@@ -50,11 +50,12 @@ const Home = () => {
       <header className="border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col">
+              <p className="text-xs text-muted-foreground mb-1">Registered: 24215 Kuykendal Road, Tomball, Texas 77375, United States</p>
               <img 
                 src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/7z5ten98_4_20260102_012214_0000.png" 
                 alt="Nevika Cura" 
-                className="h-12 w-auto"
+                className="h-16 w-auto"
                 data-testid="main-logo"
               />
             </div>
