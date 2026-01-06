@@ -19,7 +19,7 @@ const Home = () => {
     {
       id: 'diagyn',
       name: 'DiaGyn Healthcare',
-      logo: 'https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/b0voru9m_8_20260102_012214_0004.png',
+      logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg',
       description: 'Book appointments with our expert doctors',
       bgColor: 'bg-blue-50',
       accentColor: 'border-brand-blue',
@@ -28,7 +28,7 @@ const Home = () => {
     {
       id: 'proton',
       name: 'Proton Diagnostics',
-      logo: 'https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/9na5ps29_7_20260102_012214_0003.png',
+      logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
       description: 'Comprehensive diagnostic tests and health checkups',
       bgColor: 'bg-indigo-50',
       accentColor: 'border-brand-indigo',
@@ -37,7 +37,7 @@ const Home = () => {
     {
       id: 'pharmacy',
       name: 'Orange Pharmacy',
-      logo: 'https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/dvlg3alh_6_20260102_012214_0002.png',
+      logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
       description: 'Order medicines with doorstep delivery',
       bgColor: 'bg-orange-50',
       accentColor: 'border-brand-orange',
@@ -53,7 +53,7 @@ const Home = () => {
             <div className="flex flex-col">
               <p className="text-xs text-muted-foreground mb-1">Registered: 24215 Kuykendal Road, Tomball, Texas 77375, United States</p>
               <img 
-                src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/l2eqmibw_4_20260102_011840_0001.png" 
+                src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/i8ibngsp_4_20260107_021040_0001.jpg" 
                 alt="Nevika Cura" 
                 className="h-20 w-auto"
                 data-testid="main-logo"
