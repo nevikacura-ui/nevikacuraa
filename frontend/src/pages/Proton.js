@@ -157,9 +157,9 @@ const Proton = () => {
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <img 
-              src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/9na5ps29_7_20260102_012214_0003.png" 
+              src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/l2eqmibw_4_20260102_011840_0001.png" 
               alt="Proton Diagnostics" 
-              className="h-12 w-auto"
+              className="h-16 w-auto"
               data-testid="proton-logo"
             />
           </div>
