@@ -53,9 +53,9 @@ const Home = () => {
             <div className="flex flex-col">
               <p className="text-xs text-muted-foreground mb-1">Registered: 24215 Kuykendal Road, Tomball, Texas 77375, United States</p>
               <img 
-                src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/7z5ten98_4_20260102_012214_0000.png" 
+                src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/l2eqmibw_4_20260102_011840_0001.png" 
                 alt="Nevika Cura" 
-                className="h-16 w-auto"
+                className="h-20 w-auto"
                 data-testid="main-logo"
               />
             </div>
