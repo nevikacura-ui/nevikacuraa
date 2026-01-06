@@ -232,7 +232,7 @@ const Pharmacy = () => {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <img 
-                src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/dvlg3alh_6_20260102_012214_0002.png" 
+                src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg" 
                 alt="Orange Pharmacy" 
                 className="h-14 w-auto"
                 data-testid="pharmacy-logo"
