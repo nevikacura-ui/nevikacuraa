@@ -11,7 +11,7 @@ import axios from 'axios';
 import { ArrowLeft, Upload, Plus, Minus, Trash2 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = \`\${BACKEND_URL}/api\`;
+const API = `${BACKEND_URL}/api`;
 const WHATSAPP_NUMBER = '+917039030030';
 
 const Pharmacy = () => {
@@ -57,10 +57,10 @@ const Pharmacy = () => {
         formData.append('user_id', user.id);
       }
 
-      const response = await axios.post(\`\${API}/upload\`, formData, {
+      const response = await axios.post(`${API}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          ...(user && { Authorization: \`Bearer \${localStorage.getItem('token')}\` })
+          ...(user && { Authorization: `Bearer ${localStorage.getItem('token')}` })
         }
       });
 
@@ -99,15 +99,15 @@ const Pharmacy = () => {
       };
 
       if (user) {
-        await axios.post(\`\${API}/pharmacy\`, orderData, {
-          headers: { Authorization: \`Bearer \${localStorage.getItem('token')}\` }
+        await axios.post(`${API}/pharmacy`, orderData, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
       }
 
-      const medicinesList = validMedicines.map(m => \`\${m.name} (Qty: \${m.quantity})\`).join('%0A• ');
-      const whatsappMessage = \`*New Orange Pharmacy Order*%0A%0A*Medicines:*%0A• \${medicinesList}%0A%0A\${prescriptionUrl ? \`*Prescription:* \${prescriptionUrl}%0A\` : ''}\${deliveryAddress ? \`*Delivery Address:* \${deliveryAddress}%0A\` : ''}%0A*Patient Details:*%0AName: \${patientInfo.name}%0APhone: \${patientInfo.phone}\${patientInfo.email ? \`%0AEmail: \${patientInfo.email}\` : ''}\`;
+      const medicinesList = validMedicines.map(m => `${m.name} (Qty: ${m.quantity})`).join('%0A• ');
+      const whatsappMessage = `*New Orange Pharmacy Order*%0A%0A*Medicines:*%0A• ${medicinesList}%0A%0A${prescriptionUrl ? `*Prescription:* ${prescriptionUrl}%0A` : ''}${deliveryAddress ? `*Delivery Address:* ${deliveryAddress}%0A` : ''}%0A*Patient Details:*%0AName: ${patientInfo.name}%0APhone: ${patientInfo.phone}${patientInfo.email ? `%0AEmail: ${patientInfo.email}` : ''}`;
       
-      window.open(\`https://wa.me/\${WHATSAPP_NUMBER}?text=\${whatsappMessage}\`, '_blank');
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`, '_blank');
       
       toast.success('Order sent via WhatsApp!');
       
@@ -156,13 +156,13 @@ const Pharmacy = () => {
               <h2 className="font-heading text-2xl font-semibold mb-4">Medicine List</h2>
               <div className="space-y-4">
                 {medicines.map((medicine, index) => (
-                  <div key={index} className="flex gap-3" data-testid={\`medicine-row-\${index}\`}>
+                  <div key={index} className="flex gap-3" data-testid={`medicine-row-${index}`}>
                     <div className="flex-1">
                       <Input
                         placeholder="Medicine name"
                         value={medicine.name}
                         onChange={(e) => updateMedicine(index, 'name', e.target.value)}
-                        data-testid={\`medicine-name-\${index}\`}
+                        data-testid={`medicine-name-${index}`}
                         className="h-12 rounded-xl"
                       />
                     </div>
@@ -172,7 +172,7 @@ const Pharmacy = () => {
                           size="icon"
                           variant="outline"
                           onClick={() => updateMedicine(index, 'quantity', Math.max(1, medicine.quantity - 1))}
-                          data-testid={\`medicine-decrease-\${index}\`}
+                          data-testid={`medicine-decrease-${index}`}
                         >
                           <Minus className="w-4 h-4" />
                         </Button>
@@ -181,14 +181,14 @@ const Pharmacy = () => {
                           min="1"
                           value={medicine.quantity}
                           onChange={(e) => updateMedicine(index, 'quantity', parseInt(e.target.value) || 1)}
-                          data-testid={\`medicine-quantity-\${index}\`}
+                          data-testid={`medicine-quantity-${index}`}
                           className="text-center h-12"
                         />
                         <Button
                           size="icon"
                           variant="outline"
                           onClick={() => updateMedicine(index, 'quantity', medicine.quantity + 1)}
-                          data-testid={\`medicine-increase-\${index}\`}
+                          data-testid={`medicine-increase-${index}`}
                         >
                           <Plus className="w-4 h-4" />
                         </Button>
@@ -199,7 +199,7 @@ const Pharmacy = () => {
                         size="icon"
                         variant="destructive"
                         onClick={() => removeMedicine(index)}
-                        data-testid={\`medicine-remove-\${index}\`}
+                        data-testid={`medicine-remove-${index}`}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -310,7 +310,7 @@ const Pharmacy = () => {
                     <div 
                       key={index} 
                       className="flex items-center justify-between bg-orange-50 px-3 py-2 rounded-lg"
-                      data-testid={\`summary-item-\${index}\`}
+                      data-testid={`summary-item-${index}`}
                     >
                       <span className="font-body text-sm">{medicine.name}</span>
                       <span className="font-body text-sm font-semibold">x{medicine.quantity}</span>
