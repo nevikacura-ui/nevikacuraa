@@ -23,7 +23,8 @@ const Home = () => {
       description: 'Book appointments with our expert doctors',
       bgColor: 'bg-blue-50',
       accentColor: 'border-brand-blue',
-      path: '/diagyn'
+      path: '/diagyn',
+      logoBg: 'bg-blue-50'
     },
     {
       id: 'proton',
@@ -32,7 +33,8 @@ const Home = () => {
       description: 'Comprehensive diagnostic tests and health checkups',
       bgColor: 'bg-indigo-50',
       accentColor: 'border-brand-indigo',
-      path: '/proton'
+      path: '/proton',
+      logoBg: 'bg-indigo-50'
     },
     {
       id: 'pharmacy',
@@ -41,7 +43,8 @@ const Home = () => {
       description: 'Order medicines with doorstep delivery',
       bgColor: 'bg-orange-50',
       accentColor: 'border-brand-orange',
-      path: '/pharmacy'
+      path: '/pharmacy',
+      logoBg: 'bg-orange-50'
     }
   ];
 
