@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { ArrowLeft, Upload, Plus, Minus, Trash2, Search, Pill, Filter, ShoppingCart, X } from 'lucide-react';
+import { ArrowLeft, Upload, Plus, Minus, Trash2, Search, Pill, ShoppingCart, X, Package } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -36,6 +36,9 @@ const Pharmacy = () => {
   const [forms, setForms] = useState([]);
   const [inventoryLoading, setInventoryLoading] = useState(true);
   const [showCart, setShowCart] = useState(false);
+  
+  // Manual entry state
+  const [manualMedicine, setManualMedicine] = useState({ name: '', quantity: 1 });
 
   // Fetch inventory on mount
   useEffect(() => {
@@ -87,6 +90,29 @@ const Pharmacy = () => {
     toast.success(`Added ${medicine.name} to cart`);
   };
 
+  const addManualMedicine = () => {
+    if (!manualMedicine.name.trim()) {
+      toast.error('Please enter medicine name');
+      return;
+    }
+    
+    const existingIndex = medicines.findIndex(m => m.name.toLowerCase() === manualMedicine.name.toLowerCase());
+    if (existingIndex >= 0) {
+      const updated = [...medicines];
+      updated[existingIndex].quantity += manualMedicine.quantity;
+      setMedicines(updated);
+    } else {
+      setMedicines([...medicines, { 
+        name: manualMedicine.name.trim(), 
+        quantity: manualMedicine.quantity,
+        form: 'Manual Entry',
+        company: 'Custom'
+      }]);
+    }
+    toast.success(`Added ${manualMedicine.name} to cart`);
+    setManualMedicine({ name: '', quantity: 1 });
+  };
+
   const removeMedicine = (index) => {
     setMedicines(medicines.filter((_, i) => i !== index));
   };
@@ -136,7 +162,7 @@ const Pharmacy = () => {
     }
 
     if (!patientInfo.name || !patientInfo.phone) {
-      toast.error('Please fill all required fields');
+      toast.error('Please fill name and mobile number');
       return;
     }
 
@@ -215,18 +241,78 @@ const Pharmacy = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <h1 className="font-heading font-bold text-3xl sm:text-4xl mb-2 text-foreground">Order Medicines</h1>
-          <p className="font-body text-muted-foreground">Browse our inventory and add medicines to your cart</p>
+          <p className="font-body text-muted-foreground">Browse inventory or add medicines manually</p>
           <p className="font-body text-sm text-muted-foreground mt-1">
             📍 A-4, Sai Darshan, Near Don Bosco High School, Naigaon East
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Medicine Inventory - Left Side */}
+          {/* Medicine Selection - Left Side */}
           <div className="lg:col-span-2 space-y-6">
+            
+            {/* Manual Entry Card - Priority */}
+            <Card className="p-4 border-2 border-orange-200 bg-orange-50/50">
+              <h3 className="font-heading text-lg font-semibold mb-3 flex items-center gap-2">
+                <Package className="w-5 h-5 text-brand-orange" />
+                Add Medicine Manually
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <Input
+                    placeholder="Enter medicine name..."
+                    value={manualMedicine.name}
+                    onChange={(e) => setManualMedicine({...manualMedicine, name: e.target.value})}
+                    onKeyPress={(e) => e.key === 'Enter' && addManualMedicine()}
+                    data-testid="manual-medicine-name"
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+                <div className="w-full sm:w-32">
+                  <div className="flex items-center gap-1">
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => setManualMedicine({...manualMedicine, quantity: Math.max(1, manualMedicine.quantity - 1)})}
+                      className="h-12 w-12"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                    <Input
+                      type="number"
+                      min="1"
+                      value={manualMedicine.quantity}
+                      onChange={(e) => setManualMedicine({...manualMedicine, quantity: parseInt(e.target.value) || 1})}
+                      className="text-center h-12 w-16"
+                      data-testid="manual-medicine-qty"
+                    />
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => setManualMedicine({...manualMedicine, quantity: manualMedicine.quantity + 1})}
+                      className="h-12 w-12"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+                <Button 
+                  onClick={addManualMedicine}
+                  className="h-12 rounded-xl bg-brand-orange hover:bg-brand-orange/90"
+                  data-testid="add-manual-medicine-btn"
+                >
+                  <Plus className="w-4 h-4 mr-1" /> Add
+                </Button>
+              </div>
+            </Card>
+
             {/* Search and Filter */}
             <Card className="p-4">
-              <div className="flex flex-col sm:flex-row gap-4">
+              <h3 className="font-heading text-lg font-semibold mb-3 flex items-center gap-2">
+                <Pill className="w-5 h-5 text-brand-orange" />
+                Browse Inventory
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
@@ -251,66 +337,62 @@ const Pharmacy = () => {
                   </select>
                 </div>
               </div>
-            </Card>
-
-            {/* Medicine Grid */}
-            <Card className="p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-heading text-xl font-semibold flex items-center gap-2">
-                  <Pill className="w-5 h-5 text-brand-orange" />
-                  Available Medicines
-                </h2>
-                <span className="text-sm text-muted-foreground" data-testid="inventory-count">
-                  {inventory.length} items
-                </span>
-              </div>
               
-              {inventoryLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange"></div>
+              {/* Medicine Grid */}
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm text-muted-foreground" data-testid="inventory-count">
+                    {inventory.length} items found
+                  </span>
                 </div>
-              ) : inventory.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <Pill className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>No medicines found matching your search</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-2">
-                  {inventory.map((medicine, index) => (
-                    <div
-                      key={`${medicine.name}-${index}`}
-                      className="flex items-center justify-between p-3 bg-orange-50/50 rounded-xl border border-orange-100 hover:border-brand-orange/50 transition-colors"
-                      data-testid={`inventory-item-${index}`}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate" title={medicine.name}>
-                          {medicine.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {medicine.form} • {medicine.company}
-                        </p>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => addToCart(medicine)}
-                        className="ml-2 shrink-0 hover:bg-brand-orange hover:text-white hover:border-brand-orange"
-                        data-testid={`add-to-cart-${index}`}
+                
+                {inventoryLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange"></div>
+                  </div>
+                ) : inventory.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Pill className="w-10 h-10 mx-auto mb-3 opacity-50" />
+                    <p>No medicines found. Use manual entry above.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[400px] overflow-y-auto pr-2">
+                    {inventory.map((medicine, index) => (
+                      <div
+                        key={`${medicine.name}-${index}`}
+                        className="flex items-center justify-between p-3 bg-orange-50/50 rounded-xl border border-orange-100 hover:border-brand-orange/50 transition-colors"
+                        data-testid={`inventory-item-${index}`}
                       >
-                        <Plus className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm truncate" title={medicine.name}>
+                            {medicine.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {medicine.form} • {medicine.company}
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => addToCart(medicine)}
+                          className="ml-2 shrink-0 hover:bg-brand-orange hover:text-white hover:border-brand-orange"
+                          data-testid={`add-to-cart-${index}`}
+                        >
+                          <Plus className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </Card>
           </div>
 
           {/* Cart & Order - Right Side */}
-          <div className={`lg:col-span-1 space-y-6 ${showCart ? 'block' : 'hidden lg:block'}`}>
+          <div className={`lg:col-span-1 space-y-4 ${showCart ? 'block' : 'hidden lg:block'}`}>
             {/* Cart */}
             <Card className="p-4">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-3">
                 <h3 className="font-heading text-lg font-semibold flex items-center gap-2">
                   <ShoppingCart className="w-5 h-5" />
                   Your Cart
@@ -326,11 +408,11 @@ const Pharmacy = () => {
               </div>
               
               {medicines.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-6" data-testid="empty-cart-message">
-                  Your cart is empty. Browse medicines and add to cart.
+                <p className="text-sm text-muted-foreground text-center py-4" data-testid="empty-cart-message">
+                  Your cart is empty
                 </p>
               ) : (
-                <div className="space-y-3 max-h-[250px] overflow-y-auto" data-testid="cart-items">
+                <div className="space-y-2 max-h-[200px] overflow-y-auto" data-testid="cart-items">
                   {medicines.map((medicine, index) => (
                     <div 
                       key={`cart-${index}`} 
@@ -346,7 +428,6 @@ const Pharmacy = () => {
                           variant="ghost"
                           className="h-7 w-7"
                           onClick={() => updateQuantity(index, medicine.quantity - 1)}
-                          data-testid={`cart-decrease-${index}`}
                         >
                           <Minus className="w-3 h-3" />
                         </Button>
@@ -356,7 +437,6 @@ const Pharmacy = () => {
                           variant="ghost"
                           className="h-7 w-7"
                           onClick={() => updateQuantity(index, medicine.quantity + 1)}
-                          data-testid={`cart-increase-${index}`}
                         >
                           <Plus className="w-3 h-3" />
                         </Button>
@@ -365,7 +445,6 @@ const Pharmacy = () => {
                           variant="ghost"
                           className="h-7 w-7 text-red-500 hover:text-red-600"
                           onClick={() => removeMedicine(index)}
-                          data-testid={`cart-remove-${index}`}
                         >
                           <Trash2 className="w-3 h-3" />
                         </Button>
@@ -375,7 +454,7 @@ const Pharmacy = () => {
                 </div>
               )}
               
-              <div className="mt-4 pt-4 border-t border-border">
+              <div className="mt-3 pt-3 border-t border-border">
                 <p className="text-sm font-medium">
                   Total Items: <span className="text-brand-orange">{medicines.reduce((sum, m) => sum + m.quantity, 0)}</span>
                 </p>
@@ -388,7 +467,7 @@ const Pharmacy = () => {
               <div className="border-2 border-dashed border-border rounded-xl p-4 text-center">
                 {prescriptionFile ? (
                   <div className="space-y-1">
-                    <p className="font-body text-sm text-foreground truncate">{prescriptionFile.name}</p>
+                    <p className="text-sm truncate">{prescriptionFile.name}</p>
                     <p className="text-xs text-muted-foreground">
                       {uploading ? 'Uploading...' : '✓ Uploaded'}
                     </p>
@@ -417,21 +496,9 @@ const Pharmacy = () => {
               </div>
             </Card>
 
-            {/* Delivery Address */}
-            <Card className="p-4">
-              <h3 className="font-heading text-lg font-semibold mb-3">Delivery Address</h3>
-              <Textarea
-                placeholder="Enter delivery address"
-                value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
-                data-testid="delivery-address-input"
-                className="min-h-20 rounded-xl"
-              />
-            </Card>
-
             {/* Patient Details */}
             <Card className="p-4">
-              <h3 className="font-heading text-lg font-semibold mb-3">Patient Details</h3>
+              <h3 className="font-heading text-lg font-semibold mb-3">Your Details</h3>
               <div className="space-y-3">
                 <div>
                   <Label htmlFor="patient-name" className="text-sm">Full Name *</Label>
@@ -444,13 +511,24 @@ const Pharmacy = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="patient-phone" className="text-sm">Phone *</Label>
+                  <Label htmlFor="patient-phone" className="text-sm">Mobile Number *</Label>
                   <Input
                     id="patient-phone"
                     value={patientInfo.phone}
                     onChange={(e) => setPatientInfo({...patientInfo, phone: e.target.value})}
                     data-testid="patient-phone-input"
                     className="h-10 rounded-xl"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="delivery-address" className="text-sm">Delivery Address</Label>
+                  <Textarea
+                    id="delivery-address"
+                    value={deliveryAddress}
+                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                    placeholder="Enter delivery address"
+                    data-testid="delivery-address-input"
+                    className="min-h-16 rounded-xl"
                   />
                 </div>
                 <div>
