@@ -166,17 +166,17 @@ const DiaGyn = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4\">
           <div className="flex items-center gap-4\">
             <Button 
-              variant=\"ghost\" 
+              variant="ghost\" 
               onClick={() => step === 1 ? navigate('/') : setStep(step - 1)}
-              data-testid=\"back-button\"
+              data-testid="back-button\"
             >
               <ArrowLeft className="w-5 h-5\" />
             </Button>
             <img 
-              src=\"https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/b0voru9m_8_20260102_012214_0004.png\" 
-              alt=\"DiaGyn Healthcare\" 
+              src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/b0voru9m_8_20260102_012214_0004.png\" 
+              alt="DiaGyn Healthcare\" 
               className="h-12 w-auto\"
-              data-testid=\"diagyn-logo\"
+              data-testid="diagyn-logo\"
             />
           </div>
         </div>
@@ -233,7 +233,7 @@ const DiaGyn = () => {
               className="mt-8 rounded-full px-8 py-6\" 
               disabled={!selectedDoctor}
               onClick={() => setStep(2)}
-              data-testid=\"next-step-1-button\"
+              data-testid="next-step-1-button\"
             >
               Continue
             </Button>
@@ -269,7 +269,7 @@ const DiaGyn = () => {
               className="mt-8 rounded-full px-8 py-6\" 
               disabled={!selectedClinic}
               onClick={() => setStep(3)}
-              data-testid=\"next-step-2-button\"
+              data-testid="next-step-2-button\"
             >
               Continue
             </Button>
@@ -283,7 +283,7 @@ const DiaGyn = () => {
               <div>
                 <Label className="mb-4 block font-heading\">Choose Date</Label>
                 <Calendar
-                  mode=\"single\"
+                  mode="single\"
                   selected={selectedDate}
                   onSelect={(date) => {
                     setSelectedDate(date);
@@ -293,7 +293,7 @@ const DiaGyn = () => {
                     return date < new Date() || isSunday(date);
                   }}
                   className="rounded-2xl border bg-white p-4\"
-                  data-testid=\"appointment-calendar\"
+                  data-testid="appointment-calendar\"
                 />
               </div>
               
@@ -301,7 +301,7 @@ const DiaGyn = () => {
                 <div>
                   <Label className="mb-4 block font-heading\">Available Time Slots</Label>
                   {availableSlots.length > 0 ? (
-                    <div className="grid grid-cols-3 gap-3\" data-testid=\"time-slots-container\">
+                    <div className="grid grid-cols-3 gap-3\" data-testid="time-slots-container\">
                       {availableSlots.map(slot => (
                         <Button
                           key={slot}
@@ -316,7 +316,7 @@ const DiaGyn = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground font-body\" data-testid=\"no-slots-message\">
+                    <p className="text-muted-foreground font-body\" data-testid="no-slots-message\">
                       No available slots for this date
                     </p>
                   )}
@@ -327,7 +327,7 @@ const DiaGyn = () => {
               className="mt-8 rounded-full px-8 py-6\" 
               disabled={!selectedDate || !selectedSlot}
               onClick={() => setStep(4)}
-              data-testid=\"next-step-3-button\"
+              data-testid="next-step-3-button\"
             >
               Continue
             </Button>
@@ -340,33 +340,33 @@ const DiaGyn = () => {
             <Card className="p-6 max-w-lg\">
               <div className="space-y-4\">
                 <div>
-                  <Label htmlFor=\"patient-name\">Full Name *</Label>
+                  <Label htmlFor="patient-name\">Full Name *</Label>
                   <Input
-                    id=\"patient-name\"
+                    id="patient-name\"
                     value={patientInfo.name}
                     onChange={(e) => setPatientInfo({...patientInfo, name: e.target.value})}
-                    data-testid=\"patient-name-input\"
+                    data-testid="patient-name-input\"
                     className="h-12 rounded-xl\"
                   />
                 </div>
                 <div>
-                  <Label htmlFor=\"patient-phone\">Phone Number *</Label>
+                  <Label htmlFor="patient-phone\">Phone Number *</Label>
                   <Input
-                    id=\"patient-phone\"
+                    id="patient-phone\"
                     value={patientInfo.phone}
                     onChange={(e) => setPatientInfo({...patientInfo, phone: e.target.value})}
-                    data-testid=\"patient-phone-input\"
+                    data-testid="patient-phone-input\"
                     className="h-12 rounded-xl\"
                   />
                 </div>
                 <div>
-                  <Label htmlFor=\"patient-email\">Email (Optional)</Label>
+                  <Label htmlFor="patient-email\">Email (Optional)</Label>
                   <Input
-                    id=\"patient-email\"
-                    type=\"email\"
+                    id="patient-email\"
+                    type="email\"
                     value={patientInfo.email}
                     onChange={(e) => setPatientInfo({...patientInfo, email: e.target.value})}
-                    data-testid=\"patient-email-input\"
+                    data-testid="patient-email-input\"
                     className="h-12 rounded-xl\"
                   />
                 </div>
@@ -387,7 +387,7 @@ const DiaGyn = () => {
               className="mt-8 rounded-full px-8 py-6\" 
               onClick={handleBooking}
               disabled={loading}
-              data-testid=\"confirm-booking-button\"
+              data-testid="confirm-booking-button\"
             >
               {loading ? 'Processing...' : 'Confirm & Send to WhatsApp'}
             </Button>
