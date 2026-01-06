@@ -172,9 +172,9 @@ const DiaGyn = () => {
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <img 
-              src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/b0voru9m_8_20260102_012214_0004.png" 
+              src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/l2eqmibw_4_20260102_011840_0001.png" 
               alt="DiaGyn Healthcare" 
-              className="h-12 w-auto"
+              className="h-16 w-auto"
               data-testid="diagyn-logo"
             />
           </div>
