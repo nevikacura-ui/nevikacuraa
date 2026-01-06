@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { ArrowLeft, Upload, Plus, Minus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Upload, Plus, Minus, Trash2, Search, Pill, Filter, ShoppingCart, X } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -17,7 +17,7 @@ const WHATSAPP_NUMBER = '+917039030030';
 const Pharmacy = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [medicines, setMedicines] = useState([{ name: '', quantity: 1 }]);
+  const [medicines, setMedicines] = useState([]);
   const [prescriptionFile, setPrescriptionFile] = useState(null);
   const [prescriptionUrl, setPrescriptionUrl] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
@@ -28,18 +28,73 @@ const Pharmacy = () => {
   });
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  // Inventory state
+  const [inventory, setInventory] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedForm, setSelectedForm] = useState('');
+  const [forms, setForms] = useState([]);
+  const [inventoryLoading, setInventoryLoading] = useState(true);
+  const [showCart, setShowCart] = useState(false);
 
-  const addMedicine = () => {
-    setMedicines([...medicines, { name: '', quantity: 1 }]);
+  // Fetch inventory on mount
+  useEffect(() => {
+    fetchInventory();
+    fetchForms();
+  }, []);
+
+  // Fetch inventory when search/filter changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchInventory();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm, selectedForm]);
+
+  const fetchInventory = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (searchTerm) params.append('search', searchTerm);
+      if (selectedForm) params.append('form', selectedForm);
+      
+      const response = await axios.get(`${API}/pharmacy/inventory?${params.toString()}`);
+      setInventory(response.data.medicines);
+    } catch (error) {
+      console.error('Failed to fetch inventory:', error);
+    } finally {
+      setInventoryLoading(false);
+    }
+  };
+
+  const fetchForms = async () => {
+    try {
+      const response = await axios.get(`${API}/pharmacy/forms`);
+      setForms(response.data.forms);
+    } catch (error) {
+      console.error('Failed to fetch forms:', error);
+    }
+  };
+
+  const addToCart = (medicine) => {
+    const existingIndex = medicines.findIndex(m => m.name === medicine.name);
+    if (existingIndex >= 0) {
+      const updated = [...medicines];
+      updated[existingIndex].quantity += 1;
+      setMedicines(updated);
+    } else {
+      setMedicines([...medicines, { ...medicine, quantity: 1 }]);
+    }
+    toast.success(`Added ${medicine.name} to cart`);
   };
 
   const removeMedicine = (index) => {
     setMedicines(medicines.filter((_, i) => i !== index));
   };
 
-  const updateMedicine = (index, field, value) => {
+  const updateQuantity = (index, quantity) => {
+    if (quantity < 1) return;
     const updated = [...medicines];
-    updated[index][field] = value;
+    updated[index].quantity = quantity;
     setMedicines(updated);
   };
 
@@ -75,10 +130,8 @@ const Pharmacy = () => {
   };
 
   const handleSubmit = async () => {
-    const validMedicines = medicines.filter(m => m.name.trim());
-    
-    if (validMedicines.length === 0) {
-      toast.error('Please add at least one medicine');
+    if (medicines.length === 0) {
+      toast.error('Please add at least one medicine to cart');
       return;
     }
 
@@ -90,7 +143,7 @@ const Pharmacy = () => {
     setLoading(true);
     try {
       const orderData = {
-        medicines: validMedicines,
+        medicines: medicines.map(m => ({ name: m.name, quantity: m.quantity })),
         prescription_url: prescriptionUrl || null,
         patient_name: patientInfo.name,
         patient_phone: patientInfo.phone,
@@ -104,7 +157,7 @@ const Pharmacy = () => {
         });
       }
 
-      const medicinesList = validMedicines.map(m => `${m.name} (Qty: ${m.quantity})`).join('%0A• ');
+      const medicinesList = medicines.map(m => `${m.name} (Qty: ${m.quantity})`).join('%0A• ');
       const whatsappMessage = `*New Orange Pharmacy Order*%0A%0A*Medicines:*%0A• ${medicinesList}%0A%0A${prescriptionUrl ? `*Prescription:* ${prescriptionUrl}%0A` : ''}${deliveryAddress ? `*Delivery Address:* ${deliveryAddress}%0A` : ''}%0A*Patient Details:*%0AName: ${patientInfo.name}%0APhone: ${patientInfo.phone}${patientInfo.email ? `%0AEmail: ${patientInfo.email}` : ''}`;
       
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`, '_blank');
@@ -126,115 +179,223 @@ const Pharmacy = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/')}
+                data-testid="back-button"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <img 
+                src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/dvlg3alh_6_20260102_012214_0002.png" 
+                alt="Orange Pharmacy" 
+                className="h-16 w-auto"
+                data-testid="pharmacy-logo"
+              />
+            </div>
             <Button 
-              variant="ghost" 
-              onClick={() => navigate('/')}
-              data-testid="back-button"
+              onClick={() => setShowCart(!showCart)}
+              className="relative rounded-full bg-brand-orange hover:bg-brand-orange/90"
+              data-testid="cart-toggle-button"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ShoppingCart className="w-5 h-5 mr-2" />
+              Cart
+              {medicines.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                  {medicines.length}
+                </span>
+              )}
             </Button>
-            <img 
-              src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/l2eqmibw_4_20260102_011840_0001.png" 
-              alt="Orange Pharmacy" 
-              className="h-16 w-auto"
-              data-testid="pharmacy-logo"
-            />
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
-          <h1 className="font-heading font-bold text-4xl mb-2 text-foreground">Order Medicines</h1>
-          <p className="font-body text-muted-foreground">Add medicines and we'll deliver to your doorstep</p>
-          <p className="font-body text-sm text-muted-foreground mt-2">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-6">
+          <h1 className="font-heading font-bold text-3xl sm:text-4xl mb-2 text-foreground">Order Medicines</h1>
+          <p className="font-body text-muted-foreground">Browse our inventory and add medicines to your cart</p>
+          <p className="font-body text-sm text-muted-foreground mt-1">
             📍 A-4, Sai Darshan, Near Don Bosco High School, Naigaon East
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <Card className="p-6">
-              <h2 className="font-heading text-2xl font-semibold mb-4">Medicine List</h2>
-              <div className="space-y-4">
-                {medicines.map((medicine, index) => (
-                  <div key={index} className="flex gap-3" data-testid={`medicine-row-${index}`}>
-                    <div className="flex-1">
-                      <Input
-                        placeholder="Medicine name"
-                        value={medicine.name}
-                        onChange={(e) => updateMedicine(index, 'name', e.target.value)}
-                        data-testid={`medicine-name-${index}`}
-                        className="h-12 rounded-xl"
-                      />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Medicine Inventory - Left Side */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Search and Filter */}
+            <Card className="p-4">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    placeholder="Search medicines by name or company..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 h-12 rounded-xl"
+                    data-testid="medicine-search-input"
+                  />
+                </div>
+                <div className="w-full sm:w-48">
+                  <select
+                    value={selectedForm}
+                    onChange={(e) => setSelectedForm(e.target.value)}
+                    className="w-full h-12 px-4 rounded-xl border border-input bg-background text-foreground"
+                    data-testid="form-filter-select"
+                  >
+                    <option value="">All Forms</option>
+                    {forms.map((form) => (
+                      <option key={form} value={form}>{form}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </Card>
+
+            {/* Medicine Grid */}
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-heading text-xl font-semibold flex items-center gap-2">
+                  <Pill className="w-5 h-5 text-brand-orange" />
+                  Available Medicines
+                </h2>
+                <span className="text-sm text-muted-foreground" data-testid="inventory-count">
+                  {inventory.length} items
+                </span>
+              </div>
+              
+              {inventoryLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange"></div>
+                </div>
+              ) : inventory.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <Pill className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No medicines found matching your search</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-2">
+                  {inventory.map((medicine, index) => (
+                    <div
+                      key={`${medicine.name}-${index}`}
+                      className="flex items-center justify-between p-3 bg-orange-50/50 rounded-xl border border-orange-100 hover:border-brand-orange/50 transition-colors"
+                      data-testid={`inventory-item-${index}`}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate" title={medicine.name}>
+                          {medicine.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {medicine.form} • {medicine.company}
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => addToCart(medicine)}
+                        className="ml-2 shrink-0 hover:bg-brand-orange hover:text-white hover:border-brand-orange"
+                        data-testid={`add-to-cart-${index}`}
+                      >
+                        <Plus className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <div className="w-32">
-                      <div className="flex items-center gap-2">
+                  ))}
+                </div>
+              )}
+            </Card>
+          </div>
+
+          {/* Cart & Order - Right Side */}
+          <div className={`lg:col-span-1 space-y-6 ${showCart ? 'block' : 'hidden lg:block'}`}>
+            {/* Cart */}
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-heading text-lg font-semibold flex items-center gap-2">
+                  <ShoppingCart className="w-5 h-5" />
+                  Your Cart
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="lg:hidden"
+                  onClick={() => setShowCart(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              {medicines.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-6" data-testid="empty-cart-message">
+                  Your cart is empty. Browse medicines and add to cart.
+                </p>
+              ) : (
+                <div className="space-y-3 max-h-[250px] overflow-y-auto" data-testid="cart-items">
+                  {medicines.map((medicine, index) => (
+                    <div 
+                      key={`cart-${index}`} 
+                      className="flex items-center gap-2 p-2 bg-orange-50 rounded-lg"
+                      data-testid={`cart-item-${index}`}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{medicine.name}</p>
+                      </div>
+                      <div className="flex items-center gap-1">
                         <Button
                           size="icon"
-                          variant="outline"
-                          onClick={() => updateMedicine(index, 'quantity', Math.max(1, medicine.quantity - 1))}
-                          data-testid={`medicine-decrease-${index}`}
+                          variant="ghost"
+                          className="h-7 w-7"
+                          onClick={() => updateQuantity(index, medicine.quantity - 1)}
+                          data-testid={`cart-decrease-${index}`}
                         >
-                          <Minus className="w-4 h-4" />
+                          <Minus className="w-3 h-3" />
                         </Button>
-                        <Input
-                          type="number"
-                          min="1"
-                          value={medicine.quantity}
-                          onChange={(e) => updateMedicine(index, 'quantity', parseInt(e.target.value) || 1)}
-                          data-testid={`medicine-quantity-${index}`}
-                          className="text-center h-12"
-                        />
+                        <span className="w-8 text-center text-sm font-medium">{medicine.quantity}</span>
                         <Button
                           size="icon"
-                          variant="outline"
-                          onClick={() => updateMedicine(index, 'quantity', medicine.quantity + 1)}
-                          data-testid={`medicine-increase-${index}`}
+                          variant="ghost"
+                          className="h-7 w-7"
+                          onClick={() => updateQuantity(index, medicine.quantity + 1)}
+                          data-testid={`cart-increase-${index}`}
                         >
-                          <Plus className="w-4 h-4" />
+                          <Plus className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-7 w-7 text-red-500 hover:text-red-600"
+                          onClick={() => removeMedicine(index)}
+                          data-testid={`cart-remove-${index}`}
+                        >
+                          <Trash2 className="w-3 h-3" />
                         </Button>
                       </div>
                     </div>
-                    {medicines.length > 1 && (
-                      <Button
-                        size="icon"
-                        variant="destructive"
-                        onClick={() => removeMedicine(index)}
-                        data-testid={`medicine-remove-${index}`}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
+                  ))}
+                </div>
+              )}
+              
+              <div className="mt-4 pt-4 border-t border-border">
+                <p className="text-sm font-medium">
+                  Total Items: <span className="text-brand-orange">{medicines.reduce((sum, m) => sum + m.quantity, 0)}</span>
+                </p>
               </div>
-              <Button 
-                variant="outline" 
-                onClick={addMedicine} 
-                className="mt-4"
-                data-testid="add-medicine-button"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Medicine
-              </Button>
             </Card>
 
-            <Card className="p-6">
-              <h2 className="font-heading text-2xl font-semibold mb-4">Upload Prescription (Optional)</h2>
-              <div className="border-2 border-dashed border-border rounded-xl p-8 text-center">
+            {/* Upload Prescription */}
+            <Card className="p-4">
+              <h3 className="font-heading text-lg font-semibold mb-3">Prescription (Optional)</h3>
+              <div className="border-2 border-dashed border-border rounded-xl p-4 text-center">
                 {prescriptionFile ? (
-                  <div className="space-y-2">
-                    <p className="font-body text-sm text-foreground">{prescriptionFile.name}</p>
+                  <div className="space-y-1">
+                    <p className="font-body text-sm text-foreground truncate">{prescriptionFile.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {uploading ? 'Uploading...' : 'Uploaded successfully'}
+                      {uploading ? 'Uploading...' : '✓ Uploaded'}
                     </p>
                   </div>
                 ) : (
                   <>
-                    <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                    <p className="font-body text-muted-foreground mb-4">Click to upload prescription</p>
+                    <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                     <input
                       type="file"
                       accept="image/*,.pdf"
@@ -245,102 +406,76 @@ const Pharmacy = () => {
                     />
                     <Button 
                       variant="outline" 
+                      size="sm"
                       onClick={() => document.getElementById('prescription-upload').click()}
                       data-testid="prescription-upload-button"
                     >
-                      Choose File
+                      Upload
                     </Button>
                   </>
                 )}
               </div>
             </Card>
 
-            <Card className="p-6">
-              <h2 className="font-heading text-2xl font-semibold mb-4">Delivery Address</h2>
+            {/* Delivery Address */}
+            <Card className="p-4">
+              <h3 className="font-heading text-lg font-semibold mb-3">Delivery Address</h3>
               <Textarea
-                placeholder="Enter your complete delivery address"
+                placeholder="Enter delivery address"
                 value={deliveryAddress}
                 onChange={(e) => setDeliveryAddress(e.target.value)}
                 data-testid="delivery-address-input"
-                className="min-h-24 rounded-xl"
+                className="min-h-20 rounded-xl"
               />
             </Card>
 
-            <Card className="p-6">
-              <h2 className="font-heading text-2xl font-semibold mb-4">Patient Details</h2>
-              <div className="space-y-4">
+            {/* Patient Details */}
+            <Card className="p-4">
+              <h3 className="font-heading text-lg font-semibold mb-3">Patient Details</h3>
+              <div className="space-y-3">
                 <div>
-                  <Label htmlFor="patient-name">Full Name *</Label>
+                  <Label htmlFor="patient-name" className="text-sm">Full Name *</Label>
                   <Input
                     id="patient-name"
                     value={patientInfo.name}
                     onChange={(e) => setPatientInfo({...patientInfo, name: e.target.value})}
                     data-testid="patient-name-input"
-                    className="h-12 rounded-xl"
+                    className="h-10 rounded-xl"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="patient-phone">Phone Number *</Label>
+                  <Label htmlFor="patient-phone" className="text-sm">Phone *</Label>
                   <Input
                     id="patient-phone"
                     value={patientInfo.phone}
                     onChange={(e) => setPatientInfo({...patientInfo, phone: e.target.value})}
                     data-testid="patient-phone-input"
-                    className="h-12 rounded-xl"
+                    className="h-10 rounded-xl"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="patient-email">Email (Optional)</Label>
+                  <Label htmlFor="patient-email" className="text-sm">Email (Optional)</Label>
                   <Input
                     id="patient-email"
                     type="email"
                     value={patientInfo.email}
                     onChange={(e) => setPatientInfo({...patientInfo, email: e.target.value})}
                     data-testid="patient-email-input"
-                    className="h-12 rounded-xl"
+                    className="h-10 rounded-xl"
                   />
                 </div>
               </div>
             </Card>
-          </div>
 
-          <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-24">
-              <h3 className="font-heading text-xl font-semibold mb-4">Order Summary</h3>
-              {medicines.filter(m => m.name.trim()).length > 0 ? (
-                <div className="space-y-2 mb-6" data-testid="order-summary-list">
-                  {medicines.filter(m => m.name.trim()).map((medicine, index) => (
-                    <div 
-                      key={index} 
-                      className="flex items-center justify-between bg-orange-50 px-3 py-2 rounded-lg"
-                      data-testid={`summary-item-${index}`}
-                    >
-                      <span className="font-body text-sm">{medicine.name}</span>
-                      <span className="font-body text-sm font-semibold">x{medicine.quantity}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="font-body text-muted-foreground text-sm mb-6" data-testid="no-medicines-message">
-                  No medicines added
-                </p>
-              )}
-
-              <div className="border-t border-border pt-4 space-y-2 text-sm font-body">
-                <p><strong>Total Items:</strong> {medicines.filter(m => m.name.trim()).reduce((sum, m) => sum + m.quantity, 0)}</p>
-                {prescriptionFile && <p><strong>Prescription:</strong> Uploaded</p>}
-                {deliveryAddress && <p><strong>Delivery:</strong> Required</p>}
-              </div>
-
-              <Button 
-                className="w-full mt-6 rounded-full py-6 bg-brand-orange hover:bg-brand-orange/90" 
-                onClick={handleSubmit}
-                disabled={loading || medicines.filter(m => m.name.trim()).length === 0}
-                data-testid="place-order-button"
-              >
-                {loading ? 'Processing...' : 'Place Order via WhatsApp'}
-              </Button>
-            </Card>
+            {/* Place Order Button */}
+            <Button 
+              className="w-full rounded-full py-6 bg-brand-orange hover:bg-brand-orange/90 text-lg font-medium" 
+              onClick={handleSubmit}
+              disabled={loading || medicines.length === 0}
+              data-testid="place-order-button"
+            >
+              {loading ? 'Processing...' : 'Place Order via WhatsApp'}
+            </Button>
           </div>
         </div>
       </main>
