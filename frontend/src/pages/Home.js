@@ -154,11 +154,11 @@ const Home = () => {
               className={`col-span-1 h-full min-h-[320px] flex flex-col justify-between p-8 rounded-3xl transition-all duration-300 hover:scale-[1.02] hover:shadow-xl border-2 ${service.accentColor} ${service.bgColor}`}
               data-testid={`service-card-${service.id}`}
             >
-              <div className="flex items-center justify-center flex-1">
+              <div className={`flex items-center justify-center flex-1 rounded-2xl p-4 ${service.logoBg}`}>
                 <img 
                   src={service.logo} 
                   alt={service.name} 
-                  className="max-h-32 w-auto object-contain"
+                  className="max-h-32 w-auto object-contain mix-blend-multiply"
                   data-testid={`service-logo-${service.id}`}
                 />
               </div>
