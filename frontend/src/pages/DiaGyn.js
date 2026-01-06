@@ -161,34 +161,34 @@ const DiaGyn = () => {
   const availableClinics = getAvailableClinics();
 
   return (
-    <div className=\"min-h-screen bg-background\">
-      <header className=\"border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50\">
-        <div className=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4\">
-          <div className=\"flex items-center gap-4\">
+    <div className="min-h-screen bg-background\">
+      <header className="border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50\">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4\">
+          <div className="flex items-center gap-4\">
             <Button 
               variant=\"ghost\" 
               onClick={() => step === 1 ? navigate('/') : setStep(step - 1)}
               data-testid=\"back-button\"
             >
-              <ArrowLeft className=\"w-5 h-5\" />
+              <ArrowLeft className="w-5 h-5\" />
             </Button>
             <img 
               src=\"https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/b0voru9m_8_20260102_012214_0004.png\" 
               alt=\"DiaGyn Healthcare\" 
-              className=\"h-12 w-auto\"
+              className="h-12 w-auto\"
               data-testid=\"diagyn-logo\"
             />
           </div>
         </div>
       </header>
 
-      <main className=\"max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12\">
-        <div className=\"mb-8\">
-          <h1 className=\"font-heading font-bold text-4xl mb-2 text-foreground\">Book Appointment</h1>
-          <p className=\"font-body text-muted-foreground\">Choose your doctor and preferred time slot</p>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12\">
+        <div className="mb-8\">
+          <h1 className="font-heading font-bold text-4xl mb-2 text-foreground\">Book Appointment</h1>
+          <p className="font-body text-muted-foreground\">Choose your doctor and preferred time slot</p>
         </div>
 
-        <div className=\"flex gap-2 mb-8\">
+        <div className="flex gap-2 mb-8\">
           {[1, 2, 3, 4].map(s => (
             <div 
               key={s} 
@@ -200,8 +200,8 @@ const DiaGyn = () => {
 
         {step === 1 && (
           <div>
-            <h2 className=\"font-heading text-2xl font-semibold mb-6\">Select Doctor</h2>
-            <div className=\"grid grid-cols-1 md:grid-cols-2 gap-6\">
+            <h2 className="font-heading text-2xl font-semibold mb-6\">Select Doctor</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6\">
               {doctors.map(doctor => (
                 <Card 
                   key={doctor.id}
@@ -214,23 +214,23 @@ const DiaGyn = () => {
                   }}
                   data-testid={`doctor-card-${doctor.id}`}
                 >
-                  <div className=\"flex items-start gap-4\">
+                  <div className="flex items-start gap-4\">
                     <img 
                       src={doctor.image} 
                       alt={doctor.name}
-                      className=\"w-20 h-20 rounded-xl object-cover\"
+                      className="w-20 h-20 rounded-xl object-cover\"
                       data-testid={`doctor-image-${doctor.id}`}
                     />
                     <div>
-                      <h3 className=\"font-heading text-xl font-semibold mb-1\">{doctor.name}</h3>
-                      <p className=\"font-body text-muted-foreground\">{doctor.specialty}</p>
+                      <h3 className="font-heading text-xl font-semibold mb-1\">{doctor.name}</h3>
+                      <p className="font-body text-muted-foreground\">{doctor.specialty}</p>
                     </div>
                   </div>
                 </Card>
               ))}
             </div>
             <Button 
-              className=\"mt-8 rounded-full px-8 py-6\" 
+              className="mt-8 rounded-full px-8 py-6\" 
               disabled={!selectedDoctor}
               onClick={() => setStep(2)}
               data-testid=\"next-step-1-button\"
@@ -242,8 +242,8 @@ const DiaGyn = () => {
 
         {step === 2 && (
           <div>
-            <h2 className=\"font-heading text-2xl font-semibold mb-6\">Select Clinic</h2>
-            <div className=\"grid grid-cols-1 md:grid-cols-2 gap-6\">
+            <h2 className="font-heading text-2xl font-semibold mb-6\">Select Clinic</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6\">
               {availableClinics.map(clinic => (
                 <Card 
                   key={clinic.id}
@@ -255,18 +255,18 @@ const DiaGyn = () => {
                   }}
                   data-testid={`clinic-card-${clinic.id}`}
                 >
-                  <div className=\"flex items-start gap-3\">
-                    <MapPin className=\"w-6 h-6 text-brand-blue flex-shrink-0 mt-1\" />
+                  <div className="flex items-start gap-3\">
+                    <MapPin className="w-6 h-6 text-brand-blue flex-shrink-0 mt-1\" />
                     <div>
-                      <h3 className=\"font-heading text-xl font-semibold mb-2\">{clinic.name}</h3>
-                      <p className=\"font-body text-sm text-muted-foreground\">{clinic.address}</p>
+                      <h3 className="font-heading text-xl font-semibold mb-2\">{clinic.name}</h3>
+                      <p className="font-body text-sm text-muted-foreground\">{clinic.address}</p>
                     </div>
                   </div>
                 </Card>
               ))}
             </div>
             <Button 
-              className=\"mt-8 rounded-full px-8 py-6\" 
+              className="mt-8 rounded-full px-8 py-6\" 
               disabled={!selectedClinic}
               onClick={() => setStep(3)}
               data-testid=\"next-step-2-button\"
@@ -278,10 +278,10 @@ const DiaGyn = () => {
 
         {step === 3 && (
           <div>
-            <h2 className=\"font-heading text-2xl font-semibold mb-6\">Select Date & Time</h2>
-            <div className=\"grid grid-cols-1 lg:grid-cols-2 gap-8\">
+            <h2 className="font-heading text-2xl font-semibold mb-6\">Select Date & Time</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8\">
               <div>
-                <Label className=\"mb-4 block font-heading\">Choose Date</Label>
+                <Label className="mb-4 block font-heading\">Choose Date</Label>
                 <Calendar
                   mode=\"single\"
                   selected={selectedDate}
@@ -292,31 +292,31 @@ const DiaGyn = () => {
                   disabled={(date) => {
                     return date < new Date() || isSunday(date);
                   }}
-                  className=\"rounded-2xl border bg-white p-4\"
+                  className="rounded-2xl border bg-white p-4\"
                   data-testid=\"appointment-calendar\"
                 />
               </div>
               
               {selectedDate && (
                 <div>
-                  <Label className=\"mb-4 block font-heading\">Available Time Slots</Label>
+                  <Label className="mb-4 block font-heading\">Available Time Slots</Label>
                   {availableSlots.length > 0 ? (
-                    <div className=\"grid grid-cols-3 gap-3\" data-testid=\"time-slots-container\">
+                    <div className="grid grid-cols-3 gap-3\" data-testid=\"time-slots-container\">
                       {availableSlots.map(slot => (
                         <Button
                           key={slot}
                           variant={selectedSlot === slot ? 'default' : 'outline'}
                           onClick={() => setSelectedSlot(slot)}
                           data-testid={`time-slot-${slot.replace(':', '-')}`}
-                          className=\"h-auto py-3\"
+                          className="h-auto py-3\"
                         >
-                          <Clock className=\"w-4 h-4 mr-2\" />
+                          <Clock className="w-4 h-4 mr-2\" />
                           {slot}
                         </Button>
                       ))}
                     </div>
                   ) : (
-                    <p className=\"text-muted-foreground font-body\" data-testid=\"no-slots-message\">
+                    <p className="text-muted-foreground font-body\" data-testid=\"no-slots-message\">
                       No available slots for this date
                     </p>
                   )}
@@ -324,7 +324,7 @@ const DiaGyn = () => {
               )}
             </div>
             <Button 
-              className=\"mt-8 rounded-full px-8 py-6\" 
+              className="mt-8 rounded-full px-8 py-6\" 
               disabled={!selectedDate || !selectedSlot}
               onClick={() => setStep(4)}
               data-testid=\"next-step-3-button\"
@@ -336,9 +336,9 @@ const DiaGyn = () => {
 
         {step === 4 && (
           <div>
-            <h2 className=\"font-heading text-2xl font-semibold mb-6\">Patient Details</h2>
-            <Card className=\"p-6 max-w-lg\">
-              <div className=\"space-y-4\">
+            <h2 className="font-heading text-2xl font-semibold mb-6\">Patient Details</h2>
+            <Card className="p-6 max-w-lg\">
+              <div className="space-y-4\">
                 <div>
                   <Label htmlFor=\"patient-name\">Full Name *</Label>
                   <Input
@@ -346,7 +346,7 @@ const DiaGyn = () => {
                     value={patientInfo.name}
                     onChange={(e) => setPatientInfo({...patientInfo, name: e.target.value})}
                     data-testid=\"patient-name-input\"
-                    className=\"h-12 rounded-xl\"
+                    className="h-12 rounded-xl\"
                   />
                 </div>
                 <div>
@@ -356,7 +356,7 @@ const DiaGyn = () => {
                     value={patientInfo.phone}
                     onChange={(e) => setPatientInfo({...patientInfo, phone: e.target.value})}
                     data-testid=\"patient-phone-input\"
-                    className=\"h-12 rounded-xl\"
+                    className="h-12 rounded-xl\"
                   />
                 </div>
                 <div>
@@ -367,15 +367,15 @@ const DiaGyn = () => {
                     value={patientInfo.email}
                     onChange={(e) => setPatientInfo({...patientInfo, email: e.target.value})}
                     data-testid=\"patient-email-input\"
-                    className=\"h-12 rounded-xl\"
+                    className="h-12 rounded-xl\"
                   />
                 </div>
               </div>
             </Card>
 
-            <div className=\"mt-8 bg-blue-50 border border-brand-blue rounded-2xl p-6 max-w-lg\">
-              <h3 className=\"font-heading font-semibold text-lg mb-4\">Booking Summary</h3>
-              <div className=\"space-y-2 font-body text-sm\">
+            <div className="mt-8 bg-blue-50 border border-brand-blue rounded-2xl p-6 max-w-lg\">
+              <h3 className="font-heading font-semibold text-lg mb-4\">Booking Summary</h3>
+              <div className="space-y-2 font-body text-sm\">
                 <p><strong>Doctor:</strong> {doctors.find(d => d.id === selectedDoctor)?.name}</p>
                 <p><strong>Clinic:</strong> {clinics.find(c => c.id === selectedClinic)?.name}</p>
                 <p><strong>Date:</strong> {format(selectedDate, 'dd MMM yyyy, EEEE')}</p>
@@ -384,7 +384,7 @@ const DiaGyn = () => {
             </div>
 
             <Button 
-              className=\"mt-8 rounded-full px-8 py-6\" 
+              className="mt-8 rounded-full px-8 py-6\" 
               onClick={handleBooking}
               disabled={loading}
               data-testid=\"confirm-booking-button\"
