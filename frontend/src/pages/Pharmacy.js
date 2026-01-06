@@ -135,9 +135,9 @@ const Pharmacy = () => {
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <img 
-              src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/dvlg3alh_6_20260102_012214_0002.png" 
+              src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/l2eqmibw_4_20260102_011840_0001.png" 
               alt="Orange Pharmacy" 
-              className="h-12 w-auto"
+              className="h-16 w-auto"
               data-testid="pharmacy-logo"
             />
           </div>
