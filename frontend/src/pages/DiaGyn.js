@@ -49,8 +49,8 @@ const doctors = [
 ];
 
 const clinics = [
-  { id: 'pushpa', name: 'Pushpa Clinic', address: 'Location details for Pushpa Clinic' },
-  { id: 'amnion', name: 'Amnion Clinic', address: 'Location details for Amnion Clinic' }
+  { id: 'pushpa', name: 'Pushpa Clinic', address: 'A-1, Sai Darshan, Near Don Bosco High School, Naigaon East' },
+  { id: 'amnion', name: 'Amnion Clinic', address: 'G-7, Rashmi Star City Phase 5, Opp Thakur School, Naigaon East' }
 ];
 
 const DiaGyn = () => {
