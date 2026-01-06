@@ -1,0 +1,127 @@
+{
+  "identity": {
+    "brand_name": "Nevika Cura",
+    "tone": "Vibrant, Welcoming, Efficient, Trustworthy",
+    "archetype": "Organic & Earthy (Base) + Electric (Accents)",
+    "design_philosophy": "Wellness Hub, not a Clinic. Warmth over sterility."
+  },
+  "typography": {
+    "font_family": {
+      "heading": "Outfit, sans-serif",
+      "body": "DM Sans, sans-serif"
+    },
+    "google_fonts_import": "https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Outfit:wght@300;500;700;900&display=swap",
+    "usage": {
+      "h1": "font-heading font-bold text-4xl md:text-6xl tracking-tight",
+      "h2": "font-heading font-semibold text-3xl md:text-4xl tracking-tight",
+      "h3": "font-heading font-medium text-2xl tracking-normal",
+      "body": "font-body text-base leading-relaxed text-muted-foreground",
+      "label": "font-heading font-medium text-sm uppercase tracking-wider text-muted-foreground"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "DEFAULT": "#0D9488",
+        "foreground": "#FFFFFF"
+      },
+      "secondary": {
+        "DEFAULT": "#F5F5F4",
+        "foreground": "#1C1917"
+      },
+      "accent": {
+        "DEFAULT": "#F97316",
+        "foreground": "#FFFFFF"
+      },
+      "background": "#FAFAF9",
+      "card": "#FFFFFF",
+      "muted": "#E7E5E4"
+    },
+    "brand_specific": {
+      "diagyn": {
+        "primary": "#3B82F6",
+        "bg": "#EFF6FF"
+      },
+      "proton": {
+        "primary": "#6366F1",
+        "bg": "#EEF2FF"
+      },
+      "orange_pharmacy": {
+        "primary": "#F97316",
+        "bg": "#FFF7ED"
+      }
+    },
+    "tailwind_extension": {
+      "colors": {
+        "brand": {
+          "teal": "#0D9488",
+          "sand": "#F5F5F4",
+          "orange": "#F97316",
+          "indigo": "#6366F1",
+          "blue": "#3B82F6"
+        }
+      }
+    }
+  },
+  "layout_strategy": {
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "spacing": {
+      "section_gap": "py-16 md:py-24",
+      "element_gap": "gap-6 md:gap-8"
+    },
+    "grids": {
+      "bento_home": "grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8",
+      "service_card": "col-span-1 h-full min-h-[300px] flex flex-col justify-between p-8 rounded-3xl transition-all duration-300 hover:scale-[1.02] hover:shadow-xl border border-border/50"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "rounded-full px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1",
+      "secondary": "rounded-full px-8 py-6 text-lg font-medium bg-white border border-input hover:bg-accent hover:text-accent-foreground transition-all"
+    },
+    "cards": {
+      "glass": "bg-white/70 backdrop-blur-xl border border-white/20 shadow-sm rounded-3xl",
+      "solid": "bg-white border border-border/40 shadow-sm rounded-2xl"
+    },
+    "inputs": {
+      "style": "h-12 rounded-xl border-border/50 bg-white/50 focus:ring-2 focus:ring-brand-teal/20 focus:border-brand-teal transition-all"
+    }
+  },
+  "assets": {
+    "logos": {
+      "main": "https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/7z5ten98_4_20260102_012214_0000.png",
+      "orange_pharmacy": "https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/dvlg3alh_6_20260102_012214_0002.png",
+      "proton": "https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/9na5ps29_7_20260102_012214_0003.png",
+      "diagyn": "https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/b0voru9m_8_20260102_012214_0004.png"
+    },
+    "images": {
+      "dr_vikas": "https://images.unsplash.com/photo-1615177393114-bd2917a4f74a?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "dr_neha": "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg",
+      "clinic_interior": "https://images.pexels.com/photos/7108284/pexels-photo-7108284.jpeg",
+      "lab_equipment": "https://images.unsplash.com/photo-1576669801838-1b1c52121e6a?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "pharmacy_shelves": "https://images.unsplash.com/photo-1580281657527-47f249e8f4df?crop=entropy&cs=srgb&fm=jpg&q=85"
+    }
+  },
+  "motion": {
+    "transitions": "transition-all duration-300 ease-out",
+    "hover_lift": "hover:-translate-y-1 hover:shadow-lg",
+    "page_enter": "animate-in fade-in slide-in-from-bottom-4 duration-500"
+  },
+  "instructions_to_main_agent": [
+    "1. INSTALL FONTS: Add the Google Fonts import to public/index.html or src/index.css immediately.",
+    "2. TAILWIND CONFIG: Update tailwind.config.js to include the 'brand' colors and 'font-heading'/'font-body' families.",
+    "3. SHADCN OVERRIDE: Do not use default Shadcn radius. Use 'rounded-xl' or 'rounded-2xl' for a softer, friendlier look.",
+    "4. LAYOUT: Use the 'Bento' grid for the landing page service selection. Make it asymmetrical if possible (e.g., Main service larger).",
+    "5. WHATSAPP: Ensure all 'Book' or 'Order' buttons clearly indicate they will open WhatsApp (use a WhatsApp icon).",
+    "6. IMAGES: Use the provided image URLs. Do not use placeholders.",
+    "7. DATA-TESTID: Add data-testid to all interactive elements (buttons, inputs, cards).",
+    "8. FILE TYPE: Use .js/.jsx as per the project structure. Do not create .tsx files."
+  ],
+  "universal_guidelines": [
+    "Avoid generic centered layouts. Use asymmetry.",
+    "Use 2-3x more spacing than typical designs.",
+    "Never use pure black (#000000). Use #1C1917 or similar.",
+    "Glassmorphism is encouraged for cards to keep the 'light and airy' feel.",
+    "Interactive elements must have clear hover states."
+  ]
+}
