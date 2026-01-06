@@ -170,6 +170,9 @@ const Proton = () => {
         <div className="mb-8">
           <h1 className="font-heading font-bold text-4xl mb-2 text-foreground">Diagnostic Tests</h1>
           <p className="font-body text-muted-foreground">Select tests and book your appointment</p>
+          <p className="font-body text-sm text-muted-foreground mt-2">
+            📍 A-3, Sai Darshan, Near Don Bosco High School, Naigaon East
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
