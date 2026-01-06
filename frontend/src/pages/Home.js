@@ -148,22 +148,16 @@ const Home = () => {
           {services.map((service) => (
             <div
               key={service.id}
-              className={`col-span-1 h-full min-h-[300px] flex flex-col justify-between p-8 rounded-3xl transition-all duration-300 hover:scale-[1.02] hover:shadow-xl border-2 ${service.accentColor} ${service.bgColor}`}
+              className={`col-span-1 h-full min-h-[320px] flex flex-col justify-between p-8 rounded-3xl transition-all duration-300 hover:scale-[1.02] hover:shadow-xl border-2 ${service.accentColor} ${service.bgColor}`}
               data-testid={`service-card-${service.id}`}
             >
-              <div>
+              <div className="flex items-center justify-center flex-1">
                 <img 
                   src={service.logo} 
                   alt={service.name} 
-                  className="h-16 w-auto mb-6"
+                  className="max-h-32 w-auto object-contain"
                   data-testid={`service-logo-${service.id}`}
                 />
-                <h3 className="font-heading font-semibold text-2xl mb-3 text-foreground">
-                  {service.name}
-                </h3>
-                <p className="font-body text-muted-foreground leading-relaxed">
-                  {service.description}
-                </p>
               </div>
               <Button
                 onClick={() => navigate(service.path)}
