@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { ArrowLeft, Upload, Plus, X, Heart, FlaskConical, Scan, Activity, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Upload, Plus, X, Heart, FlaskConical, Scan, Activity, ShoppingCart, CreditCard, Banknote, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 
@@ -186,6 +186,10 @@ const pathologyTests = {
 const Proton = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  
+  // Step state: 1 = Select Tests, 2 = Enter Details & Payment
+  const [currentStep, setCurrentStep] = useState(1);
+  
   const [selectedTests, setSelectedTests] = useState([]);
   const [customTest, setCustomTest] = useState('');
   const [prescriptionFile, setPrescriptionFile] = useState(null);
@@ -194,13 +198,12 @@ const Proton = () => {
   const [patientInfo, setPatientInfo] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
-    email: user?.email || '',
     address: ''
   });
+  const [paymentMethod, setPaymentMethod] = useState('cod');
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('imaging');
-  const [showCart, setShowCart] = useState(false);
 
   const toggleTest = (test) => {
     setSelectedTests(prev => 
@@ -253,14 +256,23 @@ const Proton = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const goToStep2 = () => {
     if (selectedTests.length === 0) {
       toast.error('Please select at least one test');
       return;
     }
+    setCurrentStep(2);
+    window.scrollTo(0, 0);
+  };
 
+  const goToStep1 = () => {
+    setCurrentStep(1);
+    window.scrollTo(0, 0);
+  };
+
+  const handleSubmit = async () => {
     if (!patientInfo.name || !patientInfo.phone) {
-      toast.error('Please fill name and phone number');
+      toast.error('Please fill name and mobile number');
       return;
     }
 
@@ -271,8 +283,7 @@ const Proton = () => {
         prescription_url: prescriptionUrl || null,
         preferred_date: format(preferredDate, 'yyyy-MM-dd'),
         patient_name: patientInfo.name,
-        patient_phone: patientInfo.phone,
-        patient_email: patientInfo.email || null
+        patient_phone: patientInfo.phone
       };
 
       if (user) {
@@ -281,12 +292,13 @@ const Proton = () => {
         });
       }
 
+      const paymentText = paymentMethod === 'cod' ? 'Cash on Visit' : 'QR Pay / Card on Visit';
       const testsList = selectedTests.join('%0A• ');
-      const whatsappMessage = `*New Proton Diagnostics Order*%0A%0A*Tests Requested:*%0A• ${testsList}%0A%0A*Preferred Date:* ${format(preferredDate, 'dd MMM yyyy')}%0A${patientInfo.address ? `*Address:* ${patientInfo.address}%0A` : ''}${prescriptionUrl ? `*Prescription:* ${prescriptionUrl}%0A` : ''}%0A*Patient Details:*%0AName: ${patientInfo.name}%0APhone: ${patientInfo.phone}${patientInfo.email ? `%0AEmail: ${patientInfo.email}` : ''}`;
+      const whatsappMessage = `*New Proton Diagnostics Booking*%0A%0A*Tests Requested:*%0A• ${testsList}%0A%0A*Preferred Date:* ${format(preferredDate, 'dd MMM yyyy')}%0A*Payment Method:* ${paymentText}%0A${patientInfo.address ? `*Address:* ${patientInfo.address}%0A` : ''}${prescriptionUrl ? `*Prescription:* ${prescriptionUrl}%0A` : ''}%0A*Patient Details:*%0AName: ${patientInfo.name}%0AMobile: ${patientInfo.phone}`;
       
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`, '_blank');
       
-      toast.success('Test booking sent via WhatsApp!');
+      toast.success('Booking sent via WhatsApp!');
       
       setTimeout(() => {
         navigate('/');
@@ -320,7 +332,7 @@ const Proton = () => {
             <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
-                onClick={() => navigate('/')}
+                onClick={() => currentStep === 2 ? goToStep1() : navigate('/')}
                 data-testid="back-button"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -328,39 +340,39 @@ const Proton = () => {
               <img 
                 src="https://customer-assets.emergentagent.com/job_healthcare-trio/artifacts/9na5ps29_7_20260102_012214_0003.png" 
                 alt="Proton Diagnostics" 
-                className="h-16 w-auto"
+                className="h-14 w-auto"
                 data-testid="proton-logo"
               />
             </div>
-            <Button 
-              onClick={() => setShowCart(!showCart)}
-              className="relative rounded-full bg-indigo-600 hover:bg-indigo-700"
-              data-testid="cart-toggle-button"
-            >
-              <ShoppingCart className="w-5 h-5 mr-2" />
-              Tests
-              {selectedTests.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
-                  {selectedTests.length}
-                </span>
-              )}
-            </Button>
+            
+            {/* Step Indicator */}
+            <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${currentStep === 1 ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                <FlaskConical className="w-4 h-4" />
+                <span className="hidden sm:inline">Tests</span>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-400" />
+              <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${currentStep === 2 ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                <CreditCard className="w-4 h-4" />
+                <span className="hidden sm:inline">Details & Pay</span>
+              </div>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <h1 className="font-heading font-bold text-3xl sm:text-4xl mb-2 text-foreground">Diagnostic Tests</h1>
-          <p className="font-body text-muted-foreground">Select tests from our comprehensive catalog</p>
-          <p className="font-body text-sm text-muted-foreground mt-1">
-            📍 A-3, Sai Darshan, Near Don Bosco High School, Naigaon East
-          </p>
-        </div>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* STEP 1: Select Tests */}
+        {currentStep === 1 && (
+          <div className="space-y-6">
+            <div className="mb-4">
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl mb-1 text-foreground">Step 1: Select Tests</h1>
+              <p className="font-body text-muted-foreground text-sm">Choose from imaging or pathology tests</p>
+              <p className="font-body text-xs text-muted-foreground mt-1">
+                📍 A-3, Sai Darshan, Near Don Bosco High School, Naigaon East
+              </p>
+            </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Test Selection - Left Side */}
-          <div className="lg:col-span-2 space-y-6">
             {/* Category Tabs */}
             <div className="flex gap-2 flex-wrap">
               <Button
@@ -386,7 +398,6 @@ const Proton = () => {
             {/* Imaging Section */}
             {activeTab === 'imaging' && (
               <div className="space-y-4">
-                {/* ECG */}
                 <Card className="p-4">
                   <h3 className="font-heading text-lg font-semibold mb-3 flex items-center gap-2">
                     <Activity className="w-5 h-5 text-red-500" />
@@ -399,7 +410,6 @@ const Proton = () => {
                   </div>
                 </Card>
 
-                {/* Sonography */}
                 <Card className="p-4">
                   <h3 className="font-heading text-lg font-semibold mb-3 flex items-center gap-2">
                     <Heart className="w-5 h-5 text-pink-500" />
@@ -417,35 +427,26 @@ const Proton = () => {
             {/* Pathology Section */}
             {activeTab === 'pathology' && (
               <div className="space-y-4">
-                {/* Blood Tests */}
                 <Card className="p-4">
-                  <h3 className="font-heading text-lg font-semibold mb-3 text-red-600">
-                    🩸 Blood Tests
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 max-h-[400px] overflow-y-auto pr-2">
+                  <h3 className="font-heading text-lg font-semibold mb-3 text-red-600">🩸 Blood Tests</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 max-h-[350px] overflow-y-auto pr-2">
                     {pathologyTests.blood.map(test => (
                       <TestCheckbox key={test} test={test} />
                     ))}
                   </div>
                 </Card>
 
-                {/* Urine Tests */}
                 <Card className="p-4">
-                  <h3 className="font-heading text-lg font-semibold mb-3 text-yellow-600">
-                    🧪 Urine Tests
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-[300px] overflow-y-auto pr-2">
+                  <h3 className="font-heading text-lg font-semibold mb-3 text-yellow-600">🧪 Urine Tests</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-[250px] overflow-y-auto pr-2">
                     {pathologyTests.urine.map(test => (
                       <TestCheckbox key={test} test={test} />
                     ))}
                   </div>
                 </Card>
 
-                {/* Sputum Tests */}
                 <Card className="p-4">
-                  <h3 className="font-heading text-lg font-semibold mb-3 text-green-600">
-                    💨 Sputum Tests
-                  </h3>
+                  <h3 className="font-heading text-lg font-semibold mb-3 text-green-600">💨 Sputum Tests</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                     {pathologyTests.sputum.map(test => (
                       <TestCheckbox key={test} test={test} />
@@ -453,11 +454,8 @@ const Proton = () => {
                   </div>
                 </Card>
 
-                {/* Stool Tests */}
                 <Card className="p-4">
-                  <h3 className="font-heading text-lg font-semibold mb-3 text-amber-700">
-                    🔬 Stool Tests
-                  </h3>
+                  <h3 className="font-heading text-lg font-semibold mb-3 text-amber-700">🔬 Stool Tests</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                     {pathologyTests.stool.map(test => (
                       <TestCheckbox key={test} test={test} />
@@ -468,7 +466,7 @@ const Proton = () => {
             )}
 
             {/* Manual Entry */}
-            <Card className="p-4">
+            <Card className="p-4 border-2 border-indigo-200 bg-indigo-50/50">
               <h3 className="font-heading text-lg font-semibold mb-3">
                 <Plus className="w-5 h-5 inline mr-2" />
                 Add Custom Test
@@ -484,85 +482,61 @@ const Proton = () => {
                 />
                 <Button 
                   onClick={addCustomTest}
-                  className="rounded-xl"
+                  className="h-12 px-6 rounded-xl"
                   data-testid="add-custom-test-button"
                 >
                   <Plus className="w-4 h-4 mr-1" /> Add
                 </Button>
               </div>
             </Card>
-          </div>
 
-          {/* Cart & Order - Right Side */}
-          <div className={`lg:col-span-1 space-y-4 ${showCart ? 'block' : 'hidden lg:block'}`}>
-            {/* Selected Tests */}
+            {/* Selected Tests Summary */}
             <Card className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-heading text-lg font-semibold">Selected Tests</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="lg:hidden"
-                  onClick={() => setShowCart(false)}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
+              <h3 className="font-heading text-lg font-semibold mb-3 flex items-center gap-2">
+                <ShoppingCart className="w-5 h-5 text-indigo-600" />
+                Selected Tests ({selectedTests.length})
+              </h3>
               
               {selectedTests.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-4" data-testid="no-tests-message">
-                  No tests selected yet
-                </p>
+                <div className="text-center py-6 text-muted-foreground">
+                  <FlaskConical className="w-10 h-10 mx-auto mb-2 opacity-30" />
+                  <p>No tests selected yet</p>
+                </div>
               ) : (
-                <div className="space-y-2 max-h-[200px] overflow-y-auto" data-testid="selected-tests-list">
+                <div className="flex flex-wrap gap-2 max-h-[200px] overflow-y-auto" data-testid="selected-tests-list">
                   {selectedTests.map(test => (
-                    <div 
+                    <span 
                       key={test} 
-                      className="flex items-center justify-between bg-indigo-50 px-3 py-2 rounded-lg text-sm"
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm"
                     >
-                      <span className="truncate flex-1">{test}</span>
+                      {test}
                       <button 
                         onClick={() => removeTest(test)}
-                        className="text-muted-foreground hover:text-red-500 ml-2"
+                        className="hover:text-red-500"
                       >
                         <X className="w-4 h-4" />
                       </button>
-                    </div>
+                    </span>
                   ))}
                 </div>
               )}
-              <p className="text-sm font-medium mt-3 pt-3 border-t">
-                Total: <span className="text-indigo-600">{selectedTests.length} tests</span>
-              </p>
-            </Card>
-
-            {/* Preferred Date */}
-            <Card className="p-4">
-              <h3 className="font-heading text-lg font-semibold mb-3">Preferred Date</h3>
-              <CalendarComponent
-                mode="single"
-                selected={preferredDate}
-                onSelect={setPreferredDate}
-                disabled={(date) => date < new Date()}
-                className="rounded-xl border w-full"
-                data-testid="preferred-date-calendar"
-              />
             </Card>
 
             {/* Upload Prescription */}
             <Card className="p-4">
-              <h3 className="font-heading text-lg font-semibold mb-3">Prescription (Optional)</h3>
-              <div className="border-2 border-dashed border-border rounded-xl p-4 text-center">
+              <h3 className="font-heading text-lg font-semibold mb-3">Upload Prescription (Optional)</h3>
+              <div className="border-2 border-dashed border-border rounded-xl p-6 text-center">
                 {prescriptionFile ? (
                   <div className="space-y-1">
-                    <p className="text-sm truncate">{prescriptionFile.name}</p>
+                    <CheckCircle2 className="w-8 h-8 mx-auto text-green-500 mb-2" />
+                    <p className="text-sm font-medium truncate">{prescriptionFile.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {uploading ? 'Uploading...' : '✓ Uploaded'}
+                      {uploading ? 'Uploading...' : 'Uploaded successfully'}
                     </p>
                   </div>
                 ) : (
                   <>
-                    <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                    <Upload className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
                     <input
                       type="file"
                       accept="image/*,.pdf"
@@ -573,77 +547,182 @@ const Proton = () => {
                     />
                     <Button 
                       variant="outline" 
-                      size="sm"
                       onClick={() => document.getElementById('prescription-upload').click()}
                       data-testid="prescription-upload-button"
                     >
-                      Upload
+                      Choose File
                     </Button>
                   </>
                 )}
               </div>
             </Card>
 
+            {/* Continue Button */}
+            <Button 
+              className="w-full rounded-full py-6 text-lg font-medium bg-indigo-600 hover:bg-indigo-700" 
+              onClick={goToStep2}
+              disabled={selectedTests.length === 0}
+              data-testid="continue-to-details-btn"
+            >
+              Continue to Details & Payment
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </div>
+        )}
+
+        {/* STEP 2: Enter Details & Payment */}
+        {currentStep === 2 && (
+          <div className="space-y-6">
+            <div className="mb-4">
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl mb-1 text-foreground">Step 2: Your Details</h1>
+              <p className="font-body text-muted-foreground text-sm">Enter your details and select payment method</p>
+            </div>
+
+            {/* Booking Summary */}
+            <Card className="p-4 bg-indigo-50/50 border-indigo-200">
+              <h3 className="font-heading text-lg font-semibold mb-3 flex items-center gap-2">
+                <FlaskConical className="w-5 h-5 text-indigo-600" />
+                Booking Summary ({selectedTests.length} tests)
+              </h3>
+              <div className="flex flex-wrap gap-2 max-h-[150px] overflow-y-auto">
+                {selectedTests.map(test => (
+                  <span key={test} className="inline-block px-2 py-1 bg-white rounded text-sm border border-indigo-100">
+                    {test}
+                  </span>
+                ))}
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={goToStep1}
+                className="mt-3 text-indigo-600 hover:text-indigo-700"
+              >
+                ← Edit Tests
+              </Button>
+            </Card>
+
+            {/* Preferred Date */}
+            <Card className="p-4">
+              <h3 className="font-heading text-lg font-semibold mb-3">Preferred Date</h3>
+              <CalendarComponent
+                mode="single"
+                selected={preferredDate}
+                onSelect={setPreferredDate}
+                disabled={(date) => date < new Date()}
+                className="rounded-xl border mx-auto"
+                data-testid="preferred-date-calendar"
+              />
+              <p className="text-center text-sm text-muted-foreground mt-2">
+                Selected: <strong>{format(preferredDate, 'dd MMMM yyyy')}</strong>
+              </p>
+            </Card>
+
             {/* Patient Details */}
             <Card className="p-4">
-              <h3 className="font-heading text-lg font-semibold mb-3">Patient Details</h3>
-              <div className="space-y-3">
+              <h3 className="font-heading text-lg font-semibold mb-4">Patient Details</h3>
+              <div className="space-y-4">
                 <div>
-                  <Label htmlFor="patient-name" className="text-sm">Full Name *</Label>
+                  <Label htmlFor="patient-name" className="text-sm font-medium">Full Name *</Label>
                   <Input
                     id="patient-name"
                     value={patientInfo.name}
                     onChange={(e) => setPatientInfo({...patientInfo, name: e.target.value})}
+                    placeholder="Enter your full name"
                     data-testid="patient-name-input"
-                    className="h-10 rounded-xl"
+                    className="h-12 rounded-xl mt-1"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="patient-phone" className="text-sm">Mobile Number *</Label>
+                  <Label htmlFor="patient-phone" className="text-sm font-medium">Mobile Number *</Label>
                   <Input
                     id="patient-phone"
                     value={patientInfo.phone}
                     onChange={(e) => setPatientInfo({...patientInfo, phone: e.target.value})}
+                    placeholder="Enter 10-digit mobile number"
                     data-testid="patient-phone-input"
-                    className="h-10 rounded-xl"
+                    className="h-12 rounded-xl mt-1"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="patient-address" className="text-sm">Address</Label>
+                  <Label htmlFor="patient-address" className="text-sm font-medium">Address (Optional)</Label>
                   <Textarea
                     id="patient-address"
                     value={patientInfo.address}
                     onChange={(e) => setPatientInfo({...patientInfo, address: e.target.value})}
                     placeholder="Enter your address"
                     data-testid="patient-address-input"
-                    className="min-h-16 rounded-xl"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="patient-email" className="text-sm">Email (Optional)</Label>
-                  <Input
-                    id="patient-email"
-                    type="email"
-                    value={patientInfo.email}
-                    onChange={(e) => setPatientInfo({...patientInfo, email: e.target.value})}
-                    data-testid="patient-email-input"
-                    className="h-10 rounded-xl"
+                    className="min-h-20 rounded-xl mt-1"
                   />
                 </div>
               </div>
             </Card>
 
-            {/* Submit Button */}
+            {/* Payment Method */}
+            <Card className="p-4">
+              <h3 className="font-heading text-lg font-semibold mb-4">Payment Method</h3>
+              <div className="space-y-3">
+                <label 
+                  className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-indigo-200'}`}
+                  data-testid="payment-cod"
+                >
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="cod"
+                    checked={paymentMethod === 'cod'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="w-5 h-5 text-indigo-600"
+                  />
+                  <Banknote className={`w-8 h-8 ${paymentMethod === 'cod' ? 'text-indigo-600' : 'text-gray-400'}`} />
+                  <div>
+                    <p className="font-medium">Cash on Visit</p>
+                    <p className="text-sm text-muted-foreground">Pay at the diagnostic center</p>
+                  </div>
+                </label>
+                
+                <label 
+                  className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMethod === 'qr_card' ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-indigo-200'}`}
+                  data-testid="payment-qr-card"
+                >
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="qr_card"
+                    checked={paymentMethod === 'qr_card'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="w-5 h-5 text-indigo-600"
+                  />
+                  <CreditCard className={`w-8 h-8 ${paymentMethod === 'qr_card' ? 'text-indigo-600' : 'text-gray-400'}`} />
+                  <div>
+                    <p className="font-medium">QR Pay / Card on Visit</p>
+                    <p className="text-sm text-muted-foreground">Pay via UPI or Card at center</p>
+                  </div>
+                </label>
+              </div>
+            </Card>
+
+            {/* Book Tests Button */}
             <Button 
-              className="w-full rounded-full py-6 bg-indigo-600 hover:bg-indigo-700 text-lg font-medium" 
+              className="w-full rounded-full py-6 text-lg font-medium bg-green-600 hover:bg-green-700" 
               onClick={handleSubmit}
-              disabled={loading || selectedTests.length === 0}
+              disabled={loading || !patientInfo.name || !patientInfo.phone}
               data-testid="submit-order-button"
             >
-              {loading ? 'Processing...' : 'Book Tests via WhatsApp'}
+              {loading ? (
+                'Processing...'
+              ) : (
+                <>
+                  <CheckCircle2 className="w-5 h-5 mr-2" />
+                  Book Tests via WhatsApp
+                </>
+              )}
             </Button>
+            
+            <p className="text-center text-sm text-muted-foreground">
+              Your booking details will be sent to Proton Diagnostics via WhatsApp
+            </p>
           </div>
-        </div>
+        )}
       </main>
     </div>
   );
