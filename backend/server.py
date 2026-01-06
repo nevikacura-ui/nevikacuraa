@@ -264,7 +264,7 @@ async def drive_callback(code: str = Query(...), state: str = Query(...)):
         
         logger.info(f"Drive credentials stored for user {state}")
         
-        frontend_url = os.getenv("FRONTEND_URL", process.env.get("REACT_APP_BACKEND_URL", "").replace("/api", ""))
+        frontend_url = os.getenv("FRONTEND_URL", os.getenv("REACT_APP_BACKEND_URL", "").replace("/api", ""))
         return RedirectResponse(url=f"{frontend_url}?drive_connected=true")
     
     except Exception as e:
