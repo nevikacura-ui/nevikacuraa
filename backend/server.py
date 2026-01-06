@@ -29,6 +29,11 @@ db = client[os.environ['DB_NAME']]
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
+# Health check endpoint for Kubernetes liveness/readiness probes
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "nevika-cura-api"}
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
