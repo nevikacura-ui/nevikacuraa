@@ -277,7 +277,8 @@ async def get_drive_service(user_id: str):
         return None
     
     creds = Credentials(
-        token=creds_doc["access_token"],\n        refresh_token=creds_doc.get("refresh_token"),
+        token=creds_doc["access_token"],
+        refresh_token=creds_doc.get("refresh_token"),
         token_uri=creds_doc["token_uri"],
         client_id=creds_doc["client_id"],
         client_secret=creds_doc["client_secret"],
