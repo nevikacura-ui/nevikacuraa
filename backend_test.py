@@ -104,11 +104,98 @@ class NevikaHealthcareAPITester:
         """Test root API endpoint"""
         return self.run_test("Root API Endpoint", "GET", "", 200)
 
+    def test_pharmacy_inventory(self):
+        """Test pharmacy inventory endpoint - should return 665 medicines"""
+        try:
+            response = requests.get(f"{self.api_url}/pharmacy/inventory", timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                try:
+                    data = response.json()
+                    medicine_count = len(data)
+                    success = medicine_count == 665
+                    details = f"Status: {response.status_code}, Medicine count: {medicine_count}, Expected: 665"
+                    
+                    if not success:
+                        details += f" - First few medicines: {[m.get('name', 'Unknown') for m in data[:3]]}"
+                        
+                except Exception as e:
+                    success = False
+                    details = f"Status: {response.status_code}, JSON parse error: {str(e)}"
+            else:
+                details = f"Status: {response.status_code}, Expected: 200"
+            
+            self.log_test("Pharmacy Inventory (665 medicines)", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Pharmacy Inventory (665 medicines)", False, f"Exception: {str(e)}")
+            return False
+
+    def test_pharmacy_inventory_search(self):
+        """Test pharmacy inventory search for ABENDOL"""
+        try:
+            response = requests.get(f"{self.api_url}/pharmacy/inventory?search=ABENDOL", timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                try:
+                    data = response.json()
+                    # Check if ABENDOL 10 is found
+                    abendol_found = any(med.get('name', '').upper() == 'ABENDOL 10' for med in data)
+                    success = abendol_found and len(data) > 0
+                    details = f"Status: {response.status_code}, Results: {len(data)}, ABENDOL 10 found: {abendol_found}"
+                    
+                    if data:
+                        details += f" - Found medicines: {[m.get('name', 'Unknown') for m in data[:3]]}"
+                        
+                except Exception as e:
+                    success = False
+                    details = f"Status: {response.status_code}, JSON parse error: {str(e)}"
+            else:
+                details = f"Status: {response.status_code}, Expected: 200"
+            
+            self.log_test("Pharmacy Inventory Search (ABENDOL)", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Pharmacy Inventory Search (ABENDOL)", False, f"Exception: {str(e)}")
+            return False
+
+    def test_pharmacy_forms(self):
+        """Test pharmacy forms endpoint"""
+        try:
+            response = requests.get(f"{self.api_url}/pharmacy/forms", timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                try:
+                    data = response.json()
+                    success = isinstance(data, list) and len(data) > 0
+                    details = f"Status: {response.status_code}, Forms count: {len(data) if isinstance(data, list) else 'Not a list'}"
+                    
+                    if isinstance(data, list) and data:
+                        details += f" - Sample forms: {data[:5]}"
+                        
+                except Exception as e:
+                    success = False
+                    details = f"Status: {response.status_code}, JSON parse error: {str(e)}"
+            else:
+                details = f"Status: {response.status_code}, Expected: 200"
+            
+            self.log_test("Pharmacy Forms Endpoint", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Pharmacy Forms Endpoint", False, f"Exception: {str(e)}")
+            return False
+
     def test_user_registration(self):
-        """Test user registration"""
+        """Test user registration with WhatsApp notification link"""
         test_user_data = {
             "email": f"test_{datetime.now().strftime('%H%M%S')}@example.com",
-            "password": "TestPass123!",
+            "password": "testpass123",
             "phone": "9876543210",
             "name": "Test User"
         }
@@ -124,6 +211,19 @@ class NevikaHealthcareAPITester:
         if response and 'token' in response:
             self.token = response['token']
             self.user_id = response['user']['id']
+            
+            # Check for WhatsApp notification link
+            whatsapp_link = response.get('whatsapp_notification_link', '')
+            has_whatsapp_link = 'whatsapp_notification_link' in response
+            has_correct_number = '9833188288' in whatsapp_link
+            
+            success = has_whatsapp_link and has_correct_number
+            details = f"WhatsApp link present: {has_whatsapp_link}, Contains 9833188288: {has_correct_number}"
+            
+            if has_whatsapp_link:
+                details += f" - Link: {whatsapp_link[:100]}..."
+            
+            self.log_test("User Registration WhatsApp Link", success, details)
             return True
         return False
 
