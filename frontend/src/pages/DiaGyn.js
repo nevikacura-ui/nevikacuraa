@@ -171,9 +171,24 @@ const DiaGyn = () => {
       // Save to backend (this blocks the slot)
       await axios.post(`${API}/appointments`, bookingData);
 
-      const whatsappMessage = `*New DiaGyn Appointment Request*%0A%0A*Doctor:* ${doctor.name} (${doctor.specialty})%0A*Clinic:* ${clinic.name}%0A*Date:* ${format(selectedDate, 'dd MMM yyyy')}%0A*Time:* ${selectedSlot}%0A%0A*Patient Details:*%0AName: ${patientInfo.name}%0APhone: ${patientInfo.phone}${patientInfo.email ? `%0AEmail: ${patientInfo.email}` : ''}`;
+      // Format WhatsApp message with proper encoding
+      const messageLines = [
+        '*New DiaGyn Appointment Request*',
+        '',
+        `*Doctor:* ${doctor.name}`,
+        `*Specialty:* ${doctor.specialty}`,
+        `*Clinic:* ${clinic.name}`,
+        `*Date:* ${format(selectedDate, 'dd MMM yyyy')}`,
+        `*Time:* ${selectedSlot}`,
+        '',
+        '*Patient Details:*',
+        `Name: ${patientInfo.name}`,
+        `Mobile: ${patientInfo.phone}`,
+        patientInfo.email ? `Email: ${patientInfo.email}` : ''
+      ].filter(Boolean).join('\n');
       
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`, '_blank');
+      const encodedMessage = encodeURIComponent(messageLines);
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
       
       toast.success('Appointment booked successfully!');
       
