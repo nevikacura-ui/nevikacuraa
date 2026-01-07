@@ -276,6 +276,11 @@ const Proton = () => {
       return;
     }
 
+    if (!preferredDate) {
+      toast.error('Please select a preferred date');
+      return;
+    }
+
     setLoading(true);
     try {
       const orderData = {
