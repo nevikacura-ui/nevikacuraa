@@ -402,6 +402,24 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
     
     await db.appointments.insert_one(doc)
     logger.info(f"Appointment created: {appointment.id}")
+    
+    # Send email notification for new appointment
+    email_html = f"""
+    <h2>📅 New DiaGyn Appointment Booking</h2>
+    <table style="border-collapse: collapse; width: 100%;">
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Doctor:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{appointment.doctor}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Clinic:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{appointment.clinic}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Date:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{appointment.date}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Time:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{appointment.time}</td></tr>
+    </table>
+    <h3>Patient Details</h3>
+    <p><strong>Name:</strong> {appointment.patient_name}</p>
+    <p><strong>Phone:</strong> {appointment.patient_phone}</p>
+    <p><strong>Email:</strong> {appointment.patient_email or 'Not provided'}</p>
+    <p><strong>Booked at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+    """
+    await send_email_notification(f"New Appointment - {appointment.doctor} on {appointment.date}", email_html)
+    
     return appointment
 
 @api_router.get("/appointments/booked-slots")
