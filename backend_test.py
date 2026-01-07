@@ -113,12 +113,16 @@ class NevikaHealthcareAPITester:
             if success:
                 try:
                     data = response.json()
-                    medicine_count = len(data)
-                    success = medicine_count == 665
-                    details = f"Status: {response.status_code}, Medicine count: {medicine_count}, Expected: 665"
+                    # API returns {"medicines": [...], "total": count}
+                    medicines = data.get('medicines', [])
+                    total_count = data.get('total', 0)
+                    medicine_count = len(medicines)
+                    
+                    success = medicine_count == 665 and total_count == 665
+                    details = f"Status: {response.status_code}, Medicine count: {medicine_count}, Total: {total_count}, Expected: 665"
                     
                     if not success:
-                        details += f" - First few medicines: {[m.get('name', 'Unknown') for m in data[:3]]}"
+                        details += f" - First few medicines: {[m.get('name', 'Unknown') for m in medicines[:3]]}"
                         
                 except Exception as e:
                     success = False
@@ -142,13 +146,17 @@ class NevikaHealthcareAPITester:
             if success:
                 try:
                     data = response.json()
-                    # Check if ABENDOL 10 is found
-                    abendol_found = any(med.get('name', '').upper() == 'ABENDOL 10' for med in data)
-                    success = abendol_found and len(data) > 0
-                    details = f"Status: {response.status_code}, Results: {len(data)}, ABENDOL 10 found: {abendol_found}"
+                    # API returns {"medicines": [...], "total": count}
+                    medicines = data.get('medicines', [])
+                    total_count = data.get('total', 0)
                     
-                    if data:
-                        details += f" - Found medicines: {[m.get('name', 'Unknown') for m in data[:3]]}"
+                    # Check if ABENDOL 10 is found
+                    abendol_found = any(med.get('name', '').upper() == 'ABENDOL 10' for med in medicines)
+                    success = abendol_found and len(medicines) > 0
+                    details = f"Status: {response.status_code}, Results: {len(medicines)}, Total: {total_count}, ABENDOL 10 found: {abendol_found}"
+                    
+                    if medicines:
+                        details += f" - Found medicines: {[m.get('name', 'Unknown') for m in medicines[:3]]}"
                         
                 except Exception as e:
                     success = False
@@ -172,11 +180,13 @@ class NevikaHealthcareAPITester:
             if success:
                 try:
                     data = response.json()
-                    success = isinstance(data, list) and len(data) > 0
-                    details = f"Status: {response.status_code}, Forms count: {len(data) if isinstance(data, list) else 'Not a list'}"
+                    # API returns {"forms": [...]}
+                    forms = data.get('forms', [])
+                    success = isinstance(forms, list) and len(forms) > 0
+                    details = f"Status: {response.status_code}, Forms count: {len(forms)}"
                     
-                    if isinstance(data, list) and data:
-                        details += f" - Sample forms: {data[:5]}"
+                    if forms:
+                        details += f" - Sample forms: {forms[:5]}"
                         
                 except Exception as e:
                     success = False
