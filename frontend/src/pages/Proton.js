@@ -298,10 +298,26 @@ const Proton = () => {
       }
 
       const paymentText = paymentMethod === 'cod' ? 'Cash on Visit' : 'QR Pay / Card on Visit';
-      const testsList = selectedTests.join('%0A• ');
-      const whatsappMessage = `*New Proton Diagnostics Booking*%0A%0A*Tests Requested:*%0A• ${testsList}%0A%0A*Preferred Date:* ${format(preferredDate, 'dd MMM yyyy')}%0A*Payment Method:* ${paymentText}%0A${patientInfo.address ? `*Address:* ${patientInfo.address}%0A` : ''}${prescriptionUrl ? `*Prescription:* ${prescriptionUrl}%0A` : ''}%0A*Patient Details:*%0AName: ${patientInfo.name}%0AMobile: ${patientInfo.phone}`;
+      const testsList = selectedTests.map(t => `• ${t}`).join('\n');
       
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`, '_blank');
+      const messageLines = [
+        '*New Proton Diagnostics Booking*',
+        '',
+        '*Tests Requested:*',
+        testsList,
+        '',
+        `*Preferred Date:* ${format(preferredDate, 'dd MMM yyyy')}`,
+        `*Payment Method:* ${paymentText}`,
+        patientInfo.address ? `*Address:* ${patientInfo.address}` : '',
+        prescriptionUrl ? `*Prescription:* ${prescriptionUrl}` : '',
+        '',
+        '*Patient Details:*',
+        `Name: ${patientInfo.name}`,
+        `Mobile: ${patientInfo.phone}`
+      ].filter(Boolean).join('\n');
+      
+      const encodedMessage = encodeURIComponent(messageLines);
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
       
       toast.success('Booking sent via WhatsApp!');
       
