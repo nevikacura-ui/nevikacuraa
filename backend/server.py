@@ -194,7 +194,21 @@ async def register(input: UserCreate):
     
     token = jwt.encode({'sub': user.id, 'exp': datetime.now(timezone.utc) + timedelta(days=30)}, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
-    return {"token": token, "user": user.model_dump()}
+    # Send email notification for new user registration
+    email_html = f"""
+    <h2>🎉 New User Registration on Nevika Cura</h2>
+    <p><strong>Name:</strong> {user.name}</p>
+    <p><strong>Email:</strong> {user.email}</p>
+    <p><strong>Phone:</strong> {user.phone}</p>
+    <p><strong>Registered at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+    """
+    await send_email_notification("New User Registration - Nevika Cura", email_html)
+    
+    # Generate WhatsApp link for signup notification
+    whatsapp_message = f"New User Signup on Nevika Cura\n\nName: {user.name}\nEmail: {user.email}\nPhone: {user.phone}"
+    whatsapp_link = f"https://wa.me/91{SIGNUP_WHATSAPP_NUMBER}?text={whatsapp_message.replace(' ', '%20').replace(chr(10), '%0A')}"
+    
+    return {"token": token, "user": user.model_dump(), "whatsapp_notification_link": whatsapp_link}
 
 @api_router.post("/auth/login", response_model=dict)
 async def login(input: UserLogin):
