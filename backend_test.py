@@ -419,24 +419,30 @@ class NevikaHealthcareAPITester:
         print(f"📍 Base URL: {self.base_url}")
         print("=" * 60)
         
+        # Test health endpoint first
+        self.test_health_endpoint()
+        
+        # Test pharmacy inventory (high priority)
+        self.test_pharmacy_inventory()
+        self.test_pharmacy_inventory_search()
+        self.test_pharmacy_forms()
+        
         # Test basic connectivity
         self.test_root_endpoint()
         
-        # Test authentication
+        # Test authentication with WhatsApp notification
         self.test_user_registration()
         self.test_user_login()
         self.test_get_current_user()
         
-        # Test appointments
+        # Test order creation with email notifications (high priority)
         self.test_create_appointment()
-        self.test_get_appointments()
-        
-        # Test diagnostics
         self.test_create_diagnostic_order()
-        self.test_get_diagnostic_orders()
-        
-        # Test pharmacy
         self.test_create_pharmacy_order()
+        
+        # Test user order history
+        self.test_get_appointments()
+        self.test_get_diagnostic_orders()
         self.test_get_pharmacy_orders()
         
         # Test file upload
