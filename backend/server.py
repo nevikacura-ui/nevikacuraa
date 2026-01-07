@@ -457,6 +457,25 @@ async def create_diagnostic_order(input: DiagnosticOrderCreate, user = Depends(g
     
     await db.diagnostic_orders.insert_one(doc)
     logger.info(f"Diagnostic order created: {order.id}")
+    
+    # Send email notification for new diagnostic order
+    tests_list = "<br>".join([f"• {test}" for test in order.tests])
+    email_html = f"""
+    <h2>🔬 New Proton Diagnostics Order</h2>
+    <h3>Tests Ordered:</h3>
+    <p>{tests_list}</p>
+    <table style="border-collapse: collapse; width: 100%;">
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Preferred Date:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.preferred_date}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Prescription:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.prescription_url or 'Not uploaded'}</td></tr>
+    </table>
+    <h3>Patient Details</h3>
+    <p><strong>Name:</strong> {order.patient_name}</p>
+    <p><strong>Phone:</strong> {order.patient_phone}</p>
+    <p><strong>Email:</strong> {order.patient_email or 'Not provided'}</p>
+    <p><strong>Ordered at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+    """
+    await send_email_notification(f"New Diagnostic Order - {order.patient_name}", email_html)
+    
     return order
 
 @api_router.get("/diagnostics", response_model=List[DiagnosticOrder])
