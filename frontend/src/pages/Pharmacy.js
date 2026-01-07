@@ -481,7 +481,6 @@ const Pharmacy = () => {
                     >
                       <div className="flex-1 min-w-0 mr-2">
                         <p className="font-medium text-sm truncate">{medicine.name}</p>
-                        <p className="text-xs text-muted-foreground">{medicine.form}</p>
                       </div>
                       <Button
                         size="sm"
