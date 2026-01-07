@@ -25,7 +25,6 @@ const imagingTests = {
     'NT Scan (Nuchal Translucency)',
     'Growth Scan',
     'USG Pelvis',
-    'Doppler Scan',
     'Follicular Monitoring'
   ]
 };
