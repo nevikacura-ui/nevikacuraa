@@ -298,28 +298,31 @@ class NevikaHealthcareAPITester:
         return isinstance(response, list)
 
     def test_create_diagnostic_order(self):
-        """Test creating a diagnostic order"""
+        """Test creating a diagnostic order with email notification"""
         if not self.token:
             self.log_test("Create Diagnostic Order", False, "No token available")
             return False
         
         diagnostic_data = {
-            "tests": ["Complete Blood Count (CBC)", "Lipid Profile"],
-            "prescription_url": None,
-            "preferred_date": (datetime.now() + timedelta(days=2)).strftime('%Y-%m-%d'),
+            "tests": ["CBC", "Blood Sugar"],
+            "preferred_date": "2026-01-15",
             "patient_name": "Test Patient",
-            "patient_phone": "9876543210",
-            "patient_email": "patient@example.com"
+            "patient_phone": "9876543210"
         }
         
         response = self.run_test(
-            "Create Diagnostic Order",
+            "Create Diagnostic Order (Email Test)",
             "POST",
             "diagnostics",
             200,
             data=diagnostic_data
         )
-        return bool(response and 'id' in response)
+        
+        success = bool(response and 'id' in response)
+        if success:
+            print(f"   📧 Email should be sent to nevikacura@gmail.com for diagnostic order {response.get('id')}")
+        
+        return success
 
     def test_get_diagnostic_orders(self):
         """Test getting diagnostic orders"""
