@@ -75,6 +75,31 @@ class NevikaHealthcareAPITester:
             self.log_test(name, False, f"Exception: {str(e)}")
             return {}
 
+    def test_health_endpoint(self):
+        """Test health endpoint"""
+        try:
+            response = requests.get(f"{self.base_url}/health", timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                try:
+                    data = response.json()
+                    expected_response = {"status": "healthy", "service": "nevika-cura-api"}
+                    success = data == expected_response
+                    details = f"Status: {response.status_code}, Response: {data}"
+                except:
+                    success = False
+                    details = f"Status: {response.status_code}, Invalid JSON response"
+            else:
+                details = f"Status: {response.status_code}, Expected: 200"
+            
+            self.log_test("Health Endpoint", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Health Endpoint", False, f"Exception: {str(e)}")
+            return False
+
     def test_root_endpoint(self):
         """Test root API endpoint"""
         return self.run_test("Root API Endpoint", "GET", "", 200)
