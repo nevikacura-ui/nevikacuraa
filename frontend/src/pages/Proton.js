@@ -92,6 +92,10 @@ const pathologyTests = {
     'Cortisol',
     'DHEA-S',
     'Insulin (Fasting)',
+    'Hormonal Profile (Complete)',
+    'Female Hormone Panel',
+    'Male Hormone Panel',
+    'PCOD Profile',
     // Vitamin & Mineral Tests
     'Vitamin D (25-OH)',
     'Vitamin B12',
