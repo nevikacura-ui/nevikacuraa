@@ -607,13 +607,17 @@ const Proton = () => {
               <CalendarComponent
                 mode="single"
                 selected={preferredDate}
-                onSelect={setPreferredDate}
+                onSelect={(date) => {
+                  if (date) {
+                    setPreferredDate(date);
+                  }
+                }}
                 disabled={(date) => date < new Date()}
                 className="rounded-xl border mx-auto"
                 data-testid="preferred-date-calendar"
               />
               <p className="text-center text-sm text-muted-foreground mt-2">
-                Selected: <strong>{format(preferredDate, 'dd MMMM yyyy')}</strong>
+                Selected: <strong>{preferredDate ? format(preferredDate, 'dd MMMM yyyy') : 'No date selected'}</strong>
               </p>
             </Card>
 
