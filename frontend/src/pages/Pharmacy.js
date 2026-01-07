@@ -198,10 +198,27 @@ const Pharmacy = () => {
       }
 
       const paymentText = paymentMethod === 'cod' ? 'Cash on Delivery' : 'QR Pay / Card on Delivery';
-      const medicinesList = medicines.map(m => `${m.name} (Qty: ${m.quantity})`).join('%0A• ');
-      const whatsappMessage = `*New Orange Pharmacy Order*%0A%0A*Medicines:*%0A• ${medicinesList}%0A%0A*Payment Method:* ${paymentText}%0A${prescriptionUrl ? `*Prescription:* ${prescriptionUrl}%0A` : ''}%0A*Delivery Address:*%0A${deliveryAddress}%0A%0A*Customer Details:*%0AName: ${patientInfo.name}%0AMobile: ${patientInfo.phone}`;
+      const medicinesList = medicines.map(m => `• ${m.name} (Qty: ${m.quantity})`).join('\n');
       
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`, '_blank');
+      const messageLines = [
+        '*New Orange Pharmacy Order*',
+        '',
+        '*Medicines:*',
+        medicinesList,
+        '',
+        `*Payment Method:* ${paymentText}`,
+        prescriptionUrl ? `*Prescription:* ${prescriptionUrl}` : '',
+        '',
+        '*Delivery Address:*',
+        deliveryAddress,
+        '',
+        '*Customer Details:*',
+        `Name: ${patientInfo.name}`,
+        `Mobile: ${patientInfo.phone}`
+      ].filter(Boolean).join('\n');
+      
+      const encodedMessage = encodeURIComponent(messageLines);
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
       
       toast.success('Order sent via WhatsApp!');
       
