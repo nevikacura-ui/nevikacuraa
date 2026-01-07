@@ -325,7 +325,7 @@ const Proton = () => {
               <div className="space-y-4">
                 <Card className="p-4">
                   <h3 className="font-heading text-lg font-semibold mb-3 text-red-600">🩸 Blood Tests</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 max-h-[350px] overflow-y-auto pr-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                     {pathologyTests.blood.map(test => (
                       <TestCheckbox key={test} test={test} />
                     ))}
@@ -333,27 +333,9 @@ const Proton = () => {
                 </Card>
 
                 <Card className="p-4">
-                  <h3 className="font-heading text-lg font-semibold mb-3 text-yellow-600">🧪 Urine Tests</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-[250px] overflow-y-auto pr-2">
-                    {pathologyTests.urine.map(test => (
-                      <TestCheckbox key={test} test={test} />
-                    ))}
-                  </div>
-                </Card>
-
-                <Card className="p-4">
-                  <h3 className="font-heading text-lg font-semibold mb-3 text-green-600">💨 Sputum Tests</h3>
+                  <h3 className="font-heading text-lg font-semibold mb-3 text-indigo-600">📦 Health Packages</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                    {pathologyTests.sputum.map(test => (
-                      <TestCheckbox key={test} test={test} />
-                    ))}
-                  </div>
-                </Card>
-
-                <Card className="p-4">
-                  <h3 className="font-heading text-lg font-semibold mb-3 text-amber-700">🔬 Stool Tests</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                    {pathologyTests.stool.map(test => (
+                    {pathologyTests.packages.map(test => (
                       <TestCheckbox key={test} test={test} />
                     ))}
                   </div>
