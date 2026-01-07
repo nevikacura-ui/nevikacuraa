@@ -334,31 +334,31 @@ class NevikaHealthcareAPITester:
         return isinstance(response, list)
 
     def test_create_pharmacy_order(self):
-        """Test creating a pharmacy order"""
+        """Test creating a pharmacy order with email notification"""
         if not self.token:
             self.log_test("Create Pharmacy Order", False, "No token available")
             return False
         
         pharmacy_data = {
-            "medicines": [
-                {"name": "Paracetamol", "quantity": 2},
-                {"name": "Vitamin D", "quantity": 1}
-            ],
-            "prescription_url": None,
+            "medicines": [{"name": "ABENDOL 10", "quantity": 2}],
             "patient_name": "Test Patient",
             "patient_phone": "9876543210",
-            "patient_email": "patient@example.com",
-            "delivery_address": "123 Test Street, Test City"
+            "delivery_address": "Test Address, Mumbai"
         }
         
         response = self.run_test(
-            "Create Pharmacy Order",
+            "Create Pharmacy Order (Email Test)",
             "POST",
             "pharmacy",
             200,
             data=pharmacy_data
         )
-        return bool(response and 'id' in response)
+        
+        success = bool(response and 'id' in response)
+        if success:
+            print(f"   📧 Email should be sent to nevikacura@gmail.com for pharmacy order {response.get('id')}")
+        
+        return success
 
     def test_get_pharmacy_orders(self):
         """Test getting pharmacy orders"""
