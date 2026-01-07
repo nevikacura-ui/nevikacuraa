@@ -358,6 +358,16 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
     logger.info(f"Appointment created: {appointment.id}")
     return appointment
 
+@api_router.get("/appointments/booked-slots")
+async def get_booked_slots(doctor: str, clinic: str, date: str):
+    """Get booked slots for a specific doctor, clinic, and date"""
+    booked = await db.appointments.find(
+        {"doctor": doctor, "clinic": clinic, "date": date},
+        {"_id": 0, "time": 1}
+    ).to_list(100)
+    
+    return {"booked_slots": [b["time"] for b in booked]}
+
 @api_router.get("/appointments", response_model=List[Appointment])
 async def get_appointments(user = Depends(get_current_user)):
     if not user:
