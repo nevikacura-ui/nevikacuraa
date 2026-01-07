@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { ArrowLeft, Clock, MapPin } from 'lucide-react';
+import { ArrowLeft, Clock, MapPin, Ban } from 'lucide-react';
 import { format, isSunday } from 'date-fns';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -61,6 +61,8 @@ const DiaGyn = () => {
   const [selectedClinic, setSelectedClinic] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
   const [patientInfo, setPatientInfo] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
@@ -71,6 +73,39 @@ const DiaGyn = () => {
   const getDayName = (date) => {
     return format(date, 'EEEE');
   };
+
+  // Fetch booked slots when date is selected
+  const fetchBookedSlots = useCallback(async () => {
+    if (!selectedDoctor || !selectedClinic || !selectedDate) {
+      setBookedSlots([]);
+      return;
+    }
+
+    const doctor = doctors.find(d => d.id === selectedDoctor);
+    const clinic = clinics.find(c => c.id === selectedClinic);
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+
+    setLoadingSlots(true);
+    try {
+      const response = await axios.get(`${API}/appointments/booked-slots`, {
+        params: {
+          doctor: doctor.name,
+          clinic: clinic.name,
+          date: dateStr
+        }
+      });
+      setBookedSlots(response.data.booked_slots || []);
+    } catch (error) {
+      console.error('Failed to fetch booked slots:', error);
+      setBookedSlots([]);
+    } finally {
+      setLoadingSlots(false);
+    }
+  }, [selectedDoctor, selectedClinic, selectedDate]);
+
+  useEffect(() => {
+    fetchBookedSlots();
+  }, [fetchBookedSlots]);
 
   const getAvailableSlots = () => {
     if (!selectedDoctor || !selectedClinic || !selectedDate) return [];
@@ -133,17 +168,14 @@ const DiaGyn = () => {
         patient_email: patientInfo.email || null
       };
 
-      if (user) {
-        await axios.post(`${API}/appointments`, bookingData, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-      }
+      // Save to backend (this blocks the slot)
+      await axios.post(`${API}/appointments`, bookingData);
 
       const whatsappMessage = `*New DiaGyn Appointment Request*%0A%0A*Doctor:* ${doctor.name} (${doctor.specialty})%0A*Clinic:* ${clinic.name}%0A*Date:* ${format(selectedDate, 'dd MMM yyyy')}%0A*Time:* ${selectedSlot}%0A%0A*Patient Details:*%0AName: ${patientInfo.name}%0APhone: ${patientInfo.phone}${patientInfo.email ? `%0AEmail: ${patientInfo.email}` : ''}`;
       
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`, '_blank');
       
-      toast.success('Appointment request sent via WhatsApp!');
+      toast.success('Appointment booked successfully!');
       
       setTimeout(() => {
         navigate('/');
@@ -158,6 +190,9 @@ const DiaGyn = () => {
 
   const availableSlots = getAvailableSlots();
   const availableClinics = getAvailableClinics();
+
+  // Filter out booked slots
+  const unbookedSlots = availableSlots.filter(slot => !bookedSlots.includes(slot));
 
   return (
     <div className="min-h-screen bg-background">
@@ -210,6 +245,7 @@ const DiaGyn = () => {
                     setSelectedClinic(null);
                     setSelectedDate(null);
                     setSelectedSlot(null);
+                    setBookedSlots([]);
                   }}
                   data-testid={`doctor-card-${doctor.id}`}
                 >
@@ -251,6 +287,7 @@ const DiaGyn = () => {
                     setSelectedClinic(clinic.id);
                     setSelectedDate(null);
                     setSelectedSlot(null);
+                    setBookedSlots([]);
                   }}
                   data-testid={`clinic-card-${clinic.id}`}
                 >
@@ -285,8 +322,10 @@ const DiaGyn = () => {
                   mode="single"
                   selected={selectedDate}
                   onSelect={(date) => {
-                    setSelectedDate(date);
-                    setSelectedSlot(null);
+                    if (date) {
+                      setSelectedDate(date);
+                      setSelectedSlot(null);
+                    }
                   }}
                   disabled={(date) => {
                     return date < new Date() || isSunday(date);
@@ -299,24 +338,49 @@ const DiaGyn = () => {
               {selectedDate && (
                 <div>
                   <Label className="mb-4 block font-heading">Available Time Slots</Label>
-                  {availableSlots.length > 0 ? (
+                  {loadingSlots ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue"></div>
+                    </div>
+                  ) : unbookedSlots.length > 0 ? (
                     <div className="grid grid-cols-3 gap-3" data-testid="time-slots-container">
-                      {availableSlots.map(slot => (
-                        <Button
-                          key={slot}
-                          variant={selectedSlot === slot ? 'default' : 'outline'}
-                          onClick={() => setSelectedSlot(slot)}
-                          data-testid={`time-slot-${slot.replace(':', '-')}`}
-                          className="h-auto py-3"
-                        >
-                          <Clock className="w-4 h-4 mr-2" />
-                          {slot}
-                        </Button>
-                      ))}
+                      {availableSlots.map(slot => {
+                        const isBooked = bookedSlots.includes(slot);
+                        return (
+                          <Button
+                            key={slot}
+                            variant={selectedSlot === slot ? 'default' : isBooked ? 'ghost' : 'outline'}
+                            onClick={() => !isBooked && setSelectedSlot(slot)}
+                            disabled={isBooked}
+                            data-testid={`time-slot-${slot.replace(':', '-')}`}
+                            className={`h-auto py-3 ${isBooked ? 'opacity-50 cursor-not-allowed line-through bg-red-50 text-red-400' : ''}`}
+                          >
+                            {isBooked ? (
+                              <Ban className="w-4 h-4 mr-2" />
+                            ) : (
+                              <Clock className="w-4 h-4 mr-2" />
+                            )}
+                            {slot}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  ) : availableSlots.length > 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Ban className="w-12 h-12 mx-auto mb-3 text-red-400" />
+                      <p className="font-body">All slots are booked for this date</p>
+                      <p className="text-sm">Please select another date</p>
                     </div>
                   ) : (
                     <p className="text-muted-foreground font-body" data-testid="no-slots-message">
                       No available slots for this date
+                    </p>
+                  )}
+                  
+                  {bookedSlots.length > 0 && unbookedSlots.length > 0 && (
+                    <p className="text-sm text-muted-foreground mt-4">
+                      <Ban className="w-4 h-4 inline mr-1" />
+                      Crossed slots are already booked
                     </p>
                   )}
                 </div>
@@ -371,24 +435,24 @@ const DiaGyn = () => {
                 </div>
               </div>
             </Card>
-
-            <div className="mt-8 bg-blue-50 border border-brand-blue rounded-2xl p-6 max-w-lg">
-              <h3 className="font-heading font-semibold text-lg mb-4">Booking Summary</h3>
-              <div className="space-y-2 font-body text-sm">
+            
+            <Card className="p-6 max-w-lg mt-6 bg-blue-50 border-brand-blue">
+              <h3 className="font-heading text-lg font-semibold mb-4">Booking Summary</h3>
+              <div className="space-y-2 text-sm font-body">
                 <p><strong>Doctor:</strong> {doctors.find(d => d.id === selectedDoctor)?.name}</p>
                 <p><strong>Clinic:</strong> {clinics.find(c => c.id === selectedClinic)?.name}</p>
-                <p><strong>Date:</strong> {format(selectedDate, 'dd MMM yyyy, EEEE')}</p>
+                <p><strong>Date:</strong> {selectedDate && format(selectedDate, 'dd MMMM yyyy')}</p>
                 <p><strong>Time:</strong> {selectedSlot}</p>
               </div>
-            </div>
+            </Card>
 
             <Button 
-              className="mt-8 rounded-full px-8 py-6" 
+              className="mt-8 rounded-full px-8 py-6 bg-green-600 hover:bg-green-700" 
+              disabled={loading || !patientInfo.name || !patientInfo.phone}
               onClick={handleBooking}
-              disabled={loading}
-              data-testid="confirm-booking-button"
+              data-testid="book-appointment-button"
             >
-              {loading ? 'Processing...' : 'Confirm & Send to WhatsApp'}
+              {loading ? 'Processing...' : 'Book Appointment via WhatsApp'}
             </Button>
           </div>
         )}
