@@ -30,22 +30,159 @@ const imagingTests = {
   ]
 };
 
-// Pathology Tests - From Proton Diagnostics Rate List
+// Pathology Tests - Comprehensive List
 const pathologyTests = {
   blood: [
-    'AMH',
-    'Ante Natal Profile',
-    'Arthritis Panel - Basic',
-    'Beta HCG',
-    'Blood Culture & Sensitivity',
-    'Blood Group',
-    'CBC',
-    'CRP',
-    'Dual Marker',
+    // Routine Blood Tests
+    'CBC (Complete Blood Count)',
+    'Hemoglobin (Hb)',
+    'ESR (Erythrocyte Sedimentation Rate)',
+    'Blood Group & Rh Factor',
+    'Platelet Count',
+    'PCV (Packed Cell Volume)',
+    'RBC Count',
+    'WBC Count (Total & Differential)',
+    'Peripheral Blood Smear',
+    // Blood Sugar Tests
     'FBS (Fasting Blood Sugar)',
-    'G6PD',
     'PPBS (Post Prandial Blood Sugar)',
-    'Serum Ferritin'
+    'Random Blood Sugar (RBS)',
+    'HbA1c (Glycated Hemoglobin)',
+    'GTT (Glucose Tolerance Test)',
+    'Fructosamine',
+    // Kidney Function Tests
+    'Creatinine',
+    'Blood Urea',
+    'BUN (Blood Urea Nitrogen)',
+    'Uric Acid',
+    'eGFR (Estimated GFR)',
+    'Electrolytes (Na, K, Cl)',
+    // Liver Function Tests
+    'SGPT (ALT)',
+    'SGOT (AST)',
+    'Bilirubin (Total, Direct, Indirect)',
+    'Alkaline Phosphatase (ALP)',
+    'GGT (Gamma GT)',
+    'Total Protein',
+    'Albumin',
+    'Globulin',
+    'A/G Ratio',
+    // Lipid Profile
+    'Total Cholesterol',
+    'HDL Cholesterol',
+    'LDL Cholesterol',
+    'VLDL Cholesterol',
+    'Triglycerides',
+    'Lipid Profile (Complete)',
+    // Thyroid Tests
+    'TSH',
+    'T3 (Total & Free)',
+    'T4 (Total & Free)',
+    'Thyroid Profile (T3, T4, TSH)',
+    'Anti-TPO Antibodies',
+    'Thyroglobulin',
+    // Hormone Tests
+    'AMH (Anti-Mullerian Hormone)',
+    'Beta HCG',
+    'Prolactin',
+    'FSH',
+    'LH',
+    'Estradiol (E2)',
+    'Progesterone',
+    'Testosterone',
+    'Cortisol',
+    'DHEA-S',
+    'Insulin (Fasting)',
+    // Vitamin & Mineral Tests
+    'Vitamin D (25-OH)',
+    'Vitamin B12',
+    'Folic Acid',
+    'Iron Studies (Serum Iron, TIBC, Ferritin)',
+    'Serum Ferritin',
+    'Serum Calcium',
+    'Serum Magnesium',
+    'Serum Zinc',
+    // Cardiac Markers
+    'Troponin I',
+    'Troponin T',
+    'CPK (Creatine Phosphokinase)',
+    'CPK-MB',
+    'LDH',
+    'BNP/NT-proBNP',
+    'Homocysteine',
+    // Inflammation & Infection Markers
+    'CRP (C-Reactive Protein)',
+    'hs-CRP',
+    'Procalcitonin',
+    'Blood Culture & Sensitivity',
+    'Widal Test',
+    'Dengue NS1 Antigen',
+    'Dengue IgG/IgM',
+    'Malaria (Rapid/Smear)',
+    'Typhidot',
+    // Coagulation Profile
+    'PT/INR',
+    'APTT',
+    'Bleeding Time',
+    'Clotting Time',
+    'D-Dimer',
+    'Fibrinogen',
+    // Autoimmune Tests
+    'ANA (Antinuclear Antibody)',
+    'RA Factor',
+    'Anti-CCP',
+    'ASO Titre',
+    // Cancer Markers
+    'PSA (Total & Free)',
+    'CA-125',
+    'CA 19-9',
+    'CEA',
+    'AFP (Alpha Fetoprotein)',
+    // Pregnancy Tests
+    'Ante Natal Profile',
+    'Dual Marker',
+    'Triple Marker',
+    'Quadruple Marker',
+    'TORCH Panel',
+    // Miscellaneous
+    'G6PD',
+    'Serum Amylase',
+    'Serum Lipase',
+    'Ammonia',
+    'Lactate'
+  ],
+  urine: [
+    'Urine Routine & Microscopy',
+    'Urine Complete Examination',
+    'Urine Culture & Sensitivity',
+    '24-Hour Urine Protein',
+    '24-Hour Urine Creatinine',
+    'Urine Microalbumin',
+    'Urine Albumin-Creatinine Ratio (ACR)',
+    'Urine Sugar (Fasting/PP)',
+    'Urine Ketone Bodies',
+    'Urine Bile Salts & Pigments',
+    'Urine Pregnancy Test',
+    'Urine pH',
+    'Urine Specific Gravity',
+    'Urine RBC',
+    'Urine WBC/Pus Cells',
+    'Urine Casts',
+    'Urine Crystals',
+    'Urine Epithelial Cells',
+    'Urine Bence Jones Protein',
+    'Urobilinogen',
+    '24-Hour Urine Calcium',
+    '24-Hour Urine Uric Acid'
+  ],
+  sputum: [
+    'Sputum Routine Examination',
+    'Sputum Culture & Sensitivity',
+    'Sputum AFB (Acid Fast Bacilli)',
+    'Sputum for TB (Gene Xpert)',
+    'Sputum Cytology',
+    'Sputum for Fungal Elements',
+    'Sputum Gram Stain'
   ],
   packages: [
     'Diabetes Screening Package',
@@ -53,7 +190,13 @@ const pathologyTests = {
     'Diabetes Advance Package',
     'Proton Basic Package',
     'Proton Total Package',
-    'Proton Xclusive Package'
+    'Proton Xclusive Package',
+    'Cardiac Risk Profile',
+    'Anemia Profile',
+    'Arthritis Panel',
+    'Fever Panel',
+    'Pre-Operative Profile',
+    'Master Health Checkup'
   ]
 };
 
@@ -324,9 +467,27 @@ const Proton = () => {
             {activeTab === 'pathology' && (
               <div className="space-y-4">
                 <Card className="p-4">
-                  <h3 className="font-heading text-lg font-semibold mb-3 text-red-600">🩸 Blood Tests</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                  <h3 className="font-heading text-lg font-semibold mb-3 text-red-600">🩸 Blood Tests ({pathologyTests.blood.length})</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-[400px] overflow-y-auto pr-2">
                     {pathologyTests.blood.map(test => (
+                      <TestCheckbox key={test} test={test} />
+                    ))}
+                  </div>
+                </Card>
+
+                <Card className="p-4">
+                  <h3 className="font-heading text-lg font-semibold mb-3 text-amber-600">🧪 Urine Tests ({pathologyTests.urine.length})</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-[300px] overflow-y-auto pr-2">
+                    {pathologyTests.urine.map(test => (
+                      <TestCheckbox key={test} test={test} />
+                    ))}
+                  </div>
+                </Card>
+
+                <Card className="p-4">
+                  <h3 className="font-heading text-lg font-semibold mb-3 text-teal-600">🫁 Sputum Tests ({pathologyTests.sputum.length})</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                    {pathologyTests.sputum.map(test => (
                       <TestCheckbox key={test} test={test} />
                     ))}
                   </div>
