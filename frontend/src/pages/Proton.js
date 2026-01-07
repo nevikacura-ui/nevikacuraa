@@ -143,10 +143,14 @@ const pathologyTests = {
     'AFP (Alpha Fetoprotein)',
     // Pregnancy Tests
     'Ante Natal Profile',
+    'ANC Profile (Antenatal Care)',
+    'NIPT (Non-Invasive Prenatal Testing)',
     'Dual Marker',
     'Triple Marker',
     'Quadruple Marker',
     'TORCH Panel',
+    'First Trimester Screening',
+    'Second Trimester Screening',
     // Miscellaneous
     'G6PD',
     'Serum Amylase',
