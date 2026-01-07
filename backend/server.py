@@ -503,6 +503,25 @@ async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(get_c
     
     await db.pharmacy_orders.insert_one(doc)
     logger.info(f"Pharmacy order created: {order.id}")
+    
+    # Send email notification for new pharmacy order
+    medicines_list = "<br>".join([f"• {m.get('name', 'Unknown')} (Qty: {m.get('quantity', 1)})" for m in order.medicines])
+    email_html = f"""
+    <h2>💊 New Orange Pharmacy Order</h2>
+    <h3>Medicines Ordered:</h3>
+    <p>{medicines_list}</p>
+    <table style="border-collapse: collapse; width: 100%;">
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Delivery Address:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.delivery_address or 'Not provided'}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Prescription:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.prescription_url or 'Not uploaded'}</td></tr>
+    </table>
+    <h3>Customer Details</h3>
+    <p><strong>Name:</strong> {order.patient_name}</p>
+    <p><strong>Phone:</strong> {order.patient_phone}</p>
+    <p><strong>Email:</strong> {order.patient_email or 'Not provided'}</p>
+    <p><strong>Ordered at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+    """
+    await send_email_notification(f"New Pharmacy Order - {order.patient_name}", email_html)
+    
     return order
 
 @api_router.get("/pharmacy", response_model=List[PharmacyOrder])
