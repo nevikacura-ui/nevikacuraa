@@ -42,6 +42,36 @@ logger = logging.getLogger(__name__)
 JWT_SECRET = os.environ.get('JWT_SECRET', 'your-secret-key-change-in-production')
 JWT_ALGORITHM = "HS256"
 
+# Resend Email Configuration
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+NOTIFICATION_EMAIL = os.environ.get('NOTIFICATION_EMAIL', 'nevikacura@gmail.com')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
+SIGNUP_WHATSAPP_NUMBER = os.environ.get('SIGNUP_WHATSAPP_NUMBER', '9833188288')
+
+# Initialize Resend
+if RESEND_API_KEY:
+    resend.api_key = RESEND_API_KEY
+
+async def send_email_notification(subject: str, html_content: str):
+    """Send email notification using Resend"""
+    if not RESEND_API_KEY:
+        logger.warning("Resend API key not configured, skipping email notification")
+        return None
+    
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [NOTIFICATION_EMAIL],
+            "subject": subject,
+            "html": html_content
+        }
+        email = await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Email sent successfully: {email.get('id')}")
+        return email
+    except Exception as e:
+        logger.error(f"Failed to send email: {str(e)}")
+        return None
+
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
