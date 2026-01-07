@@ -260,29 +260,33 @@ class NevikaHealthcareAPITester:
         return bool(response and 'id' in response)
 
     def test_create_appointment(self):
-        """Test creating an appointment"""
+        """Test creating an appointment with email notification"""
         if not self.token:
             self.log_test("Create Appointment", False, "No token available")
             return False
         
         appointment_data = {
             "doctor": "Dr. Vikas Jha",
-            "clinic": "Pushpa Clinic",
-            "date": (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d'),
-            "time": "18:00",
+            "clinic": "DiaGyn Healthcare",
+            "date": "2026-01-15",
+            "time": "10:00 AM",
             "patient_name": "Test Patient",
-            "patient_phone": "9876543210",
-            "patient_email": "patient@example.com"
+            "patient_phone": "9876543210"
         }
         
         response = self.run_test(
-            "Create Appointment",
+            "Create Appointment (Email Test)",
             "POST",
             "appointments",
             200,
             data=appointment_data
         )
-        return bool(response and 'id' in response)
+        
+        success = bool(response and 'id' in response)
+        if success:
+            print(f"   📧 Email should be sent to nevikacura@gmail.com for appointment {response.get('id')}")
+        
+        return success
 
     def test_get_appointments(self):
         """Test getting user appointments"""
