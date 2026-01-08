@@ -650,8 +650,46 @@ async def get_pharmacy_orders(user = Depends(get_current_user)):
 # Medicine inventory for Orange Pharmacy - Empty (will be populated via API)
 MEDICINE_INVENTORY = []
 
+# Model for adding medicine
+class MedicineAdd(BaseModel):
+    name: str
+    form: str = "Tablet"
+    company: str = "Generic"
+
+@api_router.post("/pharmacy/inventory/add")
+async def add_medicine(medicine: MedicineAdd):
+    """Add a medicine to the inventory"""
+    # Check if medicine already exists
+    name_lower = medicine.name.strip().upper()
+    for m in MEDICINE_INVENTORY:
+        if m["name"].upper() == name_lower:
+            raise HTTPException(status_code=400, detail="Medicine already exists in inventory")
+    
+    new_medicine = {
+        "name": medicine.name.strip().upper(),
+        "form": medicine.form,
+        "company": medicine.company
+    }
+    MEDICINE_INVENTORY.append(new_medicine)
+    MEDICINE_INVENTORY.sort(key=lambda x: x["name"])
+    
+    return {"success": True, "message": "Medicine added successfully", "medicine": new_medicine, "total": len(MEDICINE_INVENTORY)}
+
+@api_router.delete("/pharmacy/inventory/{medicine_name}")
+async def remove_medicine(medicine_name: str):
+    """Remove a medicine from the inventory"""
+    global MEDICINE_INVENTORY
+    name_upper = medicine_name.strip().upper()
+    original_len = len(MEDICINE_INVENTORY)
+    MEDICINE_INVENTORY = [m for m in MEDICINE_INVENTORY if m["name"].upper() != name_upper]
+    
+    if len(MEDICINE_INVENTORY) == original_len:
+        raise HTTPException(status_code=404, detail="Medicine not found")
+    
+    return {"success": True, "message": "Medicine removed successfully", "total": len(MEDICINE_INVENTORY)}
+
 @api_router.get("/pharmacy/inventory")
-async def get_pharmacy_inventory(search: Optional[str] = None, form: Optional[str] = None):
+async def get_pharmacy_inventory(search: Optional[str] = None, form: Optional[str] = None, limit: int = 50):
     """Get pharmacy inventory with optional filtering"""
     inventory = MEDICINE_INVENTORY.copy()
     
@@ -663,7 +701,31 @@ async def get_pharmacy_inventory(search: Optional[str] = None, form: Optional[st
         form_lower = form.lower()
         inventory = [m for m in inventory if form_lower in m["form"].lower()]
     
-    return {"medicines": inventory, "total": len(inventory)}
+    # Limit results for autocomplete performance
+    limited_inventory = inventory[:limit]
+    
+    return {"medicines": limited_inventory, "total": len(inventory), "showing": len(limited_inventory)}
+
+@api_router.get("/pharmacy/autocomplete")
+async def autocomplete_medicine(q: str = "", limit: int = 10):
+    """Autocomplete endpoint for medicine search"""
+    if not q or len(q) < 2:
+        return {"suggestions": []}
+    
+    query_lower = q.lower()
+    suggestions = []
+    
+    for m in MEDICINE_INVENTORY:
+        if query_lower in m["name"].lower():
+            suggestions.append({
+                "name": m["name"],
+                "form": m["form"],
+                "company": m["company"]
+            })
+            if len(suggestions) >= limit:
+                break
+    
+    return {"suggestions": suggestions, "query": q}
 
 @api_router.get("/pharmacy/forms")
 async def get_medicine_forms():
