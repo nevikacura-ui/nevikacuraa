@@ -5129,7 +5129,7 @@ async def get_pharmacy_inventory(search: Optional[str] = None, form: Optional[st
     
     if search:
         search_lower = search.lower()
-        inventory = [m for m in inventory if search_lower in m["name"].lower() or search_lower in m["company"].lower()]
+        inventory = [m for m in inventory if search_lower in m["name"].lower()]
     
     if form:
         form_lower = form.lower()
