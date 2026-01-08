@@ -5179,7 +5179,7 @@ async def get_all_medicines(page: int = 1, per_page: int = 50, search: Optional[
     
     if search:
         search_lower = search.lower()
-        inventory = [m for m in inventory if search_lower in m["name"].lower() or search_lower in m["company"].lower()]
+        inventory = [m for m in inventory if search_lower in m["name"].lower()]
     
     total = len(inventory)
     start = (page - 1) * per_page
