@@ -206,8 +206,7 @@ const Pharmacy = () => {
       setMedicines([...medicines, { 
         name: manualMedicine.name.trim(), 
         quantity: manualMedicine.quantity,
-        form: 'Manual Entry',
-        company: 'Custom'
+        form: 'Manual Entry'
       }]);
     }
     toast.success(`Added ${manualMedicine.name} to cart`);
