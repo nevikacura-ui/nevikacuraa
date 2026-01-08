@@ -4360,6 +4360,33 @@ async def get_medicine_forms():
     forms.sort()
     return {"forms": forms}
 
+@api_router.get("/pharmacy/count")
+async def get_medicine_count():
+    """Get total medicine count in inventory"""
+    return {"total": len(MEDICINE_INVENTORY)}
+
+@api_router.get("/pharmacy/all")
+async def get_all_medicines(page: int = 1, per_page: int = 50, search: Optional[str] = None):
+    """Get all medicines with pagination for scrollable list"""
+    inventory = MEDICINE_INVENTORY.copy()
+    
+    if search:
+        search_lower = search.lower()
+        inventory = [m for m in inventory if search_lower in m["name"].lower() or search_lower in m["company"].lower()]
+    
+    total = len(inventory)
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated = inventory[start:end]
+    
+    return {
+        "medicines": paginated,
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "total_pages": (total + per_page - 1) // per_page
+    }
+
 @api_router.get("/")
 async def root():
     return {"message": "Nevika Cura Healthcare API"}
