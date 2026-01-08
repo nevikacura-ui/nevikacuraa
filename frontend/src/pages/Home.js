@@ -195,19 +195,96 @@ const Home = () => {
 };
 
 const AuthModal = ({ open, onClose }) => {
-  const { login, register } = useAuth();
+  const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState('phone'); // phone, otp, register
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [mockOtp, setMockOtp] = useState('');
+  const [userExists, setUserExists] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+  const otpRefs = React.useRef([]);
 
-  const handleLogin = async (e) => {
+  // Reset state when modal closes
+  React.useEffect(() => {
+    if (!open) {
+      setStep('phone');
+      setPhone('');
+      setOtp(['', '', '', '', '', '']);
+      setMockOtp('');
+      setUserExists(false);
+      setResendTimer(0);
+    }
+  }, [open]);
+
+  // Resend timer
+  React.useEffect(() => {
+    if (resendTimer > 0) {
+      const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendTimer]);
+
+  const handleSendOtp = async (e) => {
     e.preventDefault();
+    if (!phone || phone.length < 10) {
+      toast.error('Please enter a valid 10-digit phone number');
+      return;
+    }
     setLoading(true);
-    const formData = new FormData(e.target);
     try {
-      await login(formData.get('email'), formData.get('password'));
-      toast.success('Logged in successfully!');
-      onClose();
+      const response = await sendAuthOtp(phone);
+      setMockOtp(response.mock_otp);
+      setStep('otp');
+      setResendTimer(30);
+      toast.success('OTP sent successfully!');
+      setTimeout(() => otpRefs.current[0]?.focus(), 100);
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Login failed');
+      toast.error(error.response?.data?.detail || 'Failed to send OTP');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1);
+    setOtp(newOtp);
+    
+    if (value && index < 5) {
+      otpRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    const otpValue = otp.join('');
+    if (otpValue.length !== 6) {
+      toast.error('Please enter complete 6-digit OTP');
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await verifyAuthOtp(phone, otpValue);
+      setUserExists(response.user_exists);
+      
+      if (response.user_exists) {
+        // User exists - login directly
+        await loginWithOtp(phone, otpValue);
+        toast.success('Logged in successfully!');
+        onClose();
+      } else {
+        // New user - show registration form
+        setStep('register');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Invalid OTP');
     } finally {
       setLoading(false);
     }
@@ -217,11 +294,13 @@ const AuthModal = ({ open, onClose }) => {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.target);
+    const otpValue = otp.join('');
     try {
-      await register(
+      await registerWithOtp(
+        phone,
+        otpValue,
         formData.get('email'),
         formData.get('password'),
-        formData.get('phone'),
         formData.get('name')
       );
       toast.success('Account created successfully!');
@@ -233,109 +312,188 @@ const AuthModal = ({ open, onClose }) => {
     }
   };
 
+  const handleResendOtp = async () => {
+    if (resendTimer > 0) return;
+    setLoading(true);
+    try {
+      const response = await sendAuthOtp(phone);
+      setMockOtp(response.mock_otp);
+      setOtp(['', '', '', '', '', '']);
+      setResendTimer(30);
+      toast.success('OTP resent successfully!');
+      setTimeout(() => otpRefs.current[0]?.focus(), 100);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to resend OTP');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md" data-testid="auth-modal">
         <DialogHeader>
           <DialogTitle className="font-heading text-2xl">Welcome to Nevika Cura</DialogTitle>
           <DialogDescription className="font-body">
-            Login or create an account to manage your bookings
+            {step === 'phone' && 'Enter your phone number to login or create an account'}
+            {step === 'otp' && 'Enter the OTP sent to your phone'}
+            {step === 'register' && 'Complete your registration'}
           </DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login" data-testid="login-tab">Login</TabsTrigger>
-            <TabsTrigger value="register" data-testid="register-tab">Sign Up</TabsTrigger>
-          </TabsList>
-          <TabsContent value="login">
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <Label htmlFor="login-email">Email</Label>
+
+        {/* Step 1: Phone Number */}
+        {step === 'phone' && (
+          <form onSubmit={handleSendOtp} className="space-y-4">
+            <div>
+              <Label htmlFor="phone">Phone Number</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground font-medium">+91</span>
                 <Input 
-                  id="login-email" 
-                  name="email" 
-                  type="email" 
+                  id="phone" 
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  placeholder="Enter 10-digit mobile number"
                   required 
-                  data-testid="login-email-input"
-                  className="h-12 rounded-xl"
+                  data-testid="auth-phone-input"
+                  className="h-12 rounded-xl flex-1"
                 />
               </div>
-              <div>
-                <Label htmlFor="login-password">Password</Label>
-                <Input 
-                  id="login-password" 
-                  name="password" 
-                  type="password" 
-                  required 
-                  data-testid="login-password-input"
-                  className="h-12 rounded-xl"
-                />
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full rounded-full h-12" 
+              disabled={loading || phone.length < 10}
+              data-testid="send-otp-button"
+            >
+              {loading ? 'Sending OTP...' : 'Send OTP'}
+            </Button>
+          </form>
+        )}
+
+        {/* Step 2: OTP Verification */}
+        {step === 'otp' && (
+          <div className="space-y-4">
+            {mockOtp && (
+              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  <strong>Test Mode:</strong> Your OTP is <strong className="text-lg">{mockOtp}</strong>
+                </p>
               </div>
+            )}
+            
+            <div>
+              <Label className="block text-center mb-3">Enter 6-digit OTP</Label>
+              <div className="flex justify-center gap-2">
+                {otp.map((digit, idx) => (
+                  <Input
+                    key={idx}
+                    ref={(el) => (otpRefs.current[idx] = el)}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                    className="w-12 h-14 text-center text-xl font-bold rounded-xl"
+                    maxLength={1}
+                    data-testid={`otp-input-${idx}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="text-center text-sm text-muted-foreground">
+              Didn't receive OTP?{' '}
+              {resendTimer > 0 ? (
+                <span>Resend in {resendTimer}s</span>
+              ) : (
+                <button 
+                  onClick={handleResendOtp} 
+                  className="text-brand-teal font-medium hover:underline"
+                  disabled={loading}
+                >
+                  Resend OTP
+                </button>
+              )}
+            </div>
+
+            <div className="flex gap-2">
               <Button 
-                type="submit" 
-                className="w-full rounded-full" 
+                variant="outline"
+                onClick={() => setStep('phone')} 
+                className="flex-1 rounded-full"
                 disabled={loading}
-                data-testid="login-submit-button"
               >
-                {loading ? 'Logging in...' : 'Login'}
+                Back
               </Button>
-            </form>
-          </TabsContent>
-          <TabsContent value="register">
-            <form onSubmit={handleRegister} className="space-y-4">
-              <div>
-                <Label htmlFor="register-name">Full Name</Label>
-                <Input 
-                  id="register-name" 
-                  name="name" 
-                  required 
-                  data-testid="register-name-input"
-                  className="h-12 rounded-xl"
-                />
-              </div>
-              <div>
-                <Label htmlFor="register-email">Email</Label>
-                <Input 
-                  id="register-email" 
-                  name="email" 
-                  type="email" 
-                  required 
-                  data-testid="register-email-input"
-                  className="h-12 rounded-xl"
-                />
-              </div>
-              <div>
-                <Label htmlFor="register-phone">Phone Number</Label>
-                <Input 
-                  id="register-phone" 
-                  name="phone" 
-                  required 
-                  data-testid="register-phone-input"
-                  className="h-12 rounded-xl"
-                />
-              </div>
-              <div>
-                <Label htmlFor="register-password">Password</Label>
-                <Input 
-                  id="register-password" 
-                  name="password" 
-                  type="password" 
-                  required 
-                  data-testid="register-password-input"
-                  className="h-12 rounded-xl"
-                />
-              </div>
+              <Button 
+                onClick={handleVerifyOtp}
+                className="flex-1 rounded-full" 
+                disabled={loading || otp.join('').length !== 6}
+                data-testid="verify-otp-button"
+              >
+                {loading ? 'Verifying...' : 'Verify OTP'}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Registration Form (for new users) */}
+        {step === 'register' && (
+          <form onSubmit={handleRegister} className="space-y-4">
+            <p className="text-sm text-muted-foreground text-center mb-4">
+              Phone <strong>+91 {phone}</strong> verified! Complete your profile.
+            </p>
+            <div>
+              <Label htmlFor="register-name">Full Name</Label>
+              <Input 
+                id="register-name" 
+                name="name" 
+                required 
+                data-testid="register-name-input"
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <div>
+              <Label htmlFor="register-email">Email</Label>
+              <Input 
+                id="register-email" 
+                name="email" 
+                type="email" 
+                required 
+                data-testid="register-email-input"
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <div>
+              <Label htmlFor="register-password">Password</Label>
+              <Input 
+                id="register-password" 
+                name="password" 
+                type="password" 
+                required 
+                data-testid="register-password-input"
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                type="button"
+                variant="outline"
+                onClick={() => setStep('otp')} 
+                className="flex-1 rounded-full"
+                disabled={loading}
+              >
+                Back
+              </Button>
               <Button 
                 type="submit" 
-                className="w-full rounded-full" 
+                className="flex-1 rounded-full" 
                 disabled={loading}
                 data-testid="register-submit-button"
               >
-                {loading ? 'Creating Account...' : 'Sign Up'}
+                {loading ? 'Creating Account...' : 'Create Account'}
               </Button>
-            </form>
-          </TabsContent>
-        </Tabs>
+            </div>
+          </form>
+        )}
       </DialogContent>
     </Dialog>
   );
