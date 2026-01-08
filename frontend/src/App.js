@@ -5,6 +5,7 @@ import DiaGyn from '@/pages/DiaGyn';
 import Proton from '@/pages/Proton';
 import Pharmacy from '@/pages/Pharmacy';
 import Profile from '@/pages/Profile';
+import Admin from '@/pages/Admin';
 import { AuthProvider } from '@/context/AuthContext';
 import './App.css';
 
@@ -19,6 +20,7 @@ function App() {
             <Route path="/proton" element={<Proton />} />
             <Route path="/pharmacy" element={<Pharmacy />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/admin" element={<Admin />} />
           </Routes>
           <Toaster position="top-center" richColors />
         </div>
