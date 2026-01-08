@@ -1833,6 +1833,22 @@ MEDICINE_INVENTORY = [
     {"name": "Zoclar 250mg", "form": "Tablet", "company": "Generic"},
     {"name": "Zoclar 500mg", "form": "Tablet", "company": "Generic"},
     {"name": "Zymvax", "form": "Tablet", "company": "Generic"},
+    {"name": "DAPATREND 10", "form": "Tablet", "company": "Generic"},
+    {"name": "ENRISTAS 1MG", "form": "Tablet", "company": "Generic"},
+    {"name": "ENRISTAS 2MG", "form": "Tablet", "company": "Generic"},
+    {"name": "METASENS VG2", "form": "Tablet", "company": "Generic"},
+    {"name": "TRIDART 2", "form": "Tablet", "company": "Generic"},
+    {"name": "VESTAN 10MG", "form": "Tablet", "company": "Generic"},
+    {"name": "VESTAN 20MG", "form": "Tablet", "company": "Generic"},
+    {"name": "CARIHEAL CREAM", "form": "Cream", "company": "Generic"},
+    {"name": "DIAPLAN CHOCOLATE", "form": "Powder", "company": "Generic"},
+    {"name": "CORECT SUPP", "form": "Suppository", "company": "Generic"},
+    {"name": "DIPODEM", "form": "Tablet", "company": "Generic"},
+    {"name": "FLATUNA", "form": "Tablet", "company": "Generic"},
+    {"name": "HALLEN ADULT STRIP", "form": "Strip", "company": "Generic"},
+    {"name": "HALLENS CHILD SUPP", "form": "Suppository", "company": "Generic"},
+    {"name": "HALLENS INFANT SUPP", "form": "Suppository", "company": "Generic"},
+    {"name": "NASOMIST SPRAY", "form": "Spray", "company": "Generic"},
 ]
 
 @api_router.get("/pharmacy/inventory")
