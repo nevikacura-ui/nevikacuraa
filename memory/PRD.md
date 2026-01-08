@@ -146,6 +146,12 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 | `/api/admin/login` | POST | Admin login |
 | `/api/admin/stats` | GET | Get dashboard stats |
 | `/api/admin/orders/recent` | GET | Get recent orders |
+| `/api/admin/pharmacy/orders` | GET | Get pharmacy orders for admin |
+| `/api/admin/pharmacy/orders/{id}/status` | PUT | Update pharmacy order status |
+| `/api/admin/diagnostic/orders` | GET | Get diagnostic orders for admin |
+| `/api/admin/diagnostic/orders/{id}/status` | PUT | Update diagnostic order status |
+| `/api/orders/pharmacy/{id}/track` | GET | Track pharmacy order (public) |
+| `/api/orders/diagnostic/{id}/track` | GET | Track diagnostic order (public) |
 | `/api/admin/diagnostic-tests` | GET | Get all diagnostic tests |
 | `/api/admin/diagnostic-tests/add` | POST | Add new diagnostic test |
 | `/api/admin/diagnostic-tests/{cat}/{sub}/{name}` | DELETE | Delete diagnostic test |
