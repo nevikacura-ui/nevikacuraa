@@ -86,6 +86,19 @@ Build a modern healthcare application for "Nevika Cura" with three core services
   - [x] Add new test (name, category, subcategory)
   - [x] Delete test from list
   - [x] Categories: Imaging (ECG, Sonography), Pathology (Blood, Urine, Stool)
+- [x] **Tracking Tab (Order Status Management):** - NEW
+  - [x] **Orange Pharmacy Orders:**
+    - Status flow: Order Booked → Packing → Out for Delivery → Delivered
+    - Visual progress indicator (dots)
+    - Color-coded status badges
+    - Update button with notes field
+    - Email notification on status update
+  - [x] **Proton Diagnostic Orders:**
+    - Status flow: Test Booked → Sample Collected → In Process → Reports Generated
+    - Visual progress indicator (dots)
+    - Color-coded status badges
+    - Update button with notes field
+    - Email notification on status update
 - [x] **Doctor Leave Tab (Appointment Cancellation):**
   - [x] View upcoming appointments
   - [x] Cancel by Session (specific time slot on a day)
