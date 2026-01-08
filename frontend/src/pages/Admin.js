@@ -7,17 +7,34 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { 
   ArrowLeft, Pill, Users, Calendar, FileText, Package, 
   Plus, Trash2, Search, Loader2, LogOut, Shield,
-  BarChart3, FlaskConical, UserX, AlertTriangle, X
+  BarChart3, FlaskConical, UserX, AlertTriangle, X,
+  Truck, CheckCircle2, Clock, MapPin
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+
+// Status colors and icons
+const PHARMACY_STATUS_CONFIG = {
+  'Order Booked': { color: 'bg-blue-500', icon: Package },
+  'Packing': { color: 'bg-yellow-500', icon: Package },
+  'Out for Delivery': { color: 'bg-purple-500', icon: Truck },
+  'Delivered': { color: 'bg-green-500', icon: CheckCircle2 }
+};
+
+const DIAGNOSTIC_STATUS_CONFIG = {
+  'Test Booked': { color: 'bg-blue-500', icon: FileText },
+  'Sample Collected': { color: 'bg-yellow-500', icon: FlaskConical },
+  'In Process': { color: 'bg-purple-500', icon: Clock },
+  'Reports Generated': { color: 'bg-green-500', icon: CheckCircle2 }
+};
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -60,8 +77,6 @@ const Admin = () => {
   const [deleteTestLoading, setDeleteTestLoading] = useState(false);
   
   // Doctor Leave / Appointment Cancellation
-  const [appointments, setAppointments] = useState([]);
-  const [appointmentsLoading, setAppointmentsLoading] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelForm, setCancelForm] = useState({
     doctor: 'Dr. Vikas Jha',
@@ -77,6 +92,17 @@ const Admin = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [dateRangeStart, setDateRangeStart] = useState(null);
   const [dateRangeEnd, setDateRangeEnd] = useState(null);
+  
+  // Order Tracking
+  const [pharmacyOrders, setPharmacyOrders] = useState([]);
+  const [diagnosticOrders, setDiagnosticOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [updateStatusModal, setUpdateStatusModal] = useState(false);
+  const [newStatus, setNewStatus] = useState('');
+  const [statusNotes, setStatusNotes] = useState('');
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [orderType, setOrderType] = useState('pharmacy'); // 'pharmacy' or 'diagnostic'
   
   // Recent orders
   const [recentOrders, setRecentOrders] = useState(null);
@@ -98,6 +124,14 @@ const Admin = () => {
       fetchRecentOrders();
     }
   }, [isAuthenticated]);
+
+  // Fetch orders when tracking tab is active
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'tracking') {
+      fetchPharmacyOrders();
+      fetchDiagnosticOrders();
+    }
+  }, [isAuthenticated, activeTab]);
 
   // Search debounce for inventory
   useEffect(() => {
@@ -195,22 +229,30 @@ const Admin = () => {
     }
   };
 
-  const fetchAppointments = async (doctor, date) => {
-    setAppointmentsLoading(true);
+  const fetchPharmacyOrders = async () => {
+    setOrdersLoading(true);
     try {
-      const params = {};
-      if (doctor) params.doctor = doctor;
-      if (date) params.date = date;
-      
-      const response = await axios.get(`${API}/admin/appointments`, { 
+      const response = await axios.get(`${API}/admin/pharmacy/orders`, { 
         headers: getAuthHeaders(),
-        params
+        params: { limit: 50 }
       });
-      setAppointments(response.data.appointments);
+      setPharmacyOrders(response.data.orders);
     } catch (error) {
-      console.error('Failed to fetch appointments:', error);
+      console.error('Failed to fetch pharmacy orders:', error);
     } finally {
-      setAppointmentsLoading(false);
+      setOrdersLoading(false);
+    }
+  };
+
+  const fetchDiagnosticOrders = async () => {
+    try {
+      const response = await axios.get(`${API}/admin/diagnostic/orders`, { 
+        headers: getAuthHeaders(),
+        params: { limit: 50 }
+      });
+      setDiagnosticOrders(response.data.orders);
+    } catch (error) {
+      console.error('Failed to fetch diagnostic orders:', error);
     }
   };
 
@@ -348,10 +390,60 @@ const Admin = () => {
     }
   };
 
+  // Order Status Update
+  const openUpdateModal = (order, type) => {
+    setSelectedOrder(order);
+    setOrderType(type);
+    setNewStatus(order.status || (type === 'pharmacy' ? 'Order Booked' : 'Test Booked'));
+    setStatusNotes('');
+    setUpdateStatusModal(true);
+  };
+
+  const handleUpdateStatus = async () => {
+    if (!selectedOrder || !newStatus) return;
+    
+    setUpdateLoading(true);
+    try {
+      const endpoint = orderType === 'pharmacy' 
+        ? `${API}/admin/pharmacy/orders/${selectedOrder.id}/status`
+        : `${API}/admin/diagnostic/orders/${selectedOrder.id}/status`;
+      
+      await axios.put(endpoint, {
+        order_id: selectedOrder.id,
+        status: newStatus,
+        notes: statusNotes || null
+      }, { headers: getAuthHeaders() });
+      
+      toast.success(`Status updated to "${newStatus}"`);
+      setUpdateStatusModal(false);
+      setSelectedOrder(null);
+      
+      // Refresh orders
+      if (orderType === 'pharmacy') {
+        fetchPharmacyOrders();
+      } else {
+        fetchDiagnosticOrders();
+      }
+      fetchRecentOrders();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to update status');
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
+
   // Get subcategories based on category
   const getSubcategories = (category) => {
     if (category === 'imaging') return ['ecg', 'sonography'];
     return ['blood', 'urine', 'stool'];
+  };
+
+  // Get status step index
+  const getStatusIndex = (status, type) => {
+    const statuses = type === 'pharmacy' 
+      ? ['Order Booked', 'Packing', 'Out for Delivery', 'Delivered']
+      : ['Test Booked', 'Sample Collected', 'In Process', 'Reports Generated'];
+    return statuses.indexOf(status);
   };
 
   // Login Screen
@@ -479,15 +571,18 @@ const Admin = () => {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="grid w-full grid-cols-5 mb-6">
             <TabsTrigger value="inventory" data-testid="inventory-tab">
               <Package className="w-4 h-4 mr-2" /> Pharmacy
             </TabsTrigger>
             <TabsTrigger value="tests" data-testid="tests-tab">
               <FlaskConical className="w-4 h-4 mr-2" /> Tests
             </TabsTrigger>
+            <TabsTrigger value="tracking" data-testid="tracking-tab">
+              <Truck className="w-4 h-4 mr-2" /> Tracking
+            </TabsTrigger>
             <TabsTrigger value="leave" data-testid="leave-tab">
-              <UserX className="w-4 h-4 mr-2" /> Doctor Leave
+              <UserX className="w-4 h-4 mr-2" /> Leave
             </TabsTrigger>
             <TabsTrigger value="orders" data-testid="orders-tab">
               <BarChart3 className="w-4 h-4 mr-2" /> Orders
@@ -514,7 +609,6 @@ const Admin = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search medicines..."
                   className="pl-10 h-12"
-                  data-testid="admin-search-input"
                 />
               </div>
 
@@ -523,11 +617,7 @@ const Admin = () => {
                   <Loader2 className="w-8 h-8 animate-spin text-brand-orange" />
                 </div>
               ) : (
-                <div 
-                  ref={listRef}
-                  className="max-h-[400px] overflow-y-auto border rounded-lg"
-                  onScroll={handleScroll}
-                >
+                <div ref={listRef} className="max-h-[400px] overflow-y-auto border rounded-lg" onScroll={handleScroll}>
                   {inventory.length === 0 ? (
                     <div className="p-8 text-center text-muted-foreground">No medicines found</div>
                   ) : (
@@ -579,7 +669,6 @@ const Admin = () => {
                 </div>
               ) : diagnosticTests ? (
                 <div className="space-y-6">
-                  {/* Imaging Tests */}
                   <div>
                     <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                       <span className="w-3 h-3 bg-blue-500 rounded-full"></span> Imaging Tests
@@ -592,12 +681,7 @@ const Admin = () => {
                             {tests.map((test, idx) => (
                               <div key={idx} className="flex items-center justify-between p-2 bg-slate-50 rounded text-sm">
                                 <span>{test}</span>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  onClick={() => setDeleteTestTarget({ category: 'imaging', subcategory, name: test })}
-                                  className="text-red-500 hover:text-red-700 h-6 w-6 p-0"
-                                >
+                                <Button variant="ghost" size="sm" onClick={() => setDeleteTestTarget({ category: 'imaging', subcategory, name: test })} className="text-red-500 hover:text-red-700 h-6 w-6 p-0">
                                   <X className="w-3 h-3" />
                                 </Button>
                               </div>
@@ -608,7 +692,6 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  {/* Pathology Tests */}
                   <div>
                     <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                       <span className="w-3 h-3 bg-purple-500 rounded-full"></span> Pathology Tests
@@ -621,12 +704,7 @@ const Admin = () => {
                             {tests.map((test, idx) => (
                               <div key={idx} className="flex items-center justify-between p-2 bg-slate-50 rounded text-sm">
                                 <span className="truncate flex-1 mr-2">{test}</span>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  onClick={() => setDeleteTestTarget({ category: 'pathology', subcategory, name: test })}
-                                  className="text-red-500 hover:text-red-700 h-6 w-6 p-0 flex-shrink-0"
-                                >
+                                <Button variant="ghost" size="sm" onClick={() => setDeleteTestTarget({ category: 'pathology', subcategory, name: test })} className="text-red-500 hover:text-red-700 h-6 w-6 p-0 flex-shrink-0">
                                   <X className="w-3 h-3" />
                                 </Button>
                               </div>
@@ -637,10 +715,167 @@ const Admin = () => {
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="p-8 text-center text-muted-foreground">No tests configured</div>
-              )}
+              ) : null}
             </Card>
+          </TabsContent>
+
+          {/* Order Tracking Tab */}
+          <TabsContent value="tracking">
+            <div className="space-y-6">
+              {/* Pharmacy Orders */}
+              <Card className="p-6">
+                <h2 className="font-heading text-xl font-semibold mb-4 flex items-center gap-2">
+                  <Pill className="w-5 h-5 text-orange-500" /> Orange Pharmacy Orders
+                </h2>
+                
+                {/* Status Legend */}
+                <div className="flex flex-wrap gap-3 mb-4 p-3 bg-orange-50 rounded-lg">
+                  {['Order Booked', 'Packing', 'Out for Delivery', 'Delivered'].map((status, idx) => {
+                    const config = PHARMACY_STATUS_CONFIG[status];
+                    const Icon = config.icon;
+                    return (
+                      <div key={status} className="flex items-center gap-2 text-sm">
+                        <div className={`w-6 h-6 ${config.color} rounded-full flex items-center justify-center`}>
+                          <Icon className="w-3 h-3 text-white" />
+                        </div>
+                        <span>{status}</span>
+                        {idx < 3 && <span className="text-gray-300">→</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {ordersLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-80 overflow-y-auto">
+                    {pharmacyOrders.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">No pharmacy orders</p>
+                    ) : pharmacyOrders.map((order, idx) => {
+                      const currentStatus = order.status || 'Order Booked';
+                      const statusIdx = getStatusIndex(currentStatus, 'pharmacy');
+                      const config = PHARMACY_STATUS_CONFIG[currentStatus] || PHARMACY_STATUS_CONFIG['Order Booked'];
+                      const Icon = config.icon;
+                      
+                      return (
+                        <div key={order.id || idx} className="p-4 border rounded-lg hover:bg-slate-50">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-medium">{order.patient_name}</span>
+                                <span className="text-xs text-muted-foreground">#{order.id?.slice(0, 8)}</span>
+                              </div>
+                              <p className="text-sm text-muted-foreground">{order.medicines?.length || 0} medicines</p>
+                              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <MapPin className="w-3 h-3" /> {order.delivery_address?.slice(0, 40)}...
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              {/* Status Progress */}
+                              <div className="flex items-center gap-1">
+                                {[0, 1, 2, 3].map((step) => (
+                                  <div 
+                                    key={step} 
+                                    className={`w-2 h-2 rounded-full ${step <= statusIdx ? config.color : 'bg-gray-200'}`}
+                                  />
+                                ))}
+                              </div>
+                              <div className={`px-3 py-1 rounded-full text-white text-xs flex items-center gap-1 ${config.color}`}>
+                                <Icon className="w-3 h-3" />
+                                {currentStatus}
+                              </div>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => openUpdateModal(order, 'pharmacy')}
+                                disabled={currentStatus === 'Delivered'}
+                              >
+                                Update
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </Card>
+
+              {/* Diagnostic Orders */}
+              <Card className="p-6">
+                <h2 className="font-heading text-xl font-semibold mb-4 flex items-center gap-2">
+                  <FlaskConical className="w-5 h-5 text-purple-500" /> Proton Diagnostic Orders
+                </h2>
+                
+                {/* Status Legend */}
+                <div className="flex flex-wrap gap-3 mb-4 p-3 bg-purple-50 rounded-lg">
+                  {['Test Booked', 'Sample Collected', 'In Process', 'Reports Generated'].map((status, idx) => {
+                    const config = DIAGNOSTIC_STATUS_CONFIG[status];
+                    const Icon = config.icon;
+                    return (
+                      <div key={status} className="flex items-center gap-2 text-sm">
+                        <div className={`w-6 h-6 ${config.color} rounded-full flex items-center justify-center`}>
+                          <Icon className="w-3 h-3 text-white" />
+                        </div>
+                        <span>{status}</span>
+                        {idx < 3 && <span className="text-gray-300">→</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="space-y-3 max-h-80 overflow-y-auto">
+                  {diagnosticOrders.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">No diagnostic orders</p>
+                  ) : diagnosticOrders.map((order, idx) => {
+                    const currentStatus = order.status || 'Test Booked';
+                    const statusIdx = getStatusIndex(currentStatus, 'diagnostic');
+                    const config = DIAGNOSTIC_STATUS_CONFIG[currentStatus] || DIAGNOSTIC_STATUS_CONFIG['Test Booked'];
+                    const Icon = config.icon;
+                    
+                    return (
+                      <div key={order.id || idx} className="p-4 border rounded-lg hover:bg-slate-50">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-medium">{order.patient_name}</span>
+                              <span className="text-xs text-muted-foreground">#{order.id?.slice(0, 8)}</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{order.tests?.length || 0} tests</p>
+                            <p className="text-xs text-muted-foreground">Date: {order.preferred_date}</p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            {/* Status Progress */}
+                            <div className="flex items-center gap-1">
+                              {[0, 1, 2, 3].map((step) => (
+                                <div 
+                                  key={step} 
+                                  className={`w-2 h-2 rounded-full ${step <= statusIdx ? config.color : 'bg-gray-200'}`}
+                                />
+                              ))}
+                            </div>
+                            <div className={`px-3 py-1 rounded-full text-white text-xs flex items-center gap-1 ${config.color}`}>
+                              <Icon className="w-3 h-3" />
+                              {currentStatus}
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => openUpdateModal(order, 'diagnostic')}
+                              disabled={currentStatus === 'Reports Generated'}
+                            >
+                              Update
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* Doctor Leave Tab */}
@@ -651,18 +886,17 @@ const Admin = () => {
                   <h2 className="font-heading text-xl font-semibold">Doctor Leave Management</h2>
                   <p className="text-sm text-muted-foreground">Cancel appointments when doctors are on leave</p>
                 </div>
-                <Button onClick={() => setShowCancelModal(true)} className="rounded-full bg-red-500 hover:bg-red-600" data-testid="cancel-appointments-button">
+                <Button onClick={() => setShowCancelModal(true)} className="rounded-full bg-red-500 hover:bg-red-600">
                   <AlertTriangle className="w-4 h-4 mr-2" /> Cancel Appointments
                 </Button>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-                {/* Quick Stats */}
                 <Card className="p-4 bg-slate-50">
                   <h3 className="font-medium mb-3">Upcoming Appointments</h3>
                   {recentOrders?.appointments?.length > 0 ? (
                     <div className="space-y-2">
-                      {recentOrders.appointments.slice(0, 5).map((appt, idx) => (
+                      {recentOrders.appointments.filter(a => a.status !== 'cancelled').slice(0, 5).map((appt, idx) => (
                         <div key={idx} className="flex items-center justify-between p-2 bg-white rounded border">
                           <div>
                             <p className="font-medium text-sm">{appt.patient_name}</p>
@@ -680,28 +914,15 @@ const Admin = () => {
                   )}
                 </Card>
 
-                {/* Cancellation Guide */}
                 <Card className="p-4 bg-amber-50 border-amber-200">
                   <h3 className="font-medium mb-3 flex items-center gap-2 text-amber-800">
                     <AlertTriangle className="w-5 h-5" /> Cancellation Options
                   </h3>
                   <ul className="space-y-2 text-sm text-amber-900">
-                    <li className="flex items-start gap-2">
-                      <span className="font-bold">Session:</span>
-                      <span>Cancel a specific time slot on a specific day</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="font-bold">Day:</span>
-                      <span>Cancel all appointments for a single day</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="font-bold">Range:</span>
-                      <span>Cancel all appointments for multiple days (e.g., vacation)</span>
-                    </li>
+                    <li><span className="font-bold">Session:</span> Cancel a specific time slot</li>
+                    <li><span className="font-bold">Day:</span> Cancel all appointments for a day</li>
+                    <li><span className="font-bold">Range:</span> Cancel for multiple days</li>
                   </ul>
-                  <p className="mt-3 text-xs text-amber-700">
-                    Cancelled patients will be notified via email. Appointments will be marked as cancelled but not deleted.
-                  </p>
                 </Card>
               </div>
             </Card>
@@ -715,20 +936,14 @@ const Admin = () => {
                   <Calendar className="w-5 h-5 text-blue-500" /> Recent Appointments
                 </h3>
                 <div className="space-y-3 max-h-80 overflow-y-auto">
-                  {recentOrders?.appointments?.length > 0 ? (
-                    recentOrders.appointments.map((appt, idx) => (
-                      <div key={idx} className="p-3 bg-slate-50 rounded-lg text-sm">
-                        <p className="font-medium">{appt.patient_name}</p>
-                        <p className="text-muted-foreground">{appt.doctor}</p>
-                        <p className="text-muted-foreground">{appt.date} • {appt.time}</p>
-                        {appt.status === 'cancelled' && (
-                          <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded">Cancelled</span>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-muted-foreground text-sm">No recent appointments</p>
-                  )}
+                  {recentOrders?.appointments?.map((appt, idx) => (
+                    <div key={idx} className="p-3 bg-slate-50 rounded-lg text-sm">
+                      <p className="font-medium">{appt.patient_name}</p>
+                      <p className="text-muted-foreground">{appt.doctor}</p>
+                      <p className="text-muted-foreground">{appt.date} • {appt.time}</p>
+                      {appt.status === 'cancelled' && <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded">Cancelled</span>}
+                    </div>
+                  )) || <p className="text-muted-foreground text-sm">No appointments</p>}
                 </div>
               </Card>
 
@@ -737,17 +952,13 @@ const Admin = () => {
                   <FileText className="w-5 h-5 text-purple-500" /> Recent Diagnostics
                 </h3>
                 <div className="space-y-3 max-h-80 overflow-y-auto">
-                  {recentOrders?.diagnostic_orders?.length > 0 ? (
-                    recentOrders.diagnostic_orders.map((order, idx) => (
-                      <div key={idx} className="p-3 bg-slate-50 rounded-lg text-sm">
-                        <p className="font-medium">{order.patient_name}</p>
-                        <p className="text-muted-foreground">{order.tests?.length || 0} tests</p>
-                        <p className="text-muted-foreground">{order.preferred_date}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-muted-foreground text-sm">No recent diagnostics</p>
-                  )}
+                  {recentOrders?.diagnostic_orders?.map((order, idx) => (
+                    <div key={idx} className="p-3 bg-slate-50 rounded-lg text-sm">
+                      <p className="font-medium">{order.patient_name}</p>
+                      <p className="text-muted-foreground">{order.tests?.length || 0} tests</p>
+                      <p className="text-muted-foreground">{order.preferred_date}</p>
+                    </div>
+                  )) || <p className="text-muted-foreground text-sm">No diagnostics</p>}
                 </div>
               </Card>
 
@@ -756,17 +967,13 @@ const Admin = () => {
                   <Pill className="w-5 h-5 text-orange-500" /> Recent Pharmacy
                 </h3>
                 <div className="space-y-3 max-h-80 overflow-y-auto">
-                  {recentOrders?.pharmacy_orders?.length > 0 ? (
-                    recentOrders.pharmacy_orders.map((order, idx) => (
-                      <div key={idx} className="p-3 bg-slate-50 rounded-lg text-sm">
-                        <p className="font-medium">{order.patient_name}</p>
-                        <p className="text-muted-foreground">{order.medicines?.length || 0} medicines</p>
-                        <p className="text-muted-foreground truncate">{order.delivery_address}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-muted-foreground text-sm">No recent pharmacy orders</p>
-                  )}
+                  {recentOrders?.pharmacy_orders?.map((order, idx) => (
+                    <div key={idx} className="p-3 bg-slate-50 rounded-lg text-sm">
+                      <p className="font-medium">{order.patient_name}</p>
+                      <p className="text-muted-foreground">{order.medicines?.length || 0} medicines</p>
+                      <p className="text-muted-foreground truncate">{order.delivery_address}</p>
+                    </div>
+                  )) || <p className="text-muted-foreground text-sm">No pharmacy orders</p>}
                 </div>
               </Card>
             </div>
@@ -779,45 +986,22 @@ const Admin = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Medicine</DialogTitle>
-            <DialogDescription>Enter medicine details to add to inventory</DialogDescription>
+            <DialogDescription>Enter medicine details</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleAddMedicine} className="space-y-4">
             <div>
-              <Label htmlFor="med-name">Medicine Name</Label>
-              <Input
-                id="med-name"
-                value={newMedicine.name}
-                onChange={(e) => setNewMedicine({ ...newMedicine, name: e.target.value })}
-                placeholder="e.g., PARACETAMOL 500MG TAB"
-                className="mt-1"
-              />
+              <Label>Medicine Name</Label>
+              <Input value={newMedicine.name} onChange={(e) => setNewMedicine({ ...newMedicine, name: e.target.value })} placeholder="e.g., PARACETAMOL 500MG" className="mt-1" />
             </div>
             <div>
-              <Label htmlFor="med-form">Form</Label>
-              <select
-                id="med-form"
-                value={newMedicine.form}
-                onChange={(e) => setNewMedicine({ ...newMedicine, form: e.target.value })}
-                className="w-full mt-1 h-10 px-3 border rounded-md"
-              >
-                <option value="Tablet">Tablet</option>
-                <option value="Capsule">Capsule</option>
-                <option value="Syrup">Syrup</option>
-                <option value="Injection">Injection</option>
-                <option value="Cream">Cream</option>
-                <option value="Ointment">Ointment</option>
-                <option value="Drops">Drops</option>
-                <option value="Gel">Gel</option>
-                <option value="Powder">Powder</option>
-                <option value="Inhaler">Inhaler</option>
-                <option value="Generic">Generic</option>
+              <Label>Form</Label>
+              <select value={newMedicine.form} onChange={(e) => setNewMedicine({ ...newMedicine, form: e.target.value })} className="w-full mt-1 h-10 px-3 border rounded-md">
+                {['Tablet', 'Capsule', 'Syrup', 'Injection', 'Cream', 'Ointment', 'Drops', 'Gel', 'Powder', 'Inhaler', 'Generic'].map(f => <option key={f} value={f}>{f}</option>)}
               </select>
             </div>
             <div className="flex gap-2 justify-end">
               <Button type="button" variant="outline" onClick={() => setShowAddModal(false)}>Cancel</Button>
-              <Button type="submit" disabled={addLoading}>
-                {addLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Add Medicine'}
-              </Button>
+              <Button type="submit" disabled={addLoading}>{addLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Add'}</Button>
             </div>
           </form>
         </DialogContent>
@@ -828,15 +1012,11 @@ const Admin = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Medicine</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete <strong>{deleteTarget}</strong>? This action cannot be undone.
-            </DialogDescription>
+            <DialogDescription>Delete <strong>{deleteTarget}</strong>?</DialogDescription>
           </DialogHeader>
           <div className="flex gap-2 justify-end">
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDeleteMedicine} disabled={deleteLoading}>
-              {deleteLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}
-            </Button>
+            <Button variant="destructive" onClick={handleDeleteMedicine} disabled={deleteLoading}>{deleteLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -846,49 +1026,28 @@ const Admin = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Diagnostic Test</DialogTitle>
-            <DialogDescription>Add a new test to Proton Diagnostics</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleAddTest} className="space-y-4">
             <div>
-              <Label htmlFor="test-name">Test Name</Label>
-              <Input
-                id="test-name"
-                value={newTest.name}
-                onChange={(e) => setNewTest({ ...newTest, name: e.target.value })}
-                placeholder="e.g., Vitamin B6"
-                className="mt-1"
-              />
+              <Label>Test Name</Label>
+              <Input value={newTest.name} onChange={(e) => setNewTest({ ...newTest, name: e.target.value })} placeholder="e.g., Vitamin B6" className="mt-1" />
             </div>
             <div>
-              <Label htmlFor="test-category">Category</Label>
-              <select
-                id="test-category"
-                value={newTest.category}
-                onChange={(e) => setNewTest({ ...newTest, category: e.target.value, subcategory: getSubcategories(e.target.value)[0] })}
-                className="w-full mt-1 h-10 px-3 border rounded-md"
-              >
+              <Label>Category</Label>
+              <select value={newTest.category} onChange={(e) => setNewTest({ ...newTest, category: e.target.value, subcategory: getSubcategories(e.target.value)[0] })} className="w-full mt-1 h-10 px-3 border rounded-md">
                 <option value="imaging">Imaging</option>
                 <option value="pathology">Pathology</option>
               </select>
             </div>
             <div>
-              <Label htmlFor="test-subcategory">Subcategory</Label>
-              <select
-                id="test-subcategory"
-                value={newTest.subcategory}
-                onChange={(e) => setNewTest({ ...newTest, subcategory: e.target.value })}
-                className="w-full mt-1 h-10 px-3 border rounded-md"
-              >
-                {getSubcategories(newTest.category).map(sub => (
-                  <option key={sub} value={sub}>{sub.charAt(0).toUpperCase() + sub.slice(1)}</option>
-                ))}
+              <Label>Subcategory</Label>
+              <select value={newTest.subcategory} onChange={(e) => setNewTest({ ...newTest, subcategory: e.target.value })} className="w-full mt-1 h-10 px-3 border rounded-md">
+                {getSubcategories(newTest.category).map(sub => <option key={sub} value={sub}>{sub.charAt(0).toUpperCase() + sub.slice(1)}</option>)}
               </select>
             </div>
             <div className="flex gap-2 justify-end">
               <Button type="button" variant="outline" onClick={() => setShowAddTestModal(false)}>Cancel</Button>
-              <Button type="submit" disabled={addTestLoading}>
-                {addTestLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Add Test'}
-              </Button>
+              <Button type="submit" disabled={addTestLoading}>{addTestLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Add'}</Button>
             </div>
           </form>
         </DialogContent>
@@ -898,16 +1057,12 @@ const Admin = () => {
       <Dialog open={!!deleteTestTarget} onOpenChange={() => setDeleteTestTarget(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Diagnostic Test</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete <strong>{deleteTestTarget?.name}</strong>? This action cannot be undone.
-            </DialogDescription>
+            <DialogTitle>Delete Test</DialogTitle>
+            <DialogDescription>Delete <strong>{deleteTestTarget?.name}</strong>?</DialogDescription>
           </DialogHeader>
           <div className="flex gap-2 justify-end">
             <Button variant="outline" onClick={() => setDeleteTestTarget(null)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDeleteTest} disabled={deleteTestLoading}>
-              {deleteTestLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}
-            </Button>
+            <Button variant="destructive" onClick={handleDeleteTest} disabled={deleteTestLoading}>{deleteTestLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -919,144 +1074,107 @@ const Admin = () => {
             <DialogTitle className="flex items-center gap-2 text-red-600">
               <AlertTriangle className="w-5 h-5" /> Cancel Appointments
             </DialogTitle>
-            <DialogDescription>
-              Cancel appointments for a doctor on leave
-            </DialogDescription>
           </DialogHeader>
-          
           <div className="space-y-4">
             <div>
               <Label>Doctor</Label>
-              <select
-                value={cancelForm.doctor}
-                onChange={(e) => setCancelForm({ ...cancelForm, doctor: e.target.value })}
-                className="w-full mt-1 h-10 px-3 border rounded-md"
-              >
+              <select value={cancelForm.doctor} onChange={(e) => setCancelForm({ ...cancelForm, doctor: e.target.value })} className="w-full mt-1 h-10 px-3 border rounded-md">
                 <option value="Dr. Vikas Jha">Dr. Vikas Jha</option>
                 <option value="Dr. Priya Sharma">Dr. Priya Sharma</option>
               </select>
             </div>
-
             <div>
-              <Label>Cancellation Type</Label>
+              <Label>Type</Label>
               <div className="grid grid-cols-3 gap-2 mt-1">
                 {['session', 'day', 'range'].map(type => (
-                  <Button
-                    key={type}
-                    type="button"
-                    variant={cancelForm.cancel_type === type ? 'default' : 'outline'}
-                    onClick={() => setCancelForm({ ...cancelForm, cancel_type: type })}
-                    className="capitalize"
-                  >
-                    {type}
-                  </Button>
+                  <Button key={type} type="button" variant={cancelForm.cancel_type === type ? 'default' : 'outline'} onClick={() => setCancelForm({ ...cancelForm, cancel_type: type })} className="capitalize">{type}</Button>
                 ))}
               </div>
             </div>
-
+            {cancelForm.cancel_type === 'day' && (
+              <div>
+                <Label>Date</Label>
+                <CalendarComponent mode="single" selected={selectedDate} onSelect={setSelectedDate} className="rounded-md border mt-1" />
+              </div>
+            )}
+            {cancelForm.cancel_type === 'range' && (
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label>Start</Label>
+                  <CalendarComponent mode="single" selected={dateRangeStart} onSelect={setDateRangeStart} className="rounded-md border mt-1 text-xs" />
+                </div>
+                <div>
+                  <Label>End</Label>
+                  <CalendarComponent mode="single" selected={dateRangeEnd} onSelect={setDateRangeEnd} className="rounded-md border mt-1 text-xs" />
+                </div>
+              </div>
+            )}
             {cancelForm.cancel_type === 'session' && (
               <>
                 <div>
                   <Label>Date</Label>
-                  <div className="mt-1">
-                    <CalendarComponent
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={setSelectedDate}
-                      className="rounded-md border"
-                    />
-                  </div>
+                  <CalendarComponent mode="single" selected={selectedDate} onSelect={setSelectedDate} className="rounded-md border mt-1" />
                 </div>
                 <div>
-                  <Label>Time Slot</Label>
-                  <select
-                    value={cancelForm.time}
-                    onChange={(e) => setCancelForm({ ...cancelForm, time: e.target.value })}
-                    className="w-full mt-1 h-10 px-3 border rounded-md"
-                  >
+                  <Label>Time</Label>
+                  <select value={cancelForm.time} onChange={(e) => setCancelForm({ ...cancelForm, time: e.target.value })} className="w-full mt-1 h-10 px-3 border rounded-md">
                     <option value="">Select time</option>
-                    {['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', 
-                      '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM'].map(time => (
-                      <option key={time} value={time}>{time}</option>
-                    ))}
+                    {['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM'].map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
               </>
             )}
-
-            {cancelForm.cancel_type === 'day' && (
-              <div>
-                <Label>Select Date</Label>
-                <div className="mt-1">
-                  <CalendarComponent
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    className="rounded-md border"
-                  />
-                </div>
-                {selectedDate && (
-                  <p className="text-sm text-muted-foreground mt-2">
-                    All appointments on <strong>{format(selectedDate, 'PPP')}</strong> will be cancelled
-                  </p>
-                )}
-              </div>
-            )}
-
-            {cancelForm.cancel_type === 'range' && (
-              <div>
-                <Label>Select Date Range</Label>
-                <div className="grid grid-cols-2 gap-4 mt-1">
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Start Date</p>
-                    <CalendarComponent
-                      mode="single"
-                      selected={dateRangeStart}
-                      onSelect={setDateRangeStart}
-                      className="rounded-md border text-sm"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">End Date</p>
-                    <CalendarComponent
-                      mode="single"
-                      selected={dateRangeEnd}
-                      onSelect={setDateRangeEnd}
-                      className="rounded-md border text-sm"
-                    />
-                  </div>
-                </div>
-                {dateRangeStart && dateRangeEnd && (
-                  <p className="text-sm text-muted-foreground mt-2">
-                    All appointments from <strong>{format(dateRangeStart, 'PP')}</strong> to <strong>{format(dateRangeEnd, 'PP')}</strong> will be cancelled
-                  </p>
-                )}
-              </div>
-            )}
-
             <div>
               <Label>Reason</Label>
-              <Input
-                value={cancelForm.reason}
-                onChange={(e) => setCancelForm({ ...cancelForm, reason: e.target.value })}
-                placeholder="e.g., Doctor on leave, Emergency"
+              <Input value={cancelForm.reason} onChange={(e) => setCancelForm({ ...cancelForm, reason: e.target.value })} className="mt-1" />
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setShowCancelModal(false)}>Cancel</Button>
+              <Button variant="destructive" onClick={handleCancelAppointments} disabled={cancelLoading}>{cancelLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Cancel Appointments'}</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Update Status Modal */}
+      <Dialog open={updateStatusModal} onOpenChange={setUpdateStatusModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Order Status</DialogTitle>
+            <DialogDescription>
+              {selectedOrder?.patient_name} - #{selectedOrder?.id?.slice(0, 8)}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>New Status</Label>
+              <select
+                value={newStatus}
+                onChange={(e) => setNewStatus(e.target.value)}
+                className="w-full mt-1 h-10 px-3 border rounded-md"
+              >
+                {(orderType === 'pharmacy' 
+                  ? ['Order Booked', 'Packing', 'Out for Delivery', 'Delivered']
+                  : ['Test Booked', 'Sample Collected', 'In Process', 'Reports Generated']
+                ).map(status => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label>Notes (optional)</Label>
+              <Textarea
+                value={statusNotes}
+                onChange={(e) => setStatusNotes(e.target.value)}
+                placeholder="Add any notes about this status update..."
                 className="mt-1"
               />
             </div>
-
-            <div className="flex gap-2 justify-end pt-4 border-t">
-              <Button variant="outline" onClick={() => setShowCancelModal(false)}>Cancel</Button>
-              <Button 
-                variant="destructive" 
-                onClick={handleCancelAppointments}
-                disabled={cancelLoading || 
-                  (cancelForm.cancel_type === 'session' && (!selectedDate || !cancelForm.time)) ||
-                  (cancelForm.cancel_type === 'day' && !selectedDate) ||
-                  (cancelForm.cancel_type === 'range' && (!dateRangeStart || !dateRangeEnd))
-                }
-              >
-                {cancelLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <AlertTriangle className="w-4 h-4 mr-2" />}
-                Cancel Appointments
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setUpdateStatusModal(false)}>Cancel</Button>
+              <Button onClick={handleUpdateStatus} disabled={updateLoading}>
+                {updateLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
+                Update Status
               </Button>
             </div>
           </div>
