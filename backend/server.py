@@ -248,6 +248,174 @@ async def get_me(user: User = Depends(get_current_user)):
         raise HTTPException(status_code=401, detail="Not authenticated")
     return user
 
+# ============ OTP-based Auth Endpoints ============
+
+class AuthOTPRequest(BaseModel):
+    phone: str
+
+class AuthOTPVerify(BaseModel):
+    phone: str
+    otp: str
+    
+class RegisterWithOTP(BaseModel):
+    phone: str
+    otp: str
+    email: EmailStr
+    password: str
+    name: str
+
+class LoginWithOTP(BaseModel):
+    phone: str
+    otp: str
+
+# Store for auth OTPs (separate from order OTPs)
+auth_otp_storage = {}
+
+@api_router.post("/auth/otp/send")
+async def send_auth_otp(request: AuthOTPRequest):
+    """Send OTP for authentication (login/register)"""
+    phone = request.phone.strip()
+    
+    if not phone or len(phone) < 10:
+        raise HTTPException(status_code=400, detail="Invalid phone number")
+    
+    # Generate OTP
+    otp = generate_otp()
+    
+    # Store OTP with expiry (5 minutes)
+    otp_key = f"auth_{phone}"
+    auth_otp_storage[otp_key] = {
+        "otp": otp,
+        "expires_at": datetime.now(timezone.utc) + timedelta(minutes=5),
+        "attempts": 0
+    }
+    
+    logger.info(f"Auth OTP generated for {phone}: {otp}")
+    
+    return {
+        "success": True,
+        "message": "OTP sent successfully",
+        "mock_otp": otp,  # REMOVE IN PRODUCTION
+        "expires_in": 300,
+        "phone": phone
+    }
+
+@api_router.post("/auth/otp/verify")
+async def verify_auth_otp(request: AuthOTPVerify):
+    """Verify OTP for authentication"""
+    phone = request.phone.strip()
+    otp = request.otp.strip()
+    
+    otp_key = f"auth_{phone}"
+    
+    if otp_key not in auth_otp_storage:
+        raise HTTPException(status_code=400, detail="OTP not found. Please request a new OTP.")
+    
+    stored_data = auth_otp_storage[otp_key]
+    
+    # Check expiry
+    if datetime.now(timezone.utc) > stored_data["expires_at"]:
+        del auth_otp_storage[otp_key]
+        raise HTTPException(status_code=400, detail="OTP expired. Please request a new OTP.")
+    
+    # Check attempts
+    if stored_data["attempts"] >= 3:
+        del auth_otp_storage[otp_key]
+        raise HTTPException(status_code=400, detail="Too many attempts. Please request a new OTP.")
+    
+    # Verify OTP
+    if otp != stored_data["otp"]:
+        auth_otp_storage[otp_key]["attempts"] += 1
+        remaining = 3 - auth_otp_storage[otp_key]["attempts"]
+        raise HTTPException(status_code=400, detail=f"Invalid OTP. {remaining} attempts remaining.")
+    
+    # OTP verified - generate verification token
+    verification_token = str(uuid.uuid4())
+    auth_otp_storage[otp_key]["verified"] = True
+    auth_otp_storage[otp_key]["verification_token"] = verification_token
+    
+    # Check if user exists with this phone
+    existing_user = await db.users.find_one({"phone": phone}, {"_id": 0})
+    
+    return {
+        "success": True,
+        "verified": True,
+        "verification_token": verification_token,
+        "user_exists": existing_user is not None,
+        "phone": phone
+    }
+
+@api_router.post("/auth/register/otp")
+async def register_with_otp(input: RegisterWithOTP):
+    """Complete registration after OTP verification"""
+    phone = input.phone.strip()
+    otp_key = f"auth_{phone}"
+    
+    # Verify the OTP was verified
+    if otp_key not in auth_otp_storage or not auth_otp_storage[otp_key].get("verified"):
+        raise HTTPException(status_code=400, detail="Please verify OTP first")
+    
+    # Check if phone already registered
+    existing_phone = await db.users.find_one({"phone": phone}, {"_id": 0})
+    if existing_phone:
+        raise HTTPException(status_code=400, detail="Phone number already registered")
+    
+    # Check if email already registered
+    existing_email = await db.users.find_one({"email": input.email}, {"_id": 0})
+    if existing_email:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Create user
+    password_hash = bcrypt.hashpw(input.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    user = User(email=input.email, phone=phone, name=input.name)
+    
+    doc = user.model_dump()
+    doc['password_hash'] = password_hash
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.users.insert_one(doc)
+    
+    # Clean up OTP storage
+    del auth_otp_storage[otp_key]
+    
+    token = jwt.encode({'sub': user.id, 'exp': datetime.now(timezone.utc) + timedelta(days=30)}, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+    # Send email notification
+    email_html = f"""
+    <h2>🎉 New User Registration on Nevika Cura</h2>
+    <p><strong>Name:</strong> {user.name}</p>
+    <p><strong>Email:</strong> {user.email}</p>
+    <p><strong>Phone:</strong> {user.phone} (Verified via OTP)</p>
+    <p><strong>Registered at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+    """
+    await send_email_notification("New User Registration - Nevika Cura", email_html)
+    
+    return {"token": token, "user": user.model_dump()}
+
+@api_router.post("/auth/login/otp")
+async def login_with_otp(input: LoginWithOTP):
+    """Login after OTP verification"""
+    phone = input.phone.strip()
+    otp_key = f"auth_{phone}"
+    
+    # Verify the OTP was verified
+    if otp_key not in auth_otp_storage or not auth_otp_storage[otp_key].get("verified"):
+        raise HTTPException(status_code=400, detail="Please verify OTP first")
+    
+    # Find user by phone
+    user_doc = await db.users.find_one({"phone": phone}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=401, detail="No account found with this phone number")
+    
+    # Clean up OTP storage
+    del auth_otp_storage[otp_key]
+    
+    user = User(**{k: v for k, v in user_doc.items() if k != 'password_hash'})
+    token = jwt.encode({'sub': user.id, 'exp': datetime.now(timezone.utc) + timedelta(days=30)}, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+    return {"token": token, "user": user.model_dump()}
+
+
 # ============ OTP Endpoints (Mock OTP for testing) ============
 
 @api_router.post("/otp/send")
