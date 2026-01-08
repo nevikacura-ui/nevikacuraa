@@ -67,10 +67,30 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 - [x] Email notification on order
 - [x] WhatsApp link generation
 
+#### User Dashboard (/profile)
+- [x] View user profile (name, email, phone)
+- [x] View appointment history
+- [x] View diagnostic order history
+- [x] View pharmacy order history
+- [x] Order status display
+
+#### Admin Dashboard (/admin) - NEW
+- [x] Password-protected admin login (default: `nevikacura2026`)
+- [x] Dashboard stats: Medicines, Users, Appointments, Diagnostics, Pharmacy Orders
+- [x] **Inventory Management Tab:**
+  - [x] Searchable medicine list with infinite scroll
+  - [x] Add new medicine with name and form
+  - [x] Delete medicine from inventory
+- [x] **Recent Orders Tab:**
+  - [x] View recent appointments
+  - [x] View recent diagnostic orders
+  - [x] View recent pharmacy orders
+
 #### Email Notifications
 - [x] Configured with Resend API
 - [x] All notifications sent to nevikacura@gmail.com
 - [x] Sent for: New registrations, appointments, test bookings, pharmacy orders
+- ⚠️ **Note:** Emails may go to spam folder when using free Resend tier (onboarding@resend.dev)
 
 ---
 
@@ -87,6 +107,8 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 - `/app/frontend/src/pages/DiaGyn.js` - Appointment booking
 - `/app/frontend/src/pages/Proton.js` - Diagnostic test booking
 - `/app/frontend/src/pages/Pharmacy.js` - Medicine ordering with scrollable list
+- `/app/frontend/src/pages/Profile.js` - User dashboard with order history
+- `/app/frontend/src/pages/Admin.js` - Admin dashboard with inventory management
 - `/app/frontend/src/context/AuthContext.js` - Auth state management
 
 ### Key API Endpoints
@@ -96,14 +118,29 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 | `/api/auth/otp/verify` | POST | Verify auth OTP |
 | `/api/auth/login/otp` | POST | Login with OTP |
 | `/api/auth/register/otp` | POST | Register with OTP |
+| `/api/admin/login` | POST | Admin login |
+| `/api/admin/stats` | GET | Get dashboard stats |
+| `/api/admin/orders/recent` | GET | Get recent orders |
 | `/api/pharmacy/count` | GET | Total medicine count |
 | `/api/pharmacy/all` | GET | Paginated medicine list |
-| `/api/pharmacy/autocomplete` | GET | Search medicines |
+| `/api/pharmacy/inventory/add` | POST | Add medicine |
+| `/api/pharmacy/inventory/{name}` | DELETE | Delete medicine |
 | `/api/appointments` | POST | Book appointment |
 | `/api/appointments/booked-slots` | GET | Get booked slots |
 | `/api/proton/orders` | POST | Book diagnostic test |
-| `/api/otp/send` | POST | Send order OTP |
-| `/api/otp/verify` | POST | Verify order OTP |
+
+---
+
+## Access URLs
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Home | `/` | Landing page with services |
+| DiaGyn | `/diagyn` | Appointment booking |
+| Proton | `/proton` | Diagnostic test booking |
+| Pharmacy | `/pharmacy` | Medicine ordering |
+| Profile | `/profile` | User dashboard (requires login) |
+| Admin | `/admin` | Admin dashboard (password: `nevikacura2026`) |
 
 ---
 
@@ -117,6 +154,8 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 5. Orange Pharmacy medicine ordering
 6. Email notifications via Resend
 7. WhatsApp link generation for all services
+8. User dashboard with order history
+9. Admin dashboard with inventory management
 
 ### Mocked Features (Ready for Production Integration)
 - OTP system returns mock OTP in response (integrate MSG91 for production)
@@ -126,27 +165,38 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 ## Future Enhancements (Backlog)
 
 ### P0 - High Priority
-- [ ] Integrate MSG91 for real SMS OTP
-- [ ] User account dashboard with order history
+| Feature | How to Implement |
+|---------|-----------------|
+| **MSG91 OTP** | Call `integration_playbook_expert_v2` with "MSG91 SMS OTP". Get API key from msg91.com. Replace mock OTP calls in server.py |
+| **Custom Domain Email** | Add nevikacura.com to Resend dashboard. Verify DNS. Update SENDER_EMAIL in .env |
 
 ### P1 - Medium Priority
-- [ ] Admin dashboard for inventory management
-- [ ] Order tracking/status updates
-- [ ] Real WhatsApp API integration (Twilio/MSG91)
+| Feature | How to Implement |
+|---------|-----------------|
+| **WhatsApp API** | Use Twilio WhatsApp Business API or MSG91 WhatsApp. Requires WhatsApp Business verification |
+| **Order Tracking** | Add `status` field updates. Create `/api/orders/{id}/status` endpoint. Add tracking UI |
+| **Payment Gateway** | Call `integration_playbook_expert_v2` with "Razorpay" or "Stripe". Add payment flow before order confirmation |
 
 ### P2 - Lower Priority
-- [ ] Payment gateway integration
-- [ ] Push notifications
-- [ ] Mobile app
+| Feature | How to Implement |
+|---------|-----------------|
+| **Push Notifications** | Use Firebase Cloud Messaging (FCM). Add service worker for web push |
+| **Mobile App** | React Native or Flutter. Reuse API endpoints |
+| **Analytics Dashboard** | Add date range filters to admin. Create charts with recharts library |
 
 ---
 
 ## Credentials & Configuration
 
+### Admin Access
+- **URL:** `/admin`
+- **Password:** `nevikacura2026`
+
 ### Environment Variables
 - `RESEND_API_KEY` - Configured in backend/.env
 - `MONGO_URL` - MongoDB connection
 - `JWT_SECRET` - JWT token secret
+- `ADMIN_PASSWORD` - Admin dashboard password (default: nevikacura2026)
 - `REACT_APP_BACKEND_URL` - Frontend API base URL
 
 ### Notification Recipients
