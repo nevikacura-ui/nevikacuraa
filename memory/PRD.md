@@ -150,6 +150,12 @@ To enable real SMS OTP:
 
 ## Changelog
 
+### January 8, 2026 - Medicine Inventory Loaded
+- **Orange Pharmacy**: Loaded **2715 unique medicines** from Excel product list
+- Each medicine includes brand name, strength, and form (Tablet, Capsule, Syrup, etc.)
+- 15 different dosage forms available
+- Autocomplete search working (shows 8 suggestions max)
+
 ### January 8, 2026 - OTP Integration
 - **Added OTP verification** to all three services (DiaGyn, Proton, Orange Pharmacy)
 - **Mock OTP mode** implemented for testing (shows OTP on screen)
