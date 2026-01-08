@@ -38,8 +38,8 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 - [x] Service-specific OTP (diagyn, proton, pharmacy)
 
 #### Orange Pharmacy
-- [x] **Inventory cleared** - Ready for user to add medicines one by one
-- [x] **Medicine search autocomplete** - Shows suggestions as user types
+- [x] **2715 medicines loaded** from Excel product list (brand names with strength and form)
+- [x] **Medicine search autocomplete** - Shows suggestions as user types (8 results max)
 - [x] `POST /api/pharmacy/inventory/add` - Add single medicine
 - [x] `DELETE /api/pharmacy/inventory/{name}` - Remove medicine
 - [x] `GET /api/pharmacy/autocomplete` - Autocomplete suggestions
