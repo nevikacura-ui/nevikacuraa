@@ -5090,7 +5090,6 @@ MEDICINE_INVENTORY = [
 class MedicineAdd(BaseModel):
     name: str
     form: str = "Tablet"
-    company: str = "Generic"
 
 @api_router.post("/pharmacy/inventory/add")
 async def add_medicine(medicine: MedicineAdd):
@@ -5103,8 +5102,7 @@ async def add_medicine(medicine: MedicineAdd):
     
     new_medicine = {
         "name": medicine.name.strip().upper(),
-        "form": medicine.form,
-        "company": medicine.company
+        "form": medicine.form
     }
     MEDICINE_INVENTORY.append(new_medicine)
     MEDICINE_INVENTORY.sort(key=lambda x: x["name"])
