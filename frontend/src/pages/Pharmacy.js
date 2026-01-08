@@ -39,6 +39,11 @@ const Pharmacy = () => {
   const [selectedForm, setSelectedForm] = useState('');
   const [forms, setForms] = useState([]);
   const [inventoryLoading, setInventoryLoading] = useState(true);
+  const [totalMedicines, setTotalMedicines] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreMedicines, setHasMoreMedicines] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const inventoryListRef = useRef(null);
   
   // Autocomplete state
   const [suggestions, setSuggestions] = useState([]);
@@ -60,14 +65,16 @@ const Pharmacy = () => {
   useEffect(() => {
     fetchInventory();
     fetchForms();
+    fetchTotalCount();
   }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchInventory();
+      setCurrentPage(1);
+      fetchInventory(1, true);
     }, 300);
     return () => clearTimeout(timer);
-  }, [selectedForm]);
+  }, [selectedForm, searchTerm]);
 
   // Autocomplete effect
   useEffect(() => {
