@@ -123,7 +123,7 @@ To enable real SMS OTP:
 ## Backlog / Future Tasks
 
 ### P0 (High Priority)
-- [ ] Add medicines to Orange Pharmacy inventory (user will add one by one)
+- [x] ~~Add medicines to Orange Pharmacy inventory~~ **DONE - 2715 medicines loaded**
 
 ### P1 (Medium Priority)
 - [ ] Integrate MSG91 for real SMS OTP (when user provides API key)
