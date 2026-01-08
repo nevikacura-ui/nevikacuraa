@@ -584,7 +584,7 @@ const Pharmacy = () => {
                         >
                           <div className="flex-1 min-w-0">
                             <span className="font-medium text-sm block truncate">{med.name}</span>
-                            <span className="text-xs text-gray-500">{med.form} • {med.company}</span>
+                            <span className="text-xs text-gray-500">{med.form}</span>
                           </div>
                           <Plus className="w-5 h-5 text-brand-orange flex-shrink-0 ml-2" />
                         </button>
