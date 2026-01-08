@@ -17,131 +17,155 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ### User Flow
 - Optional login with guest mode
-- 2-step ordering process for Proton & Pharmacy
+- **OTP-based verification** for all bookings/orders (MOCK MODE - ready for MSG91 integration)
 - Payment options: Cash on Delivery/Visit & QR Pay/Card on Delivery/Visit
 
 ---
 
 ## What's Been Implemented ✅
 
-### Date: January 8, 2026
+### Date: January 8, 2026 - OTP Integration Update
+
+#### OTP Verification System (Mock Mode)
+- [x] **Backend API Endpoints:**
+  - `POST /api/otp/send` - Generate and "send" OTP (mock mode shows OTP in response)
+  - `POST /api/otp/verify` - Verify OTP with 3-attempt limit
+  - `POST /api/otp/resend` - Resend OTP
+- [x] 6-digit OTP generation
+- [x] 5-minute OTP expiry
+- [x] 3 verification attempts before lockout
+- [x] 30-second resend cooldown
+- [x] Service-specific OTP (diagyn, proton, pharmacy)
 
 #### Orange Pharmacy
-- [x] Manual medicine entry with name + quantity
-- [x] **1199 medicines** in inventory (updated from complete stock files)
-- [x] Search by name/company, filter by form (Tablet, Syrup, Capsule, etc.)
-- [x] Shopping cart with quantity controls
-- [x] 2-step checkout flow:
-  - Step 1: Add medicines to cart
-  - Step 2: Enter details (Name, Mobile, Address) + Payment method
-- [x] Payment options: Cash on Delivery, QR Pay/Card on Delivery
-- [x] WhatsApp order to 7039030030
-- [x] Prescription upload (optional)
+- [x] **Inventory cleared** - Ready for user to add medicines one by one
+- [x] **Medicine search autocomplete** - Shows suggestions as user types
+- [x] `POST /api/pharmacy/inventory/add` - Add single medicine
+- [x] `DELETE /api/pharmacy/inventory/{name}` - Remove medicine
+- [x] `GET /api/pharmacy/autocomplete` - Autocomplete suggestions
+- [x] Manual medicine entry with quantity
+- [x] **3-step checkout flow:**
+  - Step 1: Add medicines to cart + Enter name/phone
+  - Step 2: OTP Verification (mock mode shows OTP on screen)
+  - Step 3: Enter delivery address + Payment method
+- [x] WhatsApp order shows "(Verified)" next to phone number
 
 #### Proton Diagnostics
-- [x] **Imaging Section**:
-  - ECG
-  - Sonography (5 types): Early Scan, NT Scan, Growth Scan, USG Pelvis, Follicular Monitoring
-- [x] **Pathology Section**:
-  - Blood Tests (100+ comprehensive tests)
-  - Urine Tests (22 tests)
-  - Sputum Tests (7 tests)
-- [x] **Health Packages with Prices** (from rate list):
-  - Diabetes Screening Package - ₹600
-  - Diabetes Basic Package - ₹1200
-  - Diabetes Advance Package - ₹2500
-  - Proton Basic Package - ₹999
-  - Proton Total Package - ₹2999
-  - Proton Xclusive Package - ₹4999
-  - Home Visit (0-5 km) - ₹100
-  - Home Visit (5-10 km) - ₹150
-  - Home Visit (10-15 km) - ₹200
-- [x] Custom test manual entry
-- [x] 2-step booking flow
-- [x] WhatsApp booking to 7039040040
+- [x] **3-step booking flow:**
+  - Step 1: Select tests (Imaging/Pathology/Packages) + Enter name/phone
+  - Step 2: OTP Verification
+  - Step 3: Select date + Address (for home visit) + Payment method
+- [x] Health packages with prices from rate list
+- [x] WhatsApp booking shows "(Verified)" next to phone number
 
 #### DiaGyn Healthcare
-- [x] Doctor scheduling for Dr. Vikas Jha & Dr. Neha Patel
-- [x] Complex availability calendar
-- [x] Appointment booking with patient details
-- [x] WhatsApp notification to 7039020020
-
-#### Email Notifications
-- [x] Resend integration for order confirmations to nevikacura@gmail.com
-- [x] Sender name: "Nevika Cura"
-
-#### General
-- [x] Modern UI with consistent design
-- [x] Responsive layout
-- [x] Home page with service logos
-- [x] Nevika Cura branding with registered address
+- [x] **5-step booking flow:**
+  - Step 1: Select Doctor
+  - Step 2: Select Clinic
+  - Step 3: Select Date & Time + Enter name/phone
+  - Step 4: OTP Verification
+  - Step 5: Confirm booking
+- [x] Doctor scheduling with availability calendar
+- [x] Booked slots disabled
+- [x] WhatsApp notification shows "(Verified)" next to phone number
 
 ---
 
 ## Technical Architecture
 
 ### Backend (FastAPI)
-- `/api/pharmacy/inventory` - Get medicine inventory (1199 medicines) with search/filter
-- `/api/pharmacy/forms` - Get unique medicine forms
-- `/api/pharmacy` - Create pharmacy order
-- `/api/diagnostics` - Create diagnostic booking
-- `/api/appointments` - Create appointment
-- `/health` - Health check for deployment
+```
+/api/otp/send          - Send OTP (mock mode)
+/api/otp/verify        - Verify OTP
+/api/otp/resend        - Resend OTP
+/api/pharmacy/inventory     - Get medicine inventory (with limit)
+/api/pharmacy/autocomplete  - Autocomplete for medicine search
+/api/pharmacy/inventory/add - Add medicine to inventory
+/api/pharmacy/forms         - Get unique medicine forms
+/api/pharmacy               - Create pharmacy order
+/api/diagnostics            - Create diagnostic booking
+/api/appointments           - Create appointment
+/api/appointments/booked-slots - Get booked slots
+/health                     - Health check
+```
 
 ### Frontend (React)
 - `/` - Home page with 3 service cards
-- `/diagyn` - DiaGyn appointment booking
-- `/proton` - Proton Diagnostics test booking
-- `/pharmacy` - Orange Pharmacy medicine ordering
+- `/diagyn` - DiaGyn appointment booking (5 steps with OTP)
+- `/proton` - Proton Diagnostics test booking (3 steps with OTP)
+- `/pharmacy` - Orange Pharmacy medicine ordering (3 steps with OTP)
 
 ### Key Files
-- `/app/backend/server.py` - All API endpoints + medicine inventory
-- `/app/frontend/src/pages/Pharmacy.js` - Pharmacy 2-step flow
-- `/app/frontend/src/pages/Proton.js` - Diagnostics 2-step flow + packages with prices
-- `/app/frontend/src/pages/DiaGyn.js` - Appointment booking
+- `/app/backend/server.py` - All API endpoints + OTP logic
+- `/app/frontend/src/pages/Pharmacy.js` - Pharmacy with OTP + autocomplete
+- `/app/frontend/src/pages/Proton.js` - Diagnostics with OTP
+- `/app/frontend/src/pages/DiaGyn.js` - Appointments with OTP
+
+---
+
+## OTP Integration Status
+
+### Current: Mock Mode ✅
+- OTP is displayed on screen for testing
+- No actual SMS sent
+- Ready for immediate testing
+
+### Future: MSG91 Integration (Pending)
+To enable real SMS OTP:
+1. Create MSG91 account at https://msg91.com
+2. Get Authkey from dashboard
+3. Complete DLT registration (required for India)
+4. Update backend to use MSG91 API
+5. Remove `mock_otp` from response
 
 ---
 
 ## Backlog / Future Tasks
 
 ### P0 (High Priority)
-- [ ] None currently
+- [ ] Add medicines to Orange Pharmacy inventory (user will add one by one)
 
 ### P1 (Medium Priority)
-- [ ] Fix server-side WhatsApp notification (currently uses webbrowser.open which won't work in production)
+- [ ] Integrate MSG91 for real SMS OTP (when user provides API key)
 - [ ] Complete user account & order history feature
-- [ ] Investigate 405 errors in deployment logs
+- [ ] Fix server-side WhatsApp sign-up notification
 
 ### P2 (Low Priority)
 - [ ] Guest/optional login flow improvement
 - [ ] Admin dashboard for order management
-- [ ] Order tracking/status updates
+- [ ] Investigate 405 errors in deployment logs
 
 ### P3 (Backlog)
 - [ ] Full end-to-end booking test (verify booked slots are disabled)
+- [ ] Order tracking/status updates
 
 ---
 
 ## Known Limitations
-1. WhatsApp messages require user to tap "Send" (not fully automated)
-2. No online payment processing (only COD/QR at delivery)
-3. Server-side WhatsApp notification for user sign-up uses webbrowser.open (production-incompatible)
+1. **Mock OTP Mode** - OTP is shown on screen, not sent via SMS (ready for MSG91 integration)
+2. WhatsApp messages require user to tap "Send" (not fully automated)
+3. No online payment processing (only COD/QR at delivery)
+4. Pharmacy inventory is empty - user needs to add medicines
 
 ---
 
 ## Changelog
 
-### January 8, 2026
-- **Orange Pharmacy**: Replaced entire inventory with 1199 unique medicines from:
-  - 660853239-product-list-23062023.xlsx
-  - SI_S_266909_08012026.pdf
-  - Current_Stock_Products_With_Value_Product-wise_02_01_2026_08_01_2026
-  - Stock_Summary_Report_07-01-2026.pdf
-- **Proton Diagnostics**: Updated health packages with prices from proton_diagnostics_rate_list.pdf
+### January 8, 2026 - OTP Integration
+- **Added OTP verification** to all three services (DiaGyn, Proton, Orange Pharmacy)
+- **Mock OTP mode** implemented for testing (shows OTP on screen)
+- **Medicine search autocomplete** added to Orange Pharmacy
+- **Cleared pharmacy inventory** - ready for user to populate
+- **Updated booking flows** to include OTP step
+- **Added API endpoints** for OTP send/verify/resend
+- WhatsApp messages now show "(Verified)" for phone numbers
+
+### January 8, 2026 - Earlier
+- **Orange Pharmacy**: Replaced entire inventory with 1199 unique medicines
+- **Proton Diagnostics**: Updated health packages with prices from rate list
 - Added Home Visit service options with distance-based pricing
 
 ### January 6, 2026
 - Initial implementation of all three services
-- 346+ medicines in pharmacy inventory
-- Comprehensive diagnostic tests
-- Appointment booking system
+- Email notifications via Resend
+- Basic user auth forms
