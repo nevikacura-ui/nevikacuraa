@@ -182,21 +182,21 @@ const pathologyTests = {
     'Sputum Fungal Culture'
   ],
   packages: [
-    'Diabetes Screening Package - ₹600',
-    'Diabetes Basic Package - ₹1200',
-    'Diabetes Advance Package - ₹2500',
-    'Proton Basic Package - ₹999',
-    'Proton Total Package - ₹2999',
-    'Proton Xclusive Package - ₹4999',
+    'Diabetes Screening Package',
+    'Diabetes Basic Package',
+    'Diabetes Advance Package',
+    'Proton Basic Package',
+    'Proton Total Package',
+    'Proton Xclusive Package',
     'Cardiac Risk Profile',
     'Anemia Profile',
     'Arthritis Panel',
     'Fever Panel',
     'Pre-Operative Profile',
     'Master Health Checkup',
-    'Home Visit (0-5 km) - ₹100',
-    'Home Visit (5-10 km) - ₹150',
-    'Home Visit (10-15 km) - ₹200'
+    'Home Visit (0-5 km)',
+    'Home Visit (5-10 km)',
+    'Home Visit (10-15 km)'
   ]
 };
 
