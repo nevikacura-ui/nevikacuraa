@@ -5418,6 +5418,171 @@ async def delete_single_appointment(appointment_id: str, admin = Depends(verify_
     
     return {"success": True, "message": "Appointment deleted successfully"}
 
+# ============ Order Tracking & Status Updates ============
+
+# Status definitions
+PHARMACY_STATUSES = ["Order Booked", "Packing", "Out for Delivery", "Delivered"]
+DIAGNOSTIC_STATUSES = ["Test Booked", "Sample Collected", "In Process", "Reports Generated"]
+
+class OrderStatusUpdate(BaseModel):
+    order_id: str
+    status: str
+    notes: Optional[str] = None
+
+@api_router.get("/admin/pharmacy/orders")
+async def get_admin_pharmacy_orders(admin = Depends(verify_admin), status: Optional[str] = None, limit: int = 50):
+    """Get pharmacy orders for admin with optional status filter"""
+    query = {}
+    if status:
+        query["status"] = status
+    
+    orders = await db.pharmacy_orders.find(query, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    # Add status history if not present
+    for order in orders:
+        if "status_history" not in order:
+            order["status_history"] = []
+    
+    return {"orders": orders, "total": len(orders), "statuses": PHARMACY_STATUSES}
+
+@api_router.put("/admin/pharmacy/orders/{order_id}/status")
+async def update_pharmacy_order_status(order_id: str, update: OrderStatusUpdate, admin = Depends(verify_admin)):
+    """Update pharmacy order status"""
+    if update.status not in PHARMACY_STATUSES:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {PHARMACY_STATUSES}")
+    
+    # Get current order
+    order = await db.pharmacy_orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Create status history entry
+    status_entry = {
+        "status": update.status,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "notes": update.notes
+    }
+    
+    # Update order
+    result = await db.pharmacy_orders.update_one(
+        {"id": order_id},
+        {
+            "$set": {"status": update.status},
+            "$push": {"status_history": status_entry}
+        }
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=500, detail="Failed to update order status")
+    
+    # Send email notification for status update
+    email_html = f"""
+    <h2>📦 Pharmacy Order Status Update</h2>
+    <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+    <p><strong>Patient:</strong> {order.get('patient_name')}</p>
+    <p><strong>Phone:</strong> {order.get('patient_phone')}</p>
+    <p><strong>New Status:</strong> <span style="color: #10b981; font-weight: bold;">{update.status}</span></p>
+    {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
+    <p><strong>Updated at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+    """
+    await send_email_notification(f"Pharmacy Order Update - {update.status}", email_html)
+    
+    return {"success": True, "message": f"Order status updated to '{update.status}'", "status": update.status}
+
+@api_router.get("/admin/diagnostic/orders")
+async def get_admin_diagnostic_orders(admin = Depends(verify_admin), status: Optional[str] = None, limit: int = 50):
+    """Get diagnostic orders for admin with optional status filter"""
+    query = {}
+    if status:
+        query["status"] = status
+    
+    orders = await db.diagnostic_orders.find(query, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    # Add status history if not present
+    for order in orders:
+        if "status_history" not in order:
+            order["status_history"] = []
+    
+    return {"orders": orders, "total": len(orders), "statuses": DIAGNOSTIC_STATUSES}
+
+@api_router.put("/admin/diagnostic/orders/{order_id}/status")
+async def update_diagnostic_order_status(order_id: str, update: OrderStatusUpdate, admin = Depends(verify_admin)):
+    """Update diagnostic order status"""
+    if update.status not in DIAGNOSTIC_STATUSES:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {DIAGNOSTIC_STATUSES}")
+    
+    # Get current order
+    order = await db.diagnostic_orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Create status history entry
+    status_entry = {
+        "status": update.status,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "notes": update.notes
+    }
+    
+    # Update order
+    result = await db.diagnostic_orders.update_one(
+        {"id": order_id},
+        {
+            "$set": {"status": update.status},
+            "$push": {"status_history": status_entry}
+        }
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=500, detail="Failed to update order status")
+    
+    # Send email notification for status update
+    email_html = f"""
+    <h2>🔬 Diagnostic Order Status Update</h2>
+    <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+    <p><strong>Patient:</strong> {order.get('patient_name')}</p>
+    <p><strong>Phone:</strong> {order.get('patient_phone')}</p>
+    <p><strong>Tests:</strong> {', '.join(order.get('tests', [])[:3])}{'...' if len(order.get('tests', [])) > 3 else ''}</p>
+    <p><strong>New Status:</strong> <span style="color: #8b5cf6; font-weight: bold;">{update.status}</span></p>
+    {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
+    <p><strong>Updated at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+    """
+    await send_email_notification(f"Diagnostic Order Update - {update.status}", email_html)
+    
+    return {"success": True, "message": f"Order status updated to '{update.status}'", "status": update.status}
+
+@api_router.get("/orders/pharmacy/{order_id}/track")
+async def track_pharmacy_order(order_id: str):
+    """Track pharmacy order status (public endpoint)"""
+    order = await db.pharmacy_orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    return {
+        "order_id": order_id,
+        "status": order.get("status", "Order Booked"),
+        "status_history": order.get("status_history", []),
+        "all_statuses": PHARMACY_STATUSES,
+        "patient_name": order.get("patient_name"),
+        "created_at": order.get("created_at")
+    }
+
+@api_router.get("/orders/diagnostic/{order_id}/track")
+async def track_diagnostic_order(order_id: str):
+    """Track diagnostic order status (public endpoint)"""
+    order = await db.diagnostic_orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    return {
+        "order_id": order_id,
+        "status": order.get("status", "Test Booked"),
+        "status_history": order.get("status_history", []),
+        "all_statuses": DIAGNOSTIC_STATUSES,
+        "patient_name": order.get("patient_name"),
+        "tests": order.get("tests", []),
+        "created_at": order.get("created_at")
+    }
+
 # Model for adding medicine
 class MedicineAdd(BaseModel):
     name: str
