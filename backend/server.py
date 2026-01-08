@@ -160,6 +160,24 @@ class PharmacyOrderCreate(BaseModel):
     patient_email: Optional[str] = None
     delivery_address: Optional[str] = None
 
+# OTP Models for Mock OTP verification
+class OTPRequest(BaseModel):
+    phone: str
+    service: str  # 'diagyn', 'proton', 'pharmacy'
+
+class OTPVerify(BaseModel):
+    phone: str
+    otp: str
+    service: str
+
+# In-memory OTP storage (for mock OTP - replace with Redis in production)
+import random
+otp_storage = {}
+
+def generate_otp():
+    """Generate a 6-digit OTP"""
+    return str(random.randint(100000, 999999))
+
 async def get_current_user(authorization: str = Header(None)):
     if not authorization or not authorization.startswith('Bearer '):
         return None
