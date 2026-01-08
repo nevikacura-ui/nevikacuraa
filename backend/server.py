@@ -2065,9 +2065,8 @@ MEDICINE_INVENTORY = [
     {"name": "ZOCLAR 500MG TAB", "form": "Tablet", "company": "Generic"},
     {"name": "ZOXAN EYE OINT 5GM", "form": "Cream", "company": "Generic"},
     {"name": "ZUKANORM M 500 TAB", "form": "Tablet", "company": "Generic"},
-    {"name": "ZYMVAX TAB", "form": "Tablet", "company": "Generic"}
-]", "form": "Cream", "company": "Generic"},
-    {"name": "DIGENE MINT GEL 450ML", "form": "Cream", "company": "Generic"},
+    {"name": "ZYMVAX TAB", "form": "Tablet", "company": "Generic"},
+    {"name": "DIGENE MINT GEL 450ML", "form": "Gel", "company": "Generic"},
     {"name": "DIGENE TAB [ M/F]", "form": "Tablet", "company": "Generic"},
     {"name": "DIGENE TAB [ MINT ]", "form": "Tablet", "company": "Generic"},
     {"name": "DIGENE TAB [ ORANGE ]", "form": "Tablet", "company": "Generic"},
