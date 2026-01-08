@@ -399,7 +399,7 @@ const AuthModal = ({ open, onClose }) => {
             </div>
 
             <div className="text-center text-sm text-muted-foreground">
-              Didn't receive OTP?{' '}
+              Did not receive OTP?{' '}
               {resendTimer > 0 ? (
                 <span>Resend in {resendTimer}s</span>
               ) : (

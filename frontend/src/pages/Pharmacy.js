@@ -707,7 +707,7 @@ const Pharmacy = () => {
               </div>
               <h1 className="font-heading font-bold text-2xl sm:text-3xl mb-2">Verify Your Phone</h1>
               <p className="text-muted-foreground">
-                We've sent a 6-digit OTP to <span className="font-medium text-foreground">+91 {patientInfo.phone}</span>
+                We have sent a 6-digit OTP to <span className="font-medium text-foreground">+91 {patientInfo.phone}</span>
               </p>
             </div>
 
