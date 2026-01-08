@@ -39,7 +39,7 @@ class TestPharmacyPagination:
         assert "per_page" in data
         assert "total_pages" in data
         
-        assert data["total"] == 3624
+        assert data["total"] == 4266
         assert data["page"] == 1
         assert data["per_page"] == 50
         assert len(data["medicines"]) == 50
@@ -75,9 +75,21 @@ class TestPharmacyPagination:
         assert response.status_code == 200
         data = response.json()
         
-        expected_pages = (3624 + 100 - 1) // 100  # Ceiling division
+        expected_pages = (4266 + 100 - 1) // 100  # Ceiling division
         assert data["total_pages"] == expected_pages
         print(f"✓ Total pages calculation correct: {data['total_pages']}")
+    
+    def test_medicine_has_no_company_field(self):
+        """Test that medicines do not have company field (removed)"""
+        response = requests.get(f"{BASE_URL}/api/pharmacy/all?per_page=10")
+        assert response.status_code == 200
+        data = response.json()
+        
+        for med in data["medicines"]:
+            assert "company" not in med, f"Medicine {med['name']} still has company field"
+            assert "name" in med
+            assert "form" in med
+        print(f"✓ Medicines have no company field, only name and form")
 
 
 class TestPharmacyAutocomplete:
