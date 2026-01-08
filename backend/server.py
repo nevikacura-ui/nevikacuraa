@@ -5099,6 +5099,72 @@ MEDICINE_INVENTORY = [
     {"name": "ZYTEE TUBE 10ML", "form": "Tablet"}
 ]
 
+# ============ Admin Configuration ============
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'nevikacura2026')  # Change in production
+
+class AdminLogin(BaseModel):
+    password: str
+
+@api_router.post("/admin/login")
+async def admin_login(input: AdminLogin):
+    """Admin login with password"""
+    if input.password != ADMIN_PASSWORD:
+        raise HTTPException(status_code=401, detail="Invalid admin password")
+    
+    # Generate admin token
+    admin_token = jwt.encode({
+        'sub': 'admin',
+        'role': 'admin',
+        'exp': datetime.now(timezone.utc) + timedelta(hours=24)
+    }, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+    return {"token": admin_token, "role": "admin"}
+
+async def verify_admin(authorization: str = Header(None)):
+    """Verify admin token"""
+    if not authorization or not authorization.startswith('Bearer '):
+        raise HTTPException(status_code=401, detail="Admin authentication required")
+    
+    token = authorization.split(' ')[1]
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        if payload.get('role') != 'admin':
+            raise HTTPException(status_code=403, detail="Admin access required")
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Admin session expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid admin token")
+
+@api_router.get("/admin/stats")
+async def get_admin_stats(admin = Depends(verify_admin)):
+    """Get admin dashboard statistics"""
+    total_users = await db.users.count_documents({})
+    total_appointments = await db.appointments.count_documents({})
+    total_diagnostics = await db.diagnostic_orders.count_documents({})
+    total_pharmacy = await db.pharmacy_orders.count_documents({})
+    
+    return {
+        "total_medicines": len(MEDICINE_INVENTORY),
+        "total_users": total_users,
+        "total_appointments": total_appointments,
+        "total_diagnostic_orders": total_diagnostics,
+        "total_pharmacy_orders": total_pharmacy
+    }
+
+@api_router.get("/admin/orders/recent")
+async def get_recent_orders(admin = Depends(verify_admin), limit: int = 20):
+    """Get recent orders across all services"""
+    appointments = await db.appointments.find({}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+    diagnostics = await db.diagnostic_orders.find({}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+    pharmacy = await db.pharmacy_orders.find({}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    return {
+        "appointments": appointments,
+        "diagnostic_orders": diagnostics,
+        "pharmacy_orders": pharmacy
+    }
+
 # Model for adding medicine
 class MedicineAdd(BaseModel):
     name: str
