@@ -1,6 +1,7 @@
 """
 Backend API Tests for Nevika Cura - New Features
-Tests: Medicine count (3624), OTP-based auth, Pharmacy pagination, Autocomplete
+Tests: Medicine count (4266), OTP-based auth, Pharmacy pagination, Autocomplete
+Updated: Added 642 new medicines, removed company field from all medicines
 """
 import pytest
 import requests
@@ -11,15 +12,15 @@ BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://healthapp-21.preview
 
 
 class TestMedicineCount:
-    """Tests for medicine inventory count - should be 3624"""
+    """Tests for medicine inventory count - should be 4266 (3624 + 642 new)"""
     
-    def test_medicine_count_is_3624(self):
-        """Test that total medicine count is exactly 3624"""
+    def test_medicine_count_is_4266(self):
+        """Test that total medicine count is exactly 4266"""
         response = requests.get(f"{BASE_URL}/api/pharmacy/count")
         assert response.status_code == 200
         data = response.json()
         assert "total" in data
-        assert data["total"] == 3624, f"Expected 3624 medicines, got {data['total']}"
+        assert data["total"] == 4266, f"Expected 4266 medicines, got {data['total']}"
         print(f"✓ Medicine count is correct: {data['total']}")
 
 
