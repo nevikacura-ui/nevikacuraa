@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { ArrowLeft, ArrowRight, Upload, Plus, Minus, Trash2, Search, Pill, ShoppingCart, X, Package, CreditCard, Banknote, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Upload, Plus, Minus, Trash2, Search, Pill, ShoppingCart, X, Package, CreditCard, Banknote, CheckCircle2, Phone, Shield, Loader2 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -18,7 +18,7 @@ const Pharmacy = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   
-  // Step state: 1 = Add Medicines, 2 = Enter Details & Payment
+  // Step state: 1 = Add Medicines, 2 = OTP Verification, 3 = Enter Details & Payment
   const [currentStep, setCurrentStep] = useState(1);
   
   const [medicines, setMedicines] = useState([]);
@@ -40,8 +40,22 @@ const Pharmacy = () => {
   const [forms, setForms] = useState([]);
   const [inventoryLoading, setInventoryLoading] = useState(true);
   
+  // Autocomplete state
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchRef = useRef(null);
+  
   // Manual entry state
   const [manualMedicine, setManualMedicine] = useState({ name: '', quantity: 1 });
+  
+  // OTP state
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [mockOtp, setMockOtp] = useState('');
+  const [verificationToken, setVerificationToken] = useState('');
+  const [resendTimer, setResendTimer] = useState(0);
+  const otpRefs = useRef([]);
 
   useEffect(() => {
     fetchInventory();
@@ -53,13 +67,53 @@ const Pharmacy = () => {
       fetchInventory();
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchTerm, selectedForm]);
+  }, [selectedForm]);
+
+  // Autocomplete effect
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (searchTerm.length < 2) {
+        setSuggestions([]);
+        return;
+      }
+      try {
+        const response = await axios.get(`${API}/pharmacy/autocomplete?q=${encodeURIComponent(searchTerm)}&limit=8`);
+        setSuggestions(response.data.suggestions);
+        setShowSuggestions(true);
+      } catch (error) {
+        console.error('Autocomplete error:', error);
+      }
+    };
+    
+    const timer = setTimeout(fetchSuggestions, 200);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Resend timer countdown
+  useEffect(() => {
+    if (resendTimer > 0) {
+      const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendTimer]);
+
+  // Click outside to close suggestions
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const fetchInventory = async () => {
     try {
       const params = new URLSearchParams();
       if (searchTerm) params.append('search', searchTerm);
       if (selectedForm) params.append('form', selectedForm);
+      params.append('limit', '100');
       
       const response = await axios.get(`${API}/pharmacy/inventory?${params.toString()}`);
       setInventory(response.data.medicines);
@@ -89,6 +143,7 @@ const Pharmacy = () => {
       setMedicines([...medicines, { ...medicine, quantity: 1 }]);
     }
     toast.success(`Added ${medicine.name} to cart`);
+    setShowSuggestions(false);
   };
 
   const addManualMedicine = () => {
@@ -156,26 +211,107 @@ const Pharmacy = () => {
     }
   };
 
+  // OTP Functions
+  const sendOtp = async () => {
+    if (!patientInfo.phone || patientInfo.phone.length < 10) {
+      toast.error('Please enter a valid mobile number');
+      return;
+    }
+
+    setOtpLoading(true);
+    try {
+      const response = await axios.post(`${API}/otp/send`, {
+        phone: patientInfo.phone,
+        service: 'pharmacy'
+      });
+      
+      setOtpSent(true);
+      setMockOtp(response.data.mock_otp);
+      setResendTimer(30);
+      toast.success('OTP sent successfully!');
+      
+      // Focus first OTP input
+      setTimeout(() => otpRefs.current[0]?.focus(), 100);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to send OTP');
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const verifyOtp = async () => {
+    const otpValue = otp.join('');
+    if (otpValue.length !== 6) {
+      toast.error('Please enter complete 6-digit OTP');
+      return;
+    }
+
+    setOtpLoading(true);
+    try {
+      const response = await axios.post(`${API}/otp/verify`, {
+        phone: patientInfo.phone,
+        otp: otpValue,
+        service: 'pharmacy'
+      });
+      
+      setVerificationToken(response.data.verification_token);
+      toast.success('Phone verified successfully!');
+      setCurrentStep(3);
+      window.scrollTo(0, 0);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Invalid OTP');
+      setOtp(['', '', '', '', '', '']);
+      otpRefs.current[0]?.focus();
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+    
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1);
+    setOtp(newOtp);
+    
+    // Auto-focus next input
+    if (value && index < 5) {
+      otpRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
+    }
+  };
+
   const goToStep2 = () => {
     if (medicines.length === 0) {
       toast.error('Please add at least one medicine to cart');
       return;
     }
+    if (!patientInfo.name.trim()) {
+      toast.error('Please enter your name');
+      return;
+    }
+    if (!patientInfo.phone || patientInfo.phone.length < 10) {
+      toast.error('Please enter a valid mobile number');
+      return;
+    }
     setCurrentStep(2);
     window.scrollTo(0, 0);
+    sendOtp();
   };
 
   const goToStep1 = () => {
     setCurrentStep(1);
+    setOtpSent(false);
+    setOtp(['', '', '', '', '', '']);
     window.scrollTo(0, 0);
   };
 
   const handleSubmit = async () => {
-    if (!patientInfo.name || !patientInfo.phone) {
-      toast.error('Please fill name and mobile number');
-      return;
-    }
-
     if (!deliveryAddress.trim()) {
       toast.error('Please enter delivery address');
       return;
@@ -214,7 +350,7 @@ const Pharmacy = () => {
         '',
         '*Customer Details:*',
         `Name: ${patientInfo.name}`,
-        `Mobile: ${patientInfo.phone}`
+        `Mobile: ${patientInfo.phone} (Verified)`
       ].filter(Boolean).join('\n');
       
       const encodedMessage = encodeURIComponent(messageLines);
@@ -243,7 +379,7 @@ const Pharmacy = () => {
             <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
-                onClick={() => currentStep === 2 ? goToStep1() : navigate('/')}
+                onClick={() => currentStep > 1 ? goToStep1() : navigate('/')}
                 data-testid="back-button"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -257,15 +393,20 @@ const Pharmacy = () => {
             </div>
             
             {/* Step Indicator */}
-            <div className="flex items-center gap-2">
-              <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${currentStep === 1 ? 'bg-brand-orange text-white' : 'bg-gray-100 text-gray-500'}`}>
-                <ShoppingCart className="w-4 h-4" />
-                <span className="hidden sm:inline">Medicines</span>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <div className={`flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm ${currentStep === 1 ? 'bg-brand-orange text-white' : 'bg-green-100 text-green-600'}`}>
+                {currentStep > 1 ? <CheckCircle2 className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}
+                <span className="hidden sm:inline">Cart</span>
               </div>
-              <ArrowRight className="w-4 h-4 text-gray-400" />
-              <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm ${currentStep === 2 ? 'bg-brand-orange text-white' : 'bg-gray-100 text-gray-500'}`}>
+              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+              <div className={`flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm ${currentStep === 2 ? 'bg-brand-orange text-white' : currentStep > 2 ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
+                {currentStep > 2 ? <CheckCircle2 className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
+                <span className="hidden sm:inline">Verify</span>
+              </div>
+              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+              <div className={`flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm ${currentStep === 3 ? 'bg-brand-orange text-white' : 'bg-gray-100 text-gray-500'}`}>
                 <CreditCard className="w-4 h-4" />
-                <span className="hidden sm:inline">Details & Pay</span>
+                <span className="hidden sm:inline">Pay</span>
               </div>
             </div>
           </div>
@@ -278,181 +419,51 @@ const Pharmacy = () => {
           <div className="space-y-6">
             <div className="mb-4">
               <h1 className="font-heading font-bold text-2xl sm:text-3xl mb-1 text-foreground">Step 1: Add Medicines</h1>
-              <p className="font-body text-muted-foreground text-sm">Add medicines manually or browse our inventory</p>
-              <p className="font-body text-xs text-muted-foreground mt-1">
-                📍 A-4, Sai Darshan, Near Don Bosco High School, Naigaon East
-              </p>
+              <p className="text-sm text-muted-foreground">Search from inventory or add manually</p>
             </div>
 
-            {/* Manual Entry Card */}
-            <Card className="p-4 border-2 border-orange-200 bg-orange-50/50">
-              <h3 className="font-heading text-lg font-semibold mb-3 flex items-center gap-2">
-                <Package className="w-5 h-5 text-brand-orange" />
-                Add Medicine Manually
-              </h3>
+            {/* Search with Autocomplete */}
+            <Card className="p-4" ref={searchRef}>
               <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1">
-                  <Input
-                    placeholder="Enter medicine name..."
-                    value={manualMedicine.name}
-                    onChange={(e) => setManualMedicine({...manualMedicine, name: e.target.value})}
-                    onKeyPress={(e) => e.key === 'Enter' && addManualMedicine()}
-                    data-testid="manual-medicine-name"
-                    className="h-12 rounded-xl"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => setManualMedicine({...manualMedicine, quantity: Math.max(1, manualMedicine.quantity - 1)})}
-                    className="h-12 w-12"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <Input
-                    type="number"
-                    min="1"
-                    value={manualMedicine.quantity}
-                    onChange={(e) => setManualMedicine({...manualMedicine, quantity: parseInt(e.target.value) || 1})}
-                    className="text-center h-12 w-16"
-                    data-testid="manual-medicine-qty"
-                  />
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => setManualMedicine({...manualMedicine, quantity: manualMedicine.quantity + 1})}
-                    className="h-12 w-12"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    onClick={addManualMedicine}
-                    className="h-12 px-6 rounded-xl bg-brand-orange hover:bg-brand-orange/90"
-                    data-testid="add-manual-medicine-btn"
-                  >
-                    <Plus className="w-4 h-4 mr-1" /> Add
-                  </Button>
-                </div>
-              </div>
-            </Card>
-
-            {/* Your Cart */}
-            <Card className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-heading text-lg font-semibold flex items-center gap-2">
-                  <ShoppingCart className="w-5 h-5 text-brand-orange" />
-                  Your Cart ({totalItems} items)
-                </h3>
-              </div>
-              
-              {medicines.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <ShoppingCart className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                  <p>Your cart is empty</p>
-                  <p className="text-sm">Add medicines using the form above or browse below</p>
-                </div>
-              ) : (
-                <div className="space-y-2" data-testid="cart-items">
-                  {medicines.map((medicine, index) => (
-                    <div 
-                      key={`cart-${index}`} 
-                      className="flex items-center gap-3 p-3 bg-orange-50 rounded-xl"
-                      data-testid={`cart-item-${index}`}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">{medicine.name}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          className="h-8 w-8"
-                          onClick={() => updateQuantity(index, medicine.quantity - 1)}
-                        >
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <span className="w-8 text-center font-medium">{medicine.quantity}</span>
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          className="h-8 w-8"
-                          onClick={() => updateQuantity(index, medicine.quantity + 1)}
-                        >
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
-                          onClick={() => removeMedicine(index)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Card>
-
-            {/* Upload Prescription */}
-            <Card className="p-4">
-              <h3 className="font-heading text-lg font-semibold mb-3">Upload Prescription (Optional)</h3>
-              <div className="border-2 border-dashed border-border rounded-xl p-6 text-center">
-                {prescriptionFile ? (
-                  <div className="space-y-1">
-                    <CheckCircle2 className="w-8 h-8 mx-auto text-green-500 mb-2" />
-                    <p className="text-sm font-medium truncate">{prescriptionFile.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {uploading ? 'Uploading...' : 'Uploaded successfully'}
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <Upload className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
-                    <input
-                      type="file"
-                      accept="image/*,.pdf"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      id="prescription-upload"
-                      data-testid="prescription-upload-input"
-                    />
-                    <Button 
-                      variant="outline" 
-                      onClick={() => document.getElementById('prescription-upload').click()}
-                      data-testid="prescription-upload-button"
-                    >
-                      Choose File
-                    </Button>
-                  </>
-                )}
-              </div>
-            </Card>
-
-            {/* Browse Inventory */}
-            <Card className="p-4">
-              <h3 className="font-heading text-lg font-semibold mb-3 flex items-center gap-2">
-                <Pill className="w-5 h-5 text-brand-orange" />
-                Browse Inventory
-              </h3>
-              <div className="flex flex-col sm:flex-row gap-3 mb-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    placeholder="Search medicines..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 h-11 rounded-xl"
-                    data-testid="medicine-search-input"
-                  />
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                    <Input
+                      placeholder="Search medicines..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onFocus={() => searchTerm.length >= 2 && setShowSuggestions(true)}
+                      className="pl-10"
+                      data-testid="medicine-search"
+                    />
+                  </div>
+                  
+                  {/* Autocomplete Dropdown */}
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                      {suggestions.map((med, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => addToCart(med)}
+                          className="w-full px-4 py-3 text-left hover:bg-orange-50 border-b border-gray-100 last:border-0 flex items-center justify-between"
+                          data-testid={`suggestion-${idx}`}
+                        >
+                          <div>
+                            <span className="font-medium text-gray-900">{med.name}</span>
+                            <span className="ml-2 text-xs text-gray-500">{med.form}</span>
+                          </div>
+                          <Plus className="w-4 h-4 text-brand-orange" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
+                
                 <select
                   value={selectedForm}
                   onChange={(e) => setSelectedForm(e.target.value)}
-                  className="h-11 px-4 rounded-xl border border-input bg-background"
-                  data-testid="form-filter-select"
+                  className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  data-testid="form-filter"
                 >
                   <option value="">All Forms</option>
                   {forms.map((form) => (
@@ -460,181 +471,319 @@ const Pharmacy = () => {
                   ))}
                 </select>
               </div>
-              
-              <p className="text-sm text-muted-foreground mb-3">{inventory.length} items found</p>
-              
-              {inventoryLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange"></div>
-                </div>
-              ) : inventory.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <p>No medicines found. Use manual entry above.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[350px] overflow-y-auto pr-1">
-                  {inventory.map((medicine, index) => (
-                    <div
-                      key={`${medicine.name}-${index}`}
-                      className="flex items-center justify-between p-3 bg-orange-50/50 rounded-xl border border-orange-100 hover:border-brand-orange/50 transition-colors"
-                      data-testid={`inventory-item-${index}`}
+            </Card>
+
+            {/* Manual Entry */}
+            <Card className="p-4">
+              <h3 className="font-medium mb-3 flex items-center gap-2">
+                <Pill className="w-4 h-4 text-brand-orange" />
+                Add Medicine Manually
+              </h3>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Medicine name"
+                  value={manualMedicine.name}
+                  onChange={(e) => setManualMedicine({ ...manualMedicine, name: e.target.value })}
+                  className="flex-1"
+                  data-testid="manual-medicine-name"
+                />
+                <Input
+                  type="number"
+                  min="1"
+                  value={manualMedicine.quantity}
+                  onChange={(e) => setManualMedicine({ ...manualMedicine, quantity: parseInt(e.target.value) || 1 })}
+                  className="w-20"
+                  data-testid="manual-medicine-qty"
+                />
+                <Button onClick={addManualMedicine} className="bg-brand-orange hover:bg-brand-orange/90" data-testid="add-manual-btn">
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            </Card>
+
+            {/* Inventory List */}
+            {inventory.length > 0 && (
+              <Card className="p-4">
+                <h3 className="font-medium mb-3">Available Medicines ({inventory.length})</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                  {inventory.slice(0, 20).map((med, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => addToCart(med)}
+                      className="flex items-center justify-between p-2 rounded-lg border border-gray-200 hover:border-brand-orange hover:bg-orange-50 transition-colors text-left"
+                      data-testid={`inventory-item-${idx}`}
                     >
-                      <div className="flex-1 min-w-0 mr-2">
-                        <p className="font-medium text-sm truncate">{medicine.name}</p>
-                        <p className="text-xs text-muted-foreground">{medicine.form}</p>
+                      <div>
+                        <span className="font-medium text-sm">{med.name}</span>
+                        <span className="ml-2 text-xs text-gray-500">{med.form}</span>
                       </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => addToCart(medicine)}
-                        className="shrink-0 hover:bg-brand-orange hover:text-white hover:border-brand-orange"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </Button>
+                      <Plus className="w-4 h-4 text-brand-orange" />
+                    </button>
+                  ))}
+                </div>
+                {inventory.length > 20 && (
+                  <p className="text-xs text-gray-500 mt-2 text-center">Use search to find more medicines</p>
+                )}
+              </Card>
+            )}
+
+            {/* Cart */}
+            {medicines.length > 0 && (
+              <Card className="p-4 border-brand-orange">
+                <h3 className="font-medium mb-3 flex items-center gap-2">
+                  <ShoppingCart className="w-4 h-4 text-brand-orange" />
+                  Your Cart ({totalItems} items)
+                </h3>
+                <div className="space-y-2 mb-4">
+                  {medicines.map((med, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-2 bg-orange-50 rounded-lg">
+                      <div className="flex-1">
+                        <span className="font-medium text-sm">{med.name}</span>
+                        <span className="ml-2 text-xs text-gray-500">{med.form}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" variant="outline" onClick={() => updateQuantity(idx, med.quantity - 1)} data-testid={`decrease-qty-${idx}`}>
+                          <Minus className="w-3 h-3" />
+                        </Button>
+                        <span className="w-8 text-center">{med.quantity}</span>
+                        <Button size="sm" variant="outline" onClick={() => updateQuantity(idx, med.quantity + 1)} data-testid={`increase-qty-${idx}`}>
+                          <Plus className="w-3 h-3" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => removeMedicine(idx)} className="text-red-500" data-testid={`remove-medicine-${idx}`}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
-              )}
+              </Card>
+            )}
+
+            {/* Patient Info for OTP */}
+            <Card className="p-4">
+              <h3 className="font-medium mb-3 flex items-center gap-2">
+                <Phone className="w-4 h-4 text-brand-orange" />
+                Your Details (for OTP verification)
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <Label>Full Name *</Label>
+                  <Input
+                    value={patientInfo.name}
+                    onChange={(e) => setPatientInfo({ ...patientInfo, name: e.target.value })}
+                    placeholder="Enter your name"
+                    data-testid="patient-name"
+                  />
+                </div>
+                <div>
+                  <Label>Mobile Number *</Label>
+                  <Input
+                    value={patientInfo.phone}
+                    onChange={(e) => setPatientInfo({ ...patientInfo, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                    placeholder="10-digit mobile number"
+                    data-testid="patient-phone"
+                  />
+                </div>
+              </div>
+            </Card>
+
+            {/* Prescription Upload */}
+            <Card className="p-4">
+              <h3 className="font-medium mb-3 flex items-center gap-2">
+                <Upload className="w-4 h-4 text-brand-orange" />
+                Upload Prescription (Optional)
+              </h3>
+              <div className="flex items-center gap-4">
+                <label className="cursor-pointer">
+                  <div className="px-4 py-2 border border-dashed border-gray-300 rounded-lg hover:border-brand-orange transition-colors">
+                    {prescriptionFile ? prescriptionFile.name : 'Click to upload'}
+                  </div>
+                  <input type="file" accept="image/*,.pdf" onChange={handleFileUpload} className="hidden" data-testid="prescription-upload" />
+                </label>
+                {uploading && <span className="text-sm text-gray-500">Uploading...</span>}
+                {prescriptionUrl && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+              </div>
             </Card>
 
             {/* Continue Button */}
             <Button 
-              className="w-full rounded-full py-6 text-lg font-medium bg-brand-orange hover:bg-brand-orange/90" 
-              onClick={goToStep2}
+              onClick={goToStep2} 
               disabled={medicines.length === 0}
-              data-testid="continue-to-details-btn"
+              className="w-full bg-brand-orange hover:bg-brand-orange/90 h-12 text-lg"
+              data-testid="continue-to-otp"
             >
-              Continue to Details & Payment
+              Continue to Verify
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
         )}
 
-        {/* STEP 2: Enter Details & Payment */}
+        {/* STEP 2: OTP Verification */}
         {currentStep === 2 && (
           <div className="space-y-6">
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 mx-auto bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                <Shield className="w-10 h-10 text-brand-orange" />
+              </div>
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl mb-2">Verify Your Phone</h1>
+              <p className="text-muted-foreground">
+                We've sent a 6-digit OTP to <span className="font-medium text-foreground">+91 {patientInfo.phone}</span>
+              </p>
+            </div>
+
+            {/* Mock OTP Display (for testing) */}
+            {mockOtp && (
+              <Card className="p-4 bg-yellow-50 border-yellow-200">
+                <div className="flex items-center gap-2 text-yellow-800">
+                  <Shield className="w-5 h-5" />
+                  <span className="font-medium">Test Mode:</span>
+                  <span>Your OTP is <strong className="text-xl">{mockOtp}</strong></span>
+                </div>
+                <p className="text-xs text-yellow-600 mt-1">In production, this will be sent via SMS</p>
+              </Card>
+            )}
+
+            {/* OTP Input */}
+            <Card className="p-6">
+              <Label className="block text-center mb-4">Enter 6-digit OTP</Label>
+              <div className="flex justify-center gap-2 sm:gap-3 mb-6">
+                {otp.map((digit, idx) => (
+                  <Input
+                    key={idx}
+                    ref={(el) => (otpRefs.current[idx] = el)}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                    className="w-10 h-12 sm:w-12 sm:h-14 text-center text-xl font-bold"
+                    data-testid={`otp-input-${idx}`}
+                  />
+                ))}
+              </div>
+
+              <Button
+                onClick={verifyOtp}
+                disabled={otp.join('').length !== 6 || otpLoading}
+                className="w-full bg-brand-orange hover:bg-brand-orange/90 h-12"
+                data-testid="verify-otp-btn"
+              >
+                {otpLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-5 h-5 mr-2" />
+                    Verify OTP
+                  </>
+                )}
+              </Button>
+
+              <div className="text-center mt-4">
+                {resendTimer > 0 ? (
+                  <p className="text-sm text-gray-500">Resend OTP in {resendTimer}s</p>
+                ) : (
+                  <Button variant="link" onClick={sendOtp} disabled={otpLoading} className="text-brand-orange">
+                    Resend OTP
+                  </Button>
+                )}
+              </div>
+            </Card>
+
+            <Button variant="outline" onClick={goToStep1} className="w-full" data-testid="back-to-cart">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Cart
+            </Button>
+          </div>
+        )}
+
+        {/* STEP 3: Details & Payment */}
+        {currentStep === 3 && (
+          <div className="space-y-6">
             <div className="mb-4">
-              <h1 className="font-heading font-bold text-2xl sm:text-3xl mb-1 text-foreground">Step 2: Your Details</h1>
-              <p className="font-body text-muted-foreground text-sm">Enter delivery details and select payment method</p>
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl mb-1 text-foreground">Step 3: Delivery & Payment</h1>
+              <div className="flex items-center gap-2 text-green-600">
+                <CheckCircle2 className="w-4 h-4" />
+                <span className="text-sm">Phone verified: +91 {patientInfo.phone}</span>
+              </div>
             </div>
 
             {/* Order Summary */}
-            <Card className="p-4 bg-orange-50/50 border-orange-200">
-              <h3 className="font-heading text-lg font-semibold mb-3 flex items-center gap-2">
-                <ShoppingCart className="w-5 h-5 text-brand-orange" />
+            <Card className="p-4 bg-orange-50">
+              <h3 className="font-medium mb-3 flex items-center gap-2">
+                <Package className="w-4 h-4 text-brand-orange" />
                 Order Summary ({totalItems} items)
               </h3>
-              <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                {medicines.map((medicine, index) => (
-                  <div key={index} className="flex justify-between items-center py-2 border-b border-orange-100 last:border-0">
-                    <span className="text-sm">{medicine.name}</span>
-                    <span className="text-sm font-medium">x{medicine.quantity}</span>
+              <div className="space-y-1">
+                {medicines.map((med, idx) => (
+                  <div key={idx} className="flex justify-between text-sm">
+                    <span>{med.name}</span>
+                    <span className="text-gray-500">x{med.quantity}</span>
                   </div>
                 ))}
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={goToStep1}
-                className="mt-3 text-brand-orange hover:text-brand-orange"
-              >
-                ← Edit Cart
-              </Button>
             </Card>
 
-            {/* Customer Details */}
+            {/* Delivery Address */}
             <Card className="p-4">
-              <h3 className="font-heading text-lg font-semibold mb-4">Customer Details</h3>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="patient-name" className="text-sm font-medium">Full Name *</Label>
-                  <Input
-                    id="patient-name"
-                    value={patientInfo.name}
-                    onChange={(e) => setPatientInfo({...patientInfo, name: e.target.value})}
-                    placeholder="Enter your full name"
-                    data-testid="patient-name-input"
-                    className="h-12 rounded-xl mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="patient-phone" className="text-sm font-medium">Mobile Number *</Label>
-                  <Input
-                    id="patient-phone"
-                    value={patientInfo.phone}
-                    onChange={(e) => setPatientInfo({...patientInfo, phone: e.target.value})}
-                    placeholder="Enter 10-digit mobile number"
-                    data-testid="patient-phone-input"
-                    className="h-12 rounded-xl mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="delivery-address" className="text-sm font-medium">Delivery Address *</Label>
-                  <Textarea
-                    id="delivery-address"
-                    value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                    placeholder="Enter complete delivery address with landmark"
-                    data-testid="delivery-address-input"
-                    className="min-h-24 rounded-xl mt-1"
-                  />
-                </div>
-              </div>
+              <Label className="flex items-center gap-2 mb-2">
+                <Banknote className="w-4 h-4 text-brand-orange" />
+                Delivery Address *
+              </Label>
+              <Textarea
+                value={deliveryAddress}
+                onChange={(e) => setDeliveryAddress(e.target.value)}
+                placeholder="Enter your complete delivery address with landmark"
+                className="min-h-24"
+                data-testid="delivery-address"
+              />
             </Card>
 
             {/* Payment Method */}
             <Card className="p-4">
-              <h3 className="font-heading text-lg font-semibold mb-4">Payment Method</h3>
-              <div className="space-y-3">
-                <label 
-                  className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-brand-orange bg-orange-50' : 'border-gray-200 hover:border-orange-200'}`}
+              <Label className="flex items-center gap-2 mb-3">
+                <CreditCard className="w-4 h-4 text-brand-orange" />
+                Payment Method
+              </Label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setPaymentMethod('cod')}
+                  className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-colors ${
+                    paymentMethod === 'cod' ? 'border-brand-orange bg-orange-50' : 'border-gray-200'
+                  }`}
                   data-testid="payment-cod"
                 >
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="cod"
-                    checked={paymentMethod === 'cod'}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-5 h-5 text-brand-orange"
-                  />
-                  <Banknote className={`w-8 h-8 ${paymentMethod === 'cod' ? 'text-brand-orange' : 'text-gray-400'}`} />
-                  <div>
-                    <p className="font-medium">Cash on Delivery</p>
-                    <p className="text-sm text-muted-foreground">Pay when you receive your order</p>
-                  </div>
-                </label>
-                
-                <label 
-                  className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMethod === 'qr_card' ? 'border-brand-orange bg-orange-50' : 'border-gray-200 hover:border-orange-200'}`}
-                  data-testid="payment-qr-card"
+                  <Banknote className="w-6 h-6" />
+                  <span className="text-sm font-medium">Cash on Delivery</span>
+                </button>
+                <button
+                  onClick={() => setPaymentMethod('card')}
+                  className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-colors ${
+                    paymentMethod === 'card' ? 'border-brand-orange bg-orange-50' : 'border-gray-200'
+                  }`}
+                  data-testid="payment-card"
                 >
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="qr_card"
-                    checked={paymentMethod === 'qr_card'}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-5 h-5 text-brand-orange"
-                  />
-                  <CreditCard className={`w-8 h-8 ${paymentMethod === 'qr_card' ? 'text-brand-orange' : 'text-gray-400'}`} />
-                  <div>
-                    <p className="font-medium">QR Pay / Card on Delivery</p>
-                    <p className="text-sm text-muted-foreground">Pay via UPI or Card when delivered</p>
-                  </div>
-                </label>
+                  <CreditCard className="w-6 h-6" />
+                  <span className="text-sm font-medium">QR / Card on Delivery</span>
+                </button>
               </div>
             </Card>
 
-            {/* Place Order Button */}
+            {/* Submit Button */}
             <Button 
-              className="w-full rounded-full py-6 text-lg font-medium bg-green-600 hover:bg-green-700" 
-              onClick={handleSubmit}
-              disabled={loading || !patientInfo.name || !patientInfo.phone || !deliveryAddress}
-              data-testid="place-order-button"
+              onClick={handleSubmit} 
+              disabled={loading || !deliveryAddress.trim()}
+              className="w-full bg-brand-orange hover:bg-brand-orange/90 h-12 text-lg"
+              data-testid="place-order-btn"
             >
               {loading ? (
-                'Processing...'
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Processing...
+                </>
               ) : (
                 <>
                   <CheckCircle2 className="w-5 h-5 mr-2" />
@@ -642,10 +791,6 @@ const Pharmacy = () => {
                 </>
               )}
             </Button>
-            
-            <p className="text-center text-sm text-muted-foreground">
-              Your order details will be sent to Orange Pharmacy via WhatsApp
-            </p>
           </div>
         )}
       </main>
