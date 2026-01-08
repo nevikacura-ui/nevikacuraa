@@ -115,19 +115,57 @@ const Pharmacy = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const fetchInventory = async () => {
+  const fetchInventory = async (page = 1, reset = false) => {
     try {
-      const params = new URLSearchParams();
-      if (searchTerm) params.append('search', searchTerm);
-      if (selectedForm) params.append('form', selectedForm);
-      params.append('limit', '100');
+      if (page === 1) setInventoryLoading(true);
+      else setLoadingMore(true);
       
-      const response = await axios.get(`${API}/pharmacy/inventory?${params.toString()}`);
-      setInventory(response.data.medicines);
+      const response = await axios.get(`${API}/pharmacy/all`, {
+        params: {
+          page,
+          per_page: 50,
+          search: searchTerm || undefined
+        }
+      });
+      
+      if (reset || page === 1) {
+        setInventory(response.data.medicines);
+      } else {
+        setInventory(prev => [...prev, ...response.data.medicines]);
+      }
+      
+      setHasMoreMedicines(page < response.data.total_pages);
+      setTotalMedicines(response.data.total);
     } catch (error) {
       console.error('Failed to fetch inventory:', error);
     } finally {
       setInventoryLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  const fetchTotalCount = async () => {
+    try {
+      const response = await axios.get(`${API}/pharmacy/count`);
+      setTotalMedicines(response.data.total);
+    } catch (error) {
+      console.error('Failed to fetch total count:', error);
+    }
+  };
+
+  const loadMoreMedicines = () => {
+    if (!loadingMore && hasMoreMedicines) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchInventory(nextPage);
+    }
+  };
+
+  // Scroll handler for infinite scroll
+  const handleInventoryScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    if (scrollHeight - scrollTop <= clientHeight + 100 && hasMoreMedicines && !loadingMore) {
+      loadMoreMedicines();
     }
   };
 
