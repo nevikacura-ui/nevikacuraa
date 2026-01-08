@@ -248,6 +248,98 @@ async def get_me(user: User = Depends(get_current_user)):
         raise HTTPException(status_code=401, detail="Not authenticated")
     return user
 
+# ============ OTP Endpoints (Mock OTP for testing) ============
+
+@api_router.post("/otp/send")
+async def send_otp(request: OTPRequest):
+    """Send OTP to phone number (Mock - displays OTP in response for testing)"""
+    phone = request.phone.strip()
+    service = request.service.lower()
+    
+    if not phone or len(phone) < 10:
+        raise HTTPException(status_code=400, detail="Invalid phone number")
+    
+    if service not in ['diagyn', 'proton', 'pharmacy']:
+        raise HTTPException(status_code=400, detail="Invalid service")
+    
+    # Generate OTP
+    otp = generate_otp()
+    
+    # Store OTP with expiry (5 minutes)
+    otp_key = f"{phone}_{service}"
+    otp_storage[otp_key] = {
+        "otp": otp,
+        "expires_at": datetime.now(timezone.utc) + timedelta(minutes=5),
+        "attempts": 0
+    }
+    
+    logger.info(f"Mock OTP generated for {phone} ({service}): {otp}")
+    
+    # In production, this would send SMS via MSG91
+    # For now, return the OTP in response (MOCK MODE)
+    return {
+        "success": True,
+        "message": "OTP sent successfully",
+        "mock_otp": otp,  # REMOVE IN PRODUCTION - only for testing
+        "expires_in": 300,  # 5 minutes
+        "phone": phone
+    }
+
+@api_router.post("/otp/verify")
+async def verify_otp(request: OTPVerify):
+    """Verify OTP"""
+    phone = request.phone.strip()
+    otp = request.otp.strip()
+    service = request.service.lower()
+    
+    otp_key = f"{phone}_{service}"
+    
+    if otp_key not in otp_storage:
+        raise HTTPException(status_code=400, detail="OTP not found. Please request a new OTP.")
+    
+    stored_data = otp_storage[otp_key]
+    
+    # Check expiry
+    if datetime.now(timezone.utc) > stored_data["expires_at"]:
+        del otp_storage[otp_key]
+        raise HTTPException(status_code=400, detail="OTP has expired. Please request a new OTP.")
+    
+    # Check attempts (max 3)
+    if stored_data["attempts"] >= 3:
+        del otp_storage[otp_key]
+        raise HTTPException(status_code=400, detail="Too many attempts. Please request a new OTP.")
+    
+    # Verify OTP
+    if stored_data["otp"] != otp:
+        otp_storage[otp_key]["attempts"] += 1
+        remaining = 3 - otp_storage[otp_key]["attempts"]
+        raise HTTPException(status_code=400, detail=f"Invalid OTP. {remaining} attempts remaining.")
+    
+    # OTP verified - remove from storage
+    del otp_storage[otp_key]
+    
+    # Generate verification token (valid for 30 minutes)
+    verification_token = jwt.encode({
+        'phone': phone,
+        'service': service,
+        'verified': True,
+        'exp': datetime.now(timezone.utc) + timedelta(minutes=30)
+    }, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+    logger.info(f"OTP verified successfully for {phone} ({service})")
+    
+    return {
+        "success": True,
+        "message": "OTP verified successfully",
+        "verification_token": verification_token
+    }
+
+@api_router.post("/otp/resend")
+async def resend_otp(request: OTPRequest):
+    """Resend OTP to phone number"""
+    # Simply call send_otp again
+    return await send_otp(request)
+
 @api_router.get("/drive/connect")
 async def connect_drive(user = Depends(get_current_user)):
     if not user:
