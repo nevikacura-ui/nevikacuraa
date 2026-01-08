@@ -5165,6 +5165,259 @@ async def get_recent_orders(admin = Depends(verify_admin), limit: int = 20):
         "pharmacy_orders": pharmacy
     }
 
+# ============ Diagnostic Tests Management ============
+
+# Default diagnostic tests organized by category
+DIAGNOSTIC_TESTS = {
+    "imaging": {
+        "ecg": ["ECG (Electrocardiogram)"],
+        "sonography": [
+            "Early Scan", "NT Scan (Nuchal Translucency)", "Growth Scan",
+            "USG Pelvis", "Follicular Monitoring"
+        ]
+    },
+    "pathology": {
+        "blood": [
+            "CBC (Complete Blood Count)", "Hemoglobin (Hb)", "ESR", "Blood Group & Rh Factor",
+            "FBS (Fasting Blood Sugar)", "PPBS", "HbA1c", "Creatinine", "Blood Urea",
+            "SGPT (ALT)", "SGOT (AST)", "Bilirubin Total", "Total Cholesterol",
+            "Triglycerides", "HDL", "LDL", "TSH", "T3", "T4", "Vitamin D", "Vitamin B12",
+            "Iron Studies", "Calcium", "Uric Acid"
+        ],
+        "urine": [
+            "Urine Routine & Microscopy", "Urine Culture & Sensitivity", "Urine Albumin"
+        ],
+        "stool": [
+            "Stool Routine & Microscopy", "Stool Occult Blood"
+        ]
+    }
+}
+
+class DiagnosticTestAdd(BaseModel):
+    name: str
+    category: str  # imaging or pathology
+    subcategory: str  # ecg, sonography, blood, urine, stool
+
+@api_router.get("/admin/diagnostic-tests")
+async def get_diagnostic_tests(admin = Depends(verify_admin)):
+    """Get all diagnostic tests"""
+    # Check if custom tests exist in database
+    custom_tests = await db.diagnostic_tests.find_one({"type": "custom"}, {"_id": 0})
+    if custom_tests:
+        return {"tests": custom_tests.get("tests", DIAGNOSTIC_TESTS)}
+    return {"tests": DIAGNOSTIC_TESTS}
+
+@api_router.post("/admin/diagnostic-tests/add")
+async def add_diagnostic_test(test: DiagnosticTestAdd, admin = Depends(verify_admin)):
+    """Add a new diagnostic test"""
+    # Get current tests
+    custom_tests = await db.diagnostic_tests.find_one({"type": "custom"})
+    if custom_tests:
+        tests = custom_tests.get("tests", DIAGNOSTIC_TESTS.copy())
+    else:
+        tests = DIAGNOSTIC_TESTS.copy()
+    
+    # Validate category and subcategory
+    if test.category not in tests:
+        raise HTTPException(status_code=400, detail=f"Invalid category: {test.category}")
+    if test.subcategory not in tests[test.category]:
+        raise HTTPException(status_code=400, detail=f"Invalid subcategory: {test.subcategory}")
+    
+    # Check if test already exists
+    if test.name in tests[test.category][test.subcategory]:
+        raise HTTPException(status_code=400, detail="Test already exists")
+    
+    # Add test
+    tests[test.category][test.subcategory].append(test.name)
+    tests[test.category][test.subcategory].sort()
+    
+    # Save to database
+    await db.diagnostic_tests.update_one(
+        {"type": "custom"},
+        {"$set": {"tests": tests}},
+        upsert=True
+    )
+    
+    return {"success": True, "message": f"Test '{test.name}' added successfully"}
+
+@api_router.delete("/admin/diagnostic-tests/{category}/{subcategory}/{test_name}")
+async def delete_diagnostic_test(category: str, subcategory: str, test_name: str, admin = Depends(verify_admin)):
+    """Delete a diagnostic test"""
+    custom_tests = await db.diagnostic_tests.find_one({"type": "custom"})
+    if custom_tests:
+        tests = custom_tests.get("tests", DIAGNOSTIC_TESTS.copy())
+    else:
+        tests = DIAGNOSTIC_TESTS.copy()
+    
+    if category not in tests or subcategory not in tests[category]:
+        raise HTTPException(status_code=404, detail="Category or subcategory not found")
+    
+    # URL decode the test name
+    from urllib.parse import unquote
+    test_name = unquote(test_name)
+    
+    if test_name not in tests[category][subcategory]:
+        raise HTTPException(status_code=404, detail="Test not found")
+    
+    tests[category][subcategory].remove(test_name)
+    
+    await db.diagnostic_tests.update_one(
+        {"type": "custom"},
+        {"$set": {"tests": tests}},
+        upsert=True
+    )
+    
+    return {"success": True, "message": f"Test '{test_name}' deleted successfully"}
+
+@api_router.get("/diagnostic-tests")
+async def get_public_diagnostic_tests():
+    """Get diagnostic tests for public use (frontend)"""
+    custom_tests = await db.diagnostic_tests.find_one({"type": "custom"}, {"_id": 0})
+    if custom_tests:
+        return {"tests": custom_tests.get("tests", DIAGNOSTIC_TESTS)}
+    return {"tests": DIAGNOSTIC_TESTS}
+
+# ============ Doctor Leave / Appointment Cancellation ============
+
+class CancelAppointmentsRequest(BaseModel):
+    doctor: str
+    clinic: str
+    cancel_type: str  # 'session', 'day', 'range'
+    date: Optional[str] = None  # For single day or session
+    time: Optional[str] = None  # For single session only
+    start_date: Optional[str] = None  # For range
+    end_date: Optional[str] = None  # For range
+    reason: str = "Doctor on leave"
+
+@api_router.get("/admin/doctors")
+async def get_doctors(admin = Depends(verify_admin)):
+    """Get list of doctors with their appointments"""
+    # Get unique doctors from appointments
+    pipeline = [
+        {"$group": {
+            "_id": {"doctor": "$doctor", "clinic": "$clinic"},
+            "appointment_count": {"$sum": 1}
+        }},
+        {"$sort": {"_id.doctor": 1}}
+    ]
+    doctors_raw = await db.appointments.aggregate(pipeline).to_list(100)
+    
+    doctors = []
+    for d in doctors_raw:
+        doctors.append({
+            "doctor": d["_id"]["doctor"],
+            "clinic": d["_id"]["clinic"],
+            "appointment_count": d["appointment_count"]
+        })
+    
+    # Add default doctors if no appointments exist
+    if not doctors:
+        doctors = [
+            {"doctor": "Dr. Vikas Jha", "clinic": "Nevika Clinic", "appointment_count": 0},
+            {"doctor": "Dr. Priya Sharma", "clinic": "Nevika Clinic", "appointment_count": 0}
+        ]
+    
+    return {"doctors": doctors}
+
+@api_router.get("/admin/appointments")
+async def get_admin_appointments(
+    admin = Depends(verify_admin),
+    doctor: Optional[str] = None,
+    date: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None
+):
+    """Get appointments for admin with filters"""
+    query = {}
+    
+    if doctor:
+        query["doctor"] = doctor
+    
+    if date:
+        query["date"] = date
+    elif start_date and end_date:
+        query["date"] = {"$gte": start_date, "$lte": end_date}
+    
+    appointments = await db.appointments.find(query, {"_id": 0}).sort([("date", 1), ("time", 1)]).to_list(500)
+    return {"appointments": appointments, "total": len(appointments)}
+
+@api_router.post("/admin/appointments/cancel")
+async def cancel_appointments(request: CancelAppointmentsRequest, admin = Depends(verify_admin)):
+    """Cancel appointments for a doctor (session, day, or date range)"""
+    query = {
+        "doctor": request.doctor,
+        "clinic": request.clinic
+    }
+    
+    if request.cancel_type == "session":
+        if not request.date or not request.time:
+            raise HTTPException(status_code=400, detail="Date and time required for session cancellation")
+        query["date"] = request.date
+        query["time"] = request.time
+        
+    elif request.cancel_type == "day":
+        if not request.date:
+            raise HTTPException(status_code=400, detail="Date required for day cancellation")
+        query["date"] = request.date
+        
+    elif request.cancel_type == "range":
+        if not request.start_date or not request.end_date:
+            raise HTTPException(status_code=400, detail="Start and end dates required for range cancellation")
+        query["date"] = {"$gte": request.start_date, "$lte": request.end_date}
+    else:
+        raise HTTPException(status_code=400, detail="Invalid cancel_type. Use 'session', 'day', or 'range'")
+    
+    # Get appointments to be cancelled
+    appointments_to_cancel = await db.appointments.find(query, {"_id": 0}).to_list(500)
+    
+    if not appointments_to_cancel:
+        return {
+            "success": True,
+            "cancelled_count": 0,
+            "message": "No appointments found matching the criteria"
+        }
+    
+    # Update appointments status to cancelled
+    result = await db.appointments.update_many(
+        query,
+        {"$set": {"status": "cancelled", "cancellation_reason": request.reason}}
+    )
+    
+    # Send email notification about cancellations
+    cancelled_list = "<br>".join([
+        f"• {a['patient_name']} - {a['date']} at {a['time']}" 
+        for a in appointments_to_cancel[:20]  # Limit to first 20 in email
+    ])
+    
+    email_html = f"""
+    <h2>⚠️ Appointments Cancelled - {request.doctor}</h2>
+    <p><strong>Reason:</strong> {request.reason}</p>
+    <p><strong>Clinic:</strong> {request.clinic}</p>
+    <p><strong>Cancel Type:</strong> {request.cancel_type}</p>
+    <p><strong>Total Cancelled:</strong> {result.modified_count}</p>
+    <h3>Affected Patients:</h3>
+    <p>{cancelled_list}</p>
+    {f"<p><em>...and {len(appointments_to_cancel) - 20} more</em></p>" if len(appointments_to_cancel) > 20 else ""}
+    """
+    await send_email_notification(f"Appointments Cancelled - {request.doctor}", email_html)
+    
+    return {
+        "success": True,
+        "cancelled_count": result.modified_count,
+        "message": f"Successfully cancelled {result.modified_count} appointment(s)",
+        "cancelled_appointments": appointments_to_cancel
+    }
+
+@api_router.delete("/admin/appointments/{appointment_id}")
+async def delete_single_appointment(appointment_id: str, admin = Depends(verify_admin)):
+    """Delete a single appointment"""
+    result = await db.appointments.delete_one({"id": appointment_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    return {"success": True, "message": "Appointment deleted successfully"}
+
 # Model for adding medicine
 class MedicineAdd(BaseModel):
     name: str
