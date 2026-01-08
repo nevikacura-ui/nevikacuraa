@@ -5153,8 +5153,7 @@ async def autocomplete_medicine(q: str = "", limit: int = 10):
         if query_lower in m["name"].lower():
             suggestions.append({
                 "name": m["name"],
-                "form": m["form"],
-                "company": m["company"]
+                "form": m["form"]
             })
             if len(suggestions) >= limit:
                 break
