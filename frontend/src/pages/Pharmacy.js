@@ -546,31 +546,66 @@ const Pharmacy = () => {
               </div>
             </Card>
 
-            {/* Inventory List */}
-            {inventory.length > 0 && (
-              <Card className="p-4">
-                <h3 className="font-medium mb-3">Available Medicines ({inventory.length})</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto">
-                  {inventory.slice(0, 20).map((med, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => addToCart(med)}
-                      className="flex items-center justify-between p-2 rounded-lg border border-gray-200 hover:border-brand-orange hover:bg-orange-50 transition-colors text-left"
-                      data-testid={`inventory-item-${idx}`}
-                    >
-                      <div>
-                        <span className="font-medium text-sm">{med.name}</span>
-                        <span className="ml-2 text-xs text-gray-500">{med.form}</span>
-                      </div>
-                      <Plus className="w-4 h-4 text-brand-orange" />
-                    </button>
-                  ))}
+            {/* Inventory List - Scrollable */}
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-medium flex items-center gap-2">
+                  <Package className="w-4 h-4 text-brand-orange" />
+                  Available Medicines
+                </h3>
+                <span className="text-sm text-muted-foreground bg-orange-100 px-3 py-1 rounded-full">
+                  Total: {totalMedicines.toLocaleString()}
+                </span>
+              </div>
+              
+              {inventoryLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-brand-orange" />
+                  <span className="ml-2 text-muted-foreground">Loading medicines...</span>
                 </div>
-                {inventory.length > 20 && (
-                  <p className="text-xs text-gray-500 mt-2 text-center">Use search to find more medicines</p>
-                )}
-              </Card>
-            )}
+              ) : (
+                <div 
+                  ref={inventoryListRef}
+                  className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg"
+                  onScroll={handleInventoryScroll}
+                  data-testid="medicine-list"
+                >
+                  {inventory.length === 0 ? (
+                    <div className="p-4 text-center text-muted-foreground">
+                      {searchTerm ? 'No medicines found matching your search' : 'No medicines available'}
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-gray-100">
+                      {inventory.map((med, idx) => (
+                        <button
+                          key={`${med.name}-${idx}`}
+                          onClick={() => addToCart(med)}
+                          className="w-full flex items-center justify-between p-3 hover:bg-orange-50 transition-colors text-left"
+                          data-testid={`inventory-item-${idx}`}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <span className="font-medium text-sm block truncate">{med.name}</span>
+                            <span className="text-xs text-gray-500">{med.form} • {med.company}</span>
+                          </div>
+                          <Plus className="w-5 h-5 text-brand-orange flex-shrink-0 ml-2" />
+                        </button>
+                      ))}
+                      {loadingMore && (
+                        <div className="p-3 text-center">
+                          <Loader2 className="w-5 h-5 animate-spin text-brand-orange inline-block" />
+                          <span className="ml-2 text-sm text-muted-foreground">Loading more...</span>
+                        </div>
+                      )}
+                      {!hasMoreMedicines && inventory.length > 0 && (
+                        <div className="p-3 text-center text-xs text-muted-foreground bg-gray-50">
+                          End of list • {inventory.length} medicines shown
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </Card>
 
             {/* Cart */}
             {medicines.length > 0 && (
