@@ -24,12 +24,12 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ## What's Been Implemented ✅
 
-### Date: January 6, 2026
+### Date: January 8, 2026
 
 #### Orange Pharmacy
 - [x] Manual medicine entry with name + quantity
-- [x] Browse 346+ medicines from inventory
-- [x] Search by name/company, filter by form (Tablet, Syrup, etc.)
+- [x] **1199 medicines** in inventory (updated from complete stock files)
+- [x] Search by name/company, filter by form (Tablet, Syrup, Capsule, etc.)
 - [x] Shopping cart with quantity controls
 - [x] 2-step checkout flow:
   - Step 1: Add medicines to cart
@@ -41,20 +41,24 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 #### Proton Diagnostics
 - [x] **Imaging Section**:
   - ECG
-  - Sonography (6 types): Early Scan, NT Scan, Growth Scan, USG Pelvis, Doppler Scan, Follicular Monitoring
+  - Sonography (5 types): Early Scan, NT Scan, Growth Scan, USG Pelvis, Follicular Monitoring
 - [x] **Pathology Section**:
   - Blood Tests (100+ comprehensive tests)
   - Urine Tests (22 tests)
   - Sputum Tests (7 tests)
-  - Stool Tests (10 tests)
+- [x] **Health Packages with Prices** (from rate list):
+  - Diabetes Screening Package - ₹600
+  - Diabetes Basic Package - ₹1200
+  - Diabetes Advance Package - ₹2500
+  - Proton Basic Package - ₹999
+  - Proton Total Package - ₹2999
+  - Proton Xclusive Package - ₹4999
+  - Home Visit (0-5 km) - ₹100
+  - Home Visit (5-10 km) - ₹150
+  - Home Visit (10-15 km) - ₹200
 - [x] Custom test manual entry
-- [x] X-ray REMOVED as per user request
-- [x] 2-step booking flow:
-  - Step 1: Select tests
-  - Step 2: Enter details (Name, Mobile, Address) + Payment method
-- [x] Payment options: Cash on Visit, QR Pay/Card on Visit
+- [x] 2-step booking flow
 - [x] WhatsApp booking to 7039040040
-- [x] Preferred date selection
 
 #### DiaGyn Healthcare
 - [x] Doctor scheduling for Dr. Vikas Jha & Dr. Neha Patel
@@ -62,10 +66,14 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 - [x] Appointment booking with patient details
 - [x] WhatsApp notification to 7039020020
 
+#### Email Notifications
+- [x] Resend integration for order confirmations to nevikacura@gmail.com
+- [x] Sender name: "Nevika Cura"
+
 #### General
 - [x] Modern UI with consistent design
 - [x] Responsive layout
-- [x] Home page with service logos (no text names)
+- [x] Home page with service logos
 - [x] Nevika Cura branding with registered address
 
 ---
@@ -73,11 +81,12 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 ## Technical Architecture
 
 ### Backend (FastAPI)
-- `/api/pharmacy/inventory` - Get medicine inventory with search/filter
+- `/api/pharmacy/inventory` - Get medicine inventory (1199 medicines) with search/filter
 - `/api/pharmacy/forms` - Get unique medicine forms
 - `/api/pharmacy` - Create pharmacy order
 - `/api/diagnostics` - Create diagnostic booking
 - `/api/appointments` - Create appointment
+- `/health` - Health check for deployment
 
 ### Frontend (React)
 - `/` - Home page with 3 service cards
@@ -86,9 +95,9 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 - `/pharmacy` - Orange Pharmacy medicine ordering
 
 ### Key Files
-- `/app/backend/server.py` - All API endpoints
+- `/app/backend/server.py` - All API endpoints + medicine inventory
 - `/app/frontend/src/pages/Pharmacy.js` - Pharmacy 2-step flow
-- `/app/frontend/src/pages/Proton.js` - Diagnostics 2-step flow
+- `/app/frontend/src/pages/Proton.js` - Diagnostics 2-step flow + packages with prices
 - `/app/frontend/src/pages/DiaGyn.js` - Appointment booking
 
 ---
@@ -99,22 +108,40 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 - [ ] None currently
 
 ### P1 (Medium Priority)
-- [ ] Guest/optional login flow implementation
-- [ ] Order history for logged-in users
+- [ ] Fix server-side WhatsApp notification (currently uses webbrowser.open which won't work in production)
+- [ ] Complete user account & order history feature
+- [ ] Investigate 405 errors in deployment logs
 
 ### P2 (Low Priority)
-- [ ] Email notifications (explicitly not required by user)
+- [ ] Guest/optional login flow improvement
 - [ ] Admin dashboard for order management
 - [ ] Order tracking/status updates
 
-### Skipped by User
-- [x] Razorpay integration - User chose COD/QR payment options instead
-- [x] Google Drive integration - User decided to skip
-- [x] Automated WhatsApp (Twilio) - User chose current setup (WhatsApp links)
+### P3 (Backlog)
+- [ ] Full end-to-end booking test (verify booked slots are disabled)
 
 ---
 
 ## Known Limitations
 1. WhatsApp messages require user to tap "Send" (not fully automated)
 2. No online payment processing (only COD/QR at delivery)
-3. No Google Drive backup of orders
+3. Server-side WhatsApp notification for user sign-up uses webbrowser.open (production-incompatible)
+
+---
+
+## Changelog
+
+### January 8, 2026
+- **Orange Pharmacy**: Replaced entire inventory with 1199 unique medicines from:
+  - 660853239-product-list-23062023.xlsx
+  - SI_S_266909_08012026.pdf
+  - Current_Stock_Products_With_Value_Product-wise_02_01_2026_08_01_2026
+  - Stock_Summary_Report_07-01-2026.pdf
+- **Proton Diagnostics**: Updated health packages with prices from proton_diagnostics_rate_list.pdf
+- Added Home Visit service options with distance-based pricing
+
+### January 6, 2026
+- Initial implementation of all three services
+- 346+ medicines in pharmacy inventory
+- Comprehensive diagnostic tests
+- Appointment booking system
