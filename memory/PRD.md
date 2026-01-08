@@ -145,7 +145,6 @@ To enable real SMS OTP:
 1. **Mock OTP Mode** - OTP is shown on screen, not sent via SMS (ready for MSG91 integration)
 2. WhatsApp messages require user to tap "Send" (not fully automated)
 3. No online payment processing (only COD/QR at delivery)
-4. Pharmacy inventory is empty - user needs to add medicines
 
 ---
 
