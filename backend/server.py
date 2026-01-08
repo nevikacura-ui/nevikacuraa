@@ -1351,7 +1351,7 @@ MEDICINE_INVENTORY = [
     {"name": "DICORATE ER500 MG TAB", "form": "Tablet", "company": "Generic"},
     {"name": "DIGENE GEL 200ML [MINT]", "form": "Cream", "company": "Generic"},
     {"name": "DIGENE GEL 200ML [ORANGE]", "form": "Cream", "company": "Generic"},
-    {"name": "DIGENE GEL 200ML {M/F,
+    {"name": "DIGENE GEL 200ML M/F", "form": "Gel", "company": "Generic"},
     {"name": "8X KT SHAMPOO", "form": "Shampoo", "company": "Generic"},
     {"name": "ACEMIZ S TAB", "form": "Tablet", "company": "Generic"},
     {"name": "ACIGENE MINT GEL SUSP 170ML", "form": "Syrup", "company": "Generic"},
