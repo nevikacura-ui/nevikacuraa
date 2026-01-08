@@ -74,14 +74,26 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 - [x] View pharmacy order history
 - [x] Order status display
 
-#### Admin Dashboard (/admin) - NEW
+#### Admin Dashboard (/admin) - ENHANCED
 - [x] Password-protected admin login (default: `nevikacura2026`)
 - [x] Dashboard stats: Medicines, Users, Appointments, Diagnostics, Pharmacy Orders
-- [x] **Inventory Management Tab:**
+- [x] **Pharmacy Tab (Inventory Management):**
   - [x] Searchable medicine list with infinite scroll
-  - [x] Add new medicine with name and form
+  - [x] Add new medicine (name + form)
   - [x] Delete medicine from inventory
-- [x] **Recent Orders Tab:**
+- [x] **Tests Tab (Proton Diagnostic Tests):**
+  - [x] View all tests by category (Imaging, Pathology)
+  - [x] Add new test (name, category, subcategory)
+  - [x] Delete test from list
+  - [x] Categories: Imaging (ECG, Sonography), Pathology (Blood, Urine, Stool)
+- [x] **Doctor Leave Tab (Appointment Cancellation):**
+  - [x] View upcoming appointments
+  - [x] Cancel by Session (specific time slot on a day)
+  - [x] Cancel by Day (all appointments on a single day)
+  - [x] Cancel by Range (all appointments in a date range)
+  - [x] Email notification sent to admin for cancelled appointments
+  - [x] Reason field for cancellation
+- [x] **Orders Tab:**
   - [x] View recent appointments
   - [x] View recent diagnostic orders
   - [x] View recent pharmacy orders
