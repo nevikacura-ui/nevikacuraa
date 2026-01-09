@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -16,10 +16,90 @@ import {
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-// Clinic configuration
+// Clinic configuration with clinic IDs
 const CLINICS = {
   "Pushpa Clinic": ["Dr. Neha Patel", "Dr. Vikas Jha"],
   "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Ankita Gupta"]
+};
+
+// Doctor schedules - matching DiaGyn clinic availability
+const DOCTOR_SCHEDULES = {
+  "Dr. Vikas Jha": {
+    "Pushpa Clinic": [
+      { days: ['Monday', 'Wednesday', 'Friday'], time: '18:00-22:00' }
+    ],
+    "Amnion Clinic": [
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00-14:00' },
+      { days: ['Tuesday', 'Thursday', 'Saturday'], time: '18:00-22:00' }
+    ]
+  },
+  "Dr. Neha Patel": {
+    "Amnion Clinic": [
+      { days: ['Monday', 'Wednesday', 'Friday'], time: '18:00-22:00' }
+    ],
+    "Pushpa Clinic": [
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00-14:00' },
+      { days: ['Tuesday', 'Thursday', 'Saturday'], time: '18:00-22:00' }
+    ]
+  },
+  "Dr. Ankita Gupta": {
+    "Amnion Clinic": [
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '10:00-13:00' },
+      { days: ['Monday', 'Wednesday', 'Friday'], time: '17:00-20:00' }
+    ]
+  }
+};
+
+// Helper function to generate time slots from schedule
+const generateTimeSlots = (startTime, endTime, interval = 30) => {
+  const slots = [];
+  const [startHour, startMin] = startTime.split(':').map(Number);
+  const [endHour, endMin] = endTime.split(':').map(Number);
+  
+  let currentHour = startHour;
+  let currentMin = startMin;
+  
+  while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
+    const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
+    slots.push(timeStr);
+    
+    currentMin += interval;
+    if (currentMin >= 60) {
+      currentHour += 1;
+      currentMin = 0;
+    }
+  }
+  
+  return slots;
+};
+
+// Get day name from date
+const getDayName = (dateStr) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-US', { weekday: 'long' });
+};
+
+// Get available time slots for a doctor at a clinic on a specific date
+const getAvailableTimeSlots = (doctor, clinic, dateStr) => {
+  if (!doctor || !clinic || !dateStr) return [];
+  
+  const dayName = getDayName(dateStr);
+  const schedule = DOCTOR_SCHEDULES[doctor]?.[clinic];
+  
+  if (!schedule) return [];
+  
+  const allSlots = [];
+  
+  schedule.forEach(slot => {
+    if (slot.days.includes(dayName)) {
+      const [startTime, endTime] = slot.time.split('-');
+      const timeSlots = generateTimeSlots(startTime, endTime);
+      allSlots.push(...timeSlots);
+    }
+  });
+  
+  // Remove duplicates and sort
+  return [...new Set(allSlots)].sort();
 };
 
 const StaffPortal = () => {
