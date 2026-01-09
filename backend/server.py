@@ -6034,17 +6034,25 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
 @api_router.get("/staff/clinic/appointments")
 async def get_clinic_appointments(staff = Depends(verify_staff), date: Optional[str] = None, status: Optional[str] = None):
     """Get appointments for clinic staff"""
-    if staff.get("role") not in ["clinic_staff", "super_admin"]:
+    role = staff.get("role")
+    if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
         raise HTTPException(status_code=403, detail="Clinic staff access required")
     
     query = {}
+    
+    # Filter by clinic based on role
+    if role == "clinic_staff_pushpa":
+        query["clinic"] = "Pushpa Clinic"
+    elif role == "clinic_staff_amnion":
+        query["clinic"] = "Amnion Clinic"
+    
     if date:
         query["date"] = date
     if status:
         query["status"] = status
     
     appointments = await db.appointments.find(query, {"_id": 0}).sort([("date", 1), ("time", 1)]).to_list(200)
-    return {"appointments": appointments, "statuses": APPOINTMENT_STATUSES}
+    return {"appointments": appointments, "statuses": APPOINTMENT_STATUSES, "clinics": CLINICS}
 
 @api_router.get("/admin/stats")
 async def get_admin_stats(admin = Depends(verify_admin)):
