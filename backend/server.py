@@ -5622,6 +5622,15 @@ async def staff_login(input: StaffLogin):
     if not bcrypt.checkpw(input.password.encode('utf-8'), staff["password_hash"].encode('utf-8')):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    # Log login for audit
+    await db.audit_logs.insert_one({
+        "action": "staff_login",
+        "staff_id": staff["id"],
+        "username": staff["username"],
+        "role": staff["role"],
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
     # Generate staff token with 30 days expiry
     staff_token = jwt.encode({
         'sub': staff["id"],
@@ -5629,6 +5638,7 @@ async def staff_login(input: StaffLogin):
         'role': staff["role"],
         'name': staff["name"],
         'doctor_name': staff.get("doctor_name"),
+        'clinic': staff.get("clinic"),
         'exp': datetime.now(timezone.utc) + timedelta(days=30)
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
@@ -5636,7 +5646,8 @@ async def staff_login(input: StaffLogin):
         "token": staff_token,
         "role": staff["role"],
         "name": staff["name"],
-        "doctor_name": staff.get("doctor_name")
+        "doctor_name": staff.get("doctor_name"),
+        "clinic": staff.get("clinic")
     }
 
 # ============ Clinic Staff Endpoints ============
@@ -5644,8 +5655,15 @@ async def staff_login(input: StaffLogin):
 @api_router.post("/staff/appointments/walk-in")
 async def book_walk_in_appointment(appt: WalkInAppointment, staff = Depends(verify_staff)):
     """Book a walk-in appointment (Clinic Staff only)"""
-    if staff.get("role") not in ["clinic_staff", "super_admin"]:
+    role = staff.get("role")
+    if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
         raise HTTPException(status_code=403, detail="Clinic staff access required")
+    
+    # Verify staff can only book for their clinic
+    if role == "clinic_staff_pushpa" and appt.clinic != "Pushpa Clinic":
+        raise HTTPException(status_code=403, detail="You can only book for Pushpa Clinic")
+    if role == "clinic_staff_amnion" and appt.clinic != "Amnion Clinic":
+        raise HTTPException(status_code=403, detail="You can only book for Amnion Clinic")
     
     appointment = {
         "id": str(uuid.uuid4()),
