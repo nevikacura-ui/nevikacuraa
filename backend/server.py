@@ -58,7 +58,7 @@ TWILIO_WHATSAPP_FROM = os.environ.get('TWILIO_WHATSAPP_FROM', '')  # e.g., 'what
 
 # Doctor WhatsApp Numbers for appointment notifications
 DOCTOR_WHATSAPP_NUMBERS = {
-    "Dr. Ankita Gupta": "917045266466",
+    "Dr. Neha Patel": "917045266466",
     "Dr. Vikas Jha": "919930266466"
 }
 
@@ -5538,8 +5538,8 @@ STAFF_ROLES = {
 
 # Clinics
 CLINICS = {
-    "Pushpa Clinic": ["Dr. Ankita Gupta", "Dr. Vikas Jha"],
-    "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Ankita Gupta"]
+    "Pushpa Clinic": ["Dr. Neha Patel", "Dr. Vikas Jha"],
+    "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Neha Patel"]
 }
 
 # Appointment Statuses (Updated flow)
@@ -6875,7 +6875,7 @@ async def send_credentials_email(admin = Depends(verify_admin)):
                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Password</th>
                 </tr>
                 <tr>
-                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Ankita Gupta</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Neha Patel</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Pushpa Clinic</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">doc_pushpa_01</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
