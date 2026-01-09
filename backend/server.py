@@ -5432,15 +5432,29 @@ ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'nevikacura2026')  # Change in
 
 # Staff Roles
 STAFF_ROLES = {
-    "super_admin": "Super Admin - Full Access",
-    "doctor": "Doctor - Mark Appointments Complete",
-    "clinic_staff": "Clinic Staff - Book Walk-ins & Check-in Patients",
-    "pharmacy_staff": "Pharmacy Staff - Update Order Status",
-    "diagnostics_staff": "Diagnostics Staff - Update Test Status"
+    "super_admin": "Super Admin - Full Access (Owner)",
+    "doctor_pushpa": "Doctor - Pushpa Clinic",
+    "doctor_amnion": "Doctor - Amnion Clinic",
+    "clinic_staff_pushpa": "Clinic Staff - Pushpa Clinic",
+    "clinic_staff_amnion": "Clinic Staff - Amnion Clinic",
+    "pharmacy_staff": "Pharmacy Staff - Orange Pharmacy",
+    "diagnostics_staff": "Diagnostics Staff - Proton Diagnostics"
 }
 
-# Appointment Statuses
-APPOINTMENT_STATUSES = ["pending", "in_clinic", "completed", "cancelled", "no_show"]
+# Clinics
+CLINICS = {
+    "Pushpa Clinic": ["Dr. Neha Batra", "Dr. Priya Sharma"],
+    "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Ankita Gupta"]
+}
+
+# Appointment Statuses (Updated flow)
+APPOINTMENT_STATUSES = ["Booked", "In Clinic", "Completed", "Cancelled", "No Show"]
+
+# Pharmacy Order Statuses (Updated)
+PHARMACY_STATUSES = ["Received", "Processing", "Ready", "Delivered"]
+
+# Diagnostic Order Statuses (Updated)
+DIAGNOSTIC_STATUSES = ["Booked", "Sample Collected", "Processing", "Report Ready", "Completed"]
 
 class AdminLogin(BaseModel):
     password: str
@@ -5451,6 +5465,7 @@ class StaffCreate(BaseModel):
     name: str
     role: str
     doctor_name: Optional[str] = None  # Only for doctor role
+    clinic: Optional[str] = None  # For clinic-specific roles
 
 class StaffLogin(BaseModel):
     username: str
