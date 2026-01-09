@@ -27,7 +27,8 @@ const Pharmacy = () => {
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [patientInfo, setPatientInfo] = useState({
     name: user?.name || '',
-    phone: user?.phone || ''
+    phone: user?.phone || '',
+    email: user?.email || ''
   });
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [uploading, setUploading] = useState(false);
