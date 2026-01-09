@@ -6921,6 +6921,18 @@ async def get_diagnostic_tests(admin = Depends(verify_admin)):
         return {"tests": custom_tests.get("tests", DIAGNOSTIC_TESTS)}
     return {"tests": DIAGNOSTIC_TESTS}
 
+@api_router.get("/staff/diagnostic-tests")
+async def get_diagnostic_tests_for_staff(staff = Depends(verify_staff)):
+    """Get all diagnostic tests for staff order creation"""
+    if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+    # Check if custom tests exist in database
+    custom_tests = await db.diagnostic_tests.find_one({"type": "custom"}, {"_id": 0})
+    if custom_tests:
+        return {"tests": custom_tests.get("tests", DIAGNOSTIC_TESTS)}
+    return {"tests": DIAGNOSTIC_TESTS}
+
 @api_router.post("/admin/diagnostic-tests/add")
 async def add_diagnostic_test(test: DiagnosticTestAdd, admin = Depends(verify_admin)):
     """Add a new diagnostic test"""
