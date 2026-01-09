@@ -6445,6 +6445,134 @@ async def get_admin_stats(admin = Depends(verify_admin)):
         "total_pharmacy_orders": total_pharmacy
     }
 
+@api_router.post("/admin/send-credentials-email")
+async def send_credentials_email(admin = Depends(verify_admin)):
+    """Send all staff credentials to admin email"""
+    
+    # All credentials
+    credentials_html = """
+    <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0;">Nevika Cura - Staff Credentials</h1>
+        </div>
+        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+            
+            <h2 style="color: #0d9488; border-bottom: 2px solid #0d9488; padding-bottom: 10px;">🔐 Admin Access</h2>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                <tr style="background: #f1f5f9;">
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;"><strong>Portal URL</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">/admin</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;"><strong>Password</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">nevikacura2026</td>
+                </tr>
+            </table>
+            
+            <h2 style="color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">👨‍⚕️ DiaGyn Doctors</h2>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                <tr style="background: #dbeafe;">
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Doctor</th>
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Clinic</th>
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Username</th>
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Password</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Neha Batra</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Pushpa Clinic</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">doc_pushpa_01</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Vikas Jha</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Amnion Clinic</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">doc_amnion_01</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
+                </tr>
+            </table>
+            
+            <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 10px;">👩‍💼 DiaGyn Clinic Staff</h2>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                <tr style="background: #d1fae5;">
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Staff</th>
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Clinic</th>
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Username</th>
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Password</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Reception Staff</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Pushpa Clinic</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">staff_pushpa</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026C</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Reception Staff</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Amnion Clinic</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">staff_amnion</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026C</td>
+                </tr>
+            </table>
+            
+            <h2 style="color: #f97316; border-bottom: 2px solid #f97316; padding-bottom: 10px;">💊 Orange Pharmacy Staff</h2>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                <tr style="background: #ffedd5;">
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Staff</th>
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Username</th>
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Password</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Pharmacy Team</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">staff_pharmacy</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026P</td>
+                </tr>
+            </table>
+            
+            <h2 style="color: #8b5cf6; border-bottom: 2px solid #8b5cf6; padding-bottom: 10px;">🔬 Proton Diagnostics Staff</h2>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                <tr style="background: #ede9fe;">
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Staff</th>
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Username</th>
+                    <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Password</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Lab Team</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">staff_proton</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026L</td>
+                </tr>
+            </table>
+            
+            <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981;">
+                <h3 style="color: #166534; margin-top: 0;">📱 Staff Portal Access</h3>
+                <p style="margin-bottom: 0;"><strong>URL:</strong> <code>/staff</code></p>
+                <p style="margin-bottom: 0; color: #166534;">All staff members remain logged in until they manually logout (30-day session).</p>
+            </div>
+            
+            <p style="color: #64748b; font-size: 12px; margin-top: 30px; text-align: center;">
+                This email was sent from Nevika Cura Healthcare System.<br>
+                Generated on: """ + datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC') + """
+            </p>
+        </div>
+    </div>
+    """
+    
+    try:
+        # Send email to admin
+        if RESEND_API_KEY:
+            params = {
+                "from": SENDER_EMAIL,
+                "to": [NOTIFICATION_EMAIL],
+                "subject": "Nevika Cura - All Staff Login Credentials",
+                "html": credentials_html
+            }
+            email_result = await asyncio.to_thread(resend.Emails.send, params)
+            logger.info(f"Credentials email sent: {email_result.get('id')}")
+            return {"success": True, "message": f"Credentials sent to {NOTIFICATION_EMAIL}", "email_id": email_result.get('id')}
+        else:
+            return {"success": False, "message": "Email not configured"}
+    except Exception as e:
+        logger.error(f"Failed to send credentials email: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
+
 @api_router.get("/admin/orders/recent")
 async def get_recent_orders(admin = Depends(verify_admin), limit: int = 20):
     """Get recent orders across all services"""
