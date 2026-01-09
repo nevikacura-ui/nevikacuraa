@@ -123,6 +123,7 @@ Build a modern healthcare application for "Nevika Cura" with three core services
   - Pharmacy order status updates
   - Diagnostic order status updates
   - Appointment cancellation notice
+- [x] **Email field helper text** in all booking forms explaining what emails they'll receive
 
 ---
 
