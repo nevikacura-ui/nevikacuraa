@@ -1078,6 +1078,12 @@ const StaffPortal = () => {
                           <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-teal-100 text-teal-800">
                             Clinic Add-on
                           </span>
+                          {order.report_url && (
+                            <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-800">
+                              <FileText className="w-3 h-3 inline mr-1" />
+                              Report Uploaded
+                            </span>
+                          )}
                         </div>
                         <span className="text-sm text-gray-500">{order.patient_phone}</span>
                       </div>
@@ -1085,6 +1091,59 @@ const StaffPortal = () => {
                         <strong>Service:</strong> {order.service_type?.replace('_', ' ')} | 
                         <strong> Clinic:</strong> {order.clinic || 'N/A'}
                       </div>
+                      
+                      {/* Report Upload Section - Required before Reports Generated */}
+                      {!order.report_url && order.status !== 'Reports Generated' && (
+                        <div className="mb-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                          <p className="text-sm text-purple-800 mb-2 flex items-center gap-1">
+                            <Upload className="w-4 h-4" />
+                            <strong>Upload Report</strong> (Required before Reports Generated)
+                          </p>
+                          <input
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            onChange={async (e) => {
+                              const file = e.target.files[0];
+                              if (!file) return;
+                              
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              
+                              try {
+                                toast.loading('Uploading report...');
+                                await axios.post(
+                                  `${API}/staff/diagnostic/orders/${order.id}/upload-report`,
+                                  formData,
+                                  { 
+                                    headers: { 
+                                      'Authorization': `Bearer ${localStorage.getItem('staffToken')}`,
+                                      'Content-Type': 'multipart/form-data'
+                                    }
+                                  }
+                                );
+                                toast.dismiss();
+                                toast.success('Report uploaded successfully');
+                                loadData();
+                              } catch (error) {
+                                toast.dismiss();
+                                toast.error(error.response?.data?.detail || 'Upload failed');
+                              }
+                            }}
+                            className="text-sm"
+                            data-testid={`upload-report-${order.id}`}
+                          />
+                        </div>
+                      )}
+                      
+                      {order.report_url && (
+                        <div className="mb-3">
+                          <a href={order.report_url} target="_blank" rel="noopener noreferrer" className="text-sm text-purple-600 hover:underline flex items-center gap-1">
+                            <FileText className="w-4 h-4" />
+                            View Report
+                          </a>
+                        </div>
+                      )}
+                      
                       <div className="flex gap-2 flex-wrap">
                         {['Test Booked', 'Sample Collected', 'In Process', 'Reports Generated'].map(status => (
                           <Button
@@ -1092,8 +1151,12 @@ const StaffPortal = () => {
                             size="sm"
                             variant={order.status === status ? 'default' : 'outline'}
                             onClick={() => handleDiagnosticStatusUpdate(order.id, status)}
-                            disabled={order.status === status}
+                            disabled={
+                              order.status === status ||
+                              (status === 'Reports Generated' && !order.report_url)
+                            }
                             className={order.status === status ? 'bg-teal-500' : ''}
+                            title={status === 'Reports Generated' && !order.report_url ? 'Upload report first' : ''}
                           >
                             {status}
                           </Button>
@@ -1124,12 +1187,71 @@ const StaffPortal = () => {
                           <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${getStatusColor(order.status)}`}>
                             {order.status}
                           </span>
+                          {order.report_url && (
+                            <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-800">
+                              <FileText className="w-3 h-3 inline mr-1" />
+                              Report Uploaded
+                            </span>
+                          )}
                         </div>
                         <span className="text-sm text-gray-500">{order.patient_phone}</span>
                       </div>
                       <div className="text-sm text-gray-600 mb-3">
                         {order.tests?.slice(0, 3).join(', ')}{order.tests?.length > 3 ? '...' : ''}
                       </div>
+                      
+                      {/* Report Upload Section - Required before Reports Generated */}
+                      {!order.report_url && order.status !== 'Reports Generated' && (
+                        <div className="mb-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                          <p className="text-sm text-purple-800 mb-2 flex items-center gap-1">
+                            <Upload className="w-4 h-4" />
+                            <strong>Upload Report</strong> (Required before Reports Generated)
+                          </p>
+                          <input
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            onChange={async (e) => {
+                              const file = e.target.files[0];
+                              if (!file) return;
+                              
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              
+                              try {
+                                toast.loading('Uploading report...');
+                                await axios.post(
+                                  `${API}/staff/diagnostic/orders/${order.id}/upload-report`,
+                                  formData,
+                                  { 
+                                    headers: { 
+                                      'Authorization': `Bearer ${localStorage.getItem('staffToken')}`,
+                                      'Content-Type': 'multipart/form-data'
+                                    }
+                                  }
+                                );
+                                toast.dismiss();
+                                toast.success('Report uploaded successfully');
+                                loadData();
+                              } catch (error) {
+                                toast.dismiss();
+                                toast.error(error.response?.data?.detail || 'Upload failed');
+                              }
+                            }}
+                            className="text-sm"
+                            data-testid={`upload-report-${order.id}`}
+                          />
+                        </div>
+                      )}
+                      
+                      {order.report_url && (
+                        <div className="mb-3">
+                          <a href={order.report_url} target="_blank" rel="noopener noreferrer" className="text-sm text-purple-600 hover:underline flex items-center gap-1">
+                            <FileText className="w-4 h-4" />
+                            View Report
+                          </a>
+                        </div>
+                      )}
+                      
                       <div className="flex gap-2 flex-wrap">
                         {['Test Booked', 'Sample Collected', 'In Process', 'Reports Generated'].map(status => (
                           <Button
@@ -1137,8 +1259,12 @@ const StaffPortal = () => {
                             size="sm"
                             variant={order.status === status ? 'default' : 'outline'}
                             onClick={() => handleDiagnosticStatusUpdate(order.id, status)}
-                            disabled={order.status === status}
+                            disabled={
+                              order.status === status ||
+                              (status === 'Reports Generated' && !order.report_url)
+                            }
                             className={order.status === status ? 'bg-purple-500' : ''}
+                            title={status === 'Reports Generated' && !order.report_url ? 'Upload report first' : ''}
                           >
                             {status}
                           </Button>
