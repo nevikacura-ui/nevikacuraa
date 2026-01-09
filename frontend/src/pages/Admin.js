@@ -107,6 +107,22 @@ const Admin = () => {
   // Recent orders
   const [recentOrders, setRecentOrders] = useState(null);
 
+  // Staff Management
+  const [staffList, setStaffList] = useState([]);
+  const [staffRoles, setStaffRoles] = useState({});
+  const [showAddStaffModal, setShowAddStaffModal] = useState(false);
+  const [newStaff, setNewStaff] = useState({
+    username: '',
+    password: '',
+    name: '',
+    role: 'clinic_staff',
+    doctor_name: ''
+  });
+  const [addStaffLoading, setAddStaffLoading] = useState(false);
+  const [staffLoading, setStaffLoading] = useState(false);
+
+  const doctors = ['Dr. Neha Batra', 'Dr. Priya Sharma', 'Dr. Vikas Jha', 'Dr. Ankita Gupta'];
+
   // Check for existing admin session
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
