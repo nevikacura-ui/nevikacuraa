@@ -5696,6 +5696,20 @@ async def book_walk_in_appointment(appt: WalkInAppointment, staff = Depends(veri
     if role == "clinic_staff_amnion" and appt.clinic != "Amnion Clinic":
         raise HTTPException(status_code=403, detail="You can only book for Amnion Clinic")
     
+    # SLOT BLOCKING: Check if slot is already booked for normal appointments
+    existing_slot = await db.appointments.find_one({
+        "doctor": appt.doctor,
+        "date": appt.date,
+        "time": appt.time,
+        "status": {"$in": ["Booked", "In Clinic", "Completed"]}
+    })
+    
+    if existing_slot:
+        raise HTTPException(
+            status_code=400, 
+            detail="This time slot is already booked. Please select another slot."
+        )
+    
     appointment = {
         "id": str(uuid.uuid4()),
         "user_id": None,  # Walk-in, no user account
@@ -5707,6 +5721,7 @@ async def book_walk_in_appointment(appt: WalkInAppointment, staff = Depends(veri
         "patient_phone": appt.patient_phone,
         "patient_email": None,
         "status": "Booked",
+        "appointment_type": "NORMAL",
         "booking_type": "walk_in",
         "booked_by": staff.get("name"),
         "created_at": datetime.now(timezone.utc).isoformat()
