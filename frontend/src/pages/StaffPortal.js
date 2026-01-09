@@ -964,12 +964,71 @@ const StaffPortal = () => {
                         <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${getStatusColor(order.status)}`}>
                           {order.status}
                         </span>
+                        {order.bill_url && (
+                          <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-800">
+                            <Receipt className="w-3 h-3 inline mr-1" />
+                            Bill Uploaded
+                          </span>
+                        )}
                       </div>
                       <span className="text-sm text-gray-500">{order.patient_phone}</span>
                     </div>
                     <div className="text-sm text-gray-600 mb-3">
                       {order.medicines?.map(m => `${m.name} (${m.quantity})`).join(', ')}
                     </div>
+                    
+                    {/* Bill Upload Section - Required before Out for Delivery */}
+                    {!order.bill_url && order.status !== 'Delivered' && (
+                      <div className="mb-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                        <p className="text-sm text-orange-800 mb-2 flex items-center gap-1">
+                          <Upload className="w-4 h-4" />
+                          <strong>Upload Bill/Receipt</strong> (Required before Out for Delivery)
+                        </p>
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            
+                            try {
+                              toast.loading('Uploading bill...');
+                              const res = await axios.post(
+                                `${API}/staff/pharmacy/orders/${order.id}/upload-bill`,
+                                formData,
+                                { 
+                                  headers: { 
+                                    'Authorization': `Bearer ${localStorage.getItem('staffToken')}`,
+                                    'Content-Type': 'multipart/form-data'
+                                  }
+                                }
+                              );
+                              toast.dismiss();
+                              toast.success('Bill uploaded successfully');
+                              loadData();
+                            } catch (error) {
+                              toast.dismiss();
+                              toast.error(error.response?.data?.detail || 'Upload failed');
+                            }
+                          }}
+                          className="text-sm"
+                          data-testid={`upload-bill-${order.id}`}
+                        />
+                      </div>
+                    )}
+                    
+                    {order.bill_url && (
+                      <div className="mb-3">
+                        <a href={order.bill_url} target="_blank" rel="noopener noreferrer" className="text-sm text-orange-600 hover:underline flex items-center gap-1">
+                          <FileText className="w-4 h-4" />
+                          View Bill/Receipt
+                        </a>
+                      </div>
+                    )}
+                    
                     <div className="flex gap-2 flex-wrap">
                       {['Order Booked', 'Packing', 'Out for Delivery', 'Delivered'].map(status => (
                         <Button
@@ -977,8 +1036,12 @@ const StaffPortal = () => {
                           size="sm"
                           variant={order.status === status ? 'default' : 'outline'}
                           onClick={() => handlePharmacyStatusUpdate(order.id, status)}
-                          disabled={order.status === status}
+                          disabled={
+                            order.status === status || 
+                            (status === 'Out for Delivery' && !order.bill_url)
+                          }
                           className={order.status === status ? 'bg-orange-500' : ''}
+                          title={status === 'Out for Delivery' && !order.bill_url ? 'Upload bill first' : ''}
                         >
                           {status}
                         </Button>
