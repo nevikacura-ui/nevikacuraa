@@ -225,6 +225,10 @@ const StaffPortal = () => {
         // Also load service-linked orders
         const serviceRes = await axios.get(`${API}/staff/diagnostic/service-orders`, getAuthHeaders());
         setServiceOrders(serviceRes.data.orders || []);
+        
+        // Load available tests
+        const testsRes = await axios.get(`${API}/staff/diagnostic-tests`, getAuthHeaders());
+        setAvailableTests(testsRes.data.tests || {});
       }
     } catch (error) {
       console.error('Load data error:', error);
