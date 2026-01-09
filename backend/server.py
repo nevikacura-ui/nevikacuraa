@@ -5675,13 +5675,24 @@ async def book_walk_in_appointment(appt: WalkInAppointment, staff = Depends(veri
         "patient_name": appt.patient_name,
         "patient_phone": appt.patient_phone,
         "patient_email": None,
-        "status": "pending",
+        "status": "Booked",
         "booking_type": "walk_in",
         "booked_by": staff.get("name"),
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
     await db.appointments.insert_one(appointment)
+    
+    # Log action
+    await db.audit_logs.insert_one({
+        "action": "appointment_booked",
+        "appointment_id": appointment["id"],
+        "staff_id": staff.get("sub"),
+        "staff_name": staff.get("name"),
+        "patient_name": appt.patient_name,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
     logger.info(f"Walk-in appointment booked by {staff.get('name')}: {appt.patient_name}")
     
     return {k: v for k, v in appointment.items() if k != "_id"}
@@ -5689,35 +5700,81 @@ async def book_walk_in_appointment(appt: WalkInAppointment, staff = Depends(veri
 @api_router.put("/staff/appointments/{appointment_id}/check-in")
 async def check_in_patient(appointment_id: str, staff = Depends(verify_staff)):
     """Mark patient as checked in / IN CLINIC (Clinic Staff only)"""
-    if staff.get("role") not in ["clinic_staff", "super_admin"]:
+    role = staff.get("role")
+    if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
         raise HTTPException(status_code=403, detail="Clinic staff access required")
     
     appointment = await db.appointments.find_one({"id": appointment_id})
     if not appointment:
         raise HTTPException(status_code=404, detail="Appointment not found")
     
+    # Verify staff can only check-in for their clinic
+    if role == "clinic_staff_pushpa" and appointment.get("clinic") != "Pushpa Clinic":
+        raise HTTPException(status_code=403, detail="You can only manage Pushpa Clinic appointments")
+    if role == "clinic_staff_amnion" and appointment.get("clinic") != "Amnion Clinic":
+        raise HTTPException(status_code=403, detail="You can only manage Amnion Clinic appointments")
+    
     await db.appointments.update_one(
         {"id": appointment_id},
         {"$set": {
-            "status": "in_clinic",
+            "status": "In Clinic",
             "checked_in_at": datetime.now(timezone.utc).isoformat(),
             "checked_in_by": staff.get("name")
         }}
     )
     
+    # Log action
+    await db.audit_logs.insert_one({
+        "action": "patient_checked_in",
+        "appointment_id": appointment_id,
+        "staff_id": staff.get("sub"),
+        "staff_name": staff.get("name"),
+        "patient_name": appointment.get("patient_name"),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
+    # Send email if patient has email
+    if appointment.get("patient_email"):
+        patient_html = f"""
+        <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+                <h1 style="color: white; margin: 0;">You are Checked-In ✓</h1>
+            </div>
+            <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+                <p>Dear <strong>{appointment.get('patient_name')}</strong>,</p>
+                <p>You have been marked <strong>IN CLINIC</strong> for your appointment.</p>
+                <p>Please wait, the doctor will see you shortly.</p>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Doctor:</strong> {appointment.get('doctor')}</p>
+                    <p><strong>Clinic:</strong> {appointment.get('clinic')}</p>
+                </div>
+                <p style="color: #64748b; font-size: 14px;">Thank you for choosing Nevika Cura Healthcare.</p>
+            </div>
+        </div>
+        """
+        await send_email_notification(
+            f"Patient Check-In - {appointment.get('patient_name')}",
+            f"Patient {appointment.get('patient_name')} checked in at {appointment.get('clinic')}",
+            patient_email=appointment.get("patient_email"),
+            patient_subject="You are Checked-In – Nevika Cura",
+            patient_html=patient_html
+        )
+    
     logger.info(f"Patient checked in by {staff.get('name')}: {appointment.get('patient_name')}")
     
-    return {"success": True, "status": "in_clinic", "message": "Patient checked in successfully"}
+    return {"success": True, "status": "In Clinic", "message": "Patient checked in successfully"}
 
 # ============ Doctor Endpoints ============
 
 @api_router.get("/staff/doctor/appointments")
 async def get_doctor_appointments(staff = Depends(verify_staff), date: Optional[str] = None):
     """Get appointments for the logged-in doctor"""
-    if staff.get("role") not in ["doctor", "super_admin"]:
+    role = staff.get("role")
+    if role not in ["doctor_pushpa", "doctor_amnion", "super_admin"]:
         raise HTTPException(status_code=403, detail="Doctor access required")
     
-    query = {"doctor": staff.get("doctor_name")} if staff.get("role") == "doctor" else {}
+    # Doctors can only see their own appointments
+    query = {"doctor": staff.get("doctor_name")} if role.startswith("doctor") else {}
     
     if date:
         query["date"] = date
