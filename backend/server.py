@@ -6283,7 +6283,7 @@ async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpd
 
 @api_router.get("/staff/diagnostic/orders")
 async def get_diagnostic_orders_for_staff(staff = Depends(verify_staff), status: Optional[str] = None):
-    """Get diagnostic orders for staff"""
+    """Get diagnostic orders for staff (from both test_orders and diagnostic_orders)"""
     if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
         raise HTTPException(status_code=403, detail="Diagnostics staff access required")
     
@@ -6291,8 +6291,18 @@ async def get_diagnostic_orders_for_staff(staff = Depends(verify_staff), status:
     if status:
         query["status"] = status
     
-    orders = await db.test_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
-    return {"orders": orders, "statuses": DIAGNOSTIC_STATUSES}
+    # Get orders from test_orders collection
+    test_orders = await db.test_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    
+    # Also get orders from diagnostic_orders collection (excluding service-linked ones)
+    diag_query = {**query, "linked_appointment_id": {"$exists": False}}
+    diag_orders = await db.diagnostic_orders.find(diag_query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    
+    # Combine and sort by created_at
+    all_orders = test_orders + diag_orders
+    all_orders.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    
+    return {"orders": all_orders, "statuses": DIAGNOSTIC_STATUSES}
 
 @api_router.put("/staff/diagnostic/orders/{order_id}/status")
 async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusUpdate, staff = Depends(verify_staff)):
@@ -6303,7 +6313,15 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
     if update.status not in DIAGNOSTIC_STATUSES:
         raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {DIAGNOSTIC_STATUSES}")
     
+    # Try to find in test_orders first
     order = await db.test_orders.find_one({"id": order_id}, {"_id": 0})
+    collection = db.test_orders
+    
+    # If not found, try diagnostic_orders
+    if not order:
+        order = await db.diagnostic_orders.find_one({"id": order_id}, {"_id": 0})
+        collection = db.diagnostic_orders
+    
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     
@@ -6314,7 +6332,7 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
         "updated_by": staff.get("name")
     }
     
-    await db.test_orders.update_one(
+    await collection.update_one(
         {"id": order_id},
         {
             "$set": {"status": update.status},
