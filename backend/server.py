@@ -5894,6 +5894,9 @@ async def book_emergency_appointment(appt: EmergencyAppointment, staff = Depends
     
     logger.info(f"EMERGENCY appointment booked by {staff.get('name')}: {appt.patient_name} for {appt.doctor}")
     
+    # Send WhatsApp notification to doctor (EMERGENCY priority)
+    await notify_doctor_whatsapp(appt.doctor, appointment, "emergency")
+    
     return {k: v for k, v in appointment.items() if k != "_id"}
 
 @api_router.get("/staff/emergency-count/{doctor}/{date}")
