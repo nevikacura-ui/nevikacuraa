@@ -5450,11 +5450,23 @@ CLINICS = {
 # Appointment Statuses (Updated flow)
 APPOINTMENT_STATUSES = ["Booked", "In Clinic", "Completed", "Cancelled", "No Show"]
 
+# Appointment Types
+APPOINTMENT_TYPES = ["NORMAL", "EMERGENCY"]
+
+# Max emergency appointments per doctor per day
+MAX_EMERGENCY_PER_DOCTOR_PER_DAY = 10
+
 # Pharmacy Order Statuses (Updated)
 PHARMACY_STATUSES = ["Received", "Processing", "Ready", "Delivered"]
 
 # Diagnostic Order Statuses (Updated)
 DIAGNOSTIC_STATUSES = ["Booked", "Sample Collected", "Processing", "Report Ready", "Completed"]
+
+# Add-on Service Types
+SERVICE_TYPES = ["BLOOD_TEST", "SONOGRAPHY", "ECG"]
+
+# Service Statuses
+SERVICE_STATUSES = ["ORDERED", "SAMPLE_COLLECTED", "PROCESSING", "COMPLETED"]
 
 class AdminLogin(BaseModel):
     password: str
