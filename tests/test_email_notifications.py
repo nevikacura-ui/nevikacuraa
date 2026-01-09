@@ -340,7 +340,9 @@ class TestStatusUpdateWithoutPatientEmail:
         order_id = create_response.json()["id"]
         
         # Update status
-        headers = {"X-Admin-Password": ADMIN_PASSWORD}
+        admin_token = get_admin_token()
+        assert admin_token is not None, "Failed to get admin token"
+        headers = {"Authorization": f"Bearer {admin_token}"}
         update_response = requests.put(
             f"{BASE_URL}/api/admin/pharmacy/orders/{order_id}/status",
             json={"order_id": order_id, "status": "Packing"},
