@@ -712,7 +712,7 @@ const StaffPortal = () => {
                       <Label>Doctor</Label>
                       <select
                         value={walkInForm.doctor}
-                        onChange={(e) => setWalkInForm({ ...walkInForm, doctor: e.target.value })}
+                        onChange={(e) => setWalkInForm({ ...walkInForm, doctor: e.target.value, time: '' })}
                         className="w-full p-2 border rounded-lg"
                         data-testid="walkin-doctor"
                       >
@@ -724,22 +724,45 @@ const StaffPortal = () => {
                       <Input
                         type="date"
                         value={walkInForm.date}
-                        onChange={(e) => setWalkInForm({ ...walkInForm, date: e.target.value })}
+                        onChange={(e) => setWalkInForm({ ...walkInForm, date: e.target.value, time: '' })}
                         data-testid="walkin-date"
                       />
                     </div>
                   </div>
                   
+                  {/* Doctor availability notice */}
+                  {walkInForm.doctor && walkInForm.date && !isDoctorAvailable && (
+                    <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm">
+                      <AlertTriangle className="w-4 h-4 inline mr-2" />
+                      <strong>{walkInForm.doctor}</strong> is not available at {staffInfo?.clinic} on {getDayName(walkInForm.date)}. 
+                      Please select a different date or doctor.
+                    </div>
+                  )}
+                  
+                  {/* Show schedule info */}
+                  {walkInForm.doctor && DOCTOR_SCHEDULES[walkInForm.doctor]?.[staffInfo?.clinic] && (
+                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-sm">
+                      <Clock className="w-4 h-4 inline mr-2" />
+                      <strong>{walkInForm.doctor}</strong> schedule at {staffInfo?.clinic}:
+                      <ul className="mt-1 ml-6 list-disc">
+                        {DOCTOR_SCHEDULES[walkInForm.doctor][staffInfo?.clinic].map((slot, idx) => (
+                          <li key={idx}>{slot.days.join(', ')}: {slot.time}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
                   <div>
-                    <Label>Time Slot *</Label>
+                    <Label>Time Slot * {availableTimeSlots.length > 0 && <span className="text-gray-500 text-xs">({availableTimeSlots.length} slots available)</span>}</Label>
                     <select
                       value={walkInForm.time}
                       onChange={(e) => setWalkInForm({ ...walkInForm, time: e.target.value })}
                       className="w-full p-2 border rounded-lg"
                       data-testid="walkin-time"
+                      disabled={!isDoctorAvailable}
                     >
-                      <option value="">Select time</option>
-                      {timeSlots.map(t => <option key={t} value={t}>{t}</option>)}
+                      <option value="">{isDoctorAvailable ? 'Select time' : 'No slots available'}</option>
+                      {availableTimeSlots.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
                   
@@ -763,7 +786,7 @@ const StaffPortal = () => {
                     />
                   </div>
                   
-                  <Button onClick={handleWalkInBooking} disabled={loading} className="w-full bg-teal-500 hover:bg-teal-600" data-testid="walkin-submit">
+                  <Button onClick={handleWalkInBooking} disabled={loading || !isDoctorAvailable} className="w-full bg-teal-500 hover:bg-teal-600" data-testid="walkin-submit">
                     {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <UserPlus className="w-4 h-4 mr-2" />}
                     Book Walk-in Appointment
                   </Button>
