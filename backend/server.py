@@ -6129,6 +6129,95 @@ async def get_all_medicines(page: int = 1, per_page: int = 50, search: Optional[
         "total_pages": (total + per_page - 1) // per_page
     }
 
+# ==================== PUSH NOTIFICATION ENDPOINTS ====================
+
+@api_router.get("/push/vapid-public-key")
+async def get_vapid_public_key():
+    """Get VAPID public key for push subscription"""
+    if not VAPID_PUBLIC_KEY:
+        raise HTTPException(status_code=500, detail="Push notifications not configured")
+    return {"publicKey": VAPID_PUBLIC_KEY}
+
+@api_router.post("/push/subscribe")
+async def subscribe_push(subscription: PushSubscription, user = Depends(get_current_user)):
+    """Subscribe to push notifications"""
+    try:
+        # Store subscription with user_id if authenticated
+        sub_doc = {
+            "endpoint": subscription.endpoint,
+            "keys": subscription.keys,
+            "user_id": user.id if user else None,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # Upsert to avoid duplicates
+        await db.push_subscriptions.update_one(
+            {"endpoint": subscription.endpoint},
+            {"$set": sub_doc},
+            upsert=True
+        )
+        
+        logger.info(f"Push subscription saved for user: {user.id if user else 'anonymous'}")
+        return {"success": True, "message": "Successfully subscribed to push notifications"}
+    except Exception as e:
+        logger.error(f"Failed to save push subscription: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to subscribe")
+
+@api_router.post("/push/unsubscribe")
+async def unsubscribe_push(subscription: PushSubscription):
+    """Unsubscribe from push notifications"""
+    try:
+        result = await db.push_subscriptions.delete_one({"endpoint": subscription.endpoint})
+        if result.deleted_count > 0:
+            logger.info(f"Push subscription removed: {subscription.endpoint[:50]}...")
+            return {"success": True, "message": "Successfully unsubscribed"}
+        return {"success": False, "message": "Subscription not found"}
+    except Exception as e:
+        logger.error(f"Failed to remove push subscription: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to unsubscribe")
+
+@api_router.post("/push/test")
+async def test_push_notification(user = Depends(get_current_user)):
+    """Send a test push notification to the current user"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    result = await send_push_notification(
+        user_id=user.id,
+        title="Test Notification 🔔",
+        body="Push notifications are working! You'll receive updates about your orders and appointments.",
+        url="/profile",
+        tag="test-notification"
+    )
+    
+    if result and result.get("sent", 0) > 0:
+        return {"success": True, "message": f"Test notification sent successfully", "details": result}
+    return {"success": False, "message": "No subscriptions found or all failed", "details": result}
+
+@api_router.post("/admin/push/broadcast")
+async def admin_broadcast_push(payload: PushNotificationPayload, admin = Depends(verify_admin)):
+    """Admin: Broadcast push notification to all subscribers"""
+    result = await broadcast_push_notification(
+        title=payload.title,
+        body=payload.body,
+        url=payload.url or "/",
+        tag=payload.tag
+    )
+    
+    return {"success": True, "message": "Broadcast sent", "details": result}
+
+@api_router.get("/admin/push/subscribers")
+async def get_push_subscribers(admin = Depends(verify_admin)):
+    """Admin: Get count of push notification subscribers"""
+    total = await db.push_subscriptions.count_documents({})
+    with_user = await db.push_subscriptions.count_documents({"user_id": {"$ne": None}})
+    
+    return {
+        "total_subscribers": total,
+        "authenticated_users": with_user,
+        "anonymous": total - with_user
+    }
+
 @api_router.get("/")
 async def root():
     return {"message": "Nevika Cura Healthcare API"}
