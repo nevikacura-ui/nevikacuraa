@@ -6897,10 +6897,6 @@ async def delete_single_appointment(appointment_id: str, admin = Depends(verify_
 
 # ============ Order Tracking & Status Updates ============
 
-# Status definitions
-PHARMACY_STATUSES = ["Order Booked", "Packing", "Out for Delivery", "Delivered"]
-DIAGNOSTIC_STATUSES = ["Test Booked", "Sample Collected", "In Process", "Reports Generated"]
-
 class OrderStatusUpdate(BaseModel):
     status: str
     notes: Optional[str] = None
