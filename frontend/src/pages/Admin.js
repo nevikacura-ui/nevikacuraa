@@ -1014,6 +1014,85 @@ const Admin = () => {
             </Card>
           </TabsContent>
 
+          {/* Staff Management Tab */}
+          <TabsContent value="staff">
+            <Card className="p-6">
+              <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
+                <div>
+                  <h2 className="font-heading text-xl font-semibold">Staff Management</h2>
+                  <p className="text-sm text-muted-foreground">Manage doctors, clinic staff, and service staff</p>
+                </div>
+                <Button onClick={() => setShowAddStaffModal(true)} className="rounded-full" data-testid="add-staff-button">
+                  <Plus className="w-4 h-4 mr-2" /> Add Staff
+                </Button>
+              </div>
+
+              {staffLoading ? (
+                <div className="flex justify-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : staffList.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No staff members yet</p>
+                  <p className="text-sm">Add doctors and staff to manage appointments and orders</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {staffList.map((staff) => (
+                    <div key={staff.id} className={`flex items-center justify-between p-4 rounded-lg border ${staff.active !== false ? 'bg-white' : 'bg-gray-100 opacity-60'}`}>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                            staff.role === 'doctor' ? 'bg-blue-100 text-blue-600' :
+                            staff.role === 'clinic_staff' ? 'bg-green-100 text-green-600' :
+                            staff.role === 'pharmacy_staff' ? 'bg-orange-100 text-orange-600' :
+                            'bg-purple-100 text-purple-600'
+                          }`}>
+                            {staff.role === 'doctor' ? '👨‍⚕️' : 
+                             staff.role === 'clinic_staff' ? '🏥' :
+                             staff.role === 'pharmacy_staff' ? '💊' : '🔬'}
+                          </div>
+                          <div>
+                            <p className="font-medium">{staff.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              @{staff.username} • {staffRoles[staff.role] || staff.role}
+                              {staff.doctor_name && ` • ${staff.doctor_name}`}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleToggleStaff(staff.id)}
+                        >
+                          {staff.active !== false ? 'Disable' : 'Enable'}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteStaff(staff.id)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                <h3 className="font-medium text-blue-800 mb-2">Staff Portal Access</h3>
+                <p className="text-sm text-blue-700">
+                  Staff members can login at <code className="bg-blue-100 px-2 py-0.5 rounded">/staff</code> with their username and password.
+                </p>
+              </div>
+            </Card>
+          </TabsContent>
+
           {/* Orders Tab */}
           <TabsContent value="orders">
             <div className="grid md:grid-cols-3 gap-6">
