@@ -217,6 +217,12 @@ const Profile = () => {
               </p>
             )}
           </TabsContent>
+
+          <TabsContent value="settings" className="mt-6">
+            <div className="space-y-6">
+              <PushNotificationSettings token={localStorage.getItem('token')} />
+            </div>
+          </TabsContent>
         </Tabs>
       </main>
     </div>
