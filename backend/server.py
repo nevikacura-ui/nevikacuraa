@@ -5743,6 +5743,283 @@ async def book_walk_in_appointment(appt: WalkInAppointment, staff = Depends(veri
     
     return {k: v for k, v in appointment.items() if k != "_id"}
 
+# ============ Emergency Appointments ============
+
+@api_router.post("/staff/appointments/emergency")
+async def book_emergency_appointment(appt: EmergencyAppointment, staff = Depends(verify_staff)):
+    """Book an emergency appointment - NO time slot required (Clinic Staff only)"""
+    role = staff.get("role")
+    if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Only Clinic Staff can book emergency appointments")
+    
+    # Verify staff can only book for their clinic
+    if role == "clinic_staff_pushpa" and appt.clinic != "Pushpa Clinic":
+        raise HTTPException(status_code=403, detail="You can only book for Pushpa Clinic")
+    if role == "clinic_staff_amnion" and appt.clinic != "Amnion Clinic":
+        raise HTTPException(status_code=403, detail="You can only book for Amnion Clinic")
+    
+    # Check emergency appointment limit (max 10 per doctor per day)
+    emergency_count = await db.appointments.count_documents({
+        "doctor": appt.doctor,
+        "date": appt.date,
+        "appointment_type": "EMERGENCY",
+        "status": {"$ne": "Cancelled"}
+    })
+    
+    if emergency_count >= MAX_EMERGENCY_PER_DOCTOR_PER_DAY:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Daily emergency appointment limit reached ({MAX_EMERGENCY_PER_DOCTOR_PER_DAY}/day). Cannot book more emergency appointments for this doctor today."
+        )
+    
+    appointment = {
+        "id": str(uuid.uuid4()),
+        "user_id": None,
+        "doctor": appt.doctor,
+        "clinic": appt.clinic,
+        "date": appt.date,
+        "time": None,  # Emergency appointments have NO time slot
+        "patient_name": appt.patient_name,
+        "patient_phone": appt.patient_phone,
+        "patient_email": appt.patient_email,
+        "status": "Booked",
+        "appointment_type": "EMERGENCY",
+        "booking_type": "emergency",
+        "booked_by": staff.get("name"),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.appointments.insert_one(appointment)
+    
+    # Log action
+    await db.audit_logs.insert_one({
+        "action": "EMERGENCY_BOOKED",
+        "appointment_id": appointment["id"],
+        "staff_id": staff.get("sub"),
+        "staff_name": staff.get("name"),
+        "patient_name": appt.patient_name,
+        "doctor": appt.doctor,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
+    logger.info(f"EMERGENCY appointment booked by {staff.get('name')}: {appt.patient_name} for {appt.doctor}")
+    
+    return {k: v for k, v in appointment.items() if k != "_id"}
+
+@api_router.get("/staff/emergency-count/{doctor}/{date}")
+async def get_emergency_count(doctor: str, date: str, staff = Depends(verify_staff)):
+    """Get emergency appointment count for a doctor on a specific date"""
+    count = await db.appointments.count_documents({
+        "doctor": doctor,
+        "date": date,
+        "appointment_type": "EMERGENCY",
+        "status": {"$ne": "Cancelled"}
+    })
+    
+    return {
+        "doctor": doctor,
+        "date": date,
+        "emergency_count": count,
+        "max_allowed": MAX_EMERGENCY_PER_DOCTOR_PER_DAY,
+        "remaining": MAX_EMERGENCY_PER_DOCTOR_PER_DAY - count
+    }
+
+# ============ Add-on Services (Blood Test, Sonography, ECG) ============
+
+@api_router.post("/staff/appointments/{appointment_id}/services")
+async def add_service_to_appointment(appointment_id: str, service: AddServiceRequest, staff = Depends(verify_staff)):
+    """Add a service (Blood Test, Sonography, ECG) to an appointment - Clinic Staff only"""
+    role = staff.get("role")
+    if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Only Clinic Staff can add services")
+    
+    # Validate service type
+    if service.service_type not in SERVICE_TYPES:
+        raise HTTPException(status_code=400, detail=f"Invalid service type. Must be one of: {SERVICE_TYPES}")
+    
+    # Get appointment
+    appointment = await db.appointments.find_one({"id": appointment_id})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    # Verify clinic access
+    if role == "clinic_staff_pushpa" and appointment.get("clinic") != "Pushpa Clinic":
+        raise HTTPException(status_code=403, detail="You can only manage Pushpa Clinic appointments")
+    if role == "clinic_staff_amnion" and appointment.get("clinic") != "Amnion Clinic":
+        raise HTTPException(status_code=403, detail="You can only manage Amnion Clinic appointments")
+    
+    # Cannot add services after appointment is completed
+    if appointment.get("status") == "Completed":
+        raise HTTPException(status_code=400, detail="Cannot add services to completed appointments")
+    
+    # Create service record
+    service_record = {
+        "id": str(uuid.uuid4()),
+        "appointment_id": appointment_id,
+        "patient_name": appointment.get("patient_name"),
+        "patient_phone": appointment.get("patient_phone"),
+        "patient_email": appointment.get("patient_email"),
+        "clinic": appointment.get("clinic"),
+        "doctor": appointment.get("doctor"),
+        "service_type": service.service_type,
+        "service_details": service.service_details,
+        "ordered_by": staff.get("name"),
+        "ordered_by_id": staff.get("sub"),
+        "status": "ORDERED",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.appointment_services.insert_one(service_record)
+    
+    # Also create a linked diagnostic order for tracking
+    service_name_map = {
+        "BLOOD_TEST": "Blood Test (Clinic Add-on)",
+        "SONOGRAPHY": "Sonography (Clinic Add-on)",
+        "ECG": "ECG (Clinic Add-on)"
+    }
+    
+    diagnostic_order = {
+        "id": str(uuid.uuid4()),
+        "user_id": appointment.get("user_id"),
+        "tests": [service_name_map.get(service.service_type, service.service_type)],
+        "prescription_url": None,
+        "preferred_date": appointment.get("date"),
+        "patient_name": appointment.get("patient_name"),
+        "patient_phone": appointment.get("patient_phone"),
+        "patient_email": appointment.get("patient_email"),
+        "status": "Test Booked",
+        "linked_appointment_id": appointment_id,
+        "linked_service_id": service_record["id"],
+        "service_type": service.service_type,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.diagnostic_orders.insert_one(diagnostic_order)
+    
+    # Log action
+    await db.audit_logs.insert_one({
+        "action": "SERVICE_ADDED",
+        "appointment_id": appointment_id,
+        "service_id": service_record["id"],
+        "service_type": service.service_type,
+        "staff_id": staff.get("sub"),
+        "staff_name": staff.get("name"),
+        "patient_name": appointment.get("patient_name"),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
+    # Send email notification if patient has email
+    if appointment.get("patient_email"):
+        service_display = {
+            "BLOOD_TEST": "Blood Test",
+            "SONOGRAPHY": "Sonography / USG",
+            "ECG": "ECG (Electrocardiogram)"
+        }
+        patient_html = f"""
+        <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+                <h1 style="color: white; margin: 0;">Diagnostic Test Ordered 🔬</h1>
+            </div>
+            <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+                <p>Dear <strong>{appointment.get('patient_name')}</strong>,</p>
+                <p>The following test has been booked during your visit:</p>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8b5cf6;">
+                    <p><strong>Test:</strong> {service_display.get(service.service_type, service.service_type)}</p>
+                    <p><strong>Clinic:</strong> {appointment.get('clinic')}</p>
+                    <p><strong>Doctor:</strong> {appointment.get('doctor')}</p>
+                </div>
+                <p style="color: #64748b; font-size: 14px;">Thank you for choosing Nevika Cura Healthcare.</p>
+            </div>
+        </div>
+        """
+        await send_email_notification(
+            f"Diagnostic Test Ordered - {appointment.get('patient_name')}",
+            f"Service {service.service_type} added for patient {appointment.get('patient_name')}",
+            patient_email=appointment.get("patient_email"),
+            patient_subject="Diagnostic Test Ordered – Nevika Cura",
+            patient_html=patient_html
+        )
+    
+    logger.info(f"Service {service.service_type} added to appointment {appointment_id} by {staff.get('name')}")
+    
+    return {
+        "success": True,
+        "service": {k: v for k, v in service_record.items() if k != "_id"},
+        "message": f"{service.service_type} service added successfully"
+    }
+
+@api_router.get("/staff/appointments/{appointment_id}/services")
+async def get_appointment_services(appointment_id: str, staff = Depends(verify_staff)):
+    """Get all services linked to an appointment"""
+    services = await db.appointment_services.find(
+        {"appointment_id": appointment_id},
+        {"_id": 0}
+    ).to_list(50)
+    
+    return {"services": services}
+
+@api_router.get("/staff/diagnostic/service-orders")
+async def get_service_linked_orders(staff = Depends(verify_staff), status: Optional[str] = None):
+    """Get diagnostic orders that are linked to clinic services (Diagnostics Staff)"""
+    if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+    query = {"linked_appointment_id": {"$exists": True, "$ne": None}}
+    if status:
+        query["status"] = status
+    
+    orders = await db.diagnostic_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return {"orders": orders, "service_statuses": SERVICE_STATUSES}
+
+@api_router.put("/staff/services/{service_id}/status")
+async def update_service_status(service_id: str, update: ServiceStatusUpdate, staff = Depends(verify_staff)):
+    """Update add-on service status (Diagnostics Staff only)"""
+    if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+    if update.status not in SERVICE_STATUSES:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {SERVICE_STATUSES}")
+    
+    # Update service record
+    result = await db.appointment_services.update_one(
+        {"id": service_id},
+        {"$set": {
+            "status": update.status,
+            "updated_by": staff.get("name"),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "notes": update.notes
+        }}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    # Also update linked diagnostic order
+    service = await db.appointment_services.find_one({"id": service_id})
+    if service:
+        status_map = {
+            "ORDERED": "Test Booked",
+            "SAMPLE_COLLECTED": "Sample Collected",
+            "PROCESSING": "In Process",
+            "COMPLETED": "Reports Generated"
+        }
+        await db.diagnostic_orders.update_many(
+            {"linked_service_id": service_id},
+            {"$set": {"status": status_map.get(update.status, update.status)}}
+        )
+    
+    # Log action
+    await db.audit_logs.insert_one({
+        "action": "SERVICE_STATUS_UPDATED",
+        "service_id": service_id,
+        "new_status": update.status,
+        "staff_id": staff.get("sub"),
+        "staff_name": staff.get("name"),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {"success": True, "status": update.status}
+
 @api_router.put("/staff/appointments/{appointment_id}/check-in")
 async def check_in_patient(appointment_id: str, staff = Depends(verify_staff)):
     """Mark patient as checked in / IN CLINIC (Clinic Staff only)"""
