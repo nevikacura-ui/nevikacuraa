@@ -119,7 +119,7 @@ const StaffPortal = () => {
   const [pharmacyOrders, setPharmacyOrders] = useState([]);
   const [diagnosticOrders, setDiagnosticOrders] = useState([]);
   const [serviceOrders, setServiceOrders] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(getIndianDate());
   const [emergencyCounts, setEmergencyCounts] = useState({});
   const [availableTests, setAvailableTests] = useState({});
   
@@ -127,7 +127,7 @@ const StaffPortal = () => {
   const [walkInForm, setWalkInForm] = useState({
     doctor: '',
     clinic: '',
-    date: new Date().toISOString().split('T')[0],
+    date: getIndianDate(),
     time: '',
     patient_name: '',
     patient_phone: ''
@@ -137,7 +137,7 @@ const StaffPortal = () => {
   const [emergencyForm, setEmergencyForm] = useState({
     doctor: '',
     clinic: '',
-    date: new Date().toISOString().split('T')[0],
+    date: getIndianDate(),
     patient_name: '',
     patient_phone: '',
     patient_email: ''
