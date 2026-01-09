@@ -5549,13 +5549,21 @@ async def create_staff(staff: StaffCreate, admin = Depends(verify_admin)):
     # Hash password
     password_hash = bcrypt.hashpw(staff.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     
+    # Determine clinic based on role
+    clinic = staff.clinic
+    if staff.role in ["doctor_pushpa", "clinic_staff_pushpa"]:
+        clinic = "Pushpa Clinic"
+    elif staff.role in ["doctor_amnion", "clinic_staff_amnion"]:
+        clinic = "Amnion Clinic"
+    
     staff_doc = {
         "id": str(uuid.uuid4()),
         "username": staff.username,
         "password_hash": password_hash,
         "name": staff.name,
         "role": staff.role,
-        "doctor_name": staff.doctor_name if staff.role == "doctor" else None,
+        "doctor_name": staff.doctor_name if staff.role.startswith("doctor") else None,
+        "clinic": clinic,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "active": True
     }
@@ -5568,14 +5576,15 @@ async def create_staff(staff: StaffCreate, admin = Depends(verify_admin)):
         "username": staff.username,
         "name": staff.name,
         "role": staff.role,
-        "doctor_name": staff_doc["doctor_name"]
+        "doctor_name": staff_doc["doctor_name"],
+        "clinic": staff_doc["clinic"]
     }
 
 @api_router.get("/admin/staff")
 async def list_staff(admin = Depends(verify_admin)):
     """List all staff members"""
     staff_list = await db.staff.find({}, {"_id": 0, "password_hash": 0}).to_list(100)
-    return {"staff": staff_list, "roles": STAFF_ROLES}
+    return {"staff": staff_list, "roles": STAFF_ROLES, "clinics": CLINICS}
 
 @api_router.delete("/admin/staff/{staff_id}")
 async def delete_staff(staff_id: str, admin = Depends(verify_admin)):
