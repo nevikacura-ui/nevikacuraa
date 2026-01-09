@@ -119,16 +119,25 @@ const StaffPortal = () => {
     try {
       const res = await axios.post(`${API}/staff/login`, { username, password });
       localStorage.setItem('staffToken', res.data.token);
-      localStorage.setItem('staffInfo', JSON.stringify({
+      const staffData = {
         role: res.data.role,
         name: res.data.name,
-        doctor_name: res.data.doctor_name
-      }));
-      setStaffInfo({
-        role: res.data.role,
-        name: res.data.name,
-        doctor_name: res.data.doctor_name
-      });
+        doctor_name: res.data.doctor_name,
+        clinic: res.data.clinic
+      };
+      localStorage.setItem('staffInfo', JSON.stringify(staffData));
+      setStaffInfo(staffData);
+      
+      // Set walk-in form clinic based on logged-in user
+      if (res.data.clinic) {
+        const clinicDoctors = CLINICS[res.data.clinic] || [];
+        setWalkInForm(prev => ({
+          ...prev,
+          clinic: res.data.clinic,
+          doctor: clinicDoctors[0] || ''
+        }));
+      }
+      
       setIsAuthenticated(true);
       toast.success(`Welcome, ${res.data.name}!`);
     } catch (error) {
