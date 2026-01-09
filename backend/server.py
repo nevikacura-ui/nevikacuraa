@@ -6494,7 +6494,20 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
         }
     )
     
-    # Send email notification
+    # Build report section for email
+    report_section = ""
+    if order.get('report_url') and update.status == "Reports Generated":
+        report_section = f"""
+        <div style="background: #dcfce7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #22c55e;">
+            <h3 style="color: #166534; margin-top: 0;">📋 Your Test Reports Are Ready!</h3>
+            <p style="margin-bottom: 10px;">Your diagnostic reports are now available. Click below to download:</p>
+            <a href="{order.get('report_url')}" style="display: inline-block; background: #8b5cf6; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+                📥 Download Report (PDF)
+            </a>
+        </div>
+        """
+    
+    # Send email notification with report attachment link
     email_html = f"""
     <h2>🔬 Diagnostic Order Status Update</h2>
     <p><strong>Order ID:</strong> {order_id[:8]}...</p>
@@ -6503,16 +6516,33 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
     <p><strong>Updated by:</strong> {staff.get('name')}</p>
     """
     
+    # Get tests list
+    tests_list = order.get('tests', [])
+    if isinstance(tests_list, list):
+        tests_display = ', '.join(tests_list[:5]) + ('...' if len(tests_list) > 5 else '')
+    else:
+        tests_display = str(tests_list)
+    
     patient_html = f"""
     <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
         <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
-            <h1 style="color: white;">Test Update</h1>
+            <h1 style="color: white; margin: 0;">Test Update</h1>
         </div>
-        <div style="padding: 20px; background: #f8fafc;">
-            <p>Hello {order.get('patient_name')},</p>
-            <p>Your Proton Diagnostics order status: <strong>{update.status}</strong></p>
-            {f"<p>Notes: {update.notes}</p>" if update.notes else ""}
-            {f"<p style='color: green;'><strong>Your reports are ready!</strong> <a href='{order.get('report_url')}'>View Report</a></p>" if update.status == "Reports Generated" and order.get('report_url') else ""}
+        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+            <p>Hello <strong>{order.get('patient_name')}</strong>,</p>
+            <p>Your Proton Diagnostics test status has been updated to: <strong style="color: #8b5cf6;">{update.status}</strong></p>
+            
+            <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 5px 0;"><strong>Order ID:</strong> {order_id[:8]}...</p>
+                <p style="margin: 5px 0;"><strong>Tests:</strong> {tests_display}</p>
+                {f"<p style='margin: 5px 0;'><strong>Age/Sex:</strong> {order.get('age', 'N/A')} / {order.get('sex', 'N/A')}</p>" if order.get('age') or order.get('sex') else ""}
+            </div>
+            
+            {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
+            
+            {report_section}
+            
+            <p style="color: #64748b; font-size: 14px; margin-top: 20px;">Thank you for choosing Proton Diagnostics!</p>
         </div>
     </div>
     """
@@ -6521,7 +6551,7 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
         f"Diagnostic Order Update - {update.status}",
         email_html,
         patient_email=order.get('patient_email'),
-        patient_subject=f"Test Status: {update.status} - Proton Diagnostics",
+        patient_subject=f"Test Status: {update.status} - Proton Diagnostics" + (" (Report Attached)" if update.status == "Reports Generated" and order.get('report_url') else ""),
         patient_html=patient_html
     )
     
