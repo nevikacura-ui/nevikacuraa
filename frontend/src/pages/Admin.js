@@ -121,7 +121,7 @@ const Admin = () => {
   const [addStaffLoading, setAddStaffLoading] = useState(false);
   const [staffLoading, setStaffLoading] = useState(false);
 
-  const doctors = ['Dr. Neha Patel', 'Dr. Vikas Jha', 'Dr. Ankita Gupta'];
+  const doctors = ['Dr. Ankita Gupta', 'Dr. Vikas Jha'];
 
   // Check for existing admin session
   useEffect(() => {

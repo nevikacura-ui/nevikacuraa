@@ -58,7 +58,7 @@ TWILIO_WHATSAPP_FROM = os.environ.get('TWILIO_WHATSAPP_FROM', '')  # e.g., 'what
 
 # Doctor WhatsApp Numbers for appointment notifications
 DOCTOR_WHATSAPP_NUMBERS = {
-    "Dr. Neha Patel": "917045266466",
+    "Dr. Ankita Gupta": "917045266466",
     "Dr. Vikas Jha": "919930266466"
 }
 
