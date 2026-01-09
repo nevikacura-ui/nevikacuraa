@@ -5727,7 +5727,7 @@ async def get_pharmacy_orders_for_staff(staff = Depends(verify_staff), status: O
     return {"orders": orders, "statuses": PHARMACY_STATUSES}
 
 @api_router.put("/staff/pharmacy/orders/{order_id}/status")
-async def update_pharmacy_order_staff(order_id: str, update: OrderStatusUpdate, staff = Depends(verify_staff)):
+async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpdate, staff = Depends(verify_staff)):
     """Update pharmacy order status (Pharmacy Staff only)"""
     if staff.get("role") not in ["pharmacy_staff", "super_admin"]:
         raise HTTPException(status_code=403, detail="Pharmacy staff access required")
@@ -5813,7 +5813,7 @@ async def get_diagnostic_orders_for_staff(staff = Depends(verify_staff), status:
     return {"orders": orders, "statuses": DIAGNOSTIC_STATUSES}
 
 @api_router.put("/staff/diagnostic/orders/{order_id}/status")
-async def update_diagnostic_order_staff(order_id: str, update: OrderStatusUpdate, staff = Depends(verify_staff)):
+async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusUpdate, staff = Depends(verify_staff)):
     """Update diagnostic order status (Diagnostics Staff only)"""
     if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
         raise HTTPException(status_code=403, detail="Diagnostics staff access required")
