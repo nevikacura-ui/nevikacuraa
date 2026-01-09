@@ -5,7 +5,8 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
-import { ArrowLeft, Calendar, FileText, Pill, User } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText, Pill, User, Settings } from 'lucide-react';
+import PushNotificationSettings from '@/components/PushNotificationSettings';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
