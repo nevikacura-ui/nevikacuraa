@@ -18,8 +18,8 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 // Clinic configuration with clinic IDs
 const CLINICS = {
-  "Pushpa Clinic": ["Dr. Ankita Gupta", "Dr. Vikas Jha"],
-  "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Ankita Gupta"]
+  "Pushpa Clinic": ["Dr. Neha Patel", "Dr. Vikas Jha"],
+  "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Neha Patel"]
 };
 
 // Doctor schedules - matching DiaGyn clinic availability
@@ -33,14 +33,13 @@ const DOCTOR_SCHEDULES = {
       { days: ['Tuesday', 'Thursday', 'Saturday'], time: '18:00-22:00' }
     ]
   },
-  "Dr. Ankita Gupta": {
+  "Dr. Neha Patel": {
+    "Amnion Clinic": [
+      { days: ['Monday', 'Wednesday', 'Friday'], time: '18:00-22:00' }
+    ],
     "Pushpa Clinic": [
       { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00-14:00' },
       { days: ['Tuesday', 'Thursday', 'Saturday'], time: '18:00-22:00' }
-    ],
-    "Amnion Clinic": [
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '10:00-13:00' },
-      { days: ['Monday', 'Wednesday', 'Friday'], time: '17:00-20:00' }
     ]
   }
 };
