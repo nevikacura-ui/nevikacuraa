@@ -8,7 +8,7 @@ import requests
 import os
 import uuid
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://carehub-21.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://nevika-health-1.preview.emergentagent.com')
 
 
 class TestMedicineCount:
