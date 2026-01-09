@@ -369,6 +369,7 @@ const Pharmacy = () => {
         prescription_url: prescriptionUrl || null,
         patient_name: patientInfo.name,
         patient_phone: patientInfo.phone,
+        patient_email: patientInfo.email || null,
         delivery_address: deliveryAddress
       };
 
@@ -395,7 +396,8 @@ const Pharmacy = () => {
         '',
         '*Customer Details:*',
         `Name: ${patientInfo.name}`,
-        `Mobile: ${patientInfo.phone} (Verified)`
+        `Mobile: ${patientInfo.phone} (Verified)`,
+        patientInfo.email ? `Email: ${patientInfo.email}` : ''
       ].filter(Boolean).join('\n');
       
       const encodedMessage = encodeURIComponent(messageLines);
