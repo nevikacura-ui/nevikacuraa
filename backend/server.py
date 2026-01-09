@@ -7665,6 +7665,14 @@ async def get_push_subscribers(admin = Depends(verify_admin)):
 async def root():
     return {"message": "Nevika Cura Healthcare API"}
 
+# Create uploads directories
+uploads_dir = ROOT_DIR / "uploads"
+(uploads_dir / "reports").mkdir(parents=True, exist_ok=True)
+(uploads_dir / "bills").mkdir(parents=True, exist_ok=True)
+
+# Mount static files for uploads
+app.mount("/api/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
+
 app.include_router(api_router)
 
 app.add_middleware(
