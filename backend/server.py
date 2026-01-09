@@ -5903,6 +5903,22 @@ async def update_pharmacy_order_status(order_id: str, update: OrderStatusUpdate,
         patient_html=patient_status_html
     )
     
+    # Send push notification to user
+    if order.get('user_id'):
+        push_body = f"Your pharmacy order is now: {update.status}"
+        if update.status == "Delivered":
+            push_body = "Your pharmacy order has been delivered! 🎉"
+        elif update.status == "Out for Delivery":
+            push_body = "Your order is out for delivery! 🚚"
+        
+        await send_push_notification(
+            user_id=order.get('user_id'),
+            title=f"Order Update: {update.status}",
+            body=push_body,
+            url="/profile",
+            tag=f"pharmacy-update-{order_id}"
+        )
+    
     return {"success": True, "message": f"Order status updated to '{update.status}'", "status": update.status}
 
 @api_router.get("/admin/diagnostic/orders")
