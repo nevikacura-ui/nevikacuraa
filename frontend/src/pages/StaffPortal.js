@@ -458,8 +458,8 @@ const StaffPortal = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Service Modal */}
-      {showServiceModal && <ServiceModal />}
+      {/* Service Modal - Rendered inline */}
+      {showServiceModal && serviceModalContent}
       
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-40">
