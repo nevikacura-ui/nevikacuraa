@@ -403,7 +403,8 @@ const Proton = () => {
         prescription_url: prescriptionUrl || null,
         preferred_date: format(preferredDate, 'yyyy-MM-dd'),
         patient_name: patientInfo.name,
-        patient_phone: patientInfo.phone
+        patient_phone: patientInfo.phone,
+        patient_email: patientInfo.email || null
       };
 
       if (user) {
@@ -428,7 +429,8 @@ const Proton = () => {
         '',
         '*Patient Details:*',
         `Name: ${patientInfo.name}`,
-        `Mobile: ${patientInfo.phone} (Verified)`
+        `Mobile: ${patientInfo.phone} (Verified)`,
+        patientInfo.email ? `Email: ${patientInfo.email}` : ''
       ].filter(Boolean).join('\n');
       
       const encodedMessage = encodeURIComponent(messageLines);
