@@ -67,6 +67,16 @@ const generateTimeSlots = (startTime, endTime, interval = 15) => {
   return slots;
 };
 
+// Get current date in Indian timezone (IST - UTC+5:30)
+const getIndianDate = () => {
+  const now = new Date();
+  // Convert to IST by adding 5 hours 30 minutes to UTC
+  const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+  const utcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
+  const istTime = new Date(utcTime + istOffset);
+  return istTime.toISOString().split('T')[0];
+};
+
 // Get day name from date
 const getDayName = (dateStr) => {
   const date = new Date(dateStr);
