@@ -7,6 +7,7 @@ import Pharmacy from '@/pages/Pharmacy';
 import Profile from '@/pages/Profile';
 import Admin from '@/pages/Admin';
 import { AuthProvider } from '@/context/AuthContext';
+import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import './App.css';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path="/admin" element={<Admin />} />
           </Routes>
           <Toaster position="top-center" richColors />
+          <PWAInstallPrompt />
         </div>
       </BrowserRouter>
     </AuthProvider>
