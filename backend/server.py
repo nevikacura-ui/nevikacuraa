@@ -1040,13 +1040,21 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
 
 @api_router.get("/appointments/booked-slots")
 async def get_booked_slots(doctor: str, clinic: str, date: str):
-    """Get booked slots for a specific doctor, clinic, and date"""
+    """Get booked slots for a specific doctor, clinic, and date
+    Returns slots that are actively booked (not cancelled/no-show)
+    This endpoint is used by both DiaGyn (patient) and StaffPortal for slot synchronization
+    """
     booked = await db.appointments.find(
-        {"doctor": doctor, "clinic": clinic, "date": date},
+        {
+            "doctor": doctor, 
+            "clinic": clinic, 
+            "date": date,
+            "status": {"$in": ["Booked", "In Clinic", "Completed"]}
+        },
         {"_id": 0, "time": 1}
     ).to_list(100)
     
-    return {"booked_slots": [b["time"] for b in booked]}
+    return {"booked_slots": [b["time"] for b in booked if b.get("time")]}
 
 @api_router.get("/appointments", response_model=List[Appointment])
 async def get_appointments(user = Depends(get_current_user)):
