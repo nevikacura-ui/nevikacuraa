@@ -90,12 +90,6 @@ const StaffPortal = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (isAuthenticated && staffInfo) {
-      loadData();
-    }
-  }, [isAuthenticated, staffInfo, selectedDate]);
-
   const getAuthHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('staffToken')}` }
   });
@@ -136,6 +130,13 @@ const StaffPortal = () => {
       console.error('Load data error:', error);
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated && staffInfo) {
+      loadData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, staffInfo, selectedDate]);
 
   const handleLogin = async () => {
     if (!username || !password) {
