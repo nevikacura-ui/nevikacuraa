@@ -326,7 +326,7 @@ const StaffPortal = () => {
 
       <main className="max-w-7xl mx-auto px-4 py-6">
         {/* Clinic Staff View */}
-        {(role === 'clinic_staff' || role === 'super_admin') && (
+        {isClinicStaff(role) && (
           <Tabs defaultValue="appointments" className="space-y-4">
             <TabsList>
               <TabsTrigger value="appointments">
@@ -342,7 +342,7 @@ const StaffPortal = () => {
             <TabsContent value="appointments">
               <Card className="p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-semibold text-lg">Today's Appointments</h2>
+                  <h2 className="font-semibold text-lg">{staffInfo?.clinic || 'Clinic'} - Appointments</h2>
                   <Input
                     type="date"
                     value={selectedDate}
