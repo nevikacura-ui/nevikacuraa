@@ -5430,8 +5430,43 @@ MEDICINE_INVENTORY = [
 # ============ Admin Configuration ============
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'nevikacura2026')  # Change in production
 
+# Staff Roles
+STAFF_ROLES = {
+    "super_admin": "Super Admin - Full Access",
+    "doctor": "Doctor - Mark Appointments Complete",
+    "clinic_staff": "Clinic Staff - Book Walk-ins & Check-in Patients",
+    "pharmacy_staff": "Pharmacy Staff - Update Order Status",
+    "diagnostics_staff": "Diagnostics Staff - Update Test Status"
+}
+
+# Appointment Statuses
+APPOINTMENT_STATUSES = ["pending", "in_clinic", "completed", "cancelled", "no_show"]
+
 class AdminLogin(BaseModel):
     password: str
+
+class StaffCreate(BaseModel):
+    username: str
+    password: str
+    name: str
+    role: str
+    doctor_name: Optional[str] = None  # Only for doctor role
+
+class StaffLogin(BaseModel):
+    username: str
+    password: str
+
+class WalkInAppointment(BaseModel):
+    doctor: str
+    clinic: str
+    date: str
+    time: str
+    patient_name: str
+    patient_phone: str
+
+class AppointmentStatusUpdate(BaseModel):
+    status: str
+    notes: Optional[str] = None
 
 @api_router.post("/admin/login")
 async def admin_login(input: AdminLogin):
@@ -5442,11 +5477,12 @@ async def admin_login(input: AdminLogin):
     # Generate admin token with 30 days expiry for persistent login
     admin_token = jwt.encode({
         'sub': 'admin',
-        'role': 'admin',
+        'role': 'super_admin',
+        'name': 'Super Admin',
         'exp': datetime.now(timezone.utc) + timedelta(days=30)
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
-    return {"token": admin_token, "role": "admin"}
+    return {"token": admin_token, "role": "super_admin", "name": "Super Admin"}
 
 async def verify_admin(authorization: str = Header(None)):
     """Verify admin token"""
@@ -5456,13 +5492,410 @@ async def verify_admin(authorization: str = Header(None)):
     token = authorization.split(' ')[1]
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        if payload.get('role') != 'admin':
+        if payload.get('role') not in ['admin', 'super_admin']:
             raise HTTPException(status_code=403, detail="Admin access required")
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Admin session expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid admin token")
+
+async def verify_staff(authorization: str = Header(None)):
+    """Verify staff token and return staff info"""
+    if not authorization or not authorization.startswith('Bearer '):
+        raise HTTPException(status_code=401, detail="Staff authentication required")
+    
+    token = authorization.split(' ')[1]
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Session expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+# ============ Staff Management Endpoints ============
+
+@api_router.post("/admin/staff")
+async def create_staff(staff: StaffCreate, admin = Depends(verify_admin)):
+    """Create a new staff member (Super Admin only)"""
+    if staff.role not in STAFF_ROLES:
+        raise HTTPException(status_code=400, detail=f"Invalid role. Must be one of: {list(STAFF_ROLES.keys())}")
+    
+    # Check if username already exists
+    existing = await db.staff.find_one({"username": staff.username})
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already exists")
+    
+    # Hash password
+    password_hash = bcrypt.hashpw(staff.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    staff_doc = {
+        "id": str(uuid.uuid4()),
+        "username": staff.username,
+        "password_hash": password_hash,
+        "name": staff.name,
+        "role": staff.role,
+        "doctor_name": staff.doctor_name if staff.role == "doctor" else None,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "active": True
+    }
+    
+    await db.staff.insert_one(staff_doc)
+    logger.info(f"Staff created: {staff.username} ({staff.role})")
+    
+    return {
+        "id": staff_doc["id"],
+        "username": staff.username,
+        "name": staff.name,
+        "role": staff.role,
+        "doctor_name": staff_doc["doctor_name"]
+    }
+
+@api_router.get("/admin/staff")
+async def list_staff(admin = Depends(verify_admin)):
+    """List all staff members"""
+    staff_list = await db.staff.find({}, {"_id": 0, "password_hash": 0}).to_list(100)
+    return {"staff": staff_list, "roles": STAFF_ROLES}
+
+@api_router.delete("/admin/staff/{staff_id}")
+async def delete_staff(staff_id: str, admin = Depends(verify_admin)):
+    """Delete a staff member"""
+    result = await db.staff.delete_one({"id": staff_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Staff member not found")
+    return {"success": True, "message": "Staff member deleted"}
+
+@api_router.put("/admin/staff/{staff_id}/toggle")
+async def toggle_staff_status(staff_id: str, admin = Depends(verify_admin)):
+    """Enable/disable a staff member"""
+    staff = await db.staff.find_one({"id": staff_id})
+    if not staff:
+        raise HTTPException(status_code=404, detail="Staff member not found")
+    
+    new_status = not staff.get("active", True)
+    await db.staff.update_one({"id": staff_id}, {"$set": {"active": new_status}})
+    
+    return {"success": True, "active": new_status}
+
+# ============ Staff Login & Role-specific Endpoints ============
+
+@api_router.post("/staff/login")
+async def staff_login(input: StaffLogin):
+    """Staff login with username and password"""
+    staff = await db.staff.find_one({"username": input.username})
+    
+    if not staff:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    if not staff.get("active", True):
+        raise HTTPException(status_code=403, detail="Account is disabled")
+    
+    if not bcrypt.checkpw(input.password.encode('utf-8'), staff["password_hash"].encode('utf-8')):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    # Generate staff token with 30 days expiry
+    staff_token = jwt.encode({
+        'sub': staff["id"],
+        'username': staff["username"],
+        'role': staff["role"],
+        'name': staff["name"],
+        'doctor_name': staff.get("doctor_name"),
+        'exp': datetime.now(timezone.utc) + timedelta(days=30)
+    }, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+    return {
+        "token": staff_token,
+        "role": staff["role"],
+        "name": staff["name"],
+        "doctor_name": staff.get("doctor_name")
+    }
+
+# ============ Clinic Staff Endpoints ============
+
+@api_router.post("/staff/appointments/walk-in")
+async def book_walk_in_appointment(appt: WalkInAppointment, staff = Depends(verify_staff)):
+    """Book a walk-in appointment (Clinic Staff only)"""
+    if staff.get("role") not in ["clinic_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Clinic staff access required")
+    
+    appointment = {
+        "id": str(uuid.uuid4()),
+        "user_id": None,  # Walk-in, no user account
+        "doctor": appt.doctor,
+        "clinic": appt.clinic,
+        "date": appt.date,
+        "time": appt.time,
+        "patient_name": appt.patient_name,
+        "patient_phone": appt.patient_phone,
+        "patient_email": None,
+        "status": "pending",
+        "booking_type": "walk_in",
+        "booked_by": staff.get("name"),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.appointments.insert_one(appointment)
+    logger.info(f"Walk-in appointment booked by {staff.get('name')}: {appt.patient_name}")
+    
+    return {k: v for k, v in appointment.items() if k != "_id"}
+
+@api_router.put("/staff/appointments/{appointment_id}/check-in")
+async def check_in_patient(appointment_id: str, staff = Depends(verify_staff)):
+    """Mark patient as checked in / IN CLINIC (Clinic Staff only)"""
+    if staff.get("role") not in ["clinic_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Clinic staff access required")
+    
+    appointment = await db.appointments.find_one({"id": appointment_id})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    await db.appointments.update_one(
+        {"id": appointment_id},
+        {"$set": {
+            "status": "in_clinic",
+            "checked_in_at": datetime.now(timezone.utc).isoformat(),
+            "checked_in_by": staff.get("name")
+        }}
+    )
+    
+    logger.info(f"Patient checked in by {staff.get('name')}: {appointment.get('patient_name')}")
+    
+    return {"success": True, "status": "in_clinic", "message": "Patient checked in successfully"}
+
+# ============ Doctor Endpoints ============
+
+@api_router.get("/staff/doctor/appointments")
+async def get_doctor_appointments(staff = Depends(verify_staff), date: Optional[str] = None):
+    """Get appointments for the logged-in doctor"""
+    if staff.get("role") not in ["doctor", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Doctor access required")
+    
+    query = {"doctor": staff.get("doctor_name")} if staff.get("role") == "doctor" else {}
+    
+    if date:
+        query["date"] = date
+    
+    appointments = await db.appointments.find(query, {"_id": 0}).sort("time", 1).to_list(100)
+    return {"appointments": appointments}
+
+@api_router.put("/staff/appointments/{appointment_id}/complete")
+async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = None, staff = Depends(verify_staff)):
+    """Mark appointment as completed (Doctor only)"""
+    if staff.get("role") not in ["doctor", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Doctor access required")
+    
+    appointment = await db.appointments.find_one({"id": appointment_id})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    # If doctor role, verify it's their appointment
+    if staff.get("role") == "doctor" and appointment.get("doctor") != staff.get("doctor_name"):
+        raise HTTPException(status_code=403, detail="You can only complete your own appointments")
+    
+    await db.appointments.update_one(
+        {"id": appointment_id},
+        {"$set": {
+            "status": "completed",
+            "completed_at": datetime.now(timezone.utc).isoformat(),
+            "completed_by": staff.get("name"),
+            "completion_notes": notes
+        }}
+    )
+    
+    logger.info(f"Appointment completed by {staff.get('name')}: {appointment.get('patient_name')}")
+    
+    return {"success": True, "status": "completed", "message": "Appointment marked as completed"}
+
+# ============ Pharmacy Staff Endpoints ============
+
+@api_router.get("/staff/pharmacy/orders")
+async def get_pharmacy_orders_for_staff(staff = Depends(verify_staff), status: Optional[str] = None):
+    """Get pharmacy orders for staff"""
+    if staff.get("role") not in ["pharmacy_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Pharmacy staff access required")
+    
+    query = {}
+    if status:
+        query["status"] = status
+    
+    orders = await db.pharmacy_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return {"orders": orders, "statuses": PHARMACY_STATUSES}
+
+@api_router.put("/staff/pharmacy/orders/{order_id}/status")
+async def update_pharmacy_order_staff(order_id: str, update: OrderStatusUpdate, staff = Depends(verify_staff)):
+    """Update pharmacy order status (Pharmacy Staff only)"""
+    if staff.get("role") not in ["pharmacy_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Pharmacy staff access required")
+    
+    if update.status not in PHARMACY_STATUSES:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {PHARMACY_STATUSES}")
+    
+    order = await db.pharmacy_orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    status_entry = {
+        "status": update.status,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "notes": update.notes,
+        "updated_by": staff.get("name")
+    }
+    
+    await db.pharmacy_orders.update_one(
+        {"id": order_id},
+        {
+            "$set": {"status": update.status},
+            "$push": {"status_history": status_entry}
+        }
+    )
+    
+    # Send email notification
+    email_html = f"""
+    <h2>📦 Pharmacy Order Status Update</h2>
+    <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+    <p><strong>Patient:</strong> {order.get('patient_name')}</p>
+    <p><strong>New Status:</strong> {update.status}</p>
+    <p><strong>Updated by:</strong> {staff.get('name')}</p>
+    """
+    
+    patient_html = f"""
+    <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+            <h1 style="color: white;">Order Update</h1>
+        </div>
+        <div style="padding: 20px; background: #f8fafc;">
+            <p>Hello {order.get('patient_name')},</p>
+            <p>Your Orange Pharmacy order status: <strong>{update.status}</strong></p>
+            {f"<p>Notes: {update.notes}</p>" if update.notes else ""}
+        </div>
+    </div>
+    """
+    
+    await send_email_notification(
+        f"Pharmacy Order Update - {update.status}",
+        email_html,
+        patient_email=order.get('patient_email'),
+        patient_subject=f"Your Order is {update.status} - Orange Pharmacy",
+        patient_html=patient_html
+    )
+    
+    # Send push notification
+    if order.get('user_id'):
+        await send_push_notification(
+            user_id=order.get('user_id'),
+            title=f"Order Update: {update.status}",
+            body=f"Your pharmacy order is now: {update.status}",
+            url="/profile"
+        )
+    
+    logger.info(f"Pharmacy order {order_id} updated to {update.status} by {staff.get('name')}")
+    
+    return {"success": True, "status": update.status}
+
+# ============ Diagnostics Staff Endpoints ============
+
+@api_router.get("/staff/diagnostic/orders")
+async def get_diagnostic_orders_for_staff(staff = Depends(verify_staff), status: Optional[str] = None):
+    """Get diagnostic orders for staff"""
+    if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+    query = {}
+    if status:
+        query["status"] = status
+    
+    orders = await db.test_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return {"orders": orders, "statuses": DIAGNOSTIC_STATUSES}
+
+@api_router.put("/staff/diagnostic/orders/{order_id}/status")
+async def update_diagnostic_order_staff(order_id: str, update: OrderStatusUpdate, staff = Depends(verify_staff)):
+    """Update diagnostic order status (Diagnostics Staff only)"""
+    if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+    if update.status not in DIAGNOSTIC_STATUSES:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {DIAGNOSTIC_STATUSES}")
+    
+    order = await db.test_orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    status_entry = {
+        "status": update.status,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "notes": update.notes,
+        "updated_by": staff.get("name")
+    }
+    
+    await db.test_orders.update_one(
+        {"id": order_id},
+        {
+            "$set": {"status": update.status},
+            "$push": {"status_history": status_entry}
+        }
+    )
+    
+    # Send email notification
+    email_html = f"""
+    <h2>🔬 Diagnostic Order Status Update</h2>
+    <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+    <p><strong>Patient:</strong> {order.get('patient_name')}</p>
+    <p><strong>New Status:</strong> {update.status}</p>
+    <p><strong>Updated by:</strong> {staff.get('name')}</p>
+    """
+    
+    patient_html = f"""
+    <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+            <h1 style="color: white;">Test Update</h1>
+        </div>
+        <div style="padding: 20px; background: #f8fafc;">
+            <p>Hello {order.get('patient_name')},</p>
+            <p>Your Proton Diagnostics order status: <strong>{update.status}</strong></p>
+            {f"<p>Notes: {update.notes}</p>" if update.notes else ""}
+            {"<p style='color: green;'><strong>Your reports are ready!</strong></p>" if update.status == "Reports Generated" else ""}
+        </div>
+    </div>
+    """
+    
+    await send_email_notification(
+        f"Diagnostic Order Update - {update.status}",
+        email_html,
+        patient_email=order.get('patient_email'),
+        patient_subject=f"Test Status: {update.status} - Proton Diagnostics",
+        patient_html=patient_html
+    )
+    
+    # Send push notification
+    if order.get('user_id'):
+        await send_push_notification(
+            user_id=order.get('user_id'),
+            title=f"Test Update: {update.status}",
+            body=f"Your test reports are ready!" if update.status == "Reports Generated" else f"Your diagnostic order is now: {update.status}",
+            url="/profile"
+        )
+    
+    logger.info(f"Diagnostic order {order_id} updated to {update.status} by {staff.get('name')}")
+    
+    return {"success": True, "status": update.status}
+
+# ============ Clinic Staff - Get Today's Appointments ============
+
+@api_router.get("/staff/clinic/appointments")
+async def get_clinic_appointments(staff = Depends(verify_staff), date: Optional[str] = None, status: Optional[str] = None):
+    """Get appointments for clinic staff"""
+    if staff.get("role") not in ["clinic_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Clinic staff access required")
+    
+    query = {}
+    if date:
+        query["date"] = date
+    if status:
+        query["status"] = status
+    
+    appointments = await db.appointments.find(query, {"_id": 0}).sort([("date", 1), ("time", 1)]).to_list(200)
+    return {"appointments": appointments, "statuses": APPOINTMENT_STATUSES}
 
 @api_router.get("/admin/stats")
 async def get_admin_stats(admin = Depends(verify_admin)):
