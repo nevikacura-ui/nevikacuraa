@@ -355,6 +355,8 @@ const StaffPortal = () => {
       toast.success('Walk-in appointment booked');
       setWalkInForm({ ...walkInForm, patient_name: '', patient_phone: '', time: '' });
       loadData();
+      // Refresh booked slots to keep in sync
+      fetchBookedSlots();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Booking failed');
     }
