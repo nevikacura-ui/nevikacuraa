@@ -213,7 +213,7 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 - API endpoints: `/api/push/vapid-public-key`, `/api/push/subscribe`, `/api/push/test`
 
 ### PWA Features ✅ (Completed January 9, 2026)
-- Web app manifest with app icons (72x72 to 512x512)
+- Web app manifest with app icons (72x72 to 512x512) - **Custom Nevika Cura logo**
 - Service worker for offline caching
 - Apple touch icon for iOS home screen
 - Theme color integration (#14b8a6 teal)
