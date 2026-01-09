@@ -5459,10 +5459,10 @@ APPOINTMENT_TYPES = ["NORMAL", "EMERGENCY"]
 MAX_EMERGENCY_PER_DOCTOR_PER_DAY = 10
 
 # Pharmacy Order Statuses (Updated)
-PHARMACY_STATUSES = ["Received", "Processing", "Ready", "Delivered"]
+PHARMACY_STATUSES = ["Order Booked", "Packing", "Out for Delivery", "Delivered"]
 
 # Diagnostic Order Statuses (Updated)
-DIAGNOSTIC_STATUSES = ["Booked", "Sample Collected", "Processing", "Report Ready", "Completed"]
+DIAGNOSTIC_STATUSES = ["Test Booked", "Sample Collected", "In Process", "Reports Generated"]
 
 # Add-on Service Types
 SERVICE_TYPES = ["BLOOD_TEST", "SONOGRAPHY", "ECG"]
