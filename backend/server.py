@@ -930,6 +930,16 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
         patient_html=patient_appt_html
     )
     
+    # Send push notification if user is logged in
+    if user:
+        await send_push_notification(
+            user_id=user.id,
+            title="Appointment Confirmed! 📅",
+            body=f"Your appointment with {appointment.doctor} on {appointment.date} at {appointment.time} is confirmed.",
+            url="/profile",
+            tag=f"appointment-{appointment.id}"
+        )
+    
     return appointment
 
 @api_router.get("/appointments/booked-slots")
