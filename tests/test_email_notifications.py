@@ -19,6 +19,14 @@ BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://carehub-21.preview.e
 ADMIN_PASSWORD = "nevikacura2026"
 
 
+def get_admin_token():
+    """Get admin JWT token for authenticated requests"""
+    response = requests.post(f"{BASE_URL}/api/admin/login", json={"password": ADMIN_PASSWORD})
+    if response.status_code == 200:
+        return response.json()["token"]
+    return None
+
+
 class TestEmailConfiguration:
     """Tests for email configuration verification"""
     
