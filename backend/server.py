@@ -6367,6 +6367,69 @@ async def get_diagnostic_orders_for_staff(staff = Depends(verify_staff), status:
     
     return {"orders": all_orders, "statuses": DIAGNOSTIC_STATUSES}
 
+@api_router.post("/staff/diagnostic/orders/{order_id}/upload-report")
+async def upload_diagnostic_report(order_id: str, file: UploadFile = File(...), staff = Depends(verify_staff)):
+    """Upload report for diagnostic order (required before Reports Generated)"""
+    if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+    # Try to find in test_orders first
+    order = await db.test_orders.find_one({"id": order_id})
+    collection = db.test_orders
+    
+    # If not found, try diagnostic_orders
+    if not order:
+        order = await db.diagnostic_orders.find_one({"id": order_id})
+        collection = db.diagnostic_orders
+    
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Upload file
+    try:
+        if drive_service:
+            file_content = await file.read()
+            file_stream = io.BytesIO(file_content)
+            file_metadata = {
+                'name': f"report_{order_id}_{file.filename}",
+                'mimeType': file.content_type
+            }
+            media = MediaIoBaseUpload(file_stream, mimetype=file.content_type, resumable=True)
+            uploaded_file = drive_service.files().create(
+                body=file_metadata,
+                media_body=media,
+                fields='id, webViewLink'
+            ).execute()
+            
+            drive_service.permissions().create(
+                fileId=uploaded_file['id'],
+                body={'type': 'anyone', 'role': 'reader'}
+            ).execute()
+            
+            file_url = uploaded_file.get('webViewLink', f"https://drive.google.com/file/d/{uploaded_file['id']}/view")
+        else:
+            # Fallback: store as base64
+            file_content = await file.read()
+            import base64
+            file_url = f"data:{file.content_type};base64,{base64.b64encode(file_content).decode()}"
+        
+        # Update order with report URL
+        await collection.update_one(
+            {"id": order_id},
+            {"$set": {
+                "report_url": file_url,
+                "report_uploaded_at": datetime.now(timezone.utc).isoformat(),
+                "report_uploaded_by": staff.get("name")
+            }}
+        )
+        
+        logger.info(f"Report uploaded for diagnostic order {order_id} by {staff.get('name')}")
+        return {"success": True, "report_url": file_url, "message": "Report uploaded successfully"}
+        
+    except Exception as e:
+        logger.error(f"Failed to upload report: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to upload report: {str(e)}")
+
 @api_router.put("/staff/diagnostic/orders/{order_id}/status")
 async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusUpdate, staff = Depends(verify_staff)):
     """Update diagnostic order status (Diagnostics Staff only)"""
@@ -6387,6 +6450,13 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
     
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
+    
+    # MANDATORY: Report must be uploaded before "Reports Generated"
+    if update.status == "Reports Generated" and not order.get("report_url"):
+        raise HTTPException(
+            status_code=400, 
+            detail="Report must be uploaded before marking order as 'Reports Generated'"
+        )
     
     status_entry = {
         "status": update.status,
@@ -6421,7 +6491,7 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
             <p>Hello {order.get('patient_name')},</p>
             <p>Your Proton Diagnostics order status: <strong>{update.status}</strong></p>
             {f"<p>Notes: {update.notes}</p>" if update.notes else ""}
-            {"<p style='color: green;'><strong>Your reports are ready!</strong></p>" if update.status == "Reports Generated" else ""}
+            {f"<p style='color: green;'><strong>Your reports are ready!</strong> <a href='{order.get('report_url')}'>View Report</a></p>" if update.status == "Reports Generated" and order.get('report_url') else ""}
         </div>
     </div>
     """
