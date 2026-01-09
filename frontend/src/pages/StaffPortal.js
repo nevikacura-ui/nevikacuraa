@@ -458,7 +458,7 @@ const StaffPortal = () => {
         )}
 
         {/* Doctor View */}
-        {role === 'doctor' && (
+        {isDoctor(role) && !isClinicStaff(role) && (
           <Card className="p-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-lg">My Appointments - {staffInfo?.doctor_name}</h2>
@@ -488,7 +488,7 @@ const StaffPortal = () => {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      {appt.status === 'in_clinic' && (
+                      {appt.status === 'In Clinic' && (
                         <Button size="sm" onClick={() => handleCompleteAppointment(appt.id)} className="bg-green-500 hover:bg-green-600">
                           <CheckCircle2 className="w-4 h-4 mr-1" />
                           Complete
@@ -503,7 +503,7 @@ const StaffPortal = () => {
         )}
 
         {/* Pharmacy Staff View */}
-        {(role === 'pharmacy_staff' || role === 'super_admin') && (
+        {role === 'pharmacy_staff' && (
           <Card className="p-4 mt-4">
             <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
               <Package className="w-5 h-5 text-orange-500" />
