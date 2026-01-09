@@ -202,6 +202,15 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 8. User dashboard with order history
 9. Admin dashboard with inventory management
 10. **PWA (Progressive Web App)** - Mobile installable with offline support
+11. **Push Notifications** - Web Push API with VAPID keys
+
+### Push Notifications ✅ (Completed January 9, 2026)
+- Web Push API with VAPID keys (no Firebase dependency)
+- User subscription management from Profile → Settings
+- Notifications for: Order confirmations, status updates, appointment confirmations
+- Admin broadcast capability for announcements
+- Service worker handles push events and notification clicks
+- API endpoints: `/api/push/vapid-public-key`, `/api/push/subscribe`, `/api/push/test`
 
 ### PWA Features ✅ (Completed January 9, 2026)
 - Web app manifest with app icons (72x72 to 512x512)
