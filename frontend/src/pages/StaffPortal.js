@@ -1121,43 +1121,56 @@ const StaffPortal = () => {
 
         {/* Diagnostics Staff View */}
         {(role === 'diagnostics_staff' || role === 'super_admin') && (
-          <>
-            {/* Service-Linked Orders (from clinic add-ons) */}
-            {serviceOrders.length > 0 && (
-              <Card className="p-4 mb-4">
-                <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                  <Stethoscope className="w-5 h-5 text-teal-500" />
-                  Clinic Add-on Services
-                </h2>
-                <p className="text-sm text-gray-500 mb-4">Tests ordered during clinic visits</p>
-                
-                <div className="space-y-3">
-                  {serviceOrders.map((order) => (
-                    <div key={order.id} className="p-4 bg-teal-50 rounded-lg border border-teal-200">
-                      <div className="flex items-center justify-between mb-2">
-                        <div>
-                          <span className="font-medium">{order.patient_name}</span>
-                          <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${getStatusColor(order.status)}`}>
-                            {order.status}
-                          </span>
-                          <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-teal-100 text-teal-800">
-                            Clinic Add-on
-                          </span>
-                          {order.report_url && (
-                            <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-800">
-                              <FileText className="w-3 h-3 inline mr-1" />
-                              Report Uploaded
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-sm text-gray-500">{order.patient_phone}</span>
-                      </div>
-                      <div className="text-sm text-gray-600 mb-3">
-                        <strong>Service:</strong> {order.service_type?.replace('_', ' ')} | 
-                        <strong> Clinic:</strong> {order.clinic || 'N/A'}
-                      </div>
-                      
-                      {/* Report Upload Section - Required before Reports Generated */}
+          <Tabs defaultValue="orders" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="orders" data-testid="tab-diag-orders">
+                <FlaskConical className="w-4 h-4 mr-2" />
+                Orders
+              </TabsTrigger>
+              <TabsTrigger value="create" data-testid="tab-diag-create">
+                <UserPlus className="w-4 h-4 mr-2" />
+                Create Order
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="orders">
+              <>
+                {/* Service-Linked Orders (from clinic add-ons) */}
+                {serviceOrders.length > 0 && (
+                  <Card className="p-4 mb-4">
+                    <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      <Stethoscope className="w-5 h-5 text-teal-500" />
+                      Clinic Add-on Services
+                    </h2>
+                    <p className="text-sm text-gray-500 mb-4">Tests ordered during clinic visits</p>
+                    
+                    <div className="space-y-3">
+                      {serviceOrders.map((order) => (
+                        <div key={order.id} className="p-4 bg-teal-50 rounded-lg border border-teal-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <span className="font-medium">{order.patient_name}</span>
+                              <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${getStatusColor(order.status)}`}>
+                                {order.status}
+                              </span>
+                              <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-teal-100 text-teal-800">
+                                Clinic Add-on
+                              </span>
+                              {order.report_url && (
+                                <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-800">
+                                  <FileText className="w-3 h-3 inline mr-1" />
+                                  Report Uploaded
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-sm text-gray-500">{order.patient_phone}</span>
+                          </div>
+                          <div className="text-sm text-gray-600 mb-3">
+                            <strong>Service:</strong> {order.service_type?.replace('_', ' ')} | 
+                            <strong> Clinic:</strong> {order.clinic || 'N/A'}
+                          </div>
+                          
+                          {/* Report Upload Section - Required before Reports Generated */}
                       {!order.report_url && order.status !== 'Reports Generated' && (
                         <div className="mb-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
                           <p className="text-sm text-purple-800 mb-2 flex items-center gap-1">
