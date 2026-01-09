@@ -33,16 +33,11 @@ const DOCTOR_SCHEDULES = {
       { days: ['Tuesday', 'Thursday', 'Saturday'], time: '18:00-22:00' }
     ]
   },
-  "Dr. Neha Patel": {
-    "Amnion Clinic": [
-      { days: ['Monday', 'Wednesday', 'Friday'], time: '18:00-22:00' }
-    ],
+  "Dr. Ankita Gupta": {
     "Pushpa Clinic": [
       { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00-14:00' },
       { days: ['Tuesday', 'Thursday', 'Saturday'], time: '18:00-22:00' }
-    ]
-  },
-  "Dr. Ankita Gupta": {
+    ],
     "Amnion Clinic": [
       { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '10:00-13:00' },
       { days: ['Monday', 'Wednesday', 'Friday'], time: '17:00-20:00' }
