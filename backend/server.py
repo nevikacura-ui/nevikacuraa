@@ -7078,6 +7078,20 @@ async def delete_diagnostic_test(category: str, subcategory: str, test_name: str
     
     return {"success": True, "message": f"Test '{test_name}' deleted successfully"}
 
+# ============ WhatsApp Notifications Management ============
+
+@api_router.get("/admin/pending-whatsapp")
+async def get_pending_whatsapp(admin = Depends(verify_admin)):
+    """Get pending WhatsApp notifications that failed to send"""
+    pending = await db.pending_whatsapp.find({}, {"_id": 0}).sort("created_at", -1).to_list(50)
+    return {"pending": pending}
+
+@api_router.delete("/admin/pending-whatsapp/{notification_id}")
+async def delete_pending_whatsapp(notification_id: str, admin = Depends(verify_admin)):
+    """Mark a pending WhatsApp notification as handled"""
+    await db.pending_whatsapp.delete_one({"id": notification_id})
+    return {"success": True}
+
 @api_router.get("/diagnostic-tests")
 async def get_public_diagnostic_tests():
     """Get diagnostic tests for public use (frontend)"""
