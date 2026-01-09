@@ -82,8 +82,9 @@ async def send_email_notification(subject: str, html_content: str, patient_email
         logger.error(f"Failed to send admin email: {str(e)}")
         results.append({"admin": None})
     
-    # Send to patient if email provided
+    # Send to patient if email provided (with delay to avoid rate limiting)
     if patient_email:
+        await asyncio.sleep(0.6)  # Wait 600ms to stay under 2 req/sec rate limit
         try:
             patient_params = {
                 "from": SENDER_EMAIL,
