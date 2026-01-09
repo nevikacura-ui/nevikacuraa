@@ -216,6 +216,7 @@ const Proton = () => {
   const [patientInfo, setPatientInfo] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
+    email: user?.email || '',
     address: ''
   });
   const [paymentMethod, setPaymentMethod] = useState('cod');
