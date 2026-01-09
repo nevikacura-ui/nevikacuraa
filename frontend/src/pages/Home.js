@@ -204,6 +204,14 @@ const Home = () => {
               </button>
               <span className="text-muted-foreground">|</span>
               <button
+                onClick={() => navigate('/staff')}
+                className="text-sm text-muted-foreground hover:text-brand-teal transition-colors"
+                data-testid="staff-link"
+              >
+                Staff Portal
+              </button>
+              <span className="text-muted-foreground">|</span>
+              <button
                 onClick={() => navigate('/admin')}
                 className="text-sm text-muted-foreground hover:text-brand-teal transition-colors"
                 data-testid="admin-link"
