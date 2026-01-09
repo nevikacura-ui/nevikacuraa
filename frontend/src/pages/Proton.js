@@ -649,6 +649,17 @@ const Proton = () => {
                     data-testid="patient-phone"
                   />
                 </div>
+                <div>
+                  <Label>Email (Optional)</Label>
+                  <Input
+                    type="email"
+                    value={patientInfo.email || ''}
+                    onChange={(e) => setPatientInfo({ ...patientInfo, email: e.target.value })}
+                    placeholder="your@email.com"
+                    data-testid="patient-email"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">We'll send confirmations, test reports, and status updates to this email.</p>
+                </div>
               </div>
             </Card>
 
