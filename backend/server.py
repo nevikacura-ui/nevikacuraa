@@ -6167,6 +6167,27 @@ async def check_in_patient(appointment_id: str, staff = Depends(verify_staff)):
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
     
+    # Send WhatsApp notification to doctor about patient check-in
+    doctor_name = appointment.get("doctor")
+    doctor_number = DOCTOR_WHATSAPP_NUMBERS.get(doctor_name)
+    if doctor_number:
+        checkin_message = f"""*🏥 Patient Checked In*
+
+👤 *Patient:* {appointment.get('patient_name')}
+📞 *Phone:* {appointment.get('patient_phone', 'N/A')}
+
+👨‍⚕️ *Doctor:* {doctor_name}
+🏥 *Clinic:* {appointment.get('clinic')}
+⏰ *Time:* {appointment.get('time') or 'Emergency'}
+
+✅ *Status:* IN CLINIC
+📝 *Checked in by:* {staff.get('name')}
+
+_Patient is waiting. Please see them shortly._
+
+_Nevika Cura Healthcare_"""
+        await send_whatsapp_notification(doctor_number, checkin_message)
+    
     # Send email if patient has email
     if appointment.get("patient_email"):
         patient_html = f"""
