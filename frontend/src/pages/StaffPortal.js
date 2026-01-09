@@ -15,6 +15,12 @@ import {
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
+// Clinic configuration
+const CLINICS = {
+  "Pushpa Clinic": ["Dr. Neha Batra", "Dr. Priya Sharma"],
+  "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Ankita Gupta"]
+};
+
 const StaffPortal = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -29,17 +35,16 @@ const StaffPortal = () => {
   const [diagnosticOrders, setDiagnosticOrders] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   
-  // Walk-in form
+  // Walk-in form - will be set based on staff's clinic
   const [walkInForm, setWalkInForm] = useState({
-    doctor: 'Dr. Neha Batra',
-    clinic: 'DiaGyn Healthcare',
+    doctor: '',
+    clinic: '',
     date: new Date().toISOString().split('T')[0],
     time: '',
     patient_name: '',
     patient_phone: ''
   });
 
-  const doctors = ['Dr. Neha Batra', 'Dr. Priya Sharma'];
   const timeSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'];
 
   useEffect(() => {
@@ -47,7 +52,18 @@ const StaffPortal = () => {
     const info = localStorage.getItem('staffInfo');
     if (token && info) {
       setIsAuthenticated(true);
-      setStaffInfo(JSON.parse(info));
+      const parsedInfo = JSON.parse(info);
+      setStaffInfo(parsedInfo);
+      
+      // Set default clinic for walk-in form based on staff's clinic
+      if (parsedInfo.clinic) {
+        const clinicDoctors = CLINICS[parsedInfo.clinic] || [];
+        setWalkInForm(prev => ({
+          ...prev,
+          clinic: parsedInfo.clinic,
+          doctor: clinicDoctors[0] || ''
+        }));
+      }
     }
   }, []);
 
