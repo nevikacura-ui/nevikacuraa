@@ -148,6 +148,40 @@ const StaffPortal = () => {
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [selectedService, setSelectedService] = useState('');
+  
+  // Booked slots state for slot synchronization
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+
+  // Fetch booked slots for the selected doctor, clinic, and date
+  const fetchBookedSlots = useCallback(async () => {
+    if (!walkInForm.doctor || !walkInForm.clinic || !walkInForm.date) {
+      setBookedSlots([]);
+      return;
+    }
+    
+    setLoadingSlots(true);
+    try {
+      const response = await axios.get(`${API}/appointments/booked-slots`, {
+        params: {
+          doctor: walkInForm.doctor,
+          clinic: walkInForm.clinic,
+          date: walkInForm.date
+        }
+      });
+      setBookedSlots(response.data.booked_slots || []);
+    } catch (error) {
+      console.error('Failed to fetch booked slots:', error);
+      setBookedSlots([]);
+    } finally {
+      setLoadingSlots(false);
+    }
+  }, [walkInForm.doctor, walkInForm.clinic, walkInForm.date]);
+
+  // Fetch booked slots when doctor, clinic, or date changes
+  useEffect(() => {
+    fetchBookedSlots();
+  }, [fetchBookedSlots]);
 
   // Calculate available time slots based on doctor, clinic, and date
   const availableTimeSlots = useMemo(() => {
