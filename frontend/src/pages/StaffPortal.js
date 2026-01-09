@@ -403,6 +403,55 @@ const StaffPortal = () => {
       toast.error(error.response?.data?.detail || 'Update failed');
     }
   };
+  
+  // Create diagnostic order (for diagnostics staff)
+  const handleCreateDiagnosticOrder = async () => {
+    if (!diagOrderForm.patient_name || !diagOrderForm.patient_phone || diagOrderForm.tests.length === 0) {
+      toast.error('Please fill patient name, phone and select at least one test');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      await axios.post(`${API}/staff/diagnostic/orders`, diagOrderForm, getAuthHeaders());
+      toast.success('Diagnostic order created successfully');
+      setDiagOrderForm({
+        patient_name: '',
+        patient_phone: '',
+        patient_email: '',
+        age: '',
+        sex: '',
+        tests: [],
+        notes: ''
+      });
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to create order');
+    }
+    setLoading(false);
+  };
+  
+  // Toggle test selection
+  const toggleTestSelection = (testName) => {
+    setDiagOrderForm(prev => ({
+      ...prev,
+      tests: prev.tests.includes(testName) 
+        ? prev.tests.filter(t => t !== testName)
+        : [...prev.tests, testName]
+    }));
+  };
+  
+  // Get all tests as flat list
+  const getAllTests = () => {
+    const allTests = [];
+    if (availableTests.imaging) {
+      Object.values(availableTests.imaging).forEach(tests => allTests.push(...tests));
+    }
+    if (availableTests.pathology) {
+      Object.values(availableTests.pathology).forEach(tests => allTests.push(...tests));
+    }
+    return allTests;
+  };
 
   const getStatusColor = (status) => {
     const colors = {
