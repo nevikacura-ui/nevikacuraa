@@ -240,6 +240,7 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ### Environment Variables
 - `RESEND_API_KEY` - Configured in backend/.env
+- `SENDER_EMAIL` - **noreply@nevikacura.com** (custom domain)
 - `MONGO_URL` - MongoDB connection
 - `JWT_SECRET` - JWT token secret
 - `ADMIN_PASSWORD` - Admin dashboard password (default: nevikacura2026)
