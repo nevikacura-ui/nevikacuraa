@@ -26,7 +26,20 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ## What's Been Implemented ✅
 
-### Date: January 8, 2026 - Latest Update
+### Date: January 10, 2026 - Latest Update
+
+#### Slot Synchronization (NEW)
+- [x] **Patient + Staff booking sync** - Slots booked by patients (DiaGyn) are blocked for staff (StaffPortal) and vice versa
+- [x] `GET /api/appointments/booked-slots` - Returns active bookings only (status: Booked, In Clinic, Completed)
+- [x] StaffPortal fetches booked slots and filters available time slots
+- [x] Shows slot count: "23 slots available, 5 booked"
+- [x] Cross-booking prevention tested and verified
+
+#### Timezone Fix (NEW)
+- [x] **Indian Standard Time (IST)** - All dates in StaffPortal now use IST (UTC+5:30)
+- [x] Walk-in form, Emergency form, and Appointments tab all use correct Indian date
+
+### Date: January 8, 2026
 
 #### Medicine Inventory
 - [x] **4,266 total medicines** in inventory
