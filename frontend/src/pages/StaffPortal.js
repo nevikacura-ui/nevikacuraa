@@ -372,10 +372,16 @@ const StaffPortal = () => {
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          {appt.status === 'pending' && (
+                          {appt.status === 'Booked' && (
                             <Button size="sm" onClick={() => handleCheckIn(appt.id)} className="bg-blue-500 hover:bg-blue-600">
                               <CheckCircle2 className="w-4 h-4 mr-1" />
                               Check In
+                            </Button>
+                          )}
+                          {appt.status === 'In Clinic' && (
+                            <Button size="sm" onClick={() => handleCompleteAppointment(appt.id)} className="bg-green-500 hover:bg-green-600">
+                              <CheckCircle2 className="w-4 h-4 mr-1" />
+                              Complete
                             </Button>
                           )}
                         </div>
@@ -388,7 +394,7 @@ const StaffPortal = () => {
 
             <TabsContent value="walkin">
               <Card className="p-6 max-w-lg">
-                <h2 className="font-semibold text-lg mb-4">Book Walk-in Appointment</h2>
+                <h2 className="font-semibold text-lg mb-4">Book Walk-in Appointment - {staffInfo?.clinic}</h2>
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -398,7 +404,7 @@ const StaffPortal = () => {
                         onChange={(e) => setWalkInForm({ ...walkInForm, doctor: e.target.value })}
                         className="w-full p-2 border rounded-lg"
                       >
-                        {doctors.map(d => <option key={d} value={d}>{d}</option>)}
+                        {(CLINICS[staffInfo?.clinic] || []).map(d => <option key={d} value={d}>{d}</option>)}
                       </select>
                     </div>
                     <div>
