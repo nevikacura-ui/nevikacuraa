@@ -528,6 +528,7 @@ const DiaGyn = () => {
                       placeholder="your@email.com"
                       data-testid="patient-email"
                     />
+                    <p className="text-xs text-gray-500 mt-1">We'll send confirmations and appointment updates to this email.</p>
                   </div>
                 </div>
               </Card>
