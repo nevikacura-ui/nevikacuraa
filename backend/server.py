@@ -895,7 +895,44 @@ async def create_diagnostic_order(input: DiagnosticOrderCreate, user = Depends(g
     <p><strong>Email:</strong> {order.patient_email or 'Not provided'}</p>
     <p><strong>Ordered at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
     """
-    await send_email_notification(f"New Diagnostic Order - {order.patient_name}", email_html)
+    
+    # Patient confirmation email for diagnostics
+    tests_list_patient = "".join([f"<li>{test}</li>" for test in order.tests])
+    patient_diag_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0;">Test Booking Confirmed! 🔬</h1>
+        </div>
+        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+            <p style="font-size: 18px;">Hello <strong>{order.patient_name}</strong>,</p>
+            <p>Your diagnostic tests have been successfully booked at <strong>Proton Diagnostics</strong>.</p>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8b5cf6;">
+                <h3 style="color: #8b5cf6; margin-top: 0;">Tests Booked</h3>
+                <ul style="line-height: 1.8;">{tests_list_patient}</ul>
+                <p><strong>Preferred Date:</strong> {order.preferred_date}</p>
+                <p><strong>Order ID:</strong> {order.id[:8]}...</p>
+            </div>
+            
+            <p style="color: #64748b; font-size: 14px;">
+                Our team will contact you shortly to confirm the sample collection time. Please keep your prescription handy.
+            </p>
+            
+            <div style="text-align: center; margin-top: 30px; padding: 15px; background: #ede9fe; border-radius: 8px;">
+                <p style="margin: 0; color: #5b21b6;"><strong>Questions about your tests?</strong></p>
+                <p style="margin: 5px 0 0 0; color: #7c3aed;">Contact us: 7039040040</p>
+            </div>
+        </div>
+    </div>
+    """
+    
+    await send_email_notification(
+        f"New Diagnostic Order - {order.patient_name}", 
+        email_html,
+        patient_email=order.patient_email,
+        patient_subject=f"Test Booking Confirmed - Proton Diagnostics",
+        patient_html=patient_diag_html
+    )
     
     return order
 
