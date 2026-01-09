@@ -196,6 +196,66 @@ const Admin = () => {
     }
   };
 
+  const fetchStaff = async () => {
+    setStaffLoading(true);
+    try {
+      const response = await axios.get(`${API}/admin/staff`, { headers: getAuthHeaders() });
+      setStaffList(response.data.staff || []);
+      setStaffRoles(response.data.roles || {});
+    } catch (error) {
+      console.error('Failed to fetch staff:', error);
+    } finally {
+      setStaffLoading(false);
+    }
+  };
+
+  const handleAddStaff = async () => {
+    if (!newStaff.username || !newStaff.password || !newStaff.name) {
+      toast.error('Please fill all required fields');
+      return;
+    }
+    
+    if (newStaff.role === 'doctor' && !newStaff.doctor_name) {
+      toast.error('Please select a doctor');
+      return;
+    }
+    
+    setAddStaffLoading(true);
+    try {
+      await axios.post(`${API}/admin/staff`, newStaff, { headers: getAuthHeaders() });
+      toast.success('Staff member created successfully');
+      setShowAddStaffModal(false);
+      setNewStaff({ username: '', password: '', name: '', role: 'clinic_staff', doctor_name: '' });
+      fetchStaff();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to create staff');
+    } finally {
+      setAddStaffLoading(false);
+    }
+  };
+
+  const handleDeleteStaff = async (staffId) => {
+    if (!window.confirm('Are you sure you want to delete this staff member?')) return;
+    
+    try {
+      await axios.delete(`${API}/admin/staff/${staffId}`, { headers: getAuthHeaders() });
+      toast.success('Staff member deleted');
+      fetchStaff();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to delete staff');
+    }
+  };
+
+  const handleToggleStaff = async (staffId) => {
+    try {
+      const res = await axios.put(`${API}/admin/staff/${staffId}/toggle`, {}, { headers: getAuthHeaders() });
+      toast.success(res.data.active ? 'Staff enabled' : 'Staff disabled');
+      fetchStaff();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to update staff');
+    }
+  };
+
   const fetchInventory = async (page = 1, reset = false) => {
     try {
       if (page === 1) setInventoryLoading(true);
