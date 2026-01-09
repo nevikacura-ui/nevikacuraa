@@ -214,18 +214,17 @@ const StaffPortal = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      in_clinic: 'bg-blue-100 text-blue-800',
-      completed: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
-      'Order Booked': 'bg-yellow-100 text-yellow-800',
-      'Packing': 'bg-blue-100 text-blue-800',
-      'Out for Delivery': 'bg-purple-100 text-purple-800',
+      'Booked': 'bg-yellow-100 text-yellow-800',
+      'In Clinic': 'bg-blue-100 text-blue-800',
+      'Completed': 'bg-green-100 text-green-800',
+      'Cancelled': 'bg-red-100 text-red-800',
+      'No Show': 'bg-gray-100 text-gray-800',
+      'Received': 'bg-yellow-100 text-yellow-800',
+      'Processing': 'bg-blue-100 text-blue-800',
+      'Ready': 'bg-purple-100 text-purple-800',
       'Delivered': 'bg-green-100 text-green-800',
-      'Test Booked': 'bg-yellow-100 text-yellow-800',
       'Sample Collected': 'bg-blue-100 text-blue-800',
-      'In Process': 'bg-purple-100 text-purple-800',
-      'Reports Generated': 'bg-green-100 text-green-800'
+      'Report Ready': 'bg-purple-100 text-purple-800'
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
