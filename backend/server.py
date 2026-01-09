@@ -5691,7 +5691,58 @@ async def update_pharmacy_order_status(order_id: str, update: OrderStatusUpdate,
     {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
     <p><strong>Updated at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
     """
-    await send_email_notification(f"Pharmacy Order Update - {update.status}", email_html)
+    
+    # Patient status update email
+    status_colors = {
+        "Order Booked": "#f59e0b",
+        "Packing": "#3b82f6",
+        "Out for Delivery": "#8b5cf6",
+        "Delivered": "#10b981"
+    }
+    status_color = status_colors.get(update.status, "#6b7280")
+    status_icons = {
+        "Order Booked": "📋",
+        "Packing": "📦",
+        "Out for Delivery": "🚚",
+        "Delivered": "✅"
+    }
+    status_icon = status_icons.get(update.status, "📋")
+    
+    patient_status_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0;">Order Update {status_icon}</h1>
+        </div>
+        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+            <p style="font-size: 18px;">Hello <strong>{order.get('patient_name')}</strong>,</p>
+            <p>Your Orange Pharmacy order status has been updated.</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <div style="display: inline-block; padding: 15px 30px; background: {status_color}; border-radius: 8px;">
+                    <span style="color: white; font-size: 20px; font-weight: bold;">{update.status}</span>
+                </div>
+            </div>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+                {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding: 15px; background: #ffedd5; border-radius: 8px;">
+                <p style="margin: 0; color: #c2410c;"><strong>Track your order or need help?</strong></p>
+                <p style="margin: 5px 0 0 0; color: #ea580c;">Contact us: 7039030030</p>
+            </div>
+        </div>
+    </div>
+    """
+    
+    await send_email_notification(
+        f"Pharmacy Order Update - {update.status}", 
+        email_html,
+        patient_email=order.get('patient_email'),
+        patient_subject=f"Your Order is {update.status} - Orange Pharmacy",
+        patient_html=patient_status_html
+    )
     
     return {"success": True, "message": f"Order status updated to '{update.status}'", "status": update.status}
 
