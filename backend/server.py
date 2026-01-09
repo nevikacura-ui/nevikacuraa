@@ -5538,7 +5538,7 @@ STAFF_ROLES = {
 
 # Clinics
 CLINICS = {
-    "Pushpa Clinic": ["Dr. Neha Patel", "Dr. Vikas Jha"],
+    "Pushpa Clinic": ["Dr. Ankita Gupta", "Dr. Vikas Jha"],
     "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Ankita Gupta"]
 }
 
@@ -6875,7 +6875,7 @@ async def send_credentials_email(admin = Depends(verify_admin)):
                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Password</th>
                 </tr>
                 <tr>
-                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Neha Patel</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Ankita Gupta</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Pushpa Clinic</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">doc_pushpa_01</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>

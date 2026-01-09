@@ -1359,7 +1359,7 @@ const Admin = () => {
               <Input
                 value={newStaff.name}
                 onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
-                placeholder="e.g., Dr. Neha Patel"
+                placeholder="e.g., Dr. Ankita Gupta"
               />
             </div>
             <div>
