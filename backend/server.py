@@ -5445,7 +5445,7 @@ STAFF_ROLES = {
 
 # Clinics
 CLINICS = {
-    "Pushpa Clinic": ["Dr. Neha Batra", "Dr. Priya Sharma"],
+    "Pushpa Clinic": ["Dr. Neha Patel", "Dr. Vikas Jha"],
     "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Ankita Gupta"]
 }
 
@@ -6496,7 +6496,7 @@ async def send_credentials_email(admin = Depends(verify_admin)):
                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Password</th>
                 </tr>
                 <tr>
-                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Neha Batra</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Neha Patel</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Pushpa Clinic</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">doc_pushpa_01</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
@@ -6753,7 +6753,7 @@ async def get_doctors(admin = Depends(verify_admin)):
     if not doctors:
         doctors = [
             {"doctor": "Dr. Vikas Jha", "clinic": "Nevika Clinic", "appointment_count": 0},
-            {"doctor": "Dr. Priya Sharma", "clinic": "Nevika Clinic", "appointment_count": 0}
+            {"doctor": "Dr. Vikas Jha", "clinic": "Nevika Clinic", "appointment_count": 0}
         ]
     
     return {"doctors": doctors}

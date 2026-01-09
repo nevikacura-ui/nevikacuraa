@@ -121,7 +121,7 @@ const Admin = () => {
   const [addStaffLoading, setAddStaffLoading] = useState(false);
   const [staffLoading, setStaffLoading] = useState(false);
 
-  const doctors = ['Dr. Neha Batra', 'Dr. Priya Sharma', 'Dr. Vikas Jha', 'Dr. Ankita Gupta'];
+  const doctors = ['Dr. Neha Patel', 'Dr. Vikas Jha', 'Dr. Ankita Gupta'];
 
   // Check for existing admin session
   useEffect(() => {
@@ -1245,7 +1245,7 @@ const Admin = () => {
               <Label>Doctor</Label>
               <select value={cancelForm.doctor} onChange={(e) => setCancelForm({ ...cancelForm, doctor: e.target.value })} className="w-full mt-1 h-10 px-3 border rounded-md">
                 <option value="Dr. Vikas Jha">Dr. Vikas Jha</option>
-                <option value="Dr. Priya Sharma">Dr. Priya Sharma</option>
+                <option value="Dr. Vikas Jha">Dr. Vikas Jha</option>
               </select>
             </div>
             <div>
@@ -1359,7 +1359,7 @@ const Admin = () => {
               <Input
                 value={newStaff.name}
                 onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
-                placeholder="e.g., Dr. Neha Batra"
+                placeholder="e.g., Dr. Neha Patel"
               />
             </div>
             <div>

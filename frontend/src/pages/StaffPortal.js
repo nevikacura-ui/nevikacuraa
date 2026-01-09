@@ -18,7 +18,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 // Clinic configuration
 const CLINICS = {
-  "Pushpa Clinic": ["Dr. Neha Batra", "Dr. Priya Sharma"],
+  "Pushpa Clinic": ["Dr. Neha Patel", "Dr. Vikas Jha"],
   "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Ankita Gupta"]
 };
 
