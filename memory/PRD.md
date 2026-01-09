@@ -113,9 +113,16 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 #### Email Notifications
 - [x] Configured with Resend API
-- [x] All notifications sent to nevikacura@gmail.com
-- [x] Sent for: New registrations, appointments, test bookings, pharmacy orders
-- ⚠️ **Note:** Emails may go to spam folder when using free Resend tier (onboarding@resend.dev)
+- [x] **Custom sender domain:** `noreply@nevikacura.com`
+- [x] Admin notifications sent to nevikacura@gmail.com
+- [x] **Patient notifications** (when email provided):
+  - Welcome email on registration
+  - Appointment confirmation
+  - Diagnostic test booking confirmation
+  - Pharmacy order confirmation
+  - Pharmacy order status updates
+  - Diagnostic order status updates
+  - Appointment cancellation notice
 
 ---
 
