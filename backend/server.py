@@ -52,12 +52,15 @@ SIGNUP_WHATSAPP_NUMBER = os.environ.get('SIGNUP_WHATSAPP_NUMBER', '9833188288')
 if RESEND_API_KEY:
     resend.api_key = RESEND_API_KEY
 
-async def send_email_notification(subject: str, html_content: str):
-    """Send email notification using Resend"""
+async def send_email_notification(subject: str, html_content: str, patient_email: str = None, patient_subject: str = None, patient_html: str = None):
+    """Send email notification using Resend - to admin and optionally to patient"""
     if not RESEND_API_KEY:
         logger.warning("Resend API key not configured, skipping email notification")
         return None
     
+    results = []
+    
+    # Send to admin
     try:
         params = {
             "from": SENDER_EMAIL,
@@ -66,11 +69,29 @@ async def send_email_notification(subject: str, html_content: str):
             "html": html_content
         }
         email = await asyncio.to_thread(resend.Emails.send, params)
-        logger.info(f"Email sent successfully: {email.get('id')}")
-        return email
+        logger.info(f"Admin email sent successfully: {email.get('id')}")
+        results.append({"admin": email})
     except Exception as e:
-        logger.error(f"Failed to send email: {str(e)}")
-        return None
+        logger.error(f"Failed to send admin email: {str(e)}")
+        results.append({"admin": None})
+    
+    # Send to patient if email provided
+    if patient_email:
+        try:
+            patient_params = {
+                "from": SENDER_EMAIL,
+                "to": [patient_email],
+                "subject": patient_subject or subject,
+                "html": patient_html or html_content
+            }
+            patient_result = await asyncio.to_thread(resend.Emails.send, patient_params)
+            logger.info(f"Patient email sent successfully to {patient_email}: {patient_result.get('id')}")
+            results.append({"patient": patient_result})
+        except Exception as e:
+            logger.error(f"Failed to send patient email to {patient_email}: {str(e)}")
+            results.append({"patient": None})
+    
+    return results
 
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
