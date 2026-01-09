@@ -446,7 +446,44 @@ async def register_with_otp(input: RegisterWithOTP):
     <p><strong>Phone:</strong> {user.phone} (Verified via OTP)</p>
     <p><strong>Registered at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
     """
-    await send_email_notification("New User Registration - Nevika Cura", email_html)
+    
+    # Welcome email for the patient
+    patient_welcome_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0;">Welcome to Nevika Cura! 🎉</h1>
+        </div>
+        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+            <p style="font-size: 18px;">Hello <strong>{user.name}</strong>,</p>
+            <p>Thank you for registering with Nevika Cura Healthcare. Your account has been created successfully!</p>
+            
+            <h3 style="color: #14b8a6;">Our Services:</h3>
+            <ul style="line-height: 2;">
+                <li><strong>DiaGyn Healthcare</strong> - Book doctor appointments</li>
+                <li><strong>Proton Diagnostics</strong> - Schedule lab tests</li>
+                <li><strong>Orange Pharmacy</strong> - Order medicines online</li>
+            </ul>
+            
+            <p style="margin-top: 20px;">
+                <strong>Your registered phone:</strong> {user.phone}<br>
+                <strong>Your registered email:</strong> {user.email}
+            </p>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <p style="color: #64748b; font-size: 14px;">For any assistance, contact us at:</p>
+                <p style="color: #14b8a6;">📍 24215 Kuykendal Road, Tomball, Texas 77375</p>
+            </div>
+        </div>
+    </div>
+    """
+    
+    await send_email_notification(
+        "New User Registration - Nevika Cura", 
+        email_html,
+        patient_email=user.email,
+        patient_subject="Welcome to Nevika Cura Healthcare! 🏥",
+        patient_html=patient_welcome_html
+    )
     
     return {"token": token, "user": user.model_dump()}
 
