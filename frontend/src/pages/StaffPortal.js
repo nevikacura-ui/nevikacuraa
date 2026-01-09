@@ -77,16 +77,20 @@ const StaffPortal = () => {
     headers: { Authorization: `Bearer ${localStorage.getItem('staffToken')}` }
   });
 
+  // Helper to check clinic staff roles
+  const isClinicStaff = (role) => ['clinic_staff_pushpa', 'clinic_staff_amnion', 'super_admin'].includes(role);
+  const isDoctor = (role) => ['doctor_pushpa', 'doctor_amnion', 'super_admin'].includes(role);
+
   const loadData = async () => {
     try {
       const role = staffInfo?.role;
       
-      if (role === 'clinic_staff' || role === 'super_admin') {
+      if (isClinicStaff(role)) {
         const res = await axios.get(`${API}/staff/clinic/appointments?date=${selectedDate}`, getAuthHeaders());
         setAppointments(res.data.appointments || []);
       }
       
-      if (role === 'doctor') {
+      if (isDoctor(role)) {
         const res = await axios.get(`${API}/staff/doctor/appointments?date=${selectedDate}`, getAuthHeaders());
         setAppointments(res.data.appointments || []);
       }
