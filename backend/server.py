@@ -5803,7 +5803,61 @@ async def update_diagnostic_order_status(order_id: str, update: OrderStatusUpdat
     {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
     <p><strong>Updated at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
     """
-    await send_email_notification(f"Diagnostic Order Update - {update.status}", email_html)
+    
+    # Patient status update email for diagnostics
+    status_colors = {
+        "Test Booked": "#f59e0b",
+        "Sample Collected": "#3b82f6",
+        "In Process": "#8b5cf6",
+        "Reports Generated": "#10b981"
+    }
+    status_color = status_colors.get(update.status, "#6b7280")
+    status_icons = {
+        "Test Booked": "📋",
+        "Sample Collected": "🧪",
+        "In Process": "⏳",
+        "Reports Generated": "📊"
+    }
+    status_icon = status_icons.get(update.status, "📋")
+    
+    patient_diag_status_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0;">Test Update {status_icon}</h1>
+        </div>
+        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+            <p style="font-size: 18px;">Hello <strong>{order.get('patient_name')}</strong>,</p>
+            <p>Your Proton Diagnostics order status has been updated.</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <div style="display: inline-block; padding: 15px 30px; background: {status_color}; border-radius: 8px;">
+                    <span style="color: white; font-size: 20px; font-weight: bold;">{update.status}</span>
+                </div>
+            </div>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+                <p><strong>Tests:</strong> {', '.join(order.get('tests', [])[:3])}{'...' if len(order.get('tests', [])) > 3 else ''}</p>
+                {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
+            </div>
+            
+            {"<p style='text-align: center; color: #10b981; font-size: 16px;'><strong>Your reports are ready! Please visit our center or contact us to collect them.</strong></p>" if update.status == "Reports Generated" else ""}
+            
+            <div style="text-align: center; margin-top: 30px; padding: 15px; background: #ede9fe; border-radius: 8px;">
+                <p style="margin: 0; color: #5b21b6;"><strong>Questions about your tests?</strong></p>
+                <p style="margin: 5px 0 0 0; color: #7c3aed;">Contact us: 7039040040</p>
+            </div>
+        </div>
+    </div>
+    """
+    
+    await send_email_notification(
+        f"Diagnostic Order Update - {update.status}", 
+        email_html,
+        patient_email=order.get('patient_email'),
+        patient_subject=f"Test Status: {update.status} - Proton Diagnostics",
+        patient_html=patient_diag_status_html
+    )
     
     return {"success": True, "message": f"Order status updated to '{update.status}'", "status": update.status}
 
