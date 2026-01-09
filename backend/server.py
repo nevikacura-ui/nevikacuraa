@@ -5828,6 +5828,9 @@ async def book_walk_in_appointment(appt: WalkInAppointment, staff = Depends(veri
     
     logger.info(f"Walk-in appointment booked by {staff.get('name')}: {appt.patient_name}")
     
+    # Send WhatsApp notification to doctor
+    await notify_doctor_whatsapp(appt.doctor, appointment, "walk_in")
+    
     return {k: v for k, v in appointment.items() if k != "_id"}
 
 # ============ Emergency Appointments ============
