@@ -218,8 +218,7 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 ### P2 - Lower Priority
 | Feature | How to Implement |
 |---------|-----------------|
-| **Push Notifications** | Use Firebase Cloud Messaging (FCM). Add service worker for web push |
-| **Mobile App** | React Native or Flutter. Reuse API endpoints |
+| **Push Notifications** | Use Firebase Cloud Messaging (FCM). Leverage existing service worker |
 | **Analytics Dashboard** | Add date range filters to admin. Create charts with recharts library |
 
 ---
