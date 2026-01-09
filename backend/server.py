@@ -5499,6 +5499,25 @@ class StaffOrderStatusUpdate(BaseModel):
     status: str
     notes: Optional[str] = None
 
+class EmergencyAppointment(BaseModel):
+    """Emergency appointment - no time slot required"""
+    doctor: str
+    clinic: str
+    date: str
+    patient_name: str
+    patient_phone: str
+    patient_email: Optional[str] = None
+
+class AddServiceRequest(BaseModel):
+    """Add service to an appointment"""
+    service_type: str  # BLOOD_TEST, SONOGRAPHY, ECG
+    service_details: Optional[str] = None
+
+class ServiceStatusUpdate(BaseModel):
+    """Update service status"""
+    status: str
+    notes: Optional[str] = None
+
 @api_router.post("/admin/login")
 async def admin_login(input: AdminLogin):
     """Admin login with password"""
