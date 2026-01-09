@@ -1033,6 +1033,17 @@ async def create_diagnostic_order(input: DiagnosticOrderCreate, user = Depends(g
         patient_html=patient_diag_html
     )
     
+    # Send push notification if user is logged in
+    if user:
+        tests_preview = ", ".join(order.tests[:2]) + ("..." if len(order.tests) > 2 else "")
+        await send_push_notification(
+            user_id=user.id,
+            title="Test Booking Confirmed! 🔬",
+            body=f"Your tests ({tests_preview}) are scheduled for {order.preferred_date}.",
+            url="/profile",
+            tag=f"diagnostic-{order.id}"
+        )
+    
     return order
 
 @api_router.get("/diagnostics", response_model=List[DiagnosticOrder])
