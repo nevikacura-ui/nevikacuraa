@@ -476,7 +476,7 @@ const Proton = () => {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <img 
-                src="https://static.prod-images.emergentagent.com/jobs/583d9dca-5f23-48c4-b697-075baec16bd6/images/b981d2197f5814f2ad80eb3cfec254771b1375ded9837893c0fe915207a0cbd9.png" 
+                src="/proton-logo.png" 
                 alt="Proton Diagnostics" 
                 className="h-14 w-auto"
                 data-testid="proton-logo"
