@@ -50,8 +50,8 @@ const DOCTOR_SCHEDULES = {
   }
 };
 
-// Helper function to generate time slots from schedule
-const generateTimeSlots = (startTime, endTime, interval = 30) => {
+// Helper function to generate time slots from schedule (15-minute intervals)
+const generateTimeSlots = (startTime, endTime, interval = 15) => {
   const slots = [];
   const [startHour, startMin] = startTime.split(':').map(Number);
   const [endHour, endMin] = endTime.split(':').map(Number);
