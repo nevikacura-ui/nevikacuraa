@@ -6298,7 +6298,19 @@ async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpd
         }
     )
     
-    # Send email notification
+    # Send email notification with bill attachment link
+    bill_section = ""
+    if order.get('bill_url') and update.status in ['Out for Delivery', 'Delivered']:
+        bill_section = f"""
+        <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f97316;">
+            <h3 style="color: #92400e; margin-top: 0;">📄 Your Bill/Receipt</h3>
+            <p style="margin-bottom: 10px;">Your bill is attached below. Click to download:</p>
+            <a href="{order.get('bill_url')}" style="display: inline-block; background: #f97316; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+                📥 Download Bill (PDF)
+            </a>
+        </div>
+        """
+    
     email_html = f"""
     <h2>📦 Pharmacy Order Status Update</h2>
     <p><strong>Order ID:</strong> {order_id[:8]}...</p>
@@ -6310,13 +6322,22 @@ async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpd
     patient_html = f"""
     <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
         <div style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
-            <h1 style="color: white;">Order Update</h1>
+            <h1 style="color: white; margin: 0;">Order Update</h1>
         </div>
-        <div style="padding: 20px; background: #f8fafc;">
-            <p>Hello {order.get('patient_name')},</p>
-            <p>Your Orange Pharmacy order status: <strong>{update.status}</strong></p>
-            {f"<p>Notes: {update.notes}</p>" if update.notes else ""}
-            {f"<p><a href='{order.get('bill_url')}'>View Bill/Receipt</a></p>" if order.get('bill_url') else ""}
+        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+            <p>Hello <strong>{order.get('patient_name')}</strong>,</p>
+            <p>Your Orange Pharmacy order status has been updated to: <strong style="color: #f97316;">{update.status}</strong></p>
+            
+            <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 5px 0;"><strong>Order ID:</strong> {order_id[:8]}...</p>
+                <p style="margin: 5px 0;"><strong>Medicines:</strong> {', '.join([m.get('name', '') for m in order.get('medicines', [])])}</p>
+            </div>
+            
+            {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
+            
+            {bill_section}
+            
+            <p style="color: #64748b; font-size: 14px; margin-top: 20px;">Thank you for choosing Orange Pharmacy!</p>
         </div>
     </div>
     """
@@ -6325,7 +6346,7 @@ async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpd
         f"Pharmacy Order Update - {update.status}",
         email_html,
         patient_email=order.get('patient_email'),
-        patient_subject=f"Your Order is {update.status} - Orange Pharmacy",
+        patient_subject=f"Your Order is {update.status} - Orange Pharmacy" + (" (Bill Attached)" if order.get('bill_url') and update.status in ['Out for Delivery', 'Delivered'] else ""),
         patient_html=patient_html
     )
     
