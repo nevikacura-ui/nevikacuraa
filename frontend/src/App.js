@@ -6,6 +6,7 @@ import Proton from '@/pages/Proton';
 import Pharmacy from '@/pages/Pharmacy';
 import Profile from '@/pages/Profile';
 import Admin from '@/pages/Admin';
+import StaffPortal from '@/pages/StaffPortal';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import './App.css';
@@ -22,6 +23,7 @@ function App() {
             <Route path="/pharmacy" element={<Pharmacy />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/staff" element={<StaffPortal />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
