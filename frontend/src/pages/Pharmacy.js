@@ -664,6 +664,17 @@ const Pharmacy = () => {
                     data-testid="patient-phone"
                   />
                 </div>
+                <div className="sm:col-span-2">
+                  <Label>Email (Optional)</Label>
+                  <Input
+                    type="email"
+                    value={patientInfo.email || ''}
+                    onChange={(e) => setPatientInfo({ ...patientInfo, email: e.target.value })}
+                    placeholder="your@email.com"
+                    data-testid="patient-email"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">We'll send confirmations, order updates, and delivery status to this email.</p>
+                </div>
               </div>
             </Card>
 
