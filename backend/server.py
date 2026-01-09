@@ -1129,6 +1129,17 @@ async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(get_c
         patient_html=patient_pharmacy_html
     )
     
+    # Send push notification if user is logged in
+    if user:
+        medicine_count = len(order.medicines)
+        await send_push_notification(
+            user_id=user.id,
+            title="Order Placed! 💊",
+            body=f"Your order with {medicine_count} item(s) has been placed. We'll notify you when it's out for delivery.",
+            url="/profile",
+            tag=f"pharmacy-{order.id}"
+        )
+    
     return order
 
 @api_router.get("/pharmacy", response_model=List[PharmacyOrder])
