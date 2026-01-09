@@ -6093,7 +6093,7 @@ async def check_in_patient(appointment_id: str, staff = Depends(verify_staff)):
 
 @api_router.get("/staff/doctor/appointments")
 async def get_doctor_appointments(staff = Depends(verify_staff), date: Optional[str] = None):
-    """Get appointments for the logged-in doctor"""
+    """Get appointments for the logged-in doctor - Emergency appointments pinned on top"""
     role = staff.get("role")
     if role not in ["doctor_pushpa", "doctor_amnion", "super_admin"]:
         raise HTTPException(status_code=403, detail="Doctor access required")
@@ -6104,7 +6104,19 @@ async def get_doctor_appointments(staff = Depends(verify_staff), date: Optional[
     if date:
         query["date"] = date
     
-    appointments = await db.appointments.find(query, {"_id": 0}).sort("time", 1).to_list(100)
+    # Get all appointments
+    all_appointments = await db.appointments.find(query, {"_id": 0}).to_list(200)
+    
+    # Separate emergency and normal appointments
+    emergency_appts = [a for a in all_appointments if a.get("appointment_type") == "EMERGENCY"]
+    normal_appts = [a for a in all_appointments if a.get("appointment_type") != "EMERGENCY"]
+    
+    # Sort normal appointments by time
+    normal_appts.sort(key=lambda x: x.get("time") or "99:99")
+    
+    # Emergency appointments pinned on top
+    appointments = emergency_appts + normal_appts
+    
     return {"appointments": appointments}
 
 @api_router.put("/staff/appointments/{appointment_id}/complete")
