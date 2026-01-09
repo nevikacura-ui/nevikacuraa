@@ -100,6 +100,88 @@ async def send_email_notification(subject: str, html_content: str, patient_email
     
     return results
 
+# Push Notification Models
+class PushSubscription(BaseModel):
+    endpoint: str
+    keys: dict
+    user_id: Optional[str] = None
+
+class PushNotificationPayload(BaseModel):
+    title: str
+    body: str
+    icon: Optional[str] = "/icons/icon-192x192.png"
+    badge: Optional[str] = "/icons/icon-72x72.png"
+    url: Optional[str] = "/"
+    tag: Optional[str] = None
+
+async def send_push_notification(user_id: str = None, title: str = "", body: str = "", url: str = "/", tag: str = None):
+    """Send push notification to subscribed users"""
+    if not VAPID_PUBLIC_KEY or not VAPID_PRIVATE_KEY:
+        logger.warning("VAPID keys not configured, skipping push notification")
+        return None
+    
+    try:
+        # Get subscriptions - either for specific user or all subscriptions
+        query = {"user_id": user_id} if user_id else {}
+        subscriptions = await db.push_subscriptions.find(query, {"_id": 0}).to_list(1000)
+        
+        if not subscriptions:
+            logger.info(f"No push subscriptions found for query: {query}")
+            return {"sent": 0, "failed": 0}
+        
+        sent_count = 0
+        failed_count = 0
+        
+        payload = json.dumps({
+            "title": title,
+            "body": body,
+            "icon": "/icons/icon-192x192.png",
+            "badge": "/icons/icon-72x72.png",
+            "url": url,
+            "tag": tag or f"nevika-{datetime.now().timestamp()}"
+        })
+        
+        vapid_claims = {
+            "sub": f"mailto:{VAPID_CLAIMS_EMAIL}"
+        }
+        
+        for sub in subscriptions:
+            try:
+                subscription_info = {
+                    "endpoint": sub["endpoint"],
+                    "keys": sub["keys"]
+                }
+                
+                webpush(
+                    subscription_info=subscription_info,
+                    data=payload,
+                    vapid_private_key=VAPID_PRIVATE_KEY,
+                    vapid_claims=vapid_claims
+                )
+                sent_count += 1
+                logger.info(f"Push notification sent to endpoint: {sub['endpoint'][:50]}...")
+            except WebPushException as e:
+                logger.error(f"Push notification failed: {str(e)}")
+                # Remove invalid subscriptions (410 Gone or 404 Not Found)
+                if e.response and e.response.status_code in [404, 410]:
+                    await db.push_subscriptions.delete_one({"endpoint": sub["endpoint"]})
+                    logger.info(f"Removed invalid subscription: {sub['endpoint'][:50]}...")
+                failed_count += 1
+            except Exception as e:
+                logger.error(f"Push notification error: {str(e)}")
+                failed_count += 1
+        
+        logger.info(f"Push notifications sent: {sent_count}, failed: {failed_count}")
+        return {"sent": sent_count, "failed": failed_count}
+    
+    except Exception as e:
+        logger.error(f"Failed to send push notifications: {str(e)}")
+        return None
+
+async def broadcast_push_notification(title: str, body: str, url: str = "/", tag: str = None):
+    """Send push notification to all subscribed users"""
+    return await send_push_notification(user_id=None, title=title, body=body, url=url, tag=tag)
+
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
