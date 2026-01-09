@@ -5607,6 +5607,44 @@ async def cancel_appointments(request: CancelAppointmentsRequest, admin = Depend
     """
     await send_email_notification(f"Appointments Cancelled - {request.doctor}", email_html)
     
+    # Send cancellation emails to patients who have email
+    for appt in appointments_to_cancel:
+        if appt.get('patient_email'):
+            patient_cancel_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 10px 10px 0 0;">
+                    <h1 style="color: white; margin: 0;">Appointment Cancelled ⚠️</h1>
+                </div>
+                <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+                    <p style="font-size: 18px;">Hello <strong>{appt.get('patient_name')}</strong>,</p>
+                    <p>We regret to inform you that your appointment has been cancelled.</p>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ef4444;">
+                        <h3 style="color: #ef4444; margin-top: 0;">Cancelled Appointment</h3>
+                        <p><strong>Doctor:</strong> {request.doctor}</p>
+                        <p><strong>Clinic:</strong> {request.clinic}</p>
+                        <p><strong>Date:</strong> {appt.get('date')}</p>
+                        <p><strong>Time:</strong> {appt.get('time')}</p>
+                        <p><strong>Reason:</strong> {request.reason}</p>
+                    </div>
+                    
+                    <p>Please reschedule your appointment at your earliest convenience.</p>
+                    
+                    <div style="text-align: center; margin-top: 30px; padding: 15px; background: #fee2e2; border-radius: 8px;">
+                        <p style="margin: 0; color: #b91c1c;"><strong>Need assistance?</strong></p>
+                        <p style="margin: 5px 0 0 0; color: #dc2626;">Contact us: 7039020020</p>
+                    </div>
+                </div>
+            </div>
+            """
+            await send_email_notification(
+                f"Appointment Cancelled - {request.doctor}",
+                email_html,
+                patient_email=appt.get('patient_email'),
+                patient_subject=f"Your Appointment on {appt.get('date')} has been Cancelled",
+                patient_html=patient_cancel_html
+            )
+    
     return {
         "success": True,
         "cancelled_count": result.modified_count,
