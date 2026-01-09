@@ -6208,6 +6208,61 @@ async def get_pharmacy_orders_for_staff(staff = Depends(verify_staff), status: O
     orders = await db.pharmacy_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
     return {"orders": orders, "statuses": PHARMACY_STATUSES}
 
+@api_router.post("/staff/pharmacy/orders/{order_id}/upload-bill")
+async def upload_pharmacy_bill(order_id: str, file: UploadFile = File(...), staff = Depends(verify_staff)):
+    """Upload bill/receipt for pharmacy order (required before Out for Delivery)"""
+    if staff.get("role") not in ["pharmacy_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Pharmacy staff access required")
+    
+    order = await db.pharmacy_orders.find_one({"id": order_id})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Upload file
+    try:
+        if drive_service:
+            file_content = await file.read()
+            file_stream = io.BytesIO(file_content)
+            file_metadata = {
+                'name': f"bill_{order_id}_{file.filename}",
+                'mimeType': file.content_type
+            }
+            media = MediaIoBaseUpload(file_stream, mimetype=file.content_type, resumable=True)
+            uploaded_file = drive_service.files().create(
+                body=file_metadata,
+                media_body=media,
+                fields='id, webViewLink'
+            ).execute()
+            
+            drive_service.permissions().create(
+                fileId=uploaded_file['id'],
+                body={'type': 'anyone', 'role': 'reader'}
+            ).execute()
+            
+            file_url = uploaded_file.get('webViewLink', f"https://drive.google.com/file/d/{uploaded_file['id']}/view")
+        else:
+            # Fallback: store as base64
+            file_content = await file.read()
+            import base64
+            file_url = f"data:{file.content_type};base64,{base64.b64encode(file_content).decode()}"
+        
+        # Update order with bill URL
+        await db.pharmacy_orders.update_one(
+            {"id": order_id},
+            {"$set": {
+                "bill_url": file_url,
+                "bill_uploaded_at": datetime.now(timezone.utc).isoformat(),
+                "bill_uploaded_by": staff.get("name")
+            }}
+        )
+        
+        logger.info(f"Bill uploaded for pharmacy order {order_id} by {staff.get('name')}")
+        return {"success": True, "bill_url": file_url, "message": "Bill uploaded successfully"}
+        
+    except Exception as e:
+        logger.error(f"Failed to upload bill: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to upload bill: {str(e)}")
+
 @api_router.put("/staff/pharmacy/orders/{order_id}/status")
 async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpdate, staff = Depends(verify_staff)):
     """Update pharmacy order status (Pharmacy Staff only)"""
@@ -6220,6 +6275,13 @@ async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpd
     order = await db.pharmacy_orders.find_one({"id": order_id}, {"_id": 0})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
+    
+    # MANDATORY: Bill must be uploaded before "Out for Delivery"
+    if update.status == "Out for Delivery" and not order.get("bill_url"):
+        raise HTTPException(
+            status_code=400, 
+            detail="Bill/Receipt must be uploaded before marking order as 'Out for Delivery'"
+        )
     
     status_entry = {
         "status": update.status,
@@ -6254,6 +6316,7 @@ async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpd
             <p>Hello {order.get('patient_name')},</p>
             <p>Your Orange Pharmacy order status: <strong>{update.status}</strong></p>
             {f"<p>Notes: {update.notes}</p>" if update.notes else ""}
+            {f"<p><a href='{order.get('bill_url')}'>View Bill/Receipt</a></p>" if order.get('bill_url') else ""}
         </div>
     </div>
     """
