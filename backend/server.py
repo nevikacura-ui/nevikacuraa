@@ -82,12 +82,14 @@ if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
         logger.warning(f"Failed to initialize Twilio client: {e}")
 
 async def send_whatsapp_notification(to_number: str, message: str):
-    """Send WhatsApp notification using Twilio"""
+    """Send WhatsApp notification using Twilio or generate wa.me link as fallback"""
     if not twilio_client or not TWILIO_WHATSAPP_FROM:
-        logger.warning("Twilio not configured, skipping WhatsApp notification")
-        # Log the message that would be sent for debugging
-        logger.info(f"WhatsApp message to {to_number}: {message}")
-        return None
+        logger.warning("Twilio not configured, generating wa.me link instead")
+        # Generate wa.me link for manual sending
+        encoded_msg = message.replace('\n', '%0A').replace(' ', '%20').replace('*', '')
+        wa_link = f"https://wa.me/{to_number}?text={encoded_msg}"
+        logger.info(f"WhatsApp link for {to_number}: {wa_link}")
+        return {"type": "link", "url": wa_link}
     
     try:
         # Format numbers for WhatsApp
@@ -100,11 +102,27 @@ async def send_whatsapp_notification(to_number: str, message: str):
             from_=whatsapp_from,
             to=whatsapp_to
         )
-        logger.info(f"WhatsApp message sent to {to_number}: {result.sid}")
-        return result.sid
+        logger.info(f"WhatsApp message sent to {to_number}: SID={result.sid}")
+        return {"type": "sent", "sid": result.sid}
     except Exception as e:
-        logger.error(f"Failed to send WhatsApp message to {to_number}: {str(e)}")
-        return None
+        error_msg = str(e)
+        logger.error(f"Failed to send WhatsApp to {to_number}: {error_msg}")
+        
+        # If Twilio fails, generate wa.me link as fallback
+        encoded_msg = message.replace('\n', '%0A').replace(' ', '%20').replace('*', '')
+        wa_link = f"https://wa.me/{to_number}?text={encoded_msg}"
+        logger.info(f"Fallback wa.me link: {wa_link}")
+        
+        # Store the notification for manual sending
+        await db.pending_whatsapp.insert_one({
+            "to_number": to_number,
+            "message": message,
+            "wa_link": wa_link,
+            "error": error_msg,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+        
+        return {"type": "pending", "url": wa_link, "error": error_msg}
 
 async def notify_doctor_whatsapp(doctor_name: str, appointment_details: dict, booking_type: str = "walk_in"):
     """Send WhatsApp notification to doctor about new appointment"""
