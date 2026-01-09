@@ -386,7 +386,9 @@ class TestAdminEndpoints:
     
     def test_admin_pharmacy_orders_list(self):
         """Test admin can list pharmacy orders"""
-        headers = {"X-Admin-Password": ADMIN_PASSWORD}
+        admin_token = get_admin_token()
+        assert admin_token is not None, "Failed to get admin token"
+        headers = {"Authorization": f"Bearer {admin_token}"}
         response = requests.get(f"{BASE_URL}/api/admin/pharmacy/orders", headers=headers)
         assert response.status_code == 200
         data = response.json()
@@ -396,7 +398,9 @@ class TestAdminEndpoints:
     
     def test_admin_diagnostic_orders_list(self):
         """Test admin can list diagnostic orders"""
-        headers = {"X-Admin-Password": ADMIN_PASSWORD}
+        admin_token = get_admin_token()
+        assert admin_token is not None, "Failed to get admin token"
+        headers = {"Authorization": f"Bearer {admin_token}"}
         response = requests.get(f"{BASE_URL}/api/admin/diagnostic/orders", headers=headers)
         assert response.status_code == 200
         data = response.json()
