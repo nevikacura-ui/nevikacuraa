@@ -6398,6 +6398,87 @@ async def get_diagnostic_orders_for_staff(staff = Depends(verify_staff), status:
     
     return {"orders": all_orders, "statuses": DIAGNOSTIC_STATUSES}
 
+@api_router.post("/staff/diagnostic/orders")
+async def create_diagnostic_order_by_staff(order_data: StaffDiagnosticOrderCreate, staff = Depends(verify_staff)):
+    """Create a new diagnostic order (Diagnostics Staff only)"""
+    if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+    if not order_data.tests or len(order_data.tests) == 0:
+        raise HTTPException(status_code=400, detail="At least one test must be selected")
+    
+    order = {
+        "id": str(uuid.uuid4()),
+        "user_id": None,  # Walk-in order, no user account
+        "tests": order_data.tests,
+        "patient_name": order_data.patient_name,
+        "patient_phone": order_data.patient_phone,
+        "patient_email": order_data.patient_email,
+        "age": order_data.age,
+        "sex": order_data.sex,
+        "preferred_date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "status": "Test Booked",
+        "notes": order_data.notes,
+        "created_by": staff.get("name"),
+        "created_by_id": staff.get("sub"),
+        "booking_type": "walk_in",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.diagnostic_orders.insert_one(order)
+    
+    # Log action
+    await db.audit_logs.insert_one({
+        "action": "DIAGNOSTIC_ORDER_CREATED",
+        "order_id": order["id"],
+        "staff_id": staff.get("sub"),
+        "staff_name": staff.get("name"),
+        "patient_name": order_data.patient_name,
+        "tests": order_data.tests,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
+    # Send confirmation email if patient email is provided
+    if order_data.patient_email:
+        tests_list = ', '.join(order_data.tests)
+        patient_html = f"""
+        <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+                <h1 style="color: white; margin: 0;">Test Booking Confirmed 🔬</h1>
+            </div>
+            <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+                <p>Hello <strong>{order_data.patient_name}</strong>,</p>
+                <p>Your diagnostic tests have been booked at Proton Diagnostics.</p>
+                
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8b5cf6;">
+                    <p style="margin: 5px 0;"><strong>Order ID:</strong> {order['id'][:8]}...</p>
+                    <p style="margin: 5px 0;"><strong>Tests:</strong> {tests_list}</p>
+                    {f"<p style='margin: 5px 0;'><strong>Age/Sex:</strong> {order_data.age or 'N/A'} / {order_data.sex or 'N/A'}</p>" if order_data.age or order_data.sex else ""}
+                    <p style="margin: 5px 0;"><strong>Status:</strong> Test Booked</p>
+                </div>
+                
+                <p>You will receive your reports via email once they are ready.</p>
+                <p style="color: #64748b; font-size: 14px; margin-top: 20px;">Thank you for choosing Proton Diagnostics!</p>
+            </div>
+        </div>
+        """
+        
+        await send_email_notification(
+            f"New Diagnostic Order Created - {order_data.patient_name}",
+            f"Order created by {staff.get('name')}: {tests_list}",
+            patient_email=order_data.patient_email,
+            patient_subject="Test Booking Confirmed - Proton Diagnostics",
+            patient_html=patient_html
+        )
+    
+    logger.info(f"Diagnostic order created by {staff.get('name')}: {order_data.patient_name} - {order_data.tests}")
+    
+    return {
+        "success": True,
+        "order": {k: v for k, v in order.items() if k != "_id"},
+        "message": "Diagnostic order created successfully"
+    }
+
 @api_router.post("/staff/diagnostic/orders/{order_id}/upload-report")
 async def upload_diagnostic_report(order_id: str, file: UploadFile = File(...), staff = Depends(verify_staff)):
     """Upload report for diagnostic order (required before Reports Generated)"""
