@@ -1345,6 +1345,76 @@ const Admin = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Add Staff Modal */}
+      <Dialog open={showAddStaffModal} onOpenChange={setShowAddStaffModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Staff Member</DialogTitle>
+            <DialogDescription>Create a login for doctors or staff members</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>Full Name *</Label>
+              <Input
+                value={newStaff.name}
+                onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
+                placeholder="e.g., Dr. Neha Batra"
+              />
+            </div>
+            <div>
+              <Label>Username *</Label>
+              <Input
+                value={newStaff.username}
+                onChange={(e) => setNewStaff({ ...newStaff, username: e.target.value.toLowerCase().replace(/\s/g, '') })}
+                placeholder="e.g., drneha"
+              />
+            </div>
+            <div>
+              <Label>Password *</Label>
+              <Input
+                type="password"
+                value={newStaff.password}
+                onChange={(e) => setNewStaff({ ...newStaff, password: e.target.value })}
+                placeholder="Create a password"
+              />
+            </div>
+            <div>
+              <Label>Role *</Label>
+              <select
+                value={newStaff.role}
+                onChange={(e) => setNewStaff({ ...newStaff, role: e.target.value })}
+                className="w-full p-2 border rounded-lg"
+              >
+                <option value="clinic_staff">Clinic Staff - Book Walk-ins & Check-in</option>
+                <option value="doctor">Doctor - Mark Appointments Complete</option>
+                <option value="pharmacy_staff">Pharmacy Staff - Update Order Status</option>
+                <option value="diagnostics_staff">Diagnostics Staff - Update Test Status</option>
+              </select>
+            </div>
+            {newStaff.role === 'doctor' && (
+              <div>
+                <Label>Doctor Name *</Label>
+                <select
+                  value={newStaff.doctor_name}
+                  onChange={(e) => setNewStaff({ ...newStaff, doctor_name: e.target.value })}
+                  className="w-full p-2 border rounded-lg"
+                >
+                  <option value="">Select doctor...</option>
+                  {doctors.map(d => <option key={d} value={d}>{d}</option>)}
+                </select>
+              </div>
+            )}
+            <div className="flex justify-end gap-3 pt-4">
+              <Button variant="outline" onClick={() => setShowAddStaffModal(false)}>Cancel</Button>
+              <Button onClick={handleAddStaff} disabled={addStaffLoading}>
+                {addStaffLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
+                Add Staff
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
