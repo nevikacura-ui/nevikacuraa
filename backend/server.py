@@ -5501,6 +5501,16 @@ class StaffOrderStatusUpdate(BaseModel):
     status: str
     notes: Optional[str] = None
 
+class StaffDiagnosticOrderCreate(BaseModel):
+    """Create diagnostic order by staff"""
+    patient_name: str
+    patient_phone: str
+    patient_email: Optional[str] = None
+    age: Optional[str] = None
+    sex: Optional[str] = None  # Male, Female, Other
+    tests: List[str]
+    notes: Optional[str] = None
+
 class EmergencyAppointment(BaseModel):
     """Emergency appointment - no time slot required"""
     doctor: str
