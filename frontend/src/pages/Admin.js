@@ -1244,7 +1244,7 @@ const Admin = () => {
             <div>
               <Label>Doctor</Label>
               <select value={cancelForm.doctor} onChange={(e) => setCancelForm({ ...cancelForm, doctor: e.target.value })} className="w-full mt-1 h-10 px-3 border rounded-md">
-                <option value="Dr. Vikas Jha">Dr. Vikas Jha</option>
+                <option value="Dr. Ankita Gupta">Dr. Ankita Gupta</option>
                 <option value="Dr. Vikas Jha">Dr. Vikas Jha</option>
               </select>
             </div>
