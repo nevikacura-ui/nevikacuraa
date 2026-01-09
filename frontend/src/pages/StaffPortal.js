@@ -851,15 +851,21 @@ const StaffPortal = () => {
                   )}
                   
                   <div>
-                    <Label>Time Slot * {availableTimeSlots.length > 0 && <span className="text-gray-500 text-xs">({availableTimeSlots.length} slots available)</span>}</Label>
+                    <Label>Time Slot * 
+                      {loadingSlots ? (
+                        <span className="text-gray-500 text-xs ml-1"><Loader2 className="w-3 h-3 animate-spin inline" /> Loading...</span>
+                      ) : availableTimeSlots.length > 0 ? (
+                        <span className="text-gray-500 text-xs ml-1">({availableTimeSlots.length} slots available{bookedSlots.length > 0 ? `, ${bookedSlots.length} booked` : ''})</span>
+                      ) : null}
+                    </Label>
                     <select
                       value={walkInForm.time}
                       onChange={(e) => setWalkInForm({ ...walkInForm, time: e.target.value })}
                       className="w-full p-2 border rounded-lg"
                       data-testid="walkin-time"
-                      disabled={!isDoctorAvailable}
+                      disabled={!isDoctorAvailable || loadingSlots}
                     >
-                      <option value="">{isDoctorAvailable ? 'Select time' : 'No slots available'}</option>
+                      <option value="">{loadingSlots ? 'Loading slots...' : isDoctorAvailable ? 'Select time' : 'No slots available'}</option>
                       {availableTimeSlots.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
