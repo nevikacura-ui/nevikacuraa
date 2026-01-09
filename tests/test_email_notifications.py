@@ -259,7 +259,9 @@ class TestPharmacyStatusUpdateEmail:
         print(f"✓ Pharmacy order created: {order_id}")
         
         # Now update status as admin
-        headers = {"X-Admin-Password": ADMIN_PASSWORD}
+        admin_token = get_admin_token()
+        assert admin_token is not None, "Failed to get admin token"
+        headers = {"Authorization": f"Bearer {admin_token}"}
         
         # Test each status update
         statuses = ["Packing", "Out for Delivery", "Delivered"]
@@ -276,8 +278,6 @@ class TestPharmacyStatusUpdateEmail:
             print(f"✓ Pharmacy order status updated to '{status}'")
             print(f"✓ Status update email should be sent to patient: {order_data['patient_email']}")
             time.sleep(0.5)  # Small delay between updates
-        
-        return order_id
 
 
 class TestDiagnosticStatusUpdateEmail:
