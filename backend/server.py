@@ -5784,31 +5784,77 @@ async def get_doctor_appointments(staff = Depends(verify_staff), date: Optional[
 
 @api_router.put("/staff/appointments/{appointment_id}/complete")
 async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = None, staff = Depends(verify_staff)):
-    """Mark appointment as completed (Doctor only)"""
-    if staff.get("role") not in ["doctor", "super_admin"]:
-        raise HTTPException(status_code=403, detail="Doctor access required")
+    """Mark appointment as completed (Doctor or Clinic Staff)"""
+    role = staff.get("role")
+    if role not in ["doctor_pushpa", "doctor_amnion", "clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Doctor or Clinic Staff access required")
     
     appointment = await db.appointments.find_one({"id": appointment_id})
     if not appointment:
         raise HTTPException(status_code=404, detail="Appointment not found")
     
     # If doctor role, verify it's their appointment
-    if staff.get("role") == "doctor" and appointment.get("doctor") != staff.get("doctor_name"):
+    if role.startswith("doctor") and appointment.get("doctor") != staff.get("doctor_name"):
         raise HTTPException(status_code=403, detail="You can only complete your own appointments")
+    
+    # If clinic staff, verify it's their clinic
+    if role == "clinic_staff_pushpa" and appointment.get("clinic") != "Pushpa Clinic":
+        raise HTTPException(status_code=403, detail="You can only manage Pushpa Clinic appointments")
+    if role == "clinic_staff_amnion" and appointment.get("clinic") != "Amnion Clinic":
+        raise HTTPException(status_code=403, detail="You can only manage Amnion Clinic appointments")
     
     await db.appointments.update_one(
         {"id": appointment_id},
         {"$set": {
-            "status": "completed",
+            "status": "Completed",
             "completed_at": datetime.now(timezone.utc).isoformat(),
             "completed_by": staff.get("name"),
             "completion_notes": notes
         }}
     )
     
+    # Log action
+    await db.audit_logs.insert_one({
+        "action": "appointment_completed",
+        "appointment_id": appointment_id,
+        "staff_id": staff.get("sub"),
+        "staff_name": staff.get("name"),
+        "patient_name": appointment.get("patient_name"),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
+    # Send completion email if patient has email
+    if appointment.get("patient_email"):
+        patient_html = f"""
+        <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+                <h1 style="color: white; margin: 0;">Appointment Completed ✓</h1>
+            </div>
+            <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+                <p>Dear <strong>{appointment.get('patient_name')}</strong>,</p>
+                <p>Your appointment has been successfully completed.</p>
+                <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Doctor:</strong> {appointment.get('doctor')}</p>
+                    <p><strong>Clinic:</strong> {appointment.get('clinic')}</p>
+                    <p><strong>Date:</strong> {appointment.get('date')}</p>
+                </div>
+                <p>We appreciate your trust in Nevika Cura Healthcare.</p>
+                <p style="color: #10b981; font-weight: bold;">Wishing you good health!</p>
+                <p style="color: #64748b; font-size: 14px; margin-top: 20px;">Warm regards,<br>Nevika Cura Team</p>
+            </div>
+        </div>
+        """
+        await send_email_notification(
+            f"Appointment Completed - {appointment.get('patient_name')}",
+            f"Appointment completed for {appointment.get('patient_name')} with {appointment.get('doctor')}",
+            patient_email=appointment.get("patient_email"),
+            patient_subject="Appointment Completed – Thank You",
+            patient_html=patient_html
+        )
+    
     logger.info(f"Appointment completed by {staff.get('name')}: {appointment.get('patient_name')}")
     
-    return {"success": True, "status": "completed", "message": "Appointment marked as completed"}
+    return {"success": True, "status": "Completed", "message": "Appointment marked as completed"}
 
 # ============ Pharmacy Staff Endpoints ============
 
