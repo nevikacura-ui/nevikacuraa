@@ -143,7 +143,15 @@ const StaffPortal = () => {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [selectedService, setSelectedService] = useState('');
 
-  const timeSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'];
+  // Calculate available time slots based on doctor, clinic, and date
+  const availableTimeSlots = useMemo(() => {
+    return getAvailableTimeSlots(walkInForm.doctor, walkInForm.clinic, walkInForm.date);
+  }, [walkInForm.doctor, walkInForm.clinic, walkInForm.date]);
+
+  // Check if doctor is available on selected date
+  const isDoctorAvailable = useMemo(() => {
+    return availableTimeSlots.length > 0;
+  }, [availableTimeSlots]);
 
   useEffect(() => {
     const token = localStorage.getItem('staffToken');
