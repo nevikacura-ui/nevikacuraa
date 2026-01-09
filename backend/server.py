@@ -855,16 +855,17 @@ async def upload_file(file: UploadFile = File(...), user_id: Optional[str] = Non
 
 @api_router.post("/appointments", response_model=Appointment)
 async def create_appointment(input: AppointmentCreate, user = Depends(get_current_user)):
-    # Check if slot is already booked
+    # SLOT BLOCKING: Check if slot is already booked (only for NORMAL appointments with status Booked/In Clinic/Completed)
     existing = await db.appointments.find_one({
         "doctor": input.doctor,
         "clinic": input.clinic,
         "date": input.date,
-        "time": input.time
+        "time": input.time,
+        "status": {"$in": ["Booked", "In Clinic", "Completed"]}
     })
     
     if existing:
-        raise HTTPException(status_code=400, detail="This time slot is already booked. Please select a different time.")
+        raise HTTPException(status_code=400, detail="This time slot is already booked. Please select another slot.")
     
     appointment = Appointment(
         user_id=user.id if user else None,
@@ -873,6 +874,7 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
     
     doc = appointment.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
+    doc['appointment_type'] = "NORMAL"  # Customer bookings are always NORMAL
     
     await db.appointments.insert_one(doc)
     logger.info(f"Appointment created: {appointment.id}")
