@@ -802,9 +802,44 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
     <p><strong>Email:</strong> {appointment.patient_email or 'Not provided'}</p>
     <p><strong>Booked at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
     """
-    await send_email_notification(f"New Appointment - {appointment.doctor} on {appointment.date}", email_html)
     
-    return appointment
+    # Patient confirmation email
+    patient_appt_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0;">Appointment Confirmed! 📅</h1>
+        </div>
+        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+            <p style="font-size: 18px;">Hello <strong>{appointment.patient_name}</strong>,</p>
+            <p>Your appointment has been successfully booked at <strong>DiaGyn Healthcare</strong>.</p>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+                <h3 style="color: #3b82f6; margin-top: 0;">Appointment Details</h3>
+                <p><strong>Doctor:</strong> {appointment.doctor}</p>
+                <p><strong>Clinic:</strong> {appointment.clinic}</p>
+                <p><strong>Date:</strong> {appointment.date}</p>
+                <p><strong>Time:</strong> {appointment.time}</p>
+            </div>
+            
+            <p style="color: #64748b; font-size: 14px;">
+                Please arrive 15 minutes before your scheduled time. Bring any relevant medical records or prescriptions.
+            </p>
+            
+            <div style="text-align: center; margin-top: 30px; padding: 15px; background: #dbeafe; border-radius: 8px;">
+                <p style="margin: 0; color: #1e40af;"><strong>Need to reschedule?</strong></p>
+                <p style="margin: 5px 0 0 0; color: #3b82f6;">Contact us: 7039020020</p>
+            </div>
+        </div>
+    </div>
+    """
+    
+    await send_email_notification(
+        f"New Appointment - {appointment.doctor} on {appointment.date}", 
+        email_html,
+        patient_email=appointment.patient_email,
+        patient_subject=f"Appointment Confirmed - {appointment.doctor} on {appointment.date}",
+        patient_html=patient_appt_html
+    )
     
     return appointment
 
