@@ -5438,11 +5438,11 @@ async def admin_login(input: AdminLogin):
     if input.password != ADMIN_PASSWORD:
         raise HTTPException(status_code=401, detail="Invalid admin password")
     
-    # Generate admin token
+    # Generate admin token with 30 days expiry for persistent login
     admin_token = jwt.encode({
         'sub': 'admin',
         'role': 'admin',
-        'exp': datetime.now(timezone.utc) + timedelta(hours=24)
+        'exp': datetime.now(timezone.utc) + timedelta(days=30)
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
     return {"token": admin_token, "role": "admin"}
