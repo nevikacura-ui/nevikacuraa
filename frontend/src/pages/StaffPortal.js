@@ -11,7 +11,7 @@ import {
   ArrowLeft, User, Lock, LogOut, UserPlus, CheckCircle2, 
   Clock, Package, FlaskConical, Stethoscope, Users, 
   Phone, Calendar, Loader2, RefreshCw, AlertTriangle, Plus, 
-  Heart, Droplet, Scan
+  Heart, Droplet, Scan, Upload, FileText, Receipt
 } from 'lucide-react';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
