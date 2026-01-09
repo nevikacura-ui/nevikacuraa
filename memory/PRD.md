@@ -194,6 +194,15 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 7. WhatsApp link generation for all services
 8. User dashboard with order history
 9. Admin dashboard with inventory management
+10. **PWA (Progressive Web App)** - Mobile installable with offline support
+
+### PWA Features ✅ (Completed January 9, 2026)
+- Web app manifest with app icons (72x72 to 512x512)
+- Service worker for offline caching
+- Apple touch icon for iOS home screen
+- Theme color integration (#14b8a6 teal)
+- App shortcuts for DiaGyn, Proton, Pharmacy
+- "Add to Home Screen" capability on mobile devices
 
 ### Mocked Features (Ready for Production Integration)
 - OTP system returns mock OTP in response (integrate MSG91 for production)
