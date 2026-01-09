@@ -389,8 +389,8 @@ const StaffPortal = () => {
 
   const role = staffInfo?.role;
 
-  // Service Modal
-  const ServiceModal = () => (
+  // Service Modal Content
+  const serviceModalContent = (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-md p-6">
         <h3 className="text-lg font-semibold mb-4">Add Service for {selectedAppointment?.patient_name}</h3>
