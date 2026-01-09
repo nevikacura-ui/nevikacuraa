@@ -117,6 +117,7 @@ const StaffPortal = () => {
   const [serviceOrders, setServiceOrders] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [emergencyCounts, setEmergencyCounts] = useState({});
+  const [availableTests, setAvailableTests] = useState({});
   
   // Walk-in form
   const [walkInForm, setWalkInForm] = useState({
@@ -136,6 +137,17 @@ const StaffPortal = () => {
     patient_name: '',
     patient_phone: '',
     patient_email: ''
+  });
+  
+  // Diagnostic order form (for diagnostics staff)
+  const [diagOrderForm, setDiagOrderForm] = useState({
+    patient_name: '',
+    patient_phone: '',
+    patient_email: '',
+    age: '',
+    sex: '',
+    tests: [],
+    notes: ''
   });
   
   // Service modal states
