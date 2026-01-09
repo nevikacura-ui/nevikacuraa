@@ -91,7 +91,7 @@ const Profile = () => {
         </Card>
 
         <Tabs defaultValue="appointments" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="appointments" data-testid="appointments-tab">
               <Calendar className="w-4 h-4 mr-2" />
               Appointments
@@ -103,6 +103,10 @@ const Profile = () => {
             <TabsTrigger value="pharmacy" data-testid="pharmacy-tab">
               <Pill className="w-4 h-4 mr-2" />
               Pharmacy
+            </TabsTrigger>
+            <TabsTrigger value="settings" data-testid="settings-tab">
+              <Settings className="w-4 h-4 mr-2" />
+              Settings
             </TabsTrigger>
           </TabsList>
 
