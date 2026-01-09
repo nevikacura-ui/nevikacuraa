@@ -6228,39 +6228,31 @@ async def upload_pharmacy_bill(order_id: str, file: UploadFile = File(...), staf
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     
-    # Upload file
+    # Upload file - save to static folder
     try:
-        if drive_service:
-            file_content = await file.read()
-            file_stream = io.BytesIO(file_content)
-            file_metadata = {
-                'name': f"bill_{order_id}_{file.filename}",
-                'mimeType': file.content_type
-            }
-            media = MediaIoBaseUpload(file_stream, mimetype=file.content_type, resumable=True)
-            uploaded_file = drive_service.files().create(
-                body=file_metadata,
-                media_body=media,
-                fields='id, webViewLink'
-            ).execute()
-            
-            drive_service.permissions().create(
-                fileId=uploaded_file['id'],
-                body={'type': 'anyone', 'role': 'reader'}
-            ).execute()
-            
-            file_url = uploaded_file.get('webViewLink', f"https://drive.google.com/file/d/{uploaded_file['id']}/view")
-        else:
-            # Fallback: store as base64
-            file_content = await file.read()
-            import base64
-            file_url = f"data:{file.content_type};base64,{base64.b64encode(file_content).decode()}"
+        # Create uploads directory if not exists
+        uploads_dir = ROOT_DIR / "uploads" / "bills"
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Generate unique filename
+        file_ext = Path(file.filename).suffix or ".pdf"
+        unique_filename = f"bill_{order_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}{file_ext}"
+        file_path = uploads_dir / unique_filename
+        
+        # Save file
+        file_content = await file.read()
+        with open(file_path, "wb") as f:
+            f.write(file_content)
+        
+        # Generate URL - will be served by static files mount
+        file_url = f"/api/uploads/bills/{unique_filename}"
         
         # Update order with bill URL
         await db.pharmacy_orders.update_one(
             {"id": order_id},
             {"$set": {
                 "bill_url": file_url,
+                "bill_filename": file.filename,
                 "bill_uploaded_at": datetime.now(timezone.utc).isoformat(),
                 "bill_uploaded_by": staff.get("name")
             }}
