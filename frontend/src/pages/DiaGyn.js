@@ -32,17 +32,18 @@ const doctors = [
     }
   },
   {
-    id: 'neha',
-    name: 'Dr. Neha Patel',
+    id: 'ankita',
+    name: 'Dr. Ankita Gupta',
     specialty: 'OBGYN',
     image: 'https://customer-assets.emergentagent.com/job_1d0b9312-d1f2-40d1-b78f-c0c28fa95ba1/artifacts/kqjjgvou_IMG-20260108-WA0000.jpg',
     schedule: {
-      amnion: [
-        { days: ['Monday', 'Wednesday', 'Friday'], time: '18:00-22:00' }
-      ],
       pushpa: [
         { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00-14:00' },
         { days: ['Tuesday', 'Thursday', 'Saturday'], time: '18:00-22:00' }
+      ],
+      amnion: [
+        { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '10:00-13:00' },
+        { days: ['Monday', 'Wednesday', 'Friday'], time: '17:00-20:00' }
       ]
     }
   }
