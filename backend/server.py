@@ -51,6 +51,17 @@ NOTIFICATION_EMAIL = os.environ.get('NOTIFICATION_EMAIL', 'nevikacura@gmail.com'
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'Nevika Cura <onboarding@resend.dev>')
 SIGNUP_WHATSAPP_NUMBER = os.environ.get('SIGNUP_WHATSAPP_NUMBER', '9833188288')
 
+# Twilio Configuration for WhatsApp
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', '')
+TWILIO_WHATSAPP_FROM = os.environ.get('TWILIO_WHATSAPP_FROM', '')  # e.g., 'whatsapp:+14155238886'
+
+# Doctor WhatsApp Numbers for appointment notifications
+DOCTOR_WHATSAPP_NUMBERS = {
+    "Dr. Neha Patel": "917045266466",
+    "Dr. Vikas Jha": "919930266466"
+}
+
 # VAPID Configuration for Web Push Notifications
 VAPID_PUBLIC_KEY = os.environ.get('VAPID_PUBLIC_KEY', '')
 VAPID_PRIVATE_KEY = os.environ.get('VAPID_PRIVATE_KEY', '')
@@ -59,6 +70,69 @@ VAPID_CLAIMS_EMAIL = os.environ.get('VAPID_CLAIMS_EMAIL', 'nevikacura@gmail.com'
 # Initialize Resend
 if RESEND_API_KEY:
     resend.api_key = RESEND_API_KEY
+
+# Initialize Twilio client
+twilio_client = None
+if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
+    try:
+        from twilio.rest import Client as TwilioClient
+        twilio_client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        logger.info("Twilio client initialized successfully")
+    except Exception as e:
+        logger.warning(f"Failed to initialize Twilio client: {e}")
+
+async def send_whatsapp_notification(to_number: str, message: str):
+    """Send WhatsApp notification using Twilio"""
+    if not twilio_client or not TWILIO_WHATSAPP_FROM:
+        logger.warning("Twilio not configured, skipping WhatsApp notification")
+        # Log the message that would be sent for debugging
+        logger.info(f"WhatsApp message to {to_number}: {message}")
+        return None
+    
+    try:
+        # Format numbers for WhatsApp
+        whatsapp_to = f"whatsapp:+{to_number}" if not to_number.startswith("whatsapp:") else to_number
+        whatsapp_from = TWILIO_WHATSAPP_FROM if TWILIO_WHATSAPP_FROM.startswith("whatsapp:") else f"whatsapp:{TWILIO_WHATSAPP_FROM}"
+        
+        result = await asyncio.to_thread(
+            twilio_client.messages.create,
+            body=message,
+            from_=whatsapp_from,
+            to=whatsapp_to
+        )
+        logger.info(f"WhatsApp message sent to {to_number}: {result.sid}")
+        return result.sid
+    except Exception as e:
+        logger.error(f"Failed to send WhatsApp message to {to_number}: {str(e)}")
+        return None
+
+async def notify_doctor_whatsapp(doctor_name: str, appointment_details: dict, booking_type: str = "walk_in"):
+    """Send WhatsApp notification to doctor about new appointment"""
+    doctor_number = DOCTOR_WHATSAPP_NUMBERS.get(doctor_name)
+    if not doctor_number:
+        logger.warning(f"No WhatsApp number configured for {doctor_name}")
+        return None
+    
+    # Format the message
+    appointment_type = "🔴 EMERGENCY" if appointment_details.get("appointment_type") == "EMERGENCY" else "📅 Walk-in"
+    time_info = appointment_details.get("time") or "No time slot (Emergency)"
+    
+    message = f"""*New Appointment Booked* {appointment_type}
+
+👨‍⚕️ *Doctor:* {doctor_name}
+🏥 *Clinic:* {appointment_details.get('clinic', 'N/A')}
+📆 *Date:* {appointment_details.get('date', 'N/A')}
+⏰ *Time:* {time_info}
+
+*Patient Details:*
+👤 Name: {appointment_details.get('patient_name', 'N/A')}
+📞 Phone: {appointment_details.get('patient_phone', 'N/A')}
+
+📝 Booked by: {appointment_details.get('booked_by', 'Staff')}
+
+_Nevika Cura Healthcare_"""
+    
+    return await send_whatsapp_notification(doctor_number, message)
 
 async def send_email_notification(subject: str, html_content: str, patient_email: str = None, patient_subject: str = None, patient_html: str = None):
     """Send email notification using Resend - to admin and optionally to patient"""
