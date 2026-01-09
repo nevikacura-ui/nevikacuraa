@@ -149,6 +149,13 @@ const Admin = () => {
     }
   }, [isAuthenticated, activeTab]);
 
+  // Fetch staff when staff tab is active
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'staff') {
+      fetchStaff();
+    }
+  }, [isAuthenticated, activeTab]);
+
   // Search debounce for inventory
   useEffect(() => {
     const timer = setTimeout(() => {
