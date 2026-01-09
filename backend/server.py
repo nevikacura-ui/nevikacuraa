@@ -6370,26 +6370,64 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
 
 @api_router.get("/staff/clinic/appointments")
 async def get_clinic_appointments(staff = Depends(verify_staff), date: Optional[str] = None, status: Optional[str] = None):
-    """Get appointments for clinic staff"""
+    """Get appointments for clinic staff - Emergency appointments pinned on top"""
     role = staff.get("role")
     if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
         raise HTTPException(status_code=403, detail="Clinic staff access required")
     
     query = {}
+    clinic = None
     
     # Filter by clinic based on role
     if role == "clinic_staff_pushpa":
         query["clinic"] = "Pushpa Clinic"
+        clinic = "Pushpa Clinic"
     elif role == "clinic_staff_amnion":
         query["clinic"] = "Amnion Clinic"
+        clinic = "Amnion Clinic"
     
     if date:
         query["date"] = date
     if status:
         query["status"] = status
     
-    appointments = await db.appointments.find(query, {"_id": 0}).sort([("date", 1), ("time", 1)]).to_list(200)
-    return {"appointments": appointments, "statuses": APPOINTMENT_STATUSES, "clinics": CLINICS}
+    # Get all appointments
+    all_appointments = await db.appointments.find(query, {"_id": 0}).to_list(200)
+    
+    # Separate emergency and normal appointments
+    emergency_appts = [a for a in all_appointments if a.get("appointment_type") == "EMERGENCY"]
+    normal_appts = [a for a in all_appointments if a.get("appointment_type") != "EMERGENCY"]
+    
+    # Sort normal appointments by time
+    normal_appts.sort(key=lambda x: (x.get("date", ""), x.get("time") or "99:99"))
+    
+    # Emergency appointments pinned on top
+    appointments = emergency_appts + normal_appts
+    
+    # Get emergency counts by doctor for today
+    emergency_counts = {}
+    target_date = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if clinic:
+        doctors = CLINICS.get(clinic, [])
+        for doctor in doctors:
+            count = await db.appointments.count_documents({
+                "doctor": doctor,
+                "date": target_date,
+                "appointment_type": "EMERGENCY",
+                "status": {"$ne": "Cancelled"}
+            })
+            emergency_counts[doctor] = {
+                "count": count,
+                "max": MAX_EMERGENCY_PER_DOCTOR_PER_DAY,
+                "remaining": MAX_EMERGENCY_PER_DOCTOR_PER_DAY - count
+            }
+    
+    return {
+        "appointments": appointments, 
+        "statuses": APPOINTMENT_STATUSES, 
+        "clinics": CLINICS,
+        "emergency_counts": emergency_counts
+    }
 
 @api_router.get("/admin/stats")
 async def get_admin_stats(admin = Depends(verify_admin)):
