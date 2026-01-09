@@ -5468,6 +5468,10 @@ class AppointmentStatusUpdate(BaseModel):
     status: str
     notes: Optional[str] = None
 
+class StaffOrderStatusUpdate(BaseModel):
+    status: str
+    notes: Optional[str] = None
+
 @api_router.post("/admin/login")
 async def admin_login(input: AdminLogin):
     """Admin login with password"""
