@@ -55,9 +55,9 @@ const Home = () => {
             <div className="flex flex-col">
               <p className="text-xs text-muted-foreground mb-1">Registered: 24215 Kuykendal Road, Tomball, Texas 77375, United States</p>
               <img 
-                src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/xm64wbqn_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233253_0000.png" 
+                src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/9eca12p8_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233253_0000%20%281%29.png" 
                 alt="Nevika Cura" 
-                className="h-20 w-auto"
+                className="h-16 w-auto"
                 data-testid="main-logo"
               />
             </div>
