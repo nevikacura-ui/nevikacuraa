@@ -28,6 +28,17 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ### Date: January 10, 2026 - Latest Update (Current Session)
 
+#### Doctor Multi-Clinic Portal - NEW FEATURE
+- [x] **Doctors can now see appointments from ALL clinics they work at**
+- [x] Added `DOCTOR_CLINICS` mapping in backend (server.py line 5713)
+- [x] Staff login now returns `doctor_clinics` array with all clinics the doctor works at
+- [x] `GET /api/staff/doctor/appointments` accepts optional `clinic` query parameter for filtering
+- [x] Frontend clinic toggle dropdown - "All Clinics", "Pushpa Clinic", "Amnion Clinic"
+- [x] Calendar-based navigation with appointment counts per day
+- [x] Status summary showing Booked, In Clinic, Completed counts
+- [x] Appointment cards show clinic name, status badges, and Complete button
+- [x] **10/10 tests passed** - Full E2E verification
+
 #### Slot Synchronization FIX - CRITICAL BUG RESOLVED
 - [x] **Fixed: Patient bookings now block slots correctly** - The issue was that patient bookings (DiaGyn) created appointments with `status: "pending"`, but the slot blocking only checked for `["Booked", "In Clinic", "Completed"]`
 - [x] Updated `GET /api/appointments/booked-slots` to include `"pending"` status in filter
