@@ -396,6 +396,11 @@ class OTPVerify(BaseModel):
     otp: str
     service: str
 
+# Feedback model for appointment ratings
+class AppointmentFeedback(BaseModel):
+    rating: int  # 1-5 stars
+    comment: Optional[str] = None
+
 # In-memory OTP storage (for mock OTP - replace with Redis in production)
 import random
 otp_storage = {}
