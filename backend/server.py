@@ -6853,19 +6853,25 @@ async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpd
         }
     )
     
-    # Send email notification with bill attachment link
-    bill_section = ""
-    if order.get('bill_url') and update.status in ['Out for Delivery', 'Delivered']:
-        bill_section = f"""
-        <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f97316;">
-            <h3 style="color: #92400e; margin-top: 0;">📄 Your Bill/Receipt</h3>
-            <p style="margin-bottom: 10px;">Your bill is attached below. Click to download:</p>
-            <a href="{order.get('bill_url')}" style="display: inline-block; background: #f97316; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">
-                📥 Download Bill (PDF)
-            </a>
-        </div>
-        """
+    # Send PUSH NOTIFICATION for status updates (no email for status updates)
+    if order.get('user_id'):
+        # Determine notification message based on status
+        status_messages = {
+            "Order Booked": "Your order has been received and is being processed.",
+            "Packing": "Your medicines are being packed for delivery.",
+            "Out for Delivery": "Your order is out for delivery! 🚚",
+            "Delivered": "Your order has been delivered! Thank you for choosing Orange Pharmacy. 💊"
+        }
+        
+        await send_push_notification(
+            user_id=order.get('user_id'),
+            title=f"📦 {update.status}",
+            body=status_messages.get(update.status, f"Order status updated to: {update.status}"),
+            url="/profile",
+            tag=f"pharmacy-{order_id}"
+        )
     
+    # Send email to ADMIN only (internal tracking)
     email_html = f"""
     <h2>📦 Pharmacy Order Status Update</h2>
     <p><strong>Order ID:</strong> {order_id[:8]}...</p>
@@ -6873,46 +6879,7 @@ async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpd
     <p><strong>New Status:</strong> {update.status}</p>
     <p><strong>Updated by:</strong> {staff.get('name')}</p>
     """
-    
-    patient_html = f"""
-    <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
-            <h1 style="color: white; margin: 0;">Order Update</h1>
-        </div>
-        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
-            <p>Hello <strong>{order.get('patient_name')}</strong>,</p>
-            <p>Your Orange Pharmacy order status has been updated to: <strong style="color: #f97316;">{update.status}</strong></p>
-            
-            <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 5px 0;"><strong>Order ID:</strong> {order_id[:8]}...</p>
-                <p style="margin: 5px 0;"><strong>Medicines:</strong> {', '.join([m.get('name', '') for m in order.get('medicines', [])])}</p>
-            </div>
-            
-            {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
-            
-            {bill_section}
-            
-            <p style="color: #64748b; font-size: 14px; margin-top: 20px;">Thank you for choosing Orange Pharmacy!</p>
-        </div>
-    </div>
-    """
-    
-    await send_email_notification(
-        f"Pharmacy Order Update - {update.status}",
-        email_html,
-        patient_email=order.get('patient_email'),
-        patient_subject=f"Your Order is {update.status} - Orange Pharmacy" + (" (Bill Attached)" if order.get('bill_url') and update.status in ['Out for Delivery', 'Delivered'] else ""),
-        patient_html=patient_html
-    )
-    
-    # Send push notification
-    if order.get('user_id'):
-        await send_push_notification(
-            user_id=order.get('user_id'),
-            title=f"Order Update: {update.status}",
-            body=f"Your pharmacy order is now: {update.status}",
-            url="/profile"
-        )
+    await send_email_notification(f"Pharmacy Order Update - {update.status}", email_html)
     
     logger.info(f"Pharmacy order {order_id} updated to {update.status} by {staff.get('name')}")
     
