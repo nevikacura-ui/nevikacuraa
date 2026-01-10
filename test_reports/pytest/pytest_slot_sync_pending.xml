@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="12" time="9.741" timestamp="2026-01-10T14:44:19.011924+00:00" hostname="agent-env-5a707796-48e8-460c-8e38-d93955b22eb4"><testcase classname="tests.test_slot_sync_pending_status.TestSlotSyncPendingStatus" name="test_health_check" time="0.084"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+tests/test_slot_sync_pending_status.py:72: in test_health_check
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="tests.test_slot_sync_pending_status.TestSlotSyncPendingStatus" name="test_booked_slots_endpoint_exists" time="0.044" /><testcase classname="tests.test_slot_sync_pending_status.TestSlotSyncPendingStatus" name="test_patient_booking_creates_pending_status" time="1.652" /><testcase classname="tests.test_slot_sync_pending_status.TestSlotSyncPendingStatus" name="test_pending_status_appears_in_booked_slots" time="1.423" /><testcase classname="tests.test_slot_sync_pending_status.TestSlotSyncPendingStatus" name="test_double_booking_prevention_patient_to_patient" time="1.407" /><testcase classname="tests.test_slot_sync_pending_status.TestSlotSyncPendingStatus" name="test_staff_login" time="0.262"><failure message="AssertionError: assert 'staff' in {'clinic': 'Pushpa Clinic', 'doctor_name': None, 'name': 'Pushpa Clinic Reception', 'role': 'clinic_staff_pushpa', ...}">tests/test_slot_sync_pending_status.py:213: in test_staff_login
+    assert "staff" in data
+E   AssertionError: assert 'staff' in {'clinic': 'Pushpa Clinic', 'doctor_name': None, 'name': 'Pushpa Clinic Reception', 'role': 'clinic_staff_pushpa', ...}</failure></testcase><testcase classname="tests.test_slot_sync_pending_status.TestSlotSyncPendingStatus" name="test_staff_walkin_booking_creates_booked_status" time="0.705" /><testcase classname="tests.test_slot_sync_pending_status.TestSlotSyncPendingStatus" name="test_cross_booking_prevention_patient_then_staff" time="1.641" /><testcase classname="tests.test_slot_sync_pending_status.TestSlotSyncPendingStatus" name="test_cross_booking_prevention_staff_then_patient" time="0.699" /><testcase classname="tests.test_slot_sync_pending_status.TestSlotSyncPendingStatus" name="test_booked_slots_includes_all_active_statuses" time="0.033" /><testcase classname="tests.test_slot_sync_pending_status.TestStaffPortalSlotSync" name="test_staff_can_see_patient_booked_slots" time="1.385" /><testcase classname="tests.test_slot_sync_pending_status.TestStaffPortalSlotSync" name="test_staff_appointments_list" time="0.268"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">tests/test_slot_sync_pending_status.py:434: in test_staff_appointments_list
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase></testsuite></testsuites>
