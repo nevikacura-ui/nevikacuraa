@@ -749,7 +749,7 @@ const Admin = () => {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-6">
+          <TabsList className="grid w-full grid-cols-7 mb-6">
             <TabsTrigger value="inventory" data-testid="inventory-tab">
               <Package className="w-4 h-4 mr-2" /> Pharmacy
             </TabsTrigger>
@@ -758,6 +758,9 @@ const Admin = () => {
             </TabsTrigger>
             <TabsTrigger value="tracking" data-testid="tracking-tab">
               <Truck className="w-4 h-4 mr-2" /> Tracking
+            </TabsTrigger>
+            <TabsTrigger value="loyalty" data-testid="loyalty-tab">
+              <Gift className="w-4 h-4 mr-2" /> Loyalty
             </TabsTrigger>
             <TabsTrigger value="leave" data-testid="leave-tab">
               <UserX className="w-4 h-4 mr-2" /> Leave
