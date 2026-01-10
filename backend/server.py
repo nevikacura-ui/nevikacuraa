@@ -1024,13 +1024,13 @@ async def upload_file(file: UploadFile = File(...), user_id: Optional[str] = Non
 
 @api_router.post("/appointments", response_model=Appointment)
 async def create_appointment(input: AppointmentCreate, user = Depends(get_current_user)):
-    # SLOT BLOCKING: Check if slot is already booked (only for NORMAL appointments with status Booked/In Clinic/Completed)
+    # SLOT BLOCKING: Check if slot is already booked (includes pending from patient bookings)
     existing = await db.appointments.find_one({
         "doctor": input.doctor,
         "clinic": input.clinic,
         "date": input.date,
         "time": input.time,
-        "status": {"$in": ["Booked", "In Clinic", "Completed"]}
+        "status": {"$in": ["pending", "Booked", "In Clinic", "Completed"]}
     })
     
     if existing:
