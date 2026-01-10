@@ -72,6 +72,10 @@ const Pharmacy = () => {
     fetchInventory();
     fetchForms();
     fetchTotalCount();
+    // Fetch loyalty points for logged-in users
+    if (user) {
+      fetchLoyaltyPoints();
+    }
   }, []);
 
   useEffect(() => {
