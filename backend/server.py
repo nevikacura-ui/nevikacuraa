@@ -8578,6 +8578,203 @@ async def autocomplete_patient(phone: str):
     
     return {"suggestions": suggestions, "source": "history"}
 
+
+# ============ LOYALTY POINTS SYSTEM ============
+
+class LoyaltyPointsAdd(BaseModel):
+    phone: str
+    points: int
+    reason: Optional[str] = None  # e.g., "Pharmacy order", "Diagnostic test"
+
+
+class LoyaltyPointsSubtract(BaseModel):
+    phone: str
+    points: int
+    reason: Optional[str] = None  # e.g., "Redeemed for pharmacy order"
+
+
+@api_router.get("/user/loyalty-points")
+async def get_user_loyalty_points(user = Depends(get_current_user)):
+    """Get loyalty points for logged-in user"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Login required to view loyalty points")
+    
+    # Get user from database to get latest points
+    db_user = await db.users.find_one({"id": user.id}, {"_id": 0, "loyalty_points": 1, "name": 1, "phone": 1})
+    if not db_user:
+        return {"loyalty_points": 0, "user_name": user.name}
+    
+    return {
+        "loyalty_points": db_user.get("loyalty_points", 0),
+        "user_name": db_user.get("name", user.name),
+        "phone": db_user.get("phone")
+    }
+
+
+@api_router.get("/loyalty-points/by-phone/{phone}")
+async def get_loyalty_points_by_phone(phone: str, staff = Depends(verify_staff)):
+    """Get loyalty points for a user by phone number (Staff access)"""
+    role = staff.get("role")
+    if role not in ["pharmacy_staff", "diagnostics_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Pharmacy or Diagnostics staff access required")
+    
+    phone = phone.strip().replace(" ", "").replace("-", "")
+    
+    # Find user by phone
+    db_user = await db.users.find_one({"phone": {"$regex": phone[-10:]}}, {"_id": 0})
+    if not db_user:
+        return {"found": False, "message": "User not registered", "loyalty_points": 0}
+    
+    return {
+        "found": True,
+        "user_id": db_user.get("id"),
+        "user_name": db_user.get("name"),
+        "phone": db_user.get("phone"),
+        "email": db_user.get("email"),
+        "loyalty_points": db_user.get("loyalty_points", 0)
+    }
+
+
+@api_router.post("/staff/loyalty-points/add")
+async def staff_add_loyalty_points(data: LoyaltyPointsAdd, staff = Depends(verify_staff)):
+    """Add loyalty points to a registered user (Pharmacy/Diagnostics Staff only)"""
+    role = staff.get("role")
+    if role not in ["pharmacy_staff", "diagnostics_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Pharmacy or Diagnostics staff access required")
+    
+    if data.points <= 0:
+        raise HTTPException(status_code=400, detail="Points must be a positive number")
+    
+    phone = data.phone.strip().replace(" ", "").replace("-", "")
+    
+    # Find and update user
+    result = await db.users.find_one_and_update(
+        {"phone": {"$regex": phone[-10:]}},
+        {"$inc": {"loyalty_points": data.points}},
+        return_document=True
+    )
+    
+    if not result:
+        raise HTTPException(status_code=404, detail="User not registered. Only registered users can earn loyalty points.")
+    
+    # Log the transaction
+    await db.loyalty_transactions.insert_one({
+        "id": str(uuid.uuid4()),
+        "user_id": result.get("id"),
+        "user_phone": result.get("phone"),
+        "user_name": result.get("name"),
+        "type": "credit",
+        "points": data.points,
+        "reason": data.reason or "Staff added points",
+        "staff_username": staff.get("username"),
+        "staff_role": role,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {
+        "success": True,
+        "message": f"Added {data.points} loyalty points",
+        "user_name": result.get("name"),
+        "new_balance": result.get("loyalty_points", 0) + data.points
+    }
+
+
+@api_router.post("/admin/loyalty-points/subtract")
+async def admin_subtract_loyalty_points(data: LoyaltyPointsSubtract, admin = Depends(verify_admin)):
+    """Subtract loyalty points from a registered user (Admin only - for redemption)"""
+    if data.points <= 0:
+        raise HTTPException(status_code=400, detail="Points must be a positive number")
+    
+    phone = data.phone.strip().replace(" ", "").replace("-", "")
+    
+    # Find user first to check balance
+    user = await db.users.find_one({"phone": {"$regex": phone[-10:]}})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    current_points = user.get("loyalty_points", 0)
+    if current_points < data.points:
+        raise HTTPException(status_code=400, detail=f"Insufficient points. User has {current_points} points, trying to subtract {data.points}")
+    
+    # Update user points
+    result = await db.users.find_one_and_update(
+        {"phone": {"$regex": phone[-10:]}},
+        {"$inc": {"loyalty_points": -data.points}},
+        return_document=True
+    )
+    
+    # Log the transaction
+    await db.loyalty_transactions.insert_one({
+        "id": str(uuid.uuid4()),
+        "user_id": user.get("id"),
+        "user_phone": user.get("phone"),
+        "user_name": user.get("name"),
+        "type": "debit",
+        "points": data.points,
+        "reason": data.reason or "Points redeemed",
+        "admin": True,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {
+        "success": True,
+        "message": f"Subtracted {data.points} loyalty points",
+        "user_name": result.get("name"),
+        "previous_balance": current_points,
+        "new_balance": current_points - data.points
+    }
+
+
+@api_router.get("/admin/loyalty-points/transactions")
+async def get_loyalty_transactions(admin = Depends(verify_admin), phone: Optional[str] = None, limit: int = 50):
+    """Get loyalty points transaction history (Admin only)"""
+    query = {}
+    if phone:
+        phone = phone.strip().replace(" ", "").replace("-", "")
+        query["user_phone"] = {"$regex": phone[-10:]}
+    
+    transactions = await db.loyalty_transactions.find(query, {"_id": 0}).sort([("created_at", -1)]).limit(limit).to_list(limit)
+    
+    return {"transactions": transactions, "count": len(transactions)}
+
+
+@api_router.get("/admin/loyalty-points/summary")
+async def get_loyalty_summary(admin = Depends(verify_admin)):
+    """Get loyalty points summary statistics (Admin only)"""
+    # Get total points issued
+    pipeline_credit = [
+        {"$match": {"type": "credit"}},
+        {"$group": {"_id": None, "total": {"$sum": "$points"}}}
+    ]
+    credit_result = await db.loyalty_transactions.aggregate(pipeline_credit).to_list(1)
+    total_issued = credit_result[0]["total"] if credit_result else 0
+    
+    # Get total points redeemed
+    pipeline_debit = [
+        {"$match": {"type": "debit"}},
+        {"$group": {"_id": None, "total": {"$sum": "$points"}}}
+    ]
+    debit_result = await db.loyalty_transactions.aggregate(pipeline_debit).to_list(1)
+    total_redeemed = debit_result[0]["total"] if debit_result else 0
+    
+    # Get users with points
+    users_with_points = await db.users.count_documents({"loyalty_points": {"$gt": 0}})
+    
+    # Get top users by points
+    top_users = await db.users.find(
+        {"loyalty_points": {"$gt": 0}},
+        {"_id": 0, "name": 1, "phone": 1, "loyalty_points": 1}
+    ).sort([("loyalty_points", -1)]).limit(10).to_list(10)
+    
+    return {
+        "total_points_issued": total_issued,
+        "total_points_redeemed": total_redeemed,
+        "points_in_circulation": total_issued - total_redeemed,
+        "users_with_points": users_with_points,
+        "top_users": top_users
+    }
+
+
 # Include router AFTER all routes are defined
 app.include_router(api_router)
 
