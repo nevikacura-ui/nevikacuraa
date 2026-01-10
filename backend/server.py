@@ -6486,8 +6486,8 @@ async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = 
 # ============ Pharmacy Staff Endpoints ============
 
 @api_router.get("/staff/pharmacy/orders")
-async def get_pharmacy_orders_for_staff(staff = Depends(verify_staff), status: Optional[str] = None):
-    """Get pharmacy orders for staff"""
+async def get_pharmacy_orders_for_staff(staff = Depends(verify_staff), status: Optional[str] = None, date: Optional[str] = None):
+    """Get pharmacy orders for staff - supports date filtering"""
     if staff.get("role") not in ["pharmacy_staff", "super_admin"]:
         raise HTTPException(status_code=403, detail="Pharmacy staff access required")
     
@@ -6495,8 +6495,26 @@ async def get_pharmacy_orders_for_staff(staff = Depends(verify_staff), status: O
     if status:
         query["status"] = status
     
-    orders = await db.pharmacy_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
-    return {"orders": orders, "statuses": PHARMACY_STATUSES}
+    # Date filtering - filter by created_at date
+    if date:
+        # Match orders created on this date (created_at starts with the date string)
+        query["created_at"] = {"$regex": f"^{date}"}
+    
+    orders = await db.pharmacy_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(200)
+    
+    # Get order counts by date for calendar view
+    all_orders = await db.pharmacy_orders.find({}, {"_id": 0, "created_at": 1, "status": 1}).to_list(1000)
+    date_counts = {}
+    for order in all_orders:
+        order_date = order.get("created_at", "")[:10]
+        if order_date:
+            if order_date not in date_counts:
+                date_counts[order_date] = {"total": 0, "pending": 0}
+            date_counts[order_date]["total"] += 1
+            if order.get("status") not in ["Delivered", "Cancelled"]:
+                date_counts[order_date]["pending"] += 1
+    
+    return {"orders": orders, "statuses": PHARMACY_STATUSES, "date_counts": date_counts}
 
 @api_router.post("/staff/pharmacy/orders/{order_id}/upload-bill")
 async def upload_pharmacy_bill(order_id: str, file: UploadFile = File(...), staff = Depends(verify_staff)):
