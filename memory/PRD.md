@@ -28,6 +28,35 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ### Date: January 10, 2026 - Latest Update (Current Session)
 
+#### Loyalty Points System - NEW FEATURE (Completed)
+- [x] **Staff Portal - Pharmacy:**
+  - [x] New "Loyalty Points" tab for pharmacy staff
+  - [x] Search registered users by phone number
+  - [x] Display user name and current loyalty points
+  - [x] Add points (1-500 per transaction) with optional reason
+  - [x] Shows "User Not Registered" for unregistered phones
+- [x] **Staff Portal - Diagnostics:**
+  - [x] New "Loyalty Points" tab for diagnostics staff
+  - [x] Same functionality as pharmacy staff
+  - [x] Purple-themed UI consistent with diagnostics branding
+- [x] **Admin Portal - Loyalty Tab:**
+  - [x] Summary cards: Total Credited, Total Redeemed, Net Active Points, Users with Points
+  - [x] Search user by phone for redemption
+  - [x] Redeem/subtract points with required reason
+  - [x] View transaction history per user
+  - [x] Top Loyalty Members leaderboard with gold/silver/bronze badges
+- [x] **Backend APIs:**
+  - [x] `GET /api/loyalty-points/by-phone/{phone}` - Staff access to search users
+  - [x] `POST /api/staff/loyalty-points/add` - Staff adds points (max 500)
+  - [x] `POST /api/admin/loyalty-points/subtract` - Admin redeems points
+  - [x] `GET /api/admin/loyalty-points/summary` - Dashboard statistics
+  - [x] `GET /api/admin/loyalty-points/transactions` - Transaction history
+- [x] **Database:**
+  - [x] `loyalty_points` field added to users collection
+  - [x] `loyalty_transactions` collection for audit trail
+- [x] **Testing:** 22/22 backend tests passed, full UI verification
+- [x] Test file: `/app/tests/test_loyalty_points.py`
+
 #### Doctor Credentials Updated - NEW
 - [x] **Usernames changed:** `doc_pushpa_01` → `doc_neha`, `doc_amnion_01` → `doc_vikas`
 - [x] Both doctors now have unified `doctor` role (instead of clinic-specific roles)
