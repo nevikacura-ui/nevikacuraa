@@ -114,6 +114,14 @@ const Home = () => {
 
           {showMenu && (
             <div className="md:hidden mt-4 pb-4 space-y-3" data-testid="mobile-menu">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/track')}
+                className="w-full justify-start"
+              >
+                <Search className="w-4 h-4 mr-2" />
+                Track Orders
+              </Button>
               {user ? (
                 <>
                   <Button 
