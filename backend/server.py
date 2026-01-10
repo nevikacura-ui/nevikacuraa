@@ -693,6 +693,82 @@ async def login_with_otp(input: LoginWithOTP):
     
     return {"token": token, "user": user.model_dump()}
 
+# ============ Guest Session Endpoints ============
+
+class GuestSession(BaseModel):
+    phone: str
+    name: str = ""
+
+@api_router.post("/auth/guest/session")
+async def create_guest_session(input: GuestSession):
+    """Create a guest session after OTP verification - no account needed"""
+    phone = input.phone.strip()
+    otp_key = f"auth_{phone}"
+    
+    # Verify the OTP was verified
+    if otp_key not in auth_otp_storage or not auth_otp_storage[otp_key].get("verified"):
+        raise HTTPException(status_code=400, detail="Please verify OTP first")
+    
+    # Clean up OTP storage
+    del auth_otp_storage[otp_key]
+    
+    # Create a guest token (valid for 24 hours)
+    guest_id = f"guest_{str(uuid.uuid4())[:8]}"
+    guest_token = jwt.encode({
+        'sub': guest_id,
+        'phone': phone,
+        'name': input.name,
+        'is_guest': True,
+        'exp': datetime.now(timezone.utc) + timedelta(hours=24)
+    }, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+    logger.info(f"Guest session created for phone: {phone}")
+    
+    return {
+        "token": guest_token,
+        "guest": {
+            "id": guest_id,
+            "phone": phone,
+            "name": input.name,
+            "is_guest": True
+        },
+        "message": "Guest session created. You can now book services."
+    }
+
+@api_router.get("/guest/orders")
+async def get_guest_orders(phone: str):
+    """Get all orders for a guest by phone number"""
+    phone = phone.strip()
+    
+    if not phone or len(phone) < 10:
+        raise HTTPException(status_code=400, detail="Invalid phone number")
+    
+    # Get appointments
+    appointments = await db.appointments.find(
+        {"patient_phone": phone},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+    
+    # Get pharmacy orders
+    pharmacy_orders = await db.pharmacy_orders.find(
+        {"patient_phone": phone},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+    
+    # Get diagnostic orders
+    diagnostic_orders = await db.diagnostic_orders.find(
+        {"patient_phone": phone},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+    
+    return {
+        "phone": phone,
+        "appointments": appointments,
+        "pharmacy_orders": pharmacy_orders,
+        "diagnostic_orders": diagnostic_orders,
+        "total_orders": len(appointments) + len(pharmacy_orders) + len(diagnostic_orders)
+    }
+
 
 # ============ OTP Endpoints (Mock OTP for testing) ============
 
