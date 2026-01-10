@@ -5778,6 +5778,7 @@ class AddServiceRequest(BaseModel):
     """Add service to an appointment"""
     service_type: str  # BLOOD_TEST, SONOGRAPHY, ECG
     service_details: Optional[str] = None
+    specific_tests: Optional[List[str]] = None  # List of specific test names
 
 class ServiceStatusUpdate(BaseModel):
     """Update service status"""
