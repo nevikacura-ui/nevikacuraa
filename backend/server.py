@@ -8081,14 +8081,3 @@ app.add_middleware(
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
-
-# Catch-all handler for root API endpoint to prevent 405 errors
-@api_router.api_route("/", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
-async def api_root():
-    """Root API endpoint - returns API info"""
-    return {
-        "name": "Nevika Cura API",
-        "version": "1.0.0",
-        "status": "healthy",
-        "services": ["diagyn", "proton", "pharmacy", "staff", "admin"]
-    }
