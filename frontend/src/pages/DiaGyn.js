@@ -397,7 +397,7 @@ const DiaGyn = () => {
               {availableClinics.map(clinic => (
                 <Card 
                   key={clinic.id}
-                  className={`p-6 cursor-pointer transition-all hover:shadow-lg ${selectedClinic === clinic.id ? 'border-2 border-brand-blue bg-blue-50' : ''}`}
+                  className={`overflow-hidden cursor-pointer transition-all hover:shadow-lg ${selectedClinic === clinic.id ? 'border-2 border-brand-blue ring-2 ring-brand-blue/20' : ''}`}
                   onClick={() => {
                     setSelectedClinic(clinic.id);
                     setSelectedDate(null);
@@ -406,11 +406,22 @@ const DiaGyn = () => {
                   }}
                   data-testid={`clinic-card-${clinic.id}`}
                 >
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-6 h-6 text-brand-blue mt-1" />
-                    <div>
-                      <h3 className="font-heading text-xl font-semibold mb-1">{clinic.name}</h3>
-                      <p className="font-body text-sm text-muted-foreground">{clinic.address}</p>
+                  {clinic.image && (
+                    <div className="h-40 overflow-hidden">
+                      <img 
+                        src={clinic.image} 
+                        alt={clinic.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <div className="flex items-start gap-3">
+                      <MapPin className="w-5 h-5 text-brand-blue mt-0.5 flex-shrink-0" />
+                      <div>
+                        <h3 className="font-heading text-lg font-semibold mb-1">{clinic.name}</h3>
+                        <p className="font-body text-sm text-muted-foreground">{clinic.address}</p>
+                      </div>
                     </div>
                   </div>
                 </Card>
