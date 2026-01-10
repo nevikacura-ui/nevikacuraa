@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Bell, X } from 'lucide-react';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { toast } from 'sonner';
@@ -14,15 +14,14 @@ export function AutoNotificationPrompt() {
   } = usePushNotifications();
   
   const [showBanner, setShowBanner] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+  
+  // Check if dismissed from localStorage
+  const isDismissed = useMemo(() => {
+    return localStorage.getItem('notificationPromptDismissed') === 'true';
+  }, []);
 
   useEffect(() => {
-    // Check if user has dismissed the prompt before
-    const promptDismissed = localStorage.getItem('notificationPromptDismissed');
-    if (promptDismissed) {
-      setDismissed(true);
-      return;
-    }
+    if (isDismissed) return;
 
     // Auto-request notifications for logged-in users after a short delay
     const timer = setTimeout(() => {
@@ -32,7 +31,7 @@ export function AutoNotificationPrompt() {
     }, 3000); // Show after 3 seconds
 
     return () => clearTimeout(timer);
-  }, [isSupported, isSubscribed, permission, user]);
+  }, [isSupported, isSubscribed, permission, user, isDismissed]);
 
   const handleEnable = async () => {
     const token = localStorage.getItem('token');
