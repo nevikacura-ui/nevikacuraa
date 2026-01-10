@@ -606,10 +606,6 @@ const StaffPortal = () => {
 
   const role = staffInfo?.role;
 
-  // State for specific test selection
-  const [selectedTestCategory, setSelectedTestCategory] = useState('');
-  const [selectedSpecificTests, setSelectedSpecificTests] = useState([]);
-
   // Toggle specific test selection
   const toggleSpecificTest = (test) => {
     setSelectedSpecificTests(prev => 
