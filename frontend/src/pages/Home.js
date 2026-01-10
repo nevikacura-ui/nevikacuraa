@@ -107,59 +107,48 @@ const Home = () => {
           </div>
         </div>
       </header>
-                </Button>
-              )}
-            </div>
 
-            <button
-              className="md:hidden"
-              onClick={() => setShowMenu(!showMenu)}
-              data-testid="mobile-menu-button"
-            >
-              {showMenu ? <X /> : <Menu />}
-            </button>
-          </div>
-
-          {showMenu && (
-            <div className="md:hidden mt-4 pb-4 space-y-3" data-testid="mobile-menu">
+      {/* Mobile Menu */}
+      {showMenu && (
+        <div className="md:hidden fixed top-24 left-0 right-0 bg-white border-b shadow-lg z-40 p-4 space-y-3" data-testid="mobile-menu">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/track')}
+            className="w-full justify-start"
+          >
+            <Search className="w-4 h-4 mr-2" />
+            Track Orders
+          </Button>
+          {user ? (
+            <>
               <Button 
                 variant="ghost" 
-                onClick={() => navigate('/track')}
+                onClick={() => navigate('/profile')}
                 className="w-full justify-start"
               >
-                <Search className="w-4 h-4 mr-2" />
-                Track Orders
+                <User className="w-4 h-4 mr-2" />
+                {user.name}
               </Button>
-              {user ? (
-                <>
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => navigate('/profile')}
-                    className="w-full justify-start"
-                  >
-                    <User className="w-4 h-4 mr-2" />
-                    {user.name}
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={logout}
-                    className="w-full"
-                  >
-                    Logout
-                  </Button>
-                </>
-              ) : (
-                <Button 
-                  onClick={() => setShowAuth(true)}
-                  className="w-full"
-                >
-                  Login / Sign Up
-                </Button>
-              )}
-            </div>
+              <Button 
+                variant="outline" 
+                onClick={logout}
+                className="w-full"
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <Button 
+              onClick={() => setShowAuth(true)} 
+              className="w-full bg-brand-teal hover:bg-brand-teal/90"
+            >
+              Login / Sign Up
+            </Button>
           )}
         </div>
-      </header>
+      )}
+
+      {/* Main Content */}
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         <div className="text-center mb-16">
