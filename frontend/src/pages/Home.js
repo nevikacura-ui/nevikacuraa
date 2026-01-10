@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import { User, Menu, X, Download, Smartphone } from 'lucide-react';
+import { User, Menu, X, Download, Smartphone, Search } from 'lucide-react';
 
 const Home = () => {
   const navigate = useNavigate();
