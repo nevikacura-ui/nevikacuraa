@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
-import { ArrowLeft, Calendar, FileText, Pill, User, Settings } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText, Pill, User, Settings, Award, Star } from 'lucide-react';
 import PushNotificationSettings from '@/components/PushNotificationSettings';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -17,6 +17,7 @@ const Profile = () => {
   const [appointments, setAppointments] = useState([]);
   const [diagnostics, setDiagnostics] = useState([]);
   const [pharmacyOrders, setPharmacyOrders] = useState([]);
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,15 +33,17 @@ const Profile = () => {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
 
-      const [appointmentsRes, diagnosticsRes, pharmacyRes] = await Promise.all([
+      const [appointmentsRes, diagnosticsRes, pharmacyRes, loyaltyRes] = await Promise.all([
         axios.get(`${API}/appointments`, { headers }),
         axios.get(`${API}/diagnostics`, { headers }),
-        axios.get(`${API}/pharmacy`, { headers })
+        axios.get(`${API}/pharmacy`, { headers }),
+        axios.get(`${API}/user/loyalty-points`, { headers }).catch(() => ({ data: { loyalty_points: 0 } }))
       ]);
 
       setAppointments(appointmentsRes.data);
       setDiagnostics(diagnosticsRes.data);
       setPharmacyOrders(pharmacyRes.data);
+      setLoyaltyPoints(loyaltyRes.data.loyalty_points || 0);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
