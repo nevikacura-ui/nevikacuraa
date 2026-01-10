@@ -5904,6 +5904,49 @@ async def delete_staff(staff_id: str, admin = Depends(verify_admin)):
         raise HTTPException(status_code=404, detail="Staff member not found")
     return {"success": True, "message": "Staff member deleted"}
 
+
+class StaffUpdate(BaseModel):
+    username: Optional[str] = None
+    name: Optional[str] = None
+    role: Optional[str] = None
+    doctor_name: Optional[str] = None
+    clinic: Optional[str] = None
+
+
+@api_router.put("/admin/staff/{staff_id}")
+async def update_staff(staff_id: str, update: StaffUpdate, admin = Depends(verify_admin)):
+    """Update a staff member's details"""
+    staff = await db.staff.find_one({"id": staff_id})
+    if not staff:
+        raise HTTPException(status_code=404, detail="Staff member not found")
+    
+    update_data = {}
+    if update.username:
+        # Check if username already exists
+        existing = await db.staff.find_one({"username": update.username, "id": {"$ne": staff_id}})
+        if existing:
+            raise HTTPException(status_code=400, detail="Username already exists")
+        update_data["username"] = update.username
+    if update.name:
+        update_data["name"] = update.name
+    if update.role:
+        if update.role not in STAFF_ROLES:
+            raise HTTPException(status_code=400, detail=f"Invalid role. Must be one of: {list(STAFF_ROLES.keys())}")
+        update_data["role"] = update.role
+    if update.doctor_name:
+        update_data["doctor_name"] = update.doctor_name
+    if update.clinic:
+        update_data["clinic"] = update.clinic
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    await db.staff.update_one({"id": staff_id}, {"$set": update_data})
+    
+    updated_staff = await db.staff.find_one({"id": staff_id}, {"_id": 0, "password_hash": 0})
+    return {"success": True, "staff": updated_staff}
+
+
 @api_router.put("/admin/staff/{staff_id}/toggle")
 async def toggle_staff_status(staff_id: str, admin = Depends(verify_admin)):
     """Enable/disable a staff member"""
