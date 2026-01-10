@@ -121,27 +121,6 @@ const Home = () => {
             </button>
           </div>
         </div>
-      </header> 
-                  size="sm"
-                  onClick={() => setShowAuth(true)} 
-                  data-testid="login-button"
-                  className="rounded-full bg-brand-teal hover:bg-brand-teal/90"
-                >
-                  Login / Sign Up
-                </Button>
-              )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden ml-auto"
-              onClick={() => setShowMenu(!showMenu)}
-              data-testid="mobile-menu-button"
-            >
-              {showMenu ? <X /> : <Menu />}
-            </button>
-          </div>
-        </div>
       </header>
 
       {/* Mobile Menu */}
