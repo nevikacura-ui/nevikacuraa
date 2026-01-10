@@ -6136,6 +6136,7 @@ async def add_service_to_appointment(appointment_id: str, service: AddServiceReq
         "doctor": appointment.get("doctor"),
         "service_type": service.service_type,
         "service_details": service.service_details,
+        "specific_tests": service.specific_tests or [],
         "ordered_by": staff.get("name"),
         "ordered_by_id": staff.get("sub"),
         "status": "ORDERED",
@@ -6145,16 +6146,13 @@ async def add_service_to_appointment(appointment_id: str, service: AddServiceReq
     await db.appointment_services.insert_one(service_record)
     
     # Also create a linked diagnostic order for tracking
-    service_name_map = {
-        "BLOOD_TEST": "Blood Test (Clinic Add-on)",
-        "SONOGRAPHY": "Sonography (Clinic Add-on)",
-        "ECG": "ECG (Clinic Add-on)"
-    }
+    # Use specific tests if provided, otherwise use generic name
+    tests_for_order = service.specific_tests if service.specific_tests else [f"{service.service_type} (Clinic Add-on)"]
     
     diagnostic_order = {
         "id": str(uuid.uuid4()),
         "user_id": appointment.get("user_id"),
-        "tests": [service_name_map.get(service.service_type, service.service_type)],
+        "tests": tests_for_order,
         "prescription_url": None,
         "preferred_date": appointment.get("date"),
         "patient_name": appointment.get("patient_name"),
