@@ -7658,6 +7658,113 @@ async def delete_single_appointment(appointment_id: str, admin = Depends(verify_
     
     return {"success": True, "message": "Appointment deleted successfully"}
 
+
+# ============ CLEANUP ENDPOINTS - Day End Operations ============
+
+@api_router.delete("/admin/cleanup/appointments/date/{date}")
+async def cleanup_appointments_by_date(date: str, admin = Depends(verify_admin)):
+    """Delete all appointments for a specific date (Day End Cleanup for DiaGyn)"""
+    result = await db.appointments.delete_many({"date": date})
+    return {
+        "success": True,
+        "message": f"Deleted {result.deleted_count} appointments for {date}",
+        "deleted_count": result.deleted_count
+    }
+
+
+@api_router.delete("/admin/cleanup/appointments/completed")
+async def cleanup_completed_appointments(admin = Depends(verify_admin)):
+    """Delete all completed appointments"""
+    result = await db.appointments.delete_many({"status": "Completed"})
+    return {
+        "success": True,
+        "message": f"Deleted {result.deleted_count} completed appointments",
+        "deleted_count": result.deleted_count
+    }
+
+
+@api_router.delete("/admin/cleanup/pharmacy/completed")
+async def cleanup_completed_pharmacy_orders(admin = Depends(verify_admin)):
+    """Delete only completed/delivered pharmacy orders (Orange Pharmacy)"""
+    result = await db.pharmacy_orders.delete_many({"status": {"$in": ["Delivered", "Completed"]}})
+    return {
+        "success": True,
+        "message": f"Deleted {result.deleted_count} completed pharmacy orders",
+        "deleted_count": result.deleted_count
+    }
+
+
+@api_router.delete("/admin/cleanup/diagnostic/completed")
+async def cleanup_completed_diagnostic_orders(admin = Depends(verify_admin)):
+    """Delete only completed diagnostic orders (Proton Diagnostics)"""
+    result = await db.diagnostic_orders.delete_many({"status": {"$in": ["Report Ready", "Delivered", "Completed"]}})
+    return {
+        "success": True,
+        "message": f"Deleted {result.deleted_count} completed diagnostic orders",
+        "deleted_count": result.deleted_count
+    }
+
+
+@api_router.delete("/admin/cleanup/all")
+async def cleanup_all_data(admin = Depends(verify_admin), confirm: str = None):
+    """Delete ALL appointments, pharmacy orders, and diagnostic orders to start fresh
+    Requires confirm=DELETEALL parameter for safety
+    """
+    if confirm != "DELETEALL":
+        raise HTTPException(status_code=400, detail="Must provide confirm=DELETEALL parameter to proceed")
+    
+    appointments_result = await db.appointments.delete_many({})
+    pharmacy_result = await db.pharmacy_orders.delete_many({})
+    diagnostic_result = await db.diagnostic_orders.delete_many({})
+    
+    return {
+        "success": True,
+        "message": "All data cleared - fresh start",
+        "deleted": {
+            "appointments": appointments_result.deleted_count,
+            "pharmacy_orders": pharmacy_result.deleted_count,
+            "diagnostic_orders": diagnostic_result.deleted_count
+        },
+        "total_deleted": appointments_result.deleted_count + pharmacy_result.deleted_count + diagnostic_result.deleted_count
+    }
+
+
+@api_router.get("/admin/cleanup/stats")
+async def get_cleanup_stats(admin = Depends(verify_admin)):
+    """Get current counts of all records for cleanup planning"""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+    # Appointment counts
+    total_appointments = await db.appointments.count_documents({})
+    completed_appointments = await db.appointments.count_documents({"status": "Completed"})
+    today_appointments = await db.appointments.count_documents({"date": today})
+    
+    # Pharmacy counts
+    total_pharmacy = await db.pharmacy_orders.count_documents({})
+    completed_pharmacy = await db.pharmacy_orders.count_documents({"status": {"$in": ["Delivered", "Completed"]}})
+    
+    # Diagnostic counts
+    total_diagnostic = await db.diagnostic_orders.count_documents({})
+    completed_diagnostic = await db.diagnostic_orders.count_documents({"status": {"$in": ["Report Ready", "Delivered", "Completed"]}})
+    
+    return {
+        "today": today,
+        "appointments": {
+            "total": total_appointments,
+            "completed": completed_appointments,
+            "today": today_appointments
+        },
+        "pharmacy_orders": {
+            "total": total_pharmacy,
+            "completed": completed_pharmacy
+        },
+        "diagnostic_orders": {
+            "total": total_diagnostic,
+            "completed": completed_diagnostic
+        }
+    }
+
+
 # ============ Order Tracking & Status Updates ============
 
 class OrderStatusUpdate(BaseModel):
