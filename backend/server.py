@@ -8399,6 +8399,8 @@ async def autocomplete_patient(phone: str):
     
     return {"suggestions": suggestions, "source": "history"}
 
+# Include router AFTER all routes are defined
+app.include_router(api_router)
 
 @app.api_route("/api/", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
 @app.api_route("/api", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
