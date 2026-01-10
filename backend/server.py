@@ -668,7 +668,11 @@ async def register_with_otp(input: RegisterWithOTP):
         patient_html=patient_welcome_html
     )
     
-    return {"token": token, "user": user.model_dump()}
+    # Generate WhatsApp link for signup notification (consistent with regular registration)
+    whatsapp_message = f"New User Signup (OTP) on Nevika Cura\n\nName: {user.name}\nEmail: {user.email}\nPhone: {user.phone}"
+    whatsapp_link = f"https://wa.me/91{SIGNUP_WHATSAPP_NUMBER}?text={whatsapp_message.replace(' ', '%20').replace(chr(10), '%0A')}"
+    
+    return {"token": token, "user": user.model_dump(), "whatsapp_notification_link": whatsapp_link}
 
 @api_router.post("/auth/login/otp")
 async def login_with_otp(input: LoginWithOTP):
