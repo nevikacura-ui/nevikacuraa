@@ -421,6 +421,57 @@ const StaffPortal = () => {
     setLoadingHistory(false);
   };
 
+  // Loyalty Points Functions
+  const searchLoyaltyUser = async () => {
+    if (!loyaltyPhone || loyaltyPhone.length < 10) {
+      toast.error('Please enter a valid 10-digit phone number');
+      return;
+    }
+    
+    setLoyaltyLoading(true);
+    setLoyaltyUser(null);
+    
+    try {
+      const res = await axios.get(`${API}/loyalty-points/by-phone/${loyaltyPhone}`, getAuthHeaders());
+      setLoyaltyUser(res.data);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to search user');
+    }
+    setLoyaltyLoading(false);
+  };
+
+  const handleAddLoyaltyPoints = async () => {
+    const points = parseInt(loyaltyPoints);
+    if (!points || points <= 0 || points > 500) {
+      toast.error('Please enter points between 1-500');
+      return;
+    }
+    
+    if (!loyaltyUser?.found) {
+      toast.error('User must be registered to earn loyalty points');
+      return;
+    }
+    
+    setAddingPoints(true);
+    try {
+      await axios.post(`${API}/staff/loyalty-points/add`, {
+        phone: loyaltyPhone,
+        points: points,
+        reason: loyaltyReason || `${staffInfo?.role === 'pharmacy_staff' ? 'Pharmacy' : 'Diagnostic'} purchase`
+      }, getAuthHeaders());
+      
+      toast.success(`Added ${points} loyalty points to ${loyaltyUser.user_name}`);
+      setLoyaltyPoints('');
+      setLoyaltyReason('');
+      
+      // Refresh user data
+      searchLoyaltyUser();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to add points');
+    }
+    setAddingPoints(false);
+  };
+
   const handleWalkInBooking = async () => {
     if (!walkInForm.patient_name || !walkInForm.patient_phone || !walkInForm.time) {
       toast.error('Please fill all required fields');
