@@ -875,7 +875,87 @@ const Pharmacy = () => {
                   </div>
                 ))}
               </div>
+              {pointsToUse > 0 && (
+                <div className="mt-3 pt-3 border-t border-orange-200">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-amber-700 flex items-center gap-1">
+                      <Gift className="w-3 h-3" />
+                      Loyalty Discount ({pointsToUse} pts)
+                    </span>
+                    <span className="text-green-600 font-medium">-₹{discountAmount}</span>
+                  </div>
+                </div>
+              )}
             </Card>
+
+            {/* Loyalty Points Redemption - Only for logged-in users */}
+            {user && loyaltyPoints > 0 && (
+              <Card className="p-4 bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-medium flex items-center gap-2">
+                    <Gift className="w-5 h-5 text-amber-500" />
+                    Redeem Loyalty Points
+                  </h3>
+                  <div className="text-right">
+                    <p className="text-xl font-bold text-amber-600">{loyaltyPoints}</p>
+                    <p className="text-xs text-gray-500">Available Points</p>
+                  </div>
+                </div>
+                
+                <div className="bg-white p-3 rounded-lg border border-amber-200 mb-3">
+                  <p className="text-xs text-gray-600 mb-2">100 points = ₹10 discount</p>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <Label className="text-sm">Points to Redeem</Label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Input
+                          type="number"
+                          value={pointsToUse || ''}
+                          onChange={(e) => {
+                            const val = Math.min(parseInt(e.target.value) || 0, loyaltyPoints);
+                            setPointsToUse(Math.max(0, val));
+                          }}
+                          placeholder="0"
+                          max={loyaltyPoints}
+                          min={0}
+                          className="w-24 text-center"
+                          data-testid="points-input"
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setPointsToUse(loyaltyPoints)}
+                          className="text-xs whitespace-nowrap"
+                          data-testid="use-all-points"
+                        >
+                          Use All
+                        </Button>
+                        {pointsToUse > 0 && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setPointsToUse(0)}
+                            className="text-xs text-gray-500"
+                          >
+                            Clear
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    {pointsToUse > 0 && (
+                      <div className="text-right bg-green-50 p-3 rounded-lg">
+                        <p className="text-xs text-green-600">Your Discount</p>
+                        <p className="text-2xl font-bold text-green-600">₹{discountAmount}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <p className="text-xs text-gray-500">
+                  Points will be deducted after successful order placement
+                </p>
+              </Card>
+            )}
 
             {/* Delivery Address */}
             <Card className="p-4">
