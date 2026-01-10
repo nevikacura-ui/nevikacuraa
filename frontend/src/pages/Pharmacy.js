@@ -332,8 +332,9 @@ const Pharmacy = () => {
   };
 
   const goToStep2 = () => {
-    if (medicines.length === 0) {
-      toast.error('Please add at least one medicine to cart');
+    // Allow proceeding if prescription is uploaded OR medicines are added
+    if (medicines.length === 0 && !prescriptionUrl) {
+      toast.error('Please add medicines to cart OR upload a prescription');
       return;
     }
     if (!patientInfo.name.trim()) {
@@ -701,7 +702,7 @@ const Pharmacy = () => {
             {/* Continue Button */}
             <Button 
               onClick={goToStep2} 
-              disabled={medicines.length === 0}
+              disabled={medicines.length === 0 && !prescriptionUrl}
               className="w-full bg-brand-orange hover:bg-brand-orange/90 h-12 text-lg"
               data-testid="continue-to-otp"
             >
