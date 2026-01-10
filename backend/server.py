@@ -8058,6 +8058,18 @@ app.mount("/api/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads
 
 app.include_router(api_router)
 
+# Catch-all handler for root API endpoint to prevent 405 errors
+@app.api_route("/api/", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
+@app.api_route("/api", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
+async def api_root_handler():
+    """Root API endpoint - returns API info"""
+    return {
+        "name": "Nevika Cura API",
+        "version": "1.0.0",
+        "status": "healthy",
+        "services": ["diagyn", "proton", "pharmacy", "staff", "admin"]
+    }
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
