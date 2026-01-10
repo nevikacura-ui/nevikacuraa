@@ -407,17 +407,28 @@ const StaffPortal = () => {
       return;
     }
     
+    // Validate that specific tests are selected (except for ECG)
+    if (selectedService !== 'ECG' && selectedSpecificTests.length === 0) {
+      toast.error('Please select specific tests');
+      return;
+    }
+    
     setLoading(true);
     try {
       await axios.post(
         `${API}/staff/appointments/${selectedAppointment.id}/services`,
-        { service_type: selectedService },
+        { 
+          service_type: selectedService,
+          specific_tests: selectedService === 'ECG' ? ['ECG (Electrocardiogram)'] : selectedSpecificTests
+        },
         getAuthHeaders()
       );
-      toast.success(`${selectedService.replace('_', ' ')} added successfully`);
+      toast.success(`${selectedService.replace('_', ' ')} with ${selectedService === 'ECG' ? 1 : selectedSpecificTests.length} test(s) added`);
       setShowServiceModal(false);
       setSelectedAppointment(null);
       setSelectedService('');
+      setSelectedTestCategory('');
+      setSelectedSpecificTests([]);
       loadData();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to add service');
