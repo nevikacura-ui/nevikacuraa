@@ -269,13 +269,15 @@ const StaffPortal = () => {
       }
       
       if (role === 'pharmacy_staff' || role === 'super_admin') {
-        const res = await axios.get(`${API}/staff/pharmacy/orders`, getAuthHeaders());
+        const res = await axios.get(`${API}/staff/pharmacy/orders?date=${pharmacyDate}`, getAuthHeaders());
         setPharmacyOrders(res.data.orders || []);
+        setPharmacyDateCounts(res.data.date_counts || {});
       }
       
       if (role === 'diagnostics_staff' || role === 'super_admin') {
-        const res = await axios.get(`${API}/staff/diagnostic/orders`, getAuthHeaders());
+        const res = await axios.get(`${API}/staff/diagnostic/orders?date=${diagnosticDate}`, getAuthHeaders());
         setDiagnosticOrders(res.data.orders || []);
+        setDiagnosticDateCounts(res.data.date_counts || {});
         
         // Also load service-linked orders
         const serviceRes = await axios.get(`${API}/staff/diagnostic/service-orders`, getAuthHeaders());
