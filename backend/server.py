@@ -1331,9 +1331,53 @@ async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(get_c
                 detail=f"Maximum {MAX_QUANTITY_PER_MEDICINE} strips allowed per medicine. '{medicine.get('name', 'Unknown')}' has {qty} strips."
             )
     
+    # Handle loyalty points redemption
+    points_used = input.points_used or 0
+    discount_amount = 0.0
+    
+    if points_used > 0:
+        if not user:
+            raise HTTPException(status_code=401, detail="Login required to redeem loyalty points")
+        
+        # Verify user has enough points
+        user_doc = await db.users.find_one({"id": user.id})
+        current_points = user_doc.get('loyalty_points', 0) if user_doc else 0
+        
+        if points_used > current_points:
+            raise HTTPException(status_code=400, detail=f"Insufficient loyalty points. You have {current_points} points.")
+        
+        # Calculate discount (100 points = ₹10)
+        discount_amount = (points_used / 100) * 10
+        
+        # Deduct points from user
+        await db.users.update_one(
+            {"id": user.id},
+            {"$inc": {"loyalty_points": -points_used}}
+        )
+        
+        # Record transaction
+        await db.loyalty_transactions.insert_one({
+            "id": str(uuid.uuid4()),
+            "user_id": user.id,
+            "phone": user.phone,
+            "type": "debit",
+            "points": points_used,
+            "reason": f"Pharmacy order discount - ₹{discount_amount:.0f} off",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "staff_id": "system"
+        })
+        
+        logger.info(f"Loyalty points redeemed: {points_used} pts = ₹{discount_amount} for user {user.id}")
+    
+    # Create order data without points_used field (handled separately)
+    order_data = input.model_dump()
+    del order_data['points_used']  # Remove as we add it separately with discount
+    
     order = PharmacyOrder(
         user_id=user.id if user else None,
-        **input.model_dump()
+        points_used=points_used,
+        discount_amount=discount_amount,
+        **order_data
     )
     
     doc = order.model_dump()
