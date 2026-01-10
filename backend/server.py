@@ -7219,7 +7219,7 @@ DIAGNOSTIC_TESTS = {
             # Tumor Markers
             "Alpha Fetoprotein", "CA 19.9",
             # Pregnancy Markers
-            "Dual / Double Marker", "Quadruple Marker",
+            "Dual / Double Marker", "Quadruple Marker", "ANC (Ante Natal Profile)",
             # Arthritis & Autoimmune
             "Arthritis Basic Panel", "Anti CCP", "RA Factor",
             # Infectious Disease
@@ -7230,7 +7230,7 @@ DIAGNOSTIC_TESTS = {
             # Health Packages
             "Diabetes Basic", "Diabetes Screening", "Diabetes Advance",
             "Lupikavach Dahila", "Lupikavach Daisy", "Lupikavach Lily",
-            "Lupikavach Orchid", "Lupikavach Vitamin", "Lupipro Core", "ANC"
+            "Lupikavach Orchid", "Lupikavach Vitamin", "Lupipro Core"
         ],
         "urine": [
             "Urine Routine & Microscopy", "Urine Culture & Sensitivity", "Urine Albumin"
