@@ -6459,7 +6459,7 @@ async def get_doctor_appointments(staff = Depends(verify_staff), date: Optional[
 async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = None, staff = Depends(verify_staff)):
     """Mark appointment as completed (Doctor or Clinic Staff)"""
     role = staff.get("role")
-    if role not in ["doctor_pushpa", "doctor_amnion", "clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+    if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
         raise HTTPException(status_code=403, detail="Doctor or Clinic Staff access required")
     
     appointment = await db.appointments.find_one({"id": appointment_id})
