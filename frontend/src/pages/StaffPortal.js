@@ -327,10 +327,17 @@ const StaffPortal = () => {
         role: res.data.role,
         name: res.data.name,
         doctor_name: res.data.doctor_name,
-        clinic: res.data.clinic
+        clinic: res.data.clinic,
+        doctor_clinics: res.data.doctor_clinics || []
       };
       localStorage.setItem('staffInfo', JSON.stringify(staffData));
       setStaffInfo(staffData);
+      
+      // Set doctor clinics if available
+      if (res.data.doctor_clinics && res.data.doctor_clinics.length > 0) {
+        setDoctorClinics(res.data.doctor_clinics);
+        setSelectedClinic(res.data.doctor_clinics[0]); // Default to first clinic
+      }
       
       // Set forms with clinic
       if (res.data.clinic) {
