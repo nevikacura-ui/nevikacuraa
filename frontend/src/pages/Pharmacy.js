@@ -558,8 +558,9 @@ const Pharmacy = () => {
                 <Input
                   type="number"
                   min="1"
+                  max="20"
                   value={manualMedicine.quantity}
-                  onChange={(e) => setManualMedicine({ ...manualMedicine, quantity: parseInt(e.target.value) || 1 })}
+                  onChange={(e) => setManualMedicine({ ...manualMedicine, quantity: Math.min(parseInt(e.target.value) || 1, 20) })}
                   className="w-20"
                   data-testid="manual-medicine-qty"
                 />
