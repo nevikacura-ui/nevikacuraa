@@ -28,7 +28,34 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ### Date: January 10, 2026 - Latest Update (Current Session)
 
-#### Loyalty Points System - NEW FEATURE (Completed)
+#### Push Notifications & Feedback System - NEW FEATURE (Completed)
+- [x] **Auto-enable Push Notifications:**
+  - [x] AutoNotificationPrompt component shows for logged-in users after 3 seconds
+  - [x] Android banner-style prompt with Enable/Maybe Later options
+  - [x] Dismissal persisted in localStorage
+- [x] **App Notifications (Push instead of Email):**
+  - [x] Pharmacy order status updates → Push notification
+  - [x] Diagnostic test status updates → Push notification
+  - [x] Appointment check-in → Push notification
+  - [x] Appointment completion → Push notification
+- [x] **Email Notifications (Reduced):**
+  - [x] NEW appointment creation → Email to patient ✅
+  - [x] COMPLETED appointment → Email with feedback request ✅
+  - [x] Status updates → NO email (push only)
+- [x] **Feedback System:**
+  - [x] New `/feedback/:token` page with 5-star rating UI
+  - [x] Rating labels: Poor, Fair, Good, Very Good, Excellent
+  - [x] Optional comment field
+  - [x] Feedback stored in `appointment_feedback` collection (NOT shown in app)
+  - [x] Admin receives email when feedback submitted
+- [x] **Service Worker:**
+  - [x] Android banner-style notifications
+  - [x] Vibration pattern [200, 100, 200]
+  - [x] Action buttons: View Details, Dismiss
+- [x] **Testing:** 13/13 backend tests passed
+- [x] Test file: `/app/tests/test_feedback_notifications.py`
+
+#### Loyalty Points System - COMPLETED
 - [x] **Staff Portal - Pharmacy:**
   - [x] New "Loyalty Points" tab for pharmacy staff
   - [x] Search registered users by phone number
