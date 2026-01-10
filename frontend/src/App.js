@@ -10,6 +10,7 @@ import StaffPortal from '@/pages/StaffPortal';
 import TrackOrder from '@/pages/TrackOrder';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
+import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
 import './App.css';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
+          <AutoNotificationPrompt />
         </div>
       </BrowserRouter>
     </AuthProvider>
