@@ -8164,7 +8164,7 @@ uploads_dir = ROOT_DIR / "uploads"
 # Mount static files for uploads
 app.mount("/api/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
 
-app.include_router(api_router)
+# NOTE: Routes below were moved before include_router
 
 # Catch-all handler for root API endpoint to prevent 405 errors
 @api_router.post("/admin/send-credentials-email")
