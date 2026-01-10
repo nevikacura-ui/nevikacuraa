@@ -592,7 +592,7 @@ const Proton = () => {
 
             {activeTab === 'pathology' && (
               <div className="space-y-4">
-                {/* Popular & Pregnancy Tests - Most Important */}
+                {/* Pregnancy & OBGYN Tests - Most Important */}
                 <Card className="p-4 border-2 border-pink-200 bg-pink-50/50">
                   <h4 className="font-medium text-pink-700 mb-3 flex items-center gap-2">
                     <Heart className="w-4 h-4" />
@@ -606,6 +606,12 @@ const Proton = () => {
                     <TestCheckbox test="AMH (Anti-Mullerian Hormone)" />
                     <TestCheckbox test="Hormonal Basic" />
                     <TestCheckbox test="Hormonal Advance" />
+                    <TestCheckbox test="LH (Luteinizing Hormone)" />
+                    <TestCheckbox test="FSH (Follicle Stimulating Hormone)" />
+                    <TestCheckbox test="Prolactin" />
+                    <TestCheckbox test="Estradiol (E2)" />
+                    <TestCheckbox test="Progesterone" />
+                    <TestCheckbox test="Serum Testosterone" />
                   </div>
                 </Card>
                 
@@ -624,22 +630,8 @@ const Proton = () => {
                     <TestCheckbox test="Random Blood Sugar (RBS)" />
                     <TestCheckbox test="HbA1c (Glycated Hemoglobin)" />
                     <TestCheckbox test="OGTT - 3 Sample" />
-                  </div>
-                </Card>
-
-                {/* Health Packages */}
-                <Card className="p-4 border-2 border-green-200 bg-green-50/50">
-                  <h4 className="font-medium text-green-700 mb-3 flex items-center gap-2">
-                    <Package className="w-4 h-4" />
-                    Health Packages (Lupikavach)
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <TestCheckbox test="Lupikavach Dahila" />
-                    <TestCheckbox test="Lupikavach Daisy" />
-                    <TestCheckbox test="Lupikavach Lily" />
-                    <TestCheckbox test="Lupikavach Orchid" />
-                    <TestCheckbox test="Lupikavach Vitamin" />
-                    <TestCheckbox test="Lupipro Core" />
+                    <TestCheckbox test="Fasting Insulin" />
+                    <TestCheckbox test="C-Peptide" />
                   </div>
                 </Card>
                 
@@ -678,15 +670,16 @@ const Proton = () => {
                   </div>
                 </Card>
 
-                {/* Vitamins & Hormones */}
+                {/* Vitamins & Minerals */}
                 <Card className="p-4">
-                  <h4 className="font-medium text-indigo-700 mb-3">Vitamins & Hormones</h4>
+                  <h4 className="font-medium text-indigo-700 mb-3">Vitamins & Minerals</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <TestCheckbox test="Vitamin D" />
                     <TestCheckbox test="Vitamin B12" />
                     <TestCheckbox test="G6PD" />
-                    <TestCheckbox test="Serum Testosterone" />
                     <TestCheckbox test="Serum PSA" />
+                    <TestCheckbox test="Iron Studies (Serum Iron, TIBC, Ferritin)" />
+                    <TestCheckbox test="Calcium (Total & Ionized)" />
                   </div>
                 </Card>
 
@@ -715,31 +708,6 @@ const Proton = () => {
                     <TestCheckbox test="RA Factor" />
                     <TestCheckbox test="PT/INR" />
                   </div>
-                </Card>
-
-                {/* All Other Blood Tests - Expandable */}
-                <Card className="p-4">
-                  <details>
-                    <summary className="font-medium text-indigo-700 mb-3 cursor-pointer">All Other Blood Tests (Click to expand)</summary>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 mt-3 max-h-64 overflow-y-auto">
-                      {pathologyTests.blood.filter(t => 
-                        !['Dual / Double Marker', 'Quadruple Marker', 'ANC (Ante Natal Profile)', 'Beta-hCG', 'AMH (Anti-Mullerian Hormone)', 
-                          'Hormonal Basic', 'Hormonal Advance', 'Diabetes Basic', 'Diabetes Screening', 'Diabetes Advance',
-                          'FBS (Fasting Blood Sugar)', 'PPBS (Post Prandial Blood Sugar)', 'Random Blood Sugar (RBS)', 
-                          'HbA1c (Glycated Hemoglobin)', 'OGTT - 3 Sample', 'Lupikavach Dahila', 'Lupikavach Daisy',
-                          'Lupikavach Lily', 'Lupikavach Orchid', 'Lupikavach Vitamin', 'Lupipro Core',
-                          'CBC (Complete Blood Count)', 'Blood Group & Rh Factor', 'Hemoglobin (Hb)', 'ESR (Erythrocyte Sedimentation Rate)',
-                          'LFT (Liver Function Test)', 'RFT (Renal Function Test)', 'Lipid Profile', 'Creatinine', 'Uric Acid',
-                          'SGPT (ALT)', 'SGOT (AST)', 'Serum Amylase', 'Lipase', 'LDH', 'Serum Electrolytes', 'UPCR',
-                          'TSH', 'Thyroid Profile - Free', 'Thyroid Profile - Total', 'T3 (Total)', 'T4 (Total)',
-                          'Vitamin D', 'Vitamin B12', 'G6PD', 'Serum Testosterone', 'Serum PSA',
-                          'HIV - Rapid', 'HCV - Rapid', 'VDRL/RPR (Syphilis)', 'H3 Viral Marker', 'MP Antigen (Malaria)',
-                          'Blood Culture & Sensitivity', 'CRP (C-Reactive Protein)', 'Alpha Fetoprotein', 'CA 19-9',
-                          'Arthritis Basic Panel', 'Anti-CCP', 'RA Factor', 'PT/INR'
-                        ].includes(t)
-                      ).map(test => <TestCheckbox key={test} test={test} />)}
-                    </div>
-                  </details>
                 </Card>
                 
                 <Card className="p-4">
