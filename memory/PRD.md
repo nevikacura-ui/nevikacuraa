@@ -28,10 +28,27 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ### Date: January 10, 2026 - Latest Update (Current Session)
 
-#### Staff Credentials Email - NEW
+#### Doctor Credentials Updated - NEW
+- [x] **Usernames changed:** `doc_pushpa_01` → `doc_neha`, `doc_amnion_01` → `doc_vikas`
+- [x] Both doctors now have unified `doctor` role (instead of clinic-specific roles)
+- [x] Doctors can view BOTH clinics with toggle dropdown
+- [x] Calendar-based date navigation with 7-day view
+- [x] ✅ All 20 tests passed - credentials, clinic toggle, calendar, history modal
+
+#### Day-End Cleanup Endpoints - NEW
+- [x] `GET /api/admin/cleanup/stats` - View counts before cleanup
+- [x] `DELETE /api/admin/cleanup/appointments/date/{date}` - Delete appointments for specific date
+- [x] `DELETE /api/admin/cleanup/appointments/completed` - Delete completed appointments
+- [x] `DELETE /api/admin/cleanup/pharmacy/completed` - Delete delivered pharmacy orders
+- [x] `DELETE /api/admin/cleanup/diagnostic/completed` - Delete completed diagnostic orders
+- [x] `DELETE /api/admin/cleanup/all?confirm=DELETEALL` - Clear ALL data for fresh start
+
+#### Staff Update Endpoint - NEW
+- [x] `PUT /api/admin/staff/{staff_id}` - Update staff username, name, role, clinic
+
+#### Staff Credentials Email - SENT
 - [x] `POST /api/admin/send-credentials-email?email=xxx` - Send all login credentials via email
 - [x] ✅ Email sent to nevikacura@gmail.com with all staff credentials
-- [x] Beautifully formatted HTML email with tables for each department
 
 #### Patient Profile Saving - NEW
 - [x] `POST /api/patients/profile` - Save/update patient profile
