@@ -224,6 +224,12 @@ const StaffPortal = () => {
       const parsedInfo = JSON.parse(info);
       setStaffInfo(parsedInfo);
       
+      // Set doctor clinics if available (for doctors working at multiple clinics)
+      if (parsedInfo.doctor_clinics && parsedInfo.doctor_clinics.length > 0) {
+        setDoctorClinics(parsedInfo.doctor_clinics);
+        setSelectedClinic(parsedInfo.doctor_clinics[0]); // Default to first clinic
+      }
+      
       // Set default clinic for forms based on staff's clinic
       if (parsedInfo.clinic) {
         const clinicDoctors = CLINICS[parsedInfo.clinic] || [];
