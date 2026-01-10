@@ -6158,10 +6158,13 @@ async def add_service_to_appointment(appointment_id: str, service: AddServiceReq
         "patient_name": appointment.get("patient_name"),
         "patient_phone": appointment.get("patient_phone"),
         "patient_email": appointment.get("patient_email"),
+        "clinic": appointment.get("clinic"),  # Include clinic name for Proton staff
+        "doctor": appointment.get("doctor"),  # Include doctor name
         "status": "Test Booked",
         "linked_appointment_id": appointment_id,
         "linked_service_id": service_record["id"],
         "service_type": service.service_type,
+        "ordered_by": staff.get("name"),  # Track who ordered
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
