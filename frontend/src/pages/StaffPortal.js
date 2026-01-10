@@ -1301,6 +1301,16 @@ const StaffPortal = () => {
                       </div>
                     </div>
                     <div className="flex gap-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => fetchPatientHistory(appt.patient_phone)} 
+                        disabled={loadingHistory}
+                        data-testid={`history-btn-${appt.id}`}
+                      >
+                        <History className="w-4 h-4 mr-1" />
+                        History
+                      </Button>
                       {appt.status === 'In Clinic' && (
                         <Button 
                           size="sm" 
