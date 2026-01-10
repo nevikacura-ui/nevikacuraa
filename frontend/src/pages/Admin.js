@@ -233,6 +233,84 @@ const Admin = () => {
     }
   };
 
+  // Loyalty Points Functions
+  const fetchLoyaltySummary = async () => {
+    try {
+      const response = await axios.get(`${API}/admin/loyalty-points/summary`, { headers: getAuthHeaders() });
+      setLoyaltySummary(response.data);
+    } catch (error) {
+      console.error('Failed to fetch loyalty summary:', error);
+    }
+  };
+
+  const searchLoyaltyUser = async () => {
+    if (!loyaltyPhone || loyaltyPhone.length < 10) {
+      toast.error('Please enter a valid 10-digit phone number');
+      return;
+    }
+    
+    setLoyaltyLoading(true);
+    setLoyaltyUser(null);
+    setLoyaltyTransactions([]);
+    
+    try {
+      const response = await axios.get(`${API}/loyalty-points/by-phone/${loyaltyPhone}`, { headers: getAuthHeaders() });
+      setLoyaltyUser(response.data);
+      
+      if (response.data.found) {
+        // Fetch transactions for this user
+        const txResponse = await axios.get(`${API}/admin/loyalty-points/transactions`, {
+          headers: getAuthHeaders(),
+          params: { phone: loyaltyPhone, limit: 20 }
+        });
+        setLoyaltyTransactions(txResponse.data.transactions || []);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to search user');
+    } finally {
+      setLoyaltyLoading(false);
+    }
+  };
+
+  const handleRedeemPoints = async () => {
+    const points = parseInt(redeemAmount);
+    if (!points || points <= 0) {
+      toast.error('Please enter a valid number of points to redeem');
+      return;
+    }
+    
+    if (points > (loyaltyUser?.loyalty_points || 0)) {
+      toast.error('User does not have enough points');
+      return;
+    }
+    
+    if (!redeemReason.trim()) {
+      toast.error('Please provide a reason for redemption');
+      return;
+    }
+    
+    setRedeemLoading(true);
+    try {
+      await axios.post(`${API}/admin/loyalty-points/subtract`, {
+        phone: loyaltyPhone,
+        points: points,
+        reason: redeemReason
+      }, { headers: getAuthHeaders() });
+      
+      toast.success(`Successfully redeemed ${points} points`);
+      setRedeemAmount('');
+      setRedeemReason('');
+      
+      // Refresh user data
+      searchLoyaltyUser();
+      fetchLoyaltySummary();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to redeem points');
+    } finally {
+      setRedeemLoading(false);
+    }
+  };
+
   const handleAddStaff = async () => {
     if (!newStaff.username || !newStaff.password || !newStaff.name) {
       toast.error('Please fill all required fields');
