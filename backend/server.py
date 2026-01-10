@@ -373,6 +373,8 @@ class PharmacyOrder(BaseModel):
     patient_email: Optional[str] = None
     delivery_address: Optional[str] = None
     status: str = "pending"
+    points_used: int = 0  # Loyalty points redeemed
+    discount_amount: float = 0.0  # Discount in rupees (100 pts = ₹10)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PharmacyOrderCreate(BaseModel):
