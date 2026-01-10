@@ -158,6 +158,8 @@ const StaffPortal = () => {
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [selectedService, setSelectedService] = useState('');
+  const [selectedTestCategory, setSelectedTestCategory] = useState('');
+  const [selectedSpecificTests, setSelectedSpecificTests] = useState([]);
   
   // Booked slots state for slot synchronization
   const [bookedSlots, setBookedSlots] = useState([]);
