@@ -169,6 +169,11 @@ const StaffPortal = () => {
   const [selectedTestCategory, setSelectedTestCategory] = useState('');
   const [selectedSpecificTests, setSelectedSpecificTests] = useState([]);
   
+  // Patient history modal states
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [patientHistory, setPatientHistory] = useState(null);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  
   // Booked slots state for slot synchronization
   const [bookedSlots, setBookedSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
