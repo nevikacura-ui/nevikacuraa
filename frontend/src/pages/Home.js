@@ -52,11 +52,11 @@ const Home = () => {
       <header className="border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex flex-col">
+            <div className="flex items-center">
               <img 
-                src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/9eca12p8_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233253_0000%20%281%29.png" 
+                src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
                 alt="Nevika Cura" 
-                className="h-16 w-auto"
+                className="h-14 sm:h-16 w-auto object-contain"
                 data-testid="main-logo"
               />
             </div>
