@@ -61,49 +61,61 @@ const Home = () => {
             />
           </div>
           {/* Navigation buttons */}
-          <div className="flex justify-center items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate('/track')}
-              data-testid="track-orders-button"
-              className="font-heading"
-            >
-              <Search className="w-4 h-4 mr-2" />
-              Track Orders
-            </Button>
-            {user ? (
-              <>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => navigate('/profile')}
-                  data-testid="profile-button"
-                  className="font-heading"
-                >
-                  <User className="w-4 h-4 mr-2" />
-                  {user.name}
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={logout}
-                  data-testid="logout-button"
-                  className="rounded-full"
-                >
-                  Logout
-                </Button>
-              </>
-            ) : (
+          <div className="flex justify-between items-center">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex justify-center items-center gap-4 flex-1">
               <Button 
+                variant="ghost" 
                 size="sm"
-                onClick={() => setShowAuth(true)} 
-                data-testid="login-button"
-                className="rounded-full bg-brand-teal hover:bg-brand-teal/90"
+                onClick={() => navigate('/track')}
+                data-testid="track-orders-button"
+                className="font-heading"
               >
-                Login / Sign Up
+                <Search className="w-4 h-4 mr-2" />
+                Track Orders
               </Button>
-            )}
+              {user ? (
+                <>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => navigate('/profile')}
+                    data-testid="profile-button"
+                    className="font-heading"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    {user.name}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={logout}
+                    data-testid="logout-button"
+                    className="rounded-full"
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  size="sm"
+                  onClick={() => setShowAuth(true)} 
+                  data-testid="login-button"
+                  className="rounded-full bg-brand-teal hover:bg-brand-teal/90"
+                >
+                  Login / Sign Up
+                </Button>
+              )}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden ml-auto"
+              onClick={() => setShowMenu(!showMenu)}
+              data-testid="mobile-menu-button"
+            >
+              {showMenu ? <X /> : <Menu />}
+            </button>
           </div>
         </div>
       </header>
