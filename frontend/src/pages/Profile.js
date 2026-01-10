@@ -80,15 +80,29 @@ const Profile = () => {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* User Info Card with Loyalty Points */}
         <Card className="p-6 mb-8">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-brand-teal/10 flex items-center justify-center">
-              <User className="w-8 h-8 text-brand-teal" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-brand-teal/10 flex items-center justify-center">
+                <User className="w-8 h-8 text-brand-teal" />
+              </div>
+              <div>
+                <h2 className="font-heading text-2xl font-semibold" data-testid="user-name">{user.name}</h2>
+                <p className="font-body text-muted-foreground" data-testid="user-email">{user.email}</p>
+                <p className="font-body text-muted-foreground" data-testid="user-phone">{user.phone}</p>
+              </div>
             </div>
-            <div>
-              <h2 className="font-heading text-2xl font-semibold" data-testid="user-name">{user.name}</h2>
-              <p className="font-body text-muted-foreground" data-testid="user-email">{user.email}</p>
-              <p className="font-body text-muted-foreground" data-testid="user-phone">{user.phone}</p>
+            
+            {/* Loyalty Points Display */}
+            <div className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl px-5 py-3" data-testid="loyalty-points-card">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
+                <Star className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <p className="text-xs text-amber-700 font-medium uppercase tracking-wide">Loyalty Points</p>
+                <p className="text-2xl font-bold text-amber-900" data-testid="loyalty-points-value">{loyaltyPoints}</p>
+              </div>
             </div>
           </div>
         </Card>
