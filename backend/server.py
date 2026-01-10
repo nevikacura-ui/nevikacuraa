@@ -7233,7 +7233,7 @@ async def send_credentials_email(admin = Depends(verify_admin)):
                 <tr>
                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Vikas Jha</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Amnion Clinic</td>
-                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">doc_amnion_01</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">doc_vikas</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
                 </tr>
             </table>
