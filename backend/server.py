@@ -1205,6 +1205,69 @@ async def get_booked_slots(doctor: str, clinic: str, date: str):
     
     return {"booked_slots": [b["time"] for b in booked if b.get("time")]}
 
+# ============ Appointment Feedback Endpoint ============
+@api_router.post("/feedback/{feedback_token}")
+async def submit_appointment_feedback(feedback_token: str, feedback: AppointmentFeedback):
+    """Submit feedback for a completed appointment (via email link)"""
+    # Validate rating
+    if not 1 <= feedback.rating <= 5:
+        raise HTTPException(status_code=400, detail="Rating must be between 1 and 5")
+    
+    # Find appointment by feedback token
+    appointment = await db.appointments.find_one(
+        {"feedback_token": feedback_token},
+        {"_id": 0}
+    )
+    
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Invalid feedback link")
+    
+    if appointment.get("feedback_submitted"):
+        raise HTTPException(status_code=400, detail="Feedback already submitted for this appointment")
+    
+    # Store feedback (not shown in app, only for admin)
+    await db.appointments.update_one(
+        {"feedback_token": feedback_token},
+        {"$set": {
+            "feedback_rating": feedback.rating,
+            "feedback_comment": feedback.comment,
+            "feedback_submitted": True,
+            "feedback_submitted_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Store in separate feedback collection for analytics
+    await db.appointment_feedback.insert_one({
+        "id": str(uuid.uuid4()),
+        "appointment_id": appointment.get("id"),
+        "doctor": appointment.get("doctor"),
+        "clinic": appointment.get("clinic"),
+        "rating": feedback.rating,
+        "comment": feedback.comment,
+        "patient_name": appointment.get("patient_name"),
+        "submitted_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    # Send notification to admin about new feedback
+    admin_html = f"""
+    <h2>⭐ New Appointment Feedback Received</h2>
+    <p><strong>Rating:</strong> {'⭐' * feedback.rating} ({feedback.rating}/5)</p>
+    <p><strong>Doctor:</strong> {appointment.get('doctor')}</p>
+    <p><strong>Clinic:</strong> {appointment.get('clinic')}</p>
+    <p><strong>Patient:</strong> {appointment.get('patient_name')}</p>
+    <p><strong>Date:</strong> {appointment.get('date')}</p>
+    {f"<p><strong>Comment:</strong> {feedback.comment}</p>" if feedback.comment else ""}
+    """
+    await send_email_notification(f"New Feedback: {feedback.rating}/5 Stars - {appointment.get('doctor')}", admin_html)
+    
+    logger.info(f"Feedback submitted for appointment {appointment.get('id')}: {feedback.rating}/5")
+    
+    return {
+        "success": True, 
+        "message": "Thank you for your feedback!",
+        "rating": feedback.rating
+    }
+
 @api_router.get("/appointments", response_model=List[Appointment])
 async def get_appointments(user = Depends(get_current_user)):
     if not user:
