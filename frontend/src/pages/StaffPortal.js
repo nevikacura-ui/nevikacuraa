@@ -593,67 +593,144 @@ const StaffPortal = () => {
 
   const role = staffInfo?.role;
 
-  // Service Modal Content
+  // State for specific test selection
+  const [selectedTestCategory, setSelectedTestCategory] = useState('');
+  const [selectedSpecificTests, setSelectedSpecificTests] = useState([]);
+
+  // Toggle specific test selection
+  const toggleSpecificTest = (test) => {
+    setSelectedSpecificTests(prev => 
+      prev.includes(test) 
+        ? prev.filter(t => t !== test)
+        : [...prev, test]
+    );
+  };
+
+  // Service Modal Content with full test inventory
   const serviceModalContent = (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md p-6">
-        <h3 className="text-lg font-semibold mb-4">Add Service for {selectedAppointment?.patient_name}</h3>
-        <div className="space-y-3">
-          <button
-            onClick={() => setSelectedService('BLOOD_TEST')}
-            className={`w-full p-4 rounded-lg border flex items-center gap-3 transition-all ${
-              selectedService === 'BLOOD_TEST' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-red-300'
-            }`}
-          >
-            <Droplet className="w-6 h-6 text-red-500" />
-            <div className="text-left">
-              <p className="font-medium">Blood Test</p>
-              <p className="text-sm text-gray-500">Pathology blood test</p>
-            </div>
-          </button>
-          
-          <button
-            onClick={() => setSelectedService('SONOGRAPHY')}
-            className={`w-full p-4 rounded-lg border flex items-center gap-3 transition-all ${
-              selectedService === 'SONOGRAPHY' ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-purple-300'
-            }`}
-          >
-            <Scan className="w-6 h-6 text-purple-500" />
-            <div className="text-left">
-              <p className="font-medium">Sonography / USG</p>
-              <p className="text-sm text-gray-500">Ultrasound imaging</p>
-            </div>
-          </button>
-          
-          <button
-            onClick={() => setSelectedService('ECG')}
-            className={`w-full p-4 rounded-lg border flex items-center gap-3 transition-all ${
-              selectedService === 'ECG' ? 'border-pink-500 bg-pink-50' : 'border-gray-200 hover:border-pink-300'
-            }`}
-          >
-            <Heart className="w-6 h-6 text-pink-500" />
-            <div className="text-left">
-              <p className="font-medium">ECG</p>
-              <p className="text-sm text-gray-500">Electrocardiogram</p>
-            </div>
-          </button>
+      <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="p-6 border-b">
+          <h3 className="text-lg font-semibold">Add Service for {selectedAppointment?.patient_name}</h3>
+          <p className="text-sm text-gray-500">Select service type and specific tests</p>
         </div>
         
-        <div className="flex gap-2 mt-6">
+        <div className="flex-1 overflow-y-auto p-6">
+          {/* Service Type Selection */}
+          <div className="space-y-3 mb-6">
+            <p className="text-sm font-medium text-gray-600">Service Type:</p>
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                onClick={() => { setSelectedService('BLOOD_TEST'); setSelectedTestCategory('blood'); setSelectedSpecificTests([]); }}
+                className={`p-3 rounded-lg border flex flex-col items-center gap-2 transition-all ${
+                  selectedService === 'BLOOD_TEST' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-red-300'
+                }`}
+              >
+                <Droplet className="w-6 h-6 text-red-500" />
+                <span className="text-sm font-medium">Blood Test</span>
+              </button>
+              
+              <button
+                onClick={() => { setSelectedService('SONOGRAPHY'); setSelectedTestCategory('sonography'); setSelectedSpecificTests([]); }}
+                className={`p-3 rounded-lg border flex flex-col items-center gap-2 transition-all ${
+                  selectedService === 'SONOGRAPHY' ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-purple-300'
+                }`}
+              >
+                <Scan className="w-6 h-6 text-purple-500" />
+                <span className="text-sm font-medium">Sonography</span>
+              </button>
+              
+              <button
+                onClick={() => { setSelectedService('ECG'); setSelectedTestCategory('ecg'); setSelectedSpecificTests(['ECG (Electrocardiogram)']); }}
+                className={`p-3 rounded-lg border flex flex-col items-center gap-2 transition-all ${
+                  selectedService === 'ECG' ? 'border-pink-500 bg-pink-50' : 'border-gray-200 hover:border-pink-300'
+                }`}
+              >
+                <Heart className="w-6 h-6 text-pink-500" />
+                <span className="text-sm font-medium">ECG</span>
+              </button>
+            </div>
+          </div>
+          
+          {/* Specific Tests Selection */}
+          {selectedService && selectedService !== 'ECG' && availableTests && (
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-gray-600">
+                Select Specific Tests ({selectedSpecificTests.length} selected):
+              </p>
+              <div className="border rounded-lg max-h-64 overflow-y-auto">
+                {selectedTestCategory === 'blood' && availableTests.pathology?.blood?.map((test, idx) => (
+                  <label
+                    key={idx}
+                    className={`flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0 ${
+                      selectedSpecificTests.includes(test) ? 'bg-red-50' : ''
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedSpecificTests.includes(test)}
+                      onChange={() => toggleSpecificTest(test)}
+                      className="w-4 h-4 text-red-500 rounded"
+                    />
+                    <span className="flex-1 text-sm">{test}</span>
+                  </label>
+                ))}
+                {selectedTestCategory === 'sonography' && availableTests.imaging?.sonography?.map((test, idx) => (
+                  <label
+                    key={idx}
+                    className={`flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0 ${
+                      selectedSpecificTests.includes(test) ? 'bg-purple-50' : ''
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedSpecificTests.includes(test)}
+                      onChange={() => toggleSpecificTest(test)}
+                      className="w-4 h-4 text-purple-500 rounded"
+                    />
+                    <span className="flex-1 text-sm">{test}</span>
+                  </label>
+                ))}
+              </div>
+              {selectedSpecificTests.length > 0 && (
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs font-medium text-gray-500 mb-2">Selected Tests:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {selectedSpecificTests.map((test, idx) => (
+                      <span key={idx} className="text-xs bg-white px-2 py-1 rounded border">{test}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {selectedService === 'ECG' && (
+            <div className="bg-pink-50 rounded-lg p-4 text-center">
+              <Heart className="w-8 h-8 text-pink-500 mx-auto mb-2" />
+              <p className="font-medium">ECG (Electrocardiogram)</p>
+              <p className="text-sm text-gray-500">Standard 12-lead ECG test</p>
+            </div>
+          )}
+        </div>
+        
+        <div className="p-6 border-t bg-gray-50 flex gap-2">
           <Button variant="outline" className="flex-1" onClick={() => {
             setShowServiceModal(false);
             setSelectedAppointment(null);
             setSelectedService('');
+            setSelectedTestCategory('');
+            setSelectedSpecificTests([]);
           }}>
             Cancel
           </Button>
           <Button 
             className="flex-1 bg-teal-500 hover:bg-teal-600" 
             onClick={handleAddService}
-            disabled={!selectedService || loading}
+            disabled={!selectedService || (selectedService !== 'ECG' && selectedSpecificTests.length === 0) || loading}
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
-            Add Service
+            Add Service {selectedSpecificTests.length > 0 && `(${selectedSpecificTests.length})`}
           </Button>
         </div>
       </Card>
