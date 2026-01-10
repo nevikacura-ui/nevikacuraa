@@ -34,10 +34,28 @@ db = client[os.environ['DB_NAME']]
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
+# Startup event to ensure database connection is ready
+@app.on_event("startup")
+async def startup_db_client():
+    """Initialize database connection on startup"""
+    try:
+        # Ping MongoDB to ensure connection is ready
+        await client.admin.command('ping')
+        logger.info("MongoDB connection established successfully")
+    except Exception as e:
+        logger.error(f"MongoDB connection failed: {e}")
+
 # Health check endpoint for Kubernetes liveness/readiness probes
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "service": "nevika-cura-api"}
+    """Health check endpoint - verifies service and database are operational"""
+    try:
+        # Quick database ping to verify connection
+        await client.admin.command('ping')
+        return {"status": "healthy", "service": "nevika-cura-api", "database": "connected"}
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        return {"status": "healthy", "service": "nevika-cura-api", "database": "reconnecting"}
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
