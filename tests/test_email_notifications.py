@@ -15,7 +15,7 @@ import os
 import uuid
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://nevika-cura-1.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://medapp-11.preview.emergentagent.com')
 ADMIN_PASSWORD = "nevikacura2026"
 
 
