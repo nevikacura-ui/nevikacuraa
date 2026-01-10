@@ -418,7 +418,8 @@ const Pharmacy = () => {
         patient_name: patientInfo.name,
         patient_phone: patientInfo.phone,
         patient_email: patientInfo.email || null,
-        delivery_address: deliveryAddress
+        delivery_address: deliveryAddress,
+        points_used: user ? pointsToUse : 0  // Only send points if logged in
       };
 
       if (user) {
@@ -429,13 +430,14 @@ const Pharmacy = () => {
 
       const paymentText = paymentMethod === 'cod' ? 'Cash on Delivery' : 'QR Pay / Card on Delivery';
       const medicinesList = medicines.map(m => `• ${m.name} (Qty: ${m.quantity})`).join('\n');
+      const discountText = pointsToUse > 0 ? `\n*Loyalty Discount:* ₹${discountAmount} (${pointsToUse} pts)\n` : '';
       
       const messageLines = [
         '*New Orange Pharmacy Order*',
         '',
         '*Medicines:*',
         medicinesList,
-        '',
+        discountText,
         `*Payment Method:* ${paymentText}`,
         prescriptionUrl ? `*Prescription:* ${prescriptionUrl}` : '',
         '',
@@ -458,7 +460,7 @@ const Pharmacy = () => {
       }, 2000);
     } catch (error) {
       console.error('Order error:', error);
-      toast.error('Failed to process order');
+      toast.error(error.response?.data?.detail || 'Failed to process order');
     } finally {
       setLoading(false);
     }
