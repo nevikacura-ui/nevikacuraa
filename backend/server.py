@@ -300,6 +300,7 @@ class User(BaseModel):
     email: EmailStr
     phone: str
     name: str
+    loyalty_points: int = 0  # Loyalty points for registered users
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
