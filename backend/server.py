@@ -6666,8 +6666,8 @@ async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpd
 # ============ Diagnostics Staff Endpoints ============
 
 @api_router.get("/staff/diagnostic/orders")
-async def get_diagnostic_orders_for_staff(staff = Depends(verify_staff), status: Optional[str] = None):
-    """Get diagnostic orders for staff (from both test_orders and diagnostic_orders)"""
+async def get_diagnostic_orders_for_staff(staff = Depends(verify_staff), status: Optional[str] = None, date: Optional[str] = None):
+    """Get diagnostic orders for staff - supports date filtering"""
     if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
         raise HTTPException(status_code=403, detail="Diagnostics staff access required")
     
@@ -6675,18 +6675,39 @@ async def get_diagnostic_orders_for_staff(staff = Depends(verify_staff), status:
     if status:
         query["status"] = status
     
+    # Date filtering - filter by preferred_date or created_at
+    if date:
+        query["$or"] = [
+            {"preferred_date": date},
+            {"created_at": {"$regex": f"^{date}"}}
+        ]
+    
     # Get orders from test_orders collection
-    test_orders = await db.test_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    test_orders = await db.test_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(200)
     
     # Also get orders from diagnostic_orders collection (excluding service-linked ones)
     diag_query = {**query, "linked_appointment_id": {"$exists": False}}
-    diag_orders = await db.diagnostic_orders.find(diag_query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    diag_orders = await db.diagnostic_orders.find(diag_query, {"_id": 0}).sort("created_at", -1).to_list(200)
     
     # Combine and sort by created_at
     all_orders = test_orders + diag_orders
     all_orders.sort(key=lambda x: x.get("created_at", ""), reverse=True)
     
-    return {"orders": all_orders, "statuses": DIAGNOSTIC_STATUSES}
+    # Get order counts by date for calendar view
+    all_test_orders = await db.test_orders.find({}, {"_id": 0, "preferred_date": 1, "created_at": 1, "status": 1}).to_list(1000)
+    all_diag_orders = await db.diagnostic_orders.find({"linked_appointment_id": {"$exists": False}}, {"_id": 0, "preferred_date": 1, "created_at": 1, "status": 1}).to_list(1000)
+    
+    date_counts = {}
+    for order in all_test_orders + all_diag_orders:
+        order_date = order.get("preferred_date") or order.get("created_at", "")[:10]
+        if order_date:
+            if order_date not in date_counts:
+                date_counts[order_date] = {"total": 0, "pending": 0}
+            date_counts[order_date]["total"] += 1
+            if order.get("status") not in ["Reports Generated", "Completed", "Cancelled"]:
+                date_counts[order_date]["pending"] += 1
+    
+    return {"orders": all_orders, "statuses": DIAGNOSTIC_STATUSES, "date_counts": date_counts}
 
 @api_router.post("/staff/diagnostic/orders")
 async def create_diagnostic_order_by_staff(order_data: StaffDiagnosticOrderCreate, staff = Depends(verify_staff)):
