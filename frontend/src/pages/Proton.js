@@ -173,14 +173,7 @@ const pathologyTests = {
     'Typhoid (Widal Test)',
     'Blood Culture & Sensitivity',
     // Pancreatic Tests
-    'Amylase',
-    // Health Packages - Lupikavach
-    'Lupikavach Dahila',
-    'Lupikavach Daisy',
-    'Lupikavach Lily',
-    'Lupikavach Orchid',
-    'Lupikavach Vitamin',
-    'Lupipro Core'
+    'Amylase'
   ],
   urine: [
     'Urine Routine & Microscopy',
