@@ -7110,20 +7110,24 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
         }
     )
     
-    # Build report section for email
-    report_section = ""
-    if order.get('report_url') and update.status == "Reports Generated":
-        report_section = f"""
-        <div style="background: #dcfce7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #22c55e;">
-            <h3 style="color: #166534; margin-top: 0;">📋 Your Test Reports Are Ready!</h3>
-            <p style="margin-bottom: 10px;">Your diagnostic reports are now available. Click below to download:</p>
-            <a href="{order.get('report_url')}" style="display: inline-block; background: #8b5cf6; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">
-                📥 Download Report (PDF)
-            </a>
-        </div>
-        """
+    # Send PUSH NOTIFICATION for status updates (no email for status updates)
+    if order.get('user_id'):
+        status_messages = {
+            "Test Booked": "Your diagnostic test has been booked successfully.",
+            "Sample Collected": "Your sample has been collected and is being processed. 🧪",
+            "In Process": "Your test is being processed in our lab.",
+            "Reports Generated": "🎉 Your test reports are ready! Check your profile to download."
+        }
+        
+        await send_push_notification(
+            user_id=order.get('user_id'),
+            title=f"🔬 {update.status}",
+            body=status_messages.get(update.status, f"Test status updated to: {update.status}"),
+            url="/profile",
+            tag=f"diagnostic-{order_id}"
+        )
     
-    # Send email notification with report attachment link
+    # Send email to ADMIN only (internal tracking)
     email_html = f"""
     <h2>🔬 Diagnostic Order Status Update</h2>
     <p><strong>Order ID:</strong> {order_id[:8]}...</p>
@@ -7131,54 +7135,7 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
     <p><strong>New Status:</strong> {update.status}</p>
     <p><strong>Updated by:</strong> {staff.get('name')}</p>
     """
-    
-    # Get tests list
-    tests_list = order.get('tests', [])
-    if isinstance(tests_list, list):
-        tests_display = ', '.join(tests_list[:5]) + ('...' if len(tests_list) > 5 else '')
-    else:
-        tests_display = str(tests_list)
-    
-    patient_html = f"""
-    <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
-            <h1 style="color: white; margin: 0;">Test Update</h1>
-        </div>
-        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
-            <p>Hello <strong>{order.get('patient_name')}</strong>,</p>
-            <p>Your Proton Diagnostics test status has been updated to: <strong style="color: #8b5cf6;">{update.status}</strong></p>
-            
-            <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 5px 0;"><strong>Order ID:</strong> {order_id[:8]}...</p>
-                <p style="margin: 5px 0;"><strong>Tests:</strong> {tests_display}</p>
-                {f"<p style='margin: 5px 0;'><strong>Age/Sex:</strong> {order.get('age', 'N/A')} / {order.get('sex', 'N/A')}</p>" if order.get('age') or order.get('sex') else ""}
-            </div>
-            
-            {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
-            
-            {report_section}
-            
-            <p style="color: #64748b; font-size: 14px; margin-top: 20px;">Thank you for choosing Proton Diagnostics!</p>
-        </div>
-    </div>
-    """
-    
-    await send_email_notification(
-        f"Diagnostic Order Update - {update.status}",
-        email_html,
-        patient_email=order.get('patient_email'),
-        patient_subject=f"Test Status: {update.status} - Proton Diagnostics" + (" (Report Attached)" if update.status == "Reports Generated" and order.get('report_url') else ""),
-        patient_html=patient_html
-    )
-    
-    # Send push notification
-    if order.get('user_id'):
-        await send_push_notification(
-            user_id=order.get('user_id'),
-            title=f"Test Update: {update.status}",
-            body=f"Your test reports are ready!" if update.status == "Reports Generated" else f"Your diagnostic order is now: {update.status}",
-            url="/profile"
-        )
+    await send_email_notification(f"Diagnostic Order Update - {update.status}", email_html)
     
     logger.info(f"Diagnostic order {order_id} updated to {update.status} by {staff.get('name')}")
     
