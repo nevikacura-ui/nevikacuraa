@@ -366,8 +366,9 @@ const Proton = () => {
   };
 
   const goToStep2 = () => {
-    if (selectedTests.length === 0) {
-      toast.error('Please select at least one test');
+    // Allow proceeding if tests are selected OR prescription is uploaded
+    if (selectedTests.length === 0 && !prescriptionUrl) {
+      toast.error('Please select tests OR upload a prescription');
       return;
     }
     if (!patientInfo.name.trim()) {
@@ -687,7 +688,7 @@ const Proton = () => {
             {/* Continue Button */}
             <Button 
               onClick={goToStep2} 
-              disabled={selectedTests.length === 0}
+              disabled={selectedTests.length === 0 && !prescriptionUrl}
               className="w-full bg-indigo-600 hover:bg-indigo-700 h-12 text-lg"
               data-testid="continue-to-otp"
             >
