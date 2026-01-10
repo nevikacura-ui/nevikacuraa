@@ -592,11 +592,154 @@ const Proton = () => {
 
             {activeTab === 'pathology' && (
               <div className="space-y-4">
-                <Card className="p-4">
-                  <h4 className="font-medium text-indigo-700 mb-3">Blood Tests</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 max-h-64 overflow-y-auto">
-                    {pathologyTests.blood.map(test => <TestCheckbox key={test} test={test} />)}
+                {/* Popular & Pregnancy Tests - Most Important */}
+                <Card className="p-4 border-2 border-pink-200 bg-pink-50/50">
+                  <h4 className="font-medium text-pink-700 mb-3 flex items-center gap-2">
+                    <Heart className="w-4 h-4" />
+                    Pregnancy & OBGYN Tests
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <TestCheckbox test="Dual / Double Marker" />
+                    <TestCheckbox test="Quadruple Marker" />
+                    <TestCheckbox test="ANC (Ante Natal Profile)" />
+                    <TestCheckbox test="Beta-hCG" />
+                    <TestCheckbox test="AMH (Anti-Mullerian Hormone)" />
+                    <TestCheckbox test="Hormonal Basic" />
+                    <TestCheckbox test="Hormonal Advance" />
                   </div>
+                </Card>
+                
+                {/* Diabetes Tests */}
+                <Card className="p-4 border-2 border-blue-200 bg-blue-50/50">
+                  <h4 className="font-medium text-blue-700 mb-3 flex items-center gap-2">
+                    <Activity className="w-4 h-4" />
+                    Diabetes Tests
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <TestCheckbox test="Diabetes Basic" />
+                    <TestCheckbox test="Diabetes Screening" />
+                    <TestCheckbox test="Diabetes Advance" />
+                    <TestCheckbox test="FBS (Fasting Blood Sugar)" />
+                    <TestCheckbox test="PPBS (Post Prandial Blood Sugar)" />
+                    <TestCheckbox test="Random Blood Sugar (RBS)" />
+                    <TestCheckbox test="HbA1c (Glycated Hemoglobin)" />
+                    <TestCheckbox test="OGTT - 3 Sample" />
+                  </div>
+                </Card>
+
+                {/* Health Packages */}
+                <Card className="p-4 border-2 border-green-200 bg-green-50/50">
+                  <h4 className="font-medium text-green-700 mb-3 flex items-center gap-2">
+                    <Package className="w-4 h-4" />
+                    Health Packages (Lupikavach)
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <TestCheckbox test="Lupikavach Dahila" />
+                    <TestCheckbox test="Lupikavach Daisy" />
+                    <TestCheckbox test="Lupikavach Lily" />
+                    <TestCheckbox test="Lupikavach Orchid" />
+                    <TestCheckbox test="Lupikavach Vitamin" />
+                    <TestCheckbox test="Lupipro Core" />
+                  </div>
+                </Card>
+                
+                {/* Common Tests */}
+                <Card className="p-4">
+                  <h4 className="font-medium text-indigo-700 mb-3">Common Blood Tests</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <TestCheckbox test="CBC (Complete Blood Count)" />
+                    <TestCheckbox test="Blood Group & Rh Factor" />
+                    <TestCheckbox test="Hemoglobin (Hb)" />
+                    <TestCheckbox test="ESR (Erythrocyte Sedimentation Rate)" />
+                    <TestCheckbox test="LFT (Liver Function Test)" />
+                    <TestCheckbox test="RFT (Renal Function Test)" />
+                    <TestCheckbox test="Lipid Profile" />
+                    <TestCheckbox test="Creatinine" />
+                    <TestCheckbox test="Uric Acid" />
+                    <TestCheckbox test="SGPT (ALT)" />
+                    <TestCheckbox test="SGOT (AST)" />
+                    <TestCheckbox test="Serum Amylase" />
+                    <TestCheckbox test="Lipase" />
+                    <TestCheckbox test="LDH" />
+                    <TestCheckbox test="Serum Electrolytes" />
+                    <TestCheckbox test="UPCR" />
+                  </div>
+                </Card>
+
+                {/* Thyroid Tests */}
+                <Card className="p-4">
+                  <h4 className="font-medium text-indigo-700 mb-3">Thyroid Profile</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <TestCheckbox test="TSH" />
+                    <TestCheckbox test="Thyroid Profile - Free" />
+                    <TestCheckbox test="Thyroid Profile - Total" />
+                    <TestCheckbox test="T3 (Total)" />
+                    <TestCheckbox test="T4 (Total)" />
+                  </div>
+                </Card>
+
+                {/* Vitamins & Hormones */}
+                <Card className="p-4">
+                  <h4 className="font-medium text-indigo-700 mb-3">Vitamins & Hormones</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <TestCheckbox test="Vitamin D" />
+                    <TestCheckbox test="Vitamin B12" />
+                    <TestCheckbox test="G6PD" />
+                    <TestCheckbox test="Serum Testosterone" />
+                    <TestCheckbox test="Serum PSA" />
+                  </div>
+                </Card>
+
+                {/* Infection & Immunity */}
+                <Card className="p-4">
+                  <h4 className="font-medium text-indigo-700 mb-3">Infection & Immunity Tests</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <TestCheckbox test="HIV - Rapid" />
+                    <TestCheckbox test="HCV - Rapid" />
+                    <TestCheckbox test="VDRL/RPR (Syphilis)" />
+                    <TestCheckbox test="H3 Viral Marker" />
+                    <TestCheckbox test="MP Antigen (Malaria)" />
+                    <TestCheckbox test="Blood Culture & Sensitivity" />
+                    <TestCheckbox test="CRP (C-Reactive Protein)" />
+                  </div>
+                </Card>
+
+                {/* Tumor Markers & Arthritis */}
+                <Card className="p-4">
+                  <h4 className="font-medium text-indigo-700 mb-3">Tumor Markers & Arthritis</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <TestCheckbox test="Alpha Fetoprotein" />
+                    <TestCheckbox test="CA 19-9" />
+                    <TestCheckbox test="Arthritis Basic Panel" />
+                    <TestCheckbox test="Anti-CCP" />
+                    <TestCheckbox test="RA Factor" />
+                    <TestCheckbox test="PT/INR" />
+                  </div>
+                </Card>
+
+                {/* All Other Blood Tests - Expandable */}
+                <Card className="p-4">
+                  <details>
+                    <summary className="font-medium text-indigo-700 mb-3 cursor-pointer">All Other Blood Tests (Click to expand)</summary>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 mt-3 max-h-64 overflow-y-auto">
+                      {pathologyTests.blood.filter(t => 
+                        !['Dual / Double Marker', 'Quadruple Marker', 'ANC (Ante Natal Profile)', 'Beta-hCG', 'AMH (Anti-Mullerian Hormone)', 
+                          'Hormonal Basic', 'Hormonal Advance', 'Diabetes Basic', 'Diabetes Screening', 'Diabetes Advance',
+                          'FBS (Fasting Blood Sugar)', 'PPBS (Post Prandial Blood Sugar)', 'Random Blood Sugar (RBS)', 
+                          'HbA1c (Glycated Hemoglobin)', 'OGTT - 3 Sample', 'Lupikavach Dahila', 'Lupikavach Daisy',
+                          'Lupikavach Lily', 'Lupikavach Orchid', 'Lupikavach Vitamin', 'Lupipro Core',
+                          'CBC (Complete Blood Count)', 'Blood Group & Rh Factor', 'Hemoglobin (Hb)', 'ESR (Erythrocyte Sedimentation Rate)',
+                          'LFT (Liver Function Test)', 'RFT (Renal Function Test)', 'Lipid Profile', 'Creatinine', 'Uric Acid',
+                          'SGPT (ALT)', 'SGOT (AST)', 'Serum Amylase', 'Lipase', 'LDH', 'Serum Electrolytes', 'UPCR',
+                          'TSH', 'Thyroid Profile - Free', 'Thyroid Profile - Total', 'T3 (Total)', 'T4 (Total)',
+                          'Vitamin D', 'Vitamin B12', 'G6PD', 'Serum Testosterone', 'Serum PSA',
+                          'HIV - Rapid', 'HCV - Rapid', 'VDRL/RPR (Syphilis)', 'H3 Viral Marker', 'MP Antigen (Malaria)',
+                          'Blood Culture & Sensitivity', 'CRP (C-Reactive Protein)', 'Alpha Fetoprotein', 'CA 19-9',
+                          'Arthritis Basic Panel', 'Anti-CCP', 'RA Factor', 'PT/INR'
+                        ].includes(t)
+                      ).map(test => <TestCheckbox key={test} test={test} />)}
+                    </div>
+                  </details>
                 </Card>
                 
                 <Card className="p-4">
