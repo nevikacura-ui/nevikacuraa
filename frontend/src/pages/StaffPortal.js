@@ -1524,160 +1524,294 @@ const StaffPortal = () => {
         )}
 
         {/* Pharmacy Staff View */}
-        {role === 'pharmacy_staff' && (
-          <Card className="p-4 mt-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-lg flex items-center gap-2">
-                <Package className="w-5 h-5 text-orange-500" />
-                Pharmacy Orders
-              </h2>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gray-500" />
-                <input
-                  type="date"
-                  value={pharmacyDate}
-                  onChange={(e) => setPharmacyDate(e.target.value)}
-                  className="border rounded-lg px-3 py-1.5 text-sm"
-                />
-                {pharmacyDateCounts[pharmacyDate] && (
-                  <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
-                    {pharmacyDateCounts[pharmacyDate].total} orders
-                    {pharmacyDateCounts[pharmacyDate].pending > 0 && (
-                      <span className="ml-1 text-red-600">({pharmacyDateCounts[pharmacyDate].pending} pending)</span>
-                    )}
-                  </span>
-                )}
-              </div>
-            </div>
+        {(role === 'pharmacy_staff' || role === 'super_admin') && (
+          <Tabs defaultValue="orders" className="space-y-4 mt-4">
+            <TabsList>
+              <TabsTrigger value="orders" data-testid="tab-pharmacy-orders">
+                <Package className="w-4 h-4 mr-2" />
+                Orders
+              </TabsTrigger>
+              <TabsTrigger value="loyalty" data-testid="tab-pharmacy-loyalty">
+                <Gift className="w-4 h-4 mr-2" />
+                Loyalty Points
+              </TabsTrigger>
+            </TabsList>
             
-            {/* Date Quick Navigation */}
-            <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-              {[-2, -1, 0, 1, 2].map(offset => {
-                const d = new Date();
-                d.setDate(d.getDate() + offset);
-                const dateStr = d.toISOString().split('T')[0];
-                const counts = pharmacyDateCounts[dateStr];
-                const isSelected = dateStr === pharmacyDate;
-                return (
-                  <button
-                    key={offset}
-                    onClick={() => setPharmacyDate(dateStr)}
-                    className={`px-3 py-2 rounded-lg text-sm whitespace-nowrap flex flex-col items-center min-w-[80px] ${
-                      isSelected ? 'bg-orange-500 text-white' : 'bg-gray-100 hover:bg-gray-200'
-                    }`}
-                  >
-                    <span className="font-medium">{offset === 0 ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
-                    <span className="text-xs">{d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                    {counts && (
-                      <span className={`text-xs mt-1 ${isSelected ? 'text-orange-100' : 'text-gray-500'}`}>
-                        {counts.total} {counts.pending > 0 && `(${counts.pending})`}
+            <TabsContent value="orders">
+              <Card className="p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-semibold text-lg flex items-center gap-2">
+                    <Package className="w-5 h-5 text-orange-500" />
+                    Pharmacy Orders
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-gray-500" />
+                    <input
+                      type="date"
+                      value={pharmacyDate}
+                      onChange={(e) => setPharmacyDate(e.target.value)}
+                      className="border rounded-lg px-3 py-1.5 text-sm"
+                    />
+                    {pharmacyDateCounts[pharmacyDate] && (
+                      <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
+                        {pharmacyDateCounts[pharmacyDate].total} orders
+                        {pharmacyDateCounts[pharmacyDate].pending > 0 && (
+                          <span className="ml-1 text-red-600">({pharmacyDateCounts[pharmacyDate].pending} pending)</span>
+                        )}
                       </span>
                     )}
-                  </button>
-                );
-              })}
-            </div>
-            
-            <div className="space-y-3">
-              {pharmacyOrders.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No orders for {pharmacyDate}</p>
-              ) : (
-                pharmacyOrders.map((order) => (
-                  <div key={order.id} className="p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <div>
-                        <span className="font-medium">{order.patient_name}</span>
-                        <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${getStatusColor(order.status)}`}>
-                          {order.status}
-                        </span>
-                        {order.bill_url && (
-                          <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-800">
-                            <Receipt className="w-3 h-3 inline mr-1" />
-                            Bill Uploaded
+                  </div>
+                </div>
+                
+                {/* Date Quick Navigation */}
+                <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+                  {[-2, -1, 0, 1, 2].map(offset => {
+                    const d = new Date();
+                    d.setDate(d.getDate() + offset);
+                    const dateStr = d.toISOString().split('T')[0];
+                    const counts = pharmacyDateCounts[dateStr];
+                    const isSelected = dateStr === pharmacyDate;
+                    return (
+                      <button
+                        key={offset}
+                        onClick={() => setPharmacyDate(dateStr)}
+                        className={`px-3 py-2 rounded-lg text-sm whitespace-nowrap flex flex-col items-center min-w-[80px] ${
+                          isSelected ? 'bg-orange-500 text-white' : 'bg-gray-100 hover:bg-gray-200'
+                        }`}
+                      >
+                        <span className="font-medium">{offset === 0 ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                        <span className="text-xs">{d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                        {counts && (
+                          <span className={`text-xs mt-1 ${isSelected ? 'text-orange-100' : 'text-gray-500'}`}>
+                            {counts.total} {counts.pending > 0 && `(${counts.pending})`}
                           </span>
                         )}
-                      </div>
-                      <span className="text-sm text-gray-500">{order.patient_phone}</span>
-                    </div>
-                    <div className="text-sm text-gray-600 mb-3">
-                      {order.medicines?.map(m => `${m.name} (${m.quantity})`).join(', ')}
-                    </div>
-                    
-                    {/* Bill Upload Section - Required before Out for Delivery */}
-                    {!order.bill_url && order.status !== 'Delivered' && (
-                      <div className="mb-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                        <p className="text-sm text-orange-800 mb-2 flex items-center gap-1">
-                          <Upload className="w-4 h-4" />
-                          <strong>Upload Bill/Receipt</strong> (Required before Out for Delivery)
-                        </p>
-                        <input
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          onChange={async (e) => {
-                            const file = e.target.files[0];
-                            if (!file) return;
-                            
-                            const formData = new FormData();
-                            formData.append('file', file);
-                            
-                            try {
-                              toast.loading('Uploading bill...');
-                              const res = await axios.post(
-                                `${API}/staff/pharmacy/orders/${order.id}/upload-bill`,
-                                formData,
-                                { 
-                                  headers: { 
-                                    'Authorization': `Bearer ${localStorage.getItem('staffToken')}`,
-                                    'Content-Type': 'multipart/form-data'
-                                  }
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                <div className="space-y-3">
+                  {pharmacyOrders.length === 0 ? (
+                    <p className="text-gray-500 text-center py-8">No orders for {pharmacyDate}</p>
+                  ) : (
+                    pharmacyOrders.map((order) => (
+                      <div key={order.id} className="p-4 bg-gray-50 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <span className="font-medium">{order.patient_name}</span>
+                            <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${getStatusColor(order.status)}`}>
+                              {order.status}
+                            </span>
+                            {order.bill_url && (
+                              <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-800">
+                                <Receipt className="w-3 h-3 inline mr-1" />
+                                Bill Uploaded
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-sm text-gray-500">{order.patient_phone}</span>
+                        </div>
+                        <div className="text-sm text-gray-600 mb-3">
+                          {order.medicines?.map(m => `${m.name} (${m.quantity})`).join(', ')}
+                        </div>
+                        
+                        {/* Bill Upload Section - Required before Out for Delivery */}
+                        {!order.bill_url && order.status !== 'Delivered' && (
+                          <div className="mb-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                            <p className="text-sm text-orange-800 mb-2 flex items-center gap-1">
+                              <Upload className="w-4 h-4" />
+                              <strong>Upload Bill/Receipt</strong> (Required before Out for Delivery)
+                            </p>
+                            <input
+                              type="file"
+                              accept=".pdf,.jpg,.jpeg,.png"
+                              onChange={async (e) => {
+                                const file = e.target.files[0];
+                                if (!file) return;
+                                
+                                const formData = new FormData();
+                                formData.append('file', file);
+                                
+                                try {
+                                  toast.loading('Uploading bill...');
+                                  const res = await axios.post(
+                                    `${API}/staff/pharmacy/orders/${order.id}/upload-bill`,
+                                    formData,
+                                    { 
+                                      headers: { 
+                                        'Authorization': `Bearer ${localStorage.getItem('staffToken')}`,
+                                        'Content-Type': 'multipart/form-data'
+                                      }
+                                    }
+                                  );
+                                  toast.dismiss();
+                                  toast.success('Bill uploaded successfully');
+                                  loadData();
+                                } catch (error) {
+                                  toast.dismiss();
+                                  toast.error(error.response?.data?.detail || 'Upload failed');
                                 }
-                              );
-                              toast.dismiss();
-                              toast.success('Bill uploaded successfully');
-                              loadData();
-                            } catch (error) {
-                              toast.dismiss();
-                              toast.error(error.response?.data?.detail || 'Upload failed');
-                            }
-                          }}
-                          className="text-sm"
-                          data-testid={`upload-bill-${order.id}`}
-                        />
+                              }}
+                              className="text-sm"
+                              data-testid={`upload-bill-${order.id}`}
+                            />
+                          </div>
+                        )}
+                        
+                        {order.bill_url && (
+                          <div className="mb-3">
+                            <a href={order.bill_url} target="_blank" rel="noopener noreferrer" className="text-sm text-orange-600 hover:underline flex items-center gap-1">
+                              <FileText className="w-4 h-4" />
+                              View Bill/Receipt
+                            </a>
+                          </div>
+                        )}
+                        
+                        <div className="flex gap-2 flex-wrap">
+                          {['Order Booked', 'Packing', 'Out for Delivery', 'Delivered'].map(status => (
+                            <Button
+                              key={status}
+                              size="sm"
+                              variant={order.status === status ? 'default' : 'outline'}
+                              onClick={() => handlePharmacyStatusUpdate(order.id, status)}
+                              disabled={
+                                order.status === status || 
+                                (status === 'Out for Delivery' && !order.bill_url)
+                              }
+                              className={order.status === status ? 'bg-orange-500' : ''}
+                              title={status === 'Out for Delivery' && !order.bill_url ? 'Upload bill first' : ''}
+                            >
+                              {status}
+                            </Button>
+                          ))}
+                        </div>
                       </div>
-                    )}
-                    
-                    {order.bill_url && (
-                      <div className="mb-3">
-                        <a href={order.bill_url} target="_blank" rel="noopener noreferrer" className="text-sm text-orange-600 hover:underline flex items-center gap-1">
-                          <FileText className="w-4 h-4" />
-                          View Bill/Receipt
-                        </a>
-                      </div>
-                    )}
-                    
-                    <div className="flex gap-2 flex-wrap">
-                      {['Order Booked', 'Packing', 'Out for Delivery', 'Delivered'].map(status => (
-                        <Button
-                          key={status}
-                          size="sm"
-                          variant={order.status === status ? 'default' : 'outline'}
-                          onClick={() => handlePharmacyStatusUpdate(order.id, status)}
-                          disabled={
-                            order.status === status || 
-                            (status === 'Out for Delivery' && !order.bill_url)
-                          }
-                          className={order.status === status ? 'bg-orange-500' : ''}
-                          title={status === 'Out for Delivery' && !order.bill_url ? 'Upload bill first' : ''}
-                        >
-                          {status}
-                        </Button>
-                      ))}
-                    </div>
+                    ))
+                  )}
+                </div>
+              </Card>
+            </TabsContent>
+            
+            {/* Loyalty Points Tab for Pharmacy Staff */}
+            <TabsContent value="loyalty">
+              <Card className="p-6">
+                <div className="mb-6">
+                  <h2 className="font-semibold text-lg flex items-center gap-2 mb-2">
+                    <Gift className="w-5 h-5 text-amber-500" />
+                    Add Loyalty Points
+                  </h2>
+                  <p className="text-sm text-gray-500">Award loyalty points to registered customers for their pharmacy purchases</p>
+                </div>
+                
+                {/* Search User */}
+                <div className="flex gap-3 mb-6">
+                  <div className="relative flex-1 max-w-md">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      value={loyaltyPhone}
+                      onChange={(e) => setLoyaltyPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      placeholder="Enter customer phone number..."
+                      className="pl-10 h-12"
+                      data-testid="pharmacy-loyalty-phone"
+                      onKeyPress={(e) => e.key === 'Enter' && searchLoyaltyUser()}
+                    />
                   </div>
-                ))
-              )}
-            </div>
-          </Card>
+                  <Button 
+                    onClick={searchLoyaltyUser} 
+                    disabled={loyaltyLoading || loyaltyPhone.length < 10}
+                    className="h-12 bg-amber-500 hover:bg-amber-600"
+                    data-testid="pharmacy-loyalty-search"
+                  >
+                    {loyaltyLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <User className="w-4 h-4 mr-2" />}
+                    Find User
+                  </Button>
+                </div>
+                
+                {/* User Result */}
+                {loyaltyUser && (
+                  <div className={`p-6 rounded-xl border-2 ${loyaltyUser.found ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200' : 'bg-gray-50 border-gray-200'}`}>
+                    {loyaltyUser.found ? (
+                      <div className="space-y-4">
+                        {/* User Info */}
+                        <div className="flex items-center justify-between flex-wrap gap-4">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
+                              <Gift className="w-6 h-6 text-amber-600" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-lg">{loyaltyUser.user_name}</p>
+                              <p className="text-gray-500">{loyaltyUser.phone}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-bold text-amber-600">{loyaltyUser.loyalty_points?.toLocaleString() || 0}</p>
+                            <p className="text-sm text-gray-500">Current Points</p>
+                          </div>
+                        </div>
+                        
+                        {/* Add Points Form */}
+                        <div className="grid sm:grid-cols-3 gap-4 pt-4 border-t border-amber-200">
+                          <div>
+                            <Label className="text-sm font-medium">Points to Add *</Label>
+                            <Input
+                              type="number"
+                              value={loyaltyPoints}
+                              onChange={(e) => setLoyaltyPoints(e.target.value)}
+                              placeholder="1-500"
+                              className="mt-1"
+                              max={500}
+                              min={1}
+                              data-testid="pharmacy-loyalty-points"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Max 500 points per transaction</p>
+                          </div>
+                          <div>
+                            <Label className="text-sm font-medium">Reason (Optional)</Label>
+                            <Input
+                              value={loyaltyReason}
+                              onChange={(e) => setLoyaltyReason(e.target.value)}
+                              placeholder="e.g., Order #12345"
+                              className="mt-1"
+                              data-testid="pharmacy-loyalty-reason"
+                            />
+                          </div>
+                          <div className="flex items-end">
+                            <Button 
+                              onClick={handleAddLoyaltyPoints}
+                              disabled={addingPoints || !loyaltyPoints}
+                              className="w-full bg-amber-500 hover:bg-amber-600"
+                              data-testid="pharmacy-loyalty-submit"
+                            >
+                              {addingPoints ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
+                              Add Points
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-6">
+                        <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                          <User className="w-8 h-8 text-gray-400" />
+                        </div>
+                        <p className="text-lg font-medium text-gray-600">User Not Registered</p>
+                        <p className="text-gray-500 text-sm mt-1">Phone: {loyaltyPhone}</p>
+                        <p className="text-sm text-gray-400 mt-3">Only registered users can earn loyalty points</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {!loyaltyUser && (
+                  <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                    <Gift className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">Search for a customer to add loyalty points</p>
+                    <p className="text-sm text-gray-400 mt-1">Enter their phone number above</p>
+                  </div>
+                )}
+              </Card>
+            </TabsContent>
+          </Tabs>
         )}
 
         {/* Diagnostics Staff View */}
