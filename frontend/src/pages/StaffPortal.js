@@ -174,6 +174,14 @@ const StaffPortal = () => {
   const [patientHistory, setPatientHistory] = useState(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
   
+  // Loyalty points states
+  const [loyaltyPhone, setLoyaltyPhone] = useState('');
+  const [loyaltyUser, setLoyaltyUser] = useState(null);
+  const [loyaltyLoading, setLoyaltyLoading] = useState(false);
+  const [loyaltyPoints, setLoyaltyPoints] = useState('');
+  const [loyaltyReason, setLoyaltyReason] = useState('');
+  const [addingPoints, setAddingPoints] = useState(false);
+  
   // Booked slots state for slot synchronization
   const [bookedSlots, setBookedSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
