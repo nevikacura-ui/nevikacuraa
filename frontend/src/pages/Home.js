@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import { User, Menu, X } from 'lucide-react';
+import { User, Menu, X, Download, Smartphone } from 'lucide-react';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -187,6 +187,32 @@ const Home = () => {
           </div>
         </div>
       </main>
+
+      {/* Download App Section */}
+      <section className="py-8 bg-gradient-to-r from-teal-500 to-teal-600">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-center sm:text-left">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                <Smartphone className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-white font-semibold text-lg">Get Nevika Cura App</h3>
+                <p className="text-teal-100 text-sm">Healthcare at your fingertips</p>
+              </div>
+            </div>
+            <a
+              href="https://customer-assets.emergentagent.com/job_nevika-cura-1/artifacts/rxsuhdx2_Nevika%20Cura.apk"
+              download="Nevika Cura.apk"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-teal-600 font-semibold rounded-full hover:bg-teal-50 transition-all shadow-lg hover:shadow-xl"
+              data-testid="download-apk-btn"
+            >
+              <Download className="w-5 h-5" />
+              Download Android App
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="mt-auto py-6 border-t bg-white/50 backdrop-blur-sm">
