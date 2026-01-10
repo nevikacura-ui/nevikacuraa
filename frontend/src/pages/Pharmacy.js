@@ -62,6 +62,11 @@ const Pharmacy = () => {
   const [verificationToken, setVerificationToken] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef([]);
+  
+  // Loyalty points state
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+  const [pointsToUse, setPointsToUse] = useState(0);
+  const [loadingPoints, setLoadingPoints] = useState(false);
 
   useEffect(() => {
     fetchInventory();
