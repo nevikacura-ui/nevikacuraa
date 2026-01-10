@@ -127,6 +127,10 @@ const StaffPortal = () => {
   const [emergencyCounts, setEmergencyCounts] = useState({});
   const [availableTests, setAvailableTests] = useState({});
   
+  // Doctor multi-clinic states
+  const [doctorClinics, setDoctorClinics] = useState([]);
+  const [selectedClinic, setSelectedClinic] = useState('');
+  
   // Walk-in form
   const [walkInForm, setWalkInForm] = useState({
     doctor: '',
