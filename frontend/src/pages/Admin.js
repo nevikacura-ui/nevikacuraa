@@ -15,7 +15,7 @@ import {
   ArrowLeft, Pill, Users, Calendar, FileText, Package, 
   Plus, Trash2, Search, Loader2, LogOut, Shield,
   BarChart3, FlaskConical, UserX, AlertTriangle, X,
-  Truck, CheckCircle2, Clock, MapPin
+  Truck, CheckCircle2, Clock, MapPin, Gift, Minus, Phone, TrendingUp, History
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -106,6 +106,16 @@ const Admin = () => {
   
   // Recent orders
   const [recentOrders, setRecentOrders] = useState(null);
+
+  // Loyalty Points System
+  const [loyaltyPhone, setLoyaltyPhone] = useState('');
+  const [loyaltyUser, setLoyaltyUser] = useState(null);
+  const [loyaltyLoading, setLoyaltyLoading] = useState(false);
+  const [redeemAmount, setRedeemAmount] = useState('');
+  const [redeemReason, setRedeemReason] = useState('');
+  const [redeemLoading, setRedeemLoading] = useState(false);
+  const [loyaltySummary, setLoyaltySummary] = useState(null);
+  const [loyaltyTransactions, setLoyaltyTransactions] = useState([]);
 
   // Staff Management
   const [staffList, setStaffList] = useState([]);
