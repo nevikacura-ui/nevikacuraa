@@ -7250,8 +7250,6 @@ DIAGNOSTIC_TEST_PRICES = {
     "H3 Viral Marker": 1200, "HbA1c": 400, "HCV - Rapid": 600, "HIV - Rapid": 450,
     "Hormonal Advance": 1200, "Hormonal Basic": 800, "LDH": 550,
     "LFT (Liver Function Test)": 450, "Lipase": 600, "Lipid Profile": 500,
-    "Lupikavach Dahila": 1440, "Lupikavach Daisy": 2550, "Lupikavach Lily": 1740,
-    "Lupikavach Orchid": 3250, "Lupikavach Vitamin": 990, "Lupipro Core": 1300,
     "MP Antigen (Malaria)": 650, "OGTT - 3 Sample": 450, "PPBS": 75, "PT INR": 450,
     "Quadruple Marker": 2600, "RBS": 75, "RFT (Renal Function Test)": 600,
     "Serum Amylase": 550, "Serum Electrolytes": 400, "Serum PSA": 850,
