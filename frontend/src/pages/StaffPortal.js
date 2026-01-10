@@ -401,6 +401,18 @@ const StaffPortal = () => {
     }
   };
 
+  const fetchPatientHistory = async (phone) => {
+    setLoadingHistory(true);
+    try {
+      const res = await axios.get(`${API}/staff/patient/history/${phone}`, getAuthHeaders());
+      setPatientHistory(res.data);
+      setShowHistoryModal(true);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to load patient history');
+    }
+    setLoadingHistory(false);
+  };
+
   const handleWalkInBooking = async () => {
     if (!walkInForm.patient_name || !walkInForm.patient_phone || !walkInForm.time) {
       toast.error('Please fill all required fields');
