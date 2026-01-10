@@ -6685,13 +6685,18 @@ async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = 
     if role == "clinic_staff_amnion" and appointment.get("clinic") != "Amnion Clinic":
         raise HTTPException(status_code=403, detail="You can only manage Amnion Clinic appointments")
     
+    # Generate unique feedback token
+    feedback_token = str(uuid.uuid4())
+    
     await db.appointments.update_one(
         {"id": appointment_id},
         {"$set": {
             "status": "Completed",
             "completed_at": datetime.now(timezone.utc).isoformat(),
             "completed_by": staff.get("name"),
-            "completion_notes": notes
+            "completion_notes": notes,
+            "feedback_token": feedback_token,
+            "feedback_requested": True
         }}
     )
     
@@ -6705,8 +6710,20 @@ async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = 
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
     
-    # Send completion email if patient has email
+    # Send push notification
+    if appointment.get("user_id"):
+        await send_push_notification(
+            user_id=appointment.get("user_id"),
+            title="✅ Appointment Completed",
+            body=f"Your appointment with {appointment.get('doctor')} is complete. Thank you for visiting!",
+            url="/profile",
+            tag=f"appointment-{appointment_id}"
+        )
+    
+    # Send feedback request email if patient has email
     if appointment.get("patient_email"):
+        feedback_url = f"{os.environ.get('FRONTEND_URL', 'https://nevika-health-2.preview.emergentagent.com')}/feedback/{feedback_token}"
+        
         patient_html = f"""
         <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
             <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
@@ -6720,6 +6737,22 @@ async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = 
                     <p><strong>Clinic:</strong> {appointment.get('clinic')}</p>
                     <p><strong>Date:</strong> {appointment.get('date')}</p>
                 </div>
+                
+                <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+                    <h3 style="color: #92400e; margin: 0 0 15px 0;">How was your experience?</h3>
+                    <p style="color: #78350f; margin-bottom: 15px;">We'd love to hear your feedback. Please rate your visit:</p>
+                    
+                    <div style="margin: 20px 0;">
+                        <a href="{feedback_url}?rating=1" style="text-decoration: none; font-size: 28px; margin: 0 5px;">⭐</a>
+                        <a href="{feedback_url}?rating=2" style="text-decoration: none; font-size: 28px; margin: 0 5px;">⭐</a>
+                        <a href="{feedback_url}?rating=3" style="text-decoration: none; font-size: 28px; margin: 0 5px;">⭐</a>
+                        <a href="{feedback_url}?rating=4" style="text-decoration: none; font-size: 28px; margin: 0 5px;">⭐</a>
+                        <a href="{feedback_url}?rating=5" style="text-decoration: none; font-size: 28px; margin: 0 5px;">⭐</a>
+                    </div>
+                    
+                    <p style="font-size: 12px; color: #92400e;">Click on the stars to rate (1-5)</p>
+                </div>
+                
                 <p>We appreciate your trust in Nevika Cura Healthcare.</p>
                 <p style="color: #10b981; font-weight: bold;">Wishing you good health!</p>
                 <p style="color: #64748b; font-size: 14px; margin-top: 20px;">Warm regards,<br>Nevika Cura Team</p>
@@ -6730,7 +6763,7 @@ async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = 
             f"Appointment Completed - {appointment.get('patient_name')}",
             f"Appointment completed for {appointment.get('patient_name')} with {appointment.get('doctor')}",
             patient_email=appointment.get("patient_email"),
-            patient_subject="Appointment Completed – Thank You",
+            patient_subject="Your Appointment is Complete – Share Your Feedback ⭐",
             patient_html=patient_html
         )
     
