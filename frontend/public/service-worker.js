@@ -78,7 +78,7 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Push notification handler
+// Push notification handler - Android Banner Style
 self.addEventListener('push', (event) => {
   console.log('Nevika Cura: Push notification received');
   
@@ -99,20 +99,26 @@ self.addEventListener('push', (event) => {
     }
   }
   
+  // Android Banner Style Notification Options
   const options = {
     body: data.body,
     icon: data.icon || '/icons/icon-192x192.png',
     badge: data.badge || '/icons/icon-72x72.png',
-    vibrate: [100, 50, 100, 50, 100],
+    image: data.image || null, // Large image for expanded view
+    vibrate: [200, 100, 200], // Android-style vibration pattern
     tag: data.tag || 'nevika-notification',
     renotify: true,
     requireInteraction: false,
+    silent: false,
+    timestamp: Date.now(),
     data: {
       url: data.url || '/',
-      dateOfArrival: Date.now()
+      dateOfArrival: Date.now(),
+      type: data.type || 'general'
     },
-    actions: [
-      { action: 'view', title: 'View', icon: '/icons/icon-72x72.png' },
+    // Android banner style actions
+    actions: data.actions || [
+      { action: 'view', title: 'View Details' },
       { action: 'dismiss', title: 'Dismiss' }
     ]
   };
