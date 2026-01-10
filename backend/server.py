@@ -1391,11 +1391,14 @@ async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(get_c
     if len(order.medicines) > 3:
         medicines_text += f" +{len(order.medicines) - 3} more"
     
+    # Add discount info to WhatsApp message if applicable
+    discount_text = f"\nLoyalty Discount: ₹{order.discount_amount:.0f} ({order.points_used} pts)" if order.points_used > 0 else ""
+    
     whatsapp_message = f"""New Pharmacy Order - Orange Pharmacy
 
 Patient: {order.patient_name}
 Phone: {order.patient_phone}
-Order ID: {order.id[:8]}
+Order ID: {order.id[:8]}{discount_text}
 
 Medicines: {medicines_text if order.medicines else 'See prescription'}
 Prescription: {order.prescription_url or 'Not uploaded'}
@@ -1406,6 +1409,9 @@ Delivery: {order.delivery_address or 'Not provided'}"""
     # Format prescription as clickable link
     prescription_display = f'<a href="{order.prescription_url}" target="_blank" style="color: #f97316;">📎 View Prescription</a>' if order.prescription_url else 'Not uploaded'
     
+    # Add loyalty discount row to email if applicable
+    discount_html = f'<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>🎁 Loyalty Discount:</strong></td><td style="padding: 8px; border: 1px solid #ddd; color: #16a34a; font-weight: bold;">₹{order.discount_amount:.0f} ({order.points_used} points used)</td></tr>' if order.points_used > 0 else ''
+    
     # Send email notification for new pharmacy order
     medicines_list = "<br>".join([f"• {m.get('name', 'Unknown')} (Qty: {m.get('quantity', 1)})" for m in order.medicines]) if order.medicines else '<em>No medicines specified - Check prescription</em>'
     email_html = f"""
@@ -1415,6 +1421,7 @@ Delivery: {order.delivery_address or 'Not provided'}"""
     <table style="border-collapse: collapse; width: 100%;">
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Delivery Address:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.delivery_address or 'Not provided'}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Prescription:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{prescription_display}</td></tr>
+        {discount_html}
     </table>
     <h3>Customer Details</h3>
     <p><strong>Name:</strong> {order.patient_name}</p>
@@ -1427,6 +1434,15 @@ Delivery: {order.delivery_address or 'Not provided'}"""
     </div>
     """
     
+    # Discount info for patient email
+    patient_discount_html = f'''
+        <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: center;">
+            <p style="margin: 0; color: #d97706; font-weight: bold;">🎁 Loyalty Discount Applied!</p>
+            <p style="margin: 5px 0 0 0; color: #92400e; font-size: 20px;">₹{order.discount_amount:.0f} OFF</p>
+            <p style="margin: 5px 0 0 0; color: #78350f; font-size: 12px;">({order.points_used} points redeemed)</p>
+        </div>
+    ''' if order.points_used > 0 else ''
+    
     # Patient confirmation email for pharmacy
     medicines_list_patient = "".join([f"<li>{m.get('name', 'Unknown')} - Qty: {m.get('quantity', 1)}</li>" for m in order.medicines]) if order.medicines else '<li><em>Medicines as per prescription</em></li>'
     patient_pharmacy_html = f"""
@@ -1437,7 +1453,7 @@ Delivery: {order.delivery_address or 'Not provided'}"""
         <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
             <p style="font-size: 18px;">Hello <strong>{order.patient_name}</strong>,</p>
             <p>Your order has been successfully placed at <strong>Orange Pharmacy</strong>.</p>
-            
+            {patient_discount_html}
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f97316;">
                 <h3 style="color: #f97316; margin-top: 0;">Order Details</h3>
                 <p><strong>Order ID:</strong> {order.id[:8]}...</p>
