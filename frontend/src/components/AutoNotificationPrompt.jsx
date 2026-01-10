@@ -46,11 +46,10 @@ export function AutoNotificationPrompt() {
 
   const handleDismiss = () => {
     setShowBanner(false);
-    setDismissed(true);
     localStorage.setItem('notificationPromptDismissed', 'true');
   };
 
-  if (!showBanner || dismissed || !user) return null;
+  if (!showBanner || isDismissed || !user) return null;
 
   return (
     <div className="fixed top-4 left-4 right-4 z-[100] animate-in slide-in-from-top duration-300 max-w-md mx-auto">
