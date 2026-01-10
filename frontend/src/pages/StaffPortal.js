@@ -120,6 +120,10 @@ const StaffPortal = () => {
   const [diagnosticOrders, setDiagnosticOrders] = useState([]);
   const [serviceOrders, setServiceOrders] = useState([]);
   const [selectedDate, setSelectedDate] = useState(getIndianDate());
+  const [pharmacyDate, setPharmacyDate] = useState(getIndianDate());
+  const [diagnosticDate, setDiagnosticDate] = useState(getIndianDate());
+  const [pharmacyDateCounts, setPharmacyDateCounts] = useState({});
+  const [diagnosticDateCounts, setDiagnosticDateCounts] = useState({});
   const [emergencyCounts, setEmergencyCounts] = useState({});
   const [availableTests, setAvailableTests] = useState({});
   
