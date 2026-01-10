@@ -163,6 +163,24 @@ const Pharmacy = () => {
     }
   };
 
+  const fetchLoyaltyPoints = async () => {
+    if (!user) return;
+    setLoadingPoints(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API}/user/loyalty-points`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setLoyaltyPoints(response.data.loyalty_points || 0);
+    } catch (error) {
+      console.error('Failed to fetch loyalty points:', error);
+    }
+    setLoadingPoints(false);
+  };
+
+  // Calculate discount from points (100 pts = ₹10)
+  const discountAmount = (pointsToUse / 100) * 10;
+
   const loadMoreMedicines = () => {
     if (!loadingMore && hasMoreMedicines) {
       const nextPage = currentPage + 1;
