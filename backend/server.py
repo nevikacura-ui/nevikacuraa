@@ -6586,31 +6586,14 @@ _Patient is waiting. Please see them shortly._
 _Nevika Cura Healthcare_"""
         await send_whatsapp_notification(doctor_number, checkin_message)
     
-    # Send email if patient has email
-    if appointment.get("patient_email"):
-        patient_html = f"""
-        <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
-            <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
-                <h1 style="color: white; margin: 0;">You are Checked-In ✓</h1>
-            </div>
-            <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
-                <p>Dear <strong>{appointment.get('patient_name')}</strong>,</p>
-                <p>You have been marked <strong>IN CLINIC</strong> for your appointment.</p>
-                <p>Please wait, the doctor will see you shortly.</p>
-                <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>Doctor:</strong> {appointment.get('doctor')}</p>
-                    <p><strong>Clinic:</strong> {appointment.get('clinic')}</p>
-                </div>
-                <p style="color: #64748b; font-size: 14px;">Thank you for choosing Nevika Cura Healthcare.</p>
-            </div>
-        </div>
-        """
-        await send_email_notification(
-            f"Patient Check-In - {appointment.get('patient_name')}",
-            f"Patient {appointment.get('patient_name')} checked in at {appointment.get('clinic')}",
-            patient_email=appointment.get("patient_email"),
-            patient_subject="You are Checked-In – Nevika Cura",
-            patient_html=patient_html
+    # Send PUSH NOTIFICATION for check-in (no email for status updates)
+    if appointment.get("user_id"):
+        await send_push_notification(
+            user_id=appointment.get("user_id"),
+            title="✅ Checked In",
+            body=f"You're checked in at {appointment.get('clinic')}. The doctor will see you shortly.",
+            url="/profile",
+            tag=f"appointment-{appointment_id}"
         )
     
     logger.info(f"Patient checked in by {staff.get('name')}: {appointment.get('patient_name')}")
