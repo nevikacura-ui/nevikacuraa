@@ -1333,12 +1333,13 @@ const StaffPortal = () => {
               <>
                 {/* Service-Linked Orders (from clinic add-ons) */}
                 {serviceOrders.length > 0 && (
-                  <Card className="p-4 mb-4">
+                  <Card className="p-4 mb-4 border-2 border-teal-200">
                     <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
                       <Stethoscope className="w-5 h-5 text-teal-500" />
                       Clinic Add-on Services
+                      <span className="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded-full">{serviceOrders.length} orders</span>
                     </h2>
-                    <p className="text-sm text-gray-500 mb-4">Tests ordered during clinic visits</p>
+                    <p className="text-sm text-gray-500 mb-4">Blood tests, Sonography & ECG ordered during clinic visits at Pushpa/Amnion Clinic</p>
                     
                     <div className="space-y-3">
                       {serviceOrders.map((order) => (
@@ -1350,7 +1351,7 @@ const StaffPortal = () => {
                                 {order.status}
                               </span>
                               <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-teal-100 text-teal-800">
-                                Clinic Add-on
+                                {order.clinic || 'Clinic Add-on'}
                               </span>
                               {order.report_url && (
                                 <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-800">
@@ -1363,7 +1364,8 @@ const StaffPortal = () => {
                           </div>
                           <div className="text-sm text-gray-600 mb-3">
                             <strong>Service:</strong> {order.service_type?.replace('_', ' ')} | 
-                            <strong> Clinic:</strong> {order.clinic || 'N/A'}
+                            <strong> Tests:</strong> {order.tests?.join(', ') || 'N/A'} |
+                            <strong> Doctor:</strong> {order.doctor || 'N/A'}
                           </div>
                           
                           {/* Report Upload Section - Required before Reports Generated */}
