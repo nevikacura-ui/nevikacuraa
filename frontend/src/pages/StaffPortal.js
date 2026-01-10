@@ -1135,7 +1135,7 @@ const StaffPortal = () => {
               <div>
                 <h2 className="font-semibold text-lg flex items-center gap-2">
                   <Stethoscope className="w-5 h-5 text-teal-600" />
-                  {staffInfo?.doctor_name}'s Appointments
+                  {staffInfo?.doctor_name}&apos;s Appointments
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
                   {appointments.length} appointment{appointments.length !== 1 ? 's' : ''} for {selectedDate}
