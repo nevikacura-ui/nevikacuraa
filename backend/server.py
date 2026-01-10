@@ -511,6 +511,18 @@ async def get_me(user: User = Depends(get_current_user)):
         raise HTTPException(status_code=401, detail="Not authenticated")
     return user
 
+@api_router.get("/user/loyalty-points")
+async def get_user_loyalty_points(user: User = Depends(get_current_user)):
+    """Get current user's loyalty points balance"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Fetch fresh data from DB
+    user_doc = await db.users.find_one({"id": user.id}, {"_id": 0, "loyalty_points": 1})
+    loyalty_points = user_doc.get('loyalty_points', 0) if user_doc else 0
+    
+    return {"loyalty_points": loyalty_points}
+
 # ============ OTP-based Auth Endpoints ============
 
 class AuthOTPRequest(BaseModel):
