@@ -311,7 +311,7 @@ const StaffPortal = () => {
       loadData();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, staffInfo, selectedDate, pharmacyDate, diagnosticDate]);
+  }, [isAuthenticated, staffInfo, selectedDate, pharmacyDate, diagnosticDate, selectedClinic]);
 
   const handleLogin = async () => {
     if (!username || !password) {
