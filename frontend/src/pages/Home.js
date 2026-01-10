@@ -51,19 +51,22 @@ const Home = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          {/* Centered Logo */}
-          <div className="flex justify-center mb-2">
-            <img 
-              src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
-              alt="Nevika Cura" 
-              className="h-14 sm:h-16 w-auto object-contain"
-              data-testid="main-logo"
-            />
-          </div>
-          {/* Navigation buttons */}
-          <div className="flex justify-between items-center">
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex justify-center items-center gap-4 flex-1">
+          <div className="flex items-center justify-between">
+            {/* Empty div for balance */}
+            <div className="hidden md:block w-48"></div>
+            
+            {/* Centered Logo */}
+            <div className="flex justify-center flex-1 md:flex-none">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
+                alt="Nevika Cura" 
+                className="h-14 sm:h-16 w-auto object-contain"
+                data-testid="main-logo"
+              />
+            </div>
+            
+            {/* Navigation buttons on right */}
+            <div className="hidden md:flex items-center gap-4">
               <Button 
                 variant="ghost" 
                 size="sm"
@@ -98,6 +101,27 @@ const Home = () => {
                 </>
               ) : (
                 <Button 
+                  size="sm"
+                  onClick={() => setShowAuth(true)} 
+                  data-testid="login-button"
+                  className="rounded-full bg-brand-teal hover:bg-brand-teal/90"
+                >
+                  Login / Sign Up
+                </Button>
+              )}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden"
+              onClick={() => setShowMenu(!showMenu)}
+              data-testid="mobile-menu-button"
+            >
+              {showMenu ? <X /> : <Menu />}
+            </button>
+          </div>
+        </div>
+      </header> 
                   size="sm"
                   onClick={() => setShowAuth(true)} 
                   data-testid="login-button"
