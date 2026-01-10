@@ -1071,7 +1071,7 @@ const Admin = () => {
                   <div className="flex items-center gap-3">
                     <Gift className="w-8 h-8 opacity-80" />
                     <div>
-                      <p className="text-2xl font-bold">{loyaltySummary?.total_points_credited?.toLocaleString() || '0'}</p>
+                      <p className="text-2xl font-bold">{loyaltySummary?.total_points_issued?.toLocaleString() || '0'}</p>
                       <p className="text-sm opacity-80">Total Credited</p>
                     </div>
                   </div>
@@ -1081,7 +1081,7 @@ const Admin = () => {
                   <div className="flex items-center gap-3">
                     <Minus className="w-8 h-8 opacity-80" />
                     <div>
-                      <p className="text-2xl font-bold">{loyaltySummary?.total_points_debited?.toLocaleString() || '0'}</p>
+                      <p className="text-2xl font-bold">{loyaltySummary?.total_points_redeemed?.toLocaleString() || '0'}</p>
                       <p className="text-sm opacity-80">Total Redeemed</p>
                     </div>
                   </div>
@@ -1091,7 +1091,7 @@ const Admin = () => {
                   <div className="flex items-center gap-3">
                     <TrendingUp className="w-8 h-8 opacity-80" />
                     <div>
-                      <p className="text-2xl font-bold">{((loyaltySummary?.total_points_credited || 0) - (loyaltySummary?.total_points_debited || 0)).toLocaleString()}</p>
+                      <p className="text-2xl font-bold">{loyaltySummary?.points_in_circulation?.toLocaleString() || '0'}</p>
                       <p className="text-sm opacity-80">Net Active Points</p>
                     </div>
                   </div>
