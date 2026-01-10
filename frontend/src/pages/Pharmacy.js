@@ -650,7 +650,13 @@ const Pharmacy = () => {
                           <Minus className="w-3 h-3" />
                         </Button>
                         <span className="w-8 text-center">{med.quantity}</span>
-                        <Button size="sm" variant="outline" onClick={() => updateQuantity(idx, med.quantity + 1)} data-testid={`increase-qty-${idx}`}>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => updateQuantity(idx, med.quantity + 1)} 
+                          disabled={med.quantity >= 20}
+                          data-testid={`increase-qty-${idx}`}
+                        >
                           <Plus className="w-3 h-3" />
                         </Button>
                         <Button size="sm" variant="ghost" onClick={() => removeMedicine(idx)} className="text-red-500" data-testid={`remove-medicine-${idx}`}>
