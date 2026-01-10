@@ -7243,7 +7243,7 @@ DIAGNOSTIC_TESTS = {
 
 # Diagnostic test prices (from Lupin Diagnostics rate list)
 DIAGNOSTIC_TEST_PRICES = {
-    "Alpha Fetoprotein": 650, "AMH (Anti-Mullerian Hormone)": 1650, "ANC": 1950,
+    "Alpha Fetoprotein": 650, "AMH (Anti-Mullerian Hormone)": 1650, "ANC (Ante Natal Profile)": 1950,
     "Anti CCP": 1250, "Arthritis Basic Panel": 1650, "Beta HCG": 680,
     "Blood Culture & Sensitivity": 1000, "Blood Group": 150, "CA 19.9": 850,
     "CBC (Complete Blood Count)": 200, "Creatinine": 180, "CRP (C-Reactive Protein)": 450,
