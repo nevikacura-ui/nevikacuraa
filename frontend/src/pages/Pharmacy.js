@@ -732,7 +732,7 @@ const Pharmacy = () => {
                     placeholder="your@email.com"
                     data-testid="patient-email"
                   />
-                  <p className="text-xs text-gray-500 mt-1">We'll send confirmations, order updates, and delivery status to this email.</p>
+                  <p className="text-xs text-gray-500 mt-1">We&apos;ll send confirmations, order updates, and delivery status to this email.</p>
                 </div>
               </div>
             </Card>
