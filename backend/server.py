@@ -1082,6 +1082,26 @@ async def create_diagnostic_order(input: DiagnosticOrderCreate, user = Depends(g
     await db.diagnostic_orders.insert_one(doc)
     logger.info(f"Diagnostic order created: {order.id}")
     
+    # Generate WhatsApp link for order notification
+    tests_text = ", ".join(order.tests[:3])
+    if len(order.tests) > 3:
+        tests_text += f" +{len(order.tests) - 3} more"
+    
+    whatsapp_message = f"""New Diagnostic Order - Proton Diagnostics
+
+Patient: {order.patient_name}
+Phone: {order.patient_phone}
+Order ID: {order.id[:8]}
+
+Tests: {tests_text}
+Preferred Date: {order.preferred_date}
+Prescription: {order.prescription_url or 'Not uploaded'}"""
+    
+    whatsapp_link = f"https://wa.me/917039040040?text={whatsapp_message.replace(chr(10), '%0A').replace(' ', '%20')}"
+    
+    # Format prescription as clickable link
+    prescription_display = f'<a href="{order.prescription_url}" target="_blank" style="color: #8b5cf6;">📎 View Prescription</a>' if order.prescription_url else 'Not uploaded'
+    
     # Send email notification for new diagnostic order
     tests_list = "<br>".join([f"• {test}" for test in order.tests])
     email_html = f"""
@@ -1090,13 +1110,17 @@ async def create_diagnostic_order(input: DiagnosticOrderCreate, user = Depends(g
     <p>{tests_list}</p>
     <table style="border-collapse: collapse; width: 100%;">
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Preferred Date:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.preferred_date}</td></tr>
-        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Prescription:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.prescription_url or 'Not uploaded'}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Prescription:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{prescription_display}</td></tr>
     </table>
     <h3>Patient Details</h3>
     <p><strong>Name:</strong> {order.patient_name}</p>
     <p><strong>Phone:</strong> {order.patient_phone}</p>
     <p><strong>Email:</strong> {order.patient_email or 'Not provided'}</p>
     <p><strong>Ordered at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+    <div style="margin-top: 20px; padding: 15px; background: #dcfce7; border-radius: 8px;">
+        <p style="margin: 0;"><strong>📱 WhatsApp Forward Link:</strong></p>
+        <p style="margin: 5px 0;"><a href="{whatsapp_link}" style="color: #16a34a;">Click to forward order on WhatsApp</a></p>
+    </div>
     """
     
     # Patient confirmation email for diagnostics
