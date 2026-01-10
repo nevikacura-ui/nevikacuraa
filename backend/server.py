@@ -382,6 +382,7 @@ class PharmacyOrderCreate(BaseModel):
     patient_phone: str
     patient_email: Optional[str] = None
     delivery_address: Optional[str] = None
+    points_used: Optional[int] = 0  # Loyalty points to redeem (100 pts = ₹10)
 
 # OTP Models for Mock OTP verification
 class OTPRequest(BaseModel):
