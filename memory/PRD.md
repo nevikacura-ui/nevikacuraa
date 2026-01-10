@@ -26,16 +26,29 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ## What's Been Implemented ✅
 
-### Date: January 10, 2026 - Latest Update
+### Date: January 10, 2026 - Latest Update (Current Session)
 
-#### Slot Synchronization (NEW)
+#### Slot Synchronization FIX - CRITICAL BUG RESOLVED
+- [x] **Fixed: Patient bookings now block slots correctly** - The issue was that patient bookings (DiaGyn) created appointments with `status: "pending"`, but the slot blocking only checked for `["Booked", "In Clinic", "Completed"]`
+- [x] Updated `GET /api/appointments/booked-slots` to include `"pending"` status in filter
+- [x] Updated `POST /api/appointments` slot blocking check to include `"pending"` status
+- [x] Updated `POST /api/staff/appointments/walk-in` slot blocking check to include `"pending"` status
+- [x] **Tested and verified** - 9 core tests passed, slot sync working between DiaGyn and StaffPortal
+
+#### WhatsApp Notification Enhancement
+- [x] Added WhatsApp notification link to OTP-based registration (`/api/auth/register/otp`)
+- [x] Consistent WhatsApp link generation across all registration methods
+
+### Date: January 10, 2026 - Previous Updates
+
+#### Slot Synchronization
 - [x] **Patient + Staff booking sync** - Slots booked by patients (DiaGyn) are blocked for staff (StaffPortal) and vice versa
-- [x] `GET /api/appointments/booked-slots` - Returns active bookings only (status: Booked, In Clinic, Completed)
+- [x] `GET /api/appointments/booked-slots` - Returns active bookings (status: pending, Booked, In Clinic, Completed)
 - [x] StaffPortal fetches booked slots and filters available time slots
-- [x] Shows slot count: "23 slots available, 5 booked"
+- [x] Shows slot count: "22 slots available, 6 booked"
 - [x] Cross-booking prevention tested and verified
 
-#### Timezone Fix (NEW)
+#### Timezone Fix
 - [x] **Indian Standard Time (IST)** - All dates in StaffPortal now use IST (UTC+5:30)
 - [x] Walk-in form, Emergency form, and Appointments tab all use correct Indian date
 
