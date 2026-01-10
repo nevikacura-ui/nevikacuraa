@@ -7228,9 +7228,7 @@ DIAGNOSTIC_TESTS = {
             # Coagulation
             "PT INR",
             # Health Packages
-            "Diabetes Basic", "Diabetes Screening", "Diabetes Advance",
-            "Lupikavach Dahila", "Lupikavach Daisy", "Lupikavach Lily",
-            "Lupikavach Orchid", "Lupikavach Vitamin", "Lupipro Core"
+            "Diabetes Basic", "Diabetes Screening", "Diabetes Advance"
         ],
         "urine": [
             "Urine Routine & Microscopy", "Urine Culture & Sensitivity", "Urine Albumin"
