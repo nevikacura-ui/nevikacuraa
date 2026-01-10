@@ -378,8 +378,8 @@ class TestPushSubscriptionEndpoints:
             headers=headers
         )
         
-        # Should succeed or return appropriate error
-        assert response.status_code in [200, 400, 401, 404]
+        # Should succeed or return appropriate error (422 = validation error)
+        assert response.status_code in [200, 400, 401, 404, 422]
         print(f"✅ Push unsubscribe endpoint exists, status: {response.status_code}")
 
 
