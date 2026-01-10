@@ -5694,8 +5694,9 @@ ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'nevikacura2026')  # Change in
 # Staff Roles
 STAFF_ROLES = {
     "super_admin": "Super Admin - Full Access (Owner)",
-    "doctor_pushpa": "Doctor - Pushpa Clinic",
-    "doctor_amnion": "Doctor - Amnion Clinic",
+    "doctor": "Doctor - Multi-Clinic Access",  # NEW: Unified doctor role
+    "doctor_pushpa": "Doctor - Pushpa Clinic (Legacy)",
+    "doctor_amnion": "Doctor - Amnion Clinic (Legacy)",
     "clinic_staff_pushpa": "Clinic Staff - Pushpa Clinic",
     "clinic_staff_amnion": "Clinic Staff - Amnion Clinic",
     "pharmacy_staff": "Pharmacy Staff - Orange Pharmacy",
@@ -5706,6 +5707,12 @@ STAFF_ROLES = {
 CLINICS = {
     "Pushpa Clinic": ["Dr. Neha Patel", "Dr. Vikas Jha"],
     "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Neha Patel"]
+}
+
+# Doctor-to-Clinics mapping (which clinics each doctor works at)
+DOCTOR_CLINICS = {
+    "Dr. Neha Patel": ["Pushpa Clinic", "Amnion Clinic"],
+    "Dr. Vikas Jha": ["Pushpa Clinic", "Amnion Clinic"]
 }
 
 # Appointment Statuses (Updated flow)
