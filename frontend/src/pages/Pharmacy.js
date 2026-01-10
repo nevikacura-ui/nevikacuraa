@@ -179,10 +179,16 @@ const Pharmacy = () => {
     }
   };
 
+  const MAX_QUANTITY = 20; // Maximum 20 strips per medicine
+
   const addToCart = (medicine) => {
     const existingIndex = medicines.findIndex(m => m.name === medicine.name);
     if (existingIndex >= 0) {
       const updated = [...medicines];
+      if (updated[existingIndex].quantity >= MAX_QUANTITY) {
+        toast.error(`Maximum ${MAX_QUANTITY} strips allowed per medicine`);
+        return;
+      }
       updated[existingIndex].quantity += 1;
       setMedicines(updated);
     } else {
@@ -198,10 +204,20 @@ const Pharmacy = () => {
       return;
     }
     
+    if (manualMedicine.quantity > MAX_QUANTITY) {
+      toast.error(`Maximum ${MAX_QUANTITY} strips allowed per medicine`);
+      return;
+    }
+    
     const existingIndex = medicines.findIndex(m => m.name.toLowerCase() === manualMedicine.name.toLowerCase());
     if (existingIndex >= 0) {
       const updated = [...medicines];
-      updated[existingIndex].quantity += manualMedicine.quantity;
+      const newQty = updated[existingIndex].quantity + manualMedicine.quantity;
+      if (newQty > MAX_QUANTITY) {
+        toast.error(`Maximum ${MAX_QUANTITY} strips allowed per medicine. Current: ${updated[existingIndex].quantity}`);
+        return;
+      }
+      updated[existingIndex].quantity = newQty;
       setMedicines(updated);
     } else {
       setMedicines([...medicines, { 
@@ -220,6 +236,10 @@ const Pharmacy = () => {
 
   const updateQuantity = (index, quantity) => {
     if (quantity < 1) return;
+    if (quantity > MAX_QUANTITY) {
+      toast.error(`Maximum ${MAX_QUANTITY} strips allowed per medicine`);
+      return;
+    }
     const updated = [...medicines];
     updated[index].quantity = quantity;
     setMedicines(updated);
