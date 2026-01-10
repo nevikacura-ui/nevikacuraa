@@ -7,6 +7,7 @@ import Pharmacy from '@/pages/Pharmacy';
 import Profile from '@/pages/Profile';
 import Admin from '@/pages/Admin';
 import StaffPortal from '@/pages/StaffPortal';
+import TrackOrder from '@/pages/TrackOrder';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import './App.css';
@@ -24,6 +25,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/staff" element={<StaffPortal />} />
+            <Route path="/track" element={<TrackOrder />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
