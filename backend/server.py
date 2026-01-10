@@ -6405,32 +6405,55 @@ _Nevika Cura Healthcare_"""
 # ============ Doctor Endpoints ============
 
 @api_router.get("/staff/doctor/appointments")
-async def get_doctor_appointments(staff = Depends(verify_staff), date: Optional[str] = None):
-    """Get appointments for the logged-in doctor - Emergency appointments pinned on top"""
+async def get_doctor_appointments(staff = Depends(verify_staff), date: Optional[str] = None, clinic: Optional[str] = None):
+    """Get appointments for the logged-in doctor - Emergency appointments pinned on top
+    
+    Doctors can filter by:
+    - date: specific date (YYYY-MM-DD)
+    - clinic: specific clinic name (for doctors working at multiple clinics)
+    """
     role = staff.get("role")
-    if role not in ["doctor_pushpa", "doctor_amnion", "super_admin"]:
+    if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "super_admin"]:
         raise HTTPException(status_code=403, detail="Doctor access required")
     
     # Doctors can only see their own appointments
-    query = {"doctor": staff.get("doctor_name")} if role.startswith("doctor") else {}
+    query = {}
+    if role in ["doctor", "doctor_pushpa", "doctor_amnion"]:
+        query["doctor"] = staff.get("doctor_name")
     
+    # Filter by date if provided
     if date:
         query["date"] = date
     
-    # Get all appointments
-    all_appointments = await db.appointments.find(query, {"_id": 0}).to_list(200)
+    # Filter by clinic if provided (for multi-clinic doctors)
+    if clinic:
+        query["clinic"] = clinic
+    
+    # Get all appointments matching query
+    all_appointments = await db.appointments.find(query, {"_id": 0}).to_list(500)
     
     # Separate emergency and normal appointments
     emergency_appts = [a for a in all_appointments if a.get("appointment_type") == "EMERGENCY"]
     normal_appts = [a for a in all_appointments if a.get("appointment_type") != "EMERGENCY"]
     
-    # Sort normal appointments by time
-    normal_appts.sort(key=lambda x: x.get("time") or "99:99")
+    # Sort normal appointments by date then time
+    normal_appts.sort(key=lambda x: (x.get("date") or "", x.get("time") or "99:99"))
     
     # Emergency appointments pinned on top
     appointments = emergency_appts + normal_appts
     
-    return {"appointments": appointments}
+    # Get doctor's clinics for frontend
+    doctor_name = staff.get("doctor_name")
+    doctor_clinics = DOCTOR_CLINICS.get(doctor_name, []) if doctor_name else []
+    
+    return {
+        "appointments": appointments,
+        "doctor_name": doctor_name,
+        "doctor_clinics": doctor_clinics,
+        "selected_clinic": clinic,
+        "selected_date": date,
+        "total_count": len(appointments)
+    }
 
 @api_router.put("/staff/appointments/{appointment_id}/complete")
 async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = None, staff = Depends(verify_staff)):
