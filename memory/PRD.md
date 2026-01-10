@@ -28,6 +28,22 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ### Date: January 10, 2026 - Latest Update (Current Session)
 
+#### Patient History Modal - NEW FEATURE
+- [x] **Doctors can view complete patient history** during consultations
+- [x] `GET /api/staff/patient/history/{phone}` - Returns all appointments, diagnostic orders, pharmacy orders
+- [x] Summary cards showing: Total Visits, Upcoming, Lab Tests, Pharmacy orders
+- [x] Past appointments with date, time, doctor, clinic, status
+- [x] Diagnostic and pharmacy order history
+- [x] "History" button on each appointment card in doctor's view
+- [x] Modal displays patient name, phone, and complete medical history
+
+#### Backend Refactoring - STARTED
+- [x] Created `/app/backend/models/` directory with Pydantic schemas
+- [x] Created `/app/backend/models/schemas.py` - All data models extracted
+- [x] Created `/app/backend/utils/__init__.py` - Common utility functions
+- [x] Created `/app/backend/config.py` - Configuration constants, clinic data, settings
+- [ ] Next: Gradually migrate server.py to use modular imports (non-breaking)
+
 #### Doctor Multi-Clinic Portal - NEW FEATURE
 - [x] **Doctors can now see appointments from ALL clinics they work at**
 - [x] Added `DOCTOR_CLINICS` mapping in backend (server.py line 5713)
