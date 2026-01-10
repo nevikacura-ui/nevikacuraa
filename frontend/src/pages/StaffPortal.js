@@ -1667,7 +1667,45 @@ const StaffPortal = () => {
                   
                   <div>
                     <Label>Select Tests * <span className="text-gray-500 text-xs">({diagOrderForm.tests.length} selected)</span></Label>
-                    <div className="mt-2 border rounded-lg p-4 max-h-64 overflow-y-auto">
+                    <div className="mt-2 border rounded-lg p-4 max-h-96 overflow-y-auto">
+                      {/* OBGYN & Pregnancy Tests - Highlighted */}
+                      <div className="mb-4 p-3 bg-pink-50 rounded-lg border border-pink-200">
+                        <h4 className="font-medium text-pink-700 mb-2">🤰 Pregnancy & OBGYN Tests</h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          {['Dual / Double Marker', 'Quadruple Marker', 'ANC (Ante Natal Profile)', 'Beta HCG', 
+                            'AMH (Anti-Mullerian Hormone)', 'Hormonal Basic', 'Hormonal Advance'].map(test => (
+                            <label key={test} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-pink-100 p-1 rounded">
+                              <input
+                                type="checkbox"
+                                checked={diagOrderForm.tests.includes(test)}
+                                onChange={() => toggleTestSelection(test)}
+                                className="rounded text-pink-600"
+                              />
+                              {test}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Diabetes Tests - Highlighted */}
+                      <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <h4 className="font-medium text-blue-700 mb-2">🩺 Diabetes Tests</h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          {['Diabetes Basic', 'Diabetes Screening', 'Diabetes Advance', 'FBS (Fasting Blood Sugar)', 
+                            'PPBS', 'RBS', 'HbA1c', 'OGTT - 3 Sample'].map(test => (
+                            <label key={test} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-blue-100 p-1 rounded">
+                              <input
+                                type="checkbox"
+                                checked={diagOrderForm.tests.includes(test)}
+                                onChange={() => toggleTestSelection(test)}
+                                className="rounded text-blue-600"
+                              />
+                              {test}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                      
                       {/* Imaging Tests */}
                       {availableTests.imaging && (
                         <div className="mb-4">
@@ -1690,15 +1728,20 @@ const StaffPortal = () => {
                         </div>
                       )}
                       
-                      {/* Pathology Tests */}
+                      {/* Other Pathology Tests */}
                       {availableTests.pathology && (
                         <div>
-                          <h4 className="font-medium text-red-700 mb-2">🩸 Pathology</h4>
+                          <h4 className="font-medium text-red-700 mb-2">🩸 Other Blood Tests</h4>
                           {Object.entries(availableTests.pathology).map(([category, tests]) => (
                             <div key={category} className="mb-3">
                               <p className="text-xs text-gray-500 uppercase mb-1">{category}</p>
                               <div className="grid grid-cols-2 gap-2">
-                                {tests.map(test => (
+                                {tests.filter(test => 
+                                  !['Dual / Double Marker', 'Quadruple Marker', 'ANC (Ante Natal Profile)', 'Beta HCG',
+                                    'AMH (Anti-Mullerian Hormone)', 'Hormonal Basic', 'Hormonal Advance',
+                                    'Diabetes Basic', 'Diabetes Screening', 'Diabetes Advance', 'FBS (Fasting Blood Sugar)',
+                                    'PPBS', 'RBS', 'HbA1c', 'OGTT - 3 Sample'].includes(test)
+                                ).map(test => (
                                   <label key={test} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-red-50 p-1 rounded">
                                     <input
                                       type="checkbox"
