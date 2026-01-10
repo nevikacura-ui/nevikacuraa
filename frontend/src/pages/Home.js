@@ -63,6 +63,15 @@ const Home = () => {
             </div>
             
             <div className="hidden md:flex items-center gap-6">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/track')}
+                data-testid="track-orders-button"
+                className="font-heading"
+              >
+                <Search className="w-4 h-4 mr-2" />
+                Track Orders
+              </Button>
               {user ? (
                 <>
                   <Button 
