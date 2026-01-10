@@ -8167,6 +8167,239 @@ app.mount("/api/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads
 app.include_router(api_router)
 
 # Catch-all handler for root API endpoint to prevent 405 errors
+@api_router.post("/admin/send-credentials-email")
+async def send_credentials_email(email: str, admin = Depends(verify_admin)):
+    """Send staff login credentials to specified email"""
+    
+    credentials_html = """
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; background: #f8fafc;">
+        <div style="background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); color: white; padding: 30px; border-radius: 16px 16px 0 0; text-align: center;">
+            <h1 style="margin: 0; font-size: 28px;">🏥 Nevika Cura</h1>
+            <p style="margin: 10px 0 0; opacity: 0.9;">Staff Portal Login Credentials</p>
+        </div>
+        
+        <div style="background: white; padding: 30px; border-radius: 0 0 16px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h2 style="color: #0d9488; margin-top: 0;">📋 Login Credentials</h2>
+            <p style="color: #64748b;">Access the Staff Portal at: <a href="https://medapp-11.preview.emergentagent.com/staff" style="color: #0d9488;">Staff Portal</a></p>
+            
+            <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">👨‍⚕️ DiaGyn - Doctors</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <tr style="background: #f1f5f9;">
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Doctor</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Username</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Password</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Neha Patel</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">doc_pushpa_01</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Vikas Jha</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">doc_amnion_01</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
+                </tr>
+            </table>
+            
+            <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🏥 DiaGyn - Clinic Staff</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <tr style="background: #f1f5f9;">
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Clinic</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Username</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Password</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Pushpa Clinic Staff</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #d1fae5;">staff_pushpa</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #d1fae5;">Nevika@2026C</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Amnion Clinic Staff</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #d1fae5;">staff_amnion</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #d1fae5;">Nevika@2026C</td>
+                </tr>
+            </table>
+            
+            <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">💊 Orange Pharmacy</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <tr style="background: #f1f5f9;">
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Role</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Username</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Password</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Pharmacy Staff</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fed7aa;">staff_pharmacy</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fed7aa;">Nevika@2026P</td>
+                </tr>
+            </table>
+            
+            <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🔬 Proton Diagnostics</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <tr style="background: #f1f5f9;">
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Role</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Username</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Password</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Diagnostics Staff</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #e9d5ff;">staff_proton</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #e9d5ff;">Nevika@2026L</td>
+                </tr>
+            </table>
+            
+            <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🔐 Admin Portal</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <tr style="background: #f1f5f9;">
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Portal</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">URL</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Password</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Admin Dashboard</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;"><a href="https://medapp-11.preview.emergentagent.com/admin" style="color: #0d9488;">/admin</a></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fecaca;">nevikacura2026</td>
+                </tr>
+            </table>
+            
+            <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 15px; margin-top: 20px; border-radius: 4px;">
+                <strong style="color: #15803d;">🔒 Security Note:</strong>
+                <p style="color: #166534; margin: 5px 0 0;">Please change these passwords after first login for security. Keep this information confidential.</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                <p style="color: #64748b; font-size: 14px;">Nevika Cura Healthcare<br>📍 24215 Kuykendal Road, Tomball, Texas 77375</p>
+            </div>
+        </div>
+    </div>
+    """
+    
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [email],
+            "subject": "🏥 Nevika Cura - Staff Login Credentials",
+            "html": credentials_html
+        }
+        result = await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Credentials email sent to {email}: {result.get('id')}")
+        return {"success": True, "message": f"Credentials sent to {email}", "email_id": result.get('id')}
+    except Exception as e:
+        logger.error(f"Failed to send credentials email: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
+
+
+# ============ PATIENT PROFILE ENDPOINTS ============
+
+class PatientProfile(BaseModel):
+    phone: str
+    name: str
+    email: Optional[str] = None
+    address: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    gender: Optional[str] = None
+    blood_group: Optional[str] = None
+    allergies: Optional[List[str]] = []
+    emergency_contact: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+@api_router.post("/patients/profile")
+async def save_patient_profile(profile: PatientProfile):
+    """Save or update patient profile for future appointments"""
+    phone = profile.phone.strip().replace(" ", "").replace("-", "")
+    
+    # Check if profile exists
+    existing = await db.patient_profiles.find_one({"phone": {"$regex": phone[-10:]}})
+    
+    profile_data = profile.model_dump()
+    profile_data["phone"] = phone
+    profile_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    if existing:
+        # Update existing profile
+        await db.patient_profiles.update_one(
+            {"phone": {"$regex": phone[-10:]}},
+            {"$set": profile_data}
+        )
+        return {"success": True, "message": "Profile updated", "is_new": False}
+    else:
+        # Create new profile
+        profile_data["created_at"] = datetime.now(timezone.utc).isoformat()
+        await db.patient_profiles.insert_one(profile_data)
+        return {"success": True, "message": "Profile saved", "is_new": True}
+
+
+@api_router.get("/patients/profile/{phone}")
+async def get_patient_profile(phone: str):
+    """Get patient profile by phone number"""
+    phone = phone.strip().replace(" ", "").replace("-", "")
+    
+    profile = await db.patient_profiles.find_one(
+        {"phone": {"$regex": phone[-10:]}},
+        {"_id": 0}
+    )
+    
+    if not profile:
+        # Try to find from existing appointments/orders
+        appointment = await db.appointments.find_one(
+            {"patient_phone": {"$regex": phone[-10:]}},
+            {"_id": 0, "patient_name": 1, "patient_phone": 1, "patient_email": 1}
+        )
+        if appointment:
+            return {
+                "found": True,
+                "from_history": True,
+                "profile": {
+                    "phone": appointment.get("patient_phone"),
+                    "name": appointment.get("patient_name"),
+                    "email": appointment.get("patient_email")
+                }
+            }
+        return {"found": False, "profile": None}
+    
+    return {"found": True, "from_history": False, "profile": profile}
+
+
+@api_router.get("/patients/autocomplete/{phone}")
+async def autocomplete_patient(phone: str):
+    """Autocomplete patient details from saved profile or history"""
+    phone = phone.strip().replace(" ", "").replace("-", "")
+    
+    if len(phone) < 6:
+        return {"suggestions": []}
+    
+    # Search in profiles first
+    profiles = await db.patient_profiles.find(
+        {"phone": {"$regex": phone}},
+        {"_id": 0, "phone": 1, "name": 1, "email": 1, "address": 1}
+    ).limit(5).to_list(5)
+    
+    if profiles:
+        return {"suggestions": profiles, "source": "profiles"}
+    
+    # Fallback to appointment history
+    appointments = await db.appointments.find(
+        {"patient_phone": {"$regex": phone}},
+        {"_id": 0, "patient_phone": 1, "patient_name": 1, "patient_email": 1}
+    ).limit(5).to_list(5)
+    
+    # Deduplicate by phone
+    seen = set()
+    suggestions = []
+    for apt in appointments:
+        if apt["patient_phone"] not in seen:
+            seen.add(apt["patient_phone"])
+            suggestions.append({
+                "phone": apt["patient_phone"],
+                "name": apt["patient_name"],
+                "email": apt.get("patient_email")
+            })
+    
+    return {"suggestions": suggestions, "source": "history"}
+
+
 @app.api_route("/api/", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
 @app.api_route("/api", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
 async def api_root_handler():
