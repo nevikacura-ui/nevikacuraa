@@ -1062,6 +1062,210 @@ const Admin = () => {
             </div>
           </TabsContent>
 
+          {/* Loyalty Points Tab */}
+          <TabsContent value="loyalty">
+            <div className="space-y-6">
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card className="p-4 bg-gradient-to-br from-amber-500 to-amber-600 text-white">
+                  <div className="flex items-center gap-3">
+                    <Gift className="w-8 h-8 opacity-80" />
+                    <div>
+                      <p className="text-2xl font-bold">{loyaltySummary?.total_points_credited?.toLocaleString() || '0'}</p>
+                      <p className="text-sm opacity-80">Total Credited</p>
+                    </div>
+                  </div>
+                </Card>
+                
+                <Card className="p-4 bg-gradient-to-br from-rose-500 to-rose-600 text-white">
+                  <div className="flex items-center gap-3">
+                    <Minus className="w-8 h-8 opacity-80" />
+                    <div>
+                      <p className="text-2xl font-bold">{loyaltySummary?.total_points_debited?.toLocaleString() || '0'}</p>
+                      <p className="text-sm opacity-80">Total Redeemed</p>
+                    </div>
+                  </div>
+                </Card>
+                
+                <Card className="p-4 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
+                  <div className="flex items-center gap-3">
+                    <TrendingUp className="w-8 h-8 opacity-80" />
+                    <div>
+                      <p className="text-2xl font-bold">{((loyaltySummary?.total_points_credited || 0) - (loyaltySummary?.total_points_debited || 0)).toLocaleString()}</p>
+                      <p className="text-sm opacity-80">Net Active Points</p>
+                    </div>
+                  </div>
+                </Card>
+                
+                <Card className="p-4 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                  <div className="flex items-center gap-3">
+                    <Users className="w-8 h-8 opacity-80" />
+                    <div>
+                      <p className="text-2xl font-bold">{loyaltySummary?.users_with_points || '0'}</p>
+                      <p className="text-sm opacity-80">Users with Points</p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+              
+              {/* Search and Redeem Section */}
+              <Card className="p-6">
+                <h2 className="font-heading text-xl font-semibold mb-6 flex items-center gap-2">
+                  <Gift className="w-6 h-6 text-amber-500" /> Redeem Loyalty Points
+                </h2>
+                
+                {/* Search User */}
+                <div className="flex gap-3 mb-6">
+                  <div className="relative flex-1 max-w-md">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      value={loyaltyPhone}
+                      onChange={(e) => setLoyaltyPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      placeholder="Enter 10-digit phone number..."
+                      className="pl-10 h-12"
+                      data-testid="loyalty-phone-input"
+                      onKeyPress={(e) => e.key === 'Enter' && searchLoyaltyUser()}
+                    />
+                  </div>
+                  <Button 
+                    onClick={searchLoyaltyUser} 
+                    disabled={loyaltyLoading || loyaltyPhone.length < 10}
+                    className="h-12 px-6"
+                    data-testid="loyalty-search-btn"
+                  >
+                    {loyaltyLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Search className="w-4 h-4 mr-2" />}
+                    Search User
+                  </Button>
+                </div>
+                
+                {/* User Result */}
+                {loyaltyUser && (
+                  <div className={`p-6 rounded-xl border-2 ${loyaltyUser.found ? 'bg-gradient-to-br from-amber-50 to-white border-amber-200' : 'bg-gray-50 border-gray-200'}`}>
+                    {loyaltyUser.found ? (
+                      <div className="space-y-6">
+                        {/* User Info */}
+                        <div className="flex items-center justify-between flex-wrap gap-4">
+                          <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center">
+                              <Gift className="w-7 h-7 text-amber-600" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-lg">{loyaltyUser.user_name}</p>
+                              <p className="text-muted-foreground">{loyaltyUser.phone}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-3xl font-bold text-amber-600">{loyaltyUser.loyalty_points?.toLocaleString()}</p>
+                            <p className="text-sm text-muted-foreground">Available Points</p>
+                          </div>
+                        </div>
+                        
+                        {/* Redeem Form */}
+                        {loyaltyUser.loyalty_points > 0 ? (
+                          <div className="grid md:grid-cols-3 gap-4 pt-4 border-t">
+                            <div>
+                              <Label className="text-sm font-medium">Points to Redeem *</Label>
+                              <Input
+                                type="number"
+                                value={redeemAmount}
+                                onChange={(e) => setRedeemAmount(e.target.value)}
+                                placeholder="Enter amount"
+                                className="mt-1"
+                                max={loyaltyUser.loyalty_points}
+                                min={1}
+                                data-testid="redeem-amount-input"
+                              />
+                              <p className="text-xs text-muted-foreground mt-1">Max: {loyaltyUser.loyalty_points}</p>
+                            </div>
+                            <div>
+                              <Label className="text-sm font-medium">Reason *</Label>
+                              <Input
+                                value={redeemReason}
+                                onChange={(e) => setRedeemReason(e.target.value)}
+                                placeholder="e.g., Medicine discount"
+                                className="mt-1"
+                                data-testid="redeem-reason-input"
+                              />
+                            </div>
+                            <div className="flex items-end">
+                              <Button 
+                                onClick={handleRedeemPoints}
+                                disabled={redeemLoading || !redeemAmount || !redeemReason}
+                                className="w-full bg-amber-500 hover:bg-amber-600"
+                                data-testid="redeem-submit-btn"
+                              >
+                                {redeemLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Minus className="w-4 h-4 mr-2" />}
+                                Redeem Points
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-center py-4 bg-gray-50 rounded-lg">
+                            <p className="text-muted-foreground">This user has no points to redeem</p>
+                          </div>
+                        )}
+                        
+                        {/* Transaction History */}
+                        {loyaltyTransactions.length > 0 && (
+                          <div className="pt-4 border-t">
+                            <h4 className="font-medium mb-3 flex items-center gap-2">
+                              <History className="w-4 h-4" /> Recent Transactions
+                            </h4>
+                            <div className="space-y-2 max-h-48 overflow-y-auto">
+                              {loyaltyTransactions.map((tx, idx) => (
+                                <div key={idx} className="flex items-center justify-between p-3 bg-white rounded-lg border text-sm">
+                                  <div>
+                                    <span className={`font-medium ${tx.type === 'credit' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                      {tx.type === 'credit' ? '+' : '-'}{tx.points} pts
+                                    </span>
+                                    <p className="text-muted-foreground text-xs">{tx.reason}</p>
+                                  </div>
+                                  <div className="text-right text-xs text-muted-foreground">
+                                    {tx.created_at?.split('T')[0]}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                          <UserX className="w-8 h-8 text-gray-400" />
+                        </div>
+                        <p className="text-lg font-medium text-gray-600">User Not Registered</p>
+                        <p className="text-muted-foreground text-sm mt-1">Phone: {loyaltyPhone}</p>
+                        <p className="text-sm text-gray-500 mt-3">Only registered users can earn loyalty points</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </Card>
+              
+              {/* Top Users */}
+              {loyaltySummary?.top_users?.length > 0 && (
+                <Card className="p-6">
+                  <h3 className="font-heading text-lg font-semibold mb-4 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-emerald-500" /> Top Loyalty Members
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    {loyaltySummary.top_users.map((user, idx) => (
+                      <Card key={idx} className={`p-4 text-center ${idx === 0 ? 'border-amber-300 bg-amber-50' : idx === 1 ? 'border-gray-300 bg-gray-50' : idx === 2 ? 'border-orange-200 bg-orange-50' : ''}`}>
+                        <div className="text-2xl mb-1">
+                          {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '⭐'}
+                        </div>
+                        <p className="font-medium text-sm truncate">{user.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{user.phone}</p>
+                        <p className="font-bold text-amber-600 mt-1">{user.loyalty_points?.toLocaleString()}</p>
+                      </Card>
+                    ))}
+                  </div>
+                </Card>
+              )}
+            </div>
+          </TabsContent>
+
           {/* Doctor Leave Tab */}
           <TabsContent value="leave">
             <Card className="p-6">
