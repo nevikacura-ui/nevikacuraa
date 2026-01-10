@@ -8341,7 +8341,7 @@ async def send_credentials_email(email: str, admin = Depends(verify_admin)):
                 </tr>
                 <tr>
                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Neha Patel</td>
-                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">doc_pushpa_01</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">doc_neha</td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
                 </tr>
                 <tr>
