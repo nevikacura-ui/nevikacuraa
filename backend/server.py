@@ -5964,12 +5964,12 @@ async def book_walk_in_appointment(appt: WalkInAppointment, staff = Depends(veri
     if role == "clinic_staff_amnion" and appt.clinic != "Amnion Clinic":
         raise HTTPException(status_code=403, detail="You can only book for Amnion Clinic")
     
-    # SLOT BLOCKING: Check if slot is already booked for normal appointments
+    # SLOT BLOCKING: Check if slot is already booked for normal appointments (includes pending from patient bookings)
     existing_slot = await db.appointments.find_one({
         "doctor": appt.doctor,
         "date": appt.date,
         "time": appt.time,
-        "status": {"$in": ["Booked", "In Clinic", "Completed"]}
+        "status": {"$in": ["pending", "Booked", "In Clinic", "Completed"]}
     })
     
     if existing_slot:
