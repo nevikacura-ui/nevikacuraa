@@ -972,6 +972,21 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
     await db.appointments.insert_one(doc)
     logger.info(f"Appointment created: {appointment.id}")
     
+    # Generate WhatsApp link for appointment notification
+    whatsapp_message = f"""New DiaGyn Appointment Booking
+
+Patient: {appointment.patient_name}
+Phone: {appointment.patient_phone}
+
+Doctor: {appointment.doctor}
+Clinic: {appointment.clinic}
+Date: {appointment.date}
+Time: {appointment.time}
+
+Booking ID: {appointment.id[:8]}"""
+    
+    whatsapp_link = f"https://wa.me/917039020020?text={whatsapp_message.replace(chr(10), '%0A').replace(' ', '%20')}"
+    
     # Send email notification for new appointment
     email_html = f"""
     <h2>📅 New DiaGyn Appointment Booking</h2>
@@ -986,6 +1001,10 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
     <p><strong>Phone:</strong> {appointment.patient_phone}</p>
     <p><strong>Email:</strong> {appointment.patient_email or 'Not provided'}</p>
     <p><strong>Booked at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+    <div style="margin-top: 20px; padding: 15px; background: #dcfce7; border-radius: 8px;">
+        <p style="margin: 0;"><strong>📱 WhatsApp Forward Link:</strong></p>
+        <p style="margin: 5px 0;"><a href="{whatsapp_link}" style="color: #16a34a;">Click to forward appointment on WhatsApp</a></p>
+    </div>
     """
     
     # Patient confirmation email
@@ -1025,6 +1044,16 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
         patient_subject=f"Appointment Confirmed - {appointment.doctor} on {appointment.date}",
         patient_html=patient_appt_html
     )
+    
+    # Send WhatsApp notification to doctor
+    await notify_doctor_whatsapp(appointment.doctor, {
+        "clinic": appointment.clinic,
+        "date": appointment.date,
+        "time": appointment.time,
+        "patient_name": appointment.patient_name,
+        "patient_phone": appointment.patient_phone,
+        "booked_by": "Patient (Online)"
+    }, "online")
     
     # Send push notification if user is logged in
     if user:
