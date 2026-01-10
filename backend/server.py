@@ -1176,25 +1176,49 @@ async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(get_c
     await db.pharmacy_orders.insert_one(doc)
     logger.info(f"Pharmacy order created: {order.id}")
     
+    # Generate WhatsApp link for order notification
+    medicines_text = ", ".join([f"{m.get('name', 'Unknown')} x{m.get('quantity', 1)}" for m in order.medicines[:3]])
+    if len(order.medicines) > 3:
+        medicines_text += f" +{len(order.medicines) - 3} more"
+    
+    whatsapp_message = f"""New Pharmacy Order - Orange Pharmacy
+
+Patient: {order.patient_name}
+Phone: {order.patient_phone}
+Order ID: {order.id[:8]}
+
+Medicines: {medicines_text if order.medicines else 'See prescription'}
+Prescription: {order.prescription_url or 'Not uploaded'}
+Delivery: {order.delivery_address or 'Not provided'}"""
+    
+    whatsapp_link = f"https://wa.me/917039030030?text={whatsapp_message.replace(chr(10), '%0A').replace(' ', '%20')}"
+    
+    # Format prescription as clickable link
+    prescription_display = f'<a href="{order.prescription_url}" target="_blank" style="color: #f97316;">📎 View Prescription</a>' if order.prescription_url else 'Not uploaded'
+    
     # Send email notification for new pharmacy order
-    medicines_list = "<br>".join([f"• {m.get('name', 'Unknown')} (Qty: {m.get('quantity', 1)})" for m in order.medicines])
+    medicines_list = "<br>".join([f"• {m.get('name', 'Unknown')} (Qty: {m.get('quantity', 1)})" for m in order.medicines]) if order.medicines else '<em>No medicines specified - Check prescription</em>'
     email_html = f"""
     <h2>💊 New Orange Pharmacy Order</h2>
     <h3>Medicines Ordered:</h3>
     <p>{medicines_list}</p>
     <table style="border-collapse: collapse; width: 100%;">
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Delivery Address:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.delivery_address or 'Not provided'}</td></tr>
-        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Prescription:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.prescription_url or 'Not uploaded'}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Prescription:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{prescription_display}</td></tr>
     </table>
     <h3>Customer Details</h3>
     <p><strong>Name:</strong> {order.patient_name}</p>
     <p><strong>Phone:</strong> {order.patient_phone}</p>
     <p><strong>Email:</strong> {order.patient_email or 'Not provided'}</p>
     <p><strong>Ordered at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+    <div style="margin-top: 20px; padding: 15px; background: #dcfce7; border-radius: 8px;">
+        <p style="margin: 0;"><strong>📱 WhatsApp Forward Link:</strong></p>
+        <p style="margin: 5px 0;"><a href="{whatsapp_link}" style="color: #16a34a;">Click to forward order on WhatsApp</a></p>
+    </div>
     """
     
     # Patient confirmation email for pharmacy
-    medicines_list_patient = "".join([f"<li>{m.get('name', 'Unknown')} - Qty: {m.get('quantity', 1)}</li>" for m in order.medicines])
+    medicines_list_patient = "".join([f"<li>{m.get('name', 'Unknown')} - Qty: {m.get('quantity', 1)}</li>" for m in order.medicines]) if order.medicines else '<li><em>Medicines as per prescription</em></li>'
     patient_pharmacy_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border-radius: 10px 10px 0 0;">
@@ -1235,7 +1259,7 @@ async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(get_c
     
     # Send push notification if user is logged in
     if user:
-        medicine_count = len(order.medicines)
+        medicine_count = len(order.medicines) if order.medicines else 0
         await send_push_notification(
             user_id=user.id,
             title="Order Placed! 💊",
