@@ -8,6 +8,7 @@ import Profile from '@/pages/Profile';
 import Admin from '@/pages/Admin';
 import StaffPortal from '@/pages/StaffPortal';
 import TrackOrder from '@/pages/TrackOrder';
+import Feedback from '@/pages/Feedback';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
@@ -27,6 +28,7 @@ function App() {
             <Route path="/admin" element={<Admin />} />
             <Route path="/staff" element={<StaffPortal />} />
             <Route path="/track" element={<TrackOrder />} />
+            <Route path="/feedback/:token" element={<Feedback />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
