@@ -1161,14 +1161,61 @@ const StaffPortal = () => {
         {/* Pharmacy Staff View */}
         {role === 'pharmacy_staff' && (
           <Card className="p-4 mt-4">
-            <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
-              <Package className="w-5 h-5 text-orange-500" />
-              Pharmacy Orders
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold text-lg flex items-center gap-2">
+                <Package className="w-5 h-5 text-orange-500" />
+                Pharmacy Orders
+              </h2>
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                <input
+                  type="date"
+                  value={pharmacyDate}
+                  onChange={(e) => setPharmacyDate(e.target.value)}
+                  className="border rounded-lg px-3 py-1.5 text-sm"
+                />
+                {pharmacyDateCounts[pharmacyDate] && (
+                  <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
+                    {pharmacyDateCounts[pharmacyDate].total} orders
+                    {pharmacyDateCounts[pharmacyDate].pending > 0 && (
+                      <span className="ml-1 text-red-600">({pharmacyDateCounts[pharmacyDate].pending} pending)</span>
+                    )}
+                  </span>
+                )}
+              </div>
+            </div>
+            
+            {/* Date Quick Navigation */}
+            <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+              {[-2, -1, 0, 1, 2].map(offset => {
+                const d = new Date();
+                d.setDate(d.getDate() + offset);
+                const dateStr = d.toISOString().split('T')[0];
+                const counts = pharmacyDateCounts[dateStr];
+                const isSelected = dateStr === pharmacyDate;
+                return (
+                  <button
+                    key={offset}
+                    onClick={() => setPharmacyDate(dateStr)}
+                    className={`px-3 py-2 rounded-lg text-sm whitespace-nowrap flex flex-col items-center min-w-[80px] ${
+                      isSelected ? 'bg-orange-500 text-white' : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+                  >
+                    <span className="font-medium">{offset === 0 ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                    <span className="text-xs">{d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                    {counts && (
+                      <span className={`text-xs mt-1 ${isSelected ? 'text-orange-100' : 'text-gray-500'}`}>
+                        {counts.total} {counts.pending > 0 && `(${counts.pending})`}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
             
             <div className="space-y-3">
               {pharmacyOrders.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No orders</p>
+                <p className="text-gray-500 text-center py-8">No orders for {pharmacyDate}</p>
               ) : (
                 pharmacyOrders.map((order) => (
                   <div key={order.id} className="p-4 bg-gray-50 rounded-lg">
