@@ -1826,6 +1826,10 @@ const StaffPortal = () => {
                 <UserPlus className="w-4 h-4 mr-2" />
                 Create Order
               </TabsTrigger>
+              <TabsTrigger value="loyalty" data-testid="tab-diag-loyalty">
+                <Gift className="w-4 h-4 mr-2" />
+                Loyalty Points
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="orders">
