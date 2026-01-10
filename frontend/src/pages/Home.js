@@ -50,54 +50,63 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
-                alt="Nevika Cura" 
-                className="h-14 sm:h-16 w-auto object-contain"
-                data-testid="main-logo"
-              />
-            </div>
-            
-            <div className="hidden md:flex items-center gap-6">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/track')}
-                data-testid="track-orders-button"
-                className="font-heading"
-              >
-                <Search className="w-4 h-4 mr-2" />
-                Track Orders
-              </Button>
-              {user ? (
-                <>
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => navigate('/profile')}
-                    data-testid="profile-button"
-                    className="font-heading"
-                  >
-                    <User className="w-4 h-4 mr-2" />
-                    {user.name}
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={logout}
-                    data-testid="logout-button"
-                    className="rounded-full"
-                  >
-                    Logout
-                  </Button>
-                </>
-              ) : (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          {/* Centered Logo */}
+          <div className="flex justify-center mb-2">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
+              alt="Nevika Cura" 
+              className="h-14 sm:h-16 w-auto object-contain"
+              data-testid="main-logo"
+            />
+          </div>
+          {/* Navigation buttons */}
+          <div className="flex justify-center items-center gap-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/track')}
+              data-testid="track-orders-button"
+              className="font-heading"
+            >
+              <Search className="w-4 h-4 mr-2" />
+              Track Orders
+            </Button>
+            {user ? (
+              <>
                 <Button 
-                  onClick={() => setShowAuth(true)} 
-                  data-testid="login-button"
-                  className="rounded-full bg-brand-teal hover:bg-brand-teal/90"
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => navigate('/profile')}
+                  data-testid="profile-button"
+                  className="font-heading"
                 >
-                  Login / Sign Up
+                  <User className="w-4 h-4 mr-2" />
+                  {user.name}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={logout}
+                  data-testid="logout-button"
+                  className="rounded-full"
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button 
+                size="sm"
+                onClick={() => setShowAuth(true)} 
+                data-testid="login-button"
+                className="rounded-full bg-brand-teal hover:bg-brand-teal/90"
+              >
+                Login / Sign Up
+              </Button>
+            )}
+          </div>
+        </div>
+      </header>
                 </Button>
               )}
             </div>
