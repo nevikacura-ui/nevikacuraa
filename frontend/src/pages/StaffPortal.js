@@ -1121,52 +1121,170 @@ const StaffPortal = () => {
           </Tabs>
         )}
 
-        {/* Doctor View */}
+        {/* Doctor View - Enhanced with Clinic Toggle and Calendar */}
         {isDoctor(role) && !isClinicStaff(role) && (
           <Card className="p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-lg">My Appointments - {staffInfo?.doctor_name}</h2>
-              <Input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-40"
-              />
+            {/* Doctor Header with Clinic Toggle */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <h2 className="font-semibold text-lg flex items-center gap-2">
+                  <Stethoscope className="w-5 h-5 text-teal-600" />
+                  {staffInfo?.doctor_name}'s Appointments
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  {appointments.length} appointment{appointments.length !== 1 ? 's' : ''} for {selectedDate}
+                </p>
+              </div>
+              
+              {/* Clinic Toggle & Date Selector */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                {/* Clinic Toggle - Only show if doctor works at multiple clinics */}
+                {doctorClinics.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-gray-600">Clinic:</label>
+                    <select
+                      value={selectedClinic}
+                      onChange={(e) => setSelectedClinic(e.target.value)}
+                      className="border rounded-lg px-3 py-1.5 text-sm bg-white min-w-[150px]"
+                      data-testid="doctor-clinic-select"
+                    >
+                      <option value="">All Clinics</option>
+                      {doctorClinics.map(clinic => (
+                        <option key={clinic} value={clinic}>{clinic}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                
+                {/* Date Selector */}
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-gray-500" />
+                  <Input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="w-40"
+                    data-testid="doctor-date-select"
+                  />
+                </div>
+              </div>
             </div>
             
+            {/* Quick Date Navigation */}
+            <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+              {[-2, -1, 0, 1, 2, 3, 4].map(offset => {
+                const d = new Date();
+                d.setDate(d.getDate() + offset);
+                const dateStr = d.toISOString().split('T')[0];
+                const dayAppts = appointments.filter(a => a.date === dateStr);
+                const isSelected = dateStr === selectedDate;
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                return (
+                  <button
+                    key={offset}
+                    onClick={() => setSelectedDate(dateStr)}
+                    className={`flex flex-col items-center px-3 py-2 rounded-lg min-w-[60px] transition-colors ${
+                      isSelected 
+                        ? 'bg-teal-600 text-white' 
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+                    data-testid={`date-nav-${offset}`}
+                  >
+                    <span className="text-xs">{dayNames[d.getDay()]}</span>
+                    <span className="font-semibold">{d.getDate()}</span>
+                    {dayAppts.length > 0 && (
+                      <span className={`text-xs ${isSelected ? 'text-teal-100' : 'text-teal-600'}`}>
+                        {dayAppts.length}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            
+            {/* Status Summary */}
+            <div className="flex gap-4 mb-4 flex-wrap">
+              {['Booked', 'In Clinic', 'Completed'].map(status => {
+                const count = appointments.filter(a => a.status === status).length;
+                const colors = {
+                  'Booked': 'bg-blue-100 text-blue-800 border-blue-200',
+                  'In Clinic': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                  'Completed': 'bg-green-100 text-green-800 border-green-200'
+                };
+                return (
+                  <div key={status} className={`px-3 py-1.5 rounded-lg border ${colors[status]} text-sm`}>
+                    <span className="font-medium">{count}</span> {status}
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* Appointments List */}
             <div className="space-y-3">
               {appointments.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No appointments for this date</p>
+                <div className="text-center py-12 bg-gray-50 rounded-lg">
+                  <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">No appointments for this date</p>
+                  {selectedClinic && (
+                    <p className="text-sm text-gray-400 mt-1">at {selectedClinic}</p>
+                  )}
+                </div>
               ) : (
                 appointments.map((appt) => (
                   <div 
                     key={appt.id} 
-                    className={`flex items-center justify-between p-4 rounded-lg ${
+                    className={`flex items-center justify-between p-4 rounded-lg border ${
                       appt.appointment_type === 'EMERGENCY' 
-                        ? 'bg-red-50 border-2 border-red-300' 
-                        : 'bg-gray-50'
+                        ? 'bg-red-50 border-red-300' 
+                        : appt.status === 'Completed'
+                        ? 'bg-green-50 border-green-200'
+                        : appt.status === 'In Clinic'
+                        ? 'bg-yellow-50 border-yellow-200'
+                        : 'bg-white border-gray-200'
                     }`}
+                    data-testid={`appointment-${appt.id}`}
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-medium">{appt.patient_name}</span>
-                        <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(appt.status)}`}>
+                        <span className="font-medium text-lg">{appt.patient_name}</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(appt.status)}`}>
                           {appt.status}
                         </span>
                         {appt.appointment_type === 'EMERGENCY' && (
-                          <span className="px-2 py-0.5 rounded-full text-xs bg-red-500 text-white flex items-center gap-1">
+                          <span className="px-2.5 py-0.5 rounded-full text-xs bg-red-500 text-white flex items-center gap-1 font-medium">
                             <AlertTriangle className="w-3 h-3" />
                             EMERGENCY
                           </span>
                         )}
+                        {appt.booking_type === 'walk_in' && (
+                          <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-800">Walk-in</span>
+                        )}
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">
-                        <span>{appt.time || 'No time slot'}</span> • <span>{appt.patient_phone}</span>
+                      <div className="text-sm text-gray-600 mt-1.5 flex items-center gap-3 flex-wrap">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" />
+                          {appt.time || 'No time slot'}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-3.5 h-3.5" />
+                          {appt.patient_phone}
+                        </span>
+                        {appt.clinic && (
+                          <span className="flex items-center gap-1 text-teal-600">
+                            <Stethoscope className="w-3.5 h-3.5" />
+                            {appt.clinic}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="flex gap-2">
                       {appt.status === 'In Clinic' && (
-                        <Button size="sm" onClick={() => handleCompleteAppointment(appt.id)} className="bg-green-500 hover:bg-green-600">
+                        <Button 
+                          size="sm" 
+                          onClick={() => handleCompleteAppointment(appt.id)} 
+                          className="bg-green-500 hover:bg-green-600"
+                          data-testid={`complete-btn-${appt.id}`}
+                        >
                           <CheckCircle2 className="w-4 h-4 mr-1" />
                           Complete
                         </Button>
