@@ -5941,14 +5941,21 @@ async def staff_login(input: StaffLogin):
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
     
+    # Get all clinics this doctor works at (for doctor roles)
+    doctor_name = staff.get("doctor_name")
+    doctor_clinics = []
+    if doctor_name and staff["role"] in ["doctor", "doctor_pushpa", "doctor_amnion"]:
+        doctor_clinics = DOCTOR_CLINICS.get(doctor_name, [])
+    
     # Generate staff token with 30 days expiry
     staff_token = jwt.encode({
         'sub': staff["id"],
         'username': staff["username"],
         'role': staff["role"],
         'name': staff["name"],
-        'doctor_name': staff.get("doctor_name"),
+        'doctor_name': doctor_name,
         'clinic': staff.get("clinic"),
+        'doctor_clinics': doctor_clinics,  # All clinics doctor works at
         'exp': datetime.now(timezone.utc) + timedelta(days=30)
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
@@ -5956,8 +5963,9 @@ async def staff_login(input: StaffLogin):
         "token": staff_token,
         "role": staff["role"],
         "name": staff["name"],
-        "doctor_name": staff.get("doctor_name"),
-        "clinic": staff.get("clinic")
+        "doctor_name": doctor_name,
+        "clinic": staff.get("clinic"),
+        "doctor_clinics": doctor_clinics  # Return all clinics for doctor
     }
 
 # ============ Clinic Staff Endpoints ============
