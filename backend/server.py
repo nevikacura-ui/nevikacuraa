@@ -8359,7 +8359,7 @@ async def send_credentials_email(email: str, admin = Depends(verify_admin)):
         
         <div style="background: white; padding: 30px; border-radius: 0 0 16px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
             <h2 style="color: #0d9488; margin-top: 0;">📋 Login Credentials</h2>
-            <p style="color: #64748b;">Access the Staff Portal at: <a href="https://medapp-11.preview.emergentagent.com/staff" style="color: #0d9488;">Staff Portal</a></p>
+            <p style="color: #64748b;">Access the Staff Portal at: <a href="https://nevika-health-2.preview.emergentagent.com/staff" style="color: #0d9488;">Staff Portal</a></p>
             
             <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">👨‍⚕️ DiaGyn - Doctors</h3>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
@@ -8436,7 +8436,7 @@ async def send_credentials_email(email: str, admin = Depends(verify_admin)):
                 </tr>
                 <tr>
                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Admin Dashboard</td>
-                    <td style="padding: 12px; border: 1px solid #e2e8f0;"><a href="https://medapp-11.preview.emergentagent.com/admin" style="color: #0d9488;">/admin</a></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;"><a href="https://nevika-health-2.preview.emergentagent.com/admin" style="color: #0d9488;">/admin</a></td>
                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fecaca;">nevikacura2026</td>
                 </tr>
             </table>
