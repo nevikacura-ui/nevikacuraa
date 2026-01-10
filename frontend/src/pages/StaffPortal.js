@@ -796,10 +796,144 @@ const StaffPortal = () => {
     </div>
   );
 
+  // Patient History Modal Content
+  const historyModalContent = patientHistory && (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <Card className="w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="p-4 border-b bg-teal-50 flex items-center justify-between">
+          <div>
+            <h2 className="font-semibold text-lg flex items-center gap-2">
+              <History className="w-5 h-5 text-teal-600" />
+              Patient History
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">
+              <span className="font-medium">{patientHistory.patient_name}</span> • {patientHistory.patient_phone}
+            </p>
+          </div>
+          <Button variant="ghost" size="sm" onClick={() => setShowHistoryModal(false)}>
+            <X className="w-5 h-5" />
+          </Button>
+        </div>
+        
+        {/* Summary Cards */}
+        <div className="p-4 border-b bg-gray-50">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="bg-white p-3 rounded-lg border text-center">
+              <div className="text-2xl font-bold text-teal-600">{patientHistory.summary?.total_appointments || 0}</div>
+              <div className="text-xs text-gray-500">Total Visits</div>
+            </div>
+            <div className="bg-white p-3 rounded-lg border text-center">
+              <div className="text-2xl font-bold text-blue-600">{patientHistory.summary?.upcoming_appointments || 0}</div>
+              <div className="text-xs text-gray-500">Upcoming</div>
+            </div>
+            <div className="bg-white p-3 rounded-lg border text-center">
+              <div className="text-2xl font-bold text-purple-600">{patientHistory.summary?.total_diagnostic_orders || 0}</div>
+              <div className="text-xs text-gray-500">Lab Tests</div>
+            </div>
+            <div className="bg-white p-3 rounded-lg border text-center">
+              <div className="text-2xl font-bold text-orange-600">{patientHistory.summary?.total_pharmacy_orders || 0}</div>
+              <div className="text-xs text-gray-500">Pharmacy</div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          {/* Past Appointments */}
+          <div>
+            <h3 className="font-semibold text-sm text-gray-700 mb-2 flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Past Appointments ({patientHistory.past_appointments?.length || 0})
+            </h3>
+            {patientHistory.past_appointments?.length > 0 ? (
+              <div className="space-y-2">
+                {patientHistory.past_appointments.slice(0, 10).map((appt, idx) => (
+                  <div key={idx} className="p-3 bg-gray-50 rounded-lg border text-sm">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="font-medium">{appt.date}</span>
+                        <span className="text-gray-500 mx-2">•</span>
+                        <span>{appt.time || 'No time'}</span>
+                      </div>
+                      <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(appt.status)}`}>
+                        {appt.status}
+                      </span>
+                    </div>
+                    <div className="text-gray-600 mt-1">
+                      {appt.doctor} @ {appt.clinic}
+                    </div>
+                    {appt.appointment_type === 'EMERGENCY' && (
+                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-800">Emergency</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-sm">No past appointments</p>
+            )}
+          </div>
+          
+          {/* Diagnostic Orders */}
+          {patientHistory.diagnostic_orders?.length > 0 && (
+            <div>
+              <h3 className="font-semibold text-sm text-gray-700 mb-2 flex items-center gap-2">
+                <FlaskConical className="w-4 h-4" />
+                Lab Tests ({patientHistory.diagnostic_orders.length})
+              </h3>
+              <div className="space-y-2">
+                {patientHistory.diagnostic_orders.slice(0, 5).map((order, idx) => (
+                  <div key={idx} className="p-3 bg-purple-50 rounded-lg border border-purple-100 text-sm">
+                    <div className="flex justify-between items-start">
+                      <div className="font-medium">{order.tests?.slice(0, 3).join(', ')}{order.tests?.length > 3 ? ` +${order.tests.length - 3} more` : ''}</div>
+                      <span className="px-2 py-0.5 rounded-full text-xs bg-purple-100 text-purple-800">{order.status}</span>
+                    </div>
+                    <div className="text-gray-600 mt-1 text-xs">{order.preferred_date}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Pharmacy Orders */}
+          {patientHistory.pharmacy_orders?.length > 0 && (
+            <div>
+              <h3 className="font-semibold text-sm text-gray-700 mb-2 flex items-center gap-2">
+                <Package className="w-4 h-4" />
+                Pharmacy Orders ({patientHistory.pharmacy_orders.length})
+              </h3>
+              <div className="space-y-2">
+                {patientHistory.pharmacy_orders.slice(0, 5).map((order, idx) => (
+                  <div key={idx} className="p-3 bg-orange-50 rounded-lg border border-orange-100 text-sm">
+                    <div className="flex justify-between items-start">
+                      <div className="font-medium">{order.medicines?.length || 0} item{order.medicines?.length !== 1 ? 's' : ''}</div>
+                      <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-800">{order.status}</span>
+                    </div>
+                    <div className="text-gray-600 mt-1 text-xs">{order.created_at?.split('T')[0]}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Footer */}
+        <div className="p-4 border-t bg-gray-50">
+          <Button variant="outline" className="w-full" onClick={() => setShowHistoryModal(false)}>
+            Close
+          </Button>
+        </div>
+      </Card>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Service Modal - Rendered inline */}
       {showServiceModal && serviceModalContent}
+      
+      {/* Patient History Modal */}
+      {showHistoryModal && historyModalContent}
       
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-40">
