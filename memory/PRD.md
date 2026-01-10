@@ -28,6 +28,18 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ### Date: January 10, 2026 - Latest Update (Current Session)
 
+#### Staff Credentials Email - NEW
+- [x] `POST /api/admin/send-credentials-email?email=xxx` - Send all login credentials via email
+- [x] ✅ Email sent to nevikacura@gmail.com with all staff credentials
+- [x] Beautifully formatted HTML email with tables for each department
+
+#### Patient Profile Saving - NEW
+- [x] `POST /api/patients/profile` - Save/update patient profile
+- [x] `GET /api/patients/profile/{phone}` - Retrieve saved profile
+- [x] `GET /api/patients/autocomplete/{phone}` - Autocomplete from saved profiles/history
+- [x] Stores: name, email, address, DOB, gender, blood group, allergies, emergency contact
+- [x] Falls back to appointment history if no saved profile exists
+
 #### Patient History Modal - NEW FEATURE
 - [x] **Doctors can view complete patient history** during consultations
 - [x] `GET /api/staff/patient/history/{phone}` - Returns all appointments, diagnostic orders, pharmacy orders
