@@ -247,7 +247,7 @@ const StaffPortal = () => {
 
   // Helper to check clinic staff roles
   const isClinicStaff = (role) => ['clinic_staff_pushpa', 'clinic_staff_amnion', 'super_admin'].includes(role);
-  const isDoctor = (role) => ['doctor_pushpa', 'doctor_amnion', 'super_admin'].includes(role);
+  const isDoctor = (role) => ['doctor', 'doctor_pushpa', 'doctor_amnion', 'super_admin'].includes(role);
 
   const loadData = async () => {
     try {
@@ -268,8 +268,18 @@ const StaffPortal = () => {
       }
       
       if (isDoctor(role)) {
-        const res = await axios.get(`${API}/staff/doctor/appointments?date=${selectedDate}`, getAuthHeaders());
+        // For doctors, fetch appointments with optional clinic filter
+        let url = `${API}/staff/doctor/appointments?date=${selectedDate}`;
+        if (selectedClinic) {
+          url += `&clinic=${encodeURIComponent(selectedClinic)}`;
+        }
+        const res = await axios.get(url, getAuthHeaders());
         setAppointments(res.data.appointments || []);
+        
+        // Update doctor clinics from response if available
+        if (res.data.doctor_clinics && res.data.doctor_clinics.length > 0) {
+          setDoctorClinics(res.data.doctor_clinics);
+        }
       }
       
       if (role === 'pharmacy_staff' || role === 'super_admin') {
