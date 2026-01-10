@@ -166,6 +166,13 @@ const Admin = () => {
     }
   }, [isAuthenticated, activeTab]);
 
+  // Fetch loyalty data when loyalty tab is active
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'loyalty') {
+      fetchLoyaltySummary();
+    }
+  }, [isAuthenticated, activeTab]);
+
   // Search debounce for inventory
   useEffect(() => {
     const timer = setTimeout(() => {
