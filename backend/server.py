@@ -6455,6 +6455,68 @@ async def get_doctor_appointments(staff = Depends(verify_staff), date: Optional[
         "total_count": len(appointments)
     }
 
+@api_router.get("/staff/patient/history/{phone}")
+async def get_patient_history(phone: str, staff = Depends(verify_staff)):
+    """Get complete history for a patient by phone number
+    
+    Returns all appointments, diagnostic orders, and pharmacy orders for the patient.
+    Available to doctors and clinic staff.
+    """
+    role = staff.get("role")
+    if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Doctor or Clinic Staff access required")
+    
+    # Clean phone number
+    phone = phone.strip().replace(" ", "").replace("-", "")
+    
+    # Get all appointments for this patient
+    appointments = await db.appointments.find(
+        {"patient_phone": {"$regex": phone}},
+        {"_id": 0}
+    ).sort([("date", -1), ("time", -1)]).to_list(100)
+    
+    # Get all diagnostic orders for this patient
+    diagnostic_orders = await db.diagnostic_orders.find(
+        {"patient_phone": {"$regex": phone}},
+        {"_id": 0}
+    ).sort([("created_at", -1)]).to_list(50)
+    
+    # Get all pharmacy orders for this patient
+    pharmacy_orders = await db.pharmacy_orders.find(
+        {"patient_phone": {"$regex": phone}},
+        {"_id": 0}
+    ).sort([("created_at", -1)]).to_list(50)
+    
+    # Get patient name from most recent record
+    patient_name = None
+    if appointments:
+        patient_name = appointments[0].get("patient_name")
+    elif diagnostic_orders:
+        patient_name = diagnostic_orders[0].get("patient_name")
+    elif pharmacy_orders:
+        patient_name = pharmacy_orders[0].get("patient_name")
+    
+    # Separate past and upcoming appointments
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    past_appointments = [a for a in appointments if a.get("date", "") < today or a.get("status") == "Completed"]
+    upcoming_appointments = [a for a in appointments if a.get("date", "") >= today and a.get("status") != "Completed"]
+    
+    return {
+        "patient_phone": phone,
+        "patient_name": patient_name,
+        "summary": {
+            "total_appointments": len(appointments),
+            "past_appointments": len(past_appointments),
+            "upcoming_appointments": len(upcoming_appointments),
+            "total_diagnostic_orders": len(diagnostic_orders),
+            "total_pharmacy_orders": len(pharmacy_orders)
+        },
+        "past_appointments": past_appointments,
+        "upcoming_appointments": upcoming_appointments,
+        "diagnostic_orders": diagnostic_orders,
+        "pharmacy_orders": pharmacy_orders
+    }
+
 @api_router.put("/staff/appointments/{appointment_id}/complete")
 async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = None, staff = Depends(verify_staff)):
     """Mark appointment as completed (Doctor or Clinic Staff)"""
