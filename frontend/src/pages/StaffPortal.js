@@ -247,6 +247,14 @@ const StaffPortal = () => {
         const res = await axios.get(`${API}/staff/clinic/appointments?date=${selectedDate}`, getAuthHeaders());
         setAppointments(res.data.appointments || []);
         setEmergencyCounts(res.data.emergency_counts || {});
+        
+        // Load available tests for add-on services
+        try {
+          const testsRes = await axios.get(`${API}/staff/diagnostic-tests`, getAuthHeaders());
+          setAvailableTests(testsRes.data.tests || {});
+        } catch (err) {
+          console.log('Could not load diagnostic tests');
+        }
       }
       
       if (isDoctor(role)) {
