@@ -1299,6 +1299,16 @@ async def get_diagnostic_orders(user = Depends(get_current_user)):
 
 @api_router.post("/pharmacy", response_model=PharmacyOrder)
 async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(get_current_user)):
+    # Validate medicine quantities - max 20 strips per medicine
+    MAX_QUANTITY_PER_MEDICINE = 20
+    for medicine in input.medicines:
+        qty = medicine.get('quantity', 1)
+        if qty > MAX_QUANTITY_PER_MEDICINE:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Maximum {MAX_QUANTITY_PER_MEDICINE} strips allowed per medicine. '{medicine.get('name', 'Unknown')}' has {qty} strips."
+            )
+    
     order = PharmacyOrder(
         user_id=user.id if user else None,
         **input.model_dump()
