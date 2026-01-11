@@ -216,12 +216,12 @@ const Home = () => {
           </p>
         </div>
 
-        {/* Services Grid - 5 cards */}
+        {/* Services Grid - 5 cards (Logo + Tagline only) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
           {services.map((service) => (
             <div
               key={service.id}
-              className={`group relative h-full min-h-[280px] flex flex-col justify-between p-6 rounded-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl border ${service.accentColor} ${service.bgColor} cursor-pointer overflow-hidden`}
+              className={`group relative h-full min-h-[260px] flex flex-col justify-between p-5 rounded-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl border ${service.accentColor} ${service.bgColor} cursor-pointer overflow-hidden`}
               style={service.customBg ? { backgroundColor: service.customBg } : {}}
               onClick={() => navigate(service.path)}
               data-testid={`service-card-${service.id}`}
@@ -229,33 +229,30 @@ const Home = () => {
               {/* Background decoration */}
               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150"></div>
               
+              {/* Logo - takes most space */}
               <div 
-                className={`flex items-center justify-center flex-1 ${service.logoBg} ${service.id === 'evara' || service.id === 'omnia' ? '' : 'rounded-xl p-3'}`}
+                className={`flex items-center justify-center flex-1 ${service.logoBg} ${service.id === 'evara' || service.id === 'omnia' ? '' : 'rounded-xl p-2'}`}
                 style={service.customBg ? { backgroundColor: service.customBg } : {}}
               >
                 <img 
                   src={service.logo} 
                   alt={service.name} 
                   className={`object-contain transition-transform group-hover:scale-105 ${
-                    service.id === 'evara' || service.id === 'omnia' ? 'w-full h-auto max-h-28' : 'w-auto max-h-24 mix-blend-multiply'
+                    service.id === 'evara' || service.id === 'omnia' ? 'w-full h-auto max-h-32' : 'w-auto max-h-28 mix-blend-multiply'
                   }`}
                   data-testid={`service-logo-${service.id}`}
                 />
               </div>
               
-              <div className="mt-4">
-                <h3 className={`font-semibold text-lg mb-1 ${service.customBg ? 'text-white' : 'text-gray-800'}`}>
-                  {service.name}
-                </h3>
-                <p className={`text-sm ${service.customBg ? 'text-white/80' : 'text-gray-500'}`}>
-                  {service.description}
-                </p>
-              </div>
+              {/* Tagline only - no name */}
+              <p className={`text-center text-sm mt-3 ${service.customBg ? 'text-white/90' : 'text-gray-600'}`}>
+                {service.description}
+              </p>
               
               <Button
                 onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                 data-testid={`service-button-${service.id}`}
-                className={`mt-4 w-full rounded-xl py-5 font-medium shadow-lg hover:shadow-xl transition-all duration-300 ${
+                className={`mt-3 w-full rounded-xl py-5 font-medium shadow-lg hover:shadow-xl transition-all duration-300 ${
                   service.customBg 
                     ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
                     : 'bg-brand-teal hover:bg-brand-teal/90 text-white'
