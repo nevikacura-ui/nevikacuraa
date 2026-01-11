@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { User, Menu, X, Download, Smartphone, Search } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 const Home = () => {
   const navigate = useNavigate();
