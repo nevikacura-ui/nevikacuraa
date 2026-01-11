@@ -319,9 +319,10 @@ const Pharmacy = () => {
       });
       
       setOtpSent(true);
-      setMockOtp(response.data.mock_otp);
+      setMockOtp(response.data.mock_otp || '');
+      setOtpMethod(response.data.method || 'mock');
       setResendTimer(30);
-      toast.success('OTP sent successfully!');
+      toast.success(response.data.method === 'sms' ? 'OTP sent to your phone!' : 'OTP sent successfully!');
       
       // Focus first OTP input
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
