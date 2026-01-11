@@ -1067,7 +1067,7 @@ const Omnia = () => {
               <TabsTrigger value="tips" className="flex-1">📋 Tips</TabsTrigger>
             </TabsList>
             
-            <ScrollArea className="flex-1">
+            <div className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
               <TabsContent value="veg" className="p-4 space-y-4 m-0">
                 <Card className="bg-blue-50 border-blue-200">
                   <CardContent className="p-3">
