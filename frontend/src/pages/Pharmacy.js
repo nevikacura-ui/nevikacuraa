@@ -69,6 +69,30 @@ const Pharmacy = () => {
   const [pointsToUse, setPointsToUse] = useState(0);
   const [loadingPoints, setLoadingPoints] = useState(false);
 
+  // Check for reorder data on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('reorder') === 'true') {
+      const reorderData = localStorage.getItem('reorder_data');
+      if (reorderData) {
+        try {
+          const data = JSON.parse(reorderData);
+          setMedicines(data.medicines || []);
+          setDeliveryAddress(data.delivery_address || '');
+          setPatientInfo(prev => ({
+            ...prev,
+            name: data.patient_name || prev.name,
+            phone: data.patient_phone || prev.phone
+          }));
+          localStorage.removeItem('reorder_data');
+          toast.success('Previous order loaded! Review and proceed.');
+        } catch (e) {
+          console.error('Failed to parse reorder data:', e);
+        }
+      }
+    }
+  }, []);
+
   useEffect(() => {
     fetchInventory();
     fetchForms();
