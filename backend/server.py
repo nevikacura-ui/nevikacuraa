@@ -592,6 +592,23 @@ async def get_current_user(authorization: str = Header(None)):
         logger.error(f"Token validation error: {str(e)}")
         return None
 
+async def get_current_user_optional(authorization: str = Header(None)):
+    """Same as get_current_user but explicitly for optional auth endpoints"""
+    if not authorization or not authorization.startswith('Bearer '):
+        return None
+    token = authorization.split(' ')[1]
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user_id = payload.get('sub')
+        if not user_id:
+            return None
+        user_doc = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
+        if not user_doc:
+            return None
+        return user_doc
+    except Exception:
+        return None
+
 @api_router.post("/auth/register", response_model=dict)
 async def register(input: UserCreate):
     existing = await db.users.find_one({"email": input.email}, {"_id": 0})
