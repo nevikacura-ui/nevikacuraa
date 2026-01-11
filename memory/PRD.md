@@ -57,14 +57,14 @@ Build a modern healthcare application for "Nevika Cura" with four core services:
 - [x] **Test Coverage**: 19/19 tests passed (15 backend + 4 frontend)
 - [x] **Test File**: /app/tests/test_enhancement_features.py
 
-#### OMNIA - Diabetes Care Portal - NEW ✅ (Jan 11, 2026)
+#### OMNIA - Diabetes Care Portal - FULLY TESTED ✅ (Jan 11, 2026)
 Purpose: Patient-focused digital support system for diabetes management
-- [x] **Mandatory Login/Sign-Up**: Same OTP-based auth as Evara
+- [x] **Mandatory Login/Sign-Up**: Same auth system as main app (unified auth)
 - [x] **Blood Sugar Logging**:
   - Log FBS, PPBS, Random readings with date/time
   - Color-coded status (Normal/Pre-diabetic/High/Low)
-  - Alert for abnormal values (<70 or >180 mg/dL)
-  - APIs: GET/POST /api/omnia/sugar-logs, GET /api/omnia/sugar-stats
+  - Alert for abnormal values (<70 or >180 or >250 mg/dL)
+  - APIs: GET/POST/DELETE /api/omnia/sugar-logs, GET /api/omnia/sugar-stats
 - [x] **Diabetic Diet Plans**:
   - Indian-friendly vegetarian and non-vegetarian options
   - Breakfast, Lunch, Dinner, Snacks with calories
@@ -84,8 +84,9 @@ Purpose: Patient-focused digital support system for diabetes management
 - [x] **Profile Data**: Diabetes type, age, gender, height, weight, medications
 - [x] **Homepage Card**: Teal background (#0D9488) with Omnia logo
 - [x] **Footer Listed**: Under "Our Services"
-- [x] **Test Coverage**: 17/17 tests passed (7 backend + 10 frontend)
-- [x] **Test File**: /app/tests/test_omnia_module.py
+- [x] **Test Coverage (iteration_13)**: 17/17 tests passed (7 backend + 10 frontend)
+- [x] **Test Coverage (iteration_14)**: 35/35 tests passed (15 backend + 20 frontend) - Full authenticated flow
+- [x] **Test Files**: /app/tests/test_omnia_module.py, /app/tests/test_omnia_authenticated.py
 
 #### Evara Card Styling - COMPLETED ✅
 - [x] Card background matches logo purple (#4A2463)
