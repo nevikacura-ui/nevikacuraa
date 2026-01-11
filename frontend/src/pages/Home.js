@@ -76,12 +76,13 @@ const Home = () => {
     {
       id: 'glydex',
       name: 'Glydex',
-      logo: 'https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png',
+      logo: '/glydex-logo.png',
       description: 'Diabetes Care Portal',
-      bgColor: 'bg-gray-100',
+      bgColor: 'bg-white',
       accentColor: 'border-teal-500',
       path: '/glydex',
-      logoBg: 'bg-gray-100'
+      logoBg: 'bg-white',
+      customBg: '#0D9488'
     }
   ];
 
