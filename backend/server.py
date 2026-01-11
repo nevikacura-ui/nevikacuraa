@@ -3491,7 +3491,7 @@ async def send_credentials_email(admin = Depends(verify_admin)):
                 </tr>
             </table>
             
-            <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 10px;">👩‍💼 DiaGyn Clinic Staff</h2>
+            <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 10px;">👩‍💼 Clinic Staff</h2>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
                 <tr style="background: #d1fae5;">
                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Staff</th>
@@ -3732,8 +3732,8 @@ async def get_doctors(admin = Depends(verify_admin)):
     # Add default doctors if no appointments exist
     if not doctors:
         doctors = [
-            {"doctor": "Dr. Vikas Jha", "clinic": "Nevika Clinic", "appointment_count": 0},
-            {"doctor": "Dr. Vikas Jha", "clinic": "Nevika Clinic", "appointment_count": 0}
+            {"doctor": "Dr. Neha Patel", "clinic": "Pushpa Clinic", "appointment_count": 0},
+            {"doctor": "Dr. Vikas Jha", "clinic": "Amnion Clinic", "appointment_count": 0}
         ]
     
     return {"doctors": doctors}
