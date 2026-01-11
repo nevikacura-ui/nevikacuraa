@@ -204,9 +204,13 @@ const Home = () => {
             <div
               key={service.id}
               className={`col-span-1 h-full min-h-[320px] flex flex-col justify-between p-8 rounded-3xl transition-all duration-300 hover:scale-[1.02] hover:shadow-xl border-2 ${service.accentColor} ${service.bgColor}`}
+              style={service.customBg ? { backgroundColor: service.customBg } : {}}
               data-testid={`service-card-${service.id}`}
             >
-              <div className={`flex items-center justify-center flex-1 rounded-2xl p-4 ${service.logoBg}`}>
+              <div 
+                className={`flex items-center justify-center flex-1 rounded-2xl p-4 ${service.logoBg}`}
+                style={service.customBg ? { backgroundColor: service.customBg } : {}}
+              >
                 <img 
                   src={service.logo} 
                   alt={service.name} 
