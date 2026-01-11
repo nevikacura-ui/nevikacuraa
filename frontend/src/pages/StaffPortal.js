@@ -1654,6 +1654,12 @@ const StaffPortal = () => {
                         {appt.booking_type === 'walk_in' && (
                           <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-800">Walk-in</span>
                         )}
+                        {/* Show fee code if completed */}
+                        {appt.fee_code && (
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${FEE_CODES[appt.fee_code]?.color || 'bg-gray-100'}`}>
+                            {appt.fee_code} • ₹{appt.fee_amount}
+                          </span>
+                        )}
                       </div>
                       <div className="text-sm text-gray-600 mt-1.5 flex items-center gap-3 flex-wrap">
                         <span className="flex items-center gap-1">
@@ -1668,6 +1674,13 @@ const StaffPortal = () => {
                           <span className="flex items-center gap-1 text-teal-600">
                             <Stethoscope className="w-3.5 h-3.5" />
                             {appt.clinic}
+                          </span>
+                        )}
+                        {/* Show follow-up date if set */}
+                        {appt.follow_up_date && (
+                          <span className="flex items-center gap-1 text-blue-600">
+                            <Calendar className="w-3.5 h-3.5" />
+                            Follow-up: {appt.follow_up_date}
                           </span>
                         )}
                       </div>
@@ -1686,7 +1699,7 @@ const StaffPortal = () => {
                       {appt.status === 'In Clinic' && (
                         <Button 
                           size="sm" 
-                          onClick={() => handleCompleteAppointment(appt.id)} 
+                          onClick={() => openCompletionModal(appt)} 
                           className="bg-green-500 hover:bg-green-600"
                           data-testid={`complete-btn-${appt.id}`}
                         >
