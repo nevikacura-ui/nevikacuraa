@@ -5743,7 +5743,9 @@ async def upload_health_record(data: HealthRecordUpload, user = Depends(get_curr
 @api_router.delete("/health-records/{record_id}")
 async def delete_health_record(record_id: str, user = Depends(get_current_user)):
     """Delete a health record"""
-    result = await db.health_records.delete_one({"id": record_id, "user_id": user["id"]})
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    result = await db.health_records.delete_one({"id": record_id, "user_id": user.id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Record not found")
     return {"success": True}
