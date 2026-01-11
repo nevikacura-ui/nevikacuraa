@@ -4,6 +4,7 @@ import Home from '@/pages/Home';
 import DiaGyn from '@/pages/DiaGyn';
 import Proton from '@/pages/Proton';
 import Pharmacy from '@/pages/Pharmacy';
+import Evara from '@/pages/Evara';
 import Profile from '@/pages/Profile';
 import Admin from '@/pages/Admin';
 import StaffPortal from '@/pages/StaffPortal';
@@ -24,6 +25,7 @@ function App() {
             <Route path="/diagyn" element={<DiaGyn />} />
             <Route path="/proton" element={<Proton />} />
             <Route path="/pharmacy" element={<Pharmacy />} />
+            <Route path="/evara" element={<Evara />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/staff" element={<StaffPortal />} />
