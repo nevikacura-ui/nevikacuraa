@@ -187,18 +187,49 @@ async def send_appointment_sms(patient_phone: str, appointment_details: dict):
     clinic = appointment_details.get('clinic', 'Clinic')
     date = appointment_details.get('date', '')
     time = appointment_details.get('time', '')
+    booking_type = appointment_details.get('booking_type', 'online')
     
-    message = f"""Nevika Cura - Appointment Confirmed!
+    if booking_type == 'walk_in':
+        message = f"""DiaGyn Healthcare - Walk-in Registered!
+
+Doctor: {doctor}
+Clinic: {clinic}
+Date: {date}
+Token Time: {time}
+
+Note: The time mentioned is your arrival slot. Patients are attended in sequence.
+
+Please wait in the clinic. You will be called shortly.
+
+- DiaGyn Healthcare
+  Call: 7039020020"""
+    elif booking_type == 'emergency':
+        message = f"""DiaGyn Healthcare - Emergency Appointment!
+
+Doctor: {doctor}
+Clinic: {clinic}
+Date: {date}
+
+EMERGENCY PRIORITY - You will be attended on priority basis.
+
+Please proceed directly to the clinic.
+
+- DiaGyn Healthcare
+  Call: 7039020020"""
+    else:
+        # Online booking
+        message = f"""DiaGyn Healthcare - Appointment Confirmed!
 
 Doctor: {doctor}
 Clinic: {clinic}
 Date: {date}
 Time: {time}
 
-Please arrive 10 mins early. For queries, call the clinic.
+Note: The appointment time is your arrival time at the clinic, not the exact consultation time. Patients will be attended in sequence.
 
-Thank you!
-- Nevika Cura Healthcare"""
+Please arrive 10 mins early. For queries, call 7039020020.
+
+- DiaGyn Healthcare"""
     
     return await send_sms_notification(patient_phone, message)
 
