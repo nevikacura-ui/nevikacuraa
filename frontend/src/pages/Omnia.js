@@ -631,7 +631,106 @@ const Omnia = () => {
               <p className="text-xs text-gray-500 mt-1">Know symptoms</p>
             </CardContent>
           </Card>
+
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-indigo-200 hover:border-indigo-400 active:scale-95"
+            onClick={() => setShowHbA1c(true)}
+            data-testid="hba1c-trend-btn"
+          >
+            <CardContent className="p-5 text-center">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-lg">
+                <LineChart className="w-7 h-7 text-white" />
+              </div>
+              <p className="font-semibold text-gray-800">HbA1c Trend</p>
+              <p className="text-xs text-gray-500 mt-1">3-month control</p>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* HbA1c Trend Chart Card */}
+        {hba1cAnalysis && (
+          <Card className="mb-6 border-indigo-200">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <LineChart className="w-5 h-5 text-indigo-600" />
+                  HbA1c Trend
+                </CardTitle>
+                <Button size="sm" variant="outline" onClick={() => setShowHbA1c(true)}>
+                  + Log HbA1c
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {/* Summary Stats */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                <div className="bg-indigo-50 rounded-xl p-3 text-center">
+                  <p className="text-2xl font-bold text-indigo-700">{hba1cAnalysis.latest}%</p>
+                  <p className="text-xs text-indigo-600">Latest</p>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-3 text-center">
+                  <p className="text-2xl font-bold text-gray-700">{hba1cAnalysis.average}%</p>
+                  <p className="text-xs text-gray-600">Average</p>
+                </div>
+                <div className="bg-green-50 rounded-xl p-3 text-center">
+                  <p className="text-2xl font-bold text-green-700">{hba1cAnalysis.lowest}%</p>
+                  <p className="text-xs text-green-600">Lowest</p>
+                </div>
+                <div className="bg-red-50 rounded-xl p-3 text-center">
+                  <p className="text-2xl font-bold text-red-700">{hba1cAnalysis.highest}%</p>
+                  <p className="text-xs text-red-600">Highest</p>
+                </div>
+              </div>
+
+              {/* Visual Chart */}
+              {hba1cTrend && hba1cTrend.length > 0 && (
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="flex items-end justify-between h-32 gap-1">
+                    {hba1cTrend.slice(-10).map((log, idx) => {
+                      const height = Math.min(100, Math.max(20, ((log.value - 4) / 10) * 100));
+                      const status = getHba1cStatus(log.value);
+                      return (
+                        <div key={idx} className="flex-1 flex flex-col items-center gap-1">
+                          <span className="text-xs font-medium text-gray-600">{log.value}%</span>
+                          <div 
+                            className={`w-full rounded-t-lg ${status.bg} transition-all`}
+                            style={{ height: `${height}%` }}
+                            title={`${log.date}: ${log.value}%`}
+                          />
+                          <span className="text-[10px] text-gray-400">{log.date.slice(5)}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Target line reference */}
+                  <div className="flex items-center justify-center gap-4 mt-3 text-xs">
+                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-green-100"></span> &lt;6.5% Excellent</span>
+                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-100"></span> &lt;7% Good</span>
+                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-orange-100"></span> &lt;8% Fair</span>
+                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-100"></span> &gt;8% Needs Work</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Trend Direction */}
+              <div className="mt-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {hba1cAnalysis.trend_direction === 'improving' && (
+                    <><TrendingDown className="w-5 h-5 text-green-500" /><span className="text-green-600 font-medium">Improving</span></>
+                  )}
+                  {hba1cAnalysis.trend_direction === 'worsening' && (
+                    <><TrendingUp className="w-5 h-5 text-red-500" /><span className="text-red-600 font-medium">Needs Attention</span></>
+                  )}
+                  {hba1cAnalysis.trend_direction === 'stable' && (
+                    <><Target className="w-5 h-5 text-blue-500" /><span className="text-blue-600 font-medium">Stable</span></>
+                  )}
+                </div>
+                <span className="text-sm text-gray-500">{hba1cAnalysis.total_tests} tests recorded</span>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Recent Sugar Logs */}
         <Card className="mb-6">
