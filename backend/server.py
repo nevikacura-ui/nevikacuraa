@@ -5714,8 +5714,10 @@ class HealthRecordUpload(BaseModel):
 @api_router.get("/health-records")
 async def get_health_records(user = Depends(get_current_user)):
     """Get user's health records"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
     records = await db.health_records.find(
-        {"user_id": user["id"]},
+        {"user_id": user.id},
         {"_id": 0}
     ).sort([("created_at", -1)]).to_list(100)
     return {"records": records}
