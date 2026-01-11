@@ -452,7 +452,8 @@ const AuthModal = ({ open, onClose }) => {
         otpValue,
         formData.get('email'),
         formData.get('password'),
-        formData.get('name')
+        formData.get('name'),
+        verificationToken  // Pass the verification token
       );
       toast.success('Account created successfully!');
       onClose();
