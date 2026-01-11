@@ -252,10 +252,23 @@ const Omnia = () => {
     gender: ''
   });
 
+  // HbA1c tracking state
+  const [showHbA1c, setShowHbA1c] = useState(false);
+  const [hba1cLogs, setHba1cLogs] = useState([]);
+  const [hba1cTrend, setHba1cTrend] = useState(null);
+  const [hba1cAnalysis, setHba1cAnalysis] = useState(null);
+  const [newHba1c, setNewHba1c] = useState({
+    value: '',
+    date: new Date().toISOString().split('T')[0],
+    lab_name: '',
+    notes: ''
+  });
+
   useEffect(() => {
     if (token) {
       fetchProfile();
       fetchSugarLogs();
+      fetchHba1cData();
     }
   }, [token]);
 
@@ -288,6 +301,94 @@ const Omnia = () => {
     } catch (error) {
       console.error('Error fetching sugar logs:', error);
     }
+  };
+
+  const fetchHba1cData = async () => {
+    try {
+      const [logsRes, trendRes] = await Promise.all([
+        fetch(`${API_URL}/api/omnia/hba1c-logs`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        fetch(`${API_URL}/api/omnia/hba1c-trend`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+      
+      if (logsRes.ok) {
+        const data = await logsRes.json();
+        setHba1cLogs(data.logs || []);
+      }
+      
+      if (trendRes.ok) {
+        const data = await trendRes.json();
+        setHba1cTrend(data.trend || []);
+        setHba1cAnalysis(data.analysis);
+      }
+    } catch (error) {
+      console.error('Error fetching HbA1c data:', error);
+    }
+  };
+
+  const handleAddHba1c = async () => {
+    if (!newHba1c.value || !newHba1c.date) {
+      toast.error('Please enter HbA1c value and date');
+      return;
+    }
+    const value = parseFloat(newHba1c.value);
+    if (isNaN(value) || value < 3 || value > 20) {
+      toast.error('Please enter a valid HbA1c value (3-20%)');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/omnia/hba1c-logs`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({...newHba1c, value})
+      });
+      if (response.ok) {
+        const data = await response.json();
+        toast.success(`HbA1c logged! Status: ${data.status}`);
+        setNewHba1c({
+          value: '',
+          date: new Date().toISOString().split('T')[0],
+          lab_name: '',
+          notes: ''
+        });
+        fetchHba1cData();
+      }
+    } catch (error) {
+      toast.error('Failed to log HbA1c');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteHba1c = async (logId) => {
+    try {
+      const response = await fetch(`${API_URL}/api/omnia/hba1c-logs/${logId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        toast.success('HbA1c log deleted');
+        fetchHba1cData();
+      }
+    } catch (error) {
+      toast.error('Failed to delete log');
+    }
+  };
+
+  const getHba1cStatus = (value) => {
+    if (value < 5.7) return { status: 'Normal', color: 'text-green-600', bg: 'bg-green-100' };
+    if (value < 6.5) return { status: 'Pre-diabetic', color: 'text-yellow-600', bg: 'bg-yellow-100' };
+    if (value < 7) return { status: 'Good Control', color: 'text-blue-600', bg: 'bg-blue-100' };
+    if (value < 8) return { status: 'Fair Control', color: 'text-orange-600', bg: 'bg-orange-100' };
+    return { status: 'Needs Attention', color: 'text-red-600', bg: 'bg-red-100' };
   };
 
   const handleSaveProfile = async () => {
