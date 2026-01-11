@@ -575,7 +575,7 @@ const Omnia = () => {
         </Card>
 
         {/* Quick Actions Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
           <Card 
             className="cursor-pointer hover:shadow-lg transition-all border-teal-200 hover:border-teal-400 active:scale-95"
             onClick={() => setShowSugarLog(true)}
