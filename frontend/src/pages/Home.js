@@ -81,7 +81,7 @@ const Home = () => {
       bgColor: 'bg-white',
       accentColor: 'border-teal-500',
       path: '/glydex',
-      logoBg: 'bg-white',
+      logoBg: 'bg-teal-600',
       customBg: '#0D9488'
     }
   ];
