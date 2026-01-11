@@ -186,6 +186,34 @@ const StaffPortal = () => {
   const [bookedSlots, setBookedSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
 
+  // Doctor appointment completion states
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [completionAppointment, setCompletionAppointment] = useState(null);
+  const [completionForm, setCompletionForm] = useState({
+    fee_code: '',
+    follow_up_days: '',
+    notes: ''
+  });
+  const [completingAppointment, setCompletingAppointment] = useState(false);
+  
+  // Clinic staff - completed appointments view
+  const [completedAppointments, setCompletedAppointments] = useState([]);
+  const [loadingCompleted, setLoadingCompleted] = useState(false);
+
+  // Fee codes configuration
+  const FEE_CODES = {
+    "G1": { label: "General - First", amount: 150, color: "bg-gray-100 text-gray-800" },
+    "G2": { label: "General - Follow up", amount: 100, color: "bg-gray-100 text-gray-800" },
+    "S1": { label: "Speciality - First", amount: 300, color: "bg-blue-100 text-blue-800" },
+    "S2": { label: "Speciality - Follow up", amount: 200, color: "bg-blue-100 text-blue-800" },
+    "D1": { label: "Diabetes - First", amount: 500, color: "bg-purple-100 text-purple-800" },
+    "D2": { label: "Diabetes - Follow up", amount: 400, color: "bg-purple-100 text-purple-800" },
+    "D3": { label: "Diabetes - Follow up", amount: 300, color: "bg-purple-100 text-purple-800" },
+    "O1": { label: "OBGY - First", amount: 500, color: "bg-pink-100 text-pink-800" },
+    "O2": { label: "OBGY - Follow up", amount: 400, color: "bg-pink-100 text-pink-800" },
+    "O3": { label: "OBGY - Follow up", amount: 300, color: "bg-pink-100 text-pink-800" },
+  };
+
   // Fetch booked slots for the selected doctor, clinic, and date
   const fetchBookedSlots = useCallback(async () => {
     if (!walkInForm.doctor || !walkInForm.clinic || !walkInForm.date) {
