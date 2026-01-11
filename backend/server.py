@@ -6000,8 +6000,10 @@ async def delete_sugar_log(log_id: str, user = Depends(get_current_user)):
 @api_router.get("/omnia/sugar-stats")
 async def get_sugar_stats(user = Depends(get_current_user)):
     """Get blood sugar statistics for the user"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
     logs = await db.omnia_sugar_logs.find(
-        {"user_id": user["id"]}
+        {"user_id": user.id}
     ).to_list(1000)
     
     if not logs:
