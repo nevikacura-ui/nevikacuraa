@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Phone, Mail, MapPin, Clock, Shield, FileText, Users, X } from 'lucide-react';
+import { MessageCircle, Phone, Mail, MapPin, Clock, Shield, FileText, Users, X, Download, Smartphone } from 'lucide-react';
 
 const Footer = () => {
   const [showAbout, setShowAbout] = useState(false);
@@ -32,14 +32,25 @@ const Footer = () => {
               <p className="text-sm text-gray-400 mb-4">
                 Your trusted healthcare partner for appointments, diagnostics, pharmacy, and women's wellness.
               </p>
-              <Button
-                onClick={openWhatsApp}
-                className="bg-green-600 hover:bg-green-700 text-white gap-2"
-                data-testid="footer-whatsapp-btn"
-              >
-                <MessageCircle className="w-4 h-4" />
-                WhatsApp Support
-              </Button>
+              <div className="flex flex-col gap-2">
+                <Button
+                  onClick={openWhatsApp}
+                  className="bg-green-600 hover:bg-green-700 text-white gap-2"
+                  data-testid="footer-whatsapp-btn"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  WhatsApp Support
+                </Button>
+                <a 
+                  href="https://www.nevikacura.com/apk/nevikacura.apk"
+                  download
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-brand-teal hover:bg-brand-teal/90 text-white rounded-md text-sm font-medium transition-colors"
+                  data-testid="footer-download-apk"
+                >
+                  <Download className="w-4 h-4" />
+                  Download Android App
+                </a>
+              </div>
             </div>
 
             {/* Quick Links */}
