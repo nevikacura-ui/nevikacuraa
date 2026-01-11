@@ -5988,8 +5988,10 @@ async def add_sugar_log(data: SugarLog, user = Depends(get_current_user)):
 @api_router.delete("/omnia/sugar-logs/{log_id}")
 async def delete_sugar_log(log_id: str, user = Depends(get_current_user)):
     """Delete a blood sugar log"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
     result = await db.omnia_sugar_logs.delete_one(
-        {"id": log_id, "user_id": user["id"]}
+        {"id": log_id, "user_id": user.id}
     )
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Log not found")
