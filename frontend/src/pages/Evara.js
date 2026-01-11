@@ -476,6 +476,7 @@ const Evara = () => {
     setUser(null);
     setProfile(null);
     localStorage.removeItem('evara_token');
+    localStorage.removeItem('token'); // Also clear main app token
     toast.success('Logged out successfully');
   };
 
