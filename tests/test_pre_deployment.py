@@ -438,8 +438,10 @@ class TestStaffPortal:
         )
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
-        print(f"✓ Staff doctor appointments retrieved: {len(data)} appointments")
+        # API returns {"appointments": [...], "doctor_name": "...", ...}
+        assert "appointments" in data
+        assert isinstance(data["appointments"], list)
+        print(f"✓ Staff doctor appointments retrieved: {len(data['appointments'])} appointments")
 
 
 class TestTrackOrder:
