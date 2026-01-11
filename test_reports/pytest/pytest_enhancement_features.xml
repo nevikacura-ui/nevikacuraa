@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="7" skipped="0" tests="15" time="5.185" timestamp="2026-01-11T12:08:24.640966+00:00" hostname="agent-env-de4e84eb-afb8-4eb7-9357-e3142bc783df"><testcase classname="tests.test_enhancement_features.TestDoctorAvailabilityCalendar" name="test_get_doctors_availability_returns_data" time="0.106" /><testcase classname="tests.test_enhancement_features.TestDoctorAvailabilityCalendar" name="test_availability_contains_doctor_info" time="0.045" /><testcase classname="tests.test_enhancement_features.TestDoctorAvailabilityCalendar" name="test_availability_slots_have_required_fields" time="0.042" /><testcase classname="tests.test_enhancement_features.TestWhatsAppShareEvara" name="test_get_pcos_guide_share_content" time="0.040" /><testcase classname="tests.test_enhancement_features.TestWhatsAppShareEvara" name="test_get_pms_guide_share_content" time="0.037" /><testcase classname="tests.test_enhancement_features.TestWhatsAppShareEvara" name="test_get_pregnancy_tips_share_content" time="0.039" /><testcase classname="tests.test_enhancement_features.TestWhatsAppShareEvara" name="test_invalid_content_type_returns_404" time="0.074" /><testcase classname="tests.test_enhancement_features.TestHealthRecordsAPI" name="test_get_health_records_requires_auth" time="0.039"><failure message="assert 520 == 401&#10; +  where 520 = &lt;Response [520]&gt;.status_code">tests/test_enhancement_features.py:127: in test_get_health_records_requires_auth
+    assert response.status_code == 401
+E   assert 520 == 401
+E    +  where 520 = &lt;Response [520]&gt;.status_code</failure></testcase><testcase classname="tests.test_enhancement_features.TestHealthRecordsAPI" name="test_get_health_records_with_auth" time="1.382"><failure message="assert 520 == 200&#10; +  where 520 = &lt;Response [520]&gt;.status_code">tests/test_enhancement_features.py:135: in test_get_health_records_with_auth
+    assert response.status_code == 200
+E   assert 520 == 200
+E    +  where 520 = &lt;Response [520]&gt;.status_code</failure></testcase><testcase classname="tests.test_enhancement_features.TestHealthRecordsAPI" name="test_create_health_record" time="0.307"><failure message="assert 520 == 200&#10; +  where 520 = &lt;Response [520]&gt;.status_code">tests/test_enhancement_features.py:156: in test_create_health_record
+    assert response.status_code == 200
+E   assert 520 == 200
+E    +  where 520 = &lt;Response [520]&gt;.status_code</failure></testcase><testcase classname="tests.test_enhancement_features.TestHealthRecordsAPI" name="test_delete_health_record" time="0.301"><failure message="assert 520 == 200&#10; +  where 520 = &lt;Response [520]&gt;.status_code">tests/test_enhancement_features.py:179: in test_delete_health_record
+    assert create_response.status_code == 200
+E   assert 520 == 200
+E    +  where 520 = &lt;Response [520]&gt;.status_code</failure></testcase><testcase classname="tests.test_enhancement_features.TestMedicineReorderAPI" name="test_reorder_requires_auth" time="0.032"><failure message="assert 520 == 401&#10; +  where 520 = &lt;Response [520]&gt;.status_code">tests/test_enhancement_features.py:247: in test_reorder_requires_auth
+    assert response.status_code == 401
+E   assert 520 == 401
+E    +  where 520 = &lt;Response [520]&gt;.status_code</failure></testcase><testcase classname="tests.test_enhancement_features.TestMedicineReorderAPI" name="test_reorder_returns_order_details" time="1.870"><failure message="assert 520 == 200&#10; +  where 520 = &lt;Response [520]&gt;.status_code">tests/test_enhancement_features.py:259: in test_reorder_returns_order_details
+    assert response.status_code == 200
+E   assert 520 == 200
+E    +  where 520 = &lt;Response [520]&gt;.status_code</failure></testcase><testcase classname="tests.test_enhancement_features.TestMedicineReorderAPI" name="test_reorder_invalid_order_returns_404" time="0.719"><failure message="assert 520 == 404&#10; +  where 520 = &lt;Response [520]&gt;.status_code">tests/test_enhancement_features.py:276: in test_reorder_invalid_order_returns_404
+    assert response.status_code == 404
+E   assert 520 == 404
+E    +  where 520 = &lt;Response [520]&gt;.status_code</failure></testcase><testcase classname="tests.test_enhancement_features.TestAppointmentReminders" name="test_send_reminder_invalid_appointment_returns_404" time="0.033" /></testsuite></testsuites>
