@@ -66,7 +66,7 @@ const Home = () => {
       name: 'Evara',
       logo: '/icons/evara-logo.png',
       description: "Women's Wellness & Care Program",
-      bgColor: 'bg-gradient-to-br from-purple-100 to-pink-100',
+      bgColor: 'bg-purple-200',
       accentColor: 'border-purple-500',
       path: '/evara',
       logoBg: 'bg-purple-200'
