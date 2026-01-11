@@ -237,14 +237,14 @@ const Home = () => {
               
               {/* Logo - takes most space */}
               <div 
-                className={`flex items-center justify-center flex-1 ${service.id === 'evara' || service.stretchLogo ? '' : 'rounded-xl p-2'} ${service.logoBg}`}
-                style={service.customBg && !service.stretchLogo ? { backgroundColor: service.customBg } : {}}
+                className={`flex items-center justify-center flex-1 ${service.id === 'evara' || service.id === 'glydex' ? '' : 'rounded-xl p-2'} ${service.logoBg}`}
+                style={service.customBg ? { backgroundColor: service.customBg } : {}}
               >
                 <img 
                   src={service.logo} 
                   alt={service.name} 
                   className={`transition-transform group-hover:scale-105 ${
-                    service.id === 'evara' ? 'w-full h-auto max-h-32 object-contain' : 
+                    service.id === 'evara' || service.id === 'glydex' ? 'w-full h-auto max-h-32 object-contain' : 
                     service.stretchLogo ? 'absolute inset-0 w-full h-full object-cover' :
                     service.logoRounded ? 'w-auto max-h-28 rounded-xl shadow-md object-contain' :
                     'w-auto max-h-28 mix-blend-multiply object-contain'
