@@ -6226,9 +6226,10 @@ async def get_glydex_profile(user = Depends(get_current_user)):
 
 @api_router.post("/glydex/profile")
 async def save_glydex_profile(data: GlydexProfile, user = Depends(get_current_user)):
-    """Save or update user's Glydex diabetes profile"""
+    """Save or update user's Glydex diabetes profile with extended diabetes info"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
+    
     profile_data = {
         "user_id": user.id,
         "diabetesType": data.diabetesType,
@@ -6237,6 +6238,19 @@ async def save_glydex_profile(data: GlydexProfile, user = Depends(get_current_us
         "height": data.height,
         "weight": data.weight,
         "medications": data.medications,
+        # Extended diabetes fields
+        "dateOfDiagnosis": data.dateOfDiagnosis,
+        "hba1cTarget": data.hba1cTarget,
+        "currentMedications": data.currentMedications or [],
+        "insulinUser": data.insulinUser,
+        "complications": data.complications or [],
+        "emergencyContactName": data.emergencyContactName,
+        "emergencyContactPhone": data.emergencyContactPhone,
+        # Reminder preferences
+        "testReminders": data.testReminders if data.testReminders is not None else True,
+        "medicineReminders": data.medicineReminders if data.medicineReminders is not None else True,
+        "lastHba1cDate": data.lastHba1cDate,
+        "lastKidneyTestDate": data.lastKidneyTestDate,
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
     
@@ -6246,7 +6260,191 @@ async def save_glydex_profile(data: GlydexProfile, user = Depends(get_current_us
         upsert=True
     )
     
-    return {"success": True, "message": "Profile saved"}
+    # Schedule initial reminders if enabled
+    if data.testReminders:
+        await schedule_glydex_test_reminders(user.id, profile_data)
+    
+    return {"success": True, "message": "Profile saved with diabetes information"}
+
+
+async def schedule_glydex_test_reminders(user_id: str, profile: dict):
+    """Schedule test reminders based on diabetes profile"""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+    # HbA1c reminder (every 3 months)
+    last_hba1c = profile.get("lastHba1cDate")
+    if last_hba1c:
+        next_hba1c = (datetime.strptime(last_hba1c, "%Y-%m-%d") + timedelta(days=90)).strftime("%Y-%m-%d")
+    else:
+        next_hba1c = (datetime.now(timezone.utc) + timedelta(days=7)).strftime("%Y-%m-%d")  # Remind in 7 days if no record
+    
+    # Kidney function test reminder (yearly)
+    last_kidney = profile.get("lastKidneyTestDate")
+    if last_kidney:
+        next_kidney = (datetime.strptime(last_kidney, "%Y-%m-%d") + timedelta(days=365)).strftime("%Y-%m-%d")
+    else:
+        next_kidney = (datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%d")  # Remind in 30 days if no record
+    
+    # Store reminders in DB
+    await db.glydex_reminders.update_one(
+        {"user_id": user_id},
+        {"$set": {
+            "user_id": user_id,
+            "hba1c_next_date": next_hba1c,
+            "kidney_test_next_date": next_kidney,
+            "fbs_reminder_enabled": True,
+            "created_at": today,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }},
+        upsert=True
+    )
+
+
+@api_router.get("/glydex/reminders")
+async def get_glydex_reminders(user = Depends(get_current_user)):
+    """Get user's Glydex test and medicine reminders"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    reminders = await db.glydex_reminders.find_one(
+        {"user_id": user.id},
+        {"_id": 0}
+    )
+    
+    # Get last medicine order for refill reminder
+    last_order = await db.pharmacy_orders.find_one(
+        {"user_id": user.id},
+        {"_id": 0},
+        sort=[("created_at", -1)]
+    )
+    
+    medicine_refill_date = None
+    if last_order:
+        order_date = last_order.get("created_at", "")[:10]
+        if order_date:
+            medicine_refill_date = (datetime.strptime(order_date, "%Y-%m-%d") + timedelta(days=30)).strftime("%Y-%m-%d")
+    
+    return {
+        "reminders": reminders,
+        "medicine_refill_date": medicine_refill_date,
+        "last_order": last_order
+    }
+
+
+@api_router.post("/glydex/reminders/update-test-date")
+async def update_glydex_test_date(
+    test_type: str,
+    date: str,
+    user = Depends(get_current_user)
+):
+    """Update last test date and reschedule reminder"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    if test_type == "hba1c":
+        next_date = (datetime.strptime(date, "%Y-%m-%d") + timedelta(days=90)).strftime("%Y-%m-%d")
+        await db.glydex_profiles.update_one(
+            {"user_id": user.id},
+            {"$set": {"lastHba1cDate": date}}
+        )
+        await db.glydex_reminders.update_one(
+            {"user_id": user.id},
+            {"$set": {"hba1c_next_date": next_date}},
+            upsert=True
+        )
+    elif test_type == "kidney":
+        next_date = (datetime.strptime(date, "%Y-%m-%d") + timedelta(days=365)).strftime("%Y-%m-%d")
+        await db.glydex_profiles.update_one(
+            {"user_id": user.id},
+            {"$set": {"lastKidneyTestDate": date}}
+        )
+        await db.glydex_reminders.update_one(
+            {"user_id": user.id},
+            {"$set": {"kidney_test_next_date": next_date}},
+            upsert=True
+        )
+    
+    return {"success": True, "next_reminder_date": next_date}
+
+
+@api_router.post("/glydex/send-due-reminders")
+async def send_due_glydex_reminders(admin = Depends(verify_admin)):
+    """Admin endpoint to trigger sending of due reminders (run daily via cron)"""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    sent_count = 0
+    
+    # Get all users with due HbA1c reminders
+    due_hba1c = await db.glydex_reminders.find(
+        {"hba1c_next_date": {"$lte": today}},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    for reminder in due_hba1c:
+        user = await db.users.find_one({"id": reminder["user_id"]}, {"_id": 0})
+        if user:
+            await send_push_notification(
+                user_id=reminder["user_id"],
+                title="🩸 HbA1c Test Due",
+                body="It's time for your quarterly HbA1c test. Book now on Proton Diagnostics!",
+                url="/proton?preselect=HbA1c",
+                tag="glydex-hba1c-reminder"
+            )
+            sent_count += 1
+    
+    # Get all users with due kidney test reminders
+    due_kidney = await db.glydex_reminders.find(
+        {"kidney_test_next_date": {"$lte": today}},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    for reminder in due_kidney:
+        user = await db.users.find_one({"id": reminder["user_id"]}, {"_id": 0})
+        if user:
+            await send_push_notification(
+                user_id=reminder["user_id"],
+                title="🧪 Kidney Function Test Due",
+                body="Your annual kidney function test is due. Important for diabetes care!",
+                url="/proton?preselect=Kidney%20Function%20Test",
+                tag="glydex-kidney-reminder"
+            )
+            sent_count += 1
+    
+    # Medicine refill reminders (30 days from last order)
+    thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).strftime("%Y-%m-%d")
+    
+    # Get Glydex users with medicine reminders enabled
+    glydex_users = await db.glydex_profiles.find(
+        {"medicineReminders": True},
+        {"_id": 0, "user_id": 1}
+    ).to_list(1000)
+    
+    for profile in glydex_users:
+        user_id = profile["user_id"]
+        
+        # Check last pharmacy order
+        last_order = await db.pharmacy_orders.find_one(
+            {"user_id": user_id},
+            {"_id": 0},
+            sort=[("created_at", -1)]
+        )
+        
+        if last_order:
+            order_date = last_order.get("created_at", "")[:10]
+            if order_date and order_date <= thirty_days_ago:
+                # Send refill reminder
+                medicines = last_order.get("medicines", [])
+                medicine_names = ", ".join([m.get("name", "") for m in medicines[:3]])
+                
+                await send_push_notification(
+                    user_id=user_id,
+                    title="💊 Medicine Refill Reminder",
+                    body=f"Time to refill: {medicine_names}... Reorder now!",
+                    url="/pharmacy",
+                    tag="glydex-medicine-refill"
+                )
+                sent_count += 1
+    
+    return {"success": True, "reminders_sent": sent_count}
 
 @api_router.get("/glydex/sugar-logs")
 async def get_sugar_logs(user = Depends(get_current_user)):
