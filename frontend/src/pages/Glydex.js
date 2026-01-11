@@ -313,7 +313,7 @@ const DIABETIC_TESTS = [
   { id: "liver", name: "Liver Function Test (LFT)", description: "Checks liver health - important if on medications", frequency: "Yearly" }
 ];
 
-const Omnia = () => {
+const Glydex = () => {
   const navigate = useNavigate();
   const { user, token: authToken } = useAuth();
   
@@ -375,7 +375,7 @@ const Omnia = () => {
 
   const fetchProfile = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/omnia/profile`, {
+      const response = await fetch(`${API_URL}/api/glydex/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.ok) {
@@ -392,7 +392,7 @@ const Omnia = () => {
 
   const fetchSugarLogs = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/omnia/sugar-logs`, {
+      const response = await fetch(`${API_URL}/api/glydex/sugar-logs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.ok) {
@@ -407,10 +407,10 @@ const Omnia = () => {
   const fetchHba1cData = async () => {
     try {
       const [logsRes, trendRes] = await Promise.all([
-        fetch(`${API_URL}/api/omnia/hba1c-logs`, {
+        fetch(`${API_URL}/api/glydex/hba1c-logs`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`${API_URL}/api/omnia/hba1c-trend`, {
+        fetch(`${API_URL}/api/glydex/hba1c-trend`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -443,7 +443,7 @@ const Omnia = () => {
     
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/omnia/hba1c-logs`, {
+      const response = await fetch(`${API_URL}/api/glydex/hba1c-logs`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -471,7 +471,7 @@ const Omnia = () => {
 
   const handleDeleteHba1c = async (logId) => {
     try {
-      const response = await fetch(`${API_URL}/api/omnia/hba1c-logs/${logId}`, {
+      const response = await fetch(`${API_URL}/api/glydex/hba1c-logs/${logId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -508,7 +508,7 @@ const Omnia = () => {
     // Pass selected tests via URL params
     const testsParam = encodeURIComponent(selectedDiabeticTests.join(','));
     setShowTests(false);
-    navigate(`/proton?tests=${testsParam}&from=omnia`);
+    navigate(`/proton?tests=${testsParam}&from=glydex`);
   };
 
   const handleSaveProfile = async () => {
@@ -518,7 +518,7 @@ const Omnia = () => {
     }
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/omnia/profile`, {
+      const response = await fetch(`${API_URL}/api/glydex/profile`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -551,7 +551,7 @@ const Omnia = () => {
     
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/omnia/sugar-logs`, {
+      const response = await fetch(`${API_URL}/api/glydex/sugar-logs`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -613,7 +613,7 @@ const Omnia = () => {
               </Button>
               <img 
                 src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
-                alt="Omnia" 
+                alt="Glydex" 
                 className="h-12 w-auto"
               />
             </div>
@@ -638,7 +638,7 @@ const Omnia = () => {
             <div className="text-center mb-6">
               <Activity className="w-16 h-16 mx-auto text-teal-500 mb-4" />
               <h2 className="text-xl font-semibold mb-2">Login Required</h2>
-              <p className="text-gray-600">Please login to access Omnia Diabetes Care features</p>
+              <p className="text-gray-600">Please login to access Glydex Diabetes Care features</p>
             </div>
             <Button 
               onClick={() => navigate('/')}
@@ -664,7 +664,7 @@ const Omnia = () => {
               </Button>
               <img 
                 src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
-                alt="Omnia" 
+                alt="Glydex" 
                 className="h-10 w-auto"
               />
             </div>
@@ -1863,4 +1863,4 @@ const Omnia = () => {
   );
 };
 
-export default Omnia;
+export default Glydex;
