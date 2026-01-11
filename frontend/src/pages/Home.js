@@ -78,11 +78,11 @@ const Home = () => {
       name: 'Glydex',
       logo: '/glydex-logo.png',
       description: 'Diabetes Care Portal',
-      bgColor: 'bg-slate-50',
-      accentColor: 'border-slate-200',
+      bgColor: 'bg-slate-100',
+      accentColor: 'border-slate-300',
       path: '/glydex',
-      logoBg: 'bg-slate-50',
-      logoScale: 1.5
+      logoBg: '',
+      logoRounded: true
     }
   ];
 
