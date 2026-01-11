@@ -1,32 +1,30 @@
 """
 Nevika Cura - Services Package
+Utility services for notifications, integrations, etc.
 """
 
-from .email import send_email_notification, send_credentials_email
-from .sms import (
-    send_twilio_otp, 
-    verify_twilio_otp, 
-    send_whatsapp_notification, 
-    send_sms,
-    init_twilio
-)
-from .push import (
-    send_push_notification, 
-    subscribe_push, 
-    unsubscribe_push,
-    set_db as set_push_db
+from .notifications import (
+    send_sms_notification,
+    send_email_notification,
+    send_whatsapp_notification,
+    send_twilio_otp,
+    verify_twilio_otp,
+    send_appointment_sms,
+    send_pharmacy_order_sms,
+    send_diagnostic_order_sms,
+    twilio_client,
+    TWILIO_VERIFY_SERVICE_SID
 )
 
 __all__ = [
-    "send_email_notification",
-    "send_credentials_email",
+    "send_sms_notification",
+    "send_email_notification", 
+    "send_whatsapp_notification",
     "send_twilio_otp",
     "verify_twilio_otp",
-    "send_whatsapp_notification",
-    "send_sms",
-    "init_twilio",
-    "send_push_notification",
-    "subscribe_push",
-    "unsubscribe_push",
-    "set_push_db"
+    "send_appointment_sms",
+    "send_pharmacy_order_sms",
+    "send_diagnostic_order_sms",
+    "twilio_client",
+    "TWILIO_VERIFY_SERVICE_SID"
 ]
