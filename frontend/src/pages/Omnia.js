@@ -1292,7 +1292,7 @@ const Omnia = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <ScrollArea className="flex-1">
+          <div className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
             <div className="p-4 space-y-4">
               {/* What is it */}
               <Card className="bg-red-50 border-red-200">
