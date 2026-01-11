@@ -64,7 +64,7 @@
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+                background: #ffffff;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -76,32 +76,48 @@
                 opacity: 0;
                 pointer-events: none;
             }
+            .splash-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 40px;
+                background: radial-gradient(ellipse at center, rgba(230, 240, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+                border-radius: 50%;
+            }
             #splash-screen img {
-                width: 120px;
-                height: 120px;
-                border-radius: 24px;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-                margin-bottom: 20px;
+                width: 100px;
+                height: 100px;
+                margin-bottom: 12px;
             }
             #splash-screen h1 {
-                color: white;
                 font-family: 'Outfit', sans-serif;
-                font-size: 24px;
+                font-size: 28px;
                 font-weight: 600;
                 margin: 0;
+                letter-spacing: -0.5px;
+            }
+            #splash-screen h1 .nevika {
+                color: #6b21a8;
+            }
+            #splash-screen h1 .cura {
+                color: #16a34a;
             }
             #splash-screen p {
-                color: rgba(255,255,255,0.8);
+                color: #6b7280;
                 font-family: 'DM Sans', sans-serif;
-                font-size: 14px;
-                margin-top: 8px;
+                font-size: 12px;
+                font-weight: 500;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                margin-top: 6px;
             }
             .splash-loader {
                 margin-top: 30px;
-                width: 40px;
-                height: 40px;
-                border: 3px solid rgba(255,255,255,0.3);
-                border-top-color: white;
+                width: 36px;
+                height: 36px;
+                border: 3px solid rgba(107, 33, 168, 0.15);
+                border-top-color: #6b21a8;
                 border-radius: 50%;
                 animation: spin 1s linear infinite;
             }
@@ -113,9 +129,11 @@
     <body>
         <!-- Splash Screen for app-like experience -->
         <div id="splash-screen">
-            <img src="/icons/icon-192x192.png" alt="Nevika Cura" />
-            <h1>Nevika Cura</h1>
-            <p>A Healthcare Group</p>
+            <div class="splash-content">
+                <img src="/icons/icon-192x192.png" alt="Nevika Cura" />
+                <h1><span class="nevika">Nevika</span> <span class="cura">Cura</span></h1>
+                <p>A Healthcare Group</p>
+            </div>
             <div class="splash-loader"></div>
         </div>
         
