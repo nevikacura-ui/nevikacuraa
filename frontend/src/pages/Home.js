@@ -79,10 +79,10 @@ const Home = () => {
       logo: '/glydex-logo.png',
       description: 'Diabetes Care Portal',
       bgColor: 'bg-white',
-      accentColor: 'border-teal-500',
+      accentColor: 'border-purple-500',
       path: '/glydex',
-      logoBg: 'bg-teal-600',
-      customBg: '#0D9488'
+      logoBg: 'bg-purple-900',
+      customBg: '#1e1b4b'
     }
   ];
 
