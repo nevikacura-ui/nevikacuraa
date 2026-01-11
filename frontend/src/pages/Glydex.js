@@ -612,7 +612,7 @@ const Glydex = () => {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <img 
-                src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
+                src="/glydex-logo.png" 
                 alt="Glydex" 
                 className="h-12 w-auto"
               />
@@ -636,7 +636,7 @@ const Glydex = () => {
 
           <Card className="max-w-md mx-auto p-8 bg-white shadow-xl">
             <div className="text-center mb-6">
-              <Activity className="w-16 h-16 mx-auto text-teal-500 mb-4" />
+              <img src="/glydex-logo.png" alt="Glydex" className="w-24 h-24 mx-auto mb-4 object-contain" />
               <h2 className="text-xl font-semibold mb-2">Login Required</h2>
               <p className="text-gray-600">Please login to access Glydex Diabetes Care features</p>
             </div>
