@@ -846,18 +846,29 @@ async def verify_auth_otp(request: AuthOTPVerify):
     """Verify OTP for authentication via Twilio or fallback"""
     phone = request.phone.strip()
     otp = request.otp.strip()
+    otp_key = f"auth_{phone}"
     
     # Try Twilio verification first
     if twilio_client and TWILIO_VERIFY_SERVICE_SID:
         result = await verify_twilio_otp(phone, otp)
         if result["success"]:
             if result["valid"]:
-                # OTP verified - generate verification token
+                # OTP verified via Twilio - store verification state for registration
                 verification_token = str(uuid.uuid4())
+                auth_otp_storage[otp_key] = {
+                    "verified": True,
+                    "verification_token": verification_token,
+                    "expires_at": datetime.now(timezone.utc) + timedelta(minutes=30)
+                }
+                
+                # Check if user exists with this phone
+                existing_user = await db.users.find_one({"phone": phone}, {"_id": 0})
+                
                 return {
                     "success": True,
                     "verified": True,
                     "verification_token": verification_token,
+                    "user_exists": existing_user is not None,
                     "phone": phone,
                     "method": "sms"
                 }
@@ -871,8 +882,6 @@ async def verify_auth_otp(request: AuthOTPVerify):
             logger.warning(f"Twilio verify failed, trying mock: {result.get('error')}")
     
     # Fallback to mock OTP verification
-    otp_key = f"auth_{phone}"
-    
     if otp_key not in auth_otp_storage:
         raise HTTPException(status_code=400, detail="OTP not found. Please request a new OTP.")
     
