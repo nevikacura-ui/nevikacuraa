@@ -1319,10 +1319,22 @@ const Evara = () => {
       <Dialog open={showPCOSEducation} onOpenChange={setShowPCOSEducation}>
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto p-0">
           <DialogHeader className="p-4 bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
-            <DialogTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5" />
-              {PCOS_EDUCATION.title}
-            </DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-2">
+                <Activity className="w-5 h-5" />
+                {PCOS_EDUCATION.title}
+              </DialogTitle>
+              <Button 
+                size="sm" 
+                variant="secondary"
+                onClick={() => shareOnWhatsApp('pcos_guide')}
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                data-testid="share-pcos-btn"
+              >
+                <Share2 className="w-4 h-4 mr-1" />
+                Share
+              </Button>
+            </div>
           </DialogHeader>
           
           <Tabs defaultValue="overview" className="w-full">
