@@ -57,21 +57,21 @@ Build a modern healthcare application for "Nevika Cura" with four core services:
 - [x] **Test Coverage**: 19/19 tests passed (15 backend + 4 frontend)
 - [x] **Test File**: /app/tests/test_enhancement_features.py
 
-#### OMNIA - Diabetes Care Portal - FULLY TESTED ✅ (Jan 11, 2026)
+#### GLYDEX - Diabetes Care Portal - FULLY TESTED ✅ (Jan 11, 2026)
 Purpose: Patient-focused digital support system for diabetes management
 - [x] **Mandatory Login/Sign-Up**: Same auth system as main app (unified auth)
 - [x] **Blood Sugar Logging**:
   - Log FBS, PPBS, Random readings with date/time
   - Color-coded status (Normal/Pre-diabetic/High/Low)
   - Alert for abnormal values (<70 or >180 or >250 mg/dL)
-  - APIs: GET/POST/DELETE /api/omnia/sugar-logs, GET /api/omnia/sugar-stats
+  - APIs: GET/POST/DELETE /api/glydex/sugar-logs, GET /api/glydex/sugar-stats
 - [x] **HbA1c Trend Tracking** (NEW - Jan 11, 2026):
   - Log HbA1c test results with date, lab name, notes
   - Visual bar chart showing historical values
   - Color-coded status (Normal <5.7%, Pre-diabetic 5.7-6.4%, Good <7%, Fair <8%, Needs Attention >8%)
   - Trend analysis (improving/stable/worsening)
   - Summary stats: latest, average, lowest, highest
-  - APIs: GET/POST/DELETE /api/omnia/hba1c-logs, GET /api/omnia/hba1c-trend
+  - APIs: GET/POST/DELETE /api/glydex/hba1c-logs, GET /api/glydex/hba1c-trend
 - [x] **Diabetic Diet Plans**:
   - Indian-friendly vegetarian and non-vegetarian options
   - Breakfast, Lunch, Dinner, Snacks with calories
@@ -89,11 +89,11 @@ Purpose: Patient-focused digital support system for diabetes management
   - Emergency call buttons (112, clinic)
 - [x] **Order Medicine Redirect**: Links to Orange Pharmacy
 - [x] **Profile Data**: Diabetes type, age, gender, height, weight, medications
-- [x] **Homepage Card**: Teal background (#0D9488) with Omnia logo
+- [x] **Homepage Card**: Teal background (#0D9488) with Glydex logo
 - [x] **Footer Listed**: Under "Our Services"
 - [x] **Test Coverage (iteration_13)**: 17/17 tests passed (7 backend + 10 frontend)
 - [x] **Test Coverage (iteration_14)**: 35/35 tests passed (15 backend + 20 frontend) - Full authenticated flow
-- [x] **Test Files**: /app/tests/test_omnia_module.py, /app/tests/test_omnia_authenticated.py
+- [x] **Test Files**: /app/tests/test_glydex_module.py, /app/tests/test_glydex_authenticated.py
 
 #### Homepage Update - COMPLETED ✅ (Jan 11, 2026)
 - [x] Service cards now show only logo + tagline (removed duplicate service names)
