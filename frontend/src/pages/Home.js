@@ -72,7 +72,7 @@ const Home = () => {
       path: '/evara',
       logoBg: '',
       customBg: '#4A2463',
-      logoScale: 1.15
+      logoScale: 1.25
     },
     {
       id: 'glydex',
@@ -85,7 +85,8 @@ const Home = () => {
       logoBg: '',
       customBg: '#121f33',
       hideDecoration: true,
-      fillCard: true
+      fillCard: true,
+      logoScale: 0.90
     }
   ];
 
