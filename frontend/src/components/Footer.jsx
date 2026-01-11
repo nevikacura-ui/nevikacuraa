@@ -319,7 +319,7 @@ const Footer = () => {
               </a>
 
               <a 
-                href="https://wa.me/917039020020"
+                href="https://wa.me/919403890429"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-4 rounded-lg border hover:bg-green-50 transition-colors"
@@ -329,7 +329,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="font-medium text-gray-800">WhatsApp</p>
-                  <p className="text-sm text-gray-600">+91 7039020020</p>
+                  <p className="text-sm text-gray-600">+91 9403890429</p>
                 </div>
               </a>
 
