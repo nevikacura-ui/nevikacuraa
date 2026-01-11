@@ -298,7 +298,7 @@ const Profile = () => {
                 {diagnostics.map((order) => (
                   <Card key={order.id} className="p-6" data-testid={`diagnostic-${order.id}`}>
                     <div className="flex justify-between items-start">
-                      <div>
+                      <div className="flex-1">
                         <h3 className="font-heading text-lg font-semibold mb-2">Diagnostic Tests</h3>
                         <p className="font-body text-sm text-muted-foreground mb-2">
                           <strong>Preferred Date:</strong> {order.preferred_date}
@@ -312,9 +312,37 @@ const Profile = () => {
                           </ul>
                         </div>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
-                        {order.status}
-                      </span>
+                      <div className="flex flex-col items-end gap-2">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : order.status === 'Report Generated' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+                          {order.status}
+                        </span>
+                        {/* Download Invoice */}
+                        {order.invoice_url && (
+                          <a
+                            href={order.invoice_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100"
+                            data-testid={`download-invoice-${order.id}`}
+                          >
+                            <Download className="w-3 h-3" />
+                            Invoice
+                          </a>
+                        )}
+                        {/* Download Report */}
+                        {order.report_url && (
+                          <a
+                            href={order.report_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-xs font-medium hover:bg-green-100"
+                            data-testid={`download-report-${order.id}`}
+                          >
+                            <FileText className="w-3 h-3" />
+                            Report
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </Card>
                 ))}
@@ -354,6 +382,19 @@ const Profile = () => {
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : order.status === 'Delivered' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
                           {order.status}
                         </span>
+                        {/* Download Invoice */}
+                        {order.invoice_url && (
+                          <a
+                            href={order.invoice_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100"
+                            data-testid={`download-pharmacy-invoice-${order.id}`}
+                          >
+                            <Download className="w-3 h-3" />
+                            Invoice
+                          </a>
+                        )}
                         <Button
                           size="sm"
                           variant="outline"
