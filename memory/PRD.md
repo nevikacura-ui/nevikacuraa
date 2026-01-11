@@ -43,7 +43,28 @@ Build a modern healthcare application for "Nevika Cura" with four core services:
 - [x] **Wellness Reminders**: Custom reminders for medications, check-ins
 - [x] **AI-Generated Content**: Personalized tips and guidance per program
 - [x] **Safety Features**: Red flag detection, medical disclaimer, escalation to doctors
-- [x] **Homepage Integration**: Evara card with logo on main page
+- [x] **Homepage Integration**: Evara card with enlarged logo (25% larger), white background
+
+#### Evara Enhanced Features - NEW ✅
+- [x] **Separate Signup/Login**: Works with Nevika Cura auth system
+- [x] **Pregnancy Calculator**: 
+  - Calculate EDD using Naegele's rule (LMP + 280 days)
+  - Show current week & days of pregnancy
+  - Display trimester information
+  - Next milestone tracking
+  - Progress visualization
+- [x] **PMS Education Guide**: 
+  - Detailed physical & emotional symptoms
+  - Dietary changes, exercise & lifestyle tips
+  - Comprehensive management strategies
+- [x] **PCOS Guide with Tabs**:
+  - Overview tab: Symptoms, diagnosis methods
+  - Diet Plan tab: Foods to include/limit, sample meal plan
+  - Exercise tab: Weekly workout plan with details for each day
+- [x] **Period Tracker Enhanced**:
+  - Log period with flow intensity & symptoms
+  - Cycle prediction based on average length
+  - History view with past periods
 
 #### Splash Screen - UPDATED ✅
 - [x] White background
