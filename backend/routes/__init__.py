@@ -1,22 +1,23 @@
 """
 Nevika Cura - Routes Package
 All API route modules
+
+REFACTORING STATUS:
+- auth.py: Placeholder (routes in server.py)
+- appointments.py: Placeholder (routes in server.py)
+- pharmacy.py: Placeholder (routes in server.py)
+- diagnostics.py: Placeholder (routes in server.py)
+- admin.py: Placeholder (routes in server.py)
+- staff.py: Placeholder (routes in server.py)
+- push.py: Placeholder (routes in server.py)
+- evara.py: TODO - Move from server.py
+- omnia.py: TODO - Move from server.py
+
+All routes are currently defined in server.py for stability.
+Gradual migration to individual route files is recommended.
 """
 
-from .auth import router as auth_router
-from .appointments import router as appointments_router
-from .pharmacy import router as pharmacy_router
-from .diagnostics import router as diagnostics_router
-from .admin import router as admin_router
-from .staff import router as staff_router
-from .push import router as push_router
+# Placeholder imports - actual routes are in server.py
+# These will be populated during gradual migration
 
-__all__ = [
-    "auth_router",
-    "appointments_router", 
-    "pharmacy_router",
-    "diagnostics_router",
-    "admin_router",
-    "staff_router",
-    "push_router"
-]
+__all__ = []
