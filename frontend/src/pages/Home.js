@@ -235,7 +235,7 @@ const Home = () => {
               
               {/* Logo - takes most space */}
               <div 
-                className={`flex items-center justify-center flex-1 ${service.id === 'evara' ? '' : 'rounded-xl p-2'} ${service.logoBg}`}
+                className={`flex items-center justify-center flex-1 ${service.id === 'evara' || service.fullBleed ? '' : 'rounded-xl p-2'} ${service.logoBg}`}
                 style={service.customBg ? { backgroundColor: service.customBg } : {}}
               >
                 <img 
@@ -243,6 +243,7 @@ const Home = () => {
                   alt={service.name} 
                   className={`object-contain transition-transform group-hover:scale-105 ${
                     service.id === 'evara' ? 'w-full h-auto max-h-32' : 
+                    service.fullBleed ? 'w-full h-full object-cover' :
                     service.logoRounded ? 'w-auto max-h-28 rounded-xl shadow-md' :
                     'w-auto max-h-28 mix-blend-multiply'
                   }`}
