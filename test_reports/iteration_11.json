@@ -1,0 +1,89 @@
+{
+  "summary": "Evara Women's Wellness Module - Backlog Features Testing Complete. All features working correctly.",
+  "test_date": "2026-01-11",
+  "test_type": "Evara Backlog Features (Week-by-Week Guide, Home Services, Community Sessions)",
+  "overall_status": "PASS",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "backend_tests": {
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "tests": [
+      {"name": "test_get_programs_returns_5_programs", "status": "PASS", "endpoint": "GET /api/evara/programs"},
+      {"name": "test_get_all_weeks_returns_42_weeks", "status": "PASS", "endpoint": "GET /api/evara/pregnancy/all-weeks"},
+      {"name": "test_get_specific_week_content", "status": "PASS", "endpoint": "GET /api/evara/pregnancy/week/{week}"},
+      {"name": "test_invalid_week_returns_error", "status": "PASS", "endpoint": "GET /api/evara/pregnancy/week/{invalid}"},
+      {"name": "test_get_home_services_returns_4_services", "status": "PASS", "endpoint": "GET /api/evara/home-services"},
+      {"name": "test_home_services_include_expected_types", "status": "PASS", "endpoint": "GET /api/evara/home-services"},
+      {"name": "test_get_community_sessions_returns_6_sessions", "status": "PASS", "endpoint": "GET /api/evara/community/sessions"},
+      {"name": "test_community_sessions_include_upcoming_live", "status": "PASS", "endpoint": "GET /api/evara/community/sessions"},
+      {"name": "test_get_profile_without_auth_returns_401", "status": "PASS", "endpoint": "GET /api/evara/profile"},
+      {"name": "test_chat_endpoint_works", "status": "PASS", "endpoint": "POST /api/evara/chat"}
+    ]
+  },
+  "frontend_tests": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0,
+    "tests": [
+      {"name": "Evara main page loads at /evara", "status": "PASS"},
+      {"name": "Week-by-Week Guide button visible", "status": "PASS"},
+      {"name": "Home Services button visible", "status": "PASS"},
+      {"name": "Live Sessions button visible", "status": "PASS"},
+      {"name": "Week-by-Week Guide dialog opens and shows 42 weeks", "status": "PASS"},
+      {"name": "Clicking specific week shows detailed content", "status": "PASS"},
+      {"name": "Home Services dialog shows 4 services", "status": "PASS"},
+      {"name": "Live Sessions dialog shows upcoming live and 6 recorded sessions", "status": "PASS"},
+      {"name": "AI Chat opens and sends messages", "status": "PASS"},
+      {"name": "Pregnancy Calculator works (enter LMP, get EDD)", "status": "PASS"},
+      {"name": "All dialogs close properly", "status": "PASS"}
+    ]
+  },
+  "features_verified": {
+    "week_by_week_pregnancy_guide": {
+      "status": "WORKING",
+      "details": "Dialog opens, shows 42 weeks organized by trimester, clicking week shows baby development, mom changes, and tips"
+    },
+    "home_services": {
+      "status": "WORKING",
+      "details": "Dialog shows 4 services: Postnatal Nurse Visit, Lactation Consultant, Women's Physiotherapy, Home Sample Collection"
+    },
+    "community_live_sessions": {
+      "status": "WORKING",
+      "details": "Dialog shows upcoming live session (Monthly Q&A) and 6 recorded sessions with Watch Now buttons"
+    },
+    "ai_chat": {
+      "status": "WORKING",
+      "details": "Chat dialog opens, accepts messages, AI responds appropriately"
+    },
+    "pregnancy_calculator": {
+      "status": "WORKING",
+      "details": "Calculates weeks pregnant, EDD, trimester, days until due, and next milestone"
+    }
+  },
+  "test_report_links": [
+    "/app/tests/test_evara_module.py",
+    "/app/test_reports/pytest/pytest_evara_module.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/tests/test_evara_module.py"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100%"
+  },
+  "seed_data_creation": "None required - all data is static/hardcoded in backend",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Evara module backlog features fully tested and working. Test file /app/tests/test_evara_module.py covers all Evara API endpoints. AI Chat uses Claude via emergentintegrations library with EMERGENT_LLM_KEY."
+}
