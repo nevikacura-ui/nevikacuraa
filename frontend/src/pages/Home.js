@@ -420,6 +420,11 @@ const AuthModal = ({ open, onClose }) => {
       const response = await verifyAuthOtp(phone, otpValue);
       setUserExists(response.user_exists);
       
+      // Store verification token for registration
+      if (response.verification_token) {
+        setVerificationToken(response.verification_token);
+      }
+      
       if (response.user_exists) {
         // User exists - login directly
         await loginWithOtp(phone, otpValue);
