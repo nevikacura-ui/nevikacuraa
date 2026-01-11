@@ -1,6 +1,6 @@
 """
 Nevika Cura - Configuration
-Application constants, clinic data, inventory, and settings
+Application constants, clinic data, and settings
 """
 
 import os
@@ -14,20 +14,41 @@ MONGO_URL = os.environ.get("MONGO_URL")
 DB_NAME = os.environ.get("DB_NAME", "nevikacura")
 JWT_SECRET = os.environ.get("JWT_SECRET", "nevika-cura-jwt-secret-key-2025")
 JWT_ALGORITHM = "HS256"
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
+
+# Email Configuration
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
+NOTIFICATION_EMAIL = os.environ.get("NOTIFICATION_EMAIL", "nevikacura@gmail.com")
+SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "Nevika Cura <onboarding@resend.dev>")
+
+# Twilio Configuration
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "")
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "")
+TWILIO_PHONE_NUMBER = os.environ.get("TWILIO_PHONE_NUMBER", "")
+TWILIO_WHATSAPP_FROM = os.environ.get("TWILIO_WHATSAPP_FROM", "")
+TWILIO_VERIFY_SERVICE_SID = os.environ.get("TWILIO_VERIFY_SERVICE_SID", "")
+
+# VAPID Configuration for Web Push
+VAPID_PUBLIC_KEY = os.environ.get("VAPID_PUBLIC_KEY", "")
+VAPID_PRIVATE_KEY = os.environ.get("VAPID_PRIVATE_KEY", "")
+VAPID_CLAIMS_EMAIL = os.environ.get("VAPID_CLAIMS_EMAIL", "nevikacura@gmail.com")
+
+# Google Drive Configuration
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
+GOOGLE_DRIVE_REDIRECT_URI = os.environ.get("GOOGLE_DRIVE_REDIRECT_URI", "")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://cura-app.preview.emergentagent.com")
+
+# Admin Configuration
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "nevikacura2026")
+SIGNUP_WHATSAPP_NUMBER = os.environ.get("SIGNUP_WHATSAPP_NUMBER", "9833188288")
 
 
 # ============ WHATSAPP NUMBERS ============
 
 DOCTOR_WHATSAPP_NUMBERS = {
-    "Dr. Neha Patel": "9000000001",
-    "Dr. Vikas Jha": "9000000002",
+    "Dr. Neha Patel": "917045266466",
+    "Dr. Vikas Jha": "919930266466",
 }
-
-SIGNUP_WHATSAPP_NUMBER = "9000000003"
-PHARMACY_WHATSAPP_NUMBER = "9000000004"
-DIAGNOSTICS_WHATSAPP_NUMBER = "9000000005"
 
 
 # ============ CLINIC CONFIGURATION ============
@@ -37,7 +58,7 @@ CLINICS = {
     "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Neha Patel"]
 }
 
-# Doctor-to-Clinics mapping (which clinics each doctor works at)
+# Doctor-to-Clinics mapping
 DOCTOR_CLINICS = {
     "Dr. Neha Patel": ["Pushpa Clinic", "Amnion Clinic"],
     "Dr. Vikas Jha": ["Pushpa Clinic", "Amnion Clinic"]
@@ -82,19 +103,25 @@ STAFF_ROLES = {
 }
 
 
-# ============ APPOINTMENT STATUSES ============
+# ============ STATUS CONFIGURATIONS ============
 
-APPOINTMENT_STATUSES = ["pending", "Booked", "In Clinic", "Completed", "Cancelled", "No Show"]
-ACTIVE_STATUSES = ["pending", "Booked", "In Clinic", "Completed"]  # Used for slot blocking
+# Appointment Statuses
+APPOINTMENT_STATUSES = ["Booked", "In Clinic", "Completed", "Cancelled", "No Show"]
+ACTIVE_STATUSES = ["pending", "Booked", "In Clinic", "Completed"]
 
-DIAGNOSTIC_STATUSES = ["Test Booked", "Sample Collected", "Processing", "Report Ready", "Delivered"]
-PHARMACY_STATUSES = ["Order Received", "Preparing", "Ready for Pickup", "Out for Delivery", "Delivered"]
+# Appointment Types
+APPOINTMENT_TYPES = ["NORMAL", "EMERGENCY"]
+MAX_EMERGENCY_PER_DOCTOR_PER_DAY = 10
 
+# Pharmacy Order Statuses
+PHARMACY_STATUSES = ["Order Booked", "Packing", "Out for Delivery", "Delivered"]
 
-# ============ EMAIL CONFIGURATION ============
+# Diagnostic Order Statuses
+DIAGNOSTIC_STATUSES = ["Test Booked", "Sample Collected", "In Process", "Reports Generated"]
 
-EMAIL_FROM = "Nevika Cura <noreply@resend.dev>"
-EMAIL_ADMIN = "admin@nevikacura.com"
+# Add-on Service Types
+SERVICE_TYPES = ["BLOOD_TEST", "SONOGRAPHY", "ECG"]
+SERVICE_STATUSES = ["ORDERED", "SAMPLE_COLLECTED", "PROCESSING", "COMPLETED"]
 
 
 # ============ FILE UPLOAD PATHS ============
