@@ -1,5 +1,34 @@
 # Nevika Cura Healthcare - Changelog
 
+## [January 11, 2026] - Twilio SMS OTP Integration
+
+### Added
+- **Real SMS OTP via Twilio Verify API:**
+  - Auth OTP (login/register) uses Twilio Verify Service
+  - Order OTP (DiaGyn, Proton, Pharmacy) uses Twilio Verify Service
+  - Auto-formats Indian phone numbers with +91 prefix
+  - 5-minute OTP expiry
+  - Rate limiting via Twilio (prevents brute force)
+
+- **Frontend Updates:**
+  - Green SMS confirmation banner when real OTP sent
+  - Yellow test mode banner only when using mock fallback
+  - Dynamic message based on `method` field in API response
+
+- **Graceful Fallback:**
+  - Falls back to mock OTP if Twilio unavailable
+  - Mock OTP display only shown when using fallback
+
+- **Environment Variables:**
+  - `TWILIO_PHONE_NUMBER` - SMS sender number
+  - `TWILIO_VERIFY_SERVICE_SID` - For OTP verification
+
+### Testing
+- Verified SMS delivery to Indian numbers
+- Response shows `"method": "sms"` when real SMS sent
+
+---
+
 ## [January 10, 2026] - Push Notifications & Feedback System
 
 ### Added
