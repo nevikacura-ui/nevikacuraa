@@ -552,21 +552,98 @@ class LoginWithOTP(BaseModel):
     phone: str
     otp: str
 
-# Store for auth OTPs (separate from order OTPs)
+# Store for auth OTPs (used as fallback when Twilio is not available)
 auth_otp_storage = {}
+
+# Helper function to send OTP via Twilio Verify
+async def send_twilio_otp(phone: str) -> dict:
+    """Send OTP via Twilio Verify Service"""
+    if not twilio_client or not TWILIO_VERIFY_SERVICE_SID:
+        return {"success": False, "error": "Twilio not configured"}
+    
+    try:
+        # Format phone number for India (add +91 if needed)
+        formatted_phone = phone.strip()
+        if not formatted_phone.startswith('+'):
+            if len(formatted_phone) == 10:
+                formatted_phone = f"+91{formatted_phone}"
+            else:
+                formatted_phone = f"+{formatted_phone}"
+        
+        verification = await asyncio.to_thread(
+            twilio_client.verify.v2.services(TWILIO_VERIFY_SERVICE_SID)
+            .verifications.create,
+            to=formatted_phone,
+            channel="sms"
+        )
+        
+        logger.info(f"Twilio OTP sent to {formatted_phone}: status={verification.status}")
+        return {"success": True, "status": verification.status, "phone": formatted_phone}
+    
+    except Exception as e:
+        logger.error(f"Twilio OTP send failed: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+# Helper function to verify OTP via Twilio Verify
+async def verify_twilio_otp(phone: str, code: str) -> dict:
+    """Verify OTP via Twilio Verify Service"""
+    if not twilio_client or not TWILIO_VERIFY_SERVICE_SID:
+        return {"success": False, "error": "Twilio not configured"}
+    
+    try:
+        # Format phone number for India (add +91 if needed)
+        formatted_phone = phone.strip()
+        if not formatted_phone.startswith('+'):
+            if len(formatted_phone) == 10:
+                formatted_phone = f"+91{formatted_phone}"
+            else:
+                formatted_phone = f"+{formatted_phone}"
+        
+        verification_check = await asyncio.to_thread(
+            twilio_client.verify.v2.services(TWILIO_VERIFY_SERVICE_SID)
+            .verification_checks.create,
+            to=formatted_phone,
+            code=code
+        )
+        
+        is_valid = verification_check.status == "approved"
+        logger.info(f"Twilio OTP verify for {formatted_phone}: status={verification_check.status}, valid={is_valid}")
+        return {"success": True, "valid": is_valid, "status": verification_check.status}
+    
+    except Exception as e:
+        error_msg = str(e)
+        logger.error(f"Twilio OTP verify failed: {error_msg}")
+        # Check for specific error codes
+        if "60202" in error_msg or "Max check attempts reached" in error_msg:
+            return {"success": False, "error": "Too many attempts. Please request a new OTP.", "code": "MAX_ATTEMPTS"}
+        if "60200" in error_msg or "Invalid parameter" in error_msg:
+            return {"success": False, "error": "Invalid OTP code.", "code": "INVALID"}
+        return {"success": False, "error": error_msg}
 
 @api_router.post("/auth/otp/send")
 async def send_auth_otp(request: AuthOTPRequest):
-    """Send OTP for authentication (login/register)"""
+    """Send OTP for authentication (login/register) via Twilio SMS"""
     phone = request.phone.strip()
     
     if not phone or len(phone) < 10:
         raise HTTPException(status_code=400, detail="Invalid phone number")
     
-    # Generate OTP
-    otp = generate_otp()
+    # Try Twilio first
+    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
+        result = await send_twilio_otp(phone)
+        if result["success"]:
+            return {
+                "success": True,
+                "message": "OTP sent to your phone via SMS",
+                "expires_in": 300,
+                "phone": phone,
+                "method": "sms"
+            }
+        else:
+            logger.warning(f"Twilio failed, falling back to mock OTP: {result.get('error')}")
     
-    # Store OTP with expiry (5 minutes)
+    # Fallback to mock OTP (for development/testing)
+    otp = generate_otp()
     otp_key = f"auth_{phone}"
     auth_otp_storage[otp_key] = {
         "otp": otp,
@@ -574,22 +651,47 @@ async def send_auth_otp(request: AuthOTPRequest):
         "attempts": 0
     }
     
-    logger.info(f"Auth OTP generated for {phone}: {otp}")
+    logger.info(f"Mock OTP generated for {phone}: {otp}")
     
     return {
         "success": True,
         "message": "OTP sent successfully",
-        "mock_otp": otp,  # REMOVE IN PRODUCTION
+        "mock_otp": otp,  # Only shown when using fallback
         "expires_in": 300,
-        "phone": phone
+        "phone": phone,
+        "method": "mock"
     }
 
 @api_router.post("/auth/otp/verify")
 async def verify_auth_otp(request: AuthOTPVerify):
-    """Verify OTP for authentication"""
+    """Verify OTP for authentication via Twilio or fallback"""
     phone = request.phone.strip()
     otp = request.otp.strip()
     
+    # Try Twilio verification first
+    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
+        result = await verify_twilio_otp(phone, otp)
+        if result["success"]:
+            if result["valid"]:
+                # OTP verified - generate verification token
+                verification_token = str(uuid.uuid4())
+                return {
+                    "success": True,
+                    "verified": True,
+                    "verification_token": verification_token,
+                    "phone": phone,
+                    "method": "sms"
+                }
+            else:
+                raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
+        else:
+            error_code = result.get("code", "")
+            if error_code == "MAX_ATTEMPTS":
+                raise HTTPException(status_code=400, detail=result["error"])
+            # Fall through to mock verification
+            logger.warning(f"Twilio verify failed, trying mock: {result.get('error')}")
+    
+    # Fallback to mock OTP verification
     otp_key = f"auth_{phone}"
     
     if otp_key not in auth_otp_storage:
