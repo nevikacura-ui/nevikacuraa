@@ -24,6 +24,10 @@ import resend
 import json
 from pywebpush import webpush, WebPushException
 
+# Import data from modular files
+from data.medicine_inventory import MEDICINE_INVENTORY
+from data.diagnostic_tests import DIAGNOSTIC_TESTS, DIAGNOSTIC_TEST_PRICES
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
