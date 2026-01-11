@@ -7243,6 +7243,10 @@ async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpd
             tag=f"pharmacy-{order_id}"
         )
     
+    # Send SMS to patient for status updates
+    if order.get('patient_phone') and update.status in ["Packing", "Out for Delivery", "Delivered"]:
+        await send_pharmacy_status_sms(order.get('patient_phone'), order_id, update.status)
+    
     # Send email to ADMIN only (internal tracking)
     email_html = f"""
     <h2>📦 Pharmacy Order Status Update</h2>
