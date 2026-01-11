@@ -1,0 +1,13 @@
+#!/bin/bash
+# Daily reminder cron job for Nevika Cura
+API_URL="https://health-modules-2.preview.emergentagent.com"
+CRON_SECRET="nevikacura_cron_2026"
+
+# Send follow-up reminders
+curl -s -X POST "$API_URL/api/cron/send-follow-up-reminders?secret=$CRON_SECRET" >> /var/log/nevika_cron.log 2>&1
+
+# Send Glydex test/medicine reminders (admin endpoint)
+curl -s -X POST "$API_URL/api/glydex/send-due-reminders" \
+  -H "Authorization: Bearer ADMIN_TOKEN" >> /var/log/nevika_cron.log 2>&1
+
+echo "$(date): Cron job completed" >> /var/log/nevika_cron.log
