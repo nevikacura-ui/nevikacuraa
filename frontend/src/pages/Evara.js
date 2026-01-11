@@ -339,6 +339,13 @@ const Evara = () => {
   const [showPregnancyCalc, setShowPregnancyCalc] = useState(false);
   const [showPMSEducation, setShowPMSEducation] = useState(false);
   const [showPCOSEducation, setShowPCOSEducation] = useState(false);
+  const [showHomeServices, setShowHomeServices] = useState(false);
+  const [showCommunity, setShowCommunity] = useState(false);
+  const [showPregnancyWeeks, setShowPregnancyWeeks] = useState(false);
+  const [homeServices, setHomeServices] = useState([]);
+  const [communitySessions, setCommunitySessions] = useState([]);
+  const [pregnancyWeeks, setPregnancyWeeks] = useState([]);
+  const [selectedWeek, setSelectedWeek] = useState(null);
   const [activeProgram, setActiveProgram] = useState(null);
   const [programContent, setProgramContent] = useState(null);
   const [user, setUser] = useState(null);
