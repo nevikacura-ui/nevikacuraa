@@ -199,6 +199,10 @@ const StaffPortal = () => {
   // Clinic staff - completed appointments view
   const [completedAppointments, setCompletedAppointments] = useState([]);
   const [loadingCompleted, setLoadingCompleted] = useState(false);
+  
+  // Daily collection summary
+  const [dailyCollection, setDailyCollection] = useState(null);
+  const [loadingCollection, setLoadingCollection] = useState(false);
 
   // Fee codes configuration
   const FEE_CODES = {
