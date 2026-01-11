@@ -1,10 +1,11 @@
 # Nevika Cura Healthcare Application - PRD
 
 ## Original Problem Statement
-Build a modern healthcare application for "Nevika Cura" with three core services:
+Build a modern healthcare application for "Nevika Cura" with four core services:
 1. **DiaGyn Healthcare** - Appointment booking for doctors
 2. **Proton Diagnostics** - Lab test booking
 3. **Orange Pharmacy** - Medicine ordering
+4. **Evara** - Women's Wellness & Care Program (NEW)
 
 ## Core Requirements
 
@@ -14,6 +15,7 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 | DiaGyn Healthcare | 9403890429 | 7039020020 | Appointment notifications |
 | Proton Diagnostics | 9403890429 | 7039040040 | Test booking notifications |
 | Orange Pharmacy | 9403890429 | 7039030030 | Medicine order notifications |
+| Evara | 9403890429 | - | Women's wellness support |
 
 ### User Flow
 - OTP-based login and registration (Real SMS via Twilio)
@@ -27,6 +29,21 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 ## What's Been Implemented ✅
 
 ### Date: January 11, 2026 - Latest Update (Current Session)
+
+#### EVARA - Women's Wellness Module - NEW ✅
+- [x] **AI Chat Companion**: Claude Sonnet 4.5 integration for empathetic wellness guidance
+- [x] **User Onboarding**: Age, pregnancy status, menstrual status, conditions collection
+- [x] **5 Auto-Assigned Programs**:
+  - Menstrual Health & Period Tracking
+  - PCOS & Hormonal Balance Program
+  - Pregnancy Education & Support
+  - Menopause & Perimenopause Care
+  - Women's Health Community
+- [x] **Period Tracker**: Log periods, symptoms, flow; predict next cycle
+- [x] **Wellness Reminders**: Custom reminders for medications, check-ins
+- [x] **AI-Generated Content**: Personalized tips and guidance per program
+- [x] **Safety Features**: Red flag detection, medical disclaimer, escalation to doctors
+- [x] **Homepage Integration**: Evara card with logo on main page
 
 #### Splash Screen - UPDATED ✅
 - [x] White background
