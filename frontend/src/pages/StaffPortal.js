@@ -1080,6 +1080,99 @@ const StaffPortal = () => {
       {/* Patient History Modal */}
       {showHistoryModal && historyModalContent}
       
+      {/* Doctor Completion Modal */}
+      {showCompletionModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-lg">
+            <div className="p-6 border-b bg-gradient-to-r from-green-500 to-emerald-600 rounded-t-lg">
+              <h3 className="text-lg font-semibold text-white">Complete Appointment</h3>
+              <p className="text-sm text-green-100">Patient: {completionAppointment?.patient_name}</p>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              {/* Fee Code Selection */}
+              <div>
+                <Label className="text-sm font-medium mb-3 block">Select Fee Code *</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.entries(FEE_CODES).map(([code, info]) => (
+                    <button
+                      key={code}
+                      onClick={() => setCompletionForm(prev => ({ ...prev, fee_code: code }))}
+                      className={`p-3 rounded-lg border text-left transition-all ${
+                        completionForm.fee_code === code
+                          ? 'border-green-500 bg-green-50 ring-2 ring-green-200'
+                          : 'border-gray-200 hover:border-green-300'
+                      }`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className={`text-xs font-bold px-2 py-1 rounded ${info.color}`}>{code}</span>
+                        <span className="font-bold text-green-600">₹{info.amount}</span>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-1">{info.label}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Follow-up Days */}
+              <div>
+                <Label className="text-sm font-medium mb-2 block">Next Follow-up After (days)</Label>
+                <div className="flex gap-2">
+                  {[7, 14, 21, 30, 60, 90].map(days => (
+                    <button
+                      key={days}
+                      onClick={() => setCompletionForm(prev => ({ ...prev, follow_up_days: days.toString() }))}
+                      className={`px-3 py-2 rounded-lg border text-sm ${
+                        completionForm.follow_up_days === days.toString()
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 hover:border-blue-300'
+                      }`}
+                    >
+                      {days}d
+                    </button>
+                  ))}
+                </div>
+                <Input
+                  type="number"
+                  placeholder="Or enter custom days"
+                  value={completionForm.follow_up_days}
+                  onChange={(e) => setCompletionForm(prev => ({ ...prev, follow_up_days: e.target.value }))}
+                  className="mt-2"
+                />
+              </div>
+              
+              {/* Notes */}
+              <div>
+                <Label className="text-sm font-medium mb-2 block">Notes (Optional)</Label>
+                <Input
+                  placeholder="Any additional notes..."
+                  value={completionForm.notes}
+                  onChange={(e) => setCompletionForm(prev => ({ ...prev, notes: e.target.value }))}
+                />
+              </div>
+            </div>
+            
+            <div className="p-4 border-t bg-gray-50 flex gap-3 rounded-b-lg">
+              <Button
+                variant="outline"
+                onClick={() => setShowCompletionModal(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDoctorCompleteAppointment}
+                disabled={!completionForm.fee_code || completingAppointment}
+                className="flex-1 bg-green-600 hover:bg-green-700"
+              >
+                {completingAppointment ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
+                Complete Appointment
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+      
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
