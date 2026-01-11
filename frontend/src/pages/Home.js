@@ -76,13 +76,12 @@ const Home = () => {
     {
       id: 'omnia',
       name: 'Omnia',
-      logo: 'https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/6hsg4xui_file_00000000c4247207a977591b05d5eb1d%20%281%29.png',
+      logo: 'https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png',
       description: 'Diabetes Care Portal',
-      bgColor: '',
-      accentColor: 'border-transparent',
+      bgColor: 'bg-gray-100',
+      accentColor: 'border-teal-500',
       path: '/omnia',
-      logoBg: '',
-      customBg: '#0D9488'
+      logoBg: 'bg-gray-100'
     }
   ];
 
