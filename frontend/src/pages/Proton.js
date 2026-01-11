@@ -230,6 +230,7 @@ const pathologyTests = {
 
 const Proton = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   
   // Step state: 1 = Select Tests, 2 = OTP Verification, 3 = Enter Details & Payment
@@ -250,6 +251,7 @@ const Proton = () => {
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('imaging');
+  const [fromOmnia, setFromOmnia] = useState(false);
 
   // OTP state
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -260,6 +262,20 @@ const Proton = () => {
   const [verificationToken, setVerificationToken] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef([]);
+
+  // Check for pre-selected tests from Omnia
+  useEffect(() => {
+    const testsParam = searchParams.get('tests');
+    const fromParam = searchParams.get('from');
+    
+    if (testsParam && fromParam === 'omnia') {
+      const preSelectedTests = decodeURIComponent(testsParam).split(',');
+      setSelectedTests(preSelectedTests);
+      setFromOmnia(true);
+      setActiveTab('blood'); // Switch to blood/pathology tab for diabetic tests
+      toast.success(`${preSelectedTests.length} diabetic test${preSelectedTests.length > 1 ? 's' : ''} pre-selected from Omnia`);
+    }
+  }, [searchParams]);
 
   // Resend timer countdown
   useEffect(() => {
