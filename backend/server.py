@@ -1498,7 +1498,8 @@ Booking ID: {appointment.id[:8]}"""
         "doctor": appointment.doctor,
         "clinic": appointment.clinic,
         "date": appointment.date,
-        "time": appointment.time
+        "time": appointment.time,
+        "booking_type": "online"
     })
     
     return appointment
