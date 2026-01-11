@@ -66,10 +66,10 @@ const Home = () => {
       name: 'Evara',
       logo: '/icons/evara-logo.png',
       description: "Women's Wellness & Care Program",
-      bgColor: 'bg-purple-100',
-      accentColor: 'border-purple-400',
+      bgColor: 'bg-gradient-to-br from-purple-100 to-pink-100',
+      accentColor: 'border-purple-500',
       path: '/evara',
-      logoBg: 'bg-purple-100'
+      logoBg: 'bg-purple-200'
     }
   ];
 
