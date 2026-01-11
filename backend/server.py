@@ -2379,6 +2379,15 @@ async def book_emergency_appointment(appt: EmergencyAppointment, staff = Depends
     # Send WhatsApp notification to doctor (EMERGENCY priority)
     await notify_doctor_whatsapp(appt.doctor, appointment, "emergency")
     
+    # Send SMS confirmation to patient
+    await send_appointment_sms(appt.patient_phone, {
+        "doctor": appt.doctor,
+        "clinic": appt.clinic,
+        "date": appt.date,
+        "time": None,
+        "booking_type": "emergency"
+    })
+    
     return {k: v for k, v in appointment.items() if k != "_id"}
 
 @api_router.get("/staff/emergency-count/{doctor}/{date}")
