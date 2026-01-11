@@ -1422,7 +1422,7 @@ const Omnia = () => {
                 </CardContent>
               </Card>
             </div>
-          </ScrollArea>
+          </div>
           
           <div className="p-4 bg-gray-100 border-t flex-shrink-0">
             <div className="flex gap-3 mb-3">
