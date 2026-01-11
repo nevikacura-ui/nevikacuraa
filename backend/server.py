@@ -5980,9 +5980,9 @@ async def get_evara_share_content(content_type: str):
         "whatsapp_url": whatsapp_url
     }
 
-# ============ OMNIA - DIABETES CARE PORTAL ============
+# ============ GLYDEX - DIABETES CARE PORTAL ============
 
-class OmniaProfile(BaseModel):
+class GlydexProfile(BaseModel):
     diabetesType: str
     age: str
     gender: str
@@ -5996,20 +5996,20 @@ class SugarLog(BaseModel):
     date: str
     time: Optional[str] = None
 
-@api_router.get("/omnia/profile")
-async def get_omnia_profile(user = Depends(get_current_user)):
-    """Get user's Omnia diabetes profile"""
+@api_router.get("/glydex/profile")
+async def get_glydex_profile(user = Depends(get_current_user)):
+    """Get user's Glydex diabetes profile"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
-    profile = await db.omnia_profiles.find_one(
+    profile = await db.glydex_profiles.find_one(
         {"user_id": user.id},
         {"_id": 0}
     )
     return {"profile": profile}
 
-@api_router.post("/omnia/profile")
-async def save_omnia_profile(data: OmniaProfile, user = Depends(get_current_user)):
-    """Save or update user's Omnia diabetes profile"""
+@api_router.post("/glydex/profile")
+async def save_glydex_profile(data: GlydexProfile, user = Depends(get_current_user)):
+    """Save or update user's Glydex diabetes profile"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
     profile_data = {
@@ -6023,7 +6023,7 @@ async def save_omnia_profile(data: OmniaProfile, user = Depends(get_current_user
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
     
-    await db.omnia_profiles.update_one(
+    await db.glydex_profiles.update_one(
         {"user_id": user.id},
         {"$set": profile_data},
         upsert=True
@@ -6031,18 +6031,18 @@ async def save_omnia_profile(data: OmniaProfile, user = Depends(get_current_user
     
     return {"success": True, "message": "Profile saved"}
 
-@api_router.get("/omnia/sugar-logs")
+@api_router.get("/glydex/sugar-logs")
 async def get_sugar_logs(user = Depends(get_current_user)):
     """Get user's blood sugar logs"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
-    logs = await db.omnia_sugar_logs.find(
+    logs = await db.glydex_sugar_logs.find(
         {"user_id": user.id},
         {"_id": 0}
     ).sort([("date", -1), ("time", -1)]).to_list(100)
     return {"logs": logs}
 
-@api_router.post("/omnia/sugar-logs")
+@api_router.post("/glydex/sugar-logs")
 async def add_sugar_log(data: SugarLog, user = Depends(get_current_user)):
     """Add a new blood sugar reading"""
     if not user:
@@ -6057,7 +6057,7 @@ async def add_sugar_log(data: SugarLog, user = Depends(get_current_user)):
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
-    await db.omnia_sugar_logs.insert_one(log)
+    await db.glydex_sugar_logs.insert_one(log)
     
     # Check for abnormal values and flag
     value = int(data.value)
@@ -6075,24 +6075,24 @@ async def add_sugar_log(data: SugarLog, user = Depends(get_current_user)):
         "alert": alert
     }
 
-@api_router.delete("/omnia/sugar-logs/{log_id}")
+@api_router.delete("/glydex/sugar-logs/{log_id}")
 async def delete_sugar_log(log_id: str, user = Depends(get_current_user)):
     """Delete a blood sugar log"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
-    result = await db.omnia_sugar_logs.delete_one(
+    result = await db.glydex_sugar_logs.delete_one(
         {"id": log_id, "user_id": user.id}
     )
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Log not found")
     return {"success": True}
 
-@api_router.get("/omnia/sugar-stats")
+@api_router.get("/glydex/sugar-stats")
 async def get_sugar_stats(user = Depends(get_current_user)):
     """Get blood sugar statistics for the user"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
-    logs = await db.omnia_sugar_logs.find(
+    logs = await db.glydex_sugar_logs.find(
         {"user_id": user.id}
     ).to_list(1000)
     
@@ -6128,18 +6128,18 @@ class HbA1cLog(BaseModel):
     lab_name: str = ""
     notes: str = ""
 
-@api_router.get("/omnia/hba1c-logs")
+@api_router.get("/glydex/hba1c-logs")
 async def get_hba1c_logs(user = Depends(get_current_user)):
     """Get user's HbA1c test history"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
-    logs = await db.omnia_hba1c_logs.find(
+    logs = await db.glydex_hba1c_logs.find(
         {"user_id": user.id},
         {"_id": 0}
     ).sort("date", -1).to_list(50)
     return {"logs": logs}
 
-@api_router.post("/omnia/hba1c-logs")
+@api_router.post("/glydex/hba1c-logs")
 async def add_hba1c_log(data: HbA1cLog, user = Depends(get_current_user)):
     """Add a new HbA1c test result"""
     if not user:
@@ -6159,7 +6159,7 @@ async def add_hba1c_log(data: HbA1cLog, user = Depends(get_current_user)):
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
-    await db.omnia_hba1c_logs.insert_one(log)
+    await db.glydex_hba1c_logs.insert_one(log)
     
     # Determine control status
     status = "excellent" if data.value < 6.5 else "good" if data.value < 7 else "fair" if data.value < 8 else "poor"
@@ -6170,25 +6170,25 @@ async def add_hba1c_log(data: HbA1cLog, user = Depends(get_current_user)):
         "status": status
     }
 
-@api_router.delete("/omnia/hba1c-logs/{log_id}")
+@api_router.delete("/glydex/hba1c-logs/{log_id}")
 async def delete_hba1c_log(log_id: str, user = Depends(get_current_user)):
     """Delete an HbA1c log"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
-    result = await db.omnia_hba1c_logs.delete_one(
+    result = await db.glydex_hba1c_logs.delete_one(
         {"id": log_id, "user_id": user.id}
     )
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Log not found")
     return {"success": True}
 
-@api_router.get("/omnia/hba1c-trend")
+@api_router.get("/glydex/hba1c-trend")
 async def get_hba1c_trend(user = Depends(get_current_user)):
     """Get HbA1c trend data for charting"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
     
-    logs = await db.omnia_hba1c_logs.find(
+    logs = await db.glydex_hba1c_logs.find(
         {"user_id": user.id},
         {"_id": 0, "value": 1, "date": 1}
     ).sort("date", 1).to_list(20)  # Last 20 readings chronologically

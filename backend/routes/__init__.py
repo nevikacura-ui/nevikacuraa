@@ -11,7 +11,7 @@ REFACTORING STATUS:
 - staff.py: Placeholder (routes in server.py)
 - push.py: Placeholder (routes in server.py)
 - evara.py: TODO - Move from server.py
-- omnia.py: TODO - Move from server.py
+- glydex.py: TODO - Move from server.py
 
 All routes are currently defined in server.py for stability.
 Gradual migration to individual route files is recommended.
