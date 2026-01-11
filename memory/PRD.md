@@ -90,11 +90,13 @@ Build a modern healthcare application for "Nevika Cura" with four core services:
 - [x] **Test Coverage**: 21/21 tests passed (10 backend + 11 frontend)
 - [x] **Test File**: /app/tests/test_evara_module.py
 
-#### Splash Screen - UPDATED ✅
+#### Splash Screen - FINALIZED ✅
 - [x] White background
 - [x] 220px app icon (enlarged for visibility)
 - [x] 4 teardrop-shaped bouncing loader (Purple, Red, Orange, Green)
+- [x] Subtle glow effect behind logo
 - [x] Matches app icon design aesthetic
+- [x] User approved (Jan 11, 2026)
 
 #### SMS Templates - UPDATED ✅
 - [x] Added "arrival time not consultation time" note for all appointment types
