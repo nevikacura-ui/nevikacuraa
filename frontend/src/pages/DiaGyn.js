@@ -351,9 +351,21 @@ const DiaGyn = () => {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
-          <h1 className="font-heading font-bold text-4xl mb-2 text-foreground">Book Appointment</h1>
-          <p className="font-body text-muted-foreground">Choose your doctor and preferred time slot</p>
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="font-heading font-bold text-4xl mb-2 text-foreground">Book Appointment</h1>
+            <p className="font-body text-muted-foreground">Choose your doctor and preferred time slot</p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={fetchWeeklyAvailability}
+            disabled={loadingAvailability}
+            className="flex items-center gap-2"
+            data-testid="view-availability-btn"
+          >
+            {loadingAvailability ? <Loader2 className="w-4 h-4 animate-spin" /> : <CalendarDays className="w-4 h-4" />}
+            View Weekly Availability
+          </Button>
         </div>
 
         {/* Progress Steps */}
