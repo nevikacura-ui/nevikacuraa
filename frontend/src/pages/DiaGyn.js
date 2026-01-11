@@ -21,6 +21,7 @@ const doctors = [
     id: 'vikas',
     name: 'Dr. Vikas Jha',
     specialty: 'Diabetologist & Physician',
+    qualifications: 'M.B.B.S, C.Diab (RSSDI, Delhi), Dip. In Diabetology (Cardiff, UK)',
     image: 'https://customer-assets.emergentagent.com/job_1d0b9312-d1f2-40d1-b78f-c0c28fa95ba1/artifacts/gg2swmlp_IMG-20220627-WA0003.jpg',
     schedule: {
       pushpa: [
@@ -36,6 +37,7 @@ const doctors = [
     id: 'neha',
     name: 'Dr. Neha Patel',
     specialty: 'OBGYN',
+    qualifications: 'M.B.B.S, D.G.O (Mumbai), FMAS (Delhi)',
     image: 'https://customer-assets.emergentagent.com/job_1d0b9312-d1f2-40d1-b78f-c0c28fa95ba1/artifacts/kqjjgvou_IMG-20260108-WA0000.jpg',
     schedule: {
       amnion: [
