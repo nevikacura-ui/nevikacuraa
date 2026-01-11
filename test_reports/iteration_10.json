@@ -1,0 +1,36 @@
+{
+  "test_date": "2026-01-11",
+  "test_type": "SMS Notification System Verification",
+  "overall_status": "PASS",
+  "tests": [
+    {
+      "name": "Pharmacy Order SMS",
+      "endpoint": "POST /api/pharmacy",
+      "status": "PASS",
+      "details": "SMS sent successfully via Twilio (sid=SM913f614e19ec3b254aa3c9a0022e2817)",
+      "verified_in_logs": true
+    },
+    {
+      "name": "Diagnostic Order SMS",
+      "endpoint": "POST /api/diagnostics",
+      "status": "PASS",
+      "details": "SMS sent successfully via Twilio (sid=SM31ac0baacee511735450c4eb44b38062)",
+      "verified_in_logs": true
+    },
+    {
+      "name": "Pharmacy Status Update SMS",
+      "endpoint": "PUT /api/staff/pharmacy/orders/{id}/status",
+      "status": "PASS",
+      "details": "SMS sent successfully via Twilio (sid=SMade0d556c477e23cfef6ea2510380905)",
+      "verified_in_logs": true
+    },
+    {
+      "name": "Diagnostic Status Update SMS",
+      "endpoint": "PUT /api/staff/diagnostic/orders/{id}/status",
+      "status": "PASS",
+      "details": "SMS sent successfully via Twilio (sid=SMfe24c071b6bea0f339670bc743ec3e13)",
+      "verified_in_logs": true
+    }
+  ],
+  "summary": "All SMS notification flows are working correctly. Server-side SMS notifications are being sent via Twilio for order creation and status updates across pharmacy and diagnostic services."
+}
