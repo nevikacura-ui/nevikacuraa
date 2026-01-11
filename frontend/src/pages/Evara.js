@@ -14,7 +14,8 @@ import {
   ArrowLeft, Heart, Calendar, MessageCircle, Bell, 
   Sparkles, Activity, Baby, Flower2, Users, Send,
   ChevronRight, Plus, Clock, Calculator, BookOpen,
-  Apple, Dumbbell, Info, AlertTriangle, User, Mail, Phone, Lock
+  Apple, Dumbbell, Info, AlertTriangle, User, Mail, Phone, Lock,
+  Home, Video, PlayCircle, MapPin
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
