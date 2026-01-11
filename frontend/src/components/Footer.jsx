@@ -10,7 +10,7 @@ const Footer = () => {
   const [showContact, setShowContact] = useState(false);
 
   const openWhatsApp = () => {
-    window.open('https://wa.me/917039020020?text=Hi, I need help with Nevika Cura Healthcare services.', '_blank');
+    window.open('https://wa.me/919403890429?text=Hi, I need help with Nevika Cura Healthcare services.', '_blank');
   };
 
   return (
