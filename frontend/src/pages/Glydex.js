@@ -389,8 +389,23 @@ const Glydex = () => {
       fetchProfile();
       fetchSugarLogs();
       fetchHba1cData();
+      fetchReminders();
     }
   }, [token]);
+
+  const fetchReminders = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/glydex/reminders`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setReminders(data);
+      }
+    } catch (error) {
+      console.error('Error fetching reminders:', error);
+    }
+  };
 
   const fetchProfile = async () => {
     try {
