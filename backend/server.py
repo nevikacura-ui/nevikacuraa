@@ -722,10 +722,11 @@ class AuthOTPVerify(BaseModel):
     
 class RegisterWithOTP(BaseModel):
     phone: str
-    otp: str
+    otp: str = ""  # Keep for backward compatibility, but not required
     email: EmailStr
     password: str
     name: str
+    verification_token: str = ""  # New field for verified registration
 
 class LoginWithOTP(BaseModel):
     phone: str
