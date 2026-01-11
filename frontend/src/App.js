@@ -11,6 +11,9 @@ import Admin from '@/pages/Admin';
 import StaffPortal from '@/pages/StaffPortal';
 import TrackOrder from '@/pages/TrackOrder';
 import Feedback from '@/pages/Feedback';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import TermsOfService from '@/pages/TermsOfService';
+import AboutUs from '@/pages/AboutUs';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
@@ -33,6 +36,9 @@ function App() {
             <Route path="/staff" element={<StaffPortal />} />
             <Route path="/track" element={<TrackOrder />} />
             <Route path="/feedback/:token" element={<Feedback />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/about" element={<AboutUs />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
