@@ -1348,16 +1348,24 @@ const StaffPortal = () => {
                               Check In
                             </Button>
                           )}
+                          {/* Staff can only see status - NO Complete button */}
                           {appt.status === 'In Clinic' && (
-                            <Button 
-                              size="sm" 
-                              onClick={() => handleCompleteAppointment(appt.id)} 
-                              className="bg-green-500 hover:bg-green-600"
-                              data-testid={`complete-${appt.id}`}
-                            >
-                              <CheckCircle2 className="w-4 h-4 mr-1" />
-                              Complete
-                            </Button>
+                            <span className="px-3 py-1.5 bg-yellow-100 text-yellow-800 rounded-lg text-sm flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              With Doctor
+                            </span>
+                          )}
+                          {/* Show fee code when completed by doctor */}
+                          {appt.status === 'Completed' && appt.fee_code && (
+                            <span className={`px-3 py-1.5 rounded-lg text-sm font-bold ${FEE_CODES[appt.fee_code]?.color || 'bg-green-100 text-green-800'}`}>
+                              {appt.fee_code} • ₹{appt.fee_amount}
+                            </span>
+                          )}
+                          {appt.status === 'Completed' && appt.follow_up_date && (
+                            <span className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-lg text-sm flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              Follow-up: {appt.follow_up_date}
+                            </span>
                           )}
                         </div>
                       </div>
