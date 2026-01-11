@@ -101,7 +101,7 @@ const PrivacyPolicy = () => {
               <p>We use the collected information for:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li><strong>Healthcare Services:</strong> Booking appointments, ordering medicines, scheduling diagnostic tests</li>
-                <li><strong>Health Tracking:</strong> Providing personalized health insights through Evara and Omnia modules</li>
+                <li><strong>Health Tracking:</strong> Providing personalized health insights through Evara and Glydex modules</li>
                 <li><strong>Communication:</strong> Sending appointment reminders, order updates, and health tips via SMS/Email</li>
                 <li><strong>Service Improvement:</strong> Analyzing usage patterns to enhance user experience</li>
                 <li><strong>Legal Compliance:</strong> Meeting regulatory requirements for healthcare services</li>

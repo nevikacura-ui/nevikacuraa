@@ -70,7 +70,7 @@ const TermsOfService = () => {
                 <li><strong>Proton Diagnostics:</strong> Diagnostic test booking with home sample collection</li>
                 <li><strong>Orange Pharmacy:</strong> Online medicine ordering and delivery</li>
                 <li><strong>Evara:</strong> Women's wellness and pregnancy care program</li>
-                <li><strong>Omnia:</strong> Diabetes management and tracking tools</li>
+                <li><strong>Glydex:</strong> Diabetes management and tracking tools</li>
               </ul>
               <p className="mt-4 text-sm bg-yellow-50 p-3 rounded-lg border border-yellow-200">
                 <strong>Note:</strong> Our services are informational and supportive in nature. 
@@ -114,7 +114,7 @@ const TermsOfService = () => {
                 <li>In case of medical emergency, call emergency services (112) immediately</li>
               </ul>
               <p className="mt-4 p-3 bg-red-50 rounded-lg">
-                <strong>AI Features:</strong> Our AI-powered chat assistants (in Evara and Omnia) provide general health 
+                <strong>AI Features:</strong> Our AI-powered chat assistants (in Evara and Glydex) provide general health 
                 information only. They are not licensed medical professionals and cannot diagnose conditions or prescribe treatments.
               </p>
             </div>

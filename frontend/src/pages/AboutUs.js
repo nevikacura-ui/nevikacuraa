@@ -37,7 +37,7 @@ const AboutUs = () => {
       color: "bg-purple-500"
     },
     {
-      name: "Omnia Diabetes Care",
+      name: "Glydex Diabetes Care",
       description: "Comprehensive diabetes management with blood sugar tracking and expert guidance",
       icon: Heart,
       color: "bg-teal-500"
