@@ -356,6 +356,15 @@ const StaffPortal = () => {
   useEffect(() => {
     if (isAuthenticated && staffInfo) {
       loadData();
+      
+      // Auto-refresh every 10 seconds for real-time sync (clinic staff only)
+      const role = staffInfo?.role;
+      if (role === 'clinic_staff_pushpa' || role === 'clinic_staff_amnion') {
+        const interval = setInterval(() => {
+          loadData();
+        }, 10000); // 10 seconds
+        return () => clearInterval(interval);
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, staffInfo, selectedDate, pharmacyDate, diagnosticDate, selectedClinic]);
