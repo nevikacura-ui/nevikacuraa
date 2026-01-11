@@ -568,12 +568,15 @@ const DiaGyn = () => {
               </div>
               <h2 className="font-heading text-2xl font-semibold mb-2">Verify Your Phone</h2>
               <p className="text-muted-foreground">
-                We've sent a 6-digit OTP to <span className="font-medium text-foreground">+91 {patientInfo.phone}</span>
+                {otpMethod === 'sms' 
+                  ? <>We've sent a 6-digit OTP via SMS to <span className="font-medium text-foreground">+91 {patientInfo.phone}</span></>
+                  : <>We've sent a 6-digit OTP to <span className="font-medium text-foreground">+91 {patientInfo.phone}</span></>
+                }
               </p>
             </div>
 
-            {/* Mock OTP Display */}
-            {mockOtp && (
+            {/* Mock OTP Display - Only shown in test mode */}
+            {mockOtp && otpMethod === 'mock' && (
               <Card className="p-4 bg-yellow-50 border-yellow-200">
                 <div className="flex items-center gap-2 text-yellow-800">
                   <Shield className="w-5 h-5" />
@@ -581,6 +584,16 @@ const DiaGyn = () => {
                   <span>Your OTP is <strong className="text-xl">{mockOtp}</strong></span>
                 </div>
                 <p className="text-xs text-yellow-600 mt-1">In production, this will be sent via SMS</p>
+              </Card>
+            )}
+            
+            {/* SMS Sent Confirmation */}
+            {otpMethod === 'sms' && (
+              <Card className="p-4 bg-green-50 border-green-200">
+                <div className="flex items-center gap-2 text-green-800">
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span>OTP sent via SMS. Please check your phone.</span>
+                </div>
               </Card>
             )}
 
