@@ -346,6 +346,7 @@ const AuthModal = ({ open, onClose }) => {
   const [otpMethod, setOtpMethod] = useState(''); // 'sms' or 'mock'
   const [userExists, setUserExists] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+  const [verificationToken, setVerificationToken] = useState(''); // Store verification token
   const otpRefs = React.useRef([]);
 
   // Reset state when modal closes
@@ -357,6 +358,7 @@ const AuthModal = ({ open, onClose }) => {
       setMockOtp('');
       setUserExists(false);
       setResendTimer(0);
+      setVerificationToken('');
     }
   }, [open]);
 
