@@ -1458,6 +1458,14 @@ Booking ID: {appointment.id[:8]}"""
             tag=f"appointment-{appointment.id}"
         )
     
+    # Send SMS confirmation to patient
+    await send_appointment_sms(appointment.patient_phone, {
+        "doctor": appointment.doctor,
+        "clinic": appointment.clinic,
+        "date": appointment.date,
+        "time": appointment.time
+    })
+    
     return appointment
 
 @api_router.get("/appointments/booked-slots")
