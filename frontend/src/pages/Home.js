@@ -85,7 +85,6 @@ const Home = () => {
       logoBg: '',
       customBg: '#0E1C3A',
       hideDecoration: true,
-      stretchLogo: true,
       logoScale: 0.80
     }
   ];
