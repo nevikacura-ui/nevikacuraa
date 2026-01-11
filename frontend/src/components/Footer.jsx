@@ -93,6 +93,7 @@ const Footer = () => {
                 <li><a href="/proton" className="hover:text-brand-teal transition-colors">Proton Diagnostics</a></li>
                 <li><a href="/pharmacy" className="hover:text-brand-teal transition-colors">Orange Pharmacy</a></li>
                 <li><a href="/evara" className="hover:text-brand-teal transition-colors">Evara Women's Wellness</a></li>
+                <li><a href="/omnia" className="hover:text-brand-teal transition-colors">Omnia Diabetes Care</a></li>
               </ul>
             </div>
 
