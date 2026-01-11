@@ -352,6 +352,11 @@ const StaffPortal = () => {
         const testsRes = await axios.get(`${API}/staff/diagnostic-tests`, getAuthHeaders());
         setAvailableTests(testsRes.data.tests || {});
       }
+      
+      // Fetch daily collection for clinic staff
+      if (isClinicStaff(role)) {
+        fetchDailyCollection();
+      }
     } catch (error) {
       console.error('Load data error:', error);
     }
