@@ -5,10 +5,11 @@ import { Calendar } from '@/components/ui/calendar';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { ArrowLeft, Clock, MapPin, Ban, Shield, CheckCircle2, Loader2, Phone } from 'lucide-react';
+import { ArrowLeft, Clock, MapPin, Ban, Shield, CheckCircle2, Loader2, Phone, CalendarDays } from 'lucide-react';
 import { format, isSunday } from 'date-fns';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
