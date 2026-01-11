@@ -69,7 +69,7 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                z-index: 9999;
+                z-index: 99999;
                 transition: opacity 0.3s ease-out;
             }
             #splash-screen.hidden {
@@ -81,18 +81,17 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                padding: 40px;
-                background: radial-gradient(ellipse at center, rgba(230, 240, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
-                border-radius: 50%;
+                padding: 60px 80px;
+                background: radial-gradient(ellipse at center, rgba(220, 235, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
             }
-            #splash-screen img {
-                width: 100px;
-                height: 100px;
-                margin-bottom: 12px;
+            #splash-screen .logo-icon {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 16px;
             }
             #splash-screen h1 {
-                font-family: 'Outfit', sans-serif;
-                font-size: 28px;
+                font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+                font-size: 26px;
                 font-weight: 600;
                 margin: 0;
                 letter-spacing: -0.5px;
@@ -104,19 +103,19 @@
                 color: #16a34a;
             }
             #splash-screen p {
-                color: #6b7280;
-                font-family: 'DM Sans', sans-serif;
-                font-size: 12px;
+                color: #9ca3af;
+                font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+                font-size: 11px;
                 font-weight: 500;
-                letter-spacing: 1.5px;
+                letter-spacing: 2px;
                 text-transform: uppercase;
-                margin-top: 6px;
+                margin-top: 8px;
             }
             .splash-loader {
-                margin-top: 30px;
-                width: 36px;
-                height: 36px;
-                border: 3px solid rgba(107, 33, 168, 0.15);
+                margin-top: 40px;
+                width: 32px;
+                height: 32px;
+                border: 3px solid rgba(107, 33, 168, 0.12);
                 border-top-color: #6b21a8;
                 border-radius: 50%;
                 animation: spin 1s linear infinite;
@@ -130,7 +129,19 @@
         <!-- Splash Screen for app-like experience -->
         <div id="splash-screen">
             <div class="splash-content">
-                <img src="/icons/icon-192x192.png" alt="Nevika Cura" />
+                <!-- Inline SVG logo for clean rendering without white box -->
+                <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Purple top-left -->
+                    <path d="M35 15 Q50 15 50 30 Q50 45 35 45 Q20 45 20 30 Q20 15 35 15" fill="#6b21a8"/>
+                    <!-- Green top-right -->
+                    <path d="M65 15 Q80 15 80 30 Q80 45 65 45 Q50 45 50 30 Q50 15 65 15" fill="#16a34a"/>
+                    <!-- Yellow center -->
+                    <ellipse cx="50" cy="35" rx="8" ry="10" fill="#f59e0b"/>
+                    <!-- Purple bottom-left -->
+                    <path d="M35 55 Q50 55 50 70 Q50 85 35 85 Q20 85 20 70 Q20 55 35 55" fill="#6b21a8"/>
+                    <!-- Green bottom-right -->
+                    <path d="M65 55 Q80 55 80 70 Q80 85 65 85 Q50 85 50 70 Q50 55 65 55" fill="#16a34a"/>
+                </svg>
                 <h1><span class="nevika">Nevika</span> <span class="cura">Cura</span></h1>
                 <p>A Healthcare Group</p>
             </div>
