@@ -234,14 +234,16 @@ const Home = () => {
               
               {/* Logo - takes most space */}
               <div 
-                className={`flex items-center justify-center flex-1 ${service.id === 'evara' || service.id === 'glydex' ? '' : 'rounded-xl p-2'} ${service.logoBg}`}
+                className={`flex items-center justify-center flex-1 ${service.id === 'evara' ? '' : 'rounded-xl p-2'} ${service.logoBg}`}
                 style={service.customBg ? { backgroundColor: service.customBg } : {}}
               >
                 <img 
                   src={service.logo} 
                   alt={service.name} 
                   className={`object-contain transition-transform group-hover:scale-105 ${
-                    service.id === 'evara' || service.id === 'glydex' ? 'w-full h-auto max-h-32' : 'w-auto max-h-28 mix-blend-multiply'
+                    service.id === 'evara' ? 'w-full h-auto max-h-32' : 
+                    service.logoRounded ? 'w-auto max-h-28 rounded-xl shadow-md' :
+                    'w-auto max-h-28 mix-blend-multiply'
                   }`}
                   style={service.logoScale ? { transform: `scale(${service.logoScale})` } : {}}
                   data-testid={`service-logo-${service.id}`}
