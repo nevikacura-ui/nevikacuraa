@@ -202,7 +202,7 @@ Note: The time mentioned is your arrival slot. Patients are attended in sequence
 Please wait in the clinic. You will be called shortly.
 
 - DiaGyn Healthcare
-  Call: 7039020020"""
+  Call: 9403890429"""
     elif booking_type == 'emergency':
         message = f"""DiaGyn Healthcare - Emergency Appointment!
 
@@ -215,7 +215,7 @@ EMERGENCY PRIORITY - You will be attended on priority basis.
 Please proceed directly to the clinic.
 
 - DiaGyn Healthcare
-  Call: 7039020020"""
+  Call: 9403890429"""
     else:
         # Online booking
         message = f"""DiaGyn Healthcare - Appointment Confirmed!
@@ -227,7 +227,7 @@ Time: {time}
 
 Note: The appointment time is your arrival time at the clinic, not the exact consultation time. Patients will be attended in sequence.
 
-Please arrive 10 mins early. For queries, call 7039020020.
+Please arrive 10 mins early. For queries, call 9403890429.
 
 - DiaGyn Healthcare"""
     
