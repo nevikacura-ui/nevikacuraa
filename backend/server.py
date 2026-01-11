@@ -3283,6 +3283,61 @@ async def upload_diagnostic_report(order_id: str, file: UploadFile = File(...), 
         logger.error(f"Failed to upload report: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to upload report: {str(e)}")
 
+@api_router.post("/staff/diagnostic/orders/{order_id}/upload-invoice")
+async def upload_diagnostic_invoice(order_id: str, file: UploadFile = File(...), staff = Depends(verify_staff)):
+    """Upload invoice for diagnostic order"""
+    if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+    # Try to find in test_orders first
+    order = await db.test_orders.find_one({"id": order_id})
+    collection = db.test_orders
+    
+    # If not found, try diagnostic_orders
+    if not order:
+        order = await db.diagnostic_orders.find_one({"id": order_id})
+        collection = db.diagnostic_orders
+    
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Upload file - save to static folder
+    try:
+        # Create uploads directory if not exists
+        uploads_dir = ROOT_DIR / "uploads" / "invoices"
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Generate unique filename
+        file_ext = Path(file.filename).suffix or ".pdf"
+        unique_filename = f"invoice_diagnostic_{order_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}{file_ext}"
+        file_path = uploads_dir / unique_filename
+        
+        # Save file
+        file_content = await file.read()
+        with open(file_path, "wb") as f:
+            f.write(file_content)
+        
+        # Generate URL - will be served by static files mount
+        file_url = f"/api/uploads/invoices/{unique_filename}"
+        
+        # Update order with invoice URL
+        await collection.update_one(
+            {"id": order_id},
+            {"$set": {
+                "invoice_url": file_url,
+                "invoice_filename": file.filename,
+                "invoice_uploaded_at": datetime.now(timezone.utc).isoformat(),
+                "invoice_uploaded_by": staff.get("name")
+            }}
+        )
+        
+        logger.info(f"Invoice uploaded for diagnostic order {order_id} by {staff.get('name')}")
+        return {"success": True, "invoice_url": file_url, "message": "Invoice uploaded successfully"}
+        
+    except Exception as e:
+        logger.error(f"Failed to upload invoice: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to upload invoice: {str(e)}")
+
 @api_router.put("/staff/diagnostic/orders/{order_id}/status")
 async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusUpdate, staff = Depends(verify_staff)):
     """Update diagnostic order status (Diagnostics Staff only)"""
