@@ -5073,7 +5073,8 @@ async def evara_onboarding(data: EvaraOnboarding, user = Depends(get_current_use
         profile["created_at"] = profile["created_at"].isoformat()
         profile["updated_at"] = profile["updated_at"].isoformat()
         await db.evara_profiles.insert_one(profile)
-        del profile["_id"] if "_id" in profile else None
+        if "_id" in profile:
+            del profile["_id"]
     
     # Get program details
     program_details = [
