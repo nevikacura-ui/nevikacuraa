@@ -7509,6 +7509,15 @@ async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusU
             tag=f"diagnostic-{order_id}"
         )
     
+    # Send SMS to patient for status updates
+    if order.get('patient_phone') and update.status in ["Sample Collected", "In Process", "Reports Generated"]:
+        await send_diagnostic_status_sms(
+            order.get('patient_phone'), 
+            order_id, 
+            update.status, 
+            order.get('report_url')
+        )
+    
     # Send email to ADMIN only (internal tracking)
     email_html = f"""
     <h2>🔬 Diagnostic Order Status Update</h2>
