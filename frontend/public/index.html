@@ -96,32 +96,42 @@
                 height: 140px;
                 border-radius: 28px;
             }
-            .pulse-loader {
-                margin-top: 40px;
+            .google-loader {
+                margin-top: 50px;
                 display: flex;
-                gap: 8px;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
             }
-            .pulse-dot {
-                width: 10px;
-                height: 10px;
+            .google-dot {
+                width: 12px;
+                height: 12px;
                 border-radius: 50%;
-                animation: pulse-bounce 1.4s ease-in-out infinite;
+                animation: google-bounce 1.4s ease-in-out infinite;
             }
-            .pulse-dot:nth-child(1) {
+            .google-dot:nth-child(1) {
                 background: #6b21a8;
+                animation-delay: -0.32s;
+            }
+            .google-dot:nth-child(2) {
+                background: #dc2626;
+                animation-delay: -0.16s;
+            }
+            .google-dot:nth-child(3) {
+                background: #f59e0b;
                 animation-delay: 0s;
             }
-            .pulse-dot:nth-child(2) {
-                background: #f59e0b;
-                animation-delay: 0.2s;
-            }
-            .pulse-dot:nth-child(3) {
+            .google-dot:nth-child(4) {
                 background: #16a34a;
-                animation-delay: 0.4s;
+                animation-delay: 0.16s;
             }
-            @keyframes pulse-bounce {
-                0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
-                40% { transform: scale(1); opacity: 1; }
+            @keyframes google-bounce {
+                0%, 80%, 100% {
+                    transform: scale(0.4);
+                }
+                40% {
+                    transform: scale(1);
+                }
             }
         </style>
     </head>
@@ -132,10 +142,11 @@
                 <div class="splash-glow"></div>
                 <img class="logo-img" src="/icons/icon-192x192.png" alt="Nevika Cura" />
             </div>
-            <div class="pulse-loader">
-                <div class="pulse-dot"></div>
-                <div class="pulse-dot"></div>
-                <div class="pulse-dot"></div>
+            <div class="google-loader">
+                <div class="google-dot"></div>
+                <div class="google-dot"></div>
+                <div class="google-dot"></div>
+                <div class="google-dot"></div>
             </div>
         </div>
         
