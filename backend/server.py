@@ -5890,6 +5890,134 @@ async def get_evara_share_content(content_type: str):
         "whatsapp_url": whatsapp_url
     }
 
+# ============ OMNIA - DIABETES CARE PORTAL ============
+
+class OmniaProfile(BaseModel):
+    diabetesType: str
+    age: str
+    gender: str
+    height: Optional[str] = None
+    weight: Optional[str] = None
+    medications: Optional[str] = None
+
+class SugarLog(BaseModel):
+    type: str  # fbs, ppbs, random
+    value: str
+    date: str
+    time: Optional[str] = None
+
+@api_router.get("/omnia/profile")
+async def get_omnia_profile(user = Depends(get_current_user)):
+    """Get user's Omnia diabetes profile"""
+    profile = await db.omnia_profiles.find_one(
+        {"user_id": user["id"]},
+        {"_id": 0}
+    )
+    return {"profile": profile}
+
+@api_router.post("/omnia/profile")
+async def save_omnia_profile(data: OmniaProfile, user = Depends(get_current_user)):
+    """Save or update user's Omnia diabetes profile"""
+    profile_data = {
+        "user_id": user["id"],
+        "diabetesType": data.diabetesType,
+        "age": data.age,
+        "gender": data.gender,
+        "height": data.height,
+        "weight": data.weight,
+        "medications": data.medications,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.omnia_profiles.update_one(
+        {"user_id": user["id"]},
+        {"$set": profile_data},
+        upsert=True
+    )
+    
+    return {"success": True, "message": "Profile saved"}
+
+@api_router.get("/omnia/sugar-logs")
+async def get_sugar_logs(user = Depends(get_current_user)):
+    """Get user's blood sugar logs"""
+    logs = await db.omnia_sugar_logs.find(
+        {"user_id": user["id"]},
+        {"_id": 0}
+    ).sort([("date", -1), ("time", -1)]).to_list(100)
+    return {"logs": logs}
+
+@api_router.post("/omnia/sugar-logs")
+async def add_sugar_log(data: SugarLog, user = Depends(get_current_user)):
+    """Add a new blood sugar reading"""
+    log = {
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"],
+        "type": data.type,
+        "value": data.value,
+        "date": data.date,
+        "time": data.time or "",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.omnia_sugar_logs.insert_one(log)
+    
+    # Check for abnormal values and flag
+    value = int(data.value)
+    alert = None
+    if value < 70:
+        alert = "low"
+    elif value > 250:
+        alert = "very_high"
+    elif value > 180:
+        alert = "high"
+    
+    return {
+        "success": True, 
+        "log": {k: v for k, v in log.items() if k != "_id"},
+        "alert": alert
+    }
+
+@api_router.delete("/omnia/sugar-logs/{log_id}")
+async def delete_sugar_log(log_id: str, user = Depends(get_current_user)):
+    """Delete a blood sugar log"""
+    result = await db.omnia_sugar_logs.delete_one(
+        {"id": log_id, "user_id": user["id"]}
+    )
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Log not found")
+    return {"success": True}
+
+@api_router.get("/omnia/sugar-stats")
+async def get_sugar_stats(user = Depends(get_current_user)):
+    """Get blood sugar statistics for the user"""
+    logs = await db.omnia_sugar_logs.find(
+        {"user_id": user["id"]}
+    ).to_list(1000)
+    
+    if not logs:
+        return {"stats": None}
+    
+    fbs_values = [int(l["value"]) for l in logs if l.get("type") == "fbs"]
+    ppbs_values = [int(l["value"]) for l in logs if l.get("type") == "ppbs"]
+    
+    stats = {
+        "total_readings": len(logs),
+        "fbs": {
+            "count": len(fbs_values),
+            "avg": round(sum(fbs_values) / len(fbs_values)) if fbs_values else None,
+            "min": min(fbs_values) if fbs_values else None,
+            "max": max(fbs_values) if fbs_values else None
+        },
+        "ppbs": {
+            "count": len(ppbs_values),
+            "avg": round(sum(ppbs_values) / len(ppbs_values)) if ppbs_values else None,
+            "min": min(ppbs_values) if ppbs_values else None,
+            "max": max(ppbs_values) if ppbs_values else None
+        }
+    }
+    
+    return {"stats": stats}
+
 # Include router AFTER all routes are defined
 app.include_router(api_router)
 
