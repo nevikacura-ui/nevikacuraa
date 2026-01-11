@@ -285,11 +285,10 @@ class TestOmniaAuthenticated:
         response = requests.post(f"{BASE_URL}/api/omnia/sugar-logs", 
             headers=self.headers,
             json={
-                "reading_type": "FBS",
-                "value": 95,
+                "type": "fbs",
+                "value": "95",
                 "date": datetime.now().strftime("%Y-%m-%d"),
-                "time": "08:00",
-                "notes": "Test reading"
+                "time": "08:00"
             }
         )
         assert response.status_code == 200
