@@ -1666,6 +1666,12 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
             tag=f"diagnostic-{order.id}"
         )
     
+    # Send SMS confirmation to patient
+    await send_diagnostic_order_sms(order.patient_phone, {
+        "id": order.id,
+        "tests": order.tests
+    })
+    
     return order
 
 @api_router.get("/diagnostics", response_model=List[DiagnosticOrder])
