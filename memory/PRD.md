@@ -28,7 +28,23 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ### Date: January 11, 2026 - Latest Update (Current Session)
 
-#### Twilio SMS OTP Integration - NEW FEATURE (Completed)
+#### Modular Architecture Created - PARTIAL REFACTORING
+- [x] **New Service Modules Created:**
+  - [x] `/app/backend/services/email.py` - Email notifications via Resend
+  - [x] `/app/backend/services/sms.py` - Twilio SMS/WhatsApp/OTP
+  - [x] `/app/backend/services/push.py` - Web Push notifications
+  - [x] `/app/backend/services/__init__.py` - Package exports
+- [x] **New Route Modules Created:**
+  - [x] `/app/backend/routes/auth.py` - Authentication routes (standalone)
+  - [x] `/app/backend/routes/__init__.py` - Package exports
+- [x] **Database Module:**
+  - [x] `/app/backend/database.py` - MongoDB connection & helpers
+- [x] **New Entry Point:**
+  - [x] `/app/backend/server_new.py` - Modular FastAPI app (for future use)
+
+**Note:** The original `server.py` is still in use with 9000+ lines. The new modular files are ready for gradual migration. Full migration requires careful testing to avoid breaking production.
+
+#### Twilio SMS OTP Integration - COMPLETED
 - [x] **Real SMS OTP via Twilio Verify API:**
   - [x] Auth OTP (login/register) - Uses Twilio Verify Service
   - [x] Order OTP (DiaGyn, Proton, Pharmacy) - Uses Twilio Verify Service
