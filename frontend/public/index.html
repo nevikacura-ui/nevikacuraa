@@ -101,36 +101,36 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 6px;
+                gap: 10px;
             }
             .google-dot {
-                width: 12px;
-                height: 12px;
+                width: 14px;
+                height: 14px;
                 border-radius: 50%;
-                animation: google-bounce 1.4s ease-in-out infinite;
+                animation: google-bounce 1.2s ease-in-out infinite;
             }
             .google-dot:nth-child(1) {
-                background: #6b21a8;
-                animation-delay: -0.32s;
+                background-color: #6b21a8;
+                animation-delay: -0.3s;
             }
             .google-dot:nth-child(2) {
-                background: #dc2626;
-                animation-delay: -0.16s;
+                background-color: #dc2626;
+                animation-delay: -0.15s;
             }
             .google-dot:nth-child(3) {
-                background: #f59e0b;
+                background-color: #f59e0b;
                 animation-delay: 0s;
             }
             .google-dot:nth-child(4) {
-                background: #16a34a;
-                animation-delay: 0.16s;
+                background-color: #16a34a;
+                animation-delay: 0.15s;
             }
             @keyframes google-bounce {
-                0%, 80%, 100% {
-                    transform: scale(0.4);
+                0%, 100% {
+                    transform: translateY(0);
                 }
-                40% {
-                    transform: scale(1);
+                50% {
+                    transform: translateY(-15px);
                 }
             }
         </style>
