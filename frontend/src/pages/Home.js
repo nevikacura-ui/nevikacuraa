@@ -275,39 +275,7 @@ const Home = () => {
       )}
 
       {/* Footer */}
-      <footer className="mt-auto py-6 border-t bg-white/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground">
-              © 2026 Nevika Cura Healthcare. All rights reserved.
-            </p>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate('/profile')}
-                className="text-sm text-muted-foreground hover:text-brand-teal transition-colors"
-              >
-                My Orders
-              </button>
-              <span className="text-muted-foreground">|</span>
-              <button
-                onClick={() => navigate('/staff')}
-                className="text-sm text-muted-foreground hover:text-brand-teal transition-colors"
-                data-testid="staff-link"
-              >
-                Staff Portal
-              </button>
-              <span className="text-muted-foreground">|</span>
-              <button
-                onClick={() => navigate('/admin')}
-                className="text-sm text-muted-foreground hover:text-brand-teal transition-colors"
-                data-testid="admin-link"
-              >
-                Admin Login
-              </button>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
     </div>
