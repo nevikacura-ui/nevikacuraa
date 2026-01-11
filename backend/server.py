@@ -5944,8 +5944,10 @@ async def save_omnia_profile(data: OmniaProfile, user = Depends(get_current_user
 @api_router.get("/omnia/sugar-logs")
 async def get_sugar_logs(user = Depends(get_current_user)):
     """Get user's blood sugar logs"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
     logs = await db.omnia_sugar_logs.find(
-        {"user_id": user["id"]},
+        {"user_id": user.id},
         {"_id": 0}
     ).sort([("date", -1), ("time", -1)]).to_list(100)
     return {"logs": logs}
