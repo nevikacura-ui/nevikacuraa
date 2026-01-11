@@ -80,6 +80,26 @@ const DiaGyn = () => {
   const [verificationToken, setVerificationToken] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef([]);
+  
+  // Doctor availability calendar state
+  const [showAvailability, setShowAvailability] = useState(false);
+  const [weeklyAvailability, setWeeklyAvailability] = useState([]);
+  const [loadingAvailability, setLoadingAvailability] = useState(false);
+
+  // Fetch weekly availability
+  const fetchWeeklyAvailability = async () => {
+    setLoadingAvailability(true);
+    try {
+      const response = await axios.get(`${API}/doctors/availability?days=7`);
+      setWeeklyAvailability(response.data.availability || []);
+      setShowAvailability(true);
+    } catch (error) {
+      console.error('Failed to fetch availability:', error);
+      toast.error('Failed to load availability');
+    } finally {
+      setLoadingAvailability(false);
+    }
+  };
 
   // Resend timer countdown
   useEffect(() => {
