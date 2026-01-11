@@ -210,6 +210,7 @@ const HYPOGLYCEMIA_GUIDE = {
 const DIABETIC_TESTS = [
   { id: "fbs", name: "Fasting Blood Sugar (FBS)", description: "Blood sugar after 8-12 hours fasting. Normal: 70-100 mg/dL", frequency: "Monthly" },
   { id: "ppbs", name: "Post-Prandial Blood Sugar (PPBS)", description: "Blood sugar 2 hours after meal. Normal: <140 mg/dL", frequency: "Monthly" },
+  { id: "urine_sugar", name: "Urine Sugar / Routine", description: "Detects glucose in urine. Helps monitor kidney function and sugar control", frequency: "Monthly" },
   { id: "hba1c", name: "HbA1c (Glycated Hemoglobin)", description: "3-month average blood sugar. Target: <7% for diabetics", frequency: "Every 3 months" },
   { id: "lipid", name: "Lipid Profile", description: "Cholesterol and triglyceride levels. Important for heart health", frequency: "Every 6 months" },
   { id: "kidney", name: "Kidney Function Test (KFT)", description: "Checks kidney health - creatinine, urea, eGFR", frequency: "Every 6-12 months" },
