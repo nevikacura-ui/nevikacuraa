@@ -1871,6 +1871,58 @@ const StaffPortal = () => {
                             <strong> Doctor:</strong> {order.doctor || 'N/A'}
                           </div>
                           
+                          {/* Invoice Upload Section */}
+                          {!order.invoice_url && (
+                            <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                              <p className="text-sm text-blue-800 mb-2 flex items-center gap-1">
+                                <Upload className="w-4 h-4" />
+                                <strong>Upload Invoice</strong>
+                              </p>
+                              <input
+                                type="file"
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                onChange={async (e) => {
+                                  const file = e.target.files[0];
+                                  if (!file) return;
+                                  
+                                  const formData = new FormData();
+                                  formData.append('file', file);
+                                  
+                                  try {
+                                    toast.loading('Uploading invoice...');
+                                    await axios.post(
+                                      `${API}/staff/diagnostic/orders/${order.id}/upload-invoice`,
+                                      formData,
+                                      { 
+                                        headers: { 
+                                          'Authorization': `Bearer ${localStorage.getItem('staffToken')}`,
+                                          'Content-Type': 'multipart/form-data'
+                                        }
+                                      }
+                                    );
+                                    toast.dismiss();
+                                    toast.success('Invoice uploaded successfully');
+                                    loadData();
+                                  } catch (error) {
+                                    toast.dismiss();
+                                    toast.error(error.response?.data?.detail || 'Upload failed');
+                                  }
+                                }}
+                                className="text-sm"
+                                data-testid={`upload-invoice-${order.id}`}
+                              />
+                            </div>
+                          )}
+                          
+                          {order.invoice_url && (
+                            <div className="mb-3">
+                              <a href={order.invoice_url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline flex items-center gap-1">
+                                <FileText className="w-4 h-4" />
+                                View Invoice
+                              </a>
+                            </div>
+                          )}
+                          
                           {/* Report Upload Section - Required before Reports Generated */}
                       {!order.report_url && order.status !== 'Reports Generated' && (
                         <div className="mb-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
