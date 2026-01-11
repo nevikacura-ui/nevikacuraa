@@ -82,7 +82,9 @@ const Home = () => {
       accentColor: 'border-transparent',
       path: '/glydex',
       logoBg: '',
-      customBg: '#0E1C3A'
+      customBg: '#0E1C3A',
+      logoScale: 1.5,
+      hideDecoration: true
     }
   ];
 
