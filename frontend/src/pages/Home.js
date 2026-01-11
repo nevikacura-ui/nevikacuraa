@@ -208,13 +208,13 @@ const Home = () => {
               data-testid={`service-card-${service.id}`}
             >
               <div 
-                className={`flex items-center justify-center flex-1 rounded-2xl p-4 ${service.logoBg}`}
+                className={`flex items-center justify-center flex-1 ${service.logoBg} ${service.id === 'evara' ? '' : 'rounded-2xl p-4'}`}
                 style={service.customBg ? { backgroundColor: service.customBg } : {}}
               >
                 <img 
                   src={service.logo} 
                   alt={service.name} 
-                  className={`w-auto object-contain ${service.id === 'evara' ? 'max-h-48' : 'max-h-32 mix-blend-multiply'}`}
+                  className={`object-contain ${service.id === 'evara' ? 'w-full h-full' : 'w-auto max-h-32 mix-blend-multiply'}`}
                   data-testid={`service-logo-${service.id}`}
                 />
               </div>
