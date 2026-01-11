@@ -106,13 +106,42 @@ const Footer = () => {
                 </li>
                 <li className="flex items-center gap-2">
                   <MessageCircle className="w-4 h-4 text-green-500" />
-                  <a href="https://wa.me/917039020020" target="_blank" rel="noopener noreferrer" className="hover:text-brand-teal">7039020020</a>
+                  <a href="https://wa.me/919403890429" target="_blank" rel="noopener noreferrer" className="hover:text-brand-teal">9403890429</a>
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-brand-teal" />
                   <a href="mailto:nevikacura@gmail.com" className="hover:text-brand-teal">nevikacura@gmail.com</a>
                 </li>
               </ul>
+            </div>
+          </div>
+
+          {/* Portal Links Section */}
+          <div className="border-t border-gray-800 pt-6 mb-6">
+            <div className="flex flex-wrap items-center justify-center gap-6">
+              <a 
+                href="/profile" 
+                className="text-sm text-gray-400 hover:text-brand-teal transition-colors"
+                data-testid="footer-my-orders"
+              >
+                My Orders
+              </a>
+              <span className="text-gray-700">|</span>
+              <a 
+                href="/staff" 
+                className="text-sm text-gray-400 hover:text-brand-teal transition-colors"
+                data-testid="footer-staff-portal"
+              >
+                Staff Portal
+              </a>
+              <span className="text-gray-700">|</span>
+              <a 
+                href="/admin" 
+                className="text-sm text-gray-400 hover:text-brand-teal transition-colors"
+                data-testid="footer-admin"
+              >
+                Admin
+              </a>
             </div>
           </div>
 
