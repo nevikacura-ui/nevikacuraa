@@ -5353,6 +5353,343 @@ async def get_period_history(user = Depends(get_current_user_optional)):
         "next_predicted": next_predicted
     }
 
+# ============ EVARA - Pregnancy Week-by-Week Content ============
+
+PREGNANCY_WEEKLY_CONTENT = {
+    1: {"title": "Week 1", "baby": "Conception hasn't occurred yet. Your body is preparing for ovulation.", "mom": "Track your cycle and take prenatal vitamins with folic acid.", "size": "N/A", "tip": "Start taking 400mcg folic acid daily."},
+    2: {"title": "Week 2", "baby": "Ovulation occurs. The egg is released and may be fertilized.", "mom": "This is your fertile window. Optimal time for conception.", "size": "N/A", "tip": "Stay relaxed and maintain a healthy lifestyle."},
+    3: {"title": "Week 3", "baby": "Fertilization! The sperm meets the egg. Cell division begins.", "mom": "You may not feel different yet. The fertilized egg travels to the uterus.", "size": "Poppy seed", "tip": "Avoid alcohol, smoking, and limit caffeine."},
+    4: {"title": "Week 4", "baby": "Implantation occurs. The embryo attaches to the uterine wall.", "mom": "You might miss your period. Some women experience light spotting.", "size": "Poppy seed", "tip": "Take a pregnancy test if your period is late."},
+    5: {"title": "Week 5", "baby": "Heart begins to form and will start beating soon. Neural tube developing.", "mom": "Morning sickness may begin. Breast tenderness and fatigue common.", "size": "Sesame seed", "tip": "Eat small, frequent meals to combat nausea."},
+    6: {"title": "Week 6", "baby": "Heartbeat can be detected on ultrasound! Facial features forming.", "mom": "Increased urination, mood swings, and food aversions.", "size": "Lentil", "tip": "Schedule your first prenatal appointment."},
+    7: {"title": "Week 7", "baby": "Arms and legs are forming. Brain growing rapidly.", "mom": "Nausea may peak. Skin changes possible.", "size": "Blueberry", "tip": "Stay hydrated and get plenty of rest."},
+    8: {"title": "Week 8", "baby": "All major organs are forming. Baby is now called a fetus.", "mom": "Uterus is growing. Clothes may feel tighter.", "size": "Raspberry", "tip": "Avoid hot tubs and saunas."},
+    9: {"title": "Week 9", "baby": "Baby can move, though you can't feel it yet. Tiny muscles forming.", "mom": "Fatigue may increase. Hormones stabilizing.", "size": "Cherry", "tip": "Consider announcing to close family."},
+    10: {"title": "Week 10", "baby": "Vital organs are fully formed and starting to function.", "mom": "Belly may start showing slightly. Round ligament pain possible.", "size": "Strawberry", "tip": "Start thinking about maternity clothes."},
+    11: {"title": "Week 11", "baby": "Baby's bones are hardening. Fingers and toes separating.", "mom": "Hair and nails may grow faster. Mood improving.", "size": "Fig", "tip": "Maintain regular gentle exercise."},
+    12: {"title": "Week 12", "baby": "Reflexes developing. Baby can open and close fingers.", "mom": "Risk of miscarriage decreases significantly. Energy returning.", "size": "Lime", "tip": "Safe to share pregnancy news more widely!"},
+    13: {"title": "Week 13 - Second Trimester!", "baby": "Fingerprints forming. Vocal cords developing.", "mom": "Welcome to the second trimester! Energy often increases.", "size": "Peach", "tip": "Many women feel their best in this trimester."},
+    14: {"title": "Week 14", "baby": "Baby can make facial expressions. Kidneys producing urine.", "mom": "Appetite may increase. Less nausea for most.", "size": "Lemon", "tip": "Eat iron-rich foods to prevent anemia."},
+    15: {"title": "Week 15", "baby": "Baby is practicing breathing movements with amniotic fluid.", "mom": "Nasal congestion common. Skin changes (linea nigra) may appear.", "size": "Apple", "tip": "Use a humidifier for congestion relief."},
+    16: {"title": "Week 16", "baby": "Baby can hear sounds! Eyes are moving.", "mom": "You might feel first movements (quickening) - like flutters!", "size": "Avocado", "tip": "Talk or sing to your baby."},
+    17: {"title": "Week 17", "baby": "Fat starting to form under skin. Sweat glands developing.", "mom": "Weight gain becoming noticeable. Back pain may start.", "size": "Pomegranate", "tip": "Practice good posture and wear supportive shoes."},
+    18: {"title": "Week 18", "baby": "Baby can yawn and hiccup! Ears are in final position.", "mom": "Feeling hungrier. Sleep position adjustments needed.", "size": "Sweet potato", "tip": "Start sleeping on your side."},
+    19: {"title": "Week 19", "baby": "Protective coating (vernix) forms on skin.", "mom": "Round ligament pain common. Dizziness possible.", "size": "Mango", "tip": "Rise slowly from sitting or lying down."},
+    20: {"title": "Week 20 - Halfway There!", "baby": "Anatomy scan ultrasound! Can find out baby's sex.", "mom": "Belly is clearly visible. May feel baby's sleep/wake cycles.", "size": "Banana", "tip": "Celebrate this milestone!"},
+    21: {"title": "Week 21", "baby": "Eyebrows and eyelids fully formed. Baby moving more.", "mom": "Varicose veins may appear. Leg cramps possible.", "size": "Carrot", "tip": "Elevate feet when resting."},
+    22: {"title": "Week 22", "baby": "Sense of touch developing. Baby can feel the umbilical cord.", "mom": "Stretch marks may appear. Belly button may pop out.", "size": "Papaya", "tip": "Moisturize belly to help with itching."},
+    23: {"title": "Week 23", "baby": "Baby can hear your heartbeat and voice clearly.", "mom": "Braxton Hicks contractions may start (practice contractions).", "size": "Grapefruit", "tip": "Learn the difference between Braxton Hicks and real labor."},
+    24: {"title": "Week 24 - Viability!", "baby": "Lungs developing. Baby is now viable outside womb with medical help.", "mom": "Glucose screening test usually done now.", "size": "Cantaloupe", "tip": "Take the glucose test to check for gestational diabetes."},
+    25: {"title": "Week 25", "baby": "Baby responds to familiar voices. Hair growing.", "mom": "Hemorrhoids and constipation common. Heartburn may worsen.", "size": "Cauliflower", "tip": "Eat fiber-rich foods and stay hydrated."},
+    26: {"title": "Week 26", "baby": "Eyes opening! Baby can see light filtering through.", "mom": "Trouble sleeping. Swelling in feet and ankles.", "size": "Lettuce head", "tip": "Use pillows for support while sleeping."},
+    27: {"title": "Week 27", "baby": "Baby practicing breathing movements regularly.", "mom": "End of second trimester approaching. Possible leg cramps.", "size": "Rutabaga", "tip": "Stretch calves before bed."},
+    28: {"title": "Week 28 - Third Trimester!", "baby": "Eyes can blink. Baby dreaming during REM sleep.", "mom": "Third trimester begins! More frequent prenatal visits.", "size": "Eggplant", "tip": "Start counting baby kicks daily."},
+    29: {"title": "Week 29", "baby": "Muscles and lungs maturing. Baby very active.", "mom": "Shortness of breath as uterus presses on diaphragm.", "size": "Butternut squash", "tip": "Practice relaxation breathing techniques."},
+    30: {"title": "Week 30", "baby": "Brain growing rapidly. Baby can regulate own temperature.", "mom": "Heartburn and indigestion common. Mood swings may return.", "size": "Cabbage", "tip": "Eat smaller meals more frequently."},
+    31: {"title": "Week 31", "baby": "All five senses are working! Baby getting into position.", "mom": "Frequent urination increases. Trouble getting comfortable.", "size": "Coconut", "tip": "Do pelvic floor exercises (Kegels)."},
+    32: {"title": "Week 32", "baby": "Fingernails and toenails fully formed.", "mom": "Braxton Hicks more frequent. Baby shower time!", "size": "Squash", "tip": "Pack your hospital bag."},
+    33: {"title": "Week 33", "baby": "Bones hardening (except skull for birth). Less room to move.", "mom": "Waddling gait common. Back pain may increase.", "size": "Pineapple", "tip": "Prenatal massage can help with discomfort."},
+    34: {"title": "Week 34", "baby": "Vernix coating thickening. Lungs almost mature.", "mom": "Fatigue returning. Nesting instinct may kick in.", "size": "Cantaloupe", "tip": "Prepare baby's nursery and supplies."},
+    35: {"title": "Week 35", "baby": "Baby gaining about half a pound per week now.", "mom": "Pelvic pressure increasing. Baby may 'drop' soon.", "size": "Honeydew melon", "tip": "Review your birth plan with your doctor."},
+    36: {"title": "Week 36", "baby": "Baby is considered early term. Most organs fully mature.", "mom": "More pelvic exams. Watch for labor signs.", "size": "Romaine lettuce", "tip": "Know the signs of labor."},
+    37: {"title": "Week 37 - Full Term!", "baby": "Baby is full term! Ready for life outside.", "mom": "May lose mucus plug. More Braxton Hicks.", "size": "Winter melon", "tip": "Rest when you can!"},
+    38: {"title": "Week 38", "baby": "Organs fully ready. Baby practicing sucking.", "mom": "Cervix may begin dilating. Increased discharge.", "size": "Leek", "tip": "Stay close to home and hospital."},
+    39: {"title": "Week 39", "baby": "Brain still developing rapidly. Full-term and ready!", "mom": "May feel more emotional. Water could break anytime.", "size": "Watermelon", "tip": "Trust your body - it knows what to do."},
+    40: {"title": "Week 40 - Due Date!", "baby": "Baby is fully developed and ready to meet you!", "mom": "Due date! Only 5% of babies arrive exactly on this day.", "size": "Small pumpkin", "tip": "Stay patient - baby will come when ready!"},
+    41: {"title": "Week 41", "baby": "Still growing! May need induction discussion.", "mom": "Doctor will monitor closely. Induction may be discussed.", "size": "Pumpkin", "tip": "Try natural induction methods with doctor approval."},
+    42: {"title": "Week 42", "baby": "Post-term. Induction usually recommended.", "mom": "Close monitoring essential. Birth likely imminent.", "size": "Pumpkin", "tip": "Trust your medical team."}
+}
+
+@api_router.get("/evara/pregnancy/week/{week}")
+async def get_pregnancy_week_content(week: int):
+    """Get pregnancy content for a specific week"""
+    if week < 1 or week > 42:
+        raise HTTPException(status_code=400, detail="Week must be between 1 and 42")
+    
+    content = PREGNANCY_WEEKLY_CONTENT.get(week, {})
+    return {
+        "week": week,
+        "content": content,
+        "trimester": 1 if week <= 12 else (2 if week <= 27 else 3)
+    }
+
+@api_router.get("/evara/pregnancy/all-weeks")
+async def get_all_pregnancy_weeks():
+    """Get all pregnancy week content"""
+    return {
+        "weeks": [
+            {"week": w, **content}
+            for w, content in PREGNANCY_WEEKLY_CONTENT.items()
+        ]
+    }
+
+# ============ EVARA - Home Services Coordination ============
+
+HOME_SERVICES = {
+    "postnatal_nurse": {
+        "name": "Postnatal Nurse Visit",
+        "description": "Professional nurse visits for mother and baby care after delivery",
+        "includes": ["Mother health check", "Baby care guidance", "Breastfeeding support", "Wound care"],
+        "duration": "1-2 hours per visit",
+        "note": "Services coordinated through partner healthcare providers"
+    },
+    "lactation_consultant": {
+        "name": "Lactation Consultant",
+        "description": "Expert guidance for breastfeeding challenges",
+        "includes": ["Latch assessment", "Feeding positions", "Milk supply issues", "Pumping guidance"],
+        "duration": "45-60 minutes",
+        "note": "Virtual and home visit options available"
+    },
+    "physiotherapy": {
+        "name": "Women's Physiotherapy",
+        "description": "Specialized physiotherapy for prenatal and postnatal care",
+        "includes": ["Pelvic floor exercises", "Diastasis recti treatment", "Back pain relief", "Pregnancy exercises"],
+        "duration": "45 minutes",
+        "note": "Home visits available in select areas"
+    },
+    "sample_collection": {
+        "name": "Home Sample Collection",
+        "description": "Lab sample collection at your doorstep",
+        "includes": ["Blood tests", "Urine tests", "Prenatal screenings"],
+        "duration": "15-20 minutes",
+        "note": "Coordinated with Proton Diagnostics",
+        "redirect": "/proton"
+    }
+}
+
+class HomeServiceRequest(BaseModel):
+    service_type: str
+    preferred_date: str
+    preferred_time: str
+    address: str
+    notes: Optional[str] = None
+    phone: str
+
+@api_router.get("/evara/home-services")
+async def get_home_services():
+    """Get available home services"""
+    return {
+        "services": [
+            {"id": k, **v} for k, v in HOME_SERVICES.items()
+        ],
+        "disclaimer": "These services are coordinated through our partner providers. Evara facilitates booking but does not directly provide medical services."
+    }
+
+@api_router.post("/evara/home-services/request")
+async def request_home_service(data: HomeServiceRequest, user = Depends(get_current_user_optional)):
+    """Request a home service"""
+    if data.service_type not in HOME_SERVICES:
+        raise HTTPException(status_code=400, detail="Invalid service type")
+    
+    service = HOME_SERVICES[data.service_type]
+    
+    # Create service request record
+    request_record = {
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"] if user else None,
+        "service_type": data.service_type,
+        "service_name": service["name"],
+        "preferred_date": data.preferred_date,
+        "preferred_time": data.preferred_time,
+        "address": data.address,
+        "phone": data.phone,
+        "notes": data.notes,
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.evara_service_requests.insert_one(request_record)
+    
+    # Send SMS confirmation
+    try:
+        message = f"""Evara - Home Service Request Received!
+
+Service: {service['name']}
+Date: {data.preferred_date}
+Time: {data.preferred_time}
+
+Our team will contact you within 24 hours to confirm.
+
+- Evara by Nevika Cura
+  Call: 9403890429"""
+        await send_sms_notification(data.phone, message)
+    except Exception as e:
+        logger.error(f"Failed to send service request SMS: {e}")
+    
+    return {
+        "success": True,
+        "request_id": request_record["id"],
+        "message": "Your service request has been received. Our team will contact you within 24 hours.",
+        "service": service
+    }
+
+@api_router.get("/evara/home-services/my-requests")
+async def get_my_service_requests(user = Depends(get_current_user_optional)):
+    """Get user's service requests"""
+    if not user:
+        return {"requests": []}
+    
+    requests = await db.evara_service_requests.find(
+        {"user_id": user["id"]},
+        {"_id": 0}
+    ).sort([("created_at", -1)]).limit(20).to_list(20)
+    
+    return {"requests": requests}
+
+# ============ EVARA - Live Sessions / Community ============
+
+LIVE_SESSIONS = [
+    {
+        "id": "period_health_101",
+        "title": "Period Health 101",
+        "description": "Understanding your menstrual cycle and managing period symptoms",
+        "host": "Dr. Priya Sharma, Gynecologist",
+        "duration": "45 minutes",
+        "topics": ["Cycle phases", "PMS management", "When to see a doctor"],
+        "type": "recorded"
+    },
+    {
+        "id": "pcos_lifestyle",
+        "title": "Living Well with PCOS",
+        "description": "Diet, exercise, and lifestyle tips for managing PCOS",
+        "host": "Dr. Neha Patel, Endocrinologist",
+        "duration": "60 minutes",
+        "topics": ["PCOS diet", "Exercise routines", "Hormonal balance"],
+        "type": "recorded"
+    },
+    {
+        "id": "pregnancy_nutrition",
+        "title": "Nutrition During Pregnancy",
+        "description": "What to eat and avoid for a healthy pregnancy",
+        "host": "Dietitian Anjali Mehta",
+        "duration": "50 minutes",
+        "topics": ["Essential nutrients", "Foods to avoid", "Meal planning"],
+        "type": "recorded"
+    },
+    {
+        "id": "breastfeeding_basics",
+        "title": "Breastfeeding Basics",
+        "description": "Getting started with breastfeeding and overcoming challenges",
+        "host": "Lactation Consultant Meera Joshi",
+        "duration": "55 minutes",
+        "topics": ["Latching techniques", "Common problems", "Pumping tips"],
+        "type": "recorded"
+    },
+    {
+        "id": "menopause_wellness",
+        "title": "Thriving Through Menopause",
+        "description": "Managing menopause symptoms and maintaining wellness",
+        "host": "Dr. Sunita Rao, Women's Health Specialist",
+        "duration": "50 minutes",
+        "topics": ["Symptom management", "HRT options", "Bone health"],
+        "type": "recorded"
+    },
+    {
+        "id": "mental_wellness",
+        "title": "Mental Health for Women",
+        "description": "Addressing anxiety, depression, and emotional wellbeing",
+        "host": "Psychologist Dr. Kavita Singh",
+        "duration": "45 minutes",
+        "topics": ["Stress management", "Self-care practices", "When to seek help"],
+        "type": "recorded"
+    }
+]
+
+@api_router.get("/evara/community/sessions")
+async def get_community_sessions():
+    """Get available community sessions"""
+    return {
+        "sessions": LIVE_SESSIONS,
+        "upcoming_live": {
+            "title": "Monthly Q&A with Gynecologist",
+            "description": "Submit your questions and get answers from our expert",
+            "next_date": "Last Saturday of every month",
+            "time": "11:00 AM IST"
+        }
+    }
+
+@api_router.post("/evara/community/register/{session_id}")
+async def register_for_session(session_id: str, user = Depends(get_current_user_optional)):
+    """Register for a community session"""
+    session = next((s for s in LIVE_SESSIONS if s["id"] == session_id), None)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    registration = {
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"] if user else None,
+        "session_id": session_id,
+        "session_title": session["title"],
+        "registered_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.evara_session_registrations.insert_one(registration)
+    
+    return {
+        "success": True,
+        "message": f"Registered for {session['title']}",
+        "session": session
+    }
+
+# ============ EVARA - WhatsApp Reminders ============
+
+@api_router.post("/evara/reminders/whatsapp")
+async def set_whatsapp_reminder(
+    reminder_type: str,
+    phone: str,
+    user = Depends(get_current_user_optional)
+):
+    """Set up WhatsApp reminder preferences"""
+    valid_types = ["period", "medication", "appointment", "pregnancy_weekly", "wellness"]
+    if reminder_type not in valid_types:
+        raise HTTPException(status_code=400, detail=f"Invalid type. Choose from: {valid_types}")
+    
+    preference = {
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"] if user else None,
+        "phone": phone,
+        "reminder_type": reminder_type,
+        "channel": "sms",  # Using SMS as WhatsApp requires business setup
+        "is_active": True,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Check if preference exists
+    existing = await db.evara_reminder_preferences.find_one({
+        "phone": phone,
+        "reminder_type": reminder_type
+    })
+    
+    if existing:
+        await db.evara_reminder_preferences.update_one(
+            {"_id": existing["_id"]},
+            {"$set": {"is_active": True}}
+        )
+    else:
+        await db.evara_reminder_preferences.insert_one(preference)
+    
+    # Send confirmation SMS
+    try:
+        message = f"""Evara - Reminder Set! ✓
+
+Type: {reminder_type.replace('_', ' ').title()}
+Channel: SMS
+
+You'll receive reminders on this number.
+
+To stop: Reply STOP
+
+- Evara by Nevika Cura"""
+        await send_sms_notification(phone, message)
+    except Exception as e:
+        logger.error(f"Failed to send reminder confirmation: {e}")
+    
+    return {
+        "success": True,
+        "message": f"{reminder_type.replace('_', ' ').title()} reminders activated via SMS",
+        "note": "WhatsApp reminders will be available once WhatsApp Business is configured."
+    }
+
 
 # Include router AFTER all routes are defined
 app.include_router(api_router)
