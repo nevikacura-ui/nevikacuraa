@@ -26,9 +26,28 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ## What's Been Implemented ✅
 
-### Date: January 10, 2026 - Latest Update (Current Session)
+### Date: January 11, 2026 - Latest Update (Current Session)
 
-#### Push Notifications & Feedback System - NEW FEATURE (Completed)
+#### Twilio SMS OTP Integration - NEW FEATURE (Completed)
+- [x] **Real SMS OTP via Twilio Verify API:**
+  - [x] Auth OTP (login/register) - Uses Twilio Verify Service
+  - [x] Order OTP (DiaGyn, Proton, Pharmacy) - Uses Twilio Verify Service
+  - [x] Auto-format Indian numbers (+91 prefix)
+  - [x] 5-minute OTP expiry
+  - [x] Rate limiting and attempt tracking via Twilio
+- [x] **Frontend Updates:**
+  - [x] Green SMS confirmation banner when real OTP sent
+  - [x] Yellow test mode banner only when using mock fallback
+  - [x] Dynamic message based on `method` response field
+- [x] **Graceful Fallback:**
+  - [x] Falls back to mock OTP if Twilio fails
+  - [x] Mock OTP display only shown when using fallback
+- [x] **Environment Variables Added:**
+  - [x] `TWILIO_PHONE_NUMBER` - SMS sender number
+  - [x] `TWILIO_VERIFY_SERVICE_SID` - For OTP verification
+- [x] **Testing:** Verified SMS delivery to Indian numbers
+
+#### Push Notifications & Feedback System - COMPLETED
 - [x] **Auto-enable Push Notifications:**
   - [x] AutoNotificationPrompt component shows for logged-in users after 3 seconds
   - [x] Android banner-style prompt with Enable/Maybe Later options
