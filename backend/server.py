@@ -6179,12 +6179,33 @@ async def get_evara_share_content(content_type: str):
 # ============ GLYDEX - DIABETES CARE PORTAL ============
 
 class GlydexProfile(BaseModel):
-    diabetesType: str
+    diabetesType: str  # type1, type2, gestational, prediabetic
     age: str
     gender: str
     height: Optional[str] = None
     weight: Optional[str] = None
     medications: Optional[str] = None
+    # Extended diabetes-specific fields
+    dateOfDiagnosis: Optional[str] = None
+    hba1cTarget: Optional[str] = None  # e.g., "6.5-7.0"
+    currentMedications: Optional[List[str]] = None  # List of medications
+    insulinUser: Optional[bool] = False
+    complications: Optional[List[str]] = None  # neuropathy, retinopathy, nephropathy, etc.
+    emergencyContactName: Optional[str] = None
+    emergencyContactPhone: Optional[str] = None
+    # Reminder preferences
+    testReminders: Optional[bool] = True
+    medicineReminders: Optional[bool] = True
+    lastHba1cDate: Optional[str] = None
+    lastKidneyTestDate: Optional[str] = None
+
+
+class GlydexReminderSettings(BaseModel):
+    hba1cReminderMonths: int = 3  # Default every 3 months
+    fastingBSReminderDays: int = 7  # Weekly
+    kidneyTestReminderMonths: int = 12  # Yearly
+    medicineRefillDays: int = 30  # Monthly
+
 
 class SugarLog(BaseModel):
     type: str  # fbs, ppbs, random
