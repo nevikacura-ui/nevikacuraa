@@ -339,10 +339,11 @@ const AuthModal = ({ open, onClose }) => {
     setLoading(true);
     try {
       const response = await sendAuthOtp(phone);
-      setMockOtp(response.mock_otp);
+      setMockOtp(response.mock_otp || '');
+      setOtpMethod(response.method || 'mock');
       setStep('otp');
       setResendTimer(30);
-      toast.success('OTP sent successfully!');
+      toast.success(response.method === 'sms' ? 'OTP sent to your phone!' : 'OTP sent successfully!');
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to send OTP');
