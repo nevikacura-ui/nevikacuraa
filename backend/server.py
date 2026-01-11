@@ -919,11 +919,11 @@ async def get_guest_orders(phone: str):
     }
 
 
-# ============ OTP Endpoints (Mock OTP for testing) ============
+# ============ OTP Endpoints (Twilio SMS with Mock fallback) ============
 
 @api_router.post("/otp/send")
 async def send_otp(request: OTPRequest):
-    """Send OTP to phone number (Mock - displays OTP in response for testing)"""
+    """Send OTP to phone number via Twilio SMS (with mock fallback)"""
     phone = request.phone.strip()
     service = request.service.lower()
     
@@ -933,10 +933,22 @@ async def send_otp(request: OTPRequest):
     if service not in ['diagyn', 'proton', 'pharmacy']:
         raise HTTPException(status_code=400, detail="Invalid service")
     
-    # Generate OTP
-    otp = generate_otp()
+    # Try Twilio first
+    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
+        result = await send_twilio_otp(phone)
+        if result["success"]:
+            return {
+                "success": True,
+                "message": f"OTP sent to your phone via SMS for {service.title()} booking",
+                "expires_in": 300,
+                "phone": phone,
+                "method": "sms"
+            }
+        else:
+            logger.warning(f"Twilio failed for {service}, using mock: {result.get('error')}")
     
-    # Store OTP with expiry (5 minutes)
+    # Fallback to mock OTP
+    otp = generate_otp()
     otp_key = f"{phone}_{service}"
     otp_storage[otp_key] = {
         "otp": otp,
@@ -946,14 +958,13 @@ async def send_otp(request: OTPRequest):
     
     logger.info(f"Mock OTP generated for {phone} ({service}): {otp}")
     
-    # In production, this would send SMS via MSG91
-    # For now, return the OTP in response (MOCK MODE)
     return {
         "success": True,
         "message": "OTP sent successfully",
-        "mock_otp": otp,  # REMOVE IN PRODUCTION - only for testing
-        "expires_in": 300,  # 5 minutes
-        "phone": phone
+        "mock_otp": otp,  # Only shown when using fallback
+        "expires_in": 300,
+        "phone": phone,
+        "method": "mock"
     }
 
 @api_router.post("/otp/verify")
