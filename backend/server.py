@@ -5755,8 +5755,10 @@ async def delete_health_record(record_id: str, user = Depends(get_current_user))
 @api_router.get("/pharmacy/reorder/{order_id}")
 async def get_reorder_details(order_id: str, user = Depends(get_current_user)):
     """Get details of a previous order for reordering"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
     order = await db.pharmacy_orders.find_one(
-        {"id": order_id, "user_id": user["id"]},
+        {"id": order_id, "user_id": user.id},
         {"_id": 0}
     )
     if not order:
