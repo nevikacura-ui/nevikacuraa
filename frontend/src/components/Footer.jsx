@@ -334,7 +334,7 @@ const Footer = () => {
               </a>
 
               <a 
-                href="mailto:nevikacura@gmail.com"
+                href="mailto:help@nevikacura.com"
                 className="flex items-center gap-4 p-4 rounded-lg border hover:bg-gray-50 transition-colors"
               >
                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -342,7 +342,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="font-medium text-gray-800">Email</p>
-                  <p className="text-sm text-gray-600">nevikacura@gmail.com</p>
+                  <p className="text-sm text-gray-600">help@nevikacura.com</p>
                 </div>
               </a>
             </div>
