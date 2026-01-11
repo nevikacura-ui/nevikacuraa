@@ -214,8 +214,7 @@ const Home = () => {
                 <img 
                   src={service.logo} 
                   alt={service.name} 
-                  className={`w-auto object-contain ${service.id === 'evara' ? 'max-h-40' : 'max-h-32 mix-blend-multiply'}`}
-                  style={service.id === 'evara' ? { borderRadius: '24px' } : {}}
+                  className={`w-auto object-contain ${service.id === 'evara' ? 'max-h-48' : 'max-h-32 mix-blend-multiply'}`}
                   data-testid={`service-logo-${service.id}`}
                 />
               </div>
