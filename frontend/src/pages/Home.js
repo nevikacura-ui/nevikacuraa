@@ -71,7 +71,8 @@ const Home = () => {
       accentColor: 'border-transparent',
       path: '/evara',
       logoBg: '',
-      customBg: '#4A2463'
+      customBg: '#782B8B',
+      logoScale: 1.35
     },
     {
       id: 'glydex',
