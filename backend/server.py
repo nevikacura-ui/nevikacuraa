@@ -3146,6 +3146,140 @@ async def get_pending_follow_up_reminders(staff = Depends(verify_staff)):
     
     return {"reminders": reminders}
 
+
+@api_router.get("/staff/clinic/daily-collection")
+async def get_daily_collection_summary(
+    staff = Depends(verify_staff),
+    date: Optional[str] = None
+):
+    """Get daily collection summary for clinic staff dashboard"""
+    role = staff.get("role")
+    if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "doctor", "doctor_pushpa", "doctor_amnion", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Clinic staff or doctor access required")
+    
+    # Default to today
+    if not date:
+        date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+    # Determine clinic based on role
+    clinic_filter = {}
+    if role == "clinic_staff_pushpa":
+        clinic_filter = {"clinic": "Pushpa Clinic"}
+    elif role == "clinic_staff_amnion":
+        clinic_filter = {"clinic": "Amnion Clinic"}
+    
+    # Query completed appointments for the date
+    query = {
+        "status": "Completed",
+        "date": date,
+        "fee_code": {"$exists": True},
+        **clinic_filter
+    }
+    
+    appointments = await db.appointments.find(query, {"_id": 0}).to_list(500)
+    
+    # Calculate collection by category
+    collection_summary = {
+        "general": {"count": 0, "amount": 0, "codes": []},
+        "speciality": {"count": 0, "amount": 0, "codes": []},
+        "diabetes": {"count": 0, "amount": 0, "codes": []},
+        "obgyn": {"count": 0, "amount": 0, "codes": []},
+    }
+    
+    total_collection = 0
+    total_patients = len(appointments)
+    
+    for appt in appointments:
+        fee_code = appt.get("fee_code", "")
+        fee_amount = appt.get("fee_amount", 0)
+        fee_category = appt.get("fee_category", "general")
+        
+        total_collection += fee_amount
+        
+        if fee_category in collection_summary:
+            collection_summary[fee_category]["count"] += 1
+            collection_summary[fee_category]["amount"] += fee_amount
+            if fee_code not in collection_summary[fee_category]["codes"]:
+                collection_summary[fee_category]["codes"].append(fee_code)
+    
+    # Get doctor-wise breakdown
+    doctor_collection = {}
+    for appt in appointments:
+        doctor = appt.get("doctor", "Unknown")
+        fee_amount = appt.get("fee_amount", 0)
+        if doctor not in doctor_collection:
+            doctor_collection[doctor] = {"count": 0, "amount": 0}
+        doctor_collection[doctor]["count"] += 1
+        doctor_collection[doctor]["amount"] += fee_amount
+    
+    return {
+        "date": date,
+        "total_collection": total_collection,
+        "total_patients": total_patients,
+        "by_category": collection_summary,
+        "by_doctor": doctor_collection,
+        "appointments": appointments
+    }
+
+
+@api_router.post("/cron/send-follow-up-reminders")
+async def cron_send_follow_up_reminders(secret: str = ""):
+    """Cron endpoint to send follow-up reminders (call daily)
+    
+    Set up cron job: 0 9 * * * curl -X POST https://your-domain/api/cron/send-follow-up-reminders?secret=YOUR_SECRET
+    """
+    # Simple secret check (in production, use proper auth)
+    expected_secret = os.environ.get("CRON_SECRET", "nevikacura_cron_2026")
+    if secret != expected_secret:
+        raise HTTPException(status_code=401, detail="Invalid cron secret")
+    
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    tomorrow = (datetime.now(timezone.utc) + timedelta(days=1)).strftime("%Y-%m-%d")
+    sent_count = 0
+    
+    # Get follow-up reminders due today or tomorrow
+    due_reminders = await db.follow_up_reminders.find(
+        {
+            "status": "pending",
+            "follow_up_date": {"$in": [today, tomorrow]}
+        },
+        {"_id": 0}
+    ).to_list(500)
+    
+    for reminder in due_reminders:
+        try:
+            days_text = "today" if reminder["follow_up_date"] == today else "tomorrow"
+            
+            sms_message = f"""DiaGyn Healthcare - Follow-up Reminder
+
+Dear {reminder['patient_name']},
+
+This is a reminder for your follow-up appointment {days_text} ({reminder['follow_up_date']}).
+
+Doctor: {reminder['doctor']}
+Clinic: {reminder['clinic']}
+
+Please book your time slot: https://health-modules-2.preview.emergentagent.com/diagyn
+
+Need to reschedule? Call us or book online.
+
+- Nevika Cura Team"""
+            
+            await send_twilio_sms(reminder["patient_phone"], sms_message)
+            
+            # Mark as sent
+            await db.follow_up_reminders.update_one(
+                {"id": reminder["id"]},
+                {"$set": {"status": "sent", "sent_at": datetime.now(timezone.utc).isoformat()}}
+            )
+            sent_count += 1
+            logger.info(f"Follow-up reminder sent to {reminder['patient_phone']} for {reminder['follow_up_date']}")
+            
+        except Exception as e:
+            logger.error(f"Failed to send follow-up reminder: {e}")
+    
+    return {"success": True, "reminders_sent": sent_count, "date": today}
+
 # ============ Pharmacy Staff Endpoints ============
 
 @api_router.get("/staff/pharmacy/orders")
