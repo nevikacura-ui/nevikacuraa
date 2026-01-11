@@ -5725,9 +5725,11 @@ async def get_health_records(user = Depends(get_current_user)):
 @api_router.post("/health-records")
 async def upload_health_record(data: HealthRecordUpload, user = Depends(get_current_user)):
     """Upload a health record"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
     record = {
         "id": str(uuid.uuid4()),
-        "user_id": user["id"],
+        "user_id": user.id,
         "record_type": data.record_type,
         "title": data.title,
         "notes": data.notes,
