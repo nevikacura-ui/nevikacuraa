@@ -410,8 +410,8 @@ const Omnia = () => {
   // If not logged in, show welcome screen
   if (!token) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white">
-        <header className="border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50">
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50">
+        <header className="border-b border-border/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -419,7 +419,7 @@ const Omnia = () => {
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
                 <img 
-                  src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/6hsg4xui_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
+                  src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
                   alt="Omnia" 
                   className="h-12 w-auto"
                 />
@@ -428,83 +428,154 @@ const Omnia = () => {
           </div>
         </header>
 
-        <main className="max-w-4xl mx-auto px-4 py-12">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-teal-800 mb-4">Diabetes Care Portal</h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Your trusted digital companion for diabetes management. Track, understand, and manage your condition safely.
-            </p>
+        <main className="max-w-5xl mx-auto px-4 py-8">
+          {/* Hero Section */}
+          <div className="relative mb-12">
+            <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
+            <div className="relative bg-white/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 border border-teal-100 shadow-xl">
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-100 rounded-full text-teal-700 text-sm font-medium mb-4">
+                    <Heart className="w-4 h-4" />
+                    Your Health Companion
+                  </div>
+                  <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+                    Take Control of Your <span className="text-teal-600">Diabetes</span>
+                  </h1>
+                  <p className="text-lg text-gray-600 mb-6">
+                    Track your blood sugar, follow personalized diet plans, and stay prepared for emergencies — all in one place.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Button 
+                      size="lg"
+                      onClick={() => setShowAuth(true)}
+                      className="bg-teal-600 hover:bg-teal-700 text-lg px-8 py-6 rounded-xl shadow-lg shadow-teal-500/30"
+                      data-testid="omnia-login-btn"
+                    >
+                      Get Started Free
+                    </Button>
+                    <Button 
+                      size="lg"
+                      variant="outline"
+                      onClick={() => navigate('/pharmacy')}
+                      className="text-lg px-8 py-6 rounded-xl border-orange-300 text-orange-600 hover:bg-orange-50"
+                    >
+                      <Pill className="w-5 h-5 mr-2" />
+                      Order Medicines
+                    </Button>
+                  </div>
+                </div>
+                <div className="hidden md:flex justify-center">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-teal-400 to-cyan-400 rounded-full blur-2xl opacity-20"></div>
+                    <div className="relative bg-gradient-to-br from-teal-500 to-teal-600 rounded-3xl p-8 text-white">
+                      <div className="text-center mb-4">
+                        <Droplets className="w-16 h-16 mx-auto mb-2 opacity-90" />
+                        <p className="text-sm opacity-80">Track Daily</p>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="bg-white/20 rounded-xl p-3 flex items-center gap-3">
+                          <div className="w-10 h-10 bg-white/30 rounded-lg flex items-center justify-center">
+                            <span className="text-lg font-bold">F</span>
+                          </div>
+                          <div>
+                            <p className="text-xs opacity-80">Fasting</p>
+                            <p className="font-semibold">98 mg/dL</p>
+                          </div>
+                          <span className="ml-auto text-xs bg-green-400/30 px-2 py-1 rounded">Normal</span>
+                        </div>
+                        <div className="bg-white/20 rounded-xl p-3 flex items-center gap-3">
+                          <div className="w-10 h-10 bg-white/30 rounded-lg flex items-center justify-center">
+                            <span className="text-lg font-bold">P</span>
+                          </div>
+                          <div>
+                            <p className="text-xs opacity-80">Post-Meal</p>
+                            <p className="font-semibold">135 mg/dL</p>
+                          </div>
+                          <span className="ml-auto text-xs bg-green-400/30 px-2 py-1 rounded">Normal</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
-            <Card className="border-teal-200">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center">
-                    <Activity className="w-6 h-6 text-teal-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">Blood Sugar Tracking</h3>
-                    <p className="text-sm text-gray-600">Log and monitor your FBS & PPBS readings with trend analysis</p>
-                  </div>
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+            <Card className="bg-gradient-to-br from-teal-50 to-white border-teal-200 hover:shadow-lg transition-all hover:-translate-y-1">
+              <CardContent className="p-5">
+                <div className="w-12 h-12 rounded-xl bg-teal-500 flex items-center justify-center mb-4 shadow-lg shadow-teal-500/30">
+                  <Activity className="w-6 h-6 text-white" />
                 </div>
+                <h3 className="font-semibold text-gray-800 mb-1">Sugar Tracking</h3>
+                <p className="text-sm text-gray-500">Log FBS & PPBS with instant analysis</p>
               </CardContent>
             </Card>
 
-            <Card className="border-teal-200">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
-                    <Apple className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">Diabetic Diet Plans</h3>
-                    <p className="text-sm text-gray-600">Indian-friendly diet guidance for vegetarian & non-vegetarian</p>
-                  </div>
+            <Card className="bg-gradient-to-br from-green-50 to-white border-green-200 hover:shadow-lg transition-all hover:-translate-y-1">
+              <CardContent className="p-5">
+                <div className="w-12 h-12 rounded-xl bg-green-500 flex items-center justify-center mb-4 shadow-lg shadow-green-500/30">
+                  <Apple className="w-6 h-6 text-white" />
                 </div>
+                <h3 className="font-semibold text-gray-800 mb-1">Diet Plans</h3>
+                <p className="text-sm text-gray-500">Indian veg & non-veg meal guides</p>
               </CardContent>
             </Card>
 
-            <Card className="border-teal-200">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center">
-                    <AlertTriangle className="w-6 h-6 text-red-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">Emergency Guidance</h3>
-                    <p className="text-sm text-gray-600">Hypoglycemia first-aid and emergency protocols</p>
-                  </div>
+            <Card className="bg-gradient-to-br from-red-50 to-white border-red-200 hover:shadow-lg transition-all hover:-translate-y-1">
+              <CardContent className="p-5">
+                <div className="w-12 h-12 rounded-xl bg-red-500 flex items-center justify-center mb-4 shadow-lg shadow-red-500/30">
+                  <AlertTriangle className="w-6 h-6 text-white" />
                 </div>
+                <h3 className="font-semibold text-gray-800 mb-1">Emergency Help</h3>
+                <p className="text-sm text-gray-500">Hypoglycemia first-aid guide</p>
               </CardContent>
             </Card>
 
-            <Card className="border-teal-200">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
-                    <TestTube className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-800">Book Tests</h3>
-                    <p className="text-sm text-gray-600">Easy booking for HbA1c, FBS, PPBS & more via Proton</p>
-                  </div>
+            <Card className="bg-gradient-to-br from-purple-50 to-white border-purple-200 hover:shadow-lg transition-all hover:-translate-y-1">
+              <CardContent className="p-5">
+                <div className="w-12 h-12 rounded-xl bg-purple-500 flex items-center justify-center mb-4 shadow-lg shadow-purple-500/30">
+                  <TestTube className="w-6 h-6 text-white" />
                 </div>
+                <h3 className="font-semibold text-gray-800 mb-1">Book Tests</h3>
+                <p className="text-sm text-gray-500">HbA1c, FBS, Lipid Profile</p>
               </CardContent>
             </Card>
           </div>
 
+          {/* Order Medicine CTA */}
+          <Card className="bg-gradient-to-r from-orange-500 to-amber-500 border-0 text-white mb-8 overflow-hidden">
+            <CardContent className="p-6 relative">
+              <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+              <div className="absolute right-8 bottom-0 w-24 h-24 bg-white/10 rounded-full -mb-12"></div>
+              <div className="relative flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                    <Pill className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold mb-1">Need Diabetic Medicines?</h3>
+                    <p className="text-orange-100">Order monthly supplies from Orange Pharmacy</p>
+                  </div>
+                </div>
+                <Button 
+                  onClick={() => navigate('/pharmacy')}
+                  className="bg-white text-orange-600 hover:bg-orange-50 font-semibold px-6"
+                  data-testid="order-medicine-welcome-btn"
+                >
+                  Order Now
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Disclaimer */}
           <div className="text-center">
-            <Button 
-              size="lg"
-              onClick={() => setShowAuth(true)}
-              className="bg-teal-600 hover:bg-teal-700 text-lg px-8 py-6 rounded-full"
-              data-testid="omnia-login-btn"
-            >
-              Login / Sign Up to Continue
-            </Button>
-            <p className="text-sm text-gray-500 mt-4">
-              ⚠️ This portal is for education and tracking only. Always consult your doctor for medical advice.
+            <p className="text-sm text-gray-500 flex items-center justify-center gap-2">
+              <Info className="w-4 h-4" />
+              This portal is for education and tracking only. Always consult your doctor for medical advice.
             </p>
           </div>
         </main>
@@ -515,7 +586,7 @@ const Omnia = () => {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <img 
-                  src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/6hsg4xui_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
+                  src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
                   alt="Omnia" 
                   className="h-8 w-auto"
                 />
