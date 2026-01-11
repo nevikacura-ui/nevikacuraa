@@ -5876,7 +5876,8 @@ async def get_evara_share_content(content_type: str):
         raise HTTPException(status_code=404, detail="Content type not found")
     
     content = share_content[content_type]
-    whatsapp_url = f"https://wa.me/?text={content['message'].replace(' ', '%20').replace('\n', '%0A')}"
+    message = content['message'].replace(' ', '%20').replace('\n', '%0A')
+    whatsapp_url = f"https://wa.me/?text={message}"
     
     return {
         "title": content["title"],
