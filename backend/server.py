@@ -4869,6 +4869,473 @@ async def get_loyalty_summary(admin = Depends(verify_admin)):
     }
 
 
+# ============ EVARA - Women's Wellness & Care Program ============
+
+# Evara System Message for AI
+EVARA_SYSTEM_MESSAGE = """You are Evara, a compassionate and knowledgeable women's wellness companion by Nevika Cura Healthcare. 
+
+Your role is to:
+- Provide empathetic, non-judgmental support for women's health topics
+- Offer educational information about menstrual health, pregnancy, PCOS, menopause, and general wellness
+- Give lifestyle and nutrition guidance appropriate to the user's life stage
+- Send gentle reminders and encouragement
+
+IMPORTANT RULES:
+1. NEVER provide medical diagnosis or prescriptions
+2. NEVER replace professional medical consultation
+3. Always include appropriate disclaimers
+4. If user reports severe symptoms (heavy bleeding, severe pain, pregnancy danger signs, mental health crisis), immediately advise seeking medical help
+5. Use warm, caring, and professional language
+6. Respect privacy and sensitivity of topics
+7. Be culturally aware and inclusive
+
+Always end responses about health concerns with: "For personalized medical advice, please consult with a healthcare professional."
+
+You support women through:
+- Adolescence & Young Adult (15-25): Period tracking, PMS education, lifestyle tips
+- Reproductive Age (25-40): PCOS management, hormonal balance, pregnancy planning
+- Pregnancy: Week-by-week guidance, antenatal education, danger sign awareness
+- Perimenopause & Menopause (40+): Lifestyle care, bone health, mental wellbeing
+"""
+
+# Evara Pydantic Models
+class EvaraProfile(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    age: int
+    marital_status: Optional[str] = None  # single, married, other
+    pregnancy_status: str  # no, yes, planning
+    menstrual_status: str  # regular, irregular, menopausal
+    known_conditions: Optional[List[str]] = []  # PCOS, thyroid, diabetes, etc.
+    weight: Optional[float] = None
+    height: Optional[float] = None
+    lifestyle_goals: Optional[List[str]] = []
+    preferred_language: str = "English"
+    assigned_programs: List[str] = []
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class EvaraOnboarding(BaseModel):
+    age: int
+    marital_status: Optional[str] = None
+    pregnancy_status: str
+    menstrual_status: str
+    known_conditions: Optional[List[str]] = []
+    weight: Optional[float] = None
+    height: Optional[float] = None
+    lifestyle_goals: Optional[List[str]] = []
+    preferred_language: str = "English"
+
+class EvaraChatMessage(BaseModel):
+    message: str
+    session_id: Optional[str] = None
+
+class EvaraReminder(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    type: str  # period, medication, appointment, wellness_checkin, pregnancy_week
+    title: str
+    message: str
+    scheduled_date: str
+    scheduled_time: str
+    is_recurring: bool = False
+    recurrence_pattern: Optional[str] = None  # daily, weekly, monthly
+    is_active: bool = True
+    last_sent: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class EvaraReminderCreate(BaseModel):
+    type: str
+    title: str
+    message: str
+    scheduled_date: str
+    scheduled_time: str
+    is_recurring: bool = False
+    recurrence_pattern: Optional[str] = None
+
+# Evara Program Definitions
+EVARA_PROGRAMS = {
+    "menstrual_health": {
+        "name": "Menstrual Health & Period Tracking",
+        "description": "Track your cycle, understand your body, and manage PMS effectively",
+        "age_range": [15, 50],
+        "features": ["Period tracking", "PMS education", "Symptom logging", "Cycle predictions"]
+    },
+    "pcos_hormonal": {
+        "name": "PCOS & Hormonal Balance Program",
+        "description": "Comprehensive support for managing PCOS and hormonal health",
+        "age_range": [18, 45],
+        "conditions": ["PCOS"],
+        "features": ["Symptom tracking", "Diet plans", "Exercise guidance", "Progress monitoring"]
+    },
+    "pregnancy_support": {
+        "name": "Pregnancy Education & Support",
+        "description": "Your companion through the beautiful journey of pregnancy",
+        "pregnancy_status": ["yes", "planning"],
+        "features": ["Week-by-week guidance", "Antenatal education", "Danger sign alerts", "Nutrition tips"]
+    },
+    "menopause_care": {
+        "name": "Menopause & Perimenopause Care",
+        "description": "Navigate this transition with confidence and support",
+        "menstrual_status": ["menopausal"],
+        "age_range": [40, 65],
+        "features": ["Symptom management", "Bone health", "Mental wellbeing", "Lifestyle guidance"]
+    },
+    "wellness_community": {
+        "name": "Women's Health Community",
+        "description": "A safe space to learn, share, and grow together",
+        "age_range": [15, 65],
+        "features": ["Educational content", "Monthly live sessions", "Peer support", "Expert Q&A"]
+    }
+}
+
+def assign_evara_programs(profile: dict) -> List[str]:
+    """Auto-assign programs based on user profile"""
+    assigned = []
+    age = profile.get("age", 25)
+    pregnancy_status = profile.get("pregnancy_status", "no")
+    menstrual_status = profile.get("menstrual_status", "regular")
+    conditions = profile.get("known_conditions", [])
+    
+    # Always assign wellness community
+    assigned.append("wellness_community")
+    
+    # Menstrual health for non-menopausal women
+    if menstrual_status != "menopausal" and 15 <= age <= 50:
+        assigned.append("menstrual_health")
+    
+    # PCOS program if condition present
+    if "PCOS" in conditions or "pcos" in [c.lower() for c in conditions]:
+        assigned.append("pcos_hormonal")
+    
+    # Pregnancy support
+    if pregnancy_status in ["yes", "planning"]:
+        assigned.append("pregnancy_support")
+    
+    # Menopause care
+    if menstrual_status == "menopausal" or age >= 45:
+        assigned.append("menopause_care")
+    
+    return assigned
+
+# Evara AI Chat initialization
+from emergentintegrations.llm.chat import LlmChat, UserMessage
+
+evara_chats = {}  # Store chat sessions
+
+async def get_evara_chat(session_id: str, user_context: str = "") -> LlmChat:
+    """Get or create Evara AI chat session"""
+    if session_id not in evara_chats:
+        system_msg = EVARA_SYSTEM_MESSAGE
+        if user_context:
+            system_msg += f"\n\nUser Context: {user_context}"
+        
+        chat = LlmChat(
+            api_key=os.environ.get("EMERGENT_LLM_KEY"),
+            session_id=session_id,
+            system_message=system_msg
+        ).with_model("anthropic", "claude-sonnet-4-5-20250929")
+        
+        evara_chats[session_id] = chat
+    
+    return evara_chats[session_id]
+
+# Evara Routes
+@api_router.post("/evara/onboarding")
+async def evara_onboarding(data: EvaraOnboarding, user = Depends(get_current_user_optional)):
+    """Complete Evara onboarding and get program assignments"""
+    user_id = user["id"] if user else str(uuid.uuid4())
+    
+    # Check if profile already exists
+    existing = await db.evara_profiles.find_one({"user_id": user_id})
+    if existing:
+        # Update existing profile
+        assigned_programs = assign_evara_programs(data.model_dump())
+        await db.evara_profiles.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                **data.model_dump(),
+                "assigned_programs": assigned_programs,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        profile = await db.evara_profiles.find_one({"user_id": user_id}, {"_id": 0})
+    else:
+        # Create new profile
+        assigned_programs = assign_evara_programs(data.model_dump())
+        profile = EvaraProfile(
+            user_id=user_id,
+            assigned_programs=assigned_programs,
+            **data.model_dump()
+        ).model_dump()
+        profile["created_at"] = profile["created_at"].isoformat()
+        profile["updated_at"] = profile["updated_at"].isoformat()
+        await db.evara_profiles.insert_one(profile)
+        del profile["_id"] if "_id" in profile else None
+    
+    # Get program details
+    program_details = [
+        {**EVARA_PROGRAMS[p], "id": p}
+        for p in assigned_programs if p in EVARA_PROGRAMS
+    ]
+    
+    return {
+        "success": True,
+        "profile": {k: v for k, v in profile.items() if k != "_id"},
+        "assigned_programs": program_details,
+        "message": "Welcome to Evara! Based on your profile, we've personalized your wellness journey."
+    }
+
+@api_router.get("/evara/profile")
+async def get_evara_profile(user = Depends(get_current_user_optional)):
+    """Get user's Evara profile"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Please login to access your Evara profile")
+    
+    profile = await db.evara_profiles.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not profile:
+        return {"has_profile": False, "message": "Please complete onboarding first"}
+    
+    program_details = [
+        {**EVARA_PROGRAMS[p], "id": p}
+        for p in profile.get("assigned_programs", []) if p in EVARA_PROGRAMS
+    ]
+    
+    return {
+        "has_profile": True,
+        "profile": profile,
+        "programs": program_details
+    }
+
+@api_router.get("/evara/programs")
+async def get_evara_programs():
+    """Get all available Evara programs"""
+    return {
+        "programs": [
+            {**v, "id": k} for k, v in EVARA_PROGRAMS.items()
+        ]
+    }
+
+@api_router.get("/evara/program/{program_id}/content")
+async def get_program_content(program_id: str, user = Depends(get_current_user_optional)):
+    """Get AI-generated content for a specific program"""
+    if program_id not in EVARA_PROGRAMS:
+        raise HTTPException(status_code=404, detail="Program not found")
+    
+    program = EVARA_PROGRAMS[program_id]
+    
+    # Generate content using AI
+    try:
+        chat = await get_evara_chat(f"content_{program_id}", "")
+        prompt = f"""Generate helpful educational content for the "{program['name']}" program. 
+        Include:
+        1. Overview (2-3 sentences)
+        2. Key tips (5 bullet points)
+        3. Daily wellness suggestion
+        4. A motivational message
+        
+        Keep it warm, supportive, and educational. Format as JSON with keys: overview, tips, daily_tip, motivation"""
+        
+        response = await chat.send_message(UserMessage(text=prompt))
+        
+        # Try to parse JSON from response
+        import json
+        try:
+            content = json.loads(response)
+        except:
+            content = {
+                "overview": response[:200] if len(response) > 200 else response,
+                "tips": ["Stay hydrated", "Get enough sleep", "Exercise regularly", "Eat nutritious food", "Practice self-care"],
+                "daily_tip": "Take a moment today to appreciate your body and all it does for you.",
+                "motivation": "Every step you take towards wellness is a step towards a healthier, happier you!"
+            }
+        
+        return {
+            "program": program,
+            "content": content
+        }
+    except Exception as e:
+        logger.error(f"Error generating content: {e}")
+        return {
+            "program": program,
+            "content": {
+                "overview": program["description"],
+                "tips": program["features"],
+                "daily_tip": "Take care of yourself today - you deserve it!",
+                "motivation": "Your wellness journey is unique and beautiful. Keep going!"
+            }
+        }
+
+@api_router.post("/evara/chat")
+async def evara_chat(data: EvaraChatMessage, user = Depends(get_current_user_optional)):
+    """Chat with Evara AI wellness companion"""
+    user_id = user["id"] if user else "guest"
+    session_id = data.session_id or f"evara_{user_id}_{datetime.now().strftime('%Y%m%d')}"
+    
+    # Get user context if available
+    user_context = ""
+    if user:
+        profile = await db.evara_profiles.find_one({"user_id": user["id"]})
+        if profile:
+            user_context = f"Age: {profile.get('age')}, Pregnancy status: {profile.get('pregnancy_status')}, Menstrual status: {profile.get('menstrual_status')}"
+    
+    try:
+        chat = await get_evara_chat(session_id, user_context)
+        response = await chat.send_message(UserMessage(text=data.message))
+        
+        # Store chat history
+        chat_record = {
+            "user_id": user_id,
+            "session_id": session_id,
+            "user_message": data.message,
+            "ai_response": response,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.evara_chats.insert_one(chat_record)
+        
+        return {
+            "response": response,
+            "session_id": session_id
+        }
+    except Exception as e:
+        logger.error(f"Evara chat error: {e}")
+        return {
+            "response": "I'm here to help with your wellness journey. For personalized medical advice, please consult with a healthcare professional. How can I support you today?",
+            "session_id": session_id,
+            "error": True
+        }
+
+@api_router.get("/evara/chat/history")
+async def get_evara_chat_history(user = Depends(get_current_user_optional)):
+    """Get user's chat history with Evara"""
+    if not user:
+        return {"history": []}
+    
+    history = await db.evara_chats.find(
+        {"user_id": user["id"]},
+        {"_id": 0}
+    ).sort([("created_at", -1)]).limit(50).to_list(50)
+    
+    return {"history": history}
+
+# Evara Reminders
+@api_router.post("/evara/reminders")
+async def create_evara_reminder(data: EvaraReminderCreate, user = Depends(get_current_user_optional)):
+    """Create a wellness reminder"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Please login to set reminders")
+    
+    reminder = EvaraReminder(
+        user_id=user["id"],
+        **data.model_dump()
+    ).model_dump()
+    reminder["created_at"] = reminder["created_at"].isoformat()
+    
+    await db.evara_reminders.insert_one(reminder)
+    del reminder["_id"] if "_id" in reminder else None
+    
+    return {"success": True, "reminder": reminder}
+
+@api_router.get("/evara/reminders")
+async def get_evara_reminders(user = Depends(get_current_user_optional)):
+    """Get user's wellness reminders"""
+    if not user:
+        return {"reminders": []}
+    
+    reminders = await db.evara_reminders.find(
+        {"user_id": user["id"], "is_active": True},
+        {"_id": 0}
+    ).to_list(100)
+    
+    return {"reminders": reminders}
+
+@api_router.delete("/evara/reminders/{reminder_id}")
+async def delete_evara_reminder(reminder_id: str, user = Depends(get_current_user_optional)):
+    """Delete a reminder"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Please login")
+    
+    result = await db.evara_reminders.delete_one({"id": reminder_id, "user_id": user["id"]})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Reminder not found")
+    
+    return {"success": True}
+
+# Period Tracking
+@api_router.post("/evara/period/log")
+async def log_period(
+    start_date: str,
+    end_date: Optional[str] = None,
+    flow: str = "medium",
+    symptoms: Optional[List[str]] = None,
+    notes: Optional[str] = None,
+    user = Depends(get_current_user_optional)
+):
+    """Log period data"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Please login to track your period")
+    
+    period_log = {
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"],
+        "start_date": start_date,
+        "end_date": end_date,
+        "flow": flow,  # light, medium, heavy
+        "symptoms": symptoms or [],
+        "notes": notes,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.evara_period_logs.insert_one(period_log)
+    
+    # Calculate next predicted period (average 28-day cycle)
+    from datetime import timedelta
+    start = datetime.strptime(start_date, "%Y-%m-%d")
+    next_predicted = (start + timedelta(days=28)).strftime("%Y-%m-%d")
+    
+    return {
+        "success": True,
+        "log": {k: v for k, v in period_log.items() if k != "_id"},
+        "next_predicted": next_predicted
+    }
+
+@api_router.get("/evara/period/history")
+async def get_period_history(user = Depends(get_current_user_optional)):
+    """Get period tracking history"""
+    if not user:
+        return {"history": [], "predictions": None}
+    
+    history = await db.evara_period_logs.find(
+        {"user_id": user["id"]},
+        {"_id": 0}
+    ).sort([("start_date", -1)]).limit(12).to_list(12)
+    
+    # Calculate average cycle length
+    if len(history) >= 2:
+        cycles = []
+        for i in range(len(history) - 1):
+            start1 = datetime.strptime(history[i]["start_date"], "%Y-%m-%d")
+            start2 = datetime.strptime(history[i+1]["start_date"], "%Y-%m-%d")
+            cycles.append((start1 - start2).days)
+        avg_cycle = sum(cycles) // len(cycles) if cycles else 28
+    else:
+        avg_cycle = 28
+    
+    # Predict next period
+    next_predicted = None
+    if history:
+        last_start = datetime.strptime(history[0]["start_date"], "%Y-%m-%d")
+        next_predicted = (last_start + timedelta(days=avg_cycle)).strftime("%Y-%m-%d")
+    
+    return {
+        "history": history,
+        "average_cycle_length": avg_cycle,
+        "next_predicted": next_predicted
+    }
+
+
 # Include router AFTER all routes are defined
 app.include_router(api_router)
 
