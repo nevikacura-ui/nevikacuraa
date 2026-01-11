@@ -126,8 +126,8 @@ class TestDiaGynAppointments:
     def test_get_booked_slots(self):
         """Test getting booked slots for a doctor"""
         response = requests.get(f"{BASE_URL}/api/appointments/booked-slots", params={
-            "doctor": "Dr. Neha Sharma",
-            "clinic": "DiaGyn Clinic - Nagpur",
+            "doctor": "Dr. Neha Patel",
+            "clinic": "Pushpa Clinic",
             "date": "2026-01-15"
         })
         assert response.status_code == 200
@@ -140,8 +140,8 @@ class TestDiaGynAppointments:
         unique_id = str(uuid.uuid4().int)[:8]
         
         response = requests.post(f"{BASE_URL}/api/appointments", json={
-            "doctor": "Dr. Neha Sharma",
-            "clinic": "DiaGyn Clinic - Nagpur",
+            "doctor": "Dr. Neha Patel",
+            "clinic": "Pushpa Clinic",
             "date": f"2026-02-{15 + int(unique_id[:2]) % 10}",
             "time": f"{10 + int(unique_id[2:4]) % 8}:00",
             "patient_name": f"Test Patient {unique_id}",
