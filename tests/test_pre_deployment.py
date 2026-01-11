@@ -184,16 +184,15 @@ class TestPharmacy:
         """Test creating a pharmacy order"""
         unique_id = str(uuid.uuid4().int)[:8]
         
-        # Correct endpoint is /api/pharmacy
+        # Correct endpoint is /api/pharmacy with medicines field
         response = requests.post(f"{BASE_URL}/api/pharmacy", json={
             "patient_name": f"Test Patient {unique_id}",
             "patient_phone": f"98765{unique_id[:5]}",
             "patient_email": f"test_{unique_id}@example.com",
-            "items": [
+            "medicines": [
                 {"name": "Paracetamol 500mg", "quantity": 2, "price": 25}
             ],
-            "delivery_address": "123 Test Street, Nagpur",
-            "delivery_type": "delivery"
+            "delivery_address": "123 Test Street, Nagpur"
         })
         assert response.status_code == 200
         data = response.json()
