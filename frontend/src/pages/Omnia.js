@@ -394,6 +394,25 @@ const Omnia = () => {
     return { status: 'Needs Attention', color: 'text-red-600', bg: 'bg-red-100' };
   };
 
+  const toggleTestSelection = (testName) => {
+    setSelectedDiabeticTests(prev => 
+      prev.includes(testName) 
+        ? prev.filter(t => t !== testName)
+        : [...prev, testName]
+    );
+  };
+
+  const handleBookSelectedTests = () => {
+    if (selectedDiabeticTests.length === 0) {
+      toast.error('Please select at least one test');
+      return;
+    }
+    // Pass selected tests via URL params
+    const testsParam = encodeURIComponent(selectedDiabeticTests.join(','));
+    setShowTests(false);
+    navigate(`/proton?tests=${testsParam}&from=omnia`);
+  };
+
   const handleSaveProfile = async () => {
     if (!profileData.diabetesType) {
       toast.error('Please select your diabetes type');
