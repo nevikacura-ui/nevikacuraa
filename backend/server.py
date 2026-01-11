@@ -5882,6 +5882,9 @@ async def get_evara_share_content(content_type: str):
         "whatsapp_url": whatsapp_url
     }
 
+# Include router AFTER all routes are defined
+app.include_router(api_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
