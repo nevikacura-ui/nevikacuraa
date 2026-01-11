@@ -5235,7 +5235,7 @@ async def create_evara_reminder(data: EvaraReminderCreate, user = Depends(get_cu
     reminder["created_at"] = reminder["created_at"].isoformat()
     
     await db.evara_reminders.insert_one(reminder)
-    del reminder["_id"] if "_id" in reminder else None
+    if "_id" in reminder: del reminder["_id"]
     
     return {"success": True, "reminder": reminder}
 
