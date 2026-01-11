@@ -1633,10 +1633,22 @@ const Evara = () => {
       <Dialog open={showPregnancyWeeks} onOpenChange={setShowPregnancyWeeks}>
         <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Baby className="w-5 h-5 text-blue-500" />
-              Week-by-Week Pregnancy Guide
-            </DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-2">
+                <Baby className="w-5 h-5 text-blue-500" />
+                Week-by-Week Pregnancy Guide
+              </DialogTitle>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => shareOnWhatsApp('pregnancy_tips')}
+                className="text-green-600 border-green-300 hover:bg-green-50"
+                data-testid="share-pregnancy-btn"
+              >
+                <Share2 className="w-4 h-4 mr-1" />
+                Share
+              </Button>
+            </div>
             <DialogDescription>
               Track your baby's development from week 1 to 42
             </DialogDescription>
