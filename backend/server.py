@@ -5347,7 +5347,7 @@ async def api_root_handler():
         "name": "Nevika Cura API",
         "version": "1.0.0",
         "status": "healthy",
-        "services": ["diagyn", "proton", "pharmacy", "staff", "admin"]
+        "services": ["diagyn", "proton", "pharmacy", "evara", "staff", "admin"]
     }
 
 app.add_middleware(
