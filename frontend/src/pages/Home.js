@@ -60,6 +60,16 @@ const Home = () => {
       accentColor: 'border-brand-orange',
       path: '/pharmacy',
       logoBg: 'bg-orange-50'
+    },
+    {
+      id: 'evara',
+      name: 'Evara',
+      logo: '/icons/evara-logo.png',
+      description: "Women's Wellness & Care Program",
+      bgColor: 'bg-pink-50',
+      accentColor: 'border-pink-400',
+      path: '/evara',
+      logoBg: 'bg-pink-50'
     }
   ];
 
