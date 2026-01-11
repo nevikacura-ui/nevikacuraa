@@ -423,10 +423,11 @@ const AuthModal = ({ open, onClose }) => {
     setLoading(true);
     try {
       const response = await sendAuthOtp(phone);
-      setMockOtp(response.mock_otp);
+      setMockOtp(response.mock_otp || '');
+      setOtpMethod(response.method || 'mock');
       setOtp(['', '', '', '', '', '']);
       setResendTimer(30);
-      toast.success('OTP resent successfully!');
+      toast.success(response.method === 'sms' ? 'OTP sent to your phone!' : 'OTP resent successfully!');
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to resend OTP');
