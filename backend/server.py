@@ -6030,6 +6030,109 @@ async def get_sugar_stats(user = Depends(get_current_user)):
     
     return {"stats": stats}
 
+# ============ HbA1c Tracking Endpoints ============
+
+class HbA1cLog(BaseModel):
+    value: float
+    date: str
+    lab_name: str = ""
+    notes: str = ""
+
+@api_router.get("/omnia/hba1c-logs")
+async def get_hba1c_logs(user = Depends(get_current_user)):
+    """Get user's HbA1c test history"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    logs = await db.omnia_hba1c_logs.find(
+        {"user_id": user.id},
+        {"_id": 0}
+    ).sort("date", -1).to_list(50)
+    return {"logs": logs}
+
+@api_router.post("/omnia/hba1c-logs")
+async def add_hba1c_log(data: HbA1cLog, user = Depends(get_current_user)):
+    """Add a new HbA1c test result"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    # Validate HbA1c value (typically 4-15%)
+    if data.value < 3 or data.value > 20:
+        raise HTTPException(status_code=400, detail="Invalid HbA1c value. Normal range is 4-15%")
+    
+    log = {
+        "id": str(uuid.uuid4()),
+        "user_id": user.id,
+        "value": data.value,
+        "date": data.date,
+        "lab_name": data.lab_name,
+        "notes": data.notes,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.omnia_hba1c_logs.insert_one(log)
+    
+    # Determine control status
+    status = "excellent" if data.value < 6.5 else "good" if data.value < 7 else "fair" if data.value < 8 else "poor"
+    
+    return {
+        "success": True, 
+        "log": {k: v for k, v in log.items() if k != "_id"},
+        "status": status
+    }
+
+@api_router.delete("/omnia/hba1c-logs/{log_id}")
+async def delete_hba1c_log(log_id: str, user = Depends(get_current_user)):
+    """Delete an HbA1c log"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    result = await db.omnia_hba1c_logs.delete_one(
+        {"id": log_id, "user_id": user.id}
+    )
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Log not found")
+    return {"success": True}
+
+@api_router.get("/omnia/hba1c-trend")
+async def get_hba1c_trend(user = Depends(get_current_user)):
+    """Get HbA1c trend data for charting"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    logs = await db.omnia_hba1c_logs.find(
+        {"user_id": user.id},
+        {"_id": 0, "value": 1, "date": 1}
+    ).sort("date", 1).to_list(20)  # Last 20 readings chronologically
+    
+    if not logs:
+        return {"trend": None, "analysis": None}
+    
+    values = [l["value"] for l in logs]
+    avg = round(sum(values) / len(values), 1)
+    latest = values[-1] if values else None
+    
+    # Calculate trend direction
+    trend_direction = "stable"
+    if len(values) >= 2:
+        recent_avg = sum(values[-3:]) / len(values[-3:]) if len(values) >= 3 else values[-1]
+        older_avg = sum(values[:3]) / len(values[:3]) if len(values) >= 3 else values[0]
+        diff = recent_avg - older_avg
+        if diff < -0.3:
+            trend_direction = "improving"
+        elif diff > 0.3:
+            trend_direction = "worsening"
+    
+    analysis = {
+        "total_tests": len(logs),
+        "average": avg,
+        "latest": latest,
+        "lowest": min(values),
+        "highest": max(values),
+        "trend_direction": trend_direction,
+        "control_status": "excellent" if latest and latest < 6.5 else "good" if latest and latest < 7 else "fair" if latest and latest < 8 else "needs_improvement"
+    }
+    
+    return {"trend": logs, "analysis": analysis}
+
 # Include router AFTER all routes are defined
 app.include_router(api_router)
 
