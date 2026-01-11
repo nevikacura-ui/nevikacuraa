@@ -1700,54 +1700,252 @@ const Glydex = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Profile Setup Dialog */}
+      {/* Profile Setup Dialog - Extended Diabetes Information */}
       <Dialog open={showProfileSetup} onOpenChange={setShowProfileSetup}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Complete Your Diabetes Profile</DialogTitle>
-            <DialogDescription>Help us personalize your experience</DialogDescription>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-4 bg-gradient-to-r from-teal-500 to-teal-600 text-white flex-shrink-0">
+            <DialogTitle className="text-xl">Complete Your Diabetes Profile</DialogTitle>
+            <DialogDescription className="text-teal-100">
+              Help us personalize your diabetes care experience
+            </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label>Diabetes Type *</Label>
-              <Select value={profileData.diabetesType} onValueChange={(v) => setProfileData({...profileData, diabetesType: v})}>
-                <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="type1">Type 1 Diabetes</SelectItem>
-                  <SelectItem value="type2">Type 2 Diabetes</SelectItem>
-                  <SelectItem value="gestational">Gestational Diabetes</SelectItem>
-                  <SelectItem value="prediabetes">Pre-diabetes</SelectItem>
-                  <SelectItem value="notsure">Not Sure</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Age</Label>
-                <Input 
-                  type="number"
-                  placeholder="e.g., 45"
-                  value={profileData.age}
-                  onChange={(e) => setProfileData({...profileData, age: e.target.value})}
-                />
+          
+          <div className="flex-1 overflow-y-auto p-4" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div className="space-y-6">
+              {/* Basic Info */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-700 border-b pb-2">Basic Information</h3>
+                <div>
+                  <Label>Diabetes Type *</Label>
+                  <Select value={profileData.diabetesType} onValueChange={(v) => setProfileData({...profileData, diabetesType: v})}>
+                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="type1">Type 1 Diabetes</SelectItem>
+                      <SelectItem value="type2">Type 2 Diabetes</SelectItem>
+                      <SelectItem value="gestational">Gestational Diabetes</SelectItem>
+                      <SelectItem value="prediabetes">Pre-diabetes</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label>Age</Label>
+                    <Input 
+                      type="number"
+                      placeholder="e.g., 45"
+                      value={profileData.age}
+                      onChange={(e) => setProfileData({...profileData, age: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label>Gender</Label>
+                    <Select value={profileData.gender} onValueChange={(v) => setProfileData({...profileData, gender: v})}>
+                      <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Date of Diagnosis</Label>
+                    <Input 
+                      type="date"
+                      value={profileData.dateOfDiagnosis}
+                      onChange={(e) => setProfileData({...profileData, dateOfDiagnosis: e.target.value})}
+                    />
+                  </div>
+                </div>
               </div>
-              <div>
-                <Label>Gender</Label>
-                <Select value={profileData.gender} onValueChange={(v) => setProfileData({...profileData, gender: v})}>
-                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
+
+              {/* Medical Details */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-700 border-b pb-2">Medical Details</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>HbA1c Target Range</Label>
+                    <Select value={profileData.hba1cTarget} onValueChange={(v) => setProfileData({...profileData, hba1cTarget: v})}>
+                      <SelectTrigger><SelectValue placeholder="Select target" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="below-6.5">Below 6.5% (Strict)</SelectItem>
+                        <SelectItem value="6.5-7.0">6.5% - 7.0% (Standard)</SelectItem>
+                        <SelectItem value="7.0-7.5">7.0% - 7.5% (Moderate)</SelectItem>
+                        <SelectItem value="7.5-8.0">7.5% - 8.0% (Relaxed)</SelectItem>
+                        <SelectItem value="above-8.0">Above 8.0% (As advised)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="flex items-center gap-2">
+                      <input 
+                        type="checkbox" 
+                        checked={profileData.insulinUser}
+                        onChange={(e) => setProfileData({...profileData, insulinUser: e.target.checked})}
+                        className="rounded"
+                      />
+                      On Insulin Therapy
+                    </Label>
+                  </div>
+                </div>
+
+                {/* Current Medications */}
+                <div>
+                  <Label>Current Medications</Label>
+                  <div className="flex gap-2 mb-2">
+                    <Input 
+                      placeholder="Add medication name..."
+                      value={newMedication}
+                      onChange={(e) => setNewMedication(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && newMedication.trim()) {
+                          setProfileData({
+                            ...profileData, 
+                            currentMedications: [...(profileData.currentMedications || []), newMedication.trim()]
+                          });
+                          setNewMedication('');
+                        }
+                      }}
+                    />
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        if (newMedication.trim()) {
+                          setProfileData({
+                            ...profileData, 
+                            currentMedications: [...(profileData.currentMedications || []), newMedication.trim()]
+                          });
+                          setNewMedication('');
+                        }
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {(profileData.currentMedications || []).map((med, idx) => (
+                      <span key={idx} className="bg-teal-100 text-teal-800 px-2 py-1 rounded-full text-sm flex items-center gap-1">
+                        <Pill className="w-3 h-3" /> {med}
+                        <button 
+                          onClick={() => setProfileData({
+                            ...profileData,
+                            currentMedications: profileData.currentMedications.filter((_, i) => i !== idx)
+                          })}
+                          className="ml-1 text-teal-600 hover:text-red-500"
+                        >×</button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Complications */}
+                <div>
+                  <Label>Known Complications (if any)</Label>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {['Neuropathy', 'Retinopathy', 'Nephropathy', 'Cardiovascular', 'Foot Problems', 'None'].map(comp => (
+                      <label key={comp} className="flex items-center gap-2 text-sm cursor-pointer">
+                        <input 
+                          type="checkbox"
+                          checked={(profileData.complications || []).includes(comp)}
+                          onChange={(e) => {
+                            if (comp === 'None') {
+                              setProfileData({...profileData, complications: e.target.checked ? ['None'] : []});
+                            } else {
+                              const newComps = e.target.checked 
+                                ? [...(profileData.complications || []).filter(c => c !== 'None'), comp]
+                                : (profileData.complications || []).filter(c => c !== comp);
+                              setProfileData({...profileData, complications: newComps});
+                            }
+                          }}
+                          className="rounded"
+                        />
+                        {comp}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Emergency Contact */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-700 border-b pb-2">Emergency Contact</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Contact Name</Label>
+                    <Input 
+                      placeholder="Name of emergency contact"
+                      value={profileData.emergencyContactName}
+                      onChange={(e) => setProfileData({...profileData, emergencyContactName: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label>Contact Phone</Label>
+                    <Input 
+                      placeholder="Phone number"
+                      value={profileData.emergencyContactPhone}
+                      onChange={(e) => setProfileData({...profileData, emergencyContactPhone: e.target.value})}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Test History */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-700 border-b pb-2">Last Test Dates (for reminders)</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Last HbA1c Test</Label>
+                    <Input 
+                      type="date"
+                      value={profileData.lastHba1cDate}
+                      onChange={(e) => setProfileData({...profileData, lastHba1cDate: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label>Last Kidney Function Test</Label>
+                    <Input 
+                      type="date"
+                      value={profileData.lastKidneyTestDate}
+                      onChange={(e) => setProfileData({...profileData, lastKidneyTestDate: e.target.value})}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Reminder Preferences */}
+              <div className="space-y-4 bg-blue-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-blue-700">🔔 Reminder Preferences</h3>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox"
+                      checked={profileData.testReminders}
+                      onChange={(e) => setProfileData({...profileData, testReminders: e.target.checked})}
+                      className="rounded"
+                    />
+                    <span className="text-sm">Send me test reminders (HbA1c every 3 months, Kidney yearly)</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox"
+                      checked={profileData.medicineReminders}
+                      onChange={(e) => setProfileData({...profileData, medicineReminders: e.target.checked})}
+                      className="rounded"
+                    />
+                    <span className="text-sm">Send me medicine refill reminders (every 30 days)</span>
+                  </label>
+                </div>
               </div>
             </div>
-            <Button onClick={handleSaveProfile} disabled={loading} className="w-full bg-teal-600 hover:bg-teal-700">
-              {loading ? 'Saving...' : 'Save & Continue'}
-            </Button>
-            <Button variant="ghost" onClick={() => setShowProfileSetup(false)} className="w-full">
+          </div>
+          
+          <div className="p-4 border-t bg-gray-50 flex gap-3">
+            <Button variant="outline" onClick={() => setShowProfileSetup(false)} className="flex-1">
               Skip for now
+            </Button>
+            <Button onClick={handleSaveProfile} disabled={loading} className="flex-1 bg-teal-600 hover:bg-teal-700">
+              {loading ? 'Saving...' : 'Save Profile'}
             </Button>
           </div>
         </DialogContent>
