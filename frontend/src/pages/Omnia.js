@@ -1462,7 +1462,7 @@ const Omnia = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <ScrollArea className="flex-1">
+          <div className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
             <div className="p-4 space-y-4">
               {/* What is it */}
               <Card className="bg-purple-50 border-purple-200">
@@ -1554,7 +1554,7 @@ const Omnia = () => {
                 </CardContent>
               </Card>
             </div>
-          </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -1571,7 +1571,7 @@ const Omnia = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <ScrollArea className="flex-1">
+          <div className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
             <div className="p-4 space-y-4">
               {/* Importance */}
               <Card className="bg-blue-50 border-blue-200">
@@ -1662,7 +1662,7 @@ const Omnia = () => {
                 </CardContent>
               </Card>
             </div>
-          </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -1732,7 +1732,7 @@ const Omnia = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <ScrollArea className="flex-1">
+          <div className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
             <div className="p-4 space-y-4">
               {/* Add New HbA1c */}
               <Card className="border-indigo-200">
@@ -1856,7 +1856,7 @@ const Omnia = () => {
                 </div>
               )}
             </div>
-          </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
