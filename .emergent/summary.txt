@@ -4,109 +4,95 @@ The user wants to build a modern healthcare application named Nevika Cura.
 **PRODUCT REQUIREMENTS:**
 
 1.  **Core Services:** DiaGyn Healthcare (appointments), Proton Diagnostics (tests), and Orange Pharmacy (medicines).
-2.  **User Experience:** A modern, clean UI with features like user accounts, login, order history, and notifications.
+2.  **User Experience:** A modern, clean UI with user accounts, login, order history, and notifications.
 3.  **Admin/Staff Portals:** Dashboards for inventory management, doctor schedules, and order tracking.
 4.  **Technical Stack:** React frontend, FastAPI backend, MongoDB database.
-5.  **New Module: Evara - Women's Wellness & Care**
-    *   **Purpose:** A subscription-based (initially free) digital program for women's wellness.
-    *   **Onboarding:** Collect user data (age, pregnancy/menstrual status, conditions) to personalize care.
-    *   **Auto-Assignment:** Automatically activate programs based on user profile (e.g., Menstrual Health for teens, Pregnancy Support for expectant mothers).
-    *   **Core Services:** Wellness subscriptions, PCOS/Hormonal Balance program, Pregnancy Education, a Health Community, and coordination for home-based services.
-    *   **Features:**
-        *   AI-powered chat using Claude for educational support (not diagnosis).
-        *   Pregnancy Calculator (EDD, weeks of pregnancy).
-        *   Menstrual cycle tracking and predictions.
-        *   Detailed educational content on PCOS, diet, and exercise.
-        *   A separate sign-up flow within Evara.
-    *   **Communication:** Use empathetic language and send reminders via SMS and push notifications.
-6.  **Recent Requests (from session):**
-    *   Fix/update the application's splash screen design.
-    *   Add a disclaimer to appointment booking SMS messages.
-    *   Update the contact number in SMS templates.
-    *   Implement all backlog features.
+5.  **Module: Evara - Women's Wellness & Care**
+    *   A subscription-based (initially free) digital program for women's wellness, featuring AI-powered chat (Claude), a pregnancy calculator, menstrual cycle tracking, and detailed educational content.
+6.  **Module: Omnia - Diabetes Care Portal**
+    *   A patient-focused digital support system for diabetes management.
+    *   Features include blood sugar logging, Indian-friendly diet plans, easy booking for diabetic tests, educational content on warning signs, and critical emergency guidance for hypoglycemia.
+    *   Includes a redirect to Orange Pharmacy for ordering monthly diabetic medicines.
+7.  **General UI/UX:**
+    *   A professional footer with links to About Us, Privacy Policy, Contact, Portals, and an APK download.
+    *   A modern, aesthetic homepage design.
+    *   Display doctor qualifications on the appointment booking page.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack healthcare application (React/FastAPI/MongoDB) with functional Admin and Staff portals, a loyalty points system, and a Twilio-based SMS notification system.
+A comprehensive full-stack healthcare application built on React, FastAPI, and MongoDB. The application includes functional Admin and Staff portals, a loyalty points system, and a verified Twilio SMS notification system.
 
-A large portion of the  monolith has been refactored by extracting large, hardcoded data structures (, ) into separate files, reducing its size by nearly 50%.
+The core services are supplemented by two major modules:
+1.  **Evara (Women's Wellness):** A feature-complete module with user onboarding, program assignment, an AI chat assistant (Claude), a pregnancy calculator, and extensive educational content.
+2.  **Omnia (Diabetes Care):** A newly created module based on a detailed user PRD. It includes a dedicated frontend page, backend APIs for user profiles and blood sugar logging, educational content, and a redesigned aesthetic welcome screen with a clear call-to-action for ordering medicines.
 
-A comprehensive new module, Evara, has been built for women's wellness. It includes a dedicated frontend page, backend APIs, and integration with the Claude LLM via  for an AI chat assistant. The module features user onboarding, program assignment, a pregnancy calculator, and detailed educational guides for PCOS. Backlog features like week-by-week pregnancy content, home services, and community sessions have been added to the backend and are being integrated into the frontend.
+The application's UI has been significantly enhanced with a redesigned modern homepage, a comprehensive footer component, and updated doctor credentials. Several user-suggested features like a doctor availability calendar, a reorder medicine button, and WhatsApp sharing for content have also been implemented.
 
 **Last working item**:
-- Last item agent was working: Implementing all backlog features for the Evara module. The agent added the backend endpoints for pregnancy content, home services, and community sessions. It then began integrating these features into the  frontend page by adding state, fetch functions, and UI components (dialogs).
+- Last item agent was working: Addressing a multi-part user request to improve the UI and functionality. This involved:
+    1.  Redesigning the homepage () for a more modern and aesthetic look.
+    2.  Rewriting the  page to use the main application's shared authentication context and make all its features (sugar logging, diet plans, etc.) functional for logged-in users.
+    3.  Updating the Omnia card on the homepage to have a background color that matches its logo.
 - Status: IN PROGRESS
 - Agent Testing Done: N
 - Which testing method agent to use? frontend testing agent
 - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-- **Issue 1:** Finalize Splash Screen Design (P0)
-- **Issue 2:** Flawed WhatsApp Notification on Sign-up (P3)
-
-**Issues Detail:**
-- **Issue 1: Finalize Splash Screen Design**
-  - **Attempted fixes:** Multiple iterations were made to the splash screen in , changing the background, logo size, and adding/modifying a loading animation (from a spinner to pulsing dots to teardrops). The user has had difficulty verifying the changes due to caching and the ephemeral nature of the splash screen.
-  - **Next debug checklist:**
-    1.  Confirm the final desired design with the user (currently: 220px logo, teardrop-shaped bouncing dots, white background).
-    2.  Take a clear, final screenshot that accurately captures the splash screen without content showing through. This may require adding a  to the screenshot command to ensure the splash is fully rendered and opaque.
-    3.  Get user sign-off on the final design to prevent further iterations.
-  - **Why fix this issue and what will be achieved with the fix?** To resolve a recurring user request and finalize the app's initial loading experience.
-  - **Status:** IN PROGRESS
-  - **Is recurring issue?** Y
-  - **Should Test frontend/backend/both after fix?** Frontend
-  - **Blocked on other issue:** None
-- **Issue 2: Flawed WhatsApp Notification on Sign-up**
-  - **Attempted fixes:** The  function fails due to Twilio error 63007, indicating the number is not configured for the WhatsApp Business API. The user agreed to pivot to SMS.
-  - **Next debug checklist:**
-    1.  Inform the user that to enable WhatsApp, they must complete the WhatsApp Business Account setup and approval process within their Twilio console.
-  - **Why fix this issue and what will be achieved with the fix?** To enable the originally requested professional WhatsApp notifications if the user decides to pursue it in the future.
-  - **Status:** BLOCKED
-  - **Is recurring issue?** Y
-  - **Should Test frontend/backend/both after fix?** Backend
-  - **Blocked on other issue:** User action required on their Twilio account.
+There are no outstanding blocking issues. All user-reported issues from this session have been addressed.
 
 **In progress Task List**:
-- **Task 1: Complete Evara Backlog Implementation** (P0)
-  - **Where to resume:** The frontend file  has been updated with new state, fetch functions, quick actions, and dialog components for the backlog features (Home Services, Community Sessions, Week-by-Week Pregnancy Content). The next step is to test these new UI elements to ensure they open correctly, fetch data from the new backend endpoints, and display it properly.
-  - **What will be achieved with this?** This will complete the user's request to Finish all backlog and deliver a feature-complete Evara module as per the latest requirements.
-  - **Status:** IN PROGRESS
-  - **Should Test frontend/backend/both after fix?** both
-  - **Blocked on something:** None
-- **Task 2: Complete Refactoring of ** (P1)
-  - **Where to resume:** The monolithic  still contains all API route definitions. The structure for modular routes exists in . The next step is to systematically move the endpoint logic from  into the respective route files (e.g., , , , etc.) and update the main FastAPI app to include these new routers.
+- **Task 1: Complete Refactoring of ** (P1)
+  - **Where to resume:** The monolithic  still contains all API route definitions despite growing significantly with the addition of the Evara and Omnia modules. The structure for modular routes exists in . The next step is to systematically move the endpoint logic from  into the respective route files.
   - **What will be achieved with this?** Significantly improve code maintainability, readability, and scalability by eliminating the monolithic file structure.
-  - **Status:** IN PROGRESS
+  - **Status:** NOT STARTED
   - **Should Test frontend/backend/both after fix?** both
-  - **Blocked on something:** None
+  - **Blocked on something:** User has de-prioritized this for now.
 
 **Upcoming and Future Tasks**
 - **Upcoming Tasks:**
-  - **P1: Payment Gateway Integration:** Implement a payment provider (e.g., Razorpay, Stripe) for subscriptions and orders using the  agent.
+  - **P0: Test and Verify Rewritten  Functionality:** The  file was rewritten to fix authentication and enable features. While the UI looks correct, the core functionality (logging blood sugar, viewing history, accessing diet plans as a logged-in user) has not been tested. This needs to be the immediate next step.
 - **Future Tasks:**
-  - **P2: Migrate Hardcoded Data to DB:** The  and  lists, currently in Python files, should be moved into their own MongoDB collections to be managed via the admin panel.
-  - **P3: Refactor :** This large component should be broken down into smaller, role-specific components.
+  - **P1: Payment Gateway Integration:** Implement a payment provider (e.g., Razorpay, Stripe) for Evara subscriptions. The user has deferred this for now.
+  - **P2: Migrate Hardcoded Data to DB:** Static content like , , and the new educational data for Evara/Omnia should be moved to MongoDB collections.
+  - **P3: Refactor Large Frontend Components:** The , , and  files are very large and should be broken down into smaller, reusable components to improve maintainability.
 
 **Completed work in this session**
-- **SMS Notification System Verified:** Fully tested and confirmed the server-side SMS notification system for pharmacy and diagnostic order creation and status updates.
-- ** Partially Refactored:** Extracted  and  from  into  files, reducing the main file's line count from 9,192 to 4,846 (a 47% reduction).
-- **Splash Screen Redesigned:** Iterated through multiple designs for the application's splash screen in  based on user feedback.
-- **Appointment SMS Templates Updated:** Added a new disclaimer message and implemented custom templates for walk-in and emergency bookings. Updated the contact phone number.
-- **Evara Module Implemented & Enhanced:**
-    - Created the full-stack Evara women's wellness module.
-    - Integrated the Claude LLM for an AI chat assistant using .
-    - Added a new Evara logo and card to the homepage ().
-    - Built the Evara page () with user onboarding, program details, and quick actions.
-    - Implemented advanced features: a pregnancy calculator and detailed educational guides (PCOS, PMS).
-    - Added backend endpoints and frontend UI for backlog features: week-by-week pregnancy content, home service coordination, and community live sessions.
+- **New Module: Omnia Diabetes Care Portal:**
+  - Built the complete full-stack module as per the user's detailed PRD.
+  - Created the backend APIs, database collections (, ), and frontend page ().
+  - Redesigned the Omnia welcome page to have a modern, aesthetic look with clear calls-to-action for getting started and ordering medicine.
+  - Integrated Omnia with the main application's authentication system.
+- **Evara Module Enhancements:**
+  - Implemented and tested all backlog features: Week-by-Week Pregnancy Guide, Home Services, and Community Live Sessions.
+- **Core Feature Enhancements (User Suggestions):**
+  - **Doctor Availability Calendar:** Added a 7-day availability preview to the DiaGyn page.
+  - **Health Records Storage:** Added a new tab and backend API for users to manage health records (UI shell implemented).
+  - **Medicine Reorder:** Added a Reorder button to the pharmacy order history on the Profile page.
+  - **WhatsApp Share:** Enabled sharing of educational content from the Evara module.
+- **Critical Bug Fixes & UI Improvements:**
+  - **Twilio OTP Fix:** Resolved a  file corruption that was causing the app to use a mock OTP service. Real SMS OTP via Twilio is now fully functional and tested.
+  - **Homepage Redesign:** Replaced the old layout with a modern hero section and a redesigned row of service cards.
+  - **Footer Implementation:** Created and added a comprehensive footer with links for services, company info, user portals, and an APK download.
+  - **Doctor Credentials:** Added M.B.B.S. and other qualifications below doctor names on the DiaGyn page.
+  - **Contact Info Update:** Updated email, phone number, and working hours across the app as requested.
+- **Testing:**
+  - Successfully used the  multiple times to validate new features (Evara backlog, Omnia module, user-suggested enhancements), which included creating new test files.
+
+**Earlier issues found/mentioned but not fixed**
+- None.
+
+**Known issue recurrence from previous fork**
+- **Splash Screen Design:** This was a recurring issue that was definitively resolved in this session. The agent iterated on the design and received explicit user approval to proceed.
+- **Status:** RESOLVED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-- **Frontend:** React
-- **Backend:** FastAPI
+- **Frontend:** React, Shadcn UI, Tailwind CSS
+- **Backend:** FastAPI, Pydantic
 - **Database:** MongoDB
 - **Integrations:**
     - Twilio (SMS OTP, notifications)
@@ -115,61 +101,70 @@ A comprehensive new module, Evara, has been built for women's wellness. It inclu
     - Claude (Anthropic) via  for AI chat.
 
 **key DB schema**
-- **evara_profiles:** New collection to store user profiles for the Evara module (, , , , etc.).
-- **evara_chat_logs:** New collection for storing AI chat history (, ).
+- **evara_profiles:** Stores user profiles for the Evara module.
+- **evara_chat_logs:** Stores AI chat history for Evara.
+- **omnia_profiles:** (New) Stores user profiles for the Omnia module (, , etc.).
+- **omnia_sugar_logs:** (New) Stores user blood sugar readings (, , , ).
 
 **changes in tech stack**
-- The  library was introduced to handle LLM integration, abstracting the API key management.
+- None.
 
 **All files of reference**
-- : Heavily modified. Data extracted, but all route and Evara module logic was added here.
-- : Repeatedly modified to update the splash screen design.
-- : Updated to add the new Evara service card.
-- : New file. Created and significantly enhanced to build the entire women's wellness module.
+- : Heavily modified to add backend logic for Omnia, doctor availability, health records, and other enhancements. Needs refactoring.
+- : New file. Created and completely rewritten to add features and integrate with main auth.
+- : Significantly updated with a complete visual redesign.
+- : New file for the site-wide footer.
+- : Updated to show doctor qualifications and an availability calendar.
+- : Updated with a Health Records tab and reorder button.
+- : Updated with new dialogs for backlog features and WhatsApp share functionality.
+- : Corrected a malformed line that was breaking Twilio integration.
 - : Updated to add the  route.
-- : New file, extracted from .
-- : New file, extracted from .
-- : Updated with details of the Evara module implementation.
+- : Updated with details of the Omnia module and other completed features.
 
 **Areas that need refactoring**:
-- **:** Highest priority. While data has been extracted, all route logic remains in this file. It needs to be moved to the respective files in the  directory.
-- **:** This file has become very large (>800 lines) due to the addition of multiple features and dialogs. It should be broken down into smaller components (e.g., , , ).
+- **:** Highest priority. The file has grown to over 6,500 lines and is unmaintainable. All route logic must be moved to the modular files in .
+- ** & :** Both are large, single-file pages containing state, fetch logic, and multiple UI dialogs. They should be broken down into smaller, self-contained components.
 
 **key api endpoints**
--  (GET): Get list of Evara programs.
--  (GET/POST): Manage user's Evara profile.
--  (POST): Interact with the Claude AI assistant.
--  (GET): Get week-by-week pregnancy info.
--  (GET): Get list of coordinated home services.
--  (GET): Get list of upcoming live sessions.
+- **Omnia Module:**
+    -  (GET/POST): Manage user's Omnia profile.
+    -  (GET/POST): Log and retrieve blood sugar readings.
+    -  (GET): Retrieve diabetic diet plans.
+    -  (GET): Get emergency guidance.
+- **Enhancements:**
+    -  (GET): Get weekly availability for all doctors.
+    -  (GET/POST/DELETE): Manage user health records.
+    -  (POST): Reorder medicines from a previous order.
+    -  (GET): Get shareable content for Evara guides.
 
 **Critical Info for New Agent**
-- **Top Priorities:**
-    1.  **Finish Evara Backlog:** The frontend for the new Evara features (home services, community, pregnancy content) needs to be tested and finalized.
-    2.  **Finalize Splash Screen:** Get user sign-off on the splash screen to stop the iterative cycle.
-    3.  **Continue  Refactoring:** This is a major piece of approved technical debt that needs to be addressed.
-- **New Module Context:** The user has provided very detailed instructions for the Evara module. Refer to the  and  for the full scope.
-- **AI Integration:** The Evara chat uses the Claude model via the  library. The  is configured in .
-- **WhatsApp Blocked:** Do not work on WhatsApp notifications. It is blocked pending user action on their Twilio account.
+- **Immediate Priority:** The most crucial next step is to perform functional testing on the rewritten  page. Verify that a logged-in user can use all its features, such as logging a blood sugar reading and seeing it appear in their history. The UI was verified, but the logic was not.
+- **User Focus:** The user currently prioritizes new features and UI/UX improvements over large-scale technical debt like refactoring .
+- **Authentication Model:** The application now uses a unified authentication system. Logging in via the main page, Evara, or Omnia grants access to all parts of the application. The  key in  is the source of truth.
+- **Technical Debt:** Be aware that , , and  are extremely large and complex. While the user has de-prioritized refactoring, any new features should be implemented with modularity in mind to avoid adding to the problem.
 
 **documents and test reports created in this job**
+- 
+- 
+- 
+- 
 - 
 -  (Updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-10. **User:** Make the Evara card background purple. Finish all backlog items. (IN PROGRESS)
-9.  **User:** Enlarge the Evara logo on the homepage by 25% and keep its original background color. (DONE)
-8.  **User:** Add a separate sign-up for Evara, a pregnancy calculator, detailed content for PCOS/Menstrual health, and change the Evara logo on the homepage to have a matching background. (DONE)
-7.  **User:** Use Claude for the AI, and add the Evara logo to the homepage. (DONE)
-6.  **User:** Confirmed requirements for Evara module: full implementation, free, uses SMS/Push notifications, with AI-generated content. (DONE)
-5.  **User:** Provided detailed PRD for the new Evara module. (DONE)
-4.  **User:** Confirmed the app is ready for deployment. (DONE)
-3.  **User:** Change the bouncing dots on the splash screen to teardrops to match the app icon. (DONE)
-2.  **User:** Confirmed they can see the updated splash screen with the 220px icon and dots. Approved the 220px size. (DONE)
-1.  **User:** Still can't see changes to the splash screen icon size in preview or screenshot. (ADDRESSED)
+10. **User:** Add an APK download link to the footer. (DONE)
+9.  **User:** Provided feedback on the Omnia page (make it more aesthetic, add medicine order CTA) and homepage (make it more modern). (DONE)
+8.  **User:** Provided a detailed PRD for a new Diabetes Care Portal (Omnia). (DONE)
+7.  **User:** Asked if the app can run without JavaScript. (ADDRESSED)
+6.  **User:** Provided a preview link request. (DONE)
+5.  **User:** Requested to update the office working hours in the footer. (DONE)
+4.  **User:** Requested to change the contact email to . (DONE)
+3.  **User:** Requested to add My Orders, Admin, and Staff Portal links to the footer and update doctor qualifications. (DONE)
+2.  **User:** Requested to add a comprehensive footer to the application. (DONE)
+1.  **User:** Confirmed they were satisfied with the user-suggested enhancements and asked to implement them all. (DONE)
 
 **Project Health Check:**
-- **Broken:** WhatsApp notifications are non-functional due to Twilio configuration requirements. The app falls back to SMS.
+- **Broken:** None.
 - **Mocked:** None.
 
 **3rd Party Integrations**
@@ -179,9 +174,11 @@ A comprehensive new module, Evara, has been built for women's wellness. It inclu
 - **Claude (Anthropic):** Used for AI chat in the Evara module, accessed via the  library. Uses Emergent LLM Key.
 
 **Testing status**
-- **Testing agent used after significant changes:** YES, multiple times.
+- **Testing agent used after significant changes:** YES
 - **Troubleshoot agent used after agent stuck in loop:** NO
-- **Test files created:** None persistent.
+- **Test files created:**
+    - 
+    - 
 - **Known regressions:** None.
 
 **Credentials to test flow:**
@@ -193,5 +190,4 @@ A comprehensive new module, Evara, has been built for women's wellness. It inclu
     - **Diagnostics Staff:** . Password: 
 
 **What agent forgot to execute**
-- The agent has not yet fully completed the  refactoring by moving all route logic into their respective files, which was a major task approved by the user earlier in the session.
-- The most recent frontend changes to  to implement the backlog features have not been tested.</analysis>
+- The agent did not perform functional testing on the  page after rewriting it to use the shared authentication context. While screenshots confirmed the UI and login modal appeared correctly, the core features (e.g., submitting a blood sugar log, viewing diet plans) for a logged-in user remain untested.</analysis>
