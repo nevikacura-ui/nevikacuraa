@@ -409,6 +409,7 @@ const DiaGyn = () => {
                     <div>
                       <h3 className="font-heading text-xl font-semibold mb-1">{doctor.name}</h3>
                       <p className="font-body text-muted-foreground">{doctor.specialty}</p>
+                      <p className="font-body text-xs text-gray-500 mt-1">{doctor.qualifications}</p>
                     </div>
                   </div>
                 </Card>
