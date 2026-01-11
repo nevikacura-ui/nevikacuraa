@@ -826,6 +826,31 @@ const Evara = () => {
           </button>
         </div>
 
+        {/* New Features Row */}
+        <div className="grid grid-cols-3 gap-3">
+          <button 
+            onClick={() => { setShowPregnancyWeeks(true); fetchPregnancyWeeks(); }}
+            className="p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200 hover:shadow-md transition-all flex flex-col items-center gap-2"
+          >
+            <Baby className="w-6 h-6 text-blue-500" />
+            <span className="text-xs text-gray-600 text-center">Week-by-Week Guide</span>
+          </button>
+          <button 
+            onClick={() => { setShowHomeServices(true); fetchHomeServices(); }}
+            className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 hover:shadow-md transition-all flex flex-col items-center gap-2"
+          >
+            <Home className="w-6 h-6 text-green-500" />
+            <span className="text-xs text-gray-600 text-center">Home Services</span>
+          </button>
+          <button 
+            onClick={() => { setShowCommunity(true); fetchCommunitySessions(); }}
+            className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200 hover:shadow-md transition-all flex flex-col items-center gap-2"
+          >
+            <Video className="w-6 h-6 text-amber-500" />
+            <span className="text-xs text-gray-600 text-center">Live Sessions</span>
+          </button>
+        </div>
+
         {/* Education Quick Links */}
         <div className="grid grid-cols-2 gap-3">
           <button 
