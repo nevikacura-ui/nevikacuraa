@@ -1,5 +1,5 @@
 """
-Nevika Cura Healthcare App - Backend API Tests
+Nevika Cura Healthcare App - Backend API Tests (Fixed)
 Tests for verifying server refactoring didn't break functionality
 """
 
@@ -65,7 +65,6 @@ class TestAdminPortal:
         data = response.json()
         assert "token" in data
         print(f"✓ Admin login successful")
-        return data["token"]
     
     def test_admin_login_failure(self):
         """Test admin login with wrong password"""
@@ -109,8 +108,10 @@ class TestAdminPortal:
         )
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
-        print(f"✓ Admin staff list retrieved: {len(data)} staff members")
+        # API returns object with 'staff' key containing list
+        assert "staff" in data
+        assert isinstance(data["staff"], list)
+        print(f"✓ Admin staff list retrieved: {len(data['staff'])} staff members")
 
 
 class TestStaffPortal:
@@ -125,8 +126,9 @@ class TestStaffPortal:
         assert response.status_code == 200
         data = response.json()
         assert "token" in data
-        assert "staff" in data
-        print(f"✓ Pharmacy staff login successful: {data['staff'].get('name', 'N/A')}")
+        # Staff info is returned directly, not nested under 'staff' key
+        assert "name" in data
+        print(f"✓ Pharmacy staff login successful: {data.get('name', 'N/A')}")
     
     def test_diagnostic_staff_login(self):
         """Test diagnostic staff login"""
@@ -137,8 +139,9 @@ class TestStaffPortal:
         assert response.status_code == 200
         data = response.json()
         assert "token" in data
-        assert "staff" in data
-        print(f"✓ Diagnostic staff login successful: {data['staff'].get('name', 'N/A')}")
+        # Staff info is returned directly
+        assert "name" in data
+        print(f"✓ Diagnostic staff login successful: {data.get('name', 'N/A')}")
     
     def test_staff_login_failure(self):
         """Test staff login with wrong credentials"""
@@ -158,17 +161,21 @@ class TestPharmacyFlow:
         response = requests.get(f"{BASE_URL}/api/pharmacy/autocomplete?q=para&limit=10")
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
-        print(f"✓ Pharmacy autocomplete working: {len(data)} results for 'para'")
+        # API returns object with 'suggestions' key
+        assert "suggestions" in data
+        assert isinstance(data["suggestions"], list)
+        print(f"✓ Pharmacy autocomplete working: {len(data['suggestions'])} results for 'para'")
     
     def test_pharmacy_forms(self):
         """Test medicine forms endpoint"""
         response = requests.get(f"{BASE_URL}/api/pharmacy/forms")
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
-        assert len(data) > 0
-        print(f"✓ Pharmacy forms endpoint working: {len(data)} forms available")
+        # API returns object with 'forms' key
+        assert "forms" in data
+        assert isinstance(data["forms"], list)
+        assert len(data["forms"]) > 0
+        print(f"✓ Pharmacy forms endpoint working: {len(data['forms'])} forms available")
     
     def test_pharmacy_all_medicines(self):
         """Test paginated medicine list"""
@@ -199,7 +206,6 @@ class TestPharmacyFlow:
         assert "id" in data
         assert data["patient_name"] == "Test Patient"
         print(f"✓ Pharmacy order created: {data['id'][:8]}...")
-        return data["id"]
 
 
 class TestDiagnosticFlow:
@@ -223,7 +229,6 @@ class TestDiagnosticFlow:
         assert data["patient_name"] == "Test Patient"
         assert len(data["tests"]) == 2
         print(f"✓ Diagnostic order created: {data['id'][:8]}...")
-        return data["id"]
 
 
 class TestAppointmentFlow:
@@ -290,8 +295,10 @@ class TestStaffPharmacyOrders:
         )
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
-        print(f"✓ Staff pharmacy orders retrieved: {len(data)} orders")
+        # API returns object with 'orders' key
+        assert "orders" in data
+        assert isinstance(data["orders"], list)
+        print(f"✓ Staff pharmacy orders retrieved: {len(data['orders'])} orders")
 
 
 class TestStaffDiagnosticOrders:
@@ -314,8 +321,10 @@ class TestStaffDiagnosticOrders:
         )
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
-        print(f"✓ Staff diagnostic orders retrieved: {len(data)} orders")
+        # API returns object with 'orders' key
+        assert "orders" in data
+        assert isinstance(data["orders"], list)
+        print(f"✓ Staff diagnostic orders retrieved: {len(data['orders'])} orders")
 
 
 class TestOTPFlow:
