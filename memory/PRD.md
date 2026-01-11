@@ -98,7 +98,10 @@ Build a modern healthcare application for "Nevika Cura" with four core services:
 - [x] Matches app icon design aesthetic
 - [x] User approved (Jan 11, 2026)
 
-#### SMS Templates - UPDATED ✅
+#### Homepage Evara Card - UPDATED ✅
+- [x] Card background matches logo purple (#4A2463)
+- [x] Seamless visual integration with logo
+- [x] Purple border removed for cleaner look
 - [x] Added "arrival time not consultation time" note for all appointment types
 - [x] Walk-in and Emergency SMS templates created
 - [x] Contact number updated to 9403890429 (WhatsApp stays 7039020020)
