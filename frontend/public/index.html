@@ -85,51 +85,21 @@
             }
             .splash-glow {
                 position: absolute;
-                width: 280px;
-                height: 280px;
-                background: radial-gradient(ellipse at center, rgba(220, 235, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+                width: 320px;
+                height: 320px;
+                background: radial-gradient(ellipse at center, rgba(220, 235, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
                 border-radius: 50%;
                 z-index: -1;
             }
             #splash-screen .logo-img {
-                width: 90px;
-                height: 90px;
-                margin-bottom: 14px;
-                border-radius: 18px;
+                width: 140px;
+                height: 140px;
+                border-radius: 28px;
+                animation: pulse 2s ease-in-out infinite;
             }
-            #splash-screen h1 {
-                font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-                font-size: 26px;
-                font-weight: 600;
-                margin: 0;
-                letter-spacing: -0.5px;
-            }
-            #splash-screen h1 .nevika {
-                color: #6b21a8;
-            }
-            #splash-screen h1 .cura {
-                color: #16a34a;
-            }
-            #splash-screen p {
-                color: #9ca3af;
-                font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-                font-size: 11px;
-                font-weight: 500;
-                letter-spacing: 2px;
-                text-transform: uppercase;
-                margin-top: 8px;
-            }
-            .splash-loader {
-                margin-top: 40px;
-                width: 32px;
-                height: 32px;
-                border: 3px solid rgba(107, 33, 168, 0.12);
-                border-top-color: #6b21a8;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-            }
-            @keyframes spin {
-                to { transform: rotate(360deg); }
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.05); opacity: 0.9; }
             }
         </style>
     </head>
@@ -139,10 +109,7 @@
             <div class="splash-content">
                 <div class="splash-glow"></div>
                 <img class="logo-img" src="/icons/icon-192x192.png" alt="Nevika Cura" />
-                <h1><span class="nevika">Nevika</span> <span class="cura">Cura</span></h1>
-                <p>A Healthcare Group</p>
             </div>
-            <div class="splash-loader"></div>
         </div>
         
         <noscript>
