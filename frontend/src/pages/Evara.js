@@ -1249,10 +1249,22 @@ const Evara = () => {
       <Dialog open={showPMSEducation} onOpenChange={setShowPMSEducation}>
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-pink-500" />
-              {PMS_EDUCATION.title}
-            </DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-pink-500" />
+                {PMS_EDUCATION.title}
+              </DialogTitle>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => shareOnWhatsApp('pms_guide')}
+                className="text-green-600 border-green-300 hover:bg-green-50"
+                data-testid="share-pms-btn"
+              >
+                <Share2 className="w-4 h-4 mr-1" />
+                Share
+              </Button>
+            </div>
           </DialogHeader>
           
           <div className="space-y-6 py-4">
