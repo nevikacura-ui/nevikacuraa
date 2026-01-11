@@ -969,11 +969,41 @@ async def send_otp(request: OTPRequest):
 
 @api_router.post("/otp/verify")
 async def verify_otp(request: OTPVerify):
-    """Verify OTP"""
+    """Verify OTP via Twilio or fallback"""
     phone = request.phone.strip()
     otp = request.otp.strip()
     service = request.service.lower()
     
+    # Try Twilio verification first
+    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
+        result = await verify_twilio_otp(phone, otp)
+        if result["success"]:
+            if result["valid"]:
+                # Generate verification token
+                verification_token = jwt.encode({
+                    'phone': phone,
+                    'service': service,
+                    'verified': True,
+                    'exp': datetime.now(timezone.utc) + timedelta(minutes=30)
+                }, JWT_SECRET, algorithm=JWT_ALGORITHM)
+                
+                logger.info(f"OTP verified via Twilio for {phone} ({service})")
+                return {
+                    "success": True,
+                    "verified": True,
+                    "verification_token": verification_token,
+                    "message": "Phone verified successfully",
+                    "method": "sms"
+                }
+            else:
+                raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
+        else:
+            error_code = result.get("code", "")
+            if error_code == "MAX_ATTEMPTS":
+                raise HTTPException(status_code=400, detail=result["error"])
+            logger.warning(f"Twilio verify failed for {service}, trying mock: {result.get('error')}")
+    
+    # Fallback to mock verification
     otp_key = f"{phone}_{service}"
     
     if otp_key not in otp_storage:
