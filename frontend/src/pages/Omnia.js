@@ -1318,6 +1318,147 @@ const Omnia = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* HbA1c Tracking Dialog */}
+      <Dialog open={showHbA1c} onOpenChange={setShowHbA1c}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-4 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <LineChart className="w-6 h-6" />
+              HbA1c Tracking
+            </DialogTitle>
+            <DialogDescription className="text-indigo-100">
+              Track your 3-month glucose control • Target: &lt;7% for diabetics
+            </DialogDescription>
+          </DialogHeader>
+          
+          <ScrollArea className="flex-1">
+            <div className="p-4 space-y-4">
+              {/* Add New HbA1c */}
+              <Card className="border-indigo-200">
+                <CardHeader className="py-3 bg-indigo-50">
+                  <CardTitle className="text-base text-indigo-700">Log New HbA1c Result</CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>HbA1c Value (%) *</Label>
+                      <Input 
+                        type="number"
+                        step="0.1"
+                        placeholder="e.g., 6.5"
+                        value={newHba1c.value}
+                        onChange={(e) => setNewHba1c({...newHba1c, value: e.target.value})}
+                        className="text-lg"
+                      />
+                    </div>
+                    <div>
+                      <Label>Test Date *</Label>
+                      <Input 
+                        type="date"
+                        value={newHba1c.date}
+                        onChange={(e) => setNewHba1c({...newHba1c, date: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Lab Name (Optional)</Label>
+                    <Input 
+                      placeholder="e.g., Proton Diagnostics"
+                      value={newHba1c.lab_name}
+                      onChange={(e) => setNewHba1c({...newHba1c, lab_name: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label>Notes (Optional)</Label>
+                    <Input 
+                      placeholder="Any remarks..."
+                      value={newHba1c.notes}
+                      onChange={(e) => setNewHba1c({...newHba1c, notes: e.target.value})}
+                    />
+                  </div>
+                  <Button 
+                    onClick={handleAddHba1c} 
+                    disabled={loading} 
+                    className="w-full bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    {loading ? 'Saving...' : 'Save HbA1c Result'}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Reference Info */}
+              <Card className="bg-blue-50 border-blue-200">
+                <CardContent className="p-4">
+                  <h4 className="font-semibold text-blue-800 mb-2">📊 HbA1c Reference Ranges</h4>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="bg-white rounded p-2">
+                      <p className="font-medium text-green-700">&lt; 5.7%</p>
+                      <p className="text-xs text-gray-600">Normal (Non-diabetic)</p>
+                    </div>
+                    <div className="bg-white rounded p-2">
+                      <p className="font-medium text-yellow-700">5.7 - 6.4%</p>
+                      <p className="text-xs text-gray-600">Pre-diabetes</p>
+                    </div>
+                    <div className="bg-white rounded p-2">
+                      <p className="font-medium text-blue-700">&lt; 7%</p>
+                      <p className="text-xs text-gray-600">Good Control (Diabetic)</p>
+                    </div>
+                    <div className="bg-white rounded p-2">
+                      <p className="font-medium text-red-700">&gt; 8%</p>
+                      <p className="text-xs text-gray-600">Needs Improvement</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-blue-600 mt-3">
+                    💡 HbA1c reflects your average blood sugar over 2-3 months. Test every 3 months for best tracking.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* History */}
+              {hba1cLogs.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-3">Your HbA1c History</h4>
+                  <div className="space-y-2">
+                    {hba1cLogs.map((log, idx) => {
+                      const status = getHba1cStatus(log.value);
+                      return (
+                        <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-gray-100">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-12 h-12 rounded-xl ${status.bg} flex items-center justify-center`}>
+                              <span className={`text-lg font-bold ${status.color}`}>{log.value}%</span>
+                            </div>
+                            <div>
+                              <p className={`font-semibold ${status.color}`}>{status.status}</p>
+                              <p className="text-xs text-gray-500">{log.date} {log.lab_name && `• ${log.lab_name}`}</p>
+                            </div>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => handleDeleteHba1c(log.id)}
+                            className="text-gray-400 hover:text-red-500"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {hba1cLogs.length === 0 && (
+                <div className="text-center py-6">
+                  <LineChart className="w-12 h-12 mx-auto text-gray-300 mb-3" />
+                  <p className="text-gray-500">No HbA1c results logged yet</p>
+                  <p className="text-sm text-gray-400">Add your first result above to start tracking</p>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
