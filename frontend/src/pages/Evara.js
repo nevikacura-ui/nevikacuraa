@@ -8,28 +8,349 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useAuth } from '@/context/AuthContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, Heart, Calendar, MessageCircle, Bell, 
   Sparkles, Activity, Baby, Flower2, Users, Send,
-  ChevronRight, Plus, Trash2, Clock
+  ChevronRight, Plus, Clock, Calculator, BookOpen,
+  Apple, Dumbbell, Info, AlertTriangle, User, Mail, Phone, Lock
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
+// PMS Education Content
+const PMS_EDUCATION = {
+  title: "Understanding PMS (Premenstrual Syndrome)",
+  overview: `Premenstrual Syndrome (PMS) refers to a combination of physical and emotional symptoms that occur 1-2 weeks before your period. About 75% of women experience some form of PMS. While symptoms vary from person to person, understanding your body can help you manage them better.`,
+  symptoms: {
+    physical: [
+      "Bloating and water retention",
+      "Breast tenderness or swelling",
+      "Headaches or migraines",
+      "Fatigue and low energy",
+      "Muscle aches and joint pain",
+      "Acne breakouts",
+      "Digestive issues (constipation or diarrhea)",
+      "Food cravings, especially for sweets"
+    ],
+    emotional: [
+      "Mood swings and irritability",
+      "Anxiety or tension",
+      "Depression or sadness",
+      "Difficulty concentrating",
+      "Changes in sleep patterns",
+      "Social withdrawal",
+      "Crying spells"
+    ]
+  },
+  management: [
+    {
+      title: "Dietary Changes",
+      tips: [
+        "Reduce salt intake to minimize bloating",
+        "Eat smaller, more frequent meals",
+        "Include complex carbohydrates (whole grains, fruits, vegetables)",
+        "Limit caffeine and alcohol",
+        "Stay hydrated with water and herbal teas"
+      ]
+    },
+    {
+      title: "Exercise & Movement",
+      tips: [
+        "30 minutes of moderate exercise daily",
+        "Yoga and stretching for cramp relief",
+        "Walking or swimming",
+        "Deep breathing exercises"
+      ]
+    },
+    {
+      title: "Lifestyle Adjustments",
+      tips: [
+        "Prioritize 7-9 hours of sleep",
+        "Practice stress management techniques",
+        "Use heating pads for cramps",
+        "Keep a symptom diary to track patterns"
+      ]
+    }
+  ]
+};
+
+// PCOS Education Content
+const PCOS_EDUCATION = {
+  title: "Understanding PCOS (Polycystic Ovary Syndrome)",
+  overview: `PCOS is a common hormonal disorder affecting 1 in 10 women of reproductive age. It occurs when the ovaries produce excess androgens (male hormones), leading to irregular periods, cysts on ovaries, and various symptoms. While there's no cure, PCOS can be effectively managed through lifestyle changes and medical treatment.`,
+  
+  symptoms: [
+    "Irregular or missed periods",
+    "Heavy bleeding during periods",
+    "Excess hair growth (hirsutism) on face, chest, back",
+    "Acne and oily skin",
+    "Weight gain, especially around the abdomen",
+    "Thinning hair or male-pattern baldness",
+    "Skin darkening in neck creases, groin, under breasts",
+    "Difficulty getting pregnant"
+  ],
+  
+  diagnosis: [
+    "Blood tests to check hormone levels (testosterone, insulin, thyroid)",
+    "Pelvic ultrasound to examine ovaries",
+    "Assessment of menstrual history and symptoms"
+  ],
+  
+  dietPlan: {
+    title: "PCOS-Friendly Diet Plan",
+    principles: [
+      "Focus on low glycemic index (GI) foods to manage insulin",
+      "Include anti-inflammatory foods",
+      "Balance protein, healthy fats, and complex carbs",
+      "Eat regular meals to stabilize blood sugar"
+    ],
+    foods_to_include: [
+      { category: "Proteins", items: "Lean chicken, fish, eggs, tofu, legumes, Greek yogurt" },
+      { category: "Complex Carbs", items: "Quinoa, brown rice, oats, sweet potatoes, whole grain bread" },
+      { category: "Healthy Fats", items: "Avocado, olive oil, nuts, seeds, fatty fish (salmon)" },
+      { category: "Vegetables", items: "Leafy greens, broccoli, cauliflower, bell peppers, tomatoes" },
+      { category: "Fruits (low GI)", items: "Berries, apples, pears, oranges, cherries" },
+      { category: "Anti-inflammatory", items: "Turmeric, ginger, green tea, dark chocolate (70%+)" }
+    ],
+    foods_to_limit: [
+      "Refined carbs (white bread, pasta, pastries)",
+      "Sugary foods and drinks",
+      "Processed and fried foods",
+      "Red meat (limit to 1-2 times/week)",
+      "Dairy (some women benefit from reducing dairy)"
+    ],
+    sample_day: {
+      breakfast: "Overnight oats with berries, chia seeds, and almonds",
+      mid_morning: "Greek yogurt with walnuts",
+      lunch: "Grilled chicken salad with olive oil dressing, quinoa",
+      snack: "Apple slices with almond butter",
+      dinner: "Baked salmon with roasted vegetables and brown rice",
+      evening: "Herbal tea (spearmint tea may help reduce androgens)"
+    }
+  },
+  
+  exercisePlan: {
+    title: "Exercise Plan for PCOS",
+    benefits: [
+      "Improves insulin sensitivity",
+      "Helps with weight management",
+      "Reduces stress and anxiety",
+      "Regulates hormones",
+      "Improves mood and energy"
+    ],
+    weekly_plan: [
+      {
+        day: "Monday",
+        activity: "Cardio",
+        details: "30 min brisk walking or cycling. Start slow, maintain steady pace.",
+        duration: "30-40 minutes"
+      },
+      {
+        day: "Tuesday",
+        activity: "Strength Training",
+        details: "Upper body - Push-ups, dumbbell rows, shoulder press. 3 sets of 12 reps.",
+        duration: "30 minutes"
+      },
+      {
+        day: "Wednesday",
+        activity: "Yoga",
+        details: "Focus on poses that massage abdominal organs: Child's pose, Cobra, Butterfly pose.",
+        duration: "45 minutes"
+      },
+      {
+        day: "Thursday",
+        activity: "HIIT (High Intensity)",
+        details: "20 sec work, 40 sec rest. Jumping jacks, squats, burpees. Boosts metabolism.",
+        duration: "20 minutes"
+      },
+      {
+        day: "Friday",
+        activity: "Strength Training",
+        details: "Lower body - Squats, lunges, deadlifts. 3 sets of 12 reps.",
+        duration: "30 minutes"
+      },
+      {
+        day: "Saturday",
+        activity: "Active Recovery",
+        details: "Light walk, stretching, or swimming. Keep moving but don't strain.",
+        duration: "30-45 minutes"
+      },
+      {
+        day: "Sunday",
+        activity: "Rest Day",
+        details: "Complete rest or gentle stretching. Listen to your body.",
+        duration: "As needed"
+      }
+    ],
+    tips: [
+      "Start slowly if you're new to exercise",
+      "Consistency is more important than intensity",
+      "Include both cardio and strength training",
+      "Exercise during your higher energy days in your cycle",
+      "Track your progress and how you feel"
+    ]
+  }
+};
+
+// Pregnancy Calculator Component
+const PregnancyCalculator = ({ onClose }) => {
+  const [lmpDate, setLmpDate] = useState('');
+  const [result, setResult] = useState(null);
+
+  const calculatePregnancy = () => {
+    if (!lmpDate) {
+      toast.error('Please enter your Last Menstrual Period date');
+      return;
+    }
+
+    const lmp = new Date(lmpDate);
+    const today = new Date();
+    
+    // Calculate EDD (Naegele's Rule: LMP + 280 days)
+    const edd = new Date(lmp);
+    edd.setDate(edd.getDate() + 280);
+    
+    // Calculate weeks and days pregnant
+    const diffTime = today - lmp;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const weeks = Math.floor(diffDays / 7);
+    const days = diffDays % 7;
+    
+    // Calculate trimester
+    let trimester = 1;
+    if (weeks >= 13 && weeks < 27) trimester = 2;
+    else if (weeks >= 27) trimester = 3;
+    
+    // Pregnancy milestones
+    const milestones = [
+      { week: 4, event: "Missed period, pregnancy can be detected" },
+      { week: 6, event: "Heartbeat may be detected on ultrasound" },
+      { week: 8, event: "Baby is now called a fetus, all organs forming" },
+      { week: 12, event: "End of first trimester, risk of miscarriage decreases" },
+      { week: 16, event: "You might feel baby's first movements (quickening)" },
+      { week: 20, event: "Anatomy scan ultrasound, halfway point!" },
+      { week: 24, event: "Baby is viable outside the womb with medical help" },
+      { week: 28, event: "Third trimester begins, baby's eyes can open" },
+      { week: 32, event: "Baby is practicing breathing movements" },
+      { week: 36, event: "Baby is considered early term" },
+      { week: 37, event: "Full term! Baby could arrive anytime" },
+      { week: 40, event: "Due date - only 5% of babies arrive on this day!" }
+    ];
+    
+    const nextMilestone = milestones.find(m => m.week > weeks) || milestones[milestones.length - 1];
+    
+    setResult({
+      weeks,
+      days,
+      trimester,
+      edd: edd.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+      daysUntilDue: Math.max(0, Math.floor((edd - today) / (1000 * 60 * 60 * 24))),
+      nextMilestone,
+      progress: Math.min(100, (weeks / 40) * 100)
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label>Last Menstrual Period (LMP) Date</Label>
+        <Input 
+          type="date" 
+          value={lmpDate}
+          onChange={(e) => setLmpDate(e.target.value)}
+          max={new Date().toISOString().split('T')[0]}
+        />
+        <p className="text-xs text-gray-500 mt-1">Enter the first day of your last period</p>
+      </div>
+      
+      <Button onClick={calculatePregnancy} className="w-full bg-blue-500 hover:bg-blue-600">
+        <Calculator className="w-4 h-4 mr-2" /> Calculate
+      </Button>
+      
+      {result && (
+        <div className="space-y-4 mt-4">
+          <Card className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0">
+            <CardContent className="p-4">
+              <div className="text-center">
+                <p className="text-sm opacity-80">You are</p>
+                <p className="text-4xl font-bold">{result.weeks} weeks, {result.days} days</p>
+                <p className="text-sm opacity-80">pregnant</p>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="bg-pink-50 border-pink-200">
+              <CardContent className="p-3 text-center">
+                <p className="text-xs text-pink-600">Expected Due Date</p>
+                <p className="font-semibold text-pink-800">{result.edd}</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-purple-50 border-purple-200">
+              <CardContent className="p-3 text-center">
+                <p className="text-xs text-purple-600">Trimester</p>
+                <p className="font-semibold text-purple-800">{result.trimester}{result.trimester === 1 ? 'st' : result.trimester === 2 ? 'nd' : 'rd'}</p>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <Card className="bg-amber-50 border-amber-200">
+            <CardContent className="p-3">
+              <p className="text-xs text-amber-600">Days until due date</p>
+              <p className="font-semibold text-amber-800">{result.daysUntilDue} days</p>
+              <div className="mt-2 bg-amber-200 rounded-full h-2">
+                <div 
+                  className="bg-amber-500 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${result.progress}%` }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-green-50 border-green-200">
+            <CardContent className="p-3">
+              <p className="text-xs text-green-600">Next Milestone (Week {result.nextMilestone.week})</p>
+              <p className="text-sm text-green-800">{result.nextMilestone.event}</p>
+            </CardContent>
+          </Card>
+          
+          <p className="text-xs text-gray-500 text-center">
+            * This is an estimate. Please consult your doctor for accurate assessment.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Evara = () => {
   const navigate = useNavigate();
-  const { user, token } = useAuth();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [programs, setPrograms] = useState([]);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
   const [showPeriodLog, setShowPeriodLog] = useState(false);
+  const [showPregnancyCalc, setShowPregnancyCalc] = useState(false);
+  const [showPMSEducation, setShowPMSEducation] = useState(false);
+  const [showPCOSEducation, setShowPCOSEducation] = useState(false);
   const [activeProgram, setActiveProgram] = useState(null);
   const [programContent, setProgramContent] = useState(null);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('evara_token'));
+  
+  // Signup form state
+  const [signupData, setSignupData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    password: ''
+  });
+  const [loginMode, setLoginMode] = useState(false);
   
   // Onboarding form state
   const [onboardingData, setOnboardingData] = useState({
@@ -68,16 +389,87 @@ const Evara = () => {
     symptoms: [],
     notes: ''
   });
-  const [periodHistory, setPeriodHistory] = useState([]);
+  const [periodHistory, setPeriodHistory] = useState({ history: [], average_cycle_length: 28, next_predicted: null });
 
   const conditions = ['PCOS', 'Thyroid', 'Diabetes', 'Endometriosis', 'Fibroids'];
   const goals = ['Weight Management', 'Stress Relief', 'Better Sleep', 'Hormonal Balance', 'Fertility', 'General Wellness'];
   const symptoms = ['Cramps', 'Bloating', 'Mood Swings', 'Headache', 'Fatigue', 'Back Pain', 'Breast Tenderness'];
 
   useEffect(() => {
+    // Check for existing Nevika Cura token
+    const nevikaToken = localStorage.getItem('token');
+    if (nevikaToken) {
+      setToken(nevikaToken);
+      localStorage.setItem('evara_token', nevikaToken);
+    }
+    
+    if (token) {
+      fetchUserProfile();
+    }
     fetchProfile();
     fetchPrograms();
   }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/auth/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error);
+    }
+  };
+
+  const handleSignup = async () => {
+    if (!signupData.name || !signupData.phone || !signupData.password) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const endpoint = loginMode ? '/api/auth/login' : '/api/auth/register';
+      const body = loginMode 
+        ? { email: signupData.email, password: signupData.password }
+        : signupData;
+      
+      const res = await fetch(`${API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      
+      const data = await res.json();
+      
+      if (data.token) {
+        setToken(data.token);
+        localStorage.setItem('evara_token', data.token);
+        localStorage.setItem('token', data.token); // Also save for Nevika Cura
+        setUser(data.user || { name: signupData.name, phone: signupData.phone });
+        setShowSignup(false);
+        toast.success(loginMode ? 'Welcome back!' : 'Account created successfully!');
+        fetchProfile();
+      } else {
+        toast.error(data.detail || 'Authentication failed');
+      }
+    } catch (error) {
+      toast.error('Failed to authenticate');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+    setProfile(null);
+    localStorage.removeItem('evara_token');
+    toast.success('Logged out successfully');
+  };
 
   const fetchProfile = async () => {
     try {
@@ -88,7 +480,7 @@ const Evara = () => {
       if (data.has_profile) {
         setProfile(data.profile);
         setPrograms(data.programs || []);
-      } else {
+      } else if (token) {
         setShowOnboarding(true);
       }
     } catch (error) {
@@ -148,18 +540,6 @@ const Evara = () => {
     }
   };
 
-  const fetchProgramContent = async (programId) => {
-    try {
-      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-      const res = await fetch(`${API_URL}/api/evara/program/${programId}/content`, { headers });
-      const data = await res.json();
-      setProgramContent(data);
-      setActiveProgram(programId);
-    } catch (error) {
-      toast.error('Failed to load program content');
-    }
-  };
-
   const sendChatMessage = async () => {
     if (!chatInput.trim()) return;
     
@@ -211,14 +591,12 @@ const Evara = () => {
     }
     
     try {
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      };
-      
       const res = await fetch(`${API_URL}/api/evara/reminders`, {
         method: 'POST',
-        headers,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(newReminder)
       });
       
@@ -246,11 +624,6 @@ const Evara = () => {
     }
     
     try {
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      };
-      
       const params = new URLSearchParams({
         start_date: periodData.start_date,
         flow: periodData.flow,
@@ -263,7 +636,7 @@ const Evara = () => {
       
       const res = await fetch(`${API_URL}/api/evara/period/log?${params}`, {
         method: 'POST',
-        headers
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       
       const data = await res.json();
@@ -279,8 +652,9 @@ const Evara = () => {
 
   const fetchPeriodHistory = async () => {
     try {
-      const headers = { 'Authorization': `Bearer ${token}` };
-      const res = await fetch(`${API_URL}/api/evara/period/history`, { headers });
+      const res = await fetch(`${API_URL}/api/evara/period/history`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       const data = await res.json();
       setPeriodHistory(data);
     } catch (error) {
@@ -299,7 +673,7 @@ const Evara = () => {
     return icons[programId] || <Heart className="w-6 h-6 text-pink-500" />;
   };
 
-  if (loading) {
+  if (loading && !programs.length) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center">
@@ -325,18 +699,32 @@ const Evara = () => {
               <p className="text-xs text-pink-600">Women's Wellness</p>
             </div>
           </div>
-          <button 
-            onClick={() => { setShowChat(true); }}
-            className="p-2 bg-pink-100 hover:bg-pink-200 rounded-full transition-colors"
-          >
-            <MessageCircle className="w-5 h-5 text-pink-600" />
-          </button>
+          <div className="flex items-center gap-2">
+            {user ? (
+              <button onClick={logout} className="text-xs text-pink-600 hover:underline">
+                Logout
+              </button>
+            ) : (
+              <button 
+                onClick={() => setShowSignup(true)}
+                className="px-3 py-1 bg-pink-500 text-white text-sm rounded-full hover:bg-pink-600"
+              >
+                Sign Up
+              </button>
+            )}
+            <button 
+              onClick={() => setShowChat(true)}
+              className="p-2 bg-pink-100 hover:bg-pink-200 rounded-full transition-colors"
+            >
+              <MessageCircle className="w-5 h-5 text-pink-600" />
+            </button>
+          </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Welcome Section */}
-        {profile && (
+        {user && (
           <Card className="bg-gradient-to-r from-pink-500 to-purple-500 text-white border-0">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
@@ -344,7 +732,7 @@ const Evara = () => {
                   <Sparkles className="w-8 h-8" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold">Welcome back!</h2>
+                  <h2 className="text-xl font-semibold">Welcome, {user.name}!</h2>
                   <p className="text-white/80 text-sm">Your personalized wellness journey continues</p>
                 </div>
               </div>
@@ -352,14 +740,37 @@ const Evara = () => {
           </Card>
         )}
 
+        {!user && (
+          <Card className="bg-gradient-to-r from-pink-400 to-purple-400 text-white border-0">
+            <CardContent className="p-6 text-center">
+              <Heart className="w-12 h-12 mx-auto mb-3" />
+              <h2 className="text-xl font-semibold">Welcome to Evara</h2>
+              <p className="text-white/80 text-sm mb-4">Your trusted women's wellness companion</p>
+              <Button 
+                onClick={() => setShowSignup(true)}
+                className="bg-white text-pink-600 hover:bg-white/90"
+              >
+                Create Your Account
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Quick Actions */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <button 
-            onClick={() => { setShowChat(true); }}
+            onClick={() => setShowChat(true)}
             className="p-4 bg-white rounded-xl shadow-sm border border-pink-100 hover:border-pink-300 transition-all flex flex-col items-center gap-2"
           >
             <MessageCircle className="w-6 h-6 text-pink-500" />
             <span className="text-xs text-gray-600">Chat with Evara</span>
+          </button>
+          <button 
+            onClick={() => { setShowPregnancyCalc(true); }}
+            className="p-4 bg-white rounded-xl shadow-sm border border-pink-100 hover:border-pink-300 transition-all flex flex-col items-center gap-2"
+          >
+            <Calculator className="w-6 h-6 text-blue-500" />
+            <span className="text-xs text-gray-600">Pregnancy Calc</span>
           </button>
           <button 
             onClick={() => { setShowReminders(true); fetchReminders(); }}
@@ -369,11 +780,35 @@ const Evara = () => {
             <span className="text-xs text-gray-600">Reminders</span>
           </button>
           <button 
-            onClick={() => { setShowPeriodLog(true); fetchPeriodHistory(); }}
+            onClick={() => { setShowPeriodLog(true); if(token) fetchPeriodHistory(); }}
             className="p-4 bg-white rounded-xl shadow-sm border border-pink-100 hover:border-pink-300 transition-all flex flex-col items-center gap-2"
           >
             <Calendar className="w-6 h-6 text-rose-500" />
             <span className="text-xs text-gray-600">Period Tracker</span>
+          </button>
+        </div>
+
+        {/* Education Quick Links */}
+        <div className="grid grid-cols-2 gap-3">
+          <button 
+            onClick={() => setShowPMSEducation(true)}
+            className="p-4 bg-gradient-to-r from-pink-100 to-rose-100 rounded-xl border border-pink-200 hover:shadow-md transition-all flex items-center gap-3"
+          >
+            <BookOpen className="w-8 h-8 text-pink-600" />
+            <div className="text-left">
+              <p className="font-medium text-gray-800">PMS Guide</p>
+              <p className="text-xs text-gray-500">Understand & manage PMS</p>
+            </div>
+          </button>
+          <button 
+            onClick={() => setShowPCOSEducation(true)}
+            className="p-4 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-xl border border-purple-200 hover:shadow-md transition-all flex items-center gap-3"
+          >
+            <Activity className="w-8 h-8 text-purple-600" />
+            <div className="text-left">
+              <p className="font-medium text-gray-800">PCOS Guide</p>
+              <p className="text-xs text-gray-500">Diet, exercise & more</p>
+            </div>
           </button>
         </div>
 
@@ -385,7 +820,18 @@ const Evara = () => {
               <Card 
                 key={program.id} 
                 className="cursor-pointer hover:shadow-md transition-all border-pink-100"
-                onClick={() => fetchProgramContent(program.id)}
+                onClick={() => {
+                  if (program.id === 'menstrual_health') {
+                    setShowPeriodLog(true);
+                    if(token) fetchPeriodHistory();
+                  } else if (program.id === 'pcos_hormonal') {
+                    setShowPCOSEducation(true);
+                  } else if (program.id === 'pregnancy_support') {
+                    setShowPregnancyCalc(true);
+                  } else {
+                    setActiveProgram(program.id);
+                  }
+                }}
               >
                 <CardContent className="p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -406,7 +852,8 @@ const Evara = () => {
 
         {/* Disclaimer */}
         <Card className="bg-amber-50 border-amber-200">
-          <CardContent className="p-4">
+          <CardContent className="p-4 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-amber-800">
               <strong>Disclaimer:</strong> Evara provides wellness education and support. 
               It does not replace professional medical consultation. For any health concerns, 
@@ -416,16 +863,112 @@ const Evara = () => {
         </Card>
       </main>
 
+      {/* Signup/Login Dialog */}
+      <Dialog open={showSignup} onOpenChange={setShowSignup}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Heart className="w-5 h-5 text-pink-500" />
+              {loginMode ? 'Welcome Back' : 'Join Evara'}
+            </DialogTitle>
+            <DialogDescription>
+              {loginMode ? 'Sign in to continue your wellness journey' : 'Create your account to start your wellness journey'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {!loginMode && (
+              <>
+                <div>
+                  <Label>Full Name *</Label>
+                  <div className="relative">
+                    <User className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                    <Input 
+                      placeholder="Your name"
+                      className="pl-10"
+                      value={signupData.name}
+                      onChange={(e) => setSignupData({...signupData, name: e.target.value})}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label>Phone Number *</Label>
+                  <div className="relative">
+                    <Phone className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                    <Input 
+                      placeholder="10-digit mobile number"
+                      className="pl-10"
+                      value={signupData.phone}
+                      onChange={(e) => setSignupData({...signupData, phone: e.target.value})}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+            
+            <div>
+              <Label>Email {loginMode ? '*' : '(Optional)'}</Label>
+              <div className="relative">
+                <Mail className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                <Input 
+                  type="email"
+                  placeholder="your@email.com"
+                  className="pl-10"
+                  value={signupData.email}
+                  onChange={(e) => setSignupData({...signupData, email: e.target.value})}
+                />
+              </div>
+            </div>
+            
+            <div>
+              <Label>Password *</Label>
+              <div className="relative">
+                <Lock className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                <Input 
+                  type="password"
+                  placeholder="Create a password"
+                  className="pl-10"
+                  value={signupData.password}
+                  onChange={(e) => setSignupData({...signupData, password: e.target.value})}
+                />
+              </div>
+            </div>
+            
+            <Button 
+              onClick={handleSignup} 
+              className="w-full bg-pink-500 hover:bg-pink-600"
+              disabled={loading}
+            >
+              {loading ? 'Please wait...' : (loginMode ? 'Sign In' : 'Create Account')}
+            </Button>
+            
+            <p className="text-center text-sm text-gray-500">
+              {loginMode ? "Don't have an account? " : "Already have an account? "}
+              <button 
+                onClick={() => setLoginMode(!loginMode)}
+                className="text-pink-600 hover:underline"
+              >
+                {loginMode ? 'Sign Up' : 'Sign In'}
+              </button>
+            </p>
+            
+            <p className="text-xs text-center text-gray-400">
+              This account works with Nevika Cura app too!
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Onboarding Dialog */}
       <Dialog open={showOnboarding} onOpenChange={setShowOnboarding}>
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-pink-500" />
-              Welcome to Evara
+              Personalize Your Journey
             </DialogTitle>
             <DialogDescription>
-              Let's personalize your wellness journey. Tell us about yourself.
+              Help us understand you better to provide personalized wellness support.
             </DialogDescription>
           </DialogHeader>
           
@@ -474,7 +1017,7 @@ const Evara = () => {
               <Label>Known Conditions (Optional)</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {conditions.map((condition) => (
-                  <label key={condition} className="flex items-center gap-2 text-sm">
+                  <label key={condition} className="flex items-center gap-2 text-sm bg-gray-50 px-3 py-1.5 rounded-full">
                     <Checkbox 
                       checked={onboardingData.known_conditions.includes(condition)}
                       onCheckedChange={(checked) => {
@@ -495,7 +1038,7 @@ const Evara = () => {
               <Label>Wellness Goals (Optional)</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {goals.map((goal) => (
-                  <label key={goal} className="flex items-center gap-2 text-sm">
+                  <label key={goal} className="flex items-center gap-2 text-sm bg-gray-50 px-3 py-1.5 rounded-full">
                     <Checkbox 
                       checked={onboardingData.lifestyle_goals.includes(goal)}
                       onCheckedChange={(checked) => {
@@ -543,6 +1086,17 @@ const Evara = () => {
                   <Heart className="w-12 h-12 mx-auto text-pink-300 mb-2" />
                   <p>Hi! I'm Evara, your wellness companion.</p>
                   <p className="text-sm">Ask me anything about women's health!</p>
+                  <div className="mt-4 flex flex-wrap justify-center gap-2">
+                    {['Period pain relief', 'PCOS diet tips', 'Pregnancy nutrition', 'Menopause support'].map((q) => (
+                      <button 
+                        key={q}
+                        onClick={() => { setChatInput(q); }}
+                        className="text-xs bg-pink-100 text-pink-700 px-3 py-1.5 rounded-full hover:bg-pink-200"
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
               {chatMessages.map((msg, idx) => (
@@ -589,6 +1143,382 @@ const Evara = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Pregnancy Calculator Dialog */}
+      <Dialog open={showPregnancyCalc} onOpenChange={setShowPregnancyCalc}>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Baby className="w-5 h-5 text-blue-500" />
+              Pregnancy Calculator
+            </DialogTitle>
+            <DialogDescription>
+              Calculate your due date and track your pregnancy week
+            </DialogDescription>
+          </DialogHeader>
+          <PregnancyCalculator />
+        </DialogContent>
+      </Dialog>
+
+      {/* PMS Education Dialog */}
+      <Dialog open={showPMSEducation} onOpenChange={setShowPMSEducation}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-pink-500" />
+              {PMS_EDUCATION.title}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div>
+              <p className="text-gray-700 leading-relaxed">{PMS_EDUCATION.overview}</p>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-gray-800 mb-3">Physical Symptoms</h4>
+              <ul className="space-y-2">
+                {PMS_EDUCATION.symptoms.physical.map((symptom, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
+                    <span className="text-pink-500 mt-1">•</span>
+                    {symptom}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-gray-800 mb-3">Emotional Symptoms</h4>
+              <ul className="space-y-2">
+                {PMS_EDUCATION.symptoms.emotional.map((symptom, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
+                    <span className="text-purple-500 mt-1">•</span>
+                    {symptom}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            {PMS_EDUCATION.management.map((section, idx) => (
+              <Card key={idx} className="bg-pink-50 border-pink-200">
+                <CardContent className="p-4">
+                  <h4 className="font-semibold text-pink-800 mb-2">{section.title}</h4>
+                  <ul className="space-y-1.5">
+                    {section.tips.map((tip, tidx) => (
+                      <li key={tidx} className="text-sm text-pink-700 flex items-start gap-2">
+                        <span>✓</span>
+                        {tip}
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* PCOS Education Dialog */}
+      <Dialog open={showPCOSEducation} onOpenChange={setShowPCOSEducation}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto p-0">
+          <DialogHeader className="p-4 bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
+            <DialogTitle className="flex items-center gap-2">
+              <Activity className="w-5 h-5" />
+              {PCOS_EDUCATION.title}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="w-full justify-start px-4 pt-2 bg-gray-50">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="diet">Diet Plan</TabsTrigger>
+              <TabsTrigger value="exercise">Exercise</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="overview" className="p-4 space-y-4">
+              <p className="text-gray-700 leading-relaxed">{PCOS_EDUCATION.overview}</p>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-3">Common Symptoms</h4>
+                <div className="grid grid-cols-1 gap-2">
+                  {PCOS_EDUCATION.symptoms.map((symptom, idx) => (
+                    <div key={idx} className="flex items-start gap-2 text-sm text-gray-600 bg-purple-50 p-2 rounded-lg">
+                      <Info className="w-4 h-4 text-purple-500 flex-shrink-0 mt-0.5" />
+                      {symptom}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-3">Diagnosis Methods</h4>
+                <ul className="space-y-2">
+                  {PCOS_EDUCATION.diagnosis.map((item, idx) => (
+                    <li key={idx} className="text-sm text-gray-600 flex items-start gap-2">
+                      <span className="text-purple-500">•</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="diet" className="p-4 space-y-4">
+              <div>
+                <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-2">
+                  <Apple className="w-5 h-5" />
+                  {PCOS_EDUCATION.dietPlan.title}
+                </h4>
+                <div className="space-y-2 mb-4">
+                  {PCOS_EDUCATION.dietPlan.principles.map((p, idx) => (
+                    <p key={idx} className="text-sm text-gray-600 flex items-start gap-2">
+                      <span className="text-green-500">✓</span>
+                      {p}
+                    </p>
+                  ))}
+                </div>
+              </div>
+              
+              <Card className="bg-green-50 border-green-200">
+                <CardContent className="p-4">
+                  <h5 className="font-medium text-green-800 mb-3">Foods to Include</h5>
+                  {PCOS_EDUCATION.dietPlan.foods_to_include.map((food, idx) => (
+                    <div key={idx} className="mb-2">
+                      <p className="text-sm font-medium text-green-700">{food.category}</p>
+                      <p className="text-xs text-green-600">{food.items}</p>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-red-50 border-red-200">
+                <CardContent className="p-4">
+                  <h5 className="font-medium text-red-800 mb-2">Foods to Limit</h5>
+                  <ul className="space-y-1">
+                    {PCOS_EDUCATION.dietPlan.foods_to_limit.map((food, idx) => (
+                      <li key={idx} className="text-sm text-red-600 flex items-start gap-2">
+                        <span>✗</span>
+                        {food}
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-amber-50 border-amber-200">
+                <CardContent className="p-4">
+                  <h5 className="font-medium text-amber-800 mb-2">Sample Day Meal Plan</h5>
+                  <div className="space-y-2 text-sm">
+                    <p><strong className="text-amber-700">Breakfast:</strong> {PCOS_EDUCATION.dietPlan.sample_day.breakfast}</p>
+                    <p><strong className="text-amber-700">Mid-Morning:</strong> {PCOS_EDUCATION.dietPlan.sample_day.mid_morning}</p>
+                    <p><strong className="text-amber-700">Lunch:</strong> {PCOS_EDUCATION.dietPlan.sample_day.lunch}</p>
+                    <p><strong className="text-amber-700">Snack:</strong> {PCOS_EDUCATION.dietPlan.sample_day.snack}</p>
+                    <p><strong className="text-amber-700">Dinner:</strong> {PCOS_EDUCATION.dietPlan.sample_day.dinner}</p>
+                    <p><strong className="text-amber-700">Evening:</strong> {PCOS_EDUCATION.dietPlan.sample_day.evening}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="exercise" className="p-4 space-y-4">
+              <div>
+                <h4 className="font-semibold text-purple-800 mb-2 flex items-center gap-2">
+                  <Dumbbell className="w-5 h-5" />
+                  {PCOS_EDUCATION.exercisePlan.title}
+                </h4>
+                <div className="space-y-1 mb-4">
+                  {PCOS_EDUCATION.exercisePlan.benefits.map((b, idx) => (
+                    <p key={idx} className="text-sm text-gray-600 flex items-start gap-2">
+                      <span className="text-green-500">✓</span>
+                      {b}
+                    </p>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h5 className="font-medium text-gray-800 mb-3">Weekly Exercise Plan</h5>
+                <div className="space-y-3">
+                  {PCOS_EDUCATION.exercisePlan.weekly_plan.map((day, idx) => (
+                    <Card key={idx} className={`border-l-4 ${day.day === 'Sunday' ? 'border-l-gray-300 bg-gray-50' : 'border-l-purple-400'}`}>
+                      <CardContent className="p-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-medium text-gray-800">{day.day}</p>
+                            <p className="text-sm text-purple-600">{day.activity}</p>
+                          </div>
+                          <span className="text-xs text-gray-500">{day.duration}</span>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1">{day.details}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+              
+              <Card className="bg-blue-50 border-blue-200">
+                <CardContent className="p-4">
+                  <h5 className="font-medium text-blue-800 mb-2">Pro Tips</h5>
+                  <ul className="space-y-1">
+                    {PCOS_EDUCATION.exercisePlan.tips.map((tip, idx) => (
+                      <li key={idx} className="text-sm text-blue-700 flex items-start gap-2">
+                        <span>💡</span>
+                        {tip}
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
+
+      {/* Period Tracker Dialog */}
+      <Dialog open={showPeriodLog} onOpenChange={setShowPeriodLog}>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-rose-500" />
+              Period Tracker
+            </DialogTitle>
+            <DialogDescription>
+              Track your cycle and get predictions
+            </DialogDescription>
+          </DialogHeader>
+          
+          {token ? (
+            <Tabs defaultValue="log" className="w-full">
+              <TabsList className="w-full">
+                <TabsTrigger value="log" className="flex-1">Log Period</TabsTrigger>
+                <TabsTrigger value="history" className="flex-1">History</TabsTrigger>
+                <TabsTrigger value="pms" className="flex-1">PMS Guide</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="log" className="space-y-4 pt-4">
+                <div>
+                  <Label>Period Start Date</Label>
+                  <Input 
+                    type="date"
+                    value={periodData.start_date}
+                    onChange={(e) => setPeriodData({...periodData, start_date: e.target.value})}
+                    max={new Date().toISOString().split('T')[0]}
+                  />
+                </div>
+                
+                <div>
+                  <Label>Flow Intensity</Label>
+                  <Select 
+                    value={periodData.flow}
+                    onValueChange={(v) => setPeriodData({...periodData, flow: v})}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="light">Light</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="heavy">Heavy</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label>Symptoms</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {symptoms.map((symptom) => (
+                      <label key={symptom} className="flex items-center gap-1.5 text-sm bg-rose-50 px-3 py-1.5 rounded-full">
+                        <Checkbox 
+                          checked={periodData.symptoms.includes(symptom)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setPeriodData({...periodData, symptoms: [...periodData.symptoms, symptom]});
+                            } else {
+                              setPeriodData({...periodData, symptoms: periodData.symptoms.filter(s => s !== symptom)});
+                            }
+                          }}
+                        />
+                        {symptom}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <Label>Notes (Optional)</Label>
+                  <Input 
+                    placeholder="Any additional notes..."
+                    value={periodData.notes}
+                    onChange={(e) => setPeriodData({...periodData, notes: e.target.value})}
+                  />
+                </div>
+                
+                <Button onClick={logPeriod} className="w-full bg-rose-500 hover:bg-rose-600">
+                  Log Period
+                </Button>
+              </TabsContent>
+              
+              <TabsContent value="history" className="space-y-4 pt-4">
+                {periodHistory.next_predicted && (
+                  <Card className="bg-gradient-to-r from-rose-500 to-pink-500 text-white border-0">
+                    <CardContent className="p-4 text-center">
+                      <p className="text-sm opacity-80">Next Period Predicted</p>
+                      <p className="text-2xl font-bold">{periodHistory.next_predicted}</p>
+                      <p className="text-sm opacity-80 mt-1">Average cycle: {periodHistory.average_cycle_length} days</p>
+                    </CardContent>
+                  </Card>
+                )}
+                
+                <div>
+                  <h4 className="font-medium text-gray-700 mb-2">Recent Periods</h4>
+                  {periodHistory.history?.length > 0 ? (
+                    <div className="space-y-2">
+                      {periodHistory.history.map((log, idx) => (
+                        <Card key={idx} className="bg-rose-50 border-rose-200">
+                          <CardContent className="p-3">
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <p className="font-medium text-rose-800">{log.start_date}</p>
+                                <p className="text-xs text-rose-600">Flow: {log.flow}</p>
+                              </div>
+                              {log.symptoms?.length > 0 && (
+                                <p className="text-xs text-rose-500">{log.symptoms.length} symptoms</p>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 text-center py-4">No periods logged yet</p>
+                  )}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="pms" className="pt-4">
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600">{PMS_EDUCATION.overview.substring(0, 200)}...</p>
+                  <Button 
+                    onClick={() => { setShowPeriodLog(false); setShowPMSEducation(true); }}
+                    className="w-full bg-pink-500 hover:bg-pink-600"
+                  >
+                    Read Full PMS Guide
+                  </Button>
+                </div>
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <div className="text-center py-8">
+              <Calendar className="w-16 h-16 mx-auto text-rose-200 mb-4" />
+              <p className="text-gray-600 mb-4">Sign up to track your period and get cycle predictions</p>
+              <Button 
+                onClick={() => { setShowPeriodLog(false); setShowSignup(true); }}
+                className="bg-rose-500 hover:bg-rose-600"
+              >
+                Sign Up Now
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Reminders Dialog */}
       <Dialog open={showReminders} onOpenChange={setShowReminders}>
         <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
@@ -599,11 +1529,11 @@ const Evara = () => {
             </DialogTitle>
           </DialogHeader>
           
-          {user ? (
+          {token ? (
             <div className="space-y-4">
               <div className="space-y-3">
                 <Input 
-                  placeholder="Reminder title"
+                  placeholder="Reminder title (e.g., Take vitamins)"
                   value={newReminder.title}
                   onChange={(e) => setNewReminder({...newReminder, title: e.target.value})}
                 />
@@ -623,7 +1553,7 @@ const Evara = () => {
                   <p className="text-sm text-gray-500 text-center py-4">No reminders yet</p>
                 ) : (
                   reminders.map((reminder) => (
-                    <div key={reminder.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={reminder.id} className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-purple-500" />
                         <div>
@@ -637,135 +1567,16 @@ const Evara = () => {
               </div>
             </div>
           ) : (
-            <p className="text-center text-gray-500 py-4">Please login to manage reminders</p>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Period Tracker Dialog */}
-      <Dialog open={showPeriodLog} onOpenChange={setShowPeriodLog}>
-        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-rose-500" />
-              Period Tracker
-            </DialogTitle>
-          </DialogHeader>
-          
-          {user ? (
-            <div className="space-y-4">
-              <div className="space-y-3">
-                <div>
-                  <Label>Period Start Date</Label>
-                  <Input 
-                    type="date"
-                    value={periodData.start_date}
-                    onChange={(e) => setPeriodData({...periodData, start_date: e.target.value})}
-                  />
-                </div>
-                
-                <div>
-                  <Label>Flow</Label>
-                  <Select 
-                    value={periodData.flow}
-                    onValueChange={(v) => setPeriodData({...periodData, flow: v})}
-                  >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="light">Light</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="heavy">Heavy</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Label>Symptoms</Label>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {symptoms.map((symptom) => (
-                      <label key={symptom} className="flex items-center gap-1 text-sm">
-                        <Checkbox 
-                          checked={periodData.symptoms.includes(symptom)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              setPeriodData({...periodData, symptoms: [...periodData.symptoms, symptom]});
-                            } else {
-                              setPeriodData({...periodData, symptoms: periodData.symptoms.filter(s => s !== symptom)});
-                            }
-                          }}
-                        />
-                        {symptom}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-                
-                <Button onClick={logPeriod} className="w-full bg-rose-500 hover:bg-rose-600">
-                  Log Period
-                </Button>
-              </div>
-              
-              {periodHistory.next_predicted && (
-                <Card className="bg-pink-50 border-pink-200">
-                  <CardContent className="p-3">
-                    <p className="text-sm text-pink-800">
-                      <strong>Next predicted period:</strong> {periodHistory.next_predicted}
-                    </p>
-                    <p className="text-xs text-pink-600">
-                      Average cycle: {periodHistory.average_cycle_length || 28} days
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
+            <div className="text-center py-8">
+              <Bell className="w-16 h-16 mx-auto text-purple-200 mb-4" />
+              <p className="text-gray-600 mb-4">Sign up to set wellness reminders</p>
+              <Button 
+                onClick={() => { setShowReminders(false); setShowSignup(true); }}
+                className="bg-purple-500 hover:bg-purple-600"
+              >
+                Sign Up Now
+              </Button>
             </div>
-          ) : (
-            <p className="text-center text-gray-500 py-4">Please login to track your period</p>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Program Content Dialog */}
-      <Dialog open={!!activeProgram} onOpenChange={() => { setActiveProgram(null); setProgramContent(null); }}>
-        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
-          {programContent && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  {getProgramIcon(activeProgram)}
-                  {programContent.program?.name}
-                </DialogTitle>
-              </DialogHeader>
-              
-              <div className="space-y-4 py-4">
-                <div>
-                  <h4 className="font-medium text-gray-800 mb-2">Overview</h4>
-                  <p className="text-sm text-gray-600">{programContent.content?.overview}</p>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-gray-800 mb-2">Tips</h4>
-                  <ul className="space-y-2">
-                    {programContent.content?.tips?.map((tip, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
-                        <span className="text-pink-500">•</span>
-                        {tip}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <Card className="bg-gradient-to-r from-pink-100 to-purple-100 border-0">
-                  <CardContent className="p-4">
-                    <p className="text-sm font-medium text-purple-800">💡 Daily Tip</p>
-                    <p className="text-sm text-purple-700">{programContent.content?.daily_tip}</p>
-                  </CardContent>
-                </Card>
-                
-                <div className="text-center">
-                  <p className="text-sm text-pink-600 italic">{programContent.content?.motivation}</p>
-                </div>
-              </div>
-            </>
           )}
         </DialogContent>
       </Dialog>
