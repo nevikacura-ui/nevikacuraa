@@ -45,7 +45,7 @@ Build a modern healthcare application for "Nevika Cura" with four core services:
 - [x] **Safety Features**: Red flag detection, medical disclaimer, escalation to doctors
 - [x] **Homepage Integration**: Evara card with enlarged logo (25% larger), white background
 
-#### Evara Enhanced Features - NEW ✅
+#### Evara Enhanced Features - COMPLETED ✅
 - [x] **Separate Signup/Login**: Works with Nevika Cura auth system
 - [x] **Pregnancy Calculator**: 
   - Calculate EDD using Naegele's rule (LMP + 280 days)
@@ -65,6 +65,30 @@ Build a modern healthcare application for "Nevika Cura" with four core services:
   - Log period with flow intensity & symptoms
   - Cycle prediction based on average length
   - History view with past periods
+
+#### Evara Backlog Features - COMPLETED (Jan 11, 2026) ✅
+- [x] **Week-by-Week Pregnancy Guide**:
+  - 42 weeks of detailed pregnancy content
+  - Organized by trimester (1st: 1-12, 2nd: 13-27, 3rd: 28-42)
+  - Each week shows: baby size, baby development, mom changes, weekly tip
+  - Frontend dialog with scrollable list and detail view
+  - API: GET /api/evara/pregnancy/all-weeks, GET /api/evara/pregnancy/week/{week}
+- [x] **Home Services Coordination**:
+  - 4 coordinated home healthcare services:
+    - Postnatal Nurse Visit (1-2 hours)
+    - Lactation Consultant (45-60 mins)
+    - Women's Physiotherapy (45 mins)
+    - Home Sample Collection (redirects to Proton)
+  - Service request with SMS confirmation
+  - API: GET /api/evara/home-services, POST /api/evara/home-services/request
+- [x] **Community Live Sessions**:
+  - 6 recorded educational sessions with expert hosts
+  - Topics: Period Health, PCOS, Pregnancy Nutrition, Breastfeeding, Menopause, Mental Health
+  - Upcoming live session: Monthly Q&A with Gynecologist (last Saturday of month)
+  - Session registration functionality
+  - API: GET /api/evara/community/sessions, POST /api/evara/community/register/{session_id}
+- [x] **Test Coverage**: 21/21 tests passed (10 backend + 11 frontend)
+- [x] **Test File**: /app/tests/test_evara_module.py
 
 #### Splash Screen - UPDATED ✅
 - [x] White background
