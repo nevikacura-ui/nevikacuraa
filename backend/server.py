@@ -5705,6 +5705,185 @@ async def api_root_handler():
         "services": ["diagyn", "proton", "pharmacy", "evara", "staff", "admin"]
     }
 
+# ============ HEALTH RECORDS STORAGE ============
+
+class HealthRecordUpload(BaseModel):
+    record_type: str  # prescription, lab_report, other
+    title: str
+    notes: Optional[str] = None
+    file_url: str
+    date: Optional[str] = None
+
+@api_router.get("/health-records")
+async def get_health_records(user = Depends(get_current_user)):
+    """Get user's health records"""
+    records = await db.health_records.find(
+        {"user_id": user["id"]},
+        {"_id": 0}
+    ).sort([("created_at", -1)]).to_list(100)
+    return {"records": records}
+
+@api_router.post("/health-records")
+async def upload_health_record(data: HealthRecordUpload, user = Depends(get_current_user)):
+    """Upload a health record"""
+    record = {
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"],
+        "record_type": data.record_type,
+        "title": data.title,
+        "notes": data.notes,
+        "file_url": data.file_url,
+        "date": data.date or datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.health_records.insert_one(record)
+    return {"success": True, "record": {k: v for k, v in record.items() if k != "_id"}}
+
+@api_router.delete("/health-records/{record_id}")
+async def delete_health_record(record_id: str, user = Depends(get_current_user)):
+    """Delete a health record"""
+    result = await db.health_records.delete_one({"id": record_id, "user_id": user["id"]})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Record not found")
+    return {"success": True}
+
+# ============ MEDICINE REORDER ============
+
+@api_router.get("/pharmacy/reorder/{order_id}")
+async def get_reorder_details(order_id: str, user = Depends(get_current_user)):
+    """Get details of a previous order for reordering"""
+    order = await db.pharmacy_orders.find_one(
+        {"id": order_id, "user_id": user["id"]},
+        {"_id": 0}
+    )
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return {
+        "medicines": order.get("medicines", []),
+        "delivery_address": order.get("delivery_address", ""),
+        "patient_name": order.get("patient_name", ""),
+        "patient_phone": order.get("patient_phone", "")
+    }
+
+# ============ DOCTOR AVAILABILITY CALENDAR ============
+
+@api_router.get("/doctors/availability")
+async def get_doctors_availability(days: int = 7):
+    """Get all doctors' availability for the next N days"""
+    from datetime import timedelta
+    
+    doctors = [
+        {"id": "doc_neha", "name": "Dr. Neha", "clinic": "Pushpa Clinic"},
+        {"id": "doc_vikas", "name": "Dr. Vikas", "clinic": "Amnion Clinic"}
+    ]
+    
+    today = datetime.now(timezone.utc).date()
+    availability = []
+    
+    for doctor in doctors:
+        doctor_slots = []
+        for i in range(days):
+            date = today + timedelta(days=i)
+            date_str = date.strftime("%Y-%m-%d")
+            
+            # Get booked slots for this doctor on this date
+            booked = await db.appointments.find({
+                "doctor": doctor["name"],
+                "date": date_str,
+                "status": {"$in": ["pending", "Booked", "In Clinic"]}
+            }).to_list(100)
+            
+            booked_times = [apt.get("time") for apt in booked]
+            
+            # Define all available time slots
+            all_slots = [
+                "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
+                "12:00 PM", "12:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM",
+                "04:00 PM", "04:30 PM", "05:00 PM", "05:30 PM", "06:00 PM"
+            ]
+            
+            available_slots = [s for s in all_slots if s not in booked_times]
+            
+            doctor_slots.append({
+                "date": date_str,
+                "day": date.strftime("%A"),
+                "available_count": len(available_slots),
+                "booked_count": len(booked_times),
+                "available_slots": available_slots[:5]  # Show first 5 for preview
+            })
+        
+        availability.append({
+            "doctor": doctor,
+            "slots": doctor_slots
+        })
+    
+    return {"availability": availability}
+
+# ============ APPOINTMENT REMINDERS ============
+
+@api_router.post("/appointments/{appointment_id}/send-reminder")
+async def send_appointment_reminder(appointment_id: str):
+    """Manually send appointment reminder SMS"""
+    appointment = await db.appointments.find_one({"id": appointment_id}, {"_id": 0})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    phone = appointment.get("patient_phone")
+    if not phone:
+        raise HTTPException(status_code=400, detail="No phone number on appointment")
+    
+    message = f"""Reminder: DiaGyn Healthcare
+
+Your appointment is scheduled:
+Doctor: {appointment.get('doctor')}
+Date: {appointment.get('date')}
+Time: {appointment.get('time')}
+Clinic: {appointment.get('clinic')}
+
+Please arrive 10 mins early.
+Note: This is arrival time, not consultation time.
+
+Call: 9403890429
+WhatsApp: 7039020020"""
+    
+    try:
+        await send_sms_notification(phone, message)
+        return {"success": True, "message": "Reminder sent"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============ WHATSAPP SHARE FOR EVARA ============
+
+@api_router.get("/evara/share/{content_type}")
+async def get_evara_share_content(content_type: str):
+    """Get shareable WhatsApp content for Evara educational material"""
+    share_content = {
+        "pcos_guide": {
+            "title": "PCOS Guide",
+            "message": "🌸 *Understanding PCOS* 🌸\n\nLearn about symptoms, diet plans, and exercise routines for managing PCOS.\n\n✅ Symptoms & Diagnosis\n✅ PCOS-Friendly Diet\n✅ Weekly Exercise Plan\n\nDownload Nevika Cura app for the complete guide!\n\n#PCOSAwareness #WomensHealth"
+        },
+        "pms_guide": {
+            "title": "PMS Guide", 
+            "message": "🌷 *Understanding PMS* 🌷\n\nTips to manage premenstrual syndrome effectively.\n\n✅ Physical & Emotional Symptoms\n✅ Dietary Changes\n✅ Exercise & Lifestyle Tips\n\nDownload Nevika Cura app for more!\n\n#PMS #WomensWellness"
+        },
+        "pregnancy_tips": {
+            "title": "Pregnancy Tips",
+            "message": "🤰 *Pregnancy Week-by-Week Guide* 🤰\n\nTrack your baby's development from week 1 to 42!\n\n✅ Baby's size & growth\n✅ Mom's body changes\n✅ Weekly tips\n\nDownload Nevika Cura app!\n\n#Pregnancy #MomToBe"
+        }
+    }
+    
+    if content_type not in share_content:
+        raise HTTPException(status_code=404, detail="Content type not found")
+    
+    content = share_content[content_type]
+    whatsapp_url = f"https://wa.me/?text={content['message'].replace(' ', '%20').replace('\n', '%0A')}"
+    
+    return {
+        "title": content["title"],
+        "message": content["message"],
+        "whatsapp_url": whatsapp_url
+    }
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
