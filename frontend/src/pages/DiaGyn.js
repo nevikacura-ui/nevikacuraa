@@ -87,6 +87,22 @@ const DiaGyn = () => {
   const [showAvailability, setShowAvailability] = useState(false);
   const [weeklyAvailability, setWeeklyAvailability] = useState([]);
   const [loadingAvailability, setLoadingAvailability] = useState(false);
+  const [availabilityClinic, setAvailabilityClinic] = useState('pushpa');
+
+  // Helper to get next 7 days
+  const getNext7Days = () => {
+    const days = [];
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      days.push({
+        date: date.toISOString().split('T')[0],
+        dayName: dayNames[date.getDay()]
+      });
+    }
+    return days;
+  };
 
   // Fetch weekly availability
   const fetchWeeklyAvailability = async () => {
