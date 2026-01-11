@@ -258,14 +258,14 @@ const Home = () => {
               </div>
               
               {/* Tagline only - no name */}
-              <p className={`text-center text-sm mt-3 relative z-10 ${service.customBg ? 'text-white/90' : 'text-gray-600'}`}>
+              <p className={`text-center text-sm relative z-10 ${service.extraBottomPadding ? 'mt-1' : 'mt-3'} ${service.customBg ? 'text-white/90' : 'text-gray-600'}`}>
                 {service.description}
               </p>
               
               <Button
                 onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                 data-testid={`service-button-${service.id}`}
-                className={`mt-3 w-full rounded-xl py-5 font-medium shadow-lg hover:shadow-xl transition-all duration-300 relative z-10 ${
+                className={`mt-2 w-full rounded-xl py-5 font-medium shadow-lg hover:shadow-xl transition-all duration-300 relative z-10 ${
                   service.customBg 
                     ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
                     : 'bg-brand-teal hover:bg-brand-teal/90 text-white'
