@@ -64,12 +64,12 @@
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: #ffffff;
+                background: #ffffff !important;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                z-index: 99999;
+                z-index: 999999;
             }
             #splash-screen.hidden {
                 opacity: 0;
@@ -103,9 +103,9 @@
             }
         </style>
     </head>
-    <body>
+    <body style="background: #ffffff;">
         <!-- Splash Screen for app-like experience -->
-        <div id="splash-screen">
+        <div id="splash-screen" style="background: #ffffff;">
             <div class="splash-content">
                 <div class="splash-glow"></div>
                 <img class="logo-img" src="/icons/icon-192x192.png" alt="Nevika Cura" />
