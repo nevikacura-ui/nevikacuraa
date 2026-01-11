@@ -427,14 +427,72 @@ const StaffPortal = () => {
     }
   };
 
-  const handleCompleteAppointment = async (appointmentId) => {
+  // Open completion modal (for doctors only)
+  const openCompletionModal = (appointment) => {
+    setCompletionAppointment(appointment);
+    setCompletionForm({ fee_code: '', follow_up_days: '', notes: '' });
+    setShowCompletionModal(true);
+  };
+
+  // Doctor completes appointment with fee code and follow-up
+  const handleDoctorCompleteAppointment = async () => {
+    if (!completionForm.fee_code) {
+      toast.error('Please select a fee code');
+      return;
+    }
+    
+    setCompletingAppointment(true);
     try {
-      await axios.put(`${API}/staff/appointments/${appointmentId}/complete`, {}, getAuthHeaders());
-      toast.success('Appointment marked as completed');
+      const response = await axios.put(
+        `${API}/staff/appointments/${completionAppointment.id}/doctor-complete`,
+        {
+          fee_code: completionForm.fee_code,
+          follow_up_days: completionForm.follow_up_days ? parseInt(completionForm.follow_up_days) : null,
+          notes: completionForm.notes || null
+        },
+        getAuthHeaders()
+      );
+      
+      toast.success(`Appointment completed! Fee: ₹${response.data.fee_amount}`);
+      if (response.data.follow_up_date) {
+        toast.success(`Follow-up scheduled for ${response.data.follow_up_date}`);
+      }
+      setShowCompletionModal(false);
       loadData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Update failed');
+      toast.error(error.response?.data?.detail || 'Failed to complete appointment');
     }
+    setCompletingAppointment(false);
+  };
+
+  // Fetch completed appointments for clinic staff (real-time sync)
+  const fetchCompletedAppointments = async () => {
+    setLoadingCompleted(true);
+    try {
+      const res = await axios.get(`${API}/staff/clinic/completed-appointments`, {
+        params: { date: selectedDate },
+        ...getAuthHeaders()
+      });
+      setCompletedAppointments(res.data.appointments || []);
+    } catch (error) {
+      console.error('Failed to fetch completed appointments:', error);
+    }
+    setLoadingCompleted(false);
+  };
+
+  const handleCompleteAppointment = async (appointmentId) => {
+    // For doctors, open the completion modal
+    const role = staffInfo?.role;
+    if (role === 'doctor' || role === 'doctor_pushpa' || role === 'doctor_amnion') {
+      const appt = appointments.find(a => a.id === appointmentId);
+      if (appt) {
+        openCompletionModal(appt);
+      }
+      return;
+    }
+    
+    // For non-doctors, show error message
+    toast.error('Only doctors can complete appointments. Fee code and follow-up are required.');
   };
 
   const fetchPatientHistory = async (phone) => {
