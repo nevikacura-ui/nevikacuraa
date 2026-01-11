@@ -162,19 +162,13 @@ class TestProtonDiagnostics:
         """Test creating a diagnostic order"""
         unique_id = str(uuid.uuid4().int)[:8]
         
-        # Correct endpoint is /api/diagnostics
+        # Correct endpoint is /api/diagnostics with tests as List[str]
         response = requests.post(f"{BASE_URL}/api/diagnostics", json={
             "patient_name": f"Test Patient {unique_id}",
             "patient_phone": f"98765{unique_id[:5]}",
             "patient_email": f"test_{unique_id}@example.com",
-            "tests": [
-                {"name": "CBC (Complete Blood Count)", "price": 350},
-                {"name": "FBS (Fasting Blood Sugar)", "price": 80}
-            ],
-            "collection_type": "home",
-            "address": "123 Test Street, Nagpur",
-            "preferred_date": "2026-01-20",
-            "preferred_time": "09:00 AM"
+            "tests": ["CBC (Complete Blood Count)", "FBS (Fasting Blood Sugar)"],
+            "preferred_date": "2026-01-20"
         })
         assert response.status_code == 200
         data = response.json()
