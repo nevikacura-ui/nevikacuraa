@@ -146,6 +146,133 @@ async def send_whatsapp_notification(to_number: str, message: str):
         
         return {"type": "pending", "url": wa_link, "error": error_msg}
 
+# ============ SMS Notification Functions ============
+
+async def send_sms_notification(to_number: str, message: str):
+    """Send SMS notification to patient via Twilio"""
+    if not twilio_client or not TWILIO_PHONE_NUMBER:
+        logger.warning("Twilio SMS not configured, skipping SMS notification")
+        return {"success": False, "error": "SMS not configured"}
+    
+    try:
+        # Format phone number for India
+        formatted_to = to_number.strip()
+        if not formatted_to.startswith('+'):
+            if len(formatted_to) == 10:
+                formatted_to = f"+91{formatted_to}"
+            else:
+                formatted_to = f"+{formatted_to}"
+        
+        result = await asyncio.to_thread(
+            twilio_client.messages.create,
+            body=message,
+            from_=TWILIO_PHONE_NUMBER,
+            to=formatted_to
+        )
+        
+        logger.info(f"SMS sent to {formatted_to}: sid={result.sid}")
+        return {"success": True, "sid": result.sid}
+    
+    except Exception as e:
+        logger.error(f"SMS send failed to {to_number}: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+async def send_appointment_sms(patient_phone: str, appointment_details: dict):
+    """Send appointment confirmation SMS to patient"""
+    doctor = appointment_details.get('doctor', 'Doctor')
+    clinic = appointment_details.get('clinic', 'Clinic')
+    date = appointment_details.get('date', '')
+    time = appointment_details.get('time', '')
+    
+    message = f"""Nevika Cura - Appointment Confirmed!
+
+Doctor: {doctor}
+Clinic: {clinic}
+Date: {date}
+Time: {time}
+
+Please arrive 10 mins early. For queries, call the clinic.
+
+Thank you!
+- Nevika Cura Healthcare"""
+    
+    return await send_sms_notification(patient_phone, message)
+
+async def send_pharmacy_order_sms(patient_phone: str, order_details: dict):
+    """Send pharmacy order confirmation SMS to patient"""
+    order_id = order_details.get('id', '')[:8]
+    medicines_count = len(order_details.get('medicines', []))
+    
+    message = f"""Nevika Cura - Order Confirmed!
+
+Order ID: {order_id}
+Items: {medicines_count} medicine(s)
+Status: Order Booked
+
+We'll notify you when your order is out for delivery.
+
+Thank you!
+- Orange Pharmacy"""
+    
+    return await send_sms_notification(patient_phone, message)
+
+async def send_pharmacy_status_sms(patient_phone: str, order_id: str, status: str):
+    """Send pharmacy order status update SMS"""
+    status_messages = {
+        "Packing": "Your order is being packed.",
+        "Out for Delivery": "Your order is out for delivery! 🚚",
+        "Delivered": "Your order has been delivered. Thank you!"
+    }
+    
+    message = f"""Nevika Cura - Order Update
+
+Order ID: {order_id[:8]}
+Status: {status}
+
+{status_messages.get(status, f'Your order status: {status}')}
+
+- Orange Pharmacy"""
+    
+    return await send_sms_notification(patient_phone, message)
+
+async def send_diagnostic_order_sms(patient_phone: str, order_details: dict):
+    """Send diagnostic test booking confirmation SMS to patient"""
+    order_id = order_details.get('id', '')[:8]
+    tests = order_details.get('tests', [])
+    tests_count = len(tests) if isinstance(tests, list) else 1
+    
+    message = f"""Nevika Cura - Test Booked!
+
+Order ID: {order_id}
+Tests: {tests_count} test(s)
+Status: Test Booked
+
+Our team will contact you for sample collection.
+
+Thank you!
+- Proton Diagnostics"""
+    
+    return await send_sms_notification(patient_phone, message)
+
+async def send_diagnostic_status_sms(patient_phone: str, order_id: str, status: str, report_url: str = None):
+    """Send diagnostic test status update SMS"""
+    status_messages = {
+        "Sample Collected": "Your sample has been collected.",
+        "In Process": "Your test is being processed.",
+        "Reports Generated": "Your reports are ready! Check your email or visit our portal."
+    }
+    
+    message = f"""Nevika Cura - Test Update
+
+Order ID: {order_id[:8]}
+Status: {status}
+
+{status_messages.get(status, f'Your test status: {status}')}
+
+- Proton Diagnostics"""
+    
+    return await send_sms_notification(patient_phone, message)
+
 async def notify_doctor_whatsapp(doctor_name: str, appointment_details: dict, booking_type: str = "walk_in"):
     """Send WhatsApp notification to doctor about new appointment"""
     doctor_number = DOCTOR_WHATSAPP_NUMBERS.get(doctor_name)
