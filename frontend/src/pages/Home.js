@@ -232,14 +232,14 @@ const Home = () => {
               
               {/* Logo - takes most space */}
               <div 
-                className={`flex items-center justify-center flex-1 ${service.logoBg} ${service.id === 'evara' || service.id === 'glydex' ? '' : 'rounded-xl p-2'}`}
+                className={`flex items-center justify-center flex-1 ${service.id === 'evara' || service.id === 'glydex' ? '' : 'rounded-xl p-2'} ${service.logoBg}`}
                 style={service.customBg ? { backgroundColor: service.customBg } : {}}
               >
                 <img 
                   src={service.logo} 
                   alt={service.name} 
                   className={`object-contain transition-transform group-hover:scale-105 ${
-                    service.id === 'evara' || service.id === 'glydex' ? 'w-full h-auto max-h-32' : 'w-auto max-h-28 mix-blend-multiply'
+                    service.id === 'evara' || service.id === 'glydex' ? 'w-full h-auto max-h-32 rounded-lg' : 'w-auto max-h-28 mix-blend-multiply'
                   }`}
                   data-testid={`service-logo-${service.id}`}
                 />
