@@ -5920,8 +5920,10 @@ async def get_omnia_profile(user = Depends(get_current_user)):
 @api_router.post("/omnia/profile")
 async def save_omnia_profile(data: OmniaProfile, user = Depends(get_current_user)):
     """Save or update user's Omnia diabetes profile"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
     profile_data = {
-        "user_id": user["id"],
+        "user_id": user.id,
         "diabetesType": data.diabetesType,
         "age": data.age,
         "gender": data.gender,
@@ -5932,7 +5934,7 @@ async def save_omnia_profile(data: OmniaProfile, user = Depends(get_current_user
     }
     
     await db.omnia_profiles.update_one(
-        {"user_id": user["id"]},
+        {"user_id": user.id},
         {"$set": profile_data},
         upsert=True
     )
