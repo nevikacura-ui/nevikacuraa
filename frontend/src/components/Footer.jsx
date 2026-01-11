@@ -352,7 +352,7 @@ const Footer = () => {
                 <Clock className="w-5 h-5 text-gray-500 mt-0.5" />
                 <div>
                   <p className="font-medium text-gray-800">Working Hours</p>
-                  <p className="text-sm text-gray-600">Monday - Saturday: 9:00 AM - 9:00 PM</p>
+                  <p className="text-sm text-gray-600">Monday - Saturday: 11:00 AM - 10:00 PM</p>
                   <p className="text-sm text-gray-600">Sunday: Emergency only</p>
                 </div>
               </div>
