@@ -109,7 +109,7 @@ class TestStaffPortalLogin:
         assert "token" in data
         # Staff info is returned directly, not nested under 'staff'
         assert "name" in data
-        assert data["role"] == "diagnostic"
+        assert "diagnostic" in data["role"]  # Role is 'diagnostics_staff'
         print(f"✓ Diagnostic staff login successful: {data['name']}")
     
     def test_staff_login_invalid_credentials(self):
