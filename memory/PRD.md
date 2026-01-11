@@ -57,6 +57,36 @@ Build a modern healthcare application for "Nevika Cura" with four core services:
 - [x] **Test Coverage**: 19/19 tests passed (15 backend + 4 frontend)
 - [x] **Test File**: /app/tests/test_enhancement_features.py
 
+#### OMNIA - Diabetes Care Portal - NEW ✅ (Jan 11, 2026)
+Purpose: Patient-focused digital support system for diabetes management
+- [x] **Mandatory Login/Sign-Up**: Same OTP-based auth as Evara
+- [x] **Blood Sugar Logging**:
+  - Log FBS, PPBS, Random readings with date/time
+  - Color-coded status (Normal/Pre-diabetic/High/Low)
+  - Alert for abnormal values (<70 or >180 mg/dL)
+  - APIs: GET/POST /api/omnia/sugar-logs, GET /api/omnia/sugar-stats
+- [x] **Diabetic Diet Plans**:
+  - Indian-friendly vegetarian and non-vegetarian options
+  - Breakfast, Lunch, Dinner, Snacks with calories
+  - Do's & Don'ts section
+- [x] **Book Diabetic Tests**:
+  - FBS, PPBS, HbA1c, Lipid Profile, KFT, Urine Microalbumin
+  - Redirects to Proton Diagnostics for booking
+- [x] **Warning Signs Education**:
+  - 8 diabetes warning signs with descriptions
+  - Encourages doctor consultation
+- [x] **Hypoglycemia Emergency Guide** (High Priority):
+  - Symptoms by severity (early/moderate/severe/danger)
+  - Immediate actions with sugar intake guidance
+  - Unconscious person protocol
+  - Emergency call buttons (112, clinic)
+- [x] **Order Medicine Redirect**: Links to Orange Pharmacy
+- [x] **Profile Data**: Diabetes type, age, gender, height, weight, medications
+- [x] **Homepage Card**: Teal background (#0D9488) with Omnia logo
+- [x] **Footer Listed**: Under "Our Services"
+- [x] **Test Coverage**: 17/17 tests passed (7 backend + 10 frontend)
+- [x] **Test File**: /app/tests/test_omnia_module.py
+
 #### Evara Card Styling - COMPLETED ✅
 - [x] Card background matches logo purple (#4A2463)
 - [x] Seamless visual integration
