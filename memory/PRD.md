@@ -65,6 +65,13 @@ Purpose: Patient-focused digital support system for diabetes management
   - Color-coded status (Normal/Pre-diabetic/High/Low)
   - Alert for abnormal values (<70 or >180 or >250 mg/dL)
   - APIs: GET/POST/DELETE /api/omnia/sugar-logs, GET /api/omnia/sugar-stats
+- [x] **HbA1c Trend Tracking** (NEW - Jan 11, 2026):
+  - Log HbA1c test results with date, lab name, notes
+  - Visual bar chart showing historical values
+  - Color-coded status (Normal <5.7%, Pre-diabetic 5.7-6.4%, Good <7%, Fair <8%, Needs Attention >8%)
+  - Trend analysis (improving/stable/worsening)
+  - Summary stats: latest, average, lowest, highest
+  - APIs: GET/POST/DELETE /api/omnia/hba1c-logs, GET /api/omnia/hba1c-trend
 - [x] **Diabetic Diet Plans**:
   - Indian-friendly vegetarian and non-vegetarian options
   - Breakfast, Lunch, Dinner, Snacks with calories
@@ -87,6 +94,10 @@ Purpose: Patient-focused digital support system for diabetes management
 - [x] **Test Coverage (iteration_13)**: 17/17 tests passed (7 backend + 10 frontend)
 - [x] **Test Coverage (iteration_14)**: 35/35 tests passed (15 backend + 20 frontend) - Full authenticated flow
 - [x] **Test Files**: /app/tests/test_omnia_module.py, /app/tests/test_omnia_authenticated.py
+
+#### Homepage Update - COMPLETED ✅ (Jan 11, 2026)
+- [x] Service cards now show only logo + tagline (removed duplicate service names)
+- [x] Cleaner, more visual-focused design
 
 #### Evara Card Styling - COMPLETED ✅
 - [x] Card background matches logo purple (#4A2463)
