@@ -1856,6 +1856,12 @@ Delivery: {order.delivery_address or 'Not provided'}"""
             tag=f"pharmacy-{order.id}"
         )
     
+    # Send SMS confirmation to patient
+    await send_pharmacy_order_sms(order.patient_phone, {
+        "id": order.id,
+        "medicines": order.medicines
+    })
+    
     return order
 
 @api_router.get("/pharmacy", response_model=List[PharmacyOrder])
