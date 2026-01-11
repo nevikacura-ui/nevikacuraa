@@ -72,6 +72,17 @@ const Home = () => {
       path: '/evara',
       logoBg: '',
       customBg: '#4A2463'
+    },
+    {
+      id: 'omnia',
+      name: 'Omnia',
+      logo: 'https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/6hsg4xui_file_00000000c4247207a977591b05d5eb1d%20%281%29.png',
+      description: 'Diabetes Care Portal',
+      bgColor: '',
+      accentColor: 'border-transparent',
+      path: '/omnia',
+      logoBg: '',
+      customBg: '#0D9488'
     }
   ];
 
