@@ -70,9 +70,9 @@ export const AuthProvider = ({ children }) => {
     return response.data;
   };
 
-  const registerWithOtp = async (phone, otp, email, password, name) => {
+  const registerWithOtp = async (phone, otp, email, password, name, verification_token = '') => {
     const response = await axios.post(`${API}/auth/register/otp`, { 
-      phone, otp, email, password, name 
+      phone, otp, email, password, name, verification_token 
     });
     setToken(response.data.token);
     setUser(response.data.user);
