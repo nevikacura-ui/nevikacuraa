@@ -73,6 +73,8 @@ SIGNUP_WHATSAPP_NUMBER = os.environ.get('SIGNUP_WHATSAPP_NUMBER', '9833188288')
 TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')
 TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', '')
 TWILIO_WHATSAPP_FROM = os.environ.get('TWILIO_WHATSAPP_FROM', '')  # e.g., 'whatsapp:+14155238886'
+TWILIO_PHONE_NUMBER = os.environ.get('TWILIO_PHONE_NUMBER', '')  # SMS sender number
+TWILIO_VERIFY_SERVICE_SID = os.environ.get('TWILIO_VERIFY_SERVICE_SID', '')  # For OTP verification
 
 # Doctor WhatsApp Numbers for appointment notifications
 DOCTOR_WHATSAPP_NUMBERS = {
@@ -96,6 +98,8 @@ if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
         from twilio.rest import Client as TwilioClient
         twilio_client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
         logger.info("Twilio client initialized successfully")
+        if TWILIO_VERIFY_SERVICE_SID:
+            logger.info(f"Twilio Verify Service configured: {TWILIO_VERIFY_SERVICE_SID[:10]}...")
     except Exception as e:
         logger.warning(f"Failed to initialize Twilio client: {e}")
 
