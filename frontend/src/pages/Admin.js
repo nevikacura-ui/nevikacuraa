@@ -547,8 +547,8 @@ const Admin = () => {
       toast.success(`Cancelled ${response.data.cancelled_count} appointment(s)`);
       setShowCancelModal(false);
       setCancelForm({
-        doctor: 'Dr. Vikas Jha',
-        clinic: 'Nevika Clinic',
+        doctor: 'Dr. Neha Patel',
+        clinic: 'Pushpa Clinic',
         cancel_type: 'day',
         date: '',
         time: '',
