@@ -5909,8 +5909,10 @@ class SugarLog(BaseModel):
 @api_router.get("/omnia/profile")
 async def get_omnia_profile(user = Depends(get_current_user)):
     """Get user's Omnia diabetes profile"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
     profile = await db.omnia_profiles.find_one(
-        {"user_id": user["id"]},
+        {"user_id": user.id},
         {"_id": 0}
     )
     return {"profile": profile}
