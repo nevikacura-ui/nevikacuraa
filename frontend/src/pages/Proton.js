@@ -256,6 +256,7 @@ const Proton = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
   const [mockOtp, setMockOtp] = useState('');
+  const [otpMethod, setOtpMethod] = useState(''); // 'sms' or 'mock'
   const [verificationToken, setVerificationToken] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef([]);
