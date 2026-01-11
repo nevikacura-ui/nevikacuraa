@@ -493,6 +493,21 @@ const StaffPortal = () => {
     setLoadingCompleted(false);
   };
 
+  // Fetch daily collection summary
+  const fetchDailyCollection = async () => {
+    setLoadingCollection(true);
+    try {
+      const res = await axios.get(`${API}/staff/clinic/daily-collection`, {
+        params: { date: selectedDate },
+        ...getAuthHeaders()
+      });
+      setDailyCollection(res.data);
+    } catch (error) {
+      console.error('Failed to fetch daily collection:', error);
+    }
+    setLoadingCollection(false);
+  };
+
   const handleCompleteAppointment = async (appointmentId) => {
     // For doctors, open the completion modal
     const role = staffInfo?.role;
