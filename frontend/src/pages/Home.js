@@ -229,8 +229,10 @@ const Home = () => {
               onClick={() => navigate(service.path)}
               data-testid={`service-card-${service.id}`}
             >
-              {/* Background decoration */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150"></div>
+              {/* Background decoration - hidden for cards with hideDecoration */}
+              {!service.hideDecoration && (
+                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150"></div>
+              )}
               
               {/* Logo - takes most space */}
               <div 
@@ -241,8 +243,9 @@ const Home = () => {
                   src={service.logo} 
                   alt={service.name} 
                   className={`object-contain transition-transform group-hover:scale-105 ${
-                    service.id === 'evara' || service.id === 'glydex' ? 'w-full h-auto max-h-32 rounded-lg' : 'w-auto max-h-28 mix-blend-multiply'
+                    service.id === 'evara' || service.id === 'glydex' ? 'w-full h-auto max-h-32' : 'w-auto max-h-28 mix-blend-multiply'
                   }`}
+                  style={service.logoScale ? { transform: `scale(${service.logoScale})` } : {}}
                   data-testid={`service-logo-${service.id}`}
                 />
               </div>
