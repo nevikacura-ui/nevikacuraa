@@ -1303,6 +1303,53 @@ const StaffPortal = () => {
                   />
                 </div>
                 
+                {/* Daily Collection Summary */}
+                {dailyCollection && (
+                  <div className="mb-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-semibold text-green-800 flex items-center gap-2">
+                        💰 Today's Collection
+                      </h3>
+                      <span className="text-2xl font-bold text-green-600">₹{dailyCollection.total_collection}</span>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {dailyCollection.by_category?.general?.count > 0 && (
+                        <div className="bg-white p-2 rounded-lg text-center">
+                          <span className="text-xs text-gray-500">General</span>
+                          <p className="font-bold text-gray-700">₹{dailyCollection.by_category.general.amount}</p>
+                          <p className="text-xs text-gray-400">{dailyCollection.by_category.general.count} patients</p>
+                        </div>
+                      )}
+                      {dailyCollection.by_category?.speciality?.count > 0 && (
+                        <div className="bg-white p-2 rounded-lg text-center">
+                          <span className="text-xs text-blue-500">Speciality</span>
+                          <p className="font-bold text-blue-700">₹{dailyCollection.by_category.speciality.amount}</p>
+                          <p className="text-xs text-gray-400">{dailyCollection.by_category.speciality.count} patients</p>
+                        </div>
+                      )}
+                      {dailyCollection.by_category?.diabetes?.count > 0 && (
+                        <div className="bg-white p-2 rounded-lg text-center">
+                          <span className="text-xs text-purple-500">Diabetes</span>
+                          <p className="font-bold text-purple-700">₹{dailyCollection.by_category.diabetes.amount}</p>
+                          <p className="text-xs text-gray-400">{dailyCollection.by_category.diabetes.count} patients</p>
+                        </div>
+                      )}
+                      {dailyCollection.by_category?.obgyn?.count > 0 && (
+                        <div className="bg-white p-2 rounded-lg text-center">
+                          <span className="text-xs text-pink-500">OBGY</span>
+                          <p className="font-bold text-pink-700">₹{dailyCollection.by_category.obgyn.amount}</p>
+                          <p className="text-xs text-gray-400">{dailyCollection.by_category.obgyn.count} patients</p>
+                        </div>
+                      )}
+                    </div>
+                    {dailyCollection.total_patients > 0 && (
+                      <p className="text-xs text-green-600 mt-2 text-center">
+                        {dailyCollection.total_patients} completed consultations
+                      </p>
+                    )}
+                  </div>
+                )}
+                
                 {/* Emergency Count Display */}
                 {Object.keys(emergencyCounts).length > 0 && (
                   <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
