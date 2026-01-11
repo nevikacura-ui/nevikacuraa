@@ -350,8 +350,27 @@ const Glydex = () => {
   const [profileData, setProfileData] = useState({
     diabetesType: '',
     age: '',
-    gender: ''
+    gender: '',
+    // Extended diabetes fields
+    dateOfDiagnosis: '',
+    hba1cTarget: '',
+    currentMedications: [],
+    insulinUser: false,
+    complications: [],
+    emergencyContactName: '',
+    emergencyContactPhone: '',
+    testReminders: true,
+    medicineReminders: true,
+    lastHba1cDate: '',
+    lastKidneyTestDate: ''
   });
+  
+  // Medication input for adding to list
+  const [newMedication, setNewMedication] = useState('');
+  
+  // Reminders state
+  const [reminders, setReminders] = useState(null);
+  const [showReminders, setShowReminders] = useState(false);
 
   // HbA1c tracking state
   const [showHbA1c, setShowHbA1c] = useState(false);
