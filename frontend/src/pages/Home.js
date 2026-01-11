@@ -86,7 +86,8 @@ const Home = () => {
       logoBg: '',
       customBg: '#121f33',
       hideDecoration: true,
-      fillCard: true
+      fillCard: true,
+      logoScale: 0.85
     }
   ];
 
