@@ -70,24 +70,32 @@
                 align-items: center;
                 justify-content: center;
                 z-index: 99999;
-                transition: opacity 0.3s ease-out;
             }
             #splash-screen.hidden {
                 opacity: 0;
                 pointer-events: none;
+                transition: opacity 0.3s ease-out;
             }
             .splash-content {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                padding: 60px 80px;
-                background: radial-gradient(ellipse at center, rgba(220, 235, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
+                position: relative;
             }
-            #splash-screen .logo-icon {
-                width: 80px;
-                height: 80px;
-                margin-bottom: 16px;
+            .splash-glow {
+                position: absolute;
+                width: 280px;
+                height: 280px;
+                background: radial-gradient(ellipse at center, rgba(220, 235, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+                border-radius: 50%;
+                z-index: -1;
+            }
+            #splash-screen .logo-img {
+                width: 90px;
+                height: 90px;
+                margin-bottom: 14px;
+                border-radius: 18px;
             }
             #splash-screen h1 {
                 font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -129,19 +137,8 @@
         <!-- Splash Screen for app-like experience -->
         <div id="splash-screen">
             <div class="splash-content">
-                <!-- Inline SVG logo for clean rendering without white box -->
-                <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Purple top-left -->
-                    <path d="M35 15 Q50 15 50 30 Q50 45 35 45 Q20 45 20 30 Q20 15 35 15" fill="#6b21a8"/>
-                    <!-- Green top-right -->
-                    <path d="M65 15 Q80 15 80 30 Q80 45 65 45 Q50 45 50 30 Q50 15 65 15" fill="#16a34a"/>
-                    <!-- Yellow center -->
-                    <ellipse cx="50" cy="35" rx="8" ry="10" fill="#f59e0b"/>
-                    <!-- Purple bottom-left -->
-                    <path d="M35 55 Q50 55 50 70 Q50 85 35 85 Q20 85 20 70 Q20 55 35 55" fill="#6b21a8"/>
-                    <!-- Green bottom-right -->
-                    <path d="M65 55 Q80 55 80 70 Q80 85 65 85 Q50 85 50 70 Q50 55 65 55" fill="#16a34a"/>
-                </svg>
+                <div class="splash-glow"></div>
+                <img class="logo-img" src="/icons/icon-192x192.png" alt="Nevika Cura" />
                 <h1><span class="nevika">Nevika</span> <span class="cura">Cura</span></h1>
                 <p>A Healthcare Group</p>
             </div>
