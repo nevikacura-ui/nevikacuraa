@@ -510,6 +510,36 @@ const Evara = () => {
     }
   };
 
+  const fetchHomeServices = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/evara/home-services`);
+      const data = await res.json();
+      setHomeServices(data.services || []);
+    } catch (error) {
+      console.error('Error fetching home services:', error);
+    }
+  };
+
+  const fetchCommunitySessions = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/evara/community/sessions`);
+      const data = await res.json();
+      setCommunitySessions(data.sessions || []);
+    } catch (error) {
+      console.error('Error fetching sessions:', error);
+    }
+  };
+
+  const fetchPregnancyWeeks = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/evara/pregnancy/all-weeks`);
+      const data = await res.json();
+      setPregnancyWeeks(data.weeks || []);
+    } catch (error) {
+      console.error('Error fetching pregnancy weeks:', error);
+    }
+  };
+
   const handleOnboarding = async () => {
     if (!onboardingData.age || !onboardingData.pregnancy_status || !onboardingData.menstrual_status) {
       toast.error('Please fill in required fields');
