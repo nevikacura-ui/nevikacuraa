@@ -8,16 +8,16 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 
 ## Core Requirements
 
-### Services & WhatsApp Numbers
-| Service | WhatsApp Number | Purpose |
-|---------|-----------------|---------|
-| DiaGyn Healthcare | 7039020020 | Appointment notifications |
-| Proton Diagnostics | 7039040040 | Test booking notifications |
-| Orange Pharmacy | 7039030030 | Medicine order notifications |
+### Services & Contact Numbers
+| Service | Phone (Call) | WhatsApp | Purpose |
+|---------|--------------|----------|---------|
+| DiaGyn Healthcare | 9403890429 | 7039020020 | Appointment notifications |
+| Proton Diagnostics | 9403890429 | 7039040040 | Test booking notifications |
+| Orange Pharmacy | 9403890429 | 7039030030 | Medicine order notifications |
 
 ### User Flow
-- OTP-based login and registration
-- **OTP-based verification** for all bookings/orders (MOCK MODE - ready for MSG91 integration)
+- OTP-based login and registration (Real SMS via Twilio)
+- **OTP-based verification** for all bookings/orders
 - Payment options: Cash on Delivery/Visit & QR Pay/Card on Delivery/Visit
 - All notifications sent to nevikacura@gmail.com via Resend API
 - WhatsApp links generated via wa.me for all orders
@@ -27,6 +27,18 @@ Build a modern healthcare application for "Nevika Cura" with three core services
 ## What's Been Implemented ✅
 
 ### Date: January 11, 2026 - Latest Update (Current Session)
+
+#### Splash Screen - UPDATED ✅
+- [x] White background
+- [x] 220px app icon (enlarged for visibility)
+- [x] 4 teardrop-shaped bouncing loader (Purple, Red, Orange, Green)
+- [x] Matches app icon design aesthetic
+
+#### SMS Templates - UPDATED ✅
+- [x] Added "arrival time not consultation time" note for all appointment types
+- [x] Walk-in and Emergency SMS templates created
+- [x] Contact number updated to 9403890429 (WhatsApp stays 7039020020)
+- [x] SMS now sent for walk-in and emergency bookings
 
 #### Server Refactoring - COMPLETED (Phase 1)
 - [x] **Data Extraction (47% file size reduction):**
