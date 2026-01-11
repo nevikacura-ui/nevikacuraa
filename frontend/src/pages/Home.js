@@ -480,10 +480,20 @@ const AuthModal = ({ open, onClose }) => {
         {/* Step 2: OTP Verification */}
         {step === 'otp' && (
           <div className="space-y-4">
-            {mockOtp && (
+            {/* Mock OTP Display - Only shown in test mode */}
+            {mockOtp && otpMethod === 'mock' && (
               <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p className="text-sm text-yellow-800">
                   <strong>Test Mode:</strong> Your OTP is <strong className="text-lg">{mockOtp}</strong>
+                </p>
+              </div>
+            )}
+            
+            {/* SMS Sent Confirmation */}
+            {otpMethod === 'sms' && (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-800">
+                  ✓ OTP sent via SMS to +91 {phone}
                 </p>
               </div>
             )}
