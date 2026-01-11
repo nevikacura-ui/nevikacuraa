@@ -5,12 +5,17 @@
 @tailwind utilities;
 
 /* PWA/App-like styling */
+html {
+  background-color: #ffffff;
+}
+
 html, body {
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
+  background-color: #ffffff;
 }
 
 /* Allow text selection in inputs and text areas */
