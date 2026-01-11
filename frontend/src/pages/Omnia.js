@@ -331,6 +331,8 @@ const Omnia = () => {
   const [showWarnings, setShowWarnings] = useState(false);
   const [showEmergency, setShowEmergency] = useState(false);
   const [showProfileSetup, setShowProfileSetup] = useState(false);
+  const [showNeuropathy, setShowNeuropathy] = useState(false);
+  const [showFootCare, setShowFootCare] = useState(false);
   
   // Selected tests for booking
   const [selectedDiabeticTests, setSelectedDiabeticTests] = useState([]);
