@@ -83,7 +83,8 @@ const Home = () => {
       path: '/glydex',
       logoBg: '',
       customBg: '#0E1C3A',
-      fullBleed: true
+      hideDecoration: true,
+      stretchLogo: true
     }
   ];
 
