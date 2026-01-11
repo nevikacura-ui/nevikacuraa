@@ -200,39 +200,66 @@ const Home = () => {
 
       {/* Main Content */}
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-        <div className="text-center mb-16">
-          <h1 className="font-heading font-bold text-4xl md:text-6xl tracking-tight mb-6 text-foreground">
-            Complete Healthcare Solutions
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+        {/* Hero Section */}
+        <div className="text-center mb-12 md:mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-teal/10 border border-brand-teal/20 rounded-full text-brand-teal text-sm font-medium mb-6">
+            <span className="w-2 h-2 bg-brand-teal rounded-full animate-pulse"></span>
+            Your Health, Our Priority
+          </div>
+          <h1 className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6 text-foreground leading-tight">
+            Complete Healthcare<br/>
+            <span className="bg-gradient-to-r from-brand-teal to-cyan-500 bg-clip-text text-transparent">At Your Fingertips</span>
           </h1>
           <p className="font-body text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            From doctor appointments to diagnostics and pharmacy - all your healthcare needs in one place
+            Book appointments, order medicines, get diagnostic tests - all from one trusted platform
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        {/* Services Grid - 5 cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
           {services.map((service) => (
             <div
               key={service.id}
-              className={`col-span-1 h-full min-h-[320px] flex flex-col justify-between p-8 rounded-3xl transition-all duration-300 hover:scale-[1.02] hover:shadow-xl border-2 ${service.accentColor} ${service.bgColor}`}
+              className={`group relative h-full min-h-[280px] flex flex-col justify-between p-6 rounded-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl border ${service.accentColor} ${service.bgColor} cursor-pointer overflow-hidden`}
               style={service.customBg ? { backgroundColor: service.customBg } : {}}
+              onClick={() => navigate(service.path)}
               data-testid={`service-card-${service.id}`}
             >
+              {/* Background decoration */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150"></div>
+              
               <div 
-                className={`flex items-center justify-center flex-1 ${service.logoBg} ${service.id === 'evara' ? '' : 'rounded-2xl p-4'}`}
+                className={`flex items-center justify-center flex-1 ${service.logoBg} ${service.id === 'evara' || service.id === 'omnia' ? '' : 'rounded-xl p-3'}`}
                 style={service.customBg ? { backgroundColor: service.customBg } : {}}
               >
                 <img 
                   src={service.logo} 
                   alt={service.name} 
-                  className={`object-contain ${service.id === 'evara' ? 'w-full h-full' : 'w-auto max-h-32 mix-blend-multiply'}`}
+                  className={`object-contain transition-transform group-hover:scale-105 ${
+                    service.id === 'evara' || service.id === 'omnia' ? 'w-full h-auto max-h-28' : 'w-auto max-h-24 mix-blend-multiply'
+                  }`}
                   data-testid={`service-logo-${service.id}`}
                 />
               </div>
+              
+              <div className="mt-4">
+                <h3 className={`font-semibold text-lg mb-1 ${service.customBg ? 'text-white' : 'text-gray-800'}`}>
+                  {service.name}
+                </h3>
+                <p className={`text-sm ${service.customBg ? 'text-white/80' : 'text-gray-500'}`}>
+                  {service.description}
+                </p>
+              </div>
+              
               <Button
-                onClick={() => navigate(service.path)}
+                onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                 data-testid={`service-button-${service.id}`}
-                className="mt-6 rounded-full px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-brand-teal hover:bg-brand-teal/90"
+                className={`mt-4 w-full rounded-xl py-5 font-medium shadow-lg hover:shadow-xl transition-all duration-300 ${
+                  service.customBg 
+                    ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
+                    : 'bg-brand-teal hover:bg-brand-teal/90 text-white'
+                }`}
               >
                 Get Started
               </Button>
@@ -240,7 +267,27 @@ const Home = () => {
           ))}
         </div>
 
-        <div className="mt-16 text-center">
+        {/* Quick Stats */}
+        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="text-center p-4 bg-white/50 backdrop-blur rounded-xl border">
+            <p className="text-3xl font-bold text-brand-teal">5+</p>
+            <p className="text-sm text-gray-500">Services</p>
+          </div>
+          <div className="text-center p-4 bg-white/50 backdrop-blur rounded-xl border">
+            <p className="text-3xl font-bold text-brand-blue">2</p>
+            <p className="text-sm text-gray-500">Clinic Locations</p>
+          </div>
+          <div className="text-center p-4 bg-white/50 backdrop-blur rounded-xl border">
+            <p className="text-3xl font-bold text-brand-orange">1000+</p>
+            <p className="text-sm text-gray-500">Medicines</p>
+          </div>
+          <div className="text-center p-4 bg-white/50 backdrop-blur rounded-xl border">
+            <p className="text-3xl font-bold text-purple-600">100+</p>
+            <p className="text-sm text-gray-500">Lab Tests</p>
+          </div>
+        </div>
+
+        <div className="mt-12 text-center">
           <div className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-xl border border-border/50 rounded-full px-6 py-3">
             <span className="font-body text-muted-foreground">Need Help?</span>
             <a 
