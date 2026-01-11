@@ -7,45 +7,58 @@ The user wants to build a modern healthcare application named Nevika Cura.
 2.  **User Experience:** A modern, clean UI with features like user accounts, login, order history, and notifications.
 3.  **Admin/Staff Portals:** Dashboards for inventory management, doctor schedules, and order tracking.
 4.  **Technical Stack:** React frontend, FastAPI backend, MongoDB database.
-5.  **Recent User Requests (this session):**
-    *   Implement a loyalty points system for registered users, allowing staff to add points and admins to redeem them.
-    *   Implement a points-to-discount feature in the pharmacy checkout (100 points = ₹10 discount).
-    *   Enable push notifications by default for logged-in users and create a feedback system for completed appointments.
-    *   Refine notification logic: use app notifications for status updates and email only for critical events.
-    *   Upgrade the mock OTP system to a real SMS-based OTP using Twilio for login and order verification.
-    *   Replace client-side  links with professional, server-side SMS notifications for all appointment and order confirmations and status updates.
-    *   Refactor the monolithic  file.
+5.  **New Module: Evara - Women's Wellness & Care**
+    *   **Purpose:** A subscription-based (initially free) digital program for women's wellness.
+    *   **Onboarding:** Collect user data (age, pregnancy/menstrual status, conditions) to personalize care.
+    *   **Auto-Assignment:** Automatically activate programs based on user profile (e.g., Menstrual Health for teens, Pregnancy Support for expectant mothers).
+    *   **Core Services:** Wellness subscriptions, PCOS/Hormonal Balance program, Pregnancy Education, a Health Community, and coordination for home-based services.
+    *   **Features:**
+        *   AI-powered chat using Claude for educational support (not diagnosis).
+        *   Pregnancy Calculator (EDD, weeks of pregnancy).
+        *   Menstrual cycle tracking and predictions.
+        *   Detailed educational content on PCOS, diet, and exercise.
+        *   A separate sign-up flow within Evara.
+    *   **Communication:** Use empathetic language and send reminders via SMS and push notifications.
+6.  **Recent Requests (from session):**
+    *   Fix/update the application's splash screen design.
+    *   Add a disclaimer to appointment booking SMS messages.
+    *   Update the contact number in SMS templates.
+    *   Implement all backlog features.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A comprehensive full-stack healthcare application (React/FastAPI/MongoDB) with functional Admin and Staff portals. The application now features a complete loyalty points system (add, redeem, and convert to discounts), a real SMS-based OTP system via Twilio, and an overhauled notification system that defaults to push notifications and uses server-side SMS for confirmations. A refactoring of the large backend  file has been initiated, with new directories and service files created.
+A full-stack healthcare application (React/FastAPI/MongoDB) with functional Admin and Staff portals, a loyalty points system, and a Twilio-based SMS notification system.
+
+A large portion of the  monolith has been refactored by extracting large, hardcoded data structures (, ) into separate files, reducing its size by nearly 50%.
+
+A comprehensive new module, Evara, has been built for women's wellness. It includes a dedicated frontend page, backend APIs, and integration with the Claude LLM via  for an AI chat assistant. The module features user onboarding, program assignment, a pregnancy calculator, and detailed educational guides for PCOS. Backlog features like week-by-week pregnancy content, home services, and community sessions have been added to the backend and are being integrated into the frontend.
 
 **Last working item**:
-- Last item agent was working: Replacing client-side  links with server-side notifications. The user initially requested WhatsApp, but due to Twilio configuration requirements, they agreed to use SMS instead. The agent implemented server-side SMS notifications for new appointments, pharmacy/diagnostic orders, and their status updates.
+- Last item agent was working: Implementing all backlog features for the Evara module. The agent added the backend endpoints for pregnancy content, home services, and community sessions. It then began integrating these features into the  frontend page by adding state, fetch functions, and UI components (dialogs).
 - Status: IN PROGRESS
-- Agent Testing Done: N (Only the appointment creation SMS was verified via logs; pharmacy and diagnostic flows were not tested).
-- Which testing method agent to use? backend testing agent
+- Agent Testing Done: N
+- Which testing method agent to use? frontend testing agent
 - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-- **Issue 1:** Incomplete testing of SMS notifications (P1)
-- **Issue 2:** Flawed WhatsApp Notification on Sign-up (P2)
+- **Issue 1:** Finalize Splash Screen Design (P0)
+- **Issue 2:** Flawed WhatsApp Notification on Sign-up (P3)
 
 **Issues Detail:**
-- **Issue 1: Incomplete testing of SMS notifications**
-  - **Attempted fixes:** None. The agent implemented the code but did not test all flows.
+- **Issue 1: Finalize Splash Screen Design**
+  - **Attempted fixes:** Multiple iterations were made to the splash screen in , changing the background, logo size, and adding/modifying a loading animation (from a spinner to pulsing dots to teardrops). The user has had difficulty verifying the changes due to caching and the ephemeral nature of the splash screen.
   - **Next debug checklist:**
-    1.  Use  to call the pharmacy order creation endpoint () and verify from backend logs that an SMS is sent.
-    2.  Use  to call the diagnostic order creation endpoint () and verify SMS is sent.
-    3.  Use  to call the status update endpoints for both pharmacy () and diagnostics () and verify SMS notifications are sent for status changes.
-  - **Why fix this issue and what will be achieved with the fix?** To ensure the new server-side SMS notification feature is reliable and working across all core services as requested by the user.
-  - **Status:** NOT STARTED
-  - **Is recurring issue?** N
-  - **Should Test frontend/backend/both after fix?** Backend
+    1.  Confirm the final desired design with the user (currently: 220px logo, teardrop-shaped bouncing dots, white background).
+    2.  Take a clear, final screenshot that accurately captures the splash screen without content showing through. This may require adding a  to the screenshot command to ensure the splash is fully rendered and opaque.
+    3.  Get user sign-off on the final design to prevent further iterations.
+  - **Why fix this issue and what will be achieved with the fix?** To resolve a recurring user request and finalize the app's initial loading experience.
+  - **Status:** IN PROGRESS
+  - **Is recurring issue?** Y
+  - **Should Test frontend/backend/both after fix?** Frontend
   - **Blocked on other issue:** None
 - **Issue 2: Flawed WhatsApp Notification on Sign-up**
-  - **Attempted fixes:** The  function fails due to Twilio error 63007, indicating the number is not configured for the WhatsApp Business API. The user agreed to pivot to SMS as a workaround.
+  - **Attempted fixes:** The  function fails due to Twilio error 63007, indicating the number is not configured for the WhatsApp Business API. The user agreed to pivot to SMS.
   - **Next debug checklist:**
     1.  Inform the user that to enable WhatsApp, they must complete the WhatsApp Business Account setup and approval process within their Twilio console.
   - **Why fix this issue and what will be achieved with the fix?** To enable the originally requested professional WhatsApp notifications if the user decides to pursue it in the future.
@@ -55,9 +68,14 @@ A comprehensive full-stack healthcare application (React/FastAPI/MongoDB) with f
   - **Blocked on other issue:** User action required on their Twilio account.
 
 **In progress Task List**:
-- **Task 1: Complete Refactoring of ** (P2)
-  - The user approved a full, one-shot refactoring of the 9000+ line . The agent has already created the target modular structure (, , ).
-  - **Where to resume:** Systematically move logic from  into the newly created modular files, starting with services (notifications, DB connection) and then moving endpoint routers (auth, admin, pharmacy, etc.) into the  directory. The final step is to replace the old  with a slim version that imports and wires up all the new modules and routers.
+- **Task 1: Complete Evara Backlog Implementation** (P0)
+  - **Where to resume:** The frontend file  has been updated with new state, fetch functions, quick actions, and dialog components for the backlog features (Home Services, Community Sessions, Week-by-Week Pregnancy Content). The next step is to test these new UI elements to ensure they open correctly, fetch data from the new backend endpoints, and display it properly.
+  - **What will be achieved with this?** This will complete the user's request to Finish all backlog and deliver a feature-complete Evara module as per the latest requirements.
+  - **Status:** IN PROGRESS
+  - **Should Test frontend/backend/both after fix?** both
+  - **Blocked on something:** None
+- **Task 2: Complete Refactoring of ** (P1)
+  - **Where to resume:** The monolithic  still contains all API route definitions. The structure for modular routes exists in . The next step is to systematically move the endpoint logic from  into the respective route files (e.g., , , , etc.) and update the main FastAPI app to include these new routers.
   - **What will be achieved with this?** Significantly improve code maintainability, readability, and scalability by eliminating the monolithic file structure.
   - **Status:** IN PROGRESS
   - **Should Test frontend/backend/both after fix?** both
@@ -65,15 +83,23 @@ A comprehensive full-stack healthcare application (React/FastAPI/MongoDB) with f
 
 **Upcoming and Future Tasks**
 - **Upcoming Tasks:**
-  - **P1: Payment Gateway Integration:** The user has previously requested this. The next step is to confirm their preferred provider (e.g., Razorpay, Stripe) and implement it using the  agent.
+  - **P1: Payment Gateway Integration:** Implement a payment provider (e.g., Razorpay, Stripe) for subscriptions and orders using the  agent.
 - **Future Tasks:**
-  - **P3: Migrate Hardcoded Data to DB:** The large  and  lists hardcoded in  should be moved into their own MongoDB collections to be managed via the admin panel.
+  - **P2: Migrate Hardcoded Data to DB:** The  and  lists, currently in Python files, should be moved into their own MongoDB collections to be managed via the admin panel.
+  - **P3: Refactor :** This large component should be broken down into smaller, role-specific components.
 
 **Completed work in this session**
-- **Loyalty Points System:** Implemented a full-featured loyalty system, including a points-to-discount conversion feature (100 points = ₹10) in the pharmacy checkout.
-- **Twilio SMS OTP Integration:** Upgraded the mock OTP system to use Twilio Verify for real, secure SMS-based OTPs for user login and order verification.
-- **Notifications & Feedback System:** Overhauled the notification system to auto-enable push notifications, send server-side SMS confirmations for orders/appointments, and trigger a feedback request email upon appointment completion.
-- **Server-Side SMS Notifications:** Replaced client-facing  links with a professional backend implementation that sends SMS messages via Twilio for all key user actions.
+- **SMS Notification System Verified:** Fully tested and confirmed the server-side SMS notification system for pharmacy and diagnostic order creation and status updates.
+- ** Partially Refactored:** Extracted  and  from  into  files, reducing the main file's line count from 9,192 to 4,846 (a 47% reduction).
+- **Splash Screen Redesigned:** Iterated through multiple designs for the application's splash screen in  based on user feedback.
+- **Appointment SMS Templates Updated:** Added a new disclaimer message and implemented custom templates for walk-in and emergency bookings. Updated the contact phone number.
+- **Evara Module Implemented & Enhanced:**
+    - Created the full-stack Evara women's wellness module.
+    - Integrated the Claude LLM for an AI chat assistant using .
+    - Added a new Evara logo and card to the homepage ().
+    - Built the Evara page () with user onboarding, program details, and quick actions.
+    - Implemented advanced features: a pregnancy calculator and detailed educational guides (PCOS, PMS).
+    - Added backend endpoints and frontend UI for backlog features: week-by-week pregnancy content, home service coordination, and community live sessions.
 
 **Code Architecture**
 
@@ -82,68 +108,78 @@ A comprehensive full-stack healthcare application (React/FastAPI/MongoDB) with f
 - **Frontend:** React
 - **Backend:** FastAPI
 - **Database:** MongoDB
-- **Integrations:** Twilio (for SMS OTP and notifications), Resend (for Email), Pywebpush (for Web Push Notifications).
+- **Integrations:**
+    - Twilio (SMS OTP, notifications)
+    - Resend (Email)
+    - Pywebpush (Web Push)
+    - Claude (Anthropic) via  for AI chat.
 
 **key DB schema**
-- **users:**  added.
-- **pharmacy_orders:** ,  added.
-- **feedback:** New collection to store user feedback (, , , , ).
+- **evara_profiles:** New collection to store user profiles for the Evara module (, , , , etc.).
+- **evara_chat_logs:** New collection for storing AI chat history (, ).
+
+**changes in tech stack**
+- The  library was introduced to handle LLM integration, abstracting the API key management.
 
 **All files of reference**
-- : Heavily modified to add loyalty discount logic, the feedback system, real Twilio OTP, and server-side SMS notifications.
--  & : Updated with a Loyalty tab for managing points.
-- : Updated with a UI for redeeming loyalty points for a discount during checkout.
-- , , : Updated to handle the new real SMS OTP flow and remove the mock OTP display.
-- : Updated with a  route and the  component.
-- : Updated for Android-style banner notifications.
-- : Updated with all necessary Twilio credentials.
-- **New Refactoring Files:** , , .
+- : Heavily modified. Data extracted, but all route and Evara module logic was added here.
+- : Repeatedly modified to update the splash screen design.
+- : Updated to add the new Evara service card.
+- : New file. Created and significantly enhanced to build the entire women's wellness module.
+- : Updated to add the  route.
+- : New file, extracted from .
+- : New file, extracted from .
+- : Updated with details of the Evara module implementation.
 
 **Areas that need refactoring**:
-- **:** This is the highest priority technical debt. The full refactoring was approved by the user and has been started. It must be completed.
-- **:** This component is large and manages state for multiple staff roles. It should be broken down into smaller, role-specific components in the future.
+- **:** Highest priority. While data has been extracted, all route logic remains in this file. It needs to be moved to the respective files in the  directory.
+- **:** This file has become very large (>800 lines) due to the addition of multiple features and dialogs. It should be broken down into smaller components (e.g., , , ).
 
 **key api endpoints**
--  (GET): New endpoint to get a logged-in user's points balance.
--  (POST): New endpoint to submit appointment feedback.
-- , : Endpoints were updated to use the Twilio Verify API for real SMS.
-- All appointment and order creation/status update endpoints were updated to trigger server-side SMS notifications.
+-  (GET): Get list of Evara programs.
+-  (GET/POST): Manage user's Evara profile.
+-  (POST): Interact with the Claude AI assistant.
+-  (GET): Get week-by-week pregnancy info.
+-  (GET): Get list of coordinated home services.
+-  (GET): Get list of upcoming live sessions.
 
 **Critical Info for New Agent**
-- **Immediate Priority:** Your first task is to **complete the testing for the new SMS notification system** (P1 pending issue). Verify that pharmacy and diagnostic orders/updates trigger SMS messages correctly.
-- **Next Major Task:** Once SMS notifications are fully verified, proceed with the **full refactoring of **. The user has approved this, and the file structure is already in place. This is a large but critical task to reduce technical debt.
-- **WhatsApp is Blocked:** Do not attempt to work on WhatsApp notifications. The feature is blocked pending user action on their Twilio account. The current, working solution is SMS.
-- **Twilio is Fully Configured:** All required credentials for Twilio (Account SID, Auth Token, Phone Number, Verify Service SID) are present in the  file.
+- **Top Priorities:**
+    1.  **Finish Evara Backlog:** The frontend for the new Evara features (home services, community, pregnancy content) needs to be tested and finalized.
+    2.  **Finalize Splash Screen:** Get user sign-off on the splash screen to stop the iterative cycle.
+    3.  **Continue  Refactoring:** This is a major piece of approved technical debt that needs to be addressed.
+- **New Module Context:** The user has provided very detailed instructions for the Evara module. Refer to the  and  for the full scope.
+- **AI Integration:** The Evara chat uses the Claude model via the  library. The  is configured in .
+- **WhatsApp Blocked:** Do not work on WhatsApp notifications. It is blocked pending user action on their Twilio account.
 
 **documents and test reports created in this job**
--  (Loyalty Points System)
--  (Feedback & Notification System)
+- 
 -  (Updated)
--  (Created)
 
 **Last 10 User Messages and any pending HUMAN messages**
-10. Can I now proceed with sending whatsapp notifications directly to patient for all three, DiaGyn, Proton and Orange pharmacy instead of diverting thru wa.ma for more professional way (PENDING)
-9. What about sending same confirmation on sms rather than on whatsapp (DONE)
-8. Start with basic , whichever . Refactor all at once (DONE)
-7. Playbook for p1 and p2 (DONE)
-6. Twilio playbook to whatsapp notifications and real sms otp (DONE)
-5. Auth token 925242beab7c1cffc05ece9147a6c4bb VAa5df5077bec124f387535b887bed1e13 +18782223481 (DONE)
-4. AC83976f038358617175e433d97235bccc Account SID (DONE)
-3. Enable push notifications on user app by default . Let user know about order/ appointment and / lab test update on app notifications. Only send mail to user for create of new appointment, send mail to user once appointment closed with user feedback of app with rating 1 to 5, dont share this data on app. Notification should be android banner shape . Keep loading as before , white background with app icon . (DONE)
-2. Yes , add these feature for registered user, only when they order after login (DONE)
-1. Choose mith morder aesthetic . Dedicated section for order by registered users and option to add on loyalty points . Admin redemption panel with easy track the user and option to minus points once redeem by user (DONE)
+10. **User:** Make the Evara card background purple. Finish all backlog items. (IN PROGRESS)
+9.  **User:** Enlarge the Evara logo on the homepage by 25% and keep its original background color. (DONE)
+8.  **User:** Add a separate sign-up for Evara, a pregnancy calculator, detailed content for PCOS/Menstrual health, and change the Evara logo on the homepage to have a matching background. (DONE)
+7.  **User:** Use Claude for the AI, and add the Evara logo to the homepage. (DONE)
+6.  **User:** Confirmed requirements for Evara module: full implementation, free, uses SMS/Push notifications, with AI-generated content. (DONE)
+5.  **User:** Provided detailed PRD for the new Evara module. (DONE)
+4.  **User:** Confirmed the app is ready for deployment. (DONE)
+3.  **User:** Change the bouncing dots on the splash screen to teardrops to match the app icon. (DONE)
+2.  **User:** Confirmed they can see the updated splash screen with the 220px icon and dots. Approved the 220px size. (DONE)
+1.  **User:** Still can't see changes to the splash screen icon size in preview or screenshot. (ADDRESSED)
 
 **Project Health Check:**
-- **Broken:** WhatsApp notifications are non-functional due to Twilio configuration requirements. The app gracefully falls back to SMS.
-- **Mocked:** None. The mock OTP system was successfully replaced with a real SMS-based solution.
+- **Broken:** WhatsApp notifications are non-functional due to Twilio configuration requirements. The app falls back to SMS.
+- **Mocked:** None.
 
 **3rd Party Integrations**
-- **Twilio:** Used for real SMS OTP (via Verify API) and transactional SMS notifications. Requires user-provided keys.
+- **Twilio:** Used for real SMS OTP (via Verify API) and transactional SMS notifications.
 - **Resend:** Used for email notifications.
 - **pywebpush:** Used for browser-based web push notifications.
+- **Claude (Anthropic):** Used for AI chat in the Evara module, accessed via the  library. Uses Emergent LLM Key.
 
 **Testing status**
-- **Testing agent used after significant changes:** YES. The agent was used to test the loyalty and notification/feedback systems.
+- **Testing agent used after significant changes:** YES, multiple times.
 - **Troubleshoot agent used after agent stuck in loop:** NO
 - **Test files created:** None persistent.
 - **Known regressions:** None.
@@ -157,4 +193,5 @@ A comprehensive full-stack healthcare application (React/FastAPI/MongoDB) with f
     - **Diagnostics Staff:** . Password: 
 
 **What agent forgot to execute**
-- The agent did not comprehensively test the new SMS notification feature after implementation. While the code for pharmacy and diagnostics was added, only the appointment SMS flow was confirmed to be working.</analysis>
+- The agent has not yet fully completed the  refactoring by moving all route logic into their respective files, which was a major task approved by the user earlier in the session.
+- The most recent frontend changes to  to implement the backlog features have not been tested.</analysis>
