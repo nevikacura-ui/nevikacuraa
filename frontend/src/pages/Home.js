@@ -305,6 +305,7 @@ const AuthModal = ({ open, onClose }) => {
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [mockOtp, setMockOtp] = useState('');
+  const [otpMethod, setOtpMethod] = useState(''); // 'sms' or 'mock'
   const [userExists, setUserExists] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = React.useRef([]);
