@@ -526,28 +526,43 @@ const DiaGyn = () => {
                       <Loader2 className="w-6 h-6 animate-spin text-brand-blue" />
                     </div>
                   ) : unbookedSlots.length > 0 ? (
-                    <div className="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto">
-                      {availableSlots.map(slot => {
-                        const isBooked = bookedSlots.includes(slot);
-                        return (
-                          <button
-                            key={slot}
-                            onClick={() => !isBooked && setSelectedSlot(slot)}
-                            disabled={isBooked}
-                            className={`p-2 text-sm rounded-lg border transition-colors ${
-                              isBooked 
-                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
-                                : selectedSlot === slot 
-                                  ? 'bg-brand-blue text-white border-brand-blue' 
-                                  : 'hover:border-brand-blue'
-                            }`}
-                            data-testid={`slot-${slot}`}
-                          >
-                            {isBooked && <Ban className="w-3 h-3 inline mr-1" />}
-                            {slot}
-                          </button>
-                        );
-                      })}
+                    <div>
+                      {/* Time Period Labels */}
+                      <div className="flex gap-4 mb-4 text-xs">
+                        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-amber-400"></span> Morning (11-14)</span>
+                        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-indigo-500"></span> Evening (18-22)</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto">
+                        {availableSlots.map(slot => {
+                          const isBooked = bookedSlots.includes(slot);
+                          const hour = parseInt(slot.split(':')[0]);
+                          const isMorning = hour >= 11 && hour < 14;
+                          const isEvening = hour >= 18 && hour <= 22;
+                          
+                          return (
+                            <button
+                              key={slot}
+                              onClick={() => !isBooked && setSelectedSlot(slot)}
+                              disabled={isBooked}
+                              className={`p-2 text-sm rounded-lg border transition-all ${
+                                isBooked 
+                                  ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed line-through' 
+                                  : selectedSlot === slot 
+                                    ? 'bg-brand-blue text-white border-brand-blue shadow-lg scale-105' 
+                                    : isMorning
+                                      ? 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 hover:border-amber-400'
+                                      : isEvening
+                                        ? 'bg-indigo-50 border-indigo-300 text-indigo-800 hover:bg-indigo-100 hover:border-indigo-400'
+                                        : 'hover:border-brand-blue'
+                              }`}
+                              data-testid={`slot-${slot}`}
+                            >
+                              {isBooked && <Ban className="w-3 h-3 inline mr-1" />}
+                              {slot}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   ) : (
                     <p className="text-muted-foreground">No slots available for this day</p>
