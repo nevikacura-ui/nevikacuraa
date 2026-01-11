@@ -748,6 +748,77 @@ const DiaGyn = () => {
           </div>
         )}
       </main>
+
+      {/* Weekly Availability Dialog */}
+      <Dialog open={showAvailability} onOpenChange={setShowAvailability}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CalendarDays className="w-5 h-5 text-brand-blue" />
+              Doctor Availability - Next 7 Days
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {weeklyAvailability.map((docAvail) => (
+              <div key={docAvail.doctor.id} className="border rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-brand-blue/10 flex items-center justify-center">
+                    <span className="text-lg font-bold text-brand-blue">
+                      {docAvail.doctor.name.split(' ')[1]?.[0] || docAvail.doctor.name[0]}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-semibold">{docAvail.doctor.name}</p>
+                    <p className="text-xs text-muted-foreground">{docAvail.doctor.clinic}</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-7 gap-2">
+                  {docAvail.slots.map((slot) => (
+                    <div 
+                      key={slot.date}
+                      className={`text-center p-2 rounded-lg border ${
+                        slot.available_count > 10 ? 'bg-green-50 border-green-200' :
+                        slot.available_count > 5 ? 'bg-yellow-50 border-yellow-200' :
+                        slot.available_count > 0 ? 'bg-orange-50 border-orange-200' :
+                        'bg-gray-50 border-gray-200'
+                      }`}
+                    >
+                      <p className="text-xs font-medium">{slot.day.slice(0, 3)}</p>
+                      <p className="text-xs text-muted-foreground">{slot.date.slice(5)}</p>
+                      <p className={`text-lg font-bold mt-1 ${
+                        slot.available_count > 10 ? 'text-green-600' :
+                        slot.available_count > 5 ? 'text-yellow-600' :
+                        slot.available_count > 0 ? 'text-orange-600' :
+                        'text-gray-400'
+                      }`}>
+                        {slot.available_count}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">slots</p>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="flex items-center gap-4 mt-3 text-xs">
+                  <span className="flex items-center gap-1">
+                    <span className="w-3 h-3 rounded bg-green-200"></span> 10+ slots
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-3 h-3 rounded bg-yellow-200"></span> 5-10 slots
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-3 h-3 rounded bg-orange-200"></span> &lt;5 slots
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-3 h-3 rounded bg-gray-200"></span> No slots
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
