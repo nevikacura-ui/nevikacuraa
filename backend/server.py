@@ -2845,51 +2845,121 @@ async def get_patient_history(phone: str, staff = Depends(verify_staff)):
 
 @api_router.put("/staff/appointments/{appointment_id}/complete")
 async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = None, staff = Depends(verify_staff)):
-    """Mark appointment as completed (Doctor or Clinic Staff)"""
+    """Mark appointment as completed (Doctor ONLY - with fee code and follow-up)"""
     role = staff.get("role")
-    if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
-        raise HTTPException(status_code=403, detail="Doctor or Clinic Staff access required")
+    
+    # ONLY doctors can complete appointments
+    if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Only doctors can complete appointments")
     
     appointment = await db.appointments.find_one({"id": appointment_id})
     if not appointment:
         raise HTTPException(status_code=404, detail="Appointment not found")
     
-    # If doctor role, verify it's their appointment
+    # Verify it's the doctor's own appointment
     if role.startswith("doctor") and appointment.get("doctor") != staff.get("doctor_name"):
         raise HTTPException(status_code=403, detail="You can only complete your own appointments")
     
-    # If clinic staff, verify it's their clinic
-    if role == "clinic_staff_pushpa" and appointment.get("clinic") != "Pushpa Clinic":
-        raise HTTPException(status_code=403, detail="You can only manage Pushpa Clinic appointments")
-    if role == "clinic_staff_amnion" and appointment.get("clinic") != "Amnion Clinic":
-        raise HTTPException(status_code=403, detail="You can only manage Amnion Clinic appointments")
+    raise HTTPException(
+        status_code=400, 
+        detail="Please use the new completion endpoint with fee code and follow-up days"
+    )
+
+
+# Fee code configuration (visible to staff only, not patients)
+FEE_CODES = {
+    "G1": {"label": "General - First", "amount": 150, "category": "general"},
+    "G2": {"label": "General - Follow up", "amount": 100, "category": "general"},
+    "S1": {"label": "Speciality - First", "amount": 300, "category": "speciality"},
+    "S2": {"label": "Speciality - Follow up", "amount": 200, "category": "speciality"},
+    "D1": {"label": "Diabetes - First", "amount": 500, "category": "diabetes"},
+    "D2": {"label": "Diabetes - Follow up", "amount": 400, "category": "diabetes"},
+    "D3": {"label": "Diabetes - Follow up", "amount": 300, "category": "diabetes"},
+    "O1": {"label": "OBGY - First", "amount": 500, "category": "obgyn"},
+    "O2": {"label": "OBGY - Follow up", "amount": 400, "category": "obgyn"},
+    "O3": {"label": "OBGY - Follow up", "amount": 300, "category": "obgyn"},
+}
+
+
+class AppointmentCompletion(BaseModel):
+    fee_code: str
+    follow_up_days: Optional[int] = None
+    notes: Optional[str] = None
+
+
+@api_router.put("/staff/appointments/{appointment_id}/doctor-complete")
+async def doctor_complete_appointment(
+    appointment_id: str, 
+    completion: AppointmentCompletion,
+    staff = Depends(verify_staff)
+):
+    """Doctor completes appointment with fee code and follow-up (Doctor ONLY)"""
+    role = staff.get("role")
+    
+    # ONLY doctors can complete appointments
+    if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Only doctors can complete appointments")
+    
+    appointment = await db.appointments.find_one({"id": appointment_id})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    # Verify it's the doctor's own appointment
+    if role.startswith("doctor") and appointment.get("doctor") != staff.get("doctor_name"):
+        raise HTTPException(status_code=403, detail="You can only complete your own appointments")
+    
+    # Validate fee code
+    if completion.fee_code not in FEE_CODES:
+        raise HTTPException(status_code=400, detail=f"Invalid fee code. Valid codes: {', '.join(FEE_CODES.keys())}")
+    
+    fee_info = FEE_CODES[completion.fee_code]
+    
+    # Calculate follow-up date if provided
+    follow_up_date = None
+    if completion.follow_up_days and completion.follow_up_days > 0:
+        follow_up_date = (datetime.now(timezone.utc) + timedelta(days=completion.follow_up_days)).strftime("%Y-%m-%d")
     
     # Generate unique feedback token
     feedback_token = str(uuid.uuid4())
     
+    # Update appointment
+    update_data = {
+        "status": "Completed",
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+        "completed_by": staff.get("name"),
+        "completed_by_doctor": staff.get("doctor_name") or staff.get("name"),
+        "completion_notes": completion.notes,
+        "fee_code": completion.fee_code,
+        "fee_amount": fee_info["amount"],
+        "fee_label": fee_info["label"],
+        "fee_category": fee_info["category"],
+        "follow_up_days": completion.follow_up_days,
+        "follow_up_date": follow_up_date,
+        "feedback_token": feedback_token,
+        "feedback_requested": True
+    }
+    
     await db.appointments.update_one(
         {"id": appointment_id},
-        {"$set": {
-            "status": "Completed",
-            "completed_at": datetime.now(timezone.utc).isoformat(),
-            "completed_by": staff.get("name"),
-            "completion_notes": notes,
-            "feedback_token": feedback_token,
-            "feedback_requested": True
-        }}
+        {"$set": update_data}
     )
     
     # Log action
     await db.audit_logs.insert_one({
-        "action": "appointment_completed",
+        "action": "appointment_completed_by_doctor",
         "appointment_id": appointment_id,
         "staff_id": staff.get("sub"),
         "staff_name": staff.get("name"),
+        "doctor_name": staff.get("doctor_name") or staff.get("name"),
         "patient_name": appointment.get("patient_name"),
+        "fee_code": completion.fee_code,
+        "fee_amount": fee_info["amount"],
+        "follow_up_days": completion.follow_up_days,
+        "follow_up_date": follow_up_date,
         "timestamp": datetime.now(timezone.utc).isoformat()
     })
     
-    # Send push notification
+    # Send push notification to patient
     if appointment.get("user_id"):
         await send_push_notification(
             user_id=appointment.get("user_id"),
@@ -2899,9 +2969,61 @@ async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = 
             tag=f"appointment-{appointment_id}"
         )
     
+    # Schedule follow-up reminder SMS if follow_up_days provided
+    if follow_up_date and appointment.get("patient_phone"):
+        # Calculate reminder date (1 day before follow-up)
+        reminder_date = (datetime.now(timezone.utc) + timedelta(days=completion.follow_up_days - 1)).strftime("%Y-%m-%d")
+        
+        # Store follow-up reminder in DB for scheduled sending
+        await db.follow_up_reminders.insert_one({
+            "id": str(uuid.uuid4()),
+            "appointment_id": appointment_id,
+            "patient_name": appointment.get("patient_name"),
+            "patient_phone": appointment.get("patient_phone"),
+            "doctor": appointment.get("doctor"),
+            "clinic": appointment.get("clinic"),
+            "follow_up_date": follow_up_date,
+            "reminder_date": reminder_date,
+            "follow_up_days": completion.follow_up_days,
+            "status": "pending",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+        
+        # Send immediate confirmation SMS about follow-up
+        try:
+            follow_up_sms = f"""DiaGyn Healthcare - Follow-up Scheduled
+
+Dear {appointment.get('patient_name')},
+
+Your follow-up visit is scheduled for {follow_up_date} ({completion.follow_up_days} days from today).
+
+Doctor: {appointment.get('doctor')}
+Clinic: {appointment.get('clinic')}
+
+You will receive a reminder 1 day before your follow-up date.
+
+Book your slot: https://health-modules-2.preview.emergentagent.com/diagyn
+
+Thank you for choosing Nevika Cura!"""
+            
+            await send_twilio_sms(appointment.get("patient_phone"), follow_up_sms)
+            logger.info(f"Follow-up SMS sent to {appointment.get('patient_phone')} for {follow_up_date}")
+        except Exception as e:
+            logger.error(f"Failed to send follow-up SMS: {e}")
+    
     # Send feedback request email if patient has email
     if appointment.get("patient_email"):
         feedback_url = f"{os.environ.get('FRONTEND_URL', 'https://health-modules-2.preview.emergentagent.com')}/feedback/{feedback_token}"
+        
+        follow_up_html = ""
+        if follow_up_date:
+            follow_up_html = f"""
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="color: #1e40af; margin: 0 0 10px 0;">📅 Follow-up Scheduled</h3>
+                <p style="color: #1e3a8a; margin: 0;">Your next visit is scheduled for <strong>{follow_up_date}</strong></p>
+                <p style="color: #3b82f6; font-size: 14px; margin-top: 10px;">You will receive a reminder before your follow-up date.</p>
+            </div>
+            """
         
         patient_html = f"""
         <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
@@ -2916,6 +3038,8 @@ async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = 
                     <p><strong>Clinic:</strong> {appointment.get('clinic')}</p>
                     <p><strong>Date:</strong> {appointment.get('date')}</p>
                 </div>
+                
+                {follow_up_html}
                 
                 <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
                     <h3 style="color: #92400e; margin: 0 0 15px 0;">How was your experience?</h3>
@@ -2946,9 +3070,81 @@ async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = 
             patient_html=patient_html
         )
     
-    logger.info(f"Appointment completed by {staff.get('name')}: {appointment.get('patient_name')}")
+    logger.info(f"Appointment completed by doctor {staff.get('name')}: {appointment.get('patient_name')}, Fee: {completion.fee_code} (₹{fee_info['amount']}), Follow-up: {follow_up_date}")
     
-    return {"success": True, "status": "Completed", "message": "Appointment marked as completed"}
+    return {
+        "success": True, 
+        "status": "Completed", 
+        "message": "Appointment marked as completed",
+        "fee_code": completion.fee_code,
+        "fee_amount": fee_info["amount"],
+        "fee_label": fee_info["label"],
+        "follow_up_date": follow_up_date
+    }
+
+
+@api_router.get("/staff/fee-codes")
+async def get_fee_codes(staff = Depends(verify_staff)):
+    """Get fee codes (visible to doctors and clinic staff only)"""
+    role = staff.get("role")
+    if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    return {"fee_codes": FEE_CODES}
+
+
+@api_router.get("/staff/clinic/completed-appointments")
+async def get_clinic_completed_appointments(
+    staff = Depends(verify_staff),
+    date: Optional[str] = None
+):
+    """Get completed appointments with fee info for clinic staff dashboard (real-time sync)"""
+    role = staff.get("role")
+    if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Clinic staff access required")
+    
+    # Determine clinic based on role
+    clinic = None
+    if role == "clinic_staff_pushpa":
+        clinic = "Pushpa Clinic"
+    elif role == "clinic_staff_amnion":
+        clinic = "Amnion Clinic"
+    
+    query = {"status": "Completed"}
+    if clinic:
+        query["clinic"] = clinic
+    if date:
+        query["date"] = date
+    
+    appointments = await db.appointments.find(
+        query,
+        {"_id": 0}
+    ).sort("completed_at", -1).to_list(100)
+    
+    # Calculate totals
+    total_collection = sum(appt.get("fee_amount", 0) for appt in appointments)
+    
+    return {
+        "appointments": appointments,
+        "total_count": len(appointments),
+        "total_collection": total_collection,
+        "date": date
+    }
+
+
+@api_router.get("/staff/follow-up-reminders")
+async def get_pending_follow_up_reminders(staff = Depends(verify_staff)):
+    """Get pending follow-up reminders"""
+    role = staff.get("role")
+    if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    reminders = await db.follow_up_reminders.find(
+        {"status": "pending"},
+        {"_id": 0}
+    ).sort("follow_up_date", 1).to_list(100)
+    
+    return {"reminders": reminders}
 
 # ============ Pharmacy Staff Endpoints ============
 
