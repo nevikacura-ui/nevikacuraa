@@ -3012,11 +3012,12 @@ async def upload_pharmacy_bill(order_id: str, file: UploadFile = File(...), staf
         # Generate URL - will be served by static files mount
         file_url = f"/api/uploads/bills/{unique_filename}"
         
-        # Update order with bill URL
+        # Update order with bill URL (also set invoice_url for user profile)
         await db.pharmacy_orders.update_one(
             {"id": order_id},
             {"$set": {
                 "bill_url": file_url,
+                "invoice_url": file_url,  # Alias for user profile downloads
                 "bill_filename": file.filename,
                 "bill_uploaded_at": datetime.now(timezone.utc).isoformat(),
                 "bill_uploaded_by": staff.get("name")
