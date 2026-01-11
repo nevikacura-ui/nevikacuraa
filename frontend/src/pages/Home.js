@@ -328,7 +328,7 @@ const Home = () => {
                 </div>
               </div>
               <a
-                href="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/8qn5gihk_Nevika%20Cura.apk"
+                href="https://customer-assets.emergentagent.com/job_health-modules-2/artifacts/4musnqya_Nevika%20Cura.apk"
                 download="Nevika Cura.apk"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-teal-600 font-semibold rounded-full hover:bg-teal-50 transition-all shadow-lg hover:shadow-xl"
                 data-testid="download-apk-btn"
