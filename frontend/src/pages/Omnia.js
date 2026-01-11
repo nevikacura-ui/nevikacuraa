@@ -1451,6 +1451,223 @@ const Omnia = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Diabetic Neuropathy Dialog */}
+      <Dialog open={showNeuropathy} onOpenChange={setShowNeuropathy}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Activity className="w-6 h-6" />
+              Diabetic Neuropathy Guide
+            </DialogTitle>
+            <DialogDescription className="text-purple-100">
+              Prevention tips for nerve damage - No medication advice
+            </DialogDescription>
+          </DialogHeader>
+          
+          <ScrollArea className="flex-1">
+            <div className="p-4 space-y-4">
+              {/* What is it */}
+              <Card className="bg-purple-50 border-purple-200">
+                <CardContent className="p-4">
+                  <h4 className="font-bold text-purple-800 mb-2">What is Diabetic Neuropathy?</h4>
+                  <p className="text-sm text-purple-700">{NEUROPATHY_GUIDE.whatIs}</p>
+                </CardContent>
+              </Card>
+
+              {/* Types */}
+              <div>
+                <h4 className="font-bold text-gray-800 mb-3">Types of Neuropathy</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {NEUROPATHY_GUIDE.types.map((type, idx) => (
+                    <Card key={idx} className="border-purple-100">
+                      <CardContent className="p-3">
+                        <span className="text-2xl">{type.icon}</span>
+                        <p className="font-semibold text-sm text-purple-700 mt-1">{type.name}</p>
+                        <p className="text-xs text-gray-500 mt-1">{type.description}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Symptoms */}
+              <div>
+                <h4 className="font-bold text-gray-800 mb-3">Warning Symptoms</h4>
+                <div className="space-y-2">
+                  {NEUROPATHY_GUIDE.symptoms.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="font-medium text-sm">{item.symptom}</p>
+                        <p className="text-xs text-gray-500">{item.area}</p>
+                      </div>
+                      <span className={`text-xs px-2 py-1 rounded ${item.severity === 'Serious - see doctor' ? 'bg-red-100 text-red-700' : 'bg-purple-100 text-purple-700'}`}>
+                        {item.severity}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Prevention */}
+              <Card className="border-green-200 bg-green-50">
+                <CardHeader className="py-3">
+                  <CardTitle className="text-base text-green-700 flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5" /> Prevention Tips
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="py-2">
+                  {NEUROPATHY_GUIDE.prevention.map((tip, idx) => (
+                    <p key={idx} className="text-sm py-1.5 text-green-800 border-b border-green-100 last:border-0">
+                      ✓ {tip}
+                    </p>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Daily Exercises */}
+              <div>
+                <h4 className="font-bold text-gray-800 mb-3">Daily Exercises for Feet</h4>
+                <div className="space-y-2">
+                  {NEUROPATHY_GUIDE.dailyExercises.map((ex, idx) => (
+                    <Card key={idx} className="border-blue-100">
+                      <CardContent className="p-3">
+                        <p className="font-semibold text-blue-700">{ex.exercise}</p>
+                        <p className="text-sm text-gray-600 mt-1">{ex.description}</p>
+                        <p className="text-xs text-blue-600 mt-1">💪 {ex.benefit}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* When to see doctor */}
+              <Card className="border-red-200 bg-red-50">
+                <CardHeader className="py-3">
+                  <CardTitle className="text-base text-red-700 flex items-center gap-2">
+                    <AlertCircle className="w-5 h-5" /> When to See a Doctor
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="py-2">
+                  {NEUROPATHY_GUIDE.whenToSeeDoctor.map((item, idx) => (
+                    <p key={idx} className="text-sm py-1.5 text-red-800 border-b border-red-100 last:border-0">
+                      🚨 {item}
+                    </p>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Diabetic Foot Care Dialog */}
+      <Dialog open={showFootCare} onOpenChange={setShowFootCare}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Heart className="w-6 h-6" />
+              Diabetic Foot Care Guide
+            </DialogTitle>
+            <DialogDescription className="text-blue-100">
+              Daily care tips to prevent complications - No medication advice
+            </DialogDescription>
+          </DialogHeader>
+          
+          <ScrollArea className="flex-1">
+            <div className="p-4 space-y-4">
+              {/* Importance */}
+              <Card className="bg-blue-50 border-blue-200">
+                <CardContent className="p-4">
+                  <h4 className="font-bold text-blue-800 mb-2">Why Foot Care Matters</h4>
+                  <p className="text-sm text-blue-700">{FOOT_CARE_GUIDE.importance}</p>
+                </CardContent>
+              </Card>
+
+              {/* Daily Checklist */}
+              <div>
+                <h4 className="font-bold text-gray-800 mb-3">Daily Foot Care Checklist</h4>
+                <div className="space-y-2">
+                  {FOOT_CARE_GUIDE.dailyChecklist.map((item, idx) => (
+                    <Card key={idx} className="border-blue-100">
+                      <CardContent className="p-3">
+                        <p className="font-semibold text-blue-700">{idx + 1}. {item.task}</p>
+                        <p className="text-sm text-gray-600 mt-1"><strong>How:</strong> {item.how}</p>
+                        <p className="text-xs text-blue-600 mt-1">👀 {item.look}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Do's */}
+              <Card className="border-green-200 bg-green-50">
+                <CardHeader className="py-3">
+                  <CardTitle className="text-base text-green-700 flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5" /> Do's - Follow These
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="py-2">
+                  {FOOT_CARE_GUIDE.dos.map((tip, idx) => (
+                    <p key={idx} className="text-sm py-1.5 text-green-800 border-b border-green-100 last:border-0">
+                      ✓ {tip}
+                    </p>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Don'ts */}
+              <Card className="border-red-200 bg-red-50">
+                <CardHeader className="py-3">
+                  <CardTitle className="text-base text-red-700 flex items-center gap-2">
+                    <AlertCircle className="w-5 h-5" /> Don'ts - Avoid These
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="py-2">
+                  {FOOT_CARE_GUIDE.donts.map((tip, idx) => (
+                    <p key={idx} className="text-sm py-1.5 text-red-800 border-b border-red-100 last:border-0">
+                      ✗ {tip}
+                    </p>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Shoe Tips */}
+              <div>
+                <h4 className="font-bold text-gray-800 mb-3">Choosing the Right Shoes</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {FOOT_CARE_GUIDE.shoeTips.map((item, idx) => (
+                    <Card key={idx} className="border-gray-200">
+                      <CardContent className="p-3">
+                        <p className="font-semibold text-sm text-gray-700">👟 {item.tip}</p>
+                        <p className="text-xs text-gray-500 mt-1">{item.detail}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Emergency Signs */}
+              <Card className="border-orange-200 bg-orange-50">
+                <CardHeader className="py-3">
+                  <CardTitle className="text-base text-orange-700 flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5" /> Emergency Warning Signs
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="py-2">
+                  {FOOT_CARE_GUIDE.emergencySigns.map((item, idx) => (
+                    <div key={idx} className="py-2 border-b border-orange-100 last:border-0">
+                      <p className="font-medium text-sm text-orange-800">{item.sign}</p>
+                      <p className="text-xs text-gray-600">{item.description}</p>
+                      <p className="text-xs text-red-600 font-medium mt-1">⚡ {item.action}</p>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
       {/* Profile Setup Dialog */}
       <Dialog open={showProfileSetup} onOpenChange={setShowProfileSetup}>
         <DialogContent className="max-w-md">
