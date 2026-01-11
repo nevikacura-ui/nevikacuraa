@@ -1,5 +1,43 @@
 # Nevika Cura Healthcare - Changelog
 
+## [January 10, 2026] - Push Notifications & Feedback System
+
+### Added
+- **Auto Notification Prompt:**
+  - Shows for logged-in users after 3 second delay
+  - Android banner-style with gradient background
+  - Enable Now / Maybe Later buttons
+  - Dismissal persisted in localStorage
+
+- **Push Notifications for Status Updates:**
+  - Pharmacy order status → Push notification (no email)
+  - Diagnostic test status → Push notification (no email)
+  - Appointment check-in → Push notification (no email)
+  - Appointment completion → Push notification + feedback email
+
+- **Appointment Feedback System:**
+  - New `/feedback/:token` page with 5-star rating
+  - Rating labels: Poor, Fair, Good, Very Good, Excellent
+  - Optional comment field
+  - Feedback stored in `appointment_feedback` collection (private)
+  - Admin notification on new feedback
+
+- **Email Changes:**
+  - Reduced email volume - only for NEW appointments and COMPLETED appointments
+  - Completed appointment email includes feedback star rating links
+
+- **Service Worker Updates:**
+  - Android banner-style notifications
+  - Vibration pattern: [200, 100, 200]
+  - Action buttons: View Details, Dismiss
+  - Click handling opens relevant URL
+
+### Testing
+- 13/13 backend tests passed
+- Test file: `/app/tests/test_feedback_notifications.py`
+
+---
+
 ## [January 10, 2026] - Loyalty Points System
 
 ### Added
