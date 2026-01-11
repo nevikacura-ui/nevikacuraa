@@ -8,167 +8,224 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, Heart, Activity, AlertTriangle, Droplets, Apple, 
-  Calendar, TrendingUp, TrendingDown, Minus, Phone, Pill,
-  ClipboardList, BookOpen, Utensils, TestTube, ChevronRight,
-  User, Mail, Lock, AlertCircle, CheckCircle, Info
+  Calendar, TrendingUp, TrendingDown, Pill, Phone,
+  Utensils, TestTube, ChevronRight, Info, CheckCircle, AlertCircle
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Diabetic Diet Plans
+// Diabetic Diet Plans - Detailed
 const DIET_PLANS = {
   vegetarian: {
     breakfast: [
-      { item: "Oats Upma with vegetables", portion: "1 bowl", calories: "180" },
-      { item: "Moong Dal Chilla (2 pieces)", portion: "Medium", calories: "150" },
-      { item: "Vegetable Poha", portion: "1 bowl", calories: "200" },
-      { item: "Idli (2) with Sambar", portion: "Medium", calories: "170" },
-      { item: "Besan Cheela with mint chutney", portion: "2 pieces", calories: "160" }
+      { item: "Oats Upma with vegetables", portion: "1 bowl (150g)", calories: "180", benefits: "High fiber, keeps sugar stable" },
+      { item: "Moong Dal Chilla (2 pieces)", portion: "Medium size", calories: "150", benefits: "Protein-rich, low GI" },
+      { item: "Vegetable Poha (flattened rice)", portion: "1 bowl (150g)", calories: "200", benefits: "Light, easy to digest" },
+      { item: "Idli (2) with Sambar", portion: "2 medium idlis", calories: "170", benefits: "Fermented, good for gut" },
+      { item: "Besan Cheela with mint chutney", portion: "2 pieces", calories: "160", benefits: "High protein, low carb" },
+      { item: "Ragi Dosa with coconut chutney", portion: "2 dosas", calories: "180", benefits: "Rich in calcium & fiber" },
+      { item: "Sprouts Salad", portion: "1 cup", calories: "120", benefits: "Protein & fiber boost" }
     ],
     lunch: [
-      { item: "Brown Rice + Dal + Sabzi + Salad", portion: "1 plate", calories: "350" },
-      { item: "2 Roti + Palak Paneer + Raita", portion: "Regular", calories: "380" },
-      { item: "Quinoa Pulao + Curd + Vegetables", portion: "1 plate", calories: "320" },
-      { item: "Bajra Roti + Mixed Vegetable Curry", portion: "2 roti", calories: "340" }
+      { item: "Brown Rice + Dal + Sabzi + Salad", portion: "1 roti rice + 1 bowl dal", calories: "350", benefits: "Complete balanced meal" },
+      { item: "2 Roti + Palak Paneer + Raita", portion: "Regular serving", calories: "380", benefits: "Iron & protein rich" },
+      { item: "Quinoa Pulao + Curd + Vegetables", portion: "1 bowl quinoa", calories: "320", benefits: "Complete protein, low GI" },
+      { item: "Bajra Roti + Mixed Vegetable Curry", portion: "2 rotis", calories: "340", benefits: "Millets control sugar" },
+      { item: "Jowar Roti + Bhindi Sabzi + Dal", portion: "2 rotis", calories: "330", benefits: "High fiber millet" },
+      { item: "Vegetable Khichdi + Kadhi", portion: "1 bowl", calories: "300", benefits: "Easy to digest, balanced" }
     ],
     dinner: [
-      { item: "Vegetable Soup + 1 Roti + Sabzi", portion: "Light", calories: "250" },
-      { item: "Khichdi with Vegetables", portion: "1 bowl", calories: "280" },
-      { item: "Grilled Paneer Salad", portion: "1 plate", calories: "220" },
-      { item: "Dalia with Vegetables", portion: "1 bowl", calories: "240" }
+      { item: "Vegetable Soup + 1 Roti + Sabzi", portion: "Light serving", calories: "250", benefits: "Light dinner, good sleep" },
+      { item: "Moong Dal Khichdi", portion: "1 bowl", calories: "280", benefits: "Easy on stomach" },
+      { item: "Grilled Paneer Salad", portion: "1 large plate", calories: "220", benefits: "High protein, low carb" },
+      { item: "Dalia (Broken Wheat) with Vegetables", portion: "1 bowl", calories: "240", benefits: "Fiber-rich grain" },
+      { item: "Mixed Vegetable Clear Soup + Chapati", portion: "1 bowl + 1 roti", calories: "200", benefits: "Light & nutritious" },
+      { item: "Stuffed Capsicum with Paneer", portion: "2 pieces", calories: "230", benefits: "Protein without carbs" }
     ],
     snacks: [
-      { item: "Roasted Chana", portion: "1/4 cup", calories: "80" },
-      { item: "Mixed Nuts (unsalted)", portion: "10-12 pieces", calories: "100" },
-      { item: "Cucumber & Carrot sticks", portion: "1 cup", calories: "30" },
-      { item: "Buttermilk (Chaas)", portion: "1 glass", calories: "40" },
-      { item: "Apple or Guava", portion: "1 medium", calories: "60" }
+      { item: "Roasted Chana (Chickpeas)", portion: "1/4 cup (30g)", calories: "80", benefits: "Protein snack" },
+      { item: "Mixed Nuts (unsalted)", portion: "10-12 pieces", calories: "100", benefits: "Good fats, filling" },
+      { item: "Cucumber & Carrot sticks", portion: "1 cup", calories: "30", benefits: "Zero sugar, hydrating" },
+      { item: "Buttermilk (Chaas)", portion: "1 glass", calories: "40", benefits: "Probiotic, cooling" },
+      { item: "Apple or Guava", portion: "1 medium", calories: "60", benefits: "Low GI fruits" },
+      { item: "Makhana (Fox Nuts)", portion: "1/2 cup", calories: "50", benefits: "Low calorie, crunchy" },
+      { item: "Sprouts Chaat", portion: "1/2 cup", calories: "70", benefits: "Protein boost" },
+      { item: "Green Tea (unsweetened)", portion: "1 cup", calories: "0", benefits: "Antioxidants" }
     ]
   },
   nonVegetarian: {
     breakfast: [
-      { item: "Egg White Omelette with Toast", portion: "2 eggs + 1 toast", calories: "200" },
-      { item: "Boiled Eggs with Vegetables", portion: "2 eggs", calories: "180" },
-      { item: "Oats with Egg", portion: "1 bowl", calories: "220" }
+      { item: "Egg White Omelette (3 whites) + Toast", portion: "3 egg whites + 1 toast", calories: "200", benefits: "Pure protein start" },
+      { item: "Boiled Eggs with Vegetables", portion: "2 whole eggs", calories: "180", benefits: "Complete protein" },
+      { item: "Oats with Scrambled Egg", portion: "1 bowl", calories: "220", benefits: "Fiber + protein combo" },
+      { item: "Chicken Sandwich (whole wheat)", portion: "1 sandwich", calories: "250", benefits: "Lean protein" }
     ],
     lunch: [
-      { item: "Grilled Chicken + Brown Rice + Salad", portion: "100g chicken", calories: "400" },
-      { item: "Fish Curry + 2 Roti + Vegetables", portion: "Regular", calories: "420" },
-      { item: "Chicken Soup + Roti + Sabzi", portion: "1 bowl + 2 roti", calories: "380" }
+      { item: "Grilled Chicken Breast + Brown Rice + Salad", portion: "100g chicken", calories: "400", benefits: "Lean protein meal" },
+      { item: "Fish Curry + 2 Roti + Vegetables", portion: "100g fish", calories: "420", benefits: "Omega-3 rich" },
+      { item: "Chicken Soup + Roti + Sabzi", portion: "1 bowl + 2 roti", calories: "380", benefits: "Light & filling" },
+      { item: "Egg Curry + Brown Rice", portion: "2 eggs", calories: "350", benefits: "Budget protein" },
+      { item: "Tandoori Chicken + Salad + Raita", portion: "2 pieces", calories: "320", benefits: "Grilled, not fried" }
     ],
     dinner: [
-      { item: "Grilled Fish with Steamed Vegetables", portion: "100g fish", calories: "280" },
-      { item: "Chicken Salad", portion: "1 plate", calories: "250" },
-      { item: "Egg Curry + 1 Roti", portion: "2 eggs", calories: "300" }
+      { item: "Grilled Fish with Steamed Vegetables", portion: "100g fish", calories: "280", benefits: "Light protein dinner" },
+      { item: "Chicken Salad with Olive Oil", portion: "1 large plate", calories: "250", benefits: "Low carb dinner" },
+      { item: "Egg Curry + 1 Roti", portion: "2 eggs", calories: "300", benefits: "Simple & nutritious" },
+      { item: "Fish Tikka + Mint Chutney", portion: "4-5 pieces", calories: "220", benefits: "Grilled, healthy" },
+      { item: "Chicken Clear Soup", portion: "1 large bowl", calories: "150", benefits: "Very light option" }
     ],
     snacks: [
-      { item: "Boiled Egg", portion: "1 egg", calories: "70" },
-      { item: "Chicken Soup (clear)", portion: "1 cup", calories: "80" },
-      { item: "Fish Tikka (grilled)", portion: "2-3 pieces", calories: "120" }
+      { item: "Boiled Egg", portion: "1 egg", calories: "70", benefits: "Quick protein" },
+      { item: "Chicken Soup (clear)", portion: "1 cup", calories: "80", benefits: "Warm & filling" },
+      { item: "Fish Tikka (grilled)", portion: "2-3 pieces", calories: "120", benefits: "Lean protein snack" },
+      { item: "Egg Bhurji (dry)", portion: "1 egg", calories: "90", benefits: "Spiced protein" }
     ]
   },
   dos: [
-    "Eat at regular intervals (every 3-4 hours)",
-    "Include fiber-rich foods in every meal",
-    "Choose whole grains over refined carbs",
-    "Drink plenty of water (8-10 glasses daily)",
-    "Include protein in every meal",
-    "Use healthy cooking oils (olive, mustard)",
-    "Eat fruits with low glycemic index (apple, guava, orange)",
-    "Include green leafy vegetables daily"
+    "Eat at regular intervals - every 3-4 hours to maintain stable sugar",
+    "Include fiber-rich foods in every meal (vegetables, whole grains)",
+    "Choose whole grains over refined carbs (brown rice, whole wheat)",
+    "Drink plenty of water - 8-10 glasses daily",
+    "Include protein in every meal to slow sugar absorption",
+    "Use healthy cooking oils sparingly (olive, mustard, coconut)",
+    "Eat low glycemic fruits - apple, guava, orange, papaya",
+    "Include green leafy vegetables daily (spinach, methi, palak)",
+    "Have dinner at least 2-3 hours before sleeping",
+    "Chew food slowly - helps in better digestion",
+    "Monitor portion sizes - use smaller plates",
+    "Include cinnamon, fenugreek in diet - helps control sugar"
   ],
   donts: [
-    "Avoid white rice, maida, white bread",
-    "Limit sugar and sugary drinks completely",
-    "Avoid fried and processed foods",
-    "Don't skip meals, especially breakfast",
-    "Limit fruit juices (eat whole fruits instead)",
-    "Avoid high-GI fruits like mango, banana, grapes",
-    "Don't eat heavy meals at night",
-    "Avoid alcohol or limit strictly"
-  ]
+    "Avoid white rice, maida (refined flour), white bread",
+    "Limit sugar and sugary drinks completely - including packaged juices",
+    "Avoid fried and processed foods - samosas, pakoras, chips",
+    "Don't skip meals, especially breakfast - causes sugar spikes later",
+    "Limit fruit juices - eat whole fruits instead for fiber",
+    "Avoid high-GI fruits in excess - mango, banana, grapes, chikoo",
+    "Don't eat heavy meals at night - light dinner is best",
+    "Avoid alcohol or limit strictly - affects sugar control",
+    "Don't eat when stressed - affects digestion",
+    "Avoid late night snacking",
+    "Don't consume honey thinking it's healthy - it still raises sugar",
+    "Avoid sweetened yogurt - choose plain curd instead"
+  ],
+  timings: {
+    breakfast: "7:00 AM - 8:30 AM",
+    midMorning: "10:30 AM - 11:00 AM",
+    lunch: "12:30 PM - 1:30 PM",
+    eveningSnack: "4:00 PM - 5:00 PM",
+    dinner: "7:00 PM - 8:00 PM (latest by 8:30 PM)"
+  }
 };
 
 // Warning Signs
 const WARNING_SIGNS = [
-  { sign: "Excessive Thirst (Polydipsia)", description: "Feeling thirsty all the time, even after drinking water", icon: "💧" },
-  { sign: "Frequent Urination (Polyuria)", description: "Urinating more often, especially at night", icon: "🚽" },
-  { sign: "Unexplained Weight Loss", description: "Losing weight without trying or change in diet", icon: "⚖️" },
-  { sign: "Extreme Fatigue", description: "Feeling very tired despite adequate rest", icon: "😴" },
-  { sign: "Blurred Vision", description: "Difficulty seeing clearly, vision changes", icon: "👁️" },
-  { sign: "Slow Wound Healing", description: "Cuts and bruises take longer to heal", icon: "🩹" },
-  { sign: "Tingling or Numbness", description: "Tingling sensation in hands or feet", icon: "🖐️" },
-  { sign: "Frequent Infections", description: "Recurring skin, gum, or urinary infections", icon: "🦠" }
+  { sign: "Excessive Thirst (Polydipsia)", description: "Feeling thirsty all the time, even after drinking water", icon: "💧", action: "Track water intake, check sugar levels" },
+  { sign: "Frequent Urination (Polyuria)", description: "Urinating more often, especially at night (3+ times)", icon: "🚽", action: "Note frequency, check for UTI" },
+  { sign: "Unexplained Weight Loss", description: "Losing weight without trying or change in diet", icon: "⚖️", action: "Urgent - consult doctor immediately" },
+  { sign: "Extreme Fatigue", description: "Feeling very tired despite adequate rest and sleep", icon: "😴", action: "Check sugar levels, rest adequately" },
+  { sign: "Blurred Vision", description: "Difficulty seeing clearly, vision changes", icon: "👁️", action: "Get eye checkup, control sugar" },
+  { sign: "Slow Wound Healing", description: "Cuts and bruises take longer than usual to heal", icon: "🩹", action: "Keep wounds clean, see doctor" },
+  { sign: "Tingling or Numbness", description: "Tingling sensation in hands or feet (neuropathy sign)", icon: "🖐️", action: "Important - nerve damage sign" },
+  { sign: "Frequent Infections", description: "Recurring skin, gum, or urinary infections", icon: "🦠", action: "Maintain hygiene, consult doctor" }
 ];
 
-// Hypoglycemia Emergency Guide
+// Hypoglycemia Emergency Guide - Complete
 const HYPOGLYCEMIA_GUIDE = {
-  whatIs: "Hypoglycemia (low blood sugar) occurs when blood glucose drops below 70 mg/dL. It can happen quickly and needs immediate attention.",
-  symptoms: [
-    { symptom: "Sweating", severity: "early" },
-    { symptom: "Trembling/Shaking", severity: "early" },
-    { symptom: "Dizziness", severity: "early" },
-    { symptom: "Hunger", severity: "early" },
-    { symptom: "Fast heartbeat", severity: "moderate" },
-    { symptom: "Confusion", severity: "moderate" },
-    { symptom: "Irritability", severity: "moderate" },
-    { symptom: "Blurred vision", severity: "severe" },
-    { symptom: "Difficulty speaking", severity: "severe" },
-    { symptom: "Unconsciousness", severity: "danger" }
+  whatIs: "Hypoglycemia (low blood sugar) occurs when blood glucose drops below 70 mg/dL. It can happen quickly and needs immediate attention. It's more common in people taking insulin or certain diabetes medications.",
+  causes: [
+    "Skipping or delaying meals",
+    "Taking too much insulin or diabetes medication",
+    "Exercising more than usual without eating",
+    "Drinking alcohol without food",
+    "Not eating enough carbohydrates"
   ],
-  immediateActions: [
-    "Take 15-20 grams of fast-acting sugar immediately",
-    "Examples: 3-4 glucose tablets, 4 teaspoons sugar in water, 1/2 cup fruit juice, 1 tablespoon honey",
-    "Wait 15 minutes and recheck blood sugar if possible",
-    "If still low, repeat the sugar intake",
-    "Once better, eat a small snack with protein (biscuits with peanut butter, cheese)"
+  symptoms: {
+    early: [
+      { symptom: "Sweating", description: "Sudden cold sweats, clammy skin" },
+      { symptom: "Trembling/Shaking", description: "Hands trembling, feeling shaky" },
+      { symptom: "Hunger", description: "Sudden intense hunger" },
+      { symptom: "Dizziness", description: "Feeling lightheaded or unsteady" },
+      { symptom: "Fast heartbeat", description: "Heart pounding or racing" }
+    ],
+    moderate: [
+      { symptom: "Confusion", description: "Difficulty thinking clearly" },
+      { symptom: "Irritability", description: "Sudden mood changes, anxiety" },
+      { symptom: "Weakness", description: "Feeling weak, difficulty standing" },
+      { symptom: "Headache", description: "Sudden headache" },
+      { symptom: "Pale skin", description: "Looking pale or grey" }
+    ],
+    severe: [
+      { symptom: "Blurred vision", description: "Cannot see properly" },
+      { symptom: "Difficulty speaking", description: "Slurred speech" },
+      { symptom: "Seizures", description: "Convulsions - EMERGENCY" },
+      { symptom: "Unconsciousness", description: "Passing out - CALL 112" }
+    ]
+  },
+  rule15: {
+    title: "The 15-15 Rule",
+    steps: [
+      "Check blood sugar if possible",
+      "If below 70 mg/dL or feeling symptoms:",
+      "Take 15 grams of fast-acting carbohydrates",
+      "Wait 15 minutes",
+      "Recheck blood sugar",
+      "If still low, repeat",
+      "Once normal, eat a small snack"
+    ]
+  },
+  fastSugarOptions: [
+    { item: "Glucose tablets", amount: "3-4 tablets", grams: "15g" },
+    { item: "Sugar in water", amount: "4 teaspoons sugar in 1/2 glass water", grams: "15g" },
+    { item: "Fruit juice (no sugar added)", amount: "1/2 cup (120ml)", grams: "15g" },
+    { item: "Regular soda (not diet)", amount: "1/2 cup (120ml)", grams: "15g" },
+    { item: "Honey", amount: "1 tablespoon", grams: "15g" },
+    { item: "Candy (hard)", amount: "5-6 pieces", grams: "15g" },
+    { item: "Raisins", amount: "2 tablespoons", grams: "15g" }
   ],
-  dangerSigns: [
-    "If person is unconscious - DO NOT give food or drink",
-    "Place them on their side (recovery position)",
-    "Call emergency services immediately",
-    "If available, use glucagon injection (trained person only)"
+  unconsciousPerson: [
+    "DO NOT give anything by mouth - choking risk!",
+    "Place person on their side (recovery position)",
+    "Call emergency services immediately - 112",
+    "If available and trained - use glucagon injection",
+    "Stay with the person until help arrives",
+    "Note the time symptoms started"
+  ],
+  prevention: [
+    "Never skip meals, especially if on medication",
+    "Always carry fast-acting sugar with you",
+    "Check sugar before driving or exercise",
+    "Wear a medical ID bracelet",
+    "Inform family and colleagues about symptoms",
+    "Don't drink alcohol on empty stomach"
   ]
 };
 
-// Available Diabetic Tests
+// Diabetic Tests
 const DIABETIC_TESTS = [
-  { id: "fbs", name: "Fasting Blood Sugar (FBS)", description: "Blood sugar after 8-12 hours fasting", frequency: "Monthly" },
-  { id: "ppbs", name: "Post-Prandial Blood Sugar (PPBS)", description: "Blood sugar 2 hours after meal", frequency: "Monthly" },
-  { id: "hba1c", name: "HbA1c (Glycated Hemoglobin)", description: "3-month average blood sugar", frequency: "Every 3 months" },
-  { id: "lipid", name: "Lipid Profile", description: "Cholesterol and triglyceride levels", frequency: "Every 6 months" },
-  { id: "kidney", name: "Kidney Function Test (KFT)", description: "Checks kidney health", frequency: "Yearly" },
-  { id: "urine", name: "Urine Microalbumin", description: "Early detection of kidney damage", frequency: "Yearly" }
+  { id: "fbs", name: "Fasting Blood Sugar (FBS)", description: "Blood sugar after 8-12 hours fasting. Normal: 70-100 mg/dL", frequency: "Monthly", price: "₹80-150" },
+  { id: "ppbs", name: "Post-Prandial Blood Sugar (PPBS)", description: "Blood sugar 2 hours after meal. Normal: <140 mg/dL", frequency: "Monthly", price: "₹80-150" },
+  { id: "hba1c", name: "HbA1c (Glycated Hemoglobin)", description: "3-month average blood sugar. Target: <7% for diabetics", frequency: "Every 3 months", price: "₹400-600" },
+  { id: "lipid", name: "Lipid Profile", description: "Cholesterol and triglyceride levels. Important for heart health", frequency: "Every 6 months", price: "₹400-700" },
+  { id: "kidney", name: "Kidney Function Test (KFT)", description: "Checks kidney health - creatinine, urea, eGFR", frequency: "Every 6-12 months", price: "₹500-800" },
+  { id: "urine", name: "Urine Microalbumin", description: "Early detection of kidney damage in diabetes", frequency: "Yearly", price: "₹300-500" },
+  { id: "liver", name: "Liver Function Test (LFT)", description: "Checks liver health - important if on medications", frequency: "Yearly", price: "₹400-700" }
 ];
 
 const Omnia = () => {
   const navigate = useNavigate();
+  const { user, token: authToken } = useAuth();
   
-  // Auth state
-  const [token, setToken] = useState(localStorage.getItem('omnia_token'));
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
+  // Use main app auth
+  const token = authToken || localStorage.getItem('token');
   
   // UI state
-  const [showAuth, setShowAuth] = useState(false);
-  const [authStep, setAuthStep] = useState('phone'); // phone, otp, register, profile
   const [loading, setLoading] = useState(false);
-  
-  // Auth form state
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [authData, setAuthData] = useState({ name: '', email: '', password: '' });
-  const [profileData, setProfileData] = useState({
-    diabetesType: '',
-    age: '',
-    gender: '',
-    height: '',
-    weight: '',
-    medications: ''
-  });
+  const [profile, setProfile] = useState(null);
   
   // Feature dialogs
   const [showDiet, setShowDiet] = useState(false);
@@ -176,35 +233,30 @@ const Omnia = () => {
   const [showTests, setShowTests] = useState(false);
   const [showWarnings, setShowWarnings] = useState(false);
   const [showEmergency, setShowEmergency] = useState(false);
+  const [showProfileSetup, setShowProfileSetup] = useState(false);
   
   // Sugar log state
   const [sugarLogs, setSugarLogs] = useState([]);
-  const [newLog, setNewLog] = useState({ type: 'fbs', value: '', date: new Date().toISOString().split('T')[0], time: '' });
+  const [newLog, setNewLog] = useState({ 
+    type: 'fbs', 
+    value: '', 
+    date: new Date().toISOString().split('T')[0], 
+    time: new Date().toTimeString().slice(0, 5)
+  });
+  
+  // Profile setup
+  const [profileData, setProfileData] = useState({
+    diabetesType: '',
+    age: '',
+    gender: ''
+  });
 
   useEffect(() => {
     if (token) {
-      fetchUserData();
+      fetchProfile();
       fetchSugarLogs();
     }
   }, [token]);
-
-  const fetchUserData = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data);
-        fetchProfile();
-      } else {
-        localStorage.removeItem('omnia_token');
-        setToken(null);
-      }
-    } catch (error) {
-      console.error('Error fetching user:', error);
-    }
-  };
 
   const fetchProfile = async () => {
     try {
@@ -214,6 +266,9 @@ const Omnia = () => {
       if (response.ok) {
         const data = await response.json();
         setProfile(data.profile);
+        if (!data.profile) {
+          setShowProfileSetup(true);
+        }
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -234,90 +289,9 @@ const Omnia = () => {
     }
   };
 
-  const handleSendOtp = async () => {
-    if (!phone || phone.length !== 10) {
-      toast.error('Please enter a valid 10-digit phone number');
-      return;
-    }
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_URL}/api/auth/otp/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, service: 'omnia' })
-      });
-      const data = await response.json();
-      if (data.success) {
-        toast.success('OTP sent to your phone');
-        setAuthStep('otp');
-      } else {
-        toast.error(data.message || 'Failed to send OTP');
-      }
-    } catch (error) {
-      toast.error('Failed to send OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_URL}/api/auth/otp/verify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, otp })
-      });
-      const data = await response.json();
-      if (data.valid) {
-        if (data.user_exists && data.token) {
-          localStorage.setItem('omnia_token', data.token);
-          localStorage.setItem('token', data.token);
-          setToken(data.token);
-          setShowAuth(false);
-          toast.success('Welcome back!');
-        } else {
-          setAuthStep('register');
-        }
-      } else {
-        toast.error('Invalid OTP');
-      }
-    } catch (error) {
-      toast.error('Verification failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_URL}/api/auth/register/otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...authData, phone })
-      });
-      const data = await response.json();
-      if (data.token) {
-        localStorage.setItem('omnia_token', data.token);
-        localStorage.setItem('token', data.token);
-        setToken(data.token);
-        setAuthStep('profile');
-        toast.success('Account created! Please complete your profile.');
-      } else {
-        toast.error(data.detail || 'Registration failed');
-      }
-    } catch (error) {
-      toast.error('Registration failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSaveProfile = async () => {
-    if (!profileData.diabetesType || !profileData.age || !profileData.gender) {
-      toast.error('Please fill required fields');
+    if (!profileData.diabetesType) {
+      toast.error('Please select your diabetes type');
       return;
     }
     setLoading(true);
@@ -331,11 +305,9 @@ const Omnia = () => {
         body: JSON.stringify(profileData)
       });
       if (response.ok) {
-        toast.success('Profile saved successfully!');
-        setShowAuth(false);
+        toast.success('Profile saved!');
+        setShowProfileSetup(false);
         fetchProfile();
-      } else {
-        toast.error('Failed to save profile');
       }
     } catch (error) {
       toast.error('Failed to save profile');
@@ -367,14 +339,22 @@ const Omnia = () => {
       });
       if (response.ok) {
         toast.success('Sugar reading logged!');
-        setNewLog({ type: 'fbs', value: '', date: new Date().toISOString().split('T')[0], time: '' });
+        setNewLog({ 
+          type: 'fbs', 
+          value: '', 
+          date: new Date().toISOString().split('T')[0],
+          time: new Date().toTimeString().slice(0, 5)
+        });
         fetchSugarLogs();
         
         // Alert for abnormal values
         if (value < 70) {
-          toast.error('⚠️ Low sugar detected! Check emergency guidance.', { duration: 5000 });
+          toast.error('⚠️ LOW SUGAR! Check emergency guidance immediately.', { duration: 8000 });
+          setShowEmergency(true);
+        } else if (value > 250) {
+          toast.warning('⚠️ Very high sugar. Please consult your doctor today.', { duration: 5000 });
         } else if (value > 180) {
-          toast.warning('⚠️ High sugar reading. Please consult your doctor.', { duration: 5000 });
+          toast.warning('Sugar is high. Monitor closely and follow diet.', { duration: 5000 });
         }
       }
     } catch (error) {
@@ -387,378 +367,74 @@ const Omnia = () => {
   const getSugarStatus = (value, type) => {
     const v = parseInt(value);
     if (type === 'fbs') {
-      if (v < 70) return { status: 'Low', color: 'text-red-600', bg: 'bg-red-100' };
-      if (v <= 100) return { status: 'Normal', color: 'text-green-600', bg: 'bg-green-100' };
-      if (v <= 125) return { status: 'Pre-diabetic', color: 'text-yellow-600', bg: 'bg-yellow-100' };
-      return { status: 'High', color: 'text-red-600', bg: 'bg-red-100' };
+      if (v < 70) return { status: 'Low', color: 'text-red-600', bg: 'bg-red-100', icon: TrendingDown };
+      if (v <= 100) return { status: 'Normal', color: 'text-green-600', bg: 'bg-green-100', icon: CheckCircle };
+      if (v <= 125) return { status: 'Pre-diabetic', color: 'text-yellow-600', bg: 'bg-yellow-100', icon: AlertCircle };
+      return { status: 'High', color: 'text-red-600', bg: 'bg-red-100', icon: TrendingUp };
     } else {
-      if (v < 70) return { status: 'Low', color: 'text-red-600', bg: 'bg-red-100' };
-      if (v <= 140) return { status: 'Normal', color: 'text-green-600', bg: 'bg-green-100' };
-      if (v <= 199) return { status: 'Pre-diabetic', color: 'text-yellow-600', bg: 'bg-yellow-100' };
-      return { status: 'High', color: 'text-red-600', bg: 'bg-red-100' };
+      if (v < 70) return { status: 'Low', color: 'text-red-600', bg: 'bg-red-100', icon: TrendingDown };
+      if (v <= 140) return { status: 'Normal', color: 'text-green-600', bg: 'bg-green-100', icon: CheckCircle };
+      if (v <= 199) return { status: 'Pre-diabetic', color: 'text-yellow-600', bg: 'bg-yellow-100', icon: AlertCircle };
+      return { status: 'High', color: 'text-red-600', bg: 'bg-red-100', icon: TrendingUp };
     }
   };
 
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    setProfile(null);
-    localStorage.removeItem('omnia_token');
-    toast.success('Logged out successfully');
-  };
-
-  // If not logged in, show welcome screen
+  // If not logged in, show welcome screen with login prompt
   if (!token) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50">
         <header className="border-b border-border/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Button variant="ghost" onClick={() => navigate('/')} data-testid="back-button">
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
-                <img 
-                  src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
-                  alt="Omnia" 
-                  className="h-12 w-auto"
-                />
-              </div>
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" onClick={() => navigate('/')} data-testid="back-button">
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <img 
+                src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
+                alt="Omnia" 
+                className="h-12 w-auto"
+              />
             </div>
           </div>
         </header>
 
-        <main className="max-w-5xl mx-auto px-4 py-8">
-          {/* Hero Section */}
-          <div className="relative mb-12">
-            <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
-            <div className="relative bg-white/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 border border-teal-100 shadow-xl">
-              <div className="grid md:grid-cols-2 gap-8 items-center">
-                <div>
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-100 rounded-full text-teal-700 text-sm font-medium mb-4">
-                    <Heart className="w-4 h-4" />
-                    Your Health Companion
-                  </div>
-                  <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-                    Take Control of Your <span className="text-teal-600">Diabetes</span>
-                  </h1>
-                  <p className="text-lg text-gray-600 mb-6">
-                    Track your blood sugar, follow personalized diet plans, and stay prepared for emergencies — all in one place.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button 
-                      size="lg"
-                      onClick={() => setShowAuth(true)}
-                      className="bg-teal-600 hover:bg-teal-700 text-lg px-8 py-6 rounded-xl shadow-lg shadow-teal-500/30"
-                      data-testid="omnia-login-btn"
-                    >
-                      Get Started Free
-                    </Button>
-                    <Button 
-                      size="lg"
-                      variant="outline"
-                      onClick={() => navigate('/pharmacy')}
-                      className="text-lg px-8 py-6 rounded-xl border-orange-300 text-orange-600 hover:bg-orange-50"
-                    >
-                      <Pill className="w-5 h-5 mr-2" />
-                      Order Medicines
-                    </Button>
-                  </div>
-                </div>
-                <div className="hidden md:flex justify-center">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-teal-400 to-cyan-400 rounded-full blur-2xl opacity-20"></div>
-                    <div className="relative bg-gradient-to-br from-teal-500 to-teal-600 rounded-3xl p-8 text-white">
-                      <div className="text-center mb-4">
-                        <Droplets className="w-16 h-16 mx-auto mb-2 opacity-90" />
-                        <p className="text-sm opacity-80">Track Daily</p>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="bg-white/20 rounded-xl p-3 flex items-center gap-3">
-                          <div className="w-10 h-10 bg-white/30 rounded-lg flex items-center justify-center">
-                            <span className="text-lg font-bold">F</span>
-                          </div>
-                          <div>
-                            <p className="text-xs opacity-80">Fasting</p>
-                            <p className="font-semibold">98 mg/dL</p>
-                          </div>
-                          <span className="ml-auto text-xs bg-green-400/30 px-2 py-1 rounded">Normal</span>
-                        </div>
-                        <div className="bg-white/20 rounded-xl p-3 flex items-center gap-3">
-                          <div className="w-10 h-10 bg-white/30 rounded-lg flex items-center justify-center">
-                            <span className="text-lg font-bold">P</span>
-                          </div>
-                          <div>
-                            <p className="text-xs opacity-80">Post-Meal</p>
-                            <p className="font-semibold">135 mg/dL</p>
-                          </div>
-                          <span className="ml-auto text-xs bg-green-400/30 px-2 py-1 rounded">Normal</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <main className="max-w-4xl mx-auto px-4 py-12 text-center">
+          <div className="mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-100 rounded-full text-teal-700 text-sm font-medium mb-6">
+              <Heart className="w-4 h-4" />
+              Diabetes Care Portal
             </div>
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-            <Card className="bg-gradient-to-br from-teal-50 to-white border-teal-200 hover:shadow-lg transition-all hover:-translate-y-1">
-              <CardContent className="p-5">
-                <div className="w-12 h-12 rounded-xl bg-teal-500 flex items-center justify-center mb-4 shadow-lg shadow-teal-500/30">
-                  <Activity className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="font-semibold text-gray-800 mb-1">Sugar Tracking</h3>
-                <p className="text-sm text-gray-500">Log FBS & PPBS with instant analysis</p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-green-50 to-white border-green-200 hover:shadow-lg transition-all hover:-translate-y-1">
-              <CardContent className="p-5">
-                <div className="w-12 h-12 rounded-xl bg-green-500 flex items-center justify-center mb-4 shadow-lg shadow-green-500/30">
-                  <Apple className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="font-semibold text-gray-800 mb-1">Diet Plans</h3>
-                <p className="text-sm text-gray-500">Indian veg & non-veg meal guides</p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-red-50 to-white border-red-200 hover:shadow-lg transition-all hover:-translate-y-1">
-              <CardContent className="p-5">
-                <div className="w-12 h-12 rounded-xl bg-red-500 flex items-center justify-center mb-4 shadow-lg shadow-red-500/30">
-                  <AlertTriangle className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="font-semibold text-gray-800 mb-1">Emergency Help</h3>
-                <p className="text-sm text-gray-500">Hypoglycemia first-aid guide</p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-purple-50 to-white border-purple-200 hover:shadow-lg transition-all hover:-translate-y-1">
-              <CardContent className="p-5">
-                <div className="w-12 h-12 rounded-xl bg-purple-500 flex items-center justify-center mb-4 shadow-lg shadow-purple-500/30">
-                  <TestTube className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="font-semibold text-gray-800 mb-1">Book Tests</h3>
-                <p className="text-sm text-gray-500">HbA1c, FBS, Lipid Profile</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Order Medicine CTA */}
-          <Card className="bg-gradient-to-r from-orange-500 to-amber-500 border-0 text-white mb-8 overflow-hidden">
-            <CardContent className="p-6 relative">
-              <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-              <div className="absolute right-8 bottom-0 w-24 h-24 bg-white/10 rounded-full -mb-12"></div>
-              <div className="relative flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                    <Pill className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-1">Need Diabetic Medicines?</h3>
-                    <p className="text-orange-100">Order monthly supplies from Orange Pharmacy</p>
-                  </div>
-                </div>
-                <Button 
-                  onClick={() => navigate('/pharmacy')}
-                  className="bg-white text-orange-600 hover:bg-orange-50 font-semibold px-6"
-                  data-testid="order-medicine-welcome-btn"
-                >
-                  Order Now
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Disclaimer */}
-          <div className="text-center">
-            <p className="text-sm text-gray-500 flex items-center justify-center gap-2">
-              <Info className="w-4 h-4" />
-              This portal is for education and tracking only. Always consult your doctor for medical advice.
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Take Control of Your <span className="text-teal-600">Diabetes</span>
+            </h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+              Track blood sugar, follow diet plans, and stay prepared for emergencies.
             </p>
           </div>
+
+          <Card className="max-w-md mx-auto p-8 bg-white shadow-xl">
+            <div className="text-center mb-6">
+              <Activity className="w-16 h-16 mx-auto text-teal-500 mb-4" />
+              <h2 className="text-xl font-semibold mb-2">Login Required</h2>
+              <p className="text-gray-600">Please login to access Omnia Diabetes Care features</p>
+            </div>
+            <Button 
+              onClick={() => navigate('/')}
+              className="w-full bg-teal-600 hover:bg-teal-700 text-lg py-6"
+            >
+              Go to Home & Login
+            </Button>
+          </Card>
         </main>
-
-        {/* Auth Dialog */}
-        <Dialog open={showAuth} onOpenChange={setShowAuth}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <img 
-                  src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
-                  alt="Omnia" 
-                  className="h-8 w-auto"
-                />
-                {authStep === 'profile' ? 'Complete Your Profile' : 'Welcome to Omnia'}
-              </DialogTitle>
-              <DialogDescription>
-                {authStep === 'phone' && 'Enter your mobile number to continue'}
-                {authStep === 'otp' && 'Enter the OTP sent to your phone'}
-                {authStep === 'register' && 'Create your account'}
-                {authStep === 'profile' && 'Help us personalize your experience'}
-              </DialogDescription>
-            </DialogHeader>
-
-            {authStep === 'phone' && (
-              <div className="space-y-4">
-                <div>
-                  <Label>Mobile Number</Label>
-                  <div className="flex gap-2">
-                    <div className="flex items-center px-3 bg-gray-100 rounded-lg">
-                      <span className="text-gray-600">+91</span>
-                    </div>
-                    <Input 
-                      type="tel"
-                      placeholder="Enter 10-digit number"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                      className="flex-1"
-                    />
-                  </div>
-                </div>
-                <Button onClick={handleSendOtp} disabled={loading} className="w-full bg-teal-600 hover:bg-teal-700">
-                  {loading ? 'Sending...' : 'Send OTP'}
-                </Button>
-              </div>
-            )}
-
-            {authStep === 'otp' && (
-              <div className="space-y-4">
-                <div>
-                  <Label>Enter OTP</Label>
-                  <Input 
-                    type="text"
-                    placeholder="Enter 6-digit OTP"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    className="text-center text-2xl tracking-widest"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => setAuthStep('phone')} className="flex-1">
-                    Back
-                  </Button>
-                  <Button onClick={handleVerifyOtp} disabled={loading} className="flex-1 bg-teal-600 hover:bg-teal-700">
-                    {loading ? 'Verifying...' : 'Verify OTP'}
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {authStep === 'register' && (
-              <form onSubmit={handleRegister} className="space-y-4">
-                <div>
-                  <Label>Full Name *</Label>
-                  <Input 
-                    required
-                    value={authData.name}
-                    onChange={(e) => setAuthData({...authData, name: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label>Email</Label>
-                  <Input 
-                    type="email"
-                    value={authData.email}
-                    onChange={(e) => setAuthData({...authData, email: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label>Password *</Label>
-                  <Input 
-                    type="password"
-                    required
-                    value={authData.password}
-                    onChange={(e) => setAuthData({...authData, password: e.target.value})}
-                  />
-                </div>
-                <Button type="submit" disabled={loading} className="w-full bg-teal-600 hover:bg-teal-700">
-                  {loading ? 'Creating Account...' : 'Create Account'}
-                </Button>
-              </form>
-            )}
-
-            {authStep === 'profile' && (
-              <div className="space-y-4">
-                <div>
-                  <Label>Diabetes Type *</Label>
-                  <Select value={profileData.diabetesType} onValueChange={(v) => setProfileData({...profileData, diabetesType: v})}>
-                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="type1">Type 1 Diabetes</SelectItem>
-                      <SelectItem value="type2">Type 2 Diabetes</SelectItem>
-                      <SelectItem value="gestational">Gestational Diabetes</SelectItem>
-                      <SelectItem value="prediabetes">Pre-diabetes</SelectItem>
-                      <SelectItem value="notsure">Not Sure</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Age *</Label>
-                    <Input 
-                      type="number"
-                      value={profileData.age}
-                      onChange={(e) => setProfileData({...profileData, age: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label>Gender *</Label>
-                    <Select value={profileData.gender} onValueChange={(v) => setProfileData({...profileData, gender: v})}>
-                      <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Height (cm)</Label>
-                    <Input 
-                      type="number"
-                      placeholder="e.g., 165"
-                      value={profileData.height}
-                      onChange={(e) => setProfileData({...profileData, height: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label>Weight (kg)</Label>
-                    <Input 
-                      type="number"
-                      placeholder="e.g., 70"
-                      value={profileData.weight}
-                      onChange={(e) => setProfileData({...profileData, weight: e.target.value})}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label>Current Medications (optional)</Label>
-                  <Input 
-                    placeholder="e.g., Metformin 500mg"
-                    value={profileData.medications}
-                    onChange={(e) => setProfileData({...profileData, medications: e.target.value})}
-                  />
-                </div>
-                <Button onClick={handleSaveProfile} disabled={loading} className="w-full bg-teal-600 hover:bg-teal-700">
-                  {loading ? 'Saving...' : 'Save & Continue'}
-                </Button>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
       </div>
     );
   }
 
-  // Logged in view
+  // Logged in - Show Dashboard
   return (
-    <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white">
-      <header className="border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50">
+      <header className="border-b border-border/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button variant="ghost" onClick={() => navigate('/')} data-testid="back-button">
@@ -770,137 +446,122 @@ const Omnia = () => {
                 className="h-10 w-auto"
               />
             </div>
-            <Button variant="outline" size="sm" onClick={logout}>Logout</Button>
+            <span className="text-sm text-gray-500">Welcome, {user?.name || 'User'}</span>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Welcome Card */}
-        <Card className="mb-8 bg-gradient-to-r from-teal-500 to-teal-600 text-white border-0">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold mb-1">Welcome, {user?.name || 'User'}!</h2>
-                <p className="text-teal-100">
-                  {profile?.diabetesType === 'type1' && 'Type 1 Diabetes'}
-                  {profile?.diabetesType === 'type2' && 'Type 2 Diabetes'}
-                  {profile?.diabetesType === 'gestational' && 'Gestational Diabetes'}
-                  {profile?.diabetesType === 'prediabetes' && 'Pre-diabetes'}
-                  {profile?.diabetesType === 'notsure' && 'Diabetes Type: Not specified'}
-                  {!profile?.diabetesType && 'Complete your profile for personalized guidance'}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-teal-100">Today's Date</p>
-                <p className="text-lg font-semibold">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Emergency Alert Banner */}
-        <Card className="mb-6 border-red-300 bg-red-50 cursor-pointer hover:shadow-md transition-all" onClick={() => setShowEmergency(true)}>
+      <main className="max-w-6xl mx-auto px-4 py-6">
+        {/* Emergency Alert Banner - Always Visible */}
+        <Card 
+          className="mb-6 border-red-300 bg-gradient-to-r from-red-50 to-red-100 cursor-pointer hover:shadow-lg transition-all" 
+          onClick={() => setShowEmergency(true)}
+          data-testid="emergency-banner"
+        >
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center animate-pulse">
-                <AlertTriangle className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center animate-pulse">
+                <AlertTriangle className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1">
-                <p className="font-semibold text-red-800">Hypoglycemia Emergency Guide</p>
+                <p className="font-bold text-red-800">Hypoglycemia Emergency Guide</p>
                 <p className="text-sm text-red-600">Know what to do when blood sugar drops low - Tap to view</p>
               </div>
-              <ChevronRight className="w-5 h-5 text-red-400" />
+              <ChevronRight className="w-6 h-6 text-red-400" />
             </div>
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {/* Quick Actions Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <Card 
-            className="cursor-pointer hover:shadow-lg transition-all border-teal-200 hover:border-teal-400"
+            className="cursor-pointer hover:shadow-lg transition-all border-teal-200 hover:border-teal-400 active:scale-95"
             onClick={() => setShowSugarLog(true)}
             data-testid="log-sugar-btn"
           >
-            <CardContent className="p-4 text-center">
-              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-teal-100 flex items-center justify-center">
-                <Droplets className="w-6 h-6 text-teal-600" />
+            <CardContent className="p-5 text-center">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-lg">
+                <Droplets className="w-7 h-7 text-white" />
               </div>
-              <p className="font-medium text-gray-800">Log Sugar</p>
-              <p className="text-xs text-gray-500">Track readings</p>
+              <p className="font-semibold text-gray-800">Log Sugar</p>
+              <p className="text-xs text-gray-500 mt-1">FBS & PPBS</p>
             </CardContent>
           </Card>
 
           <Card 
-            className="cursor-pointer hover:shadow-lg transition-all border-green-200 hover:border-green-400"
+            className="cursor-pointer hover:shadow-lg transition-all border-green-200 hover:border-green-400 active:scale-95"
             onClick={() => setShowDiet(true)}
             data-testid="diet-plan-btn"
           >
-            <CardContent className="p-4 text-center">
-              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-green-100 flex items-center justify-center">
-                <Utensils className="w-6 h-6 text-green-600" />
+            <CardContent className="p-5 text-center">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg">
+                <Apple className="w-7 h-7 text-white" />
               </div>
-              <p className="font-medium text-gray-800">Diet Plan</p>
-              <p className="text-xs text-gray-500">Meal guidance</p>
+              <p className="font-semibold text-gray-800">Diet Plan</p>
+              <p className="text-xs text-gray-500 mt-1">Veg & Non-Veg</p>
             </CardContent>
           </Card>
 
           <Card 
-            className="cursor-pointer hover:shadow-lg transition-all border-purple-200 hover:border-purple-400"
+            className="cursor-pointer hover:shadow-lg transition-all border-purple-200 hover:border-purple-400 active:scale-95"
             onClick={() => setShowTests(true)}
             data-testid="book-tests-btn"
           >
-            <CardContent className="p-4 text-center">
-              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-purple-100 flex items-center justify-center">
-                <TestTube className="w-6 h-6 text-purple-600" />
+            <CardContent className="p-5 text-center">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg">
+                <TestTube className="w-7 h-7 text-white" />
               </div>
-              <p className="font-medium text-gray-800">Book Tests</p>
-              <p className="text-xs text-gray-500">HbA1c, FBS...</p>
+              <p className="font-semibold text-gray-800">Book Tests</p>
+              <p className="text-xs text-gray-500 mt-1">HbA1c, Lipid</p>
             </CardContent>
           </Card>
 
           <Card 
-            className="cursor-pointer hover:shadow-lg transition-all border-amber-200 hover:border-amber-400"
+            className="cursor-pointer hover:shadow-lg transition-all border-amber-200 hover:border-amber-400 active:scale-95"
             onClick={() => setShowWarnings(true)}
             data-testid="warning-signs-btn"
           >
-            <CardContent className="p-4 text-center">
-              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-amber-100 flex items-center justify-center">
-                <Info className="w-6 h-6 text-amber-600" />
+            <CardContent className="p-5 text-center">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
+                <Info className="w-7 h-7 text-white" />
               </div>
-              <p className="font-medium text-gray-800">Warning Signs</p>
-              <p className="text-xs text-gray-500">Know symptoms</p>
+              <p className="font-semibold text-gray-800">Warning Signs</p>
+              <p className="text-xs text-gray-500 mt-1">Know symptoms</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Recent Sugar Logs */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-teal-600" />
-              Recent Sugar Readings
-            </CardTitle>
+        <Card className="mb-6">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Activity className="w-5 h-5 text-teal-600" />
+                Recent Sugar Readings
+              </CardTitle>
+              <Button size="sm" variant="outline" onClick={() => setShowSugarLog(true)}>
+                + Add New
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             {sugarLogs.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {sugarLogs.slice(0, 5).map((log, idx) => {
                   const status = getSugarStatus(log.value, log.type);
+                  const StatusIcon = status.icon;
                   return (
-                    <div key={idx} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                    <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-gray-100">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg ${status.bg} flex items-center justify-center`}>
-                          {status.status === 'Normal' ? <CheckCircle className={`w-5 h-5 ${status.color}`} /> : 
-                           status.status === 'Low' ? <TrendingDown className={`w-5 h-5 ${status.color}`} /> :
-                           <TrendingUp className={`w-5 h-5 ${status.color}`} />}
+                        <div className={`w-10 h-10 rounded-xl ${status.bg} flex items-center justify-center`}>
+                          <StatusIcon className={`w-5 h-5 ${status.color}`} />
                         </div>
                         <div>
-                          <p className="font-medium">{log.value} mg/dL</p>
-                          <p className="text-xs text-gray-500">{log.type.toUpperCase()} • {log.date}</p>
+                          <p className="font-bold text-lg">{log.value} <span className="text-sm font-normal text-gray-500">mg/dL</span></p>
+                          <p className="text-xs text-gray-500">{log.type.toUpperCase()} • {log.date} {log.time && `at ${log.time}`}</p>
                         </div>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${status.bg} ${status.color}`}>
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${status.bg} ${status.color}`}>
                         {status.status}
                       </span>
                     </div>
@@ -910,8 +571,8 @@ const Omnia = () => {
             ) : (
               <div className="text-center py-8">
                 <Droplets className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-                <p className="text-gray-500">No readings logged yet</p>
-                <Button size="sm" className="mt-3 bg-teal-600" onClick={() => setShowSugarLog(true)}>
+                <p className="text-gray-500 mb-3">No readings logged yet</p>
+                <Button onClick={() => setShowSugarLog(true)} className="bg-teal-600 hover:bg-teal-700">
                   Log Your First Reading
                 </Button>
               </div>
@@ -919,25 +580,26 @@ const Omnia = () => {
           </CardContent>
         </Card>
 
-        {/* Order Medicine Section */}
-        <Card className="bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+        {/* Order Medicine CTA */}
+        <Card className="bg-gradient-to-r from-orange-500 to-amber-500 border-0 text-white overflow-hidden">
+          <CardContent className="p-6 relative">
+            <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+            <div className="relative flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-orange-100 flex items-center justify-center">
-                  <Pill className="w-7 h-7 text-orange-600" />
+                <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
+                  <Pill className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800 text-lg">Order Diabetic Medicines</h3>
-                  <p className="text-sm text-gray-600">Get monthly medicines delivered via Orange Pharmacy</p>
+                  <h3 className="text-xl font-bold">Order Diabetic Medicines</h3>
+                  <p className="text-orange-100 text-sm">Get monthly supplies delivered home</p>
                 </div>
               </div>
               <Button 
                 onClick={() => navigate('/pharmacy')}
-                className="bg-orange-500 hover:bg-orange-600"
+                className="bg-white text-orange-600 hover:bg-orange-50 font-semibold px-6 w-full sm:w-auto"
                 data-testid="order-medicine-btn"
               >
-                Order Now
+                Order from Orange Pharmacy
               </Button>
             </div>
           </CardContent>
@@ -955,13 +617,13 @@ const Omnia = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label>Reading Type</Label>
+              <Label>Reading Type *</Label>
               <Select value={newLog.type} onValueChange={(v) => setNewLog({...newLog, type: v})}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="fbs">FBS (Fasting Blood Sugar)</SelectItem>
-                  <SelectItem value="ppbs">PPBS (Post-Prandial)</SelectItem>
-                  <SelectItem value="random">Random</SelectItem>
+                  <SelectItem value="fbs">FBS (Fasting - Empty Stomach)</SelectItem>
+                  <SelectItem value="ppbs">PPBS (2 Hours After Meal)</SelectItem>
+                  <SelectItem value="random">Random (Anytime)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -972,6 +634,7 @@ const Omnia = () => {
                 placeholder="e.g., 120"
                 value={newLog.value}
                 onChange={(e) => setNewLog({...newLog, value: e.target.value})}
+                className="text-lg"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -994,55 +657,84 @@ const Omnia = () => {
             </div>
             
             <Card className="bg-teal-50 border-teal-200">
-              <CardContent className="p-3 text-sm">
-                <p className="font-medium text-teal-800 mb-1">Reference Ranges:</p>
-                <p className="text-teal-700">FBS: 70-100 mg/dL (Normal)</p>
-                <p className="text-teal-700">PPBS: 70-140 mg/dL (Normal)</p>
+              <CardContent className="p-3">
+                <p className="font-medium text-teal-800 text-sm mb-2">Reference Ranges:</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="bg-white rounded p-2">
+                    <p className="font-semibold text-teal-700">FBS (Fasting)</p>
+                    <p className="text-green-600">Normal: 70-100</p>
+                    <p className="text-yellow-600">Pre-diabetic: 100-125</p>
+                    <p className="text-red-600">Diabetic: 126+</p>
+                  </div>
+                  <div className="bg-white rounded p-2">
+                    <p className="font-semibold text-teal-700">PPBS (After Meal)</p>
+                    <p className="text-green-600">Normal: 70-140</p>
+                    <p className="text-yellow-600">Pre-diabetic: 140-199</p>
+                    <p className="text-red-600">Diabetic: 200+</p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
             
-            <Button onClick={handleAddSugarLog} disabled={loading} className="w-full bg-teal-600 hover:bg-teal-700">
+            <Button onClick={handleAddSugarLog} disabled={loading} className="w-full bg-teal-600 hover:bg-teal-700 py-6 text-lg">
               {loading ? 'Saving...' : 'Save Reading'}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Diet Plan Dialog */}
+      {/* Diet Plan Dialog - Detailed */}
       <Dialog open={showDiet} onOpenChange={setShowDiet}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col p-0">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0">
           <DialogHeader className="p-4 bg-gradient-to-r from-green-500 to-teal-500 text-white">
-            <DialogTitle className="flex items-center gap-2">
-              <Utensils className="w-5 h-5" />
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Utensils className="w-6 h-6" />
               Diabetic Diet Plan
             </DialogTitle>
             <DialogDescription className="text-green-100">
-              Indian-friendly meal guidance for diabetes management
+              Indian-friendly meal guidance • General guidance only - consult dietitian
             </DialogDescription>
           </DialogHeader>
           
-          <Tabs defaultValue="veg" className="flex-1 overflow-hidden">
-            <TabsList className="w-full justify-start px-4 pt-2 bg-gray-50">
-              <TabsTrigger value="veg">Vegetarian</TabsTrigger>
-              <TabsTrigger value="nonveg">Non-Vegetarian</TabsTrigger>
-              <TabsTrigger value="tips">Do's & Don'ts</TabsTrigger>
+          <Tabs defaultValue="veg" className="flex-1 overflow-hidden flex flex-col">
+            <TabsList className="w-full justify-start px-4 pt-2 bg-gray-50 flex-shrink-0">
+              <TabsTrigger value="veg" className="flex-1">🥗 Vegetarian</TabsTrigger>
+              <TabsTrigger value="nonveg" className="flex-1">🍗 Non-Veg</TabsTrigger>
+              <TabsTrigger value="tips" className="flex-1">📋 Tips</TabsTrigger>
             </TabsList>
             
-            <ScrollArea className="flex-1 h-[400px]">
-              <TabsContent value="veg" className="p-4 space-y-4">
+            <ScrollArea className="flex-1">
+              <TabsContent value="veg" className="p-4 space-y-4 m-0">
+                <Card className="bg-blue-50 border-blue-200">
+                  <CardContent className="p-3">
+                    <p className="text-sm text-blue-800">
+                      <strong>Recommended Timings:</strong> Breakfast {DIET_PLANS.timings.breakfast} | Lunch {DIET_PLANS.timings.lunch} | Dinner {DIET_PLANS.timings.dinner}
+                    </p>
+                  </CardContent>
+                </Card>
+                
                 {['breakfast', 'lunch', 'dinner', 'snacks'].map(meal => (
                   <Card key={meal} className="border-green-200">
-                    <CardHeader className="py-3">
-                      <CardTitle className="text-base capitalize text-green-700">{meal}</CardTitle>
+                    <CardHeader className="py-3 bg-green-50">
+                      <CardTitle className="text-base capitalize text-green-700 flex items-center gap-2">
+                        {meal === 'breakfast' && '🌅'}
+                        {meal === 'lunch' && '☀️'}
+                        {meal === 'dinner' && '🌙'}
+                        {meal === 'snacks' && '🥜'}
+                        {meal}
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="py-2">
                       {DIET_PLANS.vegetarian[meal].map((item, idx) => (
-                        <div key={idx} className="flex justify-between py-2 border-b last:border-0">
-                          <div>
-                            <p className="font-medium text-sm">{item.item}</p>
-                            <p className="text-xs text-gray-500">{item.portion}</p>
+                        <div key={idx} className="py-2 border-b last:border-0">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <p className="font-medium text-sm">{item.item}</p>
+                              <p className="text-xs text-gray-500">{item.portion}</p>
+                            </div>
+                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{item.calories} cal</span>
                           </div>
-                          <span className="text-xs text-gray-500">{item.calories} cal</span>
+                          <p className="text-xs text-green-600 mt-1">✓ {item.benefits}</p>
                         </div>
                       ))}
                     </CardContent>
@@ -1050,20 +742,23 @@ const Omnia = () => {
                 ))}
               </TabsContent>
               
-              <TabsContent value="nonveg" className="p-4 space-y-4">
+              <TabsContent value="nonveg" className="p-4 space-y-4 m-0">
                 {['breakfast', 'lunch', 'dinner', 'snacks'].map(meal => (
                   <Card key={meal} className="border-orange-200">
-                    <CardHeader className="py-3">
+                    <CardHeader className="py-3 bg-orange-50">
                       <CardTitle className="text-base capitalize text-orange-700">{meal}</CardTitle>
                     </CardHeader>
                     <CardContent className="py-2">
                       {DIET_PLANS.nonVegetarian[meal].map((item, idx) => (
-                        <div key={idx} className="flex justify-between py-2 border-b last:border-0">
-                          <div>
-                            <p className="font-medium text-sm">{item.item}</p>
-                            <p className="text-xs text-gray-500">{item.portion}</p>
+                        <div key={idx} className="py-2 border-b last:border-0">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <p className="font-medium text-sm">{item.item}</p>
+                              <p className="text-xs text-gray-500">{item.portion}</p>
+                            </div>
+                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{item.calories} cal</span>
                           </div>
-                          <span className="text-xs text-gray-500">{item.calories} cal</span>
+                          <p className="text-xs text-orange-600 mt-1">✓ {item.benefits}</p>
                         </div>
                       ))}
                     </CardContent>
@@ -1071,16 +766,18 @@ const Omnia = () => {
                 ))}
               </TabsContent>
               
-              <TabsContent value="tips" className="p-4 space-y-4">
+              <TabsContent value="tips" className="p-4 space-y-4 m-0">
                 <Card className="border-green-200 bg-green-50">
                   <CardHeader className="py-3">
                     <CardTitle className="text-base text-green-700 flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4" /> Do's
+                      <CheckCircle className="w-5 h-5" /> Do's - Follow These
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="py-2">
                     {DIET_PLANS.dos.map((tip, idx) => (
-                      <p key={idx} className="text-sm py-1 text-green-800">✓ {tip}</p>
+                      <p key={idx} className="text-sm py-1.5 text-green-800 border-b border-green-100 last:border-0">
+                        ✓ {tip}
+                      </p>
                     ))}
                   </CardContent>
                 </Card>
@@ -1088,12 +785,14 @@ const Omnia = () => {
                 <Card className="border-red-200 bg-red-50">
                   <CardHeader className="py-3">
                     <CardTitle className="text-base text-red-700 flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4" /> Don'ts
+                      <AlertCircle className="w-5 h-5" /> Don'ts - Avoid These
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="py-2">
                     {DIET_PLANS.donts.map((tip, idx) => (
-                      <p key={idx} className="text-sm py-1 text-red-800">✗ {tip}</p>
+                      <p key={idx} className="text-sm py-1.5 text-red-800 border-b border-red-100 last:border-0">
+                        ✗ {tip}
+                      </p>
                     ))}
                   </CardContent>
                 </Card>
@@ -1101,9 +800,9 @@ const Omnia = () => {
             </ScrollArea>
           </Tabs>
           
-          <div className="p-3 bg-amber-50 border-t border-amber-200">
+          <div className="p-3 bg-amber-50 border-t border-amber-200 flex-shrink-0">
             <p className="text-xs text-amber-700 text-center">
-              ⚠️ This is general guidance only. Please consult a dietitian for personalized diet plans.
+              ⚠️ This is general guidance only. Please consult a dietitian for personalized diet plans based on your condition.
             </p>
           </div>
         </DialogContent>
@@ -1118,19 +817,22 @@ const Omnia = () => {
               Book Diabetic Tests
             </DialogTitle>
             <DialogDescription>
-              Tests are booked via Proton Diagnostics, our partner lab.
+              Book tests via Proton Diagnostics - Our partner lab
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-3">
             {DIABETIC_TESTS.map(test => (
-              <Card key={test.id} className="border-purple-200 hover:shadow-md transition-all">
+              <Card key={test.id} className="border-purple-100 hover:border-purple-300 transition-all">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <p className="font-medium text-gray-800">{test.name}</p>
-                      <p className="text-sm text-gray-500">{test.description}</p>
-                      <p className="text-xs text-purple-600 mt-1">Recommended: {test.frequency}</p>
+                      <p className="font-semibold text-gray-800">{test.name}</p>
+                      <p className="text-sm text-gray-500 mt-1">{test.description}</p>
+                      <div className="flex items-center gap-3 mt-2">
+                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">{test.frequency}</span>
+                        <span className="text-xs text-gray-500">{test.price}</span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -1140,13 +842,13 @@ const Omnia = () => {
           
           <Button 
             onClick={() => { setShowTests(false); navigate('/proton'); }}
-            className="w-full bg-purple-600 hover:bg-purple-700 mt-4"
+            className="w-full bg-purple-600 hover:bg-purple-700 py-6 text-lg mt-4"
           >
-            Book Tests via Proton Diagnostics
+            Book Tests at Proton Diagnostics
           </Button>
           
-          <p className="text-xs text-gray-500 text-center">
-            Nevika Cura does not conduct tests directly. All tests are performed by partner labs.
+          <p className="text-xs text-gray-500 text-center mt-2">
+            Sample collection available at home. Tests conducted by certified labs.
           </p>
         </DialogContent>
       </Dialog>
@@ -1160,19 +862,22 @@ const Omnia = () => {
               Warning Signs of Diabetes
             </DialogTitle>
             <DialogDescription>
-              Recognize these symptoms early and consult your doctor.
+              Recognize these symptoms early and consult your doctor
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-3">
             {WARNING_SIGNS.map((item, idx) => (
-              <Card key={idx} className="border-amber-200">
+              <Card key={idx} className="border-amber-100 hover:border-amber-300 transition-all">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <span className="text-2xl">{item.icon}</span>
-                    <div>
-                      <p className="font-medium text-gray-800">{item.sign}</p>
-                      <p className="text-sm text-gray-500">{item.description}</p>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-800">{item.sign}</p>
+                      <p className="text-sm text-gray-500 mt-1">{item.description}</p>
+                      <p className="text-xs text-amber-600 mt-2 bg-amber-50 px-2 py-1 rounded inline-block">
+                        💡 {item.action}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -1183,102 +888,232 @@ const Omnia = () => {
           <Card className="bg-blue-50 border-blue-200 mt-4">
             <CardContent className="p-4 text-center">
               <p className="text-blue-800 font-medium">
-                🩺 If these symptoms persist, please consult your doctor immediately.
+                🩺 If any of these symptoms persist, please consult your doctor immediately.
               </p>
             </CardContent>
           </Card>
         </DialogContent>
       </Dialog>
 
-      {/* Emergency Hypoglycemia Dialog */}
+      {/* Emergency Hypoglycemia Dialog - Complete */}
       <Dialog open={showEmergency} onOpenChange={setShowEmergency}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto p-0">
-          <DialogHeader className="p-4 bg-gradient-to-r from-red-500 to-red-600 text-white">
-            <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5" />
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-4 bg-gradient-to-r from-red-500 to-red-600 text-white flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <AlertTriangle className="w-6 h-6" />
               Hypoglycemia Emergency Guide
             </DialogTitle>
             <DialogDescription className="text-red-100">
-              What to do when blood sugar drops low
+              What to do when blood sugar drops low - Save this information!
             </DialogDescription>
           </DialogHeader>
           
-          <div className="p-4 space-y-4">
-            <Card className="bg-red-50 border-red-200">
-              <CardContent className="p-4">
-                <h4 className="font-semibold text-red-800 mb-2">What is Hypoglycemia?</h4>
-                <p className="text-sm text-red-700">{HYPOGLYCEMIA_GUIDE.whatIs}</p>
-              </CardContent>
-            </Card>
-            
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-3">Symptoms to Watch</h4>
-              <div className="grid grid-cols-2 gap-2">
-                {HYPOGLYCEMIA_GUIDE.symptoms.map((item, idx) => (
-                  <div 
-                    key={idx} 
-                    className={`p-2 rounded-lg text-sm ${
-                      item.severity === 'danger' ? 'bg-red-100 text-red-800 font-medium' :
-                      item.severity === 'severe' ? 'bg-orange-100 text-orange-800' :
-                      item.severity === 'moderate' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-700'
-                    }`}
-                  >
-                    {item.symptom}
+          <ScrollArea className="flex-1">
+            <div className="p-4 space-y-4">
+              {/* What is it */}
+              <Card className="bg-red-50 border-red-200">
+                <CardContent className="p-4">
+                  <h4 className="font-bold text-red-800 mb-2">What is Hypoglycemia?</h4>
+                  <p className="text-sm text-red-700">{HYPOGLYCEMIA_GUIDE.whatIs}</p>
+                  <div className="mt-3">
+                    <p className="text-xs font-semibold text-red-800 mb-1">Common Causes:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {HYPOGLYCEMIA_GUIDE.causes.map((cause, idx) => (
+                        <span key={idx} className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">
+                          {cause}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                </CardContent>
+              </Card>
+              
+              {/* Symptoms by Severity */}
+              <div>
+                <h4 className="font-bold text-gray-800 mb-3">Symptoms to Watch</h4>
+                
+                <Card className="mb-2 border-yellow-200">
+                  <CardHeader className="py-2 bg-yellow-50">
+                    <CardTitle className="text-sm text-yellow-700">⚡ Early Symptoms</CardTitle>
+                  </CardHeader>
+                  <CardContent className="py-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      {HYPOGLYCEMIA_GUIDE.symptoms.early.map((item, idx) => (
+                        <div key={idx} className="text-xs p-2 bg-yellow-50 rounded">
+                          <p className="font-medium">{item.symptom}</p>
+                          <p className="text-gray-500">{item.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="mb-2 border-orange-200">
+                  <CardHeader className="py-2 bg-orange-50">
+                    <CardTitle className="text-sm text-orange-700">⚠️ Moderate Symptoms</CardTitle>
+                  </CardHeader>
+                  <CardContent className="py-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      {HYPOGLYCEMIA_GUIDE.symptoms.moderate.map((item, idx) => (
+                        <div key={idx} className="text-xs p-2 bg-orange-50 rounded">
+                          <p className="font-medium">{item.symptom}</p>
+                          <p className="text-gray-500">{item.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="border-red-300 bg-red-50">
+                  <CardHeader className="py-2 bg-red-100">
+                    <CardTitle className="text-sm text-red-700">🚨 SEVERE - Call 112 Immediately</CardTitle>
+                  </CardHeader>
+                  <CardContent className="py-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      {HYPOGLYCEMIA_GUIDE.symptoms.severe.map((item, idx) => (
+                        <div key={idx} className="text-xs p-2 bg-red-100 rounded">
+                          <p className="font-bold text-red-700">{item.symptom}</p>
+                          <p className="text-red-600">{item.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
+              
+              {/* 15-15 Rule */}
+              <Card className="border-green-300 bg-green-50">
+                <CardHeader className="py-3 bg-green-100">
+                  <CardTitle className="text-base text-green-800">✅ The 15-15 Rule - What To Do</CardTitle>
+                </CardHeader>
+                <CardContent className="py-3">
+                  {HYPOGLYCEMIA_GUIDE.rule15.steps.map((step, idx) => (
+                    <p key={idx} className="text-sm py-1 text-green-800">
+                      {idx + 1}. {step}
+                    </p>
+                  ))}
+                </CardContent>
+              </Card>
+              
+              {/* Fast Sugar Options */}
+              <Card className="border-blue-200">
+                <CardHeader className="py-2 bg-blue-50">
+                  <CardTitle className="text-sm text-blue-700">🍬 Fast-Acting Sugar Options (15g each)</CardTitle>
+                </CardHeader>
+                <CardContent className="py-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    {HYPOGLYCEMIA_GUIDE.fastSugarOptions.map((option, idx) => (
+                      <div key={idx} className="text-xs p-2 bg-blue-50 rounded border border-blue-100">
+                        <p className="font-medium text-blue-800">{option.item}</p>
+                        <p className="text-blue-600">{option.amount}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* If Unconscious */}
+              <Card className="border-red-400 bg-red-100">
+                <CardHeader className="py-3 bg-red-200">
+                  <CardTitle className="text-base text-red-800">🚨 If Person is UNCONSCIOUS</CardTitle>
+                </CardHeader>
+                <CardContent className="py-3">
+                  {HYPOGLYCEMIA_GUIDE.unconsciousPerson.map((action, idx) => (
+                    <p key={idx} className="text-sm py-1.5 text-red-800 font-medium border-b border-red-200 last:border-0">
+                      {idx + 1}. {action}
+                    </p>
+                  ))}
+                </CardContent>
+              </Card>
+              
+              {/* Prevention */}
+              <Card className="border-teal-200">
+                <CardHeader className="py-2 bg-teal-50">
+                  <CardTitle className="text-sm text-teal-700">🛡️ Prevention Tips</CardTitle>
+                </CardHeader>
+                <CardContent className="py-2">
+                  {HYPOGLYCEMIA_GUIDE.prevention.map((tip, idx) => (
+                    <p key={idx} className="text-xs py-1 text-teal-700">✓ {tip}</p>
+                  ))}
+                </CardContent>
+              </Card>
             </div>
-            
-            <Card className="bg-green-50 border-green-200">
-              <CardHeader className="py-3">
-                <CardTitle className="text-base text-green-700">🚨 What To Do Immediately</CardTitle>
-              </CardHeader>
-              <CardContent className="py-2">
-                {HYPOGLYCEMIA_GUIDE.immediateActions.map((action, idx) => (
-                  <p key={idx} className="text-sm py-1 text-green-800">
-                    {idx + 1}. {action}
-                  </p>
-                ))}
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-red-100 border-red-300">
-              <CardHeader className="py-3">
-                <CardTitle className="text-base text-red-700">⚠️ If Person is Unconscious</CardTitle>
-              </CardHeader>
-              <CardContent className="py-2">
-                {HYPOGLYCEMIA_GUIDE.dangerSigns.map((action, idx) => (
-                  <p key={idx} className="text-sm py-1 text-red-800 font-medium">
-                    • {action}
-                  </p>
-                ))}
-              </CardContent>
-            </Card>
-            
-            <div className="flex gap-3">
+          </ScrollArea>
+          
+          <div className="p-4 bg-gray-100 border-t flex-shrink-0">
+            <div className="flex gap-3 mb-3">
               <Button 
-                variant="outline" 
-                className="flex-1 border-red-300 text-red-600"
+                className="flex-1 bg-red-600 hover:bg-red-700"
                 onClick={() => window.open('tel:112', '_self')}
               >
                 <Phone className="w-4 h-4 mr-2" />
-                Call Emergency
+                Emergency 112
               </Button>
               <Button 
-                className="flex-1 bg-red-600 hover:bg-red-700"
+                variant="outline"
+                className="flex-1 border-teal-600 text-teal-600"
                 onClick={() => window.open('tel:9403890429', '_self')}
               >
                 <Phone className="w-4 h-4 mr-2" />
-                Call Clinic
+                Clinic: 9403890429
               </Button>
             </div>
-          </div>
-          
-          <div className="p-3 bg-gray-100 border-t">
             <p className="text-xs text-gray-600 text-center">
               ⚠️ This is emergency first-aid guidance, not medical treatment. Always seek professional help.
             </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Profile Setup Dialog */}
+      <Dialog open={showProfileSetup} onOpenChange={setShowProfileSetup}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Complete Your Diabetes Profile</DialogTitle>
+            <DialogDescription>Help us personalize your experience</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Diabetes Type *</Label>
+              <Select value={profileData.diabetesType} onValueChange={(v) => setProfileData({...profileData, diabetesType: v})}>
+                <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="type1">Type 1 Diabetes</SelectItem>
+                  <SelectItem value="type2">Type 2 Diabetes</SelectItem>
+                  <SelectItem value="gestational">Gestational Diabetes</SelectItem>
+                  <SelectItem value="prediabetes">Pre-diabetes</SelectItem>
+                  <SelectItem value="notsure">Not Sure</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Age</Label>
+                <Input 
+                  type="number"
+                  placeholder="e.g., 45"
+                  value={profileData.age}
+                  onChange={(e) => setProfileData({...profileData, age: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label>Gender</Label>
+                <Select value={profileData.gender} onValueChange={(v) => setProfileData({...profileData, gender: v})}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <Button onClick={handleSaveProfile} disabled={loading} className="w-full bg-teal-600 hover:bg-teal-700">
+              {loading ? 'Saving...' : 'Save & Continue'}
+            </Button>
+            <Button variant="ghost" onClick={() => setShowProfileSetup(false)} className="w-full">
+              Skip for now
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
