@@ -13,7 +13,8 @@ import { toast } from 'sonner';
 import { 
   ArrowLeft, Heart, Activity, AlertTriangle, Droplets, Apple, 
   Calendar, TrendingUp, TrendingDown, Pill, Phone,
-  Utensils, TestTube, ChevronRight, Info, CheckCircle, AlertCircle
+  Utensils, TestTube, ChevronRight, Info, CheckCircle, AlertCircle,
+  LineChart, Target, Trash2
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
