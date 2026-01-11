@@ -206,15 +206,15 @@ const HYPOGLYCEMIA_GUIDE = {
   ]
 };
 
-// Diabetic Tests
+// Diabetic Tests (prices removed for seamless booking)
 const DIABETIC_TESTS = [
-  { id: "fbs", name: "Fasting Blood Sugar (FBS)", description: "Blood sugar after 8-12 hours fasting. Normal: 70-100 mg/dL", frequency: "Monthly", price: "₹80-150" },
-  { id: "ppbs", name: "Post-Prandial Blood Sugar (PPBS)", description: "Blood sugar 2 hours after meal. Normal: <140 mg/dL", frequency: "Monthly", price: "₹80-150" },
-  { id: "hba1c", name: "HbA1c (Glycated Hemoglobin)", description: "3-month average blood sugar. Target: <7% for diabetics", frequency: "Every 3 months", price: "₹400-600" },
-  { id: "lipid", name: "Lipid Profile", description: "Cholesterol and triglyceride levels. Important for heart health", frequency: "Every 6 months", price: "₹400-700" },
-  { id: "kidney", name: "Kidney Function Test (KFT)", description: "Checks kidney health - creatinine, urea, eGFR", frequency: "Every 6-12 months", price: "₹500-800" },
-  { id: "urine", name: "Urine Microalbumin", description: "Early detection of kidney damage in diabetes", frequency: "Yearly", price: "₹300-500" },
-  { id: "liver", name: "Liver Function Test (LFT)", description: "Checks liver health - important if on medications", frequency: "Yearly", price: "₹400-700" }
+  { id: "fbs", name: "Fasting Blood Sugar (FBS)", description: "Blood sugar after 8-12 hours fasting. Normal: 70-100 mg/dL", frequency: "Monthly" },
+  { id: "ppbs", name: "Post-Prandial Blood Sugar (PPBS)", description: "Blood sugar 2 hours after meal. Normal: <140 mg/dL", frequency: "Monthly" },
+  { id: "hba1c", name: "HbA1c (Glycated Hemoglobin)", description: "3-month average blood sugar. Target: <7% for diabetics", frequency: "Every 3 months" },
+  { id: "lipid", name: "Lipid Profile", description: "Cholesterol and triglyceride levels. Important for heart health", frequency: "Every 6 months" },
+  { id: "kidney", name: "Kidney Function Test (KFT)", description: "Checks kidney health - creatinine, urea, eGFR", frequency: "Every 6-12 months" },
+  { id: "urine", name: "Urine Microalbumin", description: "Early detection of kidney damage in diabetes", frequency: "Yearly" },
+  { id: "liver", name: "Liver Function Test (LFT)", description: "Checks liver health - important if on medications", frequency: "Yearly" }
 ];
 
 const Omnia = () => {
