@@ -234,7 +234,7 @@ const Footer = () => {
             <div>
               <h4 className="font-semibold text-gray-800 mb-2">Your Rights</h4>
               <p>
-                You have the right to access, correct, or delete your personal data. Contact us at nevikacura@gmail.com for any privacy-related requests.
+                You have the right to access, correct, or delete your personal data. Contact us at help@nevikacura.com for any privacy-related requests.
               </p>
             </div>
           </div>
