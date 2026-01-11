@@ -87,7 +87,7 @@ const Home = () => {
       customBg: '#121f33',
       hideDecoration: true,
       fillCard: true,
-      extraBottomPadding: true
+      tallerCard: true
     }
   ];
 
