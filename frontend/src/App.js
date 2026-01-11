@@ -5,7 +5,7 @@ import DiaGyn from '@/pages/DiaGyn';
 import Proton from '@/pages/Proton';
 import Pharmacy from '@/pages/Pharmacy';
 import Evara from '@/pages/Evara';
-import Omnia from '@/pages/Omnia';
+import Glydex from '@/pages/Glydex';
 import Profile from '@/pages/Profile';
 import Admin from '@/pages/Admin';
 import StaffPortal from '@/pages/StaffPortal';
@@ -30,7 +30,7 @@ function App() {
             <Route path="/proton" element={<Proton />} />
             <Route path="/pharmacy" element={<Pharmacy />} />
             <Route path="/evara" element={<Evara />} />
-            <Route path="/omnia" element={<Omnia />} />
+            <Route path="/glydex" element={<Glydex />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/staff" element={<StaffPortal />} />

@@ -251,7 +251,7 @@ const Proton = () => {
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('imaging');
-  const [fromOmnia, setFromOmnia] = useState(false);
+  const [fromGlydex, setFromGlydex] = useState(false);
 
   // OTP state
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -263,17 +263,17 @@ const Proton = () => {
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef([]);
 
-  // Check for pre-selected tests from Omnia
+  // Check for pre-selected tests from Glydex
   useEffect(() => {
     const testsParam = searchParams.get('tests');
     const fromParam = searchParams.get('from');
     
-    if (testsParam && fromParam === 'omnia') {
+    if (testsParam && fromParam === 'glydex') {
       const preSelectedTests = decodeURIComponent(testsParam).split(',');
       setSelectedTests(preSelectedTests);
-      setFromOmnia(true);
+      setFromGlydex(true);
       setActiveTab('blood'); // Switch to blood/pathology tab for diabetic tests
-      toast.success(`${preSelectedTests.length} diabetic test${preSelectedTests.length > 1 ? 's' : ''} pre-selected from Omnia`);
+      toast.success(`${preSelectedTests.length} diabetic test${preSelectedTests.length > 1 ? 's' : ''} pre-selected from Glydex`);
     }
   }, [searchParams]);
 

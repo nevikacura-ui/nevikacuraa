@@ -74,13 +74,13 @@ const Home = () => {
       customBg: '#4A2463'
     },
     {
-      id: 'omnia',
-      name: 'Omnia',
+      id: 'glydex',
+      name: 'Glydex',
       logo: 'https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png',
       description: 'Diabetes Care Portal',
       bgColor: 'bg-gray-100',
       accentColor: 'border-teal-500',
-      path: '/omnia',
+      path: '/glydex',
       logoBg: 'bg-gray-100'
     }
   ];
@@ -231,14 +231,14 @@ const Home = () => {
               
               {/* Logo - takes most space */}
               <div 
-                className={`flex items-center justify-center flex-1 ${service.logoBg} ${service.id === 'evara' || service.id === 'omnia' ? '' : 'rounded-xl p-2'}`}
+                className={`flex items-center justify-center flex-1 ${service.logoBg} ${service.id === 'evara' || service.id === 'glydex' ? '' : 'rounded-xl p-2'}`}
                 style={service.customBg ? { backgroundColor: service.customBg } : {}}
               >
                 <img 
                   src={service.logo} 
                   alt={service.name} 
                   className={`object-contain transition-transform group-hover:scale-105 ${
-                    service.id === 'evara' || service.id === 'omnia' ? 'w-full h-auto max-h-32' : 'w-auto max-h-28 mix-blend-multiply'
+                    service.id === 'evara' || service.id === 'glydex' ? 'w-full h-auto max-h-32' : 'w-auto max-h-28 mix-blend-multiply'
                   }`}
                   data-testid={`service-logo-${service.id}`}
                 />
