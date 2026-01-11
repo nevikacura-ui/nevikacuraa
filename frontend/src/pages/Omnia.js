@@ -1185,34 +1185,32 @@ const Omnia = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <ScrollArea className="flex-1 p-4">
+          <div className="flex-1 overflow-y-auto p-4" style={{ WebkitOverflowScrolling: 'touch' }}>
             <div className="space-y-2">
               {DIABETIC_TESTS.map(test => {
                 const isSelected = selectedDiabeticTests.includes(test.name);
                 return (
-                  <Card 
+                  <div 
                     key={test.id} 
-                    className={`cursor-pointer transition-all ${isSelected ? 'border-purple-500 bg-purple-50 ring-2 ring-purple-200' : 'border-gray-200 hover:border-purple-300'}`}
+                    className={`cursor-pointer rounded-lg border p-4 ${isSelected ? 'border-purple-500 bg-purple-50 ring-2 ring-purple-200' : 'border-gray-200 active:bg-gray-50'}`}
                     onClick={() => toggleTestSelection(test.name)}
                     data-testid={`test-${test.id}`}
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-3">
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${isSelected ? 'border-purple-500 bg-purple-500' : 'border-gray-300'}`}>
-                          {isSelected && <CheckCircle className="w-4 h-4 text-white" />}
-                        </div>
-                        <div className="flex-1">
-                          <p className={`font-semibold ${isSelected ? 'text-purple-700' : 'text-gray-800'}`}>{test.name}</p>
-                          <p className="text-sm text-gray-500 mt-1">{test.description}</p>
-                          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded mt-2 inline-block">{test.frequency}</span>
-                        </div>
+                    <div className="flex items-start gap-3">
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${isSelected ? 'border-purple-500 bg-purple-500' : 'border-gray-300'}`}>
+                        {isSelected && <CheckCircle className="w-4 h-4 text-white" />}
                       </div>
-                    </CardContent>
-                  </Card>
+                      <div className="flex-1">
+                        <p className={`font-semibold ${isSelected ? 'text-purple-700' : 'text-gray-800'}`}>{test.name}</p>
+                        <p className="text-sm text-gray-500 mt-1">{test.description}</p>
+                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded mt-2 inline-block">{test.frequency}</span>
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
             </div>
-          </ScrollArea>
+          </div>
           
           <div className="p-4 border-t bg-gray-50 flex-shrink-0">
             {selectedDiabeticTests.length > 0 && (
