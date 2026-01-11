@@ -70,7 +70,7 @@ const Home = () => {
       accentColor: 'border-transparent',
       path: '/evara',
       logoBg: '',
-      customBg: '#3d2462'
+      customBg: '#7B2C9B'
     }
   ];
 
