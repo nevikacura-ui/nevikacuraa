@@ -5955,9 +5955,11 @@ async def get_sugar_logs(user = Depends(get_current_user)):
 @api_router.post("/omnia/sugar-logs")
 async def add_sugar_log(data: SugarLog, user = Depends(get_current_user)):
     """Add a new blood sugar reading"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
     log = {
         "id": str(uuid.uuid4()),
-        "user_id": user["id"],
+        "user_id": user.id,
         "type": data.type,
         "value": data.value,
         "date": data.date,
