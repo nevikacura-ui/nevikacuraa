@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Phone, Mail, MapPin, Clock, Shield, FileText, Users, X, Download, Smartphone } from 'lucide-react';
 
 const Footer = () => {
-  const [showAbout, setShowAbout] = useState(false);
-  const [showPrivacy, setShowPrivacy] = useState(false);
-  const [showTerms, setShowTerms] = useState(false);
+  const navigate = useNavigate();
   const [showContact, setShowContact] = useState(false);
 
   const openWhatsApp = () => {
@@ -58,31 +57,31 @@ const Footer = () => {
               <h4 className="font-semibold text-white mb-4">Quick Links</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <button 
-                    onClick={() => setShowAbout(true)}
+                  <a 
+                    href="/about"
                     className="hover:text-brand-teal transition-colors"
                     data-testid="footer-about-link"
                   >
                     About Us
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button 
-                    onClick={() => setShowPrivacy(true)}
+                  <a 
+                    href="/privacy"
                     className="hover:text-brand-teal transition-colors"
                     data-testid="footer-privacy-link"
                   >
                     Privacy Policy
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button 
-                    onClick={() => setShowTerms(true)}
+                  <a 
+                    href="/terms"
                     className="hover:text-brand-teal transition-colors"
                     data-testid="footer-terms-link"
                   >
                     Terms & Conditions
-                  </button>
+                  </a>
                 </li>
                 <li>
                   <button 
