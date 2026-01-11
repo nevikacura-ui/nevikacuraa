@@ -71,8 +71,7 @@ const Home = () => {
       accentColor: 'border-transparent',
       path: '/evara',
       logoBg: '',
-      customBg: '#782B8B',
-      logoScale: 1.35
+      customBg: '#4A2463'
     },
     {
       id: 'glydex',
@@ -242,7 +241,6 @@ const Home = () => {
                   className={`object-contain transition-transform group-hover:scale-105 ${
                     service.id === 'evara' || service.id === 'glydex' ? 'w-full h-auto max-h-32 rounded-lg' : 'w-auto max-h-28 mix-blend-multiply'
                   }`}
-                  style={service.logoScale ? { transform: `scale(${service.logoScale})` } : {}}
                   data-testid={`service-logo-${service.id}`}
                 />
               </div>
