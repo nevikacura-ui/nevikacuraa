@@ -674,25 +674,68 @@ const Omnia = () => {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6">
-        {/* Emergency Alert Banner - Always Visible */}
-        <Card 
-          className="mb-6 border-red-300 bg-gradient-to-r from-red-50 to-red-100 cursor-pointer hover:shadow-lg transition-all" 
-          onClick={() => setShowEmergency(true)}
-          data-testid="emergency-banner"
-        >
-          <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center animate-pulse">
-                <AlertTriangle className="w-6 h-6 text-white" />
+        {/* Health Guides Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {/* Emergency Alert Banner */}
+          <Card 
+            className="border-red-300 bg-gradient-to-r from-red-50 to-red-100 cursor-pointer hover:shadow-lg transition-all" 
+            onClick={() => setShowEmergency(true)}
+            data-testid="emergency-banner"
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center animate-pulse flex-shrink-0">
+                  <AlertTriangle className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-red-800 text-sm">Hypoglycemia Emergency</p>
+                  <p className="text-xs text-red-600">Low sugar? Know what to do</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-red-400 flex-shrink-0" />
               </div>
-              <div className="flex-1">
-                <p className="font-bold text-red-800">Hypoglycemia Emergency Guide</p>
-                <p className="text-sm text-red-600">Know what to do when blood sugar drops low - Tap to view</p>
+            </CardContent>
+          </Card>
+
+          {/* Neuropathy Guide */}
+          <Card 
+            className="border-purple-300 bg-gradient-to-r from-purple-50 to-purple-100 cursor-pointer hover:shadow-lg transition-all" 
+            onClick={() => setShowNeuropathy(true)}
+            data-testid="neuropathy-banner"
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center flex-shrink-0">
+                  <Activity className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-purple-800 text-sm">Diabetic Neuropathy</p>
+                  <p className="text-xs text-purple-600">Nerve care & prevention tips</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-purple-400 flex-shrink-0" />
               </div>
-              <ChevronRight className="w-6 h-6 text-red-400" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+
+          {/* Foot Care Guide */}
+          <Card 
+            className="border-blue-300 bg-gradient-to-r from-blue-50 to-blue-100 cursor-pointer hover:shadow-lg transition-all" 
+            onClick={() => setShowFootCare(true)}
+            data-testid="footcare-banner"
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                  <Heart className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-blue-800 text-sm">Diabetic Foot Care</p>
+                  <p className="text-xs text-blue-600">Daily care & prevention</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-blue-400 flex-shrink-0" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Quick Actions Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
