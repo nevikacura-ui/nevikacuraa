@@ -765,7 +765,7 @@ const Omnia = () => {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <img 
-                src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/6hsg4xui_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
+                src="https://customer-assets.emergentagent.com/job_healthcare-app-23/artifacts/8vlnp1xf_file_00000000c4247207a977591b05d5eb1d%20%281%29.png" 
                 alt="Omnia" 
                 className="h-10 w-auto"
               />
