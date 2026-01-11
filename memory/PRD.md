@@ -122,6 +122,7 @@ Build a modern healthcare application for "Nevika Cura" with four core services:
 - [x] **Diagnostic Order SMS:** Confirmed working (Twilio SID verified)
 - [x] **Pharmacy Status Update SMS:** Confirmed working (Twilio SID verified)
 - [x] **Diagnostic Status Update SMS:** Confirmed working (Twilio SID verified)
+- [x] **OTP via Twilio Verify:** Fixed .env configuration issue (Jan 11, 2026) - OTP now uses Twilio SMS, not mock
 - [x] Test report: `/app/test_reports/iteration_10.json`
 
 #### Twilio SMS OTP Integration - COMPLETED
