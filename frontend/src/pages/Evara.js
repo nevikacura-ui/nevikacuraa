@@ -1582,6 +1582,271 @@ const Evara = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Week-by-Week Pregnancy Guide Dialog */}
+      <Dialog open={showPregnancyWeeks} onOpenChange={setShowPregnancyWeeks}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Baby className="w-5 h-5 text-blue-500" />
+              Week-by-Week Pregnancy Guide
+            </DialogTitle>
+            <DialogDescription>
+              Track your baby's development from week 1 to 42
+            </DialogDescription>
+          </DialogHeader>
+          
+          <ScrollArea className="flex-1 pr-4">
+            {selectedWeek ? (
+              <div className="space-y-4">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setSelectedWeek(null)}
+                  className="mb-2"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-1" /> Back to all weeks
+                </Button>
+                
+                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl">
+                  <h3 className="text-xl font-bold text-blue-800 mb-2">{selectedWeek.title}</h3>
+                  <div className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm mb-4">
+                    Baby size: {selectedWeek.size}
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <Card className="border-pink-200">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm text-pink-600 flex items-center gap-2">
+                        <Baby className="w-4 h-4" /> Baby's Development
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-700">{selectedWeek.baby}</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="border-purple-200">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm text-purple-600 flex items-center gap-2">
+                        <Heart className="w-4 h-4" /> Mom's Changes
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-700">{selectedWeek.mom}</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="border-amber-200 bg-amber-50">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm text-amber-600 flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" /> Tip of the Week
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-700">{selectedWeek.tip}</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  <div className="text-center p-2 bg-pink-50 rounded-lg">
+                    <p className="text-xs text-pink-600">1st Trimester</p>
+                    <p className="font-semibold text-pink-800">Weeks 1-12</p>
+                  </div>
+                  <div className="text-center p-2 bg-purple-50 rounded-lg">
+                    <p className="text-xs text-purple-600">2nd Trimester</p>
+                    <p className="font-semibold text-purple-800">Weeks 13-27</p>
+                  </div>
+                  <div className="text-center p-2 bg-blue-50 rounded-lg">
+                    <p className="text-xs text-blue-600">3rd Trimester</p>
+                    <p className="font-semibold text-blue-800">Weeks 28-42</p>
+                  </div>
+                </div>
+                
+                {pregnancyWeeks.map((week) => (
+                  <button
+                    key={week.week}
+                    onClick={() => setSelectedWeek(week)}
+                    className={`w-full text-left p-3 rounded-lg border transition-all hover:shadow-md ${
+                      week.week <= 12 ? 'border-pink-200 hover:bg-pink-50' :
+                      week.week <= 27 ? 'border-purple-200 hover:bg-purple-50' :
+                      'border-blue-200 hover:bg-blue-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-gray-800">{week.title}</p>
+                        <p className="text-xs text-gray-500">Size: {week.size}</p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Home Services Dialog */}
+      <Dialog open={showHomeServices} onOpenChange={setShowHomeServices}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Home className="w-5 h-5 text-green-500" />
+              Home Services
+            </DialogTitle>
+            <DialogDescription>
+              Professional healthcare services at your doorstep
+            </DialogDescription>
+          </DialogHeader>
+          
+          <ScrollArea className="flex-1 pr-4">
+            <div className="space-y-3">
+              {homeServices.map((service) => (
+                <Card key={service.id} className="border-green-200 hover:shadow-md transition-all">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      {service.id === 'postnatal_nurse' && <Heart className="w-4 h-4 text-pink-500" />}
+                      {service.id === 'lactation_consultant' && <Baby className="w-4 h-4 text-blue-500" />}
+                      {service.id === 'physiotherapy' && <Activity className="w-4 h-4 text-purple-500" />}
+                      {service.id === 'sample_collection' && <MapPin className="w-4 h-4 text-green-500" />}
+                      {service.name}
+                    </CardTitle>
+                    <CardDescription>{service.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div className="flex flex-wrap gap-1">
+                      {service.includes.map((item, idx) => (
+                        <span key={idx} className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-500 flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {service.duration}
+                      </span>
+                      {service.redirect ? (
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => { setShowHomeServices(false); navigate(service.redirect); }}
+                          className="text-green-600 border-green-300"
+                        >
+                          Book Now <ChevronRight className="w-3 h-3 ml-1" />
+                        </Button>
+                      ) : (
+                        <Button 
+                          size="sm" 
+                          className="bg-green-500 hover:bg-green-600"
+                          onClick={() => toast.info('Our team will contact you within 24 hours. Call 9403890429 for immediate assistance.')}
+                        >
+                          Request Service
+                        </Button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 italic">{service.note}</p>
+                  </CardContent>
+                </Card>
+              ))}
+              
+              <Card className="bg-amber-50 border-amber-200">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-amber-800">Important Note</p>
+                      <p className="text-xs text-amber-700">
+                        These services are coordinated through our partner healthcare providers. Evara facilitates booking but does not directly provide medical services.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Community Sessions Dialog */}
+      <Dialog open={showCommunity} onOpenChange={setShowCommunity}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Video className="w-5 h-5 text-amber-500" />
+              Live Sessions & Community
+            </DialogTitle>
+            <DialogDescription>
+              Learn from experts and connect with other women
+            </DialogDescription>
+          </DialogHeader>
+          
+          <ScrollArea className="flex-1 pr-4">
+            <div className="space-y-4">
+              {/* Upcoming Live Session */}
+              <Card className="bg-gradient-to-r from-amber-100 to-orange-100 border-amber-300">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base text-amber-800">Upcoming Live Session</CardTitle>
+                    <span className="flex items-center gap-1 text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
+                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span> LIVE
+                    </span>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="font-medium text-gray-800">Monthly Q&A with Gynecologist</p>
+                  <p className="text-sm text-gray-600">Submit your questions and get answers from our expert</p>
+                  <div className="flex items-center gap-4 mt-2 text-xs text-amber-700">
+                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Last Saturday of every month</span>
+                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> 11:00 AM IST</span>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Recorded Sessions */}
+              <h4 className="font-medium text-gray-700 flex items-center gap-2">
+                <PlayCircle className="w-4 h-4" /> Recorded Sessions
+              </h4>
+              
+              {communitySessions.map((session) => (
+                <Card key={session.id} className="border-gray-200 hover:shadow-md transition-all">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-base">{session.title}</CardTitle>
+                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                        {session.duration}
+                      </span>
+                    </div>
+                    <CardDescription>{session.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <p className="text-xs text-gray-500">Hosted by: {session.host}</p>
+                    <div className="flex flex-wrap gap-1">
+                      {session.topics.map((topic, idx) => (
+                        <span key={idx} className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
+                          {topic}
+                        </span>
+                      ))}
+                    </div>
+                    <Button 
+                      size="sm" 
+                      className="w-full mt-2 bg-amber-500 hover:bg-amber-600"
+                      onClick={() => toast.success(`Registered for ${session.title}! You'll receive access details via SMS.`)}
+                    >
+                      <PlayCircle className="w-4 h-4 mr-2" /> Watch Now
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
       {/* Reminders Dialog */}
       <Dialog open={showReminders} onOpenChange={setShowReminders}>
         <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
