@@ -206,6 +206,101 @@ const HYPOGLYCEMIA_GUIDE = {
   ]
 };
 
+// Diabetic Neuropathy Guide
+const NEUROPATHY_GUIDE = {
+  whatIs: "Diabetic neuropathy is nerve damage caused by prolonged high blood sugar. It most commonly affects the legs and feet, but can affect other parts of the body too. Early detection and good sugar control can prevent or slow progression.",
+  types: [
+    { name: "Peripheral Neuropathy", description: "Affects feet and legs first, then hands and arms. Most common type.", icon: "🦶" },
+    { name: "Autonomic Neuropathy", description: "Affects digestive system, bladder, heart rate, and blood pressure.", icon: "❤️" },
+    { name: "Proximal Neuropathy", description: "Affects thighs, hips, buttocks. Can cause weakness in legs.", icon: "🦵" },
+    { name: "Focal Neuropathy", description: "Sudden weakness of one nerve, often in hand, head, or leg.", icon: "🖐️" }
+  ],
+  symptoms: [
+    { symptom: "Numbness or tingling", area: "Feet, legs, hands", severity: "Early sign" },
+    { symptom: "Burning sensation", area: "Feet, especially at night", severity: "Common" },
+    { symptom: "Sharp, jabbing pain", area: "Affected areas", severity: "Moderate" },
+    { symptom: "Extreme sensitivity to touch", area: "Skin on feet/hands", severity: "Common" },
+    { symptom: "Muscle weakness", area: "Legs, difficulty walking", severity: "Progressive" },
+    { symptom: "Loss of balance", area: "While walking/standing", severity: "Advanced" },
+    { symptom: "Foot ulcers/infections", area: "Feet", severity: "Serious - see doctor" }
+  ],
+  prevention: [
+    "Keep blood sugar in target range - most important factor",
+    "Check feet daily for cuts, blisters, redness, swelling",
+    "Never walk barefoot, even at home",
+    "Wear comfortable, well-fitting shoes",
+    "Keep feet clean and dry, moisturize (not between toes)",
+    "Trim toenails straight across, file edges gently",
+    "Avoid extreme temperatures - test bath water first",
+    "Don't sit cross-legged for long periods",
+    "Exercise regularly to improve blood flow",
+    "Quit smoking - it worsens circulation"
+  ],
+  dailyExercises: [
+    { exercise: "Toe Wiggles", description: "Wiggle toes up and down for 30 seconds, 3 times daily", benefit: "Improves circulation" },
+    { exercise: "Ankle Circles", description: "Rotate ankles clockwise then counter-clockwise, 10 times each", benefit: "Maintains flexibility" },
+    { exercise: "Heel-Toe Raises", description: "While sitting, lift heels then toes alternately, 15 times", benefit: "Strengthens muscles" },
+    { exercise: "Towel Scrunches", description: "Place towel on floor, scrunch with toes, 10 times", benefit: "Foot muscle strength" },
+    { exercise: "Walking", description: "15-30 minutes daily walk in comfortable shoes", benefit: "Overall circulation" }
+  ],
+  whenToSeeDoctor: [
+    "Any cut or sore on foot that doesn't heal in 2 days",
+    "Signs of infection: redness, warmth, swelling, discharge",
+    "New numbness, tingling, or pain in feet/hands",
+    "Changes in foot shape or color",
+    "Difficulty walking or balance problems",
+    "Burning pain that disrupts sleep"
+  ]
+};
+
+// Diabetic Foot Care Guide
+const FOOT_CARE_GUIDE = {
+  importance: "Diabetes can cause poor blood flow and nerve damage in feet, making it harder to heal from injuries and notice problems. Proper foot care can prevent serious complications including infections and amputations.",
+  dailyChecklist: [
+    { task: "Inspect feet thoroughly", how: "Check top, bottom, sides, between toes. Use mirror for bottom.", look: "Cuts, blisters, redness, swelling, nail problems" },
+    { task: "Wash feet daily", how: "Use lukewarm water (test with elbow). Mild soap. Don't soak.", look: "Dry thoroughly, especially between toes" },
+    { task: "Moisturize", how: "Apply lotion on tops and bottoms of feet", look: "Avoid between toes to prevent fungal infection" },
+    { task: "Check shoes before wearing", how: "Run hand inside to feel for objects, rough spots", look: "Pebbles, torn lining, anything that could hurt" },
+    { task: "Wear clean, dry socks", how: "Change daily. Choose seamless, padded socks", look: "Avoid tight elastic bands that reduce circulation" }
+  ],
+  dos: [
+    "Cut toenails straight across, file edges smooth",
+    "Wear shoes that fit well - shop in afternoon when feet are larger",
+    "Break in new shoes gradually - 1-2 hours at a time",
+    "Wear slippers or shoes at home - never barefoot",
+    "Keep feet warm with socks - not heating pads",
+    "Wiggle toes and move ankles throughout the day",
+    "Put feet up when sitting to help circulation",
+    "Get feet checked at every doctor visit"
+  ],
+  donts: [
+    "Don't walk barefoot - even at home or beach",
+    "Don't use heating pads, hot water bottles on feet",
+    "Don't cut corns or calluses yourself",
+    "Don't use sharp objects on feet",
+    "Don't wear tight socks or shoes",
+    "Don't smoke - it reduces blood flow to feet",
+    "Don't ignore any foot problem, even small ones",
+    "Don't soak feet for long periods"
+  ],
+  shoeTips: [
+    { tip: "Right size", detail: "Shoes should have 1/2 inch space at longest toe" },
+    { tip: "Width matters", detail: "Shoes should be wide enough to not squeeze toes" },
+    { tip: "Low heels", detail: "Avoid high heels, choose shoes with good support" },
+    { tip: "Breathable material", detail: "Leather or canvas allows air flow" },
+    { tip: "Cushioned sole", detail: "Provides protection and shock absorption" },
+    { tip: "No seams inside", detail: "Inner seams can cause rubbing and blisters" }
+  ],
+  emergencySigns: [
+    { sign: "Color changes", description: "Foot turns red, blue, or black", action: "See doctor same day" },
+    { sign: "Temperature changes", description: "One foot much warmer or colder than other", action: "See doctor within 24 hours" },
+    { sign: "Swelling", description: "Sudden swelling in foot or ankle", action: "Elevate foot, see doctor" },
+    { sign: "Pain", description: "New pain in legs when walking (claudication)", action: "See doctor soon" },
+    { sign: "Wound not healing", description: "Any cut/sore not improving in 2 days", action: "See doctor immediately" },
+    { sign: "Signs of infection", description: "Redness spreading, pus, fever, red streaks", action: "URGENT - see doctor today" }
+  ]
+};
+
 // Diabetic Tests (prices removed for seamless booking)
 const DIABETIC_TESTS = [
   { id: "fbs", name: "Fasting Blood Sugar (FBS)", description: "Blood sugar after 8-12 hours fasting. Normal: 70-100 mg/dL", frequency: "Monthly" },
