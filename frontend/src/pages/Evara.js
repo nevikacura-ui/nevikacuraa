@@ -15,10 +15,32 @@ import {
   Sparkles, Activity, Baby, Flower2, Users, Send,
   ChevronRight, Plus, Clock, Calculator, BookOpen,
   Apple, Dumbbell, Info, AlertTriangle, User, Mail, Phone, Lock,
-  Home, Video, PlayCircle, MapPin
+  Home, Video, PlayCircle, MapPin, Share2
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
+
+// WhatsApp share function
+const shareOnWhatsApp = (contentType) => {
+  const shareContent = {
+    pcos_guide: {
+      message: `🌸 *Understanding PCOS* 🌸\n\nLearn about symptoms, diet plans, and exercise routines for managing PCOS.\n\n✅ Symptoms & Diagnosis\n✅ PCOS-Friendly Diet\n✅ Weekly Exercise Plan\n\nDownload Nevika Cura app for the complete guide!\n\n#PCOSAwareness #WomensHealth`
+    },
+    pms_guide: {
+      message: `🌷 *Understanding PMS* 🌷\n\nTips to manage premenstrual syndrome effectively.\n\n✅ Physical & Emotional Symptoms\n✅ Dietary Changes\n✅ Exercise & Lifestyle Tips\n\nDownload Nevika Cura app for more!\n\n#PMS #WomensWellness`
+    },
+    pregnancy_tips: {
+      message: `🤰 *Pregnancy Week-by-Week Guide* 🤰\n\nTrack your baby's development from week 1 to 42!\n\n✅ Baby's size & growth\n✅ Mom's body changes\n✅ Weekly tips\n\nDownload Nevika Cura app!\n\n#Pregnancy #MomToBe`
+    }
+  };
+  
+  const content = shareContent[contentType];
+  if (content) {
+    const encodedMessage = encodeURIComponent(content.message);
+    window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+    toast.success('Opening WhatsApp to share!');
+  }
+};
 
 // PMS Education Content
 const PMS_EDUCATION = {
