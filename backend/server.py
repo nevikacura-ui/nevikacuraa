@@ -5691,9 +5691,6 @@ To stop: Reply STOP
     }
 
 
-# Include router AFTER all routes are defined
-app.include_router(api_router)
-
 @app.api_route("/api/", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
 @app.api_route("/api", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
 async def api_root_handler():
