@@ -1032,47 +1032,69 @@ const Omnia = () => {
       </Dialog>
 
       {/* Book Tests Dialog */}
-      <Dialog open={showTests} onOpenChange={setShowTests}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <TestTube className="w-5 h-5 text-purple-600" />
+      <Dialog open={showTests} onOpenChange={(open) => { setShowTests(open); if (!open) setSelectedDiabeticTests([]); }}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <TestTube className="w-6 h-6" />
               Book Diabetic Tests
             </DialogTitle>
-            <DialogDescription>
-              Book tests via Proton Diagnostics - Our partner lab
+            <DialogDescription className="text-purple-100">
+              Select tests and book via Proton Diagnostics
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-3">
-            {DIABETIC_TESTS.map(test => (
-              <Card key={test.id} className="border-purple-100 hover:border-purple-300 transition-all">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-800">{test.name}</p>
-                      <p className="text-sm text-gray-500 mt-1">{test.description}</p>
-                      <div className="flex items-center gap-3 mt-2">
-                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">{test.frequency}</span>
-                        <span className="text-xs text-gray-500">{test.price}</span>
+          <ScrollArea className="flex-1 p-4">
+            <div className="space-y-2">
+              {DIABETIC_TESTS.map(test => {
+                const isSelected = selectedDiabeticTests.includes(test.name);
+                return (
+                  <Card 
+                    key={test.id} 
+                    className={`cursor-pointer transition-all ${isSelected ? 'border-purple-500 bg-purple-50 ring-2 ring-purple-200' : 'border-gray-200 hover:border-purple-300'}`}
+                    onClick={() => toggleTestSelection(test.name)}
+                    data-testid={`test-${test.id}`}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${isSelected ? 'border-purple-500 bg-purple-500' : 'border-gray-300'}`}>
+                          {isSelected && <CheckCircle className="w-4 h-4 text-white" />}
+                        </div>
+                        <div className="flex-1">
+                          <p className={`font-semibold ${isSelected ? 'text-purple-700' : 'text-gray-800'}`}>{test.name}</p>
+                          <p className="text-sm text-gray-500 mt-1">{test.description}</p>
+                          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded mt-2 inline-block">{test.frequency}</span>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </ScrollArea>
+          
+          <div className="p-4 border-t bg-gray-50 flex-shrink-0">
+            {selectedDiabeticTests.length > 0 && (
+              <div className="mb-3 p-2 bg-purple-100 rounded-lg">
+                <p className="text-sm text-purple-700 font-medium">
+                  Selected: {selectedDiabeticTests.length} test{selectedDiabeticTests.length > 1 ? 's' : ''}
+                </p>
+                <p className="text-xs text-purple-600">{selectedDiabeticTests.join(', ')}</p>
+              </div>
+            )}
+            <Button 
+              onClick={handleBookSelectedTests}
+              disabled={selectedDiabeticTests.length === 0}
+              className="w-full bg-purple-600 hover:bg-purple-700 py-6 text-lg disabled:opacity-50"
+            >
+              {selectedDiabeticTests.length === 0 
+                ? 'Select tests to continue' 
+                : `Book ${selectedDiabeticTests.length} Test${selectedDiabeticTests.length > 1 ? 's' : ''} at Proton`}
+            </Button>
+            <p className="text-xs text-gray-500 text-center mt-2">
+              Sample collection available at home
+            </p>
           </div>
-          
-          <Button 
-            onClick={() => { setShowTests(false); navigate('/proton'); }}
-            className="w-full bg-purple-600 hover:bg-purple-700 py-6 text-lg mt-4"
-          >
-            Book Tests at Proton Diagnostics
-          </Button>
-          
-          <p className="text-xs text-gray-500 text-center mt-2">
-            Sample collection available at home. Tests conducted by certified labs.
-          </p>
         </DialogContent>
       </Dialog>
 
