@@ -1161,7 +1161,7 @@ const Omnia = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
-            </ScrollArea>
+            </div>
           </Tabs>
           
           <div className="p-3 bg-amber-50 border-t border-amber-200 flex-shrink-0">
