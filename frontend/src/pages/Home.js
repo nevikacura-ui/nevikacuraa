@@ -73,7 +73,7 @@ const Home = () => {
       logoBg: '',
       customBg: '#511b63',
       hideDecoration: true,
-      fillCard: true
+      fillCard: false
     },
     {
       id: 'glydex',
