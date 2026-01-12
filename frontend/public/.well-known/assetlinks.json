@@ -1,10 +1,13 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "com.nevikacura.www.twa",
-    "sha256_cert_fingerprints": [
-      "53:88:25:F9:F5:97:D9:3C:70:DD:8E:B1:7A:19:3C:6B:A5:E9:CC:9C:AF:80:2F:19:6F:29:1F:CB:75:3C:45:B5"
-    ]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.nevikacura.www.twa",
+      "sha256_cert_fingerprints": [
+        "53:88:25:F9:F5:97:D9:3C:70:DD:8E:B1:7A:19:3C:6B:A5:E9:CC:9C:AF:80:2F:19:6F:29:1F:CB:75:3C:45:B5",
+        "AB:74:D1:F4:C9:8E:F4:FA:59:73:29:57:F6:27:A0:DA:6B:8D:B4:E0:D3:4C:9E:C9:55:DE:00:DE:99:CE:57:37"
+      ]
+    }
   }
-}]
+]
