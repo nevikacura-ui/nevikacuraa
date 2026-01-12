@@ -1,0 +1,8 @@
+{
+  "appId": "com.nevikacura.app",
+  "appName": "Nevika Cura",
+  "webDir": "build",
+  "server": {
+    "androidScheme": "https"
+  }
+}
