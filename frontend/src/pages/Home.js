@@ -239,7 +239,7 @@ const Home = () => {
               
               {/* Logo - takes most space */}
               <div 
-                className={`flex items-center justify-center flex-1 ${service.id === 'evara' || service.id === 'glydex' ? '' : 'rounded-xl p-2'} ${service.logoBg}`}
+                className={`flex items-center justify-center flex-1 overflow-hidden ${service.id === 'evara' || service.id === 'glydex' ? 'px-4' : 'rounded-xl p-2'} ${service.logoBg}`}
                 style={service.customBg ? { backgroundColor: service.customBg } : {}}
               >
                 <img 
