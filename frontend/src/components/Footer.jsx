@@ -41,7 +41,7 @@ const Footer = () => {
                   WhatsApp Support
                 </Button>
                 <a 
-                  href="https://customer-assets.emergentagent.com/job_health-modules-2/artifacts/4musnqya_Nevika%20Cura.apk"
+                  href="https://customer-assets.emergentagent.com/job_health-modules-2/artifacts/phvrin01_Nevika%20Cura.apk"
                   download
                   className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-brand-teal hover:bg-brand-teal/90 text-white rounded-md text-sm font-medium transition-colors"
                   data-testid="footer-download-apk"
