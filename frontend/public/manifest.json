@@ -3,11 +3,13 @@
   "short_name": "Nevika Cura",
   "description": "Complete Healthcare Solutions - DiaGyn, Proton Diagnostics & Orange Pharmacy",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "orientation": "portrait-primary",
   "scope": "/",
+  "id": "/",
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
