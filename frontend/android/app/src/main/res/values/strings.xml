@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Nevika Cura</string>
+    <string name="title_activity_main">Nevika Cura</string>
+    <string name="package_name">com.nevikacura.app</string>
+    <string name="custom_url_scheme">com.nevikacura.app</string>
+</resources>
