@@ -156,6 +156,25 @@ const Footer = () => {
             </div>
           </div>
 
+          {/* QR Code Download Section */}
+          <div className="border-t border-gray-800 pt-6 mb-6">
+            <div className="flex flex-col items-center justify-center gap-3">
+              <div className="flex items-center gap-2 text-white">
+                <Smartphone className="w-5 h-5 text-brand-teal" />
+                <span className="font-medium">Scan to Download App</span>
+              </div>
+              <div className="bg-white p-2 rounded-lg">
+                <img 
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://customer-assets.emergentagent.com/job_caresuite/artifacts/q8j4m5st_Nevika%20Cura.apk"
+                  alt="Download Nevika Cura App QR Code"
+                  className="w-28 h-28"
+                  data-testid="footer-qr-code"
+                />
+              </div>
+              <p className="text-xs text-gray-500">Android App • No browser bar</p>
+            </div>
+          </div>
+
           {/* Bottom Bar */}
           <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-gray-500">
