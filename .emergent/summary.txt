@@ -9,83 +9,107 @@ The user wants to build a modern healthcare application named Nevika Cura.
 4.  **Technical Stack:** React frontend, FastAPI backend, MongoDB database.
 5.  **Module: Evara - Women's Wellness & Care**
     *   A subscription-based (initially free) digital program for women's wellness, featuring AI-powered chat (Claude), a pregnancy calculator, menstrual cycle tracking, and detailed educational content.
-6.  **Module: Omnia - Diabetes Care Portal**
+6.  **Module: Glydex - Diabetes Care Portal**
     *   A patient-focused digital support system for diabetes management.
-    *   Features include blood sugar logging, Indian-friendly diet plans, easy booking for diabetic tests, educational content on warning signs, and critical emergency guidance for hypoglycemia.
-    *   Includes a redirect to Orange Pharmacy for ordering monthly diabetic medicines.
-7.  **General UI/UX:**
-    *   A professional footer with links to About Us, Privacy Policy, Contact, Portals, and an APK download.
-    *   A modern, aesthetic homepage design.
-    *   Display doctor qualifications on the appointment booking page.
+    *   Features include blood sugar & HbA1c logging, Indian-friendly diet plans, easy booking for diabetic tests, educational content, and medicine refill reminders. A separate Glydex user profile for storing diabetes-specific information.
+7.  **General UI/UX & Features:**
+    *   A professional footer with links to legal pages and an APK download link.
+    *   Modern homepage design with clean service cards.
+    *   Display doctor qualifications and a toggleable, color-coded availability calendar.
+    *   Invoice and report download/upload functionality.
+    *   Doctor-specific appointment completion flow, including setting fee codes and follow-up reminders.
+    *   Staff view for real-time tracking of patient status and daily fee collections.
+    *   Automated SMS/push notifications for reminders (appointments, tests, medicine refills).
+    *   The PWA (Progressive Web App) installed via APK should run in full-screen mode without a browser bar.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A comprehensive full-stack healthcare application built on React, FastAPI, and MongoDB. The application includes functional Admin and Staff portals, a loyalty points system, and a verified Twilio SMS notification system.
-
-The core services are supplemented by two major modules:
-1.  **Evara (Women's Wellness):** A feature-complete module with user onboarding, program assignment, an AI chat assistant (Claude), a pregnancy calculator, and extensive educational content.
-2.  **Omnia (Diabetes Care):** A newly created module based on a detailed user PRD. It includes a dedicated frontend page, backend APIs for user profiles and blood sugar logging, educational content, and a redesigned aesthetic welcome screen with a clear call-to-action for ordering medicines.
-
-The application's UI has been significantly enhanced with a redesigned modern homepage, a comprehensive footer component, and updated doctor credentials. Several user-suggested features like a doctor availability calendar, a reorder medicine button, and WhatsApp sharing for content have also been implemented.
+A full-stack healthcare application with a React frontend, FastAPI backend, and MongoDB. Key features include:
+- **Core Modules:** Functional portals for Admin, Staff (Doctors, Clinic, Pharmacy, Diagnostics), and users.
+- **Evara & Glydex:** Two major wellness modules are fully implemented. Glydex includes an extended diabetes-specific profile and a reminder system for tests and medicine refills.
+- **Appointment Flow:** A sophisticated appointment management system is in place. Clinic staff can only check patients in. Doctors have an exclusive interface to complete appointments, where they must select a fee code (e.g., G1, D2) and can set a follow-up date. This information syncs in real-time to the staff dashboard.
+- **Staff Dashboard:** Clinic staff have a dashboard showing a daily collection summary, categorized by fee type.
+- **PWA/TWA Setup:** The application is a PWA. Work has been done to configure  to enable a full-screen Trusted Web Activity (TWA) experience when installed via APK, but it is currently not working as expected.
+- **UI:** The homepage service cards (Evara, Glydex) have been extensively redesigned per user feedback. The DiaGyn appointment booking page features color-coded time slots.
 
 **Last working item**:
-- Last item agent was working: Addressing a multi-part user request to improve the UI and functionality. This involved:
-    1.  Redesigning the homepage () for a more modern and aesthetic look.
-    2.  Rewriting the  page to use the main application's shared authentication context and make all its features (sugar logging, diet plans, etc.) functional for logged-in users.
-    3.  Updating the Omnia card on the homepage to have a background color that matches its logo.
+- Last item agent was working: The user confirmed that the PWA, when installed as an APK on a third, fresh phone, still shows the browser bar at the top. This indicates the problem is not phone-specific caching. The agent had just verified Google's API confirms the  is correct and was about to investigate a potential  vs  redirect issue as the root cause.
 - Status: IN PROGRESS
-- Agent Testing Done: N
-- Which testing method agent to use? frontend testing agent
-- User Testing Done: N
+- Agent Testing Done: Y
+- Which testing method agent to use? Manual testing by user after deployment. The agent needs to continue debugging the server/app configuration.
+- User Testing Done: Y
 
 **All Pending/In progress Issue list**:
-There are no outstanding blocking issues. All user-reported issues from this session have been addressed.
+- **Issue 1: PWA/TWA Shows Browser Bar (P0)**
+  - **Description:** The Android APK, generated from the PWA, displays a browser/URL bar at the top instead of running in full-screen mode. This breaks the native app illusion. The issue persists even on a fresh device, ruling out simple client-side caching.
+  - **Attempted fixes:**
+    - Updated  to white in  and .
+    - Created and deployed a valid  file to  on the production server.
+    - Used the correct package name () and the SHA-256 fingerprint from the user-provided signed APK.
+    - Verified the  file's validity for both  and  domains using Google's official API, which returned a success status.
+  - **Next debug checklist:**
+    - The agent suspected a  vs.  issue. The APK is hardcoded to use . Investigate if any redirects are happening that might break the verification chain. Use <!doctype html><html lang="en" style="background-color:#fff"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/><meta name="theme-color" content="#ffffff"/><meta name="description" content="Nevika Cura - Complete Healthcare Solutions. Book doctor appointments, diagnostic tests, and order medicines online."/><link rel="manifest" href="/manifest.json"/><link rel="icon" href="/favicon.ico"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="default"/><meta name="apple-mobile-web-app-title" content="Nevika Cura"/><meta name="msapplication-TileColor" content="#14b8a6"/><meta name="msapplication-TileImage" content="/icons/icon-144x144.png"/><meta property="og:title" content="Nevika Cura Healthcare"/><meta property="og:description" content="Complete Healthcare Solutions - Book appointments, tests & order medicines"/><meta property="og:type" content="website"/><meta property="og:image" content="/icons/icon-512x512.png"/><title>Nevika Cura | Healthcare</title><script src="https://assets.emergent.sh/scripts/emergent-main.js"></script><script>if(window.self!==window.top){var debugMonitorScript=document.createElement("script");debugMonitorScript.src="https://assets.emergent.sh/scripts/debug-monitor.js",document.head.appendChild(debugMonitorScript),window.tailwind=window.tailwind||{},tailwind.config={corePlugins:{preflight:!1}};var tailwindScript=document.createElement("script");tailwindScript.src="https://cdn.tailwindcss.com",document.head.appendChild(tailwindScript)}</script><style>body,html{background-color:#fff!important}#splash-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:#fff!important;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999999}#splash-screen.hidden{opacity:0;pointer-events:none;transition:opacity .3s ease-out}.splash-content{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}.splash-glow{position:absolute;width:320px;height:320px;background:radial-gradient(ellipse at center,rgba(220,235,255,.5) 0,rgba(255,255,255,0) 70%);border-radius:50%;z-index:-1}#splash-screen .logo-img{width:175px;height:175px;border-radius:35px}.google-loader{margin-top:50px;display:flex;align-items:center;justify-content:center;gap:10px}.google-dot{width:14px;height:14px;border-radius:50%;animation:google-bounce 1.2s ease-in-out infinite}.google-dot:first-child{background-color:#6b21a8;animation-delay:-.3s}.google-dot:nth-child(2){background-color:#dc2626;animation-delay:-.15s}.google-dot:nth-child(3){background-color:#f59e0b;animation-delay:0s}.google-dot:nth-child(4){background-color:#16a34a;animation-delay:.15s}@keyframes google-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}@keyframes bounce{0%,100%,80%{transform:translateY(0)}40%{transform:translateY(-20px)}}</style><script defer="defer" src="/static/js/main.e48d740a.js"></script><link href="/static/css/main.7a05c824.css" rel="stylesheet"></head><body style="background:#fff"><div id="splash-screen" style="background:#fff"><div class="splash-content"><div class="splash-glow"></div><img class="logo-img" src="/icons/icon-192x192.png" alt="Nevika Cura" style="width:220px!important;height:220px!important;border-radius:44px!important"/><div style="margin-top:50px;display:flex;align-items:center;justify-content:center;gap:14px;position:relative;z-index:10"><span style="width:14px;height:18px;background:#6b21a8;display:inline-block;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;animation:bounce 1.4s infinite ease-in-out both;animation-delay:-.32s"></span> <span style="width:14px;height:18px;background:#dc2626;display:inline-block;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;animation:bounce 1.4s infinite ease-in-out both;animation-delay:-.16s"></span> <span style="width:14px;height:18px;background:#f59e0b;display:inline-block;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;animation:bounce 1.4s infinite ease-in-out both;animation-delay:0s"></span> <span style="width:14px;height:18px;background:#16a34a;display:inline-block;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;animation:bounce 1.4s infinite ease-in-out both;animation-delay:.16s"></span></div></div></div><noscript><div style="font-family:Arial,sans-serif;max-width:600px;margin:50px auto;padding:20px;text-align:center;background:#f0f9ff;border-radius:12px"><h1 style="color:#0077b6;font-size:28px">Nevika Cura Healthcare</h1><p style="color:#333;font-size:16px;margin:20px 0">This application requires JavaScript to run. Please enable JavaScript in your browser settings.</p><hr style="border:1px solid #ddd;margin:20px 0"><h2 style="color:#333;font-size:18px">Our Services:</h2><ul style="list-style:none;padding:0;text-align:left;display:inline-block"><li style="padding:10px 0">📋 <strong>DiaGyn Healthcare</strong> - Call: <a href="tel:+917039020020">7039020020</a></li><li style="padding:10px 0">🔬 <strong>Proton Diagnostics</strong> - Call: <a href="tel:+917039040040">7039040040</a></li><li style="padding:10px 0">💊 <strong>Orange Pharmacy</strong> - Call: <a href="tel:+917039030030">7039030030</a></li></ul><p style="color:#666;font-size:14px;margin-top:20px">📍 24215, Kuykendal Road, Tomball, Texas 77375 United States</p></div></noscript><div id="root"></div><script>window.addEventListener("load",function(){setTimeout(function(){var e=document.getElementById("splash-screen");e&&(e.classList.add("hidden"),setTimeout(function(){e.style.display="none"},300))},800)})</script><script>!function(e,t){var r,s,o,i;t.__SV||(window.posthog=t,t._i=[],t.init=function(n,a,p){function c(e,t){var r=t.split(".");2==r.length&&(e=e[r[0]],t=r[1]),e[t]=function(){e.push([t].concat(Array.prototype.slice.call(arguments,0)))}}(o=e.createElement("script")).type="text/javascript",o.crossOrigin="anonymous",o.async=!0,o.src=a.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(i=e.getElementsByTagName("script")[0]).parentNode.insertBefore(o,i);var g=t;for(void 0!==p?g=t[p]=[]:p="posthog",g.people=g.people||[],g.toString=function(e){var t="posthog";return"posthog"!==p&&(t+="."+p),e||(t+=" (stub)"),t},g.people.toString=function(){return g.toString(1)+".people (stub)"},r="init me ws ys ps bs capture je Di ks register register_once register_for_session unregister unregister_for_session Ps getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Es $s createPersonProfile Is opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ss debug xs getPageViewId captureTraceFeedback captureTraceMetric".split(" "),s=0;s<r.length;s++)c(g,r[s]);t._i.push([n,a,p])},t.__SV=1)}(document,window.posthog||[]),posthog.init("phc_yJW1VjHGGwmCbbrtczfqqNxgBDbhlhOWcdzcIJEOTFE",{api_host:"https://us.i.posthog.com",person_profiles:"identified_only"})</script><script>"serviceWorker"in navigator&&window.addEventListener("load",function(){navigator.serviceWorker.register("/service-worker.js").then(function(e){console.log("Nevika Cura PWA: Service Worker registered with scope:",e.scope)}).catch(function(e){console.log("Nevika Cura PWA: Service Worker registration failed:",e)})})</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9bc8ef2d6c036af6',t:'MTc2ODE4MTkwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body></html> to trace headers.
+    - Double-check the  and  in . The  must match the final URL the user lands on.
+    - Re-examine the APK's internal configuration using  to confirm the  and  defined within the TWA manifest. The agent found  was the host.
+    - The issue might be subtle. The final user message confirmed the problem persists, so this is the absolute top priority.
+  - **Why fix this issue?** Critical for user experience, as it makes the app feel like a website, not a native application.
+  - **Status:** IN PROGRESS
+  - **Is recurring issue?** Y
+  - **Should Test frontend/backend/both after fix?** User manual testing on a physical device.
+  - **Blocked on other issue:** None.
+
+- **Issue 2: OTP Registration Flow Needs Real-World Verification (P2)**
+  - **Description:** A critical bug preventing new user sign-ups was fixed by replacing in-memory OTP verification with a persistent .
+  - **Next debug checklist:** The fix relies on real Twilio SMS and could not be fully tested automatically. The user needs to perform a manual test of the registration flow with a new phone number to confirm the issue is resolved.
+  - **Why fix this issue?** Blocker for new user acquisition.
+  - **Status:** USER VERIFICATION PENDING
+  - **Is recurring issue?** Y
+  - **Should Test frontend/backend/both after fix?** Manual testing by user.
+  - **Blocked on other issue:** None.
 
 **In progress Task List**:
-- **Task 1: Complete Refactoring of ** (P1)
-  - **Where to resume:** The monolithic  still contains all API route definitions despite growing significantly with the addition of the Evara and Omnia modules. The structure for modular routes exists in . The next step is to systematically move the endpoint logic from  into the respective route files.
-  - **What will be achieved with this?** Significantly improve code maintainability, readability, and scalability by eliminating the monolithic file structure.
-  - **Status:** NOT STARTED
-  - **Should Test frontend/backend/both after fix?** both
-  - **Blocked on something:** User has de-prioritized this for now.
+- **Task 1: Complete Refactoring of  (P2)**
+  - **Where to resume:** The monolithic  (approx. 6000+ lines) needs to be broken down. Route logic for auth, evara, glydex, etc., should be moved from  into their respective files in .
+  - **What will be achieved with this?** Drastically improve code maintainability, readability, and scalability.
+  - **Status:** IN PROGRESS
+  - **Should Test frontend/backend/both after fix?** both (requires comprehensive regression testing).
+  - **Blocked on something:** User has previously de-prioritized this.
 
 **Upcoming and Future Tasks**
 - **Upcoming Tasks:**
-  - **P0: Test and Verify Rewritten  Functionality:** The  file was rewritten to fix authentication and enable features. While the UI looks correct, the core functionality (logging blood sugar, viewing history, accessing diet plans as a logged-in user) has not been tested. This needs to be the immediate next step.
+    - **P1: Implement Analytics Dashboard:** Create a dashboard for clinic staff/admin showing revenue charts and appointment trends.
 - **Future Tasks:**
-  - **P1: Payment Gateway Integration:** Implement a payment provider (e.g., Razorpay, Stripe) for Evara subscriptions. The user has deferred this for now.
-  - **P2: Migrate Hardcoded Data to DB:** Static content like , , and the new educational data for Evara/Omnia should be moved to MongoDB collections.
-  - **P3: Refactor Large Frontend Components:** The , , and  files are very large and should be broken down into smaller, reusable components to improve maintainability.
+    - **P1: Payment Gateway Integration:** Implement a payment provider (e.g., Razorpay, Stripe) for Evara subscriptions and other paid services.
+    - **P2: Automated Follow-up Reminders:** Expand the reminder system for DiaGyn appointments.
+    - **P2: Migrate Hardcoded Data to DB:** Move static content like , , and educational guides into MongoDB collections.
+    - **P3: Refactor Large Frontend Components:** Break down  and  into smaller, reusable components.
+    - **P3: Implement Full Billing & Due Payments System:** Track due payments and manage billing beyond the daily collection summary.
 
 **Completed work in this session**
-- **New Module: Omnia Diabetes Care Portal:**
-  - Built the complete full-stack module as per the user's detailed PRD.
-  - Created the backend APIs, database collections (, ), and frontend page ().
-  - Redesigned the Omnia welcome page to have a modern, aesthetic look with clear calls-to-action for getting started and ordering medicine.
-  - Integrated Omnia with the main application's authentication system.
-- **Evara Module Enhancements:**
-  - Implemented and tested all backlog features: Week-by-Week Pregnancy Guide, Home Services, and Community Live Sessions.
-- **Core Feature Enhancements (User Suggestions):**
-  - **Doctor Availability Calendar:** Added a 7-day availability preview to the DiaGyn page.
-  - **Health Records Storage:** Added a new tab and backend API for users to manage health records (UI shell implemented).
-  - **Medicine Reorder:** Added a Reorder button to the pharmacy order history on the Profile page.
-  - **WhatsApp Share:** Enabled sharing of educational content from the Evara module.
-- **Critical Bug Fixes & UI Improvements:**
-  - **Twilio OTP Fix:** Resolved a  file corruption that was causing the app to use a mock OTP service. Real SMS OTP via Twilio is now fully functional and tested.
-  - **Homepage Redesign:** Replaced the old layout with a modern hero section and a redesigned row of service cards.
-  - **Footer Implementation:** Created and added a comprehensive footer with links for services, company info, user portals, and an APK download.
-  - **Doctor Credentials:** Added M.B.B.S. and other qualifications below doctor names on the DiaGyn page.
-  - **Contact Info Update:** Updated email, phone number, and working hours across the app as requested.
-- **Testing:**
-  - Successfully used the  multiple times to validate new features (Evara backlog, Omnia module, user-suggested enhancements), which included creating new test files.
+- **Doctor/Staff Appointment Flow:**
+  - Implemented a doctor-only workflow to complete appointments via a modal in the .
+  - Doctors must select a fee code (e.g., G1, S2) and can set a follow-up date.
+  - Staff can only check patients in; they cannot complete appointments but can see the fee code and follow-up date in real-time.
+- **Daily Collection Summary:** Added a summary card to the clinic staff dashboard showing total fees collected for the day, categorized by type.
+- **Glydex Module Enhancements:**
+  - Implemented an extended diabetes-specific user profile.
+  - Created a backend scheduler () and API endpoint () for sending automated test and medicine refill reminders.
+- **UI/UX Improvements:**
+  - Finalized the design of Evara and Glydex service cards on  to have uniform, non-dual-tone backgrounds.
+  - Implemented color-coded time slots (morning/evening) on the  booking page.
+  - Replaced the APK download link on the homepage and footer with the user's latest file.
+- **PWA/TWA Full-Screen Fix (Attempted):**
+  - Investigated why the PWA shows a browser bar.
+  - Correctly generated and deployed  to the production server to enable TWA.
+  - Changed PWA theme colors from teal to white in  and  to fix overscroll background color.
 
 **Earlier issues found/mentioned but not fixed**
 - None.
 
 **Known issue recurrence from previous fork**
-- **Splash Screen Design:** This was a recurring issue that was definitively resolved in this session. The agent iterated on the design and received explicit user approval to proceed.
-- **Status:** RESOLVED
+- **OTP Registration Bug:** This was a recurring problem. The latest token-based fix is implemented but still awaits final user verification.
+- **Status:** USER VERIFICATION PENDING
 
 **Code Architecture**
 
@@ -94,100 +118,88 @@ There are no outstanding blocking issues. All user-reported issues from this ses
 - **Frontend:** React, Shadcn UI, Tailwind CSS
 - **Backend:** FastAPI, Pydantic
 - **Database:** MongoDB
-- **Integrations:**
-    - Twilio (SMS OTP, notifications)
-    - Resend (Email)
-    - Pywebpush (Web Push)
-    - Claude (Anthropic) via  for AI chat.
+- **Authentication:** JWT with a custom OTP flow.
+- **Integrations:** Twilio (SMS), Resend (Email), Claude (AI Chat), pywebpush.
+- **PWA/TWA:** Progressive Web App using a  and a Trusted Web Activity setup via  to achieve a full-screen experience on Android.
 
 **key DB schema**
-- **evara_profiles:** Stores user profiles for the Evara module.
-- **evara_chat_logs:** Stores AI chat history for Evara.
-- **omnia_profiles:** (New) Stores user profiles for the Omnia module (, , etc.).
-- **omnia_sugar_logs:** (New) Stores user blood sugar readings (, , , ).
+- **appointments:** Updated to include  (e.g., G1),  (e.g., 150), and .
+- **glydex_profiles:** Extended with fields for diabetes-specific information (type, diagnosis date, medications, etc.) and reminder preferences.
+- **reminders:** (Implicitly managed by scheduler) Logic to query users and appointments due for reminders.
 
 **changes in tech stack**
 - None.
 
 **All files of reference**
-- : Heavily modified to add backend logic for Omnia, doctor availability, health records, and other enhancements. Needs refactoring.
-- : New file. Created and completely rewritten to add features and integrate with main auth.
-- : Significantly updated with a complete visual redesign.
-- : New file for the site-wide footer.
-- : Updated to show doctor qualifications and an availability calendar.
-- : Updated with a Health Records tab and reorder button.
-- : Updated with new dialogs for backlog features and WhatsApp share functionality.
-- : Corrected a malformed line that was breaking Twilio integration.
-- : Updated to add the  route.
-- : Updated with details of the Omnia module and other completed features.
+- : Heavily modified to implement the doctor-only completion flow, fee code modal, follow-up calendar, and the daily collection summary card.
+- : Modified to add new endpoints for doctor completion, daily collection summary, and the cron job for sending reminders.
+- : Iteratively updated to fix the UI of the Evara and Glydex service cards.
+- : Updated to include the extended diabetes profile form.
+- :  changed to .
+- : New file created to enable TWA full-screen mode.
+- : New file to house logic for sending scheduled reminders.
+- : Updated to add color-coding to time slots.
+- : The user-provided APK file, analyzed to extract SHA-256 and package name.
 
 **Areas that need refactoring**:
-- **:** Highest priority. The file has grown to over 6,500 lines and is unmaintainable. All route logic must be moved to the modular files in .
-- ** & :** Both are large, single-file pages containing state, fetch logic, and multiple UI dialogs. They should be broken down into smaller, self-contained components.
+- ****: Highest priority. This monolithic file is now over 6000 lines and is a major source of technical debt.
+- ****: This component has grown significantly and now contains complex state and logic for different staff roles. It should be broken down.
+- ** & **: These large pages should be broken down into smaller components.
 
 **key api endpoints**
-- **Omnia Module:**
-    -  (GET/POST): Manage user's Omnia profile.
-    -  (GET/POST): Log and retrieve blood sugar readings.
-    -  (GET): Retrieve diabetic diet plans.
-    -  (GET): Get emergency guidance.
-- **Enhancements:**
-    -  (GET): Get weekly availability for all doctors.
-    -  (GET/POST/DELETE): Manage user health records.
-    -  (POST): Reorder medicines from a previous order.
-    -  (GET): Get shareable content for Evara guides.
+-  (POST): New endpoint for doctors to complete an appointment with fee and follow-up data.
+-  (GET): New endpoint to fetch the daily fee collection summary for a clinic.
+-  (POST): New endpoint, intended to be run by a cron job, to send all due reminders.
+-  (POST/GET): Updated to handle the extended diabetes-specific profile data.
 
 **Critical Info for New Agent**
-- **Immediate Priority:** The most crucial next step is to perform functional testing on the rewritten  page. Verify that a logged-in user can use all its features, such as logging a blood sugar reading and seeing it appear in their history. The UI was verified, but the logic was not.
-- **User Focus:** The user currently prioritizes new features and UI/UX improvements over large-scale technical debt like refactoring .
-- **Authentication Model:** The application now uses a unified authentication system. Logging in via the main page, Evara, or Omnia grants access to all parts of the application. The  key in  is the source of truth.
-- **Technical Debt:** Be aware that , , and  are extremely large and complex. While the user has de-prioritized refactoring, any new features should be implemented with modularity in mind to avoid adding to the problem.
+- **PWA Browser Bar Issue is TOP PRIORITY:** The user is blocked by the APK showing a browser bar. All server-side checks ( validity, SHA-256 match) have passed. The issue persists on a fresh device, so it's not just caching. You must investigate more subtle causes, such as redirects ( vs. ),  vs.  mismatches in the , or other TWA configuration details within the APK itself. Do not assume the server config is the problem; the issue could be in the PWA build configuration.
+- **Doctor/Staff Flow:** Be aware of the strict separation of duties implemented in the . Staff can only check in patients. Doctors have the exclusive ability to complete appointments and set fees.
 
 **documents and test reports created in this job**
 - 
 - 
 - 
-- 
-- 
--  (Updated)
+- User artifact:  (URL: )
+- User artifact:  containing keystore and credentials.
 
 **Last 10 User Messages and any pending HUMAN messages**
-10. **User:** Add an APK download link to the footer. (DONE)
-9.  **User:** Provided feedback on the Omnia page (make it more aesthetic, add medicine order CTA) and homepage (make it more modern). (DONE)
-8.  **User:** Provided a detailed PRD for a new Diabetes Care Portal (Omnia). (DONE)
-7.  **User:** Asked if the app can run without JavaScript. (ADDRESSED)
-6.  **User:** Provided a preview link request. (DONE)
-5.  **User:** Requested to update the office working hours in the footer. (DONE)
-4.  **User:** Requested to change the contact email to . (DONE)
-3.  **User:** Requested to add My Orders, Admin, and Staff Portal links to the footer and update doctor qualifications. (DONE)
-2.  **User:** Requested to add a comprehensive footer to the application. (DONE)
-1.  **User:** Confirmed they were satisfied with the user-suggested enhancements and asked to implement them all. (DONE)
+10. **User:** (Shares screenshot) This phone never download this app before - Confirmed the browser bar issue is not due to caching. (PENDING/ACTIVE)
+9.  **User:** Let me try this on third phone first - Agreed to test on a fresh device. (ADDRESSED)
+8.  **User:** Did exactly same as you asked. Deleted app, deleted storage, force stop app, restart phone , visited website , download app and install - Confirmed caching issue persists on 2nd phone. (ADDRESSED)
+7.  **User:** (Shares screenshot of APK on another phone) Download apk on other phone...Still this issue - Reported issue persists. (ADDRESSED)
+6.  **User:** (Uploads new APK) This - Provided the correct APK to be linked. (COMPLETED)
+5.  **User:** Can you use apk. File in zip i jus shared to be upload in the home page footer  download apk to install  - Requested an update to the download link. (COMPLETED)
+4.  **User:** Great it worked - Confirmed the full-screen mode worked on the first phone after deploying . (This seems to have been a temporary success). (ADDRESSED)
+3.  **User:** Hane to deploy, again make apk file pwa builder and then open right? - Asked for clarification on the deployment/build process. (ADDRESSED)
+2.  **User:** (Uploads ZIP) This - Provided the PWA builder output with the new keystore. (COMPLETED)
+1.  **User:** Should I send you the zip - Offered to share the PWA builder output. (ADDRESSED)
 
 **Project Health Check:**
-- **Broken:** None.
+- **Broken:** The PWA full-screen experience is broken, which is a critical UX issue for the mobile app.
 - **Mocked:** None.
 
 **3rd Party Integrations**
-- **Twilio:** Used for real SMS OTP (via Verify API) and transactional SMS notifications.
-- **Resend:** Used for email notifications.
-- **pywebpush:** Used for browser-based web push notifications.
-- **Claude (Anthropic):** Used for AI chat in the Evara module, accessed via the  library. Uses Emergent LLM Key.
+- **Twilio:** SMS OTP and notifications.
+- **Resend:** Email notifications.
+- **Claude (Anthropic):** AI chat via . Uses Emergent LLM Key.
+- **PWABuilder:** Used by the user to convert the PWA into an APK. The configuration of this tool is central to the current PWA issue.
 
 **Testing status**
-- **Testing agent used after significant changes:** YES
+- **Testing agent used after significant changes:** YES, for a full regression test.
 - **Troubleshoot agent used after agent stuck in loop:** NO
-- **Test files created:**
-    - 
-    - 
-- **Known regressions:** None.
+- **Test files created:**  (from previous session)
+- **Known regressions:** The PWA full-screen mode, which the user believed was fixed, is not working reliably across devices.
 
 **Credentials to test flow:**
 - **Admin Login:** , Password: 
 - **Staff Logins:** 
     - **Doctors:** , . Password: 
     - **Clinic Staff:** , . Password: 
-    - **Pharmacy Staff:** . Password: 
-    - **Diagnostics Staff:** . Password: 
+- **PWA Builder Keystore (from user-provided zip):**
+    - **File:** 
+    - **Password:** 
+    - **Alias:** 
 
 **What agent forgot to execute**
-- The agent did not perform functional testing on the  page after rewriting it to use the shared authentication context. While screenshots confirmed the UI and login modal appeared correctly, the core features (e.g., submitting a blood sugar log, viewing diet plans) for a logged-in user remain untested.</analysis>
+- Nothing was forgotten. The agent was in the middle of a complex debugging process for the PWA/TWA issue when the session ended. The investigation was proceeding logically from server-side checks to client-side variables.</analysis>
