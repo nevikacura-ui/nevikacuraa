@@ -406,7 +406,7 @@ const StaffBillingModule = ({ staffInfo, getAuthHeaders }) => {
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All</SelectItem>
+                <SelectItem value="all">All</SelectItem>
                 <SelectItem value="service">Services</SelectItem>
                 <SelectItem value="test">Tests</SelectItem>
                 <SelectItem value="medicine">Medicines</SelectItem>
