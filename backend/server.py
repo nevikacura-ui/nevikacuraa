@@ -637,6 +637,8 @@ class User(BaseModel):
     phone: str
     name: str
     loyalty_points: int = 0  # Loyalty points for registered users
+    interests: List[str] = []  # User's selected interests ['evara', 'glydex', etc.]
+    onboarding_complete: bool = False  # Whether user completed profile customization
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
