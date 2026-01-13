@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="21" time="2.762" timestamp="2026-01-13T11:16:26.629843+00:00" hostname="agent-env-efe18383-40e5-4388-bb2b-5b471cdd94dc"><testcase classname="tests.test_iteration_19_calorie_analytics.TestHealthEndpoint" name="test_health_endpoint" time="0.082"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+tests/test_iteration_19_calorie_analytics.py:31: in test_health_endpoint
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="tests.test_iteration_19_calorie_analytics.TestCaloriesFoodDatabase" name="test_get_food_database" time="0.038" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestCaloriesFoodDatabase" name="test_search_foods_dosa" time="0.041" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestCaloriesFoodDatabase" name="test_search_foods_idli" time="0.036" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestCaloriesFoodDatabase" name="test_search_foods_biryani" time="0.075" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestCaloriesFoodDatabase" name="test_search_foods_short_query" time="0.037" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestUserPreferencesAPI" name="test_get_preferences_unauthenticated" time="0.035" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestUserPreferencesAPI" name="test_get_preferences_authenticated" time="1.357" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestUserPreferencesAPI" name="test_update_preferences" time="0.123" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestAdminAnalyticsAPI" name="test_analytics_unauthenticated" time="0.033" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestAdminAnalyticsAPI" name="test_analytics_default_7_days" time="0.089" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestAdminAnalyticsAPI" name="test_analytics_custom_days" time="0.053" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestAdminAnalyticsAPI" name="test_analytics_appointments_by_doctor" time="0.032" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestAdminTabLayout" name="test_admin_stats" time="0.069" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestGlydexModule" name="test_glydex_profile_unauthenticated" time="0.038" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestGlydexModule" name="test_glydex_sugar_logs_unauthenticated" time="0.036" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestEvaraModule" name="test_evara_profile" time="0.036"><failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401]&gt;.status_code">tests/test_iteration_19_calorie_analytics.py:312: in test_evara_profile
+    assert response.status_code == 200
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401]&gt;.status_code</failure></testcase><testcase classname="tests.test_iteration_19_calorie_analytics.TestEvaraModule" name="test_evara_programs" time="0.035" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestCalorieLogging" name="test_log_calorie_unauthenticated" time="0.036" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestCalorieLogging" name="test_log_calorie_authenticated" time="0.300" /><testcase classname="tests.test_iteration_19_calorie_analytics.TestCalorieLogging" name="test_get_calorie_logs" time="0.036" /></testsuite></testsuites>
