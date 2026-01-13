@@ -1008,4 +1008,594 @@ const GrowthSection = ({ child, onBack }) => {
   );
 };
 
+// ============ INDIA-SPECIFIC SECTIONS ============
+
+// Government Schemes Section (India)
+const GovtSchemesSection = ({ onBack }) => {
+  const [schemes, setSchemes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSchemes = async () => {
+      try {
+        const res = await fetch(`${API}/api/alyne/resources/india`);
+        const data = await res.json();
+        setSchemes(data.government_schemes || []);
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchSchemes();
+  }, []);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">🏛️ Government Schemes</h2><p className="text-sm text-gray-500">Free healthcare programs for children</p></div>
+      </div>
+      
+      {loading ? <div className="text-center py-8">Loading...</div> : (
+        <div className="space-y-3">
+          {schemes.map((scheme) => (
+            <Card key={scheme.id} className="border-l-4 border-orange-500">
+              <CardContent className="p-4">
+                <h4 className="font-bold text-orange-700">{scheme.name}</h4>
+                <p className="text-sm text-gray-600 mt-1">{scheme.description}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Badge className="bg-green-100 text-green-700">Eligibility: {scheme.eligibility}</Badge>
+                  {scheme.helpline && <Badge className="bg-blue-100 text-blue-700">📞 {scheme.helpline}</Badge>}
+                </div>
+                {scheme.website && (
+                  <a href={scheme.website} target="_blank" rel="noopener noreferrer" className="text-sm text-teal-600 flex items-center gap-1 mt-2 hover:underline">
+                    <ExternalLink className="w-3 h-3" /> Visit Official Website
+                  </a>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Regional Foods Section (India)
+const RegionalFoodsSection = ({ onBack }) => {
+  const [foods, setFoods] = useState({});
+  const [selectedRegion, setSelectedRegion] = useState('north');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFoods = async () => {
+      try {
+        const res = await fetch(`${API}/api/alyne/resources/india/food-guides`);
+        const data = await res.json();
+        setFoods(data.all_foods || {});
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchFoods();
+  }, []);
+
+  const regions = [
+    { id: 'north', name: 'North India', emoji: '🍛' },
+    { id: 'south', name: 'South India', emoji: '🥘' },
+    { id: 'east', name: 'East India', emoji: '🍚' },
+    { id: 'west', name: 'West India', emoji: '🥙' }
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">🍲 Regional Weaning Foods</h2><p className="text-sm text-gray-500">Traditional first foods for babies</p></div>
+      </div>
+
+      <div className="flex gap-2 overflow-x-auto pb-2">
+        {regions.map(r => (
+          <button key={r.id} onClick={() => setSelectedRegion(r.id)} className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${selectedRegion === r.id ? 'bg-orange-500 text-white' : 'bg-white border'}`}>
+            {r.emoji} {r.name}
+          </button>
+        ))}
+      </div>
+      
+      {loading ? <div className="text-center py-8">Loading...</div> : (
+        <div className="space-y-3">
+          {(foods[selectedRegion] || []).map((food, i) => (
+            <Card key={i}>
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start">
+                  <h4 className="font-bold text-amber-700">{food.name}</h4>
+                  <Badge className="bg-teal-100 text-teal-700">{food.age}</Badge>
+                </div>
+                <p className="text-sm text-gray-600 mt-2"><strong>Recipe:</strong> {food.recipe}</p>
+                <p className="text-sm text-green-600 mt-1">✅ {food.benefits}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Seasonal Alerts Section (India)
+const SeasonalAlertsSection = ({ onBack }) => {
+  const [alerts, setAlerts] = useState({});
+  const [currentSeason, setCurrentSeason] = useState('monsoon');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        const res = await fetch(`${API}/api/alyne/resources/india/seasonal-alerts`);
+        const data = await res.json();
+        setAlerts(data.all_seasons || {});
+        setCurrentSeason(data.current_season || 'monsoon');
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchAlerts();
+  }, []);
+
+  const seasons = [
+    { id: 'monsoon', name: 'Monsoon', emoji: '🌧️', color: 'bg-blue-500' },
+    { id: 'summer', name: 'Summer', emoji: '☀️', color: 'bg-amber-500' },
+    { id: 'winter', name: 'Winter', emoji: '❄️', color: 'bg-cyan-500' }
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">🌧️ Seasonal Health Alerts</h2><p className="text-sm text-gray-500">Protect your child from seasonal diseases</p></div>
+      </div>
+
+      <div className="flex gap-2">
+        {seasons.map(s => (
+          <button key={s.id} onClick={() => setCurrentSeason(s.id)} className={`px-4 py-2 rounded-full text-sm ${currentSeason === s.id ? `${s.color} text-white` : 'bg-white border'}`}>
+            {s.emoji} {s.name}
+          </button>
+        ))}
+      </div>
+      
+      {loading ? <div className="text-center py-8">Loading...</div> : (
+        <div className="space-y-3">
+          {(alerts[currentSeason] || []).map((alert, i) => (
+            <Card key={i} className="border-l-4 border-red-400">
+              <CardContent className="p-4">
+                <h4 className="font-bold text-red-700">{alert.disease}</h4>
+                <p className="text-sm text-gray-600 mt-1"><strong>Symptoms:</strong> {alert.symptoms}</p>
+                <div className="mt-3">
+                  <p className="text-sm font-semibold text-green-700">🛡️ Prevention:</p>
+                  <ul className="text-sm mt-1 space-y-1">
+                    {alert.prevention.map((p, j) => <li key={j} className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />{p}</li>)}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Ayurvedic Remedies Section (India)
+const AyurvedicSection = ({ onBack }) => {
+  const [remedies, setRemedies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRemedies = async () => {
+      try {
+        const res = await fetch(`${API}/api/alyne/resources/india/ayurvedic`);
+        const data = await res.json();
+        setRemedies(data.remedies || []);
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchRemedies();
+  }, []);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">🌿 Ayurvedic Home Remedies</h2><p className="text-sm text-gray-500">Traditional safe remedies for children</p></div>
+      </div>
+
+      <Card className="bg-amber-50 border-amber-200">
+        <CardContent className="p-3">
+          <p className="text-sm text-amber-700">⚠️ <strong>Disclaimer:</strong> Always consult a pediatrician before using any remedy.</p>
+        </CardContent>
+      </Card>
+      
+      {loading ? <div className="text-center py-8">Loading...</div> : (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {remedies.map((remedy, i) => (
+            <Card key={i} className="border-l-4 border-green-500">
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start">
+                  <h4 className="font-bold text-green-700">{remedy.name}</h4>
+                  <Badge className="bg-teal-100 text-teal-700 text-xs">{remedy.age}</Badge>
+                </div>
+                <p className="text-sm text-purple-600 mt-1">For: {remedy.for}</p>
+                <p className="text-sm text-gray-600 mt-2"><strong>How to:</strong> {remedy.recipe}</p>
+                <p className="text-xs text-red-500 mt-2">⚠️ {remedy.caution}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ============ USA-SPECIFIC SECTIONS ============
+
+// Insurance Guide Section (USA)
+const InsuranceGuideSection = ({ onBack }) => {
+  const [terms, setTerms] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTerms = async () => {
+      try {
+        const res = await fetch(`${API}/api/alyne/resources/usa/insurance-guide`);
+        const data = await res.json();
+        setTerms(data.terms || []);
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchTerms();
+  }, []);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">💳 Insurance Guide</h2><p className="text-sm text-gray-500">Understanding pediatric health insurance</p></div>
+      </div>
+      
+      {loading ? <div className="text-center py-8">Loading...</div> : (
+        <div className="space-y-3">
+          {terms.map((term, i) => (
+            <Card key={i}>
+              <CardContent className="p-4">
+                <h4 className="font-bold text-blue-700">{term.term}</h4>
+                <p className="text-sm text-gray-600 mt-1">{term.definition}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// School Vaccines Section (USA)
+const SchoolVaccinesSection = ({ onBack }) => {
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${API}/api/alyne/resources/usa/school-vaccines`);
+        const result = await res.json();
+        setData(result.requirements || {});
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">🏫 School Vaccine Requirements</h2><p className="text-sm text-gray-500">Required immunizations for school enrollment</p></div>
+      </div>
+      
+      {loading ? <div className="text-center py-8">Loading...</div> : (
+        <div className="space-y-4">
+          <Card className="border-l-4 border-blue-500">
+            <CardHeader className="pb-2"><CardTitle className="text-base">Kindergarten Entry</CardTitle></CardHeader>
+            <CardContent>
+              <ul className="space-y-1">{(data.kindergarten || []).map((v, i) => <li key={i} className="text-sm flex items-center gap-2"><Syringe className="w-4 h-4 text-blue-500" />{v}</li>)}</ul>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-l-4 border-purple-500">
+            <CardHeader className="pb-2"><CardTitle className="text-base">Middle School</CardTitle></CardHeader>
+            <CardContent>
+              <ul className="space-y-1">{(data.middle_school || []).map((v, i) => <li key={i} className="text-sm flex items-center gap-2"><Syringe className="w-4 h-4 text-purple-500" />{v}</li>)}</ul>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-amber-50 border-amber-200">
+            <CardContent className="p-4">
+              <p className="text-sm text-amber-700"><Info className="w-4 h-4 inline mr-1" />{data.note}</p>
+              <p className="text-xs text-gray-600 mt-2">{data.exemptions}</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// WIC Program Section (USA)
+const WICProgramSection = ({ onBack }) => {
+  const [program, setProgram] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${API}/api/alyne/resources/usa/wic`);
+        const result = await res.json();
+        setProgram(result.program || {});
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">🥛 WIC Program</h2><p className="text-sm text-gray-500">Nutrition assistance for families</p></div>
+      </div>
+      
+      {loading ? <div className="text-center py-8">Loading...</div> : (
+        <div className="space-y-4">
+          <Card className="bg-gradient-to-r from-green-50 to-teal-50 border-green-200">
+            <CardContent className="p-4">
+              <h3 className="font-bold text-green-700">{program.name}</h3>
+              <p className="text-sm text-gray-600 mt-2">{program.description}</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-base">✅ Eligibility</CardTitle></CardHeader>
+            <CardContent>
+              <ul className="space-y-2">{(program.eligibility || []).map((e, i) => <li key={i} className="text-sm flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />{e}</li>)}</ul>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-base">🎁 Benefits</CardTitle></CardHeader>
+            <CardContent>
+              <ul className="space-y-2">{(program.benefits || []).map((b, i) => <li key={i} className="text-sm flex items-start gap-2"><Star className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />{b}</li>)}</ul>
+            </CardContent>
+          </Card>
+
+          {program.website && (
+            <a href={program.find_office} target="_blank" rel="noopener noreferrer" className="block">
+              <Card className="bg-blue-50 border-blue-200 hover:shadow-md">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <span className="font-medium text-blue-700">Find a WIC Office Near You</span>
+                  <ExternalLink className="w-5 h-5 text-blue-500" />
+                </CardContent>
+              </Card>
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Safety Guide Section (USA)
+const SafetyGuideSection = ({ onBack }) => {
+  const [standards, setStandards] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${API}/api/alyne/resources/usa/safety`);
+        const result = await res.json();
+        setStandards(result.standards || []);
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchData();
+  }, []);
+
+  const icons = { 'Car Seat Safety': Car, 'Sleep Safety (SIDS Prevention)': Moon, 'Product Recalls': AlertTriangle };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">🚗 Child Safety Guide</h2><p className="text-sm text-gray-500">CPSC & AAP safety standards</p></div>
+      </div>
+      
+      {loading ? <div className="text-center py-8">Loading...</div> : (
+        <div className="space-y-4">
+          {standards.map((standard, i) => {
+            const Icon = icons[standard.category] || Shield;
+            return (
+              <Card key={i} className="border-l-4 border-red-400">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2"><Icon className="w-5 h-5 text-red-500" />{standard.category}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">{standard.guidelines.map((g, j) => <li key={j} className="text-sm flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />{g}</li>)}</ul>
+                  {standard.resource && (
+                    <a href={standard.resource} target="_blank" rel="noopener noreferrer" className="text-sm text-teal-600 flex items-center gap-1 mt-3 hover:underline">
+                      <ExternalLink className="w-3 h-3" /> Learn More
+                    </a>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ============ COMMON SECTIONS ============
+
+// Developmental Screening Section
+const DevScreeningSection = ({ onBack }) => {
+  const [screening, setScreening] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${API}/api/alyne/resources/common/screening`);
+        const result = await res.json();
+        setScreening(result.screening?.asq3 || {});
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">🧠 Developmental Screening</h2><p className="text-sm text-gray-500">ASQ-3 Milestone Checklist</p></div>
+      </div>
+      
+      {loading ? <div className="text-center py-8">Loading...</div> : (
+        <div className="space-y-4">
+          <Card className="bg-gradient-to-r from-purple-50 to-pink-50">
+            <CardContent className="p-4">
+              <h3 className="font-bold text-purple-700">{screening.name}</h3>
+              <p className="text-sm text-gray-600 mt-2">{screening.description}</p>
+              <Badge className="mt-2 bg-purple-100 text-purple-700">Age: {screening.age_range}</Badge>
+            </CardContent>
+          </Card>
+
+          <div className="grid gap-3">
+            {(screening.areas || []).map((area, i) => (
+              <Card key={i}>
+                <CardContent className="p-4">
+                  <h4 className="font-semibold text-teal-700">{area.name}</h4>
+                  <p className="text-sm text-gray-500 mt-1">{area.examples}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <Card className="bg-amber-50 border-amber-200">
+            <CardContent className="p-4">
+              <p className="text-sm text-amber-700"><Info className="w-4 h-4 inline mr-1" />If you have concerns about your child's development, talk to your pediatrician about a formal screening.</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Telemedicine Tips Section
+const TelemedicineSection = ({ onBack }) => {
+  const [tips, setTips] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${API}/api/alyne/resources/common/telemedicine-tips`);
+        const result = await res.json();
+        setTips(result.tips || []);
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">📹 Telemedicine Tips</h2><p className="text-sm text-gray-500">Get the most from video consultations</p></div>
+      </div>
+      
+      {loading ? <div className="text-center py-8">Loading...</div> : (
+        <Card>
+          <CardContent className="p-4">
+            <ul className="space-y-3">
+              {tips.map((tip, i) => (
+                <li key={i} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                  <span className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">{i + 1}</span>
+                  <p className="text-sm">{tip}</p>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
+
+// Parenting Tips Section
+const ParentingTipsSection = ({ onBack }) => {
+  const [tips, setTips] = useState({});
+  const [selectedAge, setSelectedAge] = useState('newborn');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${API}/api/alyne/resources/common/parenting-tips`);
+        const result = await res.json();
+        setTips(result.all_tips || {});
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetchData();
+  }, []);
+
+  const ageGroups = [
+    { id: 'newborn', name: 'Newborn', emoji: '👶' },
+    { id: 'infant', name: 'Infant', emoji: '🍼' },
+    { id: 'toddler', name: 'Toddler', emoji: '🧒' }
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">💕 Parenting Tips</h2><p className="text-sm text-gray-500">Age-appropriate guidance</p></div>
+      </div>
+
+      <div className="flex gap-2">
+        {ageGroups.map(a => (
+          <button key={a.id} onClick={() => setSelectedAge(a.id)} className={`px-4 py-2 rounded-full text-sm ${selectedAge === a.id ? 'bg-rose-500 text-white' : 'bg-white border'}`}>
+            {a.emoji} {a.name}
+          </button>
+        ))}
+      </div>
+      
+      {loading ? <div className="text-center py-8">Loading...</div> : (
+        <Card>
+          <CardContent className="p-4">
+            <ul className="space-y-3">
+              {(tips[selectedAge] || []).map((tip, i) => (
+                <li key={i} className="flex items-start gap-3 p-3 bg-rose-50 rounded-lg">
+                  <Heart className="w-5 h-5 text-rose-500 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm">{tip}</p>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
+
 export default Alyne;
