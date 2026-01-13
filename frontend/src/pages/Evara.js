@@ -2305,6 +2305,324 @@ const Evara = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Pregnancy Education Dialog */}
+      <Dialog open={showPregnancyEducation} onOpenChange={setShowPregnancyEducation}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-blue-600">
+              <Baby className="w-5 h-5" /> {PREGNANCY_EDUCATION.title}
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-[70vh] pr-4">
+            <div className="space-y-6">
+              {/* Pregnancy Calculator Quick Access */}
+              <Card className="bg-blue-50 border-blue-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-semibold text-blue-800">Pregnancy Calculator</h4>
+                      <p className="text-sm text-blue-600">Calculate your due date and track progress</p>
+                    </div>
+                    <Button 
+                      onClick={() => { setShowPregnancyEducation(false); setShowPregnancyCalc(true); }}
+                      className="bg-blue-500 hover:bg-blue-600"
+                    >
+                      <Calculator className="w-4 h-4 mr-2" /> Calculate
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Trimester Guides */}
+              <Tabs defaultValue="1">
+                <TabsList className="grid grid-cols-3 w-full">
+                  <TabsTrigger value="1">1st Trimester</TabsTrigger>
+                  <TabsTrigger value="2">2nd Trimester</TabsTrigger>
+                  <TabsTrigger value="3">3rd Trimester</TabsTrigger>
+                </TabsList>
+                {PREGNANCY_EDUCATION.trimester_guides.map((tri) => (
+                  <TabsContent key={tri.trimester} value={String(tri.trimester)} className="space-y-4 mt-4">
+                    <h3 className="text-lg font-semibold text-gray-800">{tri.title}</h3>
+                    <p className="text-gray-600">{tri.overview}</p>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <Card className="border-blue-200">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm text-blue-600">Baby's Development</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <ul className="text-sm space-y-1">
+                            {tri.baby_development.map((dev, i) => (
+                              <li key={i} className="text-gray-600">• {dev}</li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card className="border-pink-200">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm text-pink-600">Mom's Changes</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <ul className="text-sm space-y-1">
+                            {tri.mom_changes.map((change, i) => (
+                              <li key={i} className="text-gray-600">• {change}</li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    </div>
+                    
+                    <Card className="border-green-200 bg-green-50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm text-green-600">Tips & Advice</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="text-sm space-y-1">
+                          {tri.tips.map((tip, i) => (
+                            <li key={i} className="text-gray-600">✓ {tip}</li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="border-orange-200 bg-orange-50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm text-orange-600">Diet Tips</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="text-sm space-y-1">
+                          {tri.diet_tips.map((tip, i) => (
+                            <li key={i} className="text-gray-600">🍎 {tip}</li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                ))}
+              </Tabs>
+
+              {/* Important Tests */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Important Tests During Pregnancy</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {PREGNANCY_EDUCATION.important_tests.map((test, i) => (
+                      <div key={i} className="flex justify-between items-start py-2 border-b last:border-0">
+                        <div>
+                          <p className="font-medium text-gray-800">{test.test}</p>
+                          <p className="text-xs text-gray-500">{test.purpose}</p>
+                        </div>
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">{test.when}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Warning Signs */}
+              <Card className="border-red-200 bg-red-50">
+                <CardHeader>
+                  <CardTitle className="text-base text-red-600 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4" /> Warning Signs - Seek Help Immediately
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="text-sm space-y-1 text-red-700">
+                    {PREGNANCY_EDUCATION.warning_signs.map((sign, i) => (
+                      <li key={i}>⚠️ {sign}</li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Menopause Guide Dialog */}
+      <Dialog open={showMenopauseGuide} onOpenChange={setShowMenopauseGuide}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-rose-600">
+              <Flower2 className="w-5 h-5" /> {MENOPAUSE_CONTENT.title}
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-[70vh] pr-4">
+            <div className="space-y-6">
+              {/* Overview */}
+              <p className="text-gray-600">{MENOPAUSE_CONTENT.overview}</p>
+
+              {/* Stages */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Stages of Menopause</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {MENOPAUSE_CONTENT.stages.map((stage, i) => (
+                    <div key={i} className="border-l-4 border-rose-300 pl-4">
+                      <h4 className="font-semibold text-rose-700">{stage.stage}</h4>
+                      <p className="text-xs text-gray-500 mb-1">{stage.duration}</p>
+                      <p className="text-sm text-gray-600 mb-2">{stage.description}</p>
+                      <div className="flex flex-wrap gap-1">
+                        {stage.symptoms.map((s, j) => (
+                          <span key={j} className="text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded">{s}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Common Symptoms & Management */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Common Symptoms & How to Manage</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {MENOPAUSE_CONTENT.common_symptoms.map((item, i) => (
+                    <div key={i} className="p-3 bg-gray-50 rounded-lg">
+                      <h5 className="font-medium text-gray-800">{item.symptom}</h5>
+                      <p className="text-sm text-gray-500 mb-1">{item.description}</p>
+                      <p className="text-sm text-green-600">💡 {item.management}</p>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Tips & Guides */}
+              {MENOPAUSE_CONTENT.tips_guides.map((guide, i) => (
+                <Card key={i} className="border-rose-200">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base text-rose-600">{guide.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-1">
+                      {guide.tips.map((tip, j) => (
+                        <li key={j} className="text-sm text-gray-600">✓ {tip}</li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              ))}
+
+              {/* FAQs */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Frequently Asked Questions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {MENOPAUSE_CONTENT.faqs.map((faq, i) => (
+                    <div key={i} className="border-b pb-3 last:border-0">
+                      <p className="font-medium text-gray-800 mb-1">Q: {faq.q}</p>
+                      <p className="text-sm text-gray-600">A: {faq.a}</p>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Women Health Community Dialog */}
+      <Dialog open={showWomenCommunity} onOpenChange={setShowWomenCommunity}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-green-600">
+              <Users className="w-5 h-5" /> {WOMEN_HEALTH_COMMUNITY.title}
+            </DialogTitle>
+            <DialogDescription>{WOMEN_HEALTH_COMMUNITY.subtitle}</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[70vh] pr-4">
+            <div className="space-y-4">
+              {/* Category Selection */}
+              {!selectedCommunityCategory ? (
+                <div className="grid grid-cols-2 gap-3">
+                  {WOMEN_HEALTH_COMMUNITY.categories.map((cat) => (
+                    <Card 
+                      key={cat.id} 
+                      className="cursor-pointer hover:shadow-md transition-all"
+                      onClick={() => setSelectedCommunityCategory(cat)}
+                    >
+                      <CardContent className="p-4 text-center">
+                        <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-green-100 flex items-center justify-center">
+                          {cat.icon === 'heart' && <Heart className="w-6 h-6 text-green-600" />}
+                          {cat.icon === 'baby' && <Baby className="w-6 h-6 text-green-600" />}
+                          {cat.icon === 'brain' && <Sparkles className="w-6 h-6 text-green-600" />}
+                          {cat.icon === 'apple' && <Apple className="w-6 h-6 text-green-600" />}
+                        </div>
+                        <h4 className="font-medium text-gray-800">{cat.name}</h4>
+                        <p className="text-xs text-gray-500">{cat.tips.length} tips, {cat.faqs.length} FAQs</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => setSelectedCommunityCategory(null)}
+                    className="mb-2"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Categories
+                  </Button>
+                  
+                  <h3 className="text-lg font-semibold text-green-600">{selectedCommunityCategory.name}</h3>
+                  
+                  {/* Tips */}
+                  <Card className="border-green-200">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base text-green-600">💡 Tips</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {selectedCommunityCategory.tips.map((tip, i) => (
+                        <div key={i} className="p-3 bg-green-50 rounded-lg">
+                          <h5 className="font-medium text-gray-800">{tip.title}</h5>
+                          <p className="text-sm text-gray-600">{tip.content}</p>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Guides */}
+                  <Card className="border-blue-200">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base text-blue-600">📚 Guides</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {selectedCommunityCategory.guides.map((guide, i) => (
+                        <div key={i} className="p-3 bg-blue-50 rounded-lg">
+                          <h5 className="font-medium text-gray-800">{guide.title}</h5>
+                          <p className="text-sm text-gray-600">{guide.content}</p>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                  
+                  {/* FAQs */}
+                  <Card className="border-purple-200">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base text-purple-600">❓ Important Q&A</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {selectedCommunityCategory.faqs.map((faq, i) => (
+                        <div key={i} className="border-b pb-3 last:border-0">
+                          <p className="font-medium text-gray-800 mb-1">Q: {faq.q}</p>
+                          <p className="text-sm text-gray-600">A: {faq.a}</p>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
