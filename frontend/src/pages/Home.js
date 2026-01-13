@@ -838,16 +838,95 @@ const AuthModal = ({ open, onClose }) => {
             {step === 'interests' ? 'Customize Your Experience' : 'Welcome to Nevika Cura'}
           </DialogTitle>
           <DialogDescription className="font-body">
-            {step === 'email' && 'Enter your email to get started'}
-            {step === 'otp' && 'Enter the verification code sent to your email'}
+            {step === 'method-select' && 'Choose how you want to sign in'}
+            {step === 'email-otp' && 'Enter your email to receive a verification code'}
+            {step === 'email-otp-verify' && 'Enter the verification code sent to your email'}
+            {step === 'phone-otp' && 'Enter your phone number to receive an SMS'}
+            {step === 'phone-otp-verify' && 'Enter the verification code sent to your phone'}
             {step === 'register' && 'Complete your registration'}
             {step === 'password-login' && 'Enter your password to login'}
             {step === 'interests' && 'Select the services you\'re interested in'}
           </DialogDescription>
         </DialogHeader>
 
-        {/* Step 1: Email Entry */}
-        {step === 'email' && (
+        {/* Method Selection - Primary Step */}
+        {step === 'method-select' && (
+          <div className="space-y-4">
+            {/* Email OTP - Most Preferred */}
+            <button
+              onClick={() => {
+                setAuthMethod('email-otp');
+                setStep('email-otp');
+              }}
+              className="w-full p-4 border-2 border-teal-200 bg-teal-50 rounded-xl hover:border-teal-400 hover:bg-teal-100 transition-all text-left group"
+              data-testid="auth-method-email-otp"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-teal-100 rounded-lg group-hover:bg-teal-200">
+                  <svg className="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800">Email + OTP</p>
+                  <p className="text-xs text-gray-500">Recommended • No password needed</p>
+                </div>
+                <span className="ml-auto bg-teal-500 text-white text-xs px-2 py-1 rounded-full">Best</span>
+              </div>
+            </button>
+            
+            {/* Email + Password */}
+            <button
+              onClick={() => {
+                setAuthMethod('password');
+                setStep('password-login');
+              }}
+              className="w-full p-4 border border-gray-200 rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all text-left"
+              data-testid="auth-method-password"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800">Email + Password</p>
+                  <p className="text-xs text-gray-500">Traditional login</p>
+                </div>
+              </div>
+            </button>
+            
+            {/* Phone OTP - Least Preferred */}
+            <button
+              onClick={() => {
+                setAuthMethod('phone-otp');
+                setStep('phone-otp');
+              }}
+              className="w-full p-4 border border-gray-200 rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all text-left opacity-80"
+              data-testid="auth-method-phone-otp"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800">Phone + SMS OTP</p>
+                  <p className="text-xs text-gray-500">SMS charges may apply</p>
+                </div>
+              </div>
+            </button>
+            
+            <p className="text-xs text-center text-gray-400 mt-2">
+              Email OTP is free and doesn't require SMS charges
+            </p>
+          </div>
+        )}
+
+        {/* Email OTP Entry */}
+        {step === 'email-otp' && (
           <form onSubmit={handleSendEmailOtp} className="space-y-4">
             <div>
               <Label htmlFor="email">Email Address</Label>
@@ -864,29 +943,73 @@ const AuthModal = ({ open, onClose }) => {
             </div>
             <Button 
               type="submit" 
-              className="w-full rounded-full h-12" 
+              className="w-full rounded-full h-12 bg-teal-600 hover:bg-teal-700" 
               disabled={loading || !email}
               data-testid="send-email-otp-button"
             >
-              {loading ? 'Sending...' : 'Continue'}
+              {loading ? 'Sending...' : 'Send Verification Code'}
             </Button>
             <p className="text-xs text-center text-gray-500">
-              We'll send a verification code to your email (No SMS cost!)
+              We'll send a free verification code to your email
             </p>
             <div className="text-center">
               <button 
                 type="button"
-                onClick={() => setStep('password-login')}
-                className="text-sm text-brand-teal hover:underline"
+                onClick={() => setStep('method-select')}
+                className="text-sm text-gray-500 hover:underline"
               >
-                Already have account? Login with password
+                ← Back to login options
+              </button>
+            </div>
+          </form>
+        )}
+        
+        {/* Phone OTP Entry */}
+        {step === 'phone-otp' && (
+          <form onSubmit={handleSendPhoneOtp} className="space-y-4">
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-xs text-amber-700">
+                <strong>Note:</strong> SMS charges may apply. Email OTP is free!
+              </p>
+            </div>
+            <div>
+              <Label htmlFor="phone">Phone Number</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground font-medium px-3 py-2 bg-gray-100 rounded-l-xl">+91</span>
+                <Input 
+                  id="phone" 
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  placeholder="10-digit number"
+                  required 
+                  data-testid="auth-phone-input"
+                  className="h-12 rounded-r-xl rounded-l-none flex-1"
+                />
+              </div>
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full rounded-full h-12" 
+              disabled={loading || phone.length !== 10}
+              data-testid="send-phone-otp-button"
+            >
+              {loading ? 'Sending...' : 'Send OTP via SMS'}
+            </Button>
+            <div className="text-center">
+              <button 
+                type="button"
+                onClick={() => setStep('method-select')}
+                className="text-sm text-gray-500 hover:underline"
+              >
+                ← Back to login options
               </button>
             </div>
           </form>
         )}
 
-        {/* Step 2: OTP Verification */}
-        {step === 'otp' && (
+        {/* Email OTP Verification */}
+        {step === 'email-otp-verify' && (
           <div className="space-y-4">
             {otpMethod === 'mock' && mockOtp && (
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
@@ -927,7 +1050,10 @@ const AuthModal = ({ open, onClose }) => {
             </div>
             <div className="flex justify-between items-center">
               <button 
-                onClick={() => setStep('email')} 
+                onClick={() => {
+                  setStep('email-otp');
+                  setOtp(['', '', '', '', '', '']);
+                }} 
                 className="text-sm text-gray-500 hover:underline"
               >
                 Change email
@@ -956,6 +1082,70 @@ const AuthModal = ({ open, onClose }) => {
                 className="text-sm text-brand-teal hover:underline disabled:text-gray-400"
               >
                 {resendTimer > 0 ? `Resend in ${resendTimer}s` : 'Resend code'}
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {/* Phone OTP Verification */}
+        {step === 'phone-otp-verify' && (
+          <div className="space-y-4">
+            {otpMethod === 'mock' && mockOtp && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-xs text-amber-800">
+                  <strong>Test Mode:</strong> Your verification code is <span className="font-mono font-bold">{mockOtp}</span>
+                </p>
+              </div>
+            )}
+            <p className="text-sm text-gray-600 text-center">
+              Code sent to <strong>+91 {phone}</strong>
+            </p>
+            <div className="flex justify-center gap-2">
+              {otp.map((digit, index) => (
+                <Input
+                  key={index}
+                  ref={(el) => (otpRefs.current[index] = el)}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => {
+                    handleOtpChange(index, e.target.value);
+                    if (e.target.value && index < 5) {
+                      otpRefs.current[index + 1]?.focus();
+                    }
+                    // Auto verify when complete
+                    const newOtp = [...otp];
+                    newOtp[index] = e.target.value;
+                    if (newOtp.join('').length === 6) {
+                      handleVerifyPhoneOtp(newOtp.join(''));
+                    }
+                  }}
+                  onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                  className="w-12 h-14 text-center text-xl font-bold rounded-xl"
+                  data-testid={`phone-otp-input-${index}`}
+                />
+              ))}
+            </div>
+            <div className="flex justify-between items-center">
+              <button 
+                onClick={() => {
+                  setStep('phone-otp');
+                  setOtp(['', '', '', '', '', '']);
+                }} 
+                className="text-sm text-gray-500 hover:underline"
+              >
+                Change number
+              </button>
+              <button 
+                onClick={async () => {
+                  if (resendTimer > 0) return;
+                  await handleResendOtp();
+                }}
+                disabled={resendTimer > 0 || loading}
+                className="text-sm text-brand-teal hover:underline disabled:text-gray-400"
+              >
+                {resendTimer > 0 ? `Resend in ${resendTimer}s` : 'Resend OTP'}
               </button>
             </div>
           </div>
