@@ -1181,6 +1181,80 @@ async def email_otp_login(request: EmailOTPLoginRequest):
         }
     }
 
+# ============ GOOGLE OAUTH LOGIN ============
+
+class GoogleAuthRequest(BaseModel):
+    email: str
+    name: str
+    picture: str = None
+    google_id: str = None
+    session_token: str = None
+
+@api_router.post("/auth/google")
+async def google_oauth_login(request: GoogleAuthRequest):
+    """Login or register user via Google OAuth"""
+    email = request.email.strip().lower()
+    name = request.name.strip()
+    
+    # Check if user exists
+    existing_user = await db.users.find_one({"email": email}, {"_id": 0})
+    
+    if existing_user:
+        # Update Google info if needed
+        update_data = {}
+        if request.google_id and not existing_user.get("google_id"):
+            update_data["google_id"] = request.google_id
+        if request.picture:
+            update_data["picture"] = request.picture
+        
+        if update_data:
+            await db.users.update_one({"email": email}, {"$set": update_data})
+        
+        user = existing_user
+        logger.info(f"Google OAuth login for existing user: {email}")
+    else:
+        # Create new user
+        user_id = f"user_{str(uuid.uuid4())[:12]}"
+        user = {
+            "id": user_id,
+            "email": email,
+            "name": name,
+            "phone": "",
+            "password": "",  # No password for Google users
+            "google_id": request.google_id,
+            "picture": request.picture,
+            "is_subscribed": False,
+            "preferences": {},
+            "auth_method": "google",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.users.insert_one(user)
+        del user["password"]  # Don't return password
+        logger.info(f"Google OAuth registration for new user: {email}")
+    
+    # Generate JWT token
+    token_data = {
+        "user_id": user["id"],
+        "email": user["email"],
+        "name": user["name"],
+        "exp": datetime.now(timezone.utc) + timedelta(days=30)
+    }
+    token = jwt.encode(token_data, JWT_SECRET, algorithm="HS256")
+    
+    return {
+        "token": token,
+        "user": {
+            "id": user["id"],
+            "name": user["name"],
+            "email": user["email"],
+            "phone": user.get("phone", ""),
+            "picture": user.get("picture"),
+            "is_subscribed": user.get("is_subscribed", False),
+            "preferences": user.get("preferences", {}),
+            "auth_method": user.get("auth_method", "email")
+        }
+    }
+
 # ============ PASSWORD RESET VIA SMS OTP ============
 
 @api_router.post("/auth/forgot-password/send-otp")
