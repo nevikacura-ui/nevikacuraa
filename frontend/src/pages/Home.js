@@ -441,9 +441,9 @@ const Home = () => {
 };
 
 const AuthModal = ({ open, onClose }) => {
-  const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login, fetchUser } = useAuth();
+  const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login, fetchUser, loginWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
-  // Steps: method-select, email-otp, email-otp-verify, phone-otp, phone-otp-verify, password-login, register, interests
+  // Steps: method-select, email-otp, email-otp-verify, phone-otp, phone-otp-verify, password-login, register, interests, password-failed
   const [step, setStep] = useState('method-select');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -456,7 +456,8 @@ const AuthModal = ({ open, onClose }) => {
   const [passwordLogin, setPasswordLogin] = useState({ email: '', password: '' });
   const [registerForm, setRegisterForm] = useState({ name: '', phone: '', email: '', password: '' });
   const [selectedInterests, setSelectedInterests] = useState([]);
-  const [authMethod, setAuthMethod] = useState(''); // 'email-otp', 'password', 'phone-otp'
+  const [authMethod, setAuthMethod] = useState(''); // 'email-otp', 'password', 'phone-otp', 'google'
+  const [loginError, setLoginError] = useState('');
   const otpRefs = React.useRef([]);
   const API = process.env.REACT_APP_BACKEND_URL;
 
