@@ -7857,6 +7857,257 @@ async def get_daily_calorie_summary(date: str = Query(...), user = Depends(get_c
         "remaining": {k: round(recommended[k] - totals[k], 1) for k in recommended}
     }
 
+# ============================================================
+# STRIPE PAYMENT INTEGRATION FOR EVARA SUBSCRIPTIONS
+# ============================================================
+
+# Import Stripe integration
+from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
+
+# Evara Subscription Plans (fixed pricing - DO NOT accept amounts from frontend)
+EVARA_SUBSCRIPTION_PLANS = {
+    "monthly": {"name": "Evara Monthly", "amount": 299.00, "currency": "inr", "duration_days": 30},
+    "yearly": {"name": "Evara Yearly", "amount": 2999.00, "currency": "inr", "duration_days": 365},
+    "quarterly": {"name": "Evara Quarterly", "amount": 799.00, "currency": "inr", "duration_days": 90}
+}
+
+# Initialize Stripe
+stripe_api_key = os.environ.get("STRIPE_API_KEY")
+
+class SubscriptionCheckoutRequest(BaseModel):
+    plan_id: str  # monthly, yearly, quarterly
+    origin_url: str  # Frontend origin URL for redirects
+
+class SubscriptionStatusRequest(BaseModel):
+    session_id: str
+
+@api_router.get("/evara/subscription/plans")
+async def get_subscription_plans():
+    """Get available Evara subscription plans"""
+    plans = []
+    for plan_id, plan_data in EVARA_SUBSCRIPTION_PLANS.items():
+        plans.append({
+            "id": plan_id,
+            "name": plan_data["name"],
+            "amount": plan_data["amount"],
+            "currency": plan_data["currency"],
+            "duration_days": plan_data["duration_days"],
+            "formatted_price": f"₹{int(plan_data['amount'])}" if plan_data["currency"] == "inr" else f"${plan_data['amount']}"
+        })
+    return {"plans": plans}
+
+@api_router.post("/evara/subscription/checkout")
+async def create_subscription_checkout(request: SubscriptionCheckoutRequest, http_request: Request, user: User = Depends(get_current_user)):
+    """Create a Stripe checkout session for Evara subscription"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    # Validate plan
+    if request.plan_id not in EVARA_SUBSCRIPTION_PLANS:
+        raise HTTPException(status_code=400, detail="Invalid subscription plan")
+    
+    plan = EVARA_SUBSCRIPTION_PLANS[request.plan_id]
+    
+    try:
+        # Initialize Stripe checkout
+        host_url = str(http_request.base_url).rstrip('/')
+        webhook_url = f"{host_url}api/webhook/stripe"
+        stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
+        
+        # Build URLs from frontend origin (DO NOT hardcode)
+        origin_url = request.origin_url.rstrip('/')
+        success_url = f"{origin_url}/evara?payment=success&session_id={{CHECKOUT_SESSION_ID}}"
+        cancel_url = f"{origin_url}/evara?payment=cancelled"
+        
+        # Create checkout session with fixed amount from backend (security)
+        checkout_request = CheckoutSessionRequest(
+            amount=plan["amount"],
+            currency=plan["currency"],
+            success_url=success_url,
+            cancel_url=cancel_url,
+            metadata={
+                "user_id": user.id,
+                "user_email": user.email,
+                "plan_id": request.plan_id,
+                "plan_name": plan["name"],
+                "duration_days": str(plan["duration_days"])
+            }
+        )
+        
+        session: CheckoutSessionResponse = await stripe_checkout.create_checkout_session(checkout_request)
+        
+        # Create payment transaction record (BEFORE redirect)
+        transaction = {
+            "id": str(uuid.uuid4()),
+            "user_id": user.id,
+            "user_email": user.email,
+            "session_id": session.session_id,
+            "plan_id": request.plan_id,
+            "plan_name": plan["name"],
+            "amount": plan["amount"],
+            "currency": plan["currency"],
+            "duration_days": plan["duration_days"],
+            "payment_status": "pending",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.payment_transactions.insert_one(transaction)
+        
+        return {
+            "checkout_url": session.url,
+            "session_id": session.session_id
+        }
+    except Exception as e:
+        logger.error(f"Stripe checkout error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create checkout session")
+
+@api_router.get("/evara/subscription/status/{session_id}")
+async def get_subscription_status(session_id: str, http_request: Request):
+    """Check payment status and update subscription"""
+    try:
+        # Initialize Stripe
+        host_url = str(http_request.base_url).rstrip('/')
+        webhook_url = f"{host_url}api/webhook/stripe"
+        stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
+        
+        # Get status from Stripe
+        status: CheckoutStatusResponse = await stripe_checkout.get_checkout_status(session_id)
+        
+        # Find the transaction
+        transaction = await db.payment_transactions.find_one({"session_id": session_id}, {"_id": 0})
+        
+        if not transaction:
+            raise HTTPException(status_code=404, detail="Transaction not found")
+        
+        # Update transaction status (only once)
+        if transaction.get("payment_status") == "pending" and status.payment_status == "paid":
+            # Payment successful - update transaction
+            await db.payment_transactions.update_one(
+                {"session_id": session_id},
+                {"$set": {
+                    "payment_status": status.payment_status,
+                    "stripe_status": status.status,
+                    "paid_at": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+            
+            # Activate user subscription
+            subscription_end = datetime.now(timezone.utc) + timedelta(days=transaction.get("duration_days", 30))
+            await db.users.update_one(
+                {"id": transaction["user_id"]},
+                {"$set": {
+                    "evara_subscription": {
+                        "active": True,
+                        "plan_id": transaction["plan_id"],
+                        "plan_name": transaction["plan_name"],
+                        "start_date": datetime.now(timezone.utc).isoformat(),
+                        "end_date": subscription_end.isoformat(),
+                        "transaction_id": transaction["id"]
+                    }
+                }}
+            )
+        elif transaction.get("payment_status") != status.payment_status:
+            # Update status
+            await db.payment_transactions.update_one(
+                {"session_id": session_id},
+                {"$set": {"payment_status": status.payment_status, "stripe_status": status.status}}
+            )
+        
+        return {
+            "session_id": session_id,
+            "status": status.status,
+            "payment_status": status.payment_status,
+            "amount": status.amount_total / 100,  # Convert from cents
+            "currency": status.currency,
+            "plan_name": transaction.get("plan_name"),
+            "is_subscription_active": status.payment_status == "paid"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Status check error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to check payment status")
+
+@api_router.get("/evara/subscription/user")
+async def get_user_subscription(user: User = Depends(get_current_user)):
+    """Get current user's Evara subscription status"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    user_doc = await db.users.find_one({"id": user.id}, {"_id": 0, "evara_subscription": 1})
+    
+    if not user_doc or not user_doc.get("evara_subscription"):
+        return {
+            "has_subscription": False,
+            "subscription": None
+        }
+    
+    subscription = user_doc["evara_subscription"]
+    
+    # Check if subscription is still active
+    end_date = datetime.fromisoformat(subscription.get("end_date", "2000-01-01"))
+    is_active = subscription.get("active", False) and end_date > datetime.now(timezone.utc)
+    
+    return {
+        "has_subscription": is_active,
+        "subscription": {
+            "plan_id": subscription.get("plan_id"),
+            "plan_name": subscription.get("plan_name"),
+            "start_date": subscription.get("start_date"),
+            "end_date": subscription.get("end_date"),
+            "days_remaining": max(0, (end_date - datetime.now(timezone.utc)).days) if is_active else 0
+        }
+    }
+
+@api_router.post("/webhook/stripe")
+async def stripe_webhook(request: Request):
+    """Handle Stripe webhook events"""
+    try:
+        body = await request.body()
+        signature = request.headers.get("Stripe-Signature")
+        
+        host_url = str(request.base_url).rstrip('/')
+        webhook_url = f"{host_url}api/webhook/stripe"
+        stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
+        
+        webhook_response = await stripe_checkout.handle_webhook(body, signature)
+        
+        # Process based on event type
+        if webhook_response.event_type in ["checkout.session.completed", "payment_intent.succeeded"]:
+            session_id = webhook_response.session_id
+            if session_id:
+                # Update payment status
+                transaction = await db.payment_transactions.find_one({"session_id": session_id})
+                if transaction and transaction.get("payment_status") == "pending":
+                    await db.payment_transactions.update_one(
+                        {"session_id": session_id},
+                        {"$set": {
+                            "payment_status": "paid",
+                            "stripe_event": webhook_response.event_type,
+                            "paid_at": datetime.now(timezone.utc).isoformat()
+                        }}
+                    )
+                    
+                    # Activate subscription
+                    subscription_end = datetime.now(timezone.utc) + timedelta(days=transaction.get("duration_days", 30))
+                    await db.users.update_one(
+                        {"id": transaction["user_id"]},
+                        {"$set": {
+                            "evara_subscription": {
+                                "active": True,
+                                "plan_id": transaction["plan_id"],
+                                "plan_name": transaction["plan_name"],
+                                "start_date": datetime.now(timezone.utc).isoformat(),
+                                "end_date": subscription_end.isoformat(),
+                                "transaction_id": transaction["id"]
+                            }
+                        }}
+                    )
+        
+        return {"status": "received"}
+    except Exception as e:
+        logger.error(f"Webhook error: {e}")
+        return {"status": "error", "message": str(e)}
+
 # Include router AFTER all routes are defined
 app.include_router(api_router)
 
