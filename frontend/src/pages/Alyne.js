@@ -16,7 +16,8 @@ import {
   CheckCircle, Clock, AlertTriangle, ChevronRight, Trash2,
   Upload, MessageCircle, Send, ShoppingCart, Package, Stethoscope, 
   Thermometer, Star, BookOpen, GraduationCap, Phone, Pill, 
-  Eye, Scissors, Brain, Utensils, Moon, Droplets, X
+  Eye, Scissors, Brain, Utensils, Moon, Droplets, X, Video, ExternalLink, 
+  Leaf, Building2, Car, Baby as BabyIcon, Info
 } from 'lucide-react';
 import Footer from '@/components/Footer';
 
