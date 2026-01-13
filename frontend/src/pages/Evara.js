@@ -1304,7 +1304,7 @@ const Evara = () => {
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div className="flex items-center gap-2">
-            <img src="/icons/evara-logo.png" alt="Evara" className="w-10 h-10 rounded-xl" />
+            <img src="/icons/evara-logo.png" alt="Evara" className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl" />
             <div>
               <h1 className="font-semibold text-gray-800">Evara</h1>
               <p className="text-xs text-pink-600">Women's Wellness</p>
