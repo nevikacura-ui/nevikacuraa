@@ -2878,6 +2878,8 @@ FEE_CODES = {
     "O1": {"label": "OBGY - First", "amount": 500, "category": "obgyn"},
     "O2": {"label": "OBGY - Follow up", "amount": 400, "category": "obgyn"},
     "O3": {"label": "OBGY - Follow up", "amount": 300, "category": "obgyn"},
+    "N1": {"label": "No Fees", "amount": 0, "category": "free"},
+    "E1": {"label": "Emergency", "amount": 600, "category": "emergency"},
 }
 
 
