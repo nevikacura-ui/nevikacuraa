@@ -14,6 +14,12 @@ import Feedback from '@/pages/Feedback';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import TermsOfService from '@/pages/TermsOfService';
 import AboutUs from '@/pages/AboutUs';
+// New Feature Pages
+import MyHealth from '@/pages/MyHealth';
+import HealthPackages from '@/pages/HealthPackages';
+import ReferralProgram from '@/pages/ReferralProgram';
+import HealthTips from '@/pages/HealthTips';
+import Teleconsultation from '@/pages/Teleconsultation';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
@@ -39,6 +45,12 @@ function App() {
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/about" element={<AboutUs />} />
+            {/* New Feature Routes */}
+            <Route path="/my-health" element={<MyHealth />} />
+            <Route path="/health-packages" element={<HealthPackages />} />
+            <Route path="/referral" element={<ReferralProgram />} />
+            <Route path="/health-tips" element={<HealthTips />} />
+            <Route path="/teleconsult" element={<Teleconsultation />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
