@@ -1108,6 +1108,9 @@ async def register_with_otp(input: RegisterWithOTP):
         patient_html=patient_welcome_html
     )
     
+    # Send SMS notification to staff about new signup
+    await notify_staff_new_signup({"name": user.name, "phone": user.phone})
+    
     # Generate WhatsApp link for signup notification (consistent with regular registration)
     whatsapp_message = f"New User Signup (OTP) on Nevika Cura\n\nName: {user.name}\nEmail: {user.email}\nPhone: {user.phone}"
     whatsapp_link = f"https://wa.me/91{SIGNUP_WHATSAPP_NUMBER}?text={whatsapp_message.replace(' ', '%20').replace(chr(10), '%0A')}"
