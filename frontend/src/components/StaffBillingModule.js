@@ -61,7 +61,7 @@ const StaffBillingModule = ({ staffInfo, getAuthHeaders }) => {
       setIsSearching(true);
       try {
         const params = { q: query };
-        if (searchCategory) params.category = searchCategory;
+        if (searchCategory && searchCategory !== 'all') params.category = searchCategory;
         
         const response = await axios.get(`${API}/staff-billing/inventory/search`, { params });
         setSearchResults(response.data?.results || []);
