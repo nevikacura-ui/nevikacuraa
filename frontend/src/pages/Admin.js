@@ -181,6 +181,13 @@ const Admin = () => {
     }
   }, [isAuthenticated, activeTab]);
 
+  // Fetch analytics data when analytics tab is active
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'analytics') {
+      fetchAnalytics();
+    }
+  }, [isAuthenticated, activeTab, analyticsDays]);
+
   // Search debounce for inventory
   useEffect(() => {
     const timer = setTimeout(() => {
