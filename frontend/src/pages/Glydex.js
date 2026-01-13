@@ -961,6 +961,24 @@ const Glydex = () => {
               <p className="text-xs text-gray-500 mt-1">3-month control</p>
             </CardContent>
           </Card>
+
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-orange-200 hover:border-orange-400 active:scale-95"
+            onClick={() => {
+              setShowCaloriesTracker(true);
+              fetchFoodDatabase();
+              fetchCalorieLogs();
+            }}
+            data-testid="calorie-tracker-btn"
+          >
+            <CardContent className="p-5 text-center">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg">
+                <Utensils className="w-7 h-7 text-white" />
+              </div>
+              <p className="font-semibold text-gray-800">Calorie Tracker</p>
+              <p className="text-xs text-gray-500 mt-1">Indian Foods</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* HbA1c Trend Chart Card */}
