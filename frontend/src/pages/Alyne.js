@@ -1446,6 +1446,96 @@ const SafetyGuideSection = ({ onBack }) => {
 
 // ============ COMMON SECTIONS ============
 
+// Pediatrician Finder Section (USA)
+const PediatricianFinderSection = ({ onBack }) => {
+  const providers = [
+    {
+      name: "Zocdoc",
+      description: "Find and book top-rated pediatricians near you",
+      features: ["Verified patient reviews", "Real-time availability", "Book online instantly", "Filter by insurance"],
+      url: "https://www.zocdoc.com/pediatricians",
+      logo: "🩺",
+      color: "from-blue-500 to-cyan-500"
+    },
+    {
+      name: "Healthgrades",
+      description: "Compare pediatricians based on experience and patient satisfaction",
+      features: ["Detailed provider profiles", "Hospital affiliations", "Quality ratings", "Patient reviews"],
+      url: "https://www.healthgrades.com/pediatrics-directory",
+      logo: "⭐",
+      color: "from-green-500 to-teal-500"
+    },
+    {
+      name: "AAP Pediatrician Referral",
+      description: "Official American Academy of Pediatrics provider search",
+      features: ["Board-certified pediatricians", "AAP member directory", "Specialty search", "Location-based"],
+      url: "https://www.healthychildren.org/English/tips-tools/find-pediatrician/Pages/Pediatrician-Referral-Service.aspx",
+      logo: "🏥",
+      color: "from-orange-500 to-red-500"
+    }
+  ];
+
+  const tips = [
+    "Check if the pediatrician is board-certified",
+    "Verify they accept your insurance plan",
+    "Consider office location and hours",
+    "Read patient reviews for insights",
+    "Ask about after-hours availability",
+    "Schedule a meet-and-greet before committing"
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">👨‍⚕️ Find a Pediatrician</h2><p className="text-sm text-gray-500">Search trusted provider directories</p></div>
+      </div>
+
+      <div className="space-y-4">
+        {providers.map((provider, i) => (
+          <Card key={i} className="overflow-hidden">
+            <div className={`h-2 bg-gradient-to-r ${provider.color}`}></div>
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <span className="text-3xl">{provider.logo}</span>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg">{provider.name}</h3>
+                  <p className="text-sm text-gray-600">{provider.description}</p>
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {provider.features.map((f, j) => (
+                      <Badge key={j} variant="outline" className="text-xs">{f}</Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <a href={provider.url} target="_blank" rel="noopener noreferrer" className="block mt-3">
+                <Button className={`w-full bg-gradient-to-r ${provider.color}`}>
+                  Search on {provider.name} <ExternalLink className="w-4 h-4 ml-2" />
+                </Button>
+              </a>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <Card className="bg-amber-50 border-amber-200">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base flex items-center gap-2"><Info className="w-5 h-5 text-amber-600" />Tips for Choosing a Pediatrician</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-2">
+            {tips.map((tip, i) => (
+              <li key={i} className="text-sm flex items-start gap-2">
+                <CheckCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />{tip}
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 // Developmental Screening Section
 const DevScreeningSection = ({ onBack }) => {
   const [screening, setScreening] = useState({});
