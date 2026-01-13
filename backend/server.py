@@ -4483,6 +4483,19 @@ Call: 9403890429"""
                 patient_subject=f"Your Appointment on {appt.get('date')} has been Cancelled",
                 patient_html=patient_cancel_html
             )
+        
+        # Send SMS cancellation notification to patient
+        if appt.get('patient_phone'):
+            cancel_sms = f"""DiaGyn - Appointment Cancelled
+
+Dear {appt.get('patient_name')},
+Your appointment on {appt.get('date')} at {appt.get('time')} with {request.doctor} has been cancelled.
+
+Reason: {request.reason}
+
+Please reschedule at your convenience.
+Call: 9403890429"""
+            await send_sms_notification(appt.get('patient_phone'), cancel_sms)
     
     return {
         "success": True,
