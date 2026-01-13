@@ -3117,7 +3117,7 @@ Book your slot: https://caresuite.preview.emergentagent.com/diagyn
 
 Thank you for choosing Nevika Cura!"""
             
-            await send_twilio_sms(appointment.get("patient_phone"), follow_up_sms)
+            await send_sms_notification(appointment.get("patient_phone"), follow_up_sms)
             logger.info(f"Follow-up SMS sent to {appointment.get('patient_phone')} for {follow_up_date}")
         except Exception as e:
             logger.error(f"Failed to send follow-up SMS: {e}")
