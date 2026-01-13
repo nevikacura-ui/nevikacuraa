@@ -3376,7 +3376,7 @@ Need to reschedule? Call us or book online.
 
 - Nevika Cura Team"""
             
-            await send_twilio_sms(reminder["patient_phone"], sms_message)
+            await send_sms_notification(reminder["patient_phone"], sms_message)
             
             # Mark as sent
             await db.follow_up_reminders.update_one(
