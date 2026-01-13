@@ -302,7 +302,38 @@ const Home = () => {
         {user && (
           <div className="mt-12">
             <h2 className="text-xl font-semibold text-center mb-6">More Features</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {/* Emergency - Highlighted */}
+              <button
+                onClick={() => navigate('/emergency')}
+                className="p-4 bg-red-50 backdrop-blur rounded-xl border border-red-200 hover:shadow-md transition-all text-center"
+                data-testid="emergency-btn"
+              >
+                <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-red-100 flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5 text-red-500" />
+                </div>
+                <span className="text-sm font-medium text-red-700">Emergency SOS</span>
+              </button>
+              <button
+                onClick={() => navigate('/medication-tracker')}
+                className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+                data-testid="medication-tracker-btn"
+              >
+                <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-teal-100 flex items-center justify-center">
+                  <Pill className="w-5 h-5 text-teal-500" />
+                </div>
+                <span className="text-sm font-medium">Pill Tracker</span>
+              </button>
+              <button
+                onClick={() => navigate('/health-assessment')}
+                className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+                data-testid="health-assessment-btn"
+              >
+                <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-indigo-100 flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-indigo-500" />
+                </div>
+                <span className="text-sm font-medium">Risk Assessment</span>
+              </button>
               <button
                 onClick={() => navigate('/my-health')}
                 className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
