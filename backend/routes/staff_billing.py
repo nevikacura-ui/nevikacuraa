@@ -266,6 +266,36 @@ async def search_inventory(q: str, category: Optional[str] = None, limit: int = 
     
     return {"results": results[:limit], "total": len(results)}
 
+@router.get("/inventory/service/{service_type}")
+async def get_service_inventory(service_type: str):
+    """Get inventory for a specific service type (diagyn, proton, pharmacy)"""
+    if service_type == "diagyn":
+        items = []
+        for section in DIAGYN_SERVICES.values():
+            items.extend(section)
+        return {
+            "service": "DiaGyn Healthcare",
+            "service_type": "diagyn",
+            "items": items
+        }
+    elif service_type == "proton":
+        return {
+            "service": "Proton Diagnostics",
+            "service_type": "proton",
+            "items": PROTON_TESTS
+        }
+    elif service_type == "pharmacy":
+        # For pharmacy, we need to fetch from database
+        db = get_db()
+        medicines = await db.medicines.find({}, {"_id": 0}).limit(500).to_list(500)
+        return {
+            "service": "Orange Pharmacy",
+            "service_type": "pharmacy",
+            "items": medicines
+        }
+    else:
+        raise HTTPException(status_code=400, detail="Invalid service type")
+
 @router.get("/inventory/categories")
 async def get_inventory_categories():
     """Get all available categories"""
