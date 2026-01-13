@@ -636,7 +636,7 @@ const AuthModal = ({ open, onClose }) => {
     setLoading(true);
     setLoginError('');
     try {
-      await login(passwordLogin.email, passwordLogin.password);
+      await login(passwordLogin.email, passwordLogin.password, passwordLogin.rememberMe);
       toast.success('Login successful!');
       onClose();
     } catch (error) {
@@ -654,6 +654,20 @@ const AuthModal = ({ open, onClose }) => {
   const handleGoogleLogin = () => {
     loginWithGoogle();
     // Modal will close when user is redirected
+  };
+  
+  // Handle Biometric login
+  const handleBiometricLogin = async () => {
+    setLoading(true);
+    try {
+      await loginWithBiometric();
+      toast.success('Logged in with biometric!');
+      onClose();
+    } catch (error) {
+      toast.error('Biometric login failed. Please try another method.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Complete Registration
