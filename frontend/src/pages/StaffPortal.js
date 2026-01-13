@@ -361,7 +361,14 @@ const StaffPortal = () => {
       }
     } catch (error) {
       console.error('Load data error:', error);
+    } finally {
+      setIsRefreshing(false);
     }
+  };
+
+  const handleManualRefresh = () => {
+    loadData(true);
+    toast.success('Data refreshed!');
   };
 
   useEffect(() => {
