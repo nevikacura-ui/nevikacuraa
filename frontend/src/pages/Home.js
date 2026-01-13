@@ -472,7 +472,7 @@ const AuthModal = ({ open, onClose }) => {
   // Reset state when modal closes
   React.useEffect(() => {
     if (!open) {
-      setStep('email');
+      setStep('method-select');
       setEmail('');
       setPhone('');
       setOtp(['', '', '', '', '', '']);
@@ -481,8 +481,9 @@ const AuthModal = ({ open, onClose }) => {
       setResendTimer(0);
       setVerificationToken('');
       setPasswordLogin({ email: '', password: '' });
-      setRegisterForm({ name: '', phone: '', password: '' });
+      setRegisterForm({ name: '', phone: '', email: '', password: '' });
       setSelectedInterests([]);
+      setAuthMethod('');
     }
   }, [open]);
 
