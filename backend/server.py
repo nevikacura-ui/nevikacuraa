@@ -7441,6 +7441,248 @@ async def generate_evara_share_report(user = Depends(get_current_user)):
         "whatsapp_url": f"https://wa.me/?text={report_text.replace(chr(10), '%0A').replace(' ', '%20')}"
     }
 
+# ============ INDIAN CALORIES TRACKER ============
+
+# Indian Food Database with Calories (per serving)
+INDIAN_FOOD_DATABASE = {
+    "breakfast": [
+        {"name": "Idli (2 pcs)", "calories": 78, "protein": 2, "carbs": 12, "fat": 0.4, "fiber": 0.8, "category": "South Indian"},
+        {"name": "Dosa (Plain)", "calories": 133, "protein": 3.9, "carbs": 18, "fat": 5, "fiber": 0.7, "category": "South Indian"},
+        {"name": "Masala Dosa", "calories": 206, "protein": 5.7, "carbs": 24, "fat": 10, "fiber": 2, "category": "South Indian"},
+        {"name": "Upma (1 cup)", "calories": 163, "protein": 4, "carbs": 24, "fat": 6, "fiber": 2, "category": "South Indian"},
+        {"name": "Poha (1 cup)", "calories": 180, "protein": 3, "carbs": 32, "fat": 5, "fiber": 2, "category": "Maharashtrian"},
+        {"name": "Paratha (Plain)", "calories": 260, "protein": 6, "carbs": 36, "fat": 11, "fiber": 2, "category": "North Indian"},
+        {"name": "Aloo Paratha", "calories": 300, "protein": 7, "carbs": 42, "fat": 13, "fiber": 3, "category": "North Indian"},
+        {"name": "Puri (2 pcs)", "calories": 208, "protein": 4, "carbs": 24, "fat": 11, "fiber": 1, "category": "North Indian"},
+        {"name": "Chole Bhature (1 plate)", "calories": 450, "protein": 12, "carbs": 52, "fat": 22, "fiber": 5, "category": "North Indian"},
+        {"name": "Vada (2 pcs)", "calories": 290, "protein": 6, "carbs": 28, "fat": 17, "fiber": 3, "category": "South Indian"},
+        {"name": "Uttapam", "calories": 150, "protein": 4, "carbs": 22, "fat": 5, "fiber": 2, "category": "South Indian"},
+        {"name": "Pongal (1 cup)", "calories": 230, "protein": 7, "carbs": 38, "fat": 6, "fiber": 3, "category": "South Indian"},
+        {"name": "Oats Porridge (1 cup)", "calories": 147, "protein": 5, "carbs": 25, "fat": 3, "fiber": 4, "category": "Healthy"},
+        {"name": "Bread Omelette", "calories": 285, "protein": 14, "carbs": 28, "fat": 13, "fiber": 2, "category": "Fusion"},
+        {"name": "Sandwich (Veg)", "calories": 200, "protein": 6, "carbs": 30, "fat": 7, "fiber": 3, "category": "Western"},
+    ],
+    "lunch_dinner": [
+        {"name": "Roti (1 pc)", "calories": 71, "protein": 2.5, "carbs": 15, "fat": 0.4, "fiber": 1.9, "category": "North Indian"},
+        {"name": "Rice (1 cup cooked)", "calories": 206, "protein": 4.3, "carbs": 45, "fat": 0.4, "fiber": 0.6, "category": "Staple"},
+        {"name": "Brown Rice (1 cup)", "calories": 216, "protein": 5, "carbs": 45, "fat": 1.8, "fiber": 3.5, "category": "Healthy"},
+        {"name": "Dal Tadka (1 cup)", "calories": 150, "protein": 9, "carbs": 20, "fat": 4, "fiber": 5, "category": "North Indian"},
+        {"name": "Sambar (1 cup)", "calories": 130, "protein": 6, "carbs": 18, "fat": 4, "fiber": 4, "category": "South Indian"},
+        {"name": "Rasam (1 cup)", "calories": 45, "protein": 2, "carbs": 8, "fat": 0.5, "fiber": 1, "category": "South Indian"},
+        {"name": "Rajma (1 cup)", "calories": 230, "protein": 15, "carbs": 40, "fat": 2, "fiber": 11, "category": "North Indian"},
+        {"name": "Chole (1 cup)", "calories": 269, "protein": 15, "carbs": 45, "fat": 4, "fiber": 12, "category": "North Indian"},
+        {"name": "Paneer Butter Masala (1 cup)", "calories": 320, "protein": 14, "carbs": 12, "fat": 25, "fiber": 2, "category": "North Indian"},
+        {"name": "Palak Paneer (1 cup)", "calories": 260, "protein": 14, "carbs": 10, "fat": 18, "fiber": 3, "category": "North Indian"},
+        {"name": "Aloo Gobi (1 cup)", "calories": 170, "protein": 4, "carbs": 22, "fat": 8, "fiber": 4, "category": "North Indian"},
+        {"name": "Bhindi Fry (1 cup)", "calories": 130, "protein": 3, "carbs": 12, "fat": 8, "fiber": 4, "category": "North Indian"},
+        {"name": "Baingan Bharta (1 cup)", "calories": 150, "protein": 3, "carbs": 14, "fat": 10, "fiber": 5, "category": "North Indian"},
+        {"name": "Mixed Veg Curry (1 cup)", "calories": 145, "protein": 4, "carbs": 18, "fat": 7, "fiber": 5, "category": "North Indian"},
+        {"name": "Chicken Curry (1 cup)", "calories": 285, "protein": 28, "carbs": 8, "fat": 16, "fiber": 2, "category": "Non-Veg"},
+        {"name": "Mutton Curry (1 cup)", "calories": 320, "protein": 30, "carbs": 6, "fat": 20, "fiber": 1, "category": "Non-Veg"},
+        {"name": "Fish Curry (1 cup)", "calories": 200, "protein": 24, "carbs": 6, "fat": 10, "fiber": 1, "category": "Non-Veg"},
+        {"name": "Egg Curry (2 eggs)", "calories": 280, "protein": 18, "carbs": 10, "fat": 18, "fiber": 2, "category": "Non-Veg"},
+        {"name": "Biryani (Veg, 1 plate)", "calories": 350, "protein": 8, "carbs": 55, "fat": 12, "fiber": 3, "category": "Biryani"},
+        {"name": "Biryani (Chicken, 1 plate)", "calories": 490, "protein": 25, "carbs": 55, "fat": 18, "fiber": 2, "category": "Biryani"},
+        {"name": "Pulao (1 plate)", "calories": 280, "protein": 6, "carbs": 45, "fat": 8, "fiber": 2, "category": "Rice"},
+        {"name": "Khichdi (1 cup)", "calories": 200, "protein": 8, "carbs": 34, "fat": 4, "fiber": 4, "category": "Comfort Food"},
+        {"name": "Curd Rice (1 cup)", "calories": 220, "protein": 7, "carbs": 38, "fat": 5, "fiber": 1, "category": "South Indian"},
+        {"name": "Thali (Veg)", "calories": 800, "protein": 25, "carbs": 120, "fat": 25, "fiber": 12, "category": "Complete Meal"},
+    ],
+    "snacks": [
+        {"name": "Samosa (1 pc)", "calories": 262, "protein": 4, "carbs": 32, "fat": 14, "fiber": 2, "category": "Fried"},
+        {"name": "Pakora (5 pcs)", "calories": 250, "protein": 5, "carbs": 22, "fat": 16, "fiber": 3, "category": "Fried"},
+        {"name": "Bhel Puri (1 plate)", "calories": 200, "protein": 4, "carbs": 32, "fat": 7, "fiber": 3, "category": "Chaat"},
+        {"name": "Pani Puri (6 pcs)", "calories": 180, "protein": 3, "carbs": 28, "fat": 6, "fiber": 2, "category": "Chaat"},
+        {"name": "Sev Puri (1 plate)", "calories": 220, "protein": 4, "carbs": 30, "fat": 10, "fiber": 3, "category": "Chaat"},
+        {"name": "Dahi Puri (1 plate)", "calories": 250, "protein": 6, "carbs": 35, "fat": 10, "fiber": 3, "category": "Chaat"},
+        {"name": "Vada Pav", "calories": 290, "protein": 6, "carbs": 36, "fat": 14, "fiber": 3, "category": "Mumbai Street"},
+        {"name": "Pav Bhaji (1 plate)", "calories": 400, "protein": 10, "carbs": 52, "fat": 18, "fiber": 5, "category": "Mumbai Street"},
+        {"name": "Dhokla (4 pcs)", "calories": 160, "protein": 6, "carbs": 24, "fat": 4, "fiber": 2, "category": "Gujarati"},
+        {"name": "Kachori (1 pc)", "calories": 200, "protein": 4, "carbs": 22, "fat": 11, "fiber": 2, "category": "Rajasthani"},
+        {"name": "Cutlet (Veg)", "calories": 180, "protein": 5, "carbs": 18, "fat": 10, "fiber": 2, "category": "Snack"},
+        {"name": "Aloo Tikki", "calories": 160, "protein": 3, "carbs": 20, "fat": 8, "fiber": 2, "category": "North Indian"},
+        {"name": "Spring Roll (2 pcs)", "calories": 200, "protein": 4, "carbs": 22, "fat": 10, "fiber": 2, "category": "Chinese"},
+        {"name": "Momos (Veg, 6 pcs)", "calories": 220, "protein": 6, "carbs": 28, "fat": 9, "fiber": 2, "category": "Tibetan"},
+        {"name": "Momos (Chicken, 6 pcs)", "calories": 280, "protein": 14, "carbs": 26, "fat": 12, "fiber": 1, "category": "Tibetan"},
+        {"name": "Roasted Chana (1 cup)", "calories": 150, "protein": 8, "carbs": 22, "fat": 3, "fiber": 6, "category": "Healthy Snack"},
+        {"name": "Makhana (1 cup)", "calories": 100, "protein": 4, "carbs": 18, "fat": 1, "fiber": 2, "category": "Healthy Snack"},
+        {"name": "Mixed Nuts (30g)", "calories": 180, "protein": 5, "carbs": 8, "fat": 16, "fiber": 2, "category": "Healthy Snack"},
+    ],
+    "beverages": [
+        {"name": "Chai (1 cup)", "calories": 80, "protein": 2, "carbs": 12, "fat": 3, "fiber": 0, "category": "Hot Beverage"},
+        {"name": "Black Tea", "calories": 2, "protein": 0, "carbs": 0.5, "fat": 0, "fiber": 0, "category": "Hot Beverage"},
+        {"name": "Green Tea", "calories": 2, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0, "category": "Hot Beverage"},
+        {"name": "Coffee with Milk", "calories": 60, "protein": 2, "carbs": 6, "fat": 3, "fiber": 0, "category": "Hot Beverage"},
+        {"name": "Black Coffee", "calories": 5, "protein": 0.3, "carbs": 0, "fat": 0, "fiber": 0, "category": "Hot Beverage"},
+        {"name": "Filter Coffee", "calories": 94, "protein": 2, "carbs": 10, "fat": 5, "fiber": 0, "category": "South Indian"},
+        {"name": "Lassi (Sweet)", "calories": 180, "protein": 5, "carbs": 28, "fat": 5, "fiber": 0, "category": "Cold Beverage"},
+        {"name": "Lassi (Salt/Plain)", "calories": 100, "protein": 5, "carbs": 10, "fat": 4, "fiber": 0, "category": "Cold Beverage"},
+        {"name": "Buttermilk (Chaas)", "calories": 40, "protein": 2, "carbs": 5, "fat": 1, "fiber": 0, "category": "Cold Beverage"},
+        {"name": "Mango Shake", "calories": 220, "protein": 5, "carbs": 38, "fat": 6, "fiber": 2, "category": "Cold Beverage"},
+        {"name": "Banana Shake", "calories": 200, "protein": 6, "carbs": 32, "fat": 5, "fiber": 2, "category": "Cold Beverage"},
+        {"name": "Coconut Water (1 glass)", "calories": 46, "protein": 1.7, "carbs": 9, "fat": 0.5, "fiber": 2.6, "category": "Natural"},
+        {"name": "Nimbu Pani", "calories": 50, "protein": 0, "carbs": 12, "fat": 0, "fiber": 0, "category": "Cold Beverage"},
+        {"name": "Jaljeera", "calories": 30, "protein": 0.5, "carbs": 6, "fat": 0, "fiber": 0.5, "category": "Cold Beverage"},
+    ],
+    "sweets_desserts": [
+        {"name": "Gulab Jamun (2 pcs)", "calories": 300, "protein": 4, "carbs": 40, "fat": 14, "fiber": 0.5, "category": "Mithai"},
+        {"name": "Rasgulla (2 pcs)", "calories": 180, "protein": 4, "carbs": 32, "fat": 4, "fiber": 0, "category": "Bengali"},
+        {"name": "Rasmalai (2 pcs)", "calories": 250, "protein": 6, "carbs": 30, "fat": 12, "fiber": 0, "category": "Bengali"},
+        {"name": "Jalebi (2 pcs)", "calories": 250, "protein": 2, "carbs": 38, "fat": 10, "fiber": 0, "category": "Mithai"},
+        {"name": "Ladoo (1 pc)", "calories": 180, "protein": 3, "carbs": 24, "fat": 8, "fiber": 1, "category": "Mithai"},
+        {"name": "Barfi (1 pc)", "calories": 150, "protein": 3, "carbs": 18, "fat": 8, "fiber": 0, "category": "Mithai"},
+        {"name": "Kheer (1 cup)", "calories": 200, "protein": 6, "carbs": 30, "fat": 7, "fiber": 0.5, "category": "Dessert"},
+        {"name": "Payasam (1 cup)", "calories": 220, "protein": 5, "carbs": 35, "fat": 7, "fiber": 1, "category": "South Indian"},
+        {"name": "Gajar Halwa (1 cup)", "calories": 280, "protein": 5, "carbs": 35, "fat": 14, "fiber": 3, "category": "North Indian"},
+        {"name": "Moong Dal Halwa (1/2 cup)", "calories": 250, "protein": 6, "carbs": 28, "fat": 14, "fiber": 2, "category": "North Indian"},
+        {"name": "Ice Cream (1 scoop)", "calories": 140, "protein": 2, "carbs": 16, "fat": 7, "fiber": 0, "category": "Frozen"},
+        {"name": "Kulfi (1 stick)", "calories": 150, "protein": 3, "carbs": 18, "fat": 7, "fiber": 0, "category": "Frozen"},
+        {"name": "Sandesh (2 pcs)", "calories": 120, "protein": 4, "carbs": 16, "fat": 5, "fiber": 0, "category": "Bengali"},
+    ],
+    "diabetic_friendly": [
+        {"name": "Multigrain Roti", "calories": 85, "protein": 3.5, "carbs": 16, "fat": 1.5, "fiber": 3, "category": "Low GI"},
+        {"name": "Jowar Roti", "calories": 80, "protein": 3, "carbs": 17, "fat": 0.5, "fiber": 2.5, "category": "Low GI"},
+        {"name": "Bajra Roti", "calories": 92, "protein": 3, "carbs": 18, "fat": 1, "fiber": 3, "category": "Low GI"},
+        {"name": "Ragi Dosa", "calories": 120, "protein": 4, "carbs": 20, "fat": 3, "fiber": 4, "category": "Low GI"},
+        {"name": "Quinoa Upma", "calories": 180, "protein": 7, "carbs": 28, "fat": 5, "fiber": 5, "category": "Superfood"},
+        {"name": "Sprouts Salad", "calories": 100, "protein": 8, "carbs": 14, "fat": 1, "fiber": 5, "category": "High Protein"},
+        {"name": "Cucumber Raita", "calories": 60, "protein": 3, "carbs": 6, "fat": 2, "fiber": 0.5, "category": "Low Cal"},
+        {"name": "Vegetable Soup", "calories": 80, "protein": 3, "carbs": 12, "fat": 2, "fiber": 3, "category": "Low Cal"},
+        {"name": "Egg White Omelette", "calories": 55, "protein": 11, "carbs": 0.5, "fat": 0, "fiber": 0, "category": "High Protein"},
+        {"name": "Grilled Chicken (100g)", "calories": 165, "protein": 31, "carbs": 0, "fat": 3.6, "fiber": 0, "category": "High Protein"},
+        {"name": "Steamed Fish (100g)", "calories": 130, "protein": 26, "carbs": 0, "fat": 2.5, "fiber": 0, "category": "High Protein"},
+        {"name": "Greek Yogurt (1 cup)", "calories": 100, "protein": 17, "carbs": 6, "fat": 0.7, "fiber": 0, "category": "High Protein"},
+        {"name": "Almonds (10 pcs)", "calories": 70, "protein": 2.5, "carbs": 2.5, "fat": 6, "fiber": 1.2, "category": "Healthy Snack"},
+        {"name": "Walnuts (5 halves)", "calories": 65, "protein": 1.5, "carbs": 1.5, "fat": 6.5, "fiber": 0.7, "category": "Healthy Snack"},
+    ]
+}
+
+class CalorieLogCreate(BaseModel):
+    food_name: str
+    calories: int
+    protein: float = 0
+    carbs: float = 0
+    fat: float = 0
+    fiber: float = 0
+    meal_type: str = "other"  # breakfast, lunch, dinner, snack, other
+    quantity: float = 1
+    date: str
+    notes: Optional[str] = None
+
+@api_router.get("/calories/food-database")
+async def get_indian_food_database():
+    """Get the Indian food database for calorie tracking"""
+    return {
+        "categories": list(INDIAN_FOOD_DATABASE.keys()),
+        "foods": INDIAN_FOOD_DATABASE,
+        "total_items": sum(len(foods) for foods in INDIAN_FOOD_DATABASE.values())
+    }
+
+@api_router.get("/calories/search")
+async def search_indian_foods(q: str = Query(..., min_length=2)):
+    """Search Indian foods by name"""
+    query = q.lower()
+    results = []
+    for category, foods in INDIAN_FOOD_DATABASE.items():
+        for food in foods:
+            if query in food["name"].lower() or query in food.get("category", "").lower():
+                results.append({**food, "meal_category": category})
+    return {"query": q, "results": results[:20]}
+
+@api_router.post("/calories/log")
+async def log_calories(data: CalorieLogCreate, user = Depends(get_current_user)):
+    """Log food intake for calorie tracking"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    log = {
+        "id": str(uuid.uuid4()),
+        "user_id": user.id,
+        "food_name": data.food_name,
+        "calories": int(data.calories * data.quantity),
+        "protein": round(data.protein * data.quantity, 1),
+        "carbs": round(data.carbs * data.quantity, 1),
+        "fat": round(data.fat * data.quantity, 1),
+        "fiber": round(data.fiber * data.quantity, 1),
+        "meal_type": data.meal_type,
+        "quantity": data.quantity,
+        "date": data.date,
+        "notes": data.notes,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.calorie_logs.insert_one(log)
+    return {"success": True, "log": {k: v for k, v in log.items() if k != "_id"}}
+
+@api_router.get("/calories/logs")
+async def get_calorie_logs(date: Optional[str] = None, user = Depends(get_current_user)):
+    """Get calorie logs for a user, optionally filtered by date"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    query = {"user_id": user.id}
+    if date:
+        query["date"] = date
+    
+    logs = await db.calorie_logs.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    
+    # Calculate daily totals
+    totals = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0}
+    for log in logs:
+        totals["calories"] += log.get("calories", 0)
+        totals["protein"] += log.get("protein", 0)
+        totals["carbs"] += log.get("carbs", 0)
+        totals["fat"] += log.get("fat", 0)
+        totals["fiber"] += log.get("fiber", 0)
+    
+    return {"logs": logs, "totals": {k: round(v, 1) for k, v in totals.items()}}
+
+@api_router.delete("/calories/logs/{log_id}")
+async def delete_calorie_log(log_id: str, user = Depends(get_current_user)):
+    """Delete a calorie log"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    result = await db.calorie_logs.delete_one({"id": log_id, "user_id": user.id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Log not found")
+    return {"success": True}
+
+@api_router.get("/calories/daily-summary")
+async def get_daily_calorie_summary(date: str = Query(...), user = Depends(get_current_user)):
+    """Get daily calorie summary with meal breakdown"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    logs = await db.calorie_logs.find(
+        {"user_id": user.id, "date": date}, 
+        {"_id": 0}
+    ).to_list(50)
+    
+    # Group by meal type
+    meals = {"breakfast": [], "lunch": [], "dinner": [], "snack": [], "other": []}
+    totals = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0}
+    
+    for log in logs:
+        meal_type = log.get("meal_type", "other")
+        if meal_type in meals:
+            meals[meal_type].append(log)
+        totals["calories"] += log.get("calories", 0)
+        totals["protein"] += log.get("protein", 0)
+        totals["carbs"] += log.get("carbs", 0)
+        totals["fat"] += log.get("fat", 0)
+        totals["fiber"] += log.get("fiber", 0)
+    
+    # Calculate recommended daily intake (basic - can be customized per user)
+    recommended = {"calories": 2000, "protein": 50, "carbs": 275, "fat": 65, "fiber": 25}
+    
+    return {
+        "date": date,
+        "meals": meals,
+        "totals": {k: round(v, 1) for k, v in totals.items()},
+        "recommended": recommended,
+        "remaining": {k: round(recommended[k] - totals[k], 1) for k in recommended}
+    }
+
 # Include router AFTER all routes are defined
 app.include_router(api_router)
 
