@@ -85,12 +85,53 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('token');
   };
+  
+  // Google OAuth login
+  const loginWithGoogle = () => {
+    // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
+    const redirectUrl = window.location.origin + '/auth/callback';
+    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+  };
+  
+  // Process Google OAuth callback
+  const processGoogleCallback = async (sessionId) => {
+    try {
+      // Exchange session_id for user data
+      const response = await axios.get('https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data', {
+        headers: { 'X-Session-ID': sessionId }
+      });
+      
+      const googleUser = response.data;
+      
+      // Register/login user in our backend
+      const backendResponse = await axios.post(`${API}/auth/google`, {
+        email: googleUser.email,
+        name: googleUser.name,
+        picture: googleUser.picture,
+        google_id: googleUser.id,
+        session_token: googleUser.session_token
+      });
+      
+      setToken(backendResponse.data.token);
+      setUser(backendResponse.data.user);
+      localStorage.setItem('token', backendResponse.data.token);
+      
+      return backendResponse.data;
+    } catch (error) {
+      console.error('Google login failed:', error);
+      throw error;
+    }
+  };
+  
+  // Expose fetchUser for external use
+  const refreshUser = fetchUser;
 
   return (
     <AuthContext.Provider value={{ 
       user, token, loading, 
       login, register, logout,
-      sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp
+      sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp,
+      loginWithGoogle, processGoogleCallback, fetchUser: refreshUser
     }}>
       {children}
     </AuthContext.Provider>
