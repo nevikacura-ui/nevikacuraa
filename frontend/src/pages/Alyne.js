@@ -119,8 +119,8 @@ const FEATURE_CATEGORIES = [
   },
   {
     id: 'nutrition',
-    title: 'Nutrition',
-    subtitle: 'Feeding guide',
+    title: 'Nutrition Guide',
+    subtitle: 'Age-wise feeding tips',
     icon: Utensils,
     color: 'bg-gradient-to-br from-amber-400 to-orange-500',
     content: {
