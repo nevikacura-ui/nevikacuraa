@@ -8357,6 +8357,33 @@ try:
 except Exception as e:
     logger.warning(f"Could not load wearables router: {e}")
 
+# Emergency Services Router
+try:
+    from routes.emergency import router as emergency_router, set_db as set_emergency_db
+    set_emergency_db(db)
+    app.include_router(emergency_router, prefix="/api")
+    logger.info("Emergency Services router loaded")
+except Exception as e:
+    logger.warning(f"Could not load emergency router: {e}")
+
+# Health Risk Assessment Router
+try:
+    from routes.health_assessment import router as health_assessment_router, set_db as set_health_assessment_db
+    set_health_assessment_db(db)
+    app.include_router(health_assessment_router, prefix="/api")
+    logger.info("Health Assessment router loaded")
+except Exception as e:
+    logger.warning(f"Could not load health assessment router: {e}")
+
+# Medication Tracker Router
+try:
+    from routes.medication_tracker import router as medication_tracker_router, set_db as set_medication_tracker_db
+    set_medication_tracker_db(db)
+    app.include_router(medication_tracker_router, prefix="/api")
+    logger.info("Medication Tracker router loaded")
+except Exception as e:
+    logger.warning(f"Could not load medication tracker router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
