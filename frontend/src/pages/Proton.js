@@ -241,6 +241,7 @@ const Proton = () => {
   const [prescriptionFile, setPrescriptionFile] = useState(null);
   const [prescriptionUrl, setPrescriptionUrl] = useState('');
   const [preferredDate, setPreferredDate] = useState(new Date());
+  const [preferredTimeSlot, setPreferredTimeSlot] = useState('09:00-11:00');
   const [patientInfo, setPatientInfo] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
@@ -252,6 +253,41 @@ const Proton = () => {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('imaging');
   const [fromGlydex, setFromGlydex] = useState(false);
+
+  // Home collection time slots (8 AM to 7 PM)
+  const timeSlots = [
+    { value: '08:00-10:00', label: '8:00 AM - 10:00 AM' },
+    { value: '10:00-12:00', label: '10:00 AM - 12:00 PM' },
+    { value: '12:00-14:00', label: '12:00 PM - 2:00 PM' },
+    { value: '14:00-16:00', label: '2:00 PM - 4:00 PM' },
+    { value: '16:00-19:00', label: '4:00 PM - 7:00 PM' }
+  ];
+
+  // Test preparation instructions mapping
+  const testPreparations = {
+    'FBS (Fasting Blood Sugar)': { fasting: true, hours: 8, instruction: '8-12 hours fasting required. Only water allowed.' },
+    'PPBS (Post Prandial Blood Sugar)': { fasting: false, instruction: 'Test 2 hours after a meal.' },
+    'GTT (Glucose Tolerance Test)': { fasting: true, hours: 10, instruction: '10-12 hours fasting. Multiple samples over 2-3 hours.' },
+    'OGTT - 3 Sample': { fasting: true, hours: 10, instruction: '10-12 hours fasting. Multiple samples over 2-3 hours.' },
+    'Lipid Profile': { fasting: true, hours: 10, instruction: '10-12 hours fasting for accurate results.' },
+    'Total Cholesterol': { fasting: true, hours: 10, instruction: '10-12 hours fasting recommended.' },
+    'Triglycerides': { fasting: true, hours: 12, instruction: '12-14 hours fasting required.' },
+    'LFT (Liver Function Test)': { fasting: true, hours: 8, instruction: '8-12 hours fasting recommended.' },
+    'RFT (Renal Function Test)': { fasting: false, instruction: 'No fasting required. Stay hydrated.' },
+    'TSH': { fasting: false, instruction: 'No fasting required. Best done in morning.' },
+    'CBC (Complete Blood Count)': { fasting: false, instruction: 'No fasting required.' },
+    'HbA1c (Glycated Hemoglobin)': { fasting: false, instruction: 'No fasting required.' },
+    'Urine Routine': { fasting: false, instruction: 'Collect mid-stream first morning sample.' },
+    'Stool Routine': { fasting: false, instruction: 'Collect fresh sample in clean container.' },
+    'Sputum AFB (Acid-Fast Bacilli)': { fasting: false, instruction: 'Early morning sample preferred. Collect before brushing.' }
+  };
+
+  // Get preparation instructions for selected tests
+  const getSelectedTestPreparations = () => {
+    return selectedTests
+      .filter(test => testPreparations[test])
+      .map(test => ({ test, ...testPreparations[test] }));
+  };
 
   // OTP state
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
