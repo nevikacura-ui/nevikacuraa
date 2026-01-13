@@ -2916,6 +2916,17 @@ const Evara = () => {
             </DialogTitle>
             <DialogDescription>{WOMEN_HEALTH_COMMUNITY.subtitle}</DialogDescription>
           </DialogHeader>
+          <div className="mb-4 p-3 bg-pink-50 rounded-lg">
+            <p className="text-sm text-pink-700 mb-2">Want to connect with more women? Visit our full community forum!</p>
+            <Button 
+              onClick={() => navigate('/community')}
+              variant="outline"
+              className="border-pink-300 text-pink-600 hover:bg-pink-100"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Visit Full Community
+            </Button>
+          </div>
           <ScrollArea className="h-[70vh] pr-4">
             <div className="space-y-4">
               {/* Category Selection */}
