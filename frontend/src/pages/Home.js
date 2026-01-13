@@ -236,13 +236,13 @@ const Home = () => {
           </p>
         </div>
 
-        {/* Services Grid - 5 cards (Logo + Tagline only) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
+        {/* Services Grid - 6 cards (Logo + Tagline only) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 md:gap-6">
           {services.map((service) => (
             <div
               key={service.id}
               className={`group relative h-full ${service.tallerCard ? 'min-h-[320px]' : 'min-h-[260px]'} flex flex-col justify-between ${service.tallerCard ? 'p-6' : 'p-5'} rounded-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl border ${service.accentColor} ${service.bgColor} cursor-pointer overflow-hidden`}
-              style={service.customBg ? { backgroundColor: service.customBg } : {}}
+              style={service.isGradient ? { background: service.customBg } : (service.customBg ? { backgroundColor: service.customBg } : {})}
               onClick={() => navigate(service.path)}
               data-testid={`service-card-${service.id}`}
             >
@@ -253,8 +253,8 @@ const Home = () => {
               
               {/* Logo - takes most space */}
               <div 
-                className={`flex items-center justify-center flex-1 overflow-hidden ${service.id === 'evara' || service.id === 'glydex' ? 'px-4' : 'rounded-xl p-2'} ${service.logoBg}`}
-                style={service.customBg ? { backgroundColor: service.customBg } : {}}
+                className={`flex items-center justify-center flex-1 overflow-hidden ${service.id === 'evara' || service.id === 'glydex' || service.id === 'alyne' ? 'px-4' : 'rounded-xl p-2'} ${service.logoBg}`}
+                style={service.isGradient ? {} : (service.customBg ? { backgroundColor: service.customBg } : {})}
               >
                 <img 
                   src={service.logo} 
@@ -263,6 +263,7 @@ const Home = () => {
                     service.fillCard ? 'w-full h-full object-cover absolute inset-0 rounded-2xl' :
                     service.id === 'evara' ? 'w-full h-auto max-h-32 sm:max-h-36 object-contain' :
                     service.id === 'glydex' ? 'w-full h-auto max-h-36 sm:max-h-40 object-contain' : 
+                    service.id === 'alyne' ? 'w-full h-auto max-h-28 sm:max-h-32 object-contain' :
                     service.stretchLogo ? 'absolute inset-0 w-full h-full object-cover' :
                     service.logoRounded ? 'w-auto max-h-28 rounded-xl shadow-md object-contain' :
                     'w-auto max-h-28 mix-blend-multiply object-contain'
@@ -273,7 +274,7 @@ const Home = () => {
               </div>
               
               {/* Tagline only - no name */}
-              <p className={`text-center text-sm relative z-10 ${service.tallerCard ? 'mt-4' : 'mt-3'} ${service.customBg ? 'text-white/90' : 'text-gray-600'}`}>
+              <p className={`text-center text-sm relative z-10 ${service.tallerCard ? 'mt-4' : 'mt-3'} ${service.customBg || service.isGradient ? 'text-white/90' : 'text-gray-600'}`}>
                 {service.description}
               </p>
               
