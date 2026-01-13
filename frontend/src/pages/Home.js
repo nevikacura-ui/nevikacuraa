@@ -1343,6 +1343,81 @@ const AuthModal = ({ open, onClose }) => {
             </div>
           </form>
         )}
+        
+        {/* Password Failed - SMS OTP Recovery Option */}
+        {step === 'password-failed' && (
+          <div className="space-y-4">
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-red-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div>
+                  <p className="font-semibold text-red-700">Login Failed</p>
+                  <p className="text-sm text-red-600">{loginError || 'Invalid email or password'}</p>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-sm text-gray-600 text-center">
+              Don't worry! You can still login using SMS OTP
+            </p>
+            
+            <button
+              onClick={() => {
+                setAuthMethod('phone-otp');
+                setStep('phone-otp');
+              }}
+              className="w-full p-4 border-2 border-orange-200 bg-orange-50 rounded-xl hover:border-orange-400 hover:bg-orange-100 transition-all text-left"
+              data-testid="fallback-phone-otp"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800">Login with Phone + SMS OTP</p>
+                  <p className="text-xs text-gray-500">We'll send a code to your registered phone</p>
+                </div>
+              </div>
+            </button>
+            
+            <button
+              onClick={() => {
+                setEmail(passwordLogin.email);
+                setStep('email-otp');
+              }}
+              className="w-full p-4 border border-gray-200 rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-800">Reset Password via Email</p>
+                  <p className="text-xs text-gray-500">Get a verification code to reset your password</p>
+                </div>
+              </div>
+            </button>
+            
+            <div className="text-center">
+              <button 
+                type="button"
+                onClick={() => {
+                  setLoginError('');
+                  setStep('password-login');
+                }}
+                className="text-sm text-gray-500 hover:underline"
+              >
+                ← Try password again
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Step 5: Interest Selection (Profile Customization) */}
         {step === 'interests' && (
