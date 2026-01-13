@@ -558,14 +558,15 @@ const AuthModal = ({ open, onClose }) => {
         <DialogHeader>
           <DialogTitle className="font-heading text-2xl">Welcome to Nevika Cura</DialogTitle>
           <DialogDescription className="font-body">
-            {step === 'phone' && 'Enter your phone number to login or create an account'}
+            {step === 'phone' && !isInternational && 'Enter your phone number to login or create an account'}
+            {step === 'phone' && isInternational && (emailAuth.isLogin ? 'Login with your email' : 'Create an account with email')}
             {step === 'otp' && 'Enter the OTP sent to your phone'}
             {step === 'register' && 'Complete your registration'}
           </DialogDescription>
         </DialogHeader>
 
-        {/* Step 1: Phone Number */}
-        {step === 'phone' && (
+        {/* Step 1: Phone Number (Indian) or Email (International) */}
+        {step === 'phone' && !isInternational && (
           <form onSubmit={handleSendOtp} className="space-y-4">
             <div>
               <Label htmlFor="phone">Phone Number</Label>
@@ -590,6 +591,82 @@ const AuthModal = ({ open, onClose }) => {
             >
               {loading ? 'Sending OTP...' : 'Send OTP'}
             </Button>
+            <div className="text-center">
+              <button 
+                type="button"
+                onClick={() => setIsInternational(true)}
+                className="text-sm text-brand-teal hover:underline"
+              >
+                International Patient? Login with Email
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* International Login with Email */}
+        {step === 'phone' && isInternational && (
+          <form onSubmit={emailAuth.isLogin ? handleEmailLogin : handleEmailRegister} className="space-y-4">
+            {!emailAuth.isLogin && (
+              <div>
+                <Label htmlFor="name">Full Name</Label>
+                <Input 
+                  id="name" 
+                  value={emailAuth.name}
+                  onChange={(e) => setEmailAuth({...emailAuth, name: e.target.value})}
+                  placeholder="Enter your name"
+                  required 
+                  className="h-12 rounded-xl"
+                />
+              </div>
+            )}
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input 
+                id="email" 
+                type="email"
+                value={emailAuth.email}
+                onChange={(e) => setEmailAuth({...emailAuth, email: e.target.value})}
+                placeholder="your@email.com"
+                required 
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input 
+                id="password" 
+                type="password"
+                value={emailAuth.password}
+                onChange={(e) => setEmailAuth({...emailAuth, password: e.target.value})}
+                placeholder="Enter password"
+                required 
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full rounded-full h-12" 
+              disabled={loading}
+              data-testid="email-auth-button"
+            >
+              {loading ? 'Please wait...' : (emailAuth.isLogin ? 'Login' : 'Create Account')}
+            </Button>
+            <div className="flex justify-between text-sm">
+              <button 
+                type="button"
+                onClick={() => setEmailAuth({...emailAuth, isLogin: !emailAuth.isLogin})}
+                className="text-brand-teal hover:underline"
+              >
+                {emailAuth.isLogin ? "Don't have account? Sign Up" : "Already have account? Login"}
+              </button>
+              <button 
+                type="button"
+                onClick={() => setIsInternational(false)}
+                className="text-gray-500 hover:underline"
+              >
+                Use Phone OTP
+              </button>
+            </div>
           </form>
         )}
 
