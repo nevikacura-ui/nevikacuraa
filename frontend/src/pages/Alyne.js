@@ -75,8 +75,8 @@ const REGION_CONTENT = {
 const FEATURE_CATEGORIES = [
   {
     id: 'symptoms',
-    title: 'Common Symptoms',
-    subtitle: 'Health guidance',
+    title: 'Symptom Checker',
+    subtitle: 'Fever, cough, rashes & more',
     icon: Stethoscope,
     color: 'bg-gradient-to-br from-rose-400 to-pink-500',
     content: {
@@ -94,8 +94,8 @@ const FEATURE_CATEGORIES = [
   },
   {
     id: 'medication',
-    title: 'Medication',
-    subtitle: 'Dosage guide',
+    title: 'Medication Guide',
+    subtitle: 'Safe dosages & warnings',
     icon: Pill,
     color: 'bg-gradient-to-br from-violet-400 to-purple-500',
     content: {
