@@ -105,7 +105,8 @@ async def add_medication(user_id: str, med: Medication):
     await db.user_medications.insert_one(medication_doc)
     
     # Return without _id
-    del medication_doc["_id"] if "_id" in medication_doc else None
+    if "_id" in medication_doc:
+        del medication_doc["_id"]
     
     return {"success": True, "medication": medication_doc}
 
