@@ -650,10 +650,10 @@ const AuthModal = ({ open, onClose }) => {
     }
   };
   
-  // Handle Google login - Currently disabled
-  // const handleGoogleLogin = () => {
-  //   loginWithGoogle();
-  // };
+  // Handle Google login
+  const handleGoogleLogin = () => {
+    loginWithGoogle();
+  };
   
   // Handle Biometric login
   const handleBiometricLogin = async () => {
