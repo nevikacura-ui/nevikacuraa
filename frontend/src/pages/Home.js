@@ -353,71 +353,154 @@ const Home = () => {
 const AuthModal = ({ open, onClose }) => {
   const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState('phone'); // phone, otp, register, email
+  const [step, setStep] = useState('email'); // email, otp, register, password-login
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [mockOtp, setMockOtp] = useState('');
-  const [otpMethod, setOtpMethod] = useState(''); // 'sms' or 'mock'
+  const [otpMethod, setOtpMethod] = useState(''); // 'email' or 'mock'
   const [userExists, setUserExists] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
-  const [verificationToken, setVerificationToken] = useState(''); // Store verification token
-  const [isInternational, setIsInternational] = useState(false);
-  const [emailAuth, setEmailAuth] = useState({ email: '', password: '', name: '', isLogin: true });
+  const [verificationToken, setVerificationToken] = useState('');
+  const [passwordLogin, setPasswordLogin] = useState({ email: '', password: '' });
+  const [registerForm, setRegisterForm] = useState({ name: '', phone: '', password: '' });
   const otpRefs = React.useRef([]);
+  const API = process.env.REACT_APP_BACKEND_URL;
 
   // Reset state when modal closes
   React.useEffect(() => {
     if (!open) {
-      setStep('phone');
+      setStep('email');
+      setEmail('');
       setPhone('');
       setOtp(['', '', '', '', '', '']);
       setMockOtp('');
       setUserExists(false);
       setResendTimer(0);
       setVerificationToken('');
-      setIsInternational(false);
-      setEmailAuth({ email: '', password: '', name: '', isLogin: true });
+      setPasswordLogin({ email: '', password: '' });
+      setRegisterForm({ name: '', phone: '', password: '' });
     }
   }, [open]);
 
-  // Handle international email login
-  const handleEmailLogin = async (e) => {
+  // Send Email OTP for signup
+  const handleSendEmailOtp = async (e) => {
     e.preventDefault();
-    if (!emailAuth.email || !emailAuth.password) {
-      toast.error('Please enter email and password');
+    if (!email || !email.includes('@')) {
+      toast.error('Please enter a valid email');
       return;
     }
     setLoading(true);
     try {
-      await login(emailAuth.email, emailAuth.password);
-      toast.success('Login successful!');
-      onClose();
+      const response = await fetch(`${API}/api/auth/email-otp/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setOtpMethod(data.method);
+        if (data.mock_otp) setMockOtp(data.mock_otp);
+        setStep('otp');
+        setResendTimer(60);
+        toast.success('Verification code sent to your email!');
+      } else {
+        toast.error(data.detail || 'Failed to send OTP');
+      }
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Login failed. Check your credentials.');
+      toast.error('Failed to send verification code');
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle international email registration
-  const handleEmailRegister = async (e) => {
+  // Verify Email OTP
+  const handleVerifyEmailOtp = async (otpString) => {
+    if (otpString.length !== 6) return;
+    setLoading(true);
+    try {
+      const response = await fetch(`${API}/api/auth/email-otp/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp: otpString })
+      });
+      const data = await response.json();
+      if (data.success && data.verified) {
+        setVerificationToken(data.verification_token);
+        setUserExists(data.user_exists);
+        if (data.user_exists) {
+          // User exists - go to password login
+          setPasswordLogin({ ...passwordLogin, email });
+          setStep('password-login');
+          toast.success('Account found! Please enter your password.');
+        } else {
+          // New user - go to registration
+          setStep('register');
+          toast.success('Email verified! Complete your registration.');
+        }
+      } else {
+        toast.error(data.detail || 'Invalid verification code');
+      }
+    } catch (error) {
+      toast.error('Verification failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Password Login
+  const handlePasswordLogin = async (e) => {
     e.preventDefault();
-    if (!emailAuth.email || !emailAuth.password || !emailAuth.name) {
-      toast.error('Please fill all fields');
+    if (!passwordLogin.email || !passwordLogin.password) {
+      toast.error('Please enter email and password');
       return;
     }
     setLoading(true);
     try {
-      const API = process.env.REACT_APP_BACKEND_URL;
+      await login(passwordLogin.email, passwordLogin.password);
+      toast.success('Login successful!');
+      onClose();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Login failed. Check your password.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Complete Registration
+  const handleCompleteRegistration = async (e) => {
+    e.preventDefault();
+    if (!registerForm.name || !registerForm.password) {
+      toast.error('Please fill all required fields');
+      return;
+    }
+    setLoading(true);
+    try {
       const response = await fetch(`${API}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: emailAuth.name,
-          email: emailAuth.email,
-          password: emailAuth.password,
-          phone: 'international'
+          name: registerForm.name,
+          email: email,
+          password: registerForm.password,
+          phone: registerForm.phone || '',
+          verification_token: verificationToken
         })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        toast.success('Account created! Please login.');
+        setPasswordLogin({ email, password: '' });
+        setStep('password-login');
+      } else {
+        toast.error(data.detail || 'Registration failed');
+      }
+    } catch (error) {
+      toast.error('Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
       });
       if (!response.ok) {
         const data = await response.json();
