@@ -440,47 +440,74 @@ const WOMEN_HEALTH_COMMUNITY = {
   subtitle: "Tips, Guides & Important Q&A",
   categories: [
     {
-      id: "general_wellness",
-      name: "General Wellness",
-      icon: "heart",
+      id: "pregnancy",
+      name: "Pregnancy & Baby",
+      icon: "baby",
       tips: [
-        { title: "Stay Active", content: "Aim for at least 150 minutes of moderate exercise per week. Include both cardio and strength training." },
-        { title: "Prioritize Sleep", content: "Adults need 7-9 hours of quality sleep. Maintain a consistent sleep schedule." },
-        { title: "Manage Stress", content: "Practice deep breathing, meditation, or yoga. Take breaks when feeling overwhelmed." },
-        { title: "Stay Hydrated", content: "Drink at least 8 glasses of water daily. Increase intake during exercise or hot weather." },
-        { title: "Regular Check-ups", content: "Schedule annual wellness exams. Don't skip recommended screenings." }
+        { title: "Prenatal Care is Essential", content: "Schedule your first prenatal visit as soon as you know you're pregnant. Regular check-ups monitor baby's growth and your health." },
+        { title: "Folic Acid Daily", content: "Take 400-800mcg of folic acid daily to prevent neural tube defects. Start even before conception if planning." },
+        { title: "Stay Hydrated", content: "Drink 8-12 glasses of water daily. Proper hydration prevents constipation, UTIs, and supports amniotic fluid." },
+        { title: "Safe Exercise", content: "Walking, swimming, and prenatal yoga are safe. Avoid contact sports and activities with fall risk." },
+        { title: "Rest When Needed", content: "Your body is working hard. Sleep on your left side in later pregnancy to improve blood flow to baby." }
       ],
       guides: [
-        { title: "Building a Self-Care Routine", content: "Start small with 10 minutes daily. Include physical, emotional, and mental wellness activities." },
-        { title: "Healthy Eating Basics", content: "Focus on whole foods, balanced macros, and plenty of fruits and vegetables." }
+        { title: "Trimester Overview", content: "1st: Organ formation, nausea common. 2nd: Baby grows, energy returns. 3rd: Rapid growth, prepare for birth." },
+        { title: "Warning Signs to Watch", content: "Severe headache, vision changes, heavy bleeding, severe pain, or decreased baby movement need immediate medical attention." },
+        { title: "Nutrition During Pregnancy", content: "Extra 300 calories/day in 2nd-3rd trimester. Focus on protein, iron, calcium, and omega-3s. Avoid raw fish, unpasteurized dairy." }
       ],
       faqs: [
-        { q: "How often should I exercise?", a: "Aim for at least 30 minutes of moderate activity most days of the week." },
-        { q: "What supplements do women need?", a: "Common needs include vitamin D, calcium, iron (if menstruating), and folic acid (if planning pregnancy)." }
+        { q: "How much weight should I gain?", a: "Normal BMI: 11-16 kg. Underweight: 12-18 kg. Overweight: 7-11 kg. Your doctor will guide based on your starting weight." },
+        { q: "Is morning sickness normal?", a: "Yes, affects 70-80% of pregnant women. Usually improves after 12-14 weeks. Severe vomiting (hyperemesis) needs treatment." },
+        { q: "When will I feel baby move?", a: "First pregnancy: 18-25 weeks. Subsequent pregnancies: as early as 13 weeks. Report decreased movement to your doctor." }
       ]
     },
     {
-      id: "reproductive_health",
-      name: "Reproductive Health",
-      icon: "baby",
+      id: "menopause",
+      name: "Menopause Support",
+      icon: "flower",
       tips: [
-        { title: "Track Your Cycle", content: "Understanding your menstrual cycle helps identify irregularities early." },
-        { title: "Know Your Body", content: "Regular self-exams and awareness of changes help catch issues early." },
-        { title: "Safe Practices", content: "Use protection to prevent STIs. Get regular screenings as recommended." },
-        { title: "Fertility Awareness", content: "If planning pregnancy, optimize health 3-6 months before conceiving." }
+        { title: "Stay Cool", content: "Dress in layers, keep room cool, avoid spicy food and alcohol which can trigger hot flashes." },
+        { title: "Bone Health Focus", content: "Increase calcium (1200mg/day) and vitamin D. Weight-bearing exercises strengthen bones." },
+        { title: "Heart Health Matters", content: "Estrogen decline increases heart disease risk. Monitor cholesterol, blood pressure, and maintain healthy weight." },
+        { title: "Manage Vaginal Dryness", content: "Water-based lubricants help. Vaginal estrogen creams are safe and effective for many women." },
+        { title: "Sleep Hygiene", content: "Night sweats disrupt sleep. Keep bedroom cool, use moisture-wicking fabrics, avoid caffeine after noon." }
       ],
       guides: [
-        { title: "Understanding Your Menstrual Cycle", content: "The average cycle is 28 days with 4 phases: menstruation, follicular, ovulation, and luteal." },
-        { title: "When to See a Gynecologist", content: "Annual visits after age 21, or earlier if sexually active or having issues." }
+        { title: "Understanding the Stages", content: "Perimenopause (4-8 years): Irregular periods, symptoms start. Menopause: 12 months without period. Postmenopause: Symptoms may ease." },
+        { title: "HRT - Know Your Options", content: "Hormone replacement therapy can help severe symptoms. Discuss risks/benefits with your doctor based on your health history." },
+        { title: "Natural Remedies", content: "Black cohosh, evening primrose oil, and soy isoflavones may help some women. Always consult doctor before starting supplements." }
       ],
       faqs: [
-        { q: "What's a normal period length?", a: "Periods typically last 3-7 days. Flow and duration can vary between cycles." },
-        { q: "When is the best time to get pregnant?", a: "Ovulation typically occurs 14 days before your next period. The fertile window is 5 days before and the day of ovulation." }
+        { q: "What age does menopause start?", a: "Average age is 51, but normal range is 45-55. Premature menopause occurs before 40 and needs medical evaluation." },
+        { q: "How long do symptoms last?", a: "Average 4-5 years, but can continue 7-10 years. Hot flashes eventually stop for most women." },
+        { q: "Can I still get pregnant?", a: "Until 12 consecutive months without a period, pregnancy is possible. Use contraception if you don't want to conceive." }
+      ]
+    },
+    {
+      id: "pms_pcos",
+      name: "PMS & PCOS",
+      icon: "heart",
+      tips: [
+        { title: "Track Your Symptoms", content: "Log symptoms for 2-3 cycles to identify patterns. This helps you and your doctor manage symptoms better." },
+        { title: "Reduce Salt & Sugar", content: "Both can worsen bloating and mood swings. Limit processed foods, especially 1-2 weeks before your period." },
+        { title: "Exercise Helps", content: "Regular exercise reduces cramps, improves mood, and helps with PCOS insulin resistance. Aim for 30 min/day." },
+        { title: "Manage PCOS Weight", content: "Even 5-10% weight loss can restore regular periods and improve fertility in PCOS. Low-GI diet helps." },
+        { title: "Stress Management", content: "Stress worsens both PMS and PCOS. Practice yoga, meditation, or deep breathing regularly." }
+      ],
+      guides: [
+        { title: "PMS vs PMDD", content: "PMS: Mild symptoms, manageable. PMDD: Severe mood symptoms that interfere with daily life - needs medical treatment." },
+        { title: "PCOS Diet Guide", content: "Focus on low glycemic index foods, lean protein, healthy fats. Limit refined carbs, sugar, and processed foods." },
+        { title: "Supplements That Help", content: "PMS: Calcium, magnesium, B6. PCOS: Inositol, omega-3, vitamin D. Always consult doctor first." }
+      ],
+      faqs: [
+        { q: "What causes PCOS?", a: "Exact cause unknown. Involves insulin resistance, hormonal imbalance, and genetics. It's manageable with lifestyle and medication." },
+        { q: "Can PCOS affect fertility?", a: "PCOS is a leading cause of infertility but many women conceive with treatment. Weight loss and medications like Clomid help." },
+        { q: "Is severe PMS normal?", a: "Mild PMS is normal, but symptoms that disrupt work/relationships may be PMDD. Talk to your doctor about treatment options." }
       ]
     },
     {
       id: "mental_health",
-      name: "Mental Health",
+      name: "Mental Wellness",
       icon: "brain",
       tips: [
         { title: "Practice Mindfulness", content: "Even 5 minutes of daily meditation can reduce anxiety and improve focus." },
@@ -514,6 +541,26 @@ const WOMEN_HEALTH_COMMUNITY = {
       faqs: [
         { q: "Should I take a multivitamin?", a: "A balanced diet is best, but supplements can help fill gaps. Consult a doctor for personalized advice." },
         { q: "How much water should I drink daily?", a: "About 2-2.5 liters (8-10 glasses). More if exercising or in hot weather." }
+      ]
+    },
+    {
+      id: "general_wellness",
+      name: "General Health",
+      icon: "heart",
+      tips: [
+        { title: "Stay Active", content: "Aim for at least 150 minutes of moderate exercise per week. Include both cardio and strength training." },
+        { title: "Prioritize Sleep", content: "Adults need 7-9 hours of quality sleep. Maintain a consistent sleep schedule." },
+        { title: "Manage Stress", content: "Practice deep breathing, meditation, or yoga. Take breaks when feeling overwhelmed." },
+        { title: "Stay Hydrated", content: "Drink at least 8 glasses of water daily. Increase intake during exercise or hot weather." },
+        { title: "Regular Check-ups", content: "Schedule annual wellness exams. Don't skip recommended screenings." }
+      ],
+      guides: [
+        { title: "Building a Self-Care Routine", content: "Start small with 10 minutes daily. Include physical, emotional, and mental wellness activities." },
+        { title: "Healthy Eating Basics", content: "Focus on whole foods, balanced macros, and plenty of fruits and vegetables." }
+      ],
+      faqs: [
+        { q: "How often should I exercise?", a: "Aim for at least 30 minutes of moderate activity most days of the week." },
+        { q: "What supplements do women need?", a: "Common needs include vitamin D, calcium, iron (if menstruating), and folic acid (if planning pregnancy)." }
       ]
     }
   ]
