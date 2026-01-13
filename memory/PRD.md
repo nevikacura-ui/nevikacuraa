@@ -486,13 +486,46 @@ GET  /api/alyne/reminders/{child_id} - Get reminders
 PUT  /api/alyne/reminders/{reminder_id} - Update reminder
 DELETE /api/alyne/reminders/{reminder_id} - Delete reminder
 GET  /api/alyne/dashboard/{child_id} - Get dashboard summary
+
+# NEW - AI Chat, Symptoms, Shop
+POST /api/alyne/chat - AI Chat with ALYNE (24/7 pediatric assistant)
+GET  /api/alyne/chat/history/{session_id} - Get chat history
+GET  /api/alyne/symptoms - Get 6 common symptoms
+GET  /api/alyne/symptoms/{symptom_id} - Get detailed IAP/CDC guidelines
+POST /api/alyne/symptoms/check - AI-powered symptom assessment
+GET  /api/alyne/shop/categories - Get 6 product categories
+GET  /api/alyne/shop/products - Get all 25 products (filterable)
+GET  /api/alyne/shop/bestsellers - Get bestseller products
+POST /api/alyne/shop/order - Create shop order
+GET  /api/alyne/shop/orders/{user_id} - Get user orders
 ```
 
 **Frontend Page:** `/alyne`
-- Child selector sidebar (multi-child support)
-- 5 tabs: Dashboard, Vaccinations, Growth, Documents, Health Log
-- Add Child dialog with region selection
-- Beautiful gradient UI (cyan-blue-purple theme)
+- Beautiful hero section with ALYNE background image
+- 7 tabs: Home, Symptoms, AI Chat, Shop, Learn, My Child, Vaccines
+- Common features accessible to all (no login required for basic features)
+- Personalized tabs (My Child, Vaccines) enabled after adding child profile
+- Kids Shop tab - Orange Pharmacy subsidiary with 25 products
+- AI Chat tab - 24/7 pediatric assistant using Claude
+- Symptoms tab - 6 common symptoms with IAP/CDC guidelines
+- Education tab - Child health topics and articles
+
+**Symptom Checker (IAP/CDC Guidelines):**
+- 6 Symptoms: Sore Throat, Cough, Skin Rash, Fever, Vomiting, Diarrhea
+- Each symptom includes: Causes, Home Care Tips, When to See Doctor
+- Region-specific guidelines (India: IAP, USA: CDC)
+- Age-specific recommendations for infants
+
+**Kids Shop (Orange Pharmacy Subsidiary):**
+- 6 Categories: Baby Food, Feeding Essentials, Diapers, Skincare, Health, Supplements
+- 25 Products including: Breast pumps, Silicon bottles, Kids protein powder, Baby cosmetics
+- Bestseller badges, Ratings, Price with MRP
+- Shopping cart with order placement
+
+**Home Page Updates:**
+- ALYNE card with sky-blue background (no gradient dual tone)
+- Proton Health Packages section with 6 packages (no prices shown)
+- Packages: Proton Basic, Proton Total, Proton Xclusive, Diabetic Care, Women's Wellness, Cardiac Profile
 
 ---
 
