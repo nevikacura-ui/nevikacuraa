@@ -11,8 +11,10 @@ import {
   ArrowLeft, User, Lock, LogOut, UserPlus, CheckCircle2, 
   Clock, Package, FlaskConical, Stethoscope, Users, 
   Phone, Calendar, Loader2, RefreshCw, AlertTriangle, Plus, 
-  Heart, Droplet, Scan, Upload, FileText, Receipt, History, X, Gift
+  Heart, Droplet, Scan, Upload, FileText, Receipt, History, X, Gift,
+  IndianRupee
 } from 'lucide-react';
+import StaffBillingModule from '@/components/StaffBillingModule';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -204,6 +206,9 @@ const StaffPortal = () => {
   // Daily collection summary
   const [dailyCollection, setDailyCollection] = useState(null);
   const [loadingCollection, setLoadingCollection] = useState(false);
+  
+  // Active tab state for optimized data loading
+  const [activeTab, setActiveTab] = useState('appointments');
 
   // Fee codes configuration
   const FEE_CODES = {
