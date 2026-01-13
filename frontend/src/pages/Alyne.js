@@ -236,7 +236,7 @@ const FEATURE_CATEGORIES = [
   {
     id: 'growth',
     title: 'Growth Tracker',
-    subtitle: 'Height & Weight',
+    subtitle: 'WHO height & weight charts',
     icon: TrendingUp,
     color: 'bg-gradient-to-br from-pink-400 to-rose-500',
     requiresChild: true,
