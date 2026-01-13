@@ -279,6 +279,8 @@ const TrackOrder = () => {
                             {order.status}
                           </span>
                         </div>
+                        {/* Order Timeline */}
+                        <OrderTimeline status={order.status} type="pharmacy" />
                       </CardContent>
                     </Card>
                   ))}
