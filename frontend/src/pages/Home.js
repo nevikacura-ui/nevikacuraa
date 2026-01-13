@@ -273,23 +273,30 @@ const Home = () => {
               <div 
                 className={`flex items-center justify-center flex-1 overflow-hidden ${service.id === 'evara' || service.id === 'glydex' || service.id === 'alyne' ? 'px-0' : 'rounded-xl p-2'} ${service.logoBg}`}
               >
-                <img 
-                  src={service.logo} 
-                  alt={service.name} 
-                  className={`transition-transform group-hover:scale-105 ${
-                    service.fillCard ? 'w-full h-full object-cover absolute inset-0 rounded-2xl' :
-                    service.id === 'evara' ? 'w-full h-auto max-h-32 sm:max-h-36 object-contain' :
-                    service.id === 'alyne' ? 'w-auto max-h-44 object-contain rounded-2xl shadow-lg' :
-                    service.stretchLogo ? 'absolute inset-0 w-full h-full object-cover' :
-                    service.logoRounded ? 'w-auto max-h-28 rounded-xl shadow-md object-contain' :
-                    'w-auto max-h-28 mix-blend-multiply object-contain'
-                  }`}
-                  style={{
-                    ...(service.logoScale ? { transform: `scale(${service.logoScale})` } : {}),
-                    ...(service.id === 'alyne' ? { filter: 'brightness(1.1) contrast(1.05)' } : {})
-                  }}
-                  data-testid={`service-logo-${service.id}`}
-                />
+                {service.useTextLogo ? (
+                  <div className="text-center">
+                    <h2 className="text-5xl font-black text-white tracking-wide" style={{fontFamily: 'system-ui, -apple-system, sans-serif', textShadow: '0 2px 10px rgba(0,0,0,0.2)'}}>ALYNE</h2>
+                    <p className="text-white/80 text-sm mt-2 font-medium">Kids by Nevika Cura</p>
+                  </div>
+                ) : service.logo ? (
+                  <img 
+                    src={service.logo} 
+                    alt={service.name} 
+                    className={`transition-transform group-hover:scale-105 ${
+                      service.fillCard ? 'w-full h-full object-cover absolute inset-0 rounded-2xl' :
+                      service.id === 'evara' ? 'w-full h-auto max-h-32 sm:max-h-36 object-contain' :
+                      service.id === 'alyne' ? 'w-auto max-h-44 object-contain rounded-2xl shadow-lg' :
+                      service.stretchLogo ? 'absolute inset-0 w-full h-full object-cover' :
+                      service.logoRounded ? 'w-auto max-h-28 rounded-xl shadow-md object-contain' :
+                      'w-auto max-h-28 mix-blend-multiply object-contain'
+                    }`}
+                    style={{
+                      ...(service.logoScale ? { transform: `scale(${service.logoScale})` } : {}),
+                      ...(service.id === 'alyne' ? { filter: 'brightness(1.1) contrast(1.05)' } : {})
+                    }}
+                    data-testid={`service-logo-${service.id}`}
+                  />
+                ) : null}
               </div>
               
               {/* Tagline only - no name (hide for fillCard items) */}
