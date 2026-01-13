@@ -336,6 +336,24 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 - Professional invoice template with itemized bill, discounts, totals
 - Integrated with existing Resend email service
 
+### January 13, 2026 - Session 6
+**Google Social Login & SMS OTP Fallback**
+
+**Google Sign-In:**
+- Added "Continue with Google" button at top of login modal
+- Uses Emergent-managed Google OAuth for seamless authentication
+- Callback handler at `/auth/callback` for OAuth redirect
+- Backend endpoint `/api/auth/google` creates or logs in users
+- Profile picture synced from Google account
+
+**SMS OTP Fallback:**
+- When password login fails, shows `password-failed` recovery step
+- Two recovery options:
+  1. **Login with Phone + SMS OTP** (highlighted) - For users who forgot password
+  2. **Reset Password via Email** - Alternative recovery method
+- Clear error message explaining the login failure
+- "Try password again" link for typo corrections
+
 ---
 
 ## Remaining/Future Tasks
