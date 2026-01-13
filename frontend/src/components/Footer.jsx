@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Phone, Mail, MapPin, Clock, Shield, FileText, Users, X, Download, Smartphone } from 'lucide-react';
+import { MessageCircle, Phone, Mail, MapPin, Clock, Shield, FileText, Users, X, Download, Smartphone, IndianRupee } from 'lucide-react';
 
 const Footer = () => {
   const navigate = useNavigate();
