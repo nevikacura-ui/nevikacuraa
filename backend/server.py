@@ -4234,6 +4234,131 @@ async def get_admin_stats(admin = Depends(verify_admin)):
         "total_pharmacy_orders": total_pharmacy
     }
 
+@api_router.get("/admin/analytics")
+async def get_admin_analytics(admin = Depends(verify_admin), days: int = 7):
+    """Get analytics data for dashboard charts"""
+    from datetime import timedelta
+    
+    # Calculate date range
+    end_date = datetime.now(timezone.utc)
+    start_date = end_date - timedelta(days=days)
+    start_str = start_date.strftime("%Y-%m-%d")
+    
+    # Get appointments by date
+    appointments_by_date = {}
+    revenue_by_date = {}
+    appointments = await db.appointments.find(
+        {"date": {"$gte": start_str}},
+        {"_id": 0, "date": 1, "status": 1, "fee_code": 1, "appointment_type": 1}
+    ).to_list(1000)
+    
+    # Fee amounts mapping
+    fee_amounts = {
+        "G1": 150, "G2": 100, "S1": 300, "S2": 200,
+        "D1": 500, "D2": 400, "D3": 300,
+        "O1": 500, "O2": 400, "O3": 300,
+        "N1": 0, "E1": 600
+    }
+    
+    for apt in appointments:
+        date = apt.get("date", "Unknown")
+        if date not in appointments_by_date:
+            appointments_by_date[date] = {"total": 0, "confirmed": 0, "cancelled": 0, "pending": 0}
+        appointments_by_date[date]["total"] += 1
+        status = apt.get("status", "pending").lower()
+        if status == "confirmed" or status == "attended":
+            appointments_by_date[date]["confirmed"] += 1
+        elif status == "cancelled":
+            appointments_by_date[date]["cancelled"] += 1
+        else:
+            appointments_by_date[date]["pending"] += 1
+        
+        # Calculate revenue (only for confirmed/attended)
+        if status in ["confirmed", "attended"]:
+            fee_code = apt.get("fee_code", "G1")
+            fee = fee_amounts.get(fee_code, 150)
+            if date not in revenue_by_date:
+                revenue_by_date[date] = 0
+            revenue_by_date[date] += fee
+    
+    # Get appointments by doctor
+    appointments_by_doctor = {}
+    all_appointments = await db.appointments.find({}, {"_id": 0, "doctor": 1, "status": 1}).to_list(5000)
+    for apt in all_appointments:
+        doctor = apt.get("doctor", "Unknown")
+        if doctor not in appointments_by_doctor:
+            appointments_by_doctor[doctor] = {"total": 0, "confirmed": 0}
+        appointments_by_doctor[doctor]["total"] += 1
+        if apt.get("status", "").lower() in ["confirmed", "attended"]:
+            appointments_by_doctor[doctor]["confirmed"] += 1
+    
+    # Get diagnostic orders by date
+    diagnostic_by_date = {}
+    diagnostics = await db.diagnostic_orders.find(
+        {},
+        {"_id": 0, "created_at": 1, "status": 1}
+    ).to_list(1000)
+    
+    for order in diagnostics:
+        created = order.get("created_at", "")
+        if isinstance(created, str) and created:
+            date = created[:10]
+        elif hasattr(created, "strftime"):
+            date = created.strftime("%Y-%m-%d")
+        else:
+            continue
+        if date not in diagnostic_by_date:
+            diagnostic_by_date[date] = 0
+        diagnostic_by_date[date] += 1
+    
+    # Get pharmacy orders by date
+    pharmacy_by_date = {}
+    pharmacy_orders = await db.pharmacy_orders.find(
+        {},
+        {"_id": 0, "created_at": 1, "status": 1}
+    ).to_list(1000)
+    
+    for order in pharmacy_orders:
+        created = order.get("created_at", "")
+        if isinstance(created, str) and created:
+            date = created[:10]
+        elif hasattr(created, "strftime"):
+            date = created.strftime("%Y-%m-%d")
+        else:
+            continue
+        if date not in pharmacy_by_date:
+            pharmacy_by_date[date] = 0
+        pharmacy_by_date[date] += 1
+    
+    # Build date series for chart
+    date_labels = []
+    appointment_data = []
+    revenue_data = []
+    diagnostic_data = []
+    pharmacy_data = []
+    
+    for i in range(days, -1, -1):
+        date = (end_date - timedelta(days=i)).strftime("%Y-%m-%d")
+        date_labels.append(date)
+        apt_info = appointments_by_date.get(date, {"total": 0})
+        appointment_data.append(apt_info.get("total", 0))
+        revenue_data.append(revenue_by_date.get(date, 0))
+        diagnostic_data.append(diagnostic_by_date.get(date, 0))
+        pharmacy_data.append(pharmacy_by_date.get(date, 0))
+    
+    return {
+        "date_labels": date_labels,
+        "appointments": appointment_data,
+        "revenue": revenue_data,
+        "diagnostics": diagnostic_data,
+        "pharmacy": pharmacy_data,
+        "appointments_by_doctor": appointments_by_doctor,
+        "total_revenue": sum(revenue_data),
+        "total_appointments": sum(appointment_data),
+        "total_diagnostics": sum(diagnostic_data),
+        "total_pharmacy": sum(pharmacy_data)
+    }
+
 @api_router.post("/admin/send-credentials-email")
 async def send_credentials_email(admin = Depends(verify_admin)):
     """Send all staff credentials to admin email"""
