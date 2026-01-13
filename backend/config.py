@@ -36,7 +36,7 @@ VAPID_CLAIMS_EMAIL = os.environ.get("VAPID_CLAIMS_EMAIL", "nevikacura@gmail.com"
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 GOOGLE_DRIVE_REDIRECT_URI = os.environ.get("GOOGLE_DRIVE_REDIRECT_URI", "")
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://medcare-portal-34.preview.emergentagent.com")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://medcare-connect-12.preview.emergentagent.com")
 
 # Admin Configuration
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "nevikacura2026")

@@ -15,7 +15,7 @@ import requests
 import os
 from datetime import datetime, timedelta
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://medcare-portal-34.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://medcare-connect-12.preview.emergentagent.com')
 
 # Test credentials for doctors
 DOCTOR_CREDENTIALS = {
