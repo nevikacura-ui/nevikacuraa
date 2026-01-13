@@ -24,6 +24,7 @@ import Teleconsultation from '@/pages/Teleconsultation';
 import EmergencyServices from '@/pages/EmergencyServices';
 import HealthRiskAssessment from '@/pages/HealthRiskAssessment';
 import MedicationTracker from '@/pages/MedicationTracker';
+import DoctorProfiles from '@/pages/DoctorProfiles';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
