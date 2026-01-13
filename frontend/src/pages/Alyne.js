@@ -79,7 +79,8 @@ const REGION_CONTENT = {
       { name: "Insurance Guide", icon: "💳", id: "insurance_guide" },
       { name: "School Vaccines", icon: "🏫", id: "school_vaccines" },
       { name: "WIC Program", icon: "🥛", id: "wic_program" },
-      { name: "Safety Guide", icon: "🚗", id: "safety_guide" }
+      { name: "Safety Guide", icon: "🚗", id: "safety_guide" },
+      { name: "Find Pediatrician", icon: "👨‍⚕️", id: "pediatrician_finder" }
     ]
   }
 };
