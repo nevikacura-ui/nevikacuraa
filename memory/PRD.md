@@ -383,6 +383,20 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 - View and manage registered biometric credentials
 - View and manage trusted devices
 
+### January 13, 2026 - Session 8
+**Cleanup: Removed Google Login & Footer Billing**
+
+**Removed:**
+- Google Social Login (was failing due to OAuth redirect issues)
+- Quick Billing link from footer
+- AuthCallback page and route
+
+**Kept:**
+- Billing module ONLY in Staff Portal (for staff/doctors)
+- 3 working login methods: Email OTP, Email+Password, Phone SMS OTP
+- Biometric authentication for mobile app users
+- Remember Me functionality
+
 ---
 
 ## Remaining/Future Tasks
