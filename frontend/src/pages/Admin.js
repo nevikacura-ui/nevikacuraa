@@ -235,6 +235,18 @@ const Admin = () => {
     }
   };
 
+  const fetchAnalytics = async () => {
+    setAnalyticsLoading(true);
+    try {
+      const response = await axios.get(`${API}/admin/analytics?days=${analyticsDays}`, { headers: getAuthHeaders() });
+      setAnalyticsData(response.data);
+    } catch (error) {
+      console.error('Failed to fetch analytics:', error);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
+
   const fetchStaff = async () => {
     setStaffLoading(true);
     try {
