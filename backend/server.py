@@ -192,6 +192,77 @@ async def send_sms_notification(to_number: str, message: str):
         logger.error(f"SMS send failed to {to_number}: {str(e)}")
         return {"success": False, "error": str(e)}
 
+async def send_staff_sms_notification(department: str, message: str):
+    """Send SMS notification to staff members of a department"""
+    staff_numbers = STAFF_SMS_NUMBERS.get(department.lower(), [])
+    if not staff_numbers:
+        logger.warning(f"No staff numbers configured for department: {department}")
+        return {"success": False, "error": f"No staff numbers for {department}"}
+    
+    results = []
+    for number in staff_numbers:
+        result = await send_sms_notification(number, message)
+        results.append({"number": number, **result})
+    
+    success_count = sum(1 for r in results if r.get("success"))
+    logger.info(f"Staff SMS sent to {department}: {success_count}/{len(staff_numbers)} successful")
+    return {"success": success_count > 0, "results": results}
+
+async def notify_staff_new_appointment(appointment_details: dict):
+    """Notify DiaGyn staff about new appointment"""
+    patient_name = appointment_details.get('patient_name', 'Patient')
+    doctor = appointment_details.get('doctor', 'Doctor')
+    clinic = appointment_details.get('clinic', 'Clinic')
+    date = appointment_details.get('date', '')
+    time = appointment_details.get('time', '')
+    booking_type = appointment_details.get('booking_type', 'online')
+    
+    type_label = "WALK-IN" if booking_type == 'walk_in' else "EMERGENCY" if booking_type == 'emergency' else "Online"
+    
+    message = f"""NEW APPOINTMENT ({type_label})
+Patient: {patient_name}
+Doctor: {doctor}
+Clinic: {clinic}
+Date: {date}
+Time: {time}
+- DiaGyn Staff Alert"""
+    
+    return await send_staff_sms_notification("diagyn", message)
+
+async def notify_staff_new_signup(user_details: dict):
+    """Notify Nevika staff about new user signup"""
+    name = user_details.get('name', 'User')
+    phone = user_details.get('phone', '')
+    
+    message = f"""NEW USER SIGNUP
+Name: {name}
+Phone: {phone}
+- Nevika Cura Alert"""
+    
+    return await send_staff_sms_notification("nevika", message)
+
+async def notify_staff_new_order(order_details: dict, department: str):
+    """Notify staff about new order (pharmacy/diagnostics)"""
+    order_id = order_details.get('id', '')[:8]
+    patient_name = order_details.get('patient_name', 'Patient')
+    
+    if department == "orange":
+        items_count = len(order_details.get('medicines', []))
+        message = f"""NEW PHARMACY ORDER
+Order: {order_id}
+Patient: {patient_name}
+Items: {items_count} medicine(s)
+- Orange Pharmacy Alert"""
+    else:  # proton
+        test_name = order_details.get('test_name', 'Test')
+        message = f"""NEW TEST BOOKING
+Booking: {order_id}
+Patient: {patient_name}
+Test: {test_name}
+- Proton Diagnostics Alert"""
+    
+    return await send_staff_sms_notification(department, message)
+
 async def send_appointment_sms(patient_phone: str, appointment_details: dict):
     """Send appointment confirmation SMS to patient"""
     doctor = appointment_details.get('doctor', 'Doctor')
