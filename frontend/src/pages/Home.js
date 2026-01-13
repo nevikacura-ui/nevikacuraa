@@ -897,6 +897,56 @@ const AuthModal = ({ open, onClose }) => {
             </div>
           </form>
         )}
+
+        {/* Step 5: Interest Selection (Profile Customization) */}
+        {step === 'interests' && (
+          <div className="space-y-4">
+            <div className="p-3 bg-gradient-to-r from-green-50 to-teal-50 border border-green-200 rounded-lg text-center">
+              <p className="text-sm text-green-700">🎉 Account created successfully!</p>
+            </div>
+            
+            <p className="text-sm text-gray-600 text-center">
+              Help us personalize your experience by selecting services you're interested in:
+            </p>
+
+            <div className="grid gap-3">
+              {availableInterests.map(interest => (
+                <div
+                  key={interest.id}
+                  onClick={() => toggleInterest(interest.id)}
+                  className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-3 ${
+                    selectedInterests.includes(interest.id)
+                      ? 'border-brand-teal bg-teal-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                  data-testid={`interest-${interest.id}`}
+                >
+                  <span className="text-2xl">{interest.icon}</span>
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-800">{interest.name}</p>
+                    <p className="text-xs text-gray-500">{interest.description}</p>
+                  </div>
+                  {selectedInterests.includes(interest.id) && (
+                    <span className="text-brand-teal text-xl">✓</span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <Button 
+              onClick={handleSaveInterests}
+              className="w-full rounded-full h-12" 
+              disabled={loading}
+              data-testid="save-interests-button"
+            >
+              {loading ? 'Saving...' : selectedInterests.length > 0 ? 'Continue' : 'Skip for now'}
+            </Button>
+            
+            <p className="text-xs text-center text-gray-400">
+              You can always change these later in your profile
+            </p>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
