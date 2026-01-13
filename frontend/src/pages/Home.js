@@ -555,12 +555,33 @@ const AuthModal = ({ open, onClose }) => {
         setVerificationToken(data.verification_token);
         setUserExists(data.user_exists);
         if (data.user_exists) {
-          // User exists - go to password login
-          setPasswordLogin({ ...passwordLogin, email });
-          setStep('password-login');
-          toast.success('Account found! Please enter your password.');
+          // User exists - login directly with email OTP (passwordless)
+          try {
+            const loginRes = await fetch(`${API}/api/auth/email-otp/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, verification_token: data.verification_token })
+            });
+            const loginData = await loginRes.json();
+            if (loginRes.ok && loginData.token) {
+              localStorage.setItem('token', loginData.token);
+              if (fetchUser) await fetchUser();
+              toast.success('Logged in successfully!');
+              onClose();
+            } else {
+              // Fall back to password login
+              setPasswordLogin({ ...passwordLogin, email });
+              setStep('password-login');
+              toast.success('Account found! Please enter your password.');
+            }
+          } catch (err) {
+            setPasswordLogin({ ...passwordLogin, email });
+            setStep('password-login');
+            toast.success('Account found! Please enter your password.');
+          }
         } else {
           // New user - go to registration
+          setRegisterForm({ ...registerForm, email });
           setStep('register');
           toast.success('Email verified! Complete your registration.');
         }
@@ -569,6 +590,35 @@ const AuthModal = ({ open, onClose }) => {
       }
     } catch (error) {
       toast.error('Verification failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Verify Phone SMS OTP
+  const handleVerifyPhoneOtp = async (otpString) => {
+    if (otpString.length !== 6) return;
+    setLoading(true);
+    try {
+      const response = await verifyAuthOtp(phone, otpString);
+      setUserExists(response.user_exists);
+      if (response.verification_token) {
+        setVerificationToken(response.verification_token);
+      }
+      
+      if (response.user_exists) {
+        // User exists - login directly
+        await loginWithOtp(phone, otpString);
+        toast.success('Logged in successfully!');
+        onClose();
+      } else {
+        // New user - show registration form
+        setRegisterForm({ ...registerForm, phone });
+        setStep('register');
+        toast.success('Phone verified! Complete your registration.');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Invalid OTP');
     } finally {
       setLoading(false);
     }
