@@ -1096,6 +1096,191 @@ const Pharmacy = () => {
           </div>
         )}
       </main>
+
+      {/* Loyalty Program Dialog */}
+      <Dialog open={showLoyaltyInfo} onOpenChange={setShowLoyaltyInfo}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Crown className="w-6 h-6" />
+              Orange Pharmacy Loyalty Program
+            </DialogTitle>
+            <DialogDescription className="text-orange-100">
+              Earn rewards on every purchase
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Tabs value={loyaltyTab} onValueChange={setLoyaltyTab} className="flex-1 flex flex-col">
+            <TabsList className="grid grid-cols-3 mx-4 mt-2">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="faq">FAQ</TabsTrigger>
+              <TabsTrigger value="terms">Terms</TabsTrigger>
+            </TabsList>
+            
+            <ScrollArea className="flex-1 p-4">
+              {/* Overview Tab */}
+              <TabsContent value="overview" className="m-0">
+                {/* User Status Card */}
+                {userLoyaltyStatus && (
+                  <Card className="p-4 mb-4 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-semibold text-gray-800">Your Status</h3>
+                      <span className="px-3 py-1 bg-amber-500 text-white text-xs font-semibold rounded-full">
+                        {userLoyaltyStatus.frequent_tier?.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3 text-center">
+                      <div className="bg-white rounded-lg p-2">
+                        <p className="text-2xl font-bold text-orange-600">{userLoyaltyStatus.loyalty_points}</p>
+                        <p className="text-xs text-gray-500">Points</p>
+                      </div>
+                      <div className="bg-white rounded-lg p-2">
+                        <p className="text-2xl font-bold text-amber-600">{userLoyaltyStatus.gold_visits}/10</p>
+                        <p className="text-xs text-gray-500">Gold Visits</p>
+                      </div>
+                      <div className="bg-white rounded-lg p-2">
+                        <p className="text-2xl font-bold text-green-600">{userLoyaltyStatus.total_orders}</p>
+                        <p className="text-xs text-gray-500">Orders</p>
+                      </div>
+                    </div>
+                    {userLoyaltyStatus.gold_reward_eligible && (
+                      <div className="mt-3 p-2 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
+                        <p className="text-sm font-semibold text-yellow-800">🎉 Gold Reward Unlocked! Claim your benefits.</p>
+                      </div>
+                    )}
+                  </Card>
+                )}
+
+                {/* Tier Cards */}
+                <h3 className="font-semibold text-gray-800 mb-3">Loyalty Tiers</h3>
+                <div className="space-y-3 mb-4">
+                  {/* Bronze */}
+                  <Card className="p-4 border-l-4 border-l-amber-700">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-full bg-amber-700 flex items-center justify-center">
+                        <Award className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">BRONZE</h4>
+                        <p className="text-xs text-gray-500">Any Purchase Amount</p>
+                      </div>
+                    </div>
+                    <ul className="text-sm text-gray-600 space-y-1 ml-13">
+                      <li>• Earn 1 loyalty point per ₹100 spent</li>
+                      <li>• 2× points on Diagnostics</li>
+                      <li>• 20 bonus points on medicine refills</li>
+                      <li>• Redeem points for discounts & free delivery</li>
+                    </ul>
+                  </Card>
+
+                  {/* Silver */}
+                  <Card className="p-4 border-l-4 border-l-gray-400">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center">
+                        <Award className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">SILVER</h4>
+                        <p className="text-xs text-gray-500">₹500+ per bill</p>
+                      </div>
+                    </div>
+                    <ul className="text-sm text-gray-600 space-y-1 ml-13">
+                      <li>• All Bronze benefits</li>
+                      <li>• Extra 5% discount on medicines</li>
+                      <li>• FREE delivery on qualifying orders</li>
+                    </ul>
+                  </Card>
+
+                  {/* Gold */}
+                  <Card className="p-4 border-l-4 border-l-yellow-500 bg-gradient-to-r from-yellow-50 to-amber-50">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center">
+                        <Crown className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-yellow-800">GOLD</h4>
+                        <p className="text-xs text-yellow-600">₹1000+ per bill</p>
+                      </div>
+                    </div>
+                    <ul className="text-sm text-gray-700 space-y-1 ml-13">
+                      <li>• All Silver benefits</li>
+                      <li>• Extra 10% discount on medicines</li>
+                      <li>• FREE delivery always</li>
+                      <li className="font-semibold text-yellow-700">• 10-Visit Reward: Extra discount + Free Health Checkup!</li>
+                    </ul>
+                  </Card>
+                </div>
+
+                {/* How It Works */}
+                <Card className="p-4 bg-blue-50 border-blue-200">
+                  <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                    <Info className="w-4 h-4" /> How It Works
+                  </h4>
+                  <ol className="text-sm text-blue-700 space-y-1 list-decimal ml-4">
+                    <li>Share your registered mobile number at billing</li>
+                    <li>Your tier is decided by your bill amount (Bronze/Silver/Gold)</li>
+                    <li>Points and visit count are added automatically</li>
+                    <li>Track everything in the Nevika Cura app</li>
+                  </ol>
+                </Card>
+              </TabsContent>
+
+              {/* FAQ Tab */}
+              <TabsContent value="faq" className="m-0">
+                {loyaltyFAQ?.faqs ? (
+                  <div className="space-y-3">
+                    {loyaltyFAQ.faqs.map((faq, idx) => (
+                      <Card key={idx} className="p-4">
+                        <h4 className="font-semibold text-gray-800 mb-2 flex items-start gap-2">
+                          <span className="text-orange-500 font-bold">Q:</span>
+                          {faq.q}
+                        </h4>
+                        <p className="text-sm text-gray-600 ml-5">{faq.a}</p>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">Loading FAQ...</div>
+                )}
+              </TabsContent>
+
+              {/* Terms Tab */}
+              <TabsContent value="terms" className="m-0">
+                {loyaltyTerms?.sections ? (
+                  <div className="space-y-4">
+                    <div className="text-center mb-4">
+                      <h3 className="font-semibold text-lg">{loyaltyTerms.title}</h3>
+                      <p className="text-xs text-gray-500">Effective: {loyaltyTerms.effective_date}</p>
+                    </div>
+                    
+                    {loyaltyTerms.sections.map((section, idx) => (
+                      <div key={idx} className="border-b pb-3 last:border-0">
+                        <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                          <FileText className="w-4 h-4 text-orange-500" />
+                          {section.title}
+                        </h4>
+                        <ul className="text-sm text-gray-600 space-y-1">
+                          {section.content.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                    
+                    <Card className="p-3 bg-gray-50 text-xs text-gray-500 text-center">
+                      Last Updated: {loyaltyTerms.last_updated}
+                      <br />
+                      {loyaltyTerms.acceptance}
+                    </Card>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">Loading Terms...</div>
+                )}
+              </TabsContent>
+            </ScrollArea>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
