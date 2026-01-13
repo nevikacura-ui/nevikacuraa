@@ -1992,6 +1992,17 @@ const Evara = () => {
                   ) : (
                     <p className="text-sm text-gray-500 text-center py-4">No periods logged yet</p>
                   )}
+                  {/* Share Period Report Button */}
+                  {periodHistory.history?.length > 0 && (
+                    <Button 
+                      variant="outline" 
+                      onClick={() => shareOnWhatsApp('period_report', token, API_URL)}
+                      className="w-full mt-3 border-rose-300 text-rose-600 hover:bg-rose-50"
+                      data-testid="share-period-report-btn"
+                    >
+                      <Share2 className="w-4 h-4 mr-2" /> Share Period Report with Doctor
+                    </Button>
+                  )}
                 </div>
               </TabsContent>
               
