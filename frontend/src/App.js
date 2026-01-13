@@ -29,8 +29,6 @@ import Billing from '@/pages/Billing';
 // Community & Reminders
 import Community from '@/pages/Community';
 import Reminders from '@/pages/Reminders';
-// Auth
-import AuthCallback from '@/pages/AuthCallback';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
@@ -43,7 +41,6 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/diagyn" element={<DiaGyn />} />
             <Route path="/proton" element={<Proton />} />
             <Route path="/pharmacy" element={<Pharmacy />} />
