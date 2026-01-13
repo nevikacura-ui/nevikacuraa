@@ -67,6 +67,9 @@ function App() {
             <Route path="/doctors" element={<DoctorProfiles />} />
             <Route path="/doctors/:doctorId" element={<DoctorProfiles />} />
             <Route path="/billing" element={<Billing />} />
+            {/* Community & Reminders */}
+            <Route path="/community" element={<Community />} />
+            <Route path="/reminders" element={<Reminders />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
