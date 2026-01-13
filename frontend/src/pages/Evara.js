@@ -1298,6 +1298,18 @@ const Evara = () => {
             <Calendar className="w-6 h-6 text-rose-500" />
             <span className="text-xs text-gray-600">Period Tracker</span>
           </button>
+          <button 
+            onClick={() => { 
+              setShowCaloriesTracker(true); 
+              fetchFoodDatabase(); 
+              if(token) fetchCalorieLogs(); 
+            }}
+            className="p-4 bg-white rounded-xl shadow-sm border border-orange-100 hover:border-orange-300 transition-all flex flex-col items-center gap-2"
+            data-testid="evara-calorie-tracker-btn"
+          >
+            <Apple className="w-6 h-6 text-orange-500" />
+            <span className="text-xs text-gray-600">Calorie Tracker</span>
+          </button>
         </div>
 
         {/* New Features Row */}
