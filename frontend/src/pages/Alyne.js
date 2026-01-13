@@ -594,6 +594,23 @@ const CategoryDetail = ({ category, region, child, onBack, user }) => {
   if (category.id === 'vaccines') return <VaccinationsSection child={child} region={region} onBack={onBack} />;
   if (category.id === 'growth') return <GrowthSection child={child} onBack={onBack} />;
   if (category.id === 'symptoms') return <SymptomsSection child={child} region={region} onBack={onBack} />;
+  
+  // India-specific sections
+  if (category.id === 'govt_schemes') return <GovtSchemesSection onBack={onBack} />;
+  if (category.id === 'regional_foods') return <RegionalFoodsSection onBack={onBack} />;
+  if (category.id === 'seasonal_alerts') return <SeasonalAlertsSection onBack={onBack} />;
+  if (category.id === 'ayurvedic') return <AyurvedicSection onBack={onBack} />;
+  
+  // USA-specific sections
+  if (category.id === 'insurance_guide') return <InsuranceGuideSection onBack={onBack} />;
+  if (category.id === 'school_vaccines') return <SchoolVaccinesSection onBack={onBack} />;
+  if (category.id === 'wic_program') return <WICProgramSection onBack={onBack} />;
+  if (category.id === 'safety_guide') return <SafetyGuideSection onBack={onBack} />;
+  
+  // Common sections
+  if (category.id === 'dev_screening') return <DevScreeningSection onBack={onBack} />;
+  if (category.id === 'telemedicine') return <TelemedicineSection onBack={onBack} />;
+  if (category.id === 'parenting_tips') return <ParentingTipsSection onBack={onBack} />;
 
   const content = category.content;
   if (!content) return null;
