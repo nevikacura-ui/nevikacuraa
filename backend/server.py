@@ -9216,6 +9216,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load staff billing router: {e}")
 
+# ALYNE - Kids Health Router
+try:
+    from routes.alyne import router as alyne_router, set_db as set_alyne_db
+    set_alyne_db(db)
+    app.include_router(alyne_router, prefix="/api")
+    logger.info("ALYNE Kids Health router loaded")
+except Exception as e:
+    logger.warning(f"Could not load ALYNE router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

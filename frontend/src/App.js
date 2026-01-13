@@ -29,6 +29,8 @@ import Billing from '@/pages/Billing';
 // Community & Reminders
 import Community from '@/pages/Community';
 import Reminders from '@/pages/Reminders';
+// ALYNE - Kids Health
+import Alyne from '@/pages/Alyne';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
@@ -70,6 +72,8 @@ function App() {
             {/* Community & Reminders */}
             <Route path="/community" element={<Community />} />
             <Route path="/reminders" element={<Reminders />} />
+            {/* ALYNE - Kids Health */}
+            <Route path="/alyne" element={<Alyne />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
