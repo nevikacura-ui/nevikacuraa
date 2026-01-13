@@ -8300,6 +8300,55 @@ try:
 except Exception as e:
     logger.warning(f"Could not load pharmacy loyalty router: {e}")
 
+# NEW FEATURE ROUTERS
+try:
+    from routes.health_records import router as health_records_router, set_db as set_health_records_db
+    set_health_records_db(db)
+    app.include_router(health_records_router, prefix="/api")
+    logger.info("Health Records router loaded")
+except Exception as e:
+    logger.warning(f"Could not load health records router: {e}")
+
+try:
+    from routes.health_packages import router as health_packages_router, set_db as set_health_packages_db
+    set_health_packages_db(db)
+    app.include_router(health_packages_router, prefix="/api")
+    logger.info("Health Packages router loaded")
+except Exception as e:
+    logger.warning(f"Could not load health packages router: {e}")
+
+try:
+    from routes.referral import router as referral_router, set_db as set_referral_db
+    set_referral_db(db)
+    app.include_router(referral_router, prefix="/api")
+    logger.info("Referral router loaded")
+except Exception as e:
+    logger.warning(f"Could not load referral router: {e}")
+
+try:
+    from routes.health_tips import router as health_tips_router, set_db as set_health_tips_db
+    set_health_tips_db(db)
+    app.include_router(health_tips_router, prefix="/api")
+    logger.info("Health Tips router loaded")
+except Exception as e:
+    logger.warning(f"Could not load health tips router: {e}")
+
+try:
+    from routes.doctor_profiles import router as doctor_profiles_router, set_db as set_doctor_profiles_db
+    set_doctor_profiles_db(db)
+    app.include_router(doctor_profiles_router, prefix="/api")
+    logger.info("Doctor Profiles router loaded")
+except Exception as e:
+    logger.warning(f"Could not load doctor profiles router: {e}")
+
+try:
+    from routes.teleconsultation import router as teleconsult_router, set_db as set_teleconsult_db
+    set_teleconsult_db(db)
+    app.include_router(teleconsult_router, prefix="/api")
+    logger.info("Teleconsultation router loaded")
+except Exception as e:
+    logger.warning(f"Could not load teleconsultation router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
