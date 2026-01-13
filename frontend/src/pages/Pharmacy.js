@@ -1446,7 +1446,7 @@ const Pharmacy = () => {
                   <div className="text-center py-8 text-gray-500">Loading Terms...</div>
                 )}
               </TabsContent>
-            </ScrollArea>
+            </div>
           </Tabs>
         </DialogContent>
       </Dialog>
