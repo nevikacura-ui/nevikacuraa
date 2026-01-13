@@ -20,6 +20,10 @@ import HealthPackages from '@/pages/HealthPackages';
 import ReferralProgram from '@/pages/ReferralProgram';
 import HealthTips from '@/pages/HealthTips';
 import Teleconsultation from '@/pages/Teleconsultation';
+// High Priority Features
+import EmergencyServices from '@/pages/EmergencyServices';
+import HealthRiskAssessment from '@/pages/HealthRiskAssessment';
+import MedicationTracker from '@/pages/MedicationTracker';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
