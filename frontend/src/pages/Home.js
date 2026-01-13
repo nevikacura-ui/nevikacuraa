@@ -661,12 +661,15 @@ const AuthModal = ({ open, onClose }) => {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md" data-testid="auth-modal">
         <DialogHeader>
-          <DialogTitle className="font-heading text-2xl">Welcome to Nevika Cura</DialogTitle>
+          <DialogTitle className="font-heading text-2xl">
+            {step === 'interests' ? 'Customize Your Experience' : 'Welcome to Nevika Cura'}
+          </DialogTitle>
           <DialogDescription className="font-body">
             {step === 'email' && 'Enter your email to get started'}
             {step === 'otp' && 'Enter the verification code sent to your email'}
             {step === 'register' && 'Complete your registration'}
             {step === 'password-login' && 'Enter your password to login'}
+            {step === 'interests' && 'Select the services you\'re interested in'}
           </DialogDescription>
         </DialogHeader>
 
