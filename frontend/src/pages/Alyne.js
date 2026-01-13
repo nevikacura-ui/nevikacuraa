@@ -207,8 +207,8 @@ const FEATURE_CATEGORIES = [
   },
   {
     id: 'development',
-    title: 'Development',
-    subtitle: 'Milestones',
+    title: 'Milestones',
+    subtitle: 'Motor & cognitive skills',
     icon: Brain,
     color: 'bg-gradient-to-br from-emerald-400 to-green-500',
     content: {
