@@ -92,7 +92,7 @@ const Home = () => {
     {
       id: 'alyne',
       name: 'ALYNE',
-      logo: 'https://customer-assets.emergentagent.com/job_kids-health-portal/artifacts/mrmio3uk_file_000000006cd87207b39dc03d0e62d1ad%20%281%29.png',
+      logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/aj6j48sj_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
       description: 'Kids Health & Care',
       bgColor: 'bg-gradient-to-br from-cyan-500 via-teal-500 to-emerald-500',
       accentColor: 'border-transparent',
@@ -103,7 +103,7 @@ const Home = () => {
       fillCard: false,
       tallerCard: true,
       isGradient: true,
-      logoScale: 1.2
+      logoScale: 1.26
     }
   ];
 

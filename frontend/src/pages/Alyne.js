@@ -24,7 +24,7 @@ import Footer from '@/components/Footer';
 const API = process.env.REACT_APP_BACKEND_URL;
 
 // ALYNE Logo (same as home page)
-const ALYNE_LOGO = "https://customer-assets.emergentagent.com/job_kids-health-portal/artifacts/mrmio3uk_file_000000006cd87207b39dc03d0e62d1ad%20%281%29.png";
+const ALYNE_LOGO = "https://customer-assets.emergentagent.com/job_alynehealth/artifacts/aj6j48sj_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png";
 
 // Content Data for USA and India
 const REGION_CONTENT = {
