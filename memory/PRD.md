@@ -407,11 +407,92 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 - Callback handler at `/auth/callback` exchanges session for user data
 - Backend `/api/auth/google` creates or logs in Google users
 
-**Current Login Methods (4 options):**
-1. Continue with Google - Quick one-tap sign in
-2. Email + OTP - Recommended, no password needed (Best)
-3. Email + Password - Traditional login
-4. Phone + SMS OTP - Fallback option
+**Current Login Methods (3 options):**
+1. Email + OTP - Recommended, no password needed (Best)
+2. Email + Password - Traditional login
+3. Phone + SMS OTP - Fallback option
+
+---
+
+### January 13, 2026 - Session 10
+**ALYNE - Kids Health & Care Module** ✅ (Complete - MVP)
+
+**Child Profile Management:**
+- Multi-child support from Day 1
+- Region-based configuration (India/USA)
+- India: Aadhaar, UHID fields
+- USA: Insurance provider, Insurance ID fields
+- Blood group, allergies, medical conditions tracking
+
+**Vaccination Tracker:**
+- Auto-generated schedules based on DOB and region
+- India: IAP (Indian Academy of Pediatrics) - 41 vaccines
+- USA: CDC schedule - 34 vaccines
+- Status tracking: Done, Due, Overdue, Upcoming
+- Mark vaccinations as complete with administered date
+
+**Growth & Development:**
+- Height, weight, head circumference tracking
+- WHO growth percentile calculations (boys/girls)
+- Age-based percentile analysis (p3, p15, p50, p85, p97)
+- Visual growth history
+
+**Health Log:**
+- Entry types: Symptom, Doctor Visit, Medication, Note
+- Doctor name tracking for visits
+- Date-based history
+
+**Document Storage:**
+- Types: Immunization record, Medical report, School form, Prescription, Other
+- Base64 encoded file storage
+- PDF, JPG, PNG support
+
+**Reminders:**
+- Types: Vaccination, Medication, Appointment, Checkup
+- Due date and time scheduling
+- Enable/disable toggle
+
+**Dashboard Summary:**
+- Child profile with age display
+- Vaccination progress stats
+- Latest growth record
+- Upcoming reminders (7 days)
+- Recent health log entries
+- Document count
+
+**API Endpoints:**
+```
+GET  /api/alyne/config/regions - Region configuration
+POST /api/alyne/children - Create child profile
+GET  /api/alyne/children/{user_id} - Get all children
+GET  /api/alyne/child/{child_id} - Get specific child
+PUT  /api/alyne/child/{child_id} - Update child
+DELETE /api/alyne/child/{child_id} - Delete child
+GET  /api/alyne/vaccinations/{child_id} - Get vaccinations
+PUT  /api/alyne/vaccinations/{vax_id} - Update vaccination status
+GET  /api/alyne/vaccinations/{child_id}/schedule - Get upcoming schedule
+POST /api/alyne/growth/{child_id} - Add growth record
+GET  /api/alyne/growth/{child_id} - Get growth records
+GET  /api/alyne/growth/{child_id}/chart - Get chart data
+POST /api/alyne/health-log/{child_id} - Add health log entry
+GET  /api/alyne/health-log/{child_id} - Get health log
+DELETE /api/alyne/health-log/{entry_id} - Delete entry
+POST /api/alyne/documents/{child_id} - Upload document
+GET  /api/alyne/documents/{child_id} - List documents
+GET  /api/alyne/documents/download/{doc_id} - Download document
+DELETE /api/alyne/documents/{doc_id} - Delete document
+POST /api/alyne/reminders - Create reminder
+GET  /api/alyne/reminders/{child_id} - Get reminders
+PUT  /api/alyne/reminders/{reminder_id} - Update reminder
+DELETE /api/alyne/reminders/{reminder_id} - Delete reminder
+GET  /api/alyne/dashboard/{child_id} - Get dashboard summary
+```
+
+**Frontend Page:** `/alyne`
+- Child selector sidebar (multi-child support)
+- 5 tabs: Dashboard, Vaccinations, Growth, Documents, Health Log
+- Add Child dialog with region selection
+- Beautiful gradient UI (cyan-blue-purple theme)
 
 ---
 
