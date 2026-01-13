@@ -467,3 +467,76 @@ async def get_loyalty_faq():
             }
         ]
     }
+
+@router.get("/leaderboard")
+async def get_loyalty_leaderboard(limit: int = 10):
+    """Get top customers leaderboard"""
+    db = get_db()
+    
+    # Aggregate top customers by points
+    pipeline = [
+        {"$sort": {"total_points": -1}},
+        {"$limit": limit},
+        {"$project": {
+            "_id": 0,
+            "user_id": 1,
+            "total_points": 1,
+            "gold_visits": 1,
+            "total_orders": 1,
+            "total_spent": 1
+        }}
+    ]
+    
+    top_customers_raw = await db.user_loyalty.aggregate(pipeline).to_list(limit)
+    
+    # Enrich with user names (anonymized for privacy)
+    leaderboard = []
+    for idx, customer in enumerate(top_customers_raw):
+        # Get user name
+        user = await db.users.find_one({"id": customer["user_id"]}, {"_id": 0, "name": 1})
+        name = user.get("name", "Anonymous") if user else "Anonymous"
+        
+        # Anonymize name: "John Doe" -> "J***n D**e"
+        if len(name) > 2:
+            parts = name.split()
+            anonymized_parts = []
+            for part in parts:
+                if len(part) > 2:
+                    anonymized_parts.append(f"{part[0]}{'*' * (len(part)-2)}{part[-1]}")
+                else:
+                    anonymized_parts.append(part)
+            display_name = " ".join(anonymized_parts)
+        else:
+            display_name = name
+        
+        # Determine tier
+        tier = "bronze"
+        if customer.get("gold_visits", 0) >= 5:
+            tier = "gold"
+        elif customer.get("total_orders", 0) >= 3:
+            tier = "silver"
+        
+        # Badge for top 3
+        badge = None
+        if idx == 0:
+            badge = {"icon": "🥇", "label": "Top Customer"}
+        elif idx == 1:
+            badge = {"icon": "🥈", "label": "2nd Place"}
+        elif idx == 2:
+            badge = {"icon": "🥉", "label": "3rd Place"}
+        
+        leaderboard.append({
+            "rank": idx + 1,
+            "display_name": display_name,
+            "points": customer.get("total_points", 0),
+            "gold_visits": customer.get("gold_visits", 0),
+            "total_orders": customer.get("total_orders", 0),
+            "tier": tier,
+            "badge": badge
+        })
+    
+    return {
+        "leaderboard": leaderboard,
+        "last_updated": datetime.now(timezone.utc).isoformat(),
+        "total_participants": await db.user_loyalty.count_documents({})
+    }
