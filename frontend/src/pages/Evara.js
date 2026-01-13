@@ -21,7 +21,27 @@ import {
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 // WhatsApp share function
-const shareOnWhatsApp = (contentType) => {
+const shareOnWhatsApp = async (contentType, token = null, API_URL = null) => {
+  // For period_report, use API to get personalized data
+  if (contentType === 'period_report' && token && API_URL) {
+    try {
+      const response = await fetch(`${API_URL}/api/evara/share-period-report`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      if (data.whatsapp_url) {
+        window.open(data.whatsapp_url, '_blank');
+        toast.success('Opening WhatsApp to share report');
+      } else {
+        toast.error('No period data to share. Start tracking your periods!');
+      }
+      return;
+    } catch (error) {
+      toast.error('Failed to generate report');
+      return;
+    }
+  }
+  
   const shareContent = {
     pcos_guide: {
       message: `🌸 *Understanding PCOS* 🌸\n\nLearn about symptoms, diet plans, and exercise routines for managing PCOS.\n\n✅ Symptoms & Diagnosis\n✅ PCOS-Friendly Diet\n✅ Weekly Exercise Plan\n\nDownload Nevika Cura app for the complete guide!\n\n#PCOSAwareness #WomensHealth`
