@@ -301,7 +301,8 @@ const StaffPortal = () => {
   const isClinicStaff = (role) => ['clinic_staff_pushpa', 'clinic_staff_amnion', 'super_admin'].includes(role);
   const isDoctor = (role) => ['doctor', 'doctor_pushpa', 'doctor_amnion', 'super_admin'].includes(role);
 
-  const loadData = async () => {
+  const loadData = async (showRefreshIndicator = false) => {
+    if (showRefreshIndicator) setIsRefreshing(true);
     try {
       const role = staffInfo?.role;
       
