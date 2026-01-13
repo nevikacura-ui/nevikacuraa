@@ -214,9 +214,12 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 /app/backend/
 ├── server.py (main routes)
 ├── routes/
+│   ├── alyne.py (ALYNE Kids Health - NEW)
+│   ├── auth.py (Authentication)
 │   ├── billing.py (Billing & Due Payments)
 │   ├── reminders.py (Automated Reminders)
 │   ├── community.py (Women's Health Community)
+│   ├── staff_billing.py (Staff Portal Billing)
 │   └── pharmacy_loyalty.py (Loyalty Program)
 ├── migrations/
 │   └── migrate_data.py (Data migration script)
