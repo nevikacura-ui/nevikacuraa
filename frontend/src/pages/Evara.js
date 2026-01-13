@@ -2938,6 +2938,85 @@ const Evara = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Subscription Dialog */}
+      <Dialog open={showSubscription} onOpenChange={setShowSubscription}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Crown className="w-6 h-6 text-pink-600" />
+              Evara Premium
+            </DialogTitle>
+            <DialogDescription>
+              Unlock the full potential of your wellness journey
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Premium Features */}
+          <div className="mb-4 p-4 bg-gradient-to-r from-pink-50 to-rose-50 rounded-xl">
+            <h4 className="font-semibold text-gray-800 mb-2">Premium Features:</h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex items-center gap-2">
+                <span className="text-green-500">✓</span> Unlimited AI Health Chat
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-green-500">✓</span> Personalized Wellness Plans
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-green-500">✓</span> Priority Support
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-green-500">✓</span> Exclusive Live Sessions
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-green-500">✓</span> Detailed Health Reports
+              </li>
+            </ul>
+          </div>
+
+          {/* Subscription Plans */}
+          <div className="space-y-3">
+            {subscriptionPlans.map(plan => (
+              <Card 
+                key={plan.id}
+                className={`cursor-pointer transition-all hover:shadow-md ${
+                  plan.id === 'yearly' ? 'border-pink-400 bg-pink-50' : 'border-gray-200'
+                }`}
+              >
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-gray-800">{plan.name}</p>
+                      {plan.id === 'yearly' && (
+                        <span className="px-2 py-0.5 bg-pink-500 text-white text-xs rounded-full">Best Value</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-500">{plan.duration_days} days</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-pink-600">{plan.formatted_price}</p>
+                    <Button 
+                      size="sm" 
+                      className="mt-2"
+                      onClick={() => handleSubscribe(plan.id)}
+                      disabled={subscriptionLoading}
+                      data-testid={`subscribe-${plan.id}-btn`}
+                    >
+                      {subscriptionLoading ? 'Processing...' : 'Subscribe'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {!token && (
+            <p className="text-center text-sm text-gray-500 mt-4">
+              Please <button onClick={() => setShowSubscription(false)} className="text-pink-600 underline">login</button> to subscribe
+            </p>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Calorie Tracker Dialog */}
       <Dialog open={showCaloriesTracker} onOpenChange={setShowCaloriesTracker}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
