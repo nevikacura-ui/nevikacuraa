@@ -726,6 +726,12 @@ const Evara = () => {
   const [programContent, setProgramContent] = useState(null);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('evara_token'));
+
+  // Subscription state
+  const [showSubscription, setShowSubscription] = useState(false);
+  const [subscriptionPlans, setSubscriptionPlans] = useState([]);
+  const [userSubscription, setUserSubscription] = useState(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
   
   // Signup form state
   const [signupData, setSignupData] = useState({
