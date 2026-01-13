@@ -1151,12 +1151,19 @@ const AuthModal = ({ open, onClose }) => {
           </div>
         )}
 
-        {/* Step 3: Registration Form */}
+        {/* Registration Form */}
         {step === 'register' && (
           <form onSubmit={handleCompleteRegistration} className="space-y-4">
-            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-700">✓ Email verified: <strong>{email}</strong></p>
-            </div>
+            {(email || registerForm.email) && (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-700">✓ Email verified: <strong>{email || registerForm.email}</strong></p>
+              </div>
+            )}
+            {(phone || registerForm.phone) && !email && (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-700">✓ Phone verified: <strong>+91 {phone || registerForm.phone}</strong></p>
+              </div>
+            )}
             <div>
               <Label htmlFor="name">Full Name *</Label>
               <Input 
@@ -1166,22 +1173,39 @@ const AuthModal = ({ open, onClose }) => {
                 placeholder="Enter your full name"
                 required 
                 className="h-12 rounded-xl"
+                data-testid="register-name-input"
               />
             </div>
-            <div>
-              <Label htmlFor="phone">Phone Number (Optional)</Label>
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground font-medium">+91</span>
+            {!email && (
+              <div>
+                <Label htmlFor="reg-email">Email Address *</Label>
                 <Input 
-                  id="phone" 
-                  value={registerForm.phone}
-                  onChange={(e) => setRegisterForm({...registerForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})}
-                  placeholder="For appointment SMS"
-                  className="h-12 rounded-xl flex-1"
+                  id="reg-email" 
+                  type="email"
+                  value={registerForm.email}
+                  onChange={(e) => setRegisterForm({...registerForm, email: e.target.value})}
+                  placeholder="your@email.com"
+                  required 
+                  className="h-12 rounded-xl"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">Required only for appointment SMS notifications</p>
-            </div>
+            )}
+            {!phone && (
+              <div>
+                <Label htmlFor="reg-phone">Phone Number (Optional)</Label>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground font-medium px-3 py-2 bg-gray-100 rounded-l-xl">+91</span>
+                  <Input 
+                    id="reg-phone" 
+                    value={registerForm.phone}
+                    onChange={(e) => setRegisterForm({...registerForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})}
+                    placeholder="For appointment SMS"
+                    className="h-12 rounded-r-xl rounded-l-none flex-1"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Required only for appointment SMS notifications</p>
+              </div>
+            )}
             <div>
               <Label htmlFor="password">Create Password *</Label>
               <Input 
@@ -1193,15 +1217,26 @@ const AuthModal = ({ open, onClose }) => {
                 required 
                 minLength={6}
                 className="h-12 rounded-xl"
+                data-testid="register-password-input"
               />
             </div>
             <Button 
               type="submit" 
               className="w-full rounded-full h-12" 
               disabled={loading}
+              data-testid="register-submit-button"
             >
               {loading ? 'Creating Account...' : 'Create Account'}
             </Button>
+            <div className="text-center">
+              <button 
+                type="button"
+                onClick={() => setStep('method-select')}
+                className="text-sm text-gray-500 hover:underline"
+              >
+                ← Back to login options
+              </button>
+            </div>
           </form>
         )}
 
@@ -1218,6 +1253,7 @@ const AuthModal = ({ open, onClose }) => {
                 placeholder="your@email.com"
                 required 
                 className="h-12 rounded-xl"
+                data-testid="login-email-input"
               />
             </div>
             <div>
@@ -1230,6 +1266,7 @@ const AuthModal = ({ open, onClose }) => {
                 placeholder="Enter your password"
                 required 
                 className="h-12 rounded-xl"
+                data-testid="login-password-input"
               />
             </div>
             <Button 
@@ -1243,17 +1280,19 @@ const AuthModal = ({ open, onClose }) => {
             <div className="flex justify-between text-sm">
               <button 
                 type="button"
-                onClick={() => setStep('email')}
-                className="text-brand-teal hover:underline"
+                onClick={() => setStep('method-select')}
+                className="text-gray-500 hover:underline"
               >
-                Create new account
+                ← Other login options
               </button>
               <button 
                 type="button"
                 onClick={() => {
-                  toast.info('Use your phone number to reset password via SMS OTP');
+                  setEmail(passwordLogin.email);
+                  setStep('email-otp');
+                  toast.info('Enter your email to receive a password reset code');
                 }}
-                className="text-gray-500 hover:underline"
+                className="text-brand-teal hover:underline"
               >
                 Forgot password?
               </button>
