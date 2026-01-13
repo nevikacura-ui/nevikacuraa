@@ -249,6 +249,20 @@ const Home = () => {
               onClick={() => navigate(service.path)}
               data-testid={`service-card-${service.id}`}
             >
+              {/* Sparkle/Star decorations for ALYNE */}
+              {service.hasSparkles && (
+                <>
+                  <div className="absolute top-4 left-4 w-2 h-2 bg-white/60 rounded-full animate-pulse"></div>
+                  <div className="absolute top-8 right-8 w-1.5 h-1.5 bg-white/50 rounded-full animate-pulse" style={{animationDelay: '0.3s'}}></div>
+                  <div className="absolute top-16 left-12 w-1 h-1 bg-white/40 rounded-full animate-pulse" style={{animationDelay: '0.6s'}}></div>
+                  <div className="absolute bottom-20 right-6 w-2 h-2 bg-white/50 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                  <div className="absolute bottom-32 left-6 w-1.5 h-1.5 bg-white/40 rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                  <div className="absolute top-24 right-4 w-1 h-1 bg-white/60 rounded-full animate-pulse" style={{animationDelay: '0.8s'}}></div>
+                  <div className="absolute bottom-28 right-12 w-1 h-1 bg-white/50 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                  <div className="absolute top-1/2 left-3 w-1.5 h-1.5 bg-white/30 rounded-full animate-pulse" style={{animationDelay: '0.7s'}}></div>
+                </>
+              )}
+              
               {/* Background decoration - hidden for cards with hideDecoration */}
               {!service.hideDecoration && (
                 <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150"></div>
@@ -257,7 +271,6 @@ const Home = () => {
               {/* Logo - takes most space */}
               <div 
                 className={`flex items-center justify-center flex-1 overflow-hidden ${service.id === 'evara' || service.id === 'glydex' || service.id === 'alyne' ? 'px-0' : 'rounded-xl p-2'} ${service.logoBg}`}
-                style={service.isGradient ? {} : (service.customBg ? { backgroundColor: service.customBg } : {})}
               >
                 <img 
                   src={service.logo} 
@@ -265,6 +278,7 @@ const Home = () => {
                   className={`transition-transform group-hover:scale-105 ${
                     service.fillCard ? 'w-full h-full object-cover absolute inset-0 rounded-2xl' :
                     service.id === 'evara' ? 'w-full h-auto max-h-32 sm:max-h-36 object-contain' :
+                    service.id === 'alyne' ? 'w-auto max-h-40 object-contain drop-shadow-lg' :
                     service.stretchLogo ? 'absolute inset-0 w-full h-full object-cover' :
                     service.logoRounded ? 'w-auto max-h-28 rounded-xl shadow-md object-contain' :
                     'w-auto max-h-28 mix-blend-multiply object-contain'
