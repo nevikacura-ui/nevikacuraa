@@ -1836,10 +1836,11 @@ const Evara = () => {
           
           {token ? (
             <Tabs defaultValue="log" className="w-full">
-              <TabsList className="w-full">
-                <TabsTrigger value="log" className="flex-1">Log Period</TabsTrigger>
-                <TabsTrigger value="history" className="flex-1">History</TabsTrigger>
-                <TabsTrigger value="pms" className="flex-1">PMS Guide</TabsTrigger>
+              <TabsList className="w-full grid grid-cols-4">
+                <TabsTrigger value="log">Log</TabsTrigger>
+                <TabsTrigger value="tips">Tips</TabsTrigger>
+                <TabsTrigger value="history">History</TabsTrigger>
+                <TabsTrigger value="pms">PMS</TabsTrigger>
               </TabsList>
               
               <TabsContent value="log" className="space-y-4 pt-4">
