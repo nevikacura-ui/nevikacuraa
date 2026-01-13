@@ -397,6 +397,22 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 - Biometric authentication for mobile app users
 - Remember Me functionality
 
+### January 13, 2026 - Session 9
+**Re-enabled Google Social Login**
+
+**Google OAuth Re-enabled:**
+- Restored "Continue with Google" button at top of login modal
+- Improved AuthCallback page with error handling and retry option
+- Uses Emergent-managed Google OAuth (`auth.emergentagent.com`)
+- Callback handler at `/auth/callback` exchanges session for user data
+- Backend `/api/auth/google` creates or logs in Google users
+
+**Current Login Methods (4 options):**
+1. Continue with Google - Quick one-tap sign in
+2. Email + OTP - Recommended, no password needed (Best)
+3. Email + Password - Traditional login
+4. Phone + SMS OTP - Fallback option
+
 ---
 
 ## Remaining/Future Tasks
