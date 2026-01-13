@@ -217,6 +217,336 @@ const PCOS_EDUCATION = {
   }
 };
 
+// Pregnancy Education Content
+const PREGNANCY_EDUCATION = {
+  title: "Pregnancy Guide & Education",
+  trimester_guides: [
+    {
+      trimester: 1,
+      title: "First Trimester (Weeks 1-12)",
+      overview: "Your baby's major organs and systems begin to form. This is a crucial time for development.",
+      baby_development: [
+        "Week 4: Heart begins to beat",
+        "Week 6: Brain and spinal cord developing",
+        "Week 8: All major organs have begun to form",
+        "Week 10: Fingers and toes separate",
+        "Week 12: Baby can open and close fists"
+      ],
+      mom_changes: [
+        "Morning sickness and nausea",
+        "Breast tenderness and changes",
+        "Fatigue and tiredness",
+        "Frequent urination",
+        "Food cravings or aversions"
+      ],
+      tips: [
+        "Take prenatal vitamins with folic acid",
+        "Avoid alcohol, smoking, and certain medications",
+        "Get adequate rest",
+        "Eat small, frequent meals to manage nausea",
+        "Stay hydrated"
+      ],
+      diet_tips: [
+        "Focus on folate-rich foods (spinach, lentils, citrus)",
+        "Include iron-rich foods (lean meat, beans)",
+        "Eat protein at every meal",
+        "Avoid raw/undercooked meat and fish",
+        "Limit caffeine to 200mg/day"
+      ]
+    },
+    {
+      trimester: 2,
+      title: "Second Trimester (Weeks 13-26)",
+      overview: "Often called the 'golden period' - energy returns and baby grows rapidly.",
+      baby_development: [
+        "Week 14: Baby can squint and frown",
+        "Week 16: Baby can hear sounds",
+        "Week 18: Baby's movements felt (quickening)",
+        "Week 20: Halfway point! Anatomy scan",
+        "Week 24: Lungs developing, baby is viable"
+      ],
+      mom_changes: [
+        "Energy levels improve",
+        "Baby bump becomes visible",
+        "Feeling baby movements",
+        "Skin changes (linea nigra, stretch marks)",
+        "Back pain may begin"
+      ],
+      tips: [
+        "Continue prenatal vitamins",
+        "Start sleeping on your left side",
+        "Do pregnancy-safe exercises",
+        "Schedule your anatomy scan",
+        "Start planning for baby's arrival"
+      ],
+      diet_tips: [
+        "Increase calcium intake (dairy, leafy greens)",
+        "Get enough omega-3 fatty acids",
+        "Eat fiber-rich foods for constipation",
+        "Include vitamin D sources",
+        "Stay well hydrated"
+      ]
+    },
+    {
+      trimester: 3,
+      title: "Third Trimester (Weeks 27-40)",
+      overview: "Baby gains weight rapidly and prepares for birth. Final preparations time!",
+      baby_development: [
+        "Week 28: Eyes can open and close",
+        "Week 32: Baby practices breathing",
+        "Week 34: Central nervous system maturing",
+        "Week 36: Baby drops into pelvis",
+        "Week 40: Full term and ready for birth!"
+      ],
+      mom_changes: [
+        "Shortness of breath",
+        "Frequent urination returns",
+        "Braxton Hicks contractions",
+        "Difficulty sleeping",
+        "Swelling in feet and ankles"
+      ],
+      tips: [
+        "Monitor baby's movements daily",
+        "Pack your hospital bag",
+        "Take childbirth classes",
+        "Practice breathing exercises",
+        "Know the signs of labor"
+      ],
+      diet_tips: [
+        "Eat smaller, more frequent meals",
+        "Continue iron-rich foods",
+        "Stay hydrated",
+        "Avoid heavy meals before bed",
+        "Include foods for lactation prep"
+      ]
+    }
+  ],
+  important_tests: [
+    { test: "First Trimester Screening", when: "Weeks 11-14", purpose: "Check for chromosomal abnormalities" },
+    { test: "NIPT (Non-Invasive Prenatal Testing)", when: "Week 10+", purpose: "Genetic screening" },
+    { test: "Anatomy Scan", when: "Weeks 18-22", purpose: "Check baby's development" },
+    { test: "Glucose Tolerance Test", when: "Weeks 24-28", purpose: "Screen for gestational diabetes" },
+    { test: "Group B Strep Test", when: "Weeks 35-37", purpose: "Check for GBS bacteria" }
+  ],
+  warning_signs: [
+    "Heavy bleeding or passing clots",
+    "Severe abdominal pain",
+    "Sudden swelling of face/hands",
+    "Severe headache with vision changes",
+    "Baby's movements significantly decrease",
+    "Fluid leaking before 37 weeks"
+  ]
+};
+
+// Menopause Care Content
+const MENOPAUSE_CONTENT = {
+  title: "Understanding Menopause",
+  overview: "Menopause is a natural biological process marking the end of menstrual cycles. It's diagnosed after 12 months without a period, typically occurring in your late 40s to early 50s.",
+  stages: [
+    {
+      stage: "Perimenopause",
+      duration: "4-8 years before menopause",
+      description: "Your body begins transitioning. Periods become irregular, and symptoms start.",
+      symptoms: ["Irregular periods", "Hot flashes begin", "Sleep disturbances", "Mood changes"]
+    },
+    {
+      stage: "Menopause",
+      duration: "When periods stop for 12 months",
+      description: "Official menopause is confirmed after 1 year without periods.",
+      symptoms: ["No menstrual periods", "Hot flashes intensify", "Vaginal dryness", "Night sweats"]
+    },
+    {
+      stage: "Postmenopause",
+      duration: "Years after menopause",
+      description: "Symptoms may ease, but health risks increase for osteoporosis and heart disease.",
+      symptoms: ["Symptoms gradually reduce", "Bone density concerns", "Heart health focus needed"]
+    }
+  ],
+  common_symptoms: [
+    { symptom: "Hot Flashes", description: "Sudden feeling of warmth, mainly in face, neck, and chest", management: "Dress in layers, keep room cool, avoid triggers like spicy food" },
+    { symptom: "Night Sweats", description: "Hot flashes that occur during sleep", management: "Use breathable bedding, keep bedroom cool, wear moisture-wicking sleepwear" },
+    { symptom: "Sleep Problems", description: "Difficulty falling or staying asleep", management: "Maintain sleep schedule, limit caffeine, practice relaxation techniques" },
+    { symptom: "Mood Changes", description: "Irritability, anxiety, or depression", management: "Exercise regularly, seek support, consider counseling if severe" },
+    { symptom: "Vaginal Dryness", description: "Decreased lubrication and elasticity", management: "Use water-based lubricants, stay sexually active, consult doctor for treatments" },
+    { symptom: "Weight Gain", description: "Metabolism slows, weight redistributes to abdomen", management: "Increase physical activity, reduce calorie intake, focus on protein" }
+  ],
+  tips_guides: [
+    {
+      title: "Nutrition for Menopause",
+      tips: [
+        "Increase calcium and vitamin D for bone health",
+        "Eat phytoestrogen-rich foods (soy, flaxseed)",
+        "Include omega-3 fatty acids",
+        "Reduce sugar and processed foods",
+        "Limit alcohol and caffeine",
+        "Stay well hydrated"
+      ]
+    },
+    {
+      title: "Exercise Recommendations",
+      tips: [
+        "Weight-bearing exercises for bone health (walking, dancing)",
+        "Strength training 2-3 times per week",
+        "Yoga for flexibility and stress relief",
+        "Cardio for heart health and weight management",
+        "Pelvic floor exercises (Kegels)",
+        "Aim for 150 minutes of moderate activity per week"
+      ]
+    },
+    {
+      title: "Mental Wellness",
+      tips: [
+        "Practice stress management techniques",
+        "Stay socially connected",
+        "Consider mindfulness or meditation",
+        "Get adequate sleep (7-8 hours)",
+        "Seek professional help if needed",
+        "Join menopause support groups"
+      ]
+    }
+  ],
+  faqs: [
+    { q: "What age does menopause usually start?", a: "Average age is 51, but it can occur anywhere from 45-55. Premature menopause occurs before 40." },
+    { q: "How long do menopause symptoms last?", a: "Symptoms typically last 4-5 years, but can continue for 7-10 years for some women." },
+    { q: "Should I take hormone therapy?", a: "HRT can help many symptoms but isn't suitable for everyone. Discuss risks and benefits with your doctor." },
+    { q: "Can I still get pregnant during perimenopause?", a: "Yes, until you've gone 12 months without a period, pregnancy is possible. Use contraception if needed." },
+    { q: "How can I protect my bone health?", a: "Calcium, vitamin D, weight-bearing exercise, and avoiding smoking/excessive alcohol help maintain bone density." }
+  ]
+};
+
+// Women Health Community Content - Tips, Guides, Q&A
+const WOMEN_HEALTH_COMMUNITY = {
+  title: "Women's Health Community",
+  subtitle: "Tips, Guides & Important Q&A",
+  categories: [
+    {
+      id: "general_wellness",
+      name: "General Wellness",
+      icon: "heart",
+      tips: [
+        { title: "Stay Active", content: "Aim for at least 150 minutes of moderate exercise per week. Include both cardio and strength training." },
+        { title: "Prioritize Sleep", content: "Adults need 7-9 hours of quality sleep. Maintain a consistent sleep schedule." },
+        { title: "Manage Stress", content: "Practice deep breathing, meditation, or yoga. Take breaks when feeling overwhelmed." },
+        { title: "Stay Hydrated", content: "Drink at least 8 glasses of water daily. Increase intake during exercise or hot weather." },
+        { title: "Regular Check-ups", content: "Schedule annual wellness exams. Don't skip recommended screenings." }
+      ],
+      guides: [
+        { title: "Building a Self-Care Routine", content: "Start small with 10 minutes daily. Include physical, emotional, and mental wellness activities." },
+        { title: "Healthy Eating Basics", content: "Focus on whole foods, balanced macros, and plenty of fruits and vegetables." }
+      ],
+      faqs: [
+        { q: "How often should I exercise?", a: "Aim for at least 30 minutes of moderate activity most days of the week." },
+        { q: "What supplements do women need?", a: "Common needs include vitamin D, calcium, iron (if menstruating), and folic acid (if planning pregnancy)." }
+      ]
+    },
+    {
+      id: "reproductive_health",
+      name: "Reproductive Health",
+      icon: "baby",
+      tips: [
+        { title: "Track Your Cycle", content: "Understanding your menstrual cycle helps identify irregularities early." },
+        { title: "Know Your Body", content: "Regular self-exams and awareness of changes help catch issues early." },
+        { title: "Safe Practices", content: "Use protection to prevent STIs. Get regular screenings as recommended." },
+        { title: "Fertility Awareness", content: "If planning pregnancy, optimize health 3-6 months before conceiving." }
+      ],
+      guides: [
+        { title: "Understanding Your Menstrual Cycle", content: "The average cycle is 28 days with 4 phases: menstruation, follicular, ovulation, and luteal." },
+        { title: "When to See a Gynecologist", content: "Annual visits after age 21, or earlier if sexually active or having issues." }
+      ],
+      faqs: [
+        { q: "What's a normal period length?", a: "Periods typically last 3-7 days. Flow and duration can vary between cycles." },
+        { q: "When is the best time to get pregnant?", a: "Ovulation typically occurs 14 days before your next period. The fertile window is 5 days before and the day of ovulation." }
+      ]
+    },
+    {
+      id: "mental_health",
+      name: "Mental Health",
+      icon: "brain",
+      tips: [
+        { title: "Practice Mindfulness", content: "Even 5 minutes of daily meditation can reduce anxiety and improve focus." },
+        { title: "Social Connections", content: "Maintain relationships with friends and family. Social support is crucial for mental health." },
+        { title: "Set Boundaries", content: "It's okay to say no. Protect your energy and prioritize your needs." },
+        { title: "Seek Help When Needed", content: "Don't hesitate to consult a mental health professional if struggling." }
+      ],
+      guides: [
+        { title: "Managing Anxiety", content: "Identify triggers, practice grounding techniques, maintain routine, and limit caffeine." },
+        { title: "Dealing with Hormonal Mood Changes", content: "Track mood with your cycle, practice self-compassion, and communicate needs to loved ones." }
+      ],
+      faqs: [
+        { q: "Is it normal to feel emotional before periods?", a: "Yes, hormonal changes can affect mood. If severe, consult a doctor about PMDD." },
+        { q: "How do I know if I need professional help?", a: "If symptoms interfere with daily life, relationships, or work for more than 2 weeks." }
+      ]
+    },
+    {
+      id: "nutrition",
+      name: "Nutrition & Diet",
+      icon: "apple",
+      tips: [
+        { title: "Eat the Rainbow", content: "Include colorful fruits and vegetables for diverse nutrients." },
+        { title: "Iron Matters", content: "Women need more iron due to menstruation. Include leafy greens, beans, and lean meat." },
+        { title: "Calcium for Bones", content: "Dairy, fortified foods, and leafy greens help maintain bone density." },
+        { title: "Limit Processed Foods", content: "Choose whole foods over packaged items to reduce sodium and additives." }
+      ],
+      guides: [
+        { title: "Eating for Your Cycle", content: "Menstruation: Iron-rich foods. Follicular: Fresh vegetables. Ovulation: Fiber. Luteal: Complex carbs." },
+        { title: "Anti-Inflammatory Diet", content: "Focus on omega-3s, berries, leafy greens, and turmeric. Avoid sugar and processed foods." }
+      ],
+      faqs: [
+        { q: "Should I take a multivitamin?", a: "A balanced diet is best, but supplements can help fill gaps. Consult a doctor for personalized advice." },
+        { q: "How much water should I drink daily?", a: "About 2-2.5 liters (8-10 glasses). More if exercising or in hot weather." }
+      ]
+    }
+  ]
+};
+
+// Period Tracking Tips
+const PERIOD_TRACKING_TIPS = [
+  {
+    phase: "Menstrual Phase (Days 1-5)",
+    tips: [
+      "Rest and gentle movement like yoga or walking",
+      "Focus on iron-rich foods to replace blood loss",
+      "Use heating pads for cramp relief",
+      "Stay hydrated with warm drinks",
+      "Get extra sleep if needed"
+    ],
+    nutrition: "Iron-rich foods: spinach, red meat, beans, dark chocolate"
+  },
+  {
+    phase: "Follicular Phase (Days 6-14)",
+    tips: [
+      "Energy levels rise - great time for intense workouts",
+      "Try new activities or challenges",
+      "Brain power peaks - tackle complex tasks",
+      "Socialize and network",
+      "Plan creative projects"
+    ],
+    nutrition: "Focus on fermented foods, protein, and healthy fats"
+  },
+  {
+    phase: "Ovulation (Around Day 14)",
+    tips: [
+      "Peak energy and confidence",
+      "Best time for important conversations or presentations",
+      "High-intensity workouts feel easier",
+      "Libido may increase",
+      "Most fertile window if trying to conceive"
+    ],
+    nutrition: "Light, fresh foods; vegetables, fruits, fiber-rich foods"
+  },
+  {
+    phase: "Luteal Phase (Days 15-28)",
+    tips: [
+      "Energy gradually decreases",
+      "Practice self-care and stress management",
+      "Reduce caffeine and sugar to minimize PMS",
+      "Magnesium-rich foods can help with cravings",
+      "Prioritize sleep and rest"
+    ],
+    nutrition: "Complex carbs, magnesium-rich foods (nuts, seeds, dark chocolate)"
+  }
+];
+
 // Pregnancy Calculator Component
 const PregnancyCalculator = ({ onClose }) => {
   const [lmpDate, setLmpDate] = useState('');
