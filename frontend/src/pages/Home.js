@@ -650,16 +650,24 @@ const AuthModal = ({ open, onClose }) => {
       toast.error('Please fill all required fields');
       return;
     }
+    // Require either email or phone
+    if (!registerForm.email && !registerForm.phone && !email && !phone) {
+      toast.error('Email or phone is required');
+      return;
+    }
     setLoading(true);
     try {
+      const regEmail = registerForm.email || email;
+      const regPhone = registerForm.phone || phone;
+      
       const response = await fetch(`${API}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: registerForm.name,
-          email: email,
+          email: regEmail,
           password: registerForm.password,
-          phone: registerForm.phone || '',
+          phone: regPhone,
           verification_token: verificationToken
         })
       });
@@ -667,12 +675,12 @@ const AuthModal = ({ open, onClose }) => {
       if (response.ok) {
         // Auto-login after registration
         try {
-          await login(email, registerForm.password);
+          await login(regEmail, registerForm.password);
           toast.success('Account created! Now customize your experience.');
           setStep('interests');
         } catch (loginErr) {
           toast.success('Account created! Please login.');
-          setPasswordLogin({ email, password: '' });
+          setPasswordLogin({ email: regEmail, password: '' });
           setStep('password-login');
         }
       } else {
