@@ -78,7 +78,13 @@ const Pharmacy = () => {
   const [loyaltyFAQ, setLoyaltyFAQ] = useState(null);
   const [loyaltyTerms, setLoyaltyTerms] = useState(null);
   const [userLoyaltyStatus, setUserLoyaltyStatus] = useState(null);
-  const [loyaltyTab, setLoyaltyTab] = useState('overview'); // overview, faq, terms
+  const [loyaltyTab, setLoyaltyTab] = useState('overview'); // overview, leaderboard, faq, terms
+  
+  // Leaderboard state
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboardPeriod, setLeaderboardPeriod] = useState('all'); // all, weekly, monthly
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
+  const [leaderboardInfo, setLeaderboardInfo] = useState({ total_participants: 0, period_label: 'All Time' });
 
   // Check for reorder data on mount
   useEffect(() => {
