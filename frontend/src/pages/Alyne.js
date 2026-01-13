@@ -138,8 +138,8 @@ const FEATURE_CATEGORIES = [
   },
   {
     id: 'sleep',
-    title: 'Sleep Guide',
-    subtitle: 'Rest patterns',
+    title: 'Sleep Patterns',
+    subtitle: 'Hours & safe sleep tips',
     icon: Moon,
     color: 'bg-gradient-to-br from-indigo-400 to-blue-500',
     content: {
