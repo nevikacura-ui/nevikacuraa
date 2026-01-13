@@ -1141,8 +1141,12 @@ const Pharmacy = () => {
           </DialogHeader>
           
           <Tabs value={loyaltyTab} onValueChange={setLoyaltyTab} className="flex-1 flex flex-col">
-            <TabsList className="grid grid-cols-3 mx-4 mt-2">
+            <TabsList className="grid grid-cols-4 mx-4 mt-2">
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="leaderboard" className="flex items-center gap-1">
+                <Trophy className="w-3 h-3" />
+                Top 10
+              </TabsTrigger>
               <TabsTrigger value="faq">FAQ</TabsTrigger>
               <TabsTrigger value="terms">Terms</TabsTrigger>
             </TabsList>
