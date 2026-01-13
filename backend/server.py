@@ -8111,6 +8111,21 @@ async def stripe_webhook(request: Request):
 # Include router AFTER all routes are defined
 app.include_router(api_router)
 
+# Include modular routers
+try:
+    from routes.billing import router as billing_router
+    app.include_router(billing_router, prefix="/api")
+    logger.info("Billing router loaded")
+except Exception as e:
+    logger.warning(f"Could not load billing router: {e}")
+
+try:
+    from routes.reminders import router as reminders_router
+    app.include_router(reminders_router, prefix="/api")
+    logger.info("Reminders router loaded")
+except Exception as e:
+    logger.warning(f"Could not load reminders router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
