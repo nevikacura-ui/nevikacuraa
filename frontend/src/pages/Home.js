@@ -253,7 +253,7 @@ const Home = () => {
               
               {/* Logo - takes most space */}
               <div 
-                className={`flex items-center justify-center flex-1 overflow-hidden ${service.id === 'evara' || service.id === 'glydex' || service.id === 'alyne' ? 'px-4' : 'rounded-xl p-2'} ${service.logoBg}`}
+                className={`flex items-center justify-center flex-1 overflow-hidden ${service.id === 'evara' || service.id === 'glydex' || service.id === 'alyne' ? 'px-0' : 'rounded-xl p-2'} ${service.logoBg}`}
                 style={service.isGradient ? {} : (service.customBg ? { backgroundColor: service.customBg } : {})}
               >
                 <img 
@@ -262,8 +262,6 @@ const Home = () => {
                   className={`transition-transform group-hover:scale-105 ${
                     service.fillCard ? 'w-full h-full object-cover absolute inset-0 rounded-2xl' :
                     service.id === 'evara' ? 'w-full h-auto max-h-32 sm:max-h-36 object-contain' :
-                    service.id === 'glydex' ? 'w-full h-auto max-h-36 sm:max-h-40 object-contain' : 
-                    service.id === 'alyne' ? 'w-full h-auto max-h-28 sm:max-h-32 object-contain' :
                     service.stretchLogo ? 'absolute inset-0 w-full h-full object-cover' :
                     service.logoRounded ? 'w-auto max-h-28 rounded-xl shadow-md object-contain' :
                     'w-auto max-h-28 mix-blend-multiply object-contain'
@@ -273,10 +271,12 @@ const Home = () => {
                 />
               </div>
               
-              {/* Tagline only - no name */}
-              <p className={`text-center text-sm relative z-10 ${service.tallerCard ? 'mt-4' : 'mt-3'} ${service.customBg || service.isGradient ? 'text-white/90' : 'text-gray-600'}`}>
-                {service.description}
-              </p>
+              {/* Tagline only - no name (hide for fillCard items) */}
+              {!service.fillCard && (
+                <p className={`text-center text-sm relative z-10 ${service.tallerCard ? 'mt-4' : 'mt-3'} ${service.customBg || service.isGradient ? 'text-white/90' : 'text-gray-600'}`}>
+                  {service.description}
+                </p>
+              )}
               
               <Button
                 onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
