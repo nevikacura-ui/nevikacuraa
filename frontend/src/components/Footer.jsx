@@ -139,6 +139,15 @@ const Footer = () => {
               </a>
               <span className="text-gray-700">|</span>
               <a 
+                href="/billing" 
+                className="text-sm text-gray-400 hover:text-brand-teal transition-colors flex items-center gap-1"
+                data-testid="footer-billing"
+              >
+                <IndianRupee className="w-3 h-3" />
+                Quick Billing
+              </a>
+              <span className="text-gray-700">|</span>
+              <a 
                 href="/staff" 
                 className="text-sm text-gray-400 hover:text-brand-teal transition-colors"
                 data-testid="footer-staff-portal"
