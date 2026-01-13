@@ -282,7 +282,7 @@ const Home = () => {
                 onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                 data-testid={`service-button-${service.id}`}
                 className={`${service.tallerCard ? 'mt-4' : 'mt-2'} w-full rounded-xl py-5 font-medium shadow-lg hover:shadow-xl transition-all duration-300 relative z-10 ${
-                  service.customBg 
+                  (service.customBg || service.isGradient)
                     ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
                     : 'bg-brand-teal hover:bg-brand-teal/90 text-white'
                 }`}
@@ -296,7 +296,7 @@ const Home = () => {
         {/* Quick Stats */}
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center p-4 bg-white/50 backdrop-blur rounded-xl border">
-            <p className="text-3xl font-bold text-brand-teal">5+</p>
+            <p className="text-3xl font-bold text-brand-teal">6</p>
             <p className="text-sm text-gray-500">Services</p>
           </div>
           <div className="text-center p-4 bg-white/50 backdrop-blur rounded-xl border">
