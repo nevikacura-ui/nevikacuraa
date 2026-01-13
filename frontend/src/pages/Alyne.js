@@ -182,8 +182,8 @@ const FEATURE_CATEGORIES = [
   },
   {
     id: 'eyes',
-    title: 'Eyes & Vision',
-    subtitle: 'Eye health',
+    title: 'Eye & Vision',
+    subtitle: 'Screen time & milestones',
     icon: Eye,
     color: 'bg-gradient-to-br from-blue-400 to-indigo-500',
     content: {
