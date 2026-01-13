@@ -305,29 +305,10 @@ const DiaGyn = () => {
         patient_email: patientInfo.email || null
       };
 
-      // Save to backend (this blocks the slot)
+      // Save to backend (this blocks the slot and sends SMS notifications)
       await axios.post(`${API}/appointments`, bookingData);
-
-      // Format WhatsApp message with proper encoding
-      const messageLines = [
-        '*New DiaGyn Appointment Request*',
-        '',
-        `*Doctor:* ${doctor.name}`,
-        `*Specialty:* ${doctor.specialty}`,
-        `*Clinic:* ${clinic.name}`,
-        `*Date:* ${format(selectedDate, 'dd MMM yyyy')}`,
-        `*Time:* ${selectedSlot}`,
-        '',
-        '*Patient Details:*',
-        `Name: ${patientInfo.name}`,
-        `Mobile: ${patientInfo.phone} (Verified)`,
-        patientInfo.email ? `Email: ${patientInfo.email}` : ''
-      ].filter(Boolean).join('\n');
       
-      const encodedMessage = encodeURIComponent(messageLines);
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
-      
-      toast.success('Appointment booked successfully!');
+      toast.success('Appointment booked! SMS confirmation sent to you and clinic staff.');
       
       setTimeout(() => {
         navigate('/');
