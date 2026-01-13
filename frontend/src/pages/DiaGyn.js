@@ -302,13 +302,19 @@ const DiaGyn = () => {
         time: selectedSlot,
         patient_name: patientInfo.name,
         patient_phone: patientInfo.phone,
-        patient_email: patientInfo.email || null
+        patient_email: patientInfo.email || null,
+        send_email_reminder: emailReminder
       };
 
       // Save to backend (this blocks the slot and sends SMS notifications)
       await axios.post(`${API}/appointments`, bookingData);
       
       toast.success('Appointment booked! SMS confirmation sent to you and clinic staff.');
+      
+      // Schedule email reminder if enabled (handled by backend)
+      if (emailReminder && patientInfo.email) {
+        toast.info('Email reminder will be sent 1 hour before your appointment.');
+      }
       
       setTimeout(() => {
         navigate('/');
