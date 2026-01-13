@@ -365,15 +365,7 @@ const StaffPortal = () => {
   useEffect(() => {
     if (isAuthenticated && staffInfo) {
       loadData();
-      
-      // Auto-refresh every 30 seconds for clinic staff only (reduced from 10s to reduce lag)
-      const role = staffInfo?.role;
-      if (role === 'clinic_staff_pushpa' || role === 'clinic_staff_amnion') {
-        const interval = setInterval(() => {
-          loadData();
-        }, 30000); // 30 seconds - reduced frequency to prevent lag
-        return () => clearInterval(interval);
-      }
+      // Auto-refresh removed - use manual Refresh button to reduce lag
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, staffInfo, selectedDate, pharmacyDate, diagnosticDate, selectedClinic]);
