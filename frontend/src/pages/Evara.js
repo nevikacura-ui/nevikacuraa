@@ -775,6 +775,16 @@ const Evara = () => {
   });
   const [periodHistory, setPeriodHistory] = useState({ history: [], average_cycle_length: 28, next_predicted: null });
 
+  // Calorie Tracker state
+  const [showCaloriesTracker, setShowCaloriesTracker] = useState(false);
+  const [foodDatabase, setFoodDatabase] = useState({});
+  const [selectedFoodCategory, setSelectedFoodCategory] = useState('breakfast');
+  const [calorieLogs, setCalorieLogs] = useState([]);
+  const [dailyTotals, setDailyTotals] = useState({ calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
+  const [foodSearchQuery, setFoodSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+
   const conditions = ['PCOS', 'Thyroid', 'Diabetes', 'Endometriosis', 'Fibroids'];
   const goals = ['Weight Management', 'Stress Relief', 'Better Sleep', 'Hormonal Balance', 'Fertility', 'General Wellness'];
   const symptoms = ['Cramps', 'Bloating', 'Mood Swings', 'Headache', 'Fatigue', 'Back Pain', 'Breast Tenderness'];
