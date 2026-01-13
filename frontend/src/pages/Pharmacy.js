@@ -445,41 +445,15 @@ const Pharmacy = () => {
         patient_phone: patientInfo.phone,
         patient_email: patientInfo.email || null,
         delivery_address: deliveryAddress,
-        points_used: user ? pointsToUse : 0  // Only send points if logged in
+        points_used: user ? pointsToUse : 0
       };
 
-      if (user) {
-        await axios.post(`${API}/pharmacy`, orderData, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-      }
-
-      const paymentText = paymentMethod === 'cod' ? 'Cash on Delivery' : 'QR Pay / Card on Delivery';
-      const medicinesList = medicines.map(m => `• ${m.name} (Qty: ${m.quantity})`).join('\n');
-      const discountText = pointsToUse > 0 ? `\n*Loyalty Discount:* ₹${discountAmount} (${pointsToUse} pts)\n` : '';
+      // Save to backend (sends SMS to patient and Orange Pharmacy staff)
+      await axios.post(`${API}/pharmacy`, orderData, {
+        headers: user ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {}
+      });
       
-      const messageLines = [
-        '*New Orange Pharmacy Order*',
-        '',
-        '*Medicines:*',
-        medicinesList,
-        discountText,
-        `*Payment Method:* ${paymentText}`,
-        prescriptionUrl ? `*Prescription:* ${prescriptionUrl}` : '',
-        '',
-        '*Delivery Address:*',
-        deliveryAddress,
-        '',
-        '*Customer Details:*',
-        `Name: ${patientInfo.name}`,
-        `Mobile: ${patientInfo.phone} (Verified)`,
-        patientInfo.email ? `Email: ${patientInfo.email}` : ''
-      ].filter(Boolean).join('\n');
-      
-      const encodedMessage = encodeURIComponent(messageLines);
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
-      
-      toast.success('Order sent via WhatsApp!');
+      toast.success('Order confirmed! SMS sent to you and Orange Pharmacy.');
       
       setTimeout(() => {
         navigate('/');
