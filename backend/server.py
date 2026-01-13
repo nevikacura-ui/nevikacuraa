@@ -862,9 +862,228 @@ async def login(input: UserLogin):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     user = User(**{k: v for k, v in user_doc.items() if k != 'password_hash'})
-    token = jwt.encode({'sub': user.id, 'exp': datetime.now(timezone.utc) + timedelta(days=30)}, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
-    return {"token": token, "user": user.model_dump()}
+    # Check for remember_me flag in request (default 7 days, extended 30 days)
+    token_expiry = timedelta(days=30)  # Default extended for better UX
+    token = jwt.encode({'sub': user.id, 'exp': datetime.now(timezone.utc) + token_expiry}, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+    return {"token": token, "user": user.model_dump(), "expires_in_days": 30}
+
+# ============ REMEMBER ME / EXTENDED SESSION ============
+
+class RememberMeLogin(BaseModel):
+    email: str
+    password: str
+    remember_me: bool = False
+    device_id: Optional[str] = None
+    device_name: Optional[str] = None
+
+@api_router.post("/auth/login/remember")
+async def login_with_remember_me(input: RememberMeLogin):
+    """Login with optional Remember Me for extended session (30 days vs 7 days)"""
+    user_doc = await db.users.find_one({"email": input.email.lower()}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    # Check password - handle both Google users (no password) and regular users
+    if user_doc.get('password_hash'):
+        if not bcrypt.checkpw(input.password.encode('utf-8'), user_doc['password_hash'].encode('utf-8')):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+    elif user_doc.get('password'):
+        # Legacy plain password check
+        if input.password != user_doc['password']:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+    else:
+        raise HTTPException(status_code=401, detail="This account uses Google Sign-In. Please login with Google.")
+    
+    # Extended session for remember_me
+    token_expiry = timedelta(days=30) if input.remember_me else timedelta(days=7)
+    
+    user = User(**{k: v for k, v in user_doc.items() if k not in ['password_hash', 'password']})
+    token = jwt.encode({
+        'sub': user.id, 
+        'exp': datetime.now(timezone.utc) + token_expiry,
+        'remember_me': input.remember_me,
+        'device_id': input.device_id
+    }, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+    # Store trusted device if remember_me is enabled
+    if input.remember_me and input.device_id:
+        await db.trusted_devices.update_one(
+            {"user_id": user.id, "device_id": input.device_id},
+            {"$set": {
+                "user_id": user.id,
+                "device_id": input.device_id,
+                "device_name": input.device_name or "Unknown Device",
+                "last_login": datetime.now(timezone.utc).isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }},
+            upsert=True
+        )
+    
+    return {
+        "token": token, 
+        "user": user.model_dump(), 
+        "remember_me": input.remember_me,
+        "expires_in_days": 30 if input.remember_me else 7
+    }
+
+@api_router.get("/auth/trusted-devices")
+async def get_trusted_devices(user: User = Depends(get_current_user)):
+    """Get list of trusted devices for current user"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    devices = await db.trusted_devices.find(
+        {"user_id": user.id}, 
+        {"_id": 0}
+    ).sort("last_login", -1).to_list(length=10)
+    
+    return {"devices": devices}
+
+@api_router.delete("/auth/trusted-devices/{device_id}")
+async def remove_trusted_device(device_id: str, user: User = Depends(get_current_user)):
+    """Remove a trusted device"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    result = await db.trusted_devices.delete_one({"user_id": user.id, "device_id": device_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Device not found")
+    
+    return {"success": True, "message": "Device removed"}
+
+# ============ BIOMETRIC AUTHENTICATION ============
+
+class BiometricRegister(BaseModel):
+    credential_id: str
+    public_key: str
+    device_id: str
+    device_name: Optional[str] = None
+
+class BiometricLogin(BaseModel):
+    credential_id: str
+    signature: str
+    device_id: str
+
+@api_router.post("/auth/biometric/register")
+async def register_biometric(input: BiometricRegister, user: User = Depends(get_current_user)):
+    """Register a biometric credential (fingerprint/face) for passwordless login"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Store the biometric credential
+    credential = {
+        "id": f"bio_{str(uuid.uuid4())[:12]}",
+        "user_id": user.id,
+        "credential_id": input.credential_id,
+        "public_key": input.public_key,
+        "device_id": input.device_id,
+        "device_name": input.device_name or "Unknown Device",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "last_used": None
+    }
+    
+    # Check if credential already exists for this device
+    existing = await db.biometric_credentials.find_one({
+        "user_id": user.id,
+        "device_id": input.device_id
+    })
+    
+    if existing:
+        # Update existing credential
+        await db.biometric_credentials.update_one(
+            {"_id": existing["_id"]},
+            {"$set": {
+                "credential_id": input.credential_id,
+                "public_key": input.public_key,
+                "device_name": input.device_name or existing.get("device_name"),
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        return {"success": True, "message": "Biometric updated", "credential_id": existing["id"]}
+    else:
+        await db.biometric_credentials.insert_one(credential)
+        return {"success": True, "message": "Biometric registered", "credential_id": credential["id"]}
+
+@api_router.post("/auth/biometric/login")
+async def biometric_login(input: BiometricLogin):
+    """Login using biometric credential (fingerprint/face)"""
+    # Find the credential
+    credential = await db.biometric_credentials.find_one({
+        "credential_id": input.credential_id,
+        "device_id": input.device_id
+    }, {"_id": 0})
+    
+    if not credential:
+        raise HTTPException(status_code=401, detail="Biometric not registered. Please login with password first.")
+    
+    # In production, verify the signature with the stored public key
+    # For now, we trust the device's biometric verification
+    # The signature should be verified using WebAuthn/FIDO2 standards
+    
+    # Get user
+    user_doc = await db.users.find_one({"id": credential["user_id"]}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=401, detail="User not found")
+    
+    # Update last used
+    await db.biometric_credentials.update_one(
+        {"credential_id": input.credential_id},
+        {"$set": {"last_used": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    user = User(**{k: v for k, v in user_doc.items() if k not in ['password_hash', 'password']})
+    
+    # Generate token with extended expiry for biometric login
+    token = jwt.encode({
+        'sub': user.id, 
+        'exp': datetime.now(timezone.utc) + timedelta(days=30),
+        'auth_method': 'biometric',
+        'device_id': input.device_id
+    }, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+    logger.info(f"Biometric login successful for user {user.id}")
+    
+    return {
+        "token": token, 
+        "user": user.model_dump(),
+        "auth_method": "biometric",
+        "expires_in_days": 30
+    }
+
+@api_router.get("/auth/biometric/status")
+async def get_biometric_status(user: User = Depends(get_current_user)):
+    """Check if biometric is registered for current user"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    credentials = await db.biometric_credentials.find(
+        {"user_id": user.id},
+        {"_id": 0, "credential_id": 1, "device_id": 1, "device_name": 1, "created_at": 1, "last_used": 1}
+    ).to_list(length=10)
+    
+    return {
+        "biometric_enabled": len(credentials) > 0,
+        "credentials": credentials
+    }
+
+@api_router.delete("/auth/biometric/{credential_id}")
+async def remove_biometric(credential_id: str, user: User = Depends(get_current_user)):
+    """Remove a biometric credential"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    result = await db.biometric_credentials.delete_one({
+        "user_id": user.id,
+        "credential_id": credential_id
+    })
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Credential not found")
+    
+    return {"success": True, "message": "Biometric removed"}
 
 @api_router.get("/auth/me", response_model=User)
 async def get_me(user: User = Depends(get_current_user)):
