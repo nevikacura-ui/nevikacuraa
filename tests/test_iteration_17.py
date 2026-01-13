@@ -10,7 +10,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://caresuite.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://medcare-portal-34.preview.emergentagent.com')
 
 # Test credentials
 ADMIN_PASSWORD = "nevikacura2026"

@@ -9,7 +9,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://caresuite.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://medcare-portal-34.preview.emergentagent.com').rstrip('/')
 
 # Test credentials from review request
 ADMIN_PASSWORD = "nevikacura2026"
