@@ -749,6 +749,32 @@ const Pharmacy = () => {
               </div>
             </Card>
 
+            {/* Frequently Ordered - Only for logged in users */}
+            {user && frequentlyOrdered.length > 0 && (
+              <Card className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
+                <h3 className="font-medium mb-3 flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-brand-orange" />
+                  Quick Reorder - Your Frequently Ordered
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {frequentlyOrdered.slice(0, 6).map((med, idx) => (
+                    <Button
+                      key={idx}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addToCart({ name: med.name, form: med.form || 'Tablet' })}
+                      className="bg-white hover:bg-orange-100 border-orange-200"
+                      data-testid={`frequent-med-${idx}`}
+                    >
+                      <Plus className="w-3 h-3 mr-1" />
+                      {med.name}
+                      <span className="ml-1 text-xs text-gray-500">({med.order_count}x)</span>
+                    </Button>
+                  ))}
+                </div>
+              </Card>
+            )}
+
             {/* Inventory List - Scrollable */}
             <Card className="p-4">
               <div className="flex items-center justify-between mb-3">
