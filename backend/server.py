@@ -963,7 +963,7 @@ async def verify_twilio_otp(phone: str, code: str) -> dict:
 
 @api_router.post("/auth/otp/send")
 async def send_auth_otp(request: AuthOTPRequest):
-    """Send OTP for authentication (login/register) via Twilio SMS"""
+    """Send OTP for authentication - USE /auth/email-otp/send for signup instead"""
     phone = request.phone.strip()
     
     if not phone or len(phone) < 10:
@@ -1002,6 +1002,161 @@ async def send_auth_otp(request: AuthOTPRequest):
         "phone": phone,
         "method": "mock"
     }
+
+# ============ EMAIL OTP ENDPOINTS (For Signup - Cost Saving) ============
+
+class EmailOTPRequest(BaseModel):
+    email: str
+
+class EmailOTPVerify(BaseModel):
+    email: str
+    otp: str
+
+@api_router.post("/auth/email-otp/send")
+async def send_email_otp_endpoint(request: EmailOTPRequest):
+    """Send OTP via Email for signup/login (FREE - no SMS cost)"""
+    email = request.email.strip().lower()
+    
+    if not email or "@" not in email:
+        raise HTTPException(status_code=400, detail="Invalid email address")
+    
+    result = await send_email_otp(email)
+    
+    if result["success"]:
+        return {
+            "success": True,
+            "message": "Verification code sent to your email",
+            "expires_in": 600,
+            "email": email,
+            "method": "email"
+        }
+    else:
+        # Fallback: return mock OTP for testing
+        otp = generate_otp()
+        otp_key = f"email_{email}"
+        email_otp_storage[otp_key] = {
+            "otp": otp,
+            "expires_at": datetime.now(timezone.utc) + timedelta(minutes=10),
+            "attempts": 0
+        }
+        return {
+            "success": True,
+            "message": "Verification code generated",
+            "mock_otp": otp,
+            "expires_in": 600,
+            "email": email,
+            "method": "mock"
+        }
+
+@api_router.post("/auth/email-otp/verify")
+async def verify_email_otp_endpoint(request: EmailOTPVerify):
+    """Verify Email OTP for signup/login"""
+    email = request.email.strip().lower()
+    otp = request.otp.strip()
+    
+    result = await verify_email_otp(email, otp)
+    
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result.get("error", "Verification failed"))
+    
+    # Check if user exists with this email
+    existing_user = await db.users.find_one({"email": email}, {"_id": 0})
+    
+    return {
+        "success": True,
+        "verified": True,
+        "verification_token": result["verification_token"],
+        "user_exists": existing_user is not None,
+        "email": email,
+        "method": "email"
+    }
+
+# ============ PASSWORD RESET VIA SMS OTP ============
+
+@api_router.post("/auth/forgot-password/send-otp")
+async def send_password_reset_otp(request: AuthOTPRequest):
+    """Send SMS OTP for password reset ONLY"""
+    phone = request.phone.strip()
+    
+    if not phone or len(phone) < 10:
+        raise HTTPException(status_code=400, detail="Invalid phone number")
+    
+    # Check if user exists
+    user = await db.users.find_one({"phone": phone})
+    if not user:
+        raise HTTPException(status_code=404, detail="No account found with this phone number")
+    
+    # Send SMS OTP
+    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
+        result = await send_twilio_otp(phone)
+        if result["success"]:
+            return {
+                "success": True,
+                "message": "OTP sent to your phone for password reset",
+                "expires_in": 300,
+                "phone": phone,
+                "method": "sms"
+            }
+    
+    # Fallback
+    otp = generate_otp()
+    otp_key = f"reset_{phone}"
+    auth_otp_storage[otp_key] = {
+        "otp": otp,
+        "expires_at": datetime.now(timezone.utc) + timedelta(minutes=5),
+        "attempts": 0
+    }
+    
+    return {
+        "success": True,
+        "message": "OTP sent for password reset",
+        "mock_otp": otp,
+        "expires_in": 300,
+        "phone": phone,
+        "method": "mock"
+    }
+
+@api_router.post("/auth/forgot-password/reset")
+async def reset_password_with_otp(phone: str = Body(...), otp: str = Body(...), new_password: str = Body(...)):
+    """Reset password after verifying SMS OTP"""
+    phone = phone.strip()
+    otp = otp.strip()
+    
+    # Verify OTP
+    otp_key = f"reset_{phone}"
+    
+    # Try Twilio first
+    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
+        result = await verify_twilio_otp(phone, otp)
+        if result["success"] and result["valid"]:
+            pass  # Continue to reset password
+        elif result["success"] and not result["valid"]:
+            raise HTTPException(status_code=400, detail="Invalid OTP")
+    else:
+        # Mock verification
+        stored = auth_otp_storage.get(otp_key)
+        if not stored:
+            raise HTTPException(status_code=400, detail="No OTP found. Please request again.")
+        if datetime.now(timezone.utc) > stored["expires_at"]:
+            raise HTTPException(status_code=400, detail="OTP expired")
+        if stored["otp"] != otp:
+            raise HTTPException(status_code=400, detail="Invalid OTP")
+    
+    # Update password
+    hashed = hashlib.sha256(new_password.encode()).hexdigest()
+    result = await db.users.update_one(
+        {"phone": phone},
+        {"$set": {"password": hashed, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Clear OTP
+    if otp_key in auth_otp_storage:
+        del auth_otp_storage[otp_key]
+    
+    return {"success": True, "message": "Password reset successfully"}
 
 @api_router.post("/auth/otp/verify")
 async def verify_auth_otp(request: AuthOTPVerify):
