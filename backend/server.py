@@ -881,6 +881,53 @@ async def get_user_loyalty_points(user: User = Depends(get_current_user)):
     
     return {"loyalty_points": loyalty_points}
 
+# User Preferences Model
+class UserPreferencesUpdate(BaseModel):
+    interests: Optional[List[str]] = None  # ['evara', 'glydex', 'diagyn', 'proton', 'pharmacy']
+    onboarding_complete: Optional[bool] = None
+
+@api_router.put("/user/preferences")
+async def update_user_preferences(preferences: UserPreferencesUpdate, user: User = Depends(get_current_user)):
+    """Update user's preferences/interests after registration"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    update_data = {}
+    if preferences.interests is not None:
+        update_data["interests"] = preferences.interests
+    if preferences.onboarding_complete is not None:
+        update_data["onboarding_complete"] = preferences.onboarding_complete
+    
+    if update_data:
+        update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        result = await db.users.update_one(
+            {"id": user.id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count == 0 and result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+    
+    # Return updated user data
+    user_doc = await db.users.find_one({"id": user.id}, {"_id": 0, "password_hash": 0})
+    return {"success": True, "user": user_doc}
+
+@api_router.get("/user/preferences")
+async def get_user_preferences(user: User = Depends(get_current_user)):
+    """Get user's preferences/interests"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    user_doc = await db.users.find_one(
+        {"id": user.id}, 
+        {"_id": 0, "interests": 1, "onboarding_complete": 1}
+    )
+    
+    return {
+        "interests": user_doc.get("interests", []) if user_doc else [],
+        "onboarding_complete": user_doc.get("onboarding_complete", False) if user_doc else False
+    }
+
 # ============ OTP-based Auth Endpoints ============
 
 class AuthOTPRequest(BaseModel):
