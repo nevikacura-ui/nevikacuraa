@@ -7750,6 +7750,339 @@ async def generate_evara_share_report(user = Depends(get_current_user)):
         "whatsapp_url": f"https://wa.me/?text={report_text.replace(chr(10), '%0A').replace(' ', '%20')}"
     }
 
+# ============ PDF Report Generation ============
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.units import inch, cm
+from io import BytesIO
+from fastapi.responses import StreamingResponse
+
+@api_router.get("/glydex/download-pdf")
+async def download_glydex_pdf_report(user = Depends(get_current_user)):
+    """Generate a downloadable PDF report of blood sugar data"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    # Get user profile
+    profile = await db.glydex_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    
+    # Get sugar logs (last 30 days)
+    thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+    sugar_logs = await db.glydex_sugar_logs.find(
+        {"user_id": user.id, "date": {"$gte": thirty_days_ago[:10]}},
+        {"_id": 0}
+    ).sort("date", -1).to_list(100)
+    
+    # Get HbA1c logs
+    hba1c_logs = await db.glydex_hba1c_logs.find(
+        {"user_id": user.id},
+        {"_id": 0}
+    ).sort("date", -1).to_list(10)
+    
+    # Calculate statistics
+    fbs_values = [int(l["value"]) for l in sugar_logs if l.get("type") == "fbs"]
+    ppbs_values = [int(l["value"]) for l in sugar_logs if l.get("type") == "ppbs"]
+    
+    # Create PDF buffer
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=1*cm, leftMargin=1*cm, topMargin=1*cm, bottomMargin=1*cm)
+    
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle('Title', parent=styles['Heading1'], fontSize=18, textColor=colors.HexColor('#2563eb'), spaceAfter=20)
+    heading_style = ParagraphStyle('Heading', parent=styles['Heading2'], fontSize=14, textColor=colors.HexColor('#1e40af'), spaceBefore=15, spaceAfter=10)
+    normal_style = ParagraphStyle('Normal', parent=styles['Normal'], fontSize=11, spaceAfter=5)
+    
+    elements = []
+    
+    # Title
+    elements.append(Paragraph("GLYDEX - Blood Sugar Report", title_style))
+    elements.append(Paragraph(f"Patient: {user.name}", normal_style))
+    elements.append(Paragraph(f"Generated: {datetime.now().strftime('%d %b %Y, %I:%M %p')}", normal_style))
+    elements.append(Spacer(1, 20))
+    
+    # Profile section
+    if profile:
+        elements.append(Paragraph("Patient Profile", heading_style))
+        profile_data = [
+            ["Diabetes Type:", profile.get('diabetes_type', 'N/A').replace('_', ' ').title()],
+            ["Diagnosis Date:", profile.get('diagnosis_date', 'N/A')],
+        ]
+        profile_table = Table(profile_data, colWidths=[3*cm, 5*cm])
+        profile_table.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+        ]))
+        elements.append(profile_table)
+        elements.append(Spacer(1, 15))
+    
+    # Summary statistics
+    elements.append(Paragraph("Blood Sugar Summary (Last 30 Days)", heading_style))
+    summary_data = [["Type", "Readings", "Average", "Min", "Max", "Status"]]
+    
+    if fbs_values:
+        avg_fbs = round(sum(fbs_values)/len(fbs_values))
+        status = "Normal" if avg_fbs < 100 else "Pre-diabetic" if avg_fbs < 126 else "High"
+        summary_data.append(["Fasting (FBS)", str(len(fbs_values)), f"{avg_fbs} mg/dL", f"{min(fbs_values)}", f"{max(fbs_values)}", status])
+    
+    if ppbs_values:
+        avg_ppbs = round(sum(ppbs_values)/len(ppbs_values))
+        status = "Normal" if avg_ppbs < 140 else "Pre-diabetic" if avg_ppbs < 200 else "High"
+        summary_data.append(["Post-Meal (PPBS)", str(len(ppbs_values)), f"{avg_ppbs} mg/dL", f"{min(ppbs_values)}", f"{max(ppbs_values)}", status])
+    
+    if len(summary_data) > 1:
+        summary_table = Table(summary_data, colWidths=[3.5*cm, 2*cm, 2.5*cm, 1.5*cm, 1.5*cm, 2.5*cm])
+        summary_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2563eb')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        elements.append(summary_table)
+    else:
+        elements.append(Paragraph("No blood sugar readings in the last 30 days.", normal_style))
+    
+    # HbA1c History
+    if hba1c_logs:
+        elements.append(Spacer(1, 15))
+        elements.append(Paragraph("HbA1c History", heading_style))
+        hba1c_data = [["Date", "HbA1c %", "Status"]]
+        for log in hba1c_logs[:5]:
+            val = float(log.get('value', 0))
+            status = "Normal" if val < 5.7 else "Pre-diabetic" if val < 6.5 else "Diabetic"
+            hba1c_data.append([log.get('date', 'N/A'), f"{val}%", status])
+        
+        hba1c_table = Table(hba1c_data, colWidths=[4*cm, 3*cm, 4*cm])
+        hba1c_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#7c3aed')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ]))
+        elements.append(hba1c_table)
+    
+    # Recent readings
+    elements.append(Spacer(1, 15))
+    elements.append(Paragraph("Recent Blood Sugar Readings", heading_style))
+    
+    if sugar_logs:
+        readings_data = [["Date", "Time", "Type", "Value (mg/dL)", "Meal"]]
+        for log in sugar_logs[:20]:
+            log_type = "FBS" if log.get("type") == "fbs" else "PPBS"
+            readings_data.append([
+                log.get('date', 'N/A'),
+                log.get('time', '-'),
+                log_type,
+                str(log.get('value', '-')),
+                log.get('meal_notes', '-')[:15] if log.get('meal_notes') else '-'
+            ])
+        
+        readings_table = Table(readings_data, colWidths=[2.5*cm, 2*cm, 2*cm, 3*cm, 4*cm])
+        readings_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#059669')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('ALIGN', (2, 0), (3, -1), 'CENTER'),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f0fdf4')]),
+        ]))
+        elements.append(readings_table)
+    else:
+        elements.append(Paragraph("No readings available.", normal_style))
+    
+    # Footer
+    elements.append(Spacer(1, 30))
+    elements.append(Paragraph("━" * 50, normal_style))
+    elements.append(Paragraph("Generated by Nevika Cura - Glydex Diabetes Care", ParagraphStyle('Footer', fontSize=9, textColor=colors.grey)))
+    elements.append(Paragraph("This report is for informational purposes only. Please consult your doctor for medical advice.", ParagraphStyle('Footer', fontSize=8, textColor=colors.grey)))
+    
+    # Build PDF
+    doc.build(elements)
+    buffer.seek(0)
+    
+    filename = f"glydex_report_{user.name.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}.pdf"
+    
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+@api_router.get("/evara/download-pdf")
+async def download_evara_pdf_report(user = Depends(get_current_user)):
+    """Generate a downloadable PDF report of period tracking data"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    # Get period logs
+    period_logs = await db.evara_period_logs.find(
+        {"user_id": user.id},
+        {"_id": 0}
+    ).sort("start_date", -1).to_list(24)
+    
+    # Get pregnancy data if any
+    pregnancy_log = await db.evara_pregnancy_logs.find_one({"user_id": user.id}, {"_id": 0})
+    
+    # Calculate cycle statistics
+    cycle_lengths = []
+    if len(period_logs) >= 2:
+        for i in range(len(period_logs) - 1):
+            try:
+                current = datetime.strptime(period_logs[i]["start_date"], "%Y-%m-%d")
+                previous = datetime.strptime(period_logs[i+1]["start_date"], "%Y-%m-%d")
+                cycle_length = (current - previous).days
+                if 21 <= cycle_length <= 45:
+                    cycle_lengths.append(cycle_length)
+            except:
+                pass
+    
+    avg_cycle = round(sum(cycle_lengths) / len(cycle_lengths)) if cycle_lengths else None
+    
+    # Create PDF buffer
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=1*cm, leftMargin=1*cm, topMargin=1*cm, bottomMargin=1*cm)
+    
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle('Title', parent=styles['Heading1'], fontSize=18, textColor=colors.HexColor('#ec4899'), spaceAfter=20)
+    heading_style = ParagraphStyle('Heading', parent=styles['Heading2'], fontSize=14, textColor=colors.HexColor('#be185d'), spaceBefore=15, spaceAfter=10)
+    normal_style = ParagraphStyle('Normal', parent=styles['Normal'], fontSize=11, spaceAfter=5)
+    
+    elements = []
+    
+    # Title
+    elements.append(Paragraph("EVARA - Women's Health Report", title_style))
+    elements.append(Paragraph(f"Patient: {user.name}", normal_style))
+    elements.append(Paragraph(f"Generated: {datetime.now().strftime('%d %b %Y, %I:%M %p')}", normal_style))
+    elements.append(Spacer(1, 20))
+    
+    # Cycle Summary
+    elements.append(Paragraph("Menstrual Cycle Summary", heading_style))
+    summary_data = [
+        ["Total Periods Tracked:", str(len(period_logs))],
+        ["Average Cycle Length:", f"{avg_cycle} days" if avg_cycle else "Calculating..."],
+        ["Cycle Regularity:", "Regular" if cycle_lengths and max(cycle_lengths) - min(cycle_lengths) <= 7 else "Irregular" if cycle_lengths else "N/A"],
+    ]
+    
+    if period_logs:
+        last_period = period_logs[0]
+        summary_data.append(["Last Period Start:", last_period.get('start_date', 'N/A')])
+        if avg_cycle:
+            try:
+                next_predicted = datetime.strptime(last_period['start_date'], "%Y-%m-%d") + timedelta(days=avg_cycle)
+                summary_data.append(["Next Period (Predicted):", next_predicted.strftime('%d %b %Y')])
+            except:
+                pass
+    
+    summary_table = Table(summary_data, colWidths=[5*cm, 6*cm])
+    summary_table.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#be185d')),
+    ]))
+    elements.append(summary_table)
+    
+    # Period History
+    if period_logs:
+        elements.append(Spacer(1, 15))
+        elements.append(Paragraph("Period History (Last 12 Cycles)", heading_style))
+        
+        history_data = [["Start Date", "End Date", "Duration", "Flow", "Symptoms"]]
+        for log in period_logs[:12]:
+            symptoms = ", ".join(log.get("symptoms", [])[:2]) if log.get("symptoms") else "-"
+            duration = "-"
+            if log.get("end_date"):
+                try:
+                    start = datetime.strptime(log["start_date"], "%Y-%m-%d")
+                    end = datetime.strptime(log["end_date"], "%Y-%m-%d")
+                    duration = f"{(end - start).days + 1} days"
+                except:
+                    pass
+            
+            history_data.append([
+                log.get('start_date', 'N/A'),
+                log.get('end_date', '-'),
+                duration,
+                log.get('flow', '-').title() if log.get('flow') else '-',
+                symptoms[:20]
+            ])
+        
+        history_table = Table(history_data, colWidths=[2.8*cm, 2.8*cm, 2*cm, 2*cm, 4*cm])
+        history_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#ec4899')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('ALIGN', (2, 0), (3, -1), 'CENTER'),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#fdf2f8')]),
+        ]))
+        elements.append(history_table)
+    
+    # Pregnancy tracking if applicable
+    if pregnancy_log and pregnancy_log.get('is_active'):
+        elements.append(Spacer(1, 15))
+        elements.append(Paragraph("Pregnancy Tracking", heading_style))
+        
+        lmp = pregnancy_log.get('lmp_date')
+        if lmp:
+            try:
+                lmp_date = datetime.strptime(lmp, "%Y-%m-%d")
+                weeks = (datetime.now() - lmp_date).days // 7
+                days = (datetime.now() - lmp_date).days % 7
+                due_date = lmp_date + timedelta(days=280)
+                
+                preg_data = [
+                    ["Last Menstrual Period:", lmp],
+                    ["Current Week:", f"{weeks} weeks, {days} days"],
+                    ["Expected Due Date:", due_date.strftime('%d %b %Y')],
+                    ["Trimester:", "First" if weeks < 13 else "Second" if weeks < 27 else "Third"],
+                ]
+                
+                preg_table = Table(preg_data, colWidths=[5*cm, 6*cm])
+                preg_table.setStyle(TableStyle([
+                    ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+                    ('FONTSIZE', (0, 0), (-1, -1), 10),
+                    ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+                    ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#7c3aed')),
+                ]))
+                elements.append(preg_table)
+            except:
+                pass
+    
+    # Footer
+    elements.append(Spacer(1, 30))
+    elements.append(Paragraph("━" * 50, normal_style))
+    elements.append(Paragraph("Generated by Nevika Cura - Evara Women's Wellness", ParagraphStyle('Footer', fontSize=9, textColor=colors.grey)))
+    elements.append(Paragraph("This report is for informational purposes only. Please consult your doctor for medical advice.", ParagraphStyle('Footer', fontSize=8, textColor=colors.grey)))
+    
+    # Build PDF
+    doc.build(elements)
+    buffer.seek(0)
+    
+    filename = f"evara_report_{user.name.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}.pdf"
+    
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
 # ============ INDIAN CALORIES TRACKER ============
 
 # Indian Food Database with Calories (per serving)
