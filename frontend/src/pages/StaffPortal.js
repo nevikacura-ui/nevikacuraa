@@ -366,12 +366,12 @@ const StaffPortal = () => {
     if (isAuthenticated && staffInfo) {
       loadData();
       
-      // Auto-refresh every 10 seconds for real-time sync (clinic staff only)
+      // Auto-refresh every 30 seconds for clinic staff only (reduced from 10s to reduce lag)
       const role = staffInfo?.role;
       if (role === 'clinic_staff_pushpa' || role === 'clinic_staff_amnion') {
         const interval = setInterval(() => {
           loadData();
-        }, 10000); // 10 seconds
+        }, 30000); // 30 seconds - reduced frequency to prevent lag
         return () => clearInterval(interval);
       }
     }
