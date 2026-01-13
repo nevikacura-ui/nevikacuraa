@@ -55,6 +55,10 @@ function App() {
             <Route path="/referral" element={<ReferralProgram />} />
             <Route path="/health-tips" element={<HealthTips />} />
             <Route path="/teleconsult" element={<Teleconsultation />} />
+            {/* High Priority Features */}
+            <Route path="/emergency" element={<EmergencyServices />} />
+            <Route path="/health-assessment" element={<HealthRiskAssessment />} />
+            <Route path="/medication-tracker" element={<MedicationTracker />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
