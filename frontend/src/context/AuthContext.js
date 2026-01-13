@@ -312,7 +312,7 @@ export const AuthProvider = ({ children }) => {
       biometricAvailable, biometricEnabled,
       login, register, logout,
       sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp,
-      loginWithGoogle, processGoogleCallback, fetchUser: refreshUser,
+      fetchUser: refreshUser,
       registerBiometric, loginWithBiometric, removeBiometric,
       getTrustedDevices, removeTrustedDevice
     }}>
