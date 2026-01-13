@@ -88,6 +88,20 @@ const Home = () => {
       hideDecoration: true,
       fillCard: true,
       tallerCard: true
+    },
+    {
+      id: 'alyne',
+      name: 'ALYNE',
+      logo: 'https://customer-assets.emergentagent.com/job_kids-health-portal/artifacts/mrmio3uk_file_000000006cd87207b39dc03d0e62d1ad%20%281%29.png',
+      description: 'Kids Health & Care',
+      bgColor: '',
+      accentColor: 'border-transparent',
+      path: '/alyne',
+      logoBg: '',
+      customBg: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%)',
+      hideDecoration: true,
+      fillCard: false,
+      isGradient: true
     }
   ];
 
