@@ -1355,7 +1355,7 @@ const StaffPortal = () => {
       <main className="max-w-7xl mx-auto px-4 py-6">
         {/* Clinic Staff View */}
         {isClinicStaff(role) && (
-          <Tabs defaultValue="appointments" className="space-y-4">
+          <Tabs defaultValue="appointments" className="space-y-4" onValueChange={handleTabChange}>
             <TabsList>
               <TabsTrigger value="appointments" data-testid="tab-appointments">
                 <Calendar className="w-4 h-4 mr-2" />
@@ -1368,6 +1368,10 @@ const StaffPortal = () => {
               <TabsTrigger value="emergency" data-testid="tab-emergency">
                 <AlertTriangle className="w-4 h-4 mr-2" />
                 Emergency
+              </TabsTrigger>
+              <TabsTrigger value="billing" data-testid="tab-billing">
+                <IndianRupee className="w-4 h-4 mr-2" />
+                Billing
               </TabsTrigger>
             </TabsList>
 
