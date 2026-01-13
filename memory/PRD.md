@@ -8,109 +8,97 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 4. **Evara** - Women's Wellness & Care Program
 5. **Glydex** - Diabetes Care Portal
 
-## Core Requirements
+---
 
-### Services & Staff SMS Numbers
+## Authentication System (Updated Jan 13, 2026)
+
+### New Cost-Saving Auth Flow
+| Step | Method | Cost |
+|------|--------|------|
+| **Signup** | Email OTP (Resend) | FREE |
+| **Login** | Password | FREE |
+| **Password Reset** | SMS OTP (Twilio) | Paid |
+| **Appointments** | SMS OTP for verification | Paid |
+
+### Endpoints
+- `POST /api/auth/email-otp/send` - Send email OTP for signup
+- `POST /api/auth/email-otp/verify` - Verify email OTP
+- `POST /api/auth/login` - Password login
+- `POST /api/auth/forgot-password/send-otp` - SMS OTP for password reset
+- `POST /api/auth/forgot-password/reset` - Reset password with OTP
+
+---
+
+## Staff SMS Notification Numbers
 | Service | Staff Numbers | Purpose |
 |---------|---------------|---------|
-| DiaGyn Healthcare | 8108500522, 8108500533 | Appointment notifications (Pushpa + Amnion) |
-| Proton Diagnostics | 7039040040 | Test booking notifications |
-| Orange Pharmacy | 8108500511 | Medicine order notifications |
-| Nevika/Evara/Glydex | 9833188288 | Signup & general notifications |
+| DiaGyn Healthcare | 8108500522, 8108500533 | New appointments (Pushpa + Amnion) |
+| Proton Diagnostics | 7039040040 | New test bookings |
+| Orange Pharmacy | 8108500511 | New medicine orders |
+| Nevika/Evara/Glydex | 9833188288 | Signups & general |
+| Email | nevikacura@gmail.com | Order updates, reports |
 
-### User Flow
-- OTP-based login and registration (Real SMS via Twilio)
-- **Email/Password login** for international patients
-- SMS notifications to patients AND staff (no WhatsApp redirects)
-- Payment options: Cash on Delivery/Visit & QR Pay/Card on Delivery/Visit
-- Email notifications via Resend API
+### Notification Rules
+- **New Orders**: SMS to staff + Email to customer
+- **Order Updates**: Email only (no SMS)
+- **Evara/Glydex**: No SMS - Email OTP or password only
+
+---
+
+## Fee Codes
+| Code | Label | Amount |
+|------|-------|--------|
+| G1 | General - First | ₹150 |
+| G2 | General - Follow up | ₹100 |
+| S1 | Speciality - First | ₹300 |
+| S2 | Speciality - Follow up | ₹200 |
+| D1 | Diabetes - First | ₹500 |
+| D2 | Diabetes - Follow up | ₹400 |
+| D3 | Diabetes - Follow up | ₹300 |
+| O1 | OBGY - First | ₹500 |
+| O2 | OBGY - Follow up | ₹400 |
+| O3 | OBGY - Follow up | ₹300 |
+| **N1** | No Fees | ₹0 |
+| **E1** | Emergency | ₹600 |
 
 ---
 
 ## What's Been Implemented ✅
 
-### Date: January 13, 2026 - Latest Session
+### January 13, 2026 - Authentication Overhaul
 
-#### New Features - COMPLETED ✅
-- [x] **New Fee Codes**:
-  - N1 - No Fees (₹0)
-  - E1 - Emergency (₹600)
-  
-- [x] **SMS Staff Notifications**:
-  - Sends SMS to respective department staff on new orders/appointments
-  - DiaGyn: 8108500522, 8108500533 (Pushpa + Amnion)
-  - Proton: 7039040040
-  - Orange: 8108500511
-  - Nevika/Evara/Glydex: 9833188288
+**1. Email OTP for Signup (FREE)**
+- Auth modal now shows EMAIL input first
+- OTP sent via Resend API (free 10,000/month)
+- No SMS cost for user registration
 
-- [x] **Removed WhatsApp Redirects**:
-  - DiaGyn appointments: SMS confirmation only
-  - Proton test bookings: SMS confirmation only
-  - Pharmacy orders: SMS confirmation only
+**2. Password Login**
+- Users login with email/password after registration
+- No OTP needed for regular login
 
-- [x] **Enhanced Admin Appointment Cancellation**:
-  - Single Slot cancellation
-  - Bulk Session (11AM-2PM or 6PM-10PM)
-  - Whole Day cancellation
-  - Date Range cancellation
-  - Session Range (DateA/SessionA to DateB/SessionB)
+**3. SMS Only for:**
+- Password reset (forgot password flow)
+- Appointment verification by patients
 
-- [x] **Evara Content Pages**:
-  - Pregnancy Education (3 trimesters, tests, warning signs)
-  - Menopause Guide (stages, symptoms, tips, FAQs)
-  - Women Health Community (Tips, Guides, Q&A in 4 categories)
-  - Period Tracker Tips (cycle phase tips & nutrition)
+**4. No WhatsApp Redirects**
+- All orders (DiaGyn, Proton, Pharmacy) use SMS notifications
+- No WhatsApp redirect in frontend
+- SMS sent to both customer AND staff
 
-- [x] **Share Reports via WhatsApp**:
-  - Glydex: Share blood sugar logs (FBS, PPBS, HbA1c)
-  - Evara: Share period tracking report
+**5. Enhanced Admin Cancellation**
+- Single Slot, Bulk Session (11-2 / 6-10)
+- Whole Day, Date Range
+- Session Range (DateA/SessionA to DateB/SessionB)
 
-- [x] **International Patient Support**:
-  - Email/password login option
-  - Registration without Indian phone number
+**6. Evara Content**
+- Pregnancy Education (3 trimesters)
+- Menopause Guide (stages, symptoms, tips)
+- Women Health Community (tips, guides, Q&A)
+- Period Tracker with cycle phase tips
 
-- [x] **UI Fixes**:
-  - QR code in footer for APK download
-  - Evara logo sizing fixed
-
-### Previous Session Features (Jan 11-12, 2026)
-- [x] Doctor/Staff Appointment Flow with fee codes
-- [x] Daily Collection Summary for clinic staff
-- [x] Glydex diabetes profile & reminders
-- [x] TWA/PWA configuration with assetlinks.json
-- [x] Capacitor Android project for standalone app
-
----
-
-## Tech Stack
-- **Frontend**: React, Tailwind CSS, Shadcn UI
-- **Backend**: FastAPI, Python
-- **Database**: MongoDB
-- **SMS**: Twilio
-- **Email**: Resend
-- **AI Chat**: Claude (via emergentintegrations)
-- **PWA/Mobile**: Capacitor for Android
-
----
-
-## Key API Endpoints
-
-### Authentication
-- POST /api/auth/otp/send - Send OTP for login
-- POST /api/auth/login - Email/password login (international)
-- POST /api/auth/register - User registration
-
-### Orders (SMS-based, no WhatsApp)
-- POST /api/appointments - Book appointment (sends SMS to patient & DiaGyn staff)
-- POST /api/diagnostics - Book test (sends SMS to patient & Proton staff)
-- POST /api/pharmacy - Place order (sends SMS to patient & Orange staff)
-
-### Admin
-- POST /api/admin/appointments/cancel - Cancel appointments (session/day/range/session_range)
-
-### Share Reports
-- GET /api/glydex/share-report - Generate blood sugar report for WhatsApp
-- GET /api/evara/share-period-report - Generate period report for WhatsApp
+**7. Share Reports via WhatsApp**
+- Glydex: Blood sugar logs (FBS, PPBS, HbA1c)
+- Evara: Period tracking report
 
 ---
 
@@ -118,6 +106,27 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 - **Admin**: /admin, Password: `nevikacura2026`
 - **Staff Doctor**: doc_neha / Nevika@2026D
 - **Staff Clinic**: staff_pushpa / Nevika@2026C
+
+---
+
+## Tech Stack
+- **Frontend**: React, Tailwind CSS, Shadcn UI
+- **Backend**: FastAPI, Python
+- **Database**: MongoDB
+- **SMS**: Twilio (for appointments, password reset)
+- **Email**: Resend (FREE for OTP, notifications)
+- **AI Chat**: Claude (via emergentintegrations)
+- **PWA/Mobile**: Capacitor for Android
+
+---
+
+## Test Results (Jan 13, 2026)
+- ✅ Backend: 19/19 tests passed
+- ✅ Frontend: 12/12 tests passed
+- ✅ Email OTP signup: WORKING
+- ✅ Password login: WORKING
+- ✅ No WhatsApp redirects: VERIFIED
+- ✅ Staff SMS notifications: CONFIGURED
 
 ---
 
@@ -129,5 +138,4 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 ## Future/Backlog (P2-P3)
 - [ ] Migrate hardcoded data (medicines, tests) to MongoDB
 - [ ] Refactor server.py (6000+ lines)
-- [ ] Refactor large frontend components
 - [ ] Full Billing & Due Payments System
