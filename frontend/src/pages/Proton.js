@@ -484,9 +484,12 @@ const Proton = () => {
         tests: selectedTests,
         prescription_url: prescriptionUrl || null,
         preferred_date: format(preferredDate, 'yyyy-MM-dd'),
+        preferred_time_slot: preferredTimeSlot,
         patient_name: patientInfo.name,
         patient_phone: patientInfo.phone,
-        patient_email: patientInfo.email || null
+        patient_email: patientInfo.email || null,
+        patient_address: patientInfo.address || null,
+        payment_method: paymentMethod
       };
 
       // Save to backend (sends SMS to patient and Proton staff)
