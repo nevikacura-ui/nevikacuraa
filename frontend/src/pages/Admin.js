@@ -538,9 +538,17 @@ const Admin = () => {
       
       if (cancelForm.cancel_type === 'day' && selectedDate) {
         payload.date = format(selectedDate, 'yyyy-MM-dd');
+      } else if (cancelForm.cancel_type === 'bulk_session' && selectedDate) {
+        payload.date = format(selectedDate, 'yyyy-MM-dd');
+        payload.session = cancelForm.session;
       } else if (cancelForm.cancel_type === 'range' && dateRangeStart && dateRangeEnd) {
         payload.start_date = format(dateRangeStart, 'yyyy-MM-dd');
         payload.end_date = format(dateRangeEnd, 'yyyy-MM-dd');
+      } else if (cancelForm.cancel_type === 'session_range' && dateRangeStart && dateRangeEnd) {
+        payload.start_date = format(dateRangeStart, 'yyyy-MM-dd');
+        payload.end_date = format(dateRangeEnd, 'yyyy-MM-dd');
+        payload.start_session = cancelForm.start_session;
+        payload.end_session = cancelForm.end_session;
       }
       
       const response = await axios.post(`${API}/admin/appointments/cancel`, payload, { 
@@ -555,8 +563,11 @@ const Admin = () => {
         cancel_type: 'day',
         date: '',
         time: '',
+        session: 'morning',
         start_date: '',
         end_date: '',
+        start_session: 'morning',
+        end_session: 'evening',
         reason: 'Doctor on leave'
       });
       setSelectedDate(null);
