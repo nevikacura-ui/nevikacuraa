@@ -274,9 +274,9 @@ const Home = () => {
                 className={`flex items-center justify-center flex-1 overflow-hidden ${service.id === 'evara' || service.id === 'glydex' || service.id === 'alyne' ? 'px-0' : 'rounded-xl p-2'} ${service.logoBg}`}
               >
                 {service.useTextLogo ? (
-                  <div className="text-center">
-                    <h2 className="text-5xl font-black text-white tracking-wide" style={{fontFamily: 'system-ui, -apple-system, sans-serif', textShadow: '0 2px 10px rgba(0,0,0,0.2)'}}>ALYNE</h2>
-                    <p className="text-white/80 text-sm mt-2 font-medium">Kids by Nevika Cura</p>
+                  <div className="text-center px-2">
+                    <h2 className="text-4xl font-black text-white tracking-wider" style={{fontFamily: 'system-ui, -apple-system, sans-serif', textShadow: '0 2px 10px rgba(0,0,0,0.2)'}}>ALYNE</h2>
+                    <p className="text-white/90 text-xs mt-2 font-medium tracking-wide">Kids by Nevika Cura</p>
                   </div>
                 ) : service.logo ? (
                   <img 
