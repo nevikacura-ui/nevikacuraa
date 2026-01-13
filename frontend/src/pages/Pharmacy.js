@@ -572,6 +572,46 @@ const Pharmacy = () => {
         </div>
       </header>
 
+      {/* How It Works - Order Flow Guide */}
+      <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Info className="w-5 h-5 text-orange-600" />
+            <h3 className="font-semibold text-orange-800">How to Order Medicines</h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
+              <div className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
+              <div>
+                <p className="text-sm font-medium text-gray-800">Add Medicines</p>
+                <p className="text-xs text-gray-500">Search or type medicine name & quantity. Upload prescription if needed.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
+              <div className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
+              <div>
+                <p className="text-sm font-medium text-gray-800">Verify & Address</p>
+                <p className="text-xs text-gray-500">Confirm via OTP, enter delivery address & payment mode.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
+              <div className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+              <div>
+                <p className="text-sm font-medium text-gray-800">Pharmacist Call</p>
+                <p className="text-xs text-gray-500">Our pharmacist calls to confirm order & final bill. You approve before dispatch.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
+              <div className="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">4</div>
+              <div>
+                <p className="text-sm font-medium text-gray-800">Delivery & Invoice</p>
+                <p className="text-xs text-gray-500">Order delivered to your location. Download invoice in My Orders.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Loyalty Program Banner */}
       <div 
         className="bg-gradient-to-r from-orange-500 to-amber-500 text-white cursor-pointer hover:from-orange-600 hover:to-amber-600 transition-colors"
