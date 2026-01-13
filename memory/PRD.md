@@ -12,7 +12,19 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 
 ## What's Been Implemented ✅
 
-### Session 3 - January 13, 2026 (Final)
+### Session 4 - January 13, 2026
+
+**7. Loyalty Leaderboard** ✅ (NEW)
+- **Top 10 Customers Display**: Gamified leaderboard showing top customers by points
+- **Time-based Filtering**: Weekly, Monthly, and All-Time views
+- **Anonymized Names**: Privacy-friendly display (e.g., "J***n D**e")
+- **Visual Rankings**: Gold/Silver/Bronze medal styling for top 3
+- **Tier Badges**: Shows customer tier (Bronze/Silver/Gold)
+- **Stats Display**: Order count, gold visits, and points
+- **Backend**: Enhanced `/api/pharmacy/loyalty/leaderboard` with period parameter
+- **Frontend**: New "Top 10" tab in Loyalty Program dialog
+
+### Session 3 - January 13, 2026
 
 **1. Full Billing & Due Payments System** ✅
 - Invoice creation with items, taxes, discounts
@@ -50,7 +62,7 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 - 65 food items migrated to `food_catalog`
 - Proper indexes created
 
-**6. Orange Pharmacy Loyalty Program** ✅ (NEW)
+**6. Orange Pharmacy Loyalty Program** ✅
 - **Three Tiers**: Bronze (any amount), Silver (₹500+), Gold (₹1000+)
 - **Points System**: 1 point per ₹100, 2× on diagnostics, 20 bonus for refills
 - **Gold 10-Visit Reward**: Extra discount + Free Health Checkup
