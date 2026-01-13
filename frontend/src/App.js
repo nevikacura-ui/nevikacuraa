@@ -63,6 +63,7 @@ function App() {
             <Route path="/medication-tracker" element={<MedicationTracker />} />
             <Route path="/doctors" element={<DoctorProfiles />} />
             <Route path="/doctors/:doctorId" element={<DoctorProfiles />} />
+            <Route path="/billing" element={<Billing />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
