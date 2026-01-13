@@ -7025,6 +7025,179 @@ async def get_hba1c_trend(user = Depends(get_current_user)):
     
     return {"trend": logs, "analysis": analysis}
 
+# ============ PDF Report Generation for Sharing ============
+
+@api_router.get("/glydex/share-report")
+async def generate_glydex_share_report(user = Depends(get_current_user)):
+    """Generate a shareable text report of blood sugar data for WhatsApp"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    # Get user profile
+    profile = await db.glydex_profiles.find_one({"user_id": user.id}, {"_id": 0})
+    
+    # Get sugar logs (last 30 days)
+    thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+    sugar_logs = await db.glydex_sugar_logs.find(
+        {"user_id": user.id, "date": {"$gte": thirty_days_ago[:10]}},
+        {"_id": 0}
+    ).sort("date", -1).to_list(50)
+    
+    # Get HbA1c logs
+    hba1c_logs = await db.glydex_hba1c_logs.find(
+        {"user_id": user.id},
+        {"_id": 0}
+    ).sort("date", -1).to_list(5)
+    
+    # Calculate statistics
+    fbs_values = [int(l["value"]) for l in sugar_logs if l.get("type") == "fbs"]
+    ppbs_values = [int(l["value"]) for l in sugar_logs if l.get("type") == "ppbs"]
+    
+    # Generate report text
+    report_lines = [
+        "📊 *GLYDEX DIABETES REPORT*",
+        f"Patient: {user.name}",
+        f"Report Date: {datetime.now().strftime('%d %b %Y')}",
+        "",
+        "━━━━━━━━━━━━━━━━━━━━━━",
+    ]
+    
+    if profile:
+        report_lines.extend([
+            "*Patient Profile:*",
+            f"• Diabetes Type: {profile.get('diabetes_type', 'N/A')}",
+            f"• Diagnosed: {profile.get('diagnosis_date', 'N/A')}",
+            ""
+        ])
+    
+    report_lines.append("*Blood Sugar Summary (Last 30 Days):*")
+    
+    if fbs_values:
+        report_lines.extend([
+            f"📍 Fasting (FBS): {len(fbs_values)} readings",
+            f"   Avg: {round(sum(fbs_values)/len(fbs_values))} mg/dL",
+            f"   Range: {min(fbs_values)} - {max(fbs_values)} mg/dL",
+        ])
+    
+    if ppbs_values:
+        report_lines.extend([
+            f"📍 Post-Meal (PPBS): {len(ppbs_values)} readings",
+            f"   Avg: {round(sum(ppbs_values)/len(ppbs_values))} mg/dL",
+            f"   Range: {min(ppbs_values)} - {max(ppbs_values)} mg/dL",
+        ])
+    
+    if hba1c_logs:
+        latest_hba1c = hba1c_logs[0]
+        report_lines.extend([
+            "",
+            "*HbA1c History:*",
+            f"📍 Latest: {latest_hba1c.get('value')}% ({latest_hba1c.get('date')})",
+        ])
+        if len(hba1c_logs) > 1:
+            for log in hba1c_logs[1:3]:
+                report_lines.append(f"   Previous: {log.get('value')}% ({log.get('date')})")
+    
+    report_lines.extend([
+        "",
+        "━━━━━━━━━━━━━━━━━━━━━━",
+        "*Recent Readings:*"
+    ])
+    
+    for log in sugar_logs[:10]:
+        log_type = "FBS" if log.get("type") == "fbs" else "PPBS"
+        report_lines.append(f"• {log.get('date')}: {log.get('value')} mg/dL ({log_type})")
+    
+    report_lines.extend([
+        "",
+        "━━━━━━━━━━━━━━━━━━━━━━",
+        "📱 Report from Nevika Cura - Glydex",
+        "🌐 www.nevikacura.com"
+    ])
+    
+    report_text = "\n".join(report_lines)
+    
+    return {
+        "report_text": report_text,
+        "whatsapp_url": f"https://wa.me/?text={report_text.replace(chr(10), '%0A').replace(' ', '%20')}"
+    }
+
+@api_router.get("/evara/share-period-report")
+async def generate_evara_share_report(user = Depends(get_current_user)):
+    """Generate a shareable text report of period tracking data for WhatsApp"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    # Get period logs
+    period_logs = await db.evara_period_logs.find(
+        {"user_id": user.id},
+        {"_id": 0}
+    ).sort("start_date", -1).to_list(12)
+    
+    if not period_logs:
+        return {"report_text": "No period data logged yet.", "whatsapp_url": ""}
+    
+    # Calculate cycle statistics
+    if len(period_logs) >= 2:
+        cycle_lengths = []
+        for i in range(len(period_logs) - 1):
+            try:
+                current = datetime.strptime(period_logs[i]["start_date"], "%Y-%m-%d")
+                previous = datetime.strptime(period_logs[i+1]["start_date"], "%Y-%m-%d")
+                cycle_length = (current - previous).days
+                if 21 <= cycle_length <= 45:
+                    cycle_lengths.append(cycle_length)
+            except:
+                pass
+        avg_cycle = round(sum(cycle_lengths) / len(cycle_lengths)) if cycle_lengths else "N/A"
+    else:
+        avg_cycle = "N/A"
+    
+    # Generate report
+    report_lines = [
+        "🌸 *EVARA PERIOD TRACKING REPORT*",
+        f"User: {user.name}",
+        f"Report Date: {datetime.now().strftime('%d %b %Y')}",
+        "",
+        "━━━━━━━━━━━━━━━━━━━━━━",
+        "*Cycle Summary:*",
+        f"• Total Periods Logged: {len(period_logs)}",
+        f"• Average Cycle Length: {avg_cycle} days" if avg_cycle != "N/A" else "• Average Cycle: Calculating...",
+        "",
+        "*Recent Periods:*"
+    ]
+    
+    for log in period_logs[:6]:
+        symptoms = ", ".join(log.get("symptoms", [])[:3]) if log.get("symptoms") else "None noted"
+        report_lines.append(f"• {log.get('start_date')}: Flow - {log.get('flow', 'N/A')}")
+        if symptoms != "None noted":
+            report_lines.append(f"  Symptoms: {symptoms}")
+    
+    # Predict next period if possible
+    if period_logs and avg_cycle != "N/A":
+        try:
+            last_period = datetime.strptime(period_logs[0]["start_date"], "%Y-%m-%d")
+            next_predicted = last_period + timedelta(days=avg_cycle)
+            report_lines.extend([
+                "",
+                f"📅 *Next Period Predicted:* {next_predicted.strftime('%d %b %Y')}"
+            ])
+        except:
+            pass
+    
+    report_lines.extend([
+        "",
+        "━━━━━━━━━━━━━━━━━━━━━━",
+        "📱 Report from Nevika Cura - Evara",
+        "🌐 www.nevikacura.com"
+    ])
+    
+    report_text = "\n".join(report_lines)
+    
+    return {
+        "report_text": report_text,
+        "whatsapp_url": f"https://wa.me/?text={report_text.replace(chr(10), '%0A').replace(' ', '%20')}"
+    }
+
 # Include router AFTER all routes are defined
 app.include_router(api_router)
 
