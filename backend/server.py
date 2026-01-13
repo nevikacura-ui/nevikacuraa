@@ -86,6 +86,17 @@ DOCTOR_WHATSAPP_NUMBERS = {
     "Dr. Vikas Jha": "919930266466"
 }
 
+# Staff SMS Notification Numbers (for department-specific alerts)
+STAFF_SMS_NUMBERS = {
+    "diagyn": ["8108500522", "8108500533"],  # DiaGyn - Pushpa & Amnion (Amnion is part of DiaGyn)
+    "amnion": ["8108500533"],  # Amnion specific
+    "proton": ["7039040040"],  # Proton Diagnostics
+    "orange": ["8108500511"],  # Orange Pharmacy
+    "nevika": ["9833188288"],  # Nevika Cura, Evara, Glydex
+    "evara": ["9833188288"],   # Evara
+    "glydex": ["9833188288"],  # Glydex
+}
+
 # VAPID Configuration for Web Push Notifications
 VAPID_PUBLIC_KEY = os.environ.get('VAPID_PUBLIC_KEY', '')
 VAPID_PRIVATE_KEY = os.environ.get('VAPID_PRIVATE_KEY', '')
