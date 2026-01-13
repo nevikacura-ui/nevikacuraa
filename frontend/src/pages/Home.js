@@ -501,19 +501,6 @@ const AuthModal = ({ open, onClose }) => {
       setLoading(false);
     }
   };
-      });
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.detail || 'Registration failed');
-      }
-      toast.success('Registration successful! Please login.');
-      setEmailAuth({ ...emailAuth, isLogin: true });
-    } catch (error) {
-      toast.error(error.message || 'Registration failed');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Resend timer
   React.useEffect(() => {
@@ -522,28 +509,6 @@ const AuthModal = ({ open, onClose }) => {
       return () => clearTimeout(timer);
     }
   }, [resendTimer]);
-
-  const handleSendOtp = async (e) => {
-    e.preventDefault();
-    if (!phone || phone.length < 10) {
-      toast.error('Please enter a valid 10-digit phone number');
-      return;
-    }
-    setLoading(true);
-    try {
-      const response = await sendAuthOtp(phone);
-      setMockOtp(response.mock_otp || '');
-      setOtpMethod(response.method || 'mock');
-      setStep('otp');
-      setResendTimer(30);
-      toast.success(response.method === 'sms' ? 'OTP sent to your phone!' : 'OTP sent successfully!');
-      setTimeout(() => otpRefs.current[0]?.focus(), 100);
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to send OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleOtpChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
