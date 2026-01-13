@@ -211,6 +211,27 @@ const Pharmacy = () => {
     setLoadingPoints(false);
   };
 
+  const fetchLoyaltyProgramInfo = async () => {
+    try {
+      const [tiersRes, faqRes, termsRes] = await Promise.all([
+        axios.get(`${API}/pharmacy/loyalty/tiers`),
+        axios.get(`${API}/pharmacy/loyalty/faq`),
+        axios.get(`${API}/pharmacy/loyalty/terms-and-conditions`)
+      ]);
+      setLoyaltyTiers(tiersRes.data);
+      setLoyaltyFAQ(faqRes.data);
+      setLoyaltyTerms(termsRes.data);
+      
+      // Fetch user status if logged in
+      if (user) {
+        const statusRes = await axios.get(`${API}/pharmacy/loyalty/user-status?user_id=${user.id}`);
+        setUserLoyaltyStatus(statusRes.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch loyalty info:', error);
+    }
+  };
+
   // Calculate discount from points (100 pts = ₹10)
   const discountAmount = (pointsToUse / 100) * 10;
 
