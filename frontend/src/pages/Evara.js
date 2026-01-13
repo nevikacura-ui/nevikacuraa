@@ -1087,6 +1087,93 @@ const Evara = () => {
     }
   };
 
+  // Calorie Tracker Functions
+  const fetchFoodDatabase = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/calories/food-database`);
+      const data = await response.json();
+      setFoodDatabase(data.foods || {});
+    } catch (error) {
+      console.error('Failed to fetch food database');
+    }
+  };
+
+  const fetchCalorieLogs = async (date = selectedDate) => {
+    if (!token) return;
+    try {
+      const response = await fetch(`${API_URL}/api/calories/logs?date=${date}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      setCalorieLogs(data.logs || []);
+      setDailyTotals(data.totals || { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
+    } catch (error) {
+      console.error('Failed to fetch calorie logs');
+    }
+  };
+
+  const searchFoods = async (query) => {
+    if (query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    try {
+      const response = await fetch(`${API_URL}/api/calories/search?q=${encodeURIComponent(query)}`);
+      const data = await response.json();
+      setSearchResults(data.results || []);
+    } catch (error) {
+      console.error('Search failed');
+    }
+  };
+
+  const addFoodToLog = async (food, mealType = 'other', quantity = 1) => {
+    if (!token) {
+      toast.error('Please login to track calories');
+      return;
+    }
+    try {
+      const response = await fetch(`${API_URL}/api/calories/log`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          food_name: food.name,
+          calories: food.calories,
+          protein: food.protein || 0,
+          carbs: food.carbs || 0,
+          fat: food.fat || 0,
+          fiber: food.fiber || 0,
+          meal_type: mealType,
+          quantity: quantity,
+          date: selectedDate
+        })
+      });
+      if (response.ok) {
+        toast.success(`Added ${food.name}`);
+        fetchCalorieLogs();
+        setFoodSearchQuery('');
+        setSearchResults([]);
+      }
+    } catch (error) {
+      toast.error('Failed to log food');
+    }
+  };
+
+  const deleteCalorieLog = async (logId) => {
+    try {
+      await fetch(`${API_URL}/api/calories/logs/${logId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchCalorieLogs();
+      toast.success('Deleted');
+    } catch (error) {
+      toast.error('Failed to delete');
+    }
+  };
+
   const getProgramIcon = (programId) => {
     const icons = {
       menstrual_health: <Calendar className="w-6 h-6 text-pink-500" />,
