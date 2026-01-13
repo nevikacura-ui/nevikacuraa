@@ -2050,6 +2050,13 @@ Delivery: {order.delivery_address or 'Not provided'}"""
         "medicines": order.medicines
     })
     
+    # Send SMS notification to Orange Pharmacy staff
+    await notify_staff_new_order({
+        "id": order.id,
+        "patient_name": order.patient_name,
+        "medicines": order.medicines
+    }, "orange")
+    
     return order
 
 @api_router.get("/pharmacy", response_model=List[PharmacyOrder])
