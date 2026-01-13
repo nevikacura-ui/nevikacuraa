@@ -601,6 +601,25 @@ const DiaGyn = () => {
                     <p className="text-xs text-gray-500 mt-1">We'll send confirmations and appointment updates to this email.</p>
                   </div>
                 </div>
+                
+                {/* Email Reminder Option */}
+                {patientInfo.email && (
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={emailReminder}
+                        onChange={(e) => setEmailReminder(e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue"
+                        data-testid="email-reminder-checkbox"
+                      />
+                      <div>
+                        <span className="font-medium text-blue-800 text-sm">Send me an email reminder</span>
+                        <p className="text-xs text-blue-600">You'll receive a reminder email 1 hour before your appointment</p>
+                      </div>
+                    </label>
+                  </div>
+                )}
               </Card>
             )}
 
