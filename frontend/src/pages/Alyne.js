@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,9 @@ import {
   Baby, Plus, ArrowLeft, Calendar, Syringe, TrendingUp, FileText, 
   Bell, Heart, User, Shield, Activity, Scale, Ruler, 
   CheckCircle, Clock, AlertTriangle, ChevronRight, Trash2, Edit,
-  Upload, Download, Eye, X, Settings
+  Upload, Download, Eye, X, Settings, MessageCircle, Send,
+  ShoppingCart, Package, Stethoscope, Thermometer, Search, Star,
+  Filter, Minus
 } from 'lucide-react';
 import Footer from '@/components/Footer';
 
@@ -97,15 +99,15 @@ const Alyne = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-sky-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full text-center p-8">
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-            <Baby className="w-10 h-10 text-white" />
+      <div className="min-h-screen bg-gradient-to-b from-[#e8f5f3] via-white to-[#fef6e8] flex items-center justify-center p-4">
+        <Card className="max-w-md w-full text-center p-8 border-0 shadow-xl bg-white/80 backdrop-blur">
+          <div className="w-24 h-24 mx-auto mb-6 bg-[#2d7a6d] rounded-full flex items-center justify-center">
+            <Baby className="w-12 h-12 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome to ALYNE</h2>
-          <p className="text-gray-600 mb-6">Kids Health & Care Portal</p>
+          <p className="text-[#2d7a6d] font-medium mb-4">Kids Health & Care</p>
           <p className="text-sm text-gray-500 mb-6">Please login to manage your child's health records</p>
-          <Button onClick={() => navigate('/')} className="bg-gradient-to-r from-cyan-500 to-blue-500">
+          <Button onClick={() => navigate('/')} className="bg-[#2d7a6d] hover:bg-[#245f55] rounded-full px-8">
             Go to Login
           </Button>
         </Card>
@@ -114,13 +116,13 @@ const Alyne = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-purple-50 to-pink-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-xl border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3">
+    <div className="min-h-screen bg-gradient-to-b from-[#e8f5f3] via-white to-[#fef6e8]">
+      {/* Header - Teal theme matching reference */}
+      <header className="bg-[#2d7a6d] text-white sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+              <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="text-white hover:bg-white/20">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <img 
@@ -128,16 +130,10 @@ const Alyne = () => {
                 alt="ALYNE" 
                 className="h-10 w-auto"
               />
-              <div>
-                <h1 className="text-lg font-bold bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-                  ALYNE
-                </h1>
-                <p className="text-xs text-gray-500">Kids Health & Care</p>
-              </div>
             </div>
             <Button 
               onClick={() => setShowAddChild(true)}
-              className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-full"
+              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 rounded-full"
               data-testid="add-child-btn"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -147,96 +143,143 @@ const Alyne = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      {/* Welcome Banner - Personalized */}
+      {selectedChild && (
+        <div className="bg-[#2d7a6d] text-white pb-8 pt-2">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                <span className="text-3xl">{selectedChild.gender === 'male' ? '👦' : '👧'}</span>
+              </div>
+              <div>
+                <p className="text-white/80 text-sm">Welcome back,</p>
+                <h1 className="text-2xl font-bold">{user.name}!</h1>
+                <p className="text-white/80 text-sm">Managing {selectedChild.name}'s health</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <main className="max-w-7xl mx-auto px-4 py-6 -mt-4">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2d7a6d]"></div>
           </div>
         ) : children.length === 0 ? (
           <EmptyState onAddChild={() => setShowAddChild(true)} />
         ) : (
-          <div className="grid lg:grid-cols-4 gap-6">
-            {/* Sidebar - Child Selector */}
-            <div className="lg:col-span-1">
-              <Card className="bg-white/70 backdrop-blur border-0 shadow-lg">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm text-gray-500">My Children</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {children.map((child) => (
-                    <button
-                      key={child.id}
-                      onClick={() => setSelectedChild(child)}
-                      className={`w-full p-3 rounded-xl flex items-center gap-3 transition-all ${
-                        selectedChild?.id === child.id 
-                          ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg' 
-                          : 'bg-white hover:bg-gray-50'
-                      }`}
-                      data-testid={`child-card-${child.id}`}
-                    >
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        selectedChild?.id === child.id ? 'bg-white/20' : 'bg-gradient-to-br from-cyan-100 to-purple-100'
-                      }`}>
-                        <Baby className={`w-5 h-5 ${selectedChild?.id === child.id ? 'text-white' : 'text-cyan-600'}`} />
-                      </div>
-                      <div className="flex-1 text-left">
-                        <p className="font-medium">{child.name}</p>
-                        <p className={`text-xs ${selectedChild?.id === child.id ? 'text-white/80' : 'text-gray-500'}`}>
-                          {child.age_display} • {child.gender === 'male' ? '👦' : '👧'}
-                        </p>
-                      </div>
-                      {child.region === 'india' ? <span className="text-lg">🇮🇳</span> : <span className="text-lg">🇺🇸</span>}
-                    </button>
-                  ))}
-                </CardContent>
-              </Card>
+          <div className="space-y-6">
+            {/* Child Selector - Horizontal Pills */}
+            {children.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {children.map((child) => (
+                  <button
+                    key={child.id}
+                    onClick={() => setSelectedChild(child)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all ${
+                      selectedChild?.id === child.id 
+                        ? 'bg-[#2d7a6d] text-white shadow-lg' 
+                        : 'bg-white text-gray-700 hover:bg-gray-50 border'
+                    }`}
+                  >
+                    <span>{child.gender === 'male' ? '👦' : '👧'}</span>
+                    <span className="font-medium">{child.name}</span>
+                    <span className="text-xs opacity-70">{child.age_display}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Quick Action Cards - Matching Reference Design */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <QuickActionCard 
+                icon={<Calendar className="w-5 h-5" />}
+                title="Book a visit"
+                subtitle="in clinic or virtual"
+                color="bg-[#e85a7b]"
+                onClick={() => navigate('/diagyn')}
+              />
+              <QuickActionCard 
+                icon={<MessageCircle className="w-5 h-5" />}
+                title="Chat with"
+                subtitle="ALYNE 24/7"
+                color="bg-[#f4c156]"
+                onClick={() => setActiveTab('chat')}
+              />
+              <QuickActionCard 
+                icon={<Stethoscope className="w-5 h-5" />}
+                title="Check"
+                subtitle="symptoms"
+                color="bg-[#e85a7b]"
+                onClick={() => setActiveTab('symptoms')}
+              />
+              <QuickActionCard 
+                icon={<TrendingUp className="w-5 h-5" />}
+                title="Manage your"
+                subtitle="visits"
+                color="bg-[#f4c156]"
+                onClick={() => setActiveTab('dashboard')}
+              />
             </div>
 
-            {/* Main Content */}
-            <div className="lg:col-span-3">
-              {selectedChild && (
-                <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="bg-white/70 backdrop-blur p-1 rounded-xl mb-6 grid grid-cols-5">
-                    <TabsTrigger value="dashboard" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-500 data-[state=active]:text-white">
-                      <Activity className="w-4 h-4 mr-2" />
-                      <span className="hidden sm:inline">Dashboard</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="vaccinations" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-500 data-[state=active]:text-white">
-                      <Syringe className="w-4 h-4 mr-2" />
-                      <span className="hidden sm:inline">Vaccines</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="growth" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-500 data-[state=active]:text-white">
-                      <TrendingUp className="w-4 h-4 mr-2" />
-                      <span className="hidden sm:inline">Growth</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="documents" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-500 data-[state=active]:text-white">
-                      <FileText className="w-4 h-4 mr-2" />
-                      <span className="hidden sm:inline">Documents</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="health-log" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-500 data-[state=active]:text-white">
-                      <Heart className="w-4 h-4 mr-2" />
-                      <span className="hidden sm:inline">Health Log</span>
-                    </TabsTrigger>
-                  </TabsList>
+            {/* Main Tabs */}
+            {selectedChild && (
+              <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="bg-white/70 backdrop-blur p-1 rounded-xl grid grid-cols-7 gap-1">
+                  <TabsTrigger value="dashboard" className="rounded-lg text-xs data-[state=active]:bg-[#2d7a6d] data-[state=active]:text-white">
+                    <Activity className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Dashboard</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="vaccinations" className="rounded-lg text-xs data-[state=active]:bg-[#2d7a6d] data-[state=active]:text-white">
+                    <Syringe className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Vaccines</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="growth" className="rounded-lg text-xs data-[state=active]:bg-[#2d7a6d] data-[state=active]:text-white">
+                    <TrendingUp className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Growth</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="symptoms" className="rounded-lg text-xs data-[state=active]:bg-[#2d7a6d] data-[state=active]:text-white">
+                    <Thermometer className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Symptoms</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="chat" className="rounded-lg text-xs data-[state=active]:bg-[#2d7a6d] data-[state=active]:text-white">
+                    <MessageCircle className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">AI Chat</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="shop" className="rounded-lg text-xs data-[state=active]:bg-[#2d7a6d] data-[state=active]:text-white">
+                    <ShoppingCart className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Shop</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="documents" className="rounded-lg text-xs data-[state=active]:bg-[#2d7a6d] data-[state=active]:text-white">
+                    <FileText className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Docs</span>
+                  </TabsTrigger>
+                </TabsList>
 
-                  <TabsContent value="dashboard">
-                    <DashboardTab child={selectedChild} />
-                  </TabsContent>
-                  <TabsContent value="vaccinations">
-                    <VaccinationsTab child={selectedChild} />
-                  </TabsContent>
-                  <TabsContent value="growth">
-                    <GrowthTab child={selectedChild} />
-                  </TabsContent>
-                  <TabsContent value="documents">
-                    <DocumentsTab child={selectedChild} />
-                  </TabsContent>
-                  <TabsContent value="health-log">
-                    <HealthLogTab child={selectedChild} />
-                  </TabsContent>
-                </Tabs>
-              )}
-            </div>
+                <TabsContent value="dashboard">
+                  <DashboardTab child={selectedChild} />
+                </TabsContent>
+                <TabsContent value="vaccinations">
+                  <VaccinationsTab child={selectedChild} />
+                </TabsContent>
+                <TabsContent value="growth">
+                  <GrowthTab child={selectedChild} />
+                </TabsContent>
+                <TabsContent value="symptoms">
+                  <SymptomsTab child={selectedChild} />
+                </TabsContent>
+                <TabsContent value="chat">
+                  <AIChatTab child={selectedChild} user={user} />
+                </TabsContent>
+                <TabsContent value="shop">
+                  <KidsShopTab user={user} />
+                </TabsContent>
+                <TabsContent value="documents">
+                  <DocumentsTab child={selectedChild} />
+                </TabsContent>
+              </Tabs>
+            )}
           </div>
         )}
       </main>
@@ -255,11 +298,25 @@ const Alyne = () => {
   );
 };
 
+// Quick Action Card Component
+const QuickActionCard = ({ icon, title, subtitle, color, onClick }) => (
+  <button 
+    onClick={onClick}
+    className={`${color} text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg`}
+  >
+    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-2">
+      {icon}
+    </div>
+    <p className="font-semibold text-sm">{title}</p>
+    <p className="text-xs text-white/80">{subtitle}</p>
+  </button>
+);
+
 // Empty State Component
 const EmptyState = ({ onAddChild }) => (
   <div className="flex flex-col items-center justify-center py-20">
-    <div className="w-32 h-32 bg-gradient-to-br from-cyan-100 via-blue-100 to-purple-100 rounded-full flex items-center justify-center mb-6 animate-pulse">
-      <Baby className="w-16 h-16 text-cyan-500" />
+    <div className="w-32 h-32 bg-[#2d7a6d]/10 rounded-full flex items-center justify-center mb-6">
+      <Baby className="w-16 h-16 text-[#2d7a6d]" />
     </div>
     <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome to ALYNE!</h2>
     <p className="text-gray-600 mb-6 text-center max-w-md">
@@ -268,7 +325,7 @@ const EmptyState = ({ onAddChild }) => (
     <Button 
       onClick={onAddChild}
       size="lg"
-      className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-full px-8"
+      className="bg-[#2d7a6d] hover:bg-[#245f55] rounded-full px-8"
       data-testid="add-first-child-btn"
     >
       <Plus className="w-5 h-5 mr-2" />
@@ -283,7 +340,7 @@ const AddChildDialog = ({ open, onClose, newChild, setNewChild, onSubmit }) => (
     <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-[#2d7a6d] flex items-center justify-center">
             <Baby className="w-5 h-5 text-white" />
           </div>
           Add Child Profile
@@ -300,7 +357,7 @@ const AddChildDialog = ({ open, onClose, newChild, setNewChild, onSubmit }) => (
             onClick={() => setNewChild({...newChild, region: 'india'})}
             className={`p-4 rounded-xl border-2 transition-all ${
               newChild.region === 'india' 
-                ? 'border-cyan-500 bg-cyan-50' 
+                ? 'border-[#2d7a6d] bg-[#2d7a6d]/10' 
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
@@ -312,7 +369,7 @@ const AddChildDialog = ({ open, onClose, newChild, setNewChild, onSubmit }) => (
             onClick={() => setNewChild({...newChild, region: 'usa'})}
             className={`p-4 rounded-xl border-2 transition-all ${
               newChild.region === 'usa' 
-                ? 'border-cyan-500 bg-cyan-50' 
+                ? 'border-[#2d7a6d] bg-[#2d7a6d]/10' 
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
@@ -418,7 +475,7 @@ const AddChildDialog = ({ open, onClose, newChild, setNewChild, onSubmit }) => (
         <Button variant="outline" onClick={onClose}>Cancel</Button>
         <Button 
           onClick={onSubmit}
-          className="bg-gradient-to-r from-cyan-500 to-blue-500"
+          className="bg-[#2d7a6d] hover:bg-[#245f55]"
           data-testid="submit-add-child"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -453,9 +510,6 @@ const DashboardTab = ({ child }) => {
   if (loading) {
     return <div className="animate-pulse space-y-4">
       <div className="h-32 bg-white/50 rounded-xl"></div>
-      <div className="grid grid-cols-4 gap-4">
-        {[1,2,3,4].map(i => <div key={i} className="h-24 bg-white/50 rounded-xl"></div>)}
-      </div>
     </div>;
   }
 
@@ -463,35 +517,31 @@ const DashboardTab = ({ child }) => {
   const progress = vaxStats.total > 0 ? Math.round((vaxStats.done / vaxStats.total) * 100) : 0;
 
   return (
-    <div className="space-y-6">
-      {/* Child Profile Card */}
-      <Card className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 text-white border-0 shadow-xl overflow-hidden">
+    <div className="space-y-6 mt-4">
+      {/* Child Profile Card - Yellow Theme like reference */}
+      <Card className="bg-[#f4c156] text-gray-800 border-0 shadow-xl overflow-hidden rounded-2xl">
         <CardContent className="p-6">
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur">
-              <span className="text-4xl">{child.gender === 'male' ? '👦' : '👧'}</span>
-            </div>
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold">{child.name}</h2>
-              <div className="flex items-center gap-4 mt-2 text-white/90">
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  {child.age_display}
-                </span>
-                <span className="flex items-center gap-1">
-                  {child.region === 'india' ? '🇮🇳 India' : '🇺🇸 USA'}
-                </span>
-                {child.blood_group && (
-                  <span className="flex items-center gap-1">
-                    <Heart className="w-4 h-4" />
-                    {child.blood_group}
-                  </span>
-                )}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-white/30 rounded-full flex items-center justify-center">
+                <span className="text-3xl">{child.gender === 'male' ? '👦' : '👧'}</span>
+              </div>
+              <div>
+                <p className="text-sm text-gray-700">{child.gender === 'male' ? 'Boy' : 'Girl'}, {child.age_display}</p>
+                <h2 className="text-2xl font-bold">{child.name}</h2>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-white/80">Vaccination Progress</p>
-              <p className="text-3xl font-bold">{progress}%</p>
+              <p className="text-sm text-gray-700">Vaccinations progress:</p>
+              <div className="flex items-center gap-2 mt-1">
+                {['0-6', '6-12', '12-18', '18-24'].map((range, idx) => (
+                  <div key={range} className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold ${
+                    idx < Math.floor(progress / 25) ? 'bg-[#e85a7b] text-white' : 'bg-white/50 text-gray-600'
+                  }`}>
+                    {range}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </CardContent>
@@ -499,16 +549,16 @@ const DashboardTab = ({ child }) => {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-white/70 backdrop-blur border-0 shadow-lg">
+        <Card className="bg-white border-0 shadow-lg rounded-2xl">
           <CardContent className="p-4 text-center">
             <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-green-100 flex items-center justify-center">
               <CheckCircle className="w-6 h-6 text-green-500" />
             </div>
             <p className="text-2xl font-bold text-green-600">{vaxStats.done}</p>
-            <p className="text-sm text-gray-500">Completed</p>
+            <p className="text-sm text-gray-500">Done</p>
           </CardContent>
         </Card>
-        <Card className="bg-white/70 backdrop-blur border-0 shadow-lg">
+        <Card className="bg-white border-0 shadow-lg rounded-2xl">
           <CardContent className="p-4 text-center">
             <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-yellow-100 flex items-center justify-center">
               <Clock className="w-6 h-6 text-yellow-500" />
@@ -517,7 +567,7 @@ const DashboardTab = ({ child }) => {
             <p className="text-sm text-gray-500">Due Now</p>
           </CardContent>
         </Card>
-        <Card className="bg-white/70 backdrop-blur border-0 shadow-lg">
+        <Card className="bg-white border-0 shadow-lg rounded-2xl">
           <CardContent className="p-4 text-center">
             <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-red-100 flex items-center justify-center">
               <AlertTriangle className="w-6 h-6 text-red-500" />
@@ -526,7 +576,7 @@ const DashboardTab = ({ child }) => {
             <p className="text-sm text-gray-500">Overdue</p>
           </CardContent>
         </Card>
-        <Card className="bg-white/70 backdrop-blur border-0 shadow-lg">
+        <Card className="bg-white border-0 shadow-lg rounded-2xl">
           <CardContent className="p-4 text-center">
             <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-blue-100 flex items-center justify-center">
               <FileText className="w-6 h-6 text-blue-500" />
@@ -539,59 +589,34 @@ const DashboardTab = ({ child }) => {
 
       {/* Latest Growth */}
       {dashboard?.latest_growth && (
-        <Card className="bg-white/70 backdrop-blur border-0 shadow-lg">
+        <Card className="bg-white border-0 shadow-lg rounded-2xl">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-cyan-500" />
+              <TrendingUp className="w-5 h-5 text-[#2d7a6d]" />
               Latest Growth Record
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-4">
               {dashboard.latest_growth.height_cm && (
-                <div className="text-center p-4 bg-cyan-50 rounded-xl">
-                  <Ruler className="w-6 h-6 text-cyan-500 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-cyan-600">{dashboard.latest_growth.height_cm} cm</p>
+                <div className="text-center p-4 bg-[#2d7a6d]/10 rounded-xl">
+                  <Ruler className="w-6 h-6 text-[#2d7a6d] mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-[#2d7a6d]">{dashboard.latest_growth.height_cm} cm</p>
                   <p className="text-xs text-gray-500">Height</p>
                 </div>
               )}
               {dashboard.latest_growth.weight_kg && (
-                <div className="text-center p-4 bg-purple-50 rounded-xl">
-                  <Scale className="w-6 h-6 text-purple-500 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-purple-600">{dashboard.latest_growth.weight_kg} kg</p>
+                <div className="text-center p-4 bg-[#f4c156]/20 rounded-xl">
+                  <Scale className="w-6 h-6 text-[#d4a84a] mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-[#d4a84a]">{dashboard.latest_growth.weight_kg} kg</p>
                   <p className="text-xs text-gray-500">Weight</p>
                 </div>
               )}
               <div className="text-center p-4 bg-gray-50 rounded-xl">
                 <Calendar className="w-6 h-6 text-gray-500 mx-auto mb-2" />
                 <p className="text-sm font-medium text-gray-600">{dashboard.latest_growth.date}</p>
-                <p className="text-xs text-gray-500">Recorded On</p>
+                <p className="text-xs text-gray-500">Recorded</p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Upcoming Reminders */}
-      {dashboard?.upcoming_reminders?.length > 0 && (
-        <Card className="bg-white/70 backdrop-blur border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Bell className="w-5 h-5 text-yellow-500" />
-              Upcoming Reminders
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {dashboard.upcoming_reminders.map((reminder, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg">
-                  <Bell className="w-4 h-4 text-yellow-500" />
-                  <div className="flex-1">
-                    <p className="font-medium">{reminder.title}</p>
-                    <p className="text-xs text-gray-500">{reminder.due_date}</p>
-                  </div>
-                </div>
-              ))}
             </div>
           </CardContent>
         </Card>
@@ -645,13 +670,13 @@ const VaccinationsTab = ({ child }) => {
   const progress = stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mt-4">
       {/* Progress Bar */}
-      <Card className="bg-white/70 backdrop-blur border-0 shadow-lg">
+      <Card className="bg-white border-0 shadow-lg rounded-2xl">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium">Vaccination Progress</span>
-            <span className="text-lg font-bold text-cyan-600">{progress}%</span>
+            <span className="text-lg font-bold text-[#2d7a6d]">{progress}%</span>
           </div>
           <Progress value={progress} className="h-3" />
           <div className="flex justify-between mt-4 text-sm">
@@ -671,7 +696,7 @@ const VaccinationsTab = ({ child }) => {
             variant={filter === f ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter(f)}
-            className={filter === f ? 'bg-cyan-500' : ''}
+            className={filter === f ? 'bg-[#2d7a6d]' : ''}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
             {f !== 'all' && ` (${stats[f] || 0})`}
@@ -684,12 +709,12 @@ const VaccinationsTab = ({ child }) => {
         {loading ? (
           <div className="text-center py-10">Loading...</div>
         ) : filteredVax.length === 0 ? (
-          <Card className="bg-white/70 backdrop-blur border-0 p-8 text-center">
+          <Card className="bg-white border-0 p-8 text-center rounded-2xl">
             <p className="text-gray-500">No vaccinations in this category</p>
           </Card>
         ) : (
-          filteredVax.map((vax) => (
-            <Card key={vax.id} className={`bg-white/70 backdrop-blur border-0 shadow transition-all hover:shadow-lg ${
+          filteredVax.slice(0, 15).map((vax) => (
+            <Card key={vax.id} className={`bg-white border-0 shadow transition-all hover:shadow-lg rounded-2xl ${
               vax.status === 'overdue' ? 'border-l-4 border-red-500' :
               vax.status === 'due' ? 'border-l-4 border-yellow-500' :
               vax.status === 'done' ? 'border-l-4 border-green-500' : ''
@@ -710,22 +735,13 @@ const VaccinationsTab = ({ child }) => {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <p className="font-semibold">{vax.vaccine_name}</p>
-                      <Badge variant={
-                        vax.status === 'done' ? 'success' :
-                        vax.status === 'overdue' ? 'destructive' :
-                        vax.status === 'due' ? 'warning' : 'secondary'
-                      } className={
-                        vax.status === 'done' ? 'bg-green-100 text-green-700' :
-                        vax.status === 'overdue' ? 'bg-red-100 text-red-700' :
-                        vax.status === 'due' ? 'bg-yellow-100 text-yellow-700' : ''
-                      }>
+                      <Badge variant="outline" className="text-xs">
                         {vax.dose}
                       </Badge>
                     </div>
                     <p className="text-sm text-gray-500">{vax.description}</p>
                     <p className="text-xs text-gray-400 mt-1">
                       Scheduled: {vax.scheduled_date}
-                      {vax.administered_date && ` • Given: ${vax.administered_date}`}
                     </p>
                   </div>
                   {vax.status !== 'done' && (
@@ -735,7 +751,7 @@ const VaccinationsTab = ({ child }) => {
                       className="bg-green-500 hover:bg-green-600"
                     >
                       <CheckCircle className="w-4 h-4 mr-1" />
-                      Mark Done
+                      Done
                     </Button>
                   )}
                 </div>
@@ -757,7 +773,6 @@ const GrowthTab = ({ child }) => {
     date: new Date().toISOString().split('T')[0],
     height_cm: '',
     weight_kg: '',
-    head_circumference_cm: '',
     notes: ''
   });
 
@@ -790,15 +805,14 @@ const GrowthTab = ({ child }) => {
         body: JSON.stringify({
           ...newRecord,
           height_cm: newRecord.height_cm ? parseFloat(newRecord.height_cm) : null,
-          weight_kg: newRecord.weight_kg ? parseFloat(newRecord.weight_kg) : null,
-          head_circumference_cm: newRecord.head_circumference_cm ? parseFloat(newRecord.head_circumference_cm) : null
+          weight_kg: newRecord.weight_kg ? parseFloat(newRecord.weight_kg) : null
         })
       });
       
       if (response.ok) {
         toast.success('Growth record added!');
         setShowAdd(false);
-        setNewRecord({ date: new Date().toISOString().split('T')[0], height_cm: '', weight_kg: '', head_circumference_cm: '', notes: '' });
+        setNewRecord({ date: new Date().toISOString().split('T')[0], height_cm: '', weight_kg: '', notes: '' });
         fetchGrowth();
       }
     } catch (error) {
@@ -807,40 +821,32 @@ const GrowthTab = ({ child }) => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Add Button */}
+    <div className="space-y-6 mt-4">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Growth Records</h3>
-        <Button onClick={() => setShowAdd(true)} className="bg-gradient-to-r from-cyan-500 to-blue-500">
+        <Button onClick={() => setShowAdd(true)} className="bg-[#2d7a6d] hover:bg-[#245f55]">
           <Plus className="w-4 h-4 mr-2" />
           Add Measurement
         </Button>
       </div>
 
-      {/* Latest Stats */}
       {records.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-br from-cyan-400 to-cyan-600 text-white border-0 shadow-lg">
+          <Card className="bg-[#2d7a6d] text-white border-0 shadow-lg rounded-2xl">
             <CardContent className="p-6 text-center">
               <Ruler className="w-8 h-8 mx-auto mb-2 opacity-80" />
               <p className="text-3xl font-bold">{records[0].height_cm || '--'}</p>
               <p className="text-sm opacity-80">Height (cm)</p>
-              {records[0].height_percentile && (
-                <Badge className="mt-2 bg-white/20">{records[0].height_percentile.percentile} percentile</Badge>
-              )}
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-purple-400 to-purple-600 text-white border-0 shadow-lg">
+          <Card className="bg-[#f4c156] text-gray-800 border-0 shadow-lg rounded-2xl">
             <CardContent className="p-6 text-center">
               <Scale className="w-8 h-8 mx-auto mb-2 opacity-80" />
               <p className="text-3xl font-bold">{records[0].weight_kg || '--'}</p>
               <p className="text-sm opacity-80">Weight (kg)</p>
-              {records[0].weight_percentile && (
-                <Badge className="mt-2 bg-white/20">{records[0].weight_percentile.percentile} percentile</Badge>
-              )}
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-pink-400 to-pink-600 text-white border-0 shadow-lg">
+          <Card className="bg-[#e85a7b] text-white border-0 shadow-lg rounded-2xl">
             <CardContent className="p-6 text-center">
               <Activity className="w-8 h-8 mx-auto mb-2 opacity-80" />
               <p className="text-xl font-bold">{child.age_display}</p>
@@ -850,8 +856,7 @@ const GrowthTab = ({ child }) => {
         </div>
       )}
 
-      {/* Records List */}
-      <Card className="bg-white/70 backdrop-blur border-0 shadow-lg">
+      <Card className="bg-white border-0 shadow-lg rounded-2xl">
         <CardHeader>
           <CardTitle className="text-base">History</CardTitle>
         </CardHeader>
@@ -866,8 +871,8 @@ const GrowthTab = ({ child }) => {
             <div className="space-y-3">
               {records.map((record) => (
                 <div key={record.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                  <div className="w-10 h-10 bg-cyan-100 rounded-full flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-cyan-500" />
+                  <div className="w-10 h-10 bg-[#2d7a6d]/10 rounded-full flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-[#2d7a6d]" />
                   </div>
                   <div className="flex-1 grid grid-cols-4 gap-4 text-sm">
                     <div>
@@ -894,7 +899,6 @@ const GrowthTab = ({ child }) => {
         </CardContent>
       </Card>
 
-      {/* Add Record Dialog */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
         <DialogContent>
           <DialogHeader>
@@ -931,19 +935,483 @@ const GrowthTab = ({ child }) => {
                 />
               </div>
             </div>
-            <div>
-              <Label>Notes (optional)</Label>
-              <Input 
-                value={newRecord.notes}
-                onChange={(e) => setNewRecord({...newRecord, notes: e.target.value})}
-                placeholder="Any observations..."
-              />
-            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAdd(false)}>Cancel</Button>
-            <Button onClick={addGrowthRecord} className="bg-cyan-500">Save Record</Button>
+            <Button onClick={addGrowthRecord} className="bg-[#2d7a6d]">Save Record</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+// Symptoms Tab Component
+const SymptomsTab = ({ child }) => {
+  const [symptoms, setSymptoms] = useState([]);
+  const [selectedSymptom, setSelectedSymptom] = useState(null);
+  const [symptomDetails, setSymptomDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSymptoms();
+  }, []);
+
+  const fetchSymptoms = async () => {
+    try {
+      const response = await fetch(`${API}/api/alyne/symptoms`);
+      const data = await response.json();
+      setSymptoms(data.symptoms || []);
+    } catch (error) {
+      console.error('Error fetching symptoms:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSymptomDetails = async (symptomId) => {
+    try {
+      const response = await fetch(`${API}/api/alyne/symptoms/${symptomId}?region=${child.region}`);
+      const data = await response.json();
+      setSymptomDetails(data);
+      setSelectedSymptom(symptomId);
+    } catch (error) {
+      console.error('Error fetching symptom details:', error);
+    }
+  };
+
+  const symptomColors = {
+    'sore_throat': 'bg-orange-100 text-orange-600',
+    'cough': 'bg-blue-100 text-blue-600',
+    'skin_rash': 'bg-red-100 text-red-600',
+    'fever': 'bg-yellow-100 text-yellow-600',
+    'vomiting': 'bg-purple-100 text-purple-600',
+    'diarrhea': 'bg-teal-100 text-teal-600'
+  };
+
+  return (
+    <div className="space-y-6 mt-4">
+      <Card className="bg-white border-0 shadow-lg rounded-2xl">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Stethoscope className="w-5 h-5 text-[#2d7a6d]" />
+            Symptoms Checker
+          </CardTitle>
+          <CardDescription>
+            Find guidance based on {child.region === 'india' ? 'IAP' : 'CDC'} guidelines
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-xs text-gray-500 mb-4 p-2 bg-yellow-50 rounded-lg">
+            ⚠️ This is general guidance only. Please consult your pediatrician for medical advice.
+          </p>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {symptoms.map((symptom) => (
+              <button
+                key={symptom.id}
+                onClick={() => fetchSymptomDetails(symptom.id)}
+                className={`p-4 rounded-xl text-left transition-all hover:scale-105 ${
+                  selectedSymptom === symptom.id ? 'ring-2 ring-[#2d7a6d]' : ''
+                } ${symptomColors[symptom.id] || 'bg-gray-100'}`}
+              >
+                <span className="text-2xl block mb-2">{symptom.icon}</span>
+                <p className="font-medium text-sm">{symptom.name}</p>
+                <p className="text-xs opacity-70">{symptom.description}</p>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {symptomDetails && (
+        <Card className="bg-white border-0 shadow-lg rounded-2xl">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-2xl">{symptomDetails.symptom.icon}</span>
+              {symptomDetails.symptom.name}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Causes */}
+            <div>
+              <h4 className="font-medium text-sm text-gray-700 mb-2">Common Causes</h4>
+              <div className="flex flex-wrap gap-2">
+                {symptomDetails.symptom.causes.map((cause, idx) => (
+                  <Badge key={idx} variant="outline">{cause}</Badge>
+                ))}
+              </div>
+            </div>
+
+            {/* Home Care */}
+            <div>
+              <h4 className="font-medium text-sm text-gray-700 mb-2">Home Care Tips</h4>
+              <ul className="space-y-2">
+                {symptomDetails.symptom.home_care.map((tip, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                    {tip}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* When to See Doctor */}
+            <div className="p-4 bg-red-50 rounded-xl">
+              <h4 className="font-medium text-sm text-red-700 mb-2 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" />
+                When to See a Doctor
+              </h4>
+              <ul className="space-y-1">
+                {symptomDetails.symptom.when_to_see_doctor.map((item, idx) => (
+                  <li key={idx} className="text-sm text-red-600">• {item}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Guidelines */}
+            <div className="p-4 bg-[#2d7a6d]/10 rounded-xl">
+              <h4 className="font-medium text-sm text-[#2d7a6d] mb-2">
+                {child.region === 'india' ? '🇮🇳 IAP Guidelines' : '🇺🇸 CDC Guidelines'}
+              </h4>
+              <p className="text-sm text-gray-700">{symptomDetails.primary_guidelines}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
+
+// AI Chat Tab Component
+const AIChatTab = ({ child, user }) => {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [sessionId] = useState(`chat_${Date.now()}`);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+
+    const userMessage = input.trim();
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${API}/api/alyne/chat?user_id=${user.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userMessage,
+          child_id: child?.id,
+          session_id: sessionId
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      } else {
+        toast.error('Failed to get response');
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      toast.error('Chat service unavailable');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const quickQuestions = [
+    "What are the signs of teething?",
+    "How to handle a fever at home?",
+    "When should I start solid foods?",
+    "Is my child's sleep pattern normal?"
+  ];
+
+  return (
+    <div className="space-y-4 mt-4">
+      <Card className="bg-white border-0 shadow-lg rounded-2xl">
+        <CardHeader className="bg-[#2d7a6d] text-white rounded-t-2xl">
+          <CardTitle className="flex items-center gap-2">
+            <MessageCircle className="w-5 h-5" />
+            Chat with ALYNE
+          </CardTitle>
+          <CardDescription className="text-white/80">
+            24/7 AI-powered pediatric health assistant
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          {/* Chat Messages */}
+          <div className="h-[400px] overflow-y-auto p-4 space-y-4">
+            {messages.length === 0 && (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-[#2d7a6d]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MessageCircle className="w-8 h-8 text-[#2d7a6d]" />
+                </div>
+                <p className="text-gray-600 mb-4">Hi! I'm ALYNE, your pediatric health assistant.</p>
+                <p className="text-sm text-gray-500 mb-4">Ask me anything about your child's health!</p>
+                
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {quickQuestions.map((q, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setInput(q)}
+                      className="text-xs px-3 py-2 bg-[#2d7a6d]/10 text-[#2d7a6d] rounded-full hover:bg-[#2d7a6d]/20 transition-all"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {messages.map((msg, idx) => (
+              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] p-3 rounded-2xl ${
+                  msg.role === 'user' 
+                    ? 'bg-[#2d7a6d] text-white rounded-br-none' 
+                    : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                }`}>
+                  <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                </div>
+              </div>
+            ))}
+            
+            {loading && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 p-3 rounded-2xl rounded-bl-none">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          
+          {/* Input */}
+          <div className="p-4 border-t bg-gray-50 rounded-b-2xl">
+            <div className="flex gap-2">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask about your child's health..."
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                className="flex-1"
+              />
+              <Button onClick={sendMessage} disabled={loading} className="bg-[#2d7a6d]">
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
+            <p className="text-xs text-gray-400 mt-2 text-center">
+              ⚠️ AI guidance only. Consult your pediatrician for medical advice.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+// Kids Shop Tab Component  
+const KidsShopTab = ({ user }) => {
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showCart, setShowCart] = useState(false);
+
+  useEffect(() => {
+    fetchCategories();
+    fetchProducts();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${API}/api/alyne/shop/categories`);
+      const data = await response.json();
+      setCategories(data.categories || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchProducts = async (category = null) => {
+    setLoading(true);
+    try {
+      const url = category 
+        ? `${API}/api/alyne/shop/products?category=${category}`
+        : `${API}/api/alyne/shop/products`;
+      const response = await fetch(url);
+      const data = await response.json();
+      setProducts(data.products || []);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addToCart = (product) => {
+    setCart(prev => {
+      const existing = prev.find(p => p.id === product.id);
+      if (existing) {
+        return prev.map(p => p.id === product.id ? {...p, quantity: p.quantity + 1} : p);
+      }
+      return [...prev, {...product, quantity: 1}];
+    });
+    toast.success(`${product.name} added to cart`);
+  };
+
+  const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+  return (
+    <div className="space-y-6 mt-4">
+      {/* Header with Cart */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold">Kids Shop</h3>
+          <p className="text-sm text-gray-500">by Orange Pharmacy</p>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={() => setShowCart(true)}
+          className="relative"
+        >
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          Cart
+          {cart.length > 0 && (
+            <Badge className="absolute -top-2 -right-2 bg-[#e85a7b]">
+              {cart.reduce((sum, item) => sum + item.quantity, 0)}
+            </Badge>
+          )}
+        </Button>
+      </div>
+
+      {/* Categories */}
+      <div className="flex gap-2 overflow-x-auto pb-2">
+        <button
+          onClick={() => { setSelectedCategory(null); fetchProducts(); }}
+          className={`px-4 py-2 rounded-full whitespace-nowrap transition-all ${
+            !selectedCategory ? 'bg-[#2d7a6d] text-white' : 'bg-white border hover:bg-gray-50'
+          }`}
+        >
+          All Products
+        </button>
+        {categories.map(cat => (
+          <button
+            key={cat.id}
+            onClick={() => { setSelectedCategory(cat.id); fetchProducts(cat.id); }}
+            className={`px-4 py-2 rounded-full whitespace-nowrap transition-all flex items-center gap-2 ${
+              selectedCategory === cat.id ? 'bg-[#2d7a6d] text-white' : 'bg-white border hover:bg-gray-50'
+            }`}
+          >
+            <span>{cat.icon}</span>
+            {cat.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Products Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {loading ? (
+          [...Array(8)].map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl p-4 animate-pulse">
+              <div className="w-full h-32 bg-gray-200 rounded-lg mb-3"></div>
+              <div className="h-4 bg-gray-200 rounded mb-2"></div>
+              <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+            </div>
+          ))
+        ) : (
+          products.map(product => (
+            <Card key={product.id} className="bg-white border-0 shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-all">
+              <div className="p-4">
+                <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+                  <Package className="w-12 h-12 text-gray-300" />
+                </div>
+                {product.bestseller && (
+                  <Badge className="bg-[#e85a7b] text-xs mb-2">Bestseller</Badge>
+                )}
+                <h4 className="font-medium text-sm line-clamp-2">{product.name}</h4>
+                <p className="text-xs text-gray-500">{product.brand} • {product.unit}</p>
+                <div className="flex items-center gap-1 mt-1">
+                  <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                  <span className="text-xs text-gray-600">{product.rating}</span>
+                  <span className="text-xs text-gray-400">({product.reviews})</span>
+                </div>
+                <div className="flex items-center justify-between mt-3">
+                  <div>
+                    <p className="font-bold text-[#2d7a6d]">₹{product.price}</p>
+                    <p className="text-xs text-gray-400 line-through">₹{product.mrp}</p>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    onClick={() => addToCart(product)}
+                    className="bg-[#2d7a6d] hover:bg-[#245f55] rounded-full"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Cart Dialog */}
+      <Dialog open={showCart} onOpenChange={setShowCart}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Your Cart</DialogTitle>
+          </DialogHeader>
+          {cart.length === 0 ? (
+            <div className="text-center py-8">
+              <ShoppingCart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">Your cart is empty</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {cart.map(item => (
+                <div key={item.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                    <Package className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">{item.name}</p>
+                    <p className="text-xs text-gray-500">₹{item.price} × {item.quantity}</p>
+                  </div>
+                  <p className="font-bold">₹{item.price * item.quantity}</p>
+                </div>
+              ))}
+              <div className="border-t pt-4">
+                <div className="flex justify-between text-lg font-bold">
+                  <span>Total</span>
+                  <span className="text-[#2d7a6d]">₹{cartTotal}</span>
+                </div>
+                {cartTotal < 500 && (
+                  <p className="text-xs text-orange-500 mt-1">Add ₹{500 - cartTotal} more for free delivery</p>
+                )}
+              </div>
+              <Button className="w-full bg-[#2d7a6d]" onClick={() => toast.success('Order placed!')}>
+                Place Order
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
@@ -1017,14 +1485,6 @@ const DocumentsTab = ({ child }) => {
     }
   };
 
-  const documentTypes = [
-    { value: 'immunization_record', label: 'Immunization Record', icon: Syringe },
-    { value: 'medical_report', label: 'Medical Report', icon: FileText },
-    { value: 'school_form', label: 'School Form', icon: FileText },
-    { value: 'prescription', label: 'Prescription', icon: FileText },
-    { value: 'other', label: 'Other', icon: FileText }
-  ];
-
   const deleteDocument = async (docId) => {
     if (!window.confirm('Delete this document?')) return;
     try {
@@ -1039,12 +1499,12 @@ const DocumentsTab = ({ child }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mt-4">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Documents</h3>
-        <Button onClick={() => setShowUpload(true)} className="bg-gradient-to-r from-cyan-500 to-blue-500">
+        <Button onClick={() => setShowUpload(true)} className="bg-[#2d7a6d]">
           <Upload className="w-4 h-4 mr-2" />
-          Upload Document
+          Upload
         </Button>
       </div>
 
@@ -1052,29 +1512,25 @@ const DocumentsTab = ({ child }) => {
         {loading ? (
           <div className="col-span-2 text-center py-10">Loading...</div>
         ) : documents.length === 0 ? (
-          <Card className="col-span-2 bg-white/70 backdrop-blur border-0 p-8 text-center">
+          <Card className="col-span-2 bg-white border-0 p-8 text-center rounded-2xl">
             <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
             <p className="text-gray-500">No documents uploaded yet</p>
-            <p className="text-sm text-gray-400">Upload immunization records, medical reports, and more</p>
           </Card>
         ) : (
           documents.map((doc) => (
-            <Card key={doc.id} className="bg-white/70 backdrop-blur border-0 shadow-lg hover:shadow-xl transition-all">
+            <Card key={doc.id} className="bg-white border-0 shadow-lg rounded-2xl">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-cyan-500" />
+                  <div className="w-12 h-12 bg-[#2d7a6d]/10 rounded-xl flex items-center justify-center">
+                    <FileText className="w-6 h-6 text-[#2d7a6d]" />
                   </div>
                   <div className="flex-1">
                     <p className="font-medium">{doc.name}</p>
-                    <p className="text-xs text-gray-500">{doc.type.replace('_', ' ')} • {doc.file_type?.toUpperCase()}</p>
-                    <p className="text-xs text-gray-400">{new Date(doc.uploaded_at).toLocaleDateString()}</p>
+                    <p className="text-xs text-gray-500">{doc.type.replace('_', ' ')}</p>
                   </div>
-                  <div className="flex gap-2">
-                    <Button size="icon" variant="ghost" onClick={() => deleteDocument(doc.id)}>
-                      <Trash2 className="w-4 h-4 text-red-500" />
-                    </Button>
-                  </div>
+                  <Button size="icon" variant="ghost" onClick={() => deleteDocument(doc.id)}>
+                    <Trash2 className="w-4 h-4 text-red-500" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -1082,7 +1538,6 @@ const DocumentsTab = ({ child }) => {
         )}
       </div>
 
-      {/* Upload Dialog */}
       <Dialog open={showUpload} onOpenChange={setShowUpload}>
         <DialogContent>
           <DialogHeader>
@@ -1094,7 +1549,7 @@ const DocumentsTab = ({ child }) => {
               <Input 
                 value={newDoc.name}
                 onChange={(e) => setNewDoc({...newDoc, name: e.target.value})}
-                placeholder="e.g., Vaccination Certificate 2024"
+                placeholder="e.g., Vaccination Certificate"
               />
             </div>
             <div>
@@ -1104,232 +1559,24 @@ const DocumentsTab = ({ child }) => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {documentTypes.map(dt => (
-                    <SelectItem key={dt.value} value={dt.value}>{dt.label}</SelectItem>
-                  ))}
+                  <SelectItem value="immunization_record">Immunization Record</SelectItem>
+                  <SelectItem value="medical_report">Medical Report</SelectItem>
+                  <SelectItem value="school_form">School Form</SelectItem>
+                  <SelectItem value="prescription">Prescription</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label>File (PDF, JPG, PNG)</Label>
-              <Input 
-                type="file" 
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={handleFileChange}
-                className="mt-1"
-              />
-              {newDoc.fileName && (
-                <p className="text-sm text-green-600 mt-1">Selected: {newDoc.fileName}</p>
-              )}
+              <Label>File</Label>
+              <Input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileChange} />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowUpload(false)}>Cancel</Button>
-            <Button onClick={uploadDocument} disabled={uploading} className="bg-cyan-500">
+            <Button onClick={uploadDocument} disabled={uploading} className="bg-[#2d7a6d]">
               {uploading ? 'Uploading...' : 'Upload'}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-};
-
-// Health Log Tab Component
-const HealthLogTab = ({ child }) => {
-  const [entries, setEntries] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showAdd, setShowAdd] = useState(false);
-  const [newEntry, setNewEntry] = useState({
-    date: new Date().toISOString().split('T')[0],
-    type: 'symptom',
-    title: '',
-    description: '',
-    doctor_name: '',
-    medications: []
-  });
-
-  useEffect(() => {
-    fetchEntries();
-  }, [child.id]);
-
-  const fetchEntries = async () => {
-    try {
-      const response = await fetch(`${API}/api/alyne/health-log/${child.id}`);
-      const data = await response.json();
-      setEntries(data.entries || []);
-    } catch (error) {
-      console.error('Error fetching health log:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const addEntry = async () => {
-    if (!newEntry.title) {
-      toast.error('Please enter a title');
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API}/api/alyne/health-log/${child.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newEntry)
-      });
-      
-      if (response.ok) {
-        toast.success('Entry added!');
-        setShowAdd(false);
-        setNewEntry({ date: new Date().toISOString().split('T')[0], type: 'symptom', title: '', description: '', doctor_name: '', medications: [] });
-        fetchEntries();
-      }
-    } catch (error) {
-      toast.error('Failed to add entry');
-    }
-  };
-
-  const deleteEntry = async (entryId) => {
-    if (!window.confirm('Delete this entry?')) return;
-    try {
-      const response = await fetch(`${API}/api/alyne/health-log/${entryId}`, { method: 'DELETE' });
-      if (response.ok) {
-        toast.success('Entry deleted');
-        fetchEntries();
-      }
-    } catch (error) {
-      toast.error('Delete failed');
-    }
-  };
-
-  const entryTypes = [
-    { value: 'symptom', label: 'Symptom', icon: AlertTriangle, color: 'text-yellow-500 bg-yellow-100' },
-    { value: 'doctor_visit', label: 'Doctor Visit', icon: User, color: 'text-blue-500 bg-blue-100' },
-    { value: 'medication', label: 'Medication', icon: Heart, color: 'text-pink-500 bg-pink-100' },
-    { value: 'note', label: 'General Note', icon: FileText, color: 'text-gray-500 bg-gray-100' }
-  ];
-
-  const getTypeStyle = (type) => entryTypes.find(t => t.value === type) || entryTypes[3];
-
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Health Log</h3>
-        <Button onClick={() => setShowAdd(true)} className="bg-gradient-to-r from-cyan-500 to-blue-500">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Entry
-        </Button>
-      </div>
-
-      {/* Entry Types Quick Filter */}
-      <div className="flex gap-2 flex-wrap">
-        {entryTypes.map(type => (
-          <Badge key={type.value} variant="outline" className="px-3 py-1">
-            <type.icon className={`w-3 h-3 mr-1 ${type.color.split(' ')[0]}`} />
-            {type.label}
-          </Badge>
-        ))}
-      </div>
-
-      <div className="space-y-3">
-        {loading ? (
-          <div className="text-center py-10">Loading...</div>
-        ) : entries.length === 0 ? (
-          <Card className="bg-white/70 backdrop-blur border-0 p-8 text-center">
-            <Heart className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-            <p className="text-gray-500">No health log entries yet</p>
-            <p className="text-sm text-gray-400">Record symptoms, doctor visits, and medications</p>
-          </Card>
-        ) : (
-          entries.map((entry) => {
-            const typeStyle = getTypeStyle(entry.type);
-            return (
-              <Card key={entry.id} className="bg-white/70 backdrop-blur border-0 shadow-lg">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-4">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${typeStyle.color}`}>
-                      <typeStyle.icon className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-semibold">{entry.title}</p>
-                        <Badge variant="outline" className="text-xs">{typeStyle.label}</Badge>
-                      </div>
-                      {entry.description && <p className="text-sm text-gray-600 mt-1">{entry.description}</p>}
-                      {entry.doctor_name && <p className="text-xs text-blue-600 mt-1">Dr. {entry.doctor_name}</p>}
-                      <p className="text-xs text-gray-400 mt-2">{entry.date}</p>
-                    </div>
-                    <Button size="icon" variant="ghost" onClick={() => deleteEntry(entry.id)}>
-                      <Trash2 className="w-4 h-4 text-red-500" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })
-        )}
-      </div>
-
-      {/* Add Entry Dialog */}
-      <Dialog open={showAdd} onOpenChange={setShowAdd}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Health Log Entry</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Date</Label>
-                <Input 
-                  type="date" 
-                  value={newEntry.date}
-                  onChange={(e) => setNewEntry({...newEntry, date: e.target.value})}
-                />
-              </div>
-              <div>
-                <Label>Type</Label>
-                <Select value={newEntry.type} onValueChange={(v) => setNewEntry({...newEntry, type: v})}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {entryTypes.map(t => (
-                      <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div>
-              <Label>Title</Label>
-              <Input 
-                value={newEntry.title}
-                onChange={(e) => setNewEntry({...newEntry, title: e.target.value})}
-                placeholder="e.g., Mild fever, Regular checkup"
-              />
-            </div>
-            <div>
-              <Label>Description (optional)</Label>
-              <Input 
-                value={newEntry.description}
-                onChange={(e) => setNewEntry({...newEntry, description: e.target.value})}
-                placeholder="Additional details..."
-              />
-            </div>
-            {newEntry.type === 'doctor_visit' && (
-              <div>
-                <Label>Doctor Name</Label>
-                <Input 
-                  value={newEntry.doctor_name}
-                  onChange={(e) => setNewEntry({...newEntry, doctor_name: e.target.value})}
-                  placeholder="Doctor's name"
-                />
-              </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAdd(false)}>Cancel</Button>
-            <Button onClick={addEntry} className="bg-cyan-500">Add Entry</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
