@@ -98,11 +98,13 @@ const Home = () => {
       accentColor: 'border-transparent',
       path: '/alyne',
       logoBg: '',
-      customBg: '#0d9488',
-      hideDecoration: true,
+      customBg: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%)',
+      hideDecoration: false,
       fillCard: false,
       tallerCard: true,
-      logoScale: 1.5
+      logoScale: 1.5,
+      isGradient: true,
+      hasSparkles: true
     }
   ];
 
