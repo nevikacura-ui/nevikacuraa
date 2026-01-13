@@ -163,8 +163,8 @@ const FEATURE_CATEGORIES = [
   },
   {
     id: 'skin',
-    title: 'Skin & Hair',
-    subtitle: 'Care tips',
+    title: 'Skin & Hair Care',
+    subtitle: 'Rashes, eczema, nails',
     icon: Scissors,
     color: 'bg-gradient-to-br from-teal-400 to-cyan-500',
     content: {
