@@ -8286,6 +8286,13 @@ try:
 except Exception as e:
     logger.warning(f"Could not load reminders router: {e}")
 
+try:
+    from routes.community import router as community_router
+    app.include_router(community_router, prefix="/api")
+    logger.info("Community router loaded")
+except Exception as e:
+    logger.warning(f"Could not load community router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
