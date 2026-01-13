@@ -392,7 +392,7 @@ const Reminders = () => {
             ) : (
               <div className="space-y-3">
                 {reminders.map(reminder => (
-                  <ReminderCard key={reminder.id} reminder={reminder} />
+                  <ReminderCard key={reminder.id} reminder={reminder} onCancel={handleCancelReminder} />
                 ))}
               </div>
             )}
