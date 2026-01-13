@@ -351,9 +351,9 @@ const Home = () => {
 };
 
 const AuthModal = ({ open, onClose }) => {
-  const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login } = useAuth();
+  const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login, fetchUser } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState('email'); // email, otp, register, password-login
+  const [step, setStep] = useState('email'); // email, otp, register, password-login, interests
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -364,8 +364,18 @@ const AuthModal = ({ open, onClose }) => {
   const [verificationToken, setVerificationToken] = useState('');
   const [passwordLogin, setPasswordLogin] = useState({ email: '', password: '' });
   const [registerForm, setRegisterForm] = useState({ name: '', phone: '', password: '' });
+  const [selectedInterests, setSelectedInterests] = useState([]);
   const otpRefs = React.useRef([]);
   const API = process.env.REACT_APP_BACKEND_URL;
+
+  // Available interests
+  const availableInterests = [
+    { id: 'evara', name: 'Evara', description: "Women's Wellness & Care", icon: '🌸', color: 'pink' },
+    { id: 'glydex', name: 'Glydex', description: 'Diabetes Care Portal', icon: '💚', color: 'teal' },
+    { id: 'diagyn', name: 'DiaGyn Healthcare', description: 'Doctor Appointments', icon: '👨‍⚕️', color: 'blue' },
+    { id: 'proton', name: 'Proton Diagnostics', description: 'Lab Tests & Checkups', icon: '🔬', color: 'indigo' },
+    { id: 'pharmacy', name: 'Orange Pharmacy', description: 'Medicine Orders', icon: '💊', color: 'orange' },
+  ];
 
   // Reset state when modal closes
   React.useEffect(() => {
@@ -380,6 +390,7 @@ const AuthModal = ({ open, onClose }) => {
       setVerificationToken('');
       setPasswordLogin({ email: '', password: '' });
       setRegisterForm({ name: '', phone: '', password: '' });
+      setSelectedInterests([]);
     }
   }, [open]);
 
