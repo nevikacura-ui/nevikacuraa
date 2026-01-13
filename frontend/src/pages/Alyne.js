@@ -328,7 +328,7 @@ const Alyne = () => {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div className="h-12 px-4 py-1 rounded-xl flex items-center" style={{background: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%)'}}>
-                <img src={ALYNE_LOGO} alt="ALYNE" className="h-10 w-auto" />
+                <img src={ALYNE_LOGO} alt="ALYNE" className="h-10 w-auto mix-blend-multiply" />
               </div>
             </div>
             
