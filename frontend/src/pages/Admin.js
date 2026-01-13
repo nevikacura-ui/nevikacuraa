@@ -134,6 +134,11 @@ const Admin = () => {
   const [addStaffLoading, setAddStaffLoading] = useState(false);
   const [staffLoading, setStaffLoading] = useState(false);
 
+  // Analytics
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsDays, setAnalyticsDays] = useState(7);
+
   const doctors = ['Dr. Neha Patel', 'Dr. Vikas Jha'];
 
   // Check for existing admin session
