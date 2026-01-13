@@ -25,6 +25,7 @@ import EmergencyServices from '@/pages/EmergencyServices';
 import HealthRiskAssessment from '@/pages/HealthRiskAssessment';
 import MedicationTracker from '@/pages/MedicationTracker';
 import DoctorProfiles from '@/pages/DoctorProfiles';
+import Billing from '@/pages/Billing';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
