@@ -195,6 +195,54 @@ const HealthPackages = () => {
           </div>
         ) : (
           <div className="space-y-8">
+            {/* Proton Health Packages - Featured */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <FlaskConical className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold">Proton Health Packages</h2>
+                  <p className="text-xs text-gray-500">Premium diagnostic packages by Proton Diagnostics</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {PROTON_PACKAGES.map((pkg) => (
+                  <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-indigo-300">
+                    <div className={`bg-gradient-to-r ${categoryColors[pkg.category] || 'from-indigo-500 to-purple-600'} p-4 text-white`}>
+                      <div className="flex items-center justify-between">
+                        <pkg.icon className="w-5 h-5" />
+                        <span className="bg-white/20 text-xs px-2 py-1 rounded">
+                          {pkg.testsCount}
+                        </span>
+                      </div>
+                      <h3 className="font-bold text-lg mt-2">{pkg.name}</h3>
+                    </div>
+                    <CardContent className="p-4">
+                      <p className="text-sm text-gray-600 mb-3">{pkg.description}</p>
+                      
+                      {/* Tests Preview */}
+                      <div className="mb-3">
+                        <p className="text-xs font-medium text-gray-500 mb-2">Includes:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {pkg.tests.slice(0, 4).map((test, idx) => (
+                            <span key={idx} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">{test}</span>
+                          ))}
+                          {pkg.tests.length > 4 && (
+                            <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">+{pkg.tests.length - 4} more</span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <Button className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700" onClick={() => navigate('/proton')}>
+                        View Details
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
             {/* Recommended Packages */}
             {recommendedPackages.length > 0 && (
               <div>
