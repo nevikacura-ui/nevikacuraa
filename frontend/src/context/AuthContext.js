@@ -305,6 +305,12 @@ export const AuthProvider = ({ children }) => {
   };
   
   const refreshUser = fetchUser;
+  
+  // Google OAuth login
+  const loginWithGoogle = () => {
+    const redirectUrl = window.location.origin + '/auth/callback';
+    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+  };
 
   return (
     <AuthContext.Provider value={{ 
@@ -312,7 +318,7 @@ export const AuthProvider = ({ children }) => {
       biometricAvailable, biometricEnabled,
       login, register, logout,
       sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp,
-      fetchUser: refreshUser,
+      loginWithGoogle, fetchUser: refreshUser,
       registerBiometric, loginWithBiometric, removeBiometric,
       getTrustedDevices, removeTrustedDevice
     }}>
