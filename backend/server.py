@@ -2024,6 +2024,109 @@ async def submit_appointment_feedback(feedback_token: str, feedback: Appointment
         "rating": feedback.rating
     }
 
+# ==================== INTERNAL STAFF/DOCTOR FEEDBACK (NOT PUBLIC) ====================
+
+class InternalFeedbackCreate(BaseModel):
+    appointment_id: str
+    staff_rating: Optional[int] = None  # 1-5 rating for clinic staff
+    doctor_rating: Optional[int] = None  # 1-5 rating for doctor
+    staff_comment: Optional[str] = None
+    doctor_comment: Optional[str] = None
+    overall_experience: Optional[str] = None  # positive, neutral, negative
+    would_recommend: Optional[bool] = None
+
+@api_router.post("/appointments/{appointment_id}/internal-feedback")
+async def submit_internal_feedback(appointment_id: str, feedback: InternalFeedbackCreate, staff = Depends(verify_staff)):
+    """Submit internal feedback for staff and doctor - for internal survey purposes only (not shown to public)"""
+    
+    # Validate ratings if provided
+    if feedback.staff_rating and not 1 <= feedback.staff_rating <= 5:
+        raise HTTPException(status_code=400, detail="Staff rating must be between 1 and 5")
+    if feedback.doctor_rating and not 1 <= feedback.doctor_rating <= 5:
+        raise HTTPException(status_code=400, detail="Doctor rating must be between 1 and 5")
+    
+    # Find appointment
+    appointment = await db.appointments.find_one(
+        {"id": appointment_id},
+        {"_id": 0}
+    )
+    
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    # Store internal feedback (separate from patient feedback)
+    feedback_doc = {
+        "id": str(uuid.uuid4()),
+        "appointment_id": appointment_id,
+        "doctor": appointment.get("doctor"),
+        "clinic": appointment.get("clinic"),
+        "patient_name": appointment.get("patient_name"),
+        "staff_rating": feedback.staff_rating,
+        "doctor_rating": feedback.doctor_rating,
+        "staff_comment": feedback.staff_comment,
+        "doctor_comment": feedback.doctor_comment,
+        "overall_experience": feedback.overall_experience,
+        "would_recommend": feedback.would_recommend,
+        "submitted_by": staff.get("username"),
+        "submitted_at": datetime.now(timezone.utc).isoformat(),
+        "is_internal": True  # Flag to indicate this is internal feedback
+    }
+    
+    await db.internal_feedback.insert_one(feedback_doc)
+    
+    # Update appointment with internal feedback flag
+    await db.appointments.update_one(
+        {"id": appointment_id},
+        {"$set": {"has_internal_feedback": True}}
+    )
+    
+    logger.info(f"Internal feedback submitted for appointment {appointment_id} by {staff.get('username')}")
+    
+    return {"success": True, "message": "Internal feedback recorded"}
+
+@api_router.get("/staff/internal-feedback/summary")
+async def get_internal_feedback_summary(staff = Depends(verify_staff)):
+    """Get summary of internal feedback - for admin/management view only"""
+    
+    # Aggregate feedback stats
+    feedback_list = await db.internal_feedback.find({}, {"_id": 0}).to_list(500)
+    
+    if not feedback_list:
+        return {
+            "total_feedback": 0,
+            "avg_staff_rating": 0,
+            "avg_doctor_rating": 0,
+            "by_doctor": {},
+            "by_clinic": {}
+        }
+    
+    total = len(feedback_list)
+    staff_ratings = [f["staff_rating"] for f in feedback_list if f.get("staff_rating")]
+    doctor_ratings = [f["doctor_rating"] for f in feedback_list if f.get("doctor_rating")]
+    
+    # Group by doctor
+    by_doctor = {}
+    for f in feedback_list:
+        doc = f.get("doctor", "Unknown")
+        if doc not in by_doctor:
+            by_doctor[doc] = {"count": 0, "ratings": []}
+        by_doctor[doc]["count"] += 1
+        if f.get("doctor_rating"):
+            by_doctor[doc]["ratings"].append(f["doctor_rating"])
+    
+    for doc in by_doctor:
+        ratings = by_doctor[doc]["ratings"]
+        by_doctor[doc]["avg_rating"] = round(sum(ratings) / len(ratings), 1) if ratings else 0
+    
+    return {
+        "total_feedback": total,
+        "avg_staff_rating": round(sum(staff_ratings) / len(staff_ratings), 1) if staff_ratings else 0,
+        "avg_doctor_rating": round(sum(doctor_ratings) / len(doctor_ratings), 1) if doctor_ratings else 0,
+        "by_doctor": by_doctor,
+        "positive_experiences": len([f for f in feedback_list if f.get("overall_experience") == "positive"]),
+        "would_recommend_count": len([f for f in feedback_list if f.get("would_recommend")])
+    }
+
 @api_router.get("/appointments", response_model=List[Appointment])
 async def get_appointments(user = Depends(get_current_user)):
     if not user:
