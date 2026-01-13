@@ -469,31 +469,63 @@ async def get_loyalty_faq():
     }
 
 @router.get("/leaderboard")
-async def get_loyalty_leaderboard(limit: int = 10):
-    """Get top customers leaderboard"""
+async def get_loyalty_leaderboard(limit: int = 10, period: str = "all"):
+    """
+    Get top customers leaderboard
+    period: 'all' (lifetime), 'weekly' (last 7 days), 'monthly' (last 30 days)
+    """
     db = get_db()
     
-    # Aggregate top customers by points
-    pipeline = [
-        {"$sort": {"total_points": -1}},
-        {"$limit": limit},
-        {"$project": {
-            "_id": 0,
-            "user_id": 1,
-            "total_points": 1,
-            "gold_visits": 1,
-            "total_orders": 1,
-            "total_spent": 1
-        }}
-    ]
+    # Calculate date filter based on period
+    date_filter = {}
+    period_label = "All Time"
+    if period == "weekly":
+        date_filter = {"created_at": {"$gte": (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()}}
+        period_label = "This Week"
+    elif period == "monthly":
+        date_filter = {"created_at": {"$gte": (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()}}
+        period_label = "This Month"
     
-    top_customers_raw = await db.user_loyalty.aggregate(pipeline).to_list(limit)
+    if period in ["weekly", "monthly"]:
+        # For time-based leaderboard, aggregate from transactions
+        pipeline = [
+            {"$match": date_filter},
+            {"$group": {
+                "_id": "$user_id",
+                "total_points": {"$sum": "$points_earned"},
+                "total_orders": {"$sum": 1},
+                "total_spent": {"$sum": "$amount"}
+            }},
+            {"$sort": {"total_points": -1}},
+            {"$limit": limit}
+        ]
+        top_customers_raw = await db.loyalty_transactions.aggregate(pipeline).to_list(limit)
+        
+        # Transform the _id field to user_id for consistency
+        for customer in top_customers_raw:
+            customer["user_id"] = customer.pop("_id")
+            customer["gold_visits"] = 0  # Not tracked in period view
+    else:
+        # All-time leaderboard from user_loyalty collection
+        pipeline = [
+            {"$sort": {"total_points": -1}},
+            {"$limit": limit},
+            {"$project": {
+                "_id": 0,
+                "user_id": 1,
+                "total_points": 1,
+                "gold_visits": 1,
+                "total_orders": 1,
+                "total_spent": 1
+            }}
+        ]
+        top_customers_raw = await db.user_loyalty.aggregate(pipeline).to_list(limit)
     
     # Enrich with user names (anonymized for privacy)
     leaderboard = []
     for idx, customer in enumerate(top_customers_raw):
         # Get user name
-        user = await db.users.find_one({"id": customer["user_id"]}, {"_id": 0, "name": 1})
+        user = await db.users.find_one({"id": customer.get("user_id")}, {"_id": 0, "name": 1})
         name = user.get("name", "Anonymous") if user else "Anonymous"
         
         # Anonymize name: "John Doe" -> "J***n D**e"
@@ -537,6 +569,8 @@ async def get_loyalty_leaderboard(limit: int = 10):
     
     return {
         "leaderboard": leaderboard,
+        "period": period,
+        "period_label": period_label,
         "last_updated": datetime.now(timezone.utc).isoformat(),
         "total_participants": await db.user_loyalty.count_documents({})
     }
