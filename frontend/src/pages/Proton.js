@@ -453,36 +453,12 @@ const Proton = () => {
         patient_email: patientInfo.email || null
       };
 
-      if (user) {
-        await axios.post(`${API}/diagnostics`, orderData, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-      }
-
-      const paymentText = paymentMethod === 'cod' ? 'Cash on Visit' : 'QR Pay / Card on Visit';
-      const testsList = selectedTests.map(t => `• ${t}`).join('\n');
+      // Save to backend (sends SMS to patient and Proton staff)
+      await axios.post(`${API}/diagnostics`, orderData, {
+        headers: user ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {}
+      });
       
-      const messageLines = [
-        '*New Proton Diagnostics Booking*',
-        '',
-        '*Tests Requested:*',
-        testsList,
-        '',
-        `*Preferred Date:* ${format(preferredDate, 'dd MMM yyyy')}`,
-        `*Payment Method:* ${paymentText}`,
-        patientInfo.address ? `*Address:* ${patientInfo.address}` : '',
-        prescriptionUrl ? `*Prescription:* ${prescriptionUrl}` : '',
-        '',
-        '*Patient Details:*',
-        `Name: ${patientInfo.name}`,
-        `Mobile: ${patientInfo.phone} (Verified)`,
-        patientInfo.email ? `Email: ${patientInfo.email}` : ''
-      ].filter(Boolean).join('\n');
-      
-      const encodedMessage = encodeURIComponent(messageLines);
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
-      
-      toast.success('Booking sent via WhatsApp!');
+      toast.success('Test booking confirmed! SMS sent to you and Proton Diagnostics.');
       
       setTimeout(() => {
         navigate('/');
