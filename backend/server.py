@@ -5421,6 +5421,37 @@ async def get_medicine_count():
     """Get total medicine count in inventory"""
     return {"total": len(MEDICINE_INVENTORY)}
 
+@api_router.get("/pharmacy/frequently-ordered")
+async def get_frequently_ordered(user = Depends(get_current_user_optional)):
+    """Get user's frequently ordered medicines based on past orders"""
+    if not user:
+        return {"medicines": []}
+    
+    try:
+        # Aggregate medicines from user's past pharmacy orders
+        orders = await db.pharmacy_orders.find(
+            {"patient_email": user.get("email")},
+            {"_id": 0, "medicines": 1}
+        ).to_list(50)
+        
+        # Count medicine frequency
+        medicine_counts = {}
+        for order in orders:
+            for med in order.get("medicines", []):
+                name = med.get("name", "")
+                if name:
+                    if name not in medicine_counts:
+                        medicine_counts[name] = {"name": name, "form": med.get("form", "Tablet"), "order_count": 0}
+                    medicine_counts[name]["order_count"] += 1
+        
+        # Sort by order count and return top 10
+        sorted_meds = sorted(medicine_counts.values(), key=lambda x: x["order_count"], reverse=True)[:10]
+        
+        return {"medicines": sorted_meds}
+    except Exception as e:
+        logger.error(f"Error fetching frequently ordered: {e}")
+        return {"medicines": []}
+
 @api_router.get("/pharmacy/all")
 async def get_all_medicines(page: int = 1, per_page: int = 50, search: Optional[str] = None):
     """Get all medicines with pagination for scrollable list"""
