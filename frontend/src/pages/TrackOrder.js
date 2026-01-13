@@ -315,6 +315,8 @@ const TrackOrder = () => {
                             {order.status}
                           </span>
                         </div>
+                        {/* Order Timeline */}
+                        <OrderTimeline status={order.status} type="diagnostic" />
                         {order.report_url && (
                           <a 
                             href={order.report_url} 
