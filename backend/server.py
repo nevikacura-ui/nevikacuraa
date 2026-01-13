@@ -1854,6 +1854,13 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
         "tests": order.tests
     })
     
+    # Send SMS notification to Proton Diagnostics staff
+    await notify_staff_new_order({
+        "id": order.id,
+        "patient_name": order.patient_name,
+        "test_name": ", ".join(order.tests[:2]) + ("..." if len(order.tests) > 2 else "")
+    }, "proton")
+    
     return order
 
 @api_router.get("/diagnostics", response_model=List[DiagnosticOrder])
