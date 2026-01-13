@@ -542,6 +542,33 @@ const Pharmacy = () => {
         </div>
       </header>
 
+      {/* Loyalty Program Banner */}
+      <div 
+        className="bg-gradient-to-r from-orange-500 to-amber-500 text-white cursor-pointer hover:from-orange-600 hover:to-amber-600 transition-colors"
+        onClick={() => { setShowLoyaltyInfo(true); fetchLoyaltyProgramInfo(); }}
+        data-testid="loyalty-banner"
+      >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/20 rounded-full p-2">
+              <Crown className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="font-semibold text-sm sm:text-base">Orange Pharmacy Loyalty Program</p>
+              <p className="text-xs opacity-90">Earn points on every purchase • Bronze | Silver | Gold tiers</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {user && loyaltyPoints > 0 && (
+              <div className="bg-white/20 rounded-full px-3 py-1 text-sm font-semibold">
+                {loyaltyPoints} pts
+              </div>
+            )}
+            <ChevronRight className="w-5 h-5" />
+          </div>
+        </div>
+      </div>
+
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* STEP 1: Add Medicines */}
         {currentStep === 1 && (
