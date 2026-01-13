@@ -10,10 +10,68 @@ import axios from 'axios';
 import { 
   ArrowLeft, Heart, Check, Clock, FlaskConical, Home, 
   Loader2, Star, Percent, ChevronRight, Baby, User, 
-  Activity, Stethoscope, ThermometerSun, Users
+  Activity, Stethoscope, ThermometerSun, Users, Shield
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL + '/api';
+
+// Proton Health Packages (Featured)
+const PROTON_PACKAGES = [
+  {
+    id: 'proton-basic',
+    name: 'Proton Basic',
+    description: 'Essential health screening for routine checkup',
+    tests: ['Complete Blood Count', 'Blood Sugar Fasting', 'Lipid Profile', 'Liver Function Test', 'Kidney Function Test', 'Thyroid Profile', 'Urine Routine'],
+    testsCount: '40+ Tests',
+    category: 'general',
+    icon: Activity
+  },
+  {
+    id: 'proton-total',
+    name: 'Proton Total',
+    description: 'Comprehensive full body health checkup',
+    tests: ['Complete Blood Count', 'HbA1c', 'Lipid Profile', 'Liver Function', 'Kidney Function', 'Thyroid Profile', 'Vitamin D', 'Vitamin B12', 'Iron Studies', 'Uric Acid'],
+    testsCount: '70+ Tests',
+    category: 'general',
+    icon: Heart
+  },
+  {
+    id: 'proton-xclusive',
+    name: 'Proton Xclusive',
+    description: 'Premium comprehensive health assessment',
+    tests: ['Complete Blood Count', 'HbA1c', 'Lipid Profile', 'Liver Function', 'Kidney Function', 'Thyroid Complete', 'Vitamin Panel', 'Tumor Markers', 'Cardiac Risk Markers', 'Hormone Panel'],
+    testsCount: '90+ Tests',
+    category: 'general',
+    icon: Shield
+  },
+  {
+    id: 'diabetic-care',
+    name: 'Diabetic Care',
+    description: 'Complete diabetes monitoring package',
+    tests: ['Fasting Blood Sugar', 'Post Prandial Blood Sugar', 'HbA1c', 'Fasting Insulin', 'Kidney Function', 'Lipid Profile', 'Urine Microalbumin'],
+    testsCount: '35+ Tests',
+    category: 'diabetes',
+    icon: ThermometerSun
+  },
+  {
+    id: 'womens-wellness',
+    name: "Women's Wellness",
+    description: 'Complete health checkup for women',
+    tests: ['Complete Blood Count', 'Thyroid Profile', 'Vitamin D', 'Vitamin B12', 'Iron Studies', 'Calcium', 'Pap Smear', 'Mammography'],
+    testsCount: '50+ Tests',
+    category: 'women',
+    icon: Heart
+  },
+  {
+    id: 'cardiac-profile',
+    name: 'Cardiac Profile',
+    description: 'Heart health assessment package',
+    tests: ['Lipid Profile', 'Apolipoprotein', 'hs-CRP', 'Homocysteine', 'ECG', 'Echo', 'Treadmill Test'],
+    testsCount: '30+ Tests',
+    category: 'cardiac',
+    icon: Activity
+  }
+];
 
 const HealthPackages = () => {
   const navigate = useNavigate();
