@@ -609,6 +609,7 @@ const CategoryDetail = ({ category, region, child, onBack, user }) => {
   if (category.id === 'school_vaccines') return <SchoolVaccinesSection onBack={onBack} />;
   if (category.id === 'wic_program') return <WICProgramSection onBack={onBack} />;
   if (category.id === 'safety_guide') return <SafetyGuideSection onBack={onBack} />;
+  if (category.id === 'pediatrician_finder') return <PediatricianFinderSection onBack={onBack} />;
   
   // Common sections
   if (category.id === 'dev_screening') return <DevScreeningSection onBack={onBack} />;
