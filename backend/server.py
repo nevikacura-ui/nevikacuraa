@@ -4262,29 +4262,155 @@ async def get_admin_appointments(
 
 @api_router.post("/admin/appointments/cancel")
 async def cancel_appointments(request: CancelAppointmentsRequest, admin = Depends(verify_admin)):
-    """Cancel appointments for a doctor (session, day, or date range)"""
+    """Cancel appointments for a doctor (session, day, range, or session_range)
+    
+    Cancel Types:
+    - 'session': Cancel a specific time slot on a date
+    - 'day': Cancel entire day
+    - 'range': Cancel all appointments in a date range
+    - 'bulk_session': Cancel morning (11-2) or evening (6-10) on a specific date
+    - 'session_range': Cancel from dateA/sessionA to dateB/sessionB
+    """
+    # Morning slots: 11:00 AM - 2:00 PM, Evening slots: 6:00 PM - 10:00 PM
+    MORNING_SLOTS = ["11:00 AM", "11:10 AM", "11:20 AM", "11:30 AM", "11:40 AM", "11:50 AM",
+                     "12:00 PM", "12:10 PM", "12:20 PM", "12:30 PM", "12:40 PM", "12:50 PM",
+                     "1:00 PM", "1:10 PM", "1:20 PM", "1:30 PM", "1:40 PM", "1:50 PM", "2:00 PM"]
+    EVENING_SLOTS = ["6:00 PM", "6:10 PM", "6:20 PM", "6:30 PM", "6:40 PM", "6:50 PM",
+                     "7:00 PM", "7:10 PM", "7:20 PM", "7:30 PM", "7:40 PM", "7:50 PM",
+                     "8:00 PM", "8:10 PM", "8:20 PM", "8:30 PM", "8:40 PM", "8:50 PM",
+                     "9:00 PM", "9:10 PM", "9:20 PM", "9:30 PM", "9:40 PM", "9:50 PM", "10:00 PM"]
+    
     query = {
         "doctor": request.doctor,
-        "clinic": request.clinic
+        "clinic": request.clinic,
+        "status": {"$in": ["pending", "Booked", "In Clinic"]}  # Only cancel active appointments
     }
     
     if request.cancel_type == "session":
+        # Cancel specific time slot on a date
         if not request.date or not request.time:
             raise HTTPException(status_code=400, detail="Date and time required for session cancellation")
         query["date"] = request.date
         query["time"] = request.time
         
     elif request.cancel_type == "day":
+        # Cancel entire day
         if not request.date:
             raise HTTPException(status_code=400, detail="Date required for day cancellation")
         query["date"] = request.date
         
+    elif request.cancel_type == "bulk_session":
+        # Cancel morning (11-2) or evening (6-10) session on a specific date
+        if not request.date or not request.session:
+            raise HTTPException(status_code=400, detail="Date and session (morning/evening) required")
+        query["date"] = request.date
+        slots = MORNING_SLOTS if request.session == "morning" else EVENING_SLOTS
+        query["time"] = {"$in": slots}
+        
     elif request.cancel_type == "range":
+        # Cancel all appointments in date range
         if not request.start_date or not request.end_date:
             raise HTTPException(status_code=400, detail="Start and end dates required for range cancellation")
         query["date"] = {"$gte": request.start_date, "$lte": request.end_date}
+        
+    elif request.cancel_type == "session_range":
+        # Cancel from dateA/sessionA to dateB/sessionB
+        if not request.start_date or not request.end_date:
+            raise HTTPException(status_code=400, detail="Start and end dates required for session_range")
+        if not request.start_session or not request.end_session:
+            raise HTTPException(status_code=400, detail="Start and end sessions (morning/evening) required")
+        
+        # Build complex query for session range
+        # This requires checking each date individually
+        appointments_to_cancel = []
+        current_date = datetime.strptime(request.start_date, "%Y-%m-%d")
+        end_date = datetime.strptime(request.end_date, "%Y-%m-%d")
+        
+        while current_date <= end_date:
+            date_str = current_date.strftime("%Y-%m-%d")
+            
+            if date_str == request.start_date:
+                # First day: only cancel from start_session onwards
+                if request.start_session == "morning":
+                    slots = MORNING_SLOTS + EVENING_SLOTS
+                else:  # evening
+                    slots = EVENING_SLOTS
+            elif date_str == request.end_date:
+                # Last day: only cancel up to end_session
+                if request.end_session == "morning":
+                    slots = MORNING_SLOTS
+                else:  # evening
+                    slots = MORNING_SLOTS + EVENING_SLOTS
+            else:
+                # Middle days: cancel all
+                slots = MORNING_SLOTS + EVENING_SLOTS
+            
+            day_query = {
+                "doctor": request.doctor,
+                "clinic": request.clinic,
+                "date": date_str,
+                "time": {"$in": slots},
+                "status": {"$in": ["pending", "Booked", "In Clinic"]}
+            }
+            
+            day_appointments = await db.appointments.find(day_query, {"_id": 0}).to_list(100)
+            appointments_to_cancel.extend(day_appointments)
+            
+            # Update these appointments
+            if day_appointments:
+                await db.appointments.update_many(
+                    day_query,
+                    {"$set": {"status": "cancelled", "cancellation_reason": request.reason}}
+                )
+            
+            current_date += timedelta(days=1)
+        
+        if not appointments_to_cancel:
+            return {
+                "success": True,
+                "cancelled_count": 0,
+                "message": "No appointments found matching the criteria"
+            }
+        
+        # Send notifications (same as below)
+        cancelled_list = "<br>".join([
+            f"• {a['patient_name']} - {a['date']} at {a['time']}" 
+            for a in appointments_to_cancel[:20]
+        ])
+        
+        email_html = f"""
+        <h2>⚠️ Appointments Cancelled - {request.doctor}</h2>
+        <p><strong>Reason:</strong> {request.reason}</p>
+        <p><strong>Clinic:</strong> {request.clinic}</p>
+        <p><strong>Period:</strong> {request.start_date} ({request.start_session}) to {request.end_date} ({request.end_session})</p>
+        <p><strong>Total Cancelled:</strong> {len(appointments_to_cancel)}</p>
+        <h3>Affected Patients:</h3>
+        <p>{cancelled_list}</p>
+        """
+        await send_email_notification(f"Appointments Cancelled - {request.doctor}", email_html)
+        
+        # Send SMS to affected patients
+        for appt in appointments_to_cancel:
+            if appt.get('patient_phone'):
+                cancel_msg = f"""DiaGyn - Appointment Cancelled
+
+Dear {appt.get('patient_name')},
+Your appointment on {appt.get('date')} at {appt.get('time')} with {request.doctor} has been cancelled.
+
+Reason: {request.reason}
+
+Please reschedule at your convenience.
+Call: 9403890429"""
+                await send_sms_notification(appt.get('patient_phone'), cancel_msg)
+        
+        return {
+            "success": True,
+            "cancelled_count": len(appointments_to_cancel),
+            "message": f"Successfully cancelled {len(appointments_to_cancel)} appointment(s)",
+            "cancelled_appointments": appointments_to_cancel
+        }
     else:
-        raise HTTPException(status_code=400, detail="Invalid cancel_type. Use 'session', 'day', or 'range'")
+        raise HTTPException(status_code=400, detail="Invalid cancel_type. Use 'session', 'day', 'range', 'bulk_session', or 'session_range'")
     
     # Get appointments to be cancelled
     appointments_to_cancel = await db.appointments.find(query, {"_id": 0}).to_list(500)
