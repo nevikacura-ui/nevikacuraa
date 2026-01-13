@@ -650,11 +650,6 @@ const AuthModal = ({ open, onClose }) => {
     }
   };
   
-  // Handle Google login
-  const handleGoogleLogin = () => {
-    loginWithGoogle();
-  };
-  
   // Handle Biometric login
   const handleBiometricLogin = async () => {
     setLoading(true);
