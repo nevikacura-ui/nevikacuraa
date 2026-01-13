@@ -313,6 +313,47 @@ const Home = () => {
           </div>
         </div>
 
+        {/* Proton Health Packages Section */}
+        <div className="mt-12">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800">Proton Health Packages</h2>
+              <p className="text-sm text-gray-500">Comprehensive diagnostic packages for your family</p>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate('/proton')}
+              className="text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+            >
+              View All <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+            {[
+              { name: 'Proton Basic', icon: Activity, color: 'bg-blue-500', tests: '40+ Tests', desc: 'Essential health screening' },
+              { name: 'Proton Total', icon: Heart, color: 'bg-indigo-500', tests: '70+ Tests', desc: 'Complete body checkup' },
+              { name: 'Proton Xclusive', icon: Shield, color: 'bg-purple-500', tests: '90+ Tests', desc: 'Premium comprehensive' },
+              { name: 'Diabetic Care', icon: ThermometerSun, color: 'bg-orange-500', tests: '35+ Tests', desc: 'Diabetes monitoring' },
+              { name: "Women's Wellness", icon: Heart, color: 'bg-pink-500', tests: '50+ Tests', desc: 'Complete women health' },
+              { name: 'Cardiac Profile', icon: Activity, color: 'bg-red-500', tests: '30+ Tests', desc: 'Heart health checkup' },
+            ].map((pkg, idx) => (
+              <div 
+                key={idx}
+                onClick={() => navigate('/proton')}
+                className="group p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-lg transition-all cursor-pointer hover:border-indigo-200"
+              >
+                <div className={`w-10 h-10 ${pkg.color} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+                  <pkg.icon className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="font-medium text-gray-800 text-sm">{pkg.name}</h3>
+                <p className="text-xs text-gray-500 mt-1">{pkg.tests}</p>
+                <p className="text-xs text-indigo-600 mt-1">{pkg.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* More Features Section */}
         {user && (
           <div className="mt-12">
