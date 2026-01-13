@@ -2903,7 +2903,7 @@ const Evara = () => {
             <div className="space-y-4">
               {/* Category Selection */}
               {!selectedCommunityCategory ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {WOMEN_HEALTH_COMMUNITY.categories.map((cat) => (
                     <Card 
                       key={cat.id} 
@@ -2911,13 +2911,19 @@ const Evara = () => {
                       onClick={() => setSelectedCommunityCategory(cat)}
                     >
                       <CardContent className="p-4 text-center">
-                        <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-green-100 flex items-center justify-center">
-                          {cat.icon === 'heart' && <Heart className="w-6 h-6 text-green-600" />}
-                          {cat.icon === 'baby' && <Baby className="w-6 h-6 text-green-600" />}
+                        <div className={`w-12 h-12 mx-auto mb-2 rounded-full flex items-center justify-center ${
+                          cat.id === 'pregnancy' ? 'bg-pink-100' :
+                          cat.id === 'menopause' ? 'bg-purple-100' :
+                          cat.id === 'pms_pcos' ? 'bg-rose-100' :
+                          'bg-green-100'
+                        }`}>
+                          {cat.icon === 'heart' && <Heart className={`w-6 h-6 ${cat.id === 'pms_pcos' ? 'text-rose-600' : 'text-green-600'}`} />}
+                          {cat.icon === 'baby' && <Baby className="w-6 h-6 text-pink-600" />}
                           {cat.icon === 'brain' && <Sparkles className="w-6 h-6 text-green-600" />}
                           {cat.icon === 'apple' && <Apple className="w-6 h-6 text-green-600" />}
+                          {cat.icon === 'flower' && <Flower2 className="w-6 h-6 text-purple-600" />}
                         </div>
-                        <h4 className="font-medium text-gray-800">{cat.name}</h4>
+                        <h4 className="font-medium text-gray-800 text-sm">{cat.name}</h4>
                         <p className="text-xs text-gray-500">{cat.tips.length} tips, {cat.faqs.length} FAQs</p>
                       </CardContent>
                     </Card>
