@@ -305,12 +305,6 @@ export const AuthProvider = ({ children }) => {
   };
   
   const refreshUser = fetchUser;
-  
-  // Google OAuth login
-  const loginWithGoogle = () => {
-    const redirectUrl = window.location.origin + '/auth/callback';
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
-  };
 
   return (
     <AuthContext.Provider value={{ 
