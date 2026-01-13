@@ -8108,6 +8108,166 @@ async def stripe_webhook(request: Request):
         logger.error(f"Webhook error: {e}")
         return {"status": "error", "message": str(e)}
 
+# ============================================================
+# PUSH NOTIFICATION ENHANCEMENTS
+# ============================================================
+
+@api_router.post("/notifications/appointment-reminder")
+async def send_appointment_reminder_notification(appointment_id: str):
+    """Send push notification for appointment reminder"""
+    appointment = await db.appointments.find_one({"id": appointment_id}, {"_id": 0})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    user_id = appointment.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="No user associated with appointment")
+    
+    title = "Appointment Reminder"
+    body = f"Your appointment with {appointment.get('doctor', 'doctor')} is scheduled for {appointment.get('date')} at {appointment.get('time', 'scheduled time')}."
+    
+    result = await send_push_notification(
+        user_id=user_id,
+        title=title,
+        body=body,
+        url="/diagyn",
+        tag="appointment-reminder"
+    )
+    
+    return {"success": True, "result": result}
+
+@api_router.post("/notifications/subscription-expiry")
+async def send_subscription_expiry_notification(user_id: str):
+    """Send push notification for subscription expiry"""
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    subscription = user.get("evara_subscription", {})
+    if not subscription.get("active"):
+        raise HTTPException(status_code=400, detail="No active subscription")
+    
+    end_date = subscription.get("end_date", "")[:10]
+    plan_name = subscription.get("plan_name", "subscription")
+    
+    title = "Subscription Expiring Soon"
+    body = f"Your Evara {plan_name} expires on {end_date}. Renew now to continue premium features!"
+    
+    result = await send_push_notification(
+        user_id=user_id,
+        title=title,
+        body=body,
+        url="/evara",
+        tag="subscription-expiry"
+    )
+    
+    return {"success": True, "result": result}
+
+@api_router.post("/notifications/medicine-refill")
+async def send_medicine_refill_notification(user_id: str, medicine_name: str, days_left: int = 3):
+    """Send push notification for medicine refill reminder"""
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    title = "Medicine Refill Reminder"
+    body = f"Your {medicine_name} supply will run out in {days_left} days. Order refill from Orange Pharmacy."
+    
+    result = await send_push_notification(
+        user_id=user_id,
+        title=title,
+        body=body,
+        url="/pharmacy",
+        tag="medicine-refill"
+    )
+    
+    return {"success": True, "result": result}
+
+@api_router.post("/cron/check-expiring-subscriptions")
+async def cron_check_expiring_subscriptions(secret: str = ""):
+    """Cron job to check and notify expiring subscriptions"""
+    cron_secret = os.environ.get("CRON_SECRET", "nevika_cron_2026")
+    if secret != cron_secret:
+        raise HTTPException(status_code=403, detail="Invalid secret")
+    
+    # Check subscriptions expiring in next 3 days
+    today = datetime.now(timezone.utc)
+    check_date = (today + timedelta(days=3)).isoformat()
+    
+    users = await db.users.find({
+        "evara_subscription.active": True,
+        "evara_subscription.end_date": {"$lte": check_date}
+    }, {"_id": 0, "id": 1, "name": 1, "evara_subscription": 1}).to_list(1000)
+    
+    notified = 0
+    for user in users:
+        try:
+            sub = user.get("evara_subscription", {})
+            end_date = sub.get("end_date", "")[:10]
+            
+            # Check if notification already sent today
+            last_notified = await db.subscription_notifications.find_one({
+                "user_id": user["id"],
+                "date": today.strftime("%Y-%m-%d")
+            })
+            
+            if not last_notified:
+                await send_push_notification(
+                    user_id=user["id"],
+                    title="Subscription Expiring Soon",
+                    body=f"Your Evara subscription expires on {end_date}. Renew now!",
+                    url="/evara",
+                    tag="subscription-expiry"
+                )
+                
+                await db.subscription_notifications.insert_one({
+                    "user_id": user["id"],
+                    "date": today.strftime("%Y-%m-%d"),
+                    "type": "expiry_warning"
+                })
+                notified += 1
+        except Exception as e:
+            logger.error(f"Failed to notify user {user['id']}: {e}")
+    
+    return {"success": True, "users_checked": len(users), "notified": notified}
+
+@api_router.post("/cron/appointment-reminders")
+async def cron_send_appointment_reminders(secret: str = ""):
+    """Cron job to send appointment reminders for tomorrow"""
+    cron_secret = os.environ.get("CRON_SECRET", "nevika_cron_2026")
+    if secret != cron_secret:
+        raise HTTPException(status_code=403, detail="Invalid secret")
+    
+    tomorrow = (datetime.now(timezone.utc) + timedelta(days=1)).strftime("%Y-%m-%d")
+    
+    appointments = await db.appointments.find({
+        "date": tomorrow,
+        "status": {"$in": ["confirmed", "pending"]}
+    }, {"_id": 0}).to_list(500)
+    
+    notified = 0
+    for apt in appointments:
+        try:
+            user_id = apt.get("user_id")
+            if user_id:
+                await send_push_notification(
+                    user_id=user_id,
+                    title="Appointment Tomorrow",
+                    body=f"Reminder: Your appointment with {apt.get('doctor', 'doctor')} is tomorrow at {apt.get('time', 'scheduled time')}.",
+                    url="/diagyn",
+                    tag="appointment-reminder"
+                )
+                notified += 1
+            
+            # Also send SMS
+            if apt.get("phone"):
+                msg = f"Nevika Cura Reminder: Your appointment with {apt.get('doctor')} is tomorrow ({tomorrow}) at {apt.get('time')}. Please arrive 10 mins early."
+                await send_sms_notification(apt["phone"], msg)
+        except Exception as e:
+            logger.error(f"Failed to send reminder for appointment {apt.get('id')}: {e}")
+    
+    return {"success": True, "appointments_checked": len(appointments), "notified": notified}
+
 # Include router AFTER all routes are defined
 app.include_router(api_router)
 
