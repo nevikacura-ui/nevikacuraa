@@ -86,6 +86,10 @@ const Pharmacy = () => {
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [leaderboardInfo, setLeaderboardInfo] = useState({ total_participants: 0, period_label: 'All Time' });
 
+  // Frequently ordered state
+  const [frequentlyOrdered, setFrequentlyOrdered] = useState([]);
+  const [loadingFrequent, setLoadingFrequent] = useState(false);
+
   // Check for reorder data on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -110,13 +114,30 @@ const Pharmacy = () => {
     }
   }, []);
 
+  // Fetch frequently ordered medicines for logged-in users
+  const fetchFrequentlyOrdered = async () => {
+    if (!user) return;
+    setLoadingFrequent(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API}/pharmacy/frequently-ordered`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setFrequentlyOrdered(response.data.medicines || []);
+    } catch (error) {
+      console.error('Failed to fetch frequently ordered:', error);
+    }
+    setLoadingFrequent(false);
+  };
+
   useEffect(() => {
     fetchInventory();
     fetchForms();
     fetchTotalCount();
-    // Fetch loyalty points for logged-in users
+    // Fetch loyalty points and frequently ordered for logged-in users
     if (user) {
       fetchLoyaltyPoints();
+      fetchFrequentlyOrdered();
     }
   }, []);
 
