@@ -782,6 +782,250 @@ async def get_child_dashboard(child_id: str):
 
 # ----- Region Configuration -----
 
+# India-specific resources
+INDIA_RESOURCES = {
+    "government_schemes": [
+        {
+            "id": "ayushman_bharat",
+            "name": "Ayushman Bharat PM-JAY",
+            "description": "Free health insurance up to ₹5 lakh per family per year",
+            "eligibility": "SECC database beneficiaries",
+            "website": "https://pmjay.gov.in",
+            "helpline": "14555"
+        },
+        {
+            "id": "icds",
+            "name": "ICDS (Integrated Child Development Services)",
+            "description": "Nutrition, health education, immunization for children 0-6 years",
+            "eligibility": "All children under 6 years",
+            "website": "https://icds-wcd.nic.in",
+            "helpline": "1800-345-6789"
+        },
+        {
+            "id": "jssk",
+            "name": "Janani Shishu Suraksha Karyakram",
+            "description": "Free delivery and infant care in government hospitals",
+            "eligibility": "All pregnant women & newborns",
+            "website": "https://nhm.gov.in/jssk",
+            "helpline": "104"
+        },
+        {
+            "id": "rbsk",
+            "name": "Rashtriya Bal Swasthya Karyakram",
+            "description": "Free health screening for children 0-18 years",
+            "eligibility": "All children in government/aided schools",
+            "website": "https://rbsk.gov.in",
+            "helpline": "1800-180-1104"
+        }
+    ],
+    "regional_foods": {
+        "north": [
+            {"name": "Khichdi", "age": "6+ months", "recipe": "1/4 cup rice + 1/4 cup moong dal, cook soft, mash, add ghee", "benefits": "Easy to digest, complete protein"},
+            {"name": "Daliya (Broken Wheat)", "age": "7+ months", "recipe": "Roast daliya, cook with water/milk, add jaggery", "benefits": "High fiber, iron rich"},
+            {"name": "Suji Halwa", "age": "8+ months", "recipe": "Roast suji in ghee, add warm milk, cook till thick", "benefits": "Energy dense, easy to swallow"},
+            {"name": "Ragi Porridge", "age": "6+ months", "recipe": "Mix ragi flour in water, cook stirring constantly", "benefits": "High calcium, iron"},
+            {"name": "Sabudana Kheer", "age": "8+ months", "recipe": "Soak sabudana, cook in milk with sugar", "benefits": "Energy, easy digestion"}
+        ],
+        "south": [
+            {"name": "Ragi Malt", "age": "6+ months", "recipe": "Mix ragi flour, cook with water, strain, add jaggery", "benefits": "Calcium, iron, aids bone growth"},
+            {"name": "Rice Kanji", "age": "6+ months", "recipe": "Cook rice with excess water, mash, add salt", "benefits": "Easy first food, hydrating"},
+            {"name": "Idli", "age": "9+ months", "recipe": "Soft steamed idli, mash with sambar/rasam", "benefits": "Fermented, probiotic, protein"},
+            {"name": "Banana Payasam", "age": "7+ months", "recipe": "Mash banana, cook with milk, cardamom", "benefits": "Potassium, natural sweetness"},
+            {"name": "Carrot Poriyal", "age": "8+ months", "recipe": "Grate carrot, cook with dal water, temper with mustard", "benefits": "Vitamin A, fiber"}
+        ],
+        "east": [
+            {"name": "Bhat (Soft Rice)", "age": "6+ months", "recipe": "Overcooked rice mashed with dal water", "benefits": "First food, gentle on stomach"},
+            {"name": "Cholar Dal", "age": "8+ months", "recipe": "Cook chana dal soft, mash, add coconut", "benefits": "Protein, healthy fats"},
+            {"name": "Fish Curry (boneless)", "age": "10+ months", "recipe": "Soft fish cooked in light gravy, debone carefully", "benefits": "Omega-3, protein, DHA"}
+        ],
+        "west": [
+            {"name": "Moong Dal Khichdi", "age": "6+ months", "recipe": "Equal rice + moong dal, pressure cook soft", "benefits": "Complete protein, easy digestion"},
+            {"name": "Nachni Satva", "age": "6+ months", "recipe": "Soak nachni, grind, strain, cook with jaggery", "benefits": "Iron, calcium for bones"},
+            {"name": "Puran Poli (mashed)", "age": "12+ months", "recipe": "Sweet chana dal filling, mash with ghee", "benefits": "Festival food, energy dense"}
+        ]
+    },
+    "seasonal_alerts": {
+        "monsoon": [
+            {"disease": "Dengue", "symptoms": "High fever, severe headache, joint pain, rash", "prevention": ["Use mosquito nets/repellents", "Empty stagnant water", "Full-sleeve clothing", "Keep surroundings clean"]},
+            {"disease": "Malaria", "symptoms": "Chills, high fever, sweating, headache", "prevention": ["Mosquito nets at night", "Anti-malarial spray", "Cover water containers", "Seek immediate treatment"]},
+            {"disease": "Typhoid", "symptoms": "Prolonged fever, weakness, stomach pain", "prevention": ["Drink boiled/filtered water", "Eat freshly cooked food", "Wash hands frequently", "Get vaccinated"]},
+            {"disease": "Gastroenteritis", "symptoms": "Vomiting, loose stools, stomach cramps", "prevention": ["Safe drinking water", "Avoid street food", "ORS for dehydration", "Wash fruits/vegetables"]}
+        ],
+        "summer": [
+            {"disease": "Heat Stroke", "symptoms": "High body temp, no sweating, confusion", "prevention": ["Stay hydrated", "Avoid sun 11am-4pm", "Light cotton clothes", "Use ORS"]},
+            {"disease": "Heat Rash", "symptoms": "Red bumps, itching, mostly on neck/back", "prevention": ["Keep skin dry", "Loose cotton clothes", "Cool baths", "Calamine lotion"]}
+        ],
+        "winter": [
+            {"disease": "Cold & Flu", "symptoms": "Runny nose, cough, mild fever", "prevention": ["Warm clothing", "Steam inhalation", "Honey (>1 year)", "Good nutrition"]},
+            {"disease": "Pneumonia", "symptoms": "Fast breathing, chest indrawing, high fever", "prevention": ["Complete vaccinations", "Breastfeeding", "Avoid smoke exposure", "Seek early treatment"]}
+        ]
+    },
+    "ayurvedic_remedies": [
+        {"name": "Tulsi Water", "for": "Cold, cough, immunity", "recipe": "Boil 5-6 tulsi leaves in water, cool, give 2 tsp twice daily", "age": "6+ months", "caution": "Avoid in fever"},
+        {"name": "Turmeric Milk (Haldi Doodh)", "for": "Immunity, wound healing", "recipe": "1/4 tsp turmeric in warm milk with honey", "age": "12+ months", "caution": "Avoid in jaundice"},
+        {"name": "Ajwain Water", "for": "Colic, gas, indigestion", "recipe": "Boil 1/2 tsp ajwain in water, strain, give 1 tsp", "age": "3+ months", "caution": "Small quantities only"},
+        {"name": "Ginger Honey", "for": "Sore throat, nausea", "recipe": "Mix 1/4 tsp ginger juice with honey", "age": "12+ months", "caution": "No honey under 1 year"},
+        {"name": "Cumin Water (Jeera Paani)", "for": "Digestion, gas relief", "recipe": "Boil 1/2 tsp cumin in water, strain, cool", "age": "6+ months", "caution": "Mild remedy"},
+        {"name": "Coconut Oil Massage", "for": "Dry skin, growth", "recipe": "Warm coconut oil, gentle massage before bath", "age": "Birth onwards", "caution": "Test for allergy first"}
+    ],
+    "emergency_contacts": {
+        "national_emergency": "112",
+        "ambulance": "108",
+        "child_helpline": "1098",
+        "poison_control": "1800-116-117",
+        "women_helpline": "181"
+    }
+}
+
+# USA-specific resources  
+USA_RESOURCES = {
+    "insurance_guide": [
+        {"term": "Premium", "definition": "Monthly amount you pay to have health insurance coverage"},
+        {"term": "Deductible", "definition": "Amount you pay out-of-pocket before insurance starts covering costs"},
+        {"term": "Copay", "definition": "Fixed amount you pay for a covered service (e.g., $25 for doctor visit)"},
+        {"term": "Coinsurance", "definition": "Percentage you pay after meeting your deductible (e.g., 20% of costs)"},
+        {"term": "Out-of-Pocket Maximum", "definition": "Maximum you'll pay in a year; after this, insurance covers 100%"},
+        {"term": "In-Network", "definition": "Providers contracted with your insurance - lower costs"},
+        {"term": "Out-of-Network", "definition": "Providers not contracted - higher costs or no coverage"},
+        {"term": "Prior Authorization", "definition": "Approval needed from insurance before certain services"},
+        {"term": "Explanation of Benefits (EOB)", "definition": "Statement showing what was billed, paid, and what you owe"},
+        {"term": "CHIP", "definition": "Children's Health Insurance Program - low-cost coverage for kids"}
+    ],
+    "school_vaccine_requirements": {
+        "kindergarten": [
+            "DTaP - 5 doses",
+            "Polio (IPV) - 4 doses", 
+            "MMR - 2 doses",
+            "Hepatitis B - 3 doses",
+            "Varicella - 2 doses"
+        ],
+        "middle_school": [
+            "Tdap booster",
+            "Meningococcal (MenACWY)"
+        ],
+        "note": "Requirements vary by state. Check your state's immunization requirements.",
+        "exemptions": "Medical, religious, and philosophical exemptions vary by state"
+    },
+    "wic_program": {
+        "name": "Women, Infants, and Children (WIC)",
+        "description": "Nutrition program for pregnant women, new mothers, infants, and children up to age 5",
+        "eligibility": [
+            "Income at or below 185% of federal poverty level",
+            "Pregnant, breastfeeding, or postpartum women",
+            "Infants and children under 5 at nutritional risk"
+        ],
+        "benefits": [
+            "Healthy foods (milk, eggs, cereal, fruits, vegetables)",
+            "Nutrition education and counseling",
+            "Breastfeeding support",
+            "Referrals to healthcare and social services"
+        ],
+        "website": "https://www.fns.usda.gov/wic",
+        "find_office": "https://www.fns.usda.gov/wic/wic-how-apply"
+    },
+    "safety_standards": [
+        {
+            "category": "Car Seat Safety",
+            "guidelines": [
+                "Rear-facing: Birth to 2 years (or until max height/weight)",
+                "Forward-facing with harness: 2-5 years (40-65 lbs)",
+                "Booster seat: Until seat belt fits properly (usually 8-12 years)",
+                "Check expiration date on car seat",
+                "Register car seat for recall notifications"
+            ],
+            "resource": "https://www.nhtsa.gov/equipment/car-seats-and-booster-seats"
+        },
+        {
+            "category": "Sleep Safety (SIDS Prevention)",
+            "guidelines": [
+                "Always place baby on BACK to sleep",
+                "Use firm, flat sleep surface",
+                "Keep soft objects out of sleep area",
+                "Room sharing without bed sharing for first 6-12 months",
+                "Avoid overheating"
+            ],
+            "resource": "https://safetosleep.nichd.nih.gov"
+        },
+        {
+            "category": "Product Recalls",
+            "guidelines": [
+                "Check CPSC.gov for latest recalls",
+                "Register products for recall alerts",
+                "Stop using recalled products immediately"
+            ],
+            "resource": "https://www.cpsc.gov/Recalls"
+        }
+    ],
+    "developmental_resources": {
+        "cdc_milestones": {
+            "name": "CDC's Milestone Tracker App",
+            "description": "Track your child's milestones from 2 months to 5 years",
+            "app_store": "https://apps.apple.com/app/cdcs-milestone-tracker/id1232718688",
+            "play_store": "https://play.google.com/store/apps/details?id=gov.cdc.MilestoneTracker"
+        },
+        "early_intervention": {
+            "description": "Free evaluation and services for children 0-3 with developmental delays",
+            "find_services": "https://www.cdc.gov/ncbddd/actearly/parents/states.html"
+        }
+    },
+    "emergency_contacts": {
+        "emergency": "911",
+        "poison_control": "1-800-222-1222",
+        "child_abuse_hotline": "1-800-422-4453",
+        "suicide_prevention": "988"
+    }
+}
+
+# Common features for both regions
+COMMON_FEATURES = {
+    "developmental_screening": {
+        "asq3": {
+            "name": "ASQ-3 (Ages & Stages Questionnaire)",
+            "description": "Screens development in 5 areas: Communication, Gross Motor, Fine Motor, Problem Solving, Personal-Social",
+            "age_range": "1 month to 5.5 years",
+            "how_it_works": "Answer simple questions about what your child can do",
+            "areas": [
+                {"name": "Communication", "examples": "Does your child say words? Follow simple directions?"},
+                {"name": "Gross Motor", "examples": "Can your child walk? Jump? Kick a ball?"},
+                {"name": "Fine Motor", "examples": "Can your child pick up small objects? Draw?"},
+                {"name": "Problem Solving", "examples": "Does your child solve simple puzzles? Find hidden objects?"},
+                {"name": "Personal-Social", "examples": "Does your child play with others? Feed self?"}
+            ]
+        }
+    },
+    "telemedicine_tips": [
+        "Prepare list of symptoms, duration, and any medications given",
+        "Have child's temperature and weight ready",
+        "Use good lighting so doctor can see child clearly",
+        "Keep child calm and engaged during video call",
+        "Have pharmacy information ready for prescriptions",
+        "Take photos of rashes or symptoms before the call"
+    ],
+    "parenting_tips": {
+        "newborn": [
+            "Skin-to-skin contact promotes bonding",
+            "Feed on demand, 8-12 times daily",
+            "Expect 10-12 wet diapers daily",
+            "Sleep when baby sleeps",
+            "Tummy time when awake (supervised)"
+        ],
+        "infant": [
+            "Read and talk to baby daily",
+            "Introduce variety of textures and colors",
+            "Maintain consistent routines",
+            "Respond to cries - builds trust",
+            "Safe exploration is essential"
+        ],
+        "toddler": [
+            "Set clear, consistent boundaries",
+            "Offer choices within limits",
+            "Name emotions to build vocabulary",
+            "Praise effort, not just results",
+            "Allow independent play"
+        ]
+    }
+}
+
 @router.get("/config/regions")
 async def get_region_config():
     """Get region-specific configuration"""
@@ -794,7 +1038,8 @@ async def get_region_config():
                 "vaccination_schedule": "IAP (Indian Academy of Pediatrics)",
                 "id_fields": ["aadhaar_number", "uhid"],
                 "currency": "INR",
-                "language": "en-IN"
+                "language": "en-IN",
+                "languages_available": ["English", "हिंदी", "தமிழ்", "తెలుగు", "ಕನ್ನಡ", "മലയാളം", "বাংলা", "मराठी", "ગુજરાતી"]
             },
             {
                 "id": "usa",
@@ -803,10 +1048,186 @@ async def get_region_config():
                 "vaccination_schedule": "CDC",
                 "id_fields": ["insurance_provider", "insurance_id"],
                 "currency": "USD",
-                "language": "en-US"
+                "language": "en-US",
+                "languages_available": ["English", "Español"]
             }
         ]
     }
+
+# ============ REGION-SPECIFIC ENDPOINTS ============
+
+@router.get("/resources/india")
+async def get_india_resources():
+    """Get India-specific resources and information"""
+    return {
+        "success": True,
+        "region": "india",
+        "government_schemes": INDIA_RESOURCES["government_schemes"],
+        "emergency_contacts": INDIA_RESOURCES["emergency_contacts"],
+        "ayurvedic_remedies": INDIA_RESOURCES["ayurvedic_remedies"]
+    }
+
+@router.get("/resources/india/food-guides")
+async def get_india_food_guides(region: str = None):
+    """Get regional food guides for India"""
+    if region and region in INDIA_RESOURCES["regional_foods"]:
+        return {
+            "success": True,
+            "region": region,
+            "foods": INDIA_RESOURCES["regional_foods"][region]
+        }
+    return {
+        "success": True,
+        "regions": list(INDIA_RESOURCES["regional_foods"].keys()),
+        "all_foods": INDIA_RESOURCES["regional_foods"]
+    }
+
+@router.get("/resources/india/seasonal-alerts")
+async def get_india_seasonal_alerts(season: str = None):
+    """Get seasonal health alerts for India"""
+    if season and season in INDIA_RESOURCES["seasonal_alerts"]:
+        return {
+            "success": True,
+            "season": season,
+            "alerts": INDIA_RESOURCES["seasonal_alerts"][season]
+        }
+    # Determine current season based on month
+    month = datetime.now().month
+    if month in [6, 7, 8, 9]:
+        current_season = "monsoon"
+    elif month in [3, 4, 5]:
+        current_season = "summer"
+    else:
+        current_season = "winter"
+    
+    return {
+        "success": True,
+        "current_season": current_season,
+        "current_alerts": INDIA_RESOURCES["seasonal_alerts"].get(current_season, []),
+        "all_seasons": INDIA_RESOURCES["seasonal_alerts"]
+    }
+
+@router.get("/resources/india/ayurvedic")
+async def get_ayurvedic_remedies():
+    """Get safe Ayurvedic home remedies for children"""
+    return {
+        "success": True,
+        "disclaimer": "These are traditional remedies. Always consult a pediatrician before use.",
+        "remedies": INDIA_RESOURCES["ayurvedic_remedies"]
+    }
+
+@router.get("/resources/usa")
+async def get_usa_resources():
+    """Get USA-specific resources and information"""
+    return {
+        "success": True,
+        "region": "usa",
+        "insurance_guide": USA_RESOURCES["insurance_guide"],
+        "wic_program": USA_RESOURCES["wic_program"],
+        "emergency_contacts": USA_RESOURCES["emergency_contacts"]
+    }
+
+@router.get("/resources/usa/insurance-guide")
+async def get_usa_insurance_guide():
+    """Get pediatric insurance terminology guide"""
+    return {
+        "success": True,
+        "title": "Understanding Pediatric Health Insurance",
+        "terms": USA_RESOURCES["insurance_guide"]
+    }
+
+@router.get("/resources/usa/school-vaccines")
+async def get_usa_school_vaccines():
+    """Get school vaccination requirements"""
+    return {
+        "success": True,
+        "title": "School Immunization Requirements",
+        "requirements": USA_RESOURCES["school_vaccine_requirements"],
+        "resource": "https://www.cdc.gov/vaccines/schedules/hcp/imz/child-adolescent.html"
+    }
+
+@router.get("/resources/usa/wic")
+async def get_wic_info():
+    """Get WIC program information"""
+    return {
+        "success": True,
+        "program": USA_RESOURCES["wic_program"]
+    }
+
+@router.get("/resources/usa/safety")
+async def get_usa_safety_standards():
+    """Get childcare safety standards and guidelines"""
+    return {
+        "success": True,
+        "title": "Child Safety Guidelines",
+        "standards": USA_RESOURCES["safety_standards"]
+    }
+
+@router.get("/resources/usa/developmental")
+async def get_usa_developmental_resources():
+    """Get developmental resources and CDC milestones info"""
+    return {
+        "success": True,
+        "resources": USA_RESOURCES["developmental_resources"]
+    }
+
+# ============ COMMON FEATURES ============
+
+@router.get("/resources/common/screening")
+async def get_developmental_screening():
+    """Get developmental screening information"""
+    return {
+        "success": True,
+        "screening": COMMON_FEATURES["developmental_screening"]
+    }
+
+@router.get("/resources/common/telemedicine-tips")
+async def get_telemedicine_tips():
+    """Get tips for telemedicine consultations"""
+    return {
+        "success": True,
+        "tips": COMMON_FEATURES["telemedicine_tips"]
+    }
+
+@router.get("/resources/common/parenting-tips")
+async def get_parenting_tips(age_group: str = None):
+    """Get age-specific parenting tips"""
+    if age_group and age_group in COMMON_FEATURES["parenting_tips"]:
+        return {
+            "success": True,
+            "age_group": age_group,
+            "tips": COMMON_FEATURES["parenting_tips"][age_group]
+        }
+    return {
+        "success": True,
+        "all_tips": COMMON_FEATURES["parenting_tips"]
+    }
+
+@router.get("/vaccination-pdf/{child_id}")
+async def get_vaccination_pdf(child_id: str):
+    """Generate vaccination record info (for QR code/sharing)"""
+    child = await db.alyne_children.find_one({"id": child_id}, {"_id": 0})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    vaccinations = await db.alyne_vaccinations.find(
+        {"child_id": child_id, "status": "done"},
+        {"_id": 0}
+    ).to_list(length=100)
+    
+    record = {
+        "child_name": child.get("name"),
+        "date_of_birth": child.get("date_of_birth"),
+        "gender": child.get("gender"),
+        "blood_group": child.get("blood_group"),
+        "region": child.get("region"),
+        "completed_vaccinations": len(vaccinations),
+        "vaccinations": vaccinations,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "qr_data": f"ALYNE_VAX_{child_id}_{len(vaccinations)}"
+    }
+    
+    return {"success": True, "record": record}
 
 # ============ AI CHAT WITH ALYNE ============
 
