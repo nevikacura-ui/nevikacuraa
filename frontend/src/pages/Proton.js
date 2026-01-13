@@ -1045,6 +1045,56 @@ const Proton = () => {
               />
             </Card>
 
+            {/* Home Collection Time Slot (8 AM - 7 PM) */}
+            <Card className="p-4">
+              <Label className="flex items-center gap-2 mb-3">
+                <Clock className="w-4 h-4 text-indigo-600" />
+                Preferred Time Slot (8 AM - 7 PM)
+              </Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {timeSlots.map((slot) => (
+                  <button
+                    key={slot.value}
+                    onClick={() => setPreferredTimeSlot(slot.value)}
+                    className={`p-3 rounded-lg border-2 text-sm font-medium transition-colors ${
+                      preferredTimeSlot === slot.value 
+                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700' 
+                        : 'border-gray-200 hover:border-indigo-300'
+                    }`}
+                    data-testid={`time-slot-${slot.value}`}
+                  >
+                    {slot.label}
+                  </button>
+                ))}
+              </div>
+            </Card>
+
+            {/* Test Preparation Instructions */}
+            {selectedTests.length > 0 && getSelectedTestPreparations().length > 0 && (
+              <Card className="p-4 bg-amber-50 border-amber-200">
+                <h3 className="font-semibold text-amber-800 mb-3 flex items-center gap-2">
+                  <Shield className="w-5 h-5" />
+                  Important: Test Preparation Instructions
+                </h3>
+                <div className="space-y-2">
+                  {getSelectedTestPreparations().map((prep, idx) => (
+                    <div key={idx} className="flex items-start gap-2 p-2 bg-white rounded border border-amber-100">
+                      <div className={`px-2 py-0.5 rounded text-xs font-medium ${prep.fasting ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                        {prep.fasting ? `${prep.hours}hr Fasting` : 'No Fasting'}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-800">{prep.test}</p>
+                        <p className="text-xs text-gray-600">{prep.instruction}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-amber-700 mt-3">
+                  ⚠️ Following these instructions ensures accurate results. Our phlebotomist will confirm timing.
+                </p>
+              </Card>
+            )}
+
             {/* Address (Optional for Home Visit) */}
             <Card className="p-4">
               <Label className="flex items-center gap-2 mb-2">
