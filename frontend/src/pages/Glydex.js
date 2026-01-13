@@ -378,6 +378,11 @@ const Glydex = () => {
   const [hba1cTrend, setHba1cTrend] = useState(null);
   const [hba1cAnalysis, setHba1cAnalysis] = useState(null);
   const [newHba1c, setNewHba1c] = useState({
+    value: '',
+    date: new Date().toISOString().split('T')[0],
+    lab_name: '',
+    notes: ''
+  });
 
   // Calories Tracker state
   const [showCaloriesTracker, setShowCaloriesTracker] = useState(false);
@@ -388,11 +393,6 @@ const Glydex = () => {
   const [foodSearchQuery, setFoodSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-    value: '',
-    date: new Date().toISOString().split('T')[0],
-    lab_name: '',
-    notes: ''
-  });
 
   useEffect(() => {
     if (token) {
