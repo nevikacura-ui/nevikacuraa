@@ -1180,6 +1180,99 @@ const Evara = () => {
     }
   };
 
+  // Subscription Functions
+  const fetchSubscriptionPlans = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/evara/subscription/plans`);
+      const data = await response.json();
+      setSubscriptionPlans(data.plans || []);
+    } catch (error) {
+      console.error('Failed to fetch subscription plans');
+    }
+  };
+
+  const fetchUserSubscription = async () => {
+    if (!token) return;
+    try {
+      const response = await fetch(`${API_URL}/api/evara/subscription/user`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      setUserSubscription(data);
+    } catch (error) {
+      console.error('Failed to fetch user subscription');
+    }
+  };
+
+  const handleSubscribe = async (planId) => {
+    if (!token) {
+      toast.error('Please login to subscribe');
+      return;
+    }
+    setSubscriptionLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/evara/subscription/checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          plan_id: planId,
+          origin_url: window.location.origin
+        })
+      });
+      const data = await response.json();
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+      } else {
+        toast.error(data.detail || 'Failed to create checkout');
+      }
+    } catch (error) {
+      toast.error('Failed to start checkout');
+    } finally {
+      setSubscriptionLoading(false);
+    }
+  };
+
+  // Check payment status on page load (returning from Stripe)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    const paymentStatus = urlParams.get('payment');
+    
+    if (sessionId && paymentStatus === 'success') {
+      checkPaymentStatus(sessionId);
+    } else if (paymentStatus === 'cancelled') {
+      toast.info('Payment was cancelled');
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
+  const checkPaymentStatus = async (sessionId) => {
+    try {
+      const response = await fetch(`${API_URL}/api/evara/subscription/status/${sessionId}`);
+      const data = await response.json();
+      
+      if (data.payment_status === 'paid') {
+        toast.success(`🎉 Welcome to ${data.plan_name}! Your subscription is now active.`);
+        fetchUserSubscription();
+      } else {
+        toast.info('Payment is being processed...');
+      }
+      window.history.replaceState({}, '', window.location.pathname);
+    } catch (error) {
+      console.error('Failed to check payment status');
+    }
+  };
+
+  // Fetch subscription status on load
+  useEffect(() => {
+    if (token) {
+      fetchUserSubscription();
+    }
+  }, [token]);
+
   const getProgramIcon = (programId) => {
     const icons = {
       menstrual_health: <Calendar className="w-6 h-6 text-pink-500" />,
