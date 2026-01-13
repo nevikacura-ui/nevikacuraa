@@ -1695,12 +1695,14 @@ const StaffPortal = () => {
             
             {/* Quick Date Navigation */}
             <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-              {[-2, -1, 0, 1, 2, 3, 4].map(offset => {
+              {[-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7].map(offset => {
                 const d = new Date();
                 d.setDate(d.getDate() + offset);
                 const dateStr = d.toISOString().split('T')[0];
                 const dayAppts = appointments.filter(a => a.date === dateStr);
                 const isSelected = dateStr === selectedDate;
+                const isToday = offset === 0;
+                const isPast = offset < 0;
                 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 return (
                   <button
@@ -1709,12 +1711,17 @@ const StaffPortal = () => {
                     className={`flex flex-col items-center px-3 py-2 rounded-lg min-w-[60px] transition-colors ${
                       isSelected 
                         ? 'bg-teal-600 text-white' 
+                        : isToday
+                        ? 'bg-teal-100 hover:bg-teal-200 border-2 border-teal-400'
+                        : isPast
+                        ? 'bg-gray-50 hover:bg-gray-100 text-gray-600'
                         : 'bg-gray-100 hover:bg-gray-200'
                     }`}
                     data-testid={`date-nav-${offset}`}
                   >
                     <span className="text-xs">{dayNames[d.getDay()]}</span>
                     <span className="font-semibold">{d.getDate()}</span>
+                    {isToday && !isSelected && <span className="text-[10px] text-teal-600">Today</span>}
                     {dayAppts.length > 0 && (
                       <span className={`text-xs ${isSelected ? 'text-teal-100' : 'text-teal-600'}`}>
                         {dayAppts.length}
