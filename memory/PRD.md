@@ -4,110 +4,120 @@
 Build a modern healthcare application for "Nevika Cura" with core services:
 1. **DiaGyn Healthcare** - Appointment booking for doctors
 2. **Proton Diagnostics** - Lab test booking
-3. **Orange Pharmacy** - Medicine ordering
+3. **Orange Pharmacy** - Medicine ordering with Loyalty Program
 4. **Evara** - Women's Wellness & Care Program
 5. **Glydex** - Diabetes Care Portal
 
 ---
 
-## Authentication System
-
-### Email-First Auth Flow (Cost-Saving)
-| Step | Method | Cost |
-|------|--------|------|
-| **Signup** | Email OTP (Resend) | FREE |
-| **Login** | Password | FREE |
-| **Password Reset** | SMS OTP (Twilio) | Paid |
-| **Appointments** | SMS OTP for verification | Paid |
-
-### Profile Customization
-After registration, users can select interests:
-- Evara (Women's Wellness)
-- Glydex (Diabetes Care)
-- DiaGyn Healthcare
-- Proton Diagnostics
-- Orange Pharmacy
-
-### Endpoints
-- `POST /api/auth/email-otp/send` - Send email OTP for signup
-- `POST /api/auth/email-otp/verify` - Verify email OTP
-- `POST /api/auth/login` - Password login
-- `PUT /api/user/preferences` - Update user interests
-- `GET /api/user/preferences` - Get user preferences
-
----
-
-## Staff SMS Notification Numbers
-| Service | Staff Numbers | Purpose |
-|---------|---------------|---------|
-| DiaGyn Healthcare | 8108500522, 8108500533 | New appointments |
-| Proton Diagnostics | 7039040040 | New test bookings |
-| Orange Pharmacy | 8108500511 | New medicine orders |
-| Nevika/Evara/Glydex | 9833188288 | Signups & general |
-| Email | nevikacura@gmail.com | Order updates, reports |
-
----
-
-## Fee Codes
-| Code | Label | Amount |
-|------|-------|--------|
-| G1 | General - First | ₹150 |
-| G2 | General - Follow up | ₹100 |
-| S1 | Speciality - First | ₹300 |
-| S2 | Speciality - Follow up | ₹200 |
-| D1 | Diabetes - First | ₹500 |
-| D2 | Diabetes - Follow up | ₹400 |
-| D3 | Diabetes - Follow up | ₹300 |
-| O1 | OBGY - First | ₹500 |
-| O2 | OBGY - Follow up | ₹400 |
-| O3 | OBGY - Follow up | ₹300 |
-| **N1** | No Fees | ₹0 |
-| **E1** | Emergency | ₹600 |
-
----
-
 ## What's Been Implemented ✅
 
-### January 13, 2026 - Session 2
+### Session 3 - January 13, 2026 (Final)
 
-**1. Indian Food Calorie Tracker** ✅
-- 100+ Indian foods with calories, protein, carbs, fat, fiber
-- Categories: Breakfast, Lunch/Dinner, Snacks, Beverages, Sweets, Diabetic-Friendly
-- Search functionality and category browsing
-- Daily food logging with totals
-- Implemented in both **Glydex** and **Evara** modules
-- API: `/api/calories/food-database`, `/api/calories/search`, `/api/calories/log`
+**1. Full Billing & Due Payments System** ✅
+- Invoice creation with items, taxes, discounts
+- Payment recording with multiple methods (cash, card, UPI, insurance)
+- Due payments tracking and overdue marking
+- Billing summary with revenue metrics
+- Payment reminder notifications
+- API: `/api/billing/invoices`, `/api/billing/due-payments`, `/api/billing/summary`
 
-**2. User Profile Customization** ✅
-- Interest selection after registration
-- Services: Evara, Glydex, DiaGyn, Proton, Pharmacy
-- Stored in user profile for personalization
+**2. Automated Reminders System** ✅
+- Follow-up reminders after appointments
+- Medicine refill reminders for Glydex users
+- Subscription expiry alerts for Evara
+- Custom reminder creation
+- Cron job endpoint for processing due reminders
+- API: `/api/reminders/create`, `/api/reminders/pending`, `/api/reminders/appointment-followup`
 
-**3. Admin Analytics Dashboard** ✅
-- Total Revenue, Appointments, Diagnostics, Pharmacy Orders
-- Daily Revenue Trend chart
-- Daily Appointments chart
-- Appointments by Doctor breakdown
-- Configurable time range (7/14/30 days)
-- Tab layout: 2 rows x 4 columns for better aesthetics
+**3. Push Notifications Enhancement** ✅
+- Appointment reminder notifications
+- Subscription expiry notifications
+- Medicine refill notifications
+- Cron jobs for automated reminders
+- API: `/api/notifications/appointment-reminder`, `/api/cron/appointment-reminders`
 
-**4. Stripe Payment Integration for Evara Subscriptions** ✅
-- Subscription plans: Monthly (₹299), Quarterly (₹799), Yearly (₹2,999)
-- Secure checkout via Stripe
-- Automatic subscription activation after payment
-- User subscription status tracking
-- API: `/api/evara/subscription/plans`, `/api/evara/subscription/checkout`
+**4. Women's Health Community** ✅
+- 7 categories: Pregnancy, Fertility, Menopause, PCOS, Nutrition, Mental Health, General
+- Create posts with anonymous option
+- Comments and likes
+- Featured discussions
+- API: `/api/community/categories`, `/api/community/posts`, `/api/community/featured`
 
-### January 13, 2026 - Session 1
+**5. Data Migration to MongoDB** ✅
+- 24 medicines migrated to `medicines_catalog`
+- 23 diagnostic tests migrated to `diagnostic_tests_catalog`
+- 65 food items migrated to `food_catalog`
+- Proper indexes created
 
-**1. Email OTP for Signup (FREE)** ✅
-**2. Password Login** ✅
-**3. Staff SMS Notifications** ✅
-**4. Enhanced Admin Cancellation** ✅
-**5. Evara Content (Pregnancy, Menopause, PMS, Community)** ✅
-**6. Share Reports via WhatsApp** ✅
-**7. QR Code for APK Download** ✅
-**8. Capacitor Migration for Android App** ✅
+**6. Orange Pharmacy Loyalty Program** ✅ (NEW)
+- **Three Tiers**: Bronze (any amount), Silver (₹500+), Gold (₹1000+)
+- **Points System**: 1 point per ₹100, 2× on diagnostics, 20 bonus for refills
+- **Gold 10-Visit Reward**: Extra discount + Free Health Checkup
+- **FAQ**: 10 comprehensive questions and answers
+- **Terms & Conditions**: 12 legal sections covering all aspects
+- **Frontend**: Interactive banner and dialog with Overview/FAQ/Terms tabs
+- API: `/api/pharmacy/loyalty/tiers`, `/api/pharmacy/loyalty/faq`, `/api/pharmacy/loyalty/terms-and-conditions`
+
+### Session 2 - Earlier Today
+- Indian Food Calorie Tracker (Glydex & Evara)
+- User Profile Customization (Interests selection)
+- Admin Analytics Dashboard
+- Stripe Payment Integration for Evara Subscriptions
+
+### Session 1 - Earlier
+- Email OTP Authentication
+- Staff SMS Notifications
+- Enhanced Admin Cancellation
+- Evara Educational Content
+- PDF Report Sharing
+- Capacitor Android App
+
+---
+
+## Orange Pharmacy Loyalty Program Details
+
+### Tier Benefits
+| Tier | Min Amount | Points | Medicine Discount | Delivery |
+|------|------------|--------|-------------------|----------|
+| Bronze | Any | 1pt/₹100 | 0% | Free on ₹500+ |
+| Silver | ₹500+ | 1pt/₹100 | 5% | FREE |
+| Gold | ₹1000+ | 1pt/₹100 | 10% | FREE |
+
+### Special Features
+- 2× points on all Diagnostic purchases
+- 20 bonus points on medicine refills
+- Gold 10-Visit Reward: Extra discount + Free Health Checkup worth ₹500
+- Points expire after 12 months
+- 100 points = ₹10 redemption value
+
+---
+
+## Tech Stack
+- **Frontend**: React, Tailwind CSS, Shadcn UI, Capacitor
+- **Backend**: FastAPI, Python, emergentintegrations
+- **Database**: MongoDB (with migrated catalogs)
+- **SMS**: Twilio
+- **Email**: Resend
+- **AI Chat**: Claude (via emergentintegrations)
+- **Payments**: Stripe (via emergentintegrations)
+- **Mobile**: Capacitor for Android
+
+---
+
+## Backend Routes Structure
+```
+/app/backend/
+├── server.py (main routes)
+├── routes/
+│   ├── billing.py (Billing & Due Payments)
+│   ├── reminders.py (Automated Reminders)
+│   ├── community.py (Women's Health Community)
+│   └── pharmacy_loyalty.py (Loyalty Program)
+├── migrations/
+│   └── migrate_data.py (Data migration script)
+└── models/
+```
 
 ---
 
@@ -118,64 +128,74 @@ After registration, users can select interests:
 
 ---
 
-## Tech Stack
-- **Frontend**: React, Tailwind CSS, Shadcn UI, Capacitor
-- **Backend**: FastAPI, Python, emergentintegrations
-- **Database**: MongoDB
-- **SMS**: Twilio (for appointments, password reset)
-- **Email**: Resend (FREE for OTP, notifications)
-- **AI Chat**: Claude (via emergentintegrations)
-- **Payments**: Stripe (via emergentintegrations)
-- **Mobile**: Capacitor for Android
+## API Reference (New Endpoints)
+
+### Billing
+```
+POST /api/billing/invoices - Create invoice
+GET  /api/billing/invoices - List invoices
+POST /api/billing/invoices/{id}/payment - Record payment
+GET  /api/billing/due-payments - Get due payments
+GET  /api/billing/summary - Billing summary
+POST /api/billing/send-reminder/{id} - Send payment reminder
+```
+
+### Reminders
+```
+POST /api/reminders/create - Create reminder
+GET  /api/reminders/list - List reminders
+GET  /api/reminders/pending - Get today/tomorrow reminders
+POST /api/reminders/medicine-refill - Create medicine refill reminder
+POST /api/reminders/appointment-followup - Create follow-up reminder
+POST /api/reminders/process-due - Process and send due reminders (cron)
+```
+
+### Community
+```
+GET  /api/community/categories - Get categories
+GET  /api/community/featured - Get featured discussions
+GET  /api/community/posts - List posts
+POST /api/community/posts - Create post
+POST /api/community/posts/{id}/like - Like post
+POST /api/community/posts/{id}/comment - Add comment
+```
+
+### Pharmacy Loyalty
+```
+GET  /api/pharmacy/loyalty/tiers - Get tier info
+GET  /api/pharmacy/loyalty/user-status - Get user status
+POST /api/pharmacy/loyalty/record-transaction - Record loyalty transaction
+POST /api/pharmacy/loyalty/claim-gold-reward - Claim 10-visit reward
+GET  /api/pharmacy/loyalty/calculate-benefits - Calculate order benefits
+GET  /api/pharmacy/loyalty/faq - Get FAQ
+GET  /api/pharmacy/loyalty/terms-and-conditions - Get T&C
+```
 
 ---
 
-## Test Results (Jan 13, 2026 - Session 2)
-- ✅ Backend: 21/21 tests passed (iteration_19)
-- ✅ Frontend: 8/8 tests passed
-- ✅ Calorie Tracker API: WORKING
-- ✅ User Preferences API: WORKING
-- ✅ Admin Analytics API: WORKING
-- ✅ Stripe Payment API: WORKING
+## Completed Tasks Summary
+
+✅ Full Billing & Due Payments System
+✅ Automated Follow-up Reminders
+✅ Push Notifications Enhancement
+✅ Women's Health Community Forums
+✅ Medicine Refill Reminders for Glydex
+✅ Data Migration to MongoDB
+✅ Orange Pharmacy Loyalty Program with T&C
 
 ---
 
-## Upcoming Tasks (P1)
-- [ ] Full Billing & Due Payments System
-- [ ] Automated Follow-up Reminders
-- [ ] Medicine refill reminders for Glydex
+## Remaining/Future Tasks
 
-## Future/Backlog (P2-P3)
-- [ ] Migrate hardcoded data (medicines, tests, food database) to MongoDB
-- [ ] Refactor server.py (8000+ lines) into modular routes
-- [ ] Refactor large frontend components (Evara.js, Glydex.js)
-- [ ] Women's Health Community - user discussions/forums
+🔵 **P2:** Refactor server.py (~8200 lines) into modular routes
+🔵 **P2:** Refactor large frontend components (Evara.js, Glydex.js)
+🔵 **P3:** Real-time chat for Community forums
+🔵 **P3:** Payment gateway for billing invoices
 
 ---
 
-## API Reference (New)
-
-### Calorie Tracker
-```
-GET  /api/calories/food-database  - Get all Indian foods
-GET  /api/calories/search?q=dosa  - Search foods
-POST /api/calories/log            - Log food intake
-GET  /api/calories/logs?date=     - Get daily logs
-DELETE /api/calories/logs/{id}    - Delete log entry
-GET  /api/calories/daily-summary  - Get daily nutrition summary
-```
-
-### Subscriptions
-```
-GET  /api/evara/subscription/plans        - Get subscription plans
-POST /api/evara/subscription/checkout     - Create Stripe checkout
-GET  /api/evara/subscription/status/{id}  - Check payment status
-GET  /api/evara/subscription/user         - Get user subscription
-POST /api/webhook/stripe                  - Stripe webhook handler
-```
-
-### Analytics
-```
-GET /api/admin/analytics?days=7  - Get analytics data
-GET /api/admin/stats             - Get basic stats
-```
+## Project Health
+- **Backend**: All routes loading correctly
+- **Frontend**: Building successfully
+- **Database**: MongoDB with migrated data
+- **All Features**: WORKING ✅
