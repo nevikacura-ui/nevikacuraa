@@ -1436,6 +1436,46 @@ const Evara = () => {
           </button>
         </div>
 
+        {/* Subscription Banner */}
+        {token && !userSubscription?.has_subscription && (
+          <Card 
+            className="bg-gradient-to-r from-pink-500 to-rose-500 border-0 cursor-pointer hover:shadow-lg transition-all"
+            onClick={() => { setShowSubscription(true); fetchSubscriptionPlans(); }}
+            data-testid="subscription-banner"
+          >
+            <CardContent className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                  <Crown className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-white">
+                  <p className="font-semibold">Upgrade to Premium</p>
+                  <p className="text-sm opacity-90">Unlock all features & AI chat</p>
+                </div>
+              </div>
+              <ChevronRight className="w-6 h-6 text-white" />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Active Subscription Badge */}
+        {userSubscription?.has_subscription && (
+          <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                  <Crown className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="font-semibold text-green-800">{userSubscription.subscription?.plan_name}</p>
+                  <p className="text-sm text-green-600">{userSubscription.subscription?.days_remaining} days remaining</p>
+                </div>
+              </div>
+              <span className="px-3 py-1 bg-green-500 text-white text-xs font-medium rounded-full">Active</span>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Education Quick Links */}
         <div className="grid grid-cols-2 gap-3">
           <button 
