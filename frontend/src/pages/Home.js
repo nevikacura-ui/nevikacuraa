@@ -606,87 +606,205 @@ const AuthModal = ({ open, onClose }) => {
         <DialogHeader>
           <DialogTitle className="font-heading text-2xl">Welcome to Nevika Cura</DialogTitle>
           <DialogDescription className="font-body">
-            {step === 'phone' && !isInternational && 'Enter your phone number to login or create an account'}
-            {step === 'phone' && isInternational && (emailAuth.isLogin ? 'Login with your email' : 'Create an account with email')}
-            {step === 'otp' && 'Enter the OTP sent to your phone'}
+            {step === 'email' && 'Enter your email to get started'}
+            {step === 'otp' && 'Enter the verification code sent to your email'}
             {step === 'register' && 'Complete your registration'}
+            {step === 'password-login' && 'Enter your password to login'}
           </DialogDescription>
         </DialogHeader>
 
-        {/* Step 1: Phone Number (Indian) or Email (International) */}
-        {step === 'phone' && !isInternational && (
-          <form onSubmit={handleSendOtp} className="space-y-4">
+        {/* Step 1: Email Entry */}
+        {step === 'email' && (
+          <form onSubmit={handleSendEmailOtp} className="space-y-4">
             <div>
-              <Label htmlFor="phone">Phone Number</Label>
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground font-medium">+91</span>
-                <Input 
-                  id="phone" 
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  placeholder="Enter 10-digit mobile number"
-                  required 
-                  data-testid="auth-phone-input"
-                  className="h-12 rounded-xl flex-1"
-                />
-              </div>
+              <Label htmlFor="email">Email Address</Label>
+              <Input 
+                id="email" 
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                required 
+                data-testid="auth-email-input"
+                className="h-12 rounded-xl"
+              />
             </div>
             <Button 
               type="submit" 
               className="w-full rounded-full h-12" 
-              disabled={loading || phone.length < 10}
-              data-testid="send-otp-button"
+              disabled={loading || !email}
+              data-testid="send-email-otp-button"
             >
-              {loading ? 'Sending OTP...' : 'Send OTP'}
+              {loading ? 'Sending...' : 'Continue'}
             </Button>
+            <p className="text-xs text-center text-gray-500">
+              We'll send a verification code to your email (No SMS cost!)
+            </p>
             <div className="text-center">
               <button 
                 type="button"
-                onClick={() => setIsInternational(true)}
+                onClick={() => setStep('password-login')}
                 className="text-sm text-brand-teal hover:underline"
               >
-                International Patient? Login with Email
+                Already have account? Login with password
               </button>
             </div>
           </form>
         )}
 
-        {/* International Login with Email */}
-        {step === 'phone' && isInternational && (
-          <form onSubmit={emailAuth.isLogin ? handleEmailLogin : handleEmailRegister} className="space-y-4">
-            {!emailAuth.isLogin && (
-              <div>
-                <Label htmlFor="name">Full Name</Label>
-                <Input 
-                  id="name" 
-                  value={emailAuth.name}
-                  onChange={(e) => setEmailAuth({...emailAuth, name: e.target.value})}
-                  placeholder="Enter your name"
-                  required 
-                  className="h-12 rounded-xl"
-                />
+        {/* Step 2: OTP Verification */}
+        {step === 'otp' && (
+          <div className="space-y-4">
+            {otpMethod === 'mock' && mockOtp && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-xs text-amber-800">
+                  <strong>Test Mode:</strong> Your verification code is <span className="font-mono font-bold">{mockOtp}</span>
+                </p>
               </div>
             )}
+            <p className="text-sm text-gray-600 text-center">
+              Code sent to <strong>{email}</strong>
+            </p>
+            <div className="flex justify-center gap-2">
+              {otp.map((digit, index) => (
+                <Input
+                  key={index}
+                  ref={(el) => (otpRefs.current[index] = el)}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => {
+                    handleOtpChange(index, e.target.value);
+                    if (e.target.value && index < 5) {
+                      otpRefs.current[index + 1]?.focus();
+                    }
+                    // Auto verify when complete
+                    const newOtp = [...otp];
+                    newOtp[index] = e.target.value;
+                    if (newOtp.join('').length === 6) {
+                      handleVerifyEmailOtp(newOtp.join(''));
+                    }
+                  }}
+                  onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                  className="w-12 h-14 text-center text-xl font-bold rounded-xl"
+                  data-testid={`otp-input-${index}`}
+                />
+              ))}
+            </div>
+            <div className="flex justify-between items-center">
+              <button 
+                onClick={() => setStep('email')} 
+                className="text-sm text-gray-500 hover:underline"
+              >
+                Change email
+              </button>
+              <button 
+                onClick={async () => {
+                  if (resendTimer > 0) return;
+                  setLoading(true);
+                  try {
+                    const response = await fetch(`${API}/api/auth/email-otp/send`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ email })
+                    });
+                    const data = await response.json();
+                    if (data.mock_otp) setMockOtp(data.mock_otp);
+                    setResendTimer(60);
+                    toast.success('New code sent!');
+                  } catch (error) {
+                    toast.error('Failed to resend');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                disabled={resendTimer > 0 || loading}
+                className="text-sm text-brand-teal hover:underline disabled:text-gray-400"
+              >
+                {resendTimer > 0 ? `Resend in ${resendTimer}s` : 'Resend code'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Registration Form */}
+        {step === 'register' && (
+          <form onSubmit={handleCompleteRegistration} className="space-y-4">
+            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-700">✓ Email verified: <strong>{email}</strong></p>
+            </div>
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="name">Full Name *</Label>
               <Input 
-                id="email" 
+                id="name" 
+                value={registerForm.name}
+                onChange={(e) => setRegisterForm({...registerForm, name: e.target.value})}
+                placeholder="Enter your full name"
+                required 
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <div>
+              <Label htmlFor="phone">Phone Number (Optional)</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground font-medium">+91</span>
+                <Input 
+                  id="phone" 
+                  value={registerForm.phone}
+                  onChange={(e) => setRegisterForm({...registerForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})}
+                  placeholder="For appointment SMS"
+                  className="h-12 rounded-xl flex-1"
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Required only for appointment SMS notifications</p>
+            </div>
+            <div>
+              <Label htmlFor="password">Create Password *</Label>
+              <Input 
+                id="password" 
+                type="password"
+                value={registerForm.password}
+                onChange={(e) => setRegisterForm({...registerForm, password: e.target.value})}
+                placeholder="Min 6 characters"
+                required 
+                minLength={6}
+                className="h-12 rounded-xl"
+              />
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full rounded-full h-12" 
+              disabled={loading}
+            >
+              {loading ? 'Creating Account...' : 'Create Account'}
+            </Button>
+          </form>
+        )}
+
+        {/* Password Login */}
+        {step === 'password-login' && (
+          <form onSubmit={handlePasswordLogin} className="space-y-4">
+            <div>
+              <Label htmlFor="login-email">Email</Label>
+              <Input 
+                id="login-email" 
                 type="email"
-                value={emailAuth.email}
-                onChange={(e) => setEmailAuth({...emailAuth, email: e.target.value})}
+                value={passwordLogin.email}
+                onChange={(e) => setPasswordLogin({...passwordLogin, email: e.target.value})}
                 placeholder="your@email.com"
                 required 
                 className="h-12 rounded-xl"
               />
             </div>
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="login-password">Password</Label>
               <Input 
-                id="password" 
+                id="login-password" 
                 type="password"
-                value={emailAuth.password}
-                onChange={(e) => setEmailAuth({...emailAuth, password: e.target.value})}
-                placeholder="Enter password"
+                value={passwordLogin.password}
+                onChange={(e) => setPasswordLogin({...passwordLogin, password: e.target.value})}
+                placeholder="Enter your password"
                 required 
                 className="h-12 rounded-xl"
               />
@@ -695,9 +813,34 @@ const AuthModal = ({ open, onClose }) => {
               type="submit" 
               className="w-full rounded-full h-12" 
               disabled={loading}
-              data-testid="email-auth-button"
+              data-testid="password-login-button"
             >
-              {loading ? 'Please wait...' : (emailAuth.isLogin ? 'Login' : 'Create Account')}
+              {loading ? 'Logging in...' : 'Login'}
+            </Button>
+            <div className="flex justify-between text-sm">
+              <button 
+                type="button"
+                onClick={() => setStep('email')}
+                className="text-brand-teal hover:underline"
+              >
+                Create new account
+              </button>
+              <button 
+                type="button"
+                onClick={() => {
+                  toast.info('Use your phone number to reset password via SMS OTP');
+                }}
+                className="text-gray-500 hover:underline"
+              >
+                Forgot password?
+              </button>
+            </div>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};
             </Button>
             <div className="flex justify-between text-sm">
               <button 
