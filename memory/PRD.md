@@ -319,6 +319,23 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 - Cancel reminder functionality
 - Type filtering (Follow-up, Appointment, Medicine Refill, Subscription, Custom)
 
+### January 13, 2026 - Session 5
+**Multi-Method Authentication System & Email Billing Notifications**
+
+**Authentication System Overhaul:**
+- Redesigned login modal with 3 prioritized authentication methods:
+  1. 🥇 **Email + OTP** (Most Preferred) - Free, highlighted with "Best" badge and teal border
+  2. 🥈 **Email + Password** - Traditional login
+  3. 🥉 **Phone + SMS OTP** (Least Preferred) - Shows "SMS charges may apply" warning
+- New passwordless login via email OTP (`/api/auth/email-otp/login`)
+- Forgot password redirects to Email OTP flow for password-less reset
+- Clear visual hierarchy in auth modal UI
+
+**Email Billing Notifications:**
+- Automatic email invoice when bills are created with patient email
+- Professional invoice template with itemized bill, discounts, totals
+- Integrated with existing Resend email service
+
 ---
 
 ## Remaining/Future Tasks
