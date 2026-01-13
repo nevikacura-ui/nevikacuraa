@@ -694,6 +694,10 @@ const Evara = () => {
   const [showHomeServices, setShowHomeServices] = useState(false);
   const [showCommunity, setShowCommunity] = useState(false);
   const [showPregnancyWeeks, setShowPregnancyWeeks] = useState(false);
+  const [showPregnancyEducation, setShowPregnancyEducation] = useState(false);
+  const [showMenopauseGuide, setShowMenopauseGuide] = useState(false);
+  const [showWomenCommunity, setShowWomenCommunity] = useState(false);
+  const [selectedCommunityCategory, setSelectedCommunityCategory] = useState(null);
   const [homeServices, setHomeServices] = useState([]);
   const [communitySessions, setCommunitySessions] = useState([]);
   const [pregnancyWeeks, setPregnancyWeeks] = useState([]);
