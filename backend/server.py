@@ -8293,6 +8293,13 @@ try:
 except Exception as e:
     logger.warning(f"Could not load community router: {e}")
 
+try:
+    from routes.pharmacy_loyalty import router as pharmacy_loyalty_router
+    app.include_router(pharmacy_loyalty_router, prefix="/api")
+    logger.info("Pharmacy Loyalty router loaded")
+except Exception as e:
+    logger.warning(f"Could not load pharmacy loyalty router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
