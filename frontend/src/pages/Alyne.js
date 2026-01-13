@@ -46,6 +46,12 @@ const REGION_CONTENT = {
       "Malaria protection",
       "Heat rash in summers",
       "Monsoon-related infections"
+    ],
+    quickLinks: [
+      { name: "Govt Schemes", icon: "🏛️", id: "govt_schemes" },
+      { name: "Regional Foods", icon: "🍲", id: "regional_foods" },
+      { name: "Seasonal Alerts", icon: "🌧️", id: "seasonal_alerts" },
+      { name: "Home Remedies", icon: "🌿", id: "ayurvedic" }
     ]
   },
   usa: {
@@ -67,6 +73,12 @@ const REGION_CONTENT = {
       "Food allergies screening",
       "Sleep safety (Back to Sleep)",
       "Screen time limits"
+    ],
+    quickLinks: [
+      { name: "Insurance Guide", icon: "💳", id: "insurance_guide" },
+      { name: "School Vaccines", icon: "🏫", id: "school_vaccines" },
+      { name: "WIC Program", icon: "🥛", id: "wic_program" },
+      { name: "Safety Guide", icon: "🚗", id: "safety_guide" }
     ]
   }
 };
