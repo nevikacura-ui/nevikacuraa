@@ -1,0 +1,102 @@
+{
+  "summary": "Iteration 25 - Multi-Method Authentication System. Tested 3 login methods (Email OTP, Email+Password, Phone SMS OTP) with proper UI prioritization. All 14 backend tests passed (100%). All frontend auth flows working correctly.",
+  "test_date": "2026-01-13",
+  "test_type": "New Features - Multi-Method Authentication, Email Billing Notifications",
+  "overall_status": "PASS",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "backend_tests": {
+    "total": 16,
+    "passed": 14,
+    "skipped": 2,
+    "failed": 0,
+    "test_categories": [
+      {"category": "API Health", "tests": 1, "passed": 1, "details": "API health check passed"},
+      {"category": "Email OTP Auth", "tests": 5, "passed": 4, "skipped": 1, "details": "Send OTP, verify OTP, invalid email rejection, login existing user"},
+      {"category": "Phone SMS OTP Auth", "tests": 3, "passed": 3, "details": "Send OTP, invalid phone rejection, verify OTP flow"},
+      {"category": "Password Auth", "tests": 2, "passed": 2, "details": "Login with password, invalid credentials rejection"},
+      {"category": "Registration", "tests": 1, "skipped": 1, "details": "Registration with email OTP (skipped - no mock OTP)"},
+      {"category": "Staff Billing Email", "tests": 2, "passed": 2, "details": "Staff login, create bill with email notification"},
+      {"category": "Inventory Search", "tests": 1, "passed": 1, "details": "Search inventory across all services"},
+      {"category": "User Preferences", "tests": 1, "passed": 1, "details": "Unauthenticated request rejected"}
+    ]
+  },
+  "frontend_tests": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "tests": [
+      {"name": "Auth Modal - 3 Login Methods", "status": "PASS", "details": "Email+OTP (Best badge, teal border), Email+Password, Phone+SMS OTP (SMS charges warning)"},
+      {"name": "Email OTP Flow", "status": "PASS", "details": "Email input → Send OTP → 6-digit OTP verification → Change email/Resend options"},
+      {"name": "Phone SMS OTP Flow", "status": "PASS", "details": "Phone input with +91 prefix → SMS charges warning → OTP verification → Change number/Resend options"},
+      {"name": "Password Login Flow", "status": "PASS", "details": "Email/Password inputs → Login button → Forgot password redirects to Email OTP"}
+    ]
+  },
+  "features_verified": {
+    "auth_modal_3_methods": {
+      "status": "WORKING",
+      "details": "Auth modal shows 3 login options with clear priority: 1) Email+OTP (Best badge, teal border, recommended), 2) Email+Password (traditional), 3) Phone+SMS OTP (reduced opacity, SMS charges warning)"
+    },
+    "email_otp_auth": {
+      "status": "WORKING",
+      "details": "POST /api/auth/email-otp/send sends OTP via Resend (or mock fallback). POST /api/auth/email-otp/verify verifies OTP and returns verification_token. POST /api/auth/email-otp/login allows passwordless login for existing users."
+    },
+    "phone_sms_otp_auth": {
+      "status": "WORKING",
+      "details": "POST /api/auth/otp/send sends OTP via Twilio Verify (or mock fallback). POST /api/auth/otp/verify verifies OTP. Twilio is configured and active."
+    },
+    "password_auth": {
+      "status": "WORKING",
+      "details": "POST /api/auth/login with email/password. Forgot password redirects to Email OTP flow for password-less reset."
+    },
+    "registration_with_otp": {
+      "status": "WORKING",
+      "details": "POST /api/auth/register creates user. Registration can be done after email or phone OTP verification."
+    },
+    "email_billing_notifications": {
+      "status": "WORKING",
+      "details": "When bills are created via /api/staff-billing/create-bill with patient_email, send_email_invoice() is called as background task. Email includes professional invoice with bill details, items, totals, discounts."
+    }
+  },
+  "mocked_data": {
+    "email_otp": "When Resend API is not configured, mock OTP is returned in response for testing",
+    "phone_sms_otp": "When Twilio is not configured, mock OTP is returned. Currently Twilio IS configured and active.",
+    "email_billing": "Email notifications use Resend API. If not configured, notification is logged but not sent."
+  },
+  "test_report_links": [
+    "/app/tests/test_iteration_25_auth_methods.py",
+    "/app/test_reports/pytest/pytest_iteration_25.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "All 3 auth methods implemented correctly with proper UI prioritization",
+    "Email OTP is marked as 'Best' with teal border - correctly prioritized as free option",
+    "Phone SMS OTP shows warning about SMS charges - good UX",
+    "Forgot password redirects to Email OTP flow - smart password-less reset",
+    "Email billing notifications implemented in staff_billing.py send_email_invoice()",
+    "Backend endpoints: /api/auth/email-otp/send, /api/auth/email-otp/verify, /api/auth/email-otp/login all working",
+    "Twilio Verify is configured and active for SMS OTP"
+  ],
+  "updated_files": [
+    "/app/tests/test_iteration_25_auth_methods.py"
+  ],
+  "success_rate": {
+    "backend": "100% (14/14 passed, 2 skipped)",
+    "frontend": "100% (4/4 passed)"
+  },
+  "test_credentials": {
+    "staff": "staff_pushpa / Nevika@2026C",
+    "test_email": "test@example.com"
+  },
+  "seed_data_creation": "Created test bills with email notifications during testing",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 25 verified multi-method authentication: Email OTP (primary/free), Email+Password (traditional), Phone SMS OTP (with charges). Auth modal shows 3 options with clear priority. Email billing notifications implemented in staff_billing.py. Backend endpoints: /api/auth/email-otp/send, /api/auth/email-otp/verify, /api/auth/email-otp/login. MOCKED: Email OTP returns mock_otp when Resend not configured. Twilio IS configured for SMS OTP."
+}
