@@ -678,6 +678,7 @@ class AppointmentCreate(BaseModel):
     patient_name: str
     patient_phone: str
     patient_email: Optional[str] = None
+    send_email_reminder: bool = True  # Send email reminder 1 hour before
 
 class DiagnosticOrder(BaseModel):
     model_config = ConfigDict(extra="ignore")
