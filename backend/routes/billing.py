@@ -213,6 +213,50 @@ async def record_payment(invoice_id: str, payment: RecordPayment):
         "amount_due": new_due
     }
 
+@router.get("/dashboard")
+async def get_billing_dashboard():
+    """Get billing dashboard stats"""
+    db = get_db()
+    
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+    # Get counts
+    total_due = 0
+    overdue_count = 0
+    pending_count = 0
+    partial_count = 0
+    
+    dues = await db.due_payments.find({"status": {"$ne": "paid"}}, {"_id": 0}).to_list(1000)
+    for due in dues:
+        total_due += due.get("amount_due", 0)
+        status = due.get("status", "pending")
+        if status == "overdue":
+            overdue_count += 1
+        elif status == "pending":
+            pending_count += 1
+        elif status == "partial":
+            partial_count += 1
+    
+    # Get today's collection
+    today_invoices = await db.invoices.find(
+        {"updated_at": {"$regex": f"^{today}"}},
+        {"_id": 0, "payments": 1}
+    ).to_list(500)
+    
+    collected_today = 0
+    for inv in today_invoices:
+        for payment in inv.get("payments", []):
+            if payment.get("recorded_at", "").startswith(today):
+                collected_today += payment.get("amount", 0)
+    
+    return {
+        "total_due": total_due,
+        "overdue_count": overdue_count,
+        "pending_count": pending_count,
+        "partial_count": partial_count,
+        "collected_today": collected_today
+    }
+
 @router.get("/due-payments")
 async def get_due_payments(
     page: int = Query(1, ge=1),
