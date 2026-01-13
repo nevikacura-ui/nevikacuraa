@@ -447,6 +447,47 @@ const Alyne = () => {
               <QuickAction icon={<Phone className="w-5 h-5 text-red-600" />} title="Emergency" subtitle={regionData.emergency} bgColor="bg-red-50" onClick={() => window.open(`tel:${regionData.emergency}`)} />
             </div>
 
+            {/* Region-Specific Resources */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500 mb-3 flex items-center gap-2">
+                {selectedRegion === 'india' ? '🇮🇳' : '🇺🇸'} {selectedRegion === 'india' ? 'India' : 'USA'} Resources
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {regionData.quickLinks?.map((link) => (
+                  <button 
+                    key={link.id} 
+                    onClick={() => setActiveCategory({id: link.id, title: link.name, region: selectedRegion})}
+                    className="bg-white border p-4 rounded-xl text-left hover:shadow-md transition-all hover:border-teal-300"
+                  >
+                    <span className="text-2xl block mb-2">{link.icon}</span>
+                    <p className="font-medium text-sm text-gray-800">{link.name}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Common Resources */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500 mb-3">📚 Helpful Resources</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <button onClick={() => setActiveCategory({id: 'dev_screening', title: 'Developmental Screening'})} className="bg-gradient-to-r from-purple-50 to-pink-50 border p-4 rounded-xl text-left hover:shadow-md">
+                  <Brain className="w-5 h-5 text-purple-600 mb-2" />
+                  <p className="font-medium text-sm">Dev Screening</p>
+                  <p className="text-xs text-gray-500">ASQ-3 Checklist</p>
+                </button>
+                <button onClick={() => setActiveCategory({id: 'telemedicine', title: 'Telemedicine Tips'})} className="bg-gradient-to-r from-blue-50 to-cyan-50 border p-4 rounded-xl text-left hover:shadow-md">
+                  <Video className="w-5 h-5 text-blue-600 mb-2" />
+                  <p className="font-medium text-sm">Telemedicine</p>
+                  <p className="text-xs text-gray-500">Video Consult Tips</p>
+                </button>
+                <button onClick={() => setActiveCategory({id: 'parenting_tips', title: 'Parenting Tips'})} className="bg-gradient-to-r from-amber-50 to-orange-50 border p-4 rounded-xl text-left hover:shadow-md">
+                  <Heart className="w-5 h-5 text-rose-500 mb-2" />
+                  <p className="font-medium text-sm">Parenting Tips</p>
+                  <p className="text-xs text-gray-500">Age-wise guidance</p>
+                </button>
+              </div>
+            </div>
+
             {/* Region-Specific Tips */}
             <Card className="border-0 shadow-lg">
               <CardHeader className="pb-2">
