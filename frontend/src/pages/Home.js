@@ -485,6 +485,7 @@ const AuthModal = ({ open, onClose }) => {
       setRegisterForm({ name: '', phone: '', email: '', password: '' });
       setSelectedInterests([]);
       setAuthMethod('');
+      setLoginError('');
     }
   }, [open]);
 
