@@ -274,6 +274,23 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 - Risk Assessment
 - Plus existing: My Health, Health Packages, Video Consult, Refer & Earn, Health Tips
 
+**20. Pharmacy Improvements** ✅ (Complete - January 13, 2026)
+- Prescription upload with preview (image or PDF)
+- Order tracking timeline (Placed → Packed → Dispatched → Delivered)
+- "Frequently Ordered" section for quick reorders
+- Backend API: `/api/pharmacy/frequently-ordered`
+
+**21. Proton Diagnostics Improvements** ✅ (Complete)
+- Home collection time slot picker (8 AM - 7 PM, 5 slots)
+- Test preparation instructions with fasting requirements
+- Tests with fasting: FBS, PPBS, GTT, Lipid Profile, LFT, Triglycerides
+
+**22. DiaGyn Improvements** ✅ (Complete)
+- Email reminder checkbox (1 hour before appointment)
+- send_email_reminder field in appointment booking
+- Internal staff/doctor feedback API (not shown to public)
+- Backend APIs: `/api/staff/appointments/{id}/internal-feedback`, `/api/staff/internal-feedback/summary`
+
 ---
 
 ## Remaining/Future Tasks
@@ -290,7 +307,7 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 🟠 **P1:** Optimize StaffPortal.js loadData() function
 
 🔵 **P2:** Full Billing & Due Payments System enhancements
-🔵 **P2:** Refactor server.py (~8200 lines) into modular routes
+🔵 **P2:** Refactor server.py (~8400 lines) into modular routes
 🔵 **P2:** Refactor large frontend components (Evara.js, Glydex.js)
 
 🔵 **P3:** Real-time chat for Community forums
@@ -303,4 +320,4 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 - **Frontend**: Building successfully
 - **Database**: MongoDB with migrated data
 - **All Features**: WORKING ✅
-- **Test Coverage**: 14/14 tests passed (100%)
+- **Test Coverage**: Iteration 22 (14/14 passed), Iteration 23 (20/22 passed, 2 skipped)
