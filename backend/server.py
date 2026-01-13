@@ -216,7 +216,7 @@ async def send_staff_sms_notification(department: str, message: str):
     return {"success": success_count > 0, "results": results}
 
 async def notify_staff_new_appointment(appointment_details: dict):
-    """Notify DiaGyn staff about new appointment"""
+    """Notify clinic-specific DiaGyn staff about new appointment"""
     patient_name = appointment_details.get('patient_name', 'Patient')
     doctor = appointment_details.get('doctor', 'Doctor')
     clinic = appointment_details.get('clinic', 'Clinic')
@@ -234,7 +234,9 @@ Date: {date}
 Time: {time}
 - DiaGyn Staff Alert"""
     
-    return await send_staff_sms_notification("diagyn", message)
+    # Send to clinic-specific number
+    clinic_key = CLINIC_SMS_MAP.get(clinic, "diagyn")
+    return await send_staff_sms_notification(clinic_key, message)
 
 async def notify_staff_new_signup(user_details: dict):
     """Notify Nevika staff about new user signup"""
