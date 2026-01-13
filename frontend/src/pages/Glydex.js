@@ -987,6 +987,15 @@ const Glydex = () => {
                     </div>
                   );
                 })}
+                {/* Share Report Button */}
+                <Button 
+                  variant="outline" 
+                  onClick={shareReportOnWhatsApp}
+                  className="w-full mt-3 border-teal-300 text-teal-600 hover:bg-teal-50"
+                  data-testid="share-glydex-report-btn"
+                >
+                  <Share2 className="w-4 h-4 mr-2" /> Share Report with Doctor via WhatsApp
+                </Button>
               </div>
             ) : (
               <div className="text-center py-8">
