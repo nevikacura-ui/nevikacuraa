@@ -787,27 +787,32 @@ const Admin = () => {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 mb-6">
-            <TabsTrigger value="inventory" data-testid="inventory-tab">
+          <TabsList className="grid w-full grid-cols-4 gap-1 mb-2 h-auto">
+            <TabsTrigger value="inventory" data-testid="inventory-tab" className="py-2">
               <Package className="w-4 h-4 mr-2" /> Pharmacy
             </TabsTrigger>
-            <TabsTrigger value="tests" data-testid="tests-tab">
+            <TabsTrigger value="tests" data-testid="tests-tab" className="py-2">
               <FlaskConical className="w-4 h-4 mr-2" /> Tests
             </TabsTrigger>
-            <TabsTrigger value="tracking" data-testid="tracking-tab">
+            <TabsTrigger value="tracking" data-testid="tracking-tab" className="py-2">
               <Truck className="w-4 h-4 mr-2" /> Tracking
             </TabsTrigger>
-            <TabsTrigger value="loyalty" data-testid="loyalty-tab">
+            <TabsTrigger value="loyalty" data-testid="loyalty-tab" className="py-2">
               <Gift className="w-4 h-4 mr-2" /> Loyalty
             </TabsTrigger>
-            <TabsTrigger value="leave" data-testid="leave-tab">
+          </TabsList>
+          <TabsList className="grid w-full grid-cols-4 gap-1 mb-6 h-auto">
+            <TabsTrigger value="leave" data-testid="leave-tab" className="py-2">
               <UserX className="w-4 h-4 mr-2" /> Leave
             </TabsTrigger>
-            <TabsTrigger value="staff" data-testid="staff-tab">
+            <TabsTrigger value="staff" data-testid="staff-tab" className="py-2">
               <Users className="w-4 h-4 mr-2" /> Staff
             </TabsTrigger>
-            <TabsTrigger value="orders" data-testid="orders-tab">
+            <TabsTrigger value="orders" data-testid="orders-tab" className="py-2">
               <BarChart3 className="w-4 h-4 mr-2" /> Orders
+            </TabsTrigger>
+            <TabsTrigger value="analytics" data-testid="analytics-tab" className="py-2">
+              <TrendingUp className="w-4 h-4 mr-2" /> Analytics
             </TabsTrigger>
           </TabsList>
 
