@@ -316,7 +316,7 @@ const Reminders = () => {
                   </Card>
                 ) : (
                   pendingToday.map(reminder => (
-                    <ReminderCard key={reminder.id} reminder={reminder} />
+                    <ReminderCard key={reminder.id} reminder={reminder} onCancel={handleCancelReminder} />
                   ))
                 )}
               </div>
@@ -334,7 +334,7 @@ const Reminders = () => {
                   </Card>
                 ) : (
                   pendingTomorrow.map(reminder => (
-                    <ReminderCard key={reminder.id} reminder={reminder} />
+                    <ReminderCard key={reminder.id} reminder={reminder} onCancel={handleCancelReminder} />
                   ))
                 )}
               </div>
