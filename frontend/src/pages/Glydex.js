@@ -767,7 +767,7 @@ const Glydex = () => {
               <img 
                 src="/glydex-logo.png" 
                 alt="Glydex" 
-                className="h-12 w-auto"
+                className="h-16 sm:h-20 w-auto"
               />
             </div>
           </div>
@@ -818,7 +818,7 @@ const Glydex = () => {
               <img 
                 src="/glydex-logo.png" 
                 alt="Glydex" 
-                className="h-12 w-auto"
+                className="h-16 sm:h-20 w-auto"
               />
             </div>
             <span className="text-sm text-gray-500">Welcome, {user?.name || 'User'}</span>
