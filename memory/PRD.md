@@ -10,9 +10,9 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 
 ---
 
-## Authentication System (Updated Jan 13, 2026)
+## Authentication System
 
-### New Cost-Saving Auth Flow
+### Email-First Auth Flow (Cost-Saving)
 | Step | Method | Cost |
 |------|--------|------|
 | **Signup** | Email OTP (Resend) | FREE |
@@ -20,28 +20,31 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 | **Password Reset** | SMS OTP (Twilio) | Paid |
 | **Appointments** | SMS OTP for verification | Paid |
 
+### Profile Customization
+After registration, users can select interests:
+- Evara (Women's Wellness)
+- Glydex (Diabetes Care)
+- DiaGyn Healthcare
+- Proton Diagnostics
+- Orange Pharmacy
+
 ### Endpoints
 - `POST /api/auth/email-otp/send` - Send email OTP for signup
 - `POST /api/auth/email-otp/verify` - Verify email OTP
 - `POST /api/auth/login` - Password login
-- `POST /api/auth/forgot-password/send-otp` - SMS OTP for password reset
-- `POST /api/auth/forgot-password/reset` - Reset password with OTP
+- `PUT /api/user/preferences` - Update user interests
+- `GET /api/user/preferences` - Get user preferences
 
 ---
 
 ## Staff SMS Notification Numbers
 | Service | Staff Numbers | Purpose |
 |---------|---------------|---------|
-| DiaGyn Healthcare | 8108500522, 8108500533 | New appointments (Pushpa + Amnion) |
+| DiaGyn Healthcare | 8108500522, 8108500533 | New appointments |
 | Proton Diagnostics | 7039040040 | New test bookings |
 | Orange Pharmacy | 8108500511 | New medicine orders |
 | Nevika/Evara/Glydex | 9833188288 | Signups & general |
 | Email | nevikacura@gmail.com | Order updates, reports |
-
-### Notification Rules
-- **New Orders**: SMS to staff + Email to customer
-- **Order Updates**: Email only (no SMS)
-- **Evara/Glydex**: No SMS - Email OTP or password only
 
 ---
 
@@ -65,40 +68,46 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 
 ## What's Been Implemented ✅
 
-### January 13, 2026 - Authentication Overhaul
+### January 13, 2026 - Session 2
 
-**1. Email OTP for Signup (FREE)**
-- Auth modal now shows EMAIL input first
-- OTP sent via Resend API (free 10,000/month)
-- No SMS cost for user registration
+**1. Indian Food Calorie Tracker** ✅
+- 100+ Indian foods with calories, protein, carbs, fat, fiber
+- Categories: Breakfast, Lunch/Dinner, Snacks, Beverages, Sweets, Diabetic-Friendly
+- Search functionality and category browsing
+- Daily food logging with totals
+- Implemented in both **Glydex** and **Evara** modules
+- API: `/api/calories/food-database`, `/api/calories/search`, `/api/calories/log`
 
-**2. Password Login**
-- Users login with email/password after registration
-- No OTP needed for regular login
+**2. User Profile Customization** ✅
+- Interest selection after registration
+- Services: Evara, Glydex, DiaGyn, Proton, Pharmacy
+- Stored in user profile for personalization
 
-**3. SMS Only for:**
-- Password reset (forgot password flow)
-- Appointment verification by patients
+**3. Admin Analytics Dashboard** ✅
+- Total Revenue, Appointments, Diagnostics, Pharmacy Orders
+- Daily Revenue Trend chart
+- Daily Appointments chart
+- Appointments by Doctor breakdown
+- Configurable time range (7/14/30 days)
+- Tab layout: 2 rows x 4 columns for better aesthetics
 
-**4. No WhatsApp Redirects**
-- All orders (DiaGyn, Proton, Pharmacy) use SMS notifications
-- No WhatsApp redirect in frontend
-- SMS sent to both customer AND staff
+**4. Stripe Payment Integration for Evara Subscriptions** ✅
+- Subscription plans: Monthly (₹299), Quarterly (₹799), Yearly (₹2,999)
+- Secure checkout via Stripe
+- Automatic subscription activation after payment
+- User subscription status tracking
+- API: `/api/evara/subscription/plans`, `/api/evara/subscription/checkout`
 
-**5. Enhanced Admin Cancellation**
-- Single Slot, Bulk Session (11-2 / 6-10)
-- Whole Day, Date Range
-- Session Range (DateA/SessionA to DateB/SessionB)
+### January 13, 2026 - Session 1
 
-**6. Evara Content**
-- Pregnancy Education (3 trimesters)
-- Menopause Guide (stages, symptoms, tips)
-- Women Health Community (tips, guides, Q&A)
-- Period Tracker with cycle phase tips
-
-**7. Share Reports via WhatsApp**
-- Glydex: Blood sugar logs (FBS, PPBS, HbA1c)
-- Evara: Period tracking report
+**1. Email OTP for Signup (FREE)** ✅
+**2. Password Login** ✅
+**3. Staff SMS Notifications** ✅
+**4. Enhanced Admin Cancellation** ✅
+**5. Evara Content (Pregnancy, Menopause, PMS, Community)** ✅
+**6. Share Reports via WhatsApp** ✅
+**7. QR Code for APK Download** ✅
+**8. Capacitor Migration for Android App** ✅
 
 ---
 
@@ -110,32 +119,63 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 ---
 
 ## Tech Stack
-- **Frontend**: React, Tailwind CSS, Shadcn UI
-- **Backend**: FastAPI, Python
+- **Frontend**: React, Tailwind CSS, Shadcn UI, Capacitor
+- **Backend**: FastAPI, Python, emergentintegrations
 - **Database**: MongoDB
 - **SMS**: Twilio (for appointments, password reset)
 - **Email**: Resend (FREE for OTP, notifications)
 - **AI Chat**: Claude (via emergentintegrations)
-- **PWA/Mobile**: Capacitor for Android
+- **Payments**: Stripe (via emergentintegrations)
+- **Mobile**: Capacitor for Android
 
 ---
 
-## Test Results (Jan 13, 2026)
-- ✅ Backend: 19/19 tests passed
-- ✅ Frontend: 12/12 tests passed
-- ✅ Email OTP signup: WORKING
-- ✅ Password login: WORKING
-- ✅ No WhatsApp redirects: VERIFIED
-- ✅ Staff SMS notifications: CONFIGURED
+## Test Results (Jan 13, 2026 - Session 2)
+- ✅ Backend: 21/21 tests passed (iteration_19)
+- ✅ Frontend: 8/8 tests passed
+- ✅ Calorie Tracker API: WORKING
+- ✅ User Preferences API: WORKING
+- ✅ Admin Analytics API: WORKING
+- ✅ Stripe Payment API: WORKING
 
 ---
 
 ## Upcoming Tasks (P1)
-- [ ] Analytics Dashboard for revenue/appointment trends
-- [ ] Payment Gateway Integration (Razorpay/Stripe)
+- [ ] Full Billing & Due Payments System
 - [ ] Automated Follow-up Reminders
+- [ ] Medicine refill reminders for Glydex
 
 ## Future/Backlog (P2-P3)
-- [ ] Migrate hardcoded data (medicines, tests) to MongoDB
-- [ ] Refactor server.py (6000+ lines)
-- [ ] Full Billing & Due Payments System
+- [ ] Migrate hardcoded data (medicines, tests, food database) to MongoDB
+- [ ] Refactor server.py (8000+ lines) into modular routes
+- [ ] Refactor large frontend components (Evara.js, Glydex.js)
+- [ ] Women's Health Community - user discussions/forums
+
+---
+
+## API Reference (New)
+
+### Calorie Tracker
+```
+GET  /api/calories/food-database  - Get all Indian foods
+GET  /api/calories/search?q=dosa  - Search foods
+POST /api/calories/log            - Log food intake
+GET  /api/calories/logs?date=     - Get daily logs
+DELETE /api/calories/logs/{id}    - Delete log entry
+GET  /api/calories/daily-summary  - Get daily nutrition summary
+```
+
+### Subscriptions
+```
+GET  /api/evara/subscription/plans        - Get subscription plans
+POST /api/evara/subscription/checkout     - Create Stripe checkout
+GET  /api/evara/subscription/status/{id}  - Check payment status
+GET  /api/evara/subscription/user         - Get user subscription
+POST /api/webhook/stripe                  - Stripe webhook handler
+```
+
+### Analytics
+```
+GET /api/admin/analytics?days=7  - Get analytics data
+GET /api/admin/stats             - Get basic stats
+```
