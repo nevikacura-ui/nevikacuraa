@@ -1538,6 +1538,132 @@ const PediatricianFinderSection = ({ onBack }) => {
   );
 };
 
+// Brightwheel Info Section (USA)
+const BrightwheelInfoSection = ({ onBack }) => {
+  const features = [
+    { icon: "📋", title: "Digital Check-in", desc: "Contactless attendance tracking with real-time updates" },
+    { icon: "📸", title: "Daily Reports", desc: "Photos, activities, meals, and naps sent to parents" },
+    { icon: "💬", title: "Messaging", desc: "Two-way communication between teachers and parents" },
+    { icon: "💳", title: "Billing & Payments", desc: "Automated invoicing and online payment collection" },
+    { icon: "📊", title: "Learning Reports", desc: "Track developmental milestones and learning progress" },
+    { icon: "📁", title: "Document Management", desc: "Store immunization records, forms, and permissions" }
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+        <div><h2 className="text-xl font-bold">🎒 Brightwheel</h2><p className="text-sm text-gray-500">Childcare & Preschool Management</p></div>
+      </div>
+
+      {/* Hero Card */}
+      <Card className="overflow-hidden bg-gradient-to-br from-orange-500 to-amber-500 text-white">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center">
+              <span className="text-4xl">🌟</span>
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">Brightwheel</h3>
+              <p className="text-orange-100">#1 Childcare Management App</p>
+            </div>
+          </div>
+          <p className="mt-4 text-orange-50">
+            The all-in-one childcare app trusted by thousands of preschools, daycares, and parents across the US.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Features Grid */}
+      <div>
+        <h3 className="font-semibold mb-3">Key Features</h3>
+        <div className="grid grid-cols-2 gap-3">
+          {features.map((feature, i) => (
+            <Card key={i} className="border">
+              <CardContent className="p-3">
+                <span className="text-2xl">{feature.icon}</span>
+                <h4 className="font-medium text-sm mt-2">{feature.title}</h4>
+                <p className="text-xs text-gray-500 mt-1">{feature.desc}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* How Parents Use It */}
+      <Card className="bg-blue-50 border-blue-200">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">👨‍👩‍👧 For Parents</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-2 text-sm">
+            <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />Receive real-time updates on your child's day</li>
+            <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />View photos and activity reports instantly</li>
+            <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />Message teachers directly through the app</li>
+            <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />Pay tuition and fees online securely</li>
+            <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />Access immunization and enrollment documents</li>
+          </ul>
+        </CardContent>
+      </Card>
+
+      {/* Download Links */}
+      <div className="space-y-3">
+        <h3 className="font-semibold">Download the App</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <a href="https://apps.apple.com/app/brightwheel/id947549498" target="_blank" rel="noopener noreferrer">
+            <Card className="bg-black text-white hover:bg-gray-800 transition-colors">
+              <CardContent className="p-4 flex items-center gap-3">
+                <span className="text-2xl">🍎</span>
+                <div>
+                  <p className="text-xs text-gray-400">Download on</p>
+                  <p className="font-semibold">App Store</p>
+                </div>
+              </CardContent>
+            </Card>
+          </a>
+          <a href="https://play.google.com/store/apps/details?id=com.brightwheel" target="_blank" rel="noopener noreferrer">
+            <Card className="bg-black text-white hover:bg-gray-800 transition-colors">
+              <CardContent className="p-4 flex items-center gap-3">
+                <span className="text-2xl">▶️</span>
+                <div>
+                  <p className="text-xs text-gray-400">Get it on</p>
+                  <p className="font-semibold">Google Play</p>
+                </div>
+              </CardContent>
+            </Card>
+          </a>
+        </div>
+      </div>
+
+      {/* Website Link */}
+      <a href="https://mybrightwheel.com" target="_blank" rel="noopener noreferrer">
+        <Card className="bg-orange-50 border-orange-200 hover:shadow-md transition-shadow">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🌐</span>
+              <div>
+                <p className="font-medium text-orange-700">Visit Brightwheel Website</p>
+                <p className="text-xs text-gray-500">mybrightwheel.com</p>
+              </div>
+            </div>
+            <ExternalLink className="w-5 h-5 text-orange-500" />
+          </CardContent>
+        </Card>
+      </a>
+
+      {/* Info Note */}
+      <Card className="bg-gray-50 border-gray-200">
+        <CardContent className="p-4">
+          <p className="text-sm text-gray-600">
+            <Info className="w-4 h-4 inline mr-1 text-gray-500" />
+            Ask your childcare provider if they use Brightwheel. If they do, they'll send you an invite to connect your account.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 // Developmental Screening Section
 const DevScreeningSection = ({ onBack }) => {
   const [screening, setScreening] = useState({});
