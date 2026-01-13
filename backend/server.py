@@ -8349,6 +8349,14 @@ try:
 except Exception as e:
     logger.warning(f"Could not load teleconsultation router: {e}")
 
+try:
+    from routes.wearables import router as wearables_router, set_db as set_wearables_db
+    set_wearables_db(db)
+    app.include_router(wearables_router, prefix="/api")
+    logger.info("Wearables router loaded")
+except Exception as e:
+    logger.warning(f"Could not load wearables router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
