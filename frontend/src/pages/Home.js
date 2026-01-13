@@ -487,7 +487,7 @@ const AuthModal = ({ open, onClose }) => {
     }
   }, [open]);
 
-  // Send Email OTP for signup
+  // Send Email OTP for signup/login
   const handleSendEmailOtp = async (e) => {
     e.preventDefault();
     if (!email || !email.includes('@')) {
@@ -503,9 +503,9 @@ const AuthModal = ({ open, onClose }) => {
       });
       const data = await response.json();
       if (data.success) {
-        setOtpMethod(data.method);
+        setOtpMethod(data.method || 'email');
         if (data.mock_otp) setMockOtp(data.mock_otp);
-        setStep('otp');
+        setStep('email-otp-verify');
         setResendTimer(60);
         toast.success('Verification code sent to your email!');
       } else {
@@ -513,6 +513,28 @@ const AuthModal = ({ open, onClose }) => {
       }
     } catch (error) {
       toast.error('Failed to send verification code');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Send Phone SMS OTP
+  const handleSendPhoneOtp = async (e) => {
+    e.preventDefault();
+    if (!phone || phone.length !== 10) {
+      toast.error('Please enter a valid 10-digit phone number');
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await sendAuthOtp(phone);
+      setOtpMethod(response.method || 'sms');
+      if (response.mock_otp) setMockOtp(response.mock_otp);
+      setStep('phone-otp-verify');
+      setResendTimer(30);
+      toast.success(response.method === 'sms' ? 'OTP sent to your phone!' : 'OTP generated!');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to send OTP');
     } finally {
       setLoading(false);
     }
