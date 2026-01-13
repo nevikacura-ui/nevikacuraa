@@ -354,6 +354,35 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 - Clear error message explaining the login failure
 - "Try password again" link for typo corrections
 
+### January 13, 2026 - Session 7
+**Biometric Authentication, Remember Me & Backend Refactoring**
+
+**Biometric Authentication (Fingerprint/Face ID):**
+- Backend endpoints: `/api/auth/biometric/register`, `/api/auth/biometric/login`, `/api/auth/biometric/status`
+- WebAuthn/FIDO2 compatible credential storage
+- Biometric login option appears in auth modal when enabled
+- Profile Settings > Security section for managing biometric credentials
+- Device-specific credential registration
+- 30-day extended session for biometric login
+
+**Remember Me Functionality:**
+- "Remember me for 30 days" checkbox in password login form (checked by default)
+- Backend endpoint: `/api/auth/login/remember`
+- Trusted devices tracking with device ID and name
+- Profile Settings > Security section shows trusted devices
+- Option to remove trusted devices remotely
+
+**Trusted Devices Management:**
+- Backend endpoints: `/api/auth/trusted-devices`, `/api/auth/trusted-devices/{device_id}`
+- Profile page shows list of trusted devices with last login time
+- Remove device functionality to revoke access
+
+**Security Settings in Profile:**
+- New SecuritySettings component in Profile > Settings tab
+- Biometric authentication enable/disable
+- View and manage registered biometric credentials
+- View and manage trusted devices
+
 ---
 
 ## Remaining/Future Tasks
