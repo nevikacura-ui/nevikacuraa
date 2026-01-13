@@ -113,6 +113,7 @@ const StaffPortal = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Data states
   const [appointments, setAppointments] = useState([]);
