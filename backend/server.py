@@ -88,13 +88,20 @@ DOCTOR_WHATSAPP_NUMBERS = {
 
 # Staff SMS Notification Numbers (for department-specific alerts)
 STAFF_SMS_NUMBERS = {
-    "diagyn": ["8108500522", "8108500533"],  # DiaGyn - Pushpa & Amnion (Amnion is part of DiaGyn)
-    "amnion": ["8108500533"],  # Amnion specific
+    "diagyn_pushpa": ["8108500522"],  # DiaGyn - Pushpa Clinic
+    "diagyn_amnion": ["8108500533"],  # DiaGyn - Amnion Clinic
+    "diagyn": ["8108500522", "8108500533"],  # All DiaGyn clinics
     "proton": ["7039040040"],  # Proton Diagnostics
     "orange": ["8108500511"],  # Orange Pharmacy
     "nevika": ["9833188288"],  # Nevika Cura, Evara, Glydex
     "evara": ["9833188288"],   # Evara
     "glydex": ["9833188288"],  # Glydex
+}
+
+# Clinic name to SMS key mapping
+CLINIC_SMS_MAP = {
+    "Pushpa Clinic": "diagyn_pushpa",
+    "Amnion Clinic": "diagyn_amnion",
 }
 
 # VAPID Configuration for Web Push Notifications
