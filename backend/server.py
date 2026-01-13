@@ -1130,6 +1130,57 @@ async def verify_email_otp_endpoint(request: EmailOTPVerify):
         "method": "email"
     }
 
+class EmailOTPLoginRequest(BaseModel):
+    email: str
+    verification_token: str
+
+@api_router.post("/auth/email-otp/login")
+async def email_otp_login(request: EmailOTPLoginRequest):
+    """Login using verified email OTP (passwordless login for existing users)"""
+    email = request.email.strip().lower()
+    verification_token = request.verification_token
+    
+    # Verify the token is valid and not expired
+    otp_key = f"email_{email}"
+    stored = email_otp_storage.get(otp_key)
+    
+    if not stored or stored.get("verification_token") != verification_token:
+        raise HTTPException(status_code=400, detail="Invalid or expired verification token")
+    
+    if stored.get("expires_at") and stored["expires_at"] < datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="Verification token expired")
+    
+    # Find user
+    user = await db.users.find_one({"email": email}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found. Please register.")
+    
+    # Generate JWT token
+    token_data = {
+        "user_id": user["id"],
+        "email": user["email"],
+        "name": user["name"],
+        "exp": datetime.now(timezone.utc) + timedelta(days=30)
+    }
+    token = jwt.encode(token_data, JWT_SECRET, algorithm="HS256")
+    
+    # Clean up OTP storage
+    del email_otp_storage[otp_key]
+    
+    logger.info(f"Email OTP login successful for {email}")
+    
+    return {
+        "token": token,
+        "user": {
+            "id": user["id"],
+            "name": user["name"],
+            "email": user["email"],
+            "phone": user.get("phone"),
+            "is_subscribed": user.get("is_subscribed", False),
+            "preferences": user.get("preferences", {})
+        }
+    }
+
 # ============ PASSWORD RESET VIA SMS OTP ============
 
 @api_router.post("/auth/forgot-password/send-otp")
