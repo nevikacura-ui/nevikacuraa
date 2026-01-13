@@ -2345,23 +2345,42 @@ const Evara = () => {
             ) : (
               <div className="space-y-2">
                 <div className="grid grid-cols-3 gap-2 mb-4">
-                  <div className="text-center p-2 bg-pink-50 rounded-lg">
+                  <button
+                    onClick={() => {
+                      const week1 = document.querySelector('[data-week="1"]');
+                      if (week1) week1.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="text-center p-2 bg-pink-50 rounded-lg hover:bg-pink-100 transition-colors cursor-pointer border border-pink-200"
+                  >
                     <p className="text-xs text-pink-600">1st Trimester</p>
                     <p className="font-semibold text-pink-800">Weeks 1-12</p>
-                  </div>
-                  <div className="text-center p-2 bg-purple-50 rounded-lg">
+                  </button>
+                  <button
+                    onClick={() => {
+                      const week13 = document.querySelector('[data-week="13"]');
+                      if (week13) week13.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="text-center p-2 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer border border-purple-200"
+                  >
                     <p className="text-xs text-purple-600">2nd Trimester</p>
                     <p className="font-semibold text-purple-800">Weeks 13-27</p>
-                  </div>
-                  <div className="text-center p-2 bg-blue-50 rounded-lg">
+                  </button>
+                  <button
+                    onClick={() => {
+                      const week28 = document.querySelector('[data-week="28"]');
+                      if (week28) week28.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="text-center p-2 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer border border-blue-200"
+                  >
                     <p className="text-xs text-blue-600">3rd Trimester</p>
                     <p className="font-semibold text-blue-800">Weeks 28-42</p>
-                  </div>
+                  </button>
                 </div>
                 
                 {pregnancyWeeks.map((week) => (
                   <button
                     key={week.week}
+                    data-week={week.week}
                     onClick={() => setSelectedWeek(week)}
                     className={`w-full text-left p-3 rounded-lg border transition-all hover:shadow-md ${
                       week.week <= 12 ? 'border-pink-200 hover:bg-pink-50' :
