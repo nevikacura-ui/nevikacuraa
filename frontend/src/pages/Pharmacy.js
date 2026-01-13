@@ -68,6 +68,14 @@ const Pharmacy = () => {
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [pointsToUse, setPointsToUse] = useState(0);
   const [loadingPoints, setLoadingPoints] = useState(false);
+  
+  // Loyalty Program Info state
+  const [showLoyaltyInfo, setShowLoyaltyInfo] = useState(false);
+  const [loyaltyTiers, setLoyaltyTiers] = useState(null);
+  const [loyaltyFAQ, setLoyaltyFAQ] = useState(null);
+  const [loyaltyTerms, setLoyaltyTerms] = useState(null);
+  const [userLoyaltyStatus, setUserLoyaltyStatus] = useState(null);
+  const [loyaltyTab, setLoyaltyTab] = useState('overview'); // overview, faq, terms
 
   // Check for reorder data on mount
   useEffect(() => {
