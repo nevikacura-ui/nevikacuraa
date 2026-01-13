@@ -8852,6 +8852,24 @@ try:
 except Exception as e:
     logger.warning(f"Could not load medication tracker router: {e}")
 
+# Patient Flow & Queue Management Router
+try:
+    from routes.patient_flow import router as patient_flow_router, set_db as set_patient_flow_db
+    set_patient_flow_db(db)
+    app.include_router(patient_flow_router, prefix="/api")
+    logger.info("Patient Flow router loaded")
+except Exception as e:
+    logger.warning(f"Could not load patient flow router: {e}")
+
+# Staff Billing Router
+try:
+    from routes.staff_billing import router as staff_billing_router, set_db as set_staff_billing_db
+    set_staff_billing_db(db)
+    app.include_router(staff_billing_router, prefix="/api")
+    logger.info("Staff Billing router loaded")
+except Exception as e:
+    logger.warning(f"Could not load staff billing router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
