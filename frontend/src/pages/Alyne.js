@@ -926,9 +926,8 @@ const KidsShopSection = ({ user, onBack }) => {
               {p.bestseller && <Badge className="bg-rose-500 text-xs mb-1">Best</Badge>}
               <h4 className="font-medium text-xs line-clamp-2">{p.name}</h4>
               <p className="text-xs text-gray-400">{p.brand}</p>
-              <div className="flex items-center justify-between mt-2">
-                <p className="font-bold text-teal-600">₹{p.price}</p>
-                <Button size="sm" onClick={() => addToCart(p)} className="bg-teal-600 h-7 w-7 p-0"><Plus className="w-3 h-3" /></Button>
+              <div className="flex items-center justify-end mt-2">
+                <Button size="sm" onClick={() => addToCart(p)} className="bg-teal-600 h-7 px-3 text-xs">Add to Cart</Button>
               </div>
             </CardContent>
           </Card>
