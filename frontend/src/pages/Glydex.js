@@ -378,6 +378,16 @@ const Glydex = () => {
   const [hba1cTrend, setHba1cTrend] = useState(null);
   const [hba1cAnalysis, setHba1cAnalysis] = useState(null);
   const [newHba1c, setNewHba1c] = useState({
+
+  // Calories Tracker state
+  const [showCaloriesTracker, setShowCaloriesTracker] = useState(false);
+  const [foodDatabase, setFoodDatabase] = useState({});
+  const [selectedFoodCategory, setSelectedFoodCategory] = useState('breakfast');
+  const [calorieLogs, setCalorieLogs] = useState([]);
+  const [dailyTotals, setDailyTotals] = useState({ calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
+  const [foodSearchQuery, setFoodSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     value: '',
     date: new Date().toISOString().split('T')[0],
     lab_name: '',
