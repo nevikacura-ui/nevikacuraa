@@ -460,6 +460,85 @@ async def send_email_notification(subject: str, html_content: str, patient_email
     
     return results
 
+# Email OTP Storage
+email_otp_storage = {}
+
+async def send_email_otp(email: str) -> dict:
+    """Send OTP via Email for authentication (signup/login)"""
+    if not RESEND_API_KEY:
+        logger.warning("Resend API key not configured")
+        return {"success": False, "error": "Email service not configured"}
+    
+    otp = generate_otp()
+    otp_key = f"email_{email}"
+    email_otp_storage[otp_key] = {
+        "otp": otp,
+        "expires_at": datetime.now(timezone.utc) + timedelta(minutes=10),
+        "attempts": 0
+    }
+    
+    email_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #14b8a6, #0891b2); border-radius: 10px;">
+            <h1 style="color: white; margin: 0;">Nevika Cura</h1>
+            <p style="color: white; opacity: 0.9;">Healthcare</p>
+        </div>
+        <div style="padding: 30px; background: #f8fafc; text-align: center;">
+            <h2 style="color: #1e293b;">Your Verification Code</h2>
+            <div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <p style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #14b8a6; margin: 0;">{otp}</p>
+            </div>
+            <p style="color: #64748b;">This code expires in 10 minutes.</p>
+            <p style="color: #94a3b8; font-size: 12px;">If you didn't request this code, please ignore this email.</p>
+        </div>
+        <div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 12px;">
+            <p>Nevika Cura Healthcare | www.nevikacura.com</p>
+        </div>
+    </div>
+    """
+    
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [email],
+            "subject": f"Your Nevika Cura Verification Code: {otp}",
+            "html": email_html
+        }
+        result = await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Email OTP sent to {email}: {result.get('id')}")
+        return {"success": True, "otp": otp}  # Return OTP for mock/testing
+    except Exception as e:
+        logger.error(f"Failed to send email OTP to {email}: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+async def verify_email_otp(email: str, otp: str) -> dict:
+    """Verify Email OTP"""
+    otp_key = f"email_{email}"
+    stored = email_otp_storage.get(otp_key)
+    
+    if not stored:
+        return {"success": False, "error": "No OTP found. Please request a new one."}
+    
+    if datetime.now(timezone.utc) > stored["expires_at"]:
+        del email_otp_storage[otp_key]
+        return {"success": False, "error": "OTP expired. Please request a new one."}
+    
+    stored["attempts"] += 1
+    if stored["attempts"] > 5:
+        del email_otp_storage[otp_key]
+        return {"success": False, "error": "Too many attempts. Please request a new OTP."}
+    
+    if stored["otp"] == otp:
+        verification_token = str(uuid.uuid4())
+        email_otp_storage[otp_key] = {
+            "verified": True,
+            "verification_token": verification_token,
+            "expires_at": datetime.now(timezone.utc) + timedelta(minutes=30)
+        }
+        return {"success": True, "verified": True, "verification_token": verification_token}
+    
+    return {"success": False, "error": "Invalid OTP"}
+
 # Push Notification Models
 class PushSubscription(BaseModel):
     endpoint: str
