@@ -92,16 +92,16 @@ const Home = () => {
     {
       id: 'alyne',
       name: 'ALYNE',
-      logo: 'https://customer-assets.emergentagent.com/job_kids-health-portal/artifacts/mrmio3uk_file_000000006cd87207b39dc03d0e62d1ad%20%281%29.png',
-      description: 'Kids Health & Care',
-      bgColor: 'bg-sky-50',
-      accentColor: 'border-teal-200',
+      logo: 'https://customer-assets.emergentagent.com/job_kids-health-portal/artifacts/ix1psj2f_file_000000000f6872088a12ba2dede24f49.png',
+      description: '',
+      bgColor: '',
+      accentColor: 'border-transparent',
       path: '/alyne',
-      logoBg: 'bg-sky-50',
-      customBg: '',
-      hideDecoration: false,
-      fillCard: false,
-      isGradient: false
+      logoBg: '',
+      customBg: '#0a2535',
+      hideDecoration: true,
+      fillCard: true,
+      tallerCard: true
     }
   ];
 
