@@ -866,21 +866,57 @@ const Pharmacy = () => {
               </div>
             </Card>
 
-            {/* Prescription Upload */}
+            {/* Prescription Upload with Preview */}
             <Card className="p-4">
               <h3 className="font-medium mb-3 flex items-center gap-2">
                 <Upload className="w-4 h-4 text-brand-orange" />
                 Upload Prescription (Optional)
               </h3>
-              <div className="flex items-center gap-4">
-                <label className="cursor-pointer">
-                  <div className="px-4 py-2 border border-dashed border-gray-300 rounded-lg hover:border-brand-orange transition-colors">
-                    {prescriptionFile ? prescriptionFile.name : 'Click to upload'}
+              <div className="space-y-3">
+                <div className="flex items-center gap-4">
+                  <label className="cursor-pointer">
+                    <div className="px-4 py-2 border border-dashed border-gray-300 rounded-lg hover:border-brand-orange transition-colors">
+                      {prescriptionFile ? prescriptionFile.name : 'Click to upload'}
+                    </div>
+                    <input type="file" accept="image/*,.pdf" onChange={handleFileUpload} className="hidden" data-testid="prescription-upload" />
+                  </label>
+                  {uploading && <span className="text-sm text-gray-500">Uploading...</span>}
+                  {prescriptionUrl && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                </div>
+                {/* Prescription Preview */}
+                {prescriptionUrl && (
+                  <div className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+                    <p className="text-sm font-medium text-orange-800 mb-2 flex items-center gap-2">
+                      <FileText className="w-4 h-4" />
+                      Prescription Preview
+                    </p>
+                    {prescriptionFile?.type?.includes('image') || prescriptionUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                      <img 
+                        src={prescriptionUrl} 
+                        alt="Prescription preview" 
+                        className="max-h-40 rounded border border-gray-200 object-contain"
+                      />
+                    ) : (
+                      <a 
+                        href={prescriptionUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-sm text-orange-600 hover:underline flex items-center gap-1"
+                      >
+                        <FileText className="w-4 h-4" />
+                        View PDF Prescription
+                      </a>
+                    )}
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => { setPrescriptionFile(null); setPrescriptionUrl(''); }} 
+                      className="mt-2 text-red-500 h-7 text-xs"
+                    >
+                      <Trash2 className="w-3 h-3 mr-1" /> Remove
+                    </Button>
                   </div>
-                  <input type="file" accept="image/*,.pdf" onChange={handleFileUpload} className="hidden" data-testid="prescription-upload" />
-                </label>
-                {uploading && <span className="text-sm text-gray-500">Uploading...</span>}
-                {prescriptionUrl && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                )}
               </div>
             </Card>
 
