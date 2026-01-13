@@ -1349,6 +1349,19 @@ const AuthModal = ({ open, onClose }) => {
                 data-testid="login-password-input"
               />
             </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="remember-me"
+                checked={passwordLogin.rememberMe}
+                onChange={(e) => setPasswordLogin({...passwordLogin, rememberMe: e.target.checked})}
+                className="rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+                data-testid="remember-me-checkbox"
+              />
+              <label htmlFor="remember-me" className="text-sm text-gray-600">
+                Remember me for 30 days
+              </label>
+            </div>
             <Button 
               type="submit" 
               className="w-full rounded-full h-12" 
