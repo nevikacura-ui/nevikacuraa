@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="13" time="1.821" timestamp="2026-01-13T19:27:18.003212+00:00" hostname="agent-env-ce39aaec-2d21-4251-9367-7da14d565dbf"><testcase classname="tests.test_iteration_26_google_auth.TestGoogleOAuth" name="test_google_oauth_new_user" time="0.079" /><testcase classname="tests.test_iteration_26_google_auth.TestGoogleOAuth" name="test_google_oauth_existing_user" time="0.076" /><testcase classname="tests.test_iteration_26_google_auth.TestGoogleOAuth" name="test_google_oauth_missing_email" time="0.035" /><testcase classname="tests.test_iteration_26_google_auth.TestGoogleOAuth" name="test_google_oauth_updates_picture" time="0.076"><failure message="AssertionError: assert None == 'https://example.com/new_picture.jpg'&#10; +  where None = &lt;built-in method get of dict object at 0xfcfbdb5a07c0&gt;('picture')&#10; +    where &lt;built-in method get of dict object at 0xfcfbdb5a07c0&gt; = {'auth_method': 'google', 'email': 'test_google_pic_2036497d@example.com', 'id': 'user_9be50d6c-542', 'is_subscribed': False, ...}.get">tests/test_iteration_26_google_auth.py:99: in test_google_oauth_updates_picture
+    assert data["user"].get("picture") == "https://example.com/new_picture.jpg"
+E   AssertionError: assert None == 'https://example.com/new_picture.jpg'
+E    +  where None = &lt;built-in method get of dict object at 0xfcfbdb5a07c0&gt;('picture')
+E    +    where &lt;built-in method get of dict object at 0xfcfbdb5a07c0&gt; = {'auth_method': 'google', 'email': 'test_google_pic_2036497d@example.com', 'id': 'user_9be50d6c-542', 'is_subscribed': False, ...}.get</failure></testcase><testcase classname="tests.test_iteration_26_google_auth.TestPasswordLoginFailure" name="test_password_login_wrong_password" time="0.258" /><testcase classname="tests.test_iteration_26_google_auth.TestPasswordLoginFailure" name="test_password_login_nonexistent_user" time="0.045" /><testcase classname="tests.test_iteration_26_google_auth.TestSMSOTPFallback" name="test_send_phone_otp" time="0.385" /><testcase classname="tests.test_iteration_26_google_auth.TestSMSOTPFallback" name="test_send_phone_otp_invalid_number" time="0.033" /><testcase classname="tests.test_iteration_26_google_auth.TestSMSOTPFallback" name="test_verify_phone_otp_mock" time="0.263"><failure message="AssertionError: Expected 200, got 400: {&quot;detail&quot;:&quot;Invalid OTP. Please try again.&quot;}&#10;assert 400 == 200&#10; +  where 400 = &lt;Response [400]&gt;.status_code">tests/test_iteration_26_google_auth.py:172: in test_verify_phone_otp_mock
+    assert verify_response.status_code == 200, f"Expected 200, got {verify_response.status_code}: {verify_response.text}"
+E   AssertionError: Expected 200, got 400: {"detail":"Invalid OTP. Please try again."}
+E   assert 400 == 200
+E    +  where 400 = &lt;Response [400]&gt;.status_code</failure></testcase><testcase classname="tests.test_iteration_26_google_auth.TestAPIHealth" name="test_api_health" time="0.041"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+tests/test_iteration_26_google_auth.py:189: in test_api_health
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="tests.test_iteration_26_google_auth.TestAPIHealth" name="test_auth_me_unauthenticated" time="0.033" /><testcase classname="tests.test_iteration_26_google_auth.TestEmailOTPAuth" name="test_send_email_otp" time="0.348" /><testcase classname="tests.test_iteration_26_google_auth.TestEmailOTPAuth" name="test_send_email_otp_invalid" time="0.035" /></testsuite></testsuites>
