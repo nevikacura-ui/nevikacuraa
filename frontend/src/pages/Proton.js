@@ -500,7 +500,7 @@ const Proton = () => {
               <img 
                 src="/proton-logo.png" 
                 alt="Proton Diagnostics" 
-                className="h-14 w-auto"
+                className="h-16 sm:h-20 w-auto"
                 data-testid="proton-logo"
               />
             </div>
