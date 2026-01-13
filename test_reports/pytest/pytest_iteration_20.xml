@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="21" time="1.217" timestamp="2026-01-13T11:43:16.143602+00:00" hostname="agent-env-efe18383-40e5-4388-bb2b-5b471cdd94dc"><testcase classname="tests.test_iteration_20_billing_reminders.TestHealthEndpoint" name="test_health_endpoint" time="0.089"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+tests/test_iteration_20_billing_reminders.py:23: in test_health_endpoint
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="tests.test_iteration_20_billing_reminders.TestBillingAPI" name="test_create_invoice" time="0.063" /><testcase classname="tests.test_iteration_20_billing_reminders.TestBillingAPI" name="test_get_billing_summary" time="0.079" /><testcase classname="tests.test_iteration_20_billing_reminders.TestBillingAPI" name="test_get_due_payments" time="0.039" /><testcase classname="tests.test_iteration_20_billing_reminders.TestBillingAPI" name="test_list_invoices" time="0.047" /><testcase classname="tests.test_iteration_20_billing_reminders.TestRemindersAPI" name="test_create_reminder" time="0.057" /><testcase classname="tests.test_iteration_20_billing_reminders.TestRemindersAPI" name="test_get_pending_reminders" time="0.035" /><testcase classname="tests.test_iteration_20_billing_reminders.TestRemindersAPI" name="test_list_reminders" time="0.037" /><testcase classname="tests.test_iteration_20_billing_reminders.TestCommunityAPI" name="test_get_community_categories" time="0.044" /><testcase classname="tests.test_iteration_20_billing_reminders.TestCommunityAPI" name="test_get_featured_discussions" time="0.035" /><testcase classname="tests.test_iteration_20_billing_reminders.TestCommunityAPI" name="test_create_community_post" time="0.058" /><testcase classname="tests.test_iteration_20_billing_reminders.TestCommunityAPI" name="test_get_community_posts" time="0.041" /><testcase classname="tests.test_iteration_20_billing_reminders.TestPushNotifications" name="test_appointment_reminder_notification_no_appointment" time="0.035" /><testcase classname="tests.test_iteration_20_billing_reminders.TestPushNotifications" name="test_cron_appointment_reminders_invalid_secret" time="0.037" /><testcase classname="tests.test_iteration_20_billing_reminders.TestPushNotifications" name="test_cron_appointment_reminders_valid_secret" time="0.036" /><testcase classname="tests.test_iteration_20_billing_reminders.TestDataMigration" name="test_medicines_catalog_exists" time="0.036"><failure message="AssertionError: assert 'category' in {'form': 'Tablet', 'name': '3-KAT-60TAB'}">tests/test_iteration_20_billing_reminders.py:322: in test_medicines_catalog_exists
+    assert "category" in med
+E   AssertionError: assert 'category' in {'form': 'Tablet', 'name': '3-KAT-60TAB'}</failure></testcase><testcase classname="tests.test_iteration_20_billing_reminders.TestDataMigration" name="test_diagnostic_tests_catalog_exists" time="0.036"><failure message="AssertionError: Expected 200, got 404: {&quot;detail&quot;:&quot;Not Found&quot;}&#10;assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">tests/test_iteration_20_billing_reminders.py:332: in test_diagnostic_tests_catalog_exists
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
+E   AssertionError: Expected 200, got 404: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="tests.test_iteration_20_billing_reminders.TestDataMigration" name="test_food_catalog_exists" time="0.039" /><testcase classname="tests.test_iteration_20_billing_reminders.TestAppointmentFollowupReminder" name="test_create_appointment_followup_no_appointment" time="0.044" /><testcase classname="tests.test_iteration_20_billing_reminders.TestBillingPaymentFlow" name="test_create_invoice_and_record_payment" time="0.081" /><testcase classname="tests.test_iteration_20_billing_reminders.TestCommunityStats" name="test_get_community_stats" time="0.042" /></testsuite></testsuites>
