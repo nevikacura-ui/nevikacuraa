@@ -84,8 +84,11 @@ const Admin = () => {
     cancel_type: 'day',
     date: '',
     time: '',
+    session: 'morning', // For bulk_session: 'morning' (11-2) or 'evening' (6-10)
     start_date: '',
     end_date: '',
+    start_session: 'morning', // For session_range
+    end_session: 'evening', // For session_range
     reason: 'Doctor on leave'
   });
   const [cancelLoading, setCancelLoading] = useState(false);
