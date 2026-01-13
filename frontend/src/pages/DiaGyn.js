@@ -88,6 +88,9 @@ const DiaGyn = () => {
   const [weeklyAvailability, setWeeklyAvailability] = useState([]);
   const [loadingAvailability, setLoadingAvailability] = useState(false);
   const [availabilityClinic, setAvailabilityClinic] = useState('pushpa');
+  
+  // Email reminder state
+  const [emailReminder, setEmailReminder] = useState(true);
 
   // Helper to get next 7 days
   const getNext7Days = () => {
