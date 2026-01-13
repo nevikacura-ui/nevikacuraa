@@ -1904,6 +1904,40 @@ const Evara = () => {
                 </Button>
               </TabsContent>
               
+              {/* Cycle Tips Tab */}
+              <TabsContent value="tips" className="space-y-4 pt-4">
+                <ScrollArea className="h-[350px] pr-4">
+                  {PERIOD_TRACKING_TIPS.map((phase, idx) => (
+                    <Card key={idx} className="mb-3 border-rose-200">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm text-rose-600">{phase.phase}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        <div>
+                          <p className="text-xs font-medium text-gray-700 mb-1">Tips:</p>
+                          <ul className="text-xs space-y-0.5">
+                            {phase.tips.map((tip, i) => (
+                              <li key={i} className="text-gray-600">• {tip}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="p-2 bg-green-50 rounded-lg">
+                          <p className="text-xs font-medium text-green-700">🍎 Nutrition:</p>
+                          <p className="text-xs text-green-600">{phase.nutrition}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </ScrollArea>
+                <Button 
+                  onClick={() => shareOnWhatsApp('pms_guide')}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Share2 className="w-4 h-4 mr-2" /> Share Tips on WhatsApp
+                </Button>
+              </TabsContent>
+              
               <TabsContent value="history" className="space-y-4 pt-4">
                 {periodHistory.next_predicted && (
                   <Card className="bg-gradient-to-r from-rose-500 to-pink-500 text-white border-0">
