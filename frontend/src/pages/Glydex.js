@@ -2237,6 +2237,204 @@ const Glydex = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Calorie Tracker Dialog */}
+      <Dialog open={showCaloriesTracker} onOpenChange={setShowCaloriesTracker}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader className="flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Utensils className="w-6 h-6 text-orange-600" />
+              Indian Food Calorie Tracker
+            </DialogTitle>
+            <DialogDescription>
+              Track your daily food intake with our database of 100+ Indian dishes
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-y-auto px-1">
+            {/* Date Selector */}
+            <div className="flex items-center gap-3 mb-4">
+              <Label>Date:</Label>
+              <Input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => {
+                  setSelectedDate(e.target.value);
+                  fetchCalorieLogs(e.target.value);
+                }}
+                className="w-40"
+              />
+            </div>
+
+            {/* Daily Summary */}
+            <Card className="mb-4 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
+              <CardContent className="p-4">
+                <h4 className="font-semibold text-orange-800 mb-3 flex items-center gap-2">
+                  <Target className="w-4 h-4" />
+                  Today's Summary
+                </h4>
+                <div className="grid grid-cols-5 gap-2 text-center">
+                  <div className="bg-white rounded-lg p-2">
+                    <p className="text-xl font-bold text-orange-600">{dailyTotals.calories}</p>
+                    <p className="text-xs text-gray-500">Calories</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-2">
+                    <p className="text-lg font-bold text-blue-600">{dailyTotals.protein}g</p>
+                    <p className="text-xs text-gray-500">Protein</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-2">
+                    <p className="text-lg font-bold text-purple-600">{dailyTotals.carbs}g</p>
+                    <p className="text-xs text-gray-500">Carbs</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-2">
+                    <p className="text-lg font-bold text-yellow-600">{dailyTotals.fat}g</p>
+                    <p className="text-xs text-gray-500">Fat</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-2">
+                    <p className="text-lg font-bold text-green-600">{dailyTotals.fiber}g</p>
+                    <p className="text-xs text-gray-500">Fiber</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Search Bar */}
+            <div className="mb-4">
+              <Label className="text-sm font-medium mb-2 block">Search Indian Foods</Label>
+              <Input
+                placeholder="Type to search... (e.g., Dosa, Biryani, Roti)"
+                value={foodSearchQuery}
+                onChange={(e) => {
+                  setFoodSearchQuery(e.target.value);
+                  searchFoods(e.target.value);
+                }}
+                className="mb-2"
+                data-testid="food-search-input"
+              />
+              
+              {/* Search Results */}
+              {searchResults.length > 0 && (
+                <Card className="border-orange-200">
+                  <CardContent className="p-2 max-h-48 overflow-y-auto">
+                    {searchResults.map((food, idx) => (
+                      <div 
+                        key={idx}
+                        className="flex items-center justify-between p-2 hover:bg-orange-50 rounded-lg cursor-pointer"
+                        onClick={() => addFoodToLog(food, food.meal_category || 'other')}
+                      >
+                        <div>
+                          <p className="font-medium text-sm">{food.name}</p>
+                          <p className="text-xs text-gray-500">{food.category} • {food.meal_category}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-orange-600">{food.calories} cal</p>
+                          <p className="text-xs text-gray-400">P:{food.protein}g C:{food.carbs}g</p>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            {/* Category Browser */}
+            <div className="mb-4">
+              <Label className="text-sm font-medium mb-2 block">Browse by Category</Label>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {Object.keys(foodDatabase).map(category => (
+                  <Button
+                    key={category}
+                    size="sm"
+                    variant={selectedFoodCategory === category ? "default" : "outline"}
+                    onClick={() => setSelectedFoodCategory(category)}
+                    className={selectedFoodCategory === category ? "bg-orange-500 hover:bg-orange-600" : ""}
+                  >
+                    {category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </Button>
+                ))}
+              </div>
+
+              {/* Food Items in Selected Category */}
+              {foodDatabase[selectedFoodCategory] && (
+                <Card className="border-gray-200">
+                  <CardContent className="p-2 max-h-52 overflow-y-auto">
+                    <div className="grid gap-1">
+                      {foodDatabase[selectedFoodCategory].map((food, idx) => (
+                        <div 
+                          key={idx}
+                          className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg cursor-pointer border-b last:border-b-0"
+                          onClick={() => addFoodToLog(food, selectedFoodCategory)}
+                          data-testid={`food-item-${idx}`}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm truncate">{food.name}</p>
+                            <p className="text-xs text-gray-400">{food.category}</p>
+                          </div>
+                          <div className="text-right flex-shrink-0 ml-2">
+                            <p className="font-bold text-orange-600 text-sm">{food.calories} cal</p>
+                            <p className="text-xs text-gray-400">P:{food.protein} C:{food.carbs} F:{food.fat}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            {/* Today's Food Log */}
+            <div className="mb-4">
+              <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                Food Log ({selectedDate})
+              </h4>
+              {calorieLogs.length > 0 ? (
+                <Card>
+                  <CardContent className="p-2">
+                    {calorieLogs.map((log, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg border-b last:border-b-0">
+                        <div>
+                          <p className="font-medium text-sm">{log.food_name}</p>
+                          <p className="text-xs text-gray-400">
+                            {log.meal_type} • Qty: {log.quantity}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-orange-600">{log.calories} cal</span>
+                          <Button 
+                            size="sm" 
+                            variant="ghost"
+                            onClick={() => deleteCalorieLog(log.id)}
+                            className="h-8 w-8 p-0 text-gray-400 hover:text-red-500"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="text-center py-6 bg-gray-50 rounded-xl">
+                  <Utensils className="w-10 h-10 mx-auto text-gray-300 mb-2" />
+                  <p className="text-gray-500 text-sm">No food logged yet</p>
+                  <p className="text-xs text-gray-400">Search or browse foods above to add</p>
+                </div>
+              )}
+            </div>
+
+            {/* Diabetic-Friendly Tip */}
+            <Card className="bg-green-50 border-green-200">
+              <CardContent className="p-3">
+                <p className="text-sm text-green-800">
+                  💡 <strong>Tip for Diabetics:</strong> Check the "diabetic_friendly" category for low-GI foods. 
+                  Focus on foods high in fiber and protein to maintain stable blood sugar.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
