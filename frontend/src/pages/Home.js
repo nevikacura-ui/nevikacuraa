@@ -634,15 +634,26 @@ const AuthModal = ({ open, onClose }) => {
       return;
     }
     setLoading(true);
+    setLoginError('');
     try {
       await login(passwordLogin.email, passwordLogin.password);
       toast.success('Login successful!');
       onClose();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Login failed. Check your password.');
+      const errorMsg = error.response?.data?.detail || 'Login failed. Check your password.';
+      setLoginError(errorMsg);
+      toast.error(errorMsg);
+      // Show password-failed step with SMS OTP option
+      setStep('password-failed');
     } finally {
       setLoading(false);
     }
+  };
+  
+  // Handle Google login
+  const handleGoogleLogin = () => {
+    loginWithGoogle();
+    // Modal will close when user is redirected
   };
 
   // Complete Registration
