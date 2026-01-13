@@ -241,6 +241,30 @@ const Pharmacy = () => {
     }
   };
 
+  const fetchLeaderboard = async (period = 'all') => {
+    setLeaderboardLoading(true);
+    try {
+      const response = await axios.get(`${API}/pharmacy/loyalty/leaderboard?limit=10&period=${period}`);
+      setLeaderboard(response.data.leaderboard || []);
+      setLeaderboardInfo({
+        total_participants: response.data.total_participants || 0,
+        period_label: response.data.period_label || 'All Time',
+        last_updated: response.data.last_updated
+      });
+    } catch (error) {
+      console.error('Failed to fetch leaderboard:', error);
+      setLeaderboard([]);
+    }
+    setLeaderboardLoading(false);
+  };
+
+  // Fetch leaderboard when period changes or tab switches to leaderboard
+  useEffect(() => {
+    if (loyaltyTab === 'leaderboard') {
+      fetchLeaderboard(leaderboardPeriod);
+    }
+  }, [loyaltyTab, leaderboardPeriod]);
+
   // Calculate discount from points (100 pts = ₹10)
   const discountAmount = (pointsToUse / 100) * 10;
 
