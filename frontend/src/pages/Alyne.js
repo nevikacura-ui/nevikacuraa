@@ -80,7 +80,8 @@ const REGION_CONTENT = {
       { name: "School Vaccines", icon: "🏫", id: "school_vaccines" },
       { name: "WIC Program", icon: "🥛", id: "wic_program" },
       { name: "Safety Guide", icon: "🚗", id: "safety_guide" },
-      { name: "Find Pediatrician", icon: "👨‍⚕️", id: "pediatrician_finder" }
+      { name: "Find Pediatrician", icon: "👨‍⚕️", id: "pediatrician_finder" },
+      { name: "Brightwheel", icon: "🎒", id: "brightwheel_info" }
     ]
   }
 };
