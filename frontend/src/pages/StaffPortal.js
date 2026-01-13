@@ -301,27 +301,27 @@ const StaffPortal = () => {
   const isClinicStaff = (role) => ['clinic_staff_pushpa', 'clinic_staff_amnion', 'super_admin'].includes(role);
   const isDoctor = (role) => ['doctor', 'doctor_pushpa', 'doctor_amnion', 'super_admin'].includes(role);
 
-  const loadData = async (showRefreshIndicator = false) => {
-    if (showRefreshIndicator) setIsRefreshing(true);
+  // Optimized data loading - only fetch what's needed based on active tab and role
+  const loadAppointmentsData = async () => {
+    const role = staffInfo?.role;
     try {
-      const role = staffInfo?.role;
-      
       if (isClinicStaff(role)) {
         const res = await axios.get(`${API}/staff/clinic/appointments?date=${selectedDate}`, getAuthHeaders());
         setAppointments(res.data.appointments || []);
         setEmergencyCounts(res.data.emergency_counts || {});
         
-        // Load available tests for add-on services
-        try {
-          const testsRes = await axios.get(`${API}/staff/diagnostic-tests`, getAuthHeaders());
-          setAvailableTests(testsRes.data.tests || {});
-        } catch (err) {
-          console.log('Could not load diagnostic tests');
+        // Load available tests for add-on services (only once)
+        if (Object.keys(availableTests).length === 0) {
+          try {
+            const testsRes = await axios.get(`${API}/staff/diagnostic-tests`, getAuthHeaders());
+            setAvailableTests(testsRes.data.tests || {});
+          } catch (err) {
+            console.log('Could not load diagnostic tests');
+          }
         }
       }
       
       if (isDoctor(role)) {
-        // For doctors, fetch appointments with optional clinic filter
         let url = `${API}/staff/doctor/appointments?date=${selectedDate}`;
         if (selectedClinic) {
           url += `&clinic=${encodeURIComponent(selectedClinic)}`;
@@ -329,35 +329,75 @@ const StaffPortal = () => {
         const res = await axios.get(url, getAuthHeaders());
         setAppointments(res.data.appointments || []);
         
-        // Update doctor clinics from response if available
         if (res.data.doctor_clinics && res.data.doctor_clinics.length > 0) {
           setDoctorClinics(res.data.doctor_clinics);
         }
       }
+    } catch (error) {
+      console.error('Load appointments error:', error);
+    }
+  };
+
+  const loadPharmacyData = async () => {
+    try {
+      const res = await axios.get(`${API}/staff/pharmacy/orders?date=${pharmacyDate}`, getAuthHeaders());
+      setPharmacyOrders(res.data.orders || []);
+      setPharmacyDateCounts(res.data.date_counts || {});
+    } catch (error) {
+      console.error('Load pharmacy error:', error);
+    }
+  };
+
+  const loadDiagnosticsData = async () => {
+    try {
+      const res = await axios.get(`${API}/staff/diagnostic/orders?date=${diagnosticDate}`, getAuthHeaders());
+      setDiagnosticOrders(res.data.orders || []);
+      setDiagnosticDateCounts(res.data.date_counts || {});
       
-      if (role === 'pharmacy_staff' || role === 'super_admin') {
-        const res = await axios.get(`${API}/staff/pharmacy/orders?date=${pharmacyDate}`, getAuthHeaders());
-        setPharmacyOrders(res.data.orders || []);
-        setPharmacyDateCounts(res.data.date_counts || {});
-      }
+      // Load service-linked orders
+      const serviceRes = await axios.get(`${API}/staff/diagnostic/service-orders`, getAuthHeaders());
+      setServiceOrders(serviceRes.data.orders || []);
       
-      if (role === 'diagnostics_staff' || role === 'super_admin') {
-        const res = await axios.get(`${API}/staff/diagnostic/orders?date=${diagnosticDate}`, getAuthHeaders());
-        setDiagnosticOrders(res.data.orders || []);
-        setDiagnosticDateCounts(res.data.date_counts || {});
-        
-        // Also load service-linked orders
-        const serviceRes = await axios.get(`${API}/staff/diagnostic/service-orders`, getAuthHeaders());
-        setServiceOrders(serviceRes.data.orders || []);
-        
-        // Load available tests
+      // Load available tests (only once)
+      if (Object.keys(availableTests).length === 0) {
         const testsRes = await axios.get(`${API}/staff/diagnostic-tests`, getAuthHeaders());
         setAvailableTests(testsRes.data.tests || {});
       }
-      
-      // Fetch daily collection for clinic staff
-      if (isClinicStaff(role)) {
-        fetchDailyCollection();
+    } catch (error) {
+      console.error('Load diagnostics error:', error);
+    }
+  };
+
+  const loadData = async (showRefreshIndicator = false, tabOverride = null) => {
+    if (showRefreshIndicator) setIsRefreshing(true);
+    const role = staffInfo?.role;
+    const currentTab = tabOverride || activeTab;
+    
+    try {
+      // Only load data for the active tab to reduce API calls and lag
+      if (currentTab === 'appointments' && (isClinicStaff(role) || isDoctor(role))) {
+        await loadAppointmentsData();
+        if (isClinicStaff(role)) {
+          fetchDailyCollection();
+        }
+      } else if (currentTab === 'pharmacy' && (role === 'pharmacy_staff' || role === 'super_admin')) {
+        await loadPharmacyData();
+      } else if (currentTab === 'diagnostics' && (role === 'diagnostics_staff' || role === 'super_admin')) {
+        await loadDiagnosticsData();
+      } else {
+        // For initial load or super_admin, load based on role but only active tab
+        if (isClinicStaff(role) || isDoctor(role)) {
+          await loadAppointmentsData();
+          if (isClinicStaff(role)) {
+            fetchDailyCollection();
+          }
+        }
+        if ((role === 'pharmacy_staff' || role === 'super_admin') && currentTab === 'pharmacy') {
+          await loadPharmacyData();
+        }
+        if ((role === 'diagnostics_staff' || role === 'super_admin') && currentTab === 'diagnostics') {
+          await loadDiagnosticsData();
+        }
       }
     } catch (error) {
       console.error('Load data error:', error);
@@ -371,13 +411,42 @@ const StaffPortal = () => {
     toast.success('Data refreshed!');
   };
 
+  // Load data when tab changes
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    loadData(true, newTab);
+  };
+
   useEffect(() => {
     if (isAuthenticated && staffInfo) {
       loadData();
-      // Auto-refresh removed - use manual Refresh button to reduce lag
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, staffInfo, selectedDate, pharmacyDate, diagnosticDate, selectedClinic]);
+  }, [isAuthenticated, staffInfo]);
+
+  // Reload appointments when date or clinic changes
+  useEffect(() => {
+    if (isAuthenticated && staffInfo && activeTab === 'appointments') {
+      loadAppointmentsData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, selectedClinic]);
+
+  // Reload pharmacy when date changes
+  useEffect(() => {
+    if (isAuthenticated && staffInfo && activeTab === 'pharmacy') {
+      loadPharmacyData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pharmacyDate]);
+
+  // Reload diagnostics when date changes
+  useEffect(() => {
+    if (isAuthenticated && staffInfo && activeTab === 'diagnostics') {
+      loadDiagnosticsData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [diagnosticDate]);
 
   const handleLogin = async () => {
     if (!username || !password) {
