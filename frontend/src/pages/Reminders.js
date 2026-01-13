@@ -29,6 +29,81 @@ const REMINDER_TYPES = {
   custom: { label: 'Custom', icon: MessageSquare, color: 'bg-gray-100 text-gray-700' }
 };
 
+const formatDateUtil = (dateStr) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-IN', { 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric' 
+  });
+};
+
+const getReminderTypeInfo = (type) => {
+  return REMINDER_TYPES[type] || REMINDER_TYPES.custom;
+};
+
+const ReminderCard = ({ reminder, showActions = true, onCancel }) => {
+  const typeInfo = getReminderTypeInfo(reminder.reminder_type);
+  const Icon = typeInfo.icon;
+  
+  return (
+    <Card className="mb-3">
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-3">
+            <div className={`p-2 rounded-lg ${typeInfo.color}`}>
+              <Icon className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-800">{reminder.title}</h4>
+              <p className="text-sm text-gray-600 mt-1">{reminder.message}</p>
+              <div className="flex flex-wrap gap-2 mt-2 text-xs text-gray-500">
+                <span className="flex items-center gap-1">
+                  <User className="w-3 h-3" />
+                  {reminder.patient_name}
+                </span>
+                {reminder.patient_phone && (
+                  <span className="flex items-center gap-1">
+                    <Phone className="w-3 h-3" />
+                    {reminder.patient_phone}
+                  </span>
+                )}
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  {formatDateUtil(reminder.scheduled_date)}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  {reminder.scheduled_time}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge className={typeInfo.color}>{typeInfo.label}</Badge>
+            {showActions && reminder.status === 'scheduled' && onCancel && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onCancel(reminder.id)}
+                className="text-red-500 hover:text-red-700"
+                data-testid={`cancel-reminder-${reminder.id}`}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+        </div>
+        {reminder.repeat && (
+          <Badge variant="outline" className="mt-2 text-xs">
+            Repeats: {reminder.repeat}
+          </Badge>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
 const Reminders = () => {
   const navigate = useNavigate();
   const { user, token } = useAuth();
