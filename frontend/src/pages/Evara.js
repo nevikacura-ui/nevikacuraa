@@ -2265,8 +2265,8 @@ const Evara = () => {
 
       {/* Week-by-Week Pregnancy Guide Dialog */}
       <Dialog open={showPregnancyWeeks} onOpenChange={setShowPregnancyWeeks}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
-          <DialogHeader>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-4 pb-2 flex-shrink-0">
             <div className="flex items-center justify-between">
               <DialogTitle className="flex items-center gap-2">
                 <Baby className="w-5 h-5 text-blue-500" />
@@ -2288,7 +2288,7 @@ const Evara = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <ScrollArea className="flex-1 pr-4">
+          <div className="flex-1 overflow-y-auto px-4 pb-4" style={{ maxHeight: 'calc(85vh - 120px)' }}>
             {selectedWeek ? (
               <div className="space-y-4">
                 <Button 
