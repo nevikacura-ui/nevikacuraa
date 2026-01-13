@@ -1550,7 +1550,7 @@ const Admin = () => {
 
       {/* Cancel Appointments Modal */}
       <Dialog open={showCancelModal} onOpenChange={setShowCancelModal}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-red-600">
               <AlertTriangle className="w-5 h-5" /> Cancel Appointments
@@ -1565,31 +1565,143 @@ const Admin = () => {
               </select>
             </div>
             <div>
-              <Label>Type</Label>
-              <div className="grid grid-cols-3 gap-2 mt-1">
-                {['session', 'day', 'range'].map(type => (
-                  <Button key={type} type="button" variant={cancelForm.cancel_type === type ? 'default' : 'outline'} onClick={() => setCancelForm({ ...cancelForm, cancel_type: type })} className="capitalize">{type}</Button>
+              <Label>Cancellation Type</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
+                {[
+                  { value: 'session', label: 'Single Slot' },
+                  { value: 'bulk_session', label: 'Session (11-2 / 6-10)' },
+                  { value: 'day', label: 'Whole Day' },
+                  { value: 'range', label: 'Date Range' },
+                  { value: 'session_range', label: 'Session Range' }
+                ].map(type => (
+                  <Button 
+                    key={type.value} 
+                    type="button" 
+                    variant={cancelForm.cancel_type === type.value ? 'default' : 'outline'} 
+                    onClick={() => setCancelForm({ ...cancelForm, cancel_type: type.value })} 
+                    className="text-xs h-auto py-2"
+                  >
+                    {type.label}
+                  </Button>
                 ))}
               </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                {cancelForm.cancel_type === 'session' && '• Cancel a specific time slot on a date'}
+                {cancelForm.cancel_type === 'bulk_session' && '• Cancel Morning (11AM-2PM) or Evening (6PM-10PM) on a date'}
+                {cancelForm.cancel_type === 'day' && '• Cancel all appointments on a selected day'}
+                {cancelForm.cancel_type === 'range' && '• Cancel all appointments between two dates'}
+                {cancelForm.cancel_type === 'session_range' && '• Cancel from Date A/Session A to Date B/Session B'}
+              </p>
             </div>
+            
+            {/* Day selection */}
             {cancelForm.cancel_type === 'day' && (
               <div>
                 <Label>Date</Label>
                 <CalendarComponent mode="single" selected={selectedDate} onSelect={setSelectedDate} className="rounded-md border mt-1" />
               </div>
             )}
+            
+            {/* Bulk Session selection */}
+            {cancelForm.cancel_type === 'bulk_session' && (
+              <>
+                <div>
+                  <Label>Date</Label>
+                  <CalendarComponent mode="single" selected={selectedDate} onSelect={setSelectedDate} className="rounded-md border mt-1" />
+                </div>
+                <div>
+                  <Label>Session to Cancel</Label>
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    <Button 
+                      type="button" 
+                      variant={cancelForm.session === 'morning' ? 'default' : 'outline'}
+                      onClick={() => setCancelForm({ ...cancelForm, session: 'morning' })}
+                      className="flex flex-col h-auto py-3"
+                    >
+                      <span className="font-bold">Morning</span>
+                      <span className="text-xs opacity-75">11:00 AM - 2:00 PM</span>
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant={cancelForm.session === 'evening' ? 'default' : 'outline'}
+                      onClick={() => setCancelForm({ ...cancelForm, session: 'evening' })}
+                      className="flex flex-col h-auto py-3"
+                    >
+                      <span className="font-bold">Evening</span>
+                      <span className="text-xs opacity-75">6:00 PM - 10:00 PM</span>
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+            
+            {/* Date Range */}
             {cancelForm.cancel_type === 'range' && (
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <Label>Start</Label>
+                  <Label>Start Date</Label>
                   <CalendarComponent mode="single" selected={dateRangeStart} onSelect={setDateRangeStart} className="rounded-md border mt-1 text-xs" />
                 </div>
                 <div>
-                  <Label>End</Label>
+                  <Label>End Date</Label>
                   <CalendarComponent mode="single" selected={dateRangeEnd} onSelect={setDateRangeEnd} className="rounded-md border mt-1 text-xs" />
                 </div>
               </div>
             )}
+            
+            {/* Session Range - From Date/Session To Date/Session */}
+            {cancelForm.cancel_type === 'session_range' && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-green-600 font-semibold">FROM</Label>
+                    <CalendarComponent mode="single" selected={dateRangeStart} onSelect={setDateRangeStart} className="rounded-md border text-xs" />
+                    <div className="grid grid-cols-2 gap-1">
+                      <Button 
+                        type="button" 
+                        size="sm"
+                        variant={cancelForm.start_session === 'morning' ? 'default' : 'outline'}
+                        onClick={() => setCancelForm({ ...cancelForm, start_session: 'morning' })}
+                      >
+                        Morning
+                      </Button>
+                      <Button 
+                        type="button" 
+                        size="sm"
+                        variant={cancelForm.start_session === 'evening' ? 'default' : 'outline'}
+                        onClick={() => setCancelForm({ ...cancelForm, start_session: 'evening' })}
+                      >
+                        Evening
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-red-600 font-semibold">TO</Label>
+                    <CalendarComponent mode="single" selected={dateRangeEnd} onSelect={setDateRangeEnd} className="rounded-md border text-xs" />
+                    <div className="grid grid-cols-2 gap-1">
+                      <Button 
+                        type="button" 
+                        size="sm"
+                        variant={cancelForm.end_session === 'morning' ? 'default' : 'outline'}
+                        onClick={() => setCancelForm({ ...cancelForm, end_session: 'morning' })}
+                      >
+                        Morning
+                      </Button>
+                      <Button 
+                        type="button" 
+                        size="sm"
+                        variant={cancelForm.end_session === 'evening' ? 'default' : 'outline'}
+                        onClick={() => setCancelForm({ ...cancelForm, end_session: 'evening' })}
+                      >
+                        Evening
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Single Session/Slot */}
             {cancelForm.cancel_type === 'session' && (
               <>
                 <div>
@@ -1597,20 +1709,25 @@ const Admin = () => {
                   <CalendarComponent mode="single" selected={selectedDate} onSelect={setSelectedDate} className="rounded-md border mt-1" />
                 </div>
                 <div>
-                  <Label>Time</Label>
+                  <Label>Time Slot</Label>
                   <select value={cancelForm.time} onChange={(e) => setCancelForm({ ...cancelForm, time: e.target.value })} className="w-full mt-1 h-10 px-3 border rounded-md">
                     <option value="">Select time</option>
-                    {['9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM'].map(t => <option key={t} value={t}>{t}</option>)}
+                    <optgroup label="Morning (11 AM - 2 PM)">
+                      {['11:00 AM', '11:10 AM', '11:20 AM', '11:30 AM', '11:40 AM', '11:50 AM', '12:00 PM', '12:10 PM', '12:20 PM', '12:30 PM', '12:40 PM', '12:50 PM', '1:00 PM', '1:10 PM', '1:20 PM', '1:30 PM', '1:40 PM', '1:50 PM', '2:00 PM'].map(t => <option key={t} value={t}>{t}</option>)}
+                    </optgroup>
+                    <optgroup label="Evening (6 PM - 10 PM)">
+                      {['6:00 PM', '6:10 PM', '6:20 PM', '6:30 PM', '6:40 PM', '6:50 PM', '7:00 PM', '7:10 PM', '7:20 PM', '7:30 PM', '7:40 PM', '7:50 PM', '8:00 PM', '8:10 PM', '8:20 PM', '8:30 PM', '8:40 PM', '8:50 PM', '9:00 PM', '9:10 PM', '9:20 PM', '9:30 PM', '9:40 PM', '9:50 PM', '10:00 PM'].map(t => <option key={t} value={t}>{t}</option>)}
+                    </optgroup>
                   </select>
                 </div>
               </>
             )}
             <div>
               <Label>Reason</Label>
-              <Input value={cancelForm.reason} onChange={(e) => setCancelForm({ ...cancelForm, reason: e.target.value })} className="mt-1" />
+              <Input value={cancelForm.reason} onChange={(e) => setCancelForm({ ...cancelForm, reason: e.target.value })} className="mt-1" placeholder="Doctor on leave, Emergency, etc." />
             </div>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setShowCancelModal(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setShowCancelModal(false)}>Close</Button>
               <Button variant="destructive" onClick={handleCancelAppointments} disabled={cancelLoading}>{cancelLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Cancel Appointments'}</Button>
             </div>
           </div>
