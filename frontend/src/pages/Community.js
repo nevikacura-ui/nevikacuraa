@@ -543,7 +543,7 @@ const Community = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-500 text-sm">No comments yet. Be the first to comment!</p>
+                <p className="text-gray-500 text-sm">No comments yet. Be the first to comment!</p>
                 )}
                 
                 {/* Add Comment */}
