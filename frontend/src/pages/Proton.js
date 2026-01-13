@@ -526,6 +526,46 @@ const Proton = () => {
         </div>
       </header>
 
+      {/* How It Works - Order Flow Guide */}
+      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-indigo-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center gap-2 mb-3">
+            <FlaskConical className="w-5 h-5 text-indigo-600" />
+            <h3 className="font-semibold text-indigo-800">How to Book Diagnostic Tests</h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
+              <div className="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
+              <div>
+                <p className="text-sm font-medium text-gray-800">Select Tests</p>
+                <p className="text-xs text-gray-500">Choose from pathology, imaging tests or upload prescription.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
+              <div className="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
+              <div>
+                <p className="text-sm font-medium text-gray-800">Fill Details</p>
+                <p className="text-xs text-gray-500">Enter name, phone, address for sample collection.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
+              <div className="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+              <div>
+                <p className="text-sm font-medium text-gray-800">Phlebotomist Call</p>
+                <p className="text-xs text-gray-500">Our phlebotomist calls to confirm location & timing for sample collection.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
+              <div className="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">4</div>
+              <div>
+                <p className="text-sm font-medium text-gray-800">Reports Ready</p>
+                <p className="text-xs text-gray-500">Sample collected, reports generated. Download from My Orders.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* STEP 1: Select Tests */}
         {currentStep === 1 && (
