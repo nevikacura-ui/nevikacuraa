@@ -2399,7 +2399,7 @@ const Evara = () => {
                 ))}
               </div>
             )}
-          </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
 
