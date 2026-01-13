@@ -500,9 +500,16 @@ const AuthModal = ({ open, onClose }) => {
       });
       const data = await response.json();
       if (response.ok) {
-        toast.success('Account created! Please login.');
-        setPasswordLogin({ email, password: '' });
-        setStep('password-login');
+        // Auto-login after registration
+        try {
+          await login(email, registerForm.password);
+          toast.success('Account created! Now customize your experience.');
+          setStep('interests');
+        } catch (loginErr) {
+          toast.success('Account created! Please login.');
+          setPasswordLogin({ email, password: '' });
+          setStep('password-login');
+        }
       } else {
         toast.error(data.detail || 'Registration failed');
       }
@@ -511,6 +518,45 @@ const AuthModal = ({ open, onClose }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle saving interests
+  const handleSaveInterests = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API}/api/user/preferences`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          interests: selectedInterests,
+          onboarding_complete: true
+        })
+      });
+      
+      if (response.ok) {
+        toast.success('Preferences saved! Welcome to Nevika Cura.');
+        if (fetchUser) await fetchUser();
+        onClose();
+      } else {
+        toast.error('Failed to save preferences');
+      }
+    } catch (error) {
+      toast.error('Failed to save preferences');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleInterest = (interestId) => {
+    setSelectedInterests(prev => 
+      prev.includes(interestId) 
+        ? prev.filter(i => i !== interestId)
+        : [...prev, interestId]
+    );
   };
 
   // Resend timer
