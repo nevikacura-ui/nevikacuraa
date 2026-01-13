@@ -181,6 +181,7 @@ POST /api/pharmacy/loyalty/claim-gold-reward - Claim 10-visit reward
 GET  /api/pharmacy/loyalty/calculate-benefits - Calculate order benefits
 GET  /api/pharmacy/loyalty/faq - Get FAQ
 GET  /api/pharmacy/loyalty/terms-and-conditions - Get T&C
+GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 leaderboard
 ```
 
 ---
@@ -194,15 +195,20 @@ GET  /api/pharmacy/loyalty/terms-and-conditions - Get T&C
 ✅ Medicine Refill Reminders for Glydex
 ✅ Data Migration to MongoDB
 ✅ Orange Pharmacy Loyalty Program with T&C
+✅ Loyalty Leaderboard (Weekly/Monthly/All-Time)
 
 ---
 
 ## Remaining/Future Tasks
 
+🔴 **P0:** Cashfree Payment Gateway (Awaiting user verification)
+   - Integration playbook ready
+   - Will replace/supplement Stripe for Evara subscriptions
+   - Simpler enrollment for Indian merchants
+
 🔵 **P2:** Refactor server.py (~8200 lines) into modular routes
 🔵 **P2:** Refactor large frontend components (Evara.js, Glydex.js)
 🔵 **P3:** Real-time chat for Community forums
-🔵 **P3:** Payment gateway for billing invoices
 
 ---
 
