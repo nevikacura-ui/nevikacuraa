@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, Phone, Calendar, Clock, Package, Stethoscope, Pill, TestTube, ChevronRight, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Search, Phone, Calendar, Clock, Package, Stethoscope, Pill, TestTube, ChevronRight, CheckCircle, AlertCircle, Truck, PackageCheck, Home, ClipboardCheck } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
@@ -9,6 +9,76 @@ import axios from 'axios';
 import { format } from 'date-fns';
 
 const API = process.env.REACT_APP_BACKEND_URL + '/api';
+
+// Order Timeline Component
+const OrderTimeline = ({ status, type }) => {
+  const pharmacySteps = [
+    { key: 'Order Booked', label: 'Order Placed', icon: ClipboardCheck },
+    { key: 'In Process', label: 'Packed', icon: Package },
+    { key: 'Out for Delivery', label: 'Dispatched', icon: Truck },
+    { key: 'Delivered', label: 'Delivered', icon: Home }
+  ];
+  
+  const diagnosticSteps = [
+    { key: 'Order Booked', label: 'Booked', icon: ClipboardCheck },
+    { key: 'Sample Collected', label: 'Sample Collected', icon: PackageCheck },
+    { key: 'In Process', label: 'Processing', icon: TestTube },
+    { key: 'Reports Generated', label: 'Reports Ready', icon: CheckCircle }
+  ];
+  
+  const steps = type === 'pharmacy' ? pharmacySteps : diagnosticSteps;
+  const currentStepIndex = steps.findIndex(s => s.key === status);
+  const isCancelled = status === 'Cancelled';
+  
+  if (isCancelled) {
+    return (
+      <div className="mt-3 p-2 bg-red-50 rounded-lg border border-red-200">
+        <p className="text-sm text-red-600 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4" />
+          Order Cancelled
+        </p>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="mt-4 pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between">
+        {steps.map((step, idx) => {
+          const isCompleted = idx <= currentStepIndex;
+          const isCurrent = idx === currentStepIndex;
+          const Icon = step.icon;
+          
+          return (
+            <React.Fragment key={step.key}>
+              <div className="flex flex-col items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  isCompleted 
+                    ? type === 'pharmacy' ? 'bg-orange-500 text-white' : 'bg-purple-500 text-white'
+                    : 'bg-gray-200 text-gray-400'
+                } ${isCurrent ? 'ring-2 ring-offset-2 ring-orange-300' : ''}`}>
+                  <Icon className="w-4 h-4" />
+                </div>
+                <span className={`text-[10px] mt-1 text-center max-w-[60px] ${
+                  isCompleted ? 'text-gray-700 font-medium' : 'text-gray-400'
+                }`}>
+                  {step.label}
+                </span>
+              </div>
+              {idx < steps.length - 1 && (
+                <div className={`flex-1 h-1 mx-1 rounded ${
+                  idx < currentStepIndex 
+                    ? type === 'pharmacy' ? 'bg-orange-500' : 'bg-purple-500'
+                    : 'bg-gray-200'
+                }`} />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 const TrackOrder = () => {
   const navigate = useNavigate();
