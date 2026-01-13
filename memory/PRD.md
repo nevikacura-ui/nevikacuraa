@@ -291,33 +291,57 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 - Internal staff/doctor feedback API (not shown to public)
 - Backend APIs: `/api/staff/appointments/{id}/internal-feedback`, `/api/staff/internal-feedback/summary`
 
+### January 13, 2026 - Session 4
+**Patient Flow & Staff Billing System + Community & Reminders Frontends**
+
+**Staff Billing Module (NEW):**
+- Added "Billing" tab to Staff Portal for clinic staff
+- Integrated billing searches across DiaGyn services, Proton tests, Orange Pharmacy medicines
+- Patient lookup by phone with loyalty points display
+- Custom item addition, quantity controls, discount application
+- Bill creation with payment method selection (Cash, UPI, Card, Due)
+- Invoice generation and email capability
+- Quick Billing link added to Footer (`/billing`)
+
+**Community Forum (NEW):**
+- Full frontend for `/community` page
+- 7 category pills (Pregnancy, Fertility, Menopause, PCOS, Nutrition, Mental Health, General)
+- Trending Discussions sidebar
+- Post creation, viewing, likes, and comments
+- Anonymous posting option
+- Linked from Evara women's wellness community
+
+**Reminders/Scheduler (NEW):**
+- Full frontend for `/reminders` page
+- Quick stats (Due Today, Due Tomorrow, Sent, Cancelled)
+- Upcoming and All Reminders tabs
+- Create reminder dialog with type, repeat options, patient details
+- Cancel reminder functionality
+- Type filtering (Follow-up, Appointment, Medicine Refill, Subscription, Custom)
+
 ---
 
 ## Remaining/Future Tasks
 
-🔴 **P0:** Cashfree Payment Gateway (Awaiting user verification)
+🔴 **P0:** Cashfree Payment Gateway (Awaiting API credentials from user)
    - Integration playbook ready
    - Will replace/supplement Stripe for Evara subscriptions
-   - Simpler enrollment for Indian merchants
 
-🟠 **P1:** Build frontend UI for 9 scaffolded backend modules
-🟠 **P1:** PDF sharing for blood sugar & period tracker logs
-🟠 **P1:** Admin appointment cancellation by session/date range
-🟠 **P1:** Fix "All Time" leaderboard showing 0 participants
-🟠 **P1:** Optimize StaffPortal.js loadData() function
+🟠 **P1:** Complete Wearable Integration (Terra)
+   - Backend webhook ready
+   - Needs frontend UI for device connection
 
-🔵 **P2:** Full Billing & Due Payments System enhancements
 🔵 **P2:** Refactor server.py (~8400 lines) into modular routes
-🔵 **P2:** Refactor large frontend components (Evara.js, Glydex.js)
+🔵 **P2:** Refactor large frontend components (Evara.js, Glydex.js, Admin.js)
+🔵 **P2:** Migrate hardcoded data to MongoDB (food database, Evara content)
 
 🔵 **P3:** Real-time chat for Community forums
-🔵 **P3:** Wearable Integration (Terra webhook ready)
 
 ---
 
 ## Project Health
-- **Backend**: All routes loading correctly (16 modular route files)
-- **Frontend**: Building successfully
+- **Backend**: All routes loading correctly (18+ modular route files)
+- **Frontend**: Building successfully, all pages rendering
 - **Database**: MongoDB with migrated data
 - **All Features**: WORKING ✅
-- **Test Coverage**: Iteration 22 (14/14 passed), Iteration 23 (20/22 passed, 2 skipped)
+- **Test Coverage**: Iteration 22 (14/14 passed), Iteration 23 (20/22 passed), **Iteration 24 (24/24 backend + 4/4 frontend passed)**
