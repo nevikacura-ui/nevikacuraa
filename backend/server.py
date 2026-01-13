@@ -4198,11 +4198,14 @@ async def get_public_diagnostic_tests():
 class CancelAppointmentsRequest(BaseModel):
     doctor: str
     clinic: str
-    cancel_type: str  # 'session', 'day', 'range'
+    cancel_type: str  # 'session', 'day', 'range', 'session_range'
     date: Optional[str] = None  # For single day or session
-    time: Optional[str] = None  # For single session only
+    time: Optional[str] = None  # For single session only (specific time slot)
+    session: Optional[str] = None  # 'morning' (11-2) or 'evening' (6-10) for bulk session
     start_date: Optional[str] = None  # For range
     end_date: Optional[str] = None  # For range
+    start_session: Optional[str] = None  # For session_range: 'morning' or 'evening'
+    end_session: Optional[str] = None  # For session_range: 'morning' or 'evening'
     reason: str = "Doctor on leave"
 
 @api_router.get("/admin/doctors")
