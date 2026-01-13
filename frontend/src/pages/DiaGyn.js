@@ -755,7 +755,7 @@ const DiaGyn = () => {
                 ) : (
                   <>
                     <CheckCircle2 className="w-5 h-5 mr-2" />
-                    Confirm & Book via WhatsApp
+                    Confirm & Book Appointment
                   </>
                 )}
               </Button>
