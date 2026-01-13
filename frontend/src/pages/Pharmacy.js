@@ -1259,6 +1259,141 @@ const Pharmacy = () => {
                 </Card>
               </TabsContent>
 
+              {/* Leaderboard Tab */}
+              <TabsContent value="leaderboard" className="m-0">
+                {/* Period Selector */}
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-amber-500" />
+                    Top Customers
+                  </h3>
+                  <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+                    {[
+                      { value: 'weekly', label: 'Week' },
+                      { value: 'monthly', label: 'Month' },
+                      { value: 'all', label: 'All Time' }
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => setLeaderboardPeriod(option.value)}
+                        className={`px-3 py-1 text-xs rounded-md transition-all ${
+                          leaderboardPeriod === option.value
+                            ? 'bg-orange-500 text-white shadow-sm'
+                            : 'text-gray-600 hover:bg-gray-200'
+                        }`}
+                        data-testid={`leaderboard-${option.value}`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Stats Bar */}
+                <Card className="p-3 mb-4 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-orange-500" />
+                      <span className="text-gray-600">{leaderboardInfo.period_label}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Medal className="w-4 h-4 text-amber-500" />
+                      <span className="font-medium text-gray-800">{leaderboardInfo.total_participants} participants</span>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Leaderboard List */}
+                {leaderboardLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+                  </div>
+                ) : leaderboard.length > 0 ? (
+                  <div className="space-y-2">
+                    {leaderboard.map((entry, idx) => (
+                      <Card 
+                        key={idx} 
+                        className={`p-3 transition-all hover:shadow-md ${
+                          idx === 0 ? 'bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-300' :
+                          idx === 1 ? 'bg-gradient-to-r from-gray-50 to-slate-50 border-gray-300' :
+                          idx === 2 ? 'bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200' :
+                          'bg-white'
+                        }`}
+                        data-testid={`leaderboard-entry-${idx}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          {/* Rank */}
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
+                            idx === 0 ? 'bg-yellow-400 text-yellow-900' :
+                            idx === 1 ? 'bg-gray-300 text-gray-700' :
+                            idx === 2 ? 'bg-orange-400 text-orange-900' :
+                            'bg-gray-100 text-gray-500'
+                          }`}>
+                            {entry.badge ? entry.badge.icon : `#${entry.rank}`}
+                          </div>
+
+                          {/* Name & Tier */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-gray-800 truncate">{entry.display_name}</span>
+                              <span className={`px-2 py-0.5 text-xs rounded-full ${
+                                entry.tier === 'gold' ? 'bg-yellow-100 text-yellow-700' :
+                                entry.tier === 'silver' ? 'bg-gray-100 text-gray-600' :
+                                'bg-orange-100 text-orange-700'
+                              }`}>
+                                {entry.tier.toUpperCase()}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+                              <span>{entry.total_orders} orders</span>
+                              {entry.gold_visits > 0 && (
+                                <span className="flex items-center gap-1">
+                                  <Crown className="w-3 h-3 text-yellow-500" />
+                                  {entry.gold_visits} gold visits
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Points */}
+                          <div className="text-right">
+                            <div className="flex items-center gap-1">
+                              <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                              <span className="font-bold text-lg text-orange-600">{entry.points}</span>
+                            </div>
+                            <span className="text-xs text-gray-400">points</span>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <Card className="p-8 text-center bg-gray-50">
+                    <Trophy className="w-12 h-12 mx-auto text-gray-300 mb-3" />
+                    <h4 className="font-semibold text-gray-600 mb-1">No Rankings Yet</h4>
+                    <p className="text-sm text-gray-400">
+                      Be the first to earn points and claim the top spot!
+                    </p>
+                    <p className="text-xs text-gray-400 mt-2">
+                      Make purchases to start earning loyalty points
+                    </p>
+                  </Card>
+                )}
+
+                {/* Call to Action */}
+                <Card className="p-4 mt-4 bg-gradient-to-r from-orange-100 to-amber-100 border-orange-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center">
+                      <Gift className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-orange-800">Want to climb the ranks?</h4>
+                      <p className="text-xs text-orange-600">Earn 1 point per ₹100 spent. 2× points on diagnostics!</p>
+                    </div>
+                  </div>
+                </Card>
+              </TabsContent>
+
               {/* FAQ Tab */}
               <TabsContent value="faq" className="m-0">
                 {loyaltyFAQ?.faqs ? (
