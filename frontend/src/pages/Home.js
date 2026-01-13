@@ -351,9 +351,9 @@ const Home = () => {
 };
 
 const AuthModal = ({ open, onClose }) => {
-  const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp } = useAuth();
+  const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState('phone'); // phone, otp, register
+  const [step, setStep] = useState('phone'); // phone, otp, register, email
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [mockOtp, setMockOtp] = useState('');
@@ -361,6 +361,8 @@ const AuthModal = ({ open, onClose }) => {
   const [userExists, setUserExists] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
   const [verificationToken, setVerificationToken] = useState(''); // Store verification token
+  const [isInternational, setIsInternational] = useState(false);
+  const [emailAuth, setEmailAuth] = useState({ email: '', password: '', name: '', isLogin: true });
   const otpRefs = React.useRef([]);
 
   // Reset state when modal closes
@@ -373,8 +375,62 @@ const AuthModal = ({ open, onClose }) => {
       setUserExists(false);
       setResendTimer(0);
       setVerificationToken('');
+      setIsInternational(false);
+      setEmailAuth({ email: '', password: '', name: '', isLogin: true });
     }
   }, [open]);
+
+  // Handle international email login
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    if (!emailAuth.email || !emailAuth.password) {
+      toast.error('Please enter email and password');
+      return;
+    }
+    setLoading(true);
+    try {
+      await login(emailAuth.email, emailAuth.password);
+      toast.success('Login successful!');
+      onClose();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Login failed. Check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle international email registration
+  const handleEmailRegister = async (e) => {
+    e.preventDefault();
+    if (!emailAuth.email || !emailAuth.password || !emailAuth.name) {
+      toast.error('Please fill all fields');
+      return;
+    }
+    setLoading(true);
+    try {
+      const API = process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${API}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: emailAuth.name,
+          email: emailAuth.email,
+          password: emailAuth.password,
+          phone: 'international'
+        })
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.detail || 'Registration failed');
+      }
+      toast.success('Registration successful! Please login.');
+      setEmailAuth({ ...emailAuth, isLogin: true });
+    } catch (error) {
+      toast.error(error.message || 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Resend timer
   React.useEffect(() => {
