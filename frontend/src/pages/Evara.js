@@ -2271,14 +2271,31 @@ const Evara = () => {
                   )}
                   {/* Share Period Report Button */}
                   {periodHistory.history?.length > 0 && (
-                    <Button 
-                      variant="outline" 
-                      onClick={() => shareOnWhatsApp('period_report', token, API_URL)}
-                      className="w-full mt-3 border-rose-300 text-rose-600 hover:bg-rose-50"
-                      data-testid="share-period-report-btn"
-                    >
-                      <Share2 className="w-4 h-4 mr-2" /> Share Period Report with Doctor
-                    </Button>
+                    <>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => shareOnWhatsApp('period_report', token, API_URL)}
+                        className="w-full mt-3 border-rose-300 text-rose-600 hover:bg-rose-50"
+                        data-testid="share-period-report-btn"
+                      >
+                        <Share2 className="w-4 h-4 mr-2" /> Share Report via WhatsApp
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          if (!token) {
+                            toast.error('Please login to download PDF');
+                            return;
+                          }
+                          window.open(`${API_URL}/api/evara/download-pdf?token=${token}`, '_blank');
+                          toast.success('Downloading PDF report...');
+                        }}
+                        className="w-full mt-2 border-purple-300 text-purple-600 hover:bg-purple-50"
+                        data-testid="download-evara-pdf-btn"
+                      >
+                        <FileDown className="w-4 h-4 mr-2" /> Download PDF Report
+                      </Button>
+                    </>
                   )}
                 </div>
               </TabsContent>
