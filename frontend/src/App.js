@@ -29,6 +29,8 @@ import Billing from '@/pages/Billing';
 // Community & Reminders
 import Community from '@/pages/Community';
 import Reminders from '@/pages/Reminders';
+// Auth
+import AuthCallback from '@/pages/AuthCallback';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
