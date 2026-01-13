@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { ArrowLeft, ArrowRight, Upload, Plus, Minus, Trash2, Search, Pill, ShoppingCart, X, Package, CreditCard, Banknote, CheckCircle2, Phone, Shield, Loader2, Gift, Crown, Award, Star, Info, ChevronRight, FileText } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Upload, Plus, Minus, Trash2, Search, Pill, ShoppingCart, X, Package, CreditCard, Banknote, CheckCircle2, Phone, Shield, Loader2, Gift, Crown, Award, Star, Info, ChevronRight, FileText, Trophy, Medal, TrendingUp, Calendar } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
