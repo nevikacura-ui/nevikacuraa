@@ -545,6 +545,28 @@ const Glydex = () => {
     navigate(`/proton?tests=${testsParam}&from=glydex`);
   };
 
+  // Share blood sugar report via WhatsApp
+  const shareReportOnWhatsApp = async () => {
+    if (!token) {
+      toast.error('Please login to share report');
+      return;
+    }
+    try {
+      const response = await fetch(`${API_URL}/api/glydex/share-report`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      if (data.whatsapp_url) {
+        window.open(data.whatsapp_url, '_blank');
+        toast.success('Opening WhatsApp to share report');
+      } else {
+        toast.error('No data to share. Start logging your blood sugar!');
+      }
+    } catch (error) {
+      toast.error('Failed to generate report');
+    }
+  };
+
   const handleSaveProfile = async () => {
     if (!profileData.diabetesType) {
       toast.error('Please select your diabetes type');
