@@ -443,18 +443,20 @@ const Home = () => {
 const AuthModal = ({ open, onClose }) => {
   const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login, fetchUser } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState('email'); // email, otp, register, password-login, interests
+  // Steps: method-select, email-otp, email-otp-verify, phone-otp, phone-otp-verify, password-login, register, interests
+  const [step, setStep] = useState('method-select');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [mockOtp, setMockOtp] = useState('');
-  const [otpMethod, setOtpMethod] = useState(''); // 'email' or 'mock'
+  const [otpMethod, setOtpMethod] = useState(''); // 'email' or 'sms' or 'mock'
   const [userExists, setUserExists] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
   const [verificationToken, setVerificationToken] = useState('');
   const [passwordLogin, setPasswordLogin] = useState({ email: '', password: '' });
-  const [registerForm, setRegisterForm] = useState({ name: '', phone: '', password: '' });
+  const [registerForm, setRegisterForm] = useState({ name: '', phone: '', email: '', password: '' });
   const [selectedInterests, setSelectedInterests] = useState([]);
+  const [authMethod, setAuthMethod] = useState(''); // 'email-otp', 'password', 'phone-otp'
   const otpRefs = React.useRef([]);
   const API = process.env.REACT_APP_BACKEND_URL;
 
