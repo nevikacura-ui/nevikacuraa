@@ -23,7 +23,7 @@ const StaffBillingModule = ({ staffInfo, getAuthHeaders }) => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [searchCategory, setSearchCategory] = useState('');
+  const [searchCategory, setSearchCategory] = useState('all');
   const [isSearching, setIsSearching] = useState(false);
   
   // Patient info
