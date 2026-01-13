@@ -13,12 +13,182 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, Calendar, FileText, Pill, User, Settings, Star, 
-  FolderOpen, Upload, Trash2, RefreshCw, Eye, Download, Plus
+  FolderOpen, Upload, Trash2, RefreshCw, Eye, Download, Plus,
+  Fingerprint, Smartphone, Shield, Monitor
 } from 'lucide-react';
 import PushNotificationSettings from '@/components/PushNotificationSettings';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+
+// Security Settings Component
+const SecuritySettings = ({ token }) => {
+  const { biometricAvailable, biometricEnabled, registerBiometric, removeBiometric, getTrustedDevices, removeTrustedDevice } = useAuth();
+  const [trustedDevices, setTrustedDevices] = useState([]);
+  const [biometricCredentials, setBiometricCredentials] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
+  useEffect(() => {
+    fetchSecurityData();
+  }, []);
+  
+  const fetchSecurityData = async () => {
+    try {
+      // Fetch trusted devices
+      const devices = await getTrustedDevices();
+      setTrustedDevices(devices || []);
+      
+      // Fetch biometric credentials
+      const response = await axios.get(`${API}/auth/biometric/status`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setBiometricCredentials(response.data.credentials || []);
+    } catch (e) {
+      console.error('Failed to fetch security data:', e);
+    }
+  };
+  
+  const handleEnableBiometric = async () => {
+    setLoading(true);
+    try {
+      await registerBiometric();
+      toast.success('Biometric authentication enabled!');
+      fetchSecurityData();
+    } catch (error) {
+      toast.error('Failed to enable biometric. Make sure your device supports it.');
+    }
+    setLoading(false);
+  };
+  
+  const handleRemoveBiometric = async (credentialId) => {
+    if (!window.confirm('Remove this biometric credential?')) return;
+    try {
+      await removeBiometric(credentialId);
+      toast.success('Biometric removed');
+      fetchSecurityData();
+    } catch (error) {
+      toast.error('Failed to remove biometric');
+    }
+  };
+  
+  const handleRemoveDevice = async (deviceId) => {
+    if (!window.confirm('Remove this trusted device? You will need to login again on that device.')) return;
+    try {
+      await removeTrustedDevice(deviceId);
+      toast.success('Device removed');
+      fetchSecurityData();
+    } catch (error) {
+      toast.error('Failed to remove device');
+    }
+  };
+  
+  return (
+    <div className="space-y-6">
+      {/* Biometric Authentication */}
+      <Card className="p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-purple-100 rounded-lg">
+            <Fingerprint className="w-5 h-5 text-purple-600" />
+          </div>
+          <div>
+            <h3 className="font-semibold">Biometric Authentication</h3>
+            <p className="text-sm text-gray-500">Use fingerprint or face recognition to login</p>
+          </div>
+        </div>
+        
+        {biometricAvailable ? (
+          <div className="space-y-3">
+            {biometricCredentials.length > 0 ? (
+              <>
+                <div className="flex items-center gap-2 text-green-600 mb-3">
+                  <Shield className="w-4 h-4" />
+                  <span className="text-sm font-medium">Biometric enabled</span>
+                </div>
+                {biometricCredentials.map(cred => (
+                  <div key={cred.credential_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Smartphone className="w-4 h-4 text-gray-500" />
+                      <div>
+                        <p className="font-medium text-sm">{cred.device_name || 'Unknown Device'}</p>
+                        <p className="text-xs text-gray-500">
+                          Added: {new Date(cred.created_at).toLocaleDateString()}
+                          {cred.last_used && ` • Last used: ${new Date(cred.last_used).toLocaleDateString()}`}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveBiometric(cred.credential_id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <Button
+                onClick={handleEnableBiometric}
+                disabled={loading}
+                className="w-full"
+              >
+                {loading ? 'Setting up...' : 'Enable Biometric Login'}
+              </Button>
+            )}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500">
+            Biometric authentication is not available on this device.
+          </p>
+        )}
+      </Card>
+      
+      {/* Trusted Devices */}
+      <Card className="p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <Monitor className="w-5 h-5 text-blue-600" />
+          </div>
+          <div>
+            <h3 className="font-semibold">Trusted Devices</h3>
+            <p className="text-sm text-gray-500">Devices where you've chosen "Remember Me"</p>
+          </div>
+        </div>
+        
+        {trustedDevices.length > 0 ? (
+          <div className="space-y-2">
+            {trustedDevices.map(device => (
+              <div key={device.device_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Smartphone className="w-4 h-4 text-gray-500" />
+                  <div>
+                    <p className="font-medium text-sm">{device.device_name}</p>
+                    <p className="text-xs text-gray-500">
+                      Last login: {new Date(device.last_login).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleRemoveDevice(device.device_id)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500">
+            No trusted devices yet. Enable "Remember Me" when logging in.
+          </p>
+        )}
+      </Card>
+    </div>
+  );
+};
 
 const Profile = () => {
   const navigate = useNavigate();
