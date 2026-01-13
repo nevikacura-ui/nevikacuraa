@@ -441,7 +441,9 @@ const Alyne = () => {
             {/* Quick Actions */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <QuickAction icon={<MessageCircle className="w-5 h-5 text-amber-600" />} title="AI Chat" subtitle="Ask ALYNE" bgColor="bg-amber-50" onClick={() => setActiveCategory({id: 'chat', title: 'AI Chat'})} />
-              <QuickAction icon={<ShoppingCart className="w-5 h-5 text-teal-600" />} title="Kids Shop" subtitle="Essentials" bgColor="bg-teal-50" onClick={() => setActiveCategory({id: 'shop', title: 'Kids Shop'})} />
+              {selectedRegion === 'india' && (
+                <QuickAction icon={<ShoppingCart className="w-5 h-5 text-teal-600" />} title="Kids Shop" subtitle="Essentials" bgColor="bg-teal-50" onClick={() => setActiveCategory({id: 'shop', title: 'Kids Shop'})} />
+              )}
               <QuickAction icon={<Syringe className="w-5 h-5 text-blue-600" />} title="Vaccines" subtitle={selectedRegion === 'india' ? 'IAP Schedule' : 'CDC Schedule'} bgColor="bg-blue-50" onClick={() => {
                 if (!selectedChild) { toast.error('Add child first'); setShowAddChild(true); }
                 else setActiveCategory({id: 'vaccines', title: 'Vaccinations'});
