@@ -1209,6 +1209,8 @@ async def google_oauth_login(request: GoogleAuthRequest):
         
         if update_data:
             await db.users.update_one({"email": email}, {"$set": update_data})
+            # Merge update into user object for response
+            existing_user.update(update_data)
         
         user = existing_user
         logger.info(f"Google OAuth login for existing user: {email}")
