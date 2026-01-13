@@ -1488,6 +1488,146 @@ const Admin = () => {
               </Card>
             </div>
           </TabsContent>
+
+          {/* Analytics Tab */}
+          <TabsContent value="analytics">
+            <Card className="p-6">
+              <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
+                <div>
+                  <h2 className="font-heading text-xl font-semibold">Analytics Dashboard</h2>
+                  <p className="text-sm text-muted-foreground">Revenue and appointment trends</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Time Range:</Label>
+                  <select 
+                    value={analyticsDays}
+                    onChange={(e) => setAnalyticsDays(Number(e.target.value))}
+                    className="h-9 px-3 border rounded-md text-sm"
+                  >
+                    <option value={7}>Last 7 Days</option>
+                    <option value={14}>Last 14 Days</option>
+                    <option value={30}>Last 30 Days</option>
+                  </select>
+                </div>
+              </div>
+
+              {analyticsLoading ? (
+                <div className="flex justify-center py-20">
+                  <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : analyticsData ? (
+                <div className="space-y-6">
+                  {/* Summary Cards */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+                      <p className="text-sm text-green-700">Total Revenue</p>
+                      <p className="text-2xl font-bold text-green-800">₹{analyticsData.total_revenue?.toLocaleString()}</p>
+                      <p className="text-xs text-green-600 mt-1">Last {analyticsDays} days</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+                      <p className="text-sm text-blue-700">Appointments</p>
+                      <p className="text-2xl font-bold text-blue-800">{analyticsData.total_appointments}</p>
+                      <p className="text-xs text-blue-600 mt-1">Last {analyticsDays} days</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+                      <p className="text-sm text-purple-700">Diagnostics</p>
+                      <p className="text-2xl font-bold text-purple-800">{analyticsData.total_diagnostics}</p>
+                      <p className="text-xs text-purple-600 mt-1">Last {analyticsDays} days</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
+                      <p className="text-sm text-orange-700">Pharmacy Orders</p>
+                      <p className="text-2xl font-bold text-orange-800">{analyticsData.total_pharmacy}</p>
+                      <p className="text-xs text-orange-600 mt-1">Last {analyticsDays} days</p>
+                    </div>
+                  </div>
+
+                  {/* Daily Revenue Chart */}
+                  <div className="bg-white border rounded-xl p-4">
+                    <h3 className="font-semibold mb-4 flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-green-600" /> Daily Revenue Trend
+                    </h3>
+                    <div className="h-48 flex items-end gap-1">
+                      {analyticsData.revenue?.map((val, idx) => {
+                        const maxVal = Math.max(...analyticsData.revenue, 1);
+                        const height = (val / maxVal) * 100;
+                        return (
+                          <div key={idx} className="flex-1 flex flex-col items-center">
+                            <div 
+                              className="w-full bg-gradient-to-t from-green-500 to-green-300 rounded-t-sm transition-all hover:from-green-600 hover:to-green-400"
+                              style={{ height: `${Math.max(height, 2)}%` }}
+                              title={`₹${val}`}
+                            />
+                            <p className="text-[10px] text-gray-400 mt-1 -rotate-45 origin-left whitespace-nowrap">
+                              {analyticsData.date_labels?.[idx]?.slice(5)}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Daily Appointments Chart */}
+                  <div className="bg-white border rounded-xl p-4">
+                    <h3 className="font-semibold mb-4 flex items-center gap-2">
+                      <Calendar className="w-5 h-5 text-blue-600" /> Daily Appointments
+                    </h3>
+                    <div className="h-48 flex items-end gap-1">
+                      {analyticsData.appointments?.map((val, idx) => {
+                        const maxVal = Math.max(...analyticsData.appointments, 1);
+                        const height = (val / maxVal) * 100;
+                        return (
+                          <div key={idx} className="flex-1 flex flex-col items-center">
+                            <div 
+                              className="w-full bg-gradient-to-t from-blue-500 to-blue-300 rounded-t-sm transition-all hover:from-blue-600 hover:to-blue-400"
+                              style={{ height: `${Math.max(height, 2)}%` }}
+                              title={`${val} appointments`}
+                            />
+                            <p className="text-[10px] text-gray-400 mt-1 -rotate-45 origin-left whitespace-nowrap">
+                              {analyticsData.date_labels?.[idx]?.slice(5)}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Appointments by Doctor */}
+                  {analyticsData.appointments_by_doctor && Object.keys(analyticsData.appointments_by_doctor).length > 0 && (
+                    <div className="bg-white border rounded-xl p-4">
+                      <h3 className="font-semibold mb-4 flex items-center gap-2">
+                        <Users className="w-5 h-5 text-indigo-600" /> Appointments by Doctor (All Time)
+                      </h3>
+                      <div className="space-y-3">
+                        {Object.entries(analyticsData.appointments_by_doctor).map(([doctor, data]) => {
+                          const confirmRate = data.total > 0 ? Math.round((data.confirmed / data.total) * 100) : 0;
+                          return (
+                            <div key={doctor} className="flex items-center gap-4">
+                              <div className="w-32 font-medium text-sm truncate">{doctor}</div>
+                              <div className="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-indigo-400 to-indigo-600 flex items-center justify-end pr-2"
+                                  style={{ width: `${Math.min(confirmRate, 100)}%` }}
+                                >
+                                  <span className="text-xs text-white font-medium">{confirmRate}%</span>
+                                </div>
+                              </div>
+                              <div className="w-20 text-right text-sm text-gray-600">
+                                {data.confirmed}/{data.total}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-20 text-muted-foreground">
+                  No analytics data available
+                </div>
+              )}
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
 
