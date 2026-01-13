@@ -298,6 +298,65 @@ const Home = () => {
           </div>
         </div>
 
+        {/* More Features Section */}
+        {user && (
+          <div className="mt-12">
+            <h2 className="text-xl font-semibold text-center mb-6">More Features</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              <button
+                onClick={() => navigate('/my-health')}
+                className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+                data-testid="my-health-btn"
+              >
+                <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-red-100 flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-red-500" />
+                </div>
+                <span className="text-sm font-medium">My Health</span>
+              </button>
+              <button
+                onClick={() => navigate('/health-packages')}
+                className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+                data-testid="health-packages-btn"
+              >
+                <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-purple-100 flex items-center justify-center">
+                  <FlaskConical className="w-5 h-5 text-purple-500" />
+                </div>
+                <span className="text-sm font-medium">Health Packages</span>
+              </button>
+              <button
+                onClick={() => navigate('/teleconsult')}
+                className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+                data-testid="teleconsult-btn"
+              >
+                <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-blue-100 flex items-center justify-center">
+                  <Video className="w-5 h-5 text-blue-500" />
+                </div>
+                <span className="text-sm font-medium">Video Consult</span>
+              </button>
+              <button
+                onClick={() => navigate('/referral')}
+                className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+                data-testid="referral-btn"
+              >
+                <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-pink-100 flex items-center justify-center">
+                  <Gift className="w-5 h-5 text-pink-500" />
+                </div>
+                <span className="text-sm font-medium">Refer & Earn</span>
+              </button>
+              <button
+                onClick={() => navigate('/health-tips')}
+                className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+                data-testid="health-tips-btn"
+              >
+                <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-yellow-100 flex items-center justify-center">
+                  <Lightbulb className="w-5 h-5 text-yellow-500" />
+                </div>
+                <span className="text-sm font-medium">Health Tips</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="mt-12 text-center">
           <div className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-xl border border-border/50 rounded-full px-6 py-3">
             <span className="font-body text-muted-foreground">Need Help?</span>
