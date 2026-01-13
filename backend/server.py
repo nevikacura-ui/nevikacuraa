@@ -1825,6 +1825,7 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
     doc = appointment.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     doc['appointment_type'] = "NORMAL"  # Customer bookings are always NORMAL
+    doc['send_email_reminder'] = input.send_email_reminder  # Store email reminder preference
     
     await db.appointments.insert_one(doc)
     logger.info(f"Appointment created: {appointment.id}")
