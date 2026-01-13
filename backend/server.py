@@ -1638,6 +1638,16 @@ Booking ID: {appointment.id[:8]}"""
         "booking_type": "online"
     })
     
+    # Send SMS notification to DiaGyn staff
+    await notify_staff_new_appointment({
+        "patient_name": appointment.patient_name,
+        "doctor": appointment.doctor,
+        "clinic": appointment.clinic,
+        "date": appointment.date,
+        "time": appointment.time,
+        "booking_type": "online"
+    })
+    
     return appointment
 
 @api_router.get("/appointments/booked-slots")
