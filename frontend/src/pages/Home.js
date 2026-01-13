@@ -481,7 +481,7 @@ const AuthModal = ({ open, onClose }) => {
       setUserExists(false);
       setResendTimer(0);
       setVerificationToken('');
-      setPasswordLogin({ email: '', password: '' });
+      setPasswordLogin({ email: '', password: '', rememberMe: true });
       setRegisterForm({ name: '', phone: '', email: '', password: '' });
       setSelectedInterests([]);
       setAuthMethod('');
