@@ -1247,7 +1247,11 @@ const Evara = () => {
                   } else if (program.id === 'pcos_hormonal') {
                     setShowPCOSEducation(true);
                   } else if (program.id === 'pregnancy_support') {
-                    setShowPregnancyCalc(true);
+                    setShowPregnancyEducation(true);
+                  } else if (program.id === 'menopause_care') {
+                    setShowMenopauseGuide(true);
+                  } else if (program.id === 'wellness_community') {
+                    setShowWomenCommunity(true);
                   } else {
                     setActiveProgram(program.id);
                   }
