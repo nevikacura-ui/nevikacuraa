@@ -43,6 +43,7 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/diagyn" element={<DiaGyn />} />
             <Route path="/proton" element={<Proton />} />
             <Route path="/pharmacy" element={<Pharmacy />} />
