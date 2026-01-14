@@ -459,6 +459,46 @@ const Alyne = () => {
               </div>
             </div>
 
+            {/* Multi-Child Switcher - Shows when multiple children exist */}
+            {children.length > 1 && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-gray-500">Your Children</h3>
+                  <Button variant="ghost" size="sm" onClick={() => setShowAddChild(true)} className="text-teal-600 h-7 text-xs">
+                    <Plus className="w-3 h-3 mr-1" /> Add Child
+                  </Button>
+                </div>
+                <div className="flex gap-3 overflow-x-auto pb-2">
+                  {children.map(child => (
+                    <button
+                      key={child.id}
+                      onClick={() => {
+                        setSelectedChild(child);
+                        setSelectedRegion(child.region);
+                      }}
+                      className={`flex-shrink-0 p-3 rounded-2xl border-2 transition-all min-w-[120px] ${
+                        selectedChild?.id === child.id 
+                          ? 'border-teal-500 bg-teal-50 shadow-md' 
+                          : 'border-gray-200 bg-white hover:border-teal-300'
+                      }`}
+                      data-testid={`child-switcher-${child.id}`}
+                    >
+                      <div className="text-center">
+                        <span className="text-3xl block">{child.gender === 'male' ? '👦' : '👧'}</span>
+                        <p className={`font-semibold text-sm mt-1 ${selectedChild?.id === child.id ? 'text-teal-700' : 'text-gray-700'}`}>
+                          {child.name}
+                        </p>
+                        <p className="text-xs text-gray-500">{child.age_display}</p>
+                        <Badge className={`mt-1 text-[10px] ${child.region === 'usa' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'}`}>
+                          {child.region === 'usa' ? '🇺🇸' : '🇮🇳'} {child.region.toUpperCase()}
+                        </Badge>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Feature Categories - All Clickable */}
             <div>
               <h3 className="text-sm font-semibold text-gray-500 mb-4">What would you like help with?</h3>
