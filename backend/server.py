@@ -7464,7 +7464,7 @@ try:
     from routes.clinic_management import router as clinic_mgmt_router, set_db as set_clinic_db, set_jwt_config as set_clinic_jwt, set_llm_key as set_clinic_llm, set_notification_functions as set_clinic_notif
     set_clinic_db(db)
     set_clinic_jwt(JWT_SECRET, JWT_ALGORITHM)
-    set_clinic_llm(EMERGENT_LLM_KEY)
+    set_clinic_llm(os.environ.get("EMERGENT_LLM_KEY", ""))
     set_clinic_notif(send_email_notification)
     app.include_router(clinic_mgmt_router, prefix="/api")
     logger.info("Clinic Management router loaded")
