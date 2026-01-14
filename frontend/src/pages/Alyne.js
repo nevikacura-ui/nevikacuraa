@@ -14,25 +14,17 @@ import {
   Baby, Calendar, ChevronLeft, ChevronRight, Check, X, Plus, Star, Syringe,
   Pill, Heart, Utensils, Moon, Sun, Thermometer, Activity, BookOpen,
   Globe, Award, Gift, Sparkles, Volume2, VolumeX, Mic, MicOff, Send,
-  ArrowRight, Clock, AlertCircle, Info
+  ArrowRight, Clock, AlertCircle, Info, ArrowLeft, TrendingUp, FileText,
+  Bell, User, Shield, Scale, Ruler, CheckCircle, AlertTriangle, Trash2,
+  Upload, MessageCircle, ShoppingCart, Package, Stethoscope, GraduationCap,
+  Phone, Eye, Scissors, Brain, Droplets, Video, ExternalLink, Leaf, Building2,
+  Car, Dna, Gamepad2
 } from 'lucide-react';
 import Footer from '@/components/Footer';
 import { KidsZoneSection } from '@/components/AlyneKidsZone';
 import { CulturalBridgeSection } from '@/components/AlyneCulturalBridge';
 import { DigitalHealthTwinSection } from '@/components/AlyneHealthTwin';
 import AanyaNewbornCare from '@/components/AanyaNewbornCare';
-  Baby, Plus, ArrowLeft, Calendar, Syringe, TrendingUp, FileText, 
-  Bell, Heart, User, Shield, Activity, Scale, Ruler, 
-  CheckCircle, Clock, AlertTriangle, ChevronRight, Trash2,
-  Upload, MessageCircle, Send, ShoppingCart, Package, Stethoscope, 
-  Thermometer, Star, BookOpen, GraduationCap, Phone, Pill, 
-  Eye, Scissors, Brain, Utensils, Moon, Droplets, X, Video, ExternalLink, 
-  Leaf, Building2, Car, Baby as BabyIcon, Info, Sparkles, Gamepad2, Globe, Dna
-} from 'lucide-react';
-import Footer from '@/components/Footer';
-import { KidsZoneSection } from '@/components/AlyneKidsZone';
-import { CulturalBridgeSection } from '@/components/AlyneCulturalBridge';
-import { DigitalHealthTwinSection } from '@/components/AlyneHealthTwin';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
