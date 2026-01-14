@@ -124,32 +124,59 @@ async def verify_staff(authorization: str = Header(None)):
 
 @router.post("/login")
 async def staff_login(input: StaffLogin):
-    """Staff login with phone and access code"""
-    staff = await db.staff.find_one({
-        "phone": input.phone,
-        "access_code": input.access_code,
-        "is_active": True
-    })
+    """Staff login with username/password OR phone/access_code"""
+    import bcrypt
+    
+    staff = None
+    
+    # Method 1: Username + Password login
+    if input.username and input.password:
+        staff_record = await db.admin_staff.find_one({
+            "username": input.username,
+            "active": True
+        })
+        
+        if staff_record and staff_record.get('password_hash'):
+            try:
+                if bcrypt.checkpw(input.password.encode(), staff_record['password_hash'].encode()):
+                    staff = staff_record
+            except Exception as e:
+                logger.error(f"Password verification error: {e}")
+    
+    # Method 2: Phone + Access Code login (for mobile staff)
+    elif input.phone and input.access_code:
+        staff = await db.staff.find_one({
+            "phone": input.phone,
+            "access_code": input.access_code,
+            "is_active": True
+        })
     
     if not staff:
         raise HTTPException(status_code=401, detail="Invalid credentials or inactive account")
     
     # Generate staff token
     token = jwt.encode({
-        'sub': staff.get('id'),
+        'sub': staff.get('id', str(staff.get('_id', ''))),
         'phone': staff.get('phone'),
         'name': staff.get('name'),
         'role': staff.get('role'),
+        'username': staff.get('username'),
         'department': staff.get('department'),
+        'clinic': staff.get('clinic'),
         'exp': datetime.now(timezone.utc) + timedelta(hours=12)
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
     return {
         "token": token,
         "staff": {
-            "id": staff.get('id'),
+            "id": staff.get('id', str(staff.get('_id', ''))),
             "name": staff.get('name'),
             "role": staff.get('role'),
+            "clinic": staff.get('clinic'),
+            "department": staff.get('department')
+        },
+        "message": f"Welcome, {staff.get('name')}!"
+    }
             "department": staff.get('department')
         }
     }
