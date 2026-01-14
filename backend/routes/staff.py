@@ -42,8 +42,10 @@ def set_notification_functions(email_func, sms_func):
 # ============ Models ============
 
 class StaffLogin(BaseModel):
-    phone: str
-    access_code: str
+    phone: Optional[str] = None
+    access_code: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
 
 class WalkInAppointment(BaseModel):
     doctor: str
