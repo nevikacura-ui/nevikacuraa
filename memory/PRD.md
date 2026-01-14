@@ -781,6 +781,16 @@ GET  /api/teleconsult/prescription/{id} - Get prescription (auth required)
 3. **Admin Role Verification** - Fixed to accept both 'admin' and 'super_admin' roles
 4. **WebSocket Endpoint** - Moved to `/api/ws/slots` for proper ingress routing
 
+### Add Funds Toggle (January 14, 2026) ✅
+- When wallet balance is insufficient at payment step, shows "Add Funds" button
+- Opens inline dialog with:
+  - Quick amount buttons (₹300, ₹500, ₹1000, ₹2000)
+  - UPI QR code for the consultation fee
+  - UPI ID (nevikacura@ybl) with copy button
+  - "Refresh Balance" button to check updated balance
+- User-friendly amber/warning styling for insufficient balance state
+- No redirect to profile - stays on booking page
+
 ### Test Results (Iteration 29)
 - **Backend**: 22/22 tests passed (100%)
 - **Frontend**: 10/10 tests passed (100%)
