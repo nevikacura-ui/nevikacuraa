@@ -131,14 +131,18 @@ async def staff_login(input: StaffLogin):
     
     # Method 1: Username + Password login
     if input.username and input.password:
+        logger.info(f"Staff login attempt with username: {input.username}")
         staff_record = await db.admin_staff.find_one({
             "username": input.username,
             "active": True
         })
+        logger.info(f"Found staff record: {staff_record is not None}")
         
         if staff_record and staff_record.get('password_hash'):
             try:
-                if bcrypt.checkpw(input.password.encode(), staff_record['password_hash'].encode()):
+                password_valid = bcrypt.checkpw(input.password.encode(), staff_record['password_hash'].encode())
+                logger.info(f"Password valid: {password_valid}")
+                if password_valid:
                     staff = staff_record
             except Exception as e:
                 logger.error(f"Password verification error: {e}")
