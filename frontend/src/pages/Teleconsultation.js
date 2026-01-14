@@ -1,459 +1,730 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
+import WalletWidget from '@/components/WalletWidget';
 import { 
   ArrowLeft, Video, Calendar, Clock, User, Phone, 
-  Loader2, Star, MapPin, Award, Check, ChevronRight,
-  ExternalLink, MessageSquare
+  Loader2, Star, MapPin, Check, ChevronRight,
+  Wallet, FileText, Pill, FlaskConical, Stethoscope,
+  AlertCircle, Download
 } from 'lucide-react';
+import { format, addDays, isSunday, startOfDay } from 'date-fns';
 
 const API = process.env.REACT_APP_BACKEND_URL + '/api';
 
+// DiaGyn Doctors
+const TELECONSULT_DOCTORS = [
+  {
+    id: 'dr-neha-patel',
+    name: 'Dr. Neha Patel',
+    specialization: 'Obstetrics & Gynecology',
+    qualification: 'MBBS, MS (OBG), DNB',
+    experience: '15+ years',
+    clinic: 'DiaGyn Healthcare - Pushpa Clinic',
+    rating: 4.8,
+    reviews: 156,
+    fee: 300,
+    image: null
+  },
+  {
+    id: 'dr-vikas-jha',
+    name: 'Dr. Vikas Jha',
+    specialization: 'Obstetrics & Gynecology',
+    qualification: 'MBBS, DGO, FICOG',
+    experience: '12+ years',
+    clinic: 'DiaGyn Healthcare - Amnion Clinic',
+    rating: 4.6,
+    reviews: 98,
+    fee: 250,
+    image: null
+  }
+];
+
+// Generate 15-minute slots from 9 AM to 9 PM
+const generateTimeSlots = () => {
+  const slots = [];
+  for (let hour = 9; hour < 21; hour++) {
+    for (let min = 0; min < 60; min += 15) {
+      const time24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+      const hour12 = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const time12 = `${hour12}:${min.toString().padStart(2, '0')} ${ampm}`;
+      slots.push({ time24, time12, hour, minute: min });
+    }
+  }
+  return slots;
+};
+
+const TIME_SLOTS = generateTimeSlots();
+
 const Teleconsultation = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [doctors, setDoctors] = useState([]);
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [availableSlots, setAvailableSlots] = useState([]);
-  const [selectedSlot, setSelectedSlot] = useState(null);
-  const [showBooking, setShowBooking] = useState(false);
-  const [bookingLoading, setBookingLoading] = useState(false);
-  const [myBookings, setMyBookings] = useState({ upcoming: [], past: [] });
-  const [showMyBookings, setShowMyBookings] = useState(false);
+  const { user, token } = useAuth();
   
-  const [bookingForm, setBookingForm] = useState({
-    patient_name: '',
-    patient_phone: '',
-    patient_email: '',
+  // States
+  const [step, setStep] = useState(1); // 1: Doctor, 2: Date/Time, 3: Details, 4: Payment, 5: Confirmation
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingComplete, setBookingComplete] = useState(null);
+  const [myBookings, setMyBookings] = useState([]);
+  const [showMyBookings, setShowMyBookings] = useState(false);
+  const [showPrescription, setShowPrescription] = useState(null);
+  
+  const [formData, setFormData] = useState({
+    patient_name: user?.name || '',
+    patient_phone: user?.phone || '',
     reason: '',
     symptoms: ''
   });
-  
+
   useEffect(() => {
-    fetchDoctors();
-    if (user?.id) {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        patient_name: user.name || '',
+        patient_phone: user.phone || ''
+      }));
+      fetchWalletBalance();
       fetchMyBookings();
     }
   }, [user]);
-  
-  const fetchDoctors = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${API}/doctors/all`);
-      setDoctors(response.data?.doctors || []);
-    } catch (error) {
-      console.error('Error fetching doctors:', error);
+
+  useEffect(() => {
+    if (selectedDoctor && selectedDate) {
+      fetchBookedSlots();
     }
-    setLoading(false);
-  };
-  
-  const fetchMyBookings = async () => {
+  }, [selectedDoctor, selectedDate]);
+
+  const fetchWalletBalance = async () => {
+    if (!token) return;
     try {
-      const response = await axios.get(`${API}/teleconsult/bookings/${user.id}`);
-      setMyBookings(response.data);
+      const res = await axios.get(`${API}/wallet/balance`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setWalletBalance(res.data.balance || 0);
+    } catch (error) {
+      console.error('Error fetching wallet:', error);
+    }
+  };
+
+  const fetchMyBookings = async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get(`${API}/teleconsult/my-bookings`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setMyBookings(res.data.bookings || []);
     } catch (error) {
       console.error('Error fetching bookings:', error);
     }
   };
-  
-  const fetchAvailableSlots = async (doctorId, date) => {
+
+  const fetchBookedSlots = async () => {
+    setSlotsLoading(true);
     try {
-      const response = await axios.get(`${API}/teleconsult/available-slots/${doctorId}?date=${date}`);
-      setAvailableSlots(response.data?.sessions || []);
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+      const res = await axios.get(`${API}/teleconsult/booked-slots?doctor=${selectedDoctor.id}&date=${dateStr}`);
+      setBookedSlots(res.data.booked_slots || []);
     } catch (error) {
-      toast.error('Failed to fetch available slots');
-      setAvailableSlots([]);
+      console.error('Error fetching booked slots:', error);
+      setBookedSlots([]);
+    } finally {
+      setSlotsLoading(false);
     }
   };
-  
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    setSelectedSlot(null);
-    if (selectedDoctor && date) {
-      fetchAvailableSlots(selectedDoctor.id, date);
+
+  const getAvailableDates = () => {
+    const dates = [];
+    let date = startOfDay(new Date());
+    for (let i = 0; i < 14; i++) {
+      if (!isSunday(date)) {
+        dates.push(new Date(date));
+      }
+      date = addDays(date, 1);
     }
+    return dates;
   };
-  
-  const handleBookConsultation = async () => {
-    if (!bookingForm.patient_name || !bookingForm.patient_phone) {
-      toast.error('Please fill name and phone number');
+
+  const handleBooking = async () => {
+    if (!user) {
+      toast.error('Please login to book a consultation');
+      navigate('/');
       return;
     }
-    
-    if (!user?.id) {
-      toast.error('Please login to book');
+
+    if (walletBalance < selectedDoctor.fee) {
+      toast.error(`Insufficient wallet balance. Required: ₹${selectedDoctor.fee}, Available: ₹${walletBalance}`);
       return;
     }
-    
+
+    if (!formData.patient_name || !formData.patient_phone || !formData.reason) {
+      toast.error('Please fill all required fields');
+      return;
+    }
+
     setBookingLoading(true);
     try {
-      const response = await axios.post(`${API}/teleconsult/book?user_id=${user.id}`, {
+      const res = await axios.post(`${API}/teleconsult/book`, {
         doctor_id: selectedDoctor.id,
-        patient_name: bookingForm.patient_name,
-        patient_phone: bookingForm.patient_phone,
-        patient_email: bookingForm.patient_email,
-        date: selectedDate,
-        time: selectedSlot,
-        reason: bookingForm.reason,
-        symptoms: bookingForm.symptoms.split(',').map(s => s.trim()).filter(Boolean),
-        is_follow_up: false
+        doctor_name: selectedDoctor.name,
+        date: format(selectedDate, 'yyyy-MM-dd'),
+        time: selectedSlot.time12,
+        patient_name: formData.patient_name,
+        patient_phone: formData.patient_phone,
+        reason: formData.reason,
+        symptoms: formData.symptoms,
+        fee: selectedDoctor.fee,
+        payment_method: 'wallet'
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      
-      toast.success('Teleconsultation booked!');
-      setShowBooking(false);
-      setSelectedDoctor(null);
-      setSelectedDate('');
-      setSelectedSlot(null);
-      fetchMyBookings();
-      
-      // Show meeting link
-      toast.info(`Meeting link: ${response.data.meeting_link}`, { duration: 10000 });
+
+      setBookingComplete(res.data.booking);
+      setStep(5);
+      fetchWalletBalance();
+      toast.success('Consultation booked successfully!');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to book consultation');
+    } finally {
+      setBookingLoading(false);
     }
-    setBookingLoading(false);
   };
-  
-  const getMinDate = () => {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
-  };
-  
-  const getMaxDate = () => {
-    const max = new Date();
-    max.setDate(max.getDate() + 7);
-    return max.toISOString().split('T')[0];
-  };
-  
+
+  const availableDates = getAvailableDates();
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center p-4">
+        <Card className="p-8 text-center max-w-md">
+          <Video className="w-16 h-16 text-blue-500 mx-auto mb-4" />
+          <h2 className="text-xl font-bold mb-2">Video Consultation</h2>
+          <p className="text-gray-600 mb-6">Please login to book a video consultation with our doctors.</p>
+          <Button onClick={() => navigate('/')} className="w-full">
+            Login to Continue
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" onClick={() => navigate(-1)} data-testid="back-btn">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <div>
-                <h1 className="font-bold text-xl text-gray-900">Teleconsultation</h1>
-                <p className="text-sm text-gray-500">Video consult with doctors from home</p>
-              </div>
+      <header className="bg-white/80 backdrop-blur-lg border-b sticky top-0 z-50">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => step > 1 ? setStep(step - 1) : navigate(-1)}>
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div>
+              <h1 className="text-xl font-bold text-blue-800">Video Consultation</h1>
+              <p className="text-sm text-gray-500">Consult from home • 9 AM - 9 PM</p>
             </div>
-            <div className="flex items-center gap-2">
-              {user && (
-                <Button variant="outline" size="sm" onClick={() => setShowMyBookings(true)}>
-                  My Bookings
-                </Button>
-              )}
-              <Video className="w-8 h-8 text-blue-500" />
-            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <WalletWidget compact onBalanceChange={setWalletBalance} />
+            <Button variant="outline" size="sm" onClick={() => setShowMyBookings(true)}>
+              My Bookings
+            </Button>
           </div>
         </div>
       </header>
-      
-      <main className="max-w-4xl mx-auto px-4 py-6">
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {/* Info Banner */}
-            <Card className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
-              <CardContent className="p-6">
-                <h2 className="text-xl font-bold mb-2">Consult from Anywhere</h2>
-                <p className="opacity-90 mb-4">
-                  Get expert medical advice through secure video consultation. 
-                  No travel, no waiting rooms.
-                </p>
-                <div className="flex items-center gap-4 text-sm">
-                  <div className="flex items-center gap-1">
-                    <Check className="w-4 h-4" />
-                    <span>Secure & Private</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Check className="w-4 h-4" />
-                    <span>E-Prescription</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Check className="w-4 h-4" />
-                    <span>Follow-up Support</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Doctors List */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Available Doctors</h2>
-              <div className="space-y-4">
-                {doctors.map((doctor) => (
-                  <Card key={doctor.id} className="hover:shadow-md transition-shadow">
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-4">
-                        <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                          <User className="w-8 h-8 text-blue-600" />
+
+      {/* Progress Steps */}
+      <div className="max-w-4xl mx-auto px-4 py-4">
+        <div className="flex items-center justify-center gap-2 mb-6">
+          {['Doctor', 'Date & Time', 'Details', 'Payment', 'Done'].map((label, idx) => (
+            <div key={idx} className="flex items-center">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                step > idx + 1 ? 'bg-green-500 text-white' :
+                step === idx + 1 ? 'bg-blue-600 text-white' :
+                'bg-gray-200 text-gray-500'
+              }`}>
+                {step > idx + 1 ? <Check className="w-4 h-4" /> : idx + 1}
+              </div>
+              {idx < 4 && <div className={`w-8 h-0.5 ${step > idx + 1 ? 'bg-green-500' : 'bg-gray-200'}`} />}
+            </div>
+          ))}
+        </div>
+
+        {/* Step 1: Select Doctor */}
+        {step === 1 && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-center">Choose Your Doctor</h2>
+            <div className="grid gap-4">
+              {TELECONSULT_DOCTORS.map((doctor) => (
+                <Card 
+                  key={doctor.id}
+                  className={`p-4 cursor-pointer transition-all hover:shadow-lg ${
+                    selectedDoctor?.id === doctor.id ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+                  }`}
+                  onClick={() => setSelectedDoctor(doctor)}
+                  data-testid={`doctor-${doctor.id}`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xl font-bold">
+                      {doctor.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg">{doctor.name}</h3>
+                      <p className="text-sm text-gray-600">{doctor.specialization}</p>
+                      <p className="text-xs text-gray-500">{doctor.qualification} • {doctor.experience}</p>
+                      <div className="flex items-center gap-4 mt-2">
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                          <span className="text-sm font-medium">{doctor.rating}</span>
+                          <span className="text-xs text-gray-500">({doctor.reviews})</span>
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <h3 className="font-semibold text-lg">{doctor.name}</h3>
-                              <p className="text-sm text-gray-600">{doctor.specialization}</p>
-                              <p className="text-xs text-gray-500">{doctor.qualification}</p>
-                            </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1 text-yellow-500">
-                                <Star className="w-4 h-4 fill-current" />
-                                <span className="font-semibold">{doctor.rating}</span>
-                              </div>
-                              <p className="text-xs text-gray-500">{doctor.total_reviews} reviews</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                            <span className="flex items-center gap-1">
-                              <Award className="w-4 h-4" />
-                              {doctor.experience_years} years
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {doctor.clinic}
-                            </span>
-                          </div>
-                          
-                          <div className="flex items-center justify-between mt-3">
-                            <div>
-                              <span className="text-lg font-bold text-green-600">₹{doctor.consultation_fee || 300}</span>
-                              <span className="text-sm text-gray-500 ml-1">per consultation</span>
-                            </div>
-                            <Button onClick={() => {
-                              setSelectedDoctor(doctor);
-                              setBookingForm({
-                                ...bookingForm,
-                                patient_name: user?.name || '',
-                                patient_phone: user?.phone || ''
-                              });
-                            }}>
-                              <Video className="w-4 h-4 mr-2" />
-                              Book Video Consult
-                            </Button>
-                          </div>
+                        <div className="flex items-center gap-1 text-gray-500">
+                          <MapPin className="w-3 h-3" />
+                          <span className="text-xs">{doctor.clinic}</span>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xl font-bold text-green-600">₹{doctor.fee}</p>
+                      <p className="text-xs text-gray-500">per session</p>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+            <Button 
+              onClick={() => setStep(2)} 
+              disabled={!selectedDoctor}
+              className="w-full"
+            >
+              Continue <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        )}
+
+        {/* Step 2: Select Date & Time */}
+        {step === 2 && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-center">Select Date & Time</h2>
+            
+            {/* Date Selection */}
+            <div>
+              <Label className="mb-2 block">Select Date</Label>
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {availableDates.map((date, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => { setSelectedDate(date); setSelectedSlot(null); }}
+                    className={`flex-shrink-0 p-3 rounded-lg border text-center min-w-[70px] transition-all ${
+                      selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'bg-white hover:border-blue-300'
+                    }`}
+                  >
+                    <p className="text-xs">{format(date, 'EEE')}</p>
+                    <p className="text-lg font-bold">{format(date, 'd')}</p>
+                    <p className="text-xs">{format(date, 'MMM')}</p>
+                  </button>
                 ))}
               </div>
             </div>
-          </div>
-        )}
-      </main>
-      
-      {/* Slot Selection Dialog */}
-      <Dialog open={!!selectedDoctor && !showBooking} onOpenChange={(open) => !open && setSelectedDoctor(null)}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Select Date & Time</DialogTitle>
-            <DialogDescription>
-              Choose a slot for video consultation with {selectedDoctor?.name}
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            {/* Date Selection */}
-            <div>
-              <label className="text-sm font-medium">Select Date</label>
-              <Input 
-                type="date"
-                value={selectedDate}
-                onChange={(e) => handleDateChange(e.target.value)}
-                min={getMinDate()}
-                max={getMaxDate()}
-              />
-            </div>
-            
+
             {/* Time Slots */}
             {selectedDate && (
               <div>
-                <label className="text-sm font-medium">Select Time Slot</label>
-                {availableSlots.length > 0 ? (
-                  <div className="space-y-3 mt-2">
-                    {availableSlots.map((session) => (
-                      <div key={session.session}>
-                        <p className="text-xs text-gray-500 uppercase mb-2">{session.session}</p>
-                        <div className="grid grid-cols-4 gap-2">
-                          {session.slots.map((slot) => (
-                            <button
-                              key={slot.time}
-                              disabled={!slot.available}
-                              onClick={() => setSelectedSlot(slot.time)}
-                              className={`p-2 text-sm rounded-md border transition-colors ${
-                                selectedSlot === slot.time
-                                  ? 'bg-blue-500 text-white border-blue-500'
-                                  : slot.available
-                                  ? 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                                  : 'border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed'
-                              }`}
-                            >
-                              {slot.time}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500 mt-2">No slots available for this date</p>
-                )}
+                <Label className="mb-2 block flex items-center justify-between">
+                  <span>Select Time (15-min slots)</span>
+                  {slotsLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                </Label>
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-64 overflow-y-auto">
+                  {TIME_SLOTS.map((slot, idx) => {
+                    const isBooked = bookedSlots.includes(slot.time12);
+                    const isPast = selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && 
+                      (slot.hour < new Date().getHours() || (slot.hour === new Date().getHours() && slot.minute <= new Date().getMinutes()));
+                    const isDisabled = isBooked || isPast;
+                    
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => !isDisabled && setSelectedSlot(slot)}
+                        disabled={isDisabled}
+                        className={`p-2 rounded-lg border text-sm transition-all ${
+                          selectedSlot?.time24 === slot.time24
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : isDisabled
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                              : 'bg-white hover:border-blue-300'
+                        }`}
+                      >
+                        {slot.time12}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
-            
-            <Button 
-              className="w-full" 
-              disabled={!selectedDate || !selectedSlot}
-              onClick={() => setShowBooking(true)}
-            >
-              Continue - ₹{selectedDoctor?.consultation_fee || 300}
-            </Button>
+
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setStep(1)} className="flex-1">
+                Back
+              </Button>
+              <Button 
+                onClick={() => setStep(3)} 
+                disabled={!selectedDate || !selectedSlot}
+                className="flex-1"
+              >
+                Continue
+              </Button>
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Booking Form Dialog */}
-      <Dialog open={showBooking} onOpenChange={setShowBooking}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Complete Booking</DialogTitle>
-            <DialogDescription>
-              {selectedDoctor?.name} • {selectedDate} at {selectedSlot}
-            </DialogDescription>
-          </DialogHeader>
-          
+        )}
+
+        {/* Step 3: Patient Details */}
+        {step === 3 && (
           <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">Patient Name *</label>
-              <Input 
-                value={bookingForm.patient_name}
-                onChange={(e) => setBookingForm({...bookingForm, patient_name: e.target.value})}
-                placeholder="Enter patient name"
-              />
-            </div>
+            <h2 className="text-lg font-semibold text-center">Patient Details</h2>
             
-            <div>
-              <label className="text-sm font-medium">Phone Number *</label>
-              <Input 
-                value={bookingForm.patient_phone}
-                onChange={(e) => setBookingForm({...bookingForm, patient_phone: e.target.value})}
-                placeholder="Enter phone number"
-              />
-            </div>
-            
-            <div>
-              <label className="text-sm font-medium">Email (optional)</label>
-              <Input 
-                type="email"
-                value={bookingForm.patient_email}
-                onChange={(e) => setBookingForm({...bookingForm, patient_email: e.target.value})}
-                placeholder="Enter email for meeting link"
-              />
-            </div>
-            
-            <div>
-              <label className="text-sm font-medium">Reason for Consultation</label>
-              <Input 
-                value={bookingForm.reason}
-                onChange={(e) => setBookingForm({...bookingForm, reason: e.target.value})}
-                placeholder="e.g., Regular checkup, specific concern"
-              />
-            </div>
-            
-            <div>
-              <label className="text-sm font-medium">Symptoms (comma separated)</label>
-              <Textarea 
-                value={bookingForm.symptoms}
-                onChange={(e) => setBookingForm({...bookingForm, symptoms: e.target.value})}
-                placeholder="e.g., headache, fever, fatigue"
-                rows={2}
-              />
-            </div>
-            
-            <div className="p-3 bg-blue-50 rounded-lg">
-              <div className="flex items-center justify-between">
-                <span className="font-medium">Consultation Fee</span>
-                <span className="text-xl font-bold text-blue-600">₹{selectedDoctor?.consultation_fee || 300}</span>
+            <Card className="p-4 bg-blue-50 border-blue-200">
+              <div className="flex items-center gap-3">
+                <Video className="w-8 h-8 text-blue-600" />
+                <div>
+                  <p className="font-semibold">{selectedDoctor?.name}</p>
+                  <p className="text-sm text-gray-600">
+                    {format(selectedDate, 'EEEE, MMMM d')} at {selectedSlot?.time12}
+                  </p>
+                </div>
+                <p className="ml-auto text-xl font-bold text-green-600">₹{selectedDoctor?.fee}</p>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Pay after consultation</p>
+            </Card>
+
+            <div className="space-y-3">
+              <div>
+                <Label>Patient Name *</Label>
+                <Input
+                  value={formData.patient_name}
+                  onChange={(e) => setFormData({...formData, patient_name: e.target.value})}
+                  placeholder="Enter patient name"
+                />
+              </div>
+              <div>
+                <Label>Phone Number *</Label>
+                <Input
+                  value={formData.patient_phone}
+                  onChange={(e) => setFormData({...formData, patient_phone: e.target.value})}
+                  placeholder="Enter phone number"
+                />
+              </div>
+              <div>
+                <Label>Reason for Consultation *</Label>
+                <Input
+                  value={formData.reason}
+                  onChange={(e) => setFormData({...formData, reason: e.target.value})}
+                  placeholder="e.g., Regular checkup, Follow-up, New concern"
+                />
+              </div>
+              <div>
+                <Label>Symptoms (Optional)</Label>
+                <Textarea
+                  value={formData.symptoms}
+                  onChange={(e) => setFormData({...formData, symptoms: e.target.value})}
+                  placeholder="Describe your symptoms if any..."
+                  rows={3}
+                />
+              </div>
             </div>
+
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setStep(2)} className="flex-1">
+                Back
+              </Button>
+              <Button 
+                onClick={() => setStep(4)}
+                disabled={!formData.patient_name || !formData.patient_phone || !formData.reason}
+                className="flex-1"
+              >
+                Continue to Payment
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 4: Payment */}
+        {step === 4 && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-center">Confirm & Pay</h2>
             
-            <Button className="w-full" onClick={handleBookConsultation} disabled={bookingLoading}>
-              {bookingLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Video className="w-4 h-4 mr-2" />}
-              Confirm Booking
+            {/* Booking Summary */}
+            <Card className="p-4">
+              <h3 className="font-semibold mb-3">Booking Summary</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Doctor</span>
+                  <span className="font-medium">{selectedDoctor?.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Date</span>
+                  <span className="font-medium">{format(selectedDate, 'EEE, MMM d, yyyy')}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Time</span>
+                  <span className="font-medium">{selectedSlot?.time12}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Patient</span>
+                  <span className="font-medium">{formData.patient_name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Reason</span>
+                  <span className="font-medium">{formData.reason}</span>
+                </div>
+                <hr className="my-2" />
+                <div className="flex justify-between text-lg font-bold">
+                  <span>Total</span>
+                  <span className="text-green-600">₹{selectedDoctor?.fee}</span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Wallet Payment */}
+            <Card className={`p-4 ${walletBalance >= selectedDoctor?.fee ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Wallet className={`w-8 h-8 ${walletBalance >= selectedDoctor?.fee ? 'text-green-600' : 'text-red-600'}`} />
+                  <div>
+                    <p className="font-semibold">Nevika Wallet</p>
+                    <p className="text-sm text-gray-600">Balance: ₹{walletBalance.toFixed(2)}</p>
+                  </div>
+                </div>
+                {walletBalance >= selectedDoctor?.fee ? (
+                  <Check className="w-6 h-6 text-green-600" />
+                ) : (
+                  <Button size="sm" onClick={() => navigate('/profile')}>
+                    Add Money
+                  </Button>
+                )}
+              </div>
+              {walletBalance < selectedDoctor?.fee && (
+                <p className="text-sm text-red-600 mt-2 flex items-center gap-1">
+                  <AlertCircle className="w-4 h-4" />
+                  Insufficient balance. Please add ₹{(selectedDoctor?.fee - walletBalance).toFixed(2)} to proceed.
+                </p>
+              )}
+            </Card>
+
+            {/* Features */}
+            <Card className="p-4 bg-gray-50">
+              <h4 className="font-medium mb-2">What's Included</h4>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span>15-min video call</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span>E-Prescription</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span>Order medicines</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span>Book tests</span>
+                </div>
+              </div>
+            </Card>
+
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setStep(3)} className="flex-1">
+                Back
+              </Button>
+              <Button 
+                onClick={handleBooking}
+                disabled={bookingLoading || walletBalance < selectedDoctor?.fee}
+                className="flex-1 bg-green-600 hover:bg-green-700"
+              >
+                {bookingLoading ? (
+                  <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...</>
+                ) : (
+                  <>Pay ₹{selectedDoctor?.fee} & Book</>
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 5: Confirmation */}
+        {step === 5 && bookingComplete && (
+          <div className="text-center space-y-6">
+            <div className="w-20 h-20 mx-auto rounded-full bg-green-100 flex items-center justify-center">
+              <Check className="w-10 h-10 text-green-600" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-green-600">Booking Confirmed!</h2>
+              <p className="text-gray-600">Your video consultation is scheduled</p>
+            </div>
+
+            <Card className="p-4 text-left">
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Booking ID</span>
+                  <span className="font-mono">{bookingComplete.id?.slice(0, 8)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Doctor</span>
+                  <span>{bookingComplete.doctor_name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Date & Time</span>
+                  <span>{bookingComplete.date} at {bookingComplete.time}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Amount Paid</span>
+                  <span className="text-green-600">₹{bookingComplete.fee}</span>
+                </div>
+              </div>
+            </Card>
+
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-800">
+                📱 You'll receive a video call link via SMS 15 minutes before your appointment.
+              </p>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" onClick={() => navigate('/proton')}>
+                <FlaskConical className="w-4 h-4 mr-2" /> Book Tests
+              </Button>
+              <Button variant="outline" onClick={() => navigate('/pharmacy')}>
+                <Pill className="w-4 h-4 mr-2" /> Order Medicines
+              </Button>
+            </div>
+
+            <Button onClick={() => navigate('/')} className="w-full">
+              Back to Home
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
-      
+        )}
+      </div>
+
       {/* My Bookings Dialog */}
       <Dialog open={showMyBookings} onOpenChange={setShowMyBookings}>
         <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>My Video Consultations</DialogTitle>
           </DialogHeader>
-          
-          <div className="space-y-4">
-            {myBookings.upcoming?.length > 0 && (
-              <div>
-                <h4 className="font-semibold text-sm text-gray-500 mb-2">UPCOMING</h4>
-                {myBookings.upcoming.map((booking) => (
-                  <Card key={booking.id} className="mb-2">
-                    <CardContent className="p-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">{booking.date} at {booking.time}</p>
-                          <p className="text-sm text-gray-500">{booking.patient_name}</p>
-                        </div>
-                        <Button size="sm" variant="outline" onClick={() => window.open(booking.meeting_link, '_blank')}>
-                          <ExternalLink className="w-4 h-4 mr-1" />
-                          Join
+          <div className="space-y-3">
+            {myBookings.length === 0 ? (
+              <p className="text-center text-gray-500 py-8">No consultations booked yet</p>
+            ) : (
+              myBookings.map((booking) => (
+                <Card key={booking.id} className="p-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-semibold">{booking.doctor_name}</p>
+                      <p className="text-sm text-gray-600">{booking.date} at {booking.time}</p>
+                      <p className="text-xs text-gray-500">{booking.reason}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        booking.status === 'completed' ? 'bg-green-100 text-green-700' :
+                        booking.status === 'upcoming' ? 'bg-blue-100 text-blue-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {booking.status}
+                      </span>
+                      {booking.has_prescription && (
+                        <Button 
+                          variant="link" 
+                          size="sm"
+                          onClick={() => setShowPrescription(booking)}
+                        >
+                          <FileText className="w-3 h-3 mr-1" /> View Rx
                         </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-            
-            {myBookings.past?.length > 0 && (
-              <div>
-                <h4 className="font-semibold text-sm text-gray-500 mb-2">PAST</h4>
-                {myBookings.past.map((booking) => (
-                  <Card key={booking.id} className="mb-2 bg-gray-50">
-                    <CardContent className="p-3">
-                      <p className="font-medium">{booking.date} at {booking.time}</p>
-                      <p className="text-sm text-gray-500">{booking.status}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-            
-            {(!myBookings.upcoming?.length && !myBookings.past?.length) && (
-              <div className="text-center py-8 text-gray-500">
-                <Video className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                <p>No bookings yet</p>
-              </div>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              ))
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* E-Prescription Dialog */}
+      <Dialog open={!!showPrescription} onOpenChange={() => setShowPrescription(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>E-Prescription</DialogTitle>
+            <DialogDescription>
+              {showPrescription?.doctor_name} • {showPrescription?.date}
+            </DialogDescription>
+          </DialogHeader>
+          {showPrescription?.prescription && (
+            <div className="space-y-4">
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm whitespace-pre-wrap">{showPrescription.prescription.notes}</p>
+              </div>
+              
+              {showPrescription.prescription.medicines?.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2">Medicines</h4>
+                  <div className="space-y-2">
+                    {showPrescription.prescription.medicines.map((med, idx) => (
+                      <div key={idx} className="p-2 bg-orange-50 rounded flex justify-between">
+                        <span>{med.name}</span>
+                        <span className="text-sm text-gray-600">{med.dosage}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full mt-2"
+                    onClick={() => {
+                      sessionStorage.setItem('prescription_medicines', JSON.stringify(showPrescription.prescription.medicines));
+                      navigate('/pharmacy?prescription=true');
+                    }}
+                  >
+                    <Pill className="w-4 h-4 mr-2" /> Order These Medicines
+                  </Button>
+                </div>
+              )}
+
+              {showPrescription.prescription.tests?.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2">Recommended Tests</h4>
+                  <div className="space-y-2">
+                    {showPrescription.prescription.tests.map((test, idx) => (
+                      <div key={idx} className="p-2 bg-purple-50 rounded">
+                        {test}
+                      </div>
+                    ))}
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full mt-2"
+                    onClick={() => {
+                      sessionStorage.setItem('prescription_tests', JSON.stringify(showPrescription.prescription.tests));
+                      navigate('/proton?prescription=true');
+                    }}
+                  >
+                    <FlaskConical className="w-4 h-4 mr-2" /> Book These Tests
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
