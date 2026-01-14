@@ -18,10 +18,13 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/evara", tags=["Evara"])
 
-# MongoDB connection
-mongo_url = os.environ.get('MONGO_URL')
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME')]
+# MongoDB connection - will be injected by server.py
+db = None
+
+def set_db(database):
+    """Set the database instance from server.py"""
+    global db
+    db = database
 
 # ============ EVARA MODELS ============
 
