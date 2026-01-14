@@ -506,7 +506,8 @@ async def generate_glydex_share_report(user = Depends(lambda: get_current_user))
     ])
     
     report_text = "\n".join(report_lines)
-    whatsapp_url = f"https://wa.me/?text={report_text.replace(' ', '%20').replace('\n', '%0A')}"
+    newline = '\n'
+    whatsapp_url = f"https://wa.me/?text={report_text.replace(' ', '%20').replace(newline, '%0A')}"
     
     return {"report": report_text, "whatsapp_url": whatsapp_url}
 
