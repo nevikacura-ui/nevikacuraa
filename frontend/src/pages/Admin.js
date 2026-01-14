@@ -469,6 +469,64 @@ const Admin = () => {
     }
   };
 
+  // Fetch appointments for schedule visualization
+  const fetchScheduleAppointments = async () => {
+    setScheduleLoading(true);
+    try {
+      const startDate = format(scheduleWeekStart, 'yyyy-MM-dd');
+      const endDate = format(addDays(scheduleWeekStart, 6), 'yyyy-MM-dd');
+      const response = await axios.get(`${API}/admin/appointments`, { 
+        headers: getAuthHeaders(),
+        params: { start_date: startDate, end_date: endDate }
+      });
+      setScheduleAppointments(response.data.appointments || []);
+    } catch (error) {
+      console.error('Failed to fetch schedule appointments:', error);
+    } finally {
+      setScheduleLoading(false);
+    }
+  };
+
+  // Get appointments for a specific day grouped by session
+  const getAppointmentsForDay = (date, doctor) => {
+    const dateStr = format(date, 'yyyy-MM-dd');
+    const dayAppts = scheduleAppointments.filter(a => 
+      a.date === dateStr && a.doctor === doctor
+    );
+    
+    // Morning slots: 11:00 AM - 2:00 PM
+    const morningAppts = dayAppts.filter(a => {
+      const hour = parseInt(a.time?.split(':')[0] || '0');
+      const isPM = a.time?.includes('PM');
+      const hourIn24 = isPM && hour !== 12 ? hour + 12 : (!isPM && hour === 12 ? 0 : hour);
+      return hourIn24 >= 11 && hourIn24 < 14;
+    });
+    
+    // Evening slots: 6:00 PM - 10:00 PM
+    const eveningAppts = dayAppts.filter(a => {
+      const hour = parseInt(a.time?.split(':')[0] || '0');
+      const isPM = a.time?.includes('PM');
+      const hourIn24 = isPM && hour !== 12 ? hour + 12 : (!isPM && hour === 12 ? 0 : hour);
+      return hourIn24 >= 18 && hourIn24 <= 22;
+    });
+    
+    return { morning: morningAppts, evening: eveningAppts, all: dayAppts };
+  };
+
+  // Get schedule stats for a day
+  const getScheduleStats = (date, doctor) => {
+    const { morning, evening } = getAppointmentsForDay(date, doctor);
+    const bookedMorning = morning.filter(a => a.status !== 'cancelled').length;
+    const bookedEvening = evening.filter(a => a.status !== 'cancelled').length;
+    const cancelledMorning = morning.filter(a => a.status === 'cancelled').length;
+    const cancelledEvening = evening.filter(a => a.status === 'cancelled').length;
+    
+    return {
+      morning: { booked: bookedMorning, cancelled: cancelledMorning, total: morning.length },
+      evening: { booked: bookedEvening, cancelled: cancelledEvening, total: evening.length }
+    };
+  };
+
   const handleScroll = useCallback((e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
     if (scrollHeight - scrollTop <= clientHeight + 100 && hasMore && !loadingMore) {
