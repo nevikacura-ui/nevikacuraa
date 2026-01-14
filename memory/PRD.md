@@ -941,3 +941,84 @@ GET  /api/teleconsult/prescription/{id} - Get prescription (auth required)
 - **Backend**: 22/22 tests passed (100%)
 - **Frontend**: 10/10 tests passed (100%)
 - All wallet and teleconsultation flows verified working
+
+### Session 8 - January 15, 2026 (BUG FIXES + NEW FEATURES)
+
+**Bug Fixes:**
+
+1. **Add Child in ALYNE** ✅ Fixed
+   - Added user login validation
+   - Improved error handling and messages
+   - Added loading state during submission
+
+2. **Past Date Appointment Blocking** ✅ Fixed
+   - Backend validation blocks appointments for past dates/times (IST timezone)
+   - Minimum 30-minute advance booking required
+   - Frontend filters out past time slots for today's date
+   - Calendar already blocks past dates
+
+3. **Invoice Email After Consultation** ✅ Fixed
+   - Auto-sends professional HTML invoice when doctor completes appointment
+   - Includes diagnosis, prescription, follow-up details
+   - Sent to patient's email automatically
+
+4. **Dynamic QR Code Risk** ✅ Fixed
+   - QR codes now include FIXED amount using `am=` parameter
+   - Customer CANNOT modify the payment amount
+   - New endpoint: `/api/wallet/payment-qr?amount=X&purpose=Y`
+
+**New Features:**
+
+**20. ANC Registration System (ALYNE)** ✅ Complete
+- Staff registration for ANC patients (Amnion, Pushpa clinics)
+- Unique registration ID: `ANC-{CLINIC}-{YEAR}-{RANDOM}`
+- Full ANC profile with LMP, EDD calculation, obstetric history
+- Kick Counter tracking for fetal movements
+- API: `/api/anc/register`, `/api/anc/patient/{id}`, `/api/anc/kick-count`
+
+**21. Glydex Staff Patient Management** ✅ Complete
+- Patient registration for Dr. Vikas with unique ID: `GLX-VIK-{YEAR}-{RANDOM}`
+- Sugar logging (FBS, PPBS, Random)
+- HbA1c tracking with history
+- **Auto Congratulatory Messages**: SMS/Email sent for good readings (FBS<110, PPBS<140, HbA1c<7%)
+- Toggle to enable/disable congratulations per patient
+- API: `/api/glydex/staff/patients/register`, `/api/glydex/staff/patients/{id}/sugar-log`
+
+**22. Biometric Attendance System** ✅ Complete
+- WebAuthn-based fingerprint/face ID for staff
+- Device registration per staff member
+- Attendance check-in/check-out with late detection
+- Daily/monthly attendance reports
+- API: `/api/biometric-attendance/register-device`, `/api/biometric-attendance/mark-attendance`
+
+**23. Newborn Care Module (0-12 months)** ✅ Complete
+- **Feeding Tracker**: Breastfeed (side, duration), Formula (amount, brand), Solids
+- **Diaper Tracker**: Wet, Dirty, Both - with consistency/color tracking
+- **Sleep Tracker**: Naps & night sleep with duration, quality
+- **Milestone Checklist**: 26 milestones across Motor, Social, Language categories
+- **Daily Log**: Combined timeline view of all activities
+- **Health Alerts**: Auto-alerts for low wet diapers, insufficient feeding/sleep
+- API: `/api/alyne/newborn/feeding`, `/api/alyne/newborn/diaper`, `/api/alyne/newborn/sleep`, `/api/alyne/newborn/{child_id}/milestones`
+
+---
+
+## Pending/Upcoming Tasks
+
+### High Priority
+- [ ] Frontend UI for ANC Registration
+- [ ] Frontend UI for Glydex Staff Portal
+- [ ] Frontend UI for Biometric Attendance
+- [ ] Frontend UI for Newborn Care features
+- [ ] Refactor Alyne.js (currently ~2500+ lines)
+- [ ] Refactor Admin.js (currently large)
+- [ ] Remove duplicate routes from server.py (~2600 lines of duplicates)
+
+### Medium Priority
+- [ ] Cashfree Payment Gateway (credentials pending)
+- [ ] Terra Wearable Integration frontend
+- [ ] Apple Sign-In
+- [ ] Aanya Kids by ALYNE features
+
+### Low Priority
+- [ ] Login History page
+- [ ] Migrate hardcoded data to MongoDB
