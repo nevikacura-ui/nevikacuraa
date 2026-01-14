@@ -463,7 +463,9 @@ const Alyne = () => {
             <div>
               <h3 className="text-sm font-semibold text-gray-500 mb-4">What would you like help with?</h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {FEATURE_CATEGORIES.map((cat) => (
+                {FEATURE_CATEGORIES
+                  .filter(cat => !cat.regionSpecific || cat.regionSpecific === selectedRegion)
+                  .map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => {
