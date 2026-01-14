@@ -897,6 +897,14 @@ const Proton = () => {
                     placeholder="10-digit mobile number"
                     data-testid="patient-phone"
                   />
+                  {/* Booking Limit Warning */}
+                  {!bookingLimits.loading && !bookingLimits.canBook && (
+                    <div className="mt-2 p-2 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-800">
+                      <p className="font-semibold">⚠️ Order Limit Reached</p>
+                      <p>You have {bookingLimits.activeOrders} active diagnostic orders.</p>
+                      <p className="mt-1">Please wait for them to be completed or cancel one before placing a new order.</p>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <Label>Email (Optional)</Label>
