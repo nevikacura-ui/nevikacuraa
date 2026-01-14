@@ -15,7 +15,7 @@ import {
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-export default function GlydexStaffPortal({ staffName = 'Staff' }) {
+export default function GlydexStaffPortal({ staffName = 'Staff', clinic = 'Pushpa Clinic' }) {
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,6 +35,7 @@ export default function GlydexStaffPortal({ staffName = 'Staff' }) {
     email: '',
     diabetes_type: 'type2',
     doctor_assigned: 'Dr. Vikas',
+    clinic: clinic,
     send_congratulations: true,
     registered_by: staffName
   });
