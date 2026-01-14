@@ -3367,6 +3367,15 @@ async def book_walk_in_appointment(appt: WalkInAppointment, staff = Depends(veri
         "booking_type": "walk_in"
     })
     
+    # Broadcast real-time slot update via WebSocket
+    await slot_manager.broadcast_slot_update(
+        doctor=appt.doctor,
+        clinic=appt.clinic,
+        date=appt.date,
+        slot=appt.time,
+        status="booked"
+    )
+    
     return {k: v for k, v in appointment.items() if k != "_id"}
 
 # ============ Emergency Appointments ============
