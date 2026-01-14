@@ -132,6 +132,9 @@ const Admin = () => {
   const [loyaltySummary, setLoyaltySummary] = useState(null);
   const [loyaltyTransactions, setLoyaltyTransactions] = useState([]);
 
+  // Attendance Clinic Selection
+  const [selectedAttendanceClinic, setSelectedAttendanceClinic] = useState(null);
+
   // Staff Management
   const [staffList, setStaffList] = useState([]);
   const [staffRoles, setStaffRoles] = useState({});
