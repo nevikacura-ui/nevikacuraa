@@ -12,7 +12,7 @@ import os
 import json
 from datetime import datetime
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://healthcare-app-27.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://nevika-hub.preview.emergentagent.com')
 
 # Test credentials from main agent
 TEST_CHILD_ID = "child_6e108638666d"
