@@ -1,339 +1,368 @@
 """
-Teleconsultation Module
-- Video appointments with doctors
-- Booking and scheduling
-- E-prescriptions after consultation
+Teleconsultation Module - Enhanced Version
+- Video appointments with DiaGyn doctors
+- 9 AM to 9 PM slots (15-minute intervals)
+- Wallet-based payments
+- E-prescriptions with Proton/Orange integration
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends, Header
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime, timezone, timedelta
 import uuid
+import os
+import jwt
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/teleconsult", tags=["Teleconsultation"])
 
 db = None
 
-def get_db():
-    global db
-    return db
-
 def set_db(database):
     global db
     db = database
 
-# Teleconsultation Config
-TELECONSULT_CONFIG = {
-    "consultation_fee": 300,  # Base fee
-    "follow_up_fee": 150,     # Within 7 days
-    "slot_duration_minutes": 15,
-    "max_advance_booking_days": 7,
-    "cancellation_hours": 2,  # Min hours before to cancel
-    "platform": "jitsi"       # Video platform
+# ============ AUTH ============
+JWT_SECRET = os.environ.get('JWT_SECRET', 'your-secret-key-change-in-production')
+
+async def get_current_user(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    try:
+        token = authorization.split(" ")[1]
+        payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        user = await db.users.find_one({"id": payload["user_id"]}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        return user
+    except:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+# ============ CONFIG ============
+
+# DiaGyn Doctors for Teleconsultation
+TELECONSULT_DOCTORS = {
+    "dr-neha-patel": {
+        "name": "Dr. Neha Patel",
+        "fee": 300,
+        "specialization": "Obstetrics & Gynecology"
+    },
+    "dr-vikas-jha": {
+        "name": "Dr. Vikas Jha", 
+        "fee": 250,
+        "specialization": "Obstetrics & Gynecology"
+    }
 }
 
-# Available Slots Template
-TELECONSULT_SLOTS = {
-    "morning": ["09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45", "11:00", "11:15", "11:30", "11:45"],
-    "afternoon": ["14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45", "16:00", "16:15", "16:30", "16:45"],
-    "evening": ["18:00", "18:15", "18:30", "18:45", "19:00", "19:15", "19:30", "19:45", "20:00", "20:15", "20:30", "20:45"]
-}
+# Generate 15-minute slots from 9 AM to 9 PM
+def generate_time_slots():
+    slots = []
+    for hour in range(9, 21):  # 9 AM to 9 PM (21:00)
+        for minute in [0, 15, 30, 45]:
+            hour_12 = hour if hour <= 12 else hour - 12
+            if hour_12 == 0:
+                hour_12 = 12
+            ampm = "AM" if hour < 12 else "PM"
+            time_12 = f"{hour_12}:{str(minute).zfill(2)} {ampm}"
+            time_24 = f"{str(hour).zfill(2)}:{str(minute).zfill(2)}"
+            slots.append({"time_12": time_12, "time_24": time_24, "hour": hour, "minute": minute})
+    return slots
 
-# Models
-class TeleconsultBooking(BaseModel):
+TIME_SLOTS = generate_time_slots()
+
+# ============ MODELS ============
+
+class TeleconsultBookingRequest(BaseModel):
     doctor_id: str
+    doctor_name: str
+    date: str
+    time: str
     patient_name: str
     patient_phone: str
-    patient_email: Optional[str] = None
-    date: str  # YYYY-MM-DD
-    time: str  # HH:MM
-    reason: Optional[str] = None
-    symptoms: Optional[List[str]] = []
-    is_follow_up: bool = False
-    previous_consultation_id: Optional[str] = None
+    reason: str
+    symptoms: Optional[str] = ""
+    fee: float
+    payment_method: str = "wallet"
 
-class EPrescription(BaseModel):
+class EPrescriptionCreate(BaseModel):
     consultation_id: str
     diagnosis: str
-    medicines: List[dict]
-    advice: Optional[str] = None
-    follow_up_date: Optional[str] = None
-    tests_recommended: Optional[List[str]] = []
+    notes: str
+    medicines: Optional[List[dict]] = []
+    tests: Optional[List[str]] = []
+    follow_up_days: Optional[int] = None
 
-# ==================== ENDPOINTS ====================
+# ============ ROUTES ============
 
 @router.get("/config")
-async def get_teleconsult_config():
+async def get_config():
     """Get teleconsultation configuration"""
     return {
-        "config": TELECONSULT_CONFIG,
-        "slots_template": TELECONSULT_SLOTS
+        "doctors": TELECONSULT_DOCTORS,
+        "slots_per_day": len(TIME_SLOTS),
+        "slot_duration": 15,
+        "timing": "9:00 AM - 9:00 PM",
+        "payment_method": "wallet_only"
     }
 
-@router.get("/available-slots/{doctor_id}")
-async def get_available_slots(doctor_id: str, date: str):
-    """Get available teleconsultation slots for a doctor on a date"""
-    db = get_db()
-    
-    # Validate date
-    try:
-        slot_date = datetime.strptime(date, "%Y-%m-%d")
-        today = datetime.now(timezone.utc).date()
-        
-        if slot_date.date() < today:
-            raise HTTPException(status_code=400, detail="Cannot book for past dates")
-        
-        max_date = today + timedelta(days=TELECONSULT_CONFIG["max_advance_booking_days"])
-        if slot_date.date() > max_date:
-            raise HTTPException(status_code=400, detail=f"Cannot book more than {TELECONSULT_CONFIG['max_advance_booking_days']} days in advance")
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
-    
-    # Get booked slots for this doctor on this date
+@router.get("/booked-slots")
+async def get_booked_slots(doctor: str, date: str):
+    """Get booked slots for a doctor on a date"""
     booked = await db.teleconsult_bookings.find(
-        {"doctor_id": doctor_id, "date": date, "status": {"$ne": "Cancelled"}},
+        {"doctor_id": doctor, "date": date, "status": {"$nin": ["cancelled", "Cancelled"]}},
         {"_id": 0, "time": 1}
     ).to_list(100)
     
-    booked_times = [b["time"] for b in booked]
-    
-    # Build available slots
-    all_slots = []
-    for session, times in TELECONSULT_SLOTS.items():
-        session_slots = []
-        for time in times:
-            is_available = time not in booked_times
-            
-            # If today, check if slot time has passed
-            if slot_date.date() == today:
-                slot_datetime = datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M")
-                slot_datetime = slot_datetime.replace(tzinfo=timezone.utc)
-                if slot_datetime <= datetime.now(timezone.utc):
-                    is_available = False
-            
-            session_slots.append({
-                "time": time,
-                "available": is_available
-            })
-        
-        all_slots.append({
-            "session": session,
-            "slots": session_slots
-        })
-    
-    return {
-        "doctor_id": doctor_id,
-        "date": date,
-        "sessions": all_slots,
-        "fee": TELECONSULT_CONFIG["consultation_fee"]
-    }
+    return {"booked_slots": [b["time"] for b in booked]}
 
 @router.post("/book")
-async def book_teleconsultation(user_id: str, booking: TeleconsultBooking):
-    """Book a teleconsultation appointment"""
-    db = get_db()
+async def book_teleconsultation(
+    data: TeleconsultBookingRequest,
+    user = Depends(get_current_user)
+):
+    """Book a teleconsultation with wallet payment"""
+    
+    # Validate doctor
+    if data.doctor_id not in TELECONSULT_DOCTORS:
+        raise HTTPException(status_code=400, detail="Invalid doctor selected")
+    
+    doctor_info = TELECONSULT_DOCTORS[data.doctor_id]
     
     # Check if slot is available
     existing = await db.teleconsult_bookings.find_one({
-        "doctor_id": booking.doctor_id,
-        "date": booking.date,
-        "time": booking.time,
-        "status": {"$ne": "Cancelled"}
+        "doctor_id": data.doctor_id,
+        "date": data.date,
+        "time": data.time,
+        "status": {"$nin": ["cancelled", "Cancelled"]}
     })
     
     if existing:
         raise HTTPException(status_code=400, detail="This slot is no longer available")
     
-    # Calculate fee
-    fee = TELECONSULT_CONFIG["follow_up_fee"] if booking.is_follow_up else TELECONSULT_CONFIG["consultation_fee"]
+    # Check wallet balance
+    wallet = await db.wallets.find_one({"user_id": user["id"]})
+    if not wallet or wallet.get("balance", 0) < data.fee:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Insufficient wallet balance. Required: ₹{data.fee}"
+        )
     
-    # Generate meeting link (using Jitsi for simplicity)
+    # Deduct from wallet
+    new_balance = wallet["balance"] - data.fee
+    await db.wallets.update_one(
+        {"user_id": user["id"]},
+        {"$set": {
+            "balance": new_balance,
+            "total_spent": wallet.get("total_spent", 0) + data.fee,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Record wallet transaction
+    wallet_txn = {
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"],
+        "type": "debit",
+        "amount": data.fee,
+        "service_type": "teleconsult",
+        "description": f"Video consultation with {data.doctor_name}",
+        "status": "completed",
+        "balance_after": new_balance,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.wallet_transactions.insert_one(wallet_txn)
+    
+    # Generate meeting link
     meeting_id = str(uuid.uuid4())[:8]
     meeting_link = f"https://meet.jit.si/nevikacura-{meeting_id}"
     
-    booking_doc = {
+    # Create booking
+    booking = {
         "id": str(uuid.uuid4()),
-        "user_id": user_id,
-        "doctor_id": booking.doctor_id,
-        "patient_name": booking.patient_name,
-        "patient_phone": booking.patient_phone,
-        "patient_email": booking.patient_email,
-        "date": booking.date,
-        "time": booking.time,
-        "reason": booking.reason,
-        "symptoms": booking.symptoms,
-        "is_follow_up": booking.is_follow_up,
-        "previous_consultation_id": booking.previous_consultation_id,
-        "fee": fee,
+        "user_id": user["id"],
+        "doctor_id": data.doctor_id,
+        "doctor_name": data.doctor_name,
+        "date": data.date,
+        "time": data.time,
+        "patient_name": data.patient_name,
+        "patient_phone": data.patient_phone,
+        "reason": data.reason,
+        "symptoms": data.symptoms,
+        "fee": data.fee,
+        "payment_method": "wallet",
+        "payment_status": "paid",
+        "wallet_transaction_id": wallet_txn["id"],
         "meeting_link": meeting_link,
         "meeting_id": meeting_id,
-        "status": "Booked",
-        "prescription_id": None,
+        "status": "upcoming",
+        "has_prescription": False,
+        "prescription": None,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
-    await db.teleconsult_bookings.insert_one(booking_doc)
+    await db.teleconsult_bookings.insert_one(booking)
+    
+    logger.info(f"Teleconsult booked: {booking['id']} for {data.patient_name} with {data.doctor_name}")
     
     return {
-        "message": "Teleconsultation booked successfully!",
-        "booking_id": booking_doc["id"],
-        "meeting_link": meeting_link,
-        "date": booking.date,
-        "time": booking.time,
-        "fee": fee
+        "success": True,
+        "booking": {k: v for k, v in booking.items() if k != "_id"},
+        "message": "Consultation booked successfully!"
     }
 
-@router.get("/bookings/{user_id}")
-async def get_user_teleconsultations(user_id: str, status: Optional[str] = None):
-    """Get all teleconsultation bookings for a user"""
-    db = get_db()
-    
-    query = {"user_id": user_id}
-    if status:
-        query["status"] = status
-    
+@router.get("/my-bookings")
+async def get_my_bookings(user = Depends(get_current_user)):
+    """Get user's teleconsultation bookings"""
     bookings = await db.teleconsult_bookings.find(
-        query,
+        {"user_id": user["id"]},
         {"_id": 0}
-    ).sort("date", -1).to_list(50)
+    ).sort("created_at", -1).to_list(50)
     
-    # Categorize
-    upcoming = [b for b in bookings if b["status"] == "Booked" and b["date"] >= datetime.now(timezone.utc).strftime("%Y-%m-%d")]
-    past = [b for b in bookings if b["status"] == "Completed" or b["date"] < datetime.now(timezone.utc).strftime("%Y-%m-%d")]
-    cancelled = [b for b in bookings if b["status"] == "Cancelled"]
+    # Update status based on date/time
+    today = datetime.now(timezone.utc).date()
+    for booking in bookings:
+        if booking.get("status") == "upcoming":
+            booking_date = datetime.strptime(booking["date"], "%Y-%m-%d").date()
+            if booking_date < today:
+                booking["status"] = "completed"
     
-    return {
-        "upcoming": upcoming,
-        "past": past,
-        "cancelled": cancelled,
-        "total": len(bookings)
-    }
+    return {"bookings": bookings}
 
-@router.put("/cancel/{booking_id}")
-async def cancel_teleconsultation(booking_id: str, user_id: str, reason: Optional[str] = None):
-    """Cancel a teleconsultation booking"""
-    db = get_db()
-    
-    booking = await db.teleconsult_bookings.find_one({
-        "id": booking_id,
-        "user_id": user_id
-    })
+@router.get("/booking/{booking_id}")
+async def get_booking_details(booking_id: str, user = Depends(get_current_user)):
+    """Get details of a specific booking"""
+    booking = await db.teleconsult_bookings.find_one(
+        {"id": booking_id, "user_id": user["id"]},
+        {"_id": 0}
+    )
     
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
     
-    if booking["status"] != "Booked":
-        raise HTTPException(status_code=400, detail="Cannot cancel this booking")
-    
-    # Check cancellation time limit
-    booking_datetime = datetime.strptime(f"{booking['date']} {booking['time']}", "%Y-%m-%d %H:%M")
-    booking_datetime = booking_datetime.replace(tzinfo=timezone.utc)
-    hours_until = (booking_datetime - datetime.now(timezone.utc)).total_seconds() / 3600
-    
-    if hours_until < TELECONSULT_CONFIG["cancellation_hours"]:
-        raise HTTPException(
-            status_code=400, 
-            detail=f"Cannot cancel within {TELECONSULT_CONFIG['cancellation_hours']} hours of appointment"
-        )
-    
-    await db.teleconsult_bookings.update_one(
-        {"id": booking_id},
-        {"$set": {
-            "status": "Cancelled",
-            "cancellation_reason": reason,
-            "cancelled_at": datetime.now(timezone.utc).isoformat()
-        }}
-    )
-    
-    return {"message": "Teleconsultation cancelled successfully"}
+    return {"booking": booking}
 
-@router.post("/complete/{booking_id}")
-async def complete_teleconsultation(booking_id: str, notes: Optional[str] = None):
-    """Mark a teleconsultation as complete (called by doctor/staff)"""
-    db = get_db()
-    
-    result = await db.teleconsult_bookings.update_one(
-        {"id": booking_id},
-        {"$set": {
-            "status": "Completed",
-            "completed_at": datetime.now(timezone.utc).isoformat(),
-            "doctor_notes": notes
-        }}
-    )
-    
-    if result.modified_count == 0:
-        raise HTTPException(status_code=404, detail="Booking not found")
-    
-    return {"message": "Consultation marked as complete"}
+# ============ E-PRESCRIPTION (Doctor/Admin) ============
 
 @router.post("/prescription")
-async def create_prescription(prescription: EPrescription):
-    """Create e-prescription after consultation"""
-    db = get_db()
+async def create_prescription(data: EPrescriptionCreate):
+    """Create e-prescription for a consultation (doctor access)"""
     
-    # Check if consultation exists
-    consultation = await db.teleconsult_bookings.find_one({"id": prescription.consultation_id})
-    if not consultation:
+    booking = await db.teleconsult_bookings.find_one({"id": data.consultation_id})
+    if not booking:
         raise HTTPException(status_code=404, detail="Consultation not found")
     
-    prescription_doc = {
+    prescription = {
         "id": str(uuid.uuid4()),
-        "consultation_id": prescription.consultation_id,
-        "patient_name": consultation["patient_name"],
-        "patient_phone": consultation["patient_phone"],
-        "doctor_id": consultation["doctor_id"],
-        "diagnosis": prescription.diagnosis,
-        "medicines": prescription.medicines,
-        "advice": prescription.advice,
-        "follow_up_date": prescription.follow_up_date,
-        "tests_recommended": prescription.tests_recommended,
+        "consultation_id": data.consultation_id,
+        "doctor_name": booking.get("doctor_name"),
+        "patient_name": booking.get("patient_name"),
+        "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "diagnosis": data.diagnosis,
+        "notes": data.notes,
+        "medicines": data.medicines,
+        "tests": data.tests,
+        "follow_up_days": data.follow_up_days,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
-    await db.teleconsult_prescriptions.insert_one(prescription_doc)
+    await db.eprescriptions.insert_one(prescription)
     
-    # Update consultation with prescription ID
+    # Update booking
     await db.teleconsult_bookings.update_one(
-        {"id": prescription.consultation_id},
-        {"$set": {"prescription_id": prescription_doc["id"]}}
+        {"id": data.consultation_id},
+        {"$set": {
+            "has_prescription": True,
+            "prescription": {k: v for k, v in prescription.items() if k != "_id"},
+            "status": "completed"
+        }}
     )
     
     return {
-        "message": "Prescription created successfully",
-        "prescription_id": prescription_doc["id"]
+        "success": True,
+        "prescription_id": prescription["id"],
+        "message": "E-Prescription created successfully"
     }
 
-@router.get("/prescription/{prescription_id}")
-async def get_prescription(prescription_id: str):
-    """Get e-prescription details"""
-    db = get_db()
-    
-    prescription = await db.teleconsult_prescriptions.find_one(
-        {"id": prescription_id},
+@router.get("/prescription/{consultation_id}")
+async def get_prescription(consultation_id: str, user = Depends(get_current_user)):
+    """Get e-prescription for a consultation"""
+    booking = await db.teleconsult_bookings.find_one(
+        {"id": consultation_id, "user_id": user["id"]},
         {"_id": 0}
     )
     
-    if not prescription:
-        raise HTTPException(status_code=404, detail="Prescription not found")
+    if not booking:
+        raise HTTPException(status_code=404, detail="Consultation not found")
     
-    return prescription
+    if not booking.get("has_prescription"):
+        raise HTTPException(status_code=404, detail="No prescription available yet")
+    
+    return {"prescription": booking.get("prescription")}
 
-@router.get("/doctor/schedule/{doctor_id}")
-async def get_doctor_teleconsult_schedule(doctor_id: str, start_date: str, end_date: str):
-    """Get teleconsultation schedule for a doctor (for doctor portal)"""
-    db = get_db()
+# ============ CANCEL ============
+
+@router.post("/cancel/{booking_id}")
+async def cancel_booking(booking_id: str, user = Depends(get_current_user)):
+    """Cancel a teleconsultation and refund to wallet"""
     
-    bookings = await db.teleconsult_bookings.find(
-        {
-            "doctor_id": doctor_id,
-            "date": {"$gte": start_date, "$lte": end_date},
-            "status": {"$ne": "Cancelled"}
-        },
-        {"_id": 0}
-    ).sort([("date", 1), ("time", 1)]).to_list(200)
+    booking = await db.teleconsult_bookings.find_one({
+        "id": booking_id,
+        "user_id": user["id"],
+        "status": "upcoming"
+    })
+    
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found or cannot be cancelled")
+    
+    # Check if within cancellation window (2 hours before)
+    booking_datetime = datetime.strptime(f"{booking['date']} {booking['time']}", "%Y-%m-%d %I:%M %p")
+    if datetime.now() > booking_datetime - timedelta(hours=2):
+        raise HTTPException(status_code=400, detail="Cannot cancel within 2 hours of appointment")
+    
+    # Refund to wallet
+    fee = booking.get("fee", 0)
+    wallet = await db.wallets.find_one({"user_id": user["id"]})
+    
+    if wallet and fee > 0:
+        new_balance = wallet.get("balance", 0) + fee
+        await db.wallets.update_one(
+            {"user_id": user["id"]},
+            {"$set": {
+                "balance": new_balance,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        # Record refund transaction
+        refund_txn = {
+            "id": str(uuid.uuid4()),
+            "user_id": user["id"],
+            "type": "refund",
+            "amount": fee,
+            "service_type": "teleconsult",
+            "reference_id": booking_id,
+            "description": f"Refund for cancelled consultation",
+            "status": "completed",
+            "balance_after": new_balance,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.wallet_transactions.insert_one(refund_txn)
+    
+    # Update booking status
+    await db.teleconsult_bookings.update_one(
+        {"id": booking_id},
+        {"$set": {
+            "status": "cancelled",
+            "cancelled_at": datetime.now(timezone.utc).isoformat(),
+            "refund_amount": fee
+        }}
+    )
     
     return {
-        "bookings": bookings,
-        "total": len(bookings)
+        "success": True,
+        "message": f"Booking cancelled. ₹{fee} refunded to wallet.",
+        "refund_amount": fee
     }
