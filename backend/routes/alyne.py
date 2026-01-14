@@ -1689,3 +1689,446 @@ async def get_user_orders(user_id: str):
     
     return {"orders": orders}
 
+
+# ============ ALYNE KIDS ZONE - Interactive Health Features for Ages 3-8 ============
+
+# Health Stars - Gamified healthy habits tracking
+HEALTH_STAR_ACTIVITIES = [
+    {"id": "brush_morning", "name": "Morning Brush", "emoji": "🪥", "stars": 1, "category": "hygiene"},
+    {"id": "brush_night", "name": "Night Brush", "emoji": "🪥", "stars": 1, "category": "hygiene"},
+    {"id": "wash_hands", "name": "Washed Hands", "emoji": "🧼", "stars": 1, "category": "hygiene"},
+    {"id": "drink_water", "name": "Drank Water", "emoji": "💧", "stars": 1, "category": "nutrition"},
+    {"id": "eat_veggies", "name": "Ate Vegetables", "emoji": "🥦", "stars": 2, "category": "nutrition"},
+    {"id": "eat_fruit", "name": "Ate Fruit", "emoji": "🍎", "stars": 2, "category": "nutrition"},
+    {"id": "exercise", "name": "Exercise/Play", "emoji": "🏃", "stars": 2, "category": "fitness"},
+    {"id": "good_sleep", "name": "Good Sleep", "emoji": "😴", "stars": 2, "category": "rest"},
+    {"id": "took_medicine", "name": "Took Medicine", "emoji": "💊", "stars": 1, "category": "health"},
+    {"id": "helped_friend", "name": "Helped Friend", "emoji": "🤝", "stars": 1, "category": "kindness"},
+    {"id": "shared_toy", "name": "Shared Toy", "emoji": "🧸", "stars": 1, "category": "kindness"},
+    {"id": "ate_breakfast", "name": "Ate Breakfast", "emoji": "🥣", "stars": 1, "category": "nutrition"},
+]
+
+STAR_REWARDS = [
+    {"stars": 10, "reward": "Health Champion Badge", "emoji": "🏅"},
+    {"stars": 25, "reward": "Super Star Badge", "emoji": "⭐"},
+    {"stars": 50, "reward": "Health Hero Badge", "emoji": "🦸"},
+    {"stars": 100, "reward": "ALYNE Master Badge", "emoji": "👑"},
+]
+
+# Mood Emojis for tracking
+MOOD_EMOJIS = [
+    {"id": "happy", "emoji": "😊", "name": "Happy", "color": "#FFD700"},
+    {"id": "excited", "emoji": "🤩", "name": "Excited", "color": "#FF69B4"},
+    {"id": "calm", "emoji": "😌", "name": "Calm", "color": "#87CEEB"},
+    {"id": "tired", "emoji": "😴", "name": "Tired", "color": "#9370DB"},
+    {"id": "sad", "emoji": "😢", "name": "Sad", "color": "#4682B4"},
+    {"id": "angry", "emoji": "😠", "name": "Angry", "color": "#FF6347"},
+    {"id": "scared", "emoji": "😨", "name": "Scared", "color": "#808080"},
+    {"id": "sick", "emoji": "🤒", "name": "Not feeling well", "color": "#90EE90"},
+]
+
+# Bedtime Story Themes
+STORY_THEMES = [
+    {"id": "brush_teeth", "name": "Brushing Teeth Adventure", "icon": "🪥"},
+    {"id": "eat_healthy", "name": "Veggie Superhero", "icon": "🥦"},
+    {"id": "wash_hands", "name": "Germ Fighter", "icon": "🧼"},
+    {"id": "good_sleep", "name": "Dreamland Journey", "icon": "🌙"},
+    {"id": "exercise", "name": "Super Strong", "icon": "💪"},
+    {"id": "doctor_visit", "name": "Friendly Doctor", "icon": "👨‍⚕️"},
+    {"id": "share_toys", "name": "Sharing is Caring", "icon": "🧸"},
+    {"id": "drink_water", "name": "Water Wizard", "icon": "💧"},
+]
+
+class HealthStarLog(BaseModel):
+    child_id: str
+    activity_id: str
+    date: str  # YYYY-MM-DD
+
+class MoodLogEntry(BaseModel):
+    child_id: str
+    mood_id: str
+    note: Optional[str] = None
+
+class StoryRequest(BaseModel):
+    child_id: str
+    theme_id: str
+    child_name: str
+    age: int = 5
+    session_id: str
+
+class KidsChatMessage(BaseModel):
+    child_id: str
+    message: str
+    child_name: str
+    age: int = 5
+    session_id: str
+
+# ============ HEALTH STARS ENDPOINTS ============
+
+@router.get("/kidszone/activities")
+async def get_star_activities():
+    """Get list of activities kids can earn stars for"""
+    return {
+        "success": True,
+        "activities": HEALTH_STAR_ACTIVITIES,
+        "rewards": STAR_REWARDS
+    }
+
+@router.post("/kidszone/stars/log")
+async def log_star_activity(entry: HealthStarLog):
+    """Log a completed healthy activity for a child"""
+    activity = next((a for a in HEALTH_STAR_ACTIVITIES if a["id"] == entry.activity_id), None)
+    if not activity:
+        raise HTTPException(status_code=404, detail="Activity not found")
+    
+    # Check if already logged today
+    existing = await db.alyne_star_logs.find_one({
+        "child_id": entry.child_id,
+        "activity_id": entry.activity_id,
+        "date": entry.date
+    })
+    
+    if existing:
+        return {"success": False, "message": "Already logged today!", "already_done": True}
+    
+    log_doc = {
+        "id": str(uuid.uuid4()),
+        "child_id": entry.child_id,
+        "activity_id": entry.activity_id,
+        "activity_name": activity["name"],
+        "emoji": activity["emoji"],
+        "stars_earned": activity["stars"],
+        "date": entry.date,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.alyne_star_logs.insert_one(log_doc)
+    
+    # Get total stars
+    total_stars = await get_child_total_stars(entry.child_id)
+    
+    # Check for new rewards
+    new_rewards = [r for r in STAR_REWARDS if r["stars"] == total_stars]
+    
+    return {
+        "success": True,
+        "stars_earned": activity["stars"],
+        "total_stars": total_stars,
+        "new_reward": new_rewards[0] if new_rewards else None,
+        "message": f"Great job! You earned {activity['stars']} ⭐!"
+    }
+
+async def get_child_total_stars(child_id: str) -> int:
+    """Calculate total stars for a child"""
+    pipeline = [
+        {"$match": {"child_id": child_id}},
+        {"$group": {"_id": None, "total": {"$sum": "$stars_earned"}}}
+    ]
+    result = await db.alyne_star_logs.aggregate(pipeline).to_list(1)
+    return result[0]["total"] if result else 0
+
+@router.get("/kidszone/stars/{child_id}")
+async def get_child_stars(child_id: str, days: int = 7):
+    """Get star progress for a child"""
+    # Get recent activity logs
+    from_date = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+    
+    logs = await db.alyne_star_logs.find(
+        {"child_id": child_id, "date": {"$gte": from_date}},
+        {"_id": 0}
+    ).sort("date", -1).to_list(100)
+    
+    total_stars = await get_child_total_stars(child_id)
+    
+    # Calculate earned rewards
+    earned_rewards = [r for r in STAR_REWARDS if r["stars"] <= total_stars]
+    next_reward = next((r for r in STAR_REWARDS if r["stars"] > total_stars), None)
+    
+    # Get today's completed activities
+    today = datetime.now().strftime("%Y-%m-%d")
+    today_logs = [l for l in logs if l["date"] == today]
+    completed_today = [l["activity_id"] for l in today_logs]
+    
+    return {
+        "success": True,
+        "total_stars": total_stars,
+        "recent_logs": logs[:20],
+        "completed_today": completed_today,
+        "earned_rewards": earned_rewards,
+        "next_reward": next_reward,
+        "stars_to_next": next_reward["stars"] - total_stars if next_reward else 0
+    }
+
+# ============ MOOD TRACKER ENDPOINTS ============
+
+@router.get("/kidszone/moods")
+async def get_mood_options():
+    """Get available mood emojis for kids"""
+    return {"success": True, "moods": MOOD_EMOJIS}
+
+@router.post("/kidszone/mood/log")
+async def log_mood(entry: MoodLogEntry):
+    """Log a child's mood"""
+    mood = next((m for m in MOOD_EMOJIS if m["id"] == entry.mood_id), None)
+    if not mood:
+        raise HTTPException(status_code=404, detail="Mood not found")
+    
+    log_doc = {
+        "id": str(uuid.uuid4()),
+        "child_id": entry.child_id,
+        "mood_id": entry.mood_id,
+        "mood_emoji": mood["emoji"],
+        "mood_name": mood["name"],
+        "note": entry.note,
+        "date": datetime.now().strftime("%Y-%m-%d"),
+        "time": datetime.now().strftime("%H:%M"),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.alyne_mood_logs.insert_one(log_doc)
+    
+    # Generate a supportive response based on mood
+    responses = {
+        "happy": "That's wonderful! Keep spreading those happy vibes! 🌟",
+        "excited": "Wow, how exciting! What made you feel this way? 🎉",
+        "calm": "Feeling calm is so nice. You're doing great! 🌈",
+        "tired": "It's okay to rest. Make sure to get some good sleep tonight! 💤",
+        "sad": "It's okay to feel sad sometimes. Would you like a hug? 🤗",
+        "angry": "Take a deep breath. Would you like to talk about it? 🫂",
+        "scared": "It's brave to share that you're scared. You're safe! 💝",
+        "sick": "I hope you feel better soon! Make sure to rest and drink water. 💚"
+    }
+    
+    return {
+        "success": True,
+        "message": responses.get(entry.mood_id, "Thanks for sharing how you feel!"),
+        "mood_logged": mood
+    }
+
+@router.get("/kidszone/mood/{child_id}")
+async def get_mood_history(child_id: str, days: int = 7):
+    """Get mood history for a child"""
+    from_date = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+    
+    logs = await db.alyne_mood_logs.find(
+        {"child_id": child_id, "date": {"$gte": from_date}},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+    
+    # Calculate mood summary
+    mood_counts = {}
+    for log in logs:
+        mood_id = log.get("mood_id")
+        mood_counts[mood_id] = mood_counts.get(mood_id, 0) + 1
+    
+    return {
+        "success": True,
+        "mood_logs": logs,
+        "mood_summary": mood_counts,
+        "total_entries": len(logs)
+    }
+
+# ============ BEDTIME STORIES ENDPOINTS ============
+
+@router.get("/kidszone/stories/themes")
+async def get_story_themes():
+    """Get available bedtime story themes"""
+    return {"success": True, "themes": STORY_THEMES}
+
+@router.post("/kidszone/stories/generate")
+async def generate_bedtime_story(request: StoryRequest):
+    """Generate an AI-powered health-themed bedtime story"""
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=500, detail="AI service not configured")
+    
+    theme = next((t for t in STORY_THEMES if t["id"] == request.theme_id), None)
+    if not theme:
+        raise HTTPException(status_code=404, detail="Story theme not found")
+    
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        
+        # Use OpenAI for creative storytelling
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=request.session_id,
+            system_message=f"""You are a gentle, loving storyteller creating bedtime stories for young children aged 3-8.
+            
+Create a SHORT, sweet bedtime story (150-200 words) that:
+1. Features a child named {request.child_name} (age {request.age}) as the hero
+2. Teaches about the health topic: {theme['name']}
+3. Uses simple words a {request.age}-year-old can understand
+4. Has a happy, comforting ending perfect for bedtime
+5. Includes friendly characters like talking animals or magical helpers
+6. Makes the health lesson fun and memorable
+
+Keep it SHORT - this is a bedtime story! Use warm, soothing language. Include some descriptive emojis between paragraphs to make it engaging.
+
+Start the story with "Once upon a time..." and end with "The End 🌙"
+"""
+        ).with_model("openai", "gpt-5.2")
+        
+        user_message = UserMessage(
+            text=f"Please create a bedtime story about {theme['name']} for {request.child_name}."
+        )
+        
+        story = await chat.send_message(user_message)
+        
+        # Store the story
+        story_doc = {
+            "id": str(uuid.uuid4()),
+            "child_id": request.child_id,
+            "child_name": request.child_name,
+            "theme_id": request.theme_id,
+            "theme_name": theme["name"],
+            "theme_icon": theme["icon"],
+            "story": story,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.alyne_stories.insert_one(story_doc)
+        
+        return {
+            "success": True,
+            "story": story,
+            "theme": theme,
+            "story_id": story_doc["id"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Story generation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Could not generate story: {str(e)}")
+
+@router.get("/kidszone/stories/{child_id}")
+async def get_saved_stories(child_id: str):
+    """Get previously generated stories for a child"""
+    stories = await db.alyne_stories.find(
+        {"child_id": child_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(20)
+    
+    return {"success": True, "stories": stories}
+
+# ============ KIDS HEALTH BUDDY CHAT ============
+
+@router.post("/kidszone/buddy/chat")
+async def chat_with_health_buddy(chat_msg: KidsChatMessage):
+    """Simple, child-friendly AI health buddy chat"""
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=500, detail="AI service not configured")
+    
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        
+        # Use Claude for safe, thoughtful responses
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=chat_msg.session_id,
+            system_message=f"""You are ALYNE Buddy, a friendly and kind health helper for children aged 3-8.
+
+The child talking to you is {chat_msg.child_name}, who is {chat_msg.age} years old.
+
+IMPORTANT RULES:
+1. Use VERY simple words a {chat_msg.age}-year-old can understand
+2. Keep responses SHORT (2-3 sentences max)
+3. Be warm, friendly, and encouraging
+4. Use fun emojis to make it engaging 🌟
+5. If asked about health, give simple, safe advice
+6. NEVER diagnose or give medical advice - always say "Let's ask mommy/daddy or the doctor!"
+7. If the child seems upset or sick, be extra gentle and caring
+8. Encourage healthy habits in a fun way
+9. Be like a friendly teddy bear - comforting and supportive
+10. If asked anything inappropriate, redirect to fun health topics
+
+Example responses:
+- "That's so cool! 🌟 Remember to drink water to stay strong!"
+- "Aw, I'm sorry you feel ouchie. Let's tell mommy so she can help! 💝"
+- "Yay! You're doing great! Keep being awesome! 🎉"
+
+Always end with something positive or encouraging!
+"""
+        ).with_model("anthropic", "claude-sonnet-4-5-20250929")
+        
+        user_message = UserMessage(text=chat_msg.message)
+        response = await chat.send_message(user_message)
+        
+        # Store the chat
+        chat_doc = {
+            "id": str(uuid.uuid4()),
+            "child_id": chat_msg.child_id,
+            "child_name": chat_msg.child_name,
+            "session_id": chat_msg.session_id,
+            "message": chat_msg.message,
+            "response": response,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.alyne_buddy_chats.insert_one(chat_doc)
+        
+        return {
+            "success": True,
+            "response": response,
+            "buddy_name": "ALYNE Buddy"
+        }
+        
+    except Exception as e:
+        logger.error(f"Kids buddy chat error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Chat error: {str(e)}")
+
+# ============ KIDS ZONE DASHBOARD ============
+
+@router.get("/kidszone/dashboard/{child_id}")
+async def get_kidszone_dashboard(child_id: str):
+    """Get Kids Zone dashboard data for a child"""
+    today = datetime.now().strftime("%Y-%m-%d")
+    
+    # Get today's activities
+    today_activities = await db.alyne_star_logs.find(
+        {"child_id": child_id, "date": today},
+        {"_id": 0}
+    ).to_list(20)
+    
+    # Get total stars
+    total_stars = await get_child_total_stars(child_id)
+    
+    # Get today's mood
+    today_mood = await db.alyne_mood_logs.find_one(
+        {"child_id": child_id, "date": today},
+        {"_id": 0},
+        sort=[("created_at", -1)]
+    )
+    
+    # Get recent stories
+    recent_stories = await db.alyne_stories.find(
+        {"child_id": child_id},
+        {"_id": 0, "story": 0}  # Exclude full story text for speed
+    ).sort("created_at", -1).to_list(3)
+    
+    # Calculate streak
+    streak = 0
+    check_date = datetime.now()
+    for i in range(30):
+        date_str = check_date.strftime("%Y-%m-%d")
+        day_logs = await db.alyne_star_logs.count_documents({"child_id": child_id, "date": date_str})
+        if day_logs > 0:
+            streak += 1
+            check_date -= timedelta(days=1)
+        else:
+            break
+    
+    # Get earned rewards
+    earned_rewards = [r for r in STAR_REWARDS if r["stars"] <= total_stars]
+    next_reward = next((r for r in STAR_REWARDS if r["stars"] > total_stars), None)
+    
+    return {
+        "success": True,
+        "total_stars": total_stars,
+        "streak_days": streak,
+        "today_activities": len(today_activities),
+        "today_mood": today_mood,
+        "recent_stories": recent_stories,
+        "earned_rewards": earned_rewards,
+        "next_reward": next_reward,
+        "activities_available": len(HEALTH_STAR_ACTIVITIES),
+        "completed_today": [a["activity_id"] for a in today_activities]
+    }
