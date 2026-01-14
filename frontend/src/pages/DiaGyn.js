@@ -494,6 +494,24 @@ const DiaGyn = () => {
       const doctor = doctors.find(d => d.id === selectedDoctor);
       const clinic = clinics.find(c => c.id === selectedClinic);
       
+      // Real-time validation: Check if selected date/time is in the past
+      const now = new Date();
+      const appointmentDate = new Date(selectedDate);
+      const [timeStr, period] = selectedSlot.split(' ');
+      const [hours, minutes] = timeStr.split(':').map(Number);
+      let appointmentHours = hours;
+      if (period === 'PM' && hours !== 12) appointmentHours += 12;
+      if (period === 'AM' && hours === 12) appointmentHours = 0;
+      appointmentDate.setHours(appointmentHours, minutes, 0, 0);
+      
+      // Block if appointment is in the past or less than 30 minutes from now
+      const thirtyMinutesFromNow = new Date(now.getTime() + 30 * 60 * 1000);
+      if (appointmentDate < thirtyMinutesFromNow) {
+        toast.error('Cannot book appointments for past times. Please select a future time slot (at least 30 minutes from now).');
+        setLoading(false);
+        return;
+      }
+      
       const bookingData = {
         doctor: doctor.name,
         clinic: clinic.name,
