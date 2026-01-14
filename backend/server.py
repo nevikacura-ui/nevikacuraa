@@ -2643,12 +2643,31 @@ async def get_appointments(user = Depends(get_current_user)):
 @api_router.post("/diagnostics", response_model=DiagnosticOrder)
 async def create_diagnostic_order(input: DiagnosticOrderCreate, user = Depends(get_current_user)):
     # ORDER LIMIT: Check if user already has 2 active diagnostic orders
-    active_orders_count = await db.diagnostic_orders.count_documents({
+    active_orders = await db.diagnostic_orders.find({
         "patient_phone": input.patient_phone,
         "status": {"$in": ["pending", "Pending", "confirmed", "Confirmed", "Processing", "Sample Collected", "sample_collected"]}
-    })
+    }, {"_id": 0, "id": 1, "tests": 1, "status": 1, "preferred_date": 1}).to_list(2)
     
-    if active_orders_count >= 2:
+    if len(active_orders) >= 2:
+        # Notify staff about order limit reached
+        try:
+            orders_info = "\n".join([f"  • Order {o.get('id', 'N/A')[:8]}: {', '.join(o.get('tests', [])[:2])} - {o.get('status')}" for o in active_orders])
+            staff_message = f"""⚠️ DIAGNOSTIC ORDER LIMIT REACHED
+
+Patient: {input.patient_name}
+Phone: {input.patient_phone}
+Tried to order: {', '.join(input.tests[:3])}
+
+❌ BLOCKED - Already has 2 active orders:
+{orders_info}
+
+Please check if orders need to be updated or completed."""
+
+            await send_sms_notification(STAFF_PHONE_NUMBERS.get('proton', ['9833188288'])[0], staff_message)
+            logger.info(f"Staff notified about diagnostic order limit for {input.patient_phone}")
+        except Exception as e:
+            logger.error(f"Failed to notify staff about diagnostic order limit: {e}")
+        
         raise HTTPException(
             status_code=400, 
             detail="You already have 2 active diagnostic orders. Please wait for them to be completed or cancel one before placing a new order."
