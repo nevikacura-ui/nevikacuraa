@@ -2367,6 +2367,90 @@ async def get_booked_slots(doctor: str, clinic: str, date: str):
     
     return {"booked_slots": [b["time"] for b in booked if b.get("time")]}
 
+# ============ WEBSOCKET ENDPOINT FOR REAL-TIME SLOT UPDATES ============
+@app.websocket("/ws/slots")
+async def websocket_slot_updates(
+    websocket: WebSocket,
+    doctor: str = Query(...),
+    clinic: str = Query(...),
+    date: str = Query(...)
+):
+    """WebSocket endpoint for real-time slot availability updates
+    
+    Connect with: ws://host/ws/slots?doctor=Dr.%20Neha%20Patel&clinic=Pushpa%20Clinic&date=2026-01-15
+    
+    Receives messages when slots are booked or become available:
+    {
+        "type": "slot_update",
+        "doctor": "Dr. Neha Patel",
+        "clinic": "Pushpa Clinic", 
+        "date": "2026-01-15",
+        "slot": "11:00 AM",
+        "status": "booked" | "available",
+        "timestamp": "2026-01-15T10:30:00Z"
+    }
+    """
+    await slot_manager.connect(websocket, doctor, clinic, date)
+    try:
+        # Send initial connection confirmation
+        await websocket.send_json({
+            "type": "connected",
+            "message": "Connected to slot updates",
+            "doctor": doctor,
+            "clinic": clinic,
+            "date": date
+        })
+        
+        # Keep connection alive and handle incoming messages
+        while True:
+            try:
+                # Wait for messages (ping/pong or subscription changes)
+                data = await asyncio.wait_for(websocket.receive_text(), timeout=30.0)
+                message = json.loads(data)
+                
+                # Handle subscription change (user selects different date)
+                if message.get("type") == "subscribe":
+                    new_doctor = message.get("doctor", doctor)
+                    new_clinic = message.get("clinic", clinic)
+                    new_date = message.get("date", date)
+                    
+                    # Disconnect from old room
+                    slot_manager.disconnect(websocket, doctor, clinic, date)
+                    
+                    # Update subscription
+                    doctor, clinic, date = new_doctor, new_clinic, new_date
+                    
+                    # Connect to new room
+                    room_key = slot_manager.get_room_key(doctor, clinic, date)
+                    if room_key not in slot_manager.active_connections:
+                        slot_manager.active_connections[room_key] = set()
+                    slot_manager.active_connections[room_key].add(websocket)
+                    
+                    await websocket.send_json({
+                        "type": "subscribed",
+                        "doctor": doctor,
+                        "clinic": clinic,
+                        "date": date
+                    })
+                
+                # Handle ping
+                elif message.get("type") == "ping":
+                    await websocket.send_json({"type": "pong"})
+                    
+            except asyncio.TimeoutError:
+                # Send heartbeat
+                try:
+                    await websocket.send_json({"type": "heartbeat"})
+                except:
+                    break
+                    
+    except WebSocketDisconnect:
+        logger.info(f"WebSocket client disconnected: {doctor}, {clinic}, {date}")
+    except Exception as e:
+        logger.error(f"WebSocket error: {e}")
+    finally:
+        slot_manager.disconnect(websocket, doctor, clinic, date)
+
 # ============ Appointment Feedback Endpoint ============
 @api_router.post("/feedback/{feedback_token}")
 async def submit_appointment_feedback(feedback_token: str, feedback: AppointmentFeedback):
