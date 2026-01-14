@@ -39,8 +39,8 @@ const QuickReorder = () => {
       const headers = { Authorization: `Bearer ${token}` };
       
       // Fetch last appointment
-      const apptRes = await axios.get(`${API}/appointments/my`, { headers });
-      const appointments = apptRes.data?.appointments || [];
+      const apptRes = await axios.get(`${API}/appointments`, { headers });
+      const appointments = apptRes.data || [];
       const completedAppts = appointments.filter(a => 
         a.status === 'completed' || a.status === 'Completed'
       );
@@ -51,15 +51,15 @@ const QuickReorder = () => {
       }
 
       // Fetch last diagnostic order
-      const testRes = await axios.get(`${API}/diagnostic/orders`, { headers });
-      const testOrders = testRes.data?.orders || [];
+      const testRes = await axios.get(`${API}/diagnostics`, { headers });
+      const testOrders = testRes.data || [];
       if (testOrders.length > 0) {
         setLastTests(testOrders[0].tests || []);
       }
 
       // Fetch last pharmacy order
-      const pharmaRes = await axios.get(`${API}/pharmacy/orders`, { headers });
-      const pharmaOrders = pharmaRes.data?.orders || [];
+      const pharmaRes = await axios.get(`${API}/pharmacy`, { headers });
+      const pharmaOrders = pharmaRes.data || [];
       if (pharmaOrders.length > 0) {
         setLastMedicines(pharmaOrders[0].medicines || pharmaOrders[0].items || []);
       }
