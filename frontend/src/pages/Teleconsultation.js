@@ -82,6 +82,7 @@ const Teleconsultation = () => {
   const [myBookings, setMyBookings] = useState([]);
   const [showMyBookings, setShowMyBookings] = useState(false);
   const [showPrescription, setShowPrescription] = useState(null);
+  const [showAddFunds, setShowAddFunds] = useState(false);
   
   const [formData, setFormData] = useState({
     patient_name: user?.name || '',
