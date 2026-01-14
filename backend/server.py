@@ -2212,6 +2212,19 @@ async def upload_file(file: UploadFile = File(...), user_id: Optional[str] = Non
 
 @api_router.post("/appointments", response_model=Appointment)
 async def create_appointment(input: AppointmentCreate, user = Depends(get_current_user)):
+    # BOOKING LIMIT: Check if this phone number already has an active appointment
+    active_appointment = await db.appointments.find_one({
+        "patient_phone": input.patient_phone,
+        "status": {"$in": ["pending", "Booked", "In Clinic"]},  # Not completed or cancelled
+        "appointment_type": {"$ne": "EMERGENCY"}  # Emergency appointments don't count
+    })
+    
+    if active_appointment:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"You already have an active appointment on {active_appointment.get('date')} at {active_appointment.get('time')} with {active_appointment.get('doctor')}. Please complete or cancel it before booking a new one."
+        )
+    
     # SLOT BLOCKING: Check if slot is already booked (includes pending from patient bookings)
     existing = await db.appointments.find_one({
         "doctor": input.doctor,
