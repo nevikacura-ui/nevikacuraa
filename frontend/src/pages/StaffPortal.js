@@ -1360,7 +1360,7 @@ const StaffPortal = () => {
         {/* Clinic Staff View */}
         {isClinicStaff(role) && (
           <Tabs defaultValue="appointments" className="space-y-4" onValueChange={handleTabChange}>
-            <TabsList>
+            <TabsList className="flex flex-wrap">
               <TabsTrigger value="appointments" data-testid="tab-appointments">
                 <Calendar className="w-4 h-4 mr-2" />
                 Appointments
@@ -1377,6 +1377,27 @@ const StaffPortal = () => {
                 <IndianRupee className="w-4 h-4 mr-2" />
                 Billing
               </TabsTrigger>
+              {/* ANC Registration Tab - based on access_modules */}
+              {staffInfo?.access_modules?.includes('anc') && (
+                <TabsTrigger value="anc" data-testid="tab-anc">
+                  <Baby className="w-4 h-4 mr-2" />
+                  ANC
+                </TabsTrigger>
+              )}
+              {/* Glydex (Diabetes) Tab - based on access_modules */}
+              {staffInfo?.access_modules?.includes('glydex') && (
+                <TabsTrigger value="glydex" data-testid="tab-glydex">
+                  <Activity className="w-4 h-4 mr-2" />
+                  Diabetes
+                </TabsTrigger>
+              )}
+              {/* Attendance Tab - based on access_modules */}
+              {staffInfo?.access_modules?.includes('attendance') && (
+                <TabsTrigger value="attendance" data-testid="tab-attendance">
+                  <Fingerprint className="w-4 h-4 mr-2" />
+                  Attendance
+                </TabsTrigger>
+              )}
             </TabsList>
 
             <TabsContent value="appointments">
