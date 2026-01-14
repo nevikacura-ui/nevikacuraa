@@ -3,21 +3,19 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Switch } from './ui/switch';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { 
-  Activity, Users, Plus, Search, Bell, TrendingUp, TrendingDown,
-  MessageSquare, Phone, Mail, Calendar, Droplet, Heart
+  Activity, Users, Plus, Search, TrendingUp, TrendingDown,
+  Phone, Droplet, Heart
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function GlydexStaffPortal({ staffName = 'Staff' }) {
-  const [activeTab, setActiveTab] = useState('patients');
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,8 +53,19 @@ export default function GlydexStaffPortal({ staffName = 'Staff' }) {
   });
 
   useEffect(() => {
-    fetchPatients();
-    fetchSummary();
+    const loadData = async () => {
+      try {
+        const [patientsRes, summaryRes] = await Promise.all([
+          fetch(`${API}/api/glydex/staff/patients`),
+          fetch(`${API}/api/glydex/staff/reports/summary`)
+        ]);
+        const patientsData = await patientsRes.json();
+        const summaryData = await summaryRes.json();
+        if (patientsData.success) setPatients(patientsData.patients || []);
+        if (summaryData.success) setSummary(summaryData.summary);
+      } catch (err) { console.error('Error loading data:', err); }
+    };
+    loadData();
   }, []);
 
   const fetchPatients = async () => {
