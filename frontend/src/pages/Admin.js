@@ -16,8 +16,9 @@ import {
   Plus, Trash2, Search, Loader2, LogOut, Shield,
   BarChart3, FlaskConical, UserX, AlertTriangle, X,
   Truck, CheckCircle2, Clock, MapPin, Gift, Minus, Phone, TrendingUp, History,
-  ChevronLeft, ChevronRight, Sun, Moon
+  ChevronLeft, ChevronRight, Sun, Moon, Building2
 } from 'lucide-react';
+import { ClinicManagementDashboard } from '@/components/ClinicManagement';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
