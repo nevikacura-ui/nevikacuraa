@@ -95,7 +95,7 @@ async def get_wallet_balance(user = Depends(get_current_user)):
             "updated_at": datetime.now(timezone.utc).isoformat()
         }
         await db.wallets.insert_one(wallet)
-        del wallet["_id"] if "_id" in wallet else None
+        wallet.pop("_id", None)  # Remove _id if present
     
     # Get pending top-ups
     pending_topups = await db.wallet_transactions.find({
