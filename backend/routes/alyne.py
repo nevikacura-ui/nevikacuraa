@@ -6,11 +6,13 @@ Backend routes for child health management
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from datetime import datetime, timezone, date
+from datetime import datetime, timezone, date, timedelta
 from bson import ObjectId
 import uuid
 import base64
 import logging
+import json
+import os
 
 logger = logging.getLogger(__name__)
 
