@@ -298,6 +298,13 @@ const Proton = () => {
   const [verificationToken, setVerificationToken] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef([]);
+  
+  // Booking limits state
+  const [bookingLimits, setBookingLimits] = useState({
+    canBook: true,
+    activeOrders: 0,
+    loading: true
+  });
 
   // Check for pre-selected tests from Glydex
   useEffect(() => {
@@ -312,6 +319,33 @@ const Proton = () => {
       toast.success(`${preSelectedTests.length} diabetic test${preSelectedTests.length > 1 ? 's' : ''} pre-selected from Glydex`);
     }
   }, [searchParams]);
+
+  // Check booking limits when phone number changes
+  useEffect(() => {
+    const checkBookingLimits = async () => {
+      if (!patientInfo.phone || patientInfo.phone.length < 10) {
+        setBookingLimits({ canBook: true, activeOrders: 0, loading: false });
+        return;
+      }
+      
+      try {
+        const response = await axios.get(`${API}/booking-limits/status`, {
+          params: { phone: patientInfo.phone }
+        });
+        setBookingLimits({
+          canBook: response.data.can_book_diagnostic,
+          activeOrders: response.data.active_diagnostic_orders,
+          loading: false
+        });
+      } catch (error) {
+        console.error('Failed to check booking limits:', error);
+        setBookingLimits({ canBook: true, activeOrders: 0, loading: false });
+      }
+    };
+    
+    const debounce = setTimeout(checkBookingLimits, 500);
+    return () => clearTimeout(debounce);
+  }, [patientInfo.phone]);
 
   // Resend timer countdown
   useEffect(() => {
