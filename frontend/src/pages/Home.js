@@ -245,7 +245,7 @@ const Home = () => {
           {services.map((service) => (
             <div
               key={service.id}
-              className={`group relative h-full ${service.tallerCard ? 'min-h-[320px]' : 'min-h-[260px]'} flex flex-col justify-between ${service.tallerCard ? 'p-6' : 'p-5'} rounded-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl border ${service.accentColor} ${service.bgColor} cursor-pointer overflow-hidden`}
+              className={`group relative h-full ${service.tallerCard ? 'min-h-[320px]' : 'min-h-[260px]'} flex flex-col justify-between ${service.tallerCard ? 'p-6' : 'p-5'} rounded-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl border ${service.accentColor} ${service.bgColor} cursor-pointer overflow-hidden ${service.alyneCard ? 'p-0' : ''}`}
               style={service.isGradient ? { background: service.customBg } : (service.customBg ? { backgroundColor: service.customBg } : {})}
               onClick={() => navigate(service.path)}
               data-testid={`service-card-${service.id}`}
