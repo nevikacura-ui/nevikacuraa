@@ -12,7 +12,7 @@ import axios from 'axios';
 import WalletWidget from '@/components/WalletWidget';
 import { 
   ArrowLeft, Video, Calendar, Clock, User, Phone, 
-  Loader2, Star, MapPin, Check, ChevronRight,
+  Loader2, MapPin, Check, ChevronRight,
   Wallet, FileText, Pill, FlaskConical, Stethoscope,
   AlertCircle, Download, Plus, Copy, QrCode
 } from 'lucide-react';
