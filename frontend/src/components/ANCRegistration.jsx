@@ -3,13 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { 
-  Heart, Users, Plus, Search, Calendar, Baby, Clock, FileText,
+  Heart, Plus, Search, Calendar, Baby,
   Phone, User, MapPin, Activity, AlertCircle
 } from 'lucide-react';
 
@@ -25,7 +24,6 @@ export default function ANCRegistration({ staffName = 'Staff', clinic = 'amnion'
   // Dialogs
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
   const [showKickCountDialog, setShowKickCountDialog] = useState(false);
-  const [showVisitDialog, setShowVisitDialog] = useState(false);
   
   // Form
   const [registerForm, setRegisterForm] = useState({
@@ -52,7 +50,14 @@ export default function ANCRegistration({ staffName = 'Staff', clinic = 'amnion'
   });
 
   useEffect(() => {
-    fetchPatients();
+    const loadPatients = async () => {
+      try {
+        const res = await fetch(`${API}/api/anc/patients?clinic=${clinic}`);
+        const data = await res.json();
+        if (data.success) setPatients(data.patients || []);
+      } catch (err) { console.error('Error fetching patients:', err); }
+    };
+    loadPatients();
   }, [clinic]);
 
   const fetchPatients = async () => {
