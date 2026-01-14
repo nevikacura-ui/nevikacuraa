@@ -9660,9 +9660,27 @@ try:
 except Exception as e:
     logger.warning(f"Could not load ALYNE router: {e}")
 
-# NOTE: Evara and Glydex routes are currently in server.py
-# To be migrated to routes/evara.py and routes/glydex.py in future refactoring
-# The modular files have been created but routes remain in server.py to avoid breaking changes
+# Evara - Women's Wellness Router
+try:
+    from routes.evara import router as evara_router, set_db as set_evara_db, set_auth_dependencies as set_evara_auth, set_sms_function, set_stripe_key
+    set_evara_db(db)
+    set_evara_auth(get_current_user, get_current_user_optional)
+    set_sms_function(send_sms_notification)
+    set_stripe_key(stripe_api_key)
+    app.include_router(evara_router, prefix="/api")
+    logger.info("Evara Women's Wellness router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Evara router: {e}")
+
+# Glydex - Diabetes Care Router
+try:
+    from routes.glydex import router as glydex_router, set_db as set_glydex_db, set_auth_dependency as set_glydex_auth
+    set_glydex_db(db)
+    set_glydex_auth(get_current_user)
+    app.include_router(glydex_router, prefix="/api")
+    logger.info("Glydex Diabetes Care router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Glydex router: {e}")
 
 app.add_middleware(
     CORSMiddleware,
