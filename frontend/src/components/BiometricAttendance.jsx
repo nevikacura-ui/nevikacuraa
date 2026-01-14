@@ -265,7 +265,7 @@ export default function BiometricAttendance({ clinic = 'amnion' }) {
         </div>
       )}
 
-      {/* Today's Attendance */}
+      {/* Today Attendance */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
