@@ -650,6 +650,8 @@ const CategoryDetail = ({ category, region, child, onBack, user }) => {
   if (category.id === 'growth') return <GrowthSection child={child} onBack={onBack} />;
   if (category.id === 'symptoms') return <SymptomsSection child={child} region={region} onBack={onBack} />;
   if (category.id === 'kidszone') return <KidsZoneSection child={child} onBack={onBack} />;
+  if (category.id === 'cultural_bridge') return <CulturalBridgeSection child={child} onBack={onBack} />;
+  if (category.id === 'health_twin') return <DigitalHealthTwinSection child={child} onBack={onBack} />;
   
   // India-specific sections
   if (category.id === 'govt_schemes') return <GovtSchemesSection onBack={onBack} />;
