@@ -379,6 +379,19 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 - Internal staff/doctor feedback API (not shown to public)
 - Backend APIs: `/api/staff/appointments/{id}/internal-feedback`, `/api/staff/internal-feedback/summary`
 
+### DiaGyn Appointment Booking Features
+- Multi-step booking flow (Doctor → Clinic → Date/Time → OTP → Confirm)
+- Phone OTP verification via Twilio
+- Weekly availability calendar view
+- Slot blocking to prevent double bookings
+- **Real-Time Slot Updates** ✅ (Added Jan 14, 2026)
+  - WebSocket connection for instant updates when slots are booked/cancelled
+  - Visual "Live/Offline" indicator shows connection status
+  - Automatic notifications: "Slot just booked by another user"
+  - Auto-disables slots when booked by others (no refresh needed)
+  - Polling fallback (10s) when WebSocket unavailable
+- SMS confirmations to patients and doctors
+- WhatsApp notifications to doctors
 ### January 13, 2026 - Session 4
 **Patient Flow & Staff Billing System + Community & Reminders Frontends**
 
