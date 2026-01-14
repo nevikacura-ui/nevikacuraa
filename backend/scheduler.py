@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("scheduler")
 
-API_URL = "https://nevikacura-3.preview.emergentagent.com"
+API_URL = "https://nevika-health-3.preview.emergentagent.com"
 CRON_SECRET = "nevikacura_cron_2026"
 
 async def send_reminders():
