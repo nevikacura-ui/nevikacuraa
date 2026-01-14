@@ -2212,6 +2212,45 @@ async def upload_file(file: UploadFile = File(...), user_id: Optional[str] = Non
 
 @api_router.post("/appointments", response_model=Appointment)
 async def create_appointment(input: AppointmentCreate, user = Depends(get_current_user)):
+    # REAL-TIME DATE/TIME VALIDATION: Block past dates and times
+    try:
+        # Parse the appointment date and time
+        appointment_date = datetime.strptime(input.date, "%Y-%m-%d").date()
+        # Parse time (handles formats like "11:00 AM", "6:00 PM", etc.)
+        time_str = input.time.strip().upper()
+        if "AM" in time_str or "PM" in time_str:
+            appointment_time = datetime.strptime(time_str, "%I:%M %p").time()
+        else:
+            appointment_time = datetime.strptime(time_str, "%H:%M").time()
+        
+        # Combine date and time for comparison
+        appointment_datetime = datetime.combine(appointment_date, appointment_time)
+        
+        # Get current time in IST (Indian Standard Time) - UTC+5:30
+        from zoneinfo import ZoneInfo
+        ist = ZoneInfo("Asia/Kolkata")
+        now_ist = datetime.now(ist).replace(tzinfo=None)
+        
+        # Block if appointment is in the past
+        if appointment_datetime < now_ist:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Cannot book appointments for past dates/times. The selected slot ({input.date} at {input.time}) has already passed."
+            )
+        
+        # Also block if appointment is less than 30 minutes from now (buffer for arriving)
+        min_booking_buffer = timedelta(minutes=30)
+        if appointment_datetime < now_ist + min_booking_buffer:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Appointments must be booked at least 30 minutes in advance. Please select a later time slot."
+            )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.warning(f"Date/time validation warning: {e}")
+        # If parsing fails, allow the booking to proceed (backend fallback)
+    
     # BOOKING LIMIT: Check if this phone number already has an active appointment
     active_appointment = await db.appointments.find_one({
         "patient_phone": input.patient_phone,
