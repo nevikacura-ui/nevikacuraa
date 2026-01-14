@@ -64,6 +64,64 @@ async def health_check():
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+# ============ WEBSOCKET CONNECTION MANAGER ============
+class SlotConnectionManager:
+    """Manages WebSocket connections for real-time slot updates"""
+    
+    def __init__(self):
+        # Store connections by room (doctor_clinic_date)
+        self.active_connections: Dict[str, Set[WebSocket]] = {}
+    
+    def get_room_key(self, doctor: str, clinic: str, date: str) -> str:
+        """Generate a room key for grouping connections"""
+        return f"{doctor}_{clinic}_{date}".replace(" ", "_").lower()
+    
+    async def connect(self, websocket: WebSocket, doctor: str, clinic: str, date: str):
+        """Accept connection and add to room"""
+        await websocket.accept()
+        room_key = self.get_room_key(doctor, clinic, date)
+        if room_key not in self.active_connections:
+            self.active_connections[room_key] = set()
+        self.active_connections[room_key].add(websocket)
+        logger.info(f"WebSocket connected to room: {room_key}, total: {len(self.active_connections[room_key])}")
+    
+    def disconnect(self, websocket: WebSocket, doctor: str, clinic: str, date: str):
+        """Remove connection from room"""
+        room_key = self.get_room_key(doctor, clinic, date)
+        if room_key in self.active_connections:
+            self.active_connections[room_key].discard(websocket)
+            if not self.active_connections[room_key]:
+                del self.active_connections[room_key]
+            logger.info(f"WebSocket disconnected from room: {room_key}")
+    
+    async def broadcast_slot_update(self, doctor: str, clinic: str, date: str, slot: str, status: str):
+        """Broadcast slot update to all connections in the room"""
+        room_key = self.get_room_key(doctor, clinic, date)
+        if room_key in self.active_connections:
+            message = json.dumps({
+                "type": "slot_update",
+                "doctor": doctor,
+                "clinic": clinic,
+                "date": date,
+                "slot": slot,
+                "status": status,  # "booked" or "available"
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            })
+            disconnected = set()
+            for connection in self.active_connections[room_key]:
+                try:
+                    await connection.send_text(message)
+                except Exception as e:
+                    logger.error(f"Failed to send WebSocket message: {e}")
+                    disconnected.add(connection)
+            # Clean up disconnected clients
+            for conn in disconnected:
+                self.active_connections[room_key].discard(conn)
+            logger.info(f"Broadcast slot update to {len(self.active_connections.get(room_key, []))} clients: {slot} -> {status}")
+
+# Initialize the WebSocket manager
+slot_manager = SlotConnectionManager()
+
 JWT_SECRET = os.environ.get('JWT_SECRET', 'your-secret-key-change-in-production')
 JWT_ALGORITHM = "HS256"
 
