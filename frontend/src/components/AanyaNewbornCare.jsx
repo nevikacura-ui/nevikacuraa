@@ -213,21 +213,35 @@ export default function AanyaNewbornCare({ childId, childName, childGender }) {
     setLoading(false);
   };
 
+  // Aanya by Alyne logo
+  const AANYA_LOGO = "https://customer-assets.emergentagent.com/job_nevika-hub/artifacts/8mqg0viu_file_00000000bf947207a0e573e6763f822a.png";
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl p-6 text-white">
-        <div className="flex items-center gap-3 mb-2">
-          <Baby className="w-8 h-8" />
+      {/* Header with Aanya Logo */}
+      <div className="bg-gradient-to-r from-[#f0f8f0] via-[#fef9f0] to-[#fff0f5] rounded-2xl p-6 shadow-lg border border-pink-100">
+        <div className="flex items-center gap-4 mb-2">
+          <img 
+            src={AANYA_LOGO} 
+            alt="Aanya Newborn by Alyne" 
+            className="w-20 h-20 object-contain"
+            data-testid="aanya-logo"
+          />
           <div>
-            <h2 className="text-2xl font-bold">Aanya by ALYNE</h2>
-            <p className="text-pink-100">Newborn Care Tracker for {childName}</p>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-500 via-pink-500 to-cyan-500 bg-clip-text text-transparent">
+              Aanya Newborn
+            </h2>
+            <p className="text-cyan-600 text-sm font-medium">— BY Alyne —</p>
+            <p className="text-gray-600 text-sm mt-1">Newborn Care Tracker for {childName}</p>
           </div>
         </div>
         {milestones && (
-          <p className="text-sm text-pink-100 mt-2">
-            Age: {milestones.age_weeks} weeks ({milestones.age_months} months)
-          </p>
+          <div className="mt-3 p-2 bg-white/70 rounded-lg inline-block">
+            <p className="text-sm text-gray-700">
+              <Baby className="w-4 h-4 inline mr-1 text-pink-500" />
+              Age: <span className="font-semibold text-pink-600">{milestones.age_weeks} weeks</span> ({milestones.age_months} months)
+            </p>
+          </div>
         )}
       </div>
 
