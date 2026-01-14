@@ -196,6 +196,13 @@ const Admin = () => {
     }
   }, [isAuthenticated, activeTab, analyticsDays]);
 
+  // Fetch schedule when week changes or tab is leave
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'leave') {
+      fetchScheduleAppointments();
+    }
+  }, [isAuthenticated, activeTab, scheduleWeekStart]);
+
   // Search debounce for inventory
   useEffect(() => {
     const timer = setTimeout(() => {
