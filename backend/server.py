@@ -2346,6 +2346,15 @@ Booking ID: {appointment.id[:8]}"""
         "booking_type": "online"
     })
     
+    # Broadcast real-time slot update via WebSocket
+    await slot_manager.broadcast_slot_update(
+        doctor=appointment.doctor,
+        clinic=appointment.clinic,
+        date=appointment.date,
+        slot=appointment.time,
+        status="booked"
+    )
+    
     return appointment
 
 @api_router.get("/appointments/booked-slots")
