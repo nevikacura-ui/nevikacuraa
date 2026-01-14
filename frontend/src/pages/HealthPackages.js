@@ -180,7 +180,7 @@ const HealthPackages = () => {
               </Button>
               <div>
                 <h1 className="font-bold text-xl text-gray-900">Health Checkup Packages</h1>
-                <p className="text-sm text-gray-500">Comprehensive health screening at discounted prices</p>
+                <p className="text-sm text-gray-500">Comprehensive health screening packages</p>
               </div>
             </div>
             <FlaskConical className="w-8 h-8 text-purple-500" />
