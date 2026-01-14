@@ -71,6 +71,44 @@ async def get_current_user(authorization: str = Header(None)):
 
 # ============ GLYDEX MODELS ============
 
+# ---- Staff-Managed Diabetes Patient Models ----
+
+class DiabetesPatientRegistration(BaseModel):
+    """Registration model for staff to register diabetes patients"""
+    patient_name: str
+    age: int
+    phone: str
+    email: Optional[str] = None
+    address: Optional[str] = None
+    diabetes_type: str  # type1, type2, gestational, prediabetic
+    date_of_diagnosis: Optional[str] = None
+    current_medications: Optional[List[str]] = []
+    insulin_user: bool = False
+    hba1c_latest: Optional[float] = None
+    fbs_latest: Optional[int] = None
+    ppbs_latest: Optional[int] = None
+    complications: Optional[List[str]] = []
+    doctor_assigned: str = "Dr. Vikas"
+    registered_by: str
+    send_congratulations: bool = True  # Toggle for auto congratulatory messages
+
+class StaffSugarLogEntry(BaseModel):
+    """Sugar log entry by staff for managed patients"""
+    patient_id: str
+    type: str  # fbs, ppbs, random
+    value: int
+    date: str
+    time: Optional[str] = None
+    recorded_by: str
+    notes: Optional[str] = None
+
+class CongratulatoryMessageToggle(BaseModel):
+    """Toggle for sending congratulatory messages"""
+    patient_id: str
+    enabled: bool
+
+# ---- User Self-Service Models (existing) ----
+
 class GlydexProfile(BaseModel):
     diabetesType: str  # type1, type2, gestational, prediabetic
     age: str
