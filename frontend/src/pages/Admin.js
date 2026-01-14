@@ -2000,7 +2000,49 @@ const Admin = () => {
 
           {/* Biometric Attendance Tab */}
           <TabsContent value="biometric">
-            <BiometricAttendance clinic="amnion" />
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-heading text-xl font-semibold">Staff Attendance - Select Clinic</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <Card 
+                  className={`p-4 cursor-pointer hover:shadow-lg transition-all ${selectedAttendanceClinic === 'pushpa' ? 'ring-2 ring-violet-500 bg-violet-50' : ''}`}
+                  onClick={() => setSelectedAttendanceClinic('pushpa')}
+                  data-testid="clinic-select-pushpa"
+                >
+                  <div className="text-center">
+                    <Building2 className="w-10 h-10 mx-auto text-violet-600 mb-2" />
+                    <h3 className="font-semibold">Pushpa Clinic</h3>
+                    <p className="text-xs text-gray-500">Staff attendance tracking</p>
+                  </div>
+                </Card>
+                <Card 
+                  className={`p-4 cursor-pointer hover:shadow-lg transition-all ${selectedAttendanceClinic === 'amnion' ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}
+                  onClick={() => setSelectedAttendanceClinic('amnion')}
+                  data-testid="clinic-select-amnion"
+                >
+                  <div className="text-center">
+                    <Building2 className="w-10 h-10 mx-auto text-blue-600 mb-2" />
+                    <h3 className="font-semibold">Amnion Clinic</h3>
+                    <p className="text-xs text-gray-500">Staff attendance tracking</p>
+                  </div>
+                </Card>
+                <Card 
+                  className={`p-4 cursor-pointer hover:shadow-lg transition-all ${selectedAttendanceClinic === 'pharmacy' ? 'ring-2 ring-orange-500 bg-orange-50' : ''}`}
+                  onClick={() => setSelectedAttendanceClinic('pharmacy')}
+                  data-testid="clinic-select-pharmacy"
+                >
+                  <div className="text-center">
+                    <Pill className="w-10 h-10 mx-auto text-orange-600 mb-2" />
+                    <h3 className="font-semibold">Orange Pharmacy</h3>
+                    <p className="text-xs text-gray-500">Pharmacy staff attendance</p>
+                  </div>
+                </Card>
+              </div>
+              {selectedAttendanceClinic && (
+                <BiometricAttendance clinic={selectedAttendanceClinic} key={selectedAttendanceClinic} />
+              )}
+            </Card>
           </TabsContent>
         </Tabs>
       </main>
