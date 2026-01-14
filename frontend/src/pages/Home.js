@@ -103,7 +103,8 @@ const Home = () => {
       fillCard: false,
       tallerCard: true,
       logoScale: 1.25,
-      isGradient: true
+      isGradient: true,
+      useTextLogo: true
     }
   ];
 
