@@ -669,7 +669,7 @@ GET  /api/alyne/shop/orders/{user_id} - Get user orders
 ---
 
 ## Project Health
-- **Backend**: All routes loading correctly (21+ modular route files including ALYNE, Wallet, Teleconsult)
+- **Backend**: All routes loading correctly (23+ modular route files including ALYNE, Wallet, Teleconsult, Evara, Glydex)
 - **Frontend**: Building successfully, all pages rendering
 - **Database**: MongoDB with migrated data
 - **All Features**: WORKING ✅
@@ -677,12 +677,14 @@ GET  /api/alyne/shop/orders/{user_id} - Get user orders
 - **Remember Me**: Working with 30-day extended sessions
 - **Wallet System**: WORKING ✅ (UPI top-up, screenshot verification, admin approval)
 - **Teleconsultation**: WORKING ✅ (DiaGyn doctors, wallet payment, e-prescriptions)
+- **Backend Refactoring**: 
+  - server.py reduced from 9695 to 7285 lines (25% reduction)
+  - Evara routes extracted to /app/backend/routes/evara.py
+  - Glydex routes extracted to /app/backend/routes/glydex.py
 - **Test Coverage**: 
   - Iteration 26 (18/18 passed - ALYNE module MVP)
   - Iteration 28 (50/50 passed - ALYNE Comprehensive Testing - January 14, 2026)
   - Iteration 29 (32/32 passed - Wallet & Teleconsult - January 14, 2026)
-    - Backend: 22/22 tests passed (100%)
-    - Frontend: 10/10 tests passed (100%)
 
 ---
 
