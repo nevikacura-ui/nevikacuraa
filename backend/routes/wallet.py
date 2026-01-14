@@ -81,12 +81,26 @@ async def verify_admin(authorization: str = Header(None)):
         raise HTTPException(status_code=401, detail="Invalid admin token")
 
 # ============ CLINIC UPI DETAILS ============
-# Pine Labs UPI for dynamic QR payments
+# Pine Labs UPI for FIXED amount QR payments - prevents customer from modifying amount
 CLINIC_UPI = {
     "upi_id": "pinelabs.stq4087704@pineaxis",
     "name": "Nevika Cura Healthcare",
-    "qr_code": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=pinelabs.stq4087704@pineaxis&pn=Nevika%20Cura&cu=INR"
+    # Base QR without amount - amount will be added dynamically
+    "base_qr_url": "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
 }
+
+def generate_fixed_amount_qr(amount: float, transaction_ref: str = None) -> str:
+    """Generate UPI QR code with FIXED amount that cannot be modified by customer"""
+    import urllib.parse
+    
+    # UPI intent format with fixed amount (am=) - customer CANNOT change this
+    upi_data = f"upi://pay?pa={CLINIC_UPI['upi_id']}&pn={urllib.parse.quote(CLINIC_UPI['name'])}&am={amount:.2f}&cu=INR"
+    
+    if transaction_ref:
+        upi_data += f"&tn={urllib.parse.quote(f'NEVIKA-{transaction_ref}')}"
+    
+    # Encode for QR
+    return CLINIC_UPI['base_qr_url'] + urllib.parse.quote(upi_data)
 
 # ============ WALLET ROUTES ============
 
