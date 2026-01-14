@@ -69,10 +69,15 @@ async def verify_admin(authorization: str = Header(None)):
     try:
         token = authorization.split(" ")[1]
         payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
-        if payload.get("role") != "admin":
+        # Support both 'admin' and 'super_admin' roles
+        role = payload.get("role", "")
+        if role not in ["admin", "super_admin"]:
             raise HTTPException(status_code=403, detail="Admin access required")
         return payload
-    except:
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Admin token expired")
+    except Exception as e:
+        logger.error(f"Admin token validation error: {e}")
         raise HTTPException(status_code=401, detail="Invalid admin token")
 
 # ============ CLINIC UPI DETAILS ============
