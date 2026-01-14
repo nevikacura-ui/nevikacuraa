@@ -275,6 +275,33 @@ const FEATURE_CATEGORIES = [
       title: 'ALYNE Kids Zone',
       description: 'Interactive health activities for children'
     }
+  },
+  {
+    id: 'cultural_bridge',
+    title: 'Cultural Bridge',
+    subtitle: 'US-India health connections',
+    icon: Globe,
+    color: 'bg-gradient-to-br from-orange-500 to-red-500',
+    requiresChild: false,
+    isNew: true,
+    regionSpecific: 'usa',
+    content: {
+      title: 'Cultural Health Bridge',
+      description: 'Connecting US and Indian healthcare systems'
+    }
+  },
+  {
+    id: 'health_twin',
+    title: 'Health Twin',
+    subtitle: 'AI predictive health model',
+    icon: Dna,
+    color: 'bg-gradient-to-br from-indigo-500 to-purple-600',
+    requiresChild: true,
+    isNew: true,
+    content: {
+      title: 'Digital Health Twin',
+      description: 'AI-powered predictive health insights'
+    }
   }
 ];
 
