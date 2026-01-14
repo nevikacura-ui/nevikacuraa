@@ -327,11 +327,8 @@ const Alyne = () => {
               <Button variant="ghost" size="icon" onClick={() => activeCategory ? setActiveCategory(null) : navigate('/')}>
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <div className="h-12 px-5 py-1 rounded-xl flex items-center justify-center" style={{background: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%)'}}>
-                <div className="text-center">
-                  <h2 className="text-xl font-black text-white tracking-wider" style={{fontFamily: 'system-ui, -apple-system, sans-serif', textShadow: '0 1px 4px rgba(0,0,0,0.2)'}}>ALYNE</h2>
-                  <p className="text-white/90 text-[9px] font-medium tracking-wide -mt-0.5">Kids by Nevika Cura</p>
-                </div>
+              <div className="h-14 px-3 py-1 rounded-xl flex items-center justify-center" style={{backgroundColor: '#0a1628'}}>
+                <img src={ALYNE_LOGO} alt="ALYNE" className="h-12 w-auto object-contain" />
               </div>
             </div>
             
