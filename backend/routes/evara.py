@@ -21,7 +21,7 @@ from io import BytesIO
 from fastapi.responses import StreamingResponse
 
 # Stripe imports
-from emergentintegrations.payments.stripe import StripeCheckout, CheckoutSessionRequest, CheckoutSessionResponse
+from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionRequest, CheckoutSessionResponse
 
 # LLM imports for AI chat
 from emergentintegrations.llm.chat import LlmChat, UserMessage
