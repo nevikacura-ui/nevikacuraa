@@ -20,6 +20,7 @@ import HealthPackages from '@/pages/HealthPackages';
 import ReferralProgram from '@/pages/ReferralProgram';
 import HealthTips from '@/pages/HealthTips';
 import Teleconsultation from '@/pages/Teleconsultation';
+import QuickReorder from '@/pages/QuickReorder';
 // High Priority Features
 import EmergencyServices from '@/pages/EmergencyServices';
 import HealthRiskAssessment from '@/pages/HealthRiskAssessment';
