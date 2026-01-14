@@ -467,11 +467,12 @@ const StaffPortal = () => {
       const res = await axios.post(`${API}/staff/login`, { username, password });
       localStorage.setItem('staffToken', res.data.token);
       const staffData = {
-        role: res.data.role,
-        name: res.data.name,
+        role: res.data.staff?.role || res.data.role,
+        name: res.data.staff?.name || res.data.name,
         doctor_name: res.data.doctor_name,
-        clinic: res.data.clinic,
-        doctor_clinics: res.data.doctor_clinics || []
+        clinic: res.data.staff?.clinic || res.data.clinic,
+        doctor_clinics: res.data.doctor_clinics || [],
+        access_modules: res.data.staff?.access_modules || []
       };
       localStorage.setItem('staffInfo', JSON.stringify(staffData));
       setStaffInfo(staffData);
