@@ -1970,6 +1970,11 @@ const Admin = () => {
               )}
             </Card>
           </TabsContent>
+
+          {/* Clinic Management Tab */}
+          <TabsContent value="clinic-management">
+            <ClinicManagementDashboard token={adminToken} clinic="pushpa" />
+          </TabsContent>
         </Tabs>
       </main>
 
