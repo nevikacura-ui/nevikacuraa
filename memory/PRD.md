@@ -648,10 +648,16 @@ GET  /api/alyne/shop/orders/{user_id} - Get user orders
 
 ## Remaining/Future Tasks
 
-🟠 **P1:** Continue Backend Refactoring
-   - Extract Admin routes from server.py
-   - Extract Staff routes from server.py
-   - Goal: Further reduce server.py size
+🟢 **COMPLETED:** Backend Refactoring Phase 1
+   - Evara routes extracted to routes/evara.py ✅
+   - Glydex routes extracted to routes/glydex.py ✅
+   - Admin routes extracted to routes/admin.py ✅ (666 lines)
+   - Staff routes extracted to routes/staff.py ✅ (896 lines)
+   - Note: Duplicate routes still exist in server.py, to be removed after full testing
+
+🟠 **P1:** Remove duplicate admin/staff routes from server.py
+   - After full testing verification, remove original routes from server.py
+   - Expected reduction: ~1500-2000 lines
 
 🔴 **P0:** Cashfree Payment Gateway (Awaiting API credentials from user)
    - Integration playbook ready
