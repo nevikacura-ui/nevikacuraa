@@ -1767,6 +1767,37 @@ const StaffPortal = () => {
                 />
               </Card>
             </TabsContent>
+
+            {/* ANC Registration Tab Content */}
+            {staffInfo?.access_modules?.includes('anc') && (
+              <TabsContent value="anc">
+                <ANCRegistration 
+                  clinic={staffInfo?.clinic}
+                  staffName={staffInfo?.name}
+                />
+              </TabsContent>
+            )}
+
+            {/* Glydex (Diabetes) Tab Content */}
+            {staffInfo?.access_modules?.includes('glydex') && (
+              <TabsContent value="glydex">
+                <GlydexStaffPortal 
+                  staffName={staffInfo?.name}
+                  clinic={staffInfo?.clinic}
+                />
+              </TabsContent>
+            )}
+
+            {/* Attendance Tab Content */}
+            {staffInfo?.access_modules?.includes('attendance') && (
+              <TabsContent value="attendance">
+                <BiometricAttendance 
+                  clinic={staffInfo?.clinic?.toLowerCase().includes('pushpa') ? 'pushpa' : 
+                          staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 
+                          staffInfo?.clinic?.toLowerCase().includes('pharmacy') ? 'pharmacy' : 'pushpa'}
+                />
+              </TabsContent>
+            )}
           </Tabs>
         )}
 
