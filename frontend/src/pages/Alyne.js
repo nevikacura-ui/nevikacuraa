@@ -17,9 +17,10 @@ import {
   Upload, MessageCircle, Send, ShoppingCart, Package, Stethoscope, 
   Thermometer, Star, BookOpen, GraduationCap, Phone, Pill, 
   Eye, Scissors, Brain, Utensils, Moon, Droplets, X, Video, ExternalLink, 
-  Leaf, Building2, Car, Baby as BabyIcon, Info
+  Leaf, Building2, Car, Baby as BabyIcon, Info, Sparkles, Gamepad2
 } from 'lucide-react';
 import Footer from '@/components/Footer';
+import { KidsZoneSection } from '@/components/AlyneKidsZone';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
