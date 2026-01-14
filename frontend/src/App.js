@@ -63,6 +63,7 @@ function App() {
             <Route path="/referral" element={<ReferralProgram />} />
             <Route path="/health-tips" element={<HealthTips />} />
             <Route path="/teleconsult" element={<Teleconsultation />} />
+            <Route path="/quick-reorder" element={<QuickReorder />} />
             {/* High Priority Features */}
             <Route path="/emergency" element={<EmergencyServices />} />
             <Route path="/health-assessment" element={<HealthRiskAssessment />} />
