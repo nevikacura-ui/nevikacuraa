@@ -26,16 +26,16 @@ def set_db(database):
 # Doctor Profiles (can be moved to DB later)
 DOCTOR_PROFILES = [
     {
-        "id": "dr-neha-gupta",
-        "name": "Dr. Neha Gupta",
-        "slug": "dr-neha-gupta",
+        "id": "dr-neha-patel",
+        "name": "Dr. Neha Patel",
+        "slug": "dr-neha-patel",
         "specialization": "Obstetrics & Gynecology",
         "qualification": "MBBS, MS (OBG), DNB",
         "experience_years": 15,
-        "clinic": "Pushpa Hospital",
+        "clinic": "DiaGyn Healthcare - Pushpa Clinic",
         "clinic_address": "Kalyan West, Mumbai",
         "consultation_fee": 500,
-        "about": "Dr. Neha Gupta is a senior consultant in Obstetrics & Gynecology with over 15 years of experience. She specializes in high-risk pregnancies, infertility treatments, and laparoscopic surgeries.",
+        "about": "Dr. Neha Patel is a senior consultant in Obstetrics & Gynecology with over 15 years of experience. She specializes in high-risk pregnancies, infertility treatments, and laparoscopic surgeries.",
         "specialties": ["High-Risk Pregnancy", "Infertility", "Laparoscopic Surgery", "PCOS Management"],
         "education": [
             {"degree": "MBBS", "institution": "Grant Medical College, Mumbai", "year": 2005},
@@ -52,16 +52,16 @@ DOCTOR_PROFILES = [
         "featured": True
     },
     {
-        "id": "dr-vikas-sharma",
-        "name": "Dr. Vikas Sharma",
-        "slug": "dr-vikas-sharma",
+        "id": "dr-vikas-jha",
+        "name": "Dr. Vikas Jha",
+        "slug": "dr-vikas-jha",
         "specialization": "Obstetrics & Gynecology",
         "qualification": "MBBS, DGO, FICOG",
         "experience_years": 12,
-        "clinic": "Amnion Women's Hospital",
+        "clinic": "DiaGyn Healthcare - Amnion Clinic",
         "clinic_address": "Dombivli East, Mumbai",
         "consultation_fee": 400,
-        "about": "Dr. Vikas Sharma is an experienced gynecologist specializing in normal and cesarean deliveries, menstrual disorders, and preventive women's healthcare.",
+        "about": "Dr. Vikas Jha is an experienced gynecologist specializing in normal and cesarean deliveries, menstrual disorders, and preventive women's healthcare.",
         "specialties": ["Normal Delivery", "C-Section", "Menstrual Disorders", "Contraception Counseling"],
         "education": [
             {"degree": "MBBS", "institution": "Mumbai University", "year": 2008},
