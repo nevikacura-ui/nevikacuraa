@@ -497,10 +497,10 @@ const Teleconsultation = () => {
             </Card>
 
             {/* Wallet Payment */}
-            <Card className={`p-4 ${walletBalance >= selectedDoctor?.fee ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+            <Card className={`p-4 ${walletBalance >= selectedDoctor?.fee ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <Wallet className={`w-8 h-8 ${walletBalance >= selectedDoctor?.fee ? 'text-green-600' : 'text-red-600'}`} />
+                  <Wallet className={`w-8 h-8 ${walletBalance >= selectedDoctor?.fee ? 'text-green-600' : 'text-amber-600'}`} />
                   <div>
                     <p className="font-semibold">Nevika Wallet</p>
                     <p className="text-sm text-gray-600">Balance: ₹{walletBalance.toFixed(2)}</p>
@@ -509,16 +509,32 @@ const Teleconsultation = () => {
                 {walletBalance >= selectedDoctor?.fee ? (
                   <Check className="w-6 h-6 text-green-600" />
                 ) : (
-                  <Button size="sm" onClick={() => navigate('/profile')}>
-                    Add Money
+                  <Button 
+                    size="sm" 
+                    onClick={() => setShowAddFunds(true)}
+                    className="bg-amber-500 hover:bg-amber-600"
+                    data-testid="add-funds-btn"
+                  >
+                    <Plus className="w-4 h-4 mr-1" /> Add Funds
                   </Button>
                 )}
               </div>
               {walletBalance < selectedDoctor?.fee && (
-                <p className="text-sm text-red-600 mt-2 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4" />
-                  Insufficient balance. Please add ₹{(selectedDoctor?.fee - walletBalance).toFixed(2)} to proceed.
-                </p>
+                <div className="mt-3 p-3 bg-white rounded-lg border border-amber-200">
+                  <p className="text-sm text-amber-700 flex items-center gap-1 mb-2">
+                    <AlertCircle className="w-4 h-4" />
+                    Insufficient balance. Need ₹{(selectedDoctor?.fee - walletBalance).toFixed(0)} more.
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setShowAddFunds(true)}
+                    className="w-full border-amber-400 text-amber-700 hover:bg-amber-50"
+                  >
+                    <Wallet className="w-4 h-4 mr-2" />
+                    Add ₹{Math.max(100, Math.ceil((selectedDoctor?.fee - walletBalance) / 100) * 100)} to Wallet
+                  </Button>
+                </div>
               )}
             </Card>
 
