@@ -11,6 +11,16 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { 
+  Baby, Calendar, ChevronLeft, ChevronRight, Check, X, Plus, Star, Syringe,
+  Pill, Heart, Utensils, Moon, Sun, Thermometer, Activity, BookOpen,
+  Globe, Award, Gift, Sparkles, Volume2, VolumeX, Mic, MicOff, Send,
+  ArrowRight, Clock, AlertCircle, Info
+} from 'lucide-react';
+import Footer from '@/components/Footer';
+import { KidsZoneSection } from '@/components/AlyneKidsZone';
+import { CulturalBridgeSection } from '@/components/AlyneCulturalBridge';
+import { DigitalHealthTwinSection } from '@/components/AlyneHealthTwin';
+import AanyaNewbornCare from '@/components/AanyaNewbornCare';
   Baby, Plus, ArrowLeft, Calendar, Syringe, TrendingUp, FileText, 
   Bell, Heart, User, Shield, Activity, Scale, Ruler, 
   CheckCircle, Clock, AlertTriangle, ChevronRight, Trash2,
