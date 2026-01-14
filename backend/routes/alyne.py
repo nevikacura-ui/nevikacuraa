@@ -3178,7 +3178,7 @@ NEWBORN_MILESTONES = {
 @router.post("/newborn/feeding")
 async def log_newborn_feeding(log: NewbornFeedingLog):
     """Log a feeding session for newborn"""
-    child = await db.children.find_one({"id": log.child_id})
+    child = await db.alyne_children.find_one({"id": log.child_id})
     if not child:
         raise HTTPException(status_code=404, detail="Child not found")
     
@@ -3239,7 +3239,7 @@ async def get_feeding_summary(child_id: str, days: int = 7):
 @router.post("/newborn/diaper")
 async def log_newborn_diaper(log: NewbornDiaperLog):
     """Log a diaper change for newborn"""
-    child = await db.children.find_one({"id": log.child_id})
+    child = await db.alyne_children.find_one({"id": log.child_id})
     if not child:
         raise HTTPException(status_code=404, detail="Child not found")
     
@@ -3288,7 +3288,7 @@ async def get_diaper_summary(child_id: str, days: int = 7):
 @router.post("/newborn/sleep")
 async def log_newborn_sleep(log: NewbornSleepLog):
     """Log sleep session for newborn"""
-    child = await db.children.find_one({"id": log.child_id})
+    child = await db.alyne_children.find_one({"id": log.child_id})
     if not child:
         raise HTTPException(status_code=404, detail="Child not found")
     
@@ -3380,7 +3380,7 @@ async def get_sleep_summary(child_id: str, days: int = 7):
 @router.get("/newborn/{child_id}/milestones")
 async def get_newborn_milestones(child_id: str):
     """Get milestone checklist for newborn based on age"""
-    child = await db.children.find_one({"id": child_id}, {"_id": 0})
+    child = await db.alyne_children.find_one({"id": child_id}, {"_id": 0})
     if not child:
         raise HTTPException(status_code=404, detail="Child not found")
     
@@ -3428,7 +3428,7 @@ async def get_newborn_milestones(child_id: str):
 @router.post("/newborn/milestones")
 async def record_milestone(milestone: NewbornMilestone):
     """Record a developmental milestone achievement"""
-    child = await db.children.find_one({"id": milestone.child_id})
+    child = await db.alyne_children.find_one({"id": milestone.child_id})
     if not child:
         raise HTTPException(status_code=404, detail="Child not found")
     
@@ -3510,7 +3510,7 @@ async def get_daily_log(child_id: str, date: str = None):
 @router.get("/newborn/{child_id}/health-alerts")
 async def get_newborn_health_alerts(child_id: str):
     """Get health alerts based on tracking data"""
-    child = await db.children.find_one({"id": child_id}, {"_id": 0})
+    child = await db.alyne_children.find_one({"id": child_id}, {"_id": 0})
     if not child:
         raise HTTPException(status_code=404, detail="Child not found")
     
