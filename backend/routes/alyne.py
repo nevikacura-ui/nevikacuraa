@@ -3098,3 +3098,475 @@ async def get_health_twin_dashboard(child_id: str):
             "Complete Health Twin profile for personalized insights"
         ] if not profile else []
     }
+
+
+# ============ NEWBORN CARE MODULE (0-12 months) ============
+
+class NewbornFeedingLog(BaseModel):
+    """Track feeding for newborns"""
+    child_id: str
+    feed_type: str  # breastfeed, formula, mixed, solid
+    breast_side: Optional[str] = None  # left, right, both
+    duration_minutes: Optional[int] = None
+    amount_ml: Optional[int] = None
+    formula_brand: Optional[str] = None
+    solid_food: Optional[str] = None
+    notes: Optional[str] = None
+
+class NewbornDiaperLog(BaseModel):
+    """Track diaper changes"""
+    child_id: str
+    type: str  # wet, dirty, both, dry
+    consistency: Optional[str] = None  # normal, loose, hard
+    color: Optional[str] = None  # yellow, green, brown, black
+    notes: Optional[str] = None
+
+class NewbornSleepLog(BaseModel):
+    """Track sleep patterns"""
+    child_id: str
+    sleep_start: str  # ISO datetime
+    sleep_end: Optional[str] = None  # ISO datetime
+    sleep_type: str  # nap, night_sleep
+    quality: Optional[str] = None  # good, restless, poor
+    notes: Optional[str] = None
+
+class NewbornMilestone(BaseModel):
+    """Track developmental milestones"""
+    child_id: str
+    milestone_type: str  # motor, cognitive, social, language
+    milestone_name: str
+    achieved_date: str
+    notes: Optional[str] = None
+    photo_url: Optional[str] = None
+
+# Newborn milestones checklist by age (in weeks)
+NEWBORN_MILESTONES = {
+    "motor": [
+        {"week": 1, "name": "Reflexive grasping", "description": "Baby grasps objects placed in hand"},
+        {"week": 4, "name": "Head control (brief)", "description": "Can hold head up briefly during tummy time"},
+        {"week": 8, "name": "Follows objects with eyes", "description": "Tracks moving objects visually"},
+        {"week": 12, "name": "Holds head steady", "description": "Good head control when upright"},
+        {"week": 16, "name": "Reaches for toys", "description": "Attempts to reach and grab objects"},
+        {"week": 20, "name": "Rolls over", "description": "Can roll from tummy to back"},
+        {"week": 24, "name": "Sits with support", "description": "Sits when supported"},
+        {"week": 32, "name": "Sits without support", "description": "Sits independently"},
+        {"week": 40, "name": "Crawls", "description": "Moves on hands and knees"},
+        {"week": 48, "name": "Pulls to stand", "description": "Pulls up to standing position"},
+        {"week": 52, "name": "First steps", "description": "Takes first independent steps"}
+    ],
+    "social": [
+        {"week": 4, "name": "Social smile", "description": "First genuine smile in response to interaction"},
+        {"week": 8, "name": "Coos and gurgles", "description": "Makes happy sounds"},
+        {"week": 12, "name": "Laughs out loud", "description": "First laugh"},
+        {"week": 16, "name": "Recognizes parents", "description": "Shows excitement when seeing caregivers"},
+        {"week": 24, "name": "Stranger anxiety", "description": "Shows wariness of strangers"},
+        {"week": 36, "name": "Waves bye-bye", "description": "Waves in response to goodbye"},
+        {"week": 48, "name": "Points at objects", "description": "Points to show interest"},
+        {"week": 52, "name": "Simple gestures", "description": "Uses gestures to communicate"}
+    ],
+    "language": [
+        {"week": 4, "name": "Cries for needs", "description": "Different cries for hunger, discomfort"},
+        {"week": 8, "name": "Cooing sounds", "description": "Makes vowel sounds like 'oo' and 'ah'"},
+        {"week": 16, "name": "Babbling starts", "description": "Makes consonant sounds like 'ba' 'da'"},
+        {"week": 24, "name": "Responds to name", "description": "Turns when name is called"},
+        {"week": 36, "name": "Says mama/dada", "description": "First meaningful words"},
+        {"week": 48, "name": "Understands 'no'", "description": "Responds to simple commands"},
+        {"week": 52, "name": "Says 1-3 words", "description": "Uses few words meaningfully"}
+    ]
+}
+
+@router.post("/newborn/feeding")
+async def log_newborn_feeding(log: NewbornFeedingLog):
+    """Log a feeding session for newborn"""
+    child = await db.children.find_one({"id": log.child_id})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    feed_doc = {
+        "id": str(uuid.uuid4()),
+        "child_id": log.child_id,
+        "feed_type": log.feed_type,
+        "breast_side": log.breast_side,
+        "duration_minutes": log.duration_minutes,
+        "amount_ml": log.amount_ml,
+        "formula_brand": log.formula_brand,
+        "solid_food": log.solid_food,
+        "notes": log.notes,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.newborn_feeding.insert_one(feed_doc)
+    
+    return {
+        "success": True,
+        "feed_id": feed_doc["id"],
+        "message": f"Feeding logged: {log.feed_type}"
+    }
+
+@router.get("/newborn/{child_id}/feeding-summary")
+async def get_feeding_summary(child_id: str, days: int = 7):
+    """Get feeding summary for newborn"""
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    
+    feeds = await db.newborn_feeding.find({
+        "child_id": child_id,
+        "timestamp": {"$gte": cutoff.isoformat()}
+    }, {"_id": 0}).sort("timestamp", -1).to_list(500)
+    
+    # Calculate statistics
+    total_feeds = len(feeds)
+    breastfeeds = [f for f in feeds if f.get("feed_type") == "breastfeed"]
+    formula_feeds = [f for f in feeds if f.get("feed_type") == "formula"]
+    
+    total_bf_minutes = sum(f.get("duration_minutes", 0) for f in breastfeeds)
+    total_formula_ml = sum(f.get("amount_ml", 0) for f in formula_feeds)
+    
+    # Daily average
+    daily_feeds = total_feeds / days if days > 0 else 0
+    
+    return {
+        "success": True,
+        "period_days": days,
+        "total_feeds": total_feeds,
+        "daily_average": round(daily_feeds, 1),
+        "breastfeeds": len(breastfeeds),
+        "total_breastfeed_minutes": total_bf_minutes,
+        "formula_feeds": len(formula_feeds),
+        "total_formula_ml": total_formula_ml,
+        "recent_feeds": feeds[:10]
+    }
+
+@router.post("/newborn/diaper")
+async def log_newborn_diaper(log: NewbornDiaperLog):
+    """Log a diaper change for newborn"""
+    child = await db.children.find_one({"id": log.child_id})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    diaper_doc = {
+        "id": str(uuid.uuid4()),
+        "child_id": log.child_id,
+        "type": log.type,
+        "consistency": log.consistency,
+        "color": log.color,
+        "notes": log.notes,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.newborn_diapers.insert_one(diaper_doc)
+    
+    return {
+        "success": True,
+        "diaper_id": diaper_doc["id"],
+        "message": f"Diaper change logged: {log.type}"
+    }
+
+@router.get("/newborn/{child_id}/diaper-summary")
+async def get_diaper_summary(child_id: str, days: int = 7):
+    """Get diaper change summary"""
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    
+    diapers = await db.newborn_diapers.find({
+        "child_id": child_id,
+        "timestamp": {"$gte": cutoff.isoformat()}
+    }, {"_id": 0}).sort("timestamp", -1).to_list(500)
+    
+    wet = len([d for d in diapers if "wet" in d.get("type", "")])
+    dirty = len([d for d in diapers if "dirty" in d.get("type", "")])
+    
+    return {
+        "success": True,
+        "period_days": days,
+        "total_changes": len(diapers),
+        "wet_diapers": wet,
+        "dirty_diapers": dirty,
+        "daily_average": round(len(diapers) / days, 1) if days > 0 else 0,
+        "recent_changes": diapers[:10],
+        "health_alert": wet < days * 4  # Less than 4 wet diapers/day is concerning
+    }
+
+@router.post("/newborn/sleep")
+async def log_newborn_sleep(log: NewbornSleepLog):
+    """Log sleep session for newborn"""
+    child = await db.children.find_one({"id": log.child_id})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    sleep_doc = {
+        "id": str(uuid.uuid4()),
+        "child_id": log.child_id,
+        "sleep_start": log.sleep_start,
+        "sleep_end": log.sleep_end,
+        "sleep_type": log.sleep_type,
+        "quality": log.quality,
+        "notes": log.notes,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Calculate duration if end time provided
+    if log.sleep_end:
+        try:
+            start = datetime.fromisoformat(log.sleep_start.replace('Z', '+00:00'))
+            end = datetime.fromisoformat(log.sleep_end.replace('Z', '+00:00'))
+            sleep_doc["duration_minutes"] = int((end - start).total_seconds() / 60)
+        except:
+            pass
+    
+    await db.newborn_sleep.insert_one(sleep_doc)
+    
+    return {
+        "success": True,
+        "sleep_id": sleep_doc["id"],
+        "duration_minutes": sleep_doc.get("duration_minutes"),
+        "message": f"Sleep logged: {log.sleep_type}"
+    }
+
+@router.put("/newborn/sleep/{sleep_id}/end")
+async def end_sleep_session(sleep_id: str):
+    """Mark sleep session as ended"""
+    sleep = await db.newborn_sleep.find_one({"id": sleep_id})
+    if not sleep:
+        raise HTTPException(status_code=404, detail="Sleep session not found")
+    
+    end_time = datetime.now(timezone.utc).isoformat()
+    
+    try:
+        start = datetime.fromisoformat(sleep["sleep_start"].replace('Z', '+00:00'))
+        end = datetime.now(timezone.utc)
+        duration = int((end - start).total_seconds() / 60)
+    except:
+        duration = None
+    
+    await db.newborn_sleep.update_one(
+        {"id": sleep_id},
+        {"$set": {
+            "sleep_end": end_time,
+            "duration_minutes": duration
+        }}
+    )
+    
+    return {
+        "success": True,
+        "sleep_end": end_time,
+        "duration_minutes": duration,
+        "message": f"Sleep ended. Duration: {duration} minutes" if duration else "Sleep ended"
+    }
+
+@router.get("/newborn/{child_id}/sleep-summary")
+async def get_sleep_summary(child_id: str, days: int = 7):
+    """Get sleep summary for newborn"""
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    
+    sleeps = await db.newborn_sleep.find({
+        "child_id": child_id,
+        "created_at": {"$gte": cutoff.isoformat()}
+    }, {"_id": 0}).sort("created_at", -1).to_list(500)
+    
+    total_minutes = sum(s.get("duration_minutes", 0) for s in sleeps if s.get("duration_minutes"))
+    night_sleeps = [s for s in sleeps if s.get("sleep_type") == "night_sleep"]
+    naps = [s for s in sleeps if s.get("sleep_type") == "nap"]
+    
+    return {
+        "success": True,
+        "period_days": days,
+        "total_sleep_sessions": len(sleeps),
+        "total_sleep_hours": round(total_minutes / 60, 1),
+        "average_daily_hours": round(total_minutes / 60 / days, 1) if days > 0 else 0,
+        "night_sleeps": len(night_sleeps),
+        "naps": len(naps),
+        "recent_sleeps": sleeps[:10]
+    }
+
+@router.get("/newborn/{child_id}/milestones")
+async def get_newborn_milestones(child_id: str):
+    """Get milestone checklist for newborn based on age"""
+    child = await db.children.find_one({"id": child_id}, {"_id": 0})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    # Calculate age in weeks
+    try:
+        dob = datetime.strptime(child["date_of_birth"], "%Y-%m-%d")
+        age_days = (datetime.now() - dob).days
+        age_weeks = age_days // 7
+    except:
+        age_weeks = 0
+    
+    # Get achieved milestones
+    achieved = await db.newborn_milestones.find(
+        {"child_id": child_id},
+        {"_id": 0}
+    ).to_list(100)
+    achieved_names = {m.get("milestone_name") for m in achieved}
+    
+    # Build checklist with status
+    checklist = {}
+    for category, milestones in NEWBORN_MILESTONES.items():
+        checklist[category] = []
+        for m in milestones:
+            status = "achieved" if m["name"] in achieved_names else "upcoming" if m["week"] <= age_weeks + 4 else "future"
+            if m["week"] <= age_weeks and m["name"] not in achieved_names:
+                status = "due"  # Should have achieved by now
+            
+            checklist[category].append({
+                "name": m["name"],
+                "description": m["description"],
+                "expected_week": m["week"],
+                "status": status
+            })
+    
+    return {
+        "success": True,
+        "child_name": child.get("name"),
+        "age_weeks": age_weeks,
+        "age_months": round(age_weeks / 4.33, 1),
+        "milestones": checklist,
+        "achieved_count": len(achieved),
+        "total_milestones": sum(len(m) for m in NEWBORN_MILESTONES.values())
+    }
+
+@router.post("/newborn/milestones")
+async def record_milestone(milestone: NewbornMilestone):
+    """Record a developmental milestone achievement"""
+    child = await db.children.find_one({"id": milestone.child_id})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    # Check if already recorded
+    existing = await db.newborn_milestones.find_one({
+        "child_id": milestone.child_id,
+        "milestone_name": milestone.milestone_name
+    })
+    if existing:
+        return {"success": False, "message": "Milestone already recorded"}
+    
+    milestone_doc = {
+        "id": str(uuid.uuid4()),
+        "child_id": milestone.child_id,
+        "milestone_type": milestone.milestone_type,
+        "milestone_name": milestone.milestone_name,
+        "achieved_date": milestone.achieved_date,
+        "notes": milestone.notes,
+        "photo_url": milestone.photo_url,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.newborn_milestones.insert_one(milestone_doc)
+    
+    return {
+        "success": True,
+        "milestone_id": milestone_doc["id"],
+        "message": f"Milestone '{milestone.milestone_name}' recorded! 🎉"
+    }
+
+@router.get("/newborn/{child_id}/daily-log")
+async def get_daily_log(child_id: str, date: str = None):
+    """Get complete daily log for newborn (feeding, diaper, sleep)"""
+    if not date:
+        date = datetime.now().strftime("%Y-%m-%d")
+    
+    start = f"{date}T00:00:00"
+    end = f"{date}T23:59:59"
+    
+    # Get all logs for the day
+    feeds = await db.newborn_feeding.find({
+        "child_id": child_id,
+        "timestamp": {"$gte": start, "$lte": end}
+    }, {"_id": 0}).sort("timestamp", 1).to_list(100)
+    
+    diapers = await db.newborn_diapers.find({
+        "child_id": child_id,
+        "timestamp": {"$gte": start, "$lte": end}
+    }, {"_id": 0}).sort("timestamp", 1).to_list(100)
+    
+    sleeps = await db.newborn_sleep.find({
+        "child_id": child_id,
+        "created_at": {"$gte": start, "$lte": end}
+    }, {"_id": 0}).sort("created_at", 1).to_list(100)
+    
+    # Create timeline
+    timeline = []
+    for f in feeds:
+        timeline.append({"type": "feeding", "time": f.get("timestamp"), "details": f})
+    for d in diapers:
+        timeline.append({"type": "diaper", "time": d.get("timestamp"), "details": d})
+    for s in sleeps:
+        timeline.append({"type": "sleep", "time": s.get("sleep_start"), "details": s})
+    
+    timeline.sort(key=lambda x: x.get("time", ""))
+    
+    return {
+        "success": True,
+        "date": date,
+        "summary": {
+            "total_feeds": len(feeds),
+            "total_diaper_changes": len(diapers),
+            "total_sleep_sessions": len(sleeps),
+            "total_sleep_hours": round(sum(s.get("duration_minutes", 0) for s in sleeps) / 60, 1)
+        },
+        "timeline": timeline
+    }
+
+@router.get("/newborn/{child_id}/health-alerts")
+async def get_newborn_health_alerts(child_id: str):
+    """Get health alerts based on tracking data"""
+    child = await db.children.find_one({"id": child_id}, {"_id": 0})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    alerts = []
+    today = datetime.now(timezone.utc)
+    cutoff_24h = (today - timedelta(days=1)).isoformat()
+    
+    # Check feeding frequency
+    feeds_24h = await db.newborn_feeding.count_documents({
+        "child_id": child_id,
+        "timestamp": {"$gte": cutoff_24h}
+    })
+    if feeds_24h < 6:
+        alerts.append({
+            "type": "warning",
+            "category": "feeding",
+            "message": f"Only {feeds_24h} feeds in last 24 hours. Newborns typically need 8-12 feeds/day.",
+            "action": "Consider feeding more frequently or consult pediatrician"
+        })
+    
+    # Check wet diapers
+    wet_24h = await db.newborn_diapers.count_documents({
+        "child_id": child_id,
+        "timestamp": {"$gte": cutoff_24h},
+        "type": {"$in": ["wet", "both"]}
+    })
+    if wet_24h < 4:
+        alerts.append({
+            "type": "alert",
+            "category": "hydration",
+            "message": f"Only {wet_24h} wet diapers in 24 hours. This may indicate dehydration.",
+            "action": "Increase feeding frequency and consult pediatrician if continues"
+        })
+    
+    # Check sleep
+    sleeps = await db.newborn_sleep.find({
+        "child_id": child_id,
+        "created_at": {"$gte": cutoff_24h}
+    }, {"_id": 0}).to_list(100)
+    total_sleep_hours = sum(s.get("duration_minutes", 0) for s in sleeps) / 60
+    if total_sleep_hours < 12:
+        alerts.append({
+            "type": "info",
+            "category": "sleep",
+            "message": f"Baby slept only {total_sleep_hours:.1f} hours. Newborns typically need 14-17 hours/day.",
+            "action": "Create a calm environment for better sleep"
+        })
+    
+    return {
+        "success": True,
+        "child_name": child.get("name"),
+        "alerts": alerts,
+        "last_24h_stats": {
+            "feeds": feeds_24h,
+            "wet_diapers": wet_24h,
+            "sleep_hours": round(total_sleep_hours, 1)
+        }
+    }
+
