@@ -314,6 +314,7 @@ const Alyne = () => {
   const [showAddChild, setShowAddChild] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState('india');
+  const [addingChild, setAddingChild] = useState(false);
 
   const [newChild, setNewChild] = useState({
     name: '', date_of_birth: '', gender: 'male', blood_group: '', region: 'india'
