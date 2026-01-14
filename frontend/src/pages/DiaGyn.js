@@ -803,6 +803,14 @@ const DiaGyn = () => {
                       placeholder="10-digit number"
                       data-testid="patient-phone"
                     />
+                    {/* Booking Limit Warning */}
+                    {!bookingLimits.loading && !bookingLimits.canBook && bookingLimits.activeAppointment && (
+                      <div className="mt-2 p-2 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-800">
+                        <p className="font-semibold">⚠️ Active Appointment Found</p>
+                        <p>You have an appointment on {bookingLimits.activeAppointment.date} at {bookingLimits.activeAppointment.time} with {bookingLimits.activeAppointment.doctor}</p>
+                        <p className="mt-1">Please complete or cancel it before booking a new one.</p>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <Label>Email (Optional)</Label>
