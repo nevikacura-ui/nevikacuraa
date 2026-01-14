@@ -547,8 +547,29 @@ const DiaGyn = () => {
   const availableSlots = getAvailableSlots();
   const availableClinics = getAvailableClinics();
 
-  // Filter out booked slots
-  const unbookedSlots = availableSlots.filter(slot => !bookedSlots.includes(slot));
+  // Filter out booked slots AND past time slots (for today's date)
+  const unbookedSlots = availableSlots.filter(slot => {
+    // First check if slot is booked
+    if (bookedSlots.includes(slot)) return false;
+    
+    // If selected date is today, filter out past times
+    if (selectedDate) {
+      const today = new Date();
+      const selectedDateObj = new Date(selectedDate);
+      
+      // Check if selected date is today
+      if (selectedDateObj.toDateString() === today.toDateString()) {
+        const [hours, minutes] = slot.split(':').map(Number);
+        const slotTime = new Date();
+        slotTime.setHours(hours, minutes, 0, 0);
+        
+        // Add 30 minute buffer - slots must be at least 30 min in the future
+        const bufferTime = new Date(today.getTime() + 30 * 60 * 1000);
+        if (slotTime <= bufferTime) return false;
+      }
+    }
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-background">
