@@ -889,6 +889,11 @@ const Admin = () => {
               <TrendingUp className="w-4 h-4 mr-2" /> Analytics
             </TabsTrigger>
           </TabsList>
+          <TabsList className="grid w-full grid-cols-1 gap-1 mb-6 h-auto">
+            <TabsTrigger value="clinic-management" data-testid="clinic-management-tab" className="py-2">
+              <Building2 className="w-4 h-4 mr-2" /> Clinic Management (Queue, Finance, Recall)
+            </TabsTrigger>
+          </TabsList>
 
           {/* Inventory Tab */}
           <TabsContent value="inventory">
