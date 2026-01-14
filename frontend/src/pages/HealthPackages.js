@@ -311,11 +311,10 @@ const HealthPackages = () => {
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="text-gray-400 line-through text-sm">₹{pkg.original_price}</span>
-                          <span className="text-xl font-bold text-green-600 ml-2">₹{pkg.discounted_price}</span>
+                          <span className="text-sm text-purple-600">📋 {pkg.tests?.length || 0} tests</span>
                         </div>
                         <Button size="sm" onClick={(e) => { e.stopPropagation(); openBooking(pkg); }}>
-                          Book
+                          View
                         </Button>
                       </div>
                     </CardContent>
