@@ -2220,6 +2220,30 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
     })
     
     if active_appointment:
+        # Notify staff about duplicate booking attempt
+        try:
+            staff_message = f"""⚠️ DUPLICATE BOOKING ATTEMPT
+
+Patient: {input.patient_name}
+Phone: {input.patient_phone}
+Tried to book: {input.doctor} at {input.clinic}
+New Date/Time: {input.date} at {input.time}
+
+❌ BLOCKED - Already has active booking:
+Doctor: {active_appointment.get('doctor')}
+Date: {active_appointment.get('date')}
+Time: {active_appointment.get('time')}
+Status: {active_appointment.get('status')}
+Booking ID: {active_appointment.get('id', 'N/A')}
+
+Please check if patient needs to reschedule."""
+
+            # Send notification to staff
+            await send_sms_notification(STAFF_PHONE_NUMBERS.get('diagyn', ['9833188288'])[0], staff_message)
+            logger.info(f"Staff notified about duplicate booking attempt by {input.patient_phone}")
+        except Exception as e:
+            logger.error(f"Failed to notify staff about duplicate booking: {e}")
+        
         raise HTTPException(
             status_code=400, 
             detail=f"You already have an active appointment on {active_appointment.get('date')} at {active_appointment.get('time')} with {active_appointment.get('doctor')}. Please complete or cancel it before booking a new one."
