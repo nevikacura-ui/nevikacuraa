@@ -196,6 +196,8 @@ const DiaGyn = () => {
     const clinic = clinics.find(c => c.id === selectedClinic);
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
+    let pollingInterval = null;
+
     const connectWebSocket = () => {
       // Close existing connection
       if (wsRef.current) {
@@ -211,6 +213,11 @@ const DiaGyn = () => {
         ws.onopen = () => {
           console.log('WebSocket connected for slot updates');
           setWsConnected(true);
+          // Clear polling if WebSocket connected
+          if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+          }
         };
 
         ws.onmessage = (event) => {
@@ -253,23 +260,44 @@ const DiaGyn = () => {
           setWsConnected(false);
           wsRef.current = null;
           
-          // Attempt reconnect after 3 seconds if not intentionally closed
+          // Start polling as fallback if WebSocket fails
+          if (!pollingInterval && event.code !== 1000) {
+            console.log('Starting polling fallback for slot updates');
+            pollingInterval = setInterval(() => {
+              fetchBookedSlots();
+            }, 10000); // Poll every 10 seconds
+          }
+          
+          // Attempt reconnect after 5 seconds if not intentionally closed
           if (event.code !== 1000) {
             reconnectTimeoutRef.current = setTimeout(() => {
               if (selectedDoctor && selectedClinic && selectedDate) {
                 connectWebSocket();
               }
-            }, 3000);
+            }, 5000);
           }
         };
 
         ws.onerror = (error) => {
           console.error('WebSocket error:', error);
           setWsConnected(false);
+          // Start polling as fallback
+          if (!pollingInterval) {
+            console.log('WebSocket error - starting polling fallback');
+            pollingInterval = setInterval(() => {
+              fetchBookedSlots();
+            }, 10000);
+          }
         };
       } catch (e) {
         console.error('Failed to create WebSocket:', e);
         setWsConnected(false);
+        // Start polling as fallback
+        if (!pollingInterval) {
+          pollingInterval = setInterval(() => {
+            fetchBookedSlots();
+          }, 10000);
+        }
       }
     };
 
@@ -280,13 +308,16 @@ const DiaGyn = () => {
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+      }
       if (wsRef.current) {
         wsRef.current.close(1000, 'Component unmount');
         wsRef.current = null;
       }
       setWsConnected(false);
     };
-  }, [selectedDoctor, selectedClinic, selectedDate]);
+  }, [selectedDoctor, selectedClinic, selectedDate, fetchBookedSlots]);
 
   const getAvailableSlots = () => {
     if (!selectedDoctor || !selectedClinic || !selectedDate) return [];
