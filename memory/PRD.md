@@ -50,8 +50,11 @@ For children ages 3-8, providing gamified health engagement:
 - Supportive AI-generated response messages
 - Mood history and summary
 
-**🧸 ALYNE Health Buddy (AI Chat):**
+**🧸 ALYNE Health Buddy (AI Chat with Voice):**
 - Child-friendly AI assistant using Claude (via Emergent LLM Key)
+- **Voice Mode**: Press & hold microphone to speak, get audio responses
+- Speech-to-Text: OpenAI Whisper for transcription
+- Text-to-Speech: OpenAI TTS with "shimmer" voice (child-friendly)
 - Age-appropriate responses (simple words for 3-8 year olds)
 - Safety guardrails: redirects medical concerns to parents/doctors
 - Quick prompts for easy interaction
@@ -62,35 +65,109 @@ For children ages 3-8, providing gamified health engagement:
 - AI-generated personalized stories using GPT-5.2 (via Emergent LLM Key)
 - Stories feature child's name as hero
 - Saved story library for re-reading
+- "Read Aloud" option with TTS
 
-**Kids Zone Dashboard:**
-- Total stars accumulated
-- Streak days counter
-- Today's activities completed
-- Today's mood
-- Earned badges display
-- Progress to next reward
+**18. Cultural Health Bridge (USA Only)** ✅ (Complete)
 
-**API Endpoints:**
-- `GET /api/alyne/kidszone/activities` - Health star activities
-- `POST /api/alyne/kidszone/stars/log` - Log completed activity
-- `GET /api/alyne/kidszone/stars/{child_id}` - Get star progress
-- `GET /api/alyne/kidszone/moods` - Get mood options
-- `POST /api/alyne/kidszone/mood/log` - Log mood entry
-- `GET /api/alyne/kidszone/mood/{child_id}` - Get mood history
-- `GET /api/alyne/kidszone/stories/themes` - Get story themes
-- `POST /api/alyne/kidszone/stories/generate` - Generate new story
-- `GET /api/alyne/kidszone/stories/{child_id}` - Get saved stories
-- `POST /api/alyne/kidszone/buddy/chat` - Chat with health buddy
-- `GET /api/alyne/kidszone/dashboard/{child_id}` - Get dashboard data
+For Indo-American families bridging US and Indian healthcare:
 
-**Frontend:**
-- New Kids Zone category on ALYNE page with "NEW!" badge
-- Colorful gradient UI (purple-pink-orange)
-- Child-friendly mascot theme (🧸)
-- Full responsive component: `/app/frontend/src/components/AlyneKidsZone.jsx`
+**💊 Medicine Translator:**
+- 12+ common Indian medicines with US equivalents
+- Crocin → Tylenol, Brufen → Advil, etc.
+- Generic names, child dosages, usage notes
+- AI fallback for unknown medicines
 
-**Testing:** 19 backend tests, 12 frontend verifications - 100% pass rate
+**🥗 Indian Food Nutrition Guide:**
+- 10+ Indian baby foods with AAP (American Academy of Pediatrics) guidelines
+- Nutrition info: calories, protein, carbs, calcium, iron
+- Introduction age, allergen warnings, preparation tips
+- Hindi names included
+
+**📋 School Health Forms Generator:**
+- Immunization record template
+- Physical examination form
+- Emergency contact information
+- Medical conditions & allergies form
+- Pre-fills with child's data from profile
+
+**💌 Grandparent Health Sharing:**
+- Generate health updates in Indian languages (Hindi, Tamil, Telugu, Gujarati, Bengali)
+- Includes child's growth, vaccinations, recent health status
+- WhatsApp sharing integration
+- AI translation using GPT-5.2
+
+**19. Digital Health Twin** ✅ (Complete)
+
+AI-powered predictive health model:
+
+**🧬 Health Twin Profile:**
+- Family history: asthma, allergies, eczema, diabetes, obesity, thyroid
+- Environment factors: urban/rural, pets, smokers, air pollution
+- Birth info: premature, birth weight
+
+**📊 Risk Assessments:**
+- Asthma risk assessment
+- Allergy risk assessment  
+- Growth issues risk assessment
+- Comprehensive assessment
+- AI-powered analysis using GPT-5.2
+
+**📈 Assessment Results:**
+- Risk level (low/moderate/elevated/high)
+- Risk score (0-100)
+- Key risk factors identified
+- Protective factors
+- Prioritized recommendations with timeline
+- When to see doctor guidance
+
+**🎯 Health Twin Dashboard:**
+- Overall health score
+- Health status indicator
+- Latest assessment summaries
+- Personalized recommendations
+- Progress tracking
+
+**API Endpoints Added (Session 7):**
+```
+# Kids Zone
+GET  /api/alyne/kidszone/activities - Health star activities
+POST /api/alyne/kidszone/stars/log - Log completed activity
+GET  /api/alyne/kidszone/stars/{child_id} - Get star progress
+GET  /api/alyne/kidszone/moods - Get mood options
+POST /api/alyne/kidszone/mood/log - Log mood entry
+GET  /api/alyne/kidszone/mood/{child_id} - Get mood history
+GET  /api/alyne/kidszone/stories/themes - Get story themes
+POST /api/alyne/kidszone/stories/generate - Generate new story
+GET  /api/alyne/kidszone/stories/{child_id} - Get saved stories
+POST /api/alyne/kidszone/buddy/chat - Chat with health buddy
+POST /api/alyne/kidszone/buddy/voice - Voice chat (STT + TTS)
+POST /api/alyne/kidszone/buddy/speak - Text-to-speech only
+GET  /api/alyne/kidszone/dashboard/{child_id} - Dashboard data
+
+# Cultural Bridge
+GET  /api/alyne/cultural-bridge/medicines - Medicine database
+POST /api/alyne/cultural-bridge/medicines/translate - Translate medicine
+GET  /api/alyne/cultural-bridge/foods - Indian foods with nutrition
+GET  /api/alyne/cultural-bridge/foods/search - Search foods
+GET  /api/alyne/cultural-bridge/school-forms - Form templates
+POST /api/alyne/cultural-bridge/school-forms/generate - Generate forms
+POST /api/alyne/cultural-bridge/share-with-grandparents - Generate translated health update
+
+# Digital Health Twin
+POST /api/alyne/health-twin/profile - Create/update profile
+GET  /api/alyne/health-twin/profile/{child_id} - Get profile
+POST /api/alyne/health-twin/assess-risk - Run AI assessment
+GET  /api/alyne/health-twin/assessments/{child_id} - Get history
+GET  /api/alyne/health-twin/risk-factors - Get risk factor database
+GET  /api/alyne/health-twin/dashboard/{child_id} - Dashboard data
+```
+
+**Frontend Files Added:**
+- `/app/frontend/src/components/AlyneKidsZone.jsx` - Kids Zone with voice
+- `/app/frontend/src/components/AlyneCulturalBridge.jsx` - Cultural Bridge tabs
+- `/app/frontend/src/components/AlyneHealthTwin.jsx` - Health Twin dashboard
+
+**Testing:** 28 backend tests, frontend verified - 100% pass rate
 
 ---
 
