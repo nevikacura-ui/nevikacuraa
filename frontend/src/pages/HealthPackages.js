@@ -337,14 +337,14 @@ const HealthPackages = () => {
               </DialogHeader>
               
               <div className="space-y-4">
-                {/* Price */}
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                  <div>
-                    <span className="text-gray-500 line-through">₹{selectedPackage.original_price}</span>
-                    <span className="text-2xl font-bold text-green-600 ml-2">₹{selectedPackage.discounted_price}</span>
+                {/* Package Info */}
+                <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <FlaskConical className="w-5 h-5 text-purple-600" />
+                    <span className="font-semibold text-purple-700">{selectedPackage.tests?.length} Tests Included</span>
                   </div>
-                  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                    Save {selectedPackage.discount_percent}%
+                  <span className="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                    Popular
                   </span>
                 </div>
                 
@@ -388,7 +388,7 @@ const HealthPackages = () => {
                 )}
                 
                 <Button className="w-full" onClick={() => { setShowBooking(true); }}>
-                  Book This Package - ₹{selectedPackage.discounted_price}
+                  Book This Package
                 </Button>
               </div>
             </>
