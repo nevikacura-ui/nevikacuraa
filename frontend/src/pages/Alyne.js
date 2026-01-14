@@ -676,8 +676,10 @@ const Alyne = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddChild(false)}>Cancel</Button>
-            <Button onClick={handleAddChild} className="bg-teal-600">Add Child</Button>
+            <Button variant="outline" onClick={() => setShowAddChild(false)} disabled={addingChild}>Cancel</Button>
+            <Button onClick={handleAddChild} className="bg-teal-600" disabled={addingChild}>
+              {addingChild ? 'Adding...' : 'Add Child'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
