@@ -2554,6 +2554,18 @@ async def get_appointments(user = Depends(get_current_user)):
 
 @api_router.post("/diagnostics", response_model=DiagnosticOrder)
 async def create_diagnostic_order(input: DiagnosticOrderCreate, user = Depends(get_current_user)):
+    # ORDER LIMIT: Check if user already has 2 active diagnostic orders
+    active_orders_count = await db.diagnostic_orders.count_documents({
+        "patient_phone": input.patient_phone,
+        "status": {"$in": ["pending", "Pending", "confirmed", "Confirmed", "Processing", "Sample Collected", "sample_collected"]}
+    })
+    
+    if active_orders_count >= 2:
+        raise HTTPException(
+            status_code=400, 
+            detail="You already have 2 active diagnostic orders. Please wait for them to be completed or cancel one before placing a new order."
+        )
+    
     order = DiagnosticOrder(
         user_id=user.id if user else None,
         **input.model_dump()
