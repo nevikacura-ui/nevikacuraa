@@ -149,7 +149,9 @@ async def staff_login(input: StaffLogin):
         
         if staff_record and staff_record.get('password_hash'):
             try:
-                password_valid = bcrypt.checkpw(input.password.encode(), staff_record['password_hash'].encode())
+                stored_hash = staff_record['password_hash']
+                logger.info(f"Stored hash prefix: {stored_hash[:20] if stored_hash else 'None'}, len={len(stored_hash) if stored_hash else 0}")
+                password_valid = bcrypt.checkpw(input.password.encode(), stored_hash.encode())
                 logger.info(f"Password valid: {password_valid}")
                 if password_valid:
                     staff = staff_record
