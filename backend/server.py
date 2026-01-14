@@ -7475,6 +7475,27 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Glydex router: {e}")
 
+# Biometric Attendance Router
+try:
+    from routes.biometric_attendance import router as biometric_router, set_db as set_biometric_db, set_jwt_config as set_biometric_jwt
+    set_biometric_db(db)
+    set_biometric_jwt(JWT_SECRET, JWT_ALGORITHM)
+    app.include_router(biometric_router, prefix="/api")
+    logger.info("Biometric Attendance router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Biometric Attendance router: {e}")
+
+# ANC Registration Router
+try:
+    from routes.anc_registration import router as anc_router, set_db as set_anc_db, set_jwt_config as set_anc_jwt, set_notification_functions as set_anc_notif
+    set_anc_db(db)
+    set_anc_jwt(JWT_SECRET, JWT_ALGORITHM)
+    set_anc_notif(send_email_notification, send_sms_notification)
+    app.include_router(anc_router, prefix="/api")
+    logger.info("ANC Registration router loaded")
+except Exception as e:
+    logger.warning(f"Could not load ANC Registration router: {e}")
+
 # Admin Routes (extracted from server.py)
 try:
     from routes.admin import router as admin_router, set_db as set_admin_db, set_jwt_config, set_admin_password, set_notification_functions
