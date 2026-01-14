@@ -80,6 +80,11 @@ const DiaGyn = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [otpLoading, setOtpLoading] = useState(false);
   const [mockOtp, setMockOtp] = useState('');
+  
+  // WebSocket state for real-time slot updates
+  const wsRef = useRef(null);
+  const [wsConnected, setWsConnected] = useState(false);
+  const reconnectTimeoutRef = useRef(null);
   const [otpMethod, setOtpMethod] = useState(''); // 'sms' or 'mock'
   const [verificationToken, setVerificationToken] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
