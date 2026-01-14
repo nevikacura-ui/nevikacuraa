@@ -12,9 +12,12 @@ import {
   Clock, Package, FlaskConical, Stethoscope, Users, 
   Phone, Calendar, Loader2, RefreshCw, AlertTriangle, Plus, 
   Heart, Droplet, Scan, Upload, FileText, Receipt, History, X, Gift,
-  IndianRupee
+  IndianRupee, Fingerprint, Baby, Activity
 } from 'lucide-react';
 import StaffBillingModule from '@/components/StaffBillingModule';
+import ANCRegistration from '@/components/ANCRegistration';
+import GlydexStaffPortal from '@/components/GlydexStaffPortal';
+import BiometricAttendance from '@/components/BiometricAttendance';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
