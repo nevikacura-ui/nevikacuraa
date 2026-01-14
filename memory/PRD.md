@@ -704,3 +704,76 @@ GET  /api/alyne/shop/orders/{user_id} - Get user orders
 - USA: Pediatrician Finder, School Vaccines, WIC, Safety Guides, Brightwheel, Kids Shop hidden
 - Feature Categories: All 8 cards visible
 - Quick Actions: AI Chat, Vaccines, Emergency buttons working
+
+---
+
+## January 14, 2026 - Session 2 (Current)
+**Prepaid Wallet & Teleconsultation Overhaul** ✅
+
+### Prepaid Wallet System (NEW) ✅
+- **Backend**: `/app/backend/routes/wallet.py`
+- **Frontend**: `/app/frontend/src/components/WalletWidget.jsx`
+
+**Features:**
+- User wallet with balance tracking (total_added, total_spent)
+- UPI top-up with QR code and screenshot verification
+- Min ₹100 / Max ₹50,000 per top-up
+- Pending top-up queue with admin approval
+- Transaction history (topup, debit, refund)
+- Admin endpoints for approving/rejecting top-ups
+- Integrated with teleconsultation payments
+
+**API Endpoints:**
+```
+GET  /api/wallet/balance - Get user's wallet balance + UPI details (auth required)
+POST /api/wallet/topup - Create top-up request (auth required)
+POST /api/wallet/topup/{id}/screenshot - Upload payment screenshot (auth required)
+GET  /api/wallet/transactions - Get transaction history (auth required)
+POST /api/wallet/deduct - Deduct from wallet for service (internal use)
+GET  /api/wallet/admin/pending - Admin: Get pending top-ups
+POST /api/wallet/admin/approve/{id} - Admin: Approve top-up
+POST /api/wallet/admin/reject/{id} - Admin: Reject top-up
+GET  /api/wallet/admin/all - Admin: Get all wallets
+```
+
+### Teleconsultation Module Overhaul ✅
+- **Backend**: `/app/backend/routes/teleconsultation.py`
+- **Frontend**: `/app/frontend/src/pages/Teleconsultation.js`
+
+**Features:**
+- DiaGyn doctors only: Dr. Neha Patel (₹300), Dr. Vikas Jha (₹250)
+- Operating hours: 9 AM to 9 PM (48 slots per day)
+- 15-minute time slot intervals
+- Wallet-only payments (no Stripe/UPI direct)
+- E-prescription generation post-consultation
+- Jitsi Meet links for video calls
+- 2-hour cancellation window with auto-refund
+
+**API Endpoints:**
+```
+GET  /api/teleconsult/config - Get doctors, timings, fees
+GET  /api/teleconsult/booked-slots - Get booked slots for doctor/date
+POST /api/teleconsult/book - Book consultation with wallet payment (auth required)
+GET  /api/teleconsult/my-bookings - Get user's bookings (auth required)
+GET  /api/teleconsult/booking/{id} - Get booking details (auth required)
+POST /api/teleconsult/cancel/{id} - Cancel booking with refund (auth required)
+POST /api/teleconsult/prescription - Create e-prescription (doctor)
+GET  /api/teleconsult/prescription/{id} - Get prescription (auth required)
+```
+
+### Quick Reorder Feature ✅
+- **Frontend**: `/app/frontend/src/pages/QuickReorder.js`
+- One-tap to rebook last doctor, reorder last tests, or reorder last medicines
+- Uses existing endpoints: `/api/appointments`, `/api/diagnostics`, `/api/pharmacy`
+- Redirects to respective pages with pre-filled data
+
+### Bug Fixes (Iteration 29)
+1. **JWT Token Validation** - Fixed wallet.py and teleconsultation.py to support both 'sub' and 'user_id' claims
+2. **WalletWidget Compact Mode** - Fixed dialog not rendering in compact mode
+3. **Admin Role Verification** - Fixed to accept both 'admin' and 'super_admin' roles
+4. **WebSocket Endpoint** - Moved to `/api/ws/slots` for proper ingress routing
+
+### Test Results (Iteration 29)
+- **Backend**: 22/22 tests passed (100%)
+- **Frontend**: 10/10 tests passed (100%)
+- All wallet and teleconsultation flows verified working
