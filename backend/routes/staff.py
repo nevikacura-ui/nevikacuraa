@@ -100,7 +100,16 @@ async def verify_staff(authorization: str = Header(None)):
     token = authorization.split(' ')[1]
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        if payload.get('role') not in ['clinic_staff', 'pharmacy_staff', 'diagnostic_staff', 'doctor', 'admin', 'super_admin']:
+        role = payload.get('role', '')
+        # Accept various staff roles including clinic-specific ones
+        valid_roles = [
+            'clinic_staff', 'pharmacy_staff', 'diagnostic_staff', 'doctor', 'admin', 'super_admin',
+            'clinic_staff_pushpa', 'clinic_staff_amnion', 'doctor_pushpa', 'doctor_amnion',
+            'receptionist', 'nurse', 'pharmacist', 'lab_technician'
+        ]
+        # Also accept any role containing 'staff', 'doctor', or 'admin'
+        is_valid = role in valid_roles or 'staff' in role.lower() or 'doctor' in role.lower() or 'admin' in role.lower()
+        if not is_valid:
             raise HTTPException(status_code=403, detail="Staff access required")
         return payload
     except jwt.ExpiredSignatureError:
