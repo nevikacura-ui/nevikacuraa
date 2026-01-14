@@ -9120,6 +9120,118 @@ async def send_appointment_reminder_notification(appointment_id: str):
     
     return {"success": True, "result": result}
 
+@api_router.get("/appointments/{appointment_id}/reminder-status")
+async def get_appointment_reminder_status(appointment_id: str):
+    """Get reminder status for an appointment"""
+    appointment = await db.appointments.find_one(
+        {"id": appointment_id},
+        {"_id": 0, "id": 1, "date": 1, "time": 1, "reminder_24h_sent": 1, "reminder_24h_sent_at": 1, "reminder_1h_sent": 1, "reminder_1h_sent_at": 1}
+    )
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    return {
+        "appointment_id": appointment_id,
+        "date": appointment.get("date"),
+        "time": appointment.get("time"),
+        "reminders": {
+            "24h": {
+                "sent": appointment.get("reminder_24h_sent", False),
+                "sent_at": appointment.get("reminder_24h_sent_at")
+            },
+            "1h": {
+                "sent": appointment.get("reminder_1h_sent", False),
+                "sent_at": appointment.get("reminder_1h_sent_at")
+            }
+        }
+    }
+
+@api_router.post("/admin/appointments/{appointment_id}/send-reminder")
+async def admin_send_appointment_reminder(
+    appointment_id: str, 
+    reminder_type: str = "both",
+    admin = Depends(verify_admin)
+):
+    """Admin endpoint to manually send appointment reminder
+    
+    reminder_type: "24h", "1h", or "both"
+    """
+    appointment = await db.appointments.find_one({"id": appointment_id}, {"_id": 0})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    user_id = appointment.get("user_id")
+    patient_name = appointment.get("patient_name", "Patient")
+    patient_phone = appointment.get("patient_phone") or appointment.get("phone")
+    doctor = appointment.get("doctor", "your doctor")
+    clinic = appointment.get("clinic", "clinic")
+    date = appointment.get("date", "")
+    time = appointment.get("time", "scheduled time")
+    
+    results = {"push": False, "sms": False}
+    
+    if reminder_type in ["24h", "both"]:
+        # Send 24h style reminder
+        if user_id:
+            await send_push_notification(
+                user_id=user_id,
+                title="📅 Appointment Reminder",
+                body=f"Your appointment with {doctor} at {clinic} is on {date} at {time}.",
+                url="/profile",
+                tag=f"manual-reminder-{appointment_id}"
+            )
+            results["push"] = True
+        
+        if patient_phone:
+            sms_msg = f"""DiaGyn Reminder 📅
+
+Dear {patient_name},
+Your appointment details:
+
+Doctor: {doctor}
+Clinic: {clinic}
+Date: {date}
+Time: {time}
+
+Please arrive 10 mins early.
+- Nevika Cura"""
+            await send_sms_notification(patient_phone, sms_msg)
+            results["sms"] = True
+    
+    if reminder_type in ["1h", "both"] and reminder_type != "24h":
+        # Send urgent 1h style reminder
+        if user_id:
+            await send_push_notification(
+                user_id=user_id,
+                title="⏰ Appointment Soon!",
+                body=f"Your appointment with {doctor} at {clinic} is at {time}. Please head to the clinic!",
+                url="/profile",
+                tag=f"manual-reminder-urgent-{appointment_id}"
+            )
+            results["push"] = True
+        
+        if patient_phone:
+            sms_msg = f"""⏰ DiaGyn - Urgent Reminder
+
+Dear {patient_name},
+Your appointment is coming up:
+
+Doctor: {doctor}
+Clinic: {clinic}
+Time: {time}
+
+Please head to the clinic now!
+- Nevika Cura"""
+            await send_sms_notification(patient_phone, sms_msg)
+            results["sms"] = True
+    
+    return {
+        "success": True,
+        "appointment_id": appointment_id,
+        "reminder_type": reminder_type,
+        "notifications_sent": results
+    }
+
 @api_router.post("/notifications/subscription-expiry")
 async def send_subscription_expiry_notification(user_id: str):
     """Send push notification for subscription expiry"""
