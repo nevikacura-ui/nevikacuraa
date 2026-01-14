@@ -132,10 +132,19 @@ async def staff_login(input: StaffLogin):
     # Method 1: Username + Password login
     if input.username and input.password:
         logger.info(f"Staff login attempt with username: {input.username}")
-        staff_record = await db.admin_staff.find_one({
+        # Check both staff and admin_staff collections
+        staff_record = await db.staff.find_one({
             "username": input.username,
-            "active": True
+            "is_active": True
         })
+        
+        if not staff_record:
+            # Try admin_staff collection
+            staff_record = await db.admin_staff.find_one({
+                "username": input.username,
+                "active": True
+            })
+        
         logger.info(f"Found staff record: {staff_record is not None}")
         
         if staff_record and staff_record.get('password_hash'):
