@@ -732,6 +732,19 @@ const CategoryDetail = ({ category, region, child, onBack, user }) => {
   if (category.id === 'kidszone') return <KidsZoneSection child={child} onBack={onBack} />;
   if (category.id === 'cultural_bridge') return <CulturalBridgeSection child={child} onBack={onBack} />;
   if (category.id === 'health_twin') return <DigitalHealthTwinSection child={child} onBack={onBack} />;
+  if (category.id === 'aanya_newborn') return (
+    <div className="space-y-4">
+      <Button variant="ghost" onClick={onBack} className="mb-2">
+        <ChevronLeft className="w-4 h-4 mr-2" /> Back
+      </Button>
+      <AanyaNewbornCare 
+        childId={child?.id} 
+        childName={child?.name} 
+        childDob={child?.date_of_birth}
+        childGender={child?.gender}
+      />
+    </div>
+  );
   
   // India-specific sections
   if (category.id === 'govt_schemes') return <GovtSchemesSection onBack={onBack} />;
