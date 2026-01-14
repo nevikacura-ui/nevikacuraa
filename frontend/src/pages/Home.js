@@ -99,12 +99,12 @@ const Home = () => {
       path: '/alyne',
       logoBg: '',
       customBg: '#0a1628',
-      hideDecoration: false,
-      fillCard: false,
+      hideDecoration: true,
+      fillCard: true,
       tallerCard: true,
-      logoScale: 1.4,
+      logoScale: 1,
       isGradient: false,
-      hasSparkles: true
+      hasSparkles: false
     }
   ];
 
