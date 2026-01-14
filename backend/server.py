@@ -9216,41 +9216,185 @@ async def cron_check_expiring_subscriptions(secret: str = ""):
     return {"success": True, "users_checked": len(users), "notified": notified}
 
 @api_router.post("/cron/appointment-reminders")
-async def cron_send_appointment_reminders(secret: str = ""):
-    """Cron job to send appointment reminders for tomorrow"""
+async def cron_send_appointment_reminders(secret: str = "", reminder_type: str = "all"):
+    """Cron job to send appointment reminders
+    
+    Call every 15 minutes with: /api/cron/appointment-reminders?secret=YOUR_SECRET&reminder_type=all
+    
+    reminder_type options:
+    - "24h" : Send 24-hour reminders only (day before)
+    - "1h"  : Send 1-hour reminders only (same day)
+    - "all" : Send both types (default)
+    
+    Recommended cron schedule:
+    - Every 15 mins: */15 * * * * curl -X POST "https://domain/api/cron/appointment-reminders?secret=SECRET"
+    """
     cron_secret = os.environ.get("CRON_SECRET", "nevika_cron_2026")
     if secret != cron_secret:
         raise HTTPException(status_code=403, detail="Invalid secret")
     
-    tomorrow = (datetime.now(timezone.utc) + timedelta(days=1)).strftime("%Y-%m-%d")
+    now = datetime.now(timezone.utc)
+    today = now.strftime("%Y-%m-%d")
+    tomorrow = (now + timedelta(days=1)).strftime("%Y-%m-%d")
+    current_hour = now.hour
+    current_minute = now.minute
     
-    appointments = await db.appointments.find({
-        "date": tomorrow,
-        "status": {"$in": ["confirmed", "pending"]}
-    }, {"_id": 0}).to_list(500)
+    results = {
+        "24h_reminders": {"checked": 0, "sent": 0},
+        "1h_reminders": {"checked": 0, "sent": 0}
+    }
     
-    notified = 0
-    for apt in appointments:
-        try:
-            user_id = apt.get("user_id")
-            if user_id:
-                await send_push_notification(
-                    user_id=user_id,
-                    title="Appointment Tomorrow",
-                    body=f"Reminder: Your appointment with {apt.get('doctor', 'doctor')} is tomorrow at {apt.get('time', 'scheduled time')}.",
-                    url="/diagyn",
-                    tag="appointment-reminder"
+    # ===== 24 HOUR REMINDERS (Day Before) =====
+    if reminder_type in ["24h", "all"]:
+        # Get tomorrow's appointments that haven't received 24h reminder
+        tomorrow_appointments = await db.appointments.find({
+            "date": tomorrow,
+            "status": {"$in": ["confirmed", "pending", "Booked"]},
+            "reminder_24h_sent": {"$ne": True}
+        }, {"_id": 0}).to_list(500)
+        
+        results["24h_reminders"]["checked"] = len(tomorrow_appointments)
+        
+        for apt in tomorrow_appointments:
+            try:
+                user_id = apt.get("user_id")
+                patient_name = apt.get("patient_name", "Patient")
+                doctor = apt.get("doctor", "your doctor")
+                clinic = apt.get("clinic", "clinic")
+                time = apt.get("time", "scheduled time")
+                
+                # Send Push Notification
+                if user_id:
+                    await send_push_notification(
+                        user_id=user_id,
+                        title="📅 Appointment Tomorrow!",
+                        body=f"Reminder: Your appointment with {doctor} at {clinic} is tomorrow at {time}. Don't forget!",
+                        url="/profile",
+                        tag=f"reminder-24h-{apt.get('id')}"
+                    )
+                
+                # Send SMS Reminder
+                patient_phone = apt.get("patient_phone") or apt.get("phone")
+                if patient_phone:
+                    sms_msg = f"""DiaGyn Reminder 📅
+
+Dear {patient_name},
+Your appointment is TOMORROW:
+
+Doctor: {doctor}
+Clinic: {clinic}
+Date: {tomorrow}
+Time: {time}
+
+Please arrive 10 mins early.
+For queries: 9403890429
+
+- Nevika Cura"""
+                    await send_sms_notification(patient_phone, sms_msg)
+                
+                # Mark as sent
+                await db.appointments.update_one(
+                    {"id": apt.get("id")},
+                    {"$set": {"reminder_24h_sent": True, "reminder_24h_sent_at": now.isoformat()}}
                 )
-                notified += 1
-            
-            # Also send SMS
-            if apt.get("phone"):
-                msg = f"Nevika Cura Reminder: Your appointment with {apt.get('doctor')} is tomorrow ({tomorrow}) at {apt.get('time')}. Please arrive 10 mins early."
-                await send_sms_notification(apt["phone"], msg)
-        except Exception as e:
-            logger.error(f"Failed to send reminder for appointment {apt.get('id')}: {e}")
+                results["24h_reminders"]["sent"] += 1
+                logger.info(f"24h reminder sent for appointment {apt.get('id')}")
+                
+            except Exception as e:
+                logger.error(f"Failed to send 24h reminder for appointment {apt.get('id')}: {e}")
     
-    return {"success": True, "appointments_checked": len(appointments), "notified": notified}
+    # ===== 1 HOUR REMINDERS (Same Day) =====
+    if reminder_type in ["1h", "all"]:
+        # Get today's appointments in the next 60-75 minutes that haven't received 1h reminder
+        today_appointments = await db.appointments.find({
+            "date": today,
+            "status": {"$in": ["confirmed", "pending", "Booked", "In Clinic"]},
+            "reminder_1h_sent": {"$ne": True}
+        }, {"_id": 0}).to_list(500)
+        
+        for apt in today_appointments:
+            try:
+                apt_time = apt.get("time", "")
+                if not apt_time:
+                    continue
+                
+                # Parse appointment time (format: "11:00 AM" or "18:00")
+                try:
+                    if "AM" in apt_time or "PM" in apt_time:
+                        # 12-hour format
+                        time_parts = apt_time.replace("AM", "").replace("PM", "").strip().split(":")
+                        hour = int(time_parts[0])
+                        minute = int(time_parts[1]) if len(time_parts) > 1 else 0
+                        if "PM" in apt_time and hour != 12:
+                            hour += 12
+                        elif "AM" in apt_time and hour == 12:
+                            hour = 0
+                    else:
+                        # 24-hour format
+                        time_parts = apt_time.split(":")
+                        hour = int(time_parts[0])
+                        minute = int(time_parts[1]) if len(time_parts) > 1 else 0
+                    
+                    # Calculate minutes until appointment
+                    apt_minutes = hour * 60 + minute
+                    current_minutes = current_hour * 60 + current_minute
+                    minutes_until = apt_minutes - current_minutes
+                    
+                    # Send reminder if appointment is 45-75 minutes away (gives buffer for cron timing)
+                    if 45 <= minutes_until <= 75:
+                        results["1h_reminders"]["checked"] += 1
+                        
+                        user_id = apt.get("user_id")
+                        patient_name = apt.get("patient_name", "Patient")
+                        doctor = apt.get("doctor", "your doctor")
+                        clinic = apt.get("clinic", "clinic")
+                        
+                        # Send Push Notification
+                        if user_id:
+                            await send_push_notification(
+                                user_id=user_id,
+                                title="⏰ Appointment in 1 Hour!",
+                                body=f"Your appointment with {doctor} at {clinic} is at {apt_time}. Please start heading to the clinic!",
+                                url="/profile",
+                                tag=f"reminder-1h-{apt.get('id')}"
+                            )
+                        
+                        # Send SMS Reminder
+                        patient_phone = apt.get("patient_phone") or apt.get("phone")
+                        if patient_phone:
+                            sms_msg = f"""⏰ DiaGyn - 1 Hour Reminder
+
+Dear {patient_name},
+Your appointment is in 1 HOUR:
+
+Doctor: {doctor}
+Clinic: {clinic}
+Time: {apt_time}
+
+Please arrive 10 mins early!
+- Nevika Cura"""
+                            await send_sms_notification(patient_phone, sms_msg)
+                        
+                        # Mark as sent
+                        await db.appointments.update_one(
+                            {"id": apt.get("id")},
+                            {"$set": {"reminder_1h_sent": True, "reminder_1h_sent_at": now.isoformat()}}
+                        )
+                        results["1h_reminders"]["sent"] += 1
+                        logger.info(f"1h reminder sent for appointment {apt.get('id')}")
+                        
+                except ValueError as ve:
+                    logger.warning(f"Could not parse time '{apt_time}' for appointment {apt.get('id')}: {ve}")
+                    
+            except Exception as e:
+                logger.error(f"Failed to send 1h reminder for appointment {apt.get('id')}: {e}")
+    
+    return {
+        "success": True,
+        "timestamp": now.isoformat(),
+        "results": results,
+        "summary": f"24h: {results['24h_reminders']['sent']}/{results['24h_reminders']['checked']} sent, 1h: {results['1h_reminders']['sent']}/{results['1h_reminders']['checked']} sent"
+    }
 
 # Include router AFTER all routes are defined
 app.include_router(api_router)
