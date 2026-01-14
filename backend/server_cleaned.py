@@ -3146,6 +3146,36 @@ class ServiceStatusUpdate(BaseModel):
     status: str
     notes: Optional[str] = None
 
+async def verify_admin(authorization: str = Header(None)):
+    """Verify admin token"""
+    if not authorization or not authorization.startswith('Bearer '):
+        raise HTTPException(status_code=401, detail="Admin authentication required")
+    
+    token = authorization.split(' ')[1]
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        if payload.get('role') not in ['admin', 'super_admin']:
+            raise HTTPException(status_code=403, detail="Admin access required")
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Admin session expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid admin token")
+
+async def verify_staff(authorization: str = Header(None)):
+    """Verify staff token and return staff info"""
+    if not authorization or not authorization.startswith('Bearer '):
+        raise HTTPException(status_code=401, detail="Staff authentication required")
+    
+    token = authorization.split(' ')[1]
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Session expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
 # ============ Staff Management Endpoints ============
 
 # ==================== INTERNAL STAFF/DOCTOR FEEDBACK (NOT PUBLIC) ====================
@@ -3166,26 +3196,6 @@ class StaffUpdate(BaseModel):
     clinic: Optional[str] = None
 
 
-# ============ Staff Login & Role-specific Endpoints ============
-
-# ============ Clinic Staff Endpoints ============
-
-# ============ Emergency Appointments ============
-
-# ============ Add-on Services (Blood Test, Sonography, ECG) ============
-
-👤 *Patient:* {appointment.get('patient_name')}
-📞 *Phone:* {appointment.get('patient_phone', 'N/A')}
-
-👨‍⚕️ *Doctor:* {doctor_name}
-🏥 *Clinic:* {appointment.get('clinic')}
-⏰ *Time:* {appointment.get('time') or 'Emergency'}
-
-✅ *Status:* IN CLINIC
-📝 *Checked in by:* {staff.get('name')}
-
-_Patient is waiting. Please see them shortly._
-
 _Nevika Cura Healthcare_"""
         await send_whatsapp_notification(doctor_number, checkin_message)
     
@@ -3205,7 +3215,6 @@ _Nevika Cura Healthcare_"""
 
 # ============ Doctor Endpoints ============
 
-# Fee code configuration (visible to staff only, not patients)
 FEE_CODES = {
     "G1": {"label": "General - First", "amount": 150, "category": "general"},
     "G2": {"label": "General - Follow up", "amount": 100, "category": "general"},
@@ -3585,17 +3594,10 @@ Need to reschedule? Call us or book online.
 
 # ============ Pharmacy Staff Endpoints ============
 
-# ============ Diagnostics Staff Endpoints ============
-
-# ============ Clinic Staff - Get Today's Appointments ============
-
-# ============ Diagnostic Tests Management ============
 class DiagnosticTestAdd(BaseModel):
     name: str
     category: str  # imaging or pathology
     subcategory: str  # ecg, sonography, blood, urine, stool
-
-# ============ WhatsApp Notifications Management ============
 
 @api_router.get("/diagnostic-tests")
 async def get_public_diagnostic_tests():
@@ -3635,12 +3637,6 @@ class CancelAppointmentsRequest(BaseModel):
     appointments = await db.appointments.find(query, {"_id": 0}).sort([("date", 1), ("time", 1)]).to_list(500)
     return {"appointments": appointments, "total": len(appointments)}
 
-Dear {appt.get('patient_name')},
-Your appointment on {appt.get('date')} at {appt.get('time')} with {request.doctor} has been cancelled.
-
-Reason: {request.reason}
-
-Please reschedule at your convenience.
 Call: 9403890429"""
                 await send_sms_notification(appt.get('patient_phone'), cancel_msg)
         
@@ -3754,10 +3750,6 @@ Call: 9403890429"""
         "message": f"Successfully cancelled {result.modified_count} appointment(s)",
         "cancelled_appointments": appointments_to_cancel
     }
-
-# ============ CLEANUP ENDPOINTS - Day End Operations ============
-
-# ============ Order Tracking & Status Updates ============
 
 class OrderStatusUpdate(BaseModel):
     status: str
@@ -4015,8 +4007,6 @@ app.mount("/api/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads
 # NOTE: Routes below were moved before include_router
 
 # Catch-all handler for root API endpoint to prevent 405 errors
-# ============ PATIENT PROFILE ENDPOINTS ============
-
 class PatientProfile(BaseModel):
     phone: str
     name: str
@@ -4182,8 +4172,6 @@ async def get_loyalty_points_by_phone(phone: str, staff = Depends(verify_staff))
     }
 
 
-# Evara routes moved to routes/evara.py
-# Glydex routes moved to routes/glydex.py
 @api_router.post("/webhook/stripe")
 async def stripe_webhook(request: Request):
     """Handle Stripe webhook events"""
