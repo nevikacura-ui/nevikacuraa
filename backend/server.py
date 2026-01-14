@@ -7467,9 +7467,10 @@ except Exception as e:
 
 # Glydex - Diabetes Care Router
 try:
-    from routes.glydex import router as glydex_router, set_db as set_glydex_db, set_jwt_secret as set_glydex_jwt
+    from routes.glydex import router as glydex_router, set_db as set_glydex_db, set_jwt_secret as set_glydex_jwt, set_notification_functions as set_glydex_notif
     set_glydex_db(db)
     set_glydex_jwt(JWT_SECRET)
+    set_glydex_notif(send_email_notification, send_sms_notification)
     app.include_router(glydex_router, prefix="/api")
     logger.info("Glydex Diabetes Care router loaded")
 except Exception as e:
