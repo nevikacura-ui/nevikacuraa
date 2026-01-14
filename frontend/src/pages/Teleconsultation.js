@@ -79,6 +79,15 @@ const Teleconsultation = () => {
   const [showMyBookings, setShowMyBookings] = useState(false);
   const [showPrescription, setShowPrescription] = useState(null);
   const [showAddFunds, setShowAddFunds] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date()); // For real-time slot updates
+  
+  // Update current time every minute to refresh slot availability
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Update every minute
+    return () => clearInterval(timer);
+  }, []);
   
   const [formData, setFormData] = useState({
     patient_name: user?.name || '',
