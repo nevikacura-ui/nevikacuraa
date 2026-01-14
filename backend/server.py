@@ -9225,6 +9225,10 @@ try:
 except Exception as e:
     logger.warning(f"Could not load ALYNE router: {e}")
 
+# NOTE: Evara and Glydex routes are currently in server.py
+# To be migrated to routes/evara.py and routes/glydex.py in future refactoring
+# The modular files have been created but routes remain in server.py to avoid breaking changes
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
