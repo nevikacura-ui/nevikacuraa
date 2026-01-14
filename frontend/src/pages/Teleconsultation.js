@@ -356,11 +356,10 @@ const Teleconsultation = () => {
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-64 overflow-y-auto">
                   {TIME_SLOTS.map((slot, idx) => {
                     const isBooked = bookedSlots.includes(slot.time12);
-                    const now = new Date();
-                    const isToday = selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(now, 'yyyy-MM-dd');
+                    const isToday = selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(currentTime, 'yyyy-MM-dd');
                     // Block slots that have already passed (with 15 min buffer for booking)
                     const slotTimeInMinutes = slot.hour * 60 + slot.minute;
-                    const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes() + 15; // 15 min buffer
+                    const currentTimeInMinutes = currentTime.getHours() * 60 + currentTime.getMinutes() + 15; // 15 min buffer
                     const isPast = isToday && slotTimeInMinutes <= currentTimeInMinutes;
                     const isDisabled = isBooked || isPast;
                     
