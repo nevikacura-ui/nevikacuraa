@@ -272,9 +272,17 @@ const Teleconsultation = () => {
                   data-testid={`doctor-${doctor.id}`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xl font-bold">
-                      {doctor.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                    </div>
+                    {doctor.image ? (
+                      <img 
+                        src={doctor.image} 
+                        alt={doctor.name}
+                        className="w-16 h-16 rounded-full object-cover border-2 border-blue-100"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xl font-bold">
+                        {doctor.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      </div>
+                    )}
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg">{doctor.name}</h3>
                       <p className="text-sm text-gray-600">{doctor.specialization}</p>
