@@ -213,23 +213,6 @@ export default function AanyaNewbornCare({ childId, childName, childGender }) {
     setLoading(false);
   };
 
-  const StatCard = ({ icon: Icon, title, value, subtitle, color }) => (
-    <Card className="bg-gradient-to-br from-white to-gray-50 border-none shadow-md hover:shadow-lg transition-shadow">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-xl ${color}`}>
-            <Icon className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <p className="text-xs text-gray-500">{title}</p>
-            <p className="text-xl font-bold text-gray-800">{value}</p>
-            {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
   return (
     <div className="space-y-6">
       {/* Header */}
