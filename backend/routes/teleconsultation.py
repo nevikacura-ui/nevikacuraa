@@ -136,6 +136,18 @@ async def book_teleconsultation(
     if data.doctor_id not in TELECONSULT_DOCTORS:
         raise HTTPException(status_code=400, detail="Invalid doctor selected")
     
+    # BOOKING LIMIT: Check if user already has an active teleconsultation
+    active_booking = await db.teleconsult_bookings.find_one({
+        "user_id": user["id"],
+        "status": {"$in": ["pending", "confirmed", "Booked"]},  # Not completed or cancelled
+    })
+    
+    if active_booking:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"You already have an active teleconsultation on {active_booking.get('date')} at {active_booking.get('time')} with {active_booking.get('doctor_name')}. Please complete or cancel it before booking a new one."
+        )
+    
     # Check if slot is available
     existing = await db.teleconsult_bookings.find_one({
         "doctor_id": data.doctor_id,
