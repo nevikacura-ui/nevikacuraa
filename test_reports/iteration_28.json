@@ -196,7 +196,7 @@
     "frontend": "100% (15/15 passed)"
   },
   "test_credentials": {
-    "api_base_url": "https://alyne-kids-health.preview.emergentagent.com",
+    "api_base_url": "https://healthcare-app-27.preview.emergentagent.com",
     "test_user_id": "test_user_123",
     "test_child_id": "child_fc20ed0f2b58"
   },
