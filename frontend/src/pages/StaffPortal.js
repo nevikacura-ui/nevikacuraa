@@ -1418,7 +1418,7 @@ const StaffPortal = () => {
                   <div className="mb-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="font-semibold text-green-800 flex items-center gap-2">
-                        💰 Today's Collection
+                        💰 Today&apos;s Collection
                       </h3>
                       <span className="text-2xl font-bold text-green-600">₹{dailyCollection.total_collection}</span>
                     </div>
