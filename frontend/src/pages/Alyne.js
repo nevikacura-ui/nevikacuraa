@@ -260,6 +260,19 @@ const FEATURE_CATEGORIES = [
       title: 'Growth Tracking',
       description: 'Monitor your child\'s growth with WHO standards'
     }
+  },
+  {
+    id: 'kidszone',
+    title: 'Kids Zone',
+    subtitle: 'Fun health games for ages 3-8!',
+    icon: Gamepad2,
+    color: 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400',
+    requiresChild: true,
+    isNew: true,
+    content: {
+      title: 'ALYNE Kids Zone',
+      description: 'Interactive health activities for children'
+    }
   }
 ];
 
