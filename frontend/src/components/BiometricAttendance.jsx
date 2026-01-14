@@ -213,19 +213,30 @@ export default function BiometricAttendance({ clinic = 'amnion' }) {
     return new Date(isoString).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
   };
 
+  // Clinic display names
+  const clinicNames = {
+    'pushpa': 'Pushpa Clinic',
+    'amnion': 'Amnion Clinic',
+    'pharmacy': 'Orange Pharmacy'
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl p-6 text-white">
+      <div className={`bg-gradient-to-r rounded-2xl p-6 text-white ${
+        clinic === 'pharmacy' ? 'from-orange-500 to-orange-600' : 
+        clinic === 'pushpa' ? 'from-violet-600 to-purple-600' : 
+        'from-blue-600 to-indigo-600'
+      }`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Fingerprint className="w-10 h-10" />
             <div>
               <h2 className="text-2xl font-bold">Biometric Attendance</h2>
-              <p className="text-violet-100">{clinic === 'amnion' ? 'Amnion Clinic' : 'Pushpa Clinic'}</p>
+              <p className="opacity-90">{clinicNames[clinic] || clinic}</p>
             </div>
           </div>
-          <Button onClick={() => setShowRegisterDevice(true)} className="bg-white text-violet-600 hover:bg-violet-50">
+          <Button onClick={() => setShowRegisterDevice(true)} className="bg-white text-gray-800 hover:bg-gray-100">
             <Fingerprint className="w-4 h-4 mr-2" /> Register Staff
           </Button>
         </div>
