@@ -932,6 +932,14 @@ const Pharmacy = () => {
                     placeholder="10-digit mobile number"
                     data-testid="patient-phone"
                   />
+                  {/* Booking Limit Warning */}
+                  {!bookingLimits.loading && !bookingLimits.canBook && (
+                    <div className="mt-2 p-2 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-800">
+                      <p className="font-semibold">⚠️ Order Limit Reached</p>
+                      <p>You have {bookingLimits.activeOrders} active pharmacy orders.</p>
+                      <p className="mt-1">Please wait for delivery or cancel one before placing a new order.</p>
+                    </div>
+                  )}
                 </div>
                 <div className="sm:col-span-2">
                   <Label>Email (Optional)</Label>
