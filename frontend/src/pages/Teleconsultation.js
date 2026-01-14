@@ -279,16 +279,9 @@ const Teleconsultation = () => {
                       <h3 className="font-semibold text-lg">{doctor.name}</h3>
                       <p className="text-sm text-gray-600">{doctor.specialization}</p>
                       <p className="text-xs text-gray-500">{doctor.qualification} • {doctor.experience}</p>
-                      <div className="flex items-center gap-4 mt-2">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                          <span className="text-sm font-medium">{doctor.rating}</span>
-                          <span className="text-xs text-gray-500">({doctor.reviews})</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-gray-500">
-                          <MapPin className="w-3 h-3" />
-                          <span className="text-xs">{doctor.clinic}</span>
-                        </div>
+                      <div className="flex items-center gap-1 text-gray-500 mt-2">
+                        <MapPin className="w-3 h-3" />
+                        <span className="text-xs">{doctor.clinic}</span>
                       </div>
                     </div>
                     <div className="text-right">
