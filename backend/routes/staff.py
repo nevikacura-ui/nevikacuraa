@@ -132,17 +132,17 @@ async def staff_login(input: StaffLogin):
     # Method 1: Username + Password login
     if input.username and input.password:
         logger.info(f"Staff login attempt with username: {input.username}")
-        # Check both staff and admin_staff collections
+        # Check staff collection with 'active' field
         staff_record = await db.staff.find_one({
             "username": input.username,
-            "is_active": True
+            "active": True
         })
         
         if not staff_record:
-            # Try admin_staff collection
-            staff_record = await db.admin_staff.find_one({
+            # Also check with is_active field (different schema)
+            staff_record = await db.staff.find_one({
                 "username": input.username,
-                "active": True
+                "is_active": True
             })
         
         logger.info(f"Found staff record: {staff_record is not None}")
@@ -159,9 +159,10 @@ async def staff_login(input: StaffLogin):
     # Method 2: Phone + Access Code login (for mobile staff)
     elif input.phone and input.access_code:
         staff = await db.staff.find_one({
-            "phone": input.phone,
-            "access_code": input.access_code,
-            "is_active": True
+            "$or": [
+                {"phone": input.phone, "access_code": input.access_code, "is_active": True},
+                {"phone": input.phone, "access_code": input.access_code, "active": True}
+            ]
         })
     
     if not staff:
