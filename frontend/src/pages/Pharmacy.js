@@ -67,6 +67,13 @@ const Pharmacy = () => {
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef([]);
   
+  // Booking limits state
+  const [bookingLimits, setBookingLimits] = useState({
+    canBook: true,
+    activeOrders: 0,
+    loading: true
+  });
+  
   // Loyalty points state
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [pointsToUse, setPointsToUse] = useState(0);
