@@ -177,9 +177,6 @@ async def staff_login(input: StaffLogin):
         },
         "message": f"Welcome, {staff.get('name')}!"
     }
-            "department": staff.get('department')
-        }
-    }
 
 
 # ============ Walk-in Appointments ============
