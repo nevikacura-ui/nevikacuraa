@@ -212,19 +212,38 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 ## Backend Routes Structure
 ```
 /app/backend/
-├── server.py (main routes)
+├── server.py (main routes - ~9200 lines, refactoring in progress)
 ├── routes/
-│   ├── alyne.py (ALYNE Kids Health - NEW)
+│   ├── alyne.py (ALYNE Kids Health)
 │   ├── auth.py (Authentication)
 │   ├── billing.py (Billing & Due Payments)
-│   ├── reminders.py (Automated Reminders)
 │   ├── community.py (Women's Health Community)
+│   ├── doctor_profiles.py (Doctor Profiles & Ratings)
+│   ├── emergency.py (Emergency Services)
+│   ├── evara.py (Evara Women's Wellness - CREATED Jan 14)
+│   ├── glydex.py (Glydex Diabetes Care - CREATED Jan 14)
+│   ├── health_assessment.py (Risk Assessment)
+│   ├── health_packages.py (Health Packages)
+│   ├── health_records.py (EHR)
+│   ├── health_tips.py (Health Tips & Articles)
+│   ├── medication_tracker.py (Pill Tracker)
+│   ├── patient_flow.py (Patient Flow)
+│   ├── pharmacy_loyalty.py (Loyalty Program)
+│   ├── referral.py (Referral Program)
+│   ├── reminders.py (Automated Reminders)
 │   ├── staff_billing.py (Staff Portal Billing)
-│   └── pharmacy_loyalty.py (Loyalty Program)
+│   ├── teleconsultation.py (Video Consult)
+│   └── wearables.py (Terra Integration)
 ├── migrations/
 │   └── migrate_data.py (Data migration script)
 └── models/
 ```
+
+### Routes Migration Status (Jan 14, 2026)
+- ✅ **19 modular route files** in `/app/backend/routes/`
+- 📝 **Evara routes**: File created (`routes/evara.py`), routes still in server.py
+- 📝 **Glydex routes**: File created (`routes/glydex.py`), routes still in server.py
+- 🔴 **Still in server.py**: Admin routes, Staff routes, Pharmacy, Diagnostics, Appointments (~190 routes)
 
 ---
 
