@@ -49,11 +49,18 @@ async def get_current_user(authorization: str = Header(None)):
     try:
         token = authorization.split(" ")[1]
         payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
-        user = await db.users.find_one({"id": payload["user_id"]}, {"_id": 0})
+        # Support both 'sub' (from server.py) and 'user_id' (legacy) for user ID
+        user_id = payload.get("sub") or payload.get("user_id")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+        user = await db.users.find_one({"id": user_id}, {"_id": 0})
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
         return user
-    except:
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except Exception as e:
+        logger.error(f"Token validation error: {e}")
         raise HTTPException(status_code=401, detail="Invalid token")
 
 async def verify_admin(authorization: str = Header(None)):
