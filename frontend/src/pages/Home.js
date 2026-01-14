@@ -408,14 +408,14 @@ const Home = () => {
               <span className="text-sm font-medium">Health Packages</span>
             </button>
             <button
-              onClick={() => navigate('/teleconsult')}
-              className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
-              data-testid="teleconsult-btn"
+              onClick={() => navigate('/quick-reorder')}
+              className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 backdrop-blur rounded-xl border border-green-200 hover:shadow-md transition-all text-center"
+              data-testid="quick-reorder-btn"
             >
-              <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-blue-100 flex items-center justify-center">
-                <Video className="w-5 h-5 text-blue-500" />
+              <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-green-100 flex items-center justify-center">
+                <ChevronRight className="w-5 h-5 text-green-600" />
               </div>
-              <span className="text-sm font-medium">Video Consult</span>
+              <span className="text-sm font-medium text-green-700">Quick Reorder</span>
             </button>
             <button
               onClick={() => navigate('/referral')}
