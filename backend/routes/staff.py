@@ -179,6 +179,7 @@ async def staff_login(input: StaffLogin):
         'username': staff.get('username'),
         'department': staff.get('department'),
         'clinic': staff.get('clinic'),
+        'access_modules': staff.get('access_modules', []),
         'exp': datetime.now(timezone.utc) + timedelta(hours=12)
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
@@ -189,7 +190,8 @@ async def staff_login(input: StaffLogin):
             "name": staff.get('name'),
             "role": staff.get('role'),
             "clinic": staff.get('clinic'),
-            "department": staff.get('department')
+            "department": staff.get('department'),
+            "access_modules": staff.get('access_modules', [])
         },
         "message": f"Welcome, {staff.get('name')}!"
     }
