@@ -7448,6 +7448,17 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Admin router: {e}")
 
+# Staff Routes (extracted from server.py)
+try:
+    from routes.staff import router as staff_router, set_db as set_staff_db, set_jwt_config as set_staff_jwt, set_notification_functions as set_staff_notif
+    set_staff_db(db)
+    set_staff_jwt(JWT_SECRET, JWT_ALGORITHM)
+    set_staff_notif(send_email_notification, send_sms_notification)
+    app.include_router(staff_router, prefix="/api")
+    logger.info("Staff router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Staff router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
