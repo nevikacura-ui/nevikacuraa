@@ -304,6 +304,8 @@ const Home = () => {
                       ...(service.id === 'alyne' ? { filter: 'brightness(1.1) contrast(1.05)' } : {})
                     }}
                     data-testid={`service-logo-${service.id}`}
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : null}
               </div>
