@@ -29,9 +29,7 @@ const TELECONSULT_DOCTORS = [
     qualification: 'MBBS, MS (OBG), DNB',
     experience: '15+ years',
     clinic: 'DiaGyn Healthcare - Pushpa Clinic',
-    rating: 4.8,
-    reviews: 156,
-    fee: 300,
+    fee: 500,
     image: null
   },
   {
@@ -41,9 +39,7 @@ const TELECONSULT_DOCTORS = [
     qualification: 'MBBS, DGO, FICOG',
     experience: '12+ years',
     clinic: 'DiaGyn Healthcare - Amnion Clinic',
-    rating: 4.6,
-    reviews: 98,
-    fee: 250,
+    fee: 500,
     image: null
   }
 ];

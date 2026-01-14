@@ -54,12 +54,12 @@ async def get_current_user(authorization: str = Header(None)):
 TELECONSULT_DOCTORS = {
     "dr-neha-patel": {
         "name": "Dr. Neha Patel",
-        "fee": 300,
+        "fee": 500,
         "specialization": "Obstetrics & Gynecology"
     },
     "dr-vikas-jha": {
         "name": "Dr. Vikas Jha", 
-        "fee": 250,
+        "fee": 500,
         "specialization": "Obstetrics & Gynecology"
     }
 }
