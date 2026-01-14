@@ -2132,3 +2132,967 @@ async def get_kidszone_dashboard(child_id: str):
         "activities_available": len(HEALTH_STAR_ACTIVITIES),
         "completed_today": [a["activity_id"] for a in today_activities]
     }
+
+# ============ VOICE HEALTH BUDDY - Speech-to-Text & Text-to-Speech ============
+
+from fastapi import UploadFile, File
+
+@router.post("/kidszone/buddy/voice")
+async def voice_chat_with_buddy(
+    audio: UploadFile = File(...),
+    child_id: str = None,
+    child_name: str = "Friend",
+    age: int = 5,
+    session_id: str = None
+):
+    """Voice-based chat with Health Buddy - accepts audio, returns audio response"""
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=500, detail="AI service not configured")
+    
+    try:
+        from emergentintegrations.llm.openai import OpenAISpeechToText, OpenAITextToSpeech
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        import base64
+        
+        # Step 1: Convert speech to text using Whisper
+        stt = OpenAISpeechToText(api_key=EMERGENT_LLM_KEY)
+        audio_content = await audio.read()
+        
+        # Create a file-like object for the audio
+        import io
+        audio_file = io.BytesIO(audio_content)
+        audio_file.name = audio.filename or "audio.webm"
+        
+        transcription = await stt.transcribe(
+            file=audio_file,
+            model="whisper-1",
+            response_format="json",
+            language="en"
+        )
+        
+        user_message = transcription.text
+        logger.info(f"Voice transcription: {user_message}")
+        
+        if not user_message or len(user_message.strip()) < 2:
+            return {
+                "success": False,
+                "error": "Could not understand the audio. Please try again.",
+                "transcription": ""
+            }
+        
+        # Step 2: Get AI response using Claude
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=session_id or f"voice_{datetime.now().timestamp()}",
+            system_message=f"""You are ALYNE Buddy, a friendly and kind health helper for children aged 3-8.
+            
+The child talking to you is {child_name}, who is {age} years old.
+
+IMPORTANT RULES FOR VOICE RESPONSES:
+1. Use VERY simple words a {age}-year-old can understand
+2. Keep responses VERY SHORT (1-2 sentences max) - this will be spoken aloud
+3. Be warm, friendly, and encouraging
+4. NEVER diagnose or give medical advice - always say "Let's ask mommy or daddy!"
+5. If the child seems upset or sick, be extra gentle
+6. Speak naturally as if talking to a child
+7. Don't use emojis in your response (they can't be spoken)
+8. End with something positive or a simple question
+"""
+        ).with_model("anthropic", "claude-sonnet-4-5-20250929")
+        
+        ai_response = await chat.send_message(UserMessage(text=user_message))
+        logger.info(f"AI response: {ai_response}")
+        
+        # Step 3: Convert text response to speech using TTS
+        tts = OpenAITextToSpeech(api_key=EMERGENT_LLM_KEY)
+        audio_bytes = await tts.generate_speech(
+            text=ai_response,
+            model="tts-1",
+            voice="shimmer",  # Bright, cheerful voice perfect for kids
+            speed=0.9  # Slightly slower for children to understand
+        )
+        
+        # Convert to base64 for easy frontend handling
+        audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+        
+        # Store the conversation
+        if child_id:
+            chat_doc = {
+                "id": str(uuid.uuid4()),
+                "child_id": child_id,
+                "child_name": child_name,
+                "session_id": session_id,
+                "message": user_message,
+                "response": ai_response,
+                "is_voice": True,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.alyne_buddy_chats.insert_one(chat_doc)
+        
+        return {
+            "success": True,
+            "transcription": user_message,
+            "response": ai_response,
+            "audio_base64": audio_base64,
+            "audio_format": "mp3"
+        }
+        
+    except Exception as e:
+        logger.error(f"Voice buddy error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Voice chat error: {str(e)}")
+
+@router.post("/kidszone/buddy/speak")
+async def text_to_speech(text: str, voice: str = "shimmer"):
+    """Convert text to speech for reading stories or responses aloud"""
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=500, detail="AI service not configured")
+    
+    try:
+        from emergentintegrations.llm.openai import OpenAITextToSpeech
+        import base64
+        
+        # Validate text length
+        if len(text) > 4000:
+            text = text[:4000]  # Truncate to limit
+        
+        tts = OpenAITextToSpeech(api_key=EMERGENT_LLM_KEY)
+        audio_bytes = await tts.generate_speech(
+            text=text,
+            model="tts-1",
+            voice=voice,  # shimmer is cheerful, fable is storytelling
+            speed=0.9
+        )
+        
+        audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+        
+        return {
+            "success": True,
+            "audio_base64": audio_base64,
+            "audio_format": "mp3"
+        }
+        
+    except Exception as e:
+        logger.error(f"TTS error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Speech generation error: {str(e)}")
+
+# ============ CULTURAL HEALTH BRIDGE - For Indo-American Families ============
+
+# Medicine Translation Database (Indian ↔ US equivalents)
+MEDICINE_TRANSLATIONS = [
+    {
+        "indian_name": "Crocin",
+        "us_name": "Tylenol (Acetaminophen)",
+        "generic": "Paracetamol / Acetaminophen",
+        "use": "Fever & Pain relief",
+        "child_dosage": "10-15 mg/kg every 4-6 hours",
+        "notes": "Same active ingredient, different brand names"
+    },
+    {
+        "indian_name": "Brufen",
+        "us_name": "Advil / Motrin (Ibuprofen)",
+        "generic": "Ibuprofen",
+        "use": "Fever, Pain & Inflammation",
+        "child_dosage": "5-10 mg/kg every 6-8 hours",
+        "notes": "Available as children's liquid in both countries"
+    },
+    {
+        "indian_name": "Meftal-P",
+        "us_name": "Not available in US",
+        "generic": "Mefenamic Acid",
+        "use": "Pain relief",
+        "child_dosage": "Consult doctor",
+        "notes": "Use Tylenol or Advil as alternative in US"
+    },
+    {
+        "indian_name": "Digene",
+        "us_name": "Tums / Mylanta",
+        "generic": "Antacid",
+        "use": "Indigestion, Acidity",
+        "child_dosage": "Not for young children",
+        "notes": "Consult pediatrician for children"
+    },
+    {
+        "indian_name": "Ondem / Emeset",
+        "us_name": "Zofran",
+        "generic": "Ondansetron",
+        "use": "Nausea & Vomiting",
+        "child_dosage": "Prescription required",
+        "notes": "Prescription medication in both countries"
+    },
+    {
+        "indian_name": "Cetrizine (Cetzine)",
+        "us_name": "Zyrtec",
+        "generic": "Cetirizine",
+        "use": "Allergies",
+        "child_dosage": "2.5-5 mg based on age",
+        "notes": "Children's version available OTC"
+    },
+    {
+        "indian_name": "Allegra",
+        "us_name": "Allegra",
+        "generic": "Fexofenadine",
+        "use": "Allergies",
+        "child_dosage": "30 mg twice daily (6-11 yrs)",
+        "notes": "Same brand in both countries"
+    },
+    {
+        "indian_name": "ORS (Electral)",
+        "us_name": "Pedialyte",
+        "generic": "Oral Rehydration Salts",
+        "use": "Dehydration, Diarrhea",
+        "child_dosage": "As needed for hydration",
+        "notes": "Essential for child illness recovery"
+    },
+    {
+        "indian_name": "Vicks VapoRub",
+        "us_name": "Vicks VapoRub",
+        "generic": "Camphor/Menthol/Eucalyptus",
+        "use": "Cold & Congestion",
+        "child_dosage": "Not for under 2 years",
+        "notes": "Same product in both countries"
+    },
+    {
+        "indian_name": "Gripe Water",
+        "us_name": "Gripe Water (Mommy's Bliss)",
+        "generic": "Herbal supplement",
+        "use": "Colic, Gas",
+        "child_dosage": "Follow package directions",
+        "notes": "Formulations may vary - check ingredients"
+    },
+    {
+        "indian_name": "Lacto Calamine",
+        "us_name": "Calamine Lotion",
+        "generic": "Calamine",
+        "use": "Skin irritation, Rashes",
+        "child_dosage": "Apply as needed",
+        "notes": "Safe for children"
+    },
+    {
+        "indian_name": "Betadine",
+        "us_name": "Betadine",
+        "generic": "Povidone-Iodine",
+        "use": "Antiseptic",
+        "child_dosage": "External use only",
+        "notes": "Same product available"
+    },
+]
+
+# Indian Foods with US Pediatric Nutrition Info
+INDIAN_FOODS_NUTRITION = [
+    {
+        "name": "Khichdi",
+        "hindi": "खिचड़ी",
+        "description": "Rice and lentil porridge",
+        "us_nutrition": {
+            "calories": "150 per cup",
+            "protein": "5g",
+            "carbs": "25g",
+            "aap_approved": True,
+            "introduction_age": "6 months",
+            "benefits": ["Easy to digest", "Complete protein", "Iron from lentils"]
+        },
+        "allergens": [],
+        "preparation_tip": "Start with thin consistency, thicken as baby grows"
+    },
+    {
+        "name": "Ragi Porridge",
+        "hindi": "रागी का दलिया",
+        "description": "Finger millet cereal",
+        "us_nutrition": {
+            "calories": "120 per cup",
+            "protein": "3g",
+            "carbs": "22g",
+            "calcium": "344mg (high!)",
+            "aap_approved": True,
+            "introduction_age": "6 months",
+            "benefits": ["Calcium-rich", "Gluten-free", "Iron fortified"]
+        },
+        "allergens": [],
+        "preparation_tip": "Mix with breast milk or formula initially"
+    },
+    {
+        "name": "Dal Rice",
+        "hindi": "दाल चावल",
+        "description": "Lentils with rice",
+        "us_nutrition": {
+            "calories": "200 per cup",
+            "protein": "8g",
+            "carbs": "35g",
+            "fiber": "4g",
+            "aap_approved": True,
+            "introduction_age": "8 months",
+            "benefits": ["Complete amino acids", "Plant protein", "Fiber"]
+        },
+        "allergens": [],
+        "preparation_tip": "Add ghee for healthy fats and better absorption"
+    },
+    {
+        "name": "Idli",
+        "hindi": "इडली",
+        "description": "Steamed rice-lentil cakes",
+        "us_nutrition": {
+            "calories": "40 per idli",
+            "protein": "2g",
+            "carbs": "8g",
+            "aap_approved": True,
+            "introduction_age": "8 months",
+            "benefits": ["Fermented (probiotics)", "Easy to digest", "Low fat"]
+        },
+        "allergens": [],
+        "preparation_tip": "Mash for younger babies, soft finger food for older"
+    },
+    {
+        "name": "Paneer",
+        "hindi": "पनीर",
+        "description": "Indian cottage cheese",
+        "us_nutrition": {
+            "calories": "265 per 100g",
+            "protein": "18g",
+            "calcium": "208mg",
+            "aap_approved": True,
+            "introduction_age": "8-10 months",
+            "benefits": ["High protein", "Calcium", "Vegetarian protein source"]
+        },
+        "allergens": ["Dairy"],
+        "preparation_tip": "Cut into small cubes as finger food"
+    },
+    {
+        "name": "Poha",
+        "hindi": "पोहा",
+        "description": "Flattened rice",
+        "us_nutrition": {
+            "calories": "130 per cup",
+            "protein": "2g",
+            "carbs": "27g",
+            "iron": "4mg (fortified)",
+            "aap_approved": True,
+            "introduction_age": "10 months",
+            "benefits": ["Iron-fortified", "Light", "Easy to digest"]
+        },
+        "allergens": [],
+        "preparation_tip": "Make soft with vegetables for toddlers"
+    },
+    {
+        "name": "Upma",
+        "hindi": "उपमा",
+        "description": "Semolina porridge with vegetables",
+        "us_nutrition": {
+            "calories": "180 per cup",
+            "protein": "5g",
+            "carbs": "30g",
+            "fiber": "2g",
+            "aap_approved": True,
+            "introduction_age": "10 months",
+            "benefits": ["Vegetables added", "B vitamins", "Energy"]
+        },
+        "allergens": ["Gluten"],
+        "preparation_tip": "Add colorful vegetables for nutrition"
+    },
+    {
+        "name": "Ghee",
+        "hindi": "घी",
+        "description": "Clarified butter",
+        "us_nutrition": {
+            "calories": "120 per tbsp",
+            "fat": "14g",
+            "vitamin_a": "8% DV",
+            "aap_approved": True,
+            "introduction_age": "6 months",
+            "benefits": ["Healthy fats for brain", "Fat-soluble vitamin absorption", "Lactose-free"]
+        },
+        "allergens": ["Dairy (trace)"],
+        "preparation_tip": "Add small amount to foods for healthy fats"
+    },
+    {
+        "name": "Banana (Kela)",
+        "hindi": "केला",
+        "description": "First food for many Indian babies",
+        "us_nutrition": {
+            "calories": "90 per medium",
+            "potassium": "400mg",
+            "fiber": "3g",
+            "aap_approved": True,
+            "introduction_age": "6 months",
+            "benefits": ["Potassium", "Natural sweetness", "Easy first food"]
+        },
+        "allergens": [],
+        "preparation_tip": "Mash ripe banana, can mix with breast milk"
+    },
+    {
+        "name": "Curd/Yogurt (Dahi)",
+        "hindi": "दही",
+        "description": "Fresh yogurt",
+        "us_nutrition": {
+            "calories": "60 per cup",
+            "protein": "11g",
+            "calcium": "300mg",
+            "aap_approved": True,
+            "introduction_age": "6 months",
+            "benefits": ["Probiotics", "Calcium", "Protein"]
+        },
+        "allergens": ["Dairy"],
+        "preparation_tip": "Use plain, full-fat yogurt - no added sugar"
+    },
+]
+
+# School Health Form Templates
+SCHOOL_FORM_FIELDS = {
+    "immunization_record": {
+        "title": "Immunization Record",
+        "required_vaccines": ["DTaP", "IPV", "MMR", "Varicella", "Hep B", "Hep A"],
+        "fields": ["vaccine_name", "date_given", "doctor_name", "clinic_address"]
+    },
+    "physical_exam": {
+        "title": "Physical Examination Form",
+        "fields": ["height", "weight", "vision", "hearing", "blood_pressure", "doctor_signature", "date"]
+    },
+    "emergency_contact": {
+        "title": "Emergency Contact Information",
+        "fields": ["parent1_name", "parent1_phone", "parent2_name", "parent2_phone", "emergency_contact", "authorized_pickup"]
+    },
+    "medical_conditions": {
+        "title": "Medical Conditions & Allergies",
+        "fields": ["allergies", "chronic_conditions", "medications", "dietary_restrictions", "action_plan"]
+    },
+    "medication_authorization": {
+        "title": "Medication Authorization Form",
+        "fields": ["medication_name", "dosage", "frequency", "reason", "parent_signature", "doctor_signature"]
+    }
+}
+
+class MedicineTranslateRequest(BaseModel):
+    medicine_name: str
+    direction: str = "indian_to_us"  # or "us_to_indian"
+
+class HealthShareRequest(BaseModel):
+    child_id: str
+    recipient_name: str
+    recipient_language: str = "hindi"  # hindi, tamil, telugu, gujarati, bengali
+    include_records: list = ["growth", "vaccinations", "recent_visits"]
+    sender_name: str
+
+class SchoolFormRequest(BaseModel):
+    child_id: str
+    child_name: str
+    form_types: list
+    child_data: dict = {}
+
+@router.get("/cultural-bridge/medicines")
+async def get_medicine_translations():
+    """Get the medicine translation database"""
+    return {
+        "success": True,
+        "medicines": MEDICINE_TRANSLATIONS,
+        "total": len(MEDICINE_TRANSLATIONS)
+    }
+
+@router.post("/cultural-bridge/medicines/translate")
+async def translate_medicine(request: MedicineTranslateRequest):
+    """Translate medicine name between Indian and US equivalents"""
+    search_term = request.medicine_name.lower()
+    
+    results = []
+    for med in MEDICINE_TRANSLATIONS:
+        if request.direction == "indian_to_us":
+            if search_term in med["indian_name"].lower() or search_term in med["generic"].lower():
+                results.append(med)
+        else:
+            if search_term in med["us_name"].lower() or search_term in med["generic"].lower():
+                results.append(med)
+    
+    if not results:
+        # Use AI to help with unknown medicines
+        if EMERGENT_LLM_KEY:
+            try:
+                from emergentintegrations.llm.chat import LlmChat, UserMessage
+                chat = LlmChat(
+                    api_key=EMERGENT_LLM_KEY,
+                    session_id=f"med_translate_{datetime.now().timestamp()}",
+                    system_message="""You are a pharmacist helping translate medicine names between India and USA.
+                    Provide: generic name, US equivalent, use, and any important notes.
+                    Be concise and accurate. If uncertain, say so."""
+                ).with_model("anthropic", "claude-sonnet-4-5-20250929")
+                
+                direction_text = "Indian to US" if request.direction == "indian_to_us" else "US to Indian"
+                ai_response = await chat.send_message(
+                    UserMessage(text=f"Translate this medicine ({direction_text}): {request.medicine_name}")
+                )
+                
+                return {
+                    "success": True,
+                    "matches": [],
+                    "ai_suggestion": ai_response,
+                    "note": "AI-generated suggestion - please verify with a pharmacist"
+                }
+            except:
+                pass
+    
+    return {
+        "success": True,
+        "matches": results,
+        "search_term": request.medicine_name
+    }
+
+@router.get("/cultural-bridge/foods")
+async def get_indian_foods_nutrition():
+    """Get Indian foods with US pediatric nutrition guidelines"""
+    return {
+        "success": True,
+        "foods": INDIAN_FOODS_NUTRITION,
+        "source": "Based on AAP (American Academy of Pediatrics) guidelines"
+    }
+
+@router.get("/cultural-bridge/foods/search")
+async def search_indian_food(query: str):
+    """Search for Indian food nutrition info"""
+    query_lower = query.lower()
+    results = [f for f in INDIAN_FOODS_NUTRITION if query_lower in f["name"].lower() or query_lower in f.get("hindi", "").lower()]
+    return {"success": True, "results": results}
+
+@router.post("/cultural-bridge/share-with-grandparents")
+async def share_health_with_grandparents(request: HealthShareRequest):
+    """Generate a health summary to share with grandparents in India (translated)"""
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=500, detail="AI service not configured")
+    
+    # Get child's health data
+    child = await db.alyne_children.find_one({"id": request.child_id}, {"_id": 0})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    # Collect health records
+    health_data = {"child": child}
+    
+    if "growth" in request.include_records:
+        growth = await db.alyne_growth.find(
+            {"child_id": request.child_id},
+            {"_id": 0}
+        ).sort("date", -1).to_list(5)
+        health_data["growth"] = growth
+    
+    if "vaccinations" in request.include_records:
+        vaccines = await db.alyne_vaccinations.find(
+            {"child_id": request.child_id, "status": "completed"},
+            {"_id": 0}
+        ).to_list(20)
+        health_data["vaccinations"] = vaccines
+    
+    # Generate summary in target language
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        
+        language_names = {
+            "hindi": "Hindi (हिंदी)",
+            "tamil": "Tamil (தமிழ்)",
+            "telugu": "Telugu (తెలుగు)",
+            "gujarati": "Gujarati (ગુજરાતી)",
+            "bengali": "Bengali (বাংলা)",
+            "english": "English"
+        }
+        
+        target_lang = language_names.get(request.recipient_language, "Hindi")
+        
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"share_{datetime.now().timestamp()}",
+            system_message=f"""You are helping create a health update about a grandchild for grandparents in India.
+            
+Write the message in {target_lang}. Make it warm and personal.
+Include: child's name, age, recent growth/weight if available, completed vaccinations, and general health status.
+Keep it conversational and loving - this is from parent to grandparent.
+Start with a warm greeting appropriate to the language/culture."""
+        ).with_model("openai", "gpt-5.2")
+        
+        summary = await chat.send_message(
+            UserMessage(text=f"""Create a health update message from {request.sender_name} to {request.recipient_name}.
+            
+Child's data: {json.dumps(health_data, default=str)}
+
+Make it warm, include the key health information, and write in {target_lang}.""")
+        )
+        
+        # Store the share record
+        share_doc = {
+            "id": str(uuid.uuid4()),
+            "child_id": request.child_id,
+            "recipient_name": request.recipient_name,
+            "language": request.recipient_language,
+            "message": summary,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.alyne_health_shares.insert_one(share_doc)
+        
+        return {
+            "success": True,
+            "message": summary,
+            "language": request.recipient_language,
+            "share_id": share_doc["id"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Health share generation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Could not generate message: {str(e)}")
+
+@router.get("/cultural-bridge/school-forms")
+async def get_school_form_templates():
+    """Get available school health form templates"""
+    return {
+        "success": True,
+        "forms": SCHOOL_FORM_FIELDS,
+        "description": "Common US school health form requirements"
+    }
+
+@router.post("/cultural-bridge/school-forms/generate")
+async def generate_school_forms(request: SchoolFormRequest):
+    """Generate filled school health forms for a child"""
+    # Get child data
+    child = await db.alyne_children.find_one({"id": request.child_id}, {"_id": 0})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    # Get vaccination records
+    vaccinations = await db.alyne_vaccinations.find(
+        {"child_id": request.child_id, "status": "completed"},
+        {"_id": 0}
+    ).to_list(50)
+    
+    # Get latest growth record
+    latest_growth = await db.alyne_growth.find_one(
+        {"child_id": request.child_id},
+        {"_id": 0},
+        sort=[("date", -1)]
+    )
+    
+    generated_forms = {}
+    
+    for form_type in request.form_types:
+        if form_type not in SCHOOL_FORM_FIELDS:
+            continue
+        
+        form_template = SCHOOL_FORM_FIELDS[form_type]
+        
+        if form_type == "immunization_record":
+            generated_forms["immunization_record"] = {
+                "title": form_template["title"],
+                "child_name": request.child_name,
+                "date_of_birth": child.get("date_of_birth"),
+                "vaccines": [
+                    {
+                        "vaccine_name": v.get("vaccine_name"),
+                        "date_given": v.get("date_completed"),
+                        "status": "Completed"
+                    } for v in vaccinations
+                ],
+                "notes": "Please have your pediatrician sign this form"
+            }
+        
+        elif form_type == "physical_exam":
+            generated_forms["physical_exam"] = {
+                "title": form_template["title"],
+                "child_name": request.child_name,
+                "date_of_birth": child.get("date_of_birth"),
+                "height": latest_growth.get("height") if latest_growth else request.child_data.get("height"),
+                "weight": latest_growth.get("weight") if latest_growth else request.child_data.get("weight"),
+                "exam_date": datetime.now().strftime("%Y-%m-%d"),
+                "notes": "To be completed by licensed physician"
+            }
+        
+        elif form_type == "emergency_contact":
+            generated_forms["emergency_contact"] = {
+                "title": form_template["title"],
+                "child_name": request.child_name,
+                **request.child_data
+            }
+        
+        elif form_type == "medical_conditions":
+            generated_forms["medical_conditions"] = {
+                "title": form_template["title"],
+                "child_name": request.child_name,
+                "allergies": child.get("allergies", request.child_data.get("allergies", [])),
+                "conditions": child.get("medical_conditions", request.child_data.get("conditions", [])),
+                "medications": request.child_data.get("medications", [])
+            }
+    
+    return {
+        "success": True,
+        "forms": generated_forms,
+        "child_name": request.child_name,
+        "generated_at": datetime.now().isoformat()
+    }
+
+# ============ DIGITAL HEALTH TWIN - AI Predictive Health Model ============
+
+class HealthTwinProfile(BaseModel):
+    child_id: str
+    family_history: dict = {}  # {"asthma": True, "allergies": ["pollen", "dust"], "diabetes": False}
+    environment: dict = {}  # {"location": "urban", "pets": True, "smokers_home": False}
+    birth_info: dict = {}  # {"premature": False, "birth_weight": 3.2}
+
+class RiskAssessmentRequest(BaseModel):
+    child_id: str
+    assessment_type: str  # "asthma", "allergies", "growth", "comprehensive"
+
+# Risk factors database
+HEALTH_RISK_FACTORS = {
+    "asthma": {
+        "genetic": ["family_history_asthma", "family_history_allergies", "family_history_eczema"],
+        "environmental": ["urban_living", "air_pollution", "second_hand_smoke", "mold_exposure"],
+        "early_life": ["premature_birth", "low_birth_weight", "respiratory_infections"],
+        "symptoms": ["frequent_cough", "wheezing", "shortness_of_breath", "chest_tightness"]
+    },
+    "allergies": {
+        "genetic": ["family_history_allergies", "family_history_eczema", "family_history_asthma"],
+        "environmental": ["pet_exposure", "pollen_region", "dust_mites", "food_sensitivities"],
+        "early_life": ["formula_fed", "early_solid_foods", "antibiotic_use"],
+        "symptoms": ["skin_rashes", "itchy_eyes", "runny_nose", "food_reactions"]
+    },
+    "growth_issues": {
+        "genetic": ["family_short_stature", "family_growth_disorders", "thyroid_history"],
+        "nutritional": ["picky_eating", "dairy_avoidance", "low_protein_diet", "vitamin_deficiency"],
+        "medical": ["chronic_illness", "frequent_infections", "digestive_issues"],
+        "developmental": ["delayed_milestones", "sleep_problems", "activity_level"]
+    },
+    "obesity": {
+        "genetic": ["family_obesity", "family_diabetes", "metabolic_disorders"],
+        "lifestyle": ["sedentary_behavior", "screen_time", "sugary_drinks", "processed_foods"],
+        "environmental": ["limited_outdoor_play", "food_insecurity", "stress_eating"],
+        "medical": ["hormonal_issues", "medications", "sleep_apnea"]
+    }
+}
+
+@router.post("/health-twin/profile")
+async def create_health_twin_profile(profile: HealthTwinProfile):
+    """Create or update a child's Digital Health Twin profile"""
+    existing = await db.alyne_health_twins.find_one({"child_id": profile.child_id})
+    
+    profile_doc = {
+        "child_id": profile.child_id,
+        "family_history": profile.family_history,
+        "environment": profile.environment,
+        "birth_info": profile.birth_info,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if existing:
+        await db.alyne_health_twins.update_one(
+            {"child_id": profile.child_id},
+            {"$set": profile_doc}
+        )
+        return {"success": True, "message": "Health Twin profile updated", "is_new": False}
+    else:
+        profile_doc["id"] = str(uuid.uuid4())
+        profile_doc["created_at"] = datetime.now(timezone.utc).isoformat()
+        await db.alyne_health_twins.insert_one(profile_doc)
+        return {"success": True, "message": "Health Twin profile created", "is_new": True}
+
+@router.get("/health-twin/profile/{child_id}")
+async def get_health_twin_profile(child_id: str):
+    """Get a child's Digital Health Twin profile"""
+    profile = await db.alyne_health_twins.find_one({"child_id": child_id}, {"_id": 0})
+    if not profile:
+        return {"success": False, "profile": None, "message": "No Health Twin profile found"}
+    return {"success": True, "profile": profile}
+
+@router.post("/health-twin/assess-risk")
+async def assess_health_risk(request: RiskAssessmentRequest):
+    """Perform AI-powered health risk assessment"""
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=500, detail="AI service not configured")
+    
+    # Get child data
+    child = await db.alyne_children.find_one({"id": request.child_id}, {"_id": 0})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    # Get Health Twin profile
+    twin_profile = await db.alyne_health_twins.find_one({"child_id": request.child_id}, {"_id": 0})
+    
+    # Get growth history
+    growth_history = await db.alyne_growth.find(
+        {"child_id": request.child_id},
+        {"_id": 0}
+    ).sort("date", -1).to_list(10)
+    
+    # Get mood history (can indicate health patterns)
+    mood_history = await db.alyne_mood_logs.find(
+        {"child_id": request.child_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(30)
+    
+    # Calculate age
+    dob = datetime.strptime(child.get("date_of_birth", "2020-01-01"), "%Y-%m-%d")
+    age_months = (datetime.now() - dob).days // 30
+    
+    # Prepare data for AI analysis
+    assessment_data = {
+        "child": {
+            "name": child.get("name"),
+            "age_months": age_months,
+            "gender": child.get("gender"),
+            "region": child.get("region")
+        },
+        "health_twin_profile": twin_profile or {},
+        "growth_data": growth_history,
+        "mood_patterns": mood_history[:10],
+        "risk_factors": HEALTH_RISK_FACTORS.get(request.assessment_type, HEALTH_RISK_FACTORS)
+    }
+    
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        
+        assessment_types = {
+            "asthma": "asthma and respiratory conditions",
+            "allergies": "allergies and immune sensitivities",
+            "growth": "growth and developmental issues",
+            "comprehensive": "overall health risks including asthma, allergies, growth, and obesity"
+        }
+        
+        focus = assessment_types.get(request.assessment_type, "overall health")
+        
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"risk_{request.child_id}_{datetime.now().timestamp()}",
+            system_message=f"""You are a pediatric health AI assistant performing a Digital Health Twin risk assessment.
+            
+Analyze the provided data to assess risk for {focus}.
+
+Provide your assessment in this JSON structure:
+{{
+    "risk_level": "low" | "moderate" | "elevated" | "high",
+    "risk_score": 0-100,
+    "key_factors": ["factor1", "factor2", ...],
+    "protective_factors": ["factor1", "factor2", ...],
+    "recommendations": [
+        {{"priority": "high"|"medium"|"low", "action": "description", "timeline": "immediate"|"short-term"|"long-term"}}
+    ],
+    "monitoring_suggestions": ["suggestion1", "suggestion2", ...],
+    "when_to_see_doctor": "description of warning signs",
+    "summary": "2-3 sentence summary for parents"
+}}
+
+IMPORTANT:
+- Be evidence-based and cautious
+- Never diagnose - only assess risk
+- Always recommend professional consultation for elevated concerns
+- Consider the family history and environmental factors
+- Provide actionable, parent-friendly recommendations"""
+        ).with_model("openai", "gpt-5.2")
+        
+        ai_response = await chat.send_message(
+            UserMessage(text=f"Perform a {request.assessment_type} risk assessment for this child:\n\n{json.dumps(assessment_data, default=str)}")
+        )
+        
+        # Try to parse as JSON
+        try:
+            # Extract JSON from response
+            import re
+            json_match = re.search(r'\{[\s\S]*\}', ai_response)
+            if json_match:
+                assessment_result = json.loads(json_match.group())
+            else:
+                assessment_result = {"raw_assessment": ai_response}
+        except:
+            assessment_result = {"raw_assessment": ai_response}
+        
+        # Store the assessment
+        assessment_doc = {
+            "id": str(uuid.uuid4()),
+            "child_id": request.child_id,
+            "assessment_type": request.assessment_type,
+            "result": assessment_result,
+            "data_used": assessment_data,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.alyne_risk_assessments.insert_one(assessment_doc)
+        
+        return {
+            "success": True,
+            "assessment_id": assessment_doc["id"],
+            "assessment_type": request.assessment_type,
+            "result": assessment_result,
+            "disclaimer": "This is an AI-assisted risk assessment and not a medical diagnosis. Please consult your pediatrician for professional medical advice."
+        }
+        
+    except Exception as e:
+        logger.error(f"Risk assessment error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Assessment error: {str(e)}")
+
+@router.get("/health-twin/assessments/{child_id}")
+async def get_risk_assessments(child_id: str):
+    """Get all risk assessments for a child"""
+    assessments = await db.alyne_risk_assessments.find(
+        {"child_id": child_id},
+        {"_id": 0, "data_used": 0}  # Exclude raw data for brevity
+    ).sort("created_at", -1).to_list(20)
+    
+    return {"success": True, "assessments": assessments}
+
+@router.get("/health-twin/risk-factors")
+async def get_risk_factor_database():
+    """Get the risk factors database for reference"""
+    return {
+        "success": True,
+        "risk_factors": HEALTH_RISK_FACTORS,
+        "categories": list(HEALTH_RISK_FACTORS.keys())
+    }
+
+@router.get("/health-twin/dashboard/{child_id}")
+async def get_health_twin_dashboard(child_id: str):
+    """Get a comprehensive Digital Health Twin dashboard"""
+    # Get profile
+    profile = await db.alyne_health_twins.find_one({"child_id": child_id}, {"_id": 0})
+    
+    # Get latest assessments (one per type)
+    latest_assessments = {}
+    for assessment_type in ["asthma", "allergies", "growth", "comprehensive"]:
+        assessment = await db.alyne_risk_assessments.find_one(
+            {"child_id": child_id, "assessment_type": assessment_type},
+            {"_id": 0, "data_used": 0},
+            sort=[("created_at", -1)]
+        )
+        if assessment:
+            latest_assessments[assessment_type] = assessment
+    
+    # Get child growth trend
+    growth_data = await db.alyne_growth.find(
+        {"child_id": child_id},
+        {"_id": 0}
+    ).sort("date", -1).to_list(12)
+    
+    # Calculate overall health score (simple algorithm)
+    health_score = 85  # Base score
+    if profile:
+        if profile.get("environment", {}).get("smokers_home"):
+            health_score -= 10
+        if profile.get("birth_info", {}).get("premature"):
+            health_score -= 5
+    
+    for assessment in latest_assessments.values():
+        result = assessment.get("result", {})
+        risk_score = result.get("risk_score", 50)
+        if risk_score > 70:
+            health_score -= 10
+        elif risk_score > 50:
+            health_score -= 5
+    
+    health_score = max(0, min(100, health_score))
+    
+    return {
+        "success": True,
+        "child_id": child_id,
+        "has_profile": profile is not None,
+        "profile_summary": {
+            "family_history_items": len(profile.get("family_history", {})) if profile else 0,
+            "environment_factors": len(profile.get("environment", {})) if profile else 0
+        },
+        "health_score": health_score,
+        "health_status": "Excellent" if health_score >= 80 else "Good" if health_score >= 60 else "Monitor",
+        "latest_assessments": latest_assessments,
+        "growth_trend": growth_data[:6],
+        "recommendations": [
+            "Schedule regular pediatric checkups",
+            "Maintain vaccination schedule",
+            "Track growth monthly",
+            "Complete Health Twin profile for personalized insights"
+        ] if not profile else []
+    }
