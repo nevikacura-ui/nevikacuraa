@@ -205,7 +205,7 @@ const DiaGyn = () => {
         wsRef.current.close();
       }
 
-      const wsUrl = `${WS_URL}/ws/slots?doctor=${encodeURIComponent(doctor.name)}&clinic=${encodeURIComponent(clinic.name)}&date=${dateStr}`;
+      const wsUrl = `${WS_URL}/api/ws/slots?doctor=${encodeURIComponent(doctor.name)}&clinic=${encodeURIComponent(clinic.name)}&date=${dateStr}`;
       
       try {
         const ws = new WebSocket(wsUrl);
