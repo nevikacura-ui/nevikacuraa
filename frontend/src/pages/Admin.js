@@ -892,9 +892,18 @@ const Admin = () => {
               <TrendingUp className="w-4 h-4 mr-2" /> Analytics
             </TabsTrigger>
           </TabsList>
-          <TabsList className="grid w-full grid-cols-1 gap-1 mb-6 h-auto">
+          <TabsList className="grid w-full grid-cols-4 gap-1 mb-6 h-auto">
             <TabsTrigger value="clinic-management" data-testid="clinic-management-tab" className="py-2">
-              <Building2 className="w-4 h-4 mr-2" /> Clinic Management (Queue, Finance, Recall)
+              <Building2 className="w-4 h-4 mr-2" /> Clinic Mgmt
+            </TabsTrigger>
+            <TabsTrigger value="glydex-staff" data-testid="glydex-staff-tab" className="py-2">
+              <Activity className="w-4 h-4 mr-2" /> Glydex Staff
+            </TabsTrigger>
+            <TabsTrigger value="anc-registration" data-testid="anc-registration-tab" className="py-2">
+              <Baby className="w-4 h-4 mr-2" /> ANC
+            </TabsTrigger>
+            <TabsTrigger value="biometric" data-testid="biometric-tab" className="py-2">
+              <Fingerprint className="w-4 h-4 mr-2" /> Attendance
             </TabsTrigger>
           </TabsList>
 
