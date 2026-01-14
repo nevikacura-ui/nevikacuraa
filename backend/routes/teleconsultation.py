@@ -136,8 +136,6 @@ async def book_teleconsultation(
     if data.doctor_id not in TELECONSULT_DOCTORS:
         raise HTTPException(status_code=400, detail="Invalid doctor selected")
     
-    doctor_info = TELECONSULT_DOCTORS[data.doctor_id]
-    
     # Check if slot is available
     existing = await db.teleconsult_bookings.find_one({
         "doctor_id": data.doctor_id,
