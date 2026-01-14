@@ -1388,19 +1388,277 @@ const Admin = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
                 <div>
                   <h2 className="font-heading text-xl font-semibold">Doctor Leave Management</h2>
-                  <p className="text-sm text-muted-foreground">Cancel appointments when doctors are on leave</p>
+                  <p className="text-sm text-muted-foreground">View schedule and cancel appointments when doctors are on leave</p>
                 </div>
-                <Button onClick={() => setShowCancelModal(true)} className="rounded-full bg-red-500 hover:bg-red-600">
+                <Button onClick={() => setShowCancelModal(true)} className="rounded-full bg-red-500 hover:bg-red-600" data-testid="cancel-appointments-btn">
                   <AlertTriangle className="w-4 h-4 mr-2" /> Cancel Appointments
                 </Button>
               </div>
 
+              {/* Schedule Visualization - Week Navigator */}
+              <Card className="p-4 mb-6 bg-gradient-to-r from-slate-50 to-blue-50">
+                <div className="flex items-center justify-between mb-4">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setScheduleWeekStart(addDays(scheduleWeekStart, -7))}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  <div className="text-center">
+                    <h3 className="font-semibold text-lg" data-testid="schedule-week-title">
+                      {format(scheduleWeekStart, 'MMM d')} - {format(addDays(scheduleWeekStart, 6), 'MMM d, yyyy')}
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      {scheduleAppointments.filter(a => a.status !== 'cancelled').length} booked • {scheduleAppointments.filter(a => a.status === 'cancelled').length} cancelled
+                    </p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setScheduleWeekStart(addDays(scheduleWeekStart, 7))}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                {/* Legend */}
+                <div className="flex flex-wrap gap-4 justify-center mb-4 text-xs">
+                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-emerald-500"></div> Available</div>
+                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-blue-500"></div> Booked</div>
+                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-red-500"></div> Cancelled</div>
+                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-amber-500"></div> Emergency</div>
+                </div>
+
+                {scheduleLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Dr. Neha Patel Schedule */}
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-blue-700 flex items-center gap-2 border-b pb-2">
+                        <span className="text-lg">👩‍⚕️</span> Dr. Neha Patel
+                        <span className="text-xs font-normal text-muted-foreground">Pushpa Clinic</span>
+                      </h4>
+                      <div className="grid grid-cols-7 gap-1 text-center">
+                        {[0, 1, 2, 3, 4, 5, 6].map(dayOffset => {
+                          const day = addDays(scheduleWeekStart, dayOffset);
+                          const stats = getScheduleStats(day, 'Dr. Neha Patel');
+                          const isToday = isSameDay(day, new Date());
+                          const isSelected = selectedScheduleDay && isSameDay(day, selectedScheduleDay.date) && selectedScheduleDay.doctor === 'Dr. Neha Patel';
+                          
+                          return (
+                            <div 
+                              key={dayOffset} 
+                              className={`rounded-lg p-2 cursor-pointer transition-all ${isToday ? 'ring-2 ring-blue-400' : ''} ${isSelected ? 'ring-2 ring-amber-400 bg-amber-50' : 'hover:bg-white'}`}
+                              onClick={() => {
+                                setSelectedScheduleDay({ date: day, doctor: 'Dr. Neha Patel' });
+                                setDayAppointments(getAppointmentsForDay(day, 'Dr. Neha Patel'));
+                              }}
+                              data-testid={`schedule-day-neha-${dayOffset}`}
+                            >
+                              <p className="text-xs font-medium text-muted-foreground">{format(day, 'EEE')}</p>
+                              <p className={`text-sm font-bold ${isToday ? 'text-blue-600' : ''}`}>{format(day, 'd')}</p>
+                              
+                              {/* Morning Session */}
+                              <div className="mt-1 text-xs">
+                                <div className="flex items-center justify-center gap-0.5 text-amber-600">
+                                  <Sun className="w-3 h-3" />
+                                  <span>{stats.morning.booked}</span>
+                                </div>
+                                <div className={`h-1.5 rounded-full mt-0.5 ${stats.morning.booked > 0 ? 'bg-blue-500' : 'bg-emerald-200'}`} 
+                                     style={{ opacity: stats.morning.booked > 0 ? Math.min(stats.morning.booked / 10, 1) : 0.3 }}></div>
+                              </div>
+                              
+                              {/* Evening Session */}
+                              <div className="mt-1 text-xs">
+                                <div className="flex items-center justify-center gap-0.5 text-indigo-600">
+                                  <Moon className="w-3 h-3" />
+                                  <span>{stats.evening.booked}</span>
+                                </div>
+                                <div className={`h-1.5 rounded-full mt-0.5 ${stats.evening.booked > 0 ? 'bg-indigo-500' : 'bg-emerald-200'}`}
+                                     style={{ opacity: stats.evening.booked > 0 ? Math.min(stats.evening.booked / 15, 1) : 0.3 }}></div>
+                              </div>
+                              
+                              {stats.morning.cancelled + stats.evening.cancelled > 0 && (
+                                <div className="text-red-500 text-xs mt-1">
+                                  ✕{stats.morning.cancelled + stats.evening.cancelled}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Dr. Vikas Jha Schedule */}
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-green-700 flex items-center gap-2 border-b pb-2">
+                        <span className="text-lg">👨‍⚕️</span> Dr. Vikas Jha
+                        <span className="text-xs font-normal text-muted-foreground">Amnion Clinic</span>
+                      </h4>
+                      <div className="grid grid-cols-7 gap-1 text-center">
+                        {[0, 1, 2, 3, 4, 5, 6].map(dayOffset => {
+                          const day = addDays(scheduleWeekStart, dayOffset);
+                          const stats = getScheduleStats(day, 'Dr. Vikas Jha');
+                          const isToday = isSameDay(day, new Date());
+                          const isSelected = selectedScheduleDay && isSameDay(day, selectedScheduleDay.date) && selectedScheduleDay.doctor === 'Dr. Vikas Jha';
+                          
+                          return (
+                            <div 
+                              key={dayOffset} 
+                              className={`rounded-lg p-2 cursor-pointer transition-all ${isToday ? 'ring-2 ring-green-400' : ''} ${isSelected ? 'ring-2 ring-amber-400 bg-amber-50' : 'hover:bg-white'}`}
+                              onClick={() => {
+                                setSelectedScheduleDay({ date: day, doctor: 'Dr. Vikas Jha' });
+                                setDayAppointments(getAppointmentsForDay(day, 'Dr. Vikas Jha'));
+                              }}
+                              data-testid={`schedule-day-vikas-${dayOffset}`}
+                            >
+                              <p className="text-xs font-medium text-muted-foreground">{format(day, 'EEE')}</p>
+                              <p className={`text-sm font-bold ${isToday ? 'text-green-600' : ''}`}>{format(day, 'd')}</p>
+                              
+                              {/* Morning Session */}
+                              <div className="mt-1 text-xs">
+                                <div className="flex items-center justify-center gap-0.5 text-amber-600">
+                                  <Sun className="w-3 h-3" />
+                                  <span>{stats.morning.booked}</span>
+                                </div>
+                                <div className={`h-1.5 rounded-full mt-0.5 ${stats.morning.booked > 0 ? 'bg-blue-500' : 'bg-emerald-200'}`}
+                                     style={{ opacity: stats.morning.booked > 0 ? Math.min(stats.morning.booked / 10, 1) : 0.3 }}></div>
+                              </div>
+                              
+                              {/* Evening Session */}
+                              <div className="mt-1 text-xs">
+                                <div className="flex items-center justify-center gap-0.5 text-indigo-600">
+                                  <Moon className="w-3 h-3" />
+                                  <span>{stats.evening.booked}</span>
+                                </div>
+                                <div className={`h-1.5 rounded-full mt-0.5 ${stats.evening.booked > 0 ? 'bg-indigo-500' : 'bg-emerald-200'}`}
+                                     style={{ opacity: stats.evening.booked > 0 ? Math.min(stats.evening.booked / 15, 1) : 0.3 }}></div>
+                              </div>
+                              
+                              {stats.morning.cancelled + stats.evening.cancelled > 0 && (
+                                <div className="text-red-500 text-xs mt-1">
+                                  ✕{stats.morning.cancelled + stats.evening.cancelled}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </Card>
+
+              {/* Selected Day Details */}
+              {selectedScheduleDay && (
+                <Card className="p-4 mb-6 border-amber-200 bg-amber-50/50" data-testid="selected-day-details">
+                  <div className="flex justify-between items-center mb-4">
+                    <div>
+                      <h3 className="font-semibold text-lg">
+                        {format(selectedScheduleDay.date, 'EEEE, MMMM d, yyyy')}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">{selectedScheduleDay.doctor}</p>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setSelectedScheduleDay(null)}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* Morning Session */}
+                    <div className="bg-white rounded-lg p-3 border border-amber-200">
+                      <h4 className="font-medium text-amber-700 flex items-center gap-2 mb-3">
+                        <Sun className="w-4 h-4" /> Morning Session
+                        <span className="text-xs bg-amber-100 px-2 py-0.5 rounded">11:00 AM - 2:00 PM</span>
+                      </h4>
+                      {dayAppointments.morning.length > 0 ? (
+                        <div className="space-y-2 max-h-48 overflow-y-auto">
+                          {dayAppointments.morning.map((appt, idx) => (
+                            <div key={idx} className={`flex items-center justify-between p-2 rounded text-sm ${appt.status === 'cancelled' ? 'bg-red-50 line-through text-red-400' : 'bg-slate-50'}`}>
+                              <div>
+                                <p className="font-medium">{appt.patient_name}</p>
+                                <p className="text-xs text-muted-foreground">{appt.time}</p>
+                              </div>
+                              <span className={`text-xs px-2 py-0.5 rounded ${appt.status === 'cancelled' ? 'bg-red-100 text-red-700' : appt.type === 'emergency' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+                                {appt.status === 'cancelled' ? 'Cancelled' : appt.type || 'Booked'}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground text-center py-4">No appointments</p>
+                      )}
+                      <div className="mt-3 pt-2 border-t text-xs text-muted-foreground">
+                        {dayAppointments.morning.filter(a => a.status !== 'cancelled').length} booked • {dayAppointments.morning.filter(a => a.status === 'cancelled').length} cancelled
+                      </div>
+                    </div>
+
+                    {/* Evening Session */}
+                    <div className="bg-white rounded-lg p-3 border border-indigo-200">
+                      <h4 className="font-medium text-indigo-700 flex items-center gap-2 mb-3">
+                        <Moon className="w-4 h-4" /> Evening Session
+                        <span className="text-xs bg-indigo-100 px-2 py-0.5 rounded">6:00 PM - 10:00 PM</span>
+                      </h4>
+                      {dayAppointments.evening.length > 0 ? (
+                        <div className="space-y-2 max-h-48 overflow-y-auto">
+                          {dayAppointments.evening.map((appt, idx) => (
+                            <div key={idx} className={`flex items-center justify-between p-2 rounded text-sm ${appt.status === 'cancelled' ? 'bg-red-50 line-through text-red-400' : 'bg-slate-50'}`}>
+                              <div>
+                                <p className="font-medium">{appt.patient_name}</p>
+                                <p className="text-xs text-muted-foreground">{appt.time}</p>
+                              </div>
+                              <span className={`text-xs px-2 py-0.5 rounded ${appt.status === 'cancelled' ? 'bg-red-100 text-red-700' : appt.type === 'emergency' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+                                {appt.status === 'cancelled' ? 'Cancelled' : appt.type || 'Booked'}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground text-center py-4">No appointments</p>
+                      )}
+                      <div className="mt-3 pt-2 border-t text-xs text-muted-foreground">
+                        {dayAppointments.evening.filter(a => a.status !== 'cancelled').length} booked • {dayAppointments.evening.filter(a => a.status === 'cancelled').length} cancelled
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Cancel Button for Selected Day */}
+                  <div className="mt-4 flex justify-center">
+                    <Button 
+                      variant="outline" 
+                      className="text-red-600 border-red-200 hover:bg-red-50"
+                      onClick={() => {
+                        setCancelForm(prev => ({
+                          ...prev,
+                          doctor: selectedScheduleDay.doctor,
+                          clinic: selectedScheduleDay.doctor === 'Dr. Neha Patel' ? 'Pushpa Clinic' : 'Amnion Clinic',
+                          cancel_type: 'day'
+                        }));
+                        setSelectedDate(selectedScheduleDay.date);
+                        setShowCancelModal(true);
+                      }}
+                    >
+                      <AlertTriangle className="w-4 h-4 mr-2" /> Cancel All for This Day
+                    </Button>
+                  </div>
+                </Card>
+              )}
+
+              {/* Quick Stats and Options */}
               <div className="grid md:grid-cols-2 gap-6">
                 <Card className="p-4 bg-slate-50">
                   <h3 className="font-medium mb-3">Upcoming Appointments</h3>
                   {recentOrders?.appointments?.length > 0 ? (
-                    <div className="space-y-2">
-                      {recentOrders.appointments.filter(a => a.status !== 'cancelled').slice(0, 5).map((appt, idx) => (
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {recentOrders.appointments.filter(a => a.status !== 'cancelled').slice(0, 8).map((appt, idx) => (
                         <div key={idx} className="flex items-center justify-between p-2 bg-white rounded border">
                           <div>
                             <p className="font-medium text-sm">{appt.patient_name}</p>
@@ -1424,9 +1682,14 @@ const Admin = () => {
                   </h3>
                   <ul className="space-y-2 text-sm text-amber-900">
                     <li><span className="font-bold">Session:</span> Cancel a specific time slot</li>
+                    <li><span className="font-bold">Bulk Session:</span> Cancel morning (11-2) or evening (6-10)</li>
                     <li><span className="font-bold">Day:</span> Cancel all appointments for a day</li>
                     <li><span className="font-bold">Range:</span> Cancel for multiple days</li>
+                    <li><span className="font-bold">Session Range:</span> Cancel from date/session to date/session</li>
                   </ul>
+                  <div className="mt-4 p-2 bg-white rounded border border-amber-200">
+                    <p className="text-xs text-amber-700">💡 <strong>Tip:</strong> Click on any day in the schedule above to see details and quickly cancel appointments.</p>
+                  </div>
                 </Card>
               </div>
             </Card>
