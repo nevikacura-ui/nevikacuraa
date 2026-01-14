@@ -782,7 +782,7 @@ const Teleconsultation = () => {
                     size="sm"
                     onClick={() => {
                       // Open UPI payment link
-                      const upiUrl = `upi://pay?pa=nevikacura@ybl&pn=Nevika%20Cura&am=${amt}&cu=INR`;
+                      const upiUrl = `upi://pay?pa=pinelabs.stq4087704@pineaxis&pn=Nevika%20Cura&am=${amt}&cu=INR`;
                       window.open(upiUrl, '_blank');
                       toast.info(`Opening UPI app for ₹${amt}. After payment, contact support for wallet credit.`, { duration: 5000 });
                     }}
