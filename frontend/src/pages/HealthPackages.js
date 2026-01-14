@@ -266,11 +266,10 @@ const HealthPackages = () => {
                       <CardContent className="p-4">
                         <p className="text-sm text-gray-600 mb-3">{pkg.description}</p>
                         <div className="flex items-center gap-2 mb-3">
-                          <span className="text-gray-400 line-through text-sm">₹{pkg.original_price}</span>
-                          <span className="text-2xl font-bold text-green-600">₹{pkg.discounted_price}</span>
+                          <span className="text-sm text-purple-600 font-medium">📋 {pkg.tests?.length || 0} tests included</span>
                         </div>
                         <Button className="w-full" onClick={() => openBooking(pkg)}>
-                          Book Now
+                          View Details
                         </Button>
                       </CardContent>
                     </Card>
