@@ -26,24 +26,47 @@ router = APIRouter(prefix="/glydex", tags=["Glydex"])
 
 # MongoDB connection - will be injected by server.py
 db = None
-_get_current_user = None
+JWT_SECRET = None
 
 def set_db(database):
     """Set the database instance from server.py"""
     global db
     db = database
 
-def set_auth_dependency(auth_func):
-    """Set the authentication dependency from server.py"""
-    global _get_current_user
-    _get_current_user = auth_func
+def set_jwt_secret(secret):
+    """Set the JWT secret from server.py"""
+    global JWT_SECRET
+    JWT_SECRET = secret
 
-async def get_current_user_dep():
-    """Wrapper dependency that calls the injected auth function"""
-    if _get_current_user is None:
-        raise HTTPException(status_code=500, detail="Auth not configured")
-    # The actual auth function will be called by FastAPI's dependency injection
-    return _get_current_user
+async def get_current_user(authorization: str = Header(None)):
+    """Get current user from JWT token"""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    token = authorization.split(" ")[1]
+    try:
+        payload = jwt.decode(token, JWT_SECRET or os.environ.get("JWT_SECRET", "nevika-health-secret-key-2024"), algorithms=["HS256"])
+        user_id = payload.get("sub") or payload.get("user_id")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        
+        user = await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0})
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        
+        # Create User-like object
+        class UserObj:
+            def __init__(self, data):
+                self.id = data.get("id")
+                self.email = data.get("email")
+                self.name = data.get("name")
+                self.phone = data.get("phone")
+        
+        return UserObj(user)
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 # ============ GLYDEX MODELS ============
 
