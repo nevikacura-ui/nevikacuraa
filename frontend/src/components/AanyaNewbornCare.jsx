@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -8,14 +8,31 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { toast } from 'sonner';
 import { 
-  Baby, Droplets, Moon, TrendingUp, Clock, Plus, Check, AlertTriangle,
-  Scale, Ruler, Activity, Heart, Utensils, BedDouble
+  Baby, Droplets, Moon, TrendingUp, Check, AlertTriangle,
+  Scale, Ruler, Activity, Heart, Utensils
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-export default function AanyaNewbornCare({ childId, childName, childDob, childGender }) {
+const StatCard = ({ icon: Icon, title, value, subtitle, color }) => (
+  <Card className="bg-gradient-to-br from-white to-gray-50 border-none shadow-md hover:shadow-lg transition-shadow">
+    <CardContent className="p-4">
+      <div className="flex items-center gap-3">
+        <div className={`p-2 rounded-xl ${color}`}>
+          <Icon className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <p className="text-xs text-gray-500">{title}</p>
+          <p className="text-xl font-bold text-gray-800">{value}</p>
+          {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+export default function AanyaNewbornCare({ childId, childName, childGender }) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
   const [dailyLog, setDailyLog] = useState(null);
@@ -32,7 +49,6 @@ export default function AanyaNewbornCare({ childId, childName, childDob, childGe
   const [showDiaperDialog, setShowDiaperDialog] = useState(false);
   const [showSleepDialog, setShowSleepDialog] = useState(false);
   const [showGrowthDialog, setShowGrowthDialog] = useState(false);
-  const [showMilestoneDialog, setShowMilestoneDialog] = useState(false);
   
   // Form states
   const [feedingForm, setFeedingForm] = useState({ feed_type: 'breastfeed', breast_side: 'left', duration_minutes: 15, amount_ml: 0 });
@@ -41,25 +57,15 @@ export default function AanyaNewbornCare({ childId, childName, childDob, childGe
   const [growthForm, setGrowthForm] = useState({ measurement_type: 'weight', value: '', date: new Date().toISOString().split('T')[0] });
   const [activeSleep, setActiveSleep] = useState(null);
 
-  useEffect(() => {
-    if (childId) {
-      fetchDailyLog();
-      fetchSummaries();
-      fetchMilestones();
-      fetchGrowthData();
-      fetchHealthAlerts();
-    }
-  }, [childId]);
-
-  const fetchDailyLog = async () => {
+  const fetchDailyLog = useCallback(async () => {
     try {
       const res = await fetch(`${API}/api/alyne/newborn/${childId}/daily-log`);
       const data = await res.json();
       if (data.success) setDailyLog(data);
     } catch (err) { console.error('Error fetching daily log:', err); }
-  };
+  }, [childId]);
 
-  const fetchSummaries = async () => {
+  const fetchSummaries = useCallback(async () => {
     try {
       const [feeding, sleep, diaper] = await Promise.all([
         fetch(`${API}/api/alyne/newborn/${childId}/feeding-summary?days=7`).then(r => r.json()),
@@ -70,17 +76,17 @@ export default function AanyaNewbornCare({ childId, childName, childDob, childGe
       if (sleep.success) setSleepSummary(sleep);
       if (diaper.success) setDiaperSummary(diaper);
     } catch (err) { console.error('Error fetching summaries:', err); }
-  };
+  }, [childId]);
 
-  const fetchMilestones = async () => {
+  const fetchMilestones = useCallback(async () => {
     try {
       const res = await fetch(`${API}/api/alyne/newborn/${childId}/milestones`);
       const data = await res.json();
       if (data.success) setMilestones(data);
     } catch (err) { console.error('Error fetching milestones:', err); }
-  };
+  }, [childId]);
 
-  const fetchGrowthData = async () => {
+  const fetchGrowthData = useCallback(async () => {
     try {
       const [summary, chart] = await Promise.all([
         fetch(`${API}/api/alyne/aanya/growth/${childId}/summary`).then(r => r.json()),
@@ -89,15 +95,25 @@ export default function AanyaNewbornCare({ childId, childName, childDob, childGe
       if (summary.success) setGrowthSummary(summary);
       if (chart.success) setGrowthChart(chart);
     } catch (err) { console.error('Error fetching growth data:', err); }
-  };
+  }, [childId]);
 
-  const fetchHealthAlerts = async () => {
+  const fetchHealthAlerts = useCallback(async () => {
     try {
       const res = await fetch(`${API}/api/alyne/newborn/${childId}/health-alerts`);
       const data = await res.json();
       if (data.success) setHealthAlerts(data.alerts || []);
     } catch (err) { console.error('Error fetching alerts:', err); }
-  };
+  }, [childId]);
+
+  useEffect(() => {
+    if (childId) {
+      fetchDailyLog();
+      fetchSummaries();
+      fetchMilestones();
+      fetchGrowthData();
+      fetchHealthAlerts();
+    }
+  }, [childId, fetchDailyLog, fetchSummaries, fetchMilestones, fetchGrowthData, fetchHealthAlerts]);
 
   const handleLogFeeding = async () => {
     setLoading(true);
