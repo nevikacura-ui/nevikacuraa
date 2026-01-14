@@ -13,6 +13,24 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 
 ## What's Been Implemented ✅
 
+### Admin Dashboard Features
+- Medicine inventory management
+- User statistics
+- Staff management (doctors, clinic staff, service staff)
+- Leave/appointment cancellation with notifications
+- **Doctor Schedule Visualization** ✅ (Added Jan 14, 2026)
+  - Weekly calendar view with navigation
+  - Side-by-side doctor view (Dr. Neha Patel & Dr. Vikas Jha)
+  - Morning (11AM-2PM) and Evening (6PM-10PM) sessions shown separately
+  - Color-coded slots: Available (green), Booked (blue), Cancelled (red), Emergency (amber)
+  - Click on any day to see detailed appointment breakdown
+  - Quick "Cancel All for This Day" action
+  - Stats: booked/cancelled count per session
+- Pharmacy order tracking
+- Diagnostic order tracking
+- Loyalty program management
+- Analytics dashboard
+
 ### Session 6 - January 14, 2026 (ALYNE ENHANCEMENTS)
 
 **16. ALYNE Kids Health Module - Phase 2** ✅ (Complete)
