@@ -2377,7 +2377,7 @@ async def get_booked_slots(doctor: str, clinic: str, date: str):
     return {"booked_slots": [b["time"] for b in booked if b.get("time")]}
 
 # ============ WEBSOCKET ENDPOINT FOR REAL-TIME SLOT UPDATES ============
-@app.websocket("/ws/slots")
+@app.websocket("/api/ws/slots")
 async def websocket_slot_updates(
     websocket: WebSocket,
     doctor: str = Query(...),
