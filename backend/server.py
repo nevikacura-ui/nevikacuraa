@@ -7436,6 +7436,18 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Glydex router: {e}")
 
+# Admin Routes (extracted from server.py)
+try:
+    from routes.admin import router as admin_router, set_db as set_admin_db, set_jwt_config, set_admin_password, set_notification_functions
+    set_admin_db(db)
+    set_jwt_config(JWT_SECRET, JWT_ALGORITHM)
+    set_admin_password(ADMIN_PASSWORD)
+    set_notification_functions(send_email_notification, send_sms_notification)
+    app.include_router(admin_router, prefix="/api")
+    logger.info("Admin router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Admin router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
