@@ -351,7 +351,7 @@ async def cancel_booking(booking_id: str, user = Depends(get_current_user)):
             "amount": fee,
             "service_type": "teleconsult",
             "reference_id": booking_id,
-            "description": f"Refund for cancelled consultation",
+            "description": "Refund for cancelled consultation",
             "status": "completed",
             "balance_after": new_balance,
             "created_at": datetime.now(timezone.utc).isoformat()
