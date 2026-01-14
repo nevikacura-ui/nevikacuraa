@@ -3570,3 +3570,336 @@ async def get_newborn_health_alerts(child_id: str):
         }
     }
 
+
+# ============ AANYA BY ALYNE - BABY GROWTH CHART (WHO Standards) ============
+
+# WHO Growth Standards (simplified percentiles for weight in kg and height in cm)
+WHO_GROWTH_STANDARDS = {
+    "male": {
+        "weight": {
+            # Age in months: [3rd, 15th, 50th, 85th, 97th percentile]
+            0: [2.5, 2.9, 3.3, 3.9, 4.4],
+            1: [3.4, 3.9, 4.5, 5.1, 5.8],
+            2: [4.3, 4.9, 5.6, 6.3, 7.1],
+            3: [5.0, 5.7, 6.4, 7.2, 8.0],
+            4: [5.6, 6.3, 7.0, 7.9, 8.7],
+            5: [6.0, 6.7, 7.5, 8.4, 9.3],
+            6: [6.4, 7.1, 7.9, 8.9, 9.8],
+            7: [6.7, 7.4, 8.3, 9.3, 10.3],
+            8: [6.9, 7.7, 8.6, 9.6, 10.7],
+            9: [7.1, 8.0, 8.9, 10.0, 11.0],
+            10: [7.4, 8.2, 9.2, 10.3, 11.4],
+            11: [7.6, 8.4, 9.4, 10.5, 11.7],
+            12: [7.7, 8.6, 9.6, 10.8, 12.0],
+            18: [8.8, 9.8, 10.9, 12.2, 13.7],
+            24: [9.7, 10.8, 12.2, 13.6, 15.3]
+        },
+        "height": {
+            0: [46.1, 48.0, 49.9, 51.8, 53.7],
+            1: [50.8, 52.8, 54.7, 56.7, 58.6],
+            2: [54.4, 56.4, 58.4, 60.4, 62.4],
+            3: [57.3, 59.4, 61.4, 63.5, 65.5],
+            4: [59.7, 61.8, 63.9, 66.0, 68.0],
+            5: [61.7, 63.8, 65.9, 68.0, 70.1],
+            6: [63.3, 65.5, 67.6, 69.8, 71.9],
+            7: [64.8, 67.0, 69.2, 71.3, 73.5],
+            8: [66.2, 68.4, 70.6, 72.8, 75.0],
+            9: [67.5, 69.7, 72.0, 74.2, 76.5],
+            10: [68.7, 71.0, 73.3, 75.6, 77.9],
+            11: [69.9, 72.2, 74.5, 76.9, 79.2],
+            12: [71.0, 73.4, 75.7, 78.1, 80.5],
+            18: [76.9, 79.6, 82.3, 85.0, 87.7],
+            24: [81.7, 84.8, 87.8, 90.9, 93.9]
+        }
+    },
+    "female": {
+        "weight": {
+            0: [2.4, 2.8, 3.2, 3.7, 4.2],
+            1: [3.2, 3.6, 4.2, 4.8, 5.5],
+            2: [3.9, 4.5, 5.1, 5.8, 6.6],
+            3: [4.5, 5.2, 5.8, 6.6, 7.5],
+            4: [5.0, 5.7, 6.4, 7.3, 8.2],
+            5: [5.4, 6.1, 6.9, 7.8, 8.8],
+            6: [5.7, 6.5, 7.3, 8.3, 9.3],
+            7: [6.0, 6.8, 7.6, 8.6, 9.8],
+            8: [6.3, 7.0, 7.9, 9.0, 10.2],
+            9: [6.5, 7.3, 8.2, 9.3, 10.5],
+            10: [6.7, 7.5, 8.5, 9.6, 10.9],
+            11: [6.9, 7.7, 8.7, 9.9, 11.2],
+            12: [7.0, 7.9, 8.9, 10.1, 11.5],
+            18: [8.1, 9.1, 10.2, 11.6, 13.2],
+            24: [9.0, 10.2, 11.5, 13.0, 14.8]
+        },
+        "height": {
+            0: [45.4, 47.3, 49.1, 51.0, 52.9],
+            1: [49.8, 51.7, 53.7, 55.6, 57.6],
+            2: [53.0, 55.0, 57.1, 59.1, 61.1],
+            3: [55.6, 57.7, 59.8, 61.9, 64.0],
+            4: [57.8, 59.9, 62.1, 64.3, 66.4],
+            5: [59.6, 61.8, 64.0, 66.2, 68.5],
+            6: [61.2, 63.5, 65.7, 68.0, 70.3],
+            7: [62.7, 65.0, 67.3, 69.6, 71.9],
+            8: [64.0, 66.4, 68.7, 71.1, 73.5],
+            9: [65.3, 67.7, 70.1, 72.6, 75.0],
+            10: [66.5, 69.0, 71.5, 73.9, 76.4],
+            11: [67.7, 70.3, 72.8, 75.3, 77.8],
+            12: [68.9, 71.4, 74.0, 76.6, 79.2],
+            18: [74.0, 76.9, 79.9, 82.8, 85.7],
+            24: [79.3, 82.5, 85.7, 88.9, 92.0]
+        }
+    }
+}
+
+class GrowthMeasurement(BaseModel):
+    """Model for baby growth measurement"""
+    child_id: str
+    measurement_type: str  # weight, height, head_circumference
+    value: float  # kg for weight, cm for height/head
+    date: str  # YYYY-MM-DD
+    notes: Optional[str] = None
+    measured_by: Optional[str] = None
+
+def calculate_percentile(value: float, percentiles: list) -> dict:
+    """Calculate which percentile range the value falls into"""
+    if value < percentiles[0]:
+        return {"percentile": "<3rd", "status": "below_normal", "alert": True}
+    elif value < percentiles[1]:
+        return {"percentile": "3rd-15th", "status": "low_normal", "alert": False}
+    elif value < percentiles[2]:
+        return {"percentile": "15th-50th", "status": "normal", "alert": False}
+    elif value < percentiles[3]:
+        return {"percentile": "50th-85th", "status": "normal", "alert": False}
+    elif value < percentiles[4]:
+        return {"percentile": "85th-97th", "status": "high_normal", "alert": False}
+    else:
+        return {"percentile": ">97th", "status": "above_normal", "alert": True}
+
+def get_nearest_month_standards(age_months: int, gender: str, measure_type: str) -> list:
+    """Get WHO standards for nearest available month"""
+    standards = WHO_GROWTH_STANDARDS.get(gender, WHO_GROWTH_STANDARDS["male"])
+    type_standards = standards.get(measure_type, {})
+    
+    available_months = sorted(type_standards.keys())
+    
+    # Find nearest month
+    nearest = min(available_months, key=lambda x: abs(x - age_months))
+    return type_standards.get(nearest, [3, 4, 5, 6, 7])  # Default fallback
+
+@router.post("/aanya/growth/record")
+async def record_growth_measurement(measurement: GrowthMeasurement):
+    """Record a growth measurement for Aanya by Alyne growth tracking"""
+    child = await db.alyne_children.find_one({"id": measurement.child_id})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    # Calculate age in months
+    try:
+        dob = datetime.strptime(child["date_of_birth"], "%Y-%m-%d")
+        measure_date = datetime.strptime(measurement.date, "%Y-%m-%d")
+        age_months = (measure_date.year - dob.year) * 12 + (measure_date.month - dob.month)
+    except:
+        age_months = 0
+    
+    # Get percentile based on WHO standards
+    gender = child.get("gender", "male").lower()
+    if gender not in ["male", "female"]:
+        gender = "male"
+    
+    percentile_data = None
+    if measurement.measurement_type in ["weight", "height"]:
+        standards = get_nearest_month_standards(age_months, gender, measurement.measurement_type)
+        percentile_data = calculate_percentile(measurement.value, standards)
+    
+    growth_doc = {
+        "id": str(uuid.uuid4()),
+        "child_id": measurement.child_id,
+        "measurement_type": measurement.measurement_type,
+        "value": measurement.value,
+        "unit": "kg" if measurement.measurement_type == "weight" else "cm",
+        "date": measurement.date,
+        "age_months": age_months,
+        "percentile": percentile_data,
+        "notes": measurement.notes,
+        "measured_by": measurement.measured_by,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.aanya_growth_records.insert_one(growth_doc)
+    
+    alert_message = None
+    if percentile_data and percentile_data.get("alert"):
+        if percentile_data["status"] == "below_normal":
+            alert_message = f"⚠️ {measurement.measurement_type.title()} is below 3rd percentile. Please consult your pediatrician."
+        elif percentile_data["status"] == "above_normal":
+            alert_message = f"📊 {measurement.measurement_type.title()} is above 97th percentile. Monitor and consult if needed."
+    
+    return {
+        "success": True,
+        "measurement_id": growth_doc["id"],
+        "age_months": age_months,
+        "percentile": percentile_data,
+        "alert": alert_message,
+        "message": f"{measurement.measurement_type.title()} recorded: {measurement.value} {'kg' if measurement.measurement_type == 'weight' else 'cm'}"
+    }
+
+@router.get("/aanya/growth/{child_id}/chart")
+async def get_growth_chart(child_id: str, measurement_type: str = "weight"):
+    """Get growth chart data with WHO percentile curves"""
+    child = await db.alyne_children.find_one({"id": child_id}, {"_id": 0})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    # Get all measurements of this type
+    measurements = await db.aanya_growth_records.find({
+        "child_id": child_id,
+        "measurement_type": measurement_type
+    }, {"_id": 0}).sort("date", 1).to_list(100)
+    
+    gender = child.get("gender", "male").lower()
+    if gender not in ["male", "female"]:
+        gender = "male"
+    
+    # Get WHO reference curves
+    standards = WHO_GROWTH_STANDARDS.get(gender, WHO_GROWTH_STANDARDS["male"])
+    type_standards = standards.get(measurement_type, {})
+    
+    # Build reference curves
+    reference_curves = {
+        "3rd": [],
+        "15th": [],
+        "50th": [],
+        "85th": [],
+        "97th": []
+    }
+    
+    percentile_indices = {"3rd": 0, "15th": 1, "50th": 2, "85th": 3, "97th": 4}
+    
+    for month in sorted(type_standards.keys()):
+        values = type_standards[month]
+        for pct, idx in percentile_indices.items():
+            reference_curves[pct].append({"month": month, "value": values[idx]})
+    
+    # Calculate current status
+    current_status = None
+    if measurements:
+        latest = measurements[-1]
+        current_status = {
+            "value": latest.get("value"),
+            "percentile": latest.get("percentile", {}).get("percentile"),
+            "status": latest.get("percentile", {}).get("status"),
+            "age_months": latest.get("age_months"),
+            "date": latest.get("date")
+        }
+    
+    return {
+        "success": True,
+        "child_name": child.get("name"),
+        "gender": gender,
+        "measurement_type": measurement_type,
+        "unit": "kg" if measurement_type == "weight" else "cm",
+        "measurements": measurements,
+        "reference_curves": reference_curves,
+        "current_status": current_status
+    }
+
+@router.get("/aanya/growth/{child_id}/summary")
+async def get_growth_summary(child_id: str):
+    """Get comprehensive growth summary for a child"""
+    child = await db.alyne_children.find_one({"id": child_id}, {"_id": 0})
+    if not child:
+        raise HTTPException(status_code=404, detail="Child not found")
+    
+    # Calculate current age
+    try:
+        dob = datetime.strptime(child["date_of_birth"], "%Y-%m-%d")
+        today = datetime.now()
+        age_months = (today.year - dob.year) * 12 + (today.month - dob.month)
+        age_days = (today - dob).days
+    except:
+        age_months = 0
+        age_days = 0
+    
+    # Get latest measurements
+    latest_weight = await db.aanya_growth_records.find_one(
+        {"child_id": child_id, "measurement_type": "weight"},
+        {"_id": 0},
+        sort=[("date", -1)]
+    )
+    
+    latest_height = await db.aanya_growth_records.find_one(
+        {"child_id": child_id, "measurement_type": "height"},
+        {"_id": 0},
+        sort=[("date", -1)]
+    )
+    
+    latest_head = await db.aanya_growth_records.find_one(
+        {"child_id": child_id, "measurement_type": "head_circumference"},
+        {"_id": 0},
+        sort=[("date", -1)]
+    )
+    
+    # Calculate growth velocity (if multiple measurements)
+    weight_history = await db.aanya_growth_records.find(
+        {"child_id": child_id, "measurement_type": "weight"},
+        {"_id": 0}
+    ).sort("date", -1).limit(3).to_list(3)
+    
+    growth_velocity = None
+    if len(weight_history) >= 2:
+        recent = weight_history[0]
+        previous = weight_history[1]
+        try:
+            days_diff = (datetime.strptime(recent["date"], "%Y-%m-%d") - 
+                        datetime.strptime(previous["date"], "%Y-%m-%d")).days
+            if days_diff > 0:
+                weight_diff = recent["value"] - previous["value"]
+                growth_velocity = {
+                    "kg_per_month": round(weight_diff / days_diff * 30, 2),
+                    "period_days": days_diff
+                }
+        except:
+            pass
+    
+    # Alerts
+    alerts = []
+    if latest_weight and latest_weight.get("percentile", {}).get("alert"):
+        alerts.append({
+            "type": "weight",
+            "message": f"Weight is {latest_weight.get('percentile', {}).get('percentile')} - may need attention"
+        })
+    if latest_height and latest_height.get("percentile", {}).get("alert"):
+        alerts.append({
+            "type": "height",
+            "message": f"Height is {latest_height.get('percentile', {}).get('percentile')} - may need attention"
+        })
+    
+    return {
+        "success": True,
+        "child": {
+            "name": child.get("name"),
+            "date_of_birth": child.get("date_of_birth"),
+            "gender": child.get("gender"),
+            "age_months": age_months,
+            "age_display": f"{age_months // 12}y {age_months % 12}m" if age_months >= 12 else f"{age_months}m {age_days % 30}d"
+        },
+        "measurements": {
+            "weight": {
+                "latest": latest_weight.get("value") if latest_weight else None,
+                "percentile": latest_weight.get("percentile") if latest_weight else None,
+                "date": latest_weight.get("date") if latest_weight else None
+            },
+            "height": {
+                "latest": latest_height.get("value") if latest_height else None,
+                "percentile": latest_height.get("percentile") if latest_height else None,
+                "date": latest_height.get("date") if latest_height else None
+            },
+            "head_circumference": {
+                "latest": latest_head.get("value") if latest_head else None,
+                "date": latest_head.get("date") if latest_head else None
+            }
+        },
+        "growth_velocity": growth_velocity,
+        "alerts": alerts,
+        "next_checkup_tip": "Schedule growth measurement every 2-4 weeks for infants under 6 months"
+    }
+
