@@ -2805,12 +2805,32 @@ async def get_diagnostic_orders(user = Depends(get_current_user)):
 @api_router.post("/pharmacy", response_model=PharmacyOrder)
 async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(get_current_user)):
     # ORDER LIMIT: Check if user already has 2 active pharmacy orders
-    active_orders_count = await db.pharmacy_orders.count_documents({
+    active_orders = await db.pharmacy_orders.find({
         "patient_phone": input.patient_phone,
         "status": {"$in": ["pending", "Pending", "confirmed", "Confirmed", "Processing", "Ready for Pickup", "ready_for_pickup", "Out for Delivery", "out_for_delivery"]}
-    })
+    }, {"_id": 0, "id": 1, "medicines": 1, "status": 1, "created_at": 1}).to_list(2)
     
-    if active_orders_count >= 2:
+    if len(active_orders) >= 2:
+        # Notify staff about order limit reached
+        try:
+            orders_info = "\n".join([f"  • Order {o.get('id', 'N/A')[:8]}: {len(o.get('medicines', []))} items - {o.get('status')}" for o in active_orders])
+            medicines_text = ", ".join([m.get('name', 'Unknown') for m in input.medicines[:3]])
+            staff_message = f"""⚠️ PHARMACY ORDER LIMIT REACHED
+
+Patient: {input.patient_name}
+Phone: {input.patient_phone}
+Tried to order: {medicines_text}
+
+❌ BLOCKED - Already has 2 active orders:
+{orders_info}
+
+Please check if orders need delivery update."""
+
+            await send_sms_notification(STAFF_PHONE_NUMBERS.get('orange', ['9833188288'])[0], staff_message)
+            logger.info(f"Staff notified about pharmacy order limit for {input.patient_phone}")
+        except Exception as e:
+            logger.error(f"Failed to notify staff about pharmacy order limit: {e}")
+        
         raise HTTPException(
             status_code=400, 
             detail="You already have 2 active pharmacy orders. Please wait for them to be delivered or cancel one before placing a new order."
