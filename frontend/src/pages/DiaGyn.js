@@ -686,28 +686,41 @@ const DiaGyn = () => {
                         {availableSlots.map(slot => {
                           const isBooked = bookedSlots.includes(slot);
                           const hour = parseInt(slot.split(':')[0]);
+                          const minute = parseInt(slot.split(':')[1]) || 0;
                           const isMorning = hour >= 11 && hour < 14;
                           const isEvening = hour >= 18 && hour <= 22;
+                          
+                          // Check if slot time has passed (for today's date)
+                          const now = new Date();
+                          const isToday = selectedDate && 
+                            selectedDate.toDateString() === now.toDateString();
+                          const slotTimeInMinutes = hour * 60 + minute;
+                          const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes() + 15; // 15 min buffer
+                          const isPast = isToday && slotTimeInMinutes <= currentTimeInMinutes;
+                          const isDisabled = isBooked || isPast;
                           
                           return (
                             <button
                               key={slot}
-                              onClick={() => !isBooked && setSelectedSlot(slot)}
-                              disabled={isBooked}
+                              onClick={() => !isDisabled && setSelectedSlot(slot)}
+                              disabled={isDisabled}
                               className={`p-2 text-sm rounded-lg border transition-all ${
-                                isBooked 
-                                  ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed line-through' 
-                                  : selectedSlot === slot 
-                                    ? 'bg-brand-blue text-white border-brand-blue shadow-lg scale-105' 
-                                    : isMorning
-                                      ? 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 hover:border-amber-400'
-                                      : isEvening
-                                        ? 'bg-indigo-50 border-indigo-300 text-indigo-800 hover:bg-indigo-100 hover:border-indigo-400'
-                                        : 'hover:border-brand-blue'
+                                isPast
+                                  ? 'bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed line-through'
+                                  : isBooked 
+                                    ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed line-through' 
+                                    : selectedSlot === slot 
+                                      ? 'bg-brand-blue text-white border-brand-blue shadow-lg scale-105' 
+                                      : isMorning
+                                        ? 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 hover:border-amber-400'
+                                        : isEvening
+                                          ? 'bg-indigo-50 border-indigo-300 text-indigo-800 hover:bg-indigo-100 hover:border-indigo-400'
+                                          : 'hover:border-brand-blue'
                               }`}
                               data-testid={`slot-${slot}`}
+                              title={isPast ? 'Time has passed' : isBooked ? 'Already booked' : 'Available'}
                             >
-                              {isBooked && <Ban className="w-3 h-3 inline mr-1" />}
+                              {(isBooked || isPast) && <Ban className="w-3 h-3 inline mr-1" />}
                               {slot}
                             </button>
                           );
