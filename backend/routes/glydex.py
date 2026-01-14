@@ -26,7 +26,7 @@ router = APIRouter(prefix="/glydex", tags=["Glydex"])
 
 # MongoDB connection - will be injected by server.py
 db = None
-get_current_user = None
+_get_current_user = None
 
 def set_db(database):
     """Set the database instance from server.py"""
@@ -35,14 +35,15 @@ def set_db(database):
 
 def set_auth_dependency(auth_func):
     """Set the authentication dependency from server.py"""
-    global get_current_user
-    get_current_user = auth_func
+    global _get_current_user
+    _get_current_user = auth_func
 
-def get_user_dependency():
-    """Dynamic dependency to get current user"""
-    if get_current_user is None:
+async def get_current_user_dep():
+    """Wrapper dependency that calls the injected auth function"""
+    if _get_current_user is None:
         raise HTTPException(status_code=500, detail="Auth not configured")
-    return get_current_user
+    # The actual auth function will be called by FastAPI's dependency injection
+    return _get_current_user
 
 # ============ GLYDEX MODELS ============
 
