@@ -648,6 +648,13 @@ GET  /api/alyne/shop/orders/{user_id} - Get user orders
 
 ## Remaining/Future Tasks
 
+🟠 **P1:** Complete Backend Refactoring
+   - Extract Evara routes from server.py (file exists, not activated)
+   - Extract Glydex routes from server.py (file exists, not activated)
+   - Extract Admin routes from server.py
+   - Extract Staff routes from server.py
+   - Goal: Reduce server.py from ~9600 to ~4000 lines
+
 🔴 **P0:** Cashfree Payment Gateway (Awaiting API credentials from user)
    - Integration playbook ready
    - Will replace/supplement Stripe for Evara subscriptions
@@ -656,7 +663,6 @@ GET  /api/alyne/shop/orders/{user_id} - Get user orders
    - Backend webhook ready
    - Needs frontend UI for device connection
 
-🔵 **P2:** Refactor server.py (~8400 lines) into modular routes
 🔵 **P2:** Refactor large frontend components (Evara.js, Glydex.js, Admin.js)
 🔵 **P2:** Migrate hardcoded data to MongoDB (food database, Evara content)
 
