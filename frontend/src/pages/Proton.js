@@ -1184,7 +1184,7 @@ const Proton = () => {
             {/* Submit Button */}
             <Button 
               onClick={handleSubmit} 
-              disabled={loading || !preferredDate}
+              disabled={loading || !preferredDate || !bookingLimits.canBook}
               className="w-full bg-indigo-600 hover:bg-indigo-700 h-12 text-lg"
               data-testid="book-now-btn"
             >
@@ -1192,6 +1192,11 @@ const Proton = () => {
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                   Processing...
+                </>
+              ) : !bookingLimits.canBook ? (
+                <>
+                  <AlertTriangle className="w-5 h-5 mr-2" />
+                  Complete Existing Orders First
                 </>
               ) : (
                 <>
