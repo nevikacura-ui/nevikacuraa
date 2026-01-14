@@ -425,7 +425,7 @@ export default function AanyaNewbornCare({ childId, childName, childGender }) {
         {/* Timeline Tab */}
         <TabsContent value="timeline">
           <Card>
-            <CardHeader><CardTitle className="text-lg">Today's Timeline</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-lg">Today&apos;s Timeline</CardTitle></CardHeader>
             <CardContent>
               {dailyLog?.timeline?.length > 0 ? (
                 <div className="space-y-3">
