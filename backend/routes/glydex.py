@@ -154,7 +154,7 @@ async def schedule_glydex_test_reminders(user_id: str, profile: dict):
 # ============ GLYDEX ROUTES ============
 
 @router.get("/profile")
-async def get_glydex_profile(user = Depends(get_user_dependency)):
+async def get_glydex_profile(user = Depends(get_current_user)):
     """Get user's Glydex diabetes profile"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -166,7 +166,7 @@ async def get_glydex_profile(user = Depends(get_user_dependency)):
 
 
 @router.post("/profile")
-async def save_glydex_profile(data: GlydexProfile, user = Depends(get_user_dependency)):
+async def save_glydex_profile(data: GlydexProfile, user = Depends(get_current_user)):
     """Save or update user's Glydex diabetes profile"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -206,7 +206,7 @@ async def save_glydex_profile(data: GlydexProfile, user = Depends(get_user_depen
 
 
 @router.get("/reminders")
-async def get_glydex_reminders(user = Depends(get_user_dependency)):
+async def get_glydex_reminders(user = Depends(get_current_user)):
     """Get user's diabetes test reminders"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -229,7 +229,7 @@ async def get_glydex_reminders(user = Depends(get_user_dependency)):
 
 
 @router.post("/reminders/update-test-date")
-async def update_glydex_test_date(data: TestDateUpdate, user = Depends(get_user_dependency)):
+async def update_glydex_test_date(data: TestDateUpdate, user = Depends(get_current_user)):
     """Update last test date and reschedule reminder"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -297,7 +297,7 @@ async def send_due_reminders(admin_key: str = None):
 # ============ SUGAR LOGS ============
 
 @router.get("/sugar-logs")
-async def get_sugar_logs(user = Depends(get_user_dependency)):
+async def get_sugar_logs(user = Depends(get_current_user)):
     """Get user's blood sugar logs"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -310,7 +310,7 @@ async def get_sugar_logs(user = Depends(get_user_dependency)):
 
 
 @router.post("/sugar-logs")
-async def add_sugar_log(data: SugarLog, user = Depends(get_user_dependency)):
+async def add_sugar_log(data: SugarLog, user = Depends(get_current_user)):
     """Add a new blood sugar log"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -330,7 +330,7 @@ async def add_sugar_log(data: SugarLog, user = Depends(get_user_dependency)):
 
 
 @router.delete("/sugar-logs/{log_id}")
-async def delete_sugar_log(log_id: str, user = Depends(get_user_dependency)):
+async def delete_sugar_log(log_id: str, user = Depends(get_current_user)):
     """Delete a blood sugar log"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -342,7 +342,7 @@ async def delete_sugar_log(log_id: str, user = Depends(get_user_dependency)):
 
 
 @router.get("/sugar-stats")
-async def get_sugar_stats(user = Depends(get_user_dependency)):
+async def get_sugar_stats(user = Depends(get_current_user)):
     """Get blood sugar statistics"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -375,7 +375,7 @@ async def get_sugar_stats(user = Depends(get_user_dependency)):
 # ============ HbA1c LOGS ============
 
 @router.get("/hba1c-logs")
-async def get_hba1c_logs(user = Depends(get_user_dependency)):
+async def get_hba1c_logs(user = Depends(get_current_user)):
     """Get user's HbA1c logs"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -388,7 +388,7 @@ async def get_hba1c_logs(user = Depends(get_user_dependency)):
 
 
 @router.post("/hba1c-logs")
-async def add_hba1c_log(data: HbA1cLog, user = Depends(get_user_dependency)):
+async def add_hba1c_log(data: HbA1cLog, user = Depends(get_current_user)):
     """Add a new HbA1c log"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -413,7 +413,7 @@ async def add_hba1c_log(data: HbA1cLog, user = Depends(get_user_dependency)):
 
 
 @router.delete("/hba1c-logs/{log_id}")
-async def delete_hba1c_log(log_id: str, user = Depends(get_user_dependency)):
+async def delete_hba1c_log(log_id: str, user = Depends(get_current_user)):
     """Delete an HbA1c log"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -425,7 +425,7 @@ async def delete_hba1c_log(log_id: str, user = Depends(get_user_dependency)):
 
 
 @router.get("/hba1c-trend")
-async def get_hba1c_trend(user = Depends(get_user_dependency)):
+async def get_hba1c_trend(user = Depends(get_current_user)):
     """Get HbA1c trend data for charting"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -468,7 +468,7 @@ async def get_hba1c_trend(user = Depends(get_user_dependency)):
 # ============ REPORTS ============
 
 @router.get("/share-report")
-async def generate_glydex_share_report(user = Depends(get_user_dependency)):
+async def generate_glydex_share_report(user = Depends(get_current_user)):
     """Generate a shareable text report of blood sugar data for WhatsApp"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
@@ -544,7 +544,7 @@ async def generate_glydex_share_report(user = Depends(get_user_dependency)):
 
 
 @router.get("/download-pdf")
-async def download_glydex_pdf_report(user = Depends(get_user_dependency)):
+async def download_glydex_pdf_report(user = Depends(get_current_user)):
     """Generate a downloadable PDF report of blood sugar data"""
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
