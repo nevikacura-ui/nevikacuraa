@@ -14,7 +14,7 @@ import {
   ArrowLeft, Video, Calendar, Clock, User, Phone, 
   Loader2, Star, MapPin, Check, ChevronRight,
   Wallet, FileText, Pill, FlaskConical, Stethoscope,
-  AlertCircle, Download
+  AlertCircle, Download, Plus, Copy, QrCode
 } from 'lucide-react';
 import { format, addDays, isSunday, startOfDay } from 'date-fns';
 
