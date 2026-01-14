@@ -9,11 +9,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { ArrowLeft, Clock, MapPin, Ban, Shield, CheckCircle2, Loader2, Phone, CalendarDays } from 'lucide-react';
+import { ArrowLeft, Clock, MapPin, Ban, Shield, CheckCircle2, Loader2, Phone, CalendarDays, Wifi, WifiOff } from 'lucide-react';
 import { format, isSunday } from 'date-fns';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+// WebSocket URL - convert http(s) to ws(s)
+const WS_URL = BACKEND_URL.replace('http', 'ws');
 const WHATSAPP_NUMBER = '+917039020020';
 
 const doctors = [
