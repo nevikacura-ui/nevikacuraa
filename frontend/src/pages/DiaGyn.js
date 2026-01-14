@@ -624,6 +624,13 @@ const DiaGyn = () => {
                 <h3 className="font-heading text-lg font-semibold mb-4 flex items-center gap-2">
                   <Clock className="w-5 h-5 text-brand-blue" />
                   Available Slots
+                  {/* Real-time connection indicator */}
+                  {selectedDate && (
+                    <span className={`ml-auto flex items-center gap-1 text-xs font-normal ${wsConnected ? 'text-green-600' : 'text-gray-400'}`}>
+                      {wsConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+                      {wsConnected ? 'Live' : 'Offline'}
+                    </span>
+                  )}
                 </h3>
                 {selectedDate ? (
                   loadingSlots ? (
