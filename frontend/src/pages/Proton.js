@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { ArrowLeft, ArrowRight, Upload, Plus, X, Heart, FlaskConical, Scan, Activity, ShoppingCart, CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, Package, Clock } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Upload, Plus, X, Heart, FlaskConical, Scan, Activity, ShoppingCart, CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, Package, Clock, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 
