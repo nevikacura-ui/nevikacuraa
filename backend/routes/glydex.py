@@ -38,6 +38,12 @@ def set_auth_dependency(auth_func):
     global get_current_user
     get_current_user = auth_func
 
+def get_user_dependency():
+    """Dynamic dependency to get current user"""
+    if get_current_user is None:
+        raise HTTPException(status_code=500, detail="Auth not configured")
+    return get_current_user
+
 # ============ GLYDEX MODELS ============
 
 class GlydexProfile(BaseModel):
