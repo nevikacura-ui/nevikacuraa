@@ -121,6 +121,33 @@ const Pharmacy = () => {
     }
   }, []);
 
+  // Check booking limits when phone number changes
+  useEffect(() => {
+    const checkBookingLimits = async () => {
+      if (!patientInfo.phone || patientInfo.phone.length < 10) {
+        setBookingLimits({ canBook: true, activeOrders: 0, loading: false });
+        return;
+      }
+      
+      try {
+        const response = await axios.get(`${API}/booking-limits/status`, {
+          params: { phone: patientInfo.phone }
+        });
+        setBookingLimits({
+          canBook: response.data.can_book_pharmacy,
+          activeOrders: response.data.active_pharmacy_orders,
+          loading: false
+        });
+      } catch (error) {
+        console.error('Failed to check booking limits:', error);
+        setBookingLimits({ canBook: true, activeOrders: 0, loading: false });
+      }
+    };
+    
+    const debounce = setTimeout(checkBookingLimits, 500);
+    return () => clearTimeout(debounce);
+  }, [patientInfo.phone]);
+
   // Fetch frequently ordered medicines for logged-in users
   const fetchFrequentlyOrdered = async () => {
     if (!user) return;
