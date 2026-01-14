@@ -605,4 +605,36 @@ GET  /api/alyne/shop/orders/{user_id} - Get user orders
 - **All Features**: WORKING ✅
 - **Authentication**: 4 methods (Email OTP, Password, Phone OTP, Biometric) all working
 - **Remember Me**: Working with 30-day extended sessions
-- **Test Coverage**: Iteration 26 (18/18 passed - ALYNE module)
+- **Test Coverage**: 
+  - Iteration 26 (18/18 passed - ALYNE module MVP)
+  - Iteration 28 (50/50 passed - ALYNE Comprehensive Testing - January 14, 2026)
+    - Backend: 35/35 tests passed (100%)
+    - Frontend: 15/15 tests passed (100%)
+    - All region-specific features verified (India & USA)
+
+---
+
+## Latest Test Report (January 14, 2026)
+
+**Iteration 28 - ALYNE Comprehensive Testing Results:**
+
+✅ **Backend Tests (35/35 Passed)**
+- Region Config: India (IAP) & USA (CDC) working
+- India Resources: Govt Schemes, Food Guides, Seasonal Alerts, Ayurvedic Remedies
+- USA Resources: Insurance Guide, School Vaccines, WIC Program, Safety Standards
+- Common Resources: Dev Screening, Telemedicine Tips, Parenting Tips
+- Symptom Checker: 6 symptoms with IAP/CDC guidelines
+- Kids Shop: Categories, Products, Bestsellers (prices hidden for India)
+- Child Profile CRUD: Full lifecycle working
+- Vaccination Tracker: IAP (India) & CDC (USA) schedules
+- Growth Chart: WHO percentile calculations
+- Dashboard, AI Chat, Health Log, Reminders: All working
+
+✅ **Frontend Tests (15/15 Passed)**
+- Home Page: All 6 service cards visible (desktop & mobile)
+- ALYNE Card: Dark navy background with colorful logo
+- Region Toggle: Correctly switches India/USA content
+- India: Govt Schemes, Regional Foods, Seasonal Alerts, Home Remedies, Kids Shop (no prices)
+- USA: Pediatrician Finder, School Vaccines, WIC, Safety Guides, Brightwheel, Kids Shop hidden
+- Feature Categories: All 8 cards visible
+- Quick Actions: AI Chat, Vaccines, Emergency buttons working
