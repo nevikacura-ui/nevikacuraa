@@ -17,10 +17,12 @@ import {
   Upload, MessageCircle, Send, ShoppingCart, Package, Stethoscope, 
   Thermometer, Star, BookOpen, GraduationCap, Phone, Pill, 
   Eye, Scissors, Brain, Utensils, Moon, Droplets, X, Video, ExternalLink, 
-  Leaf, Building2, Car, Baby as BabyIcon, Info, Sparkles, Gamepad2
+  Leaf, Building2, Car, Baby as BabyIcon, Info, Sparkles, Gamepad2, Globe, Dna
 } from 'lucide-react';
 import Footer from '@/components/Footer';
 import { KidsZoneSection } from '@/components/AlyneKidsZone';
+import { CulturalBridgeSection } from '@/components/AlyneCulturalBridge';
+import { DigitalHealthTwinSection } from '@/components/AlyneHealthTwin';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
