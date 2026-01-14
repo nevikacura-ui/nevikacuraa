@@ -3,13 +3,14 @@ Glydex - Diabetes Care Portal
 All Glydex-related routes for blood sugar tracking, HbA1c monitoring, reminders, etc.
 """
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Header
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime, timezone, timedelta
 import uuid
 import os
 import logging
+import jwt
 
 # PDF generation imports
 from reportlab.lib.pagesizes import A4
