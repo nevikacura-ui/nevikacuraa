@@ -81,11 +81,11 @@ async def verify_admin(authorization: str = Header(None)):
         raise HTTPException(status_code=401, detail="Invalid admin token")
 
 # ============ CLINIC UPI DETAILS ============
-
+# Pine Labs UPI for dynamic QR payments
 CLINIC_UPI = {
-    "upi_id": "nevikacura@ybl",
+    "upi_id": "pinelabs.stq4087704@pineaxis",
     "name": "Nevika Cura Healthcare",
-    "qr_code": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=nevikacura@ybl&pn=Nevika%20Cura&cu=INR"
+    "qr_code": "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=pinelabs.stq4087704@pineaxis&pn=Nevika%20Cura&cu=INR"
 }
 
 # ============ WALLET ROUTES ============
