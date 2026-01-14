@@ -5523,6 +5523,16 @@ Reason: {request.reason}
 Please reschedule at your convenience.
 Call: 9403890429"""
             await send_sms_notification(appt.get('patient_phone'), cancel_sms)
+        
+        # Broadcast real-time slot update - slot is now available
+        if appt.get('time'):
+            await slot_manager.broadcast_slot_update(
+                doctor=request.doctor,
+                clinic=request.clinic,
+                date=appt.get('date'),
+                slot=appt.get('time'),
+                status="available"
+            )
     
     return {
         "success": True,
