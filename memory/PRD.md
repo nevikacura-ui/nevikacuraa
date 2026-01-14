@@ -442,8 +442,11 @@ GET  /api/alyne/health-twin/dashboard/{child_id} - Dashboard data
 
 ## Test Credentials
 - **Admin**: /admin, Password: `nevikacura2026`
-- **Staff Doctor**: doc_neha / Nevika@2026D
-- **Staff Clinic**: staff_pushpa / Nevika@2026C
+- **Staff Doctor (Dr. Neha)**: doc_neha / Nevika@2026C
+- **Staff Doctor (Dr. Vikas)**: doc_vikas / Nevika@2026C
+- **Staff Clinic (Pushpa)**: staff_pushpa / Nevika@2026C
+- **Staff Clinic (Amnion)**: staff_amnion / Nevika@2026C
+- **Pharmacy Staff**: staff_pharmacy / Nevika@2026C
 
 ---
 
