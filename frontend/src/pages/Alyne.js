@@ -445,8 +445,14 @@ const Alyne = () => {
                         setActiveCategory(cat);
                       }
                     }}
-                    className={`${cat.color} text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg`}
+                    className={`${cat.color} text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg relative`}
+                    data-testid={`category-${cat.id}`}
                   >
+                    {cat.isNew && (
+                      <Badge className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs animate-pulse">
+                        NEW!
+                      </Badge>
+                    )}
                     <cat.icon className="w-6 h-6 mb-2" />
                     <p className="font-bold text-sm">{cat.title}</p>
                     <p className="text-xs text-white/80">{cat.subtitle}</p>
