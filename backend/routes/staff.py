@@ -281,9 +281,10 @@ async def doctor_complete_appointment(
     diagnosis: str = None,
     prescription: str = None,
     follow_up_days: int = None,
+    consultation_fee: float = None,
     staff = Depends(verify_staff)
 ):
-    """Mark appointment as completed by doctor with medical notes"""
+    """Mark appointment as completed by doctor with medical notes and send invoice"""
     appointment = await db.appointments.find_one({"id": appointment_id})
     if not appointment:
         raise HTTPException(status_code=404, detail="Appointment not found")
@@ -298,6 +299,8 @@ async def doctor_complete_appointment(
         update_data["diagnosis"] = diagnosis
     if prescription:
         update_data["prescription"] = prescription
+    if consultation_fee:
+        update_data["consultation_fee"] = consultation_fee
     if follow_up_days:
         follow_up_date = (datetime.now(timezone.utc) + timedelta(days=follow_up_days)).strftime("%Y-%m-%d")
         update_data["follow_up_date"] = follow_up_date
@@ -305,7 +308,97 @@ async def doctor_complete_appointment(
     
     await db.appointments.update_one({"id": appointment_id}, {"$set": update_data})
     
-    return {"message": "Appointment completed by doctor", "status": "Completed"}
+    # Generate and send invoice email
+    invoice_sent = False
+    patient_email = appointment.get("patient_email")
+    if patient_email and send_email_notification:
+        try:
+            invoice_date = datetime.now().strftime("%d %b %Y")
+            invoice_number = f"INV-{appointment_id[:8].upper()}"
+            fee = consultation_fee or appointment.get("consultation_fee", 500)
+            
+            invoice_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 30px; border-radius: 12px 12px 0 0;">
+                    <h1 style="margin: 0; font-size: 24px;">Nevika Cura Healthcare</h1>
+                    <p style="margin: 10px 0 0; opacity: 0.9;">Consultation Invoice</p>
+                </div>
+                
+                <div style="background: #f8fafc; padding: 25px; border: 1px solid #e2e8f0;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 8px 0;"><strong>Invoice No:</strong></td>
+                            <td style="padding: 8px 0; text-align: right;">{invoice_number}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0;"><strong>Date:</strong></td>
+                            <td style="padding: 8px 0; text-align: right;">{invoice_date}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0;"><strong>Patient:</strong></td>
+                            <td style="padding: 8px 0; text-align: right;">{appointment.get('patient_name', 'Patient')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0;"><strong>Doctor:</strong></td>
+                            <td style="padding: 8px 0; text-align: right;">{appointment.get('doctor', 'Doctor')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0;"><strong>Clinic:</strong></td>
+                            <td style="padding: 8px 0; text-align: right;">{appointment.get('clinic', 'Clinic')}</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div style="background: white; padding: 25px; border: 1px solid #e2e8f0; border-top: none;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f1f5f9;">
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0;">Description</th>
+                                <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0;">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">Consultation Fee</td>
+                                <td style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0;">₹{fee:.2f}</td>
+                            </tr>
+                            <tr style="font-weight: bold; background: #f8fafc;">
+                                <td style="padding: 12px;">Total</td>
+                                <td style="padding: 12px; text-align: right; color: #6366f1;">₹{fee:.2f}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                {f'<div style="background: #fef3c7; padding: 15px; border: 1px solid #f59e0b; border-radius: 8px; margin-top: 20px;"><strong>Diagnosis:</strong> {diagnosis}</div>' if diagnosis else ''}
+                
+                {f'<div style="background: #dbeafe; padding: 15px; border: 1px solid #3b82f6; border-radius: 8px; margin-top: 15px;"><strong>Prescription:</strong><br>{prescription}</div>' if prescription else ''}
+                
+                {f'<div style="background: #dcfce7; padding: 15px; border: 1px solid #22c55e; border-radius: 8px; margin-top: 15px;"><strong>Follow-up:</strong> Please schedule a follow-up appointment after {follow_up_days} days ({follow_up_date})</div>' if follow_up_days else ''}
+                
+                <div style="text-align: center; padding: 25px; color: #64748b; font-size: 12px;">
+                    <p>Thank you for choosing Nevika Cura Healthcare</p>
+                    <p>For queries: support@nevikacura.com | +91-XXXXXXXXXX</p>
+                </div>
+            </div>
+            """
+            
+            await send_email_notification(
+                patient_email,
+                f"Consultation Invoice - {invoice_number} | Nevika Cura",
+                invoice_html
+            )
+            invoice_sent = True
+            logger.info(f"Invoice sent to {patient_email} for appointment {appointment_id}")
+        except Exception as e:
+            logger.error(f"Failed to send invoice email: {e}")
+    
+    return {
+        "message": "Appointment completed by doctor", 
+        "status": "Completed",
+        "invoice_sent": invoice_sent,
+        "invoice_email": patient_email if invoice_sent else None
+    }
 
 
 # ============ Services ============
