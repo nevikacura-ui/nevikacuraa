@@ -174,6 +174,114 @@ const DiaGyn = () => {
     fetchBookedSlots();
   }, [fetchBookedSlots]);
 
+  // WebSocket connection for real-time slot updates
+  useEffect(() => {
+    if (!selectedDoctor || !selectedClinic || !selectedDate) {
+      // Clean up existing connection
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+        setWsConnected(false);
+      }
+      return;
+    }
+
+    const doctor = doctors.find(d => d.id === selectedDoctor);
+    const clinic = clinics.find(c => c.id === selectedClinic);
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+
+    const connectWebSocket = () => {
+      // Close existing connection
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+
+      const wsUrl = `${WS_URL}/ws/slots?doctor=${encodeURIComponent(doctor.name)}&clinic=${encodeURIComponent(clinic.name)}&date=${dateStr}`;
+      
+      try {
+        const ws = new WebSocket(wsUrl);
+        wsRef.current = ws;
+
+        ws.onopen = () => {
+          console.log('WebSocket connected for slot updates');
+          setWsConnected(true);
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            
+            if (data.type === 'slot_update') {
+              // Update bookedSlots based on the update
+              if (data.status === 'booked') {
+                setBookedSlots(prev => {
+                  if (!prev.includes(data.slot)) {
+                    toast.info(`Slot ${data.slot} just booked by another user`, {
+                      duration: 3000,
+                      icon: '⚡'
+                    });
+                    return [...prev, data.slot];
+                  }
+                  return prev;
+                });
+                // Clear selected slot if it was just booked
+                setSelectedSlot(prev => prev === data.slot ? null : prev);
+              } else if (data.status === 'available') {
+                setBookedSlots(prev => prev.filter(s => s !== data.slot));
+                toast.success(`Slot ${data.slot} is now available!`, {
+                  duration: 3000,
+                  icon: '✨'
+                });
+              }
+            } else if (data.type === 'heartbeat') {
+              // Respond to heartbeat
+              ws.send(JSON.stringify({ type: 'pong' }));
+            }
+          } catch (e) {
+            console.error('Error parsing WebSocket message:', e);
+          }
+        };
+
+        ws.onclose = (event) => {
+          console.log('WebSocket disconnected:', event.code);
+          setWsConnected(false);
+          wsRef.current = null;
+          
+          // Attempt reconnect after 3 seconds if not intentionally closed
+          if (event.code !== 1000) {
+            reconnectTimeoutRef.current = setTimeout(() => {
+              if (selectedDoctor && selectedClinic && selectedDate) {
+                connectWebSocket();
+              }
+            }, 3000);
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          setWsConnected(false);
+        };
+      } catch (e) {
+        console.error('Failed to create WebSocket:', e);
+        setWsConnected(false);
+      }
+    };
+
+    connectWebSocket();
+
+    // Cleanup on unmount or when dependencies change
+    return () => {
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+      if (wsRef.current) {
+        wsRef.current.close(1000, 'Component unmount');
+        wsRef.current = null;
+      }
+      setWsConnected(false);
+    };
+  }, [selectedDoctor, selectedClinic, selectedDate]);
+
   const getAvailableSlots = () => {
     if (!selectedDoctor || !selectedClinic || !selectedDate) return [];
     
