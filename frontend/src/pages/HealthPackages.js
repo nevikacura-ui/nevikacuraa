@@ -469,10 +469,10 @@ const HealthPackages = () => {
               <Home className="w-5 h-5 text-blue-500 ml-auto" />
             </div>
             
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-sm font-medium mb-1">Amount to Pay</p>
-              <p className="text-2xl font-bold text-green-600">₹{selectedPackage?.discounted_price}</p>
-              <p className="text-xs text-gray-500">Payment on collection (COD)</p>
+            <div className="p-3 bg-purple-50 rounded-lg">
+              <p className="text-sm font-medium mb-1">Package Selected</p>
+              <p className="text-lg font-bold text-purple-700">{selectedPackage?.name}</p>
+              <p className="text-xs text-gray-500">Payment details will be shared on call</p>
             </div>
             
             <Button className="w-full" onClick={handleBookPackage} disabled={bookingLoading}>
