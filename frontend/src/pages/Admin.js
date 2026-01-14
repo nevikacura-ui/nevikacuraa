@@ -97,6 +97,13 @@ const Admin = () => {
   const [dateRangeStart, setDateRangeStart] = useState(null);
   const [dateRangeEnd, setDateRangeEnd] = useState(null);
   
+  // Schedule Visualization
+  const [scheduleWeekStart, setScheduleWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const [scheduleAppointments, setScheduleAppointments] = useState([]);
+  const [scheduleLoading, setScheduleLoading] = useState(false);
+  const [selectedScheduleDay, setSelectedScheduleDay] = useState(null);
+  const [dayAppointments, setDayAppointments] = useState({ morning: [], evening: [] });
+  
   // Order Tracking
   const [pharmacyOrders, setPharmacyOrders] = useState([]);
   const [diagnosticOrders, setDiagnosticOrders] = useState([]);
