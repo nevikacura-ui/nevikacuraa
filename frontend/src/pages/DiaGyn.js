@@ -995,13 +995,18 @@ const DiaGyn = () => {
               <Button 
                 className="w-full bg-brand-blue hover:bg-brand-blue/90 h-12"
                 onClick={handleBooking}
-                disabled={loading}
+                disabled={loading || !bookingLimits.canBook}
                 data-testid="confirm-booking-btn"
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Processing...
+                  </>
+                ) : !bookingLimits.canBook ? (
+                  <>
+                    <Ban className="w-5 h-5 mr-2" />
+                    Complete Existing Appointment First
                   </>
                 ) : (
                   <>
