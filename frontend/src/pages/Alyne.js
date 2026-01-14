@@ -614,6 +614,7 @@ const CategoryDetail = ({ category, region, child, onBack, user }) => {
   if (category.id === 'vaccines') return <VaccinationsSection child={child} region={region} onBack={onBack} />;
   if (category.id === 'growth') return <GrowthSection child={child} onBack={onBack} />;
   if (category.id === 'symptoms') return <SymptomsSection child={child} region={region} onBack={onBack} />;
+  if (category.id === 'kidszone') return <KidsZoneSection child={child} onBack={onBack} />;
   
   // India-specific sections
   if (category.id === 'govt_schemes') return <GovtSchemesSection onBack={onBack} />;
