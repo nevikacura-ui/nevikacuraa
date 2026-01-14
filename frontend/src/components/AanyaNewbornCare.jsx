@@ -363,7 +363,7 @@ export default function AanyaNewbornCare({ childId, childName, childGender }) {
                     <Area type="monotone" dataKey="p97" stroke="#fca5a5" fill="#fef2f2" name="97th" />
                     <Area type="monotone" dataKey="p50" stroke="#86efac" fill="#f0fdf4" name="50th" />
                     <Area type="monotone" dataKey="p3" stroke="#93c5fd" fill="#eff6ff" name="3rd" />
-                    <Line type="monotone" dataKey="actual" stroke="#ec4899" strokeWidth={3} dot={{ r: 6 }} name="Baby's Weight" />
+                    <Line type="monotone" dataKey="actual" stroke="#ec4899" strokeWidth={3} dot={{ r: 6 }} name="Baby Weight" />
                   </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
