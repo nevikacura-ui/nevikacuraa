@@ -76,12 +76,21 @@ const DiaGyn = () => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [bookedSlots, setBookedSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date()); // For real-time slot updates
   const [patientInfo, setPatientInfo] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
     email: user?.email || ''
   });
   const [loading, setLoading] = useState(false);
+
+  // Update current time every minute to refresh slot availability
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Update every minute
+    return () => clearInterval(timer);
+  }, []);
 
   // OTP state
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
