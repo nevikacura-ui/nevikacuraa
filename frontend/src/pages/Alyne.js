@@ -274,6 +274,19 @@ const FEATURE_CATEGORIES = [
     }
   },
   {
+    id: 'aanya_newborn',
+    title: 'Aanya Newborn',
+    subtitle: 'Complete newborn care (0-12 months)',
+    icon: Baby,
+    color: 'bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-500',
+    requiresChild: true,
+    isNew: true,
+    content: {
+      title: 'Aanya by ALYNE',
+      description: 'Newborn care tracker with feeding, diaper, sleep, growth charts & milestones'
+    }
+  },
+  {
     id: 'kidszone',
     title: 'Kids Zone',
     subtitle: 'Fun health games for ages 3-8!',
