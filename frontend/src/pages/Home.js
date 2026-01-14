@@ -120,6 +120,8 @@ const Home = () => {
                 alt="Nevika Cura" 
                 className="h-14 sm:h-16 w-auto object-contain"
                 data-testid="main-logo"
+                loading="eager"
+                fetchPriority="high"
               />
             </div>
             
