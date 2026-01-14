@@ -92,19 +92,19 @@ const Home = () => {
     {
       id: 'alyne',
       name: 'ALYNE',
-      logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/0q6n5i9g_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_052258_0002.png',
+      logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/dbpx86gw_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
       description: 'Kids Health & Care',
       bgColor: '',
       accentColor: 'border-transparent',
       path: '/alyne',
       logoBg: '',
-      customBg: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%)',
-      hideDecoration: true,
+      customBg: '#0a1628',
+      hideDecoration: false,
       fillCard: false,
       tallerCard: true,
-      logoScale: 1.25,
-      isGradient: true,
-      useTextLogo: true
+      logoScale: 1.3,
+      isGradient: false,
+      hasSparkles: true
     }
   ];
 
