@@ -700,11 +700,10 @@ const DiaGyn = () => {
                           const isEvening = hour >= 18 && hour <= 22;
                           
                           // Check if slot time has passed (for today's date)
-                          const now = new Date();
                           const isToday = selectedDate && 
-                            selectedDate.toDateString() === now.toDateString();
+                            selectedDate.toDateString() === currentTime.toDateString();
                           const slotTimeInMinutes = hour * 60 + minute;
-                          const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes() + 15; // 15 min buffer
+                          const currentTimeInMinutes = currentTime.getHours() * 60 + currentTime.getMinutes() + 15; // 15 min buffer
                           const isPast = isToday && slotTimeInMinutes <= currentTimeInMinutes;
                           const isDisabled = isBooked || isPast;
                           
