@@ -393,7 +393,7 @@ export default function BiometricAttendance({ clinic = 'amnion' }) {
               </div>
               <div className="p-3 bg-violet-50 rounded-lg text-sm">
                 <p className="font-medium text-violet-800">Instructions:</p>
-                <p className="text-violet-600">Click "Register" and follow the biometric prompt (fingerprint/face ID) to register the staff member's device.</p>
+                <p className="text-violet-600">Click Register and follow the biometric prompt (fingerprint/face ID) to register the staff device.</p>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setShowRegisterDevice(false)} className="flex-1">Cancel</Button>
