@@ -1987,6 +1987,21 @@ const Admin = () => {
           <TabsContent value="clinic-management">
             <ClinicManagementDashboard token={localStorage.getItem('adminToken')} clinic="pushpa" />
           </TabsContent>
+
+          {/* Glydex Staff Portal Tab */}
+          <TabsContent value="glydex-staff">
+            <GlydexStaffPortal staffName="Admin" />
+          </TabsContent>
+
+          {/* ANC Registration Tab */}
+          <TabsContent value="anc-registration">
+            <ANCRegistration staffName="Admin" clinic="amnion" />
+          </TabsContent>
+
+          {/* Biometric Attendance Tab */}
+          <TabsContent value="biometric">
+            <BiometricAttendance clinic="amnion" />
+          </TabsContent>
         </Tabs>
       </main>
 
