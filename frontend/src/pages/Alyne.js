@@ -338,6 +338,10 @@ const Alyne = () => {
   };
 
   const handleAddChild = async () => {
+    if (!user?.id) {
+      toast.error('Please login to add a child profile');
+      return;
+    }
     if (!newChild.name || !newChild.date_of_birth) {
       toast.error('Please fill required fields');
       return;
@@ -354,8 +358,13 @@ const Alyne = () => {
         setShowAddChild(false);
         setNewChild({ name: '', date_of_birth: '', gender: 'male', blood_group: '', region: selectedRegion });
         fetchChildren();
+      } else {
+        toast.error(data.detail || 'Failed to add child profile');
       }
-    } catch (error) { toast.error('Failed to add child'); }
+    } catch (error) { 
+      console.error('Add child error:', error);
+      toast.error('Failed to add child. Please try again.'); 
+    }
   };
 
   const regionData = REGION_CONTENT[selectedRegion];
