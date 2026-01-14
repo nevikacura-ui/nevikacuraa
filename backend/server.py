@@ -9589,6 +9589,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load teleconsultation router: {e}")
 
+# Wallet Router
+try:
+    from routes.wallet import router as wallet_router, set_db as set_wallet_db
+    set_wallet_db(db)
+    app.include_router(wallet_router, prefix="/api")
+    logger.info("Wallet router loaded")
+except Exception as e:
+    logger.warning(f"Could not load wallet router: {e}")
+
 try:
     from routes.wearables import router as wearables_router, set_db as set_wearables_db
     set_wearables_db(db)
