@@ -16,9 +16,12 @@ import {
   Plus, Trash2, Search, Loader2, LogOut, Shield,
   BarChart3, FlaskConical, UserX, AlertTriangle, X,
   Truck, CheckCircle2, Clock, MapPin, Gift, Minus, Phone, TrendingUp, History,
-  ChevronLeft, ChevronRight, Sun, Moon, Building2
+  ChevronLeft, ChevronRight, Sun, Moon, Building2, Fingerprint, Baby, Activity
 } from 'lucide-react';
 import { ClinicManagementDashboard } from '@/components/ClinicManagement';
+import GlydexStaffPortal from '@/components/GlydexStaffPortal';
+import ANCRegistration from '@/components/ANCRegistration';
+import BiometricAttendance from '@/components/BiometricAttendance';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
