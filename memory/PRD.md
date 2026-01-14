@@ -379,6 +379,22 @@ GET  /api/pharmacy/loyalty/leaderboard?period=weekly|monthly|all - Get Top 10 le
 - Internal staff/doctor feedback API (not shown to public)
 - Backend APIs: `/api/staff/appointments/{id}/internal-feedback`, `/api/staff/internal-feedback/summary`
 
+### Appointment Reminder System ✅ (Added Jan 14, 2026)
+- **24-Hour Reminder** (Day Before):
+  - Push notification: "📅 Appointment Tomorrow!"
+  - SMS with full appointment details
+  - Sent once per appointment, tracked in DB
+- **1-Hour Reminder** (Same Day):
+  - Push notification: "⏰ Appointment in 1 Hour!"
+  - Urgent SMS reminder
+  - Triggered 45-75 mins before appointment
+- **Cron Endpoint**: `/api/cron/appointment-reminders?secret=SECRET`
+  - Run every 15 minutes for optimal coverage
+  - Supports `reminder_type`: "24h", "1h", or "all"
+- **Admin Manual Trigger**: `/api/admin/appointments/{id}/send-reminder`
+- **Duplicate Prevention**: Tracks `reminder_24h_sent` and `reminder_1h_sent` flags
+- **Reduces No-Shows**: Proactive reminders ensure patients don't forget
+
 ### DiaGyn Appointment Booking Features
 - Multi-step booking flow (Doctor → Clinic → Date/Time → OTP → Confirm)
 - Phone OTP verification via Twilio
