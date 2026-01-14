@@ -223,6 +223,33 @@ async def upload_topup_screenshot(
         "message": "Screenshot uploaded. Admin will verify and approve your top-up within 30 minutes."
     }
 
+@router.get("/payment-qr")
+async def get_fixed_amount_payment_qr(
+    amount: float,
+    purpose: str = "Payment",
+    reference: str = None
+):
+    """Generate a FIXED amount QR code for any payment - customer CANNOT modify the amount"""
+    if amount < 1:
+        raise HTTPException(status_code=400, detail="Amount must be at least ₹1")
+    if amount > 100000:
+        raise HTTPException(status_code=400, detail="Amount cannot exceed ₹1,00,000")
+    
+    ref_id = reference or str(uuid.uuid4())[:8]
+    qr_url = generate_fixed_amount_qr(amount, ref_id)
+    
+    return {
+        "success": True,
+        "qr_code": qr_url,
+        "upi_id": CLINIC_UPI["upi_id"],
+        "payee_name": CLINIC_UPI["name"],
+        "amount": amount,
+        "amount_locked": True,
+        "purpose": purpose,
+        "reference": ref_id,
+        "message": f"Pay exactly ₹{amount:.2f} using this QR. Amount is fixed and cannot be changed."
+    }
+
 @router.get("/transactions")
 async def get_wallet_transactions(
     limit: int = 20,
