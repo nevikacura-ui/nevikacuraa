@@ -936,19 +936,21 @@ const HealthBuddyChat = ({ child, onBack }) => {
               <Input 
                 value={input} 
                 onChange={(e) => setInput(e.target.value)} 
-            placeholder="Type your message..." 
-            onKeyPress={(e) => e.key === 'Enter' && send()}
-            className="text-base"
-            data-testid="buddy-chat-input"
-          />
-          <Button 
-            onClick={() => send()} 
-            disabled={loading} 
-            className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
-            data-testid="buddy-chat-send"
-          >
-            <Send className="w-4 h-4" />
-          </Button>
+                placeholder="Type your message..." 
+                onKeyPress={(e) => e.key === 'Enter' && send()}
+                className="text-base"
+                data-testid="buddy-chat-input"
+              />
+              <Button 
+                onClick={() => send()} 
+                disabled={loading} 
+                className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
+                data-testid="buddy-chat-send"
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
         </div>
       </Card>
     </div>
