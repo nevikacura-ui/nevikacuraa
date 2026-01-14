@@ -19,8 +19,8 @@ const getWsUrl = () => {
   const url = new URL(BACKEND_URL);
   // Use wss for https, ws for http
   const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
-  // Include /api prefix for proper routing through ingress in preview/production
-  return `${protocol}//${url.host}/api`;
+  // WebSocket endpoint is at /api/ws/slots
+  return `${protocol}//${url.host}`;
 };
 const WS_URL = getWsUrl();
 const WHATSAPP_NUMBER = '+917039020020';
