@@ -648,13 +648,19 @@ const BedtimeStoriesSection = ({ child, onBack }) => {
   );
 };
 
-// ============ HEALTH BUDDY CHAT ============
+// ============ HEALTH BUDDY CHAT WITH VOICE ============
 const HealthBuddyChat = ({ child, onBack }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [sessionId] = useState(`buddy_${Date.now()}`);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [voiceMode, setVoiceMode] = useState(false);
   const endRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const audioRef = useRef(null);
 
   useEffect(() => { 
     endRef.current?.scrollIntoView({ behavior: "smooth" }); 
@@ -676,6 +682,105 @@ const HealthBuddyChat = ({ child, onBack }) => {
     "Why drink water? 💧"
   ];
 
+  // Start voice recording
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      audioChunksRef.current = [];
+      
+      mediaRecorderRef.current.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+      
+      mediaRecorderRef.current.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        stream.getTracks().forEach(t => t.stop());
+        await sendVoiceMessage(audioBlob);
+      };
+      
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
+    } catch (e) {
+      console.error('Microphone error:', e);
+      toast.error("Can't use microphone. Check permissions!");
+    }
+  };
+
+  // Stop recording
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  // Send voice message to backend
+  const sendVoiceMessage = async (audioBlob) => {
+    setLoading(true);
+    setMessages(prev => [...prev, { role: 'user', content: '🎤 Voice message...', isVoice: true }]);
+    
+    try {
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'voice.webm');
+      formData.append('child_id', child.id);
+      formData.append('child_name', child.name);
+      formData.append('age', calculateAge(child.date_of_birth));
+      formData.append('session_id', sessionId);
+      
+      const res = await fetch(`${API}/api/alyne/kidszone/buddy/voice`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        // Update the user message with transcription
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { role: 'user', content: data.transcription, isVoice: true };
+          return [...updated, { role: 'assistant', content: data.response, audioBase64: data.audio_base64 }];
+        });
+        
+        // Auto-play the response
+        if (data.audio_base64) {
+          playAudio(data.audio_base64);
+        }
+      } else {
+        setMessages(prev => prev.slice(0, -1));
+        toast.error(data.error || "Couldn't understand. Try again!");
+      }
+    } catch (e) {
+      console.error(e);
+      setMessages(prev => prev.slice(0, -1));
+      toast.error("Voice chat error. Try again!");
+    }
+    finally { setLoading(false); }
+  };
+
+  // Play audio response
+  const playAudio = (base64Audio) => {
+    try {
+      const audio = new Audio(`data:audio/mp3;base64,${base64Audio}`);
+      audioRef.current = audio;
+      setIsPlaying(true);
+      audio.play();
+      audio.onended = () => setIsPlaying(false);
+    } catch (e) {
+      console.error('Audio play error:', e);
+    }
+  };
+
+  // Stop audio
+  const stopAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
+    }
+  };
+
+  // Text chat send
   const send = async (text = input) => {
     const msg = text.trim();
     if (!msg) return;
@@ -712,39 +817,56 @@ const HealthBuddyChat = ({ child, onBack }) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center text-2xl shadow-lg">
-            🧸
-          </div>
-          <div>
-            <h2 className="text-lg font-bold">ALYNE Buddy</h2>
-            <p className="text-xs text-green-500">Online • Ready to chat!</p>
+          <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center text-2xl shadow-lg">
+              🧸
+            </div>
+            <div>
+              <h2 className="text-lg font-bold">ALYNE Buddy</h2>
+              <p className="text-xs text-green-500">Online • Ready to chat!</p>
+            </div>
           </div>
         </div>
+        {/* Voice Mode Toggle */}
+        <button
+          onClick={() => setVoiceMode(!voiceMode)}
+          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+            voiceMode 
+              ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' 
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          {voiceMode ? '🎤 Voice ON' : '⌨️ Text'}
+        </button>
       </div>
 
       <Card className="border-0 shadow-lg overflow-hidden">
-        <div className="h-[350px] overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-blue-50 to-white">
+        <div className="h-[320px] overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-blue-50 to-white">
           {messages.length === 0 && (
-            <div className="text-center py-8">
+            <div className="text-center py-6">
               <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center text-4xl shadow-lg">
                 🧸
               </div>
               <p className="text-lg font-semibold text-blue-700">Hi {child.name}! 👋</p>
-              <p className="text-sm text-gray-500 mt-1">I'm your health buddy! Ask me anything!</p>
-              <div className="flex flex-wrap gap-2 justify-center mt-4">
-                {quickPrompts.map((q, i) => (
-                  <button 
-                    key={i} 
-                    onClick={() => send(q)} 
-                    className="text-sm px-4 py-2 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
-                  >
-                    {q}
-                  </button>
-                ))}
-              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                {voiceMode ? "Press the mic button and talk to me!" : "Type or tap to chat with me!"}
+              </p>
+              {!voiceMode && (
+                <div className="flex flex-wrap gap-2 justify-center mt-4">
+                  {quickPrompts.map((q, i) => (
+                    <button 
+                      key={i} 
+                      onClick={() => send(q)} 
+                      className="text-sm px-4 py-2 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
           
@@ -755,7 +877,17 @@ const HealthBuddyChat = ({ child, onBack }) => {
                   ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-br-sm' 
                   : 'bg-white border shadow-sm rounded-bl-sm'
               }`}>
+                {m.isVoice && <span className="text-xs opacity-70">🎤 </span>}
                 <p className="whitespace-pre-wrap">{m.content}</p>
+                {/* Play button for assistant audio */}
+                {m.role === 'assistant' && m.audioBase64 && (
+                  <button
+                    onClick={() => isPlaying ? stopAudio() : playAudio(m.audioBase64)}
+                    className="mt-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full hover:bg-blue-200"
+                  >
+                    {isPlaying ? '⏹️ Stop' : '🔊 Listen'}
+                  </button>
+                )}
               </div>
             </div>
           ))}
@@ -774,10 +906,36 @@ const HealthBuddyChat = ({ child, onBack }) => {
           <div ref={endRef} />
         </div>
         
-        <div className="p-4 border-t bg-white flex gap-2">
-          <Input 
-            value={input} 
-            onChange={(e) => setInput(e.target.value)} 
+        {/* Input Area */}
+        <div className="p-4 border-t bg-white">
+          {voiceMode ? (
+            /* Voice Input Mode */
+            <div className="flex flex-col items-center gap-3">
+              <button
+                onMouseDown={startRecording}
+                onMouseUp={stopRecording}
+                onTouchStart={startRecording}
+                onTouchEnd={stopRecording}
+                disabled={loading}
+                className={`w-20 h-20 rounded-full transition-all shadow-lg ${
+                  isRecording 
+                    ? 'bg-red-500 scale-110 animate-pulse' 
+                    : 'bg-gradient-to-br from-blue-500 to-cyan-500 hover:scale-105'
+                } text-white flex items-center justify-center`}
+                data-testid="voice-record-btn"
+              >
+                <span className="text-3xl">{isRecording ? '🔴' : '🎤'}</span>
+              </button>
+              <p className="text-sm text-gray-500">
+                {isRecording ? '🎙️ Listening... Release to send' : 'Press & hold to talk'}
+              </p>
+            </div>
+          ) : (
+            /* Text Input Mode */
+            <div className="flex gap-2">
+              <Input 
+                value={input} 
+                onChange={(e) => setInput(e.target.value)} 
             placeholder="Type your message..." 
             onKeyPress={(e) => e.key === 'Enter' && send()}
             className="text-base"
