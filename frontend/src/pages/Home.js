@@ -100,11 +100,12 @@ const Home = () => {
       logoBg: '',
       customBg: '#0a1628',
       hideDecoration: true,
-      fillCard: true,
+      fillCard: false,
       tallerCard: true,
-      logoScale: 1,
+      logoScale: 1.15,
       isGradient: false,
-      hasSparkles: false
+      hasSparkles: true,
+      seamlessLogo: true
     }
   ];
 
