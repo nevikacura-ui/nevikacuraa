@@ -25,22 +25,22 @@ const TELECONSULT_DOCTORS = [
   {
     id: 'dr-neha-patel',
     name: 'Dr. Neha Patel',
-    specialization: 'Obstetrics & Gynecology',
-    qualification: 'MBBS, MS (OBG), DNB',
+    specialization: 'OBGYN',
+    qualification: 'M.B.B.S, D.G.O (Mumbai), FMAS (Delhi)',
     experience: '15+ years',
     clinic: 'DiaGyn Healthcare - Pushpa Clinic',
     fee: 500,
-    image: null
+    image: 'https://customer-assets.emergentagent.com/job_1d0b9312-d1f2-40d1-b78f-c0c28fa95ba1/artifacts/kqjjgvou_IMG-20260108-WA0000.jpg'
   },
   {
     id: 'dr-vikas-jha',
     name: 'Dr. Vikas Jha',
-    specialization: 'Obstetrics & Gynecology',
-    qualification: 'MBBS, DGO, FICOG',
+    specialization: 'Diabetologist & Physician',
+    qualification: 'M.B.B.S, C.Diab (RSSDI, Delhi), Dip. In Diabetology (Cardiff, UK)',
     experience: '12+ years',
     clinic: 'DiaGyn Healthcare - Amnion Clinic',
     fee: 500,
-    image: null
+    image: 'https://customer-assets.emergentagent.com/job_1d0b9312-d1f2-40d1-b78f-c0c28fa95ba1/artifacts/gg2swmlp_IMG-20220627-WA0003.jpg'
   }
 ];
 
