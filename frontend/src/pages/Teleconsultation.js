@@ -798,7 +798,7 @@ const Teleconsultation = () => {
             <div className="text-center p-4 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600 mb-2">Scan to Pay via UPI</p>
               <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=nevikacura@ybl&pn=Nevika%20Cura&am=${selectedDoctor?.fee || 300}&cu=INR`}
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=pinelabs.stq4087704@pineaxis&pn=Nevika%20Cura&am=${selectedDoctor?.fee || 300}&cu=INR`}
                 alt="UPI QR Code"
                 className="mx-auto rounded-lg border"
               />
@@ -809,13 +809,13 @@ const Teleconsultation = () => {
             <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
               <div>
                 <p className="text-xs text-gray-500">UPI ID</p>
-                <p className="font-mono font-semibold">nevikacura@ybl</p>
+                <p className="font-mono font-semibold text-sm">pinelabs.stq4087704@pineaxis</p>
               </div>
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={() => {
-                  navigator.clipboard.writeText('nevikacura@ybl');
+                  navigator.clipboard.writeText('pinelabs.stq4087704@pineaxis');
                   toast.success('UPI ID copied!');
                 }}
               >
