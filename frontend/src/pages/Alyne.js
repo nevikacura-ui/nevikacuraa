@@ -327,7 +327,9 @@ const Alyne = () => {
               <Button variant="ghost" size="icon" onClick={() => activeCategory ? setActiveCategory(null) : navigate('/')}>
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <img src={ALYNE_LOGO} alt="ALYNE" className="h-12 w-auto object-contain" />
+              <div className="h-14 px-2 rounded-xl flex items-center justify-center overflow-hidden" style={{background: 'linear-gradient(135deg, #0a4a47 0%, #0d5c57 50%, #0f766e 100%)'}}>
+                <img src={ALYNE_LOGO} alt="ALYNE" className="h-12 w-auto object-contain rounded-lg" />
+              </div>
             </div>
             
             <div className="flex items-center gap-2">
