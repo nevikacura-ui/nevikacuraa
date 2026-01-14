@@ -317,9 +317,7 @@ const Home = () => {
                 onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                 data-testid={`service-button-${service.id}`}
                 className={`${service.tallerCard ? 'mt-4' : 'mt-2'} w-full rounded-xl py-5 font-medium shadow-lg hover:shadow-xl transition-all duration-300 relative z-10 ${
-                  service.alyneSpecial
-                    ? 'bg-teal-700 hover:bg-teal-800 text-white border-0'
-                    : (service.customBg || service.isGradient)
+                  (service.customBg || service.isGradient)
                     ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
                     : 'bg-brand-teal hover:bg-brand-teal/90 text-white'
                 }`}
