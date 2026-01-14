@@ -3146,6 +3146,22 @@ class ServiceStatusUpdate(BaseModel):
     status: str
     notes: Optional[str] = None
 
+# REMOVED: @api_router.post("/admin/login")
+# REMOVED: async def admin_login(input: AdminLogin):
+# REMOVED:     """Admin login with password"""
+# REMOVED:     if input.password != ADMIN_PASSWORD:
+# REMOVED:         raise HTTPException(status_code=401, detail="Invalid admin password")
+    
+# REMOVED:     # Generate admin token with 30 days expiry for persistent login
+# REMOVED:     admin_token = jwt.encode({
+# REMOVED:         'sub': 'admin',
+# REMOVED:         'role': 'super_admin',
+# REMOVED:         'name': 'Super Admin',
+# REMOVED:         'exp': datetime.now(timezone.utc) + timedelta(days=30)
+# REMOVED:     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+# REMOVED:     return {"token": admin_token, "role": "super_admin", "name": "Super Admin"}
+
 async def verify_admin(authorization: str = Header(None)):
     """Verify admin token"""
     if not authorization or not authorization.startswith('Bearer '):
@@ -3188,6 +3204,158 @@ class InternalFeedbackCreate(BaseModel):
     overall_experience: Optional[str] = None  # positive, neutral, negative
     would_recommend: Optional[bool] = None
 
+# REMOVED: @api_router.post("/staff/appointments/{appointment_id}/internal-feedback")
+# REMOVED: async def submit_internal_feedback(appointment_id: str, feedback: InternalFeedbackCreate, staff = Depends(verify_staff)):
+# REMOVED:     """Submit internal feedback for staff and doctor - for internal survey purposes only (not shown to public)"""
+    
+# REMOVED:     # Validate ratings if provided
+# REMOVED:     if feedback.staff_rating and not 1 <= feedback.staff_rating <= 5:
+# REMOVED:         raise HTTPException(status_code=400, detail="Staff rating must be between 1 and 5")
+# REMOVED:     if feedback.doctor_rating and not 1 <= feedback.doctor_rating <= 5:
+# REMOVED:         raise HTTPException(status_code=400, detail="Doctor rating must be between 1 and 5")
+    
+# REMOVED:     # Find appointment
+# REMOVED:     appointment = await db.appointments.find_one(
+# REMOVED:         {"id": appointment_id},
+# REMOVED:         {"_id": 0}
+# REMOVED:     )
+    
+# REMOVED:     if not appointment:
+# REMOVED:         raise HTTPException(status_code=404, detail="Appointment not found")
+    
+# REMOVED:     # Store internal feedback (separate from patient feedback)
+# REMOVED:     feedback_doc = {
+# REMOVED:         "id": str(uuid.uuid4()),
+# REMOVED:         "appointment_id": appointment_id,
+# REMOVED:         "doctor": appointment.get("doctor"),
+# REMOVED:         "clinic": appointment.get("clinic"),
+# REMOVED:         "patient_name": appointment.get("patient_name"),
+# REMOVED:         "staff_rating": feedback.staff_rating,
+# REMOVED:         "doctor_rating": feedback.doctor_rating,
+# REMOVED:         "staff_comment": feedback.staff_comment,
+# REMOVED:         "doctor_comment": feedback.doctor_comment,
+# REMOVED:         "overall_experience": feedback.overall_experience,
+# REMOVED:         "would_recommend": feedback.would_recommend,
+# REMOVED:         "submitted_by": staff.get("username"),
+# REMOVED:         "submitted_at": datetime.now(timezone.utc).isoformat(),
+# REMOVED:         "is_internal": True  # Flag to indicate this is internal feedback
+# REMOVED:     }
+    
+# REMOVED:     await db.internal_feedback.insert_one(feedback_doc)
+    
+# REMOVED:     # Update appointment with internal feedback flag
+# REMOVED:     await db.appointments.update_one(
+# REMOVED:         {"id": appointment_id},
+# REMOVED:         {"$set": {"has_internal_feedback": True}}
+# REMOVED:     )
+    
+# REMOVED:     logger.info(f"Internal feedback submitted for appointment {appointment_id} by {staff.get('username')}")
+    
+# REMOVED:     return {"success": True, "message": "Internal feedback recorded"}
+
+# REMOVED: @api_router.get("/staff/internal-feedback/summary")
+# REMOVED: async def get_internal_feedback_summary(staff = Depends(verify_staff)):
+# REMOVED:     """Get summary of internal feedback - for admin/management view only"""
+    
+# REMOVED:     # Aggregate feedback stats
+# REMOVED:     feedback_list = await db.internal_feedback.find({}, {"_id": 0}).to_list(500)
+    
+# REMOVED:     if not feedback_list:
+# REMOVED:         return {
+# REMOVED:             "total_feedback": 0,
+# REMOVED:             "avg_staff_rating": 0,
+# REMOVED:             "avg_doctor_rating": 0,
+# REMOVED:             "by_doctor": {},
+# REMOVED:             "by_clinic": {}
+# REMOVED:         }
+    
+# REMOVED:     total = len(feedback_list)
+# REMOVED:     staff_ratings = [f["staff_rating"] for f in feedback_list if f.get("staff_rating")]
+# REMOVED:     doctor_ratings = [f["doctor_rating"] for f in feedback_list if f.get("doctor_rating")]
+    
+# REMOVED:     # Group by doctor
+# REMOVED:     by_doctor = {}
+# REMOVED:     for f in feedback_list:
+# REMOVED:         doc = f.get("doctor", "Unknown")
+# REMOVED:         if doc not in by_doctor:
+# REMOVED:             by_doctor[doc] = {"count": 0, "ratings": []}
+# REMOVED:         by_doctor[doc]["count"] += 1
+# REMOVED:         if f.get("doctor_rating"):
+# REMOVED:             by_doctor[doc]["ratings"].append(f["doctor_rating"])
+    
+# REMOVED:     for doc in by_doctor:
+# REMOVED:         ratings = by_doctor[doc]["ratings"]
+# REMOVED:         by_doctor[doc]["avg_rating"] = round(sum(ratings) / len(ratings), 1) if ratings else 0
+    
+# REMOVED:     return {
+# REMOVED:         "total_feedback": total,
+# REMOVED:         "avg_staff_rating": round(sum(staff_ratings) / len(staff_ratings), 1) if staff_ratings else 0,
+# REMOVED:         "avg_doctor_rating": round(sum(doctor_ratings) / len(doctor_ratings), 1) if doctor_ratings else 0,
+# REMOVED:         "by_doctor": by_doctor,
+# REMOVED:         "positive_experiences": len([f for f in feedback_list if f.get("overall_experience") == "positive"]),
+# REMOVED:         "would_recommend_count": len([f for f in feedback_list if f.get("would_recommend")])
+# REMOVED:     }
+
+# REMOVED: @api_router.post("/admin/staff")
+# REMOVED: async def create_staff(staff: StaffCreate, admin = Depends(verify_admin)):
+# REMOVED:     """Create a new staff member (Super Admin only)"""
+# REMOVED:     if staff.role not in STAFF_ROLES:
+# REMOVED:         raise HTTPException(status_code=400, detail=f"Invalid role. Must be one of: {list(STAFF_ROLES.keys())}")
+    
+# REMOVED:     # Check if username already exists
+# REMOVED:     existing = await db.staff.find_one({"username": staff.username})
+# REMOVED:     if existing:
+# REMOVED:         raise HTTPException(status_code=400, detail="Username already exists")
+    
+# REMOVED:     # Hash password
+# REMOVED:     password_hash = bcrypt.hashpw(staff.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+# REMOVED:     # Determine clinic based on role
+# REMOVED:     clinic = staff.clinic
+# REMOVED:     if staff.role in ["doctor_pushpa", "clinic_staff_pushpa"]:
+# REMOVED:         clinic = "Pushpa Clinic"
+# REMOVED:     elif staff.role in ["doctor_amnion", "clinic_staff_amnion"]:
+# REMOVED:         clinic = "Amnion Clinic"
+    
+# REMOVED:     staff_doc = {
+# REMOVED:         "id": str(uuid.uuid4()),
+# REMOVED:         "username": staff.username,
+# REMOVED:         "password_hash": password_hash,
+# REMOVED:         "name": staff.name,
+# REMOVED:         "role": staff.role,
+# REMOVED:         "doctor_name": staff.doctor_name if staff.role.startswith("doctor") else None,
+# REMOVED:         "clinic": clinic,
+# REMOVED:         "created_at": datetime.now(timezone.utc).isoformat(),
+# REMOVED:         "active": True
+# REMOVED:     }
+    
+# REMOVED:     await db.staff.insert_one(staff_doc)
+# REMOVED:     logger.info(f"Staff created: {staff.username} ({staff.role})")
+    
+# REMOVED:     return {
+# REMOVED:         "id": staff_doc["id"],
+# REMOVED:         "username": staff.username,
+# REMOVED:         "name": staff.name,
+# REMOVED:         "role": staff.role,
+# REMOVED:         "doctor_name": staff_doc["doctor_name"],
+# REMOVED:         "clinic": staff_doc["clinic"]
+# REMOVED:     }
+
+# REMOVED: @api_router.get("/admin/staff")
+# REMOVED: async def list_staff(admin = Depends(verify_admin)):
+# REMOVED:     """List all staff members"""
+# REMOVED:     staff_list = await db.staff.find({}, {"_id": 0, "password_hash": 0}).to_list(100)
+# REMOVED:     return {"staff": staff_list, "roles": STAFF_ROLES, "clinics": CLINICS}
+
+# REMOVED: @api_router.delete("/admin/staff/{staff_id}")
+# REMOVED: async def delete_staff(staff_id: str, admin = Depends(verify_admin)):
+# REMOVED:     """Delete a staff member"""
+# REMOVED:     result = await db.staff.delete_one({"id": staff_id})
+# REMOVED:     if result.deleted_count == 0:
+# REMOVED:         raise HTTPException(status_code=404, detail="Staff member not found")
+# REMOVED:     return {"success": True, "message": "Staff member deleted"}
+
+
 class StaffUpdate(BaseModel):
     username: Optional[str] = None
     name: Optional[str] = None
@@ -3196,44 +3364,685 @@ class StaffUpdate(BaseModel):
     clinic: Optional[str] = None
 
 
+# REMOVED: @api_router.put("/admin/staff/{staff_id}")
+# REMOVED: async def update_staff(staff_id: str, update: StaffUpdate, admin = Depends(verify_admin)):
+# REMOVED:     """Update a staff member's details"""
+# REMOVED:     staff = await db.staff.find_one({"id": staff_id})
+# REMOVED:     if not staff:
+# REMOVED:         raise HTTPException(status_code=404, detail="Staff member not found")
+    
+# REMOVED:     update_data = {}
+# REMOVED:     if update.username:
+# REMOVED:         # Check if username already exists
+# REMOVED:         existing = await db.staff.find_one({"username": update.username, "id": {"$ne": staff_id}})
+# REMOVED:         if existing:
+# REMOVED:             raise HTTPException(status_code=400, detail="Username already exists")
+# REMOVED:         update_data["username"] = update.username
+# REMOVED:     if update.name:
+# REMOVED:         update_data["name"] = update.name
+# REMOVED:     if update.role:
+# REMOVED:         if update.role not in STAFF_ROLES:
+# REMOVED:             raise HTTPException(status_code=400, detail=f"Invalid role. Must be one of: {list(STAFF_ROLES.keys())}")
+# REMOVED:         update_data["role"] = update.role
+# REMOVED:     if update.doctor_name:
+# REMOVED:         update_data["doctor_name"] = update.doctor_name
+# REMOVED:     if update.clinic:
+# REMOVED:         update_data["clinic"] = update.clinic
+    
+# REMOVED:     if not update_data:
+# REMOVED:         raise HTTPException(status_code=400, detail="No fields to update")
+    
+# REMOVED:     await db.staff.update_one({"id": staff_id}, {"$set": update_data})
+    
+# REMOVED:     updated_staff = await db.staff.find_one({"id": staff_id}, {"_id": 0, "password_hash": 0})
+# REMOVED:     return {"success": True, "staff": updated_staff}
+
+
+# REMOVED: @api_router.put("/admin/staff/{staff_id}/toggle")
+# REMOVED: async def toggle_staff_status(staff_id: str, admin = Depends(verify_admin)):
+# REMOVED:     """Enable/disable a staff member"""
+# REMOVED:     staff = await db.staff.find_one({"id": staff_id})
+# REMOVED:     if not staff:
+# REMOVED:         raise HTTPException(status_code=404, detail="Staff member not found")
+    
+# REMOVED:     new_status = not staff.get("active", True)
+# REMOVED:     await db.staff.update_one({"id": staff_id}, {"$set": {"active": new_status}})
+    
+# REMOVED:     return {"success": True, "active": new_status}
+
 # ============ Staff Login & Role-specific Endpoints ============
+
+# REMOVED: @api_router.post("/staff/login")
+# REMOVED: async def staff_login(input: StaffLogin):
+# REMOVED:     """Staff login with username and password"""
+# REMOVED:     staff = await db.staff.find_one({"username": input.username})
+    
+# REMOVED:     if not staff:
+# REMOVED:         raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+# REMOVED:     if not staff.get("active", True):
+# REMOVED:         raise HTTPException(status_code=403, detail="Account is disabled")
+    
+# REMOVED:     if not bcrypt.checkpw(input.password.encode('utf-8'), staff["password_hash"].encode('utf-8')):
+# REMOVED:         raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+# REMOVED:     # Log login for audit
+# REMOVED:     await db.audit_logs.insert_one({
+# REMOVED:         "action": "staff_login",
+# REMOVED:         "staff_id": staff["id"],
+# REMOVED:         "username": staff["username"],
+# REMOVED:         "role": staff["role"],
+# REMOVED:         "timestamp": datetime.now(timezone.utc).isoformat()
+# REMOVED:     })
+    
+# REMOVED:     # Get all clinics this doctor works at (for doctor roles)
+# REMOVED:     doctor_name = staff.get("doctor_name")
+# REMOVED:     doctor_clinics = []
+# REMOVED:     if doctor_name and staff["role"] in ["doctor", "doctor_pushpa", "doctor_amnion"]:
+# REMOVED:         doctor_clinics = DOCTOR_CLINICS.get(doctor_name, [])
+    
+# REMOVED:     # Generate staff token with 30 days expiry
+# REMOVED:     staff_token = jwt.encode({
+# REMOVED:         'sub': staff["id"],
+# REMOVED:         'username': staff["username"],
+# REMOVED:         'role': staff["role"],
+# REMOVED:         'name': staff["name"],
+# REMOVED:         'doctor_name': doctor_name,
+# REMOVED:         'clinic': staff.get("clinic"),
+# REMOVED:         'doctor_clinics': doctor_clinics,  # All clinics doctor works at
+# REMOVED:         'exp': datetime.now(timezone.utc) + timedelta(days=30)
+# REMOVED:     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    
+# REMOVED:     return {
+# REMOVED:         "token": staff_token,
+# REMOVED:         "role": staff["role"],
+# REMOVED:         "name": staff["name"],
+# REMOVED:         "doctor_name": doctor_name,
+# REMOVED:         "clinic": staff.get("clinic"),
+# REMOVED:         "doctor_clinics": doctor_clinics  # Return all clinics for doctor
+# REMOVED:     }
 
 # ============ Clinic Staff Endpoints ============
 
+# REMOVED: @api_router.post("/staff/appointments/walk-in")
+# REMOVED: async def book_walk_in_appointment(appt: WalkInAppointment, staff = Depends(verify_staff)):
+# REMOVED:     """Book a walk-in appointment (Clinic Staff only)"""
+# REMOVED:     role = staff.get("role")
+# REMOVED:     if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Clinic staff access required")
+    
+# REMOVED:     # Verify staff can only book for their clinic
+# REMOVED:     if role == "clinic_staff_pushpa" and appt.clinic != "Pushpa Clinic":
+# REMOVED:         raise HTTPException(status_code=403, detail="You can only book for Pushpa Clinic")
+# REMOVED:     if role == "clinic_staff_amnion" and appt.clinic != "Amnion Clinic":
+# REMOVED:         raise HTTPException(status_code=403, detail="You can only book for Amnion Clinic")
+    
+# REMOVED:     # SLOT BLOCKING: Check if slot is already booked for normal appointments (includes pending from patient bookings)
+# REMOVED:     existing_slot = await db.appointments.find_one({
+# REMOVED:         "doctor": appt.doctor,
+# REMOVED:         "date": appt.date,
+# REMOVED:         "time": appt.time,
+# REMOVED:         "status": {"$in": ["pending", "Booked", "In Clinic", "Completed"]}
+# REMOVED:     })
+    
+# REMOVED:     if existing_slot:
+# REMOVED:         raise HTTPException(
+# REMOVED:             status_code=400, 
+# REMOVED:             detail="This time slot is already booked. Please select another slot."
+# REMOVED:         )
+    
+# REMOVED:     appointment = {
+# REMOVED:         "id": str(uuid.uuid4()),
+# REMOVED:         "user_id": None,  # Walk-in, no user account
+# REMOVED:         "doctor": appt.doctor,
+# REMOVED:         "clinic": appt.clinic,
+# REMOVED:         "date": appt.date,
+# REMOVED:         "time": appt.time,
+# REMOVED:         "patient_name": appt.patient_name,
+# REMOVED:         "patient_phone": appt.patient_phone,
+# REMOVED:         "patient_email": None,
+# REMOVED:         "status": "Booked",
+# REMOVED:         "appointment_type": "NORMAL",
+# REMOVED:         "booking_type": "walk_in",
+# REMOVED:         "booked_by": staff.get("name"),
+# REMOVED:         "created_at": datetime.now(timezone.utc).isoformat()
+# REMOVED:     }
+    
+# REMOVED:     await db.appointments.insert_one(appointment)
+    
+# REMOVED:     # Log action
+# REMOVED:     await db.audit_logs.insert_one({
+# REMOVED:         "action": "appointment_booked",
+# REMOVED:         "appointment_id": appointment["id"],
+# REMOVED:         "staff_id": staff.get("sub"),
+# REMOVED:         "staff_name": staff.get("name"),
+# REMOVED:         "patient_name": appt.patient_name,
+# REMOVED:         "timestamp": datetime.now(timezone.utc).isoformat()
+# REMOVED:     })
+    
+# REMOVED:     logger.info(f"Walk-in appointment booked by {staff.get('name')}: {appt.patient_name}")
+    
+# REMOVED:     # Send WhatsApp notification to doctor
+# REMOVED:     await notify_doctor_whatsapp(appt.doctor, appointment, "walk_in")
+    
+# REMOVED:     # Send SMS confirmation to patient
+# REMOVED:     await send_appointment_sms(appt.patient_phone, {
+# REMOVED:         "doctor": appt.doctor,
+# REMOVED:         "clinic": appt.clinic,
+# REMOVED:         "date": appt.date,
+# REMOVED:         "time": appt.time,
+# REMOVED:         "booking_type": "walk_in"
+# REMOVED:     })
+    
+# REMOVED:     # Broadcast real-time slot update via WebSocket
+# REMOVED:     await slot_manager.broadcast_slot_update(
+# REMOVED:         doctor=appt.doctor,
+# REMOVED:         clinic=appt.clinic,
+# REMOVED:         date=appt.date,
+# REMOVED:         slot=appt.time,
+# REMOVED:         status="booked"
+# REMOVED:     )
+    
+# REMOVED:     return {k: v for k, v in appointment.items() if k != "_id"}
+
 # ============ Emergency Appointments ============
+
+# REMOVED: @api_router.post("/staff/appointments/emergency")
+# REMOVED: async def book_emergency_appointment(appt: EmergencyAppointment, staff = Depends(verify_staff)):
+# REMOVED:     """Book an emergency appointment - NO time slot required (Clinic Staff only)"""
+# REMOVED:     role = staff.get("role")
+# REMOVED:     if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Only Clinic Staff can book emergency appointments")
+    
+# REMOVED:     # Verify staff can only book for their clinic
+# REMOVED:     if role == "clinic_staff_pushpa" and appt.clinic != "Pushpa Clinic":
+# REMOVED:         raise HTTPException(status_code=403, detail="You can only book for Pushpa Clinic")
+# REMOVED:     if role == "clinic_staff_amnion" and appt.clinic != "Amnion Clinic":
+# REMOVED:         raise HTTPException(status_code=403, detail="You can only book for Amnion Clinic")
+    
+# REMOVED:     # Check emergency appointment limit (max 10 per doctor per day)
+# REMOVED:     emergency_count = await db.appointments.count_documents({
+# REMOVED:         "doctor": appt.doctor,
+# REMOVED:         "date": appt.date,
+# REMOVED:         "appointment_type": "EMERGENCY",
+# REMOVED:         "status": {"$ne": "Cancelled"}
+# REMOVED:     })
+    
+# REMOVED:     if emergency_count >= MAX_EMERGENCY_PER_DOCTOR_PER_DAY:
+# REMOVED:         raise HTTPException(
+# REMOVED:             status_code=400,
+# REMOVED:             detail=f"Daily emergency appointment limit reached ({MAX_EMERGENCY_PER_DOCTOR_PER_DAY}/day). Cannot book more emergency appointments for this doctor today."
+# REMOVED:         )
+    
+# REMOVED:     appointment = {
+# REMOVED:         "id": str(uuid.uuid4()),
+# REMOVED:         "user_id": None,
+# REMOVED:         "doctor": appt.doctor,
+# REMOVED:         "clinic": appt.clinic,
+# REMOVED:         "date": appt.date,
+# REMOVED:         "time": None,  # Emergency appointments have NO time slot
+# REMOVED:         "patient_name": appt.patient_name,
+# REMOVED:         "patient_phone": appt.patient_phone,
+# REMOVED:         "patient_email": appt.patient_email,
+# REMOVED:         "status": "Booked",
+# REMOVED:         "appointment_type": "EMERGENCY",
+# REMOVED:         "booking_type": "emergency",
+# REMOVED:         "booked_by": staff.get("name"),
+# REMOVED:         "created_at": datetime.now(timezone.utc).isoformat()
+# REMOVED:     }
+    
+# REMOVED:     await db.appointments.insert_one(appointment)
+    
+# REMOVED:     # Log action
+# REMOVED:     await db.audit_logs.insert_one({
+# REMOVED:         "action": "EMERGENCY_BOOKED",
+# REMOVED:         "appointment_id": appointment["id"],
+# REMOVED:         "staff_id": staff.get("sub"),
+# REMOVED:         "staff_name": staff.get("name"),
+# REMOVED:         "patient_name": appt.patient_name,
+# REMOVED:         "doctor": appt.doctor,
+# REMOVED:         "timestamp": datetime.now(timezone.utc).isoformat()
+# REMOVED:     })
+    
+# REMOVED:     logger.info(f"EMERGENCY appointment booked by {staff.get('name')}: {appt.patient_name} for {appt.doctor}")
+    
+# REMOVED:     # Send WhatsApp notification to doctor (EMERGENCY priority)
+# REMOVED:     await notify_doctor_whatsapp(appt.doctor, appointment, "emergency")
+    
+# REMOVED:     # Send SMS confirmation to patient
+# REMOVED:     await send_appointment_sms(appt.patient_phone, {
+# REMOVED:         "doctor": appt.doctor,
+# REMOVED:         "clinic": appt.clinic,
+# REMOVED:         "date": appt.date,
+# REMOVED:         "time": None,
+# REMOVED:         "booking_type": "emergency"
+# REMOVED:     })
+    
+# REMOVED:     return {k: v for k, v in appointment.items() if k != "_id"}
+
+# REMOVED: @api_router.get("/staff/emergency-count/{doctor}/{date}")
+# REMOVED: async def get_emergency_count(doctor: str, date: str, staff = Depends(verify_staff)):
+# REMOVED:     """Get emergency appointment count for a doctor on a specific date"""
+# REMOVED:     count = await db.appointments.count_documents({
+# REMOVED:         "doctor": doctor,
+# REMOVED:         "date": date,
+# REMOVED:         "appointment_type": "EMERGENCY",
+# REMOVED:         "status": {"$ne": "Cancelled"}
+# REMOVED:     })
+    
+# REMOVED:     return {
+# REMOVED:         "doctor": doctor,
+# REMOVED:         "date": date,
+# REMOVED:         "emergency_count": count,
+# REMOVED:         "max_allowed": MAX_EMERGENCY_PER_DOCTOR_PER_DAY,
+# REMOVED:         "remaining": MAX_EMERGENCY_PER_DOCTOR_PER_DAY - count
+# REMOVED:     }
 
 # ============ Add-on Services (Blood Test, Sonography, ECG) ============
 
-👤 *Patient:* {appointment.get('patient_name')}
-📞 *Phone:* {appointment.get('patient_phone', 'N/A')}
-
-👨‍⚕️ *Doctor:* {doctor_name}
-🏥 *Clinic:* {appointment.get('clinic')}
-⏰ *Time:* {appointment.get('time') or 'Emergency'}
-
-✅ *Status:* IN CLINIC
-📝 *Checked in by:* {staff.get('name')}
-
-_Patient is waiting. Please see them shortly._
-
-_Nevika Cura Healthcare_"""
-        await send_whatsapp_notification(doctor_number, checkin_message)
+# REMOVED: @api_router.post("/staff/appointments/{appointment_id}/services")
+# REMOVED: async def add_service_to_appointment(appointment_id: str, service: AddServiceRequest, staff = Depends(verify_staff)):
+# REMOVED:     """Add a service (Blood Test, Sonography, ECG) to an appointment - Clinic Staff only"""
+# REMOVED:     role = staff.get("role")
+# REMOVED:     if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Only Clinic Staff can add services")
     
-    # Send PUSH NOTIFICATION for check-in (no email for status updates)
-    if appointment.get("user_id"):
-        await send_push_notification(
-            user_id=appointment.get("user_id"),
-            title="✅ Checked In",
-            body=f"You're checked in at {appointment.get('clinic')}. The doctor will see you shortly.",
-            url="/profile",
-            tag=f"appointment-{appointment_id}"
-        )
+# REMOVED:     # Validate service type
+# REMOVED:     if service.service_type not in SERVICE_TYPES:
+# REMOVED:         raise HTTPException(status_code=400, detail=f"Invalid service type. Must be one of: {SERVICE_TYPES}")
     
-    logger.info(f"Patient checked in by {staff.get('name')}: {appointment.get('patient_name')}")
+# REMOVED:     # Get appointment
+# REMOVED:     appointment = await db.appointments.find_one({"id": appointment_id})
+# REMOVED:     if not appointment:
+# REMOVED:         raise HTTPException(status_code=404, detail="Appointment not found")
     
-    return {"success": True, "status": "In Clinic", "message": "Patient checked in successfully"}
+# REMOVED:     # Verify clinic access
+# REMOVED:     if role == "clinic_staff_pushpa" and appointment.get("clinic") != "Pushpa Clinic":
+# REMOVED:         raise HTTPException(status_code=403, detail="You can only manage Pushpa Clinic appointments")
+# REMOVED:     if role == "clinic_staff_amnion" and appointment.get("clinic") != "Amnion Clinic":
+# REMOVED:         raise HTTPException(status_code=403, detail="You can only manage Amnion Clinic appointments")
+    
+# REMOVED:     # Cannot add services after appointment is completed
+# REMOVED:     if appointment.get("status") == "Completed":
+# REMOVED:         raise HTTPException(status_code=400, detail="Cannot add services to completed appointments")
+    
+# REMOVED:     # Create service record
+# REMOVED:     service_record = {
+# REMOVED:         "id": str(uuid.uuid4()),
+# REMOVED:         "appointment_id": appointment_id,
+# REMOVED:         "patient_name": appointment.get("patient_name"),
+# REMOVED:         "patient_phone": appointment.get("patient_phone"),
+# REMOVED:         "patient_email": appointment.get("patient_email"),
+# REMOVED:         "clinic": appointment.get("clinic"),
+# REMOVED:         "doctor": appointment.get("doctor"),
+# REMOVED:         "service_type": service.service_type,
+# REMOVED:         "service_details": service.service_details,
+# REMOVED:         "specific_tests": service.specific_tests or [],
+# REMOVED:         "ordered_by": staff.get("name"),
+# REMOVED:         "ordered_by_id": staff.get("sub"),
+# REMOVED:         "status": "ORDERED",
+# REMOVED:         "created_at": datetime.now(timezone.utc).isoformat()
+# REMOVED:     }
+    
+# REMOVED:     await db.appointment_services.insert_one(service_record)
+    
+# REMOVED:     # Also create a linked diagnostic order for tracking
+# REMOVED:     # Use specific tests if provided, otherwise use generic name
+# REMOVED:     tests_for_order = service.specific_tests if service.specific_tests else [f"{service.service_type} (Clinic Add-on)"]
+    
+# REMOVED:     diagnostic_order = {
+# REMOVED:         "id": str(uuid.uuid4()),
+# REMOVED:         "user_id": appointment.get("user_id"),
+# REMOVED:         "tests": tests_for_order,
+# REMOVED:         "prescription_url": None,
+# REMOVED:         "preferred_date": appointment.get("date"),
+# REMOVED:         "patient_name": appointment.get("patient_name"),
+# REMOVED:         "patient_phone": appointment.get("patient_phone"),
+# REMOVED:         "patient_email": appointment.get("patient_email"),
+# REMOVED:         "clinic": appointment.get("clinic"),  # Include clinic name for Proton staff
+# REMOVED:         "doctor": appointment.get("doctor"),  # Include doctor name
+# REMOVED:         "status": "Test Booked",
+# REMOVED:         "linked_appointment_id": appointment_id,
+# REMOVED:         "linked_service_id": service_record["id"],
+# REMOVED:         "service_type": service.service_type,
+# REMOVED:         "ordered_by": staff.get("name"),  # Track who ordered
+# REMOVED:         "created_at": datetime.now(timezone.utc).isoformat()
+# REMOVED:     }
+    
+# REMOVED:     await db.diagnostic_orders.insert_one(diagnostic_order)
+    
+# REMOVED:     # Log action
+# REMOVED:     await db.audit_logs.insert_one({
+# REMOVED:         "action": "SERVICE_ADDED",
+# REMOVED:         "appointment_id": appointment_id,
+# REMOVED:         "service_id": service_record["id"],
+# REMOVED:         "service_type": service.service_type,
+# REMOVED:         "staff_id": staff.get("sub"),
+# REMOVED:         "staff_name": staff.get("name"),
+# REMOVED:         "patient_name": appointment.get("patient_name"),
+# REMOVED:         "timestamp": datetime.now(timezone.utc).isoformat()
+# REMOVED:     })
+    
+# REMOVED:     # Send email notification if patient has email
+# REMOVED:     if appointment.get("patient_email"):
+# REMOVED:         service_display = {
+# REMOVED:             "BLOOD_TEST": "Blood Test",
+# REMOVED:             "SONOGRAPHY": "Sonography / USG",
+# REMOVED:             "ECG": "ECG (Electrocardiogram)"
+# REMOVED:         }
+# REMOVED:         patient_html = f"""
+# REMOVED:         <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
+# REMOVED:             <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+# REMOVED:                 <h1 style="color: white; margin: 0;">Diagnostic Test Ordered 🔬</h1>
+# REMOVED:             </div>
+# REMOVED:             <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+# REMOVED:                 <p>Dear <strong>{appointment.get('patient_name')}</strong>,</p>
+# REMOVED:                 <p>The following test has been booked during your visit:</p>
+# REMOVED:                 <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8b5cf6;">
+# REMOVED:                     <p><strong>Test:</strong> {service_display.get(service.service_type, service.service_type)}</p>
+# REMOVED:                     <p><strong>Clinic:</strong> {appointment.get('clinic')}</p>
+# REMOVED:                     <p><strong>Doctor:</strong> {appointment.get('doctor')}</p>
+# REMOVED:                 </div>
+# REMOVED:                 <p style="color: #64748b; font-size: 14px;">Thank you for choosing Nevika Cura Healthcare.</p>
+# REMOVED:             </div>
+# REMOVED:         </div>
+# REMOVED:         """
+# REMOVED:         await send_email_notification(
+# REMOVED:             f"Diagnostic Test Ordered - {appointment.get('patient_name')}",
+# REMOVED:             f"Service {service.service_type} added for patient {appointment.get('patient_name')}",
+# REMOVED:             patient_email=appointment.get("patient_email"),
+# REMOVED:             patient_subject="Diagnostic Test Ordered – Nevika Cura",
+# REMOVED:             patient_html=patient_html
+# REMOVED:         )
+    
+# REMOVED:     logger.info(f"Service {service.service_type} added to appointment {appointment_id} by {staff.get('name')}")
+    
+# REMOVED:     return {
+# REMOVED:         "success": True,
+# REMOVED:         "service": {k: v for k, v in service_record.items() if k != "_id"},
+# REMOVED:         "message": f"{service.service_type} service added successfully"
+# REMOVED:     }
+
+# REMOVED: @api_router.get("/staff/appointments/{appointment_id}/services")
+# REMOVED: async def get_appointment_services(appointment_id: str, staff = Depends(verify_staff)):
+# REMOVED:     """Get all services linked to an appointment"""
+# REMOVED:     services = await db.appointment_services.find(
+# REMOVED:         {"appointment_id": appointment_id},
+# REMOVED:         {"_id": 0}
+# REMOVED:     ).to_list(50)
+    
+# REMOVED:     return {"services": services}
+
+# REMOVED: @api_router.get("/staff/diagnostic/service-orders")
+# REMOVED: async def get_service_linked_orders(staff = Depends(verify_staff), status: Optional[str] = None):
+# REMOVED:     """Get diagnostic orders that are linked to clinic services (Diagnostics Staff)"""
+# REMOVED:     if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+# REMOVED:     query = {"linked_appointment_id": {"$exists": True, "$ne": None}}
+# REMOVED:     if status:
+# REMOVED:         query["status"] = status
+    
+# REMOVED:     orders = await db.diagnostic_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+# REMOVED:     return {"orders": orders, "service_statuses": SERVICE_STATUSES}
+
+# REMOVED: @api_router.put("/staff/services/{service_id}/status")
+# REMOVED: async def update_service_status(service_id: str, update: ServiceStatusUpdate, staff = Depends(verify_staff)):
+# REMOVED:     """Update add-on service status (Diagnostics Staff only)"""
+# REMOVED:     if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+# REMOVED:     if update.status not in SERVICE_STATUSES:
+# REMOVED:         raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {SERVICE_STATUSES}")
+    
+# REMOVED:     # Update service record
+# REMOVED:     result = await db.appointment_services.update_one(
+# REMOVED:         {"id": service_id},
+# REMOVED:         {"$set": {
+# REMOVED:             "status": update.status,
+# REMOVED:             "updated_by": staff.get("name"),
+# REMOVED:             "updated_at": datetime.now(timezone.utc).isoformat(),
+# REMOVED:             "notes": update.notes
+# REMOVED:         }}
+# REMOVED:     )
+    
+# REMOVED:     if result.matched_count == 0:
+# REMOVED:         raise HTTPException(status_code=404, detail="Service not found")
+    
+# REMOVED:     # Also update linked diagnostic order
+# REMOVED:     service = await db.appointment_services.find_one({"id": service_id})
+# REMOVED:     if service:
+# REMOVED:         status_map = {
+# REMOVED:             "ORDERED": "Test Booked",
+# REMOVED:             "SAMPLE_COLLECTED": "Sample Collected",
+# REMOVED:             "PROCESSING": "In Process",
+# REMOVED:             "COMPLETED": "Reports Generated"
+# REMOVED:         }
+# REMOVED:         await db.diagnostic_orders.update_many(
+# REMOVED:             {"linked_service_id": service_id},
+# REMOVED:             {"$set": {"status": status_map.get(update.status, update.status)}}
+# REMOVED:         )
+    
+# REMOVED:     # Log action
+# REMOVED:     await db.audit_logs.insert_one({
+# REMOVED:         "action": "SERVICE_STATUS_UPDATED",
+# REMOVED:         "service_id": service_id,
+# REMOVED:         "new_status": update.status,
+# REMOVED:         "staff_id": staff.get("sub"),
+# REMOVED:         "staff_name": staff.get("name"),
+# REMOVED:         "timestamp": datetime.now(timezone.utc).isoformat()
+# REMOVED:     })
+    
+# REMOVED:     return {"success": True, "status": update.status}
+
+# REMOVED: @api_router.put("/staff/appointments/{appointment_id}/check-in")
+# REMOVED: async def check_in_patient(appointment_id: str, staff = Depends(verify_staff)):
+# REMOVED:     """Mark patient as checked in / IN CLINIC (Clinic Staff only)"""
+# REMOVED:     role = staff.get("role")
+# REMOVED:     if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Clinic staff access required")
+    
+# REMOVED:     appointment = await db.appointments.find_one({"id": appointment_id})
+# REMOVED:     if not appointment:
+# REMOVED:         raise HTTPException(status_code=404, detail="Appointment not found")
+    
+# REMOVED:     # Verify staff can only check-in for their clinic
+# REMOVED:     if role == "clinic_staff_pushpa" and appointment.get("clinic") != "Pushpa Clinic":
+# REMOVED:         raise HTTPException(status_code=403, detail="You can only manage Pushpa Clinic appointments")
+# REMOVED:     if role == "clinic_staff_amnion" and appointment.get("clinic") != "Amnion Clinic":
+# REMOVED:         raise HTTPException(status_code=403, detail="You can only manage Amnion Clinic appointments")
+    
+# REMOVED:     await db.appointments.update_one(
+# REMOVED:         {"id": appointment_id},
+# REMOVED:         {"$set": {
+# REMOVED:             "status": "In Clinic",
+# REMOVED:             "checked_in_at": datetime.now(timezone.utc).isoformat(),
+# REMOVED:             "checked_in_by": staff.get("name")
+# REMOVED:         }}
+# REMOVED:     )
+    
+# REMOVED:     # Log action
+# REMOVED:     await db.audit_logs.insert_one({
+# REMOVED:         "action": "patient_checked_in",
+# REMOVED:         "appointment_id": appointment_id,
+# REMOVED:         "staff_id": staff.get("sub"),
+# REMOVED:         "staff_name": staff.get("name"),
+# REMOVED:         "patient_name": appointment.get("patient_name"),
+# REMOVED:         "timestamp": datetime.now(timezone.utc).isoformat()
+# REMOVED:     })
+    
+# REMOVED:     # Send WhatsApp notification to doctor about patient check-in
+# REMOVED:     doctor_name = appointment.get("doctor")
+# REMOVED:     doctor_number = DOCTOR_WHATSAPP_NUMBERS.get(doctor_name)
+# REMOVED:     if doctor_number:
+# REMOVED:         checkin_message = f"""*🏥 Patient Checked In*
+# REMOVED: 
+# REMOVED: 👤 *Patient:* {appointment.get('patient_name')}
+# REMOVED: 📞 *Phone:* {appointment.get('patient_phone', 'N/A')}
+# REMOVED: 
+# REMOVED: 👨‍⚕️ *Doctor:* {doctor_name}
+# REMOVED: 🏥 *Clinic:* {appointment.get('clinic')}
+# REMOVED: ⏰ *Time:* {appointment.get('time') or 'Emergency'}
+# REMOVED: 
+# REMOVED: ✅ *Status:* IN CLINIC
+# REMOVED: 📝 *Checked in by:* {staff.get('name')}
+# REMOVED: 
+# REMOVED: _Patient is waiting. Please see them shortly._
+# REMOVED: 
+# REMOVED: _Nevika Cura Healthcare_"""
+# REMOVED:         await send_whatsapp_notification(doctor_number, checkin_message)
+    
+# REMOVED:     # Send PUSH NOTIFICATION for check-in (no email for status updates)
+# REMOVED:     if appointment.get("user_id"):
+# REMOVED:         await send_push_notification(
+# REMOVED:             user_id=appointment.get("user_id"),
+# REMOVED:             title="✅ Checked In",
+# REMOVED:             body=f"You're checked in at {appointment.get('clinic')}. The doctor will see you shortly.",
+# REMOVED:             url="/profile",
+# REMOVED:             tag=f"appointment-{appointment_id}"
+# REMOVED:         )
+    
+# REMOVED:     logger.info(f"Patient checked in by {staff.get('name')}: {appointment.get('patient_name')}")
+    
+# REMOVED:     return {"success": True, "status": "In Clinic", "message": "Patient checked in successfully"}
 
 # ============ Doctor Endpoints ============
+
+# REMOVED: @api_router.get("/staff/doctor/appointments")
+# REMOVED: async def get_doctor_appointments(staff = Depends(verify_staff), date: Optional[str] = None, clinic: Optional[str] = None):
+# REMOVED:     """Get appointments for the logged-in doctor - Emergency appointments pinned on top
+# REMOVED:     
+# REMOVED:     Doctors can filter by:
+# REMOVED:     - date: specific date (YYYY-MM-DD)
+# REMOVED:     - clinic: specific clinic name (for doctors working at multiple clinics)
+# REMOVED:     """
+# REMOVED:     role = staff.get("role")
+# REMOVED:     if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Doctor access required")
+    
+# REMOVED:     # Doctors can only see their own appointments
+# REMOVED:     query = {}
+# REMOVED:     if role in ["doctor", "doctor_pushpa", "doctor_amnion"]:
+# REMOVED:         query["doctor"] = staff.get("doctor_name")
+    
+# REMOVED:     # Filter by date if provided
+# REMOVED:     if date:
+# REMOVED:         query["date"] = date
+    
+# REMOVED:     # Filter by clinic if provided (for multi-clinic doctors)
+# REMOVED:     if clinic:
+# REMOVED:         query["clinic"] = clinic
+    
+# REMOVED:     # Get all appointments matching query
+# REMOVED:     all_appointments = await db.appointments.find(query, {"_id": 0}).to_list(500)
+    
+# REMOVED:     # Separate emergency and normal appointments
+# REMOVED:     emergency_appts = [a for a in all_appointments if a.get("appointment_type") == "EMERGENCY"]
+# REMOVED:     normal_appts = [a for a in all_appointments if a.get("appointment_type") != "EMERGENCY"]
+    
+# REMOVED:     # Sort normal appointments by date then time
+# REMOVED:     normal_appts.sort(key=lambda x: (x.get("date") or "", x.get("time") or "99:99"))
+    
+# REMOVED:     # Emergency appointments pinned on top
+# REMOVED:     appointments = emergency_appts + normal_appts
+    
+# REMOVED:     # Get doctor's clinics for frontend
+# REMOVED:     doctor_name = staff.get("doctor_name")
+# REMOVED:     doctor_clinics = DOCTOR_CLINICS.get(doctor_name, []) if doctor_name else []
+    
+# REMOVED:     return {
+# REMOVED:         "appointments": appointments,
+# REMOVED:         "doctor_name": doctor_name,
+# REMOVED:         "doctor_clinics": doctor_clinics,
+# REMOVED:         "selected_clinic": clinic,
+# REMOVED:         "selected_date": date,
+# REMOVED:         "total_count": len(appointments)
+# REMOVED:     }
+
+# REMOVED: @api_router.get("/staff/patient/history/{phone}")
+# REMOVED: async def get_patient_history(phone: str, staff = Depends(verify_staff)):
+# REMOVED:     """Get complete history for a patient by phone number
+# REMOVED:     
+# REMOVED:     Returns all appointments, diagnostic orders, and pharmacy orders for the patient.
+# REMOVED:     Available to doctors and clinic staff.
+# REMOVED:     """
+# REMOVED:     role = staff.get("role")
+# REMOVED:     if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Doctor or Clinic Staff access required")
+    
+# REMOVED:     # Clean phone number
+# REMOVED:     phone = phone.strip().replace(" ", "").replace("-", "")
+    
+# REMOVED:     # Get all appointments for this patient
+# REMOVED:     appointments = await db.appointments.find(
+# REMOVED:         {"patient_phone": {"$regex": phone}},
+# REMOVED:         {"_id": 0}
+# REMOVED:     ).sort([("date", -1), ("time", -1)]).to_list(100)
+    
+# REMOVED:     # Get all diagnostic orders for this patient
+# REMOVED:     diagnostic_orders = await db.diagnostic_orders.find(
+# REMOVED:         {"patient_phone": {"$regex": phone}},
+# REMOVED:         {"_id": 0}
+# REMOVED:     ).sort([("created_at", -1)]).to_list(50)
+    
+# REMOVED:     # Get all pharmacy orders for this patient
+# REMOVED:     pharmacy_orders = await db.pharmacy_orders.find(
+# REMOVED:         {"patient_phone": {"$regex": phone}},
+# REMOVED:         {"_id": 0}
+# REMOVED:     ).sort([("created_at", -1)]).to_list(50)
+    
+# REMOVED:     # Get patient name from most recent record
+# REMOVED:     patient_name = None
+# REMOVED:     if appointments:
+# REMOVED:         patient_name = appointments[0].get("patient_name")
+# REMOVED:     elif diagnostic_orders:
+# REMOVED:         patient_name = diagnostic_orders[0].get("patient_name")
+# REMOVED:     elif pharmacy_orders:
+# REMOVED:         patient_name = pharmacy_orders[0].get("patient_name")
+    
+# REMOVED:     # Separate past and upcoming appointments
+# REMOVED:     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+# REMOVED:     past_appointments = [a for a in appointments if a.get("date", "") < today or a.get("status") == "Completed"]
+# REMOVED:     upcoming_appointments = [a for a in appointments if a.get("date", "") >= today and a.get("status") != "Completed"]
+    
+# REMOVED:     return {
+# REMOVED:         "patient_phone": phone,
+# REMOVED:         "patient_name": patient_name,
+# REMOVED:         "summary": {
+# REMOVED:             "total_appointments": len(appointments),
+# REMOVED:             "past_appointments": len(past_appointments),
+# REMOVED:             "upcoming_appointments": len(upcoming_appointments),
+# REMOVED:             "total_diagnostic_orders": len(diagnostic_orders),
+# REMOVED:             "total_pharmacy_orders": len(pharmacy_orders)
+# REMOVED:         },
+# REMOVED:         "past_appointments": past_appointments,
+# REMOVED:         "upcoming_appointments": upcoming_appointments,
+# REMOVED:         "diagnostic_orders": diagnostic_orders,
+# REMOVED:         "pharmacy_orders": pharmacy_orders
+# REMOVED:     }
+
+# REMOVED: @api_router.put("/staff/appointments/{appointment_id}/complete")
+# REMOVED: async def mark_appointment_complete(appointment_id: str, notes: Optional[str] = None, staff = Depends(verify_staff)):
+# REMOVED:     """Mark appointment as completed (Doctor ONLY - with fee code and follow-up)"""
+# REMOVED:     role = staff.get("role")
+    
+# REMOVED:     # ONLY doctors can complete appointments
+# REMOVED:     if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Only doctors can complete appointments")
+    
+# REMOVED:     appointment = await db.appointments.find_one({"id": appointment_id})
+# REMOVED:     if not appointment:
+# REMOVED:         raise HTTPException(status_code=404, detail="Appointment not found")
+    
+# REMOVED:     # Verify it's the doctor's own appointment
+# REMOVED:     if role.startswith("doctor") and appointment.get("doctor") != staff.get("doctor_name"):
+# REMOVED:         raise HTTPException(status_code=403, detail="You can only complete your own appointments")
+    
+# REMOVED:     raise HTTPException(
+# REMOVED:         status_code=400, 
+# REMOVED:         detail="Please use the new completion endpoint with fee code and follow-up days"
+# REMOVED:     )
+
 
 # Fee code configuration (visible to staff only, not patients)
 FEE_CODES = {
@@ -3258,6 +4067,11 @@ class AppointmentCompletion(BaseModel):
     notes: Optional[str] = None
 
 
+# REMOVED: @api_router.put("/staff/appointments/{appointment_id}/doctor-complete")
+# REMOVED: async def doctor_complete_appointment(
+# REMOVED:     appointment_id: str, 
+# REMOVED:     completion: AppointmentCompletion,
+# REMOVED:     staff = Depends(verify_staff)
 ):
     """Doctor completes appointment with fee code and follow-up (Doctor ONLY)"""
     role = staff.get("role")
@@ -3449,6 +4263,20 @@ Thank you for choosing Nevika Cura!"""
     }
 
 
+# REMOVED: @api_router.get("/staff/fee-codes")
+# REMOVED: async def get_fee_codes(staff = Depends(verify_staff)):
+# REMOVED:     """Get fee codes (visible to doctors and clinic staff only)"""
+# REMOVED:     role = staff.get("role")
+# REMOVED:     if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Access denied")
+    
+# REMOVED:     return {"fee_codes": FEE_CODES}
+
+
+# REMOVED: @api_router.get("/staff/clinic/completed-appointments")
+# REMOVED: async def get_clinic_completed_appointments(
+# REMOVED:     staff = Depends(verify_staff),
+# REMOVED:     date: Optional[str] = None
 ):
     """Get completed appointments with fee info for clinic staff dashboard (real-time sync)"""
     role = staff.get("role")
@@ -3484,6 +4312,25 @@ Thank you for choosing Nevika Cura!"""
     }
 
 
+# REMOVED: @api_router.get("/staff/follow-up-reminders")
+# REMOVED: async def get_pending_follow_up_reminders(staff = Depends(verify_staff)):
+# REMOVED:     """Get pending follow-up reminders"""
+# REMOVED:     role = staff.get("role")
+# REMOVED:     if role not in ["doctor", "doctor_pushpa", "doctor_amnion", "clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Access denied")
+    
+# REMOVED:     reminders = await db.follow_up_reminders.find(
+# REMOVED:         {"status": "pending"},
+# REMOVED:         {"_id": 0}
+# REMOVED:     ).sort("follow_up_date", 1).to_list(100)
+    
+# REMOVED:     return {"reminders": reminders}
+
+
+# REMOVED: @api_router.get("/staff/clinic/daily-collection")
+# REMOVED: async def get_daily_collection_summary(
+# REMOVED:     staff = Depends(verify_staff),
+# REMOVED:     date: Optional[str] = None
 ):
     """Get daily collection summary for clinic staff dashboard"""
     role = staff.get("role")
@@ -3615,9 +4462,820 @@ Need to reschedule? Call us or book online.
 
 # ============ Pharmacy Staff Endpoints ============
 
+# REMOVED: @api_router.get("/staff/pharmacy/orders")
+# REMOVED: async def get_pharmacy_orders_for_staff(staff = Depends(verify_staff), status: Optional[str] = None, date: Optional[str] = None):
+# REMOVED:     """Get pharmacy orders for staff - supports date filtering"""
+# REMOVED:     if staff.get("role") not in ["pharmacy_staff", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Pharmacy staff access required")
+    
+# REMOVED:     query = {}
+# REMOVED:     if status:
+# REMOVED:         query["status"] = status
+    
+# REMOVED:     # Date filtering - filter by created_at date
+# REMOVED:     if date:
+# REMOVED:         # Match orders created on this date (created_at starts with the date string)
+# REMOVED:         query["created_at"] = {"$regex": f"^{date}"}
+    
+# REMOVED:     orders = await db.pharmacy_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(200)
+    
+# REMOVED:     # Get order counts by date for calendar view
+# REMOVED:     all_orders = await db.pharmacy_orders.find({}, {"_id": 0, "created_at": 1, "status": 1}).to_list(1000)
+# REMOVED:     date_counts = {}
+# REMOVED:     for order in all_orders:
+# REMOVED:         order_date = order.get("created_at", "")[:10]
+# REMOVED:         if order_date:
+# REMOVED:             if order_date not in date_counts:
+# REMOVED:                 date_counts[order_date] = {"total": 0, "pending": 0}
+# REMOVED:             date_counts[order_date]["total"] += 1
+# REMOVED:             if order.get("status") not in ["Delivered", "Cancelled"]:
+# REMOVED:                 date_counts[order_date]["pending"] += 1
+    
+# REMOVED:     return {"orders": orders, "statuses": PHARMACY_STATUSES, "date_counts": date_counts}
+
+# REMOVED: @api_router.post("/staff/pharmacy/orders/{order_id}/upload-bill")
+# REMOVED: async def upload_pharmacy_bill(order_id: str, file: UploadFile = File(...), staff = Depends(verify_staff)):
+# REMOVED:     """Upload bill/receipt for pharmacy order (required before Out for Delivery)"""
+# REMOVED:     if staff.get("role") not in ["pharmacy_staff", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Pharmacy staff access required")
+    
+# REMOVED:     order = await db.pharmacy_orders.find_one({"id": order_id})
+# REMOVED:     if not order:
+# REMOVED:         raise HTTPException(status_code=404, detail="Order not found")
+    
+# REMOVED:     # Upload file - save to static folder
+# REMOVED:     try:
+# REMOVED:         # Create uploads directory if not exists
+# REMOVED:         uploads_dir = ROOT_DIR / "uploads" / "bills"
+# REMOVED:         uploads_dir.mkdir(parents=True, exist_ok=True)
+        
+# REMOVED:         # Generate unique filename
+# REMOVED:         file_ext = Path(file.filename).suffix or ".pdf"
+# REMOVED:         unique_filename = f"bill_{order_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}{file_ext}"
+# REMOVED:         file_path = uploads_dir / unique_filename
+        
+# REMOVED:         # Save file
+# REMOVED:         file_content = await file.read()
+# REMOVED:         with open(file_path, "wb") as f:
+# REMOVED:             f.write(file_content)
+        
+# REMOVED:         # Generate URL - will be served by static files mount
+# REMOVED:         file_url = f"/api/uploads/bills/{unique_filename}"
+        
+# REMOVED:         # Update order with bill URL (also set invoice_url for user profile)
+# REMOVED:         await db.pharmacy_orders.update_one(
+# REMOVED:             {"id": order_id},
+# REMOVED:             {"$set": {
+# REMOVED:                 "bill_url": file_url,
+# REMOVED:                 "invoice_url": file_url,  # Alias for user profile downloads
+# REMOVED:                 "bill_filename": file.filename,
+# REMOVED:                 "bill_uploaded_at": datetime.now(timezone.utc).isoformat(),
+# REMOVED:                 "bill_uploaded_by": staff.get("name")
+# REMOVED:             }}
+# REMOVED:         )
+        
+# REMOVED:         logger.info(f"Bill uploaded for pharmacy order {order_id} by {staff.get('name')}")
+# REMOVED:         return {"success": True, "bill_url": file_url, "message": "Bill uploaded successfully"}
+        
+# REMOVED:     except Exception as e:
+# REMOVED:         logger.error(f"Failed to upload bill: {str(e)}")
+# REMOVED:         raise HTTPException(status_code=500, detail=f"Failed to upload bill: {str(e)}")
+
+# REMOVED: @api_router.put("/staff/pharmacy/orders/{order_id}/status")
+# REMOVED: async def update_pharmacy_order_staff(order_id: str, update: StaffOrderStatusUpdate, staff = Depends(verify_staff)):
+# REMOVED:     """Update pharmacy order status (Pharmacy Staff only)"""
+# REMOVED:     if staff.get("role") not in ["pharmacy_staff", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Pharmacy staff access required")
+    
+# REMOVED:     if update.status not in PHARMACY_STATUSES:
+# REMOVED:         raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {PHARMACY_STATUSES}")
+    
+# REMOVED:     order = await db.pharmacy_orders.find_one({"id": order_id}, {"_id": 0})
+# REMOVED:     if not order:
+# REMOVED:         raise HTTPException(status_code=404, detail="Order not found")
+    
+# REMOVED:     # MANDATORY: Bill must be uploaded before "Out for Delivery"
+# REMOVED:     if update.status == "Out for Delivery" and not order.get("bill_url"):
+# REMOVED:         raise HTTPException(
+# REMOVED:             status_code=400, 
+# REMOVED:             detail="Bill/Receipt must be uploaded before marking order as 'Out for Delivery'"
+# REMOVED:         )
+    
+# REMOVED:     status_entry = {
+# REMOVED:         "status": update.status,
+# REMOVED:         "timestamp": datetime.now(timezone.utc).isoformat(),
+# REMOVED:         "notes": update.notes,
+# REMOVED:         "updated_by": staff.get("name")
+# REMOVED:     }
+    
+# REMOVED:     await db.pharmacy_orders.update_one(
+# REMOVED:         {"id": order_id},
+# REMOVED:         {
+# REMOVED:             "$set": {"status": update.status},
+# REMOVED:             "$push": {"status_history": status_entry}
+# REMOVED:         }
+# REMOVED:     )
+    
+# REMOVED:     # Send PUSH NOTIFICATION for status updates (no email for status updates)
+# REMOVED:     if order.get('user_id'):
+# REMOVED:         # Determine notification message based on status
+# REMOVED:         status_messages = {
+# REMOVED:             "Order Booked": "Your order has been received and is being processed.",
+# REMOVED:             "Packing": "Your medicines are being packed for delivery.",
+# REMOVED:             "Out for Delivery": "Your order is out for delivery! 🚚",
+# REMOVED:             "Delivered": "Your order has been delivered! Thank you for choosing Orange Pharmacy. 💊"
+# REMOVED:         }
+        
+# REMOVED:         await send_push_notification(
+# REMOVED:             user_id=order.get('user_id'),
+# REMOVED:             title=f"📦 {update.status}",
+# REMOVED:             body=status_messages.get(update.status, f"Order status updated to: {update.status}"),
+# REMOVED:             url="/profile",
+# REMOVED:             tag=f"pharmacy-{order_id}"
+# REMOVED:         )
+    
+# REMOVED:     # Send SMS to patient for status updates
+# REMOVED:     if order.get('patient_phone') and update.status in ["Packing", "Out for Delivery", "Delivered"]:
+# REMOVED:         await send_pharmacy_status_sms(order.get('patient_phone'), order_id, update.status)
+    
+# REMOVED:     # Send email to ADMIN only (internal tracking)
+# REMOVED:     email_html = f"""
+# REMOVED:     <h2>📦 Pharmacy Order Status Update</h2>
+# REMOVED:     <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+# REMOVED:     <p><strong>Patient:</strong> {order.get('patient_name')}</p>
+# REMOVED:     <p><strong>New Status:</strong> {update.status}</p>
+# REMOVED:     <p><strong>Updated by:</strong> {staff.get('name')}</p>
+# REMOVED:     """
+# REMOVED:     await send_email_notification(f"Pharmacy Order Update - {update.status}", email_html)
+    
+# REMOVED:     logger.info(f"Pharmacy order {order_id} updated to {update.status} by {staff.get('name')}")
+    
+# REMOVED:     return {"success": True, "status": update.status}
+
 # ============ Diagnostics Staff Endpoints ============
 
+# REMOVED: @api_router.get("/staff/diagnostic/orders")
+# REMOVED: async def get_diagnostic_orders_for_staff(staff = Depends(verify_staff), status: Optional[str] = None, date: Optional[str] = None):
+# REMOVED:     """Get diagnostic orders for staff - supports date filtering"""
+# REMOVED:     if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+# REMOVED:     query = {}
+# REMOVED:     if status:
+# REMOVED:         query["status"] = status
+    
+# REMOVED:     # Date filtering - filter by preferred_date or created_at
+# REMOVED:     if date:
+# REMOVED:         query["$or"] = [
+# REMOVED:             {"preferred_date": date},
+# REMOVED:             {"created_at": {"$regex": f"^{date}"}}
+# REMOVED:         ]
+    
+# REMOVED:     # Get orders from test_orders collection
+# REMOVED:     test_orders = await db.test_orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(200)
+    
+# REMOVED:     # Also get orders from diagnostic_orders collection (excluding service-linked ones)
+# REMOVED:     diag_query = {**query, "linked_appointment_id": {"$exists": False}}
+# REMOVED:     diag_orders = await db.diagnostic_orders.find(diag_query, {"_id": 0}).sort("created_at", -1).to_list(200)
+    
+# REMOVED:     # Combine and sort by created_at
+# REMOVED:     all_orders = test_orders + diag_orders
+# REMOVED:     all_orders.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    
+# REMOVED:     # Get order counts by date for calendar view
+# REMOVED:     all_test_orders = await db.test_orders.find({}, {"_id": 0, "preferred_date": 1, "created_at": 1, "status": 1}).to_list(1000)
+# REMOVED:     all_diag_orders = await db.diagnostic_orders.find({"linked_appointment_id": {"$exists": False}}, {"_id": 0, "preferred_date": 1, "created_at": 1, "status": 1}).to_list(1000)
+    
+# REMOVED:     date_counts = {}
+# REMOVED:     for order in all_test_orders + all_diag_orders:
+# REMOVED:         order_date = order.get("preferred_date") or order.get("created_at", "")[:10]
+# REMOVED:         if order_date:
+# REMOVED:             if order_date not in date_counts:
+# REMOVED:                 date_counts[order_date] = {"total": 0, "pending": 0}
+# REMOVED:             date_counts[order_date]["total"] += 1
+# REMOVED:             if order.get("status") not in ["Reports Generated", "Completed", "Cancelled"]:
+# REMOVED:                 date_counts[order_date]["pending"] += 1
+    
+# REMOVED:     return {"orders": all_orders, "statuses": DIAGNOSTIC_STATUSES, "date_counts": date_counts}
+
+# REMOVED: @api_router.post("/staff/diagnostic/orders")
+# REMOVED: async def create_diagnostic_order_by_staff(order_data: StaffDiagnosticOrderCreate, staff = Depends(verify_staff)):
+# REMOVED:     """Create a new diagnostic order (Diagnostics Staff only)"""
+# REMOVED:     if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+# REMOVED:     if not order_data.tests or len(order_data.tests) == 0:
+# REMOVED:         raise HTTPException(status_code=400, detail="At least one test must be selected")
+    
+# REMOVED:     order = {
+# REMOVED:         "id": str(uuid.uuid4()),
+# REMOVED:         "user_id": None,  # Walk-in order, no user account
+# REMOVED:         "tests": order_data.tests,
+# REMOVED:         "patient_name": order_data.patient_name,
+# REMOVED:         "patient_phone": order_data.patient_phone,
+# REMOVED:         "patient_email": order_data.patient_email,
+# REMOVED:         "age": order_data.age,
+# REMOVED:         "sex": order_data.sex,
+# REMOVED:         "preferred_date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+# REMOVED:         "status": "Test Booked",
+# REMOVED:         "notes": order_data.notes,
+# REMOVED:         "created_by": staff.get("name"),
+# REMOVED:         "created_by_id": staff.get("sub"),
+# REMOVED:         "booking_type": "walk_in",
+# REMOVED:         "created_at": datetime.now(timezone.utc).isoformat()
+# REMOVED:     }
+    
+# REMOVED:     await db.diagnostic_orders.insert_one(order)
+    
+# REMOVED:     # Log action
+# REMOVED:     await db.audit_logs.insert_one({
+# REMOVED:         "action": "DIAGNOSTIC_ORDER_CREATED",
+# REMOVED:         "order_id": order["id"],
+# REMOVED:         "staff_id": staff.get("sub"),
+# REMOVED:         "staff_name": staff.get("name"),
+# REMOVED:         "patient_name": order_data.patient_name,
+# REMOVED:         "tests": order_data.tests,
+# REMOVED:         "timestamp": datetime.now(timezone.utc).isoformat()
+# REMOVED:     })
+    
+# REMOVED:     # Send confirmation email if patient email is provided
+# REMOVED:     if order_data.patient_email:
+# REMOVED:         tests_list = ', '.join(order_data.tests)
+# REMOVED:         patient_html = f"""
+# REMOVED:         <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
+# REMOVED:             <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
+# REMOVED:                 <h1 style="color: white; margin: 0;">Test Booking Confirmed 🔬</h1>
+# REMOVED:             </div>
+# REMOVED:             <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+# REMOVED:                 <p>Hello <strong>{order_data.patient_name}</strong>,</p>
+# REMOVED:                 <p>Your diagnostic tests have been booked at Proton Diagnostics.</p>
+# REMOVED:                 
+# REMOVED:                 <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8b5cf6;">
+# REMOVED:                     <p style="margin: 5px 0;"><strong>Order ID:</strong> {order['id'][:8]}...</p>
+# REMOVED:                     <p style="margin: 5px 0;"><strong>Tests:</strong> {tests_list}</p>
+# REMOVED:                     {f"<p style='margin: 5px 0;'><strong>Age/Sex:</strong> {order_data.age or 'N/A'} / {order_data.sex or 'N/A'}</p>" if order_data.age or order_data.sex else ""}
+# REMOVED:                     <p style="margin: 5px 0;"><strong>Status:</strong> Test Booked</p>
+# REMOVED:                 </div>
+# REMOVED:                 
+# REMOVED:                 <p>You will receive your reports via email once they are ready.</p>
+# REMOVED:                 <p style="color: #64748b; font-size: 14px; margin-top: 20px;">Thank you for choosing Proton Diagnostics!</p>
+# REMOVED:             </div>
+# REMOVED:         </div>
+# REMOVED:         """
+        
+# REMOVED:         await send_email_notification(
+# REMOVED:             f"New Diagnostic Order Created - {order_data.patient_name}",
+# REMOVED:             f"Order created by {staff.get('name')}: {tests_list}",
+# REMOVED:             patient_email=order_data.patient_email,
+# REMOVED:             patient_subject="Test Booking Confirmed - Proton Diagnostics",
+# REMOVED:             patient_html=patient_html
+# REMOVED:         )
+    
+# REMOVED:     logger.info(f"Diagnostic order created by {staff.get('name')}: {order_data.patient_name} - {order_data.tests}")
+    
+# REMOVED:     return {
+# REMOVED:         "success": True,
+# REMOVED:         "order": {k: v for k, v in order.items() if k != "_id"},
+# REMOVED:         "message": "Diagnostic order created successfully"
+# REMOVED:     }
+
+# REMOVED: @api_router.post("/staff/diagnostic/orders/{order_id}/upload-report")
+# REMOVED: async def upload_diagnostic_report(order_id: str, file: UploadFile = File(...), staff = Depends(verify_staff)):
+# REMOVED:     """Upload report for diagnostic order (required before Reports Generated)"""
+# REMOVED:     if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+# REMOVED:     # Try to find in test_orders first
+# REMOVED:     order = await db.test_orders.find_one({"id": order_id})
+# REMOVED:     collection = db.test_orders
+    
+# REMOVED:     # If not found, try diagnostic_orders
+# REMOVED:     if not order:
+# REMOVED:         order = await db.diagnostic_orders.find_one({"id": order_id})
+# REMOVED:         collection = db.diagnostic_orders
+    
+# REMOVED:     if not order:
+# REMOVED:         raise HTTPException(status_code=404, detail="Order not found")
+    
+# REMOVED:     # Upload file - save to static folder
+# REMOVED:     try:
+# REMOVED:         # Create uploads directory if not exists
+# REMOVED:         uploads_dir = ROOT_DIR / "uploads" / "reports"
+# REMOVED:         uploads_dir.mkdir(parents=True, exist_ok=True)
+        
+# REMOVED:         # Generate unique filename
+# REMOVED:         file_ext = Path(file.filename).suffix or ".pdf"
+# REMOVED:         unique_filename = f"report_{order_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}{file_ext}"
+# REMOVED:         file_path = uploads_dir / unique_filename
+        
+# REMOVED:         # Save file
+# REMOVED:         file_content = await file.read()
+# REMOVED:         with open(file_path, "wb") as f:
+# REMOVED:             f.write(file_content)
+        
+# REMOVED:         # Generate URL - will be served by static files mount
+# REMOVED:         file_url = f"/api/uploads/reports/{unique_filename}"
+        
+# REMOVED:         # Update order with report URL
+# REMOVED:         await collection.update_one(
+# REMOVED:             {"id": order_id},
+# REMOVED:             {"$set": {
+# REMOVED:                 "report_url": file_url,
+# REMOVED:                 "report_filename": file.filename,
+# REMOVED:                 "report_uploaded_at": datetime.now(timezone.utc).isoformat(),
+# REMOVED:                 "report_uploaded_by": staff.get("name")
+# REMOVED:             }}
+# REMOVED:         )
+        
+# REMOVED:         logger.info(f"Report uploaded for diagnostic order {order_id} by {staff.get('name')}")
+# REMOVED:         return {"success": True, "report_url": file_url, "message": "Report uploaded successfully"}
+        
+# REMOVED:     except Exception as e:
+# REMOVED:         logger.error(f"Failed to upload report: {str(e)}")
+# REMOVED:         raise HTTPException(status_code=500, detail=f"Failed to upload report: {str(e)}")
+
+# REMOVED: @api_router.post("/staff/diagnostic/orders/{order_id}/upload-invoice")
+# REMOVED: async def upload_diagnostic_invoice(order_id: str, file: UploadFile = File(...), staff = Depends(verify_staff)):
+# REMOVED:     """Upload invoice for diagnostic order"""
+# REMOVED:     if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+# REMOVED:     # Try to find in test_orders first
+# REMOVED:     order = await db.test_orders.find_one({"id": order_id})
+# REMOVED:     collection = db.test_orders
+    
+# REMOVED:     # If not found, try diagnostic_orders
+# REMOVED:     if not order:
+# REMOVED:         order = await db.diagnostic_orders.find_one({"id": order_id})
+# REMOVED:         collection = db.diagnostic_orders
+    
+# REMOVED:     if not order:
+# REMOVED:         raise HTTPException(status_code=404, detail="Order not found")
+    
+# REMOVED:     # Upload file - save to static folder
+# REMOVED:     try:
+# REMOVED:         # Create uploads directory if not exists
+# REMOVED:         uploads_dir = ROOT_DIR / "uploads" / "invoices"
+# REMOVED:         uploads_dir.mkdir(parents=True, exist_ok=True)
+        
+# REMOVED:         # Generate unique filename
+# REMOVED:         file_ext = Path(file.filename).suffix or ".pdf"
+# REMOVED:         unique_filename = f"invoice_diagnostic_{order_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}{file_ext}"
+# REMOVED:         file_path = uploads_dir / unique_filename
+        
+# REMOVED:         # Save file
+# REMOVED:         file_content = await file.read()
+# REMOVED:         with open(file_path, "wb") as f:
+# REMOVED:             f.write(file_content)
+        
+# REMOVED:         # Generate URL - will be served by static files mount
+# REMOVED:         file_url = f"/api/uploads/invoices/{unique_filename}"
+        
+# REMOVED:         # Update order with invoice URL
+# REMOVED:         await collection.update_one(
+# REMOVED:             {"id": order_id},
+# REMOVED:             {"$set": {
+# REMOVED:                 "invoice_url": file_url,
+# REMOVED:                 "invoice_filename": file.filename,
+# REMOVED:                 "invoice_uploaded_at": datetime.now(timezone.utc).isoformat(),
+# REMOVED:                 "invoice_uploaded_by": staff.get("name")
+# REMOVED:             }}
+# REMOVED:         )
+        
+# REMOVED:         logger.info(f"Invoice uploaded for diagnostic order {order_id} by {staff.get('name')}")
+# REMOVED:         return {"success": True, "invoice_url": file_url, "message": "Invoice uploaded successfully"}
+        
+# REMOVED:     except Exception as e:
+# REMOVED:         logger.error(f"Failed to upload invoice: {str(e)}")
+# REMOVED:         raise HTTPException(status_code=500, detail=f"Failed to upload invoice: {str(e)}")
+
+# REMOVED: @api_router.put("/staff/diagnostic/orders/{order_id}/status")
+# REMOVED: async def update_diagnostic_order_staff(order_id: str, update: StaffOrderStatusUpdate, staff = Depends(verify_staff)):
+# REMOVED:     """Update diagnostic order status (Diagnostics Staff only)"""
+# REMOVED:     if staff.get("role") not in ["diagnostics_staff", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Diagnostics staff access required")
+    
+# REMOVED:     if update.status not in DIAGNOSTIC_STATUSES:
+# REMOVED:         raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {DIAGNOSTIC_STATUSES}")
+    
+# REMOVED:     # Try to find in test_orders first
+# REMOVED:     order = await db.test_orders.find_one({"id": order_id}, {"_id": 0})
+# REMOVED:     collection = db.test_orders
+    
+# REMOVED:     # If not found, try diagnostic_orders
+# REMOVED:     if not order:
+# REMOVED:         order = await db.diagnostic_orders.find_one({"id": order_id}, {"_id": 0})
+# REMOVED:         collection = db.diagnostic_orders
+    
+# REMOVED:     if not order:
+# REMOVED:         raise HTTPException(status_code=404, detail="Order not found")
+    
+# REMOVED:     # MANDATORY: Report must be uploaded before "Reports Generated"
+# REMOVED:     if update.status == "Reports Generated" and not order.get("report_url"):
+# REMOVED:         raise HTTPException(
+# REMOVED:             status_code=400, 
+# REMOVED:             detail="Report must be uploaded before marking order as 'Reports Generated'"
+# REMOVED:         )
+    
+# REMOVED:     status_entry = {
+# REMOVED:         "status": update.status,
+# REMOVED:         "timestamp": datetime.now(timezone.utc).isoformat(),
+# REMOVED:         "notes": update.notes,
+# REMOVED:         "updated_by": staff.get("name")
+# REMOVED:     }
+    
+# REMOVED:     await collection.update_one(
+# REMOVED:         {"id": order_id},
+# REMOVED:         {
+# REMOVED:             "$set": {"status": update.status},
+# REMOVED:             "$push": {"status_history": status_entry}
+# REMOVED:         }
+# REMOVED:     )
+    
+# REMOVED:     # Send PUSH NOTIFICATION for status updates (no email for status updates)
+# REMOVED:     if order.get('user_id'):
+# REMOVED:         status_messages = {
+# REMOVED:             "Test Booked": "Your diagnostic test has been booked successfully.",
+# REMOVED:             "Sample Collected": "Your sample has been collected and is being processed. 🧪",
+# REMOVED:             "In Process": "Your test is being processed in our lab.",
+# REMOVED:             "Reports Generated": "🎉 Your test reports are ready! Check your profile to download."
+# REMOVED:         }
+        
+# REMOVED:         await send_push_notification(
+# REMOVED:             user_id=order.get('user_id'),
+# REMOVED:             title=f"🔬 {update.status}",
+# REMOVED:             body=status_messages.get(update.status, f"Test status updated to: {update.status}"),
+# REMOVED:             url="/profile",
+# REMOVED:             tag=f"diagnostic-{order_id}"
+# REMOVED:         )
+    
+# REMOVED:     # Send SMS to patient for status updates
+# REMOVED:     if order.get('patient_phone') and update.status in ["Sample Collected", "In Process", "Reports Generated"]:
+# REMOVED:         await send_diagnostic_status_sms(
+# REMOVED:             order.get('patient_phone'), 
+# REMOVED:             order_id, 
+# REMOVED:             update.status, 
+# REMOVED:             order.get('report_url')
+# REMOVED:         )
+    
+# REMOVED:     # Send email to ADMIN only (internal tracking)
+# REMOVED:     email_html = f"""
+# REMOVED:     <h2>🔬 Diagnostic Order Status Update</h2>
+# REMOVED:     <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+# REMOVED:     <p><strong>Patient:</strong> {order.get('patient_name')}</p>
+# REMOVED:     <p><strong>New Status:</strong> {update.status}</p>
+# REMOVED:     <p><strong>Updated by:</strong> {staff.get('name')}</p>
+# REMOVED:     """
+# REMOVED:     await send_email_notification(f"Diagnostic Order Update - {update.status}", email_html)
+    
+# REMOVED:     logger.info(f"Diagnostic order {order_id} updated to {update.status} by {staff.get('name')}")
+    
+# REMOVED:     return {"success": True, "status": update.status}
+
 # ============ Clinic Staff - Get Today's Appointments ============
+
+# REMOVED: @api_router.get("/staff/clinic/appointments")
+# REMOVED: async def get_clinic_appointments(staff = Depends(verify_staff), date: Optional[str] = None, status: Optional[str] = None):
+# REMOVED:     """Get appointments for clinic staff - Emergency appointments pinned on top"""
+# REMOVED:     role = staff.get("role")
+# REMOVED:     if role not in ["clinic_staff_pushpa", "clinic_staff_amnion", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Clinic staff access required")
+    
+# REMOVED:     query = {}
+# REMOVED:     clinic = None
+    
+# REMOVED:     # Filter by clinic based on role
+# REMOVED:     if role == "clinic_staff_pushpa":
+# REMOVED:         query["clinic"] = "Pushpa Clinic"
+# REMOVED:         clinic = "Pushpa Clinic"
+# REMOVED:     elif role == "clinic_staff_amnion":
+# REMOVED:         query["clinic"] = "Amnion Clinic"
+# REMOVED:         clinic = "Amnion Clinic"
+    
+# REMOVED:     if date:
+# REMOVED:         query["date"] = date
+# REMOVED:     if status:
+# REMOVED:         query["status"] = status
+    
+# REMOVED:     # Get all appointments
+# REMOVED:     all_appointments = await db.appointments.find(query, {"_id": 0}).to_list(200)
+    
+# REMOVED:     # Separate emergency and normal appointments
+# REMOVED:     emergency_appts = [a for a in all_appointments if a.get("appointment_type") == "EMERGENCY"]
+# REMOVED:     normal_appts = [a for a in all_appointments if a.get("appointment_type") != "EMERGENCY"]
+    
+# REMOVED:     # Sort normal appointments by time
+# REMOVED:     normal_appts.sort(key=lambda x: (x.get("date", ""), x.get("time") or "99:99"))
+    
+# REMOVED:     # Emergency appointments pinned on top
+# REMOVED:     appointments = emergency_appts + normal_appts
+    
+# REMOVED:     # Get emergency counts by doctor for today
+# REMOVED:     emergency_counts = {}
+# REMOVED:     target_date = date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+# REMOVED:     if clinic:
+# REMOVED:         doctors = CLINICS.get(clinic, [])
+# REMOVED:         for doctor in doctors:
+# REMOVED:             count = await db.appointments.count_documents({
+# REMOVED:                 "doctor": doctor,
+# REMOVED:                 "date": target_date,
+# REMOVED:                 "appointment_type": "EMERGENCY",
+# REMOVED:                 "status": {"$ne": "Cancelled"}
+# REMOVED:             })
+# REMOVED:             emergency_counts[doctor] = {
+# REMOVED:                 "count": count,
+# REMOVED:                 "max": MAX_EMERGENCY_PER_DOCTOR_PER_DAY,
+# REMOVED:                 "remaining": MAX_EMERGENCY_PER_DOCTOR_PER_DAY - count
+# REMOVED:             }
+    
+# REMOVED:     return {
+# REMOVED:         "appointments": appointments, 
+# REMOVED:         "statuses": APPOINTMENT_STATUSES, 
+# REMOVED:         "clinics": CLINICS,
+# REMOVED:         "emergency_counts": emergency_counts
+# REMOVED:     }
+
+# REMOVED: @api_router.get("/admin/stats")
+# REMOVED: async def get_admin_stats(admin = Depends(verify_admin)):
+# REMOVED:     """Get admin dashboard statistics"""
+# REMOVED:     total_users = await db.users.count_documents({})
+# REMOVED:     total_appointments = await db.appointments.count_documents({})
+# REMOVED:     total_diagnostics = await db.diagnostic_orders.count_documents({})
+# REMOVED:     total_pharmacy = await db.pharmacy_orders.count_documents({})
+    
+# REMOVED:     return {
+# REMOVED:         "total_medicines": len(MEDICINE_INVENTORY),
+# REMOVED:         "total_users": total_users,
+# REMOVED:         "total_appointments": total_appointments,
+# REMOVED:         "total_diagnostic_orders": total_diagnostics,
+# REMOVED:         "total_pharmacy_orders": total_pharmacy
+# REMOVED:     }
+
+# REMOVED: @api_router.get("/admin/analytics")
+# REMOVED: async def get_admin_analytics(admin = Depends(verify_admin), days: int = 7):
+# REMOVED:     """Get analytics data for dashboard charts"""
+# REMOVED:     from datetime import timedelta
+    
+# REMOVED:     # Calculate date range
+# REMOVED:     end_date = datetime.now(timezone.utc)
+# REMOVED:     start_date = end_date - timedelta(days=days)
+# REMOVED:     start_str = start_date.strftime("%Y-%m-%d")
+    
+# REMOVED:     # Get appointments by date
+# REMOVED:     appointments_by_date = {}
+# REMOVED:     revenue_by_date = {}
+# REMOVED:     appointments = await db.appointments.find(
+# REMOVED:         {"date": {"$gte": start_str}},
+# REMOVED:         {"_id": 0, "date": 1, "status": 1, "fee_code": 1, "appointment_type": 1}
+# REMOVED:     ).to_list(1000)
+    
+# REMOVED:     # Fee amounts mapping
+# REMOVED:     fee_amounts = {
+# REMOVED:         "G1": 150, "G2": 100, "S1": 300, "S2": 200,
+# REMOVED:         "D1": 500, "D2": 400, "D3": 300,
+# REMOVED:         "O1": 500, "O2": 400, "O3": 300,
+# REMOVED:         "N1": 0, "E1": 600
+# REMOVED:     }
+    
+# REMOVED:     for apt in appointments:
+# REMOVED:         date = apt.get("date", "Unknown")
+# REMOVED:         if date not in appointments_by_date:
+# REMOVED:             appointments_by_date[date] = {"total": 0, "confirmed": 0, "cancelled": 0, "pending": 0}
+# REMOVED:         appointments_by_date[date]["total"] += 1
+# REMOVED:         status = apt.get("status", "pending").lower()
+# REMOVED:         if status == "confirmed" or status == "attended":
+# REMOVED:             appointments_by_date[date]["confirmed"] += 1
+# REMOVED:         elif status == "cancelled":
+# REMOVED:             appointments_by_date[date]["cancelled"] += 1
+# REMOVED:         else:
+# REMOVED:             appointments_by_date[date]["pending"] += 1
+        
+# REMOVED:         # Calculate revenue (only for confirmed/attended)
+# REMOVED:         if status in ["confirmed", "attended"]:
+# REMOVED:             fee_code = apt.get("fee_code", "G1")
+# REMOVED:             fee = fee_amounts.get(fee_code, 150)
+# REMOVED:             if date not in revenue_by_date:
+# REMOVED:                 revenue_by_date[date] = 0
+# REMOVED:             revenue_by_date[date] += fee
+    
+# REMOVED:     # Get appointments by doctor
+# REMOVED:     appointments_by_doctor = {}
+# REMOVED:     all_appointments = await db.appointments.find({}, {"_id": 0, "doctor": 1, "status": 1}).to_list(5000)
+# REMOVED:     for apt in all_appointments:
+# REMOVED:         doctor = apt.get("doctor", "Unknown")
+# REMOVED:         if doctor not in appointments_by_doctor:
+# REMOVED:             appointments_by_doctor[doctor] = {"total": 0, "confirmed": 0}
+# REMOVED:         appointments_by_doctor[doctor]["total"] += 1
+# REMOVED:         if apt.get("status", "").lower() in ["confirmed", "attended"]:
+# REMOVED:             appointments_by_doctor[doctor]["confirmed"] += 1
+    
+# REMOVED:     # Get diagnostic orders by date
+# REMOVED:     diagnostic_by_date = {}
+# REMOVED:     diagnostics = await db.diagnostic_orders.find(
+# REMOVED:         {},
+# REMOVED:         {"_id": 0, "created_at": 1, "status": 1}
+# REMOVED:     ).to_list(1000)
+    
+# REMOVED:     for order in diagnostics:
+# REMOVED:         created = order.get("created_at", "")
+# REMOVED:         if isinstance(created, str) and created:
+# REMOVED:             date = created[:10]
+# REMOVED:         elif hasattr(created, "strftime"):
+# REMOVED:             date = created.strftime("%Y-%m-%d")
+# REMOVED:         else:
+# REMOVED:             continue
+# REMOVED:         if date not in diagnostic_by_date:
+# REMOVED:             diagnostic_by_date[date] = 0
+# REMOVED:         diagnostic_by_date[date] += 1
+    
+# REMOVED:     # Get pharmacy orders by date
+# REMOVED:     pharmacy_by_date = {}
+# REMOVED:     pharmacy_orders = await db.pharmacy_orders.find(
+# REMOVED:         {},
+# REMOVED:         {"_id": 0, "created_at": 1, "status": 1}
+# REMOVED:     ).to_list(1000)
+    
+# REMOVED:     for order in pharmacy_orders:
+# REMOVED:         created = order.get("created_at", "")
+# REMOVED:         if isinstance(created, str) and created:
+# REMOVED:             date = created[:10]
+# REMOVED:         elif hasattr(created, "strftime"):
+# REMOVED:             date = created.strftime("%Y-%m-%d")
+# REMOVED:         else:
+# REMOVED:             continue
+# REMOVED:         if date not in pharmacy_by_date:
+# REMOVED:             pharmacy_by_date[date] = 0
+# REMOVED:         pharmacy_by_date[date] += 1
+    
+# REMOVED:     # Build date series for chart
+# REMOVED:     date_labels = []
+# REMOVED:     appointment_data = []
+# REMOVED:     revenue_data = []
+# REMOVED:     diagnostic_data = []
+# REMOVED:     pharmacy_data = []
+    
+# REMOVED:     for i in range(days, -1, -1):
+# REMOVED:         date = (end_date - timedelta(days=i)).strftime("%Y-%m-%d")
+# REMOVED:         date_labels.append(date)
+# REMOVED:         apt_info = appointments_by_date.get(date, {"total": 0})
+# REMOVED:         appointment_data.append(apt_info.get("total", 0))
+# REMOVED:         revenue_data.append(revenue_by_date.get(date, 0))
+# REMOVED:         diagnostic_data.append(diagnostic_by_date.get(date, 0))
+# REMOVED:         pharmacy_data.append(pharmacy_by_date.get(date, 0))
+    
+# REMOVED:     return {
+# REMOVED:         "date_labels": date_labels,
+# REMOVED:         "appointments": appointment_data,
+# REMOVED:         "revenue": revenue_data,
+# REMOVED:         "diagnostics": diagnostic_data,
+# REMOVED:         "pharmacy": pharmacy_data,
+# REMOVED:         "appointments_by_doctor": appointments_by_doctor,
+# REMOVED:         "total_revenue": sum(revenue_data),
+# REMOVED:         "total_appointments": sum(appointment_data),
+# REMOVED:         "total_diagnostics": sum(diagnostic_data),
+# REMOVED:         "total_pharmacy": sum(pharmacy_data)
+# REMOVED:     }
+
+# REMOVED: @api_router.post("/admin/send-credentials-email")
+# REMOVED: async def send_credentials_email(admin = Depends(verify_admin)):
+# REMOVED:     """Send all staff credentials to admin email"""
+    
+# REMOVED:     # All credentials
+# REMOVED:     credentials_html = """
+# REMOVED:     <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px;">
+# REMOVED:         <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); border-radius: 10px 10px 0 0;">
+# REMOVED:             <h1 style="color: white; margin: 0;">Nevika Cura - Staff Credentials</h1>
+# REMOVED:         </div>
+# REMOVED:         <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+# REMOVED:             
+# REMOVED:             <h2 style="color: #0d9488; border-bottom: 2px solid #0d9488; padding-bottom: 10px;">🔐 Admin Access</h2>
+# REMOVED:             <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+# REMOVED:                 <tr style="background: #f1f5f9;">
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;"><strong>Portal URL</strong></td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">/admin</td>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;"><strong>Password</strong></td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">nevikacura2026</td>
+# REMOVED:                 </tr>
+# REMOVED:             </table>
+# REMOVED:             
+# REMOVED:             <h2 style="color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">👨‍⚕️ DiaGyn Doctors</h2>
+# REMOVED:             <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+# REMOVED:                 <tr style="background: #dbeafe;">
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Doctor</th>
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Clinic</th>
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Username</th>
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Password</th>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Neha Patel</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Pushpa Clinic</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">doc_neha</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Vikas Jha</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Amnion Clinic</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">doc_vikas</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
+# REMOVED:                 </tr>
+# REMOVED:             </table>
+# REMOVED:             
+# REMOVED:             <h2 style="color: #10b981; border-bottom: 2px solid #10b981; padding-bottom: 10px;">👩‍💼 Clinic Staff</h2>
+# REMOVED:             <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+# REMOVED:                 <tr style="background: #d1fae5;">
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Staff</th>
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Clinic</th>
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Username</th>
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Password</th>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Reception Staff</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Pushpa Clinic</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">staff_pushpa</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026C</td>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Reception Staff</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Amnion Clinic</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">staff_amnion</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026C</td>
+# REMOVED:                 </tr>
+# REMOVED:             </table>
+# REMOVED:             
+# REMOVED:             <h2 style="color: #f97316; border-bottom: 2px solid #f97316; padding-bottom: 10px;">💊 Orange Pharmacy Staff</h2>
+# REMOVED:             <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+# REMOVED:                 <tr style="background: #ffedd5;">
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Staff</th>
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Username</th>
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Password</th>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Pharmacy Team</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">staff_pharmacy</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026P</td>
+# REMOVED:                 </tr>
+# REMOVED:             </table>
+# REMOVED:             
+# REMOVED:             <h2 style="color: #8b5cf6; border-bottom: 2px solid #8b5cf6; padding-bottom: 10px;">🔬 Proton Diagnostics Staff</h2>
+# REMOVED:             <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+# REMOVED:                 <tr style="background: #ede9fe;">
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Staff</th>
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Username</th>
+# REMOVED:                     <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Password</th>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Lab Team</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace;">staff_proton</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026L</td>
+# REMOVED:                 </tr>
+# REMOVED:             </table>
+# REMOVED:             
+# REMOVED:             <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981;">
+# REMOVED:                 <h3 style="color: #166534; margin-top: 0;">📱 Staff Portal Access</h3>
+# REMOVED:                 <p style="margin-bottom: 0;"><strong>URL:</strong> <code>/staff</code></p>
+# REMOVED:                 <p style="margin-bottom: 0; color: #166534;">All staff members remain logged in until they manually logout (30-day session).</p>
+# REMOVED:             </div>
+# REMOVED:             
+# REMOVED:             <p style="color: #64748b; font-size: 12px; margin-top: 30px; text-align: center;">
+# REMOVED:                 This email was sent from Nevika Cura Healthcare System.<br>
+# REMOVED:                 Generated on: """ + datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC') + """
+# REMOVED:             </p>
+# REMOVED:         </div>
+# REMOVED:     </div>
+# REMOVED:     """
+    
+# REMOVED:     try:
+# REMOVED:         # Send email to admin
+# REMOVED:         if RESEND_API_KEY:
+# REMOVED:             params = {
+# REMOVED:                 "from": SENDER_EMAIL,
+# REMOVED:                 "to": [NOTIFICATION_EMAIL],
+# REMOVED:                 "subject": "Nevika Cura - All Staff Login Credentials",
+# REMOVED:                 "html": credentials_html
+# REMOVED:             }
+# REMOVED:             email_result = await asyncio.to_thread(resend.Emails.send, params)
+# REMOVED:             logger.info(f"Credentials email sent: {email_result.get('id')}")
+# REMOVED:             return {"success": True, "message": f"Credentials sent to {NOTIFICATION_EMAIL}", "email_id": email_result.get('id')}
+# REMOVED:         else:
+# REMOVED:             return {"success": False, "message": "Email not configured"}
+# REMOVED:     except Exception as e:
+# REMOVED:         logger.error(f"Failed to send credentials email: {str(e)}")
+# REMOVED:         raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
+
+# REMOVED: @api_router.get("/admin/orders/recent")
+# REMOVED: async def get_recent_orders(admin = Depends(verify_admin), limit: int = 20):
+# REMOVED:     """Get recent orders across all services"""
+# REMOVED:     appointments = await db.appointments.find({}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+# REMOVED:     diagnostics = await db.diagnostic_orders.find({}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+# REMOVED:     pharmacy = await db.pharmacy_orders.find({}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+    
+# REMOVED:     return {
+# REMOVED:         "appointments": appointments,
+# REMOVED:         "diagnostic_orders": diagnostics,
+# REMOVED:         "pharmacy_orders": pharmacy
+# REMOVED:     }
 
 # ============ Diagnostic Tests Management ============
 class DiagnosticTestAdd(BaseModel):
@@ -3625,7 +5283,101 @@ class DiagnosticTestAdd(BaseModel):
     category: str  # imaging or pathology
     subcategory: str  # ecg, sonography, blood, urine, stool
 
+# REMOVED: @api_router.get("/admin/diagnostic-tests")
+# REMOVED: async def get_diagnostic_tests(admin = Depends(verify_admin)):
+# REMOVED:     """Get all diagnostic tests"""
+# REMOVED:     # Check if custom tests exist in database
+# REMOVED:     custom_tests = await db.diagnostic_tests.find_one({"type": "custom"}, {"_id": 0})
+# REMOVED:     if custom_tests:
+# REMOVED:         return {"tests": custom_tests.get("tests", DIAGNOSTIC_TESTS)}
+# REMOVED:     return {"tests": DIAGNOSTIC_TESTS}
+
+# REMOVED: @api_router.get("/staff/diagnostic-tests")
+# REMOVED: async def get_diagnostic_tests_for_staff(staff = Depends(verify_staff)):
+# REMOVED:     """Get all diagnostic tests for staff - accessible by all staff roles for assigning tests to patients"""
+# REMOVED:     # All staff can access diagnostic tests (clinic staff needs it for add-on services)
+    
+# REMOVED:     # Check if custom tests exist in database
+# REMOVED:     custom_tests = await db.diagnostic_tests.find_one({"type": "custom"}, {"_id": 0})
+# REMOVED:     if custom_tests:
+# REMOVED:         return {"tests": custom_tests.get("tests", DIAGNOSTIC_TESTS), "prices": DIAGNOSTIC_TEST_PRICES}
+# REMOVED:     return {"tests": DIAGNOSTIC_TESTS, "prices": DIAGNOSTIC_TEST_PRICES}
+
+# REMOVED: @api_router.post("/admin/diagnostic-tests/add")
+# REMOVED: async def add_diagnostic_test(test: DiagnosticTestAdd, admin = Depends(verify_admin)):
+# REMOVED:     """Add a new diagnostic test"""
+# REMOVED:     # Get current tests
+# REMOVED:     custom_tests = await db.diagnostic_tests.find_one({"type": "custom"})
+# REMOVED:     if custom_tests:
+# REMOVED:         tests = custom_tests.get("tests", DIAGNOSTIC_TESTS.copy())
+# REMOVED:     else:
+# REMOVED:         tests = DIAGNOSTIC_TESTS.copy()
+    
+# REMOVED:     # Validate category and subcategory
+# REMOVED:     if test.category not in tests:
+# REMOVED:         raise HTTPException(status_code=400, detail=f"Invalid category: {test.category}")
+# REMOVED:     if test.subcategory not in tests[test.category]:
+# REMOVED:         raise HTTPException(status_code=400, detail=f"Invalid subcategory: {test.subcategory}")
+    
+# REMOVED:     # Check if test already exists
+# REMOVED:     if test.name in tests[test.category][test.subcategory]:
+# REMOVED:         raise HTTPException(status_code=400, detail="Test already exists")
+    
+# REMOVED:     # Add test
+# REMOVED:     tests[test.category][test.subcategory].append(test.name)
+# REMOVED:     tests[test.category][test.subcategory].sort()
+    
+# REMOVED:     # Save to database
+# REMOVED:     await db.diagnostic_tests.update_one(
+# REMOVED:         {"type": "custom"},
+# REMOVED:         {"$set": {"tests": tests}},
+# REMOVED:         upsert=True
+# REMOVED:     )
+    
+# REMOVED:     return {"success": True, "message": f"Test '{test.name}' added successfully"}
+
+# REMOVED: @api_router.delete("/admin/diagnostic-tests/{category}/{subcategory}/{test_name}")
+# REMOVED: async def delete_diagnostic_test(category: str, subcategory: str, test_name: str, admin = Depends(verify_admin)):
+# REMOVED:     """Delete a diagnostic test"""
+# REMOVED:     custom_tests = await db.diagnostic_tests.find_one({"type": "custom"})
+# REMOVED:     if custom_tests:
+# REMOVED:         tests = custom_tests.get("tests", DIAGNOSTIC_TESTS.copy())
+# REMOVED:     else:
+# REMOVED:         tests = DIAGNOSTIC_TESTS.copy()
+    
+# REMOVED:     if category not in tests or subcategory not in tests[category]:
+# REMOVED:         raise HTTPException(status_code=404, detail="Category or subcategory not found")
+    
+# REMOVED:     # URL decode the test name
+# REMOVED:     from urllib.parse import unquote
+# REMOVED:     test_name = unquote(test_name)
+    
+# REMOVED:     if test_name not in tests[category][subcategory]:
+# REMOVED:         raise HTTPException(status_code=404, detail="Test not found")
+    
+# REMOVED:     tests[category][subcategory].remove(test_name)
+    
+# REMOVED:     await db.diagnostic_tests.update_one(
+# REMOVED:         {"type": "custom"},
+# REMOVED:         {"$set": {"tests": tests}},
+# REMOVED:         upsert=True
+# REMOVED:     )
+    
+# REMOVED:     return {"success": True, "message": f"Test '{test_name}' deleted successfully"}
+
 # ============ WhatsApp Notifications Management ============
+
+# REMOVED: @api_router.get("/admin/pending-whatsapp")
+# REMOVED: async def get_pending_whatsapp(admin = Depends(verify_admin)):
+# REMOVED:     """Get pending WhatsApp notifications that failed to send"""
+# REMOVED:     pending = await db.pending_whatsapp.find({}, {"_id": 0}).sort("created_at", -1).to_list(50)
+# REMOVED:     return {"pending": pending}
+
+# REMOVED: @api_router.delete("/admin/pending-whatsapp/{notification_id}")
+# REMOVED: async def delete_pending_whatsapp(notification_id: str, admin = Depends(verify_admin)):
+# REMOVED:     """Mark a pending WhatsApp notification as handled"""
+# REMOVED:     await db.pending_whatsapp.delete_one({"id": notification_id})
+# REMOVED:     return {"success": True}
 
 @api_router.get("/diagnostic-tests")
 async def get_public_diagnostic_tests():
@@ -3650,6 +5402,43 @@ class CancelAppointmentsRequest(BaseModel):
     end_session: Optional[str] = None  # For session_range: 'morning' or 'evening'
     reason: str = "Doctor on leave"
 
+# REMOVED: @api_router.get("/admin/doctors")
+# REMOVED: async def get_doctors(admin = Depends(verify_admin)):
+# REMOVED:     """Get list of doctors with their appointments"""
+# REMOVED:     # Get unique doctors from appointments
+# REMOVED:     pipeline = [
+# REMOVED:         {"$group": {
+# REMOVED:             "_id": {"doctor": "$doctor", "clinic": "$clinic"},
+# REMOVED:             "appointment_count": {"$sum": 1}
+# REMOVED:         }},
+# REMOVED:         {"$sort": {"_id.doctor": 1}}
+# REMOVED:     ]
+# REMOVED:     doctors_raw = await db.appointments.aggregate(pipeline).to_list(100)
+    
+# REMOVED:     doctors = []
+# REMOVED:     for d in doctors_raw:
+# REMOVED:         doctors.append({
+# REMOVED:             "doctor": d["_id"]["doctor"],
+# REMOVED:             "clinic": d["_id"]["clinic"],
+# REMOVED:             "appointment_count": d["appointment_count"]
+# REMOVED:         })
+    
+# REMOVED:     # Add default doctors if no appointments exist
+# REMOVED:     if not doctors:
+# REMOVED:         doctors = [
+# REMOVED:             {"doctor": "Dr. Neha Patel", "clinic": "Pushpa Clinic", "appointment_count": 0},
+# REMOVED:             {"doctor": "Dr. Vikas Jha", "clinic": "Amnion Clinic", "appointment_count": 0}
+# REMOVED:         ]
+    
+# REMOVED:     return {"doctors": doctors}
+
+# REMOVED: @api_router.get("/admin/appointments")
+# REMOVED: async def get_admin_appointments(
+# REMOVED:     admin = Depends(verify_admin),
+# REMOVED:     doctor: Optional[str] = None,
+# REMOVED:     date: Optional[str] = None,
+# REMOVED:     start_date: Optional[str] = None,
+# REMOVED:     end_date: Optional[str] = None
 ):
     """Get appointments for admin with filters"""
     query = {}
@@ -3665,133 +5454,640 @@ class CancelAppointmentsRequest(BaseModel):
     appointments = await db.appointments.find(query, {"_id": 0}).sort([("date", 1), ("time", 1)]).to_list(500)
     return {"appointments": appointments, "total": len(appointments)}
 
-Dear {appt.get('patient_name')},
-Your appointment on {appt.get('date')} at {appt.get('time')} with {request.doctor} has been cancelled.
-
-Reason: {request.reason}
-
-Please reschedule at your convenience.
-Call: 9403890429"""
-                await send_sms_notification(appt.get('patient_phone'), cancel_msg)
+# REMOVED: @api_router.post("/admin/appointments/cancel")
+# REMOVED: async def cancel_appointments(request: CancelAppointmentsRequest, admin = Depends(verify_admin)):
+# REMOVED:     """Cancel appointments for a doctor (session, day, range, or session_range)
+# REMOVED:     
+# REMOVED:     Cancel Types:
+# REMOVED:     - 'session': Cancel a specific time slot on a date
+# REMOVED:     - 'day': Cancel entire day
+# REMOVED:     - 'range': Cancel all appointments in a date range
+# REMOVED:     - 'bulk_session': Cancel morning (11-2) or evening (6-10) on a specific date
+# REMOVED:     - 'session_range': Cancel from dateA/sessionA to dateB/sessionB
+# REMOVED:     """
+# REMOVED:     # Morning slots: 11:00 AM - 2:00 PM, Evening slots: 6:00 PM - 10:00 PM
+# REMOVED:     MORNING_SLOTS = ["11:00 AM", "11:10 AM", "11:20 AM", "11:30 AM", "11:40 AM", "11:50 AM",
+# REMOVED:                      "12:00 PM", "12:10 PM", "12:20 PM", "12:30 PM", "12:40 PM", "12:50 PM",
+# REMOVED:                      "1:00 PM", "1:10 PM", "1:20 PM", "1:30 PM", "1:40 PM", "1:50 PM", "2:00 PM"]
+# REMOVED:     EVENING_SLOTS = ["6:00 PM", "6:10 PM", "6:20 PM", "6:30 PM", "6:40 PM", "6:50 PM",
+# REMOVED:                      "7:00 PM", "7:10 PM", "7:20 PM", "7:30 PM", "7:40 PM", "7:50 PM",
+# REMOVED:                      "8:00 PM", "8:10 PM", "8:20 PM", "8:30 PM", "8:40 PM", "8:50 PM",
+# REMOVED:                      "9:00 PM", "9:10 PM", "9:20 PM", "9:30 PM", "9:40 PM", "9:50 PM", "10:00 PM"]
+    
+# REMOVED:     query = {
+# REMOVED:         "doctor": request.doctor,
+# REMOVED:         "clinic": request.clinic,
+# REMOVED:         "status": {"$in": ["pending", "Booked", "In Clinic"]}  # Only cancel active appointments
+# REMOVED:     }
+    
+# REMOVED:     if request.cancel_type == "session":
+# REMOVED:         # Cancel specific time slot on a date
+# REMOVED:         if not request.date or not request.time:
+# REMOVED:             raise HTTPException(status_code=400, detail="Date and time required for session cancellation")
+# REMOVED:         query["date"] = request.date
+# REMOVED:         query["time"] = request.time
         
-        return {
-            "success": True,
-            "cancelled_count": len(appointments_to_cancel),
-            "message": f"Successfully cancelled {len(appointments_to_cancel)} appointment(s)",
-            "cancelled_appointments": appointments_to_cancel
-        }
-    else:
-        raise HTTPException(status_code=400, detail="Invalid cancel_type. Use 'session', 'day', 'range', 'bulk_session', or 'session_range'")
-    
-    # Get appointments to be cancelled
-    appointments_to_cancel = await db.appointments.find(query, {"_id": 0}).to_list(500)
-    
-    if not appointments_to_cancel:
-        return {
-            "success": True,
-            "cancelled_count": 0,
-            "message": "No appointments found matching the criteria"
-        }
-    
-    # Update appointments status to cancelled
-    result = await db.appointments.update_many(
-        query,
-        {"$set": {"status": "cancelled", "cancellation_reason": request.reason}}
-    )
-    
-    # Send email notification about cancellations
-    cancelled_list = "<br>".join([
-        f"• {a['patient_name']} - {a['date']} at {a['time']}" 
-        for a in appointments_to_cancel[:20]  # Limit to first 20 in email
-    ])
-    
-    email_html = f"""
-    <h2>⚠️ Appointments Cancelled - {request.doctor}</h2>
-    <p><strong>Reason:</strong> {request.reason}</p>
-    <p><strong>Clinic:</strong> {request.clinic}</p>
-    <p><strong>Cancel Type:</strong> {request.cancel_type}</p>
-    <p><strong>Total Cancelled:</strong> {result.modified_count}</p>
-    <h3>Affected Patients:</h3>
-    <p>{cancelled_list}</p>
-    {f"<p><em>...and {len(appointments_to_cancel) - 20} more</em></p>" if len(appointments_to_cancel) > 20 else ""}
-    """
-    await send_email_notification(f"Appointments Cancelled - {request.doctor}", email_html)
-    
-    # Send cancellation emails to patients who have email
-    for appt in appointments_to_cancel:
-        if appt.get('patient_email'):
-            patient_cancel_html = f"""
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 10px 10px 0 0;">
-                    <h1 style="color: white; margin: 0;">Appointment Cancelled ⚠️</h1>
-                </div>
-                <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
-                    <p style="font-size: 18px;">Hello <strong>{appt.get('patient_name')}</strong>,</p>
-                    <p>We regret to inform you that your appointment has been cancelled.</p>
-                    
-                    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ef4444;">
-                        <h3 style="color: #ef4444; margin-top: 0;">Cancelled Appointment</h3>
-                        <p><strong>Doctor:</strong> {request.doctor}</p>
-                        <p><strong>Clinic:</strong> {request.clinic}</p>
-                        <p><strong>Date:</strong> {appt.get('date')}</p>
-                        <p><strong>Time:</strong> {appt.get('time')}</p>
-                        <p><strong>Reason:</strong> {request.reason}</p>
-                    </div>
-                    
-                    <p>Please reschedule your appointment at your earliest convenience.</p>
-                    
-                    <div style="text-align: center; margin-top: 30px; padding: 15px; background: #fee2e2; border-radius: 8px;">
-                        <p style="margin: 0; color: #b91c1c;"><strong>Need assistance?</strong></p>
-                        <p style="margin: 5px 0 0 0; color: #dc2626;">Contact us: 7039020020</p>
-                    </div>
-                </div>
-            </div>
-            """
-            await send_email_notification(
-                f"Appointment Cancelled - {request.doctor}",
-                email_html,
-                patient_email=appt.get('patient_email'),
-                patient_subject=f"Your Appointment on {appt.get('date')} has been Cancelled",
-                patient_html=patient_cancel_html
-            )
+# REMOVED:     elif request.cancel_type == "day":
+# REMOVED:         # Cancel entire day
+# REMOVED:         if not request.date:
+# REMOVED:             raise HTTPException(status_code=400, detail="Date required for day cancellation")
+# REMOVED:         query["date"] = request.date
         
-        # Send SMS cancellation notification to patient
-        if appt.get('patient_phone'):
-            cancel_sms = f"""DiaGyn - Appointment Cancelled
-
-Dear {appt.get('patient_name')},
-Your appointment on {appt.get('date')} at {appt.get('time')} with {request.doctor} has been cancelled.
-
-Reason: {request.reason}
-
-Please reschedule at your convenience.
-Call: 9403890429"""
-            await send_sms_notification(appt.get('patient_phone'), cancel_sms)
+# REMOVED:     elif request.cancel_type == "bulk_session":
+# REMOVED:         # Cancel morning (11-2) or evening (6-10) session on a specific date
+# REMOVED:         if not request.date or not request.session:
+# REMOVED:             raise HTTPException(status_code=400, detail="Date and session (morning/evening) required")
+# REMOVED:         query["date"] = request.date
+# REMOVED:         slots = MORNING_SLOTS if request.session == "morning" else EVENING_SLOTS
+# REMOVED:         query["time"] = {"$in": slots}
         
-        # Broadcast real-time slot update - slot is now available
-        if appt.get('time'):
-            await slot_manager.broadcast_slot_update(
-                doctor=request.doctor,
-                clinic=request.clinic,
-                date=appt.get('date'),
-                slot=appt.get('time'),
-                status="available"
-            )
+# REMOVED:     elif request.cancel_type == "range":
+# REMOVED:         # Cancel all appointments in date range
+# REMOVED:         if not request.start_date or not request.end_date:
+# REMOVED:             raise HTTPException(status_code=400, detail="Start and end dates required for range cancellation")
+# REMOVED:         query["date"] = {"$gte": request.start_date, "$lte": request.end_date}
+        
+# REMOVED:     elif request.cancel_type == "session_range":
+# REMOVED:         # Cancel from dateA/sessionA to dateB/sessionB
+# REMOVED:         if not request.start_date or not request.end_date:
+# REMOVED:             raise HTTPException(status_code=400, detail="Start and end dates required for session_range")
+# REMOVED:         if not request.start_session or not request.end_session:
+# REMOVED:             raise HTTPException(status_code=400, detail="Start and end sessions (morning/evening) required")
+        
+# REMOVED:         # Build complex query for session range
+# REMOVED:         # This requires checking each date individually
+# REMOVED:         appointments_to_cancel = []
+# REMOVED:         current_date = datetime.strptime(request.start_date, "%Y-%m-%d")
+# REMOVED:         end_date = datetime.strptime(request.end_date, "%Y-%m-%d")
+        
+# REMOVED:         while current_date <= end_date:
+# REMOVED:             date_str = current_date.strftime("%Y-%m-%d")
+            
+# REMOVED:             if date_str == request.start_date:
+# REMOVED:                 # First day: only cancel from start_session onwards
+# REMOVED:                 if request.start_session == "morning":
+# REMOVED:                     slots = MORNING_SLOTS + EVENING_SLOTS
+# REMOVED:                 else:  # evening
+# REMOVED:                     slots = EVENING_SLOTS
+# REMOVED:             elif date_str == request.end_date:
+# REMOVED:                 # Last day: only cancel up to end_session
+# REMOVED:                 if request.end_session == "morning":
+# REMOVED:                     slots = MORNING_SLOTS
+# REMOVED:                 else:  # evening
+# REMOVED:                     slots = MORNING_SLOTS + EVENING_SLOTS
+# REMOVED:             else:
+# REMOVED:                 # Middle days: cancel all
+# REMOVED:                 slots = MORNING_SLOTS + EVENING_SLOTS
+            
+# REMOVED:             day_query = {
+# REMOVED:                 "doctor": request.doctor,
+# REMOVED:                 "clinic": request.clinic,
+# REMOVED:                 "date": date_str,
+# REMOVED:                 "time": {"$in": slots},
+# REMOVED:                 "status": {"$in": ["pending", "Booked", "In Clinic"]}
+# REMOVED:             }
+            
+# REMOVED:             day_appointments = await db.appointments.find(day_query, {"_id": 0}).to_list(100)
+# REMOVED:             appointments_to_cancel.extend(day_appointments)
+            
+# REMOVED:             # Update these appointments
+# REMOVED:             if day_appointments:
+# REMOVED:                 await db.appointments.update_many(
+# REMOVED:                     day_query,
+# REMOVED:                     {"$set": {"status": "cancelled", "cancellation_reason": request.reason}}
+# REMOVED:                 )
+            
+# REMOVED:             current_date += timedelta(days=1)
+        
+# REMOVED:         if not appointments_to_cancel:
+# REMOVED:             return {
+# REMOVED:                 "success": True,
+# REMOVED:                 "cancelled_count": 0,
+# REMOVED:                 "message": "No appointments found matching the criteria"
+# REMOVED:             }
+        
+# REMOVED:         # Send notifications (same as below)
+# REMOVED:         cancelled_list = "<br>".join([
+# REMOVED:             f"• {a['patient_name']} - {a['date']} at {a['time']}" 
+# REMOVED:             for a in appointments_to_cancel[:20]
+# REMOVED:         ])
+        
+# REMOVED:         email_html = f"""
+# REMOVED:         <h2>⚠️ Appointments Cancelled - {request.doctor}</h2>
+# REMOVED:         <p><strong>Reason:</strong> {request.reason}</p>
+# REMOVED:         <p><strong>Clinic:</strong> {request.clinic}</p>
+# REMOVED:         <p><strong>Period:</strong> {request.start_date} ({request.start_session}) to {request.end_date} ({request.end_session})</p>
+# REMOVED:         <p><strong>Total Cancelled:</strong> {len(appointments_to_cancel)}</p>
+# REMOVED:         <h3>Affected Patients:</h3>
+# REMOVED:         <p>{cancelled_list}</p>
+# REMOVED:         """
+# REMOVED:         await send_email_notification(f"Appointments Cancelled - {request.doctor}", email_html)
+        
+# REMOVED:         # Send SMS to affected patients
+# REMOVED:         for appt in appointments_to_cancel:
+# REMOVED:             if appt.get('patient_phone'):
+# REMOVED:                 cancel_msg = f"""DiaGyn - Appointment Cancelled
+# REMOVED: 
+# REMOVED: Dear {appt.get('patient_name')},
+# REMOVED: Your appointment on {appt.get('date')} at {appt.get('time')} with {request.doctor} has been cancelled.
+# REMOVED: 
+# REMOVED: Reason: {request.reason}
+# REMOVED: 
+# REMOVED: Please reschedule at your convenience.
+# REMOVED: Call: 9403890429"""
+# REMOVED:                 await send_sms_notification(appt.get('patient_phone'), cancel_msg)
+        
+# REMOVED:         return {
+# REMOVED:             "success": True,
+# REMOVED:             "cancelled_count": len(appointments_to_cancel),
+# REMOVED:             "message": f"Successfully cancelled {len(appointments_to_cancel)} appointment(s)",
+# REMOVED:             "cancelled_appointments": appointments_to_cancel
+# REMOVED:         }
+# REMOVED:     else:
+# REMOVED:         raise HTTPException(status_code=400, detail="Invalid cancel_type. Use 'session', 'day', 'range', 'bulk_session', or 'session_range'")
     
-    return {
-        "success": True,
-        "cancelled_count": result.modified_count,
-        "message": f"Successfully cancelled {result.modified_count} appointment(s)",
-        "cancelled_appointments": appointments_to_cancel
-    }
+# REMOVED:     # Get appointments to be cancelled
+# REMOVED:     appointments_to_cancel = await db.appointments.find(query, {"_id": 0}).to_list(500)
+    
+# REMOVED:     if not appointments_to_cancel:
+# REMOVED:         return {
+# REMOVED:             "success": True,
+# REMOVED:             "cancelled_count": 0,
+# REMOVED:             "message": "No appointments found matching the criteria"
+# REMOVED:         }
+    
+# REMOVED:     # Update appointments status to cancelled
+# REMOVED:     result = await db.appointments.update_many(
+# REMOVED:         query,
+# REMOVED:         {"$set": {"status": "cancelled", "cancellation_reason": request.reason}}
+# REMOVED:     )
+    
+# REMOVED:     # Send email notification about cancellations
+# REMOVED:     cancelled_list = "<br>".join([
+# REMOVED:         f"• {a['patient_name']} - {a['date']} at {a['time']}" 
+# REMOVED:         for a in appointments_to_cancel[:20]  # Limit to first 20 in email
+# REMOVED:     ])
+    
+# REMOVED:     email_html = f"""
+# REMOVED:     <h2>⚠️ Appointments Cancelled - {request.doctor}</h2>
+# REMOVED:     <p><strong>Reason:</strong> {request.reason}</p>
+# REMOVED:     <p><strong>Clinic:</strong> {request.clinic}</p>
+# REMOVED:     <p><strong>Cancel Type:</strong> {request.cancel_type}</p>
+# REMOVED:     <p><strong>Total Cancelled:</strong> {result.modified_count}</p>
+# REMOVED:     <h3>Affected Patients:</h3>
+# REMOVED:     <p>{cancelled_list}</p>
+# REMOVED:     {f"<p><em>...and {len(appointments_to_cancel) - 20} more</em></p>" if len(appointments_to_cancel) > 20 else ""}
+# REMOVED:     """
+# REMOVED:     await send_email_notification(f"Appointments Cancelled - {request.doctor}", email_html)
+    
+# REMOVED:     # Send cancellation emails to patients who have email
+# REMOVED:     for appt in appointments_to_cancel:
+# REMOVED:         if appt.get('patient_email'):
+# REMOVED:             patient_cancel_html = f"""
+# REMOVED:             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+# REMOVED:                 <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 10px 10px 0 0;">
+# REMOVED:                     <h1 style="color: white; margin: 0;">Appointment Cancelled ⚠️</h1>
+# REMOVED:                 </div>
+# REMOVED:                 <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+# REMOVED:                     <p style="font-size: 18px;">Hello <strong>{appt.get('patient_name')}</strong>,</p>
+# REMOVED:                     <p>We regret to inform you that your appointment has been cancelled.</p>
+# REMOVED:                     
+# REMOVED:                     <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ef4444;">
+# REMOVED:                         <h3 style="color: #ef4444; margin-top: 0;">Cancelled Appointment</h3>
+# REMOVED:                         <p><strong>Doctor:</strong> {request.doctor}</p>
+# REMOVED:                         <p><strong>Clinic:</strong> {request.clinic}</p>
+# REMOVED:                         <p><strong>Date:</strong> {appt.get('date')}</p>
+# REMOVED:                         <p><strong>Time:</strong> {appt.get('time')}</p>
+# REMOVED:                         <p><strong>Reason:</strong> {request.reason}</p>
+# REMOVED:                     </div>
+# REMOVED:                     
+# REMOVED:                     <p>Please reschedule your appointment at your earliest convenience.</p>
+# REMOVED:                     
+# REMOVED:                     <div style="text-align: center; margin-top: 30px; padding: 15px; background: #fee2e2; border-radius: 8px;">
+# REMOVED:                         <p style="margin: 0; color: #b91c1c;"><strong>Need assistance?</strong></p>
+# REMOVED:                         <p style="margin: 5px 0 0 0; color: #dc2626;">Contact us: 7039020020</p>
+# REMOVED:                     </div>
+# REMOVED:                 </div>
+# REMOVED:             </div>
+# REMOVED:             """
+# REMOVED:             await send_email_notification(
+# REMOVED:                 f"Appointment Cancelled - {request.doctor}",
+# REMOVED:                 email_html,
+# REMOVED:                 patient_email=appt.get('patient_email'),
+# REMOVED:                 patient_subject=f"Your Appointment on {appt.get('date')} has been Cancelled",
+# REMOVED:                 patient_html=patient_cancel_html
+# REMOVED:             )
+        
+# REMOVED:         # Send SMS cancellation notification to patient
+# REMOVED:         if appt.get('patient_phone'):
+# REMOVED:             cancel_sms = f"""DiaGyn - Appointment Cancelled
+# REMOVED: 
+# REMOVED: Dear {appt.get('patient_name')},
+# REMOVED: Your appointment on {appt.get('date')} at {appt.get('time')} with {request.doctor} has been cancelled.
+# REMOVED: 
+# REMOVED: Reason: {request.reason}
+# REMOVED: 
+# REMOVED: Please reschedule at your convenience.
+# REMOVED: Call: 9403890429"""
+# REMOVED:             await send_sms_notification(appt.get('patient_phone'), cancel_sms)
+        
+# REMOVED:         # Broadcast real-time slot update - slot is now available
+# REMOVED:         if appt.get('time'):
+# REMOVED:             await slot_manager.broadcast_slot_update(
+# REMOVED:                 doctor=request.doctor,
+# REMOVED:                 clinic=request.clinic,
+# REMOVED:                 date=appt.get('date'),
+# REMOVED:                 slot=appt.get('time'),
+# REMOVED:                 status="available"
+# REMOVED:             )
+    
+# REMOVED:     return {
+# REMOVED:         "success": True,
+# REMOVED:         "cancelled_count": result.modified_count,
+# REMOVED:         "message": f"Successfully cancelled {result.modified_count} appointment(s)",
+# REMOVED:         "cancelled_appointments": appointments_to_cancel
+# REMOVED:     }
+
+# REMOVED: @api_router.delete("/admin/appointments/{appointment_id}")
+# REMOVED: async def delete_single_appointment(appointment_id: str, admin = Depends(verify_admin)):
+# REMOVED:     """Delete a single appointment"""
+# REMOVED:     result = await db.appointments.delete_one({"id": appointment_id})
+    
+# REMOVED:     if result.deleted_count == 0:
+# REMOVED:         raise HTTPException(status_code=404, detail="Appointment not found")
+    
+# REMOVED:     return {"success": True, "message": "Appointment deleted successfully"}
+
 
 # ============ CLEANUP ENDPOINTS - Day End Operations ============
+
+# REMOVED: @api_router.delete("/admin/cleanup/appointments/date/{date}")
+# REMOVED: async def cleanup_appointments_by_date(date: str, admin = Depends(verify_admin)):
+# REMOVED:     """Delete all appointments for a specific date (Day End Cleanup for DiaGyn)"""
+# REMOVED:     result = await db.appointments.delete_many({"date": date})
+# REMOVED:     return {
+# REMOVED:         "success": True,
+# REMOVED:         "message": f"Deleted {result.deleted_count} appointments for {date}",
+# REMOVED:         "deleted_count": result.deleted_count
+# REMOVED:     }
+
+
+# REMOVED: @api_router.delete("/admin/cleanup/appointments/completed")
+# REMOVED: async def cleanup_completed_appointments(admin = Depends(verify_admin)):
+# REMOVED:     """Delete all completed appointments"""
+# REMOVED:     result = await db.appointments.delete_many({"status": "Completed"})
+# REMOVED:     return {
+# REMOVED:         "success": True,
+# REMOVED:         "message": f"Deleted {result.deleted_count} completed appointments",
+# REMOVED:         "deleted_count": result.deleted_count
+# REMOVED:     }
+
+
+# REMOVED: @api_router.delete("/admin/cleanup/pharmacy/completed")
+# REMOVED: async def cleanup_completed_pharmacy_orders(admin = Depends(verify_admin)):
+# REMOVED:     """Delete only completed/delivered pharmacy orders (Orange Pharmacy)"""
+# REMOVED:     result = await db.pharmacy_orders.delete_many({"status": {"$in": ["Delivered", "Completed"]}})
+# REMOVED:     return {
+# REMOVED:         "success": True,
+# REMOVED:         "message": f"Deleted {result.deleted_count} completed pharmacy orders",
+# REMOVED:         "deleted_count": result.deleted_count
+# REMOVED:     }
+
+
+# REMOVED: @api_router.delete("/admin/cleanup/diagnostic/completed")
+# REMOVED: async def cleanup_completed_diagnostic_orders(admin = Depends(verify_admin)):
+# REMOVED:     """Delete only completed diagnostic orders (Proton Diagnostics)"""
+# REMOVED:     result = await db.diagnostic_orders.delete_many({"status": {"$in": ["Report Ready", "Delivered", "Completed"]}})
+# REMOVED:     return {
+# REMOVED:         "success": True,
+# REMOVED:         "message": f"Deleted {result.deleted_count} completed diagnostic orders",
+# REMOVED:         "deleted_count": result.deleted_count
+# REMOVED:     }
+
+
+# REMOVED: @api_router.delete("/admin/cleanup/all")
+# REMOVED: async def cleanup_all_data(admin = Depends(verify_admin), confirm: str = None):
+# REMOVED:     """Delete ALL appointments, pharmacy orders, and diagnostic orders to start fresh
+# REMOVED:     Requires confirm=DELETEALL parameter for safety
+# REMOVED:     """
+# REMOVED:     if confirm != "DELETEALL":
+# REMOVED:         raise HTTPException(status_code=400, detail="Must provide confirm=DELETEALL parameter to proceed")
+    
+# REMOVED:     appointments_result = await db.appointments.delete_many({})
+# REMOVED:     pharmacy_result = await db.pharmacy_orders.delete_many({})
+# REMOVED:     diagnostic_result = await db.diagnostic_orders.delete_many({})
+    
+# REMOVED:     return {
+# REMOVED:         "success": True,
+# REMOVED:         "message": "All data cleared - fresh start",
+# REMOVED:         "deleted": {
+# REMOVED:             "appointments": appointments_result.deleted_count,
+# REMOVED:             "pharmacy_orders": pharmacy_result.deleted_count,
+# REMOVED:             "diagnostic_orders": diagnostic_result.deleted_count
+# REMOVED:         },
+# REMOVED:         "total_deleted": appointments_result.deleted_count + pharmacy_result.deleted_count + diagnostic_result.deleted_count
+# REMOVED:     }
+
+
+# REMOVED: @api_router.get("/admin/cleanup/stats")
+# REMOVED: async def get_cleanup_stats(admin = Depends(verify_admin)):
+# REMOVED:     """Get current counts of all records for cleanup planning"""
+# REMOVED:     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+# REMOVED:     # Appointment counts
+# REMOVED:     total_appointments = await db.appointments.count_documents({})
+# REMOVED:     completed_appointments = await db.appointments.count_documents({"status": "Completed"})
+# REMOVED:     today_appointments = await db.appointments.count_documents({"date": today})
+    
+# REMOVED:     # Pharmacy counts
+# REMOVED:     total_pharmacy = await db.pharmacy_orders.count_documents({})
+# REMOVED:     completed_pharmacy = await db.pharmacy_orders.count_documents({"status": {"$in": ["Delivered", "Completed"]}})
+    
+# REMOVED:     # Diagnostic counts
+# REMOVED:     total_diagnostic = await db.diagnostic_orders.count_documents({})
+# REMOVED:     completed_diagnostic = await db.diagnostic_orders.count_documents({"status": {"$in": ["Report Ready", "Delivered", "Completed"]}})
+    
+# REMOVED:     return {
+# REMOVED:         "today": today,
+# REMOVED:         "appointments": {
+# REMOVED:             "total": total_appointments,
+# REMOVED:             "completed": completed_appointments,
+# REMOVED:             "today": today_appointments
+# REMOVED:         },
+# REMOVED:         "pharmacy_orders": {
+# REMOVED:             "total": total_pharmacy,
+# REMOVED:             "completed": completed_pharmacy
+# REMOVED:         },
+# REMOVED:         "diagnostic_orders": {
+# REMOVED:             "total": total_diagnostic,
+# REMOVED:             "completed": completed_diagnostic
+# REMOVED:         }
+# REMOVED:     }
+
 
 # ============ Order Tracking & Status Updates ============
 
 class OrderStatusUpdate(BaseModel):
     status: str
     notes: Optional[str] = None
+
+# REMOVED: @api_router.get("/admin/pharmacy/orders")
+# REMOVED: async def get_admin_pharmacy_orders(admin = Depends(verify_admin), status: Optional[str] = None, limit: int = 50):
+# REMOVED:     """Get pharmacy orders for admin with optional status filter"""
+# REMOVED:     query = {}
+# REMOVED:     if status:
+# REMOVED:         query["status"] = status
+    
+# REMOVED:     orders = await db.pharmacy_orders.find(query, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+    
+# REMOVED:     # Add status history if not present
+# REMOVED:     for order in orders:
+# REMOVED:         if "status_history" not in order:
+# REMOVED:             order["status_history"] = []
+    
+# REMOVED:     return {"orders": orders, "total": len(orders), "statuses": PHARMACY_STATUSES}
+
+# REMOVED: @api_router.put("/admin/pharmacy/orders/{order_id}/status")
+# REMOVED: async def update_pharmacy_order_status(order_id: str, update: OrderStatusUpdate, admin = Depends(verify_admin)):
+# REMOVED:     """Update pharmacy order status"""
+# REMOVED:     if update.status not in PHARMACY_STATUSES:
+# REMOVED:         raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {PHARMACY_STATUSES}")
+    
+# REMOVED:     # Get current order
+# REMOVED:     order = await db.pharmacy_orders.find_one({"id": order_id}, {"_id": 0})
+# REMOVED:     if not order:
+# REMOVED:         raise HTTPException(status_code=404, detail="Order not found")
+    
+# REMOVED:     # Create status history entry
+# REMOVED:     status_entry = {
+# REMOVED:         "status": update.status,
+# REMOVED:         "timestamp": datetime.now(timezone.utc).isoformat(),
+# REMOVED:         "notes": update.notes
+# REMOVED:     }
+    
+# REMOVED:     # Update order
+# REMOVED:     result = await db.pharmacy_orders.update_one(
+# REMOVED:         {"id": order_id},
+# REMOVED:         {
+# REMOVED:             "$set": {"status": update.status},
+# REMOVED:             "$push": {"status_history": status_entry}
+# REMOVED:         }
+# REMOVED:     )
+    
+# REMOVED:     if result.modified_count == 0:
+# REMOVED:         raise HTTPException(status_code=500, detail="Failed to update order status")
+    
+# REMOVED:     # Send email notification for status update
+# REMOVED:     email_html = f"""
+# REMOVED:     <h2>📦 Pharmacy Order Status Update</h2>
+# REMOVED:     <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+# REMOVED:     <p><strong>Patient:</strong> {order.get('patient_name')}</p>
+# REMOVED:     <p><strong>Phone:</strong> {order.get('patient_phone')}</p>
+# REMOVED:     <p><strong>New Status:</strong> <span style="color: #10b981; font-weight: bold;">{update.status}</span></p>
+# REMOVED:     {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
+# REMOVED:     <p><strong>Updated at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+# REMOVED:     """
+    
+# REMOVED:     # Patient status update email
+# REMOVED:     status_colors = {
+# REMOVED:         "Order Booked": "#f59e0b",
+# REMOVED:         "Packing": "#3b82f6",
+# REMOVED:         "Out for Delivery": "#8b5cf6",
+# REMOVED:         "Delivered": "#10b981"
+# REMOVED:     }
+# REMOVED:     status_color = status_colors.get(update.status, "#6b7280")
+# REMOVED:     status_icons = {
+# REMOVED:         "Order Booked": "📋",
+# REMOVED:         "Packing": "📦",
+# REMOVED:         "Out for Delivery": "🚚",
+# REMOVED:         "Delivered": "✅"
+# REMOVED:     }
+# REMOVED:     status_icon = status_icons.get(update.status, "📋")
+    
+# REMOVED:     patient_status_html = f"""
+# REMOVED:     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+# REMOVED:         <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border-radius: 10px 10px 0 0;">
+# REMOVED:             <h1 style="color: white; margin: 0;">Order Update {status_icon}</h1>
+# REMOVED:         </div>
+# REMOVED:         <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+# REMOVED:             <p style="font-size: 18px;">Hello <strong>{order.get('patient_name')}</strong>,</p>
+# REMOVED:             <p>Your Orange Pharmacy order status has been updated.</p>
+# REMOVED:             
+# REMOVED:             <div style="text-align: center; margin: 30px 0;">
+# REMOVED:                 <div style="display: inline-block; padding: 15px 30px; background: {status_color}; border-radius: 8px;">
+# REMOVED:                     <span style="color: white; font-size: 20px; font-weight: bold;">{update.status}</span>
+# REMOVED:                 </div>
+# REMOVED:             </div>
+# REMOVED:             
+# REMOVED:             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+# REMOVED:                 <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+# REMOVED:                 {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
+# REMOVED:             </div>
+# REMOVED:             
+# REMOVED:             <div style="text-align: center; margin-top: 30px; padding: 15px; background: #ffedd5; border-radius: 8px;">
+# REMOVED:                 <p style="margin: 0; color: #c2410c;"><strong>Track your order or need help?</strong></p>
+# REMOVED:                 <p style="margin: 5px 0 0 0; color: #ea580c;">Contact us: 7039030030</p>
+# REMOVED:             </div>
+# REMOVED:         </div>
+# REMOVED:     </div>
+# REMOVED:     """
+    
+# REMOVED:     await send_email_notification(
+# REMOVED:         f"Pharmacy Order Update - {update.status}", 
+# REMOVED:         email_html,
+# REMOVED:         patient_email=order.get('patient_email'),
+# REMOVED:         patient_subject=f"Your Order is {update.status} - Orange Pharmacy",
+# REMOVED:         patient_html=patient_status_html
+# REMOVED:     )
+    
+# REMOVED:     # Send push notification to user
+# REMOVED:     if order.get('user_id'):
+# REMOVED:         push_body = f"Your pharmacy order is now: {update.status}"
+# REMOVED:         if update.status == "Delivered":
+# REMOVED:             push_body = "Your pharmacy order has been delivered! 🎉"
+# REMOVED:         elif update.status == "Out for Delivery":
+# REMOVED:             push_body = "Your order is out for delivery! 🚚"
+        
+# REMOVED:         await send_push_notification(
+# REMOVED:             user_id=order.get('user_id'),
+# REMOVED:             title=f"Order Update: {update.status}",
+# REMOVED:             body=push_body,
+# REMOVED:             url="/profile",
+# REMOVED:             tag=f"pharmacy-update-{order_id}"
+# REMOVED:         )
+    
+# REMOVED:     return {"success": True, "message": f"Order status updated to '{update.status}'", "status": update.status}
+
+# REMOVED: @api_router.get("/admin/diagnostic/orders")
+# REMOVED: async def get_admin_diagnostic_orders(admin = Depends(verify_admin), status: Optional[str] = None, limit: int = 50):
+# REMOVED:     """Get diagnostic orders for admin with optional status filter"""
+# REMOVED:     query = {}
+# REMOVED:     if status:
+# REMOVED:         query["status"] = status
+    
+# REMOVED:     orders = await db.diagnostic_orders.find(query, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+    
+# REMOVED:     # Add status history if not present
+# REMOVED:     for order in orders:
+# REMOVED:         if "status_history" not in order:
+# REMOVED:             order["status_history"] = []
+    
+# REMOVED:     return {"orders": orders, "total": len(orders), "statuses": DIAGNOSTIC_STATUSES}
+
+# REMOVED: @api_router.put("/admin/diagnostic/orders/{order_id}/status")
+# REMOVED: async def update_diagnostic_order_status(order_id: str, update: OrderStatusUpdate, admin = Depends(verify_admin)):
+# REMOVED:     """Update diagnostic order status"""
+# REMOVED:     if update.status not in DIAGNOSTIC_STATUSES:
+# REMOVED:         raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {DIAGNOSTIC_STATUSES}")
+    
+# REMOVED:     # Get current order
+# REMOVED:     order = await db.diagnostic_orders.find_one({"id": order_id}, {"_id": 0})
+# REMOVED:     if not order:
+# REMOVED:         raise HTTPException(status_code=404, detail="Order not found")
+    
+# REMOVED:     # Create status history entry
+# REMOVED:     status_entry = {
+# REMOVED:         "status": update.status,
+# REMOVED:         "timestamp": datetime.now(timezone.utc).isoformat(),
+# REMOVED:         "notes": update.notes
+# REMOVED:     }
+    
+# REMOVED:     # Update order
+# REMOVED:     result = await db.diagnostic_orders.update_one(
+# REMOVED:         {"id": order_id},
+# REMOVED:         {
+# REMOVED:             "$set": {"status": update.status},
+# REMOVED:             "$push": {"status_history": status_entry}
+# REMOVED:         }
+# REMOVED:     )
+    
+# REMOVED:     if result.modified_count == 0:
+# REMOVED:         raise HTTPException(status_code=500, detail="Failed to update order status")
+    
+# REMOVED:     # Send email notification for status update
+# REMOVED:     email_html = f"""
+# REMOVED:     <h2>🔬 Diagnostic Order Status Update</h2>
+# REMOVED:     <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+# REMOVED:     <p><strong>Patient:</strong> {order.get('patient_name')}</p>
+# REMOVED:     <p><strong>Phone:</strong> {order.get('patient_phone')}</p>
+# REMOVED:     <p><strong>Tests:</strong> {', '.join(order.get('tests', [])[:3])}{'...' if len(order.get('tests', [])) > 3 else ''}</p>
+# REMOVED:     <p><strong>New Status:</strong> <span style="color: #8b5cf6; font-weight: bold;">{update.status}</span></p>
+# REMOVED:     {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
+# REMOVED:     <p><strong>Updated at:</strong> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+# REMOVED:     """
+    
+# REMOVED:     # Patient status update email for diagnostics
+# REMOVED:     status_colors = {
+# REMOVED:         "Test Booked": "#f59e0b",
+# REMOVED:         "Sample Collected": "#3b82f6",
+# REMOVED:         "In Process": "#8b5cf6",
+# REMOVED:         "Reports Generated": "#10b981"
+# REMOVED:     }
+# REMOVED:     status_color = status_colors.get(update.status, "#6b7280")
+# REMOVED:     status_icons = {
+# REMOVED:         "Test Booked": "📋",
+# REMOVED:         "Sample Collected": "🧪",
+# REMOVED:         "In Process": "⏳",
+# REMOVED:         "Reports Generated": "📊"
+# REMOVED:     }
+# REMOVED:     status_icon = status_icons.get(update.status, "📋")
+    
+# REMOVED:     patient_diag_status_html = f"""
+# REMOVED:     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+# REMOVED:         <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 10px 10px 0 0;">
+# REMOVED:             <h1 style="color: white; margin: 0;">Test Update {status_icon}</h1>
+# REMOVED:         </div>
+# REMOVED:         <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+# REMOVED:             <p style="font-size: 18px;">Hello <strong>{order.get('patient_name')}</strong>,</p>
+# REMOVED:             <p>Your Proton Diagnostics order status has been updated.</p>
+# REMOVED:             
+# REMOVED:             <div style="text-align: center; margin: 30px 0;">
+# REMOVED:                 <div style="display: inline-block; padding: 15px 30px; background: {status_color}; border-radius: 8px;">
+# REMOVED:                     <span style="color: white; font-size: 20px; font-weight: bold;">{update.status}</span>
+# REMOVED:                 </div>
+# REMOVED:             </div>
+# REMOVED:             
+# REMOVED:             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+# REMOVED:                 <p><strong>Order ID:</strong> {order_id[:8]}...</p>
+# REMOVED:                 <p><strong>Tests:</strong> {', '.join(order.get('tests', [])[:3])}{'...' if len(order.get('tests', [])) > 3 else ''}</p>
+# REMOVED:                 {f"<p><strong>Notes:</strong> {update.notes}</p>" if update.notes else ""}
+# REMOVED:             </div>
+# REMOVED:             
+# REMOVED:             {"<p style='text-align: center; color: #10b981; font-size: 16px;'><strong>Your reports are ready! Please visit our center or contact us to collect them.</strong></p>" if update.status == "Reports Generated" else ""}
+# REMOVED:             
+# REMOVED:             <div style="text-align: center; margin-top: 30px; padding: 15px; background: #ede9fe; border-radius: 8px;">
+# REMOVED:                 <p style="margin: 0; color: #5b21b6;"><strong>Questions about your tests?</strong></p>
+# REMOVED:                 <p style="margin: 5px 0 0 0; color: #7c3aed;">Contact us: 7039040040</p>
+# REMOVED:             </div>
+# REMOVED:         </div>
+# REMOVED:     </div>
+# REMOVED:     """
+    
+# REMOVED:     await send_email_notification(
+# REMOVED:         f"Diagnostic Order Update - {update.status}", 
+# REMOVED:         email_html,
+# REMOVED:         patient_email=order.get('patient_email'),
+# REMOVED:         patient_subject=f"Test Status: {update.status} - Proton Diagnostics",
+# REMOVED:         patient_html=patient_diag_status_html
+# REMOVED:     )
+    
+# REMOVED:     # Send push notification to user
+# REMOVED:     if order.get('user_id'):
+# REMOVED:         push_body = f"Your diagnostic order is now: {update.status}"
+# REMOVED:         if update.status == "Reports Generated":
+# REMOVED:             push_body = "Your test reports are ready! 📊"
+# REMOVED:         elif update.status == "Sample Collected":
+# REMOVED:             push_body = "Sample collected. Processing your tests..."
+        
+# REMOVED:         await send_push_notification(
+# REMOVED:             user_id=order.get('user_id'),
+# REMOVED:             title=f"Test Update: {update.status}",
+# REMOVED:             body=push_body,
+# REMOVED:             url="/profile",
+# REMOVED:             tag=f"diagnostic-update-{order_id}"
+# REMOVED:         )
+    
+# REMOVED:     return {"success": True, "message": f"Order status updated to '{update.status}'", "status": update.status}
 
 @api_router.get("/orders/pharmacy/{order_id}/track")
 async def track_pharmacy_order(order_id: str):
@@ -4030,6 +6326,30 @@ async def test_push_notification(user = Depends(get_current_user)):
         return {"success": True, "message": f"Test notification sent successfully", "details": result}
     return {"success": False, "message": "No subscriptions found or all failed", "details": result}
 
+# REMOVED: @api_router.post("/admin/push/broadcast")
+# REMOVED: async def admin_broadcast_push(payload: PushNotificationPayload, admin = Depends(verify_admin)):
+# REMOVED:     """Admin: Broadcast push notification to all subscribers"""
+# REMOVED:     result = await broadcast_push_notification(
+# REMOVED:         title=payload.title,
+# REMOVED:         body=payload.body,
+# REMOVED:         url=payload.url or "/",
+# REMOVED:         tag=payload.tag
+# REMOVED:     )
+    
+# REMOVED:     return {"success": True, "message": "Broadcast sent", "details": result}
+
+# REMOVED: @api_router.get("/admin/push/subscribers")
+# REMOVED: async def get_push_subscribers(admin = Depends(verify_admin)):
+# REMOVED:     """Admin: Get count of push notification subscribers"""
+# REMOVED:     total = await db.push_subscriptions.count_documents({})
+# REMOVED:     with_user = await db.push_subscriptions.count_documents({"user_id": {"$ne": None}})
+    
+# REMOVED:     return {
+# REMOVED:         "total_subscribers": total,
+# REMOVED:         "authenticated_users": with_user,
+# REMOVED:         "anonymous": total - with_user
+# REMOVED:     }
+
 @api_router.get("/")
 async def root():
     return {"message": "Nevika Cura Healthcare API"}
@@ -4045,6 +6365,128 @@ app.mount("/api/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads
 # NOTE: Routes below were moved before include_router
 
 # Catch-all handler for root API endpoint to prevent 405 errors
+# REMOVED: @api_router.post("/admin/send-credentials-email")
+# REMOVED: async def send_credentials_email(email: str, admin = Depends(verify_admin)):
+# REMOVED:     """Send staff login credentials to specified email"""
+    
+# REMOVED:     credentials_html = """
+# REMOVED:     <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; background: #f8fafc;">
+# REMOVED:         <div style="background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); color: white; padding: 30px; border-radius: 16px 16px 0 0; text-align: center;">
+# REMOVED:             <h1 style="margin: 0; font-size: 28px;">🏥 Nevika Cura</h1>
+# REMOVED:             <p style="margin: 10px 0 0; opacity: 0.9;">Staff Portal Login Credentials</p>
+# REMOVED:         </div>
+# REMOVED:         
+# REMOVED:         <div style="background: white; padding: 30px; border-radius: 0 0 16px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+# REMOVED:             <h2 style="color: #0d9488; margin-top: 0;">📋 Login Credentials</h2>
+# REMOVED:             <p style="color: #64748b;">Access the Staff Portal at: <a href="https://alyne-kids-health.preview.emergentagent.com/staff" style="color: #0d9488;">Staff Portal</a></p>
+# REMOVED:             
+# REMOVED:             <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">👨‍⚕️ DiaGyn - Doctors</h3>
+# REMOVED:             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+# REMOVED:                 <tr style="background: #f1f5f9;">
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Doctor</th>
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Username</th>
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Password</th>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Neha Patel</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">doc_neha</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Dr. Vikas Jha</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">doc_vikas</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;">Nevika@2026D</td>
+# REMOVED:                 </tr>
+# REMOVED:             </table>
+# REMOVED:             
+# REMOVED:             <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🏥 DiaGyn - Clinic Staff</h3>
+# REMOVED:             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+# REMOVED:                 <tr style="background: #f1f5f9;">
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Clinic</th>
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Username</th>
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Password</th>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Pushpa Clinic Staff</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #d1fae5;">staff_pushpa</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #d1fae5;">Nevika@2026C</td>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Amnion Clinic Staff</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #d1fae5;">staff_amnion</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #d1fae5;">Nevika@2026C</td>
+# REMOVED:                 </tr>
+# REMOVED:             </table>
+# REMOVED:             
+# REMOVED:             <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">💊 Orange Pharmacy</h3>
+# REMOVED:             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+# REMOVED:                 <tr style="background: #f1f5f9;">
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Role</th>
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Username</th>
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Password</th>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Pharmacy Staff</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fed7aa;">staff_pharmacy</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fed7aa;">Nevika@2026P</td>
+# REMOVED:                 </tr>
+# REMOVED:             </table>
+# REMOVED:             
+# REMOVED:             <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🔬 Proton Diagnostics</h3>
+# REMOVED:             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+# REMOVED:                 <tr style="background: #f1f5f9;">
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Role</th>
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Username</th>
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Password</th>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Diagnostics Staff</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #e9d5ff;">staff_proton</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #e9d5ff;">Nevika@2026L</td>
+# REMOVED:                 </tr>
+# REMOVED:             </table>
+# REMOVED:             
+# REMOVED:             <h3 style="color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🔐 Admin Portal</h3>
+# REMOVED:             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+# REMOVED:                 <tr style="background: #f1f5f9;">
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Portal</th>
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">URL</th>
+# REMOVED:                     <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Password</th>
+# REMOVED:                 </tr>
+# REMOVED:                 <tr>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;">Admin Dashboard</td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0;"><a href="https://alyne-kids-health.preview.emergentagent.com/admin" style="color: #0d9488;">/admin</a></td>
+# REMOVED:                     <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fecaca;">nevikacura2026</td>
+# REMOVED:                 </tr>
+# REMOVED:             </table>
+# REMOVED:             
+# REMOVED:             <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 15px; margin-top: 20px; border-radius: 4px;">
+# REMOVED:                 <strong style="color: #15803d;">🔒 Security Note:</strong>
+# REMOVED:                 <p style="color: #166534; margin: 5px 0 0;">Please change these passwords after first login for security. Keep this information confidential.</p>
+# REMOVED:             </div>
+# REMOVED:             
+# REMOVED:             <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+# REMOVED:                 <p style="color: #64748b; font-size: 14px;">Nevika Cura Healthcare<br>📍 24215 Kuykendal Road, Tomball, Texas 77375</p>
+# REMOVED:             </div>
+# REMOVED:         </div>
+# REMOVED:     </div>
+# REMOVED:     """
+    
+# REMOVED:     try:
+# REMOVED:         params = {
+# REMOVED:             "from": SENDER_EMAIL,
+# REMOVED:             "to": [email],
+# REMOVED:             "subject": "🏥 Nevika Cura - Staff Login Credentials",
+# REMOVED:             "html": credentials_html
+# REMOVED:         }
+# REMOVED:         result = await asyncio.to_thread(resend.Emails.send, params)
+# REMOVED:         logger.info(f"Credentials email sent to {email}: {result.get('id')}")
+# REMOVED:         return {"success": True, "message": f"Credentials sent to {email}", "email_id": result.get('id')}
+# REMOVED:     except Exception as e:
+# REMOVED:         logger.error(f"Failed to send credentials email: {str(e)}")
+# REMOVED:         raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
+
+
 # ============ PATIENT PROFILE ENDPOINTS ============
 
 class PatientProfile(BaseModel):
@@ -4212,6 +6654,146 @@ async def get_loyalty_points_by_phone(phone: str, staff = Depends(verify_staff))
     }
 
 
+# REMOVED: @api_router.post("/staff/loyalty-points/add")
+# REMOVED: async def staff_add_loyalty_points(data: LoyaltyPointsAdd, staff = Depends(verify_staff)):
+# REMOVED:     """Add loyalty points to a registered user (Pharmacy/Diagnostics Staff only)"""
+# REMOVED:     role = staff.get("role")
+# REMOVED:     if role not in ["pharmacy_staff", "diagnostics_staff", "super_admin"]:
+# REMOVED:         raise HTTPException(status_code=403, detail="Pharmacy or Diagnostics staff access required")
+    
+# REMOVED:     if data.points <= 0:
+# REMOVED:         raise HTTPException(status_code=400, detail="Points must be a positive number")
+    
+# REMOVED:     phone = data.phone.strip().replace(" ", "").replace("-", "")
+    
+# REMOVED:     # Find and update user
+# REMOVED:     result = await db.users.find_one_and_update(
+# REMOVED:         {"phone": {"$regex": phone[-10:]}},
+# REMOVED:         {"$inc": {"loyalty_points": data.points}},
+# REMOVED:         return_document=True
+# REMOVED:     )
+    
+# REMOVED:     if not result:
+# REMOVED:         raise HTTPException(status_code=404, detail="User not registered. Only registered users can earn loyalty points.")
+    
+# REMOVED:     # Log the transaction
+# REMOVED:     await db.loyalty_transactions.insert_one({
+# REMOVED:         "id": str(uuid.uuid4()),
+# REMOVED:         "user_id": result.get("id"),
+# REMOVED:         "user_phone": result.get("phone"),
+# REMOVED:         "user_name": result.get("name"),
+# REMOVED:         "type": "credit",
+# REMOVED:         "points": data.points,
+# REMOVED:         "reason": data.reason or "Staff added points",
+# REMOVED:         "staff_username": staff.get("username"),
+# REMOVED:         "staff_role": role,
+# REMOVED:         "created_at": datetime.now(timezone.utc).isoformat()
+# REMOVED:     })
+    
+# REMOVED:     return {
+# REMOVED:         "success": True,
+# REMOVED:         "message": f"Added {data.points} loyalty points",
+# REMOVED:         "user_name": result.get("name"),
+# REMOVED:         "new_balance": result.get("loyalty_points", 0) + data.points
+# REMOVED:     }
+
+
+# REMOVED: @api_router.post("/admin/loyalty-points/subtract")
+# REMOVED: async def admin_subtract_loyalty_points(data: LoyaltyPointsSubtract, admin = Depends(verify_admin)):
+# REMOVED:     """Subtract loyalty points from a registered user (Admin only - for redemption)"""
+# REMOVED:     if data.points <= 0:
+# REMOVED:         raise HTTPException(status_code=400, detail="Points must be a positive number")
+    
+# REMOVED:     phone = data.phone.strip().replace(" ", "").replace("-", "")
+    
+# REMOVED:     # Find user first to check balance
+# REMOVED:     user = await db.users.find_one({"phone": {"$regex": phone[-10:]}})
+# REMOVED:     if not user:
+# REMOVED:         raise HTTPException(status_code=404, detail="User not found")
+    
+# REMOVED:     current_points = user.get("loyalty_points", 0)
+# REMOVED:     if current_points < data.points:
+# REMOVED:         raise HTTPException(status_code=400, detail=f"Insufficient points. User has {current_points} points, trying to subtract {data.points}")
+    
+# REMOVED:     # Update user points
+# REMOVED:     result = await db.users.find_one_and_update(
+# REMOVED:         {"phone": {"$regex": phone[-10:]}},
+# REMOVED:         {"$inc": {"loyalty_points": -data.points}},
+# REMOVED:         return_document=True
+# REMOVED:     )
+    
+# REMOVED:     # Log the transaction
+# REMOVED:     await db.loyalty_transactions.insert_one({
+# REMOVED:         "id": str(uuid.uuid4()),
+# REMOVED:         "user_id": user.get("id"),
+# REMOVED:         "user_phone": user.get("phone"),
+# REMOVED:         "user_name": user.get("name"),
+# REMOVED:         "type": "debit",
+# REMOVED:         "points": data.points,
+# REMOVED:         "reason": data.reason or "Points redeemed",
+# REMOVED:         "admin": True,
+# REMOVED:         "created_at": datetime.now(timezone.utc).isoformat()
+# REMOVED:     })
+    
+# REMOVED:     return {
+# REMOVED:         "success": True,
+# REMOVED:         "message": f"Subtracted {data.points} loyalty points",
+# REMOVED:         "user_name": result.get("name"),
+# REMOVED:         "previous_balance": current_points,
+# REMOVED:         "new_balance": current_points - data.points
+# REMOVED:     }
+
+
+# REMOVED: @api_router.get("/admin/loyalty-points/transactions")
+# REMOVED: async def get_loyalty_transactions(admin = Depends(verify_admin), phone: Optional[str] = None, limit: int = 50):
+# REMOVED:     """Get loyalty points transaction history (Admin only)"""
+# REMOVED:     query = {}
+# REMOVED:     if phone:
+# REMOVED:         phone = phone.strip().replace(" ", "").replace("-", "")
+# REMOVED:         query["user_phone"] = {"$regex": phone[-10:]}
+    
+# REMOVED:     transactions = await db.loyalty_transactions.find(query, {"_id": 0}).sort([("created_at", -1)]).limit(limit).to_list(limit)
+    
+# REMOVED:     return {"transactions": transactions, "count": len(transactions)}
+
+
+# REMOVED: @api_router.get("/admin/loyalty-points/summary")
+# REMOVED: async def get_loyalty_summary(admin = Depends(verify_admin)):
+# REMOVED:     """Get loyalty points summary statistics (Admin only)"""
+# REMOVED:     # Get total points issued
+# REMOVED:     pipeline_credit = [
+# REMOVED:         {"$match": {"type": "credit"}},
+# REMOVED:         {"$group": {"_id": None, "total": {"$sum": "$points"}}}
+# REMOVED:     ]
+# REMOVED:     credit_result = await db.loyalty_transactions.aggregate(pipeline_credit).to_list(1)
+# REMOVED:     total_issued = credit_result[0]["total"] if credit_result else 0
+    
+# REMOVED:     # Get total points redeemed
+# REMOVED:     pipeline_debit = [
+# REMOVED:         {"$match": {"type": "debit"}},
+# REMOVED:         {"$group": {"_id": None, "total": {"$sum": "$points"}}}
+# REMOVED:     ]
+# REMOVED:     debit_result = await db.loyalty_transactions.aggregate(pipeline_debit).to_list(1)
+# REMOVED:     total_redeemed = debit_result[0]["total"] if debit_result else 0
+    
+# REMOVED:     # Get users with points
+# REMOVED:     users_with_points = await db.users.count_documents({"loyalty_points": {"$gt": 0}})
+    
+# REMOVED:     # Get top users by points
+# REMOVED:     top_users = await db.users.find(
+# REMOVED:         {"loyalty_points": {"$gt": 0}},
+# REMOVED:         {"_id": 0, "name": 1, "phone": 1, "loyalty_points": 1}
+# REMOVED:     ).sort([("loyalty_points", -1)]).limit(10).to_list(10)
+    
+# REMOVED:     return {
+# REMOVED:         "total_points_issued": total_issued,
+# REMOVED:         "total_points_redeemed": total_redeemed,
+# REMOVED:         "points_in_circulation": total_issued - total_redeemed,
+# REMOVED:         "users_with_points": users_with_points,
+# REMOVED:         "top_users": top_users
+# REMOVED:     }
+
+
 # Evara routes moved to routes/evara.py
 # Glydex routes moved to routes/glydex.py
 @api_router.post("/webhook/stripe")
@@ -4318,6 +6900,11 @@ async def get_appointment_reminder_status(appointment_id: str):
         }
     }
 
+# REMOVED: @api_router.post("/admin/appointments/{appointment_id}/send-reminder")
+# REMOVED: async def admin_send_appointment_reminder(
+# REMOVED:     appointment_id: str, 
+# REMOVED:     reminder_type: str = "both",
+# REMOVED:     admin = Depends(verify_admin)
 ):
     """Admin endpoint to manually send appointment reminder
     
