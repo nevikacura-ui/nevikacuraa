@@ -10,12 +10,13 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { format } from 'date-fns';
+import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
 import { 
   ArrowLeft, Pill, Users, Calendar, FileText, Package, 
   Plus, Trash2, Search, Loader2, LogOut, Shield,
   BarChart3, FlaskConical, UserX, AlertTriangle, X,
-  Truck, CheckCircle2, Clock, MapPin, Gift, Minus, Phone, TrendingUp, History
+  Truck, CheckCircle2, Clock, MapPin, Gift, Minus, Phone, TrendingUp, History,
+  ChevronLeft, ChevronRight, Sun, Moon
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
