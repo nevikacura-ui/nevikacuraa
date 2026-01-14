@@ -744,6 +744,103 @@ const Teleconsultation = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Add Funds Dialog */}
+      <Dialog open={showAddFunds} onOpenChange={setShowAddFunds}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Wallet className="w-5 h-5 text-green-600" />
+              Add Funds to Wallet
+            </DialogTitle>
+            <DialogDescription>
+              Add money via UPI to book your consultation
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Quick Amount Buttons */}
+            <div>
+              <Label className="text-sm text-gray-600">Select Amount</Label>
+              <div className="grid grid-cols-4 gap-2 mt-2">
+                {[300, 500, 1000, 2000].map(amt => (
+                  <Button
+                    key={amt}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      // Open UPI payment link
+                      const upiUrl = `upi://pay?pa=nevikacura@ybl&pn=Nevika%20Cura&am=${amt}&cu=INR`;
+                      window.open(upiUrl, '_blank');
+                      toast.info(`Opening UPI app for ₹${amt}. After payment, contact support for wallet credit.`, { duration: 5000 });
+                    }}
+                    className="hover:bg-green-50 hover:border-green-400"
+                  >
+                    ₹{amt}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* UPI QR Code */}
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600 mb-2">Scan to Pay via UPI</p>
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=nevikacura@ybl&pn=Nevika%20Cura&am=${selectedDoctor?.fee || 300}&cu=INR`}
+                alt="UPI QR Code"
+                className="mx-auto rounded-lg border"
+              />
+              <p className="text-lg font-bold text-green-600 mt-2">₹{selectedDoctor?.fee || 300}</p>
+            </div>
+
+            {/* UPI ID */}
+            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <div>
+                <p className="text-xs text-gray-500">UPI ID</p>
+                <p className="font-mono font-semibold">nevikacura@ybl</p>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => {
+                  navigator.clipboard.writeText('nevikacura@ybl');
+                  toast.success('UPI ID copied!');
+                }}
+              >
+                <Copy className="w-4 h-4" />
+              </Button>
+            </div>
+
+            {/* Instructions */}
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-sm text-amber-800">
+                <strong>After Payment:</strong> Your wallet will be credited within 30 minutes. 
+                Take a screenshot of payment for reference.
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowAddFunds(false)}
+                className="flex-1"
+              >
+                Close
+              </Button>
+              <Button 
+                onClick={() => {
+                  setShowAddFunds(false);
+                  fetchWalletBalance();
+                  toast.info('Checking wallet balance...', { duration: 2000 });
+                }}
+                className="flex-1 bg-green-600 hover:bg-green-700"
+              >
+                Refresh Balance
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
