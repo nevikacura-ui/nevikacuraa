@@ -728,3 +728,319 @@ async def download_glydex_pdf_report(user = Depends(get_current_user)):
         media_type="application/pdf",
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
+
+
+
+# ============ STAFF-MANAGED DIABETES PATIENTS (Dr. Vikas) ============
+
+send_sms_notification = None
+send_email_notification = None
+
+def set_notification_functions(email_func, sms_func):
+    """Set notification functions from server.py"""
+    global send_email_notification, send_sms_notification
+    send_email_notification = email_func
+    send_sms_notification = sms_func
+
+def generate_patient_id(doctor: str = "Vikas") -> str:
+    """Generate unique diabetes patient ID"""
+    year = datetime.now().strftime("%Y")
+    doc_code = doctor.upper()[:3]
+    return f"GLX-{doc_code}-{year}-{uuid.uuid4().hex[:6].upper()}"
+
+@router.post("/staff/patients/register")
+async def register_diabetes_patient(registration: DiabetesPatientRegistration):
+    """Staff registers a new diabetes patient (Dr. Vikas workflow)"""
+    
+    # Generate unique patient ID
+    patient_id = generate_patient_id(registration.doctor_assigned.split()[-1] if " " in registration.doctor_assigned else "VIK")
+    
+    # Check if phone already registered
+    existing = await db.glydex_managed_patients.find_one({
+        "phone": registration.phone,
+        "status": "active"
+    })
+    if existing:
+        return {
+            "success": False,
+            "message": "Patient already registered with this phone",
+            "existing_id": existing.get("patient_id")
+        }
+    
+    patient_doc = {
+        "patient_id": patient_id,
+        "patient_name": registration.patient_name,
+        "age": registration.age,
+        "phone": registration.phone,
+        "email": registration.email,
+        "address": registration.address,
+        "diabetes_type": registration.diabetes_type,
+        "date_of_diagnosis": registration.date_of_diagnosis,
+        "current_medications": registration.current_medications,
+        "insulin_user": registration.insulin_user,
+        "hba1c_history": [{"value": registration.hba1c_latest, "date": datetime.now().strftime("%Y-%m-%d")}] if registration.hba1c_latest else [],
+        "doctor_assigned": registration.doctor_assigned,
+        "registered_by": registration.registered_by,
+        "send_congratulations": registration.send_congratulations,
+        "status": "active",
+        "sugar_logs": [],
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.glydex_managed_patients.insert_one(patient_doc)
+    
+    logger.info(f"Diabetes patient registered: {patient_id}")
+    
+    return {
+        "success": True,
+        "patient_id": patient_id,
+        "patient_name": registration.patient_name,
+        "doctor": registration.doctor_assigned,
+        "message": f"Patient registered successfully. ID: {patient_id}"
+    }
+
+@router.get("/staff/patients")
+async def get_all_diabetes_patients(doctor: Optional[str] = None, status: str = "active"):
+    """Get all managed diabetes patients"""
+    query = {"status": status}
+    if doctor:
+        query["doctor_assigned"] = {"$regex": doctor, "$options": "i"}
+    
+    patients = await db.glydex_managed_patients.find(
+        query,
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(500)
+    
+    return {"success": True, "patients": patients, "total": len(patients)}
+
+@router.get("/staff/patients/{patient_id}")
+async def get_diabetes_patient(patient_id: str):
+    """Get specific diabetes patient details"""
+    patient = await db.glydex_managed_patients.find_one(
+        {"patient_id": patient_id},
+        {"_id": 0}
+    )
+    
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    
+    # Get sugar log stats
+    fbs_logs = [l for l in patient.get("sugar_logs", []) if l.get("type") == "fbs"]
+    ppbs_logs = [l for l in patient.get("sugar_logs", []) if l.get("type") == "ppbs"]
+    
+    patient["stats"] = {
+        "fbs_avg": round(sum(l.get("value", 0) for l in fbs_logs) / len(fbs_logs)) if fbs_logs else None,
+        "ppbs_avg": round(sum(l.get("value", 0) for l in ppbs_logs) / len(ppbs_logs)) if ppbs_logs else None,
+        "total_logs": len(patient.get("sugar_logs", [])),
+        "last_hba1c": patient.get("hba1c_history", [{}])[-1] if patient.get("hba1c_history") else None
+    }
+    
+    return {"success": True, "patient": patient}
+
+@router.post("/staff/patients/{patient_id}/sugar-log")
+async def add_staff_sugar_log(patient_id: str, entry: StaffSugarLogEntry):
+    """Staff adds sugar log for a managed patient"""
+    
+    patient = await db.glydex_managed_patients.find_one({"patient_id": patient_id})
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    
+    log_entry = {
+        "id": str(uuid.uuid4()),
+        "type": entry.type,
+        "value": entry.value,
+        "date": entry.date,
+        "time": entry.time,
+        "recorded_by": entry.recorded_by,
+        "notes": entry.notes,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.glydex_managed_patients.update_one(
+        {"patient_id": patient_id},
+        {
+            "$push": {"sugar_logs": log_entry},
+            "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+        }
+    )
+    
+    # Check for good results and send congratulations if enabled
+    congrats_sent = False
+    if patient.get("send_congratulations", True):
+        is_good_reading = False
+        message = ""
+        
+        if entry.type == "fbs" and entry.value < 110:
+            is_good_reading = True
+            message = f"Great news! Your fasting sugar of {entry.value} mg/dL is excellent. Keep up the good work! - Dr. Vikas, Nevika Cura"
+        elif entry.type == "ppbs" and entry.value < 140:
+            is_good_reading = True
+            message = f"Well done! Your post-meal sugar of {entry.value} mg/dL shows great control. Continue your healthy habits! - Dr. Vikas, Nevika Cura"
+        
+        if is_good_reading and message:
+            # Send SMS congratulations
+            if send_sms_notification and patient.get("phone"):
+                try:
+                    await send_sms_notification(patient.get("phone"), message)
+                    congrats_sent = True
+                    logger.info(f"Congratulatory SMS sent to patient {patient_id}")
+                except Exception as e:
+                    logger.error(f"Failed to send congratulatory SMS: {e}")
+            
+            # Send email congratulations
+            if send_email_notification and patient.get("email"):
+                try:
+                    await send_email_notification(
+                        patient.get("email"),
+                        "Congratulations on Your Diabetes Control! - Nevika Cura",
+                        f"""
+                        <h2>Great Progress, {patient.get('patient_name')}!</h2>
+                        <p>{message}</p>
+                        <p>Your {entry.type.upper()} reading: <strong>{entry.value} mg/dL</strong></p>
+                        <p>Keep following your diet and medication routine.</p>
+                        <p>Best regards,<br>Dr. Vikas<br>Nevika Cura - Glydex Diabetes Care</p>
+                        """
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to send congratulatory email: {e}")
+    
+    return {
+        "success": True,
+        "log_id": log_entry["id"],
+        "congratulations_sent": congrats_sent,
+        "message": "Sugar log added successfully"
+    }
+
+@router.post("/staff/patients/{patient_id}/hba1c")
+async def add_hba1c_result(patient_id: str, value: float, date: str, notes: Optional[str] = None):
+    """Add HbA1c test result for a managed patient"""
+    
+    patient = await db.glydex_managed_patients.find_one({"patient_id": patient_id})
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    
+    hba1c_entry = {
+        "id": str(uuid.uuid4()),
+        "value": value,
+        "date": date,
+        "notes": notes,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.glydex_managed_patients.update_one(
+        {"patient_id": patient_id},
+        {
+            "$push": {"hba1c_history": hba1c_entry},
+            "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+        }
+    )
+    
+    # Check for improved HbA1c and send congratulations
+    congrats_sent = False
+    previous_hba1c = patient.get("hba1c_history", [{}])[-1] if patient.get("hba1c_history") else None
+    
+    if patient.get("send_congratulations", True):
+        is_improvement = False
+        message = ""
+        
+        if value < 7.0:
+            is_improvement = True
+            message = f"Excellent! Your HbA1c of {value}% shows outstanding diabetes control. Congratulations! - Dr. Vikas"
+        elif previous_hba1c and previous_hba1c.get("value") and value < previous_hba1c.get("value"):
+            is_improvement = True
+            improvement = round(previous_hba1c.get("value") - value, 1)
+            message = f"Great progress! Your HbA1c improved by {improvement}% to {value}%. Keep it up! - Dr. Vikas"
+        
+        if is_improvement and message:
+            if send_sms_notification and patient.get("phone"):
+                try:
+                    await send_sms_notification(patient.get("phone"), message)
+                    congrats_sent = True
+                except Exception as e:
+                    logger.error(f"Failed to send HbA1c congratulations: {e}")
+    
+    return {
+        "success": True,
+        "hba1c_id": hba1c_entry["id"],
+        "value": value,
+        "congratulations_sent": congrats_sent,
+        "message": "HbA1c result added"
+    }
+
+@router.put("/staff/patients/{patient_id}/congratulations")
+async def toggle_congratulations(patient_id: str, toggle: CongratulatoryMessageToggle):
+    """Toggle congratulatory message setting for a patient"""
+    
+    result = await db.glydex_managed_patients.update_one(
+        {"patient_id": patient_id},
+        {"$set": {
+            "send_congratulations": toggle.enabled,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    
+    return {
+        "success": True,
+        "send_congratulations": toggle.enabled,
+        "message": f"Congratulatory messages {'enabled' if toggle.enabled else 'disabled'}"
+    }
+
+@router.get("/staff/patients/search")
+async def search_diabetes_patients(query: str, doctor: Optional[str] = None):
+    """Search diabetes patients by name, phone, or ID"""
+    search_filter = {
+        "$or": [
+            {"patient_name": {"$regex": query, "$options": "i"}},
+            {"phone": {"$regex": query}},
+            {"patient_id": {"$regex": query, "$options": "i"}}
+        ],
+        "status": "active"
+    }
+    
+    if doctor:
+        search_filter["doctor_assigned"] = {"$regex": doctor, "$options": "i"}
+    
+    patients = await db.glydex_managed_patients.find(
+        search_filter,
+        {"_id": 0}
+    ).limit(20).to_list(20)
+    
+    return {"success": True, "results": patients}
+
+@router.get("/staff/reports/summary")
+async def get_diabetes_summary_report(doctor: Optional[str] = None):
+    """Get summary report of all managed diabetes patients"""
+    query = {"status": "active"}
+    if doctor:
+        query["doctor_assigned"] = {"$regex": doctor, "$options": "i"}
+    
+    patients = await db.glydex_managed_patients.find(query, {"_id": 0}).to_list(500)
+    
+    # Calculate statistics
+    total_patients = len(patients)
+    controlled = 0  # HbA1c < 7%
+    uncontrolled = 0
+    
+    for p in patients:
+        latest_hba1c = p.get("hba1c_history", [{}])[-1] if p.get("hba1c_history") else {}
+        if latest_hba1c.get("value"):
+            if latest_hba1c.get("value") < 7.0:
+                controlled += 1
+            else:
+                uncontrolled += 1
+    
+    return {
+        "success": True,
+        "summary": {
+            "total_patients": total_patients,
+            "controlled": controlled,
+            "uncontrolled": uncontrolled,
+            "unknown_status": total_patients - controlled - uncontrolled,
+            "control_rate": round(controlled / total_patients * 100, 1) if total_patients > 0 else 0
+        },
+        "doctor": doctor or "All"
+    }
