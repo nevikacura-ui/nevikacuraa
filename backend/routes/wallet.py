@@ -143,14 +143,15 @@ async def request_wallet_topup(
     data: WalletTopUpRequest,
     user = Depends(get_current_user)
 ):
-    """Request wallet top-up (requires admin approval)"""
+    """Request wallet top-up with FIXED amount QR (customer cannot modify amount)"""
     if data.amount < 100:
         raise HTTPException(status_code=400, detail="Minimum top-up amount is ₹100")
     if data.amount > 50000:
         raise HTTPException(status_code=400, detail="Maximum top-up amount is ₹50,000")
     
+    transaction_id = str(uuid.uuid4())
     transaction = {
-        "id": str(uuid.uuid4()),
+        "id": transaction_id,
         "user_id": user["id"],
         "user_name": user.get("name", ""),
         "user_phone": user.get("phone", ""),
@@ -169,11 +170,20 @@ async def request_wallet_topup(
     
     await db.wallet_transactions.insert_one(transaction)
     
+    # Generate FIXED amount QR - customer CANNOT change this amount
+    fixed_qr = generate_fixed_amount_qr(data.amount, transaction_id[:8])
+    
     return {
         "success": True,
         "transaction_id": transaction["id"],
-        "message": "Top-up request submitted. Please upload payment screenshot for verification.",
-        "upi_details": CLINIC_UPI
+        "message": "Top-up request submitted. Please pay the exact amount using the QR code.",
+        "upi_details": {
+            "upi_id": CLINIC_UPI["upi_id"],
+            "name": CLINIC_UPI["name"],
+            "qr_code": fixed_qr,  # Fixed amount QR
+            "amount": data.amount,
+            "amount_locked": True  # Indicates amount is fixed
+        }
     }
 
 @router.post("/topup/{transaction_id}/screenshot")
