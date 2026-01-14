@@ -1,0 +1,130 @@
+{
+  "summary": "Iteration 27 - ALYNE Kids Health & Care Module with Region-Specific Features. All 18 backend API tests passed (100%). Frontend verified - Home page shows all 6 service cards including ALYNE with dark navy logo. ALYNE page shows region toggle (India/USA), all feature categories, region-specific resources, and common features working correctly.",
+  "test_date": "2026-01-14",
+  "test_type": "Feature Testing - ALYNE Region-Specific Resources",
+  "overall_status": "PASS",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "backend_tests": {
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "test_categories": [
+      {"category": "India Resources", "tests": 6, "passed": 6, "details": "GET /api/alyne/resources/india (4 govt schemes, 6 ayurvedic remedies), food-guides (4 regions), seasonal-alerts (3 seasons), ayurvedic"},
+      {"category": "USA Resources", "tests": 5, "passed": 5, "details": "GET /api/alyne/resources/usa, insurance-guide (10 terms), school-vaccines, wic, safety (3 categories)"},
+      {"category": "Common Resources", "tests": 4, "passed": 4, "details": "GET /api/alyne/resources/common/screening (ASQ-3 with 5 areas), telemedicine-tips (6 tips), parenting-tips (3 age groups)"},
+      {"category": "Existing Endpoints", "tests": 3, "passed": 3, "details": "GET /api/alyne/symptoms (6 symptoms), shop/categories, shop/products (25 products MOCKED)"}
+    ]
+  },
+  "frontend_tests": {
+    "total": 12,
+    "passed": 12,
+    "failed": 0,
+    "tests": [
+      {"name": "Home Page - All 6 Service Cards", "status": "PASS", "details": "DiaGyn, Proton, Orange, Evara, Glydex, ALYNE cards all visible"},
+      {"name": "ALYNE Card - Dark Navy Logo", "status": "PASS", "details": "ALYNE logo with dark navy background filling the card, 'Kids by Nevika Cura' subtitle, 'Get Started' button"},
+      {"name": "ALYNE Page - Region Toggle", "status": "PASS", "details": "India/USA toggle working, switches between IAP and CDC guidelines"},
+      {"name": "India Region - Resources", "status": "PASS", "details": "Govt Schemes, Regional Foods, Seasonal Alerts, Home Remedies all visible"},
+      {"name": "India Region - Kids Shop", "status": "PASS", "details": "Kids Shop visible for India, shows products WITHOUT prices"},
+      {"name": "USA Region - Resources", "status": "PASS", "details": "Insurance Guide, School Vaccines, WIC Program, Safety Guide, Find Pediatrician, Brightwheel all visible"},
+      {"name": "USA Region - No Kids Shop", "status": "PASS", "details": "Kids Shop NOT visible for USA (correct behavior)"},
+      {"name": "Feature Categories", "status": "PASS", "details": "All 8 feature cards clickable: Symptom Checker, Medication Guide, Nutrition, Sleep, Skin & Hair, Eye & Vision, Milestones, Growth Tracker"},
+      {"name": "Symptom Checker", "status": "PASS", "details": "Shows 6 symptoms: Fever, Cough, Sore Throat, Vomiting, Diarrhea, Skin Rash"},
+      {"name": "Govt Schemes (India)", "status": "PASS", "details": "Shows 4 schemes: Ayushman Bharat, ICDS, JSSK, RBSK with eligibility and helplines"},
+      {"name": "Insurance Guide (USA)", "status": "PASS", "details": "Shows 10 insurance terms: Premium, Deductible, Copay, Coinsurance, etc."},
+      {"name": "Dev Screening", "status": "PASS", "details": "Shows ASQ-3 with 5 milestone areas: Communication, Gross Motor, Fine Motor, Problem Solving, Personal-Social"}
+    ]
+  },
+  "features_verified": {
+    "home_page_service_cards": {
+      "status": "WORKING",
+      "details": "All 6 service cards visible: DiaGyn, Proton, Orange Pharmacy, Evara, Glydex, ALYNE"
+    },
+    "alyne_card_styling": {
+      "status": "WORKING",
+      "details": "ALYNE card has dark navy background (#0a1628) with colorful logo filling the entire card, 'Get Started' button with white/30 transparency"
+    },
+    "region_toggle": {
+      "status": "WORKING",
+      "details": "India/USA toggle switches between IAP (Indian Academy of Pediatrics) and CDC & AAP (American Academy of Pediatrics) guidelines"
+    },
+    "india_resources": {
+      "status": "WORKING",
+      "details": "Govt Schemes (4 programs), Regional Foods (4 regions), Seasonal Alerts (3 seasons), Home Remedies (6 ayurvedic remedies)"
+    },
+    "usa_resources": {
+      "status": "WORKING",
+      "details": "Insurance Guide (10 terms), School Vaccines (kindergarten + middle school), WIC Program, Safety Guide (car seat, SIDS, recalls), Find Pediatrician, Brightwheel"
+    },
+    "kids_shop_india_only": {
+      "status": "WORKING",
+      "details": "Kids Shop visible for India only, shows 25 products WITHOUT prices, categories: Baby Food, Feeding Essentials, Diapers, Skincare, Health & Safety, Supplements"
+    },
+    "common_features": {
+      "status": "WORKING",
+      "details": "Dev Screening (ASQ-3), Telemedicine Tips, Parenting Tips (newborn/infant/toddler)"
+    },
+    "ai_chat": {
+      "status": "WORKING",
+      "details": "AI Chat interface accessible with input field and send button"
+    },
+    "symptom_checker": {
+      "status": "WORKING",
+      "details": "Shows 6 symptoms with colorful cards, IAP/CDC guidelines based on region"
+    }
+  },
+  "api_endpoints_tested": [
+    "GET /api/alyne/resources/india - 4 govt schemes, 6 ayurvedic remedies",
+    "GET /api/alyne/resources/india/food-guides - 4 regions (north/south/east/west)",
+    "GET /api/alyne/resources/india/seasonal-alerts - 3 seasons (monsoon/summer/winter)",
+    "GET /api/alyne/resources/india/ayurvedic - 6 safe home remedies",
+    "GET /api/alyne/resources/usa - insurance guide, WIC program",
+    "GET /api/alyne/resources/usa/insurance-guide - 10 insurance terms",
+    "GET /api/alyne/resources/usa/school-vaccines - kindergarten + middle school requirements",
+    "GET /api/alyne/resources/usa/wic - WIC program details",
+    "GET /api/alyne/resources/usa/safety - 3 safety categories",
+    "GET /api/alyne/resources/common/screening - ASQ-3 with 5 areas",
+    "GET /api/alyne/resources/common/telemedicine-tips - 6 tips",
+    "GET /api/alyne/resources/common/parenting-tips - 3 age groups",
+    "GET /api/alyne/symptoms - 6 symptoms",
+    "GET /api/alyne/shop/categories - product categories",
+    "GET /api/alyne/shop/products - 25 products (MOCKED)"
+  ],
+  "mocked_data": {
+    "kids_shop_products": "25 products hardcoded in alyne.py backend",
+    "ai_chat": "Uses emergentintegrations LLM"
+  },
+  "test_report_links": [
+    "/app/tests/test_alyne_region_resources.py",
+    "/app/test_reports/pytest/pytest_iteration_27.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "ALYNE module fully implemented with dual region support (India/USA)",
+    "India-specific features: Govt Schemes, Regional Foods, Seasonal Alerts, Ayurvedic Remedies, Kids Shop",
+    "USA-specific features: Insurance Guide, School Vaccines, WIC Program, Safety Guide, Pediatrician Finder, Brightwheel",
+    "Common features: Dev Screening (ASQ-3), Telemedicine Tips, Parenting Tips",
+    "Kids Shop shows products WITHOUT prices as per requirement",
+    "Region toggle correctly switches between IAP and CDC guidelines",
+    "All backend APIs returning correct data with proper structure"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (18/18 passed)",
+    "frontend": "100% (12/12 passed)"
+  },
+  "test_credentials": {
+    "api_base_url": "https://alynehealth.preview.emergentagent.com"
+  },
+  "seed_data_creation": "None - using existing test data from iteration 26",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "ALYNE Kids Health module with region-specific features fully tested. All backend APIs working: India resources (govt schemes, food guides, seasonal alerts, ayurvedic), USA resources (insurance guide, school vaccines, WIC, safety), Common resources (screening, telemedicine, parenting tips). Frontend shows correct region toggle, Kids Shop for India only (no prices), all feature categories clickable. AI Chat uses emergentintegrations. Kids Shop products are MOCKED/hardcoded."
+}
