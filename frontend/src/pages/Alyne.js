@@ -347,6 +347,7 @@ const Alyne = () => {
       toast.error('Please fill required fields');
       return;
     }
+    setAddingChild(true);
     try {
       const response = await fetch(`${API}/api/alyne/children?user_id=${user.id}`, {
         method: 'POST',
@@ -365,6 +366,8 @@ const Alyne = () => {
     } catch (error) { 
       console.error('Add child error:', error);
       toast.error('Failed to add child. Please try again.'); 
+    } finally {
+      setAddingChild(false);
     }
   };
 
