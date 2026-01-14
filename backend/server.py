@@ -2539,6 +2539,70 @@ async def submit_appointment_feedback(feedback_token: str, feedback: Appointment
         "rating": feedback.rating
     }
 
+@api_router.get("/booking-limits/status")
+async def get_booking_limits_status(phone: str = None, user = Depends(get_current_user_optional)):
+    """Check if user can book appointments/orders based on current active bookings"""
+    user_phone = phone or (user.phone if user else None)
+    user_id = user.id if user else None
+    
+    if not user_phone and not user_id:
+        return {
+            "can_book_appointment": True,
+            "can_book_diagnostic": True,
+            "can_book_pharmacy": True,
+            "can_book_teleconsult": True,
+            "active_appointments": 0,
+            "active_diagnostic_orders": 0,
+            "active_pharmacy_orders": 0,
+            "active_teleconsults": 0
+        }
+    
+    # Check active DiaGyn appointments
+    active_appointment = None
+    if user_phone:
+        active_appointment = await db.appointments.find_one({
+            "patient_phone": user_phone,
+            "status": {"$in": ["pending", "Booked", "In Clinic"]},
+            "appointment_type": {"$ne": "EMERGENCY"}
+        }, {"_id": 0, "date": 1, "time": 1, "doctor": 1})
+    
+    # Check active teleconsult bookings
+    active_teleconsult = None
+    if user_id:
+        active_teleconsult = await db.teleconsult_bookings.find_one({
+            "user_id": user_id,
+            "status": {"$in": ["pending", "confirmed", "Booked"]}
+        }, {"_id": 0, "date": 1, "time": 1, "doctor_name": 1})
+    
+    # Check active diagnostic orders
+    active_diagnostic_count = 0
+    if user_phone:
+        active_diagnostic_count = await db.diagnostic_orders.count_documents({
+            "patient_phone": user_phone,
+            "status": {"$in": ["pending", "Pending", "confirmed", "Confirmed", "Processing", "Sample Collected", "sample_collected"]}
+        })
+    
+    # Check active pharmacy orders
+    active_pharmacy_count = 0
+    if user_phone:
+        active_pharmacy_count = await db.pharmacy_orders.count_documents({
+            "patient_phone": user_phone,
+            "status": {"$in": ["pending", "Pending", "confirmed", "Confirmed", "Processing", "Ready for Pickup", "ready_for_pickup", "Out for Delivery", "out_for_delivery"]}
+        })
+    
+    return {
+        "can_book_appointment": active_appointment is None,
+        "can_book_diagnostic": active_diagnostic_count < 2,
+        "can_book_pharmacy": active_pharmacy_count < 2,
+        "can_book_teleconsult": active_teleconsult is None,
+        "active_appointments": 1 if active_appointment else 0,
+        "active_diagnostic_orders": active_diagnostic_count,
+        "active_pharmacy_orders": active_pharmacy_count,
+        "active_teleconsults": 1 if active_teleconsult else 0,
+        "active_appointment_details": active_appointment,
+        "active_teleconsult_details": active_teleconsult
+    }
+
 @api_router.get("/appointments", response_model=List[Appointment])
 async def get_appointments(user = Depends(get_current_user)):
     if not user:
