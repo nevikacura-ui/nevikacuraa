@@ -14,8 +14,14 @@ import { format, isSunday } from 'date-fns';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
-// WebSocket URL - convert http(s) to ws(s)
-const WS_URL = BACKEND_URL.replace('http', 'ws');
+// WebSocket URL - handle both local and production environments
+const getWsUrl = () => {
+  const url = new URL(BACKEND_URL);
+  // Use wss for https, ws for http
+  const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+  return `${protocol}//${url.host}`;
+};
+const WS_URL = getWsUrl();
 const WHATSAPP_NUMBER = '+917039020020';
 
 const doctors = [
