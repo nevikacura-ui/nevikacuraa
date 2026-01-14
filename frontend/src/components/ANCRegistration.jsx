@@ -52,7 +52,7 @@ export default function ANCRegistration({ staffName = 'Staff', clinic = 'amnion'
   useEffect(() => {
     const loadPatients = async () => {
       try {
-        const res = await fetch(`${API}/api/anc/patients?clinic=${clinic}`);
+        const res = await fetch(`${API}/api/anc/patients/${clinic}`);
         const data = await res.json();
         if (data.success) setPatients(data.patients || []);
       } catch (err) { console.error('Error fetching patients:', err); }
@@ -62,7 +62,7 @@ export default function ANCRegistration({ staffName = 'Staff', clinic = 'amnion'
 
   const fetchPatients = async () => {
     try {
-      const res = await fetch(`${API}/api/anc/patients?clinic=${clinic}`);
+      const res = await fetch(`${API}/api/anc/patients/${clinic}`);
       const data = await res.json();
       if (data.success) setPatients(data.patients || []);
     } catch (err) { console.error('Error fetching patients:', err); }
