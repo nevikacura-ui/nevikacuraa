@@ -285,7 +285,7 @@ const Home = () => {
                     className={`transition-transform group-hover:scale-105 ${
                       service.fillCard ? 'w-full h-full object-cover absolute inset-0 rounded-2xl' :
                       service.id === 'evara' ? 'w-full h-auto max-h-32 sm:max-h-36 object-contain' :
-                      service.alyneLogo ? 'w-full h-full object-contain' :
+                      service.alyneFill ? 'absolute inset-0 w-full h-full object-contain rounded-2xl' :
                       service.seamlessLogo ? 'w-full h-auto max-h-56 object-contain' :
                       service.stretchLogo ? 'absolute inset-0 w-full h-full object-cover' :
                       service.logoRounded ? 'w-auto max-h-28 rounded-xl shadow-md object-contain' :
