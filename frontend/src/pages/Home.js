@@ -95,16 +95,17 @@ const Home = () => {
       logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/pwdfvuz7_file_000000007c1071fa869036af4a03af75.png',
       description: '',
       bgColor: '',
-      accentColor: 'border-transparent',
+      accentColor: 'border-[#6fd6d6]',
       path: '/alyne',
       logoBg: '',
-      customBg: 'transparent',
+      customBg: '#6fd6d6',
       hideDecoration: true,
-      fillCard: true,
+      fillCard: false,
       tallerCard: true,
       logoScale: 1,
       isGradient: false,
-      hasSparkles: false
+      hasSparkles: false,
+      alyneSpecial: true
     }
   ];
 
