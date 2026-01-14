@@ -6,14 +6,13 @@ import { Label } from './ui/label';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { 
-  Fingerprint, Clock, CheckCircle, XCircle, Users, Calendar,
+  Fingerprint, CheckCircle, XCircle, Users, Calendar,
   LogIn, LogOut, AlertTriangle, TrendingUp
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
 export default function BiometricAttendance({ clinic = 'amnion' }) {
-  const [staff, setStaff] = useState([]);
   const [todayAttendance, setTodayAttendance] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -28,8 +27,25 @@ export default function BiometricAttendance({ clinic = 'amnion' }) {
   });
 
   useEffect(() => {
-    fetchTodayAttendance();
-    fetchMonthlyReport();
+    const loadData = async () => {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const year = new Date().getFullYear();
+        const month = new Date().getMonth() + 1;
+        
+        const [attendanceRes, reportRes] = await Promise.all([
+          fetch(`${API}/api/biometric-attendance/daily-report?clinic=${clinic}&date=${today}`),
+          fetch(`${API}/api/biometric-attendance/monthly-report?clinic=${clinic}&year=${year}&month=${month}`)
+        ]);
+        
+        const attendanceData = await attendanceRes.json();
+        const reportData = await reportRes.json();
+        
+        if (attendanceData.success) setTodayAttendance(attendanceData.attendance || []);
+        if (reportData.success) setMonthlyReport(reportData);
+      } catch (err) { console.error('Error loading data:', err); }
+    };
+    loadData();
   }, [clinic]);
 
   const fetchTodayAttendance = async () => {
