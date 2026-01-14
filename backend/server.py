@@ -2697,6 +2697,18 @@ async def get_diagnostic_orders(user = Depends(get_current_user)):
 
 @api_router.post("/pharmacy", response_model=PharmacyOrder)
 async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(get_current_user)):
+    # ORDER LIMIT: Check if user already has 2 active pharmacy orders
+    active_orders_count = await db.pharmacy_orders.count_documents({
+        "patient_phone": input.patient_phone,
+        "status": {"$in": ["pending", "Pending", "confirmed", "Confirmed", "Processing", "Ready for Pickup", "ready_for_pickup", "Out for Delivery", "out_for_delivery"]}
+    })
+    
+    if active_orders_count >= 2:
+        raise HTTPException(
+            status_code=400, 
+            detail="You already have 2 active pharmacy orders. Please wait for them to be delivered or cancel one before placing a new order."
+        )
+    
     # Validate medicine quantities - max 20 strips per medicine
     MAX_QUANTITY_PER_MEDICINE = 20
     for medicine in input.medicines:
