@@ -270,7 +270,7 @@ export default function BiometricAttendance({ clinic = 'amnion' }) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="w-5 h-5" />
-            Today's Attendance - {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
+            Today&apos;s Attendance - {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
           </CardTitle>
         </CardHeader>
         <CardContent>
