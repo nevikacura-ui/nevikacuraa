@@ -1245,6 +1245,7 @@ const VaccinationsSection = ({ child, region, onBack }) => {
     } catch (e) { console.error('Error updating vaccination:', e); } 
   };
   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (child) fetchVaccinations(); }, [child?.id]);
   const filtered = filter === 'all' ? vaccinations : vaccinations.filter(v => v.status === filter);
   const progress = stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0;
