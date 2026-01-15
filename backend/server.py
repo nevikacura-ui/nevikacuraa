@@ -3813,6 +3813,27 @@ try:
 except Exception as e:
     logger.warning(f"Could not load live queue router: {e}")
 
+# Smart Medicine Reminders
+try:
+    from routes.medicine_reminders import router as medicine_reminders_router, set_db as set_medicine_db, set_jwt_config as set_medicine_jwt, set_notification_function as set_medicine_notif
+    set_medicine_db(db)
+    set_medicine_jwt(JWT_SECRET)
+    set_medicine_notif(send_push_notification)
+    app.include_router(medicine_reminders_router, prefix="/api")
+    logger.info("Medicine Reminders router loaded")
+except Exception as e:
+    logger.warning(f"Could not load medicine reminders router: {e}")
+
+# Clinic Analytics Dashboard
+try:
+    from routes.clinic_analytics import router as clinic_analytics_router, set_db as set_analytics_db, set_jwt_config as set_analytics_jwt
+    set_analytics_db(db)
+    set_analytics_jwt(JWT_SECRET)
+    app.include_router(clinic_analytics_router, prefix="/api")
+    logger.info("Clinic Analytics router loaded")
+except Exception as e:
+    logger.warning(f"Could not load clinic analytics router: {e}")
+
 # Staff Billing Router
 try:
     from routes.staff_billing import router as staff_billing_router, set_db as set_staff_billing_db
