@@ -1357,53 +1357,107 @@ const StaffPortal = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      <main className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
         {/* Clinic Staff View */}
         {isClinicStaff(role) && (
           <Tabs defaultValue="dashboard" className="space-y-4" onValueChange={handleTabChange}>
-            <TabsList className="flex flex-wrap gap-1">
-              <TabsTrigger value="dashboard" data-testid="tab-dashboard">
-                <Users className="w-4 h-4 mr-2" />
-                Dashboard
-              </TabsTrigger>
-              <TabsTrigger value="appointments" data-testid="tab-appointments">
-                <Calendar className="w-4 h-4 mr-2" />
-                Appointments
-              </TabsTrigger>
-              <TabsTrigger value="walkin" data-testid="tab-walkin">
-                <UserPlus className="w-4 h-4 mr-2" />
-                Walk-in
-              </TabsTrigger>
-              <TabsTrigger value="emergency" data-testid="tab-emergency">
-                <AlertTriangle className="w-4 h-4 mr-2" />
-                Emergency
-              </TabsTrigger>
-              <TabsTrigger value="billing" data-testid="tab-billing">
-                <IndianRupee className="w-4 h-4 mr-2" />
-                Billing
-              </TabsTrigger>
-              {/* ANC Registration Tab - based on access_modules */}
-              {staffInfo?.access_modules?.includes('anc') && (
-                <TabsTrigger value="anc" data-testid="tab-anc">
-                  <Baby className="w-4 h-4 mr-2" />
-                  ANC
+            {/* Mobile-optimized Tab Navigation */}
+            <div className="overflow-x-auto pb-2 -mx-2 px-2">
+              <div className="flex gap-2 min-w-max">
+                <button
+                  onClick={() => document.querySelector('[data-state="active"]')?.click() || handleTabChange('dashboard')}
+                  data-testid="tab-dashboard"
+                  data-value="dashboard"
+                  className="staff-tab flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-md data-[state=active]:ring-2 data-[state=active]:ring-offset-2"
+                >
+                  <Users className="w-4 h-4" />
+                  <span className="hidden sm:inline">Dashboard</span>
+                  <span className="sm:hidden">Home</span>
+                </button>
+                <TabsTrigger 
+                  value="dashboard" 
+                  className="hidden"
+                  data-testid="tab-dashboard-hidden"
+                />
+              </div>
+            </div>
+            
+            {/* Color-coded Module Tabs */}
+            <div className="overflow-x-auto pb-2 -mx-2 px-2">
+              <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 min-w-[320px]">
+                <TabsTrigger 
+                  value="appointments" 
+                  data-testid="tab-appointments"
+                  className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-blue-50 text-blue-700 hover:bg-blue-100 data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                >
+                  <Calendar className="w-5 h-5" />
+                  <span>Appts</span>
                 </TabsTrigger>
-              )}
-              {/* Glydex (Diabetes) Tab - based on access_modules */}
-              {staffInfo?.access_modules?.includes('glydex') && (
-                <TabsTrigger value="glydex" data-testid="tab-glydex">
-                  <Activity className="w-4 h-4 mr-2" />
-                  Diabetes
+                
+                <TabsTrigger 
+                  value="walkin" 
+                  data-testid="tab-walkin"
+                  className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-green-50 text-green-700 hover:bg-green-100 data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                >
+                  <UserPlus className="w-5 h-5" />
+                  <span>Walk-in</span>
                 </TabsTrigger>
-              )}
-              {/* Attendance Tab - based on access_modules */}
-              {staffInfo?.access_modules?.includes('attendance') && (
-                <TabsTrigger value="attendance" data-testid="tab-attendance">
-                  <Fingerprint className="w-4 h-4 mr-2" />
-                  Attendance
+                
+                <TabsTrigger 
+                  value="emergency" 
+                  data-testid="tab-emergency"
+                  className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-red-50 text-red-700 hover:bg-red-100 data-[state=active]:bg-red-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                >
+                  <AlertTriangle className="w-5 h-5" />
+                  <span>SOS</span>
                 </TabsTrigger>
-              )}
-            </TabsList>
+                
+                <TabsTrigger 
+                  value="billing" 
+                  data-testid="tab-billing"
+                  className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-amber-50 text-amber-700 hover:bg-amber-100 data-[state=active]:bg-amber-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                >
+                  <IndianRupee className="w-5 h-5" />
+                  <span>Billing</span>
+                </TabsTrigger>
+                
+                {/* ANC Tab - Pink themed */}
+                {staffInfo?.access_modules?.includes('anc') && (
+                  <TabsTrigger 
+                    value="anc" 
+                    data-testid="tab-anc"
+                    className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-pink-50 text-pink-700 hover:bg-pink-100 data-[state=active]:bg-pink-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  >
+                    <Baby className="w-5 h-5" />
+                    <span>ANC</span>
+                  </TabsTrigger>
+                )}
+                
+                {/* Diabetes Tab - Purple themed */}
+                {staffInfo?.access_modules?.includes('glydex') && (
+                  <TabsTrigger 
+                    value="glydex" 
+                    data-testid="tab-glydex"
+                    className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-purple-50 text-purple-700 hover:bg-purple-100 data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  >
+                    <Activity className="w-5 h-5" />
+                    <span>Diabetes</span>
+                  </TabsTrigger>
+                )}
+                
+                {/* Attendance Tab - Orange themed */}
+                {staffInfo?.access_modules?.includes('attendance') && (
+                  <TabsTrigger 
+                    value="attendance" 
+                    data-testid="tab-attendance"
+                    className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-orange-50 text-orange-700 hover:bg-orange-100 data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  >
+                    <Fingerprint className="w-5 h-5" />
+                    <span>Attend</span>
+                  </TabsTrigger>
+                )}
+              </div>
+            </div>
 
             {/* Dashboard Tab */}
             <TabsContent value="dashboard">
@@ -1417,7 +1471,7 @@ const StaffPortal = () => {
             </TabsContent>
 
             <TabsContent value="appointments">
-              <Card className="p-4">
+              <Card className="p-3 sm:p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-semibold text-lg">{staffInfo?.clinic || 'Clinic'} - Appointments</h2>
                   <Input
