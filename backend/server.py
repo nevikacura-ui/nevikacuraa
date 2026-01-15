@@ -3475,6 +3475,192 @@ Please arrive 10 mins early!
         "summary": f"24h: {results['24h_reminders']['sent']}/{results['24h_reminders']['checked']} sent, 1h: {results['1h_reminders']['sent']}/{results['1h_reminders']['checked']} sent"
     }
 
+
+@api_router.post("/cron/sonography-reminders")
+async def cron_send_sonography_reminders(secret: str = "", reminder_minutes: int = 60):
+    """Automated cron job to send sonography reminders
+    
+    Call every 15 minutes with: /api/cron/sonography-reminders?secret=YOUR_SECRET&reminder_minutes=60
+    
+    Features:
+    - Sends 24-hour advance reminders (day before)
+    - Sends 1-hour reminders (same day)
+    - Prevents duplicate reminders with tracking flags
+    - Uses IST timezone for accurate scheduling
+    
+    Recommended cron schedule:
+    - Every 15 mins: */15 * * * * curl -X POST "https://domain/api/cron/sonography-reminders?secret=SECRET"
+    """
+    cron_secret = os.environ.get("CRON_SECRET", "nevika_cron_2026")
+    if secret != cron_secret:
+        raise HTTPException(status_code=403, detail="Invalid secret")
+    
+    # Use IST timezone for scheduling
+    ist_offset = timedelta(hours=5, minutes=30)
+    now_utc = datetime.now(timezone.utc)
+    now_ist = now_utc + ist_offset
+    today = now_ist.strftime("%Y-%m-%d")
+    tomorrow = (now_ist + timedelta(days=1)).strftime("%Y-%m-%d")
+    current_hour = now_ist.hour
+    current_minute = now_ist.minute
+    
+    results = {
+        "24h_reminders": {"checked": 0, "sent": 0, "errors": []},
+        "1h_reminders": {"checked": 0, "sent": 0, "errors": []}
+    }
+    
+    # ===== 24 HOUR REMINDERS (Day Before Sonography) =====
+    try:
+        tomorrow_bookings = await db.sonography_bookings.find({
+            "booking_date": tomorrow,
+            "status": "booked",
+            "reminder_24h_sent": {"$ne": True}
+        }, {"_id": 0}).to_list(100)
+        
+        results["24h_reminders"]["checked"] = len(tomorrow_bookings)
+        
+        for booking in tomorrow_bookings:
+            try:
+                booking_id = booking.get("id")
+                patient_name = booking.get("patient_name", "Patient")
+                mobile = booking.get("mobile_number")
+                clinic = booking.get("clinic", "Clinic")
+                scan_type = booking.get("scan_type", "Sonography")
+                booking_time = booking.get("booking_time", "scheduled time")
+                
+                # Get clinic map link
+                map_link = ""
+                for key, link in CLINIC_MAP_LINKS.items():
+                    if key.lower() in clinic.lower():
+                        map_link = link
+                        break
+                
+                # Send SMS Reminder (24h advance)
+                if mobile and send_sms_notification:
+                    sms_msg = f"""Nevika Cura - Sonography Reminder
+                    
+Dear {patient_name},
+Your {scan_type} is scheduled for TOMORROW:
+
+Date: {tomorrow}
+Time: {booking_time}
+Clinic: {clinic}
+
+Preparation: Empty bladder may be required. Please confirm instructions when you arrive.
+Location: {map_link}
+
+For queries: 9403890429
+- Nevika Cura"""
+                    await send_sms_notification(mobile, sms_msg)
+                    logger.info(f"24h sonography reminder sent to {mobile} for booking {booking_id}")
+                
+                # Mark reminder as sent
+                await db.sonography_bookings.update_one(
+                    {"id": booking_id},
+                    {"$set": {
+                        "reminder_24h_sent": True, 
+                        "reminder_24h_sent_at": now_utc.isoformat()
+                    }}
+                )
+                results["24h_reminders"]["sent"] += 1
+                
+            except Exception as e:
+                error_msg = f"Failed 24h reminder for {booking.get('id')}: {str(e)}"
+                logger.error(error_msg)
+                results["24h_reminders"]["errors"].append(error_msg)
+                
+    except Exception as e:
+        logger.error(f"Error fetching tomorrow's sonography bookings: {e}")
+    
+    # ===== 1 HOUR REMINDERS (Same Day Sonography) =====
+    try:
+        today_bookings = await db.sonography_bookings.find({
+            "booking_date": today,
+            "status": "booked",
+            "reminder_1h_sent": {"$ne": True}
+        }, {"_id": 0}).to_list(100)
+        
+        for booking in today_bookings:
+            try:
+                booking_time_str = booking.get("booking_time", "")
+                if not booking_time_str:
+                    continue
+                
+                # Parse booking time (format: "11:00" or "11:00 AM")
+                try:
+                    if "AM" in booking_time_str or "PM" in booking_time_str:
+                        time_parts = booking_time_str.replace("AM", "").replace("PM", "").strip().split(":")
+                        hour = int(time_parts[0])
+                        minute = int(time_parts[1]) if len(time_parts) > 1 else 0
+                        if "PM" in booking_time_str and hour != 12:
+                            hour += 12
+                        elif "AM" in booking_time_str and hour == 12:
+                            hour = 0
+                    else:
+                        time_parts = booking_time_str.split(":")
+                        hour = int(time_parts[0])
+                        minute = int(time_parts[1]) if len(time_parts) > 1 else 0
+                    
+                    # Calculate minutes until appointment
+                    booking_minutes = hour * 60 + minute
+                    current_minutes = current_hour * 60 + current_minute
+                    minutes_until = booking_minutes - current_minutes
+                    
+                    # Send reminder if sonography is 45-75 minutes away
+                    if 45 <= minutes_until <= 75:
+                        results["1h_reminders"]["checked"] += 1
+                        
+                        booking_id = booking.get("id")
+                        patient_name = booking.get("patient_name", "Patient")
+                        mobile = booking.get("mobile_number")
+                        clinic = booking.get("clinic", "Clinic")
+                        scan_type = booking.get("scan_type", "Sonography")
+                        
+                        # Send SMS Reminder
+                        if mobile and send_sms_notification:
+                            sms_msg = f"""⏰ Nevika Cura - 1 Hour Reminder
+
+Dear {patient_name},
+Your {scan_type} is in 1 HOUR:
+
+Time: {booking_time_str}
+Clinic: {clinic}
+
+Please arrive 10 minutes early!
+- Nevika Cura"""
+                            await send_sms_notification(mobile, sms_msg)
+                            logger.info(f"1h sonography reminder sent to {mobile} for booking {booking_id}")
+                        
+                        # Mark reminder as sent
+                        await db.sonography_bookings.update_one(
+                            {"id": booking_id},
+                            {"$set": {
+                                "reminder_1h_sent": True, 
+                                "reminder_1h_sent_at": now_utc.isoformat()
+                            }}
+                        )
+                        results["1h_reminders"]["sent"] += 1
+                        
+                except ValueError as ve:
+                    logger.warning(f"Could not parse time '{booking_time_str}' for sonography {booking.get('id')}: {ve}")
+                    
+            except Exception as e:
+                error_msg = f"Failed 1h reminder for {booking.get('id')}: {str(e)}"
+                logger.error(error_msg)
+                results["1h_reminders"]["errors"].append(error_msg)
+                
+    except Exception as e:
+        logger.error(f"Error fetching today's sonography bookings: {e}")
+    
+    return {
+        "success": True,
+        "timestamp": now_utc.isoformat(),
+        "ist_time": now_ist.strftime("%Y-%m-%d %H:%M:%S IST"),
+        "results": results,
+        "summary": f"24h: {results['24h_reminders']['sent']}/{results['24h_reminders']['checked']} sent, 1h: {results['1h_reminders']['sent']}/{results['1h_reminders']['checked']} sent"
+    }
+
+
 # Include router AFTER all routes are defined
 app.include_router(api_router)
 
