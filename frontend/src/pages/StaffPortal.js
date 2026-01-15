@@ -1587,6 +1587,7 @@ const StaffPortal = () => {
                         type="date"
                         value={walkInForm.date}
                         onChange={(e) => setWalkInForm({ ...walkInForm, date: e.target.value, time: '' })}
+                        min={getIndianDate()}
                         data-testid="walkin-date"
                       />
                     </div>
