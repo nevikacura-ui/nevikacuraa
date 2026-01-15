@@ -540,7 +540,6 @@ const Alyne = () => {
                     data-testid="aanya-logo-home"
                   />
                 </div>
-                <p className="text-sm text-gray-600 text-center font-medium">Newborn Care (0-24 months)</p>
               </div>
               
               {/* Aanya Feature Cards */}
