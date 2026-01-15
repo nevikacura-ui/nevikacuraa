@@ -1887,7 +1887,7 @@ const StaffPortal = () => {
             {/* Attendance Tab Content */}
             {staffInfo?.access_modules?.includes('attendance') && (
               <TabsContent value="attendance">
-                <BiometricAttendance 
+                <SmartBiometric 
                   clinic={staffInfo?.clinic?.toLowerCase().includes('pushpa') ? 'pushpa' : 
                           staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 
                           staffInfo?.clinic?.toLowerCase().includes('pharmacy') ? 'pharmacy' : 'pushpa'}
