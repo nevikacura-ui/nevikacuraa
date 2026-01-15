@@ -22,6 +22,7 @@ import { ClinicManagementDashboard } from '@/components/ClinicManagement';
 import GlydexStaffPortal from '@/components/GlydexStaffPortal';
 import ANCRegistration from '@/components/ANCRegistration';
 import BiometricAttendance from '@/components/BiometricAttendance';
+import ClinicAnalyticsDashboard from '@/components/ClinicAnalyticsDashboard';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
