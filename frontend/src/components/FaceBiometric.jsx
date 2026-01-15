@@ -94,28 +94,6 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
     }
   };
 
-  // Check and request camera permission first
-  const checkCameraPermission = async () => {
-    try {
-      // Check if permissions API is available
-      if (navigator.permissions && navigator.permissions.query) {
-        try {
-          const result = await navigator.permissions.query({ name: 'camera' });
-          console.log('Camera permission status:', result.state);
-          return result.state;
-        } catch (e) {
-          // Some browsers don't support camera permission query
-          console.log('Camera permission query not supported');
-          return 'prompt';
-        }
-      }
-      return 'prompt'; // Default to prompt if API not available
-    } catch (err) {
-      console.log('Permissions API not supported, will prompt directly');
-      return 'prompt';
-    }
-  };
-
   // Start camera - simplified version matching working test page
   const startCamera = async () => {
     console.log('=== START CAMERA CALLED ===');
