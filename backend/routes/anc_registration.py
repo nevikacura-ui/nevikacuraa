@@ -931,9 +931,8 @@ async def submit_anc_form(form_id: str, data: ANCFormSubmission):
             </div>
             """
             await send_email_notification(
-                "nevikacura@gmail.com",
-                f"✅ ANC Form Submitted - {data.full_name}",
-                admin_html
+                f"✅ ANC Form Submitted - {data.full_name}",  # subject
+                admin_html  # html_content (admin only, no patient email)
             )
     except Exception as e:
         logger.error(f"Failed to send admin notification: {e}")
