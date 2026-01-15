@@ -412,11 +412,14 @@ const FaceBiometric = ({ staffName = '', clinic = 'pushpa' }) => {
 
       {/* Today's Attendance */}
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-2 flex flex-row items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
             <Clock className="w-4 h-4" />
             Today&apos;s Attendance ({todayAttendance.length})
           </CardTitle>
+          <Button variant="ghost" size="sm" onClick={() => { fetchTodayAttendance(); fetchRegisteredStaff(); }}>
+            <RefreshCw className="w-4 h-4" />
+          </Button>
         </CardHeader>
         <CardContent>
           {todayAttendance.length === 0 ? (
