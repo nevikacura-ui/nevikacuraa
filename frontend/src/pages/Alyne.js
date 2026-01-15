@@ -1958,7 +1958,7 @@ const BrightwheelInfoSection = ({ onBack }) => {
         <CardContent className="p-4">
           <p className="text-sm text-gray-600">
             <Info className="w-4 h-4 inline mr-1 text-gray-500" />
-            Ask your childcare provider if they use Brightwheel. If they do, they'll send you an invite to connect your account.
+            Ask your childcare provider if they use Brightwheel. If they do, they&apos;ll send you an invite to connect your account.
           </p>
         </CardContent>
       </Card>
