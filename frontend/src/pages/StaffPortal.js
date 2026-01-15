@@ -1826,15 +1826,27 @@ const StaffPortal = () => {
 
             <TabsContent value="appointments">
               <Card className="p-3 sm:p-4">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                   <h2 className="font-semibold text-lg">{staffInfo?.clinic || 'Clinic'} - Appointments</h2>
-                  <Input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-40"
-                    data-testid="date-picker"
-                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowSonographyModal(true)}
+                      className="border-purple-300 text-purple-600 hover:bg-purple-50"
+                      data-testid="book-sonography-btn"
+                    >
+                      <Scan className="w-4 h-4 mr-1" />
+                      Book Sonography
+                    </Button>
+                    <Input
+                      type="date"
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      className="w-40"
+                      data-testid="date-picker"
+                    />
+                  </div>
                 </div>
                 
                 {/* Daily Collection Summary */}
