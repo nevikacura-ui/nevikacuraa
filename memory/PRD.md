@@ -1265,6 +1265,21 @@ GET  /api/teleconsult/prescription/{id} - Get prescription (auth required)
   - Indian date format displayed in Walk-in and Emergency forms
   - Walk-in booking successfully creates appointments
 
+**39. Today's Summary Dashboard Widget** ✅ (Complete)
+- **New Feature**: Added comprehensive "Today's Summary" widget to Staff Portal home tab
+- **Shows**:
+  - Status breakdown: Completed, Pending, In Clinic, Emergency counts
+  - Appointment type: Online vs Walk-in counts
+  - Cancelled appointments count (if any)
+  - Busiest time slot with appointment count and "View" quick link
+- **Files Modified**:
+  - `/app/frontend/src/components/StaffDashboard.jsx` - Added todaySummary state and widget UI
+- **Widget Features**:
+  - Color-coded status cards (green=completed, yellow=pending, blue=in clinic, red=emergency)
+  - Auto-calculates busiest time slot from appointment distribution
+  - Quick navigation to appointments tab
+  - Only shows when appointments exist for the day
+
 **Test Credentials:**
 - Clinic Staff (Pushpa): `staff_pushpa` / `Nevika@2026C`
 - Clinic Staff (Amnion): `staff_amnion` / `Nevika@2026C`
