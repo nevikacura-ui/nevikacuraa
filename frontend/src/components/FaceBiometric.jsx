@@ -411,7 +411,7 @@ const FaceBiometric = ({ staffName = '', clinic = 'pushpa' }) => {
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
             <Clock className="w-4 h-4" />
-            Today's Attendance ({todayAttendance.length})
+            Today&apos;s Attendance ({todayAttendance.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
