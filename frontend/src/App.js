@@ -38,6 +38,8 @@ import ANCFormPublic from '@/pages/ANCFormPublic';
 import DiabetesFormPublic from '@/pages/DiabetesFormPublic';
 // Simple Face Attendance (for debugging)
 import SimpleFaceAttendance from '@/pages/SimpleFaceAttendance';
+// Live Queue Display
+import QueuePage from '@/pages/QueuePage';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
