@@ -17,9 +17,16 @@ import {
 import StaffBillingModule from '@/components/StaffBillingModule';
 import ANCRegistration from '@/components/ANCRegistration';
 import GlydexStaffPortal from '@/components/GlydexStaffPortal';
-import BiometricAttendance from '@/components/BiometricAttendance';
-import FaceBiometric from '@/components/FaceBiometric';
 import StaffDashboard from '@/components/StaffDashboard';
+
+// Import refactored utilities and components
+import StaffLogin from './staff/StaffLogin';
+import SmartBiometric from './staff/SmartBiometric';
+import { 
+  API, CLINICS, DOCTOR_SCHEDULES, FEE_CODES,
+  getIndianDate, getDayName, getAvailableTimeSlots, 
+  getStatusColor, getAuthHeaders, generateTimeSlots 
+} from './staff/staffUtils';
 
 // Mobile detection hook
 const useIsMobile = () => {
