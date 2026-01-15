@@ -81,7 +81,19 @@ export default function GlydexStaffPortal({ staffName = 'Staff', clinic = 'Pushp
       } catch (err) { console.error('Error loading data:', err); }
     };
     loadData();
+    fetchDiabetesForms();
   }, []);
+
+  const fetchDiabetesForms = async () => {
+    try {
+      const res = await fetch(`${API}/api/glydex/forms/list?clinic=${clinic}`);
+      const data = await res.json();
+      if (data.success) {
+        setDiabetesForms(data.forms || []);
+        setFormCounts(data.counts || { total: 0, allotted: 0, filled: 0 });
+      }
+    } catch (err) { console.error('Error fetching diabetes forms:', err); }
+  };
 
   const fetchPatients = async () => {
     try {
