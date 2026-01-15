@@ -231,9 +231,56 @@ async def upload_topup_screenshot(
         }}
     )
     
+    # Send notification to admin about new top-up request with screenshot
+    amount = transaction.get("amount", 0)
+    user_name = user.get("name", "Unknown")
+    user_phone = user.get("phone", "N/A")
+    
+    try:
+        # Send Email to Admin
+        if send_email_notification:
+            email_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #0d9488, #14b8a6); padding: 20px; text-align: center;">
+                    <h1 style="color: white; margin: 0;">💳 New Wallet Top-Up Request</h1>
+                </div>
+                <div style="padding: 20px; background: #f8fafc;">
+                    <h2 style="color: #0d9488;">Payment Screenshot Received</h2>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr><td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Amount:</strong></td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #0d9488; font-size: 24px;"><strong>₹{amount:.2f}</strong></td></tr>
+                        <tr><td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Customer:</strong></td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">{user_name}</td></tr>
+                        <tr><td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Phone:</strong></td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">{user_phone}</td></tr>
+                        <tr><td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Transaction ID:</strong></td><td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">{transaction_id[:12]}...</td></tr>
+                        <tr><td style="padding: 10px;"><strong>Time:</strong></td><td style="padding: 10px;">{datetime.now(timezone.utc).strftime('%d %b %Y, %I:%M %p')} UTC</td></tr>
+                    </table>
+                    <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px;">
+                        <p style="margin: 0; color: #92400e;">⚠️ <strong>Action Required:</strong> Please login to Admin Panel → Wallet → Pending Top-ups to verify and approve this request.</p>
+                    </div>
+                    <p style="margin-top: 20px; color: #64748b; font-size: 12px;">Screenshot has been uploaded and is available in the admin panel for verification.</p>
+                </div>
+            </div>
+            """
+            await send_email_notification(
+                ADMIN_EMAIL,
+                f"🔔 Wallet Top-Up ₹{amount:.2f} - {user_name}",
+                email_html
+            )
+            logger.info(f"Admin email notification sent for wallet top-up: {transaction_id}")
+    except Exception as e:
+        logger.error(f"Failed to send admin email notification: {e}")
+    
+    try:
+        # Send SMS to Admin
+        if send_sms_notification:
+            sms_text = f"💳 NEVIKA WALLET: New top-up ₹{amount:.2f} by {user_name} ({user_phone}). Screenshot uploaded. Verify in Admin Panel."
+            await send_sms_notification(ADMIN_PHONE, sms_text)
+            logger.info(f"Admin SMS notification sent for wallet top-up: {transaction_id}")
+    except Exception as e:
+        logger.error(f"Failed to send admin SMS notification: {e}")
+    
     return {
         "success": True,
-        "message": "Screenshot uploaded. Admin will verify and approve your top-up within 30 minutes."
+        "message": "Screenshot uploaded. Admin has been notified and will verify your top-up within 30 minutes."
     }
 
 @router.get("/payment-qr")
