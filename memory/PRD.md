@@ -14,6 +14,32 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 
 ## What's Been Implemented ✅
 
+### Session 11 - January 15, 2026 (DIABETES FORM FEATURE & CAMERA FIX)
+
+**34. Diabetes Registration Form System** ✅ (Complete)
+- **Send Form Link**: Staff can send diabetes registration form link via Email/SMS
+- **Public Form Page**: `/diabetes-form/:formId` - Patients fill form online without login
+- **Form Sections**: Personal Info, Diabetes Info, Medications, Medical History, Lifestyle, Test Results, Symptoms
+- **Status Tracking**: Forms have status `allotted` → `filled`
+- **Staff Dashboard**: GlydexStaffPortal shows form status counts and list
+- **Files**: 
+  - `/app/frontend/src/pages/DiabetesFormPublic.jsx` (NEW)
+  - `/app/frontend/src/components/GlydexStaffPortal.jsx` (Updated - Send Form Link button)
+  - `/app/backend/routes/glydex.py` (Added form endpoints)
+- **API Endpoints**:
+  - `POST /api/glydex/form/send` - Send form link to patient
+  - `GET /api/glydex/form/{form_id}` - Get form details
+  - `POST /api/glydex/form/{form_id}/submit` - Submit filled form
+  - `GET /api/glydex/forms/list` - List all forms with status
+- **Testing**: 11/11 backend tests passed, frontend verified
+
+**35. Face ID Camera Permission Fix** ✅ (Complete)
+- **Better Permission Handling**: `checkCameraPermission()` checks permission status before camera access
+- **Multiple Fallback Constraints**: Tries ideal → simpler → any camera for better mobile compatibility
+- **Comprehensive Error Handling**: Specific messages for NotAllowedError, NotFoundError, NotReadableError, SecurityError
+- **User-Friendly Instructions**: Clear instructions to enable camera in browser settings
+- **File**: `/app/frontend/src/components/FaceBiometric.jsx`
+
 ### Session 10 - January 15, 2026 (FACE BIOMETRIC, ALYNE REDESIGN & REFACTORING)
 
 **29. Face Recognition Attendance for Mobile** ✅ (Complete)
