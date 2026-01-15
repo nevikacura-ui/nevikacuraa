@@ -98,6 +98,31 @@ class LoyaltyPointsAdd(BaseModel):
     points: int
     reason: str
 
+# ============ Pre-Sonography Models ============
+
+class ChildInfo(BaseModel):
+    gender: str  # "boy" or "girl"
+    age: str
+
+class PreSonographyBooking(BaseModel):
+    """Pre-sonography patient details form"""
+    patient_name: str
+    age: str
+    lmp: str  # Last Menstrual Period
+    mobile_number: str
+    date_of_birth: Optional[str] = None
+    husband_name: str
+    address: str
+    has_children: bool = False
+    children: Optional[List[ChildInfo]] = []
+    # Booking details
+    appointment_id: Optional[str] = None  # If booking from existing appointment
+    booking_date: str
+    booking_time: str
+    clinic: str
+    scan_type: Optional[str] = None  # ES, NT, GS, etc.
+    notes: Optional[str] = None
+
 
 # ============ Auth Functions ============
 
