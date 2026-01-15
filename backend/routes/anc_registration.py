@@ -834,9 +834,11 @@ async def send_anc_form_link(data: ANCFormSendRequest):
             
             if send_email_notification:
                 await send_email_notification(
-                    data.patient_email,
-                    "📝 Fill Your ANC Registration Form - Nevika Cura",
-                    email_html
+                    "📝 Fill Your ANC Registration Form - Nevika Cura",  # subject
+                    email_html,  # html_content
+                    data.patient_email,  # patient_email
+                    "📝 Fill Your ANC Registration Form - Nevika Cura",  # patient_subject
+                    email_html  # patient_html
                 )
                 email_sent = True
                 logger.info(f"ANC form email sent to {data.patient_email}")
