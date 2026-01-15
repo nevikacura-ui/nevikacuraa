@@ -502,6 +502,88 @@ const Home = () => {
         </section>
       )}
 
+      {/* Senior Care Charity Section */}
+      <section className="py-12 bg-gradient-to-br from-green-50 via-white to-purple-50">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-green-100">
+            <div className="flex flex-col lg:flex-row">
+              {/* Left - Logo & Info */}
+              <div className="lg:w-2/5 bg-gradient-to-br from-green-600 to-teal-600 p-8 lg:p-10 text-white flex flex-col justify-center items-center text-center">
+                <img 
+                  src="/icons/psvn-trust-logo.png" 
+                  alt="PSVN Charitable Trust" 
+                  className="w-24 h-24 md:w-32 md:h-32 object-contain mb-4 bg-white rounded-full p-2"
+                  data-testid="charity-section-logo"
+                />
+                <h3 className="text-xl md:text-2xl font-bold mb-1">Nevika Cura Senior Care</h3>
+                <p className="text-green-100 text-sm mb-3">by PSVN Charitable Trust</p>
+                <p className="text-lg font-serif italic text-green-100">
+                  "Caring for Those Who Cared for Us"
+                </p>
+              </div>
+              
+              {/* Right - Content */}
+              <div className="lg:w-3/5 p-8 lg:p-10">
+                <p className="text-gray-600 mb-6">
+                  Many senior citizens in our community cannot afford basic healthcare. 
+                  Your small contribution can give them:
+                </p>
+                
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    Free health checkups
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    Essential medicines
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    Diagnostic tests
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    Specialist consultations
+                  </div>
+                </div>
+                
+                {/* Quick Donate Buttons */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <button 
+                    onClick={() => navigate('/senior-care')}
+                    className="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium hover:bg-green-200 transition-colors"
+                  >
+                    ₹300 - Medicine Kit
+                  </button>
+                  <button 
+                    onClick={() => navigate('/senior-care')}
+                    className="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium hover:bg-green-200 transition-colors"
+                  >
+                    ₹500 - Health Checkup
+                  </button>
+                  <button 
+                    onClick={() => navigate('/senior-care')}
+                    className="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium hover:bg-green-200 transition-colors"
+                  >
+                    ₹800 - Full Screening
+                  </button>
+                </div>
+                
+                <Button
+                  onClick={() => navigate('/senior-care')}
+                  className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full px-8"
+                  data-testid="give-back-cta"
+                >
+                  <HandHeart className="w-5 h-5 mr-2" />
+                  Contribute Now
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <Footer />
 
