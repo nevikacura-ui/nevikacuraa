@@ -94,6 +94,8 @@ function App() {
             <Route path="/face-attendance" element={<SimpleFaceAttendance />} />
             {/* Live Queue Display - Public */}
             <Route path="/queue" element={<QueuePage />} />
+            {/* Patient Health Dashboard */}
+            <Route path="/health-dashboard" element={<HealthDashboard />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
