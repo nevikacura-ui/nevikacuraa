@@ -28,11 +28,11 @@ const SeniorCare = () => {
 
   // UPI Details
   const upiDetails = {
-    upiId: 'psvncharitabletrust@upi',
-    accountName: 'PSVN Charitable Trust',
-    bankName: 'State Bank of India',
-    accountNo: '1234567890',
-    ifsc: 'SBIN0001234',
+    upiId: 'pinelabs.stq4087704@pineaxis',
+    accountName: 'Nevika Cura Healthcare',
+    bankName: 'State Bank of Mauritius',
+    accountNo: '20229833188288',
+    ifsc: 'STCB0000065',
     phone: '+91 9403890429'
   };
 
