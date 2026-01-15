@@ -428,14 +428,42 @@ export default function BiometricAttendance({ clinic = 'amnion' }) {
                   placeholder="e.g., staff_amnion_01"
                 />
               </div>
-              <div className="p-3 bg-violet-50 rounded-lg text-sm">
-                <p className="font-medium text-violet-800">Instructions:</p>
-                <p className="text-violet-600">Click Register and follow the biometric prompt (fingerprint/face ID) to register the staff device.</p>
-              </div>
+              
+              {/* Fingerprint Scanning Animation */}
+              {scanningFingerprint ? (
+                <div className="p-6 bg-gradient-to-br from-violet-50 to-purple-100 rounded-xl text-center">
+                  <div className="relative w-24 h-24 mx-auto mb-4">
+                    <div className="absolute inset-0 rounded-full border-4 border-violet-300 animate-ping"></div>
+                    <div className="absolute inset-2 rounded-full border-4 border-violet-400 animate-pulse"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Fingerprint className="w-16 h-16 text-violet-600 animate-pulse" />
+                    </div>
+                  </div>
+                  <p className="font-bold text-violet-800 text-lg">Place Your Finger</p>
+                  <p className="text-violet-600 text-sm mt-1">Scanning fingerprint for {registerForm.staff_name}...</p>
+                  <div className="mt-4 h-2 bg-violet-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-violet-500 rounded-full animate-[progress_3s_ease-in-out]" style={{animation: 'progress 3s ease-in-out forwards'}}></div>
+                  </div>
+                  <style>{`
+                    @keyframes progress {
+                      0% { width: 0%; }
+                      100% { width: 100%; }
+                    }
+                  `}</style>
+                </div>
+              ) : (
+                <div className="p-3 bg-violet-50 rounded-lg text-sm">
+                  <p className="font-medium text-violet-800">Instructions:</p>
+                  <p className="text-violet-600">Click Register and place your finger on the sensor to capture biometric data.</p>
+                </div>
+              )}
+              
               <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setShowRegisterDevice(false)} className="flex-1">Cancel</Button>
-                <Button onClick={handleRegisterDevice} disabled={loading} className="flex-1">
-                  <Fingerprint className="w-4 h-4 mr-2" /> Register
+                <Button variant="outline" onClick={() => { setShowRegisterDevice(false); setScanningFingerprint(false); }} className="flex-1" disabled={loading}>
+                  Cancel
+                </Button>
+                <Button onClick={handleRegisterDevice} disabled={loading || scanningFingerprint} className="flex-1 bg-violet-600 hover:bg-violet-700">
+                  <Fingerprint className="w-4 h-4 mr-2" /> {scanningFingerprint ? 'Scanning...' : 'Register Fingerprint'}
                 </Button>
               </div>
             </CardContent>
