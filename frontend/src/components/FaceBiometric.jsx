@@ -581,16 +581,36 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {!cameraActive ? (
+            {!cameraActive && !cameraStarting ? (
               <div className="text-center py-8">
                 <ScanFace className="w-16 h-16 mx-auto text-gray-300 mb-4" />
                 <p className="text-gray-500 mb-4">Start camera for face verification</p>
-                <Button onClick={startCamera} className="bg-violet-600 hover:bg-violet-700">
+                <Button onClick={startCamera} className="bg-violet-600 hover:bg-violet-700" disabled={cameraStarting}>
                   <Camera className="w-4 h-4 mr-2" /> Start Camera
                 </Button>
                 <p className="text-xs text-gray-400 mt-3">
                   Make sure to allow camera access when prompted
                 </p>
+                
+                {/* Show error if camera failed */}
+                {cameraError && (
+                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-800 font-medium flex items-center justify-center gap-2">
+                      <AlertCircle className="w-4 h-4" />
+                      Camera Error
+                    </p>
+                    <p className="text-red-600 text-sm mt-1">{cameraError}</p>
+                    <Button 
+                      onClick={() => { setCameraError(null); startCamera(); }} 
+                      variant="outline"
+                      size="sm"
+                      className="mt-3 text-red-600 border-red-300"
+                    >
+                      <RefreshCw className="w-4 h-4 mr-1" /> Try Again
+                    </Button>
+                  </div>
+                )}
+                
                 {/* Troubleshooting tips */}
                 <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-left text-sm">
                   <p className="font-medium text-amber-800 mb-2">Camera not starting?</p>
@@ -602,11 +622,27 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
                   </ul>
                 </div>
               </div>
+            ) : cameraStarting && !cameraActive ? (
+              <div className="text-center py-8">
+                <Loader2 className="w-12 h-12 mx-auto text-violet-500 animate-spin mb-4" />
+                <p className="text-gray-600 font-medium">Starting camera...</p>
+                <p className="text-gray-400 text-sm mt-2">Please allow camera access if prompted</p>
+                <Button 
+                  onClick={stopCamera} 
+                  variant="outline"
+                  size="sm"
+                  className="mt-4"
+                >
+                  Cancel
+                </Button>
+              </div>
             ) : (
               <div className="space-y-4">
                 {/* Retry button - Always visible when camera is active */}
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Camera active</span>
+                  <span className="text-sm text-green-600 flex items-center gap-1">
+                    <CheckCircle2 className="w-4 h-4" /> Camera active
+                  </span>
                   <Button 
                     variant="outline" 
                     size="sm"
