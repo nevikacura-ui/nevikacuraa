@@ -896,7 +896,7 @@ const Admin = () => {
               <TrendingUp className="w-4 h-4 mr-2" /> Analytics
             </TabsTrigger>
           </TabsList>
-          <TabsList className="grid w-full grid-cols-4 gap-1 mb-6 h-auto">
+          <TabsList className="grid w-full grid-cols-5 gap-1 mb-6 h-auto">
             <TabsTrigger value="clinic-management" data-testid="clinic-management-tab" className="py-2">
               <Building2 className="w-4 h-4 mr-2" /> Clinic Mgmt
             </TabsTrigger>
@@ -908,6 +908,9 @@ const Admin = () => {
             </TabsTrigger>
             <TabsTrigger value="biometric" data-testid="biometric-tab" className="py-2">
               <Fingerprint className="w-4 h-4 mr-2" /> Attendance
+            </TabsTrigger>
+            <TabsTrigger value="clinic-analytics" data-testid="clinic-analytics-tab" className="py-2">
+              <BarChart3 className="w-4 h-4 mr-2" /> Clinic Analytics
             </TabsTrigger>
           </TabsList>
 
