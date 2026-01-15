@@ -204,10 +204,6 @@ const StaffPortal = () => {
     }
   }, []);
 
-  const getAuthHeaders = () => ({
-    headers: { Authorization: `Bearer ${localStorage.getItem('staffToken')}` }
-  });
-
   // Helper to check clinic staff roles
   const isClinicStaff = (role) => ['clinic_staff_pushpa', 'clinic_staff_amnion', 'super_admin'].includes(role);
   const isDoctor = (role) => ['doctor', 'doctor_pushpa', 'doctor_amnion', 'super_admin'].includes(role);
