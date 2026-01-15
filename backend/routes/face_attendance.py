@@ -246,7 +246,7 @@ async def verify_face(request: FaceVerificationRequest):
                         "staff_name": best_match["staff_name"],
                         "staff_id": best_match["staff_id"],
                         "message": "Please check-in first",
-                        "confidence": confidence,
+                        "confidence": best_confidence,
                         "action": "not_checked_in"
                     }
                 
@@ -256,7 +256,7 @@ async def verify_face(request: FaceVerificationRequest):
                         "staff_name": best_match["staff_name"],
                         "staff_id": best_match["staff_id"],
                         "message": f"Already checked out at {existing_attendance['check_out']}",
-                        "confidence": confidence,
+                        "confidence": best_confidence,
                         "action": "already_checked_out"
                     }
                 
@@ -270,7 +270,7 @@ async def verify_face(request: FaceVerificationRequest):
                     "staff_name": best_match["staff_name"],
                     "staff_id": best_match["staff_id"],
                     "message": f"Check-out successful at {current_time}",
-                    "confidence": confidence,
+                    "confidence": best_confidence,
                     "action": "check_out"
                 }
         
