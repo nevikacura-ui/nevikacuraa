@@ -744,6 +744,139 @@ async def get_follow_up_reminders(staff = Depends(verify_staff)):
     return {"reminders": reminders}
 
 
+# ============ Pre-Sonography Bookings ============
+
+@router.post("/sonography/book")
+async def create_sonography_booking(data: PreSonographyBooking, staff = Depends(verify_staff)):
+    """Create a pre-sonography booking with patient details"""
+    booking_id = str(uuid.uuid4())
+    
+    booking_record = {
+        "id": booking_id,
+        "patient_name": data.patient_name,
+        "age": data.age,
+        "lmp": data.lmp,
+        "mobile_number": data.mobile_number,
+        "date_of_birth": data.date_of_birth,
+        "husband_name": data.husband_name,
+        "address": data.address,
+        "has_children": data.has_children,
+        "children": [child.dict() for child in data.children] if data.children else [],
+        "appointment_id": data.appointment_id,
+        "booking_date": data.booking_date,
+        "booking_time": data.booking_time,
+        "clinic": data.clinic,
+        "scan_type": data.scan_type,
+        "notes": data.notes,
+        "status": "booked",  # booked -> in_progress -> completed -> cancelled
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": staff.get("username", "staff"),
+        "doctor": "Dr. Neha Gupta"  # Default to Dr. Neha for sonography
+    }
+    
+    await db.sonography_bookings.insert_one(booking_record)
+    
+    # Send confirmation SMS to patient
+    try:
+        if send_sms_notification:
+            sms_text = f"Dear {data.patient_name}, Your sonography appointment is confirmed for {data.booking_date} at {data.booking_time}. Clinic: {data.clinic}. - Nevika Cura"
+            await send_sms_notification(data.mobile_number, sms_text)
+    except Exception as e:
+        logger.error(f"Failed to send sonography booking SMS: {e}")
+    
+    return {
+        "success": True,
+        "booking_id": booking_id,
+        "message": f"Sonography booking created for {data.patient_name}"
+    }
+
+@router.get("/sonography/bookings")
+async def get_sonography_bookings(
+    date: str = None,
+    clinic: str = None,
+    status: str = None,
+    staff = Depends(verify_staff)
+):
+    """Get sonography bookings - for Dr. Neha's dashboard"""
+    query = {}
+    
+    if date:
+        query["booking_date"] = date
+    if clinic:
+        query["clinic"] = {"$regex": clinic, "$options": "i"}
+    if status:
+        query["status"] = status
+    
+    bookings = await db.sonography_bookings.find(query, {"_id": 0}).sort("booking_date", -1).to_list(100)
+    
+    # Get counts by status
+    total = len(bookings)
+    booked = len([b for b in bookings if b["status"] == "booked"])
+    in_progress = len([b for b in bookings if b["status"] == "in_progress"])
+    completed = len([b for b in bookings if b["status"] == "completed"])
+    
+    return {
+        "success": True,
+        "bookings": bookings,
+        "counts": {
+            "total": total,
+            "booked": booked,
+            "in_progress": in_progress,
+            "completed": completed
+        }
+    }
+
+@router.get("/sonography/booking/{booking_id}")
+async def get_sonography_booking_details(booking_id: str, staff = Depends(verify_staff)):
+    """Get detailed sonography booking info"""
+    booking = await db.sonography_bookings.find_one({"id": booking_id}, {"_id": 0})
+    
+    if not booking:
+        return {"error": "Booking not found"}
+    
+    return {"success": True, "booking": booking}
+
+@router.put("/sonography/booking/{booking_id}/status")
+async def update_sonography_status(booking_id: str, status: str, staff = Depends(verify_staff)):
+    """Update sonography booking status"""
+    valid_statuses = ["booked", "in_progress", "completed", "cancelled"]
+    if status not in valid_statuses:
+        return {"error": f"Invalid status. Must be one of: {valid_statuses}"}
+    
+    result = await db.sonography_bookings.update_one(
+        {"id": booking_id},
+        {"$set": {
+            "status": status,
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_by": staff.get("username", "staff")
+        }}
+    )
+    
+    if result.modified_count == 0:
+        return {"error": "Booking not found or no changes made"}
+    
+    return {"success": True, "message": f"Booking status updated to {status}"}
+
+@router.get("/sonography/today")
+async def get_todays_sonography(clinic: str = None, staff = Depends(verify_staff)):
+    """Get today's sonography bookings for quick access"""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+    query = {"booking_date": today}
+    if clinic:
+        query["clinic"] = {"$regex": clinic, "$options": "i"}
+    
+    bookings = await db.sonography_bookings.find(query, {"_id": 0}).sort("booking_time", 1).to_list(50)
+    
+    return {
+        "success": True,
+        "date": today,
+        "bookings": bookings,
+        "count": len(bookings)
+    }
+
+
+
 # ============ Fee Codes ============
 
 @router.get("/fee-codes")
