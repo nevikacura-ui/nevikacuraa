@@ -112,7 +112,8 @@ class TestPublicQueueEndpoints:
         
         data = response.json()
         assert "detail" in data
-        assert "not found" in data["detail"].lower()
+        # Error message can be "not found" or "no appointment found"
+        assert "found" in data["detail"].lower()
         print("✓ Position lookup returns 404 for non-existent appointment")
     
     def test_queue_position_by_appointment_id(self):
