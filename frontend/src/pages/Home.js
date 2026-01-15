@@ -388,14 +388,14 @@ const Home = () => {
               <span className="text-sm font-medium">Risk Assessment</span>
             </button>
             <button
-              onClick={() => navigate('/my-health')}
-              className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+              onClick={() => navigate('/health-dashboard')}
+              className="p-4 bg-gradient-to-br from-red-50 to-pink-50 backdrop-blur rounded-xl border border-red-200 hover:shadow-md transition-all text-center"
               data-testid="my-health-btn"
             >
               <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-red-100 flex items-center justify-center">
                 <Heart className="w-5 h-5 text-red-500" />
               </div>
-              <span className="text-sm font-medium">My Health</span>
+              <span className="text-sm font-medium text-red-700">Health Dashboard</span>
             </button>
             <button
               onClick={() => navigate('/health-packages')}
