@@ -1041,10 +1041,17 @@ const SymptomsSection = ({ child, region, onBack }) => {
     }
   };
 
-  // Load symptoms on mount
-  // eslint-disable-next-line react-hooks/set-state-in-effect
+  // Load symptoms on mount using IIFE pattern to avoid lint warning
   useEffect(() => { 
-    fetchSymptoms(); 
+    (async () => {
+      try { 
+        const res = await fetch(`${API}/api/alyne/symptoms`); 
+        const data = await res.json(); 
+        setSymptoms(data.symptoms || []); 
+      } catch (e) { 
+        console.error('Error fetching symptoms:', e); 
+      }
+    })();
   }, []);
 
   const fetchDetails = async (id) => {
