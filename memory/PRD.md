@@ -49,10 +49,12 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 **33. StaffPortal.js Refactoring** ✅ (Complete)
 - Reduced from 3171 to 3014 lines (-157 lines)
 - Created modular structure in `/app/frontend/src/pages/staff/`:
-  - `staffUtils.js` - Shared constants and helper functions (FEE_CODES, CLINICS, DOCTOR_SCHEDULES, getStatusColor, getAuthHeaders, etc.)
+  - `staffUtils.js` - Shared constants (FEE_CODES, CLINICS, DOCTOR_SCHEDULES) and helper functions (getStatusColor, getAuthHeaders, getIndianDate, getAvailableTimeSlots, etc.)
   - `StaffLogin.jsx` - Standalone login component
   - `SmartBiometric.jsx` - Device-aware biometric component with useIsMobile hook
+  - `StaffUIComponents.jsx` - Reusable UI components (DateNavigation, StatusBadge, LoadingSpinner, EmptyState, RefreshButton, SectionHeader, OrderCard)
   - `index.js` - Re-exports for easy importing
+- Total modular code: 502 lines across 5 files
 - Removed duplicate code from main StaffPortal.js
 - All lint checks passing
 
