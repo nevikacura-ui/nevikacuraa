@@ -90,6 +90,8 @@ function App() {
             <Route path="/diabetes-form/:formId" element={<DiabetesFormPublic />} />
             {/* Simple Face Attendance - for debugging */}
             <Route path="/face-attendance" element={<SimpleFaceAttendance />} />
+            {/* Live Queue Display - Public */}
+            <Route path="/queue" element={<QueuePage />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
