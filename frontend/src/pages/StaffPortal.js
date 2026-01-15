@@ -803,6 +803,44 @@ const StaffPortal = () => {
     setAddingPoints(false);
   };
 
+  // Submit patient feedback
+  const submitFeedback = async () => {
+    if (!feedbackForm.patientName) {
+      toast.error('Please enter patient name');
+      return;
+    }
+    if (!feedbackForm.doctorRating && !feedbackForm.staffRating && !feedbackForm.cleanlinessRating) {
+      toast.error('Please provide at least one rating');
+      return;
+    }
+    
+    setSubmittingFeedback(true);
+    try {
+      const overallRating = (feedbackForm.doctorRating + feedbackForm.staffRating + feedbackForm.cleanlinessRating) / 3;
+      await axios.post(`${API}/staff/feedback`, {
+        patient_name: feedbackForm.patientName,
+        doctor_rating: feedbackForm.doctorRating,
+        staff_rating: feedbackForm.staffRating,
+        cleanliness_rating: feedbackForm.cleanlinessRating,
+        overall_rating: overallRating.toFixed(1),
+        clinic: staffInfo?.clinic,
+        collected_by: staffInfo?.name,
+        date: new Date().toISOString().split('T')[0]
+      }, getAuthHeaders());
+      
+      toast.success('Feedback submitted successfully!');
+      setFeedbackForm({
+        patientName: '',
+        doctorRating: 0,
+        staffRating: 0,
+        cleanlinessRating: 0
+      });
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to submit feedback');
+    }
+    setSubmittingFeedback(false);
+  };
+
   const handleWalkInBooking = async () => {
     if (!walkInForm.patient_name || !walkInForm.patient_phone || !walkInForm.time) {
       toast.error('Please fill all required fields');
