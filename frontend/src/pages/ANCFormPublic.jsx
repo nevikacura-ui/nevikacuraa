@@ -21,6 +21,40 @@ const ANCFormPublic = () => {
   const [patientInfo, setPatientInfo] = useState(null);
   
   const [form, setForm] = useState({
+    // Personal Information
+    full_name: '',
+    age: '',
+    date_of_birth: '',
+    blood_group: '',
+    phone: '',
+    email: '',
+    address: '',
+    emergency_contact: '',
+    emergency_phone: '',
+    // Obstetric History
+    gravida: '',
+    para: '',
+    abortions: '',
+    living_children: '',
+    lmp_date: '',
+    edd_date: '',
+    // Medical History
+    medical_conditions: [],
+    allergies: '',
+    current_medications: '',
+    previous_surgeries: '',
+    // Family History
+    family_diabetes: false,
+    family_hypertension: false,
+    family_twins: false,
+    family_genetic: '',
+    // Current Pregnancy
+    pregnancy_symptoms: '',
+    concerns: '',
+    preferred_hospital: '',
+    // Consent
+    consent_given: false
+  });
 
   const loadFormData = async () => {
     try {
@@ -40,7 +74,6 @@ const ANCFormPublic = () => {
         setSubmitted(true);
         setForm(data.form_data || {});
       } else if (data.patient) {
-        // Pre-fill from patient info
         setForm(prev => ({
           ...prev,
           full_name: data.patient.name || '',
