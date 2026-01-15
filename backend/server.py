@@ -3076,6 +3076,101 @@ async def get_pharmacy_orders(user = Depends(get_current_user)):
     
     return orders
 
+# ============ Pharmacy Inventory Endpoints ============
+@api_router.get("/pharmacy/inventory")
+async def get_pharmacy_inventory(search: Optional[str] = None, form: Optional[str] = None, limit: int = 50):
+    """Get pharmacy inventory with optional filtering"""
+    inventory = MEDICINE_INVENTORY.copy()
+    
+    if search:
+        search_lower = search.lower()
+        inventory = [m for m in inventory if search_lower in m["name"].lower()]
+    
+    if form:
+        form_lower = form.lower()
+        inventory = [m for m in inventory if form_lower in m["form"].lower()]
+    
+    # Limit results for autocomplete performance
+    limited_inventory = inventory[:limit]
+    
+    return {"medicines": limited_inventory, "total": len(inventory), "showing": len(limited_inventory)}
+
+@api_router.get("/pharmacy/autocomplete")
+async def autocomplete_medicine(q: str = "", limit: int = 10):
+    """Autocomplete endpoint for medicine search"""
+    if not q or len(q) < 2:
+        return {"suggestions": []}
+    
+    query_lower = q.lower()
+    suggestions = []
+    
+    for m in MEDICINE_INVENTORY:
+        if query_lower in m["name"].lower():
+            suggestions.append({
+                "name": m["name"],
+                "form": m["form"]
+            })
+            if len(suggestions) >= limit:
+                break
+    
+    return {"suggestions": suggestions}
+
+@api_router.get("/pharmacy/forms")
+async def get_medicine_forms():
+    """Get all unique medicine forms for filtering"""
+    forms = list(set(m["form"] for m in MEDICINE_INVENTORY))
+    forms.sort()
+    return {"forms": forms}
+
+@api_router.get("/pharmacy/count")
+async def get_medicine_count():
+    """Get total medicine count in inventory"""
+    return {"total": len(MEDICINE_INVENTORY)}
+
+@api_router.get("/pharmacy/all")
+async def get_all_medicines(page: int = 1, per_page: int = 100):
+    """Get all medicines with pagination"""
+    start = (page - 1) * per_page
+    end = start + per_page
+    medicines = MEDICINE_INVENTORY[start:end]
+    
+    return {
+        "medicines": medicines,
+        "total": len(MEDICINE_INVENTORY),
+        "page": page,
+        "per_page": per_page,
+        "total_pages": (len(MEDICINE_INVENTORY) + per_page - 1) // per_page
+    }
+
+@api_router.get("/pharmacy/frequently-ordered")
+async def get_frequently_ordered(user = Depends(get_current_user_optional)):
+    """Get user's frequently ordered medicines based on past orders"""
+    if not user:
+        return {"medicines": []}
+    
+    # Get user's past orders
+    orders = await db.pharmacy_orders.find({"user_id": user.id}).to_list(50)
+    
+    # Count medicine occurrences
+    medicine_counts = {}
+    for order in orders:
+        for med in order.get("medicines", []):
+            name = med.get("name", "")
+            if name:
+                medicine_counts[name] = medicine_counts.get(name, 0) + med.get("quantity", 1)
+    
+    # Sort by count and return top medicines
+    sorted_meds = sorted(medicine_counts.items(), key=lambda x: x[1], reverse=True)
+    
+    # Get full medicine info
+    frequent = []
+    for name, count in sorted_meds[:10]:
+        med_info = next((m for m in MEDICINE_INVENTORY if m["name"] == name), None)
+        if med_info:
+            frequent.append({**med_info, "order_count": count})
+    
+    return {"medicines": frequent}
+
 # ============ Admin Configuration ============
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'nevikacura2026')  # Change in production
 
