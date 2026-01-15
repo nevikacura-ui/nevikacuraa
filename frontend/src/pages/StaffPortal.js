@@ -2302,6 +2302,13 @@ const StaffPortal = () => {
                 )}
               </Card>
             </TabsContent>
+
+            {/* Attendance Tab Content for Pharmacy Staff */}
+            {staffInfo?.access_modules?.includes('attendance') && (
+              <TabsContent value="attendance">
+                <BiometricAttendance clinic="pharmacy" />
+              </TabsContent>
+            )}
           </Tabs>
         )}
 
