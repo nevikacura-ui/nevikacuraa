@@ -1328,30 +1328,32 @@ const StaffPortal = () => {
       
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate('/')}>
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="p-2">
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="font-bold text-lg">Staff Portal</h1>
-              <p className="text-sm text-gray-500">{staffInfo?.name} • {role?.replace(/_/g, ' ').toUpperCase()}</p>
+              <h1 className="font-bold text-base sm:text-lg">Staff Portal</h1>
+              <p className="text-xs sm:text-sm text-gray-500 truncate max-w-[150px] sm:max-w-none">
+                {staffInfo?.name} • {staffInfo?.clinic}
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <Button 
               variant="outline" 
               size="sm" 
               onClick={handleManualRefresh}
               disabled={isRefreshing}
-              className="bg-teal-50 border-teal-200 hover:bg-teal-100 text-teal-700"
+              className="bg-teal-50 border-teal-200 hover:bg-teal-100 text-teal-700 px-2 sm:px-3"
             >
-              <RefreshCw className={`w-4 h-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
-              {isRefreshing ? 'Refreshing...' : 'Refresh'}
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline ml-1">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
-              <LogOut className="w-4 h-4 mr-1" />
-              Logout
+            <Button variant="ghost" size="sm" onClick={handleLogout} className="px-2 sm:px-3">
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline ml-1">Logout</span>
             </Button>
           </div>
         </div>
