@@ -2314,6 +2314,174 @@ const StaffPortal = () => {
               </TabsContent>
             )}
 
+            {/* Forms Tab Content - Send Registration Forms */}
+            <TabsContent value="forms">
+              <Card>
+                <CardContent className="p-4 space-y-4">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Send className="w-5 h-5 text-indigo-500" />
+                    Send Registration Forms
+                  </h3>
+                  <p className="text-sm text-gray-500">Send form links to patients via SMS/WhatsApp</p>
+                  
+                  <div className="grid gap-4">
+                    {/* ANC Form */}
+                    <div className="p-4 bg-pink-50 border border-pink-200 rounded-xl">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Baby className="w-5 h-5 text-pink-500" />
+                          <span className="font-medium text-pink-800">ANC Registration</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-pink-600 mb-3">For pregnant women - captures medical history, LMP, and contact details</p>
+                      <div className="flex gap-2">
+                        <Input 
+                          placeholder="Enter patient phone number"
+                          className="flex-1"
+                          id="anc-phone-input"
+                        />
+                        <Button 
+                          className="bg-pink-500 hover:bg-pink-600"
+                          onClick={async () => {
+                            const phone = document.getElementById('anc-phone-input').value;
+                            if (!phone || phone.length < 10) {
+                              toast.error('Please enter valid phone number');
+                              return;
+                            }
+                            try {
+                              const res = await axios.post(`${API}/anc/send-form-link`, { phone_number: phone, clinic: staffInfo?.clinic }, getAuthHeaders());
+                              if (res.data.success) {
+                                toast.success('ANC form link sent!');
+                                document.getElementById('anc-phone-input').value = '';
+                              }
+                            } catch (err) {
+                              toast.error('Failed to send form link');
+                            }
+                          }}
+                        >
+                          <Send className="w-4 h-4 mr-1" /> Send
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Diabetes Form */}
+                    <div className="p-4 bg-purple-50 border border-purple-200 rounded-xl">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Activity className="w-5 h-5 text-purple-500" />
+                          <span className="font-medium text-purple-800">Diabetes Registration</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-purple-600 mb-3">For diabetes patients - captures health history and lifestyle data</p>
+                      <div className="flex gap-2">
+                        <Input 
+                          placeholder="Enter patient phone number"
+                          className="flex-1"
+                          id="diabetes-phone-input"
+                        />
+                        <Button 
+                          className="bg-purple-500 hover:bg-purple-600"
+                          onClick={async () => {
+                            const phone = document.getElementById('diabetes-phone-input').value;
+                            if (!phone || phone.length < 10) {
+                              toast.error('Please enter valid phone number');
+                              return;
+                            }
+                            try {
+                              const res = await axios.post(`${API}/glydex/send-form-link`, { phone_number: phone, clinic: staffInfo?.clinic }, getAuthHeaders());
+                              if (res.data.success) {
+                                toast.success('Diabetes form link sent!');
+                                document.getElementById('diabetes-phone-input').value = '';
+                              }
+                            } catch (err) {
+                              toast.error('Failed to send form link');
+                            }
+                          }}
+                        >
+                          <Send className="w-4 h-4 mr-1" /> Send
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Loyalty Tab Content - Pharmacy Rewards */}
+            <TabsContent value="loyalty">
+              <Card>
+                <CardContent className="p-4 space-y-4">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Star className="w-5 h-5 text-yellow-500" />
+                    Loyalty Points
+                  </h3>
+                  <p className="text-sm text-gray-500">Check and manage patient loyalty points</p>
+                  
+                  {/* Loyalty Search */}
+                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
+                    <div className="flex gap-2 mb-4">
+                      <Input 
+                        placeholder="Enter patient phone number"
+                        className="flex-1"
+                        value={loyaltyPhone}
+                        onChange={(e) => setLoyaltyPhone(e.target.value)}
+                      />
+                      <Button 
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                        onClick={searchLoyaltyUser}
+                        disabled={searchingLoyalty}
+                      >
+                        {searchingLoyalty ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Search'}
+                      </Button>
+                    </div>
+                    
+                    {loyaltyUser && (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+                          <div>
+                            <p className="font-medium">{loyaltyUser.name}</p>
+                            <p className="text-sm text-gray-500">{loyaltyUser.phone}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-bold text-yellow-600">{loyaltyUser.points || 0}</p>
+                            <p className="text-xs text-gray-500">points</p>
+                          </div>
+                        </div>
+                        
+                        {/* Quick Actions */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              const points = prompt('Enter points to add:');
+                              if (points && !isNaN(points)) {
+                                addLoyaltyPoints(parseInt(points), 'Manual addition');
+                              }
+                            }}
+                          >
+                            <Plus className="w-4 h-4 mr-1" /> Add Points
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              const points = prompt('Enter points to redeem:');
+                              if (points && !isNaN(points)) {
+                                redeemLoyaltyPoints(parseInt(points));
+                              }
+                            }}
+                          >
+                            <Gift className="w-4 h-4 mr-1" /> Redeem
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             {/* Attendance Tab Content */}
             {staffInfo?.access_modules?.includes('attendance') && (
               <TabsContent value="attendance">
