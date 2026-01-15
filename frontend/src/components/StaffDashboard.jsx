@@ -29,6 +29,11 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
     walkinCount: 0,
     onlineCount: 0
   });
+  const [queueStats, setQueueStats] = useState({
+    waiting: 0,
+    serving: 0,
+    avgWait: 0
+  });
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
 
