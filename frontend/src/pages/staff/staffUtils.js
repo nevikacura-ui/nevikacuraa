@@ -92,7 +92,9 @@ export const getIndianDate = () => {
 
 // Get day name from date
 export const getDayName = (dateStr) => {
-  const date = new Date(dateStr);
+  // Parse date parts directly to avoid timezone issues
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const date = new Date(year, month - 1, day); // month is 0-indexed
   return date.toLocaleDateString('en-US', { weekday: 'long' });
 };
 
