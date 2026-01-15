@@ -494,13 +494,13 @@ const StaffPortal = () => {
         }));
         setEmergencyForm(prev => ({
           ...prev,
-          clinic: res.data.clinic,
+          clinic: res.data.staff?.clinic || res.data.clinic,
           doctor: clinicDoctors[0] || ''
         }));
       }
       
       setIsAuthenticated(true);
-      toast.success(`Welcome, ${res.data.name}!`);
+      toast.success(`Welcome, ${res.data.staff?.name || res.data.name}!`);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Login failed');
     }
