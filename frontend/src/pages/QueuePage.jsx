@@ -65,36 +65,26 @@ const QueuePage = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Check if clinic is currently open based on OPD timings
+  // Check if clinic is currently open
+  // Timings: Mon-Sat, 11 AM - 2 PM & 6 PM - 10 PM
   const isClinicOpen = () => {
     const hour = currentTime.getHours();
     const minute = currentTime.getMinutes();
     const currentMinutes = hour * 60 + minute;
     const dayName = currentTime.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'Asia/Kolkata' });
     
-    // Morning: 11:00 AM - 2:00 PM (660 - 840 minutes) - Mon-Sat
-    // Evening: 6:00 PM - 10:00 PM (1080 - 1320 minutes) - varies by clinic
+    // Closed on Sunday
+    if (dayName === 'Sunday') return false;
+    
+    // Morning: 11:00 AM - 2:00 PM (660 - 840 minutes)
+    // Evening: 6:00 PM - 10:00 PM (1080 - 1320 minutes)
     const morningOpen = 11 * 60; // 11:00 AM
     const morningClose = 14 * 60; // 2:00 PM
     const eveningOpen = 18 * 60; // 6:00 PM
     const eveningClose = 22 * 60; // 10:00 PM
     
-    const isSunday = dayName === 'Sunday';
-    if (isSunday) return false;
-    
-    const isMorningOpen = currentMinutes >= morningOpen && currentMinutes < morningClose;
-    const isEveningOpen = currentMinutes >= eveningOpen && currentMinutes < eveningClose;
-    
-    // Check evening schedule based on clinic
-    if (selectedClinic === 'pushpa') {
-      // Pushpa evening: Tue, Thu, Sat
-      const eveningDays = ['Tuesday', 'Thursday', 'Saturday'];
-      return isMorningOpen || (isEveningOpen && eveningDays.includes(dayName));
-    } else {
-      // Amnion evening: Mon, Wed, Fri
-      const eveningDays = ['Monday', 'Wednesday', 'Friday'];
-      return isMorningOpen || (isEveningOpen && eveningDays.includes(dayName));
-    }
+    return (currentMinutes >= morningOpen && currentMinutes < morningClose) ||
+           (currentMinutes >= eveningOpen && currentMinutes < eveningClose);
   };
 
   return (
