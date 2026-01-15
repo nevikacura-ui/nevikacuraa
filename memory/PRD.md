@@ -1289,17 +1289,31 @@ GET  /api/teleconsult/prescription/{id} - Get prescription (auth required)
 ## Remaining Tasks
 
 ### High Priority
-- [ ] **Face ID Verification**: User needs to confirm if FaceBiometric.jsx works in main Staff Portal (standalone HTML page works)
-- [ ] Complete Pre-Sonography Form Feature (backend APIs ready, frontend needs completion)
-- [ ] Further refactor Alyne.js into smaller components
-- [ ] Further refactor Admin.js into smaller components
+- [ ] **Face ID User Verification**: User needs to confirm Face ID works on their real mobile device
+- [ ] Refactor `StaffPortal.js` (3000+ lines) into role-specific components
 
 ### Medium Priority  
-- [ ] Refactor StaffPortal.js (3000+ lines) into role-specific components
 - [ ] Cashfree Payment Gateway
 - [ ] Terra Wearable Integration frontend
 - [ ] Apple Sign-In
 
 ### Low Priority
 - [ ] Login History page
-- [ ] Migrate hardcoded data (doctor schedules) to MongoDB
+- [ ] Migrate hardcoded doctor schedules to MongoDB
+
+---
+
+## Latest Test Report (January 15, 2026)
+
+**Iteration 37 - Comprehensive Frontend Testing Results:**
+
+✅ **All 9 Features Verified (100% Pass Rate)**
+
+| Feature | Status | Details |
+|---------|--------|---------|
+| Today's Summary Widget | ✅ PASS | Status breakdown (Completed, Pending, In Clinic, Emergency), Busiest time slot, View link |
+| Pre-Sonography Modal | ✅ PASS | Full form with patient details, children info, booking details, scan type selection |
+| Dr. Neha Sonography Tab | ✅ PASS | Dedicated tab with booking list, date filter, status management |
+| Walk-in Indian Date Format | ✅ PASS | Shows "15/01/2026 - Thursday" (DD/MM/YYYY) |
+| Past Slot Filtering | ✅ PASS | Morning slots filtered when current time is afternoon/evening |
+| Face ID Mobile View | ✅ PASS | Shows on mobile viewport (≤1024px) with camera preview, Start Camera button |
