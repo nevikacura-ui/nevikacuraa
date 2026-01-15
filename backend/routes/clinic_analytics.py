@@ -59,9 +59,21 @@ async def verify_admin_or_staff(authorization: str = Header(None)):
         token = authorization.split(' ')[1]
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         
-        # Check if admin or staff
-        role = payload.get("role", "")
-        if role not in ["admin", "staff", "doctor"]:
+        # Check if admin, staff, or doctor
+        role = payload.get("role", "").lower()
+        username = payload.get("username", "").lower()
+        
+        # Allow admin, staff, doctors - check various role patterns
+        allowed = (
+            "admin" in role or
+            "staff" in role or
+            "doctor" in role or
+            "doc_" in username or
+            "staff_" in username or
+            role in ["admin", "staff", "doctor", "manager"]
+        )
+        
+        if not allowed:
             raise HTTPException(status_code=403, detail="Admin/Staff access required")
         
         return payload
