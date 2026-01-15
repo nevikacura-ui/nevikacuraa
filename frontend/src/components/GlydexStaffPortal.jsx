@@ -660,6 +660,85 @@ export default function GlydexStaffPortal({ staffName = 'Staff', clinic = 'Pushp
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Send Form Link Dialog */}
+      <Dialog open={showSendFormDialog} onOpenChange={setShowSendFormDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Send className="w-5 h-5 text-emerald-500" />
+              Send Diabetes Form Link
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+              <p className="text-sm text-emerald-800">
+                Send a Diabetes registration form link to the patient. They can fill it online and submit directly.
+              </p>
+            </div>
+            <div>
+              <Label>Patient Name *</Label>
+              <Input 
+                value={sendFormData.patient_name} 
+                onChange={e => setSendFormData({...sendFormData, patient_name: e.target.value})}
+                placeholder="Enter patient name"
+              />
+            </div>
+            <div>
+              <Label>Phone Number *</Label>
+              <Input 
+                value={sendFormData.patient_phone} 
+                onChange={e => setSendFormData({...sendFormData, patient_phone: e.target.value})}
+                placeholder="+91 XXXXXXXXXX"
+              />
+            </div>
+            <div>
+              <Label>Email (Optional)</Label>
+              <Input 
+                type="email"
+                value={sendFormData.patient_email} 
+                onChange={e => setSendFormData({...sendFormData, patient_email: e.target.value})}
+                placeholder="patient@email.com"
+              />
+            </div>
+            <div>
+              <Label>Send Via</Label>
+              <div className="flex gap-2 mt-2">
+                <Button 
+                  type="button"
+                  variant={sendFormData.send_via === 'sms' ? 'default' : 'outline'}
+                  className={sendFormData.send_via === 'sms' ? 'bg-blue-500' : ''}
+                  onClick={() => setSendFormData({...sendFormData, send_via: 'sms'})}
+                >
+                  <MessageSquare className="w-4 h-4 mr-2" /> SMS Only
+                </Button>
+                <Button 
+                  type="button"
+                  variant={sendFormData.send_via === 'email' ? 'default' : 'outline'}
+                  className={sendFormData.send_via === 'email' ? 'bg-blue-500' : ''}
+                  onClick={() => setSendFormData({...sendFormData, send_via: 'email'})}
+                >
+                  <Mail className="w-4 h-4 mr-2" /> Email Only
+                </Button>
+                <Button 
+                  type="button"
+                  variant={sendFormData.send_via === 'both' ? 'default' : 'outline'}
+                  className={sendFormData.send_via === 'both' ? 'bg-emerald-500' : ''}
+                  onClick={() => setSendFormData({...sendFormData, send_via: 'both'})}
+                >
+                  Both
+                </Button>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSendFormDialog(false)}>Cancel</Button>
+            <Button onClick={handleSendForm} disabled={sendingForm} className="bg-emerald-600 hover:bg-emerald-700">
+              {sendingForm ? 'Sending...' : 'Send Form Link'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
