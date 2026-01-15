@@ -10,22 +10,36 @@ import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { 
   Activity, Users, Plus, Search, TrendingUp, TrendingDown,
-  Phone, Droplet, Heart
+  Phone, Droplet, Heart, Send, Mail, MessageSquare, FileText, CheckCircle2, Clock
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-export default function GlydexStaffPortal({ staffName = 'Staff', clinic = 'Pushpa Clinic' }) {
+export default function GlydexStaffPortal({ staffName = 'Staff', clinic = 'Pushpa Clinic', doctor = 'Dr. Vikas Jha' }) {
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState(null);
   
+  // Diabetes Forms list
+  const [diabetesForms, setDiabetesForms] = useState([]);
+  const [formCounts, setFormCounts] = useState({ total: 0, allotted: 0, filled: 0 });
+  
   // Dialogs
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
   const [showSugarLogDialog, setShowSugarLogDialog] = useState(false);
   const [showHba1cDialog, setShowHba1cDialog] = useState(false);
+  const [showSendFormDialog, setShowSendFormDialog] = useState(false);
+  
+  // Send Form state
+  const [sendFormData, setSendFormData] = useState({
+    patient_name: '',
+    patient_phone: '',
+    patient_email: '',
+    send_via: 'both'
+  });
+  const [sendingForm, setSendingForm] = useState(false);
   
   // Forms
   const [registerForm, setRegisterForm] = useState({
