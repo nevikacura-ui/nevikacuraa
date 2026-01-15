@@ -719,3 +719,251 @@ async def get_anc_dashboard(clinic: str):
             "deliveries_due_this_month": due_this_month
         }
     }
+
+
+# ============ ANC FORM LINK SYSTEM ============
+
+class ANCFormSendRequest(BaseModel):
+    patient_id: Optional[str] = None  # Existing patient or new
+    patient_name: str
+    patient_phone: str
+    patient_email: Optional[str] = None
+    send_via: str = "both"  # email, sms, both
+    clinic: str = "Pushpa Clinic"
+    doctor: str = "Dr. Neha Patel"
+
+class ANCFormSubmission(BaseModel):
+    full_name: str
+    age: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    blood_group: Optional[str] = None
+    phone: str
+    email: Optional[str] = None
+    address: Optional[str] = None
+    emergency_contact: Optional[str] = None
+    emergency_phone: Optional[str] = None
+    gravida: Optional[str] = None
+    para: Optional[str] = None
+    abortions: Optional[str] = None
+    living_children: Optional[str] = None
+    lmp_date: str
+    edd_date: Optional[str] = None
+    medical_conditions: Optional[List[str]] = []
+    allergies: Optional[str] = None
+    current_medications: Optional[str] = None
+    previous_surgeries: Optional[str] = None
+    family_diabetes: bool = False
+    family_hypertension: bool = False
+    family_twins: bool = False
+    family_genetic: Optional[str] = None
+    pregnancy_symptoms: Optional[str] = None
+    concerns: Optional[str] = None
+    preferred_hospital: Optional[str] = None
+    consent_given: bool = False
+
+@router.post("/form/send")
+async def send_anc_form_link(data: ANCFormSendRequest):
+    """Send ANC form link to patient via Email/SMS"""
+    
+    # Create form record
+    form_id = str(uuid.uuid4())
+    base_url = os.environ.get("FRONTEND_URL", "https://healthcare-dash-16.preview.emergentagent.com")
+    form_link = f"{base_url}/anc-form/{form_id}"
+    
+    form_record = {
+        "id": form_id,
+        "patient_id": data.patient_id,
+        "patient_name": data.patient_name,
+        "patient_phone": data.patient_phone,
+        "patient_email": data.patient_email,
+        "clinic": data.clinic,
+        "doctor": data.doctor,
+        "status": "allotted",  # allotted -> filled
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "sent_via": data.send_via,
+        "form_link": form_link,
+        "form_data": None,
+        "submitted_at": None
+    }
+    
+    await db.anc_forms.insert_one(form_record)
+    
+    # Send Email
+    email_sent = False
+    if data.patient_email and data.send_via in ["email", "both"]:
+        try:
+            email_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #ec4899, #8b5cf6); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                    <h1 style="margin: 0; font-size: 24px;">👶 ANC Registration Form</h1>
+                    <p style="margin: 10px 0 0; opacity: 0.9;">Nevika Cura Healthcare</p>
+                </div>
+                
+                <div style="background: #fdf4ff; padding: 25px; border: 1px solid #f5d0fe;">
+                    <p style="color: #333; font-size: 16px;">Dear <strong>{data.patient_name}</strong>,</p>
+                    
+                    <p style="color: #555;">Please fill out your Antenatal Care (ANC) registration form by clicking the button below:</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="{form_link}" style="background: linear-gradient(135deg, #ec4899, #8b5cf6); color: white; padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block;">
+                            Fill ANC Form
+                        </a>
+                    </div>
+                    
+                    <p style="color: #555; font-size: 14px;">Or copy this link: <br><a href="{form_link}" style="color: #8b5cf6; word-break: break-all;">{form_link}</a></p>
+                    
+                    <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                        <p style="margin: 0; color: #92400e; font-size: 14px;">
+                            <strong>📋 Instructions:</strong><br>
+                            1. Click the link above to open the form<br>
+                            2. Fill in all required information<br>
+                            3. Submit the form online<br>
+                            4. Our team will contact you to schedule your first ANC visit
+                        </p>
+                    </div>
+                </div>
+                
+                <div style="background: #f8fafc; padding: 20px; text-align: center; border-radius: 0 0 12px 12px;">
+                    <p style="color: #64748b; font-size: 12px; margin: 0;">
+                        {data.clinic} | {data.doctor}<br>
+                        For queries: <a href="mailto:nevikacura@gmail.com" style="color: #8b5cf6;">nevikacura@gmail.com</a>
+                    </p>
+                </div>
+            </div>
+            """
+            
+            if send_email_notification:
+                await send_email_notification(
+                    data.patient_email,
+                    "📝 Fill Your ANC Registration Form - Nevika Cura",
+                    email_html
+                )
+                email_sent = True
+                logger.info(f"ANC form email sent to {data.patient_email}")
+        except Exception as e:
+            logger.error(f"Failed to send ANC form email: {e}")
+    
+    # Send SMS
+    sms_sent = False
+    if data.patient_phone and data.send_via in ["sms", "both"]:
+        try:
+            sms_text = f"Dear {data.patient_name}, Please fill your ANC Registration Form: {form_link} - Nevika Cura Healthcare ({data.clinic})"
+            
+            if send_sms_notification:
+                await send_sms_notification(data.patient_phone, sms_text)
+                sms_sent = True
+                logger.info(f"ANC form SMS sent to {data.patient_phone}")
+        except Exception as e:
+            logger.error(f"Failed to send ANC form SMS: {e}")
+    
+    return {
+        "success": True,
+        "form_id": form_id,
+        "form_link": form_link,
+        "email_sent": email_sent,
+        "sms_sent": sms_sent,
+        "message": f"ANC form link sent to {data.patient_name}"
+    }
+
+@router.get("/form/{form_id}")
+async def get_anc_form(form_id: str):
+    """Get ANC form details for patient to fill"""
+    form = await db.anc_forms.find_one({"id": form_id}, {"_id": 0})
+    
+    if not form:
+        return {"error": "Form not found or expired"}
+    
+    return {
+        "id": form["id"],
+        "status": form["status"],
+        "patient": {
+            "name": form.get("patient_name"),
+            "phone": form.get("patient_phone"),
+            "email": form.get("patient_email")
+        },
+        "clinic": form.get("clinic"),
+        "doctor": form.get("doctor"),
+        "form_data": form.get("form_data") if form["status"] == "filled" else None
+    }
+
+@router.post("/form/{form_id}/submit")
+async def submit_anc_form(form_id: str, data: ANCFormSubmission):
+    """Submit filled ANC form"""
+    form = await db.anc_forms.find_one({"id": form_id})
+    
+    if not form:
+        return {"error": "Form not found"}
+    
+    if form["status"] == "filled":
+        return {"error": "Form already submitted"}
+    
+    # Update form with submitted data
+    await db.anc_forms.update_one(
+        {"id": form_id},
+        {"$set": {
+            "status": "filled",
+            "form_data": data.dict(),
+            "submitted_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Send notification to admin/staff
+    try:
+        if send_email_notification:
+            admin_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: #22c55e; color: white; padding: 20px; text-align: center;">
+                    <h2 style="margin: 0;">✅ New ANC Form Submitted</h2>
+                </div>
+                <div style="padding: 20px; background: #f0fdf4;">
+                    <p><strong>Patient:</strong> {data.full_name}</p>
+                    <p><strong>Phone:</strong> {data.phone}</p>
+                    <p><strong>LMP:</strong> {data.lmp_date}</p>
+                    <p><strong>EDD:</strong> {data.edd_date or 'Not specified'}</p>
+                    <p><strong>Clinic:</strong> {form.get('clinic')}</p>
+                    <p><strong>Form ID:</strong> {form_id[:8].upper()}</p>
+                </div>
+                <div style="padding: 15px; background: #fef3c7; text-align: center;">
+                    <p style="margin: 0; color: #92400e;">Please review and schedule the first ANC visit.</p>
+                </div>
+            </div>
+            """
+            await send_email_notification(
+                "nevikacura@gmail.com",
+                f"✅ ANC Form Submitted - {data.full_name}",
+                admin_html
+            )
+    except Exception as e:
+        logger.error(f"Failed to send admin notification: {e}")
+    
+    return {
+        "success": True,
+        "message": "ANC form submitted successfully",
+        "form_id": form_id
+    }
+
+@router.get("/forms/list")
+async def list_anc_forms(clinic: str = None, status: str = None):
+    """List all ANC forms with status for staff dashboard"""
+    query = {}
+    if clinic:
+        query["clinic"] = {"$regex": clinic, "$options": "i"}
+    if status:
+        query["status"] = status
+    
+    forms = await db.anc_forms.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    
+    # Get counts
+    total = len(forms)
+    allotted = len([f for f in forms if f["status"] == "allotted"])
+    filled = len([f for f in forms if f["status"] == "filled"])
+    
+    return {
+        "success": True,
+        "forms": forms,
+        "counts": {
+            "total": total,
+            "allotted": allotted,
+            "filled": filled
+        }
+    }
