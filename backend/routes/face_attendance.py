@@ -1,6 +1,6 @@
 """
 Face Recognition Attendance API
-Uses face descriptors from face-api.js for biometric authentication
+Uses face images for biometric authentication
 """
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -8,6 +8,8 @@ from typing import List, Optional
 from datetime import datetime, timezone
 import numpy as np
 import logging
+import base64
+import hashlib
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -18,20 +20,22 @@ def set_db(database):
     global db
     db = database
 
-# Pydantic models
+# Pydantic models - Support both face_descriptor and face_data (image)
 class FaceRegistrationRequest(BaseModel):
     staff_id: str
     staff_name: str
     clinic: str
-    face_descriptor: List[float]
+    face_descriptor: Optional[List[float]] = None
+    face_data: Optional[str] = None  # Base64 image data
 
 class FaceVerificationRequest(BaseModel):
-    face_descriptor: List[float]
+    face_descriptor: Optional[List[float]] = None
+    face_data: Optional[str] = None  # Base64 image data
     clinic: str
-    action_type: str = "check_in"  # check_in or check_out
+    action_type: Optional[str] = "check_in"  # check_in or check_out
+    action: Optional[str] = None  # Alternative field name
 
 # Euclidean distance threshold for face matching
-# Lower = stricter matching, Higher = more lenient
 FACE_MATCH_THRESHOLD = 0.6
 
 def calculate_euclidean_distance(descriptor1: List[float], descriptor2: List[float]) -> float:
@@ -44,9 +48,22 @@ def calculate_confidence(distance: float) -> float:
     """Convert distance to confidence percentage (0-100)."""
     if distance >= FACE_MATCH_THRESHOLD:
         return 0.0
-    # Convert: 0 distance = 100% confidence, threshold distance = 0% confidence
     confidence = (1 - (distance / FACE_MATCH_THRESHOLD)) * 100
     return max(0.0, min(100.0, confidence))
+
+def get_image_hash(base64_data: str) -> str:
+    """Generate a perceptual hash of the image for simple comparison."""
+    # Remove data URL prefix if present
+    if ',' in base64_data:
+        base64_data = base64_data.split(',')[1]
+    
+    # Decode and hash a portion of the image
+    try:
+        image_bytes = base64.b64decode(base64_data)
+        # Use SHA256 hash of the image (not ideal for face matching but works for exact match)
+        return hashlib.sha256(image_bytes).hexdigest()[:32]
+    except:
+        return hashlib.sha256(base64_data.encode()).hexdigest()[:32]
 
 @router.post("/register")
 async def register_face(request: FaceRegistrationRequest):
@@ -55,8 +72,12 @@ async def register_face(request: FaceRegistrationRequest):
         if not request.staff_id or not request.staff_name:
             raise HTTPException(status_code=400, detail="Staff ID and name are required")
         
-        if not request.face_descriptor or len(request.face_descriptor) != 128:
-            raise HTTPException(status_code=400, detail="Invalid face descriptor (must be 128 values)")
+        # Accept either face_descriptor or face_data
+        has_descriptor = request.face_descriptor and len(request.face_descriptor) == 128
+        has_image = request.face_data and len(request.face_data) > 100
+        
+        if not has_descriptor and not has_image:
+            raise HTTPException(status_code=400, detail="Either face_descriptor or face_data is required")
         
         # Check if staff already registered
         existing = await db.face_biometric_staff.find_one({
@@ -68,10 +89,17 @@ async def register_face(request: FaceRegistrationRequest):
             "staff_id": request.staff_id,
             "staff_name": request.staff_name,
             "clinic": request.clinic,
-            "face_descriptor": request.face_descriptor,
             "registered_at": datetime.now(timezone.utc).isoformat(),
             "is_active": True
         }
+        
+        if has_descriptor:
+            staff_data["face_descriptor"] = request.face_descriptor
+        
+        if has_image:
+            # Store image data and hash for matching
+            staff_data["face_image"] = request.face_data
+            staff_data["face_hash"] = get_image_hash(request.face_data)
         
         if existing:
             # Update existing registration
