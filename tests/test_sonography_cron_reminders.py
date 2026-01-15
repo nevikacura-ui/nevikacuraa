@@ -511,7 +511,7 @@ class TestSonographyBookingEndpoints:
         
         booking_data = {
             "patient_name": f"TEST_Status_{uuid.uuid4().hex[:6]}",
-            "age": 30,
+            "age": "30",  # Age must be string
             "lmp": "2025-12-01",
             "mobile_number": "9999999999",
             "date_of_birth": "1995-01-01",
