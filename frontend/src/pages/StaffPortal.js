@@ -23,7 +23,7 @@ import StaffDashboard from '@/components/StaffDashboard';
 import StaffLogin from './staff/StaffLogin';
 import SmartBiometric from './staff/SmartBiometric';
 import { 
-  API, CLINICS, DOCTOR_SCHEDULES, FEE_CODES, SCAN_FEES,
+  API, CLINICS, CLINIC_LOCATIONS, DOCTOR_SCHEDULES, FEE_CODES, SCAN_FEES,
   getIndianDate, getDayName, getAvailableTimeSlots, 
   getStatusColor, getAuthHeaders, generateTimeSlots, formatIndianDate 
 } from './staff/staffUtils';
