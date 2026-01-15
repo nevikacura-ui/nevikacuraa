@@ -222,9 +222,16 @@ const StaffPortal = () => {
   }, [walkInForm.doctor, walkInForm.clinic, walkInForm.date, bookedSlots]);
 
   // Check if doctor is available on selected date
+  // Only consider "not available" if doctor and clinic are actually set
   const isDoctorAvailable = useMemo(() => {
+    if (!walkInForm.doctor || !walkInForm.clinic) {
+      return true; // Don't show "not available" while loading
+    }
     return availableTimeSlots.length > 0;
-  }, [availableTimeSlots]);
+  }, [availableTimeSlots, walkInForm.doctor, walkInForm.clinic]);
+  
+  // Check if form is ready (doctor and clinic are set)
+  const isFormReady = walkInForm.doctor && walkInForm.clinic;
 
   useEffect(() => {
     const token = localStorage.getItem('staffToken');
