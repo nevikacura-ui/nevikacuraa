@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Phone, Mail, MapPin, Clock, Shield, FileText, Users, X, Download, Smartphone } from 'lucide-react';
+import { MessageCircle, Phone, Mail, MapPin, Clock, Shield, FileText, Users, X, Download, Smartphone, HandHeart } from 'lucide-react';
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -131,6 +131,15 @@ const Footer = () => {
           {/* Portal Links Section */}
           <div className="border-t border-gray-800 pt-6 mb-6">
             <div className="flex flex-wrap items-center justify-center gap-6">
+              <a 
+                href="/senior-care" 
+                className="inline-flex items-center gap-1.5 text-sm text-green-400 hover:text-green-300 transition-colors font-medium"
+                data-testid="footer-give-back"
+              >
+                <HandHeart className="w-4 h-4" />
+                Give Back
+              </a>
+              <span className="text-gray-700">|</span>
               <a 
                 href="/profile" 
                 className="text-sm text-gray-400 hover:text-brand-teal transition-colors"
