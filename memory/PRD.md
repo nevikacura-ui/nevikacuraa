@@ -1298,6 +1298,25 @@ GET  /api/teleconsult/prescription/{id} - Get prescription (auth required)
 - **Testing**: 100% pass rate (iteration_38.json) - 11 backend tests passed
 - **Note**: SMS delivery depends on Twilio credentials being configured
 
+**41. Indian Food Database for Calories Tracker** ✅ (Complete)
+- **Bug Fix**: Calories tracker in Evara, Glydex, and Alyne had no food options (API was missing)
+- **Solution**: Created `/app/backend/routes/calories.py` with comprehensive Indian food database
+- **Food Categories** (168 total items):
+  - Breakfast (28 items): Idli, Dosa, Paratha, Poha, Upma, etc.
+  - Lunch (30 items): Dal, Sambar, Rajma, Chicken Curry, Biryani, etc.
+  - Dinner (19 items): Khichdi, Tandoori items, Soups, etc.
+  - Snacks (27 items): Samosa, Pakora, Chaat items, etc.
+  - Beverages (22 items): Chai, Lassi, Fresh juices, etc.
+  - Sweets (22 items): Gulab Jamun, Rasgulla, Ladoo, etc.
+  - Fruits (20 items): Regional and seasonal fruits
+- **API Endpoints**:
+  - `GET /api/calories/food-database` - Full food database
+  - `GET /api/calories/food-search?query=` - Search foods
+  - `GET /api/calories/logs?date=` - Get calorie logs
+  - `POST /api/calories/log` - Add food entry
+  - `GET /api/calories/summary` - Date range summary
+  - `GET/POST /api/calories/goals` - Calorie goals
+
 **Test Credentials:**
 - Clinic Staff (Pushpa): `staff_pushpa` / `Nevika@2026C`
 - Clinic Staff (Amnion): `staff_amnion` / `Nevika@2026C`
