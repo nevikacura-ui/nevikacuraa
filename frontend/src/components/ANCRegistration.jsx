@@ -73,7 +73,19 @@ export default function ANCRegistration({ staffName = 'Staff', clinic = 'amnion'
       } catch (err) { console.error('Error fetching patients:', err); }
     };
     loadPatients();
+    fetchAncForms();
   }, [clinic]);
+
+  const fetchAncForms = async () => {
+    try {
+      const res = await fetch(`${API}/api/anc/forms/list?clinic=${clinic}`);
+      const data = await res.json();
+      if (data.success) {
+        setAncForms(data.forms || []);
+        setFormCounts(data.counts || { total: 0, allotted: 0, filled: 0 });
+      }
+    } catch (err) { console.error('Error fetching ANC forms:', err); }
+  };
 
   const fetchPatients = async () => {
     try {
