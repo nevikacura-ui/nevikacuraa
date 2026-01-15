@@ -203,24 +203,13 @@ async def get_me(authorization: str = None):
 
 @router.post("/otp/send")
 async def send_auth_otp(request: AuthOTPRequest):
-    """Send OTP for authentication via SMS"""
+    """Send OTP for authentication - Uses MOCK OTP (no SMS for login)"""
     phone = request.phone.strip()
     
     if not phone or len(phone) < 10:
         raise HTTPException(status_code=400, detail="Invalid phone number")
     
-    # Try Twilio first
-    result = await send_twilio_otp(phone)
-    if result.get("success"):
-        return {
-            "success": True,
-            "message": "OTP sent to your phone via SMS",
-            "expires_in": 300,
-            "phone": phone,
-            "method": "sms"
-        }
-    
-    # Fallback to mock OTP
+    # Always use mock OTP for login (SMS not used for login OTP as per requirement)
     otp = generate_otp()
     otp_key = f"auth_{phone}"
     auth_otp_storage[otp_key] = {
@@ -229,15 +218,17 @@ async def send_auth_otp(request: AuthOTPRequest):
         "attempts": 0
     }
     
-    logger.info(f"Mock OTP generated for {phone}: {otp}")
+    logger.info(f"Login OTP generated for {phone}: {otp}")
     
+    # Return mock OTP in response for development/testing
     return {
         "success": True,
-        "message": "OTP sent successfully",
-        "mock_otp": otp,
+        "message": "OTP generated successfully",
+        "mock_otp": otp,  # Display in UI for testing
         "expires_in": 300,
         "phone": phone,
-        "method": "mock"
+        "method": "mock",
+        "note": "Use the displayed OTP to login"
     }
 
 @router.post("/otp/verify")
