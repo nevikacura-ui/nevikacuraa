@@ -290,21 +290,27 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
           { duration: 10000 }
         );
       } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-        toast.error('No camera found. Please ensure your device has a working camera.');
+        errorMsg = 'No camera found. Please ensure your device has a working camera.';
+        toast.error(errorMsg);
       } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
-        toast.error('Camera is busy. Please close other apps using the camera and try again.');
+        errorMsg = 'Camera is busy. Please close other apps using the camera and try again.';
+        toast.error(errorMsg);
       } else if (err.name === 'OverconstrainedError') {
-        toast.error('Camera settings issue. Please try again.');
+        errorMsg = 'Camera settings issue. Please try again.';
+        toast.error(errorMsg);
       } else if (err.name === 'SecurityError') {
-        toast.error('Camera blocked. Please use HTTPS and grant camera permission.');
+        errorMsg = 'Camera blocked. Please use HTTPS and grant camera permission.';
+        toast.error(errorMsg);
       } else if (err.name === 'AbortError') {
-        toast.error('Camera request was aborted. Please try again.');
+        errorMsg = 'Camera request was aborted. Please try again.';
+        toast.error(errorMsg);
       } else {
-        toast.error('Camera error: ' + (err.message || 'Unknown error'));
+        errorMsg = 'Camera error: ' + (err.message || 'Unknown error');
+        toast.error(errorMsg);
       }
       
       // Set error state for UI
-      setCameraError(err.message || 'Failed to access camera');
+      setCameraError(errorMsg || err.message || 'Failed to access camera');
     } finally {
       setCameraStarting(false);
     }
