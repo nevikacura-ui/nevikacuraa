@@ -14,7 +14,7 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 
 ## What's Been Implemented ✅
 
-### Session 12 - January 15, 2026 (SMS TEMPLATES & AUTOMATED REMINDERS)
+### Session 12 - January 15, 2026 (SMS TEMPLATES, AUTOMATED REMINDERS & LIVE QUEUE)
 
 **37. SMS Templates Standardization** ✅ (Complete)
 - **Walk-in & Emergency SMS**: Both templates now follow the same user-approved format
@@ -31,6 +31,38 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 - **Files Modified**:
   - `/app/backend/server.py` (Added cron endpoint)
   - `/app/backend/scheduler.py` (Updated to call sonography reminders)
+
+**39. Real-Time Queue & Wait Time System** ✅ (Complete)
+- **Public Queue Display**: Live queue status viewable by patients without login
+- **Features**:
+  - Clinic selector (Pushpa/Amnion)
+  - Currently serving & waiting queue lists
+  - Avg wait time & estimated queue time
+  - Busy hours heatmap with peak hour recommendations
+  - "Check My Position" by phone number
+  - Remote check-in ("I'm on my way")
+- **Staff Features**:
+  - Call Next Patient button
+  - Mark consultation complete
+  - Queue analytics & efficiency score
+  - Live Queue widget on Staff Dashboard
+- **API Endpoints**:
+  - `GET /api/live-queue/status/{clinic}` - Public queue status
+  - `GET /api/live-queue/position` - Patient position lookup
+  - `GET /api/live-queue/busy-hours/{clinic}` - Busy hours heatmap
+  - `POST /api/live-queue/remote-checkin` - Remote check-in
+  - `POST /api/live-queue/staff/call-next/{clinic}` - Staff call next
+  - `POST /api/live-queue/staff/complete/{id}` - Mark complete
+  - `GET /api/live-queue/staff/analytics/{clinic}` - Analytics
+- **Frontend Pages**:
+  - `/queue` - Public queue display page
+  - Staff Dashboard Live Queue widget
+- **Files Created**:
+  - `/app/backend/routes/live_queue.py`
+  - `/app/frontend/src/components/LiveQueueDisplay.jsx`
+  - `/app/frontend/src/components/StaffQueueManager.jsx`
+  - `/app/frontend/src/pages/QueuePage.jsx`
+- **Testing**: 18/18 backend tests passed, frontend verified
 
 **Pending User Verification:**
 - Face ID Camera functionality on mobile device
