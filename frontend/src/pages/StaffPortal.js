@@ -2314,92 +2314,101 @@ const StaffPortal = () => {
               </TabsContent>
             )}
 
-            {/* Forms Tab Content - Send Registration Forms */}
-            <TabsContent value="forms">
+            {/* Fees Tab Content - View Fee Structure */}
+            <TabsContent value="fees">
               <Card>
                 <CardContent className="p-4 space-y-4">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <Send className="w-5 h-5 text-indigo-500" />
-                    Send Registration Forms
+                    <Receipt className="w-5 h-5 text-indigo-500" />
+                    Fee Structure
                   </h3>
-                  <p className="text-sm text-gray-500">Send form links to patients via SMS/WhatsApp</p>
                   
-                  <div className="grid gap-4">
-                    {/* ANC Form */}
-                    <div className="p-4 bg-pink-50 border border-pink-200 rounded-xl">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <Baby className="w-5 h-5 text-pink-500" />
-                          <span className="font-medium text-pink-800">ANC Registration</span>
-                        </div>
+                  {/* Consultation Fees */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-gray-700 border-b pb-2">Consultation Fees</h4>
+                    <div className="grid gap-2">
+                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span>New Patient Consultation</span>
+                        <span className="font-semibold text-indigo-600">₹500</span>
                       </div>
-                      <p className="text-sm text-pink-600 mb-3">For pregnant women - captures medical history, LMP, and contact details</p>
-                      <div className="flex gap-2">
-                        <Input 
-                          placeholder="Enter patient phone number"
-                          className="flex-1"
-                          id="anc-phone-input"
-                        />
-                        <Button 
-                          className="bg-pink-500 hover:bg-pink-600"
-                          onClick={async () => {
-                            const phone = document.getElementById('anc-phone-input').value;
-                            if (!phone || phone.length < 10) {
-                              toast.error('Please enter valid phone number');
-                              return;
-                            }
-                            try {
-                              const res = await axios.post(`${API}/anc/send-form-link`, { phone_number: phone, clinic: staffInfo?.clinic }, getAuthHeaders());
-                              if (res.data.success) {
-                                toast.success('ANC form link sent!');
-                                document.getElementById('anc-phone-input').value = '';
-                              }
-                            } catch (err) {
-                              toast.error('Failed to send form link');
-                            }
-                          }}
-                        >
-                          <Send className="w-4 h-4 mr-1" /> Send
-                        </Button>
+                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span>Follow-up Consultation</span>
+                        <span className="font-semibold text-indigo-600">₹300</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span>Emergency Consultation</span>
+                        <span className="font-semibold text-red-600">₹800</span>
                       </div>
                     </div>
-                    
-                    {/* Diabetes Form */}
-                    <div className="p-4 bg-purple-50 border border-purple-200 rounded-xl">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <Activity className="w-5 h-5 text-purple-500" />
-                          <span className="font-medium text-purple-800">Diabetes Registration</span>
+                  </div>
+                  
+                  {/* Sonography Charges */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-purple-700 border-b pb-2 flex items-center gap-2">
+                      <Scan className="w-4 h-4" />
+                      Sonography Charges
+                    </h4>
+                    <div className="grid gap-2">
+                      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                        <div>
+                          <span className="font-medium">Early Pregnancy Scan</span>
+                          <p className="text-xs text-gray-500">6-10 weeks</p>
                         </div>
+                        <span className="font-semibold text-purple-600">₹1,200</span>
                       </div>
-                      <p className="text-sm text-purple-600 mb-3">For diabetes patients - captures health history and lifestyle data</p>
-                      <div className="flex gap-2">
-                        <Input 
-                          placeholder="Enter patient phone number"
-                          className="flex-1"
-                          id="diabetes-phone-input"
-                        />
-                        <Button 
-                          className="bg-purple-500 hover:bg-purple-600"
-                          onClick={async () => {
-                            const phone = document.getElementById('diabetes-phone-input').value;
-                            if (!phone || phone.length < 10) {
-                              toast.error('Please enter valid phone number');
-                              return;
-                            }
-                            try {
-                              const res = await axios.post(`${API}/glydex/send-form-link`, { phone_number: phone, clinic: staffInfo?.clinic }, getAuthHeaders());
-                              if (res.data.success) {
-                                toast.success('Diabetes form link sent!');
-                                document.getElementById('diabetes-phone-input').value = '';
-                              }
-                            } catch (err) {
-                              toast.error('Failed to send form link');
-                            }
-                          }}
-                        >
-                          <Send className="w-4 h-4 mr-1" /> Send
-                        </Button>
+                      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                        <div>
+                          <span className="font-medium">NT Scan</span>
+                          <p className="text-xs text-gray-500">11-14 weeks</p>
+                        </div>
+                        <span className="font-semibold text-purple-600">₹2,000</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                        <div>
+                          <span className="font-medium">Anomaly Scan (TIFFA)</span>
+                          <p className="text-xs text-gray-500">18-22 weeks</p>
+                        </div>
+                        <span className="font-semibold text-purple-600">₹2,500</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                        <div>
+                          <span className="font-medium">Growth Scan</span>
+                          <p className="text-xs text-gray-500">28-40 weeks</p>
+                        </div>
+                        <span className="font-semibold text-purple-600">₹1,500</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                        <div>
+                          <span className="font-medium">Doppler Study</span>
+                          <p className="text-xs text-gray-500">Blood flow assessment</p>
+                        </div>
+                        <span className="font-semibold text-purple-600">₹1,800</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                        <div>
+                          <span className="font-medium">TVS (Transvaginal)</span>
+                          <p className="text-xs text-gray-500">Pelvic scan</p>
+                        </div>
+                        <span className="font-semibold text-purple-600">₹1,200</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Other Procedures */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-gray-700 border-b pb-2">Other Procedures</h4>
+                    <div className="grid gap-2">
+                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span>ECG</span>
+                        <span className="font-semibold text-indigo-600">₹500</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span>Pap Smear</span>
+                        <span className="font-semibold text-indigo-600">₹1,000</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span>IUD Insertion</span>
+                        <span className="font-semibold text-indigo-600">₹2,500</span>
                       </div>
                     </div>
                   </div>
@@ -2407,76 +2416,127 @@ const StaffPortal = () => {
               </Card>
             </TabsContent>
 
-            {/* Loyalty Tab Content - Pharmacy Rewards */}
-            <TabsContent value="loyalty">
+            {/* Feedback Tab Content - Patient Feedback */}
+            <TabsContent value="feedback">
               <Card>
                 <CardContent className="p-4 space-y-4">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <Star className="w-5 h-5 text-yellow-500" />
-                    Loyalty Points
+                    <Star className="w-5 h-5 text-cyan-500" />
+                    Patient Feedback
                   </h3>
-                  <p className="text-sm text-gray-500">Check and manage patient loyalty points</p>
+                  <p className="text-sm text-gray-500">Collect feedback after consultation</p>
                   
-                  {/* Loyalty Search */}
-                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
-                    <div className="flex gap-2 mb-4">
+                  <div className="p-4 bg-cyan-50 border border-cyan-200 rounded-xl space-y-4">
+                    {/* Patient Name */}
+                    <div>
+                      <Label className="text-sm font-medium">Patient Name</Label>
                       <Input 
-                        placeholder="Enter patient phone number"
-                        className="flex-1"
-                        value={loyaltyPhone}
-                        onChange={(e) => setLoyaltyPhone(e.target.value)}
+                        placeholder="Enter patient name"
+                        value={feedbackForm.patientName}
+                        onChange={(e) => setFeedbackForm({...feedbackForm, patientName: e.target.value})}
+                        className="mt-1"
                       />
-                      <Button 
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white"
-                        onClick={searchLoyaltyUser}
-                        disabled={searchingLoyalty}
-                      >
-                        {searchingLoyalty ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Search'}
-                      </Button>
                     </div>
                     
-                    {loyaltyUser && (
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between p-3 bg-white rounded-lg">
-                          <div>
-                            <p className="font-medium">{loyaltyUser.name}</p>
-                            <p className="text-sm text-gray-500">{loyaltyUser.phone}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-2xl font-bold text-yellow-600">{loyaltyUser.points || 0}</p>
-                            <p className="text-xs text-gray-500">points</p>
-                          </div>
-                        </div>
-                        
-                        {/* Quick Actions */}
-                        <div className="grid grid-cols-2 gap-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => {
-                              const points = prompt('Enter points to add:');
-                              if (points && !isNaN(points)) {
-                                addLoyaltyPoints(parseInt(points), 'Manual addition');
-                              }
-                            }}
-                          >
-                            <Plus className="w-4 h-4 mr-1" /> Add Points
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => {
-                              const points = prompt('Enter points to redeem:');
-                              if (points && !isNaN(points)) {
-                                redeemLoyaltyPoints(parseInt(points));
-                              }
-                            }}
-                          >
-                            <Gift className="w-4 h-4 mr-1" /> Redeem
-                          </Button>
+                    {/* Rating Categories */}
+                    <div className="space-y-4">
+                      {/* Doctor Care Rating */}
+                      <div>
+                        <Label className="text-sm font-medium flex items-center gap-2">
+                          <Stethoscope className="w-4 h-4 text-pink-500" />
+                          Doctor&apos;s Care & Attention
+                        </Label>
+                        <div className="flex gap-2 mt-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setFeedbackForm({...feedbackForm, doctorRating: star})}
+                              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                                feedbackForm.doctorRating >= star 
+                                  ? 'bg-yellow-400 text-white' 
+                                  : 'bg-gray-200 text-gray-400'
+                              }`}
+                            >
+                              <Star className="w-5 h-5" fill={feedbackForm.doctorRating >= star ? 'currentColor' : 'none'} />
+                            </button>
+                          ))}
                         </div>
                       </div>
+                      
+                      {/* Staff Behavior Rating */}
+                      <div>
+                        <Label className="text-sm font-medium flex items-center gap-2">
+                          <Users className="w-4 h-4 text-blue-500" />
+                          Staff Behavior & Helpfulness
+                        </Label>
+                        <div className="flex gap-2 mt-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setFeedbackForm({...feedbackForm, staffRating: star})}
+                              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                                feedbackForm.staffRating >= star 
+                                  ? 'bg-yellow-400 text-white' 
+                                  : 'bg-gray-200 text-gray-400'
+                              }`}
+                            >
+                              <Star className="w-5 h-5" fill={feedbackForm.staffRating >= star ? 'currentColor' : 'none'} />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Clinic Cleanliness Rating */}
+                      <div>
+                        <Label className="text-sm font-medium flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-green-500" />
+                          Clinic Cleanliness & Hygiene
+                        </Label>
+                        <div className="flex gap-2 mt-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setFeedbackForm({...feedbackForm, cleanlinessRating: star})}
+                              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                                feedbackForm.cleanlinessRating >= star 
+                                  ? 'bg-yellow-400 text-white' 
+                                  : 'bg-gray-200 text-gray-400'
+                              }`}
+                            >
+                              <Star className="w-5 h-5" fill={feedbackForm.cleanlinessRating >= star ? 'currentColor' : 'none'} />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Overall Rating Display */}
+                    {(feedbackForm.doctorRating || feedbackForm.staffRating || feedbackForm.cleanlinessRating) && (
+                      <div className="p-3 bg-white rounded-lg text-center">
+                        <p className="text-sm text-gray-500">Overall Rating</p>
+                        <p className="text-3xl font-bold text-cyan-600">
+                          {((feedbackForm.doctorRating + feedbackForm.staffRating + feedbackForm.cleanlinessRating) / 3).toFixed(1)}
+                        </p>
+                        <p className="text-xs text-gray-400">out of 5</p>
+                      </div>
                     )}
+                    
+                    {/* Submit Button */}
+                    <Button 
+                      className="w-full bg-cyan-500 hover:bg-cyan-600"
+                      onClick={submitFeedback}
+                      disabled={submittingFeedback || !feedbackForm.patientName}
+                    >
+                      {submittingFeedback ? (
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      ) : (
+                        <CheckCircle2 className="w-4 h-4 mr-2" />
+                      )}
+                      Submit Feedback
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
