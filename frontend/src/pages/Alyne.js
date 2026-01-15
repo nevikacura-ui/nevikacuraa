@@ -1899,7 +1899,7 @@ const BrightwheelInfoSection = ({ onBack }) => {
         </CardHeader>
         <CardContent>
           <ul className="space-y-2 text-sm">
-            <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />Receive real-time updates on your child's day</li>
+            <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />Receive real-time updates on your child&apos;s day</li>
             <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />View photos and activity reports instantly</li>
             <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />Message teachers directly through the app</li>
             <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />Pay tuition and fees online securely</li>
