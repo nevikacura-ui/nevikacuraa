@@ -574,9 +574,23 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
                 <Button onClick={startCamera} className="bg-violet-600 hover:bg-violet-700">
                   <Camera className="w-4 h-4 mr-2" /> Start Camera
                 </Button>
+                <p className="text-xs text-gray-400 mt-3">
+                  Make sure to allow camera access when prompted
+                </p>
               </div>
             ) : (
               <div className="space-y-4">
+                {/* Retry button if camera seems stuck */}
+                <div className="flex justify-end">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => { stopCamera(); setTimeout(startCamera, 300); }}
+                    className="text-gray-500"
+                  >
+                    <RefreshCw className="w-4 h-4 mr-1" /> Restart Camera
+                  </Button>
+                </div>
                 {/* Video Feed */}
                 <div 
                   className="relative bg-black rounded-xl overflow-hidden aspect-video max-w-md mx-auto cursor-pointer"
