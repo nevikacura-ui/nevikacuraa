@@ -126,6 +126,15 @@ const StaffPortal = () => {
   const [loyaltyReason, setLoyaltyReason] = useState('');
   const [addingPoints, setAddingPoints] = useState(false);
   
+  // Feedback form states
+  const [feedbackForm, setFeedbackForm] = useState({
+    patientName: '',
+    doctorRating: 0,
+    staffRating: 0,
+    cleanlinessRating: 0
+  });
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
+  
   // Booked slots state for slot synchronization
   const [bookedSlots, setBookedSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
