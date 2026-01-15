@@ -1360,8 +1360,12 @@ const StaffPortal = () => {
       <main className="max-w-7xl mx-auto px-4 py-6">
         {/* Clinic Staff View */}
         {isClinicStaff(role) && (
-          <Tabs defaultValue="appointments" className="space-y-4" onValueChange={handleTabChange}>
-            <TabsList className="flex flex-wrap">
+          <Tabs defaultValue="dashboard" className="space-y-4" onValueChange={handleTabChange}>
+            <TabsList className="flex flex-wrap gap-1">
+              <TabsTrigger value="dashboard" data-testid="tab-dashboard">
+                <Users className="w-4 h-4 mr-2" />
+                Dashboard
+              </TabsTrigger>
               <TabsTrigger value="appointments" data-testid="tab-appointments">
                 <Calendar className="w-4 h-4 mr-2" />
                 Appointments
@@ -1400,6 +1404,17 @@ const StaffPortal = () => {
                 </TabsTrigger>
               )}
             </TabsList>
+
+            {/* Dashboard Tab */}
+            <TabsContent value="dashboard">
+              <StaffDashboard 
+                staffInfo={staffInfo}
+                onNavigate={(tab) => {
+                  const tabElement = document.querySelector(`[data-testid="tab-${tab}"]`);
+                  if (tabElement) tabElement.click();
+                }}
+              />
+            </TabsContent>
 
             <TabsContent value="appointments">
               <Card className="p-4">
