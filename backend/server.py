@@ -3495,6 +3495,12 @@ async def cron_send_sonography_reminders(secret: str = "", reminder_minutes: int
     if secret != cron_secret:
         raise HTTPException(status_code=403, detail="Invalid secret")
     
+    # Clinic location Google Maps links
+    CLINIC_MAP_LINKS = {
+        "Pushpa Clinic": "https://maps.app.goo.gl/LfFoHwVzvMEQ1Qzt9",
+        "Amnion Clinic": "https://maps.app.goo.gl/aBr4jwCv3b6874vi8"
+    }
+    
     # Use IST timezone for scheduling
     ist_offset = timedelta(hours=5, minutes=30)
     now_utc = datetime.now(timezone.utc)
