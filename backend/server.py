@@ -3549,8 +3549,9 @@ except Exception as e:
 
 # Wallet Router
 try:
-    from routes.wallet import router as wallet_router, set_db as set_wallet_db
+    from routes.wallet import router as wallet_router, set_db as set_wallet_db, set_notification_functions as set_wallet_notif
     set_wallet_db(db)
+    set_wallet_notif(send_email_notification, send_sms_notification)
     app.include_router(wallet_router, prefix="/api")
     logger.info("Wallet router loaded")
 except Exception as e:
