@@ -577,16 +577,27 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
                 <p className="text-xs text-gray-400 mt-3">
                   Make sure to allow camera access when prompted
                 </p>
+                {/* Troubleshooting tips */}
+                <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-left text-sm">
+                  <p className="font-medium text-amber-800 mb-2">Camera not starting?</p>
+                  <ul className="text-amber-700 space-y-1 text-xs">
+                    <li>• Check browser has camera permission (Settings → Site Settings → Camera)</li>
+                    <li>• Close other apps using camera</li>
+                    <li>• Try refreshing the page</li>
+                    <li>• Use Chrome or Safari browser</li>
+                  </ul>
+                </div>
               </div>
             ) : (
               <div className="space-y-4">
-                {/* Retry button if camera seems stuck */}
-                <div className="flex justify-end">
+                {/* Retry button - Always visible when camera is active */}
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Camera active</span>
                   <Button 
-                    variant="ghost" 
+                    variant="outline" 
                     size="sm"
-                    onClick={() => { stopCamera(); setTimeout(startCamera, 300); }}
-                    className="text-gray-500"
+                    onClick={() => { stopCamera(); setTimeout(startCamera, 500); }}
+                    className="text-orange-600 border-orange-300 hover:bg-orange-50"
                   >
                     <RefreshCw className="w-4 h-4 mr-1" /> Restart Camera
                   </Button>
