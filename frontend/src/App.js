@@ -36,6 +36,8 @@ import Alyne from '@/pages/Alyne';
 import ANCFormPublic from '@/pages/ANCFormPublic';
 // Diabetes Public Form
 import DiabetesFormPublic from '@/pages/DiabetesFormPublic';
+// Simple Face Attendance (for debugging)
+import SimpleFaceAttendance from '@/pages/SimpleFaceAttendance';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
