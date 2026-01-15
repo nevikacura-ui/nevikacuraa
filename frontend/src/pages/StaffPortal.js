@@ -2677,6 +2677,11 @@ const StaffPortal = () => {
                                     {SCAN_FEES[booking.scan_type]?.label || booking.scan_type}
                                   </span>
                                 )}
+                                {booking.reminder_sent && (
+                                  <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700 flex items-center gap-1">
+                                    <Bell className="w-3 h-3" /> Reminded
+                                  </span>
+                                )}
                               </div>
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 text-sm text-gray-600">
                                 <span><strong>Time:</strong> {booking.booking_time}</span>
