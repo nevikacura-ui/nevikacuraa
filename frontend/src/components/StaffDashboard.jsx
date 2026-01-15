@@ -40,130 +40,132 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
   }, []);
 
   useEffect(() => {
-    fetchDashboardStats();
-  }, [staffInfo]);
+    const fetchDashboardStats = async () => {
+      setLoading(true);
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const token = localStorage.getItem('staffToken');
+        const headers = { Authorization: `Bearer ${token}` };
 
-  const fetchDashboardStats = async () => {
-    setLoading(true);
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      const token = localStorage.getItem('staffToken');
-      const headers = { Authorization: `Bearer ${token}` };
-
-      // Fetch appointments count and calculate today's summary
-      if (accessModules.includes('appointments')) {
-        const appointmentsRes = await fetch(`${API}/api/staff/clinic/appointments?date=${today}`, { headers });
-        if (appointmentsRes.ok) {
-          const data = await appointmentsRes.json();
-          const appointments = data.appointments || [];
-          
-          // Calculate status counts
-          const completed = appointments.filter(a => a.status === 'Completed').length;
-          const pending = appointments.filter(a => a.status === 'Booked').length;
-          const inClinic = appointments.filter(a => a.status === 'In Clinic').length;
-          const cancelled = appointments.filter(a => a.status === 'Cancelled').length;
-          const emergencyCount = appointments.filter(a => a.appointment_type === 'EMERGENCY').length;
-          const walkinCount = appointments.filter(a => a.appointment_type === 'WALKIN' || a.appointment_type === 'WALK_IN').length;
-          const onlineCount = appointments.filter(a => a.appointment_type === 'ONLINE' || !a.appointment_type).length;
-          
-          // Calculate slot distribution to find busiest slot
-          const slotDistribution = {};
-          appointments.forEach(appt => {
-            if (appt.time) {
-              // Group by hour
-              const hour = appt.time.split(':')[0];
-              const hourLabel = `${hour}:00`;
-              slotDistribution[hourLabel] = (slotDistribution[hourLabel] || 0) + 1;
-            }
-          });
-          
-          // Find busiest slot
-          let busiestSlot = null;
-          let maxCount = 0;
-          Object.entries(slotDistribution).forEach(([slot, count]) => {
-            if (count > maxCount) {
-              maxCount = count;
-              busiestSlot = { time: slot, count };
-            }
-          });
-          
-          setStats(prev => ({
-            ...prev,
-            appointments: {
-              total: appointments.length,
-              today: appointments.length,
-              pending: pending
-            }
-          }));
-          
-          setTodaySummary({
-            totalBooked: appointments.length,
-            completed,
-            pending,
-            inClinic,
-            cancelled,
-            emergencyCount,
-            busiestSlot,
-            slotDistribution,
-            walkinCount,
-            onlineCount
-          });
+        // Fetch appointments count and calculate today's summary
+        if (accessModules.includes('appointments')) {
+          const appointmentsRes = await fetch(`${API}/api/staff/clinic/appointments?date=${today}`, { headers });
+          if (appointmentsRes.ok) {
+            const data = await appointmentsRes.json();
+            const appointments = data.appointments || [];
+            
+            // Calculate status counts
+            const completed = appointments.filter(a => a.status === 'Completed').length;
+            const pending = appointments.filter(a => a.status === 'Booked').length;
+            const inClinic = appointments.filter(a => a.status === 'In Clinic').length;
+            const cancelled = appointments.filter(a => a.status === 'Cancelled').length;
+            const emergencyCount = appointments.filter(a => a.appointment_type === 'EMERGENCY').length;
+            const walkinCount = appointments.filter(a => a.appointment_type === 'WALKIN' || a.appointment_type === 'WALK_IN').length;
+            const onlineCount = appointments.filter(a => a.appointment_type === 'ONLINE' || !a.appointment_type).length;
+            
+            // Calculate slot distribution to find busiest slot
+            const slotDistribution = {};
+            appointments.forEach(appt => {
+              if (appt.time) {
+                // Group by hour
+                const hour = appt.time.split(':')[0];
+                const hourLabel = `${hour}:00`;
+                slotDistribution[hourLabel] = (slotDistribution[hourLabel] || 0) + 1;
+              }
+            });
+            
+            // Find busiest slot
+            let busiestSlot = null;
+            let maxCount = 0;
+            Object.entries(slotDistribution).forEach(([slot, count]) => {
+              if (count > maxCount) {
+                maxCount = count;
+                busiestSlot = { time: slot, count };
+              }
+            });
+            
+            setStats(prev => ({
+              ...prev,
+              appointments: {
+                total: appointments.length,
+                today: appointments.length,
+                pending: pending
+              }
+            }));
+            
+            setTodaySummary({
+              totalBooked: appointments.length,
+              completed,
+              pending,
+              inClinic,
+              cancelled,
+              emergencyCount,
+              busiestSlot,
+              slotDistribution,
+              walkinCount,
+              onlineCount
+            });
+          }
         }
-      }
 
-      // Fetch ANC stats
-      if (accessModules.includes('anc')) {
-        const ancRes = await fetch(`${API}/api/anc/dashboard/${encodeURIComponent(staffInfo?.clinic || 'Pushpa Clinic')}`);
-        if (ancRes.ok) {
-          const data = await ancRes.json();
-          setStats(prev => ({
-            ...prev,
-            anc: {
-              total: data.total_patients || 0,
-              dueThisWeek: data.due_this_week || 0
-            }
-          }));
+        // Fetch ANC stats
+        if (accessModules.includes('anc')) {
+          const ancRes = await fetch(`${API}/api/anc/dashboard/${encodeURIComponent(staffInfo?.clinic || 'Pushpa Clinic')}`);
+          if (ancRes.ok) {
+            const data = await ancRes.json();
+            setStats(prev => ({
+              ...prev,
+              anc: {
+                total: data.total_patients || 0,
+                dueThisWeek: data.due_this_week || 0
+              }
+            }));
+          }
         }
-      }
 
-      // Fetch Glydex stats
-      if (accessModules.includes('glydex')) {
-        const glydexRes = await fetch(`${API}/api/glydex/staff/reports/summary`);
-        if (glydexRes.ok) {
-          const data = await glydexRes.json();
-          setStats(prev => ({
-            ...prev,
-            glydex: {
-              total: data.summary?.total_patients || 0,
-              uncontrolled: data.summary?.uncontrolled || 0
-            }
-          }));
+        // Fetch Glydex stats
+        if (accessModules.includes('glydex')) {
+          const glydexRes = await fetch(`${API}/api/glydex/staff/reports/summary`);
+          if (glydexRes.ok) {
+            const data = await glydexRes.json();
+            setStats(prev => ({
+              ...prev,
+              glydex: {
+                total: data.summary?.total_patients || 0,
+                uncontrolled: data.summary?.uncontrolled || 0
+              }
+            }));
+          }
         }
-      }
 
-      // Fetch Attendance stats
-      if (accessModules.includes('attendance')) {
-        const clinic = staffInfo?.clinic?.toLowerCase().includes('pushpa') ? 'pushpa' : 
-                       staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 
-                       staffInfo?.clinic?.toLowerCase().includes('pharmacy') ? 'pharmacy' : 'pushpa';
-        const attendanceRes = await fetch(`${API}/api/biometric-attendance/daily-report?clinic=${clinic}&date=${today}`);
-        if (attendanceRes.ok) {
-          const data = await attendanceRes.json();
-          setStats(prev => ({
-            ...prev,
-            attendance: {
-              present: data.present || 0,
-              late: data.late || 0,
-              absent: data.absent || 0
-            }
-          }));
+        // Fetch Attendance stats
+        if (accessModules.includes('attendance')) {
+          const clinic = staffInfo?.clinic?.toLowerCase().includes('pushpa') ? 'pushpa' : 
+                         staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 
+                         staffInfo?.clinic?.toLowerCase().includes('pharmacy') ? 'pharmacy' : 'pushpa';
+          const attendanceRes = await fetch(`${API}/api/biometric-attendance/daily-report?clinic=${clinic}&date=${today}`);
+          if (attendanceRes.ok) {
+            const data = await attendanceRes.json();
+            setStats(prev => ({
+              ...prev,
+              attendance: {
+                present: data.present || 0,
+                late: data.late || 0,
+                absent: data.absent || 0
+              }
+            }));
+          }
         }
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
       }
-    } catch (error) {
-      console.error('Error fetching dashboard stats:', error);
+      setLoading(false);
+    };
+
+    if (staffInfo) {
+      fetchDashboardStats();
     }
-    setLoading(false);
-  };
+  }, [staffInfo, accessModules]);
 
   const getGreeting = () => {
     const hour = currentTime.getHours();
