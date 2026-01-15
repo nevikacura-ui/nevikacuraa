@@ -1162,9 +1162,26 @@ const KidsShopSection = ({ user, onBack }) => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchCategories = async () => { 
+    try { 
+      const res = await fetch(`${API}/api/alyne/shop/categories`); 
+      const data = await res.json(); 
+      setCategories(data.categories || []); 
+    } catch (e) { console.error('Error fetching categories:', e); } 
+  };
+  
+  const fetchProducts = async (cat = null) => { 
+    setLoading(true); 
+    try { 
+      const url = cat ? `${API}/api/alyne/shop/products?category=${cat}` : `${API}/api/alyne/shop/products`; 
+      const res = await fetch(url); 
+      const data = await res.json(); 
+      setProducts(data.products || []); 
+    } catch (e) { console.error('Error fetching products:', e); } 
+    finally { setLoading(false); } 
+  };
+  
   useEffect(() => { fetchCategories(); fetchProducts(); }, []);
-  const fetchCategories = async () => { try { const res = await fetch(`${API}/api/alyne/shop/categories`); const data = await res.json(); setCategories(data.categories || []); } catch (e) {} };
-  const fetchProducts = async (cat = null) => { setLoading(true); try { const url = cat ? `${API}/api/alyne/shop/products?category=${cat}` : `${API}/api/alyne/shop/products`; const res = await fetch(url); const data = await res.json(); setProducts(data.products || []); } catch (e) {} finally { setLoading(false); } };
   const addToCart = (p) => { setCart(prev => { const ex = prev.find(x => x.id === p.id); if (ex) return prev.map(x => x.id === p.id ? {...x, quantity: x.quantity + 1} : x); return [...prev, {...p, quantity: 1}]; }); toast.success('Added!'); };
 
   return (
