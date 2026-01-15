@@ -111,11 +111,21 @@ export const getAvailableTimeSlots = (doctor, clinic, dateStr) => {
 // Get status color for appointments
 export const getStatusColor = (status) => {
   const colors = {
-    'Booked': 'bg-blue-100 text-blue-800',
-    'In Clinic': 'bg-yellow-100 text-yellow-800',
+    'Booked': 'bg-yellow-100 text-yellow-800',
+    'In Clinic': 'bg-blue-100 text-blue-800',
     'Completed': 'bg-green-100 text-green-800',
     'Cancelled': 'bg-red-100 text-red-800',
     'No Show': 'bg-gray-100 text-gray-800',
+    'Received': 'bg-yellow-100 text-yellow-800',
+    'Processing': 'bg-blue-100 text-blue-800',
+    'Ready': 'bg-purple-100 text-purple-800',
+    'Delivered': 'bg-green-100 text-green-800',
+    'Sample Collected': 'bg-blue-100 text-blue-800',
+    'Report Ready': 'bg-purple-100 text-purple-800',
+    'ORDERED': 'bg-yellow-100 text-yellow-800',
+    'SAMPLE_COLLECTED': 'bg-blue-100 text-blue-800',
+    'PROCESSING': 'bg-purple-100 text-purple-800',
+    'COMPLETED': 'bg-green-100 text-green-800',
     'pending': 'bg-yellow-100 text-yellow-800',
     'processing': 'bg-blue-100 text-blue-800',
     'ready': 'bg-green-100 text-green-800',
