@@ -9,7 +9,8 @@ import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { 
   Heart, Plus, Search, Calendar, Baby,
-  Phone, User, MapPin, Activity, AlertCircle
+  Phone, User, MapPin, Activity, AlertCircle,
+  Send, Mail, MessageSquare, FileText, CheckCircle2, Clock
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
