@@ -3802,6 +3802,17 @@ try:
 except Exception as e:
     logger.warning(f"Could not load patient flow router: {e}")
 
+# Live Queue & Wait Time System
+try:
+    from routes.live_queue import router as live_queue_router, set_db as set_live_queue_db, set_jwt_config as set_live_queue_jwt, set_notification_functions as set_live_queue_notifications
+    set_live_queue_db(db)
+    set_live_queue_jwt(JWT_SECRET)
+    set_live_queue_notifications(send_push_notification, send_sms_notification)
+    app.include_router(live_queue_router, prefix="/api")
+    logger.info("Live Queue router loaded")
+except Exception as e:
+    logger.warning(f"Could not load live queue router: {e}")
+
 # Staff Billing Router
 try:
     from routes.staff_billing import router as staff_billing_router, set_db as set_staff_billing_db
