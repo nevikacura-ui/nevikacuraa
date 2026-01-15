@@ -78,6 +78,13 @@ class InternalFeedback(BaseModel):
     cleanliness: Optional[int] = None  # 1-5
     notes: Optional[str] = None
 
+class DoctorCompletionRequest(BaseModel):
+    fee_code: str
+    scan_codes: Optional[List[str]] = []  # Scan/ultrasound codes
+    total_fee: Optional[float] = None  # Pre-calculated total
+    follow_up_days: Optional[int] = None
+    notes: Optional[str] = None
+
 class DiagnosticOrderCreate(BaseModel):
     patient_name: str
     patient_phone: str
