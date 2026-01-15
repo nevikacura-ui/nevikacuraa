@@ -268,6 +268,16 @@ async def create_walkin_appointment(data: WalkInAppointment, staff = Depends(ver
     await db.appointments.insert_one(appointment)
     appointment.pop("_id", None)
     
+    # Send SMS confirmation with location (DiaGyn Appointment - SMS allowed)
+    if send_sms_notification and data.patient_phone:
+        try:
+            map_link = get_clinic_map_link(data.clinic)
+            sms_text = f"Dear {data.patient_name}, Your appointment with {data.doctor} is confirmed at {data.clinic}. Time: {data.time}. Location: {map_link} - Nevika Cura"
+            await send_sms_notification(data.patient_phone, sms_text)
+            logger.info(f"Walk-in confirmation SMS sent to {data.patient_phone}")
+        except Exception as e:
+            logger.error(f"Failed to send walk-in confirmation SMS: {e}")
+    
     return {"message": "Walk-in appointment created", "appointment": appointment}
 
 
