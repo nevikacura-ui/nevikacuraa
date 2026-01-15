@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Face Attendance - Nevika Cura</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+      min-height: 100vh;
+      padding: 16px;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 16px;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .video-box {
+      background: #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      position: relative;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      background: rgba(0,0,0,0.7);
+    }
+    .overlay.hidden { display: none; }
+    .live-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #22c55e;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary { background: #7c3aed; color: white; }
+    .btn-primary:disabled { opacity: 0.6; }
+    .btn-green { background: #22c55e; color: white; }
+    .btn-orange { background: #f97316; color: white; }
+    .btn-row { display: flex; gap: 10px; }
+    .btn-row button { flex: 1; }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .status {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    .status.success { background: #dcfce7; color: #166534; }
+    .status.error { background: #fee2e2; color: #dc2626; }
+    .status.info { background: #e0f2fe; color: #0369a1; }
+    .logs {
+      background: #111;
+      border-radius: 8px;
+      padding: 12px;
+      max-height: 150px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 11px;
+    }
+    .log { padding: 3px 0; border-bottom: 1px solid #333; }
+    .log:last-child { border: none; }
+    .log-info { color: #60a5fa; }
+    .log-success { color: #4ade80; }
+    .log-error { color: #f87171; }
+    h3 { font-size: 16px; margin-bottom: 12px; color: #333; }
+    .section-title { font-size: 14px; color: #666; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📷 Face Attendance</h1>
+    
+    <div class="card">
+      <div class="video-box">
+        <video id="video" autoplay muted playsinline></video>
+        <div class="overlay" id="overlay">
+          <div>
+            <div style="font-size: 40px; margin-bottom: 10px;">📷</div>
+            <p id="overlayText">Tap "Start Camera" below</p>
+          </div>
+        </div>
+        <div class="live-badge" id="liveBadge" style="display:none;">● LIVE</div>
+      </div>
+      
+      <button class="btn-primary" id="startBtn" onclick="startCamera()">
+        📷 Start Camera
+      </button>
+      
+      <div class="btn-row" id="actionBtns" style="display:none;">
+        <button class="btn-green" onclick="checkIn()">✅ Check In</button>
+        <button class="btn-orange" onclick="checkOut()">🚪 Check Out</button>
+      </div>
+      
+      <div id="statusBox"></div>
+    </div>
+    
+    <div class="card">
+      <h3>👤 Register New Face</h3>
+      <input type="text" id="staffName" placeholder="Enter staff name">
+      <button class="btn-primary" id="registerBtn" onclick="registerFace()" disabled>
+        📸 Capture & Register
+      </button>
+    </div>
+    
+    <div class="card">
+      <p class="section-title">Debug Logs</p>
+      <div class="logs" id="logs">
+        <div class="log log-info">Ready to start</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'https://nevika-health-4.preview.emergentagent.com';
+    let stream = null;
+    const video = document.getElementById('video');
+    const overlay = document.getElementById('overlay');
+    const overlayText = document.getElementById('overlayText');
+    const liveBadge = document.getElementById('liveBadge');
+    const startBtn = document.getElementById('startBtn');
+    const actionBtns = document.getElementById('actionBtns');
+    const registerBtn = document.getElementById('registerBtn');
+    const statusBox = document.getElementById('statusBox');
+    const logsEl = document.getElementById('logs');
+    
+    function log(msg, type = 'info') {
+      const div = document.createElement('div');
+      div.className = `log log-${type}`;
+      div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      logsEl.appendChild(div);
+      logsEl.scrollTop = logsEl.scrollHeight;
+      console.log(`[FaceAttend] ${msg}`);
+    }
+    
+    function setStatus(msg, type) {
+      statusBox.innerHTML = `<div class="status ${type}">${msg}</div>`;
+    }
+    
+    async function startCamera() {
+      log('Starting camera...');
+      overlayText.textContent = 'Requesting camera...';
+      startBtn.disabled = true;
+      
+      if (!navigator.mediaDevices) {
+        log('mediaDevices not available', 'error');
+        setStatus('Camera API not supported', 'error');
+        startBtn.disabled = false;
+        return;
+      }
+      
+      try {
+        log('Calling getUserMedia...');
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: 'user' }, 
+          audio: false 
+        });
+        
+        log('Got stream!', 'success');
+        video.srcObject = stream;
+        
+        video.onloadedmetadata = () => {
+          log('Video metadata loaded');
+          video.play().then(() => {
+            log('Video playing!', 'success');
+            overlay.classList.add('hidden');
+            liveBadge.style.display = 'block';
+            startBtn.style.display = 'none';
+            actionBtns.style.display = 'flex';
+            registerBtn.disabled = false;
+            setStatus('Camera ready! Position your face and tap an action.', 'success');
+          }).catch(e => {
+            log('Play failed: ' + e.message, 'error');
+          });
+        };
+      } catch (err) {
+        log(`Error: ${err.name} - ${err.message}`, 'error');
+        setStatus(`Camera error: ${err.message}`, 'error');
+        startBtn.disabled = false;
+        overlayText.textContent = 'Camera failed. Tap to retry.';
+      }
+    }
+    
+    function capturePhoto() {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      return canvas.toDataURL('image/jpeg', 0.8);
+    }
+    
+    async function checkIn() {
+      log('Attempting check-in...');
+      setStatus('Verifying face...', 'info');
+      
+      const photo = capturePhoto();
+      
+      try {
+        const res = await fetch(`${API}/api/face-attendance/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            face_data: photo,
+            clinic: 'pushpa',
+            action: 'check_in'
+          })
+        });
+        
+        const data = await res.json();
+        log('Response: ' + JSON.stringify(data), data.verified ? 'success' : 'error');
+        
+        if (data.verified) {
+          setStatus(`✅ ${data.staff_name} checked in at ${new Date().toLocaleTimeString()}`, 'success');
+        } else {
+          setStatus(data.message || 'Face not recognized', 'error');
+        }
+      } catch (err) {
+        log('Check-in error: ' + err.message, 'error');
+        setStatus('Check-in failed: ' + err.message, 'error');
+      }
+    }
+    
+    async function checkOut() {
+      log('Attempting check-out...');
+      setStatus('Verifying face...', 'info');
+      
+      const photo = capturePhoto();
+      
+      try {
+        const res = await fetch(`${API}/api/face-attendance/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            face_data: photo,
+            clinic: 'pushpa',
+            action: 'check_out'
+          })
+        });
+        
+        const data = await res.json();
+        log('Response: ' + JSON.stringify(data), data.verified ? 'success' : 'error');
+        
+        if (data.verified) {
+          setStatus(`🚪 ${data.staff_name} checked out at ${new Date().toLocaleTimeString()}`, 'success');
+        } else {
+          setStatus(data.message || 'Face not recognized', 'error');
+        }
+      } catch (err) {
+        log('Check-out error: ' + err.message, 'error');
+        setStatus('Check-out failed: ' + err.message, 'error');
+      }
+    }
+    
+    async function registerFace() {
+      const name = document.getElementById('staffName').value.trim();
+      if (!name) {
+        setStatus('Please enter staff name', 'error');
+        return;
+      }
+      
+      log(`Registering ${name}...`);
+      setStatus('Capturing face...', 'info');
+      
+      const photo = capturePhoto();
+      
+      try {
+        const res = await fetch(`${API}/api/face-attendance/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            staff_name: name,
+            staff_id: name.toLowerCase().replace(/\s+/g, '_'),
+            face_data: photo,
+            clinic: 'pushpa'
+          })
+        });
+        
+        const data = await res.json();
+        log('Register response: ' + JSON.stringify(data), data.success ? 'success' : 'error');
+        
+        if (data.success) {
+          setStatus(`✅ ${name} registered successfully!`, 'success');
+          document.getElementById('staffName').value = '';
+        } else {
+          setStatus(data.error || 'Registration failed', 'error');
+        }
+      } catch (err) {
+        log('Register error: ' + err.message, 'error');
+        setStatus('Registration failed: ' + err.message, 'error');
+      }
+    }
+    
+    // Allow tap on video to play
+    video.addEventListener('click', () => {
+      if (video.paused && stream) {
+        video.play().then(() => log('Video resumed on tap', 'success'));
+      }
+    });
+    
+    log('Page loaded, ready to start camera');
+  </script>
+</body>
+</html>
