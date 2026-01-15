@@ -14,12 +14,23 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 
 ## What's Been Implemented ✅
 
-### Session 12 - January 15, 2026 (SMS TEMPLATES & VERIFICATION)
+### Session 12 - January 15, 2026 (SMS TEMPLATES & AUTOMATED REMINDERS)
 
 **37. SMS Templates Standardization** ✅ (Complete)
 - **Walk-in & Emergency SMS**: Both templates now follow the same user-approved format
 - **Format includes**: Doctor, Clinic, Date, Token Time, arrival note, Google Maps link, contact number
 - **File**: `/app/backend/routes/staff.py`
+
+**38. Automated Sonography Reminders (Cron Job)** ✅ (Complete)
+- **24-Hour Reminders**: Sends SMS reminder day before sonography appointment
+- **1-Hour Reminders**: Sends SMS reminder 45-75 minutes before appointment
+- **Duplicate Prevention**: Tracks `reminder_24h_sent` and `reminder_1h_sent` flags
+- **IST Timezone Support**: All scheduling uses Indian Standard Time
+- **API Endpoint**: `POST /api/cron/sonography-reminders?secret=nevika_cron_2026`
+- **Scheduler Script**: `/app/backend/scheduler.py` - runs every 15 minutes
+- **Files Modified**:
+  - `/app/backend/server.py` (Added cron endpoint)
+  - `/app/backend/scheduler.py` (Updated to call sonography reminders)
 
 **Pending User Verification:**
 - Face ID Camera functionality on mobile device
