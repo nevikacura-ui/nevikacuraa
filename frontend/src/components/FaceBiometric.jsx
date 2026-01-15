@@ -92,16 +92,68 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
     }
   };
 
-  // Start camera
+  // Check and request camera permission first
+  const checkCameraPermission = async () => {
+    try {
+      // Check if permissions API is available
+      if (navigator.permissions && navigator.permissions.query) {
+        const result = await navigator.permissions.query({ name: 'camera' });
+        console.log('Camera permission status:', result.state);
+        return result.state;
+      }
+      return 'prompt'; // Default to prompt if API not available
+    } catch (err) {
+      console.log('Permissions API not supported, will prompt directly');
+      return 'prompt';
+    }
+  };
+
+  // Start camera with better mobile handling
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { 
-          width: { ideal: 640 }, 
-          height: { ideal: 480 },
-          facingMode: 'user' // Front camera on mobile
+      // First check permission status
+      const permissionStatus = await checkCameraPermission();
+      console.log('Permission check result:', permissionStatus);
+      
+      if (permissionStatus === 'denied') {
+        toast.error('Camera access is blocked. Please enable camera in your browser settings and refresh the page.', {
+          duration: 5000
+        });
+        return;
+      }
+
+      // Stop any existing stream first
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+      
+      // Request camera with multiple fallback constraints for better mobile compatibility
+      let stream = null;
+      const constraints = [
+        // Try ideal settings first
+        { video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } },
+        // Fallback to simpler user-facing
+        { video: { facingMode: 'user' } },
+        // Last resort - any camera
+        { video: true }
+      ];
+      
+      for (const constraint of constraints) {
+        try {
+          console.log('Trying camera constraint:', JSON.stringify(constraint));
+          stream = await navigator.mediaDevices.getUserMedia(constraint);
+          console.log('Successfully got stream with constraint:', JSON.stringify(constraint));
+          break;
+        } catch (e) {
+          console.log('Constraint failed:', e.message);
+          continue;
         }
-      });
+      }
+      
+      if (!stream) {
+        throw new Error('Could not access camera with any constraints');
+      }
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -109,17 +161,38 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
         
         // Wait for video to be ready before activating detection
         videoRef.current.onloadedmetadata = () => {
-          videoRef.current.play();
-          setCameraActive(true);
-          console.log('Camera ready, video dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+          videoRef.current.play().then(() => {
+            setCameraActive(true);
+            console.log('Camera ready, video dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+            toast.success('Camera started successfully!');
+          }).catch(playErr => {
+            console.error('Video play error:', playErr);
+            toast.error('Failed to start video playback. Please try again.');
+          });
+        };
+        
+        videoRef.current.onerror = (e) => {
+          console.error('Video element error:', e);
+          toast.error('Video playback error. Please refresh and try again.');
         };
       }
     } catch (err) {
-      console.error('Camera error:', err);
-      if (err.name === 'NotAllowedError') {
-        toast.error('Camera access denied. Please enable camera permissions in your browser settings.');
-      } else if (err.name === 'NotFoundError') {
-        toast.error('No camera found. Please ensure your device has a camera.');
+      console.error('Camera error:', err.name, err.message);
+      
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        toast.error(
+          'Camera permission denied. To enable:\n1. Tap the lock icon in browser address bar\n2. Find "Camera" permission\n3. Set to "Allow"\n4. Refresh this page',
+          { duration: 8000 }
+        );
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        toast.error('No camera found. Please ensure your device has a working camera.');
+      } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+        toast.error('Camera is in use by another app. Please close other apps using the camera and try again.');
+      } else if (err.name === 'OverconstrainedError') {
+        toast.error('Camera does not support required settings. Trying alternative...');
+        // This shouldn't happen with our fallback constraints
+      } else if (err.name === 'SecurityError') {
+        toast.error('Camera access blocked due to security settings. Please use HTTPS or enable camera permissions.');
       } else {
         toast.error('Camera error: ' + err.message);
       }
