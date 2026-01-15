@@ -148,15 +148,15 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
           const clinic = staffInfo?.clinic?.toLowerCase().includes('pushpa') ? 'pushpa' : 
                          staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 
                          staffInfo?.clinic?.toLowerCase().includes('pharmacy') ? 'pharmacy' : 'pushpa';
-          const attendanceRes = await fetch(`${API}/api/biometric-attendance/daily-report?clinic=${clinic}&date=${today}`);
+          const attendanceRes = await fetch(`${API}/api/biometric-attendance/report/${clinic}?date=${today}`);
           if (attendanceRes.ok) {
             const data = await attendanceRes.json();
             setStats(prev => ({
               ...prev,
               attendance: {
-                present: data.present || 0,
-                late: data.late || 0,
-                absent: data.absent || 0
+                present: data.summary?.present || 0,
+                late: data.summary?.late || 0,
+                absent: data.summary?.absent || 0
               }
             }));
           }
