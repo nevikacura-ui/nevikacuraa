@@ -1865,99 +1865,152 @@ const StaffPortal = () => {
           </Tabs>
         )}
 
-        {/* Doctor View - Enhanced with Clinic Toggle and Calendar */}
+        {/* Doctor View - Enhanced with Clinic Toggle, Calendar, and Specialty Tabs */}
         {isDoctor(role) && !isClinicStaff(role) && (
-          <Card className="p-4">
-            {/* Doctor Header with Clinic Toggle */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-              <div>
-                <h2 className="font-semibold text-lg flex items-center gap-2">
-                  <Stethoscope className="w-5 h-5 text-teal-600" />
-                  {staffInfo?.doctor_name}&apos;s Appointments
-                </h2>
-                <p className="text-sm text-gray-500 mt-1">
-                  {appointments.length} appointment{appointments.length !== 1 ? 's' : ''} for {selectedDate}
-                </p>
-              </div>
+          <Tabs defaultValue="appointments" className="space-y-4">
+            {/* Doctor Specialty Tabs based on role */}
+            <TabsList className="h-auto p-1 bg-gray-100 rounded-xl flex-wrap justify-start">
+              <TabsTrigger 
+                value="appointments" 
+                data-testid="doc-tab-appointments"
+                className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-teal-500 data-[state=active]:text-white"
+              >
+                <Calendar className="w-4 h-4" />
+                Appointments
+              </TabsTrigger>
               
-              {/* Clinic Toggle & Date Selector */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                {/* Clinic Toggle - Only show if doctor works at multiple clinics */}
-                {doctorClinics.length > 0 && (
-                  <div className="flex items-center gap-2">
-                    <label className="text-sm text-gray-600">Clinic:</label>
-                    <select
-                      value={selectedClinic}
-                      onChange={(e) => setSelectedClinic(e.target.value)}
-                      className="border rounded-lg px-3 py-1.5 text-sm bg-white min-w-[150px]"
-                      data-testid="doctor-clinic-select"
-                    >
-                      <option value="">All Clinics</option>
-                      {doctorClinics.map(clinic => (
-                        <option key={clinic} value={clinic}>{clinic}</option>
-                      ))}
-                    </select>
+              {/* ANC Tab for Dr. Neha / OBGY doctors */}
+              {(staffInfo?.name?.toLowerCase().includes('neha') || 
+                staffInfo?.access_modules?.includes('anc') ||
+                role === 'doctor_amnion') && (
+                <TabsTrigger 
+                  value="anc" 
+                  data-testid="doc-tab-anc"
+                  className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-pink-500 data-[state=active]:text-white"
+                >
+                  <Baby className="w-4 h-4" />
+                  ANC Patients
+                </TabsTrigger>
+              )}
+              
+              {/* Diabetes/Glydex Tab for Dr. Vikas / Diabetes specialists */}
+              {(staffInfo?.name?.toLowerCase().includes('vikas') || 
+                staffInfo?.access_modules?.includes('glydex') ||
+                staffInfo?.specialization?.toLowerCase().includes('diabetes')) && (
+                <TabsTrigger 
+                  value="glydex" 
+                  data-testid="doc-tab-glydex"
+                  className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-purple-500 data-[state=active]:text-white"
+                >
+                  <Activity className="w-4 h-4" />
+                  Diabetes Patients
+                </TabsTrigger>
+              )}
+              
+              {/* Biometric Attendance for Doctors */}
+              <TabsTrigger 
+                value="biometric" 
+                data-testid="doc-tab-biometric"
+                className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-orange-500 data-[state=active]:text-white"
+              >
+                <Fingerprint className="w-4 h-4" />
+                Attendance
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Appointments Tab Content */}
+            <TabsContent value="appointments">
+              <Card className="p-4">
+                {/* Doctor Header with Clinic Toggle */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                  <div>
+                    <h2 className="font-semibold text-lg flex items-center gap-2">
+                      <Stethoscope className="w-5 h-5 text-teal-600" />
+                      {staffInfo?.doctor_name || staffInfo?.name}&apos;s Appointments
+                    </h2>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {appointments.length} appointment{appointments.length !== 1 ? 's' : ''} for {selectedDate}
+                    </p>
                   </div>
-                )}
-                
-                {/* Date Selector */}
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-gray-500" />
-                  <Input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-40"
-                    data-testid="doctor-date-select"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            {/* Quick Date Navigation */}
-            <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-              {[-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7].map(offset => {
-                const d = new Date();
-                d.setDate(d.getDate() + offset);
-                const dateStr = d.toISOString().split('T')[0];
-                const dayAppts = appointments.filter(a => a.date === dateStr);
-                const isSelected = dateStr === selectedDate;
-                const isToday = offset === 0;
-                const isPast = offset < 0;
-                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                return (
-                  <button
-                    key={offset}
-                    onClick={() => setSelectedDate(dateStr)}
-                    className={`flex flex-col items-center px-3 py-2 rounded-lg min-w-[60px] transition-colors ${
-                      isSelected 
-                        ? 'bg-teal-600 text-white' 
-                        : isToday
-                        ? 'bg-teal-100 hover:bg-teal-200 border-2 border-teal-400'
-                        : isPast
-                        ? 'bg-gray-50 hover:bg-gray-100 text-gray-600'
-                        : 'bg-gray-100 hover:bg-gray-200'
-                    }`}
-                    data-testid={`date-nav-${offset}`}
-                  >
-                    <span className="text-xs">{dayNames[d.getDay()]}</span>
-                    <span className="font-semibold">{d.getDate()}</span>
-                    {isToday && !isSelected && <span className="text-[10px] text-teal-600">Today</span>}
-                    {dayAppts.length > 0 && (
-                      <span className={`text-xs ${isSelected ? 'text-teal-100' : 'text-teal-600'}`}>
-                        {dayAppts.length}
-                      </span>
+                  
+                  {/* Clinic Toggle & Date Selector */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                    {/* Clinic Toggle - Only show if doctor works at multiple clinics */}
+                    {doctorClinics.length > 0 && (
+                      <div className="flex items-center gap-2">
+                        <label className="text-sm text-gray-600">Clinic:</label>
+                        <select
+                          value={selectedClinic}
+                          onChange={(e) => setSelectedClinic(e.target.value)}
+                          className="border rounded-lg px-3 py-1.5 text-sm bg-white min-w-[150px]"
+                          data-testid="doctor-clinic-select"
+                        >
+                          <option value="">All Clinics</option>
+                          {doctorClinics.map(clinic => (
+                            <option key={clinic} value={clinic}>{clinic}</option>
+                          ))}
+                        </select>
+                      </div>
                     )}
-                  </button>
-                );
-              })}
-            </div>
-            
-            {/* Status Summary */}
-            <div className="flex gap-4 mb-4 flex-wrap">
-              {['Booked', 'In Clinic', 'Completed'].map(status => {
-                const count = appointments.filter(a => a.status === status).length;
-                const colors = {
+                    
+                    {/* Date Selector */}
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-gray-500" />
+                      <Input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="w-40"
+                        data-testid="doctor-date-select"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Quick Date Navigation */}
+                <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+                  {[-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7].map(offset => {
+                    const d = new Date();
+                    d.setDate(d.getDate() + offset);
+                    const dateStr = d.toISOString().split('T')[0];
+                    const dayAppts = appointments.filter(a => a.date === dateStr);
+                    const isSelected = dateStr === selectedDate;
+                    const isToday = offset === 0;
+                    const isPast = offset < 0;
+                    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    return (
+                      <button
+                        key={offset}
+                        onClick={() => setSelectedDate(dateStr)}
+                        className={`flex flex-col items-center px-3 py-2 rounded-lg min-w-[60px] transition-colors ${
+                          isSelected 
+                            ? 'bg-teal-600 text-white' 
+                            : isToday
+                            ? 'bg-teal-100 hover:bg-teal-200 border-2 border-teal-400'
+                            : isPast
+                            ? 'bg-gray-50 hover:bg-gray-100 text-gray-600'
+                            : 'bg-gray-100 hover:bg-gray-200'
+                        }`}
+                        data-testid={`date-nav-${offset}`}
+                      >
+                        <span className="text-xs">{dayNames[d.getDay()]}</span>
+                        <span className="font-semibold">{d.getDate()}</span>
+                        {isToday && !isSelected && <span className="text-[10px] text-teal-600">Today</span>}
+                        {dayAppts.length > 0 && (
+                          <span className={`text-xs ${isSelected ? 'text-teal-100' : 'text-teal-600'}`}>
+                            {dayAppts.length}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                {/* Status Summary */}
+                <div className="flex gap-4 mb-4 flex-wrap">
+                  {['Booked', 'In Clinic', 'Completed'].map(status => {
+                    const count = appointments.filter(a => a.status === status).length;
+                    const colors = {
                   'Booked': 'bg-blue-100 text-blue-800 border-blue-200',
                   'In Clinic': 'bg-yellow-100 text-yellow-800 border-yellow-200',
                   'Completed': 'bg-green-100 text-green-800 border-green-200'
