@@ -106,11 +106,23 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
-        setCameraActive(true);
+        
+        // Wait for video to be ready before activating detection
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current.play();
+          setCameraActive(true);
+          console.log('Camera ready, video dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+        };
       }
     } catch (err) {
       console.error('Camera error:', err);
-      toast.error('Camera access denied. Please enable camera permissions.');
+      if (err.name === 'NotAllowedError') {
+        toast.error('Camera access denied. Please enable camera permissions in your browser settings.');
+      } else if (err.name === 'NotFoundError') {
+        toast.error('No camera found. Please ensure your device has a camera.');
+      } else {
+        toast.error('Camera error: ' + err.message);
+      }
     }
   };
 
