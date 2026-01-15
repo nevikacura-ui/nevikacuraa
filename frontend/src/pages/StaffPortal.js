@@ -2269,6 +2269,21 @@ const StaffPortal = () => {
                 </TabsTrigger>
               )}
               
+              {/* Sonography Bookings Tab for Dr. Neha / OBGY doctors */}
+              {(staffInfo?.name?.toLowerCase().includes('neha') || 
+                staffInfo?.access_modules?.includes('anc') ||
+                role === 'doctor_amnion') && (
+                <TabsTrigger 
+                  value="sonography" 
+                  onClick={() => fetchSonographyBookings()}
+                  data-testid="doc-tab-sonography"
+                  className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-purple-500 data-[state=active]:text-white"
+                >
+                  <Scan className="w-4 h-4" />
+                  Sonography
+                </TabsTrigger>
+              )}
+              
               {/* Diabetes/Glydex Tab for Dr. Vikas / Diabetes specialists */}
               {(staffInfo?.name?.toLowerCase().includes('vikas') || 
                 staffInfo?.access_modules?.includes('glydex') ||
