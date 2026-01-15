@@ -21,6 +21,8 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [loadingModels, setLoadingModels] = useState(true);
   const [cameraActive, setCameraActive] = useState(false);
+  const [cameraStarting, setCameraStarting] = useState(false);
+  const [cameraError, setCameraError] = useState(null);
   const [detecting, setDetecting] = useState(false);
   const [faceDetected, setFaceDetected] = useState(false);
   
