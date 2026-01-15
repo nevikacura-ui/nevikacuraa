@@ -1,66 +1,49 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import * as faceapi from 'face-api.js';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Badge } from './ui/badge';
+import React, { useState, useEffect, useRef } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { 
-  Camera, CheckCircle2, XCircle, Loader2, User, 
-  ScanFace, Clock, LogIn, LogOut, RefreshCw, AlertCircle
+  Camera, User, Clock, LogIn, LogOut, RefreshCw, 
+  AlertCircle, CheckCircle2, Loader2, Users
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
+const FaceBiometric = ({ staffName = '', clinic = 'pushpa' }) => {
   const videoRef = useRef(null);
-  const canvasRef = useRef(null);
   const streamRef = useRef(null);
   
-  const [modelsLoaded, setModelsLoaded] = useState(false);
-  const [loadingModels, setLoadingModels] = useState(true);
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraStarting, setCameraStarting] = useState(false);
   const [cameraError, setCameraError] = useState(null);
-  const [detecting, setDetecting] = useState(false);
-  const [faceDetected, setFaceDetected] = useState(false);
   
   // Registration
   const [showRegister, setShowRegister] = useState(false);
   const [registerForm, setRegisterForm] = useState({ staff_name: staffName, staff_id: '' });
   const [registering, setRegistering] = useState(false);
-  const [capturedDescriptor, setCapturedDescriptor] = useState(null);
   
   // Verification
   const [verifying, setVerifying] = useState(false);
-  const [verificationResult, setVerificationResult] = useState(null);
+  const [lastAction, setLastAction] = useState(null);
   
   // Attendance data
   const [todayAttendance, setTodayAttendance] = useState([]);
   const [registeredStaff, setRegisteredStaff] = useState([]);
 
-  // Load face-api.js models
+  // Fetch attendance data
   useEffect(() => {
-    const loadModels = async () => {
-      setLoadingModels(true);
-      try {
-        const MODEL_URL = '/models';
-        await Promise.all([
-          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-          faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-          faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-        ]);
-        setModelsLoaded(true);
-        console.log('Face-api.js models loaded successfully');
-      } catch (err) {
-        console.error('Error loading face-api.js models:', err);
-        toast.error('Failed to load face recognition models');
+    fetchTodayAttendance();
+    fetchRegisteredStaff();
+  }, [clinic]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
       }
-      setLoadingModels(false);
     };
-    
-    loadModels();
   }, []);
 
   const fetchTodayAttendance = async () => {
@@ -88,112 +71,61 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
     }
   };
 
-  // Fetch attendance data - must be after function declarations
-  useEffect(() => {
-    fetchTodayAttendance();
-    fetchRegisteredStaff();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clinic]);
-
-  // Start camera - simplified version matching working test page
   const startCamera = async () => {
-    console.log('=== START CAMERA CALLED ===');
+    console.log('Starting camera...');
     setCameraStarting(true);
     setCameraError(null);
     
-    // Check if mediaDevices is available
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      const err = 'Camera not supported on this browser. Please use Chrome or Safari.';
+      const err = 'Camera API not supported on this browser';
       setCameraError(err);
       setCameraStarting(false);
       toast.error(err);
       return;
     }
     
-    // Stop any existing stream first
+    // Stop existing stream
     if (streamRef.current) {
-      console.log('Stopping existing stream...');
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
     }
     
-    // Clear video source
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-    
-    // Small delay to ensure cleanup
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    // Try camera constraints - matching the working test page
-    const constraints = [
-      { name: 'Front camera (ideal)', video: { facingMode: 'user' } },
-      { name: 'Any camera', video: true },
-    ];
-    
-    let stream = null;
-    let lastError = null;
-    
-    for (const constraint of constraints) {
-      try {
-        console.log(`Trying: ${constraint.name}...`);
-        stream = await navigator.mediaDevices.getUserMedia({ video: constraint.video, audio: false });
-        console.log(`SUCCESS with: ${constraint.name}`);
+    try {
+      console.log('Requesting camera access...');
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'user' }, 
+        audio: false 
+      });
+      
+      console.log('Camera stream obtained!');
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        streamRef.current = stream;
         
-        // Get track info
-        const tracks = stream.getVideoTracks();
-        if (tracks.length > 0) {
-          const settings = tracks[0].getSettings();
-          console.log(`Camera: ${tracks[0].label}`);
-          console.log(`Resolution: ${settings.width}x${settings.height}`);
-        }
-        break;
-      } catch (e) {
-        console.log(`Failed: ${e.name} - ${e.message}`);
-        lastError = e;
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current.play()
+            .then(() => {
+              console.log('Video playing!');
+              setCameraActive(true);
+              setCameraStarting(false);
+              toast.success('Camera started!');
+            })
+            .catch(e => {
+              console.log('Play error:', e.message);
+              setCameraActive(true);
+              setCameraStarting(false);
+            });
+        };
       }
-    }
-    
-    if (!stream) {
-      const errorMsg = lastError ? `${lastError.name}: ${lastError.message}` : 'Could not access camera';
-      console.error('All camera constraints failed:', errorMsg);
-      setCameraError(errorMsg);
+    } catch (err) {
+      console.error('Camera error:', err.name, err.message);
+      setCameraError(`${err.name}: ${err.message}`);
       setCameraStarting(false);
-      toast.error(errorMsg);
-      return;
-    }
-    
-    // Attach to video element
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-      streamRef.current = stream;
-      
-      // Wait for video to be ready
-      videoRef.current.onloadedmetadata = async () => {
-        console.log('Video metadata loaded');
-        try {
-          await videoRef.current.play();
-          console.log('Video playing! Dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
-          setCameraActive(true);
-          setCameraStarting(false);
-          toast.success('Camera started!');
-        } catch (playErr) {
-          console.log('Play error (may need user tap):', playErr.message);
-          // Still set active - user can tap to play
-          setCameraActive(true);
-          setCameraStarting(false);
-        }
-      };
-      
-      videoRef.current.onerror = (e) => {
-        console.error('Video error:', e);
-        setCameraError('Video playback error');
-        setCameraStarting(false);
-      };
+      toast.error(`Camera error: ${err.message}`);
     }
   };
 
-  // Stop camera
   const stopCamera = () => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
@@ -204,557 +136,271 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
     }
     setCameraActive(false);
     setCameraStarting(false);
-    setFaceDetected(false);
   };
 
-  // Real-time face detection
-  const detectFace = useCallback(async () => {
-    if (!videoRef.current || !canvasRef.current || !modelsLoaded || !cameraActive) return null;
-    
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    
-    // Wait for video to have valid dimensions
-    if (video.videoWidth === 0 || video.videoHeight === 0) {
-      console.log('Video not ready yet, waiting...');
-      return null;
-    }
-    
-    try {
-      const displaySize = { width: video.videoWidth, height: video.videoHeight };
-      faceapi.matchDimensions(canvas, displaySize);
-      
-      const detection = await faceapi
-        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
-        .withFaceLandmarks()
-        .withFaceDescriptor();
-      
-      // Clear canvas
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      if (detection) {
-        setFaceDetected(true);
-        
-        // Draw face box
-        const resizedDetection = faceapi.resizeResults(detection, displaySize);
-        
-        // Draw green box around face
-        ctx.strokeStyle = '#22c55e';
-        ctx.lineWidth = 3;
-        const box = resizedDetection.detection.box;
-        ctx.strokeRect(box.x, box.y, box.width, box.height);
-        
-        // Draw landmarks
-        faceapi.draw.drawFaceLandmarks(canvas, resizedDetection);
-        
-        return detection.descriptor;
-      } else {
-        setFaceDetected(false);
-        return null;
-      }
-    } catch (err) {
-      console.error('Face detection error:', err);
-      setFaceDetected(false);
-      return null;
-    }
-  }, [modelsLoaded, cameraActive]);
-
-  // Continuous face detection loop
-  useEffect(() => {
-    let animationId;
-    
-    const detectLoop = async () => {
-      if (cameraActive && modelsLoaded && !detecting && !verifying && !registering) {
-        await detectFace();
-      }
-      animationId = requestAnimationFrame(detectLoop);
-    };
-    
-    if (cameraActive && modelsLoaded) {
-      detectLoop();
-    }
-    
-    return () => {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
-    };
-  }, [cameraActive, modelsLoaded, detecting, verifying, registering, detectFace]);
-
-  // Capture face for registration
-  const captureFaceForRegistration = async () => {
-    if (!faceDetected) {
-      toast.error('No face detected. Please position your face in the frame.');
-      return;
-    }
-    
-    setDetecting(true);
-    try {
-      const descriptor = await detectFace();
-      if (descriptor) {
-        const descriptorArray = Array.from(descriptor);
-        console.log('Face descriptor captured:', descriptorArray.length, 'values');
-        if (descriptorArray.length !== 128) {
-          toast.error(`Invalid face descriptor: expected 128 values, got ${descriptorArray.length}`);
-          setDetecting(false);
-          return;
-        }
-        setCapturedDescriptor(descriptorArray);
-        toast.success('Face captured! Click "Register" to save.');
-      } else {
-        toast.error('Could not capture face. Try again.');
-      }
-    } catch (err) {
-      console.error('Face capture error:', err);
-      toast.error('Error capturing face: ' + err.message);
-    }
-    setDetecting(false);
+  const capturePhoto = () => {
+    if (!videoRef.current) return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth || 640;
+    canvas.height = videoRef.current.videoHeight || 480;
+    canvas.getContext('2d').drawImage(videoRef.current, 0, 0);
+    return canvas.toDataURL('image/jpeg', 0.8);
   };
 
-  // Register face
   const handleRegister = async () => {
-    if (!registerForm.staff_name || !registerForm.staff_id) {
-      toast.error('Please fill in staff name and ID');
+    if (!registerForm.staff_name.trim()) {
+      toast.error('Please enter staff name');
       return;
     }
-    if (!capturedDescriptor) {
-      toast.error('Please capture your face first');
-      return;
-    }
-    if (capturedDescriptor.length !== 128) {
-      toast.error(`Invalid face data. Please capture face again. (Got ${capturedDescriptor.length} values, expected 128)`);
-      setCapturedDescriptor(null);
+    
+    const photo = capturePhoto();
+    if (!photo) {
+      toast.error('Could not capture photo');
       return;
     }
     
     setRegistering(true);
+    
     try {
-      console.log('Registering face with descriptor length:', capturedDescriptor.length);
       const res = await fetch(`${API}/api/face-attendance/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          staff_id: registerForm.staff_id,
           staff_name: registerForm.staff_name,
-          clinic: clinic,
-          face_descriptor: capturedDescriptor,
+          staff_id: registerForm.staff_id || registerForm.staff_name.toLowerCase().replace(/\s+/g, '_'),
+          face_data: photo,
+          clinic: clinic
         })
       });
       
       const data = await res.json();
-      console.log('Registration response:', data);
       
       if (data.success) {
-        toast.success(`Face registered for ${registerForm.staff_name}!`);
-        setShowRegister(false);
-        setCapturedDescriptor(null);
+        toast.success(`${registerForm.staff_name} registered successfully!`);
         setRegisterForm({ staff_name: '', staff_id: '' });
-        stopCamera();
+        setShowRegister(false);
         fetchRegisteredStaff();
       } else {
-        toast.error(data.detail || data.message || 'Registration failed');
+        toast.error(data.error || data.detail || 'Registration failed');
       }
     } catch (err) {
-      console.error('Registration error:', err);
       toast.error('Registration failed: ' + err.message);
     }
+    
     setRegistering(false);
   };
 
-  // Verify face for check-in/check-out
-  const handleVerification = async (type = 'check_in') => {
-    if (!faceDetected) {
-      toast.error('No face detected. Please position your face in the frame.');
+  const handleAttendance = async (action) => {
+    const photo = capturePhoto();
+    if (!photo) {
+      toast.error('Could not capture photo');
       return;
     }
     
     setVerifying(true);
-    setVerificationResult(null);
     
     try {
-      const descriptor = await detectFace();
-      if (!descriptor) {
-        toast.error('Could not detect face. Try again.');
-        setVerifying(false);
-        return;
-      }
-      
       const res = await fetch(`${API}/api/face-attendance/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          face_descriptor: Array.from(descriptor),
+          face_data: photo,
           clinic: clinic,
-          action_type: type,
+          action: action
         })
       });
       
       const data = await res.json();
       
       if (data.verified) {
-        setVerificationResult({
-          success: true,
-          staff_name: data.staff_name,
-          message: data.message,
-          confidence: data.confidence,
+        const actionText = action === 'check_in' ? 'Checked In' : 'Checked Out';
+        toast.success(`${actionText}: ${data.staff_name}`);
+        setLastAction({ 
+          action, 
+          name: data.staff_name, 
+          time: new Date().toLocaleTimeString(),
+          message: data.message
         });
-        toast.success(data.message);
         fetchTodayAttendance();
       } else {
-        setVerificationResult({
-          success: false,
-          message: data.message || 'Face not recognized',
-        });
         toast.error(data.message || 'Face not recognized');
       }
     } catch (err) {
-      toast.error('Verification failed');
-      setVerificationResult({ success: false, message: 'Verification error' });
+      toast.error('Verification failed: ' + err.message);
     }
+    
     setVerifying(false);
   };
 
-  // Clinic display names
-  const clinicNames = {
-    'pushpa': 'Pushpa Clinic',
-    'amnion': 'Amnion Clinic',
-    'pharmacy': 'Orange Pharmacy'
-  };
-
-  if (loadingModels) {
-    return (
-      <Card className="p-8">
-        <div className="flex flex-col items-center justify-center gap-4">
-          <Loader2 className="w-12 h-12 animate-spin text-violet-600" />
-          <p className="text-lg font-medium">Loading Face Recognition...</p>
-          <p className="text-sm text-gray-500">Downloading AI models (first time only)</p>
-        </div>
-      </Card>
-    );
-  }
-
   return (
     <div className="space-y-4">
-      {/* Header */}
-      <div className={`bg-gradient-to-r rounded-xl p-4 text-white ${
-        clinic === 'pharmacy' ? 'from-orange-500 to-orange-600' : 
-        clinic === 'pushpa' ? 'from-violet-600 to-purple-600' : 
-        'from-blue-600 to-indigo-600'
-      }`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <ScanFace className="w-8 h-8" />
-            <div>
-              <h2 className="text-xl font-bold">Face Recognition Attendance</h2>
-              <p className="text-sm opacity-90">{clinicNames[clinic] || clinic}</p>
-            </div>
-          </div>
-          <Button 
-            onClick={() => { setShowRegister(true); startCamera(); }} 
-            className="bg-white text-gray-800 hover:bg-gray-100"
-            size="sm"
+      {/* Main Camera Card */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Camera className="w-5 h-5 text-violet-600" />
+            Face Attendance
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Video Container */}
+          <div 
+            className="relative bg-black rounded-xl overflow-hidden aspect-video max-w-md mx-auto"
+            onClick={() => {
+              if (videoRef.current?.paused && streamRef.current) {
+                videoRef.current.play();
+              }
+            }}
           >
-            <User className="w-4 h-4 mr-1" /> Register Staff
-          </Button>
-        </div>
-      </div>
-
-      {/* Camera View for Check-in/out */}
-      {!showRegister && (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Camera className="w-5 h-5" />
-              Quick Check-in / Check-out
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {!cameraActive && !cameraStarting ? (
-              <div className="text-center py-8">
-                <ScanFace className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-                <p className="text-gray-500 mb-4">Start camera for face verification</p>
-                <Button onClick={startCamera} className="bg-violet-600 hover:bg-violet-700" disabled={cameraStarting}>
-                  <Camera className="w-4 h-4 mr-2" /> Start Camera
-                </Button>
-                <p className="text-xs text-gray-400 mt-3">
-                  Make sure to allow camera access when prompted
-                </p>
-                
-                {/* Show error if camera failed */}
-                {cameraError && (
-                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-red-800 font-medium flex items-center justify-center gap-2">
-                      <AlertCircle className="w-4 h-4" />
-                      Camera Error
-                    </p>
-                    <p className="text-red-600 text-sm mt-1">{cameraError}</p>
-                    <Button 
-                      onClick={() => { setCameraError(null); startCamera(); }} 
-                      variant="outline"
-                      size="sm"
-                      className="mt-3 text-red-600 border-red-300"
-                    >
-                      <RefreshCw className="w-4 h-4 mr-1" /> Try Again
-                    </Button>
-                  </div>
-                )}
-                
-                {/* Troubleshooting tips */}
-                <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-left text-sm">
-                  <p className="font-medium text-amber-800 mb-2">Camera not starting?</p>
-                  <ul className="text-amber-700 space-y-1 text-xs">
-                    <li>• Check browser has camera permission (Settings → Site Settings → Camera)</li>
-                    <li>• Close other apps using camera</li>
-                    <li>• Try refreshing the page</li>
-                    <li>• Use Chrome or Safari browser</li>
-                  </ul>
-                </div>
-              </div>
-            ) : cameraStarting && !cameraActive ? (
-              <div className="text-center py-8">
-                <Loader2 className="w-12 h-12 mx-auto text-violet-500 animate-spin mb-4" />
-                <p className="text-gray-600 font-medium">Starting camera...</p>
-                <p className="text-gray-400 text-sm mt-2">Please allow camera access if prompted</p>
-                <Button 
-                  onClick={stopCamera} 
-                  variant="outline"
-                  size="sm"
-                  className="mt-4"
-                >
-                  Cancel
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {/* Retry button - Always visible when camera is active */}
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-green-600 flex items-center gap-1">
-                    <CheckCircle2 className="w-4 h-4" /> Camera active
-                  </span>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => { stopCamera(); setTimeout(startCamera, 500); }}
-                    className="text-orange-600 border-orange-300 hover:bg-orange-50"
-                  >
-                    <RefreshCw className="w-4 h-4 mr-1" /> Restart Camera
-                  </Button>
-                </div>
-                {/* Video Feed */}
-                <div 
-                  className="relative bg-black rounded-xl overflow-hidden aspect-video max-w-md mx-auto cursor-pointer"
-                  onClick={() => {
-                    // Fallback for mobile - tap to play
-                    if (videoRef.current && videoRef.current.paused) {
-                      videoRef.current.play().catch(e => console.log('Tap play error:', e));
-                    }
-                  }}
-                >
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover"
-                    style={{ transform: 'scaleX(-1)' }}
-                  />
-                  <canvas
-                    ref={canvasRef}
-                    className="absolute top-0 left-0 w-full h-full pointer-events-none"
-                    style={{ transform: 'scaleX(-1)' }}
-                  />
-                  
-                  {/* Loading indicator when camera not ready */}
-                  {!cameraActive && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80">
-                      <div className="text-center text-white">
-                        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
-                        <p className="text-sm">Starting camera...</p>
-                        <p className="text-xs text-gray-400 mt-1">Tap here if camera does not start</p>
-                      </div>
-                    </div>
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+              style={{ transform: 'scaleX(-1)' }}
+            />
+            
+            {!cameraActive && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+                <div className="text-center text-white p-4">
+                  {cameraStarting ? (
+                    <>
+                      <Loader2 className="w-10 h-10 animate-spin mx-auto mb-2" />
+                      <p>Starting camera...</p>
+                    </>
+                  ) : (
+                    <>
+                      <Camera className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm opacity-75">Camera preview</p>
+                    </>
                   )}
-                  
-                  {/* Face detection indicator */}
-                  <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium ${
-                    faceDetected ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-                  }`}>
-                    {faceDetected ? '✓ Face Detected' : '✗ No Face'}
-                  </div>
-                </div>
-
-                {/* Verification Result */}
-                {verificationResult && (
-                  <div className={`p-4 rounded-xl ${
-                    verificationResult.success 
-                      ? 'bg-green-50 border-2 border-green-400' 
-                      : 'bg-red-50 border-2 border-red-400'
-                  }`}>
-                    <div className="flex items-center gap-3">
-                      {verificationResult.success ? (
-                        <CheckCircle2 className="w-10 h-10 text-green-600" />
-                      ) : (
-                        <XCircle className="w-10 h-10 text-red-600" />
-                      )}
-                      <div>
-                        <p className={`font-bold text-lg ${verificationResult.success ? 'text-green-800' : 'text-red-800'}`}>
-                          {verificationResult.success ? `Welcome, ${verificationResult.staff_name}!` : 'Not Recognized'}
-                        </p>
-                        <p className={`text-sm ${verificationResult.success ? 'text-green-600' : 'text-red-600'}`}>
-                          {verificationResult.message}
-                        </p>
-                        {verificationResult.confidence && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            Confidence: {verificationResult.confidence.toFixed(1)}%
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="flex gap-3 justify-center">
-                  <Button 
-                    onClick={() => handleVerification('check_in')} 
-                    disabled={verifying || !faceDetected}
-                    className="bg-green-600 hover:bg-green-700 flex-1 max-w-[150px]"
-                  >
-                    {verifying ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <LogIn className="w-4 h-4 mr-2" />}
-                    Check In
-                  </Button>
-                  <Button 
-                    onClick={() => handleVerification('check_out')} 
-                    disabled={verifying || !faceDetected}
-                    className="bg-orange-600 hover:bg-orange-700 flex-1 max-w-[150px]"
-                  >
-                    {verifying ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <LogOut className="w-4 h-4 mr-2" />}
-                    Check Out
-                  </Button>
-                  <Button 
-                    onClick={stopCamera} 
-                    variant="outline"
-                    className="flex-1 max-w-[100px]"
-                  >
-                    Stop
-                  </Button>
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
-      )}
+            
+            {cameraActive && (
+              <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+                <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                LIVE
+              </div>
+            )}
+          </div>
+
+          {/* Camera Controls */}
+          {!cameraActive ? (
+            <Button 
+              onClick={startCamera} 
+              className="w-full bg-violet-600 hover:bg-violet-700"
+              disabled={cameraStarting}
+            >
+              {cameraStarting ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Starting...</>
+              ) : (
+                <><Camera className="w-4 h-4 mr-2" /> Start Camera</>
+              )}
+            </Button>
+          ) : (
+            <div className="space-y-3">
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => handleAttendance('check_in')} 
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  disabled={verifying}
+                >
+                  {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4 mr-1" />}
+                  Check In
+                </Button>
+                <Button 
+                  onClick={() => handleAttendance('check_out')} 
+                  className="flex-1 bg-orange-600 hover:bg-orange-700"
+                  disabled={verifying}
+                >
+                  {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4 mr-1" />}
+                  Check Out
+                </Button>
+              </div>
+              
+              {/* Secondary Actions */}
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowRegister(!showRegister)}
+                  className="flex-1"
+                >
+                  <User className="w-4 h-4 mr-1" />
+                  {showRegister ? 'Cancel' : 'Register New'}
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => { stopCamera(); setTimeout(startCamera, 300); }}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Camera Error */}
+          {cameraError && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800 font-medium flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" /> Camera Error
+              </p>
+              <p className="text-red-600 text-sm mt-1">{cameraError}</p>
+              <Button onClick={startCamera} size="sm" variant="outline" className="mt-2 text-red-600">
+                Try Again
+              </Button>
+            </div>
+          )}
+
+          {/* Last Action */}
+          {lastAction && (
+            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4" />
+                <span className="font-medium">{lastAction.name}</span>
+                <span className="text-sm">
+                  {lastAction.action === 'check_in' ? 'checked in' : 'checked out'} at {lastAction.time}
+                </span>
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Registration Form */}
-      {showRegister && (
+      {showRegister && cameraActive && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <User className="w-5 h-5" />
-                Register Staff Face
-              </span>
-              <Button variant="ghost" size="sm" onClick={() => { setShowRegister(false); stopCamera(); setCapturedDescriptor(null); }}>
-                ✕
-              </Button>
+            <CardTitle className="text-base flex items-center gap-2">
+              <User className="w-4 h-4" />
+              Register New Staff
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>Staff Name</Label>
-                <Input
-                  value={registerForm.staff_name}
-                  onChange={(e) => setRegisterForm({ ...registerForm, staff_name: e.target.value })}
-                  placeholder="e.g., Dr. Neha"
-                />
-              </div>
-              <div>
-                <Label>Staff ID</Label>
-                <Input
-                  value={registerForm.staff_id}
-                  onChange={(e) => setRegisterForm({ ...registerForm, staff_id: e.target.value })}
-                  placeholder="e.g., staff_001"
-                />
-              </div>
-            </div>
-
-            {/* Camera for Registration */}
-            {cameraActive && (
-              <div className="space-y-3">
-                <div 
-                  className="relative bg-black rounded-xl overflow-hidden aspect-video max-w-sm mx-auto cursor-pointer"
-                  onClick={() => {
-                    if (videoRef.current && videoRef.current.paused) {
-                      videoRef.current.play().catch(e => console.log('Tap play error:', e));
-                    }
-                  }}
-                >
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover"
-                    style={{ transform: 'scaleX(-1)' }}
-                  />
-                  <canvas
-                    ref={canvasRef}
-                    className="absolute top-0 left-0 w-full h-full pointer-events-none"
-                    style={{ transform: 'scaleX(-1)' }}
-                  />
-                  <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${
-                    faceDetected ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-                  }`}>
-                    {faceDetected ? '✓ Face OK' : '✗ No Face'}
-                  </div>
-                </div>
-
-                {capturedDescriptor ? (
-                  <div className="bg-green-50 border border-green-300 rounded-lg p-3 text-center">
-                    <CheckCircle2 className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                    <p className="text-green-800 font-medium">Face Captured Successfully!</p>
-                    <p className="text-xs text-green-600">Click Register to save</p>
-                  </div>
-                ) : (
-                  <p className="text-center text-sm text-gray-500">
-                    Position your face in the frame and click Capture
-                  </p>
-                )}
-              </div>
-            )}
-
-            <div className="flex gap-2">
-              {!capturedDescriptor ? (
-                <Button 
-                  onClick={captureFaceForRegistration} 
-                  disabled={!cameraActive || detecting || !faceDetected}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700"
-                >
-                  {detecting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Camera className="w-4 h-4 mr-2" />}
-                  Capture Face
-                </Button>
+          <CardContent className="space-y-3">
+            <Input
+              placeholder="Staff Name *"
+              value={registerForm.staff_name}
+              onChange={(e) => setRegisterForm(prev => ({ ...prev, staff_name: e.target.value }))}
+            />
+            <Input
+              placeholder="Staff ID (optional)"
+              value={registerForm.staff_id}
+              onChange={(e) => setRegisterForm(prev => ({ ...prev, staff_id: e.target.value }))}
+            />
+            <Button 
+              onClick={handleRegister}
+              className="w-full bg-violet-600 hover:bg-violet-700"
+              disabled={registering}
+            >
+              {registering ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Registering...</>
               ) : (
-                <>
-                  <Button 
-                    onClick={() => setCapturedDescriptor(null)} 
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    Retake
-                  </Button>
-                  <Button 
-                    onClick={handleRegister} 
-                    disabled={registering}
-                    className="flex-1 bg-green-600 hover:bg-green-700"
-                  >
-                    {registering ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
-                    Register
-                  </Button>
-                </>
+                <><Camera className="w-4 h-4 mr-2" /> Capture & Register</>
               )}
-            </div>
+            </Button>
           </CardContent>
         </Card>
       )}
@@ -762,39 +408,35 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
       {/* Today's Attendance */}
       <Card>
         <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              Today&apos;s Attendance
-            </CardTitle>
-            <Button variant="ghost" size="sm" onClick={fetchTodayAttendance}>
-              <RefreshCw className="w-4 h-4" />
-            </Button>
-          </div>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Clock className="w-4 h-4" />
+            Today's Attendance ({todayAttendance.length})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {todayAttendance.length === 0 ? (
-            <p className="text-center text-gray-500 py-4">No attendance records today</p>
+            <p className="text-gray-500 text-sm text-center py-4">No attendance records yet</p>
           ) : (
             <div className="space-y-2">
               {todayAttendance.map((record, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-violet-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium">{record.staff_name}</p>
-                      <p className="text-xs text-gray-500">{record.staff_id}</p>
-                    </div>
+                <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-gray-400" />
+                    <span className="font-medium text-sm">{record.staff_name}</span>
                   </div>
-                  <div className="text-right">
-                    <Badge className={record.check_out ? 'bg-gray-500' : 'bg-green-500'}>
-                      {record.check_out ? 'Completed' : 'Present'}
-                    </Badge>
-                    <p className="text-xs text-gray-500 mt-1">
-                      In: {record.check_in} {record.check_out && `| Out: ${record.check_out}`}
-                    </p>
+                  <div className="flex gap-3 text-xs">
+                    {record.check_in && (
+                      <span className="text-green-600">
+                        <LogIn className="w-3 h-3 inline mr-1" />
+                        {record.check_in}
+                      </span>
+                    )}
+                    {record.check_out && (
+                      <span className="text-orange-600">
+                        <LogOut className="w-3 h-3 inline mr-1" />
+                        {record.check_out}
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -806,32 +448,20 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
       {/* Registered Staff */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <User className="w-5 h-5" />
+          <CardTitle className="text-base flex items-center gap-2">
+            <Users className="w-4 h-4" />
             Registered Staff ({registeredStaff.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
           {registeredStaff.length === 0 ? (
-            <div className="text-center py-4">
-              <AlertCircle className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-              <p className="text-gray-500">No staff registered yet</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="mt-2"
-                onClick={() => { setShowRegister(true); startCamera(); }}
-              >
-                Register First Staff
-              </Button>
-            </div>
+            <p className="text-gray-500 text-sm text-center py-4">No staff registered yet</p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {registeredStaff.map((staff, idx) => (
-                <Badge key={idx} variant="secondary" className="py-1 px-3">
-                  <User className="w-3 h-3 mr-1" />
+                <span key={idx} className="px-3 py-1 bg-violet-100 text-violet-800 rounded-full text-sm">
                   {staff.staff_name}
-                </Badge>
+                </span>
               ))}
             </div>
           )}
@@ -839,4 +469,6 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
       </Card>
     </div>
   );
-}
+};
+
+export default FaceBiometric;
