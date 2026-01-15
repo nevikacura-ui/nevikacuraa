@@ -279,6 +279,65 @@ async def get_attendance_history(staff_id: str, days: int = 30):
         }
     }
 
+@router.get("/monthly-report")
+async def get_monthly_report(clinic: str, year: int = None, month: int = None):
+    """Get monthly attendance report for all staff in a clinic"""
+    from calendar import monthrange
+    
+    now = datetime.now()
+    year = year or now.year
+    month = month or now.month
+    
+    # Get date range for the month
+    _, last_day = monthrange(year, month)
+    start_date = f"{year}-{month:02d}-01"
+    end_date = f"{year}-{month:02d}-{last_day:02d}"
+    
+    # Get all staff for this clinic
+    staff_list = await db.biometric_devices.find(
+        {"clinic": {"$regex": clinic, "$options": "i"}, "is_active": True},
+        {"_id": 0}
+    ).to_list(50)
+    
+    staff_ids = list(set(s.get("staff_id") for s in staff_list))
+    
+    # Get all attendance records for the month
+    attendance_records = await db.biometric_attendance.find({
+        "staff_id": {"$in": staff_ids},
+        "date": {"$gte": start_date, "$lte": end_date}
+    }, {"_id": 0}).to_list(1000)
+    
+    # Group by staff
+    staff_report = []
+    for staff_id in staff_ids:
+        staff_info = next((s for s in staff_list if s.get("staff_id") == staff_id), {})
+        staff_records = [r for r in attendance_records if r.get("staff_id") == staff_id]
+        
+        present_days = len([r for r in staff_records if r.get("status") in ["present", "late"]])
+        late_days = len([r for r in staff_records if r.get("status") == "late"])
+        
+        staff_report.append({
+            "staff_id": staff_id,
+            "staff_name": staff_info.get("staff_name", "Unknown"),
+            "present_days": present_days,
+            "late_days": late_days,
+            "absent_days": last_day - present_days,  # Simplified calculation
+            "attendance_rate": round((present_days / last_day) * 100, 1) if last_day > 0 else 0
+        })
+    
+    return {
+        "success": True,
+        "clinic": clinic,
+        "year": year,
+        "month": month,
+        "total_working_days": last_day,
+        "staff_report": staff_report,
+        "summary": {
+            "total_staff": len(staff_report),
+            "avg_attendance_rate": round(sum(s["attendance_rate"] for s in staff_report) / len(staff_report), 1) if staff_report else 0
+        }
+    }
+
 @router.get("/report/{clinic}")
 async def get_clinic_attendance_report(clinic: str, date: Optional[str] = None):
     """Get attendance report for all staff in a clinic"""
