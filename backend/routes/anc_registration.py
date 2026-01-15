@@ -966,9 +966,29 @@ async def list_anc_forms(clinic: str = None, status: str = None):
     
     forms = await db.anc_forms.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
     
-    # Get counts
+    # Add expiry info to each form (1 month = 30 days)
+    now = datetime.now(timezone.utc)
+    for form in forms:
+        created_at = form.get("created_at")
+        if created_at and form.get("status") == "allotted":
+            try:
+                created_date = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+                expiry_date = created_date + timedelta(days=30)
+                form["expires_at"] = expiry_date.isoformat()
+                form["is_expired"] = now > expiry_date
+                days_left = (expiry_date - now).days
+                form["days_until_expiry"] = max(0, days_left)
+            except Exception:
+                form["is_expired"] = False
+                form["days_until_expiry"] = None
+        else:
+            form["is_expired"] = False
+            form["days_until_expiry"] = None
+    
+    # Get counts (excluding expired)
     total = len(forms)
-    allotted = len([f for f in forms if f["status"] == "allotted"])
+    allotted = len([f for f in forms if f["status"] == "allotted" and not f.get("is_expired")])
+    expired = len([f for f in forms if f["status"] == "allotted" and f.get("is_expired")])
     filled = len([f for f in forms if f["status"] == "filled"])
     
     return {
@@ -977,6 +997,91 @@ async def list_anc_forms(clinic: str = None, status: str = None):
         "counts": {
             "total": total,
             "allotted": allotted,
+            "expired": expired,
             "filled": filled
         }
+    }
+
+@router.post("/form/{form_id}/resend")
+async def resend_anc_form_link(form_id: str):
+    """Resend/Regenerate ANC form link (creates new form with same patient data)"""
+    old_form = await db.anc_forms.find_one({"id": form_id}, {"_id": 0})
+    
+    if not old_form:
+        return {"error": "Form not found"}
+    
+    # Create new form with same patient data
+    new_form_id = str(uuid.uuid4())
+    base_url = os.environ.get("FRONTEND_URL", "https://nevika-health-4.preview.emergentagent.com")
+    new_form_link = f"{base_url}/anc-form/{new_form_id}"
+    
+    new_form_record = {
+        "id": new_form_id,
+        "patient_id": old_form.get("patient_id"),
+        "patient_name": old_form.get("patient_name"),
+        "patient_phone": old_form.get("patient_phone"),
+        "patient_email": old_form.get("patient_email"),
+        "clinic": old_form.get("clinic"),
+        "doctor": old_form.get("doctor"),
+        "status": "allotted",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "sent_via": old_form.get("sent_via", "both"),
+        "form_link": new_form_link,
+        "form_data": None,
+        "submitted_at": None,
+        "resent_from": form_id
+    }
+    
+    await db.anc_forms.insert_one(new_form_record)
+    
+    # Mark old form as replaced
+    await db.anc_forms.update_one(
+        {"id": form_id},
+        {"$set": {"replaced_by": new_form_id}}
+    )
+    
+    # Send notifications
+    email_sent = False
+    sms_sent = False
+    send_via = old_form.get("sent_via", "both")
+    
+    if old_form.get("patient_email") and send_via in ["email", "both"]:
+        try:
+            email_html = f"""
+            <div style="font-family: Arial; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #ec4899, #8b5cf6); color: white; padding: 20px; text-align: center; border-radius: 12px 12px 0 0;">
+                    <h2>👶 New ANC Form Link</h2>
+                </div>
+                <div style="padding: 20px; background: #fdf4ff;">
+                    <p>Dear <strong>{old_form.get('patient_name')}</strong>,</p>
+                    <p>Here is your new ANC registration form link:</p>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <a href="{new_form_link}" style="background: linear-gradient(135deg, #ec4899, #8b5cf6); color: white; padding: 15px 30px; border-radius: 25px; text-decoration: none; font-weight: bold;">Fill ANC Form</a>
+                    </div>
+                    <p style="font-size: 14px; color: #666;">This link is valid for 30 days.</p>
+                </div>
+            </div>
+            """
+            if send_email_notification:
+                await send_email_notification("👶 New ANC Form Link - Nevika Cura", email_html, old_form.get("patient_email"), "👶 New ANC Form Link", email_html)
+                email_sent = True
+        except Exception as e:
+            logger.error(f"Failed to send ANC resend email: {e}")
+    
+    if old_form.get("patient_phone") and send_via in ["sms", "both"]:
+        try:
+            sms_text = f"Dear {old_form.get('patient_name')}, Here is your new ANC Registration Form link: {new_form_link} - Nevika Cura"
+            if send_sms_notification:
+                await send_sms_notification(old_form.get("patient_phone"), sms_text)
+                sms_sent = True
+        except Exception as e:
+            logger.error(f"Failed to send ANC resend SMS: {e}")
+    
+    return {
+        "success": True,
+        "new_form_id": new_form_id,
+        "new_form_link": new_form_link,
+        "email_sent": email_sent,
+        "sms_sent": sms_sent,
+        "message": f"New ANC form link sent to {old_form.get('patient_name')}"
     }
