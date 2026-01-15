@@ -2105,6 +2105,7 @@ const StaffPortal = () => {
                 <ANCRegistration 
                   clinic={staffInfo?.clinic}
                   staffName={staffInfo?.name}
+                  doctor={staffInfo?.name || 'Dr. Neha Patel'}
                 />
               </TabsContent>
             )}
