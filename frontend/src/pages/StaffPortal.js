@@ -2602,6 +2602,21 @@ const StaffPortal = () => {
                       >
                         <RefreshCw className={`w-4 h-4 ${loadingSonography ? 'animate-spin' : ''}`} />
                       </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={sendSonographyReminders}
+                        disabled={sendingReminders}
+                        className="border-purple-300 text-purple-600 hover:bg-purple-50"
+                        title="Send SMS reminders for upcoming scans (within 30 mins)"
+                      >
+                        {sendingReminders ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                        ) : (
+                          <Bell className="w-4 h-4 mr-1" />
+                        )}
+                        Send Reminders
+                      </Button>
                     </div>
                   </div>
                   
