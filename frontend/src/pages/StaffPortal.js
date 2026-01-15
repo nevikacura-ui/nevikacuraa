@@ -1704,6 +1704,7 @@ const StaffPortal = () => {
                         type="date"
                         value={emergencyForm.date}
                         onChange={(e) => setEmergencyForm({ ...emergencyForm, date: e.target.value })}
+                        min={getIndianDate()}
                         data-testid="emergency-date"
                       />
                     </div>
