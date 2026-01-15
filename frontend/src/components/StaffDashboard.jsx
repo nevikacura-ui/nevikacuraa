@@ -419,6 +419,78 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
         )}
       </div>
 
+      {/* Live Queue Widget */}
+      <Card className="bg-gradient-to-r from-cyan-50 to-blue-50 border-cyan-200">
+        <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <Users className="w-5 h-5 text-cyan-600" />
+              Live Queue
+            </CardTitle>
+            <a href="/queue" target="_blank" rel="noopener noreferrer">
+              <Button variant="ghost" size="sm" className="text-cyan-600 hover:text-cyan-700">
+                <ExternalLink className="w-4 h-4 mr-1" />
+                Full View
+              </Button>
+            </a>
+          </div>
+        </CardHeader>
+        <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+              <p className="text-3xl font-bold text-green-600">{queueStats.serving}</p>
+              <p className="text-xs text-gray-500">Being Served</p>
+            </div>
+            <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+              <p className="text-3xl font-bold text-amber-600">{queueStats.waiting}</p>
+              <p className="text-xs text-gray-500">Waiting</p>
+            </div>
+            <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+              <p className="text-3xl font-bold text-blue-600">{queueStats.avgWait}<span className="text-lg">m</span></p>
+              <p className="text-xs text-gray-500">Avg Wait</p>
+            </div>
+          </div>
+          <div className="mt-3 flex gap-2">
+            <Button 
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+              size="sm"
+              onClick={() => {
+                // Call next patient via API
+                const token = localStorage.getItem('staffToken');
+                const clinicParam = staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 'pushpa';
+                fetch(`${API}/api/live-queue/staff/call-next/${clinicParam}`, {
+                  method: 'POST',
+                  headers: { 'Authorization': `Bearer ${token}` }
+                }).then(res => res.json()).then(data => {
+                  if (data.success) {
+                    alert(`Called: ${data.called_patient?.name || 'Next patient'}`);
+                    // Refresh queue stats
+                    fetch(`${API}/api/live-queue/status/${clinicParam}`)
+                      .then(r => r.json())
+                      .then(q => setQueueStats({
+                        waiting: q.stats?.total_waiting || 0,
+                        serving: q.stats?.currently_serving || 0,
+                        avgWait: q.stats?.avg_wait_time_minutes || 0
+                      }));
+                  } else {
+                    alert(data.message || 'No patients waiting');
+                  }
+                }).catch(e => console.error(e));
+              }}
+            >
+              <PlayCircle className="w-4 h-4 mr-1" />
+              Call Next
+            </Button>
+            <a href={`/queue?clinic=${staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 'pushpa'}`} target="_blank" rel="noopener noreferrer" className="flex-1">
+              <Button variant="outline" className="w-full border-cyan-300 text-cyan-700" size="sm">
+                <Users className="w-4 h-4 mr-1" />
+                Manage Queue
+              </Button>
+            </a>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Quick Actions - Grid on mobile */}
       <Card>
         <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
