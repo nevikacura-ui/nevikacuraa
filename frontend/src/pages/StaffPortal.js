@@ -2375,87 +2375,170 @@ const StaffPortal = () => {
                     <h4 className="font-medium text-gray-700 border-b pb-2">Consultation Fees</h4>
                     <div className="grid gap-2">
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span>New Patient Consultation</span>
-                        <span className="font-semibold text-indigo-600">₹500</span>
+                        <div>
+                          <span className="font-medium">G1</span>
+                          <span className="text-gray-500 text-sm ml-2">General - First</span>
+                        </div>
+                        <span className="font-semibold text-gray-700">₹150</span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span>Follow-up Consultation</span>
-                        <span className="font-semibold text-indigo-600">₹300</span>
+                        <div>
+                          <span className="font-medium">G2</span>
+                          <span className="text-gray-500 text-sm ml-2">General - Follow up</span>
+                        </div>
+                        <span className="font-semibold text-gray-700">₹100</span>
                       </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span>Emergency Consultation</span>
-                        <span className="font-semibold text-red-600">₹800</span>
+                      <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-blue-700">S1</span>
+                          <span className="text-blue-600 text-sm ml-2">Speciality - First</span>
+                        </div>
+                        <span className="font-semibold text-blue-700">₹300</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-blue-700">S2</span>
+                          <span className="text-blue-600 text-sm ml-2">Speciality - Follow up</span>
+                        </div>
+                        <span className="font-semibold text-blue-700">₹200</span>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Sonography Charges */}
+                  {/* Diabetes Fees */}
                   <div className="space-y-3">
                     <h4 className="font-medium text-purple-700 border-b pb-2 flex items-center gap-2">
-                      <Scan className="w-4 h-4" />
-                      Sonography Charges
+                      <Activity className="w-4 h-4" />
+                      Diabetes (Glydex)
                     </h4>
                     <div className="grid gap-2">
                       <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
                         <div>
-                          <span className="font-medium">Early Pregnancy Scan</span>
-                          <p className="text-xs text-gray-500">6-10 weeks</p>
+                          <span className="font-medium text-purple-700">D1</span>
+                          <span className="text-purple-600 text-sm ml-2">Diabetes - First</span>
                         </div>
-                        <span className="font-semibold text-purple-600">₹1,200</span>
+                        <span className="font-semibold text-purple-700">₹500</span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
                         <div>
-                          <span className="font-medium">NT Scan</span>
-                          <p className="text-xs text-gray-500">11-14 weeks</p>
+                          <span className="font-medium text-purple-700">D2</span>
+                          <span className="text-purple-600 text-sm ml-2">Diabetes - Follow up</span>
                         </div>
-                        <span className="font-semibold text-purple-600">₹2,000</span>
+                        <span className="font-semibold text-purple-700">₹400</span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
                         <div>
-                          <span className="font-medium">Anomaly Scan (TIFFA)</span>
-                          <p className="text-xs text-gray-500">18-22 weeks</p>
+                          <span className="font-medium text-purple-700">D3</span>
+                          <span className="text-purple-600 text-sm ml-2">Diabetes - Follow up</span>
                         </div>
-                        <span className="font-semibold text-purple-600">₹2,500</span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                        <div>
-                          <span className="font-medium">Growth Scan</span>
-                          <p className="text-xs text-gray-500">28-40 weeks</p>
-                        </div>
-                        <span className="font-semibold text-purple-600">₹1,500</span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                        <div>
-                          <span className="font-medium">Doppler Study</span>
-                          <p className="text-xs text-gray-500">Blood flow assessment</p>
-                        </div>
-                        <span className="font-semibold text-purple-600">₹1,800</span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                        <div>
-                          <span className="font-medium">TVS (Transvaginal)</span>
-                          <p className="text-xs text-gray-500">Pelvic scan</p>
-                        </div>
-                        <span className="font-semibold text-purple-600">₹1,200</span>
+                        <span className="font-semibold text-purple-700">₹300</span>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Other Procedures */}
+                  {/* OBGY Fees */}
                   <div className="space-y-3">
-                    <h4 className="font-medium text-gray-700 border-b pb-2">Other Procedures</h4>
+                    <h4 className="font-medium text-pink-700 border-b pb-2 flex items-center gap-2">
+                      <Baby className="w-4 h-4" />
+                      OBGY (ANC)
+                    </h4>
                     <div className="grid gap-2">
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span>ECG</span>
-                        <span className="font-semibold text-indigo-600">₹500</span>
+                      <div className="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-pink-700">O1</span>
+                          <span className="text-pink-600 text-sm ml-2">OBGY - First</span>
+                        </div>
+                        <span className="font-semibold text-pink-700">₹500</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-pink-700">O2</span>
+                          <span className="text-pink-600 text-sm ml-2">OBGY - Follow up</span>
+                        </div>
+                        <span className="font-semibold text-pink-700">₹400</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-pink-700">O3</span>
+                          <span className="text-pink-600 text-sm ml-2">OBGY - Follow up</span>
+                        </div>
+                        <span className="font-semibold text-pink-700">₹300</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Emergency */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-red-700 border-b pb-2 flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4" />
+                      Emergency
+                    </h4>
+                    <div className="grid gap-2">
+                      <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-red-700">E1</span>
+                          <span className="text-red-600 text-sm ml-2">Emergency</span>
+                        </div>
+                        <span className="font-semibold text-red-700">₹600</span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span>Pap Smear</span>
-                        <span className="font-semibold text-indigo-600">₹1,000</span>
+                        <div>
+                          <span className="font-medium text-gray-700">NF</span>
+                          <span className="text-gray-500 text-sm ml-2">No Fees</span>
+                        </div>
+                        <span className="font-semibold text-gray-500">₹0</span>
                       </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span>IUD Insertion</span>
-                        <span className="font-semibold text-indigo-600">₹2,500</span>
+                    </div>
+                  </div>
+                  
+                  {/* Sonography/Scan Charges */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-cyan-700 border-b pb-2 flex items-center gap-2">
+                      <Scan className="w-4 h-4" />
+                      Sonography Charges
+                    </h4>
+                    <div className="grid gap-2">
+                      <div className="flex justify-between items-center p-3 bg-cyan-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-cyan-700">ES</span>
+                          <span className="text-cyan-600 text-sm ml-2">Early Scan</span>
+                        </div>
+                        <span className="font-semibold text-cyan-700">₹1,000</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-cyan-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-cyan-700">NT</span>
+                          <span className="text-cyan-600 text-sm ml-2">NT Scan</span>
+                        </div>
+                        <span className="font-semibold text-cyan-700">₹1,200</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-cyan-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-cyan-700">GS</span>
+                          <span className="text-cyan-600 text-sm ml-2">Growth Scan</span>
+                        </div>
+                        <span className="font-semibold text-cyan-700">₹1,500</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-teal-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-teal-700">FL</span>
+                          <span className="text-teal-600 text-sm ml-2">Follicular</span>
+                        </div>
+                        <span className="font-semibold text-teal-700">₹200</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-teal-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-teal-700">UP</span>
+                          <span className="text-teal-600 text-sm ml-2">USG Pelvis</span>
+                        </div>
+                        <span className="font-semibold text-teal-700">₹1,000</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-teal-50 rounded-lg">
+                        <div>
+                          <span className="font-medium text-teal-700">UT</span>
+                          <span className="text-teal-600 text-sm ml-2">UpT</span>
+                        </div>
+                        <span className="font-semibold text-teal-700">₹100</span>
                       </div>
                     </div>
                   </div>
