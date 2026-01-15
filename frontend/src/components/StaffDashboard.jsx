@@ -226,17 +226,19 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
 
         {accessModules.includes('glydex') && (
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('glydex')}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">Diabetes Patients</p>
-                  <p className="text-2xl font-bold text-purple-600">{stats.glydex.total}</p>
-                  {stats.glydex.uncontrolled > 0 && (
-                    <p className="text-xs text-red-500">{stats.glydex.uncontrolled} uncontrolled</p>
+                  <p className="text-[10px] sm:text-sm text-gray-500">Diabetes</p>
+                  <p className="text-xl sm:text-2xl font-bold text-purple-600">{stats.glydex.total}</p>
+                  {stats.glydex.uncontrolled > 0 ? (
+                    <p className="text-[10px] sm:text-xs text-red-500">{stats.glydex.uncontrolled} uncontrolled</p>
+                  ) : (
+                    <p className="text-[10px] sm:text-xs text-gray-400">patients</p>
                   )}
                 </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Activity className="w-6 h-6 text-purple-600" />
+                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Activity className="w-4 h-4 sm:w-6 sm:h-6 text-purple-600" />
                 </div>
               </div>
             </CardContent>
@@ -245,15 +247,15 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
 
         {accessModules.includes('attendance') && (
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('attendance')}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">Attendance Today</p>
-                  <p className="text-2xl font-bold text-orange-600">{stats.attendance.present}</p>
-                  <p className="text-xs text-gray-400">{stats.attendance.late} late</p>
+                  <p className="text-[10px] sm:text-sm text-gray-500">Attendance</p>
+                  <p className="text-xl sm:text-2xl font-bold text-orange-600">{stats.attendance.present}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-400">{stats.attendance.late} late</p>
                 </div>
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                  <Fingerprint className="w-6 h-6 text-orange-600" />
+                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Fingerprint className="w-4 h-4 sm:w-6 sm:h-6 text-orange-600" />
                 </div>
               </div>
             </CardContent>
@@ -261,33 +263,34 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
         )}
       </div>
 
-      {/* Quick Actions */}
+      {/* Quick Actions - Grid on mobile */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Quick Actions</CardTitle>
+        <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
+          <CardTitle className="text-base sm:text-lg">Quick Actions</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-3">
+        <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3">
             {quickActions.map(action => (
               <Button
                 key={action.id}
                 variant="outline"
-                className={`${action.color} text-white hover:opacity-90 border-0`}
+                size="sm"
+                className={`${action.color} text-white hover:opacity-90 border-0 text-xs sm:text-sm`}
                 onClick={() => onNavigate(action.id)}
                 data-testid={`quick-action-${action.id}`}
               >
-                <action.icon className="w-4 h-4 mr-2" />
-                {action.label}
+                <action.icon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="truncate">{action.label}</span>
               </Button>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Module Access Summary */}
+      {/* Module Access Summary - Compact on mobile */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Your Access Modules</CardTitle>
+        <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
+          <CardTitle className="text-base sm:text-lg">Your Access</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
