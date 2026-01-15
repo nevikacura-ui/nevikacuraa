@@ -18,7 +18,39 @@ import StaffBillingModule from '@/components/StaffBillingModule';
 import ANCRegistration from '@/components/ANCRegistration';
 import GlydexStaffPortal from '@/components/GlydexStaffPortal';
 import BiometricAttendance from '@/components/BiometricAttendance';
+import FaceBiometric from '@/components/FaceBiometric';
 import StaffDashboard from '@/components/StaffDashboard';
+
+// Mobile detection hook
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = React.useState(false);
+  
+  React.useEffect(() => {
+    const checkMobile = () => {
+      // Check for mobile/tablet devices by screen width or user agent
+      const mobileByWidth = window.innerWidth <= 1024;
+      const mobileByAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      setIsMobile(mobileByWidth || mobileByAgent);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  return isMobile;
+};
+
+// Smart Biometric component that switches based on device type
+const SmartBiometric = ({ clinic }) => {
+  const isMobile = useIsMobile();
+  
+  // Use Face Recognition on mobile/tablet, WebAuthn fingerprint on desktop
+  if (isMobile) {
+    return <FaceBiometric clinic={clinic} />;
+  }
+  return <BiometricAttendance clinic={clinic} />;
+};
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
