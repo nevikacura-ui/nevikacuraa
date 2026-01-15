@@ -1013,6 +1013,86 @@ async def send_all_sonography_reminders(minutes: int = 30, staff = Depends(verif
     }
 
 
+# ============ Patient Feedback ============
+
+class FeedbackRequest(BaseModel):
+    patient_name: str
+    doctor_rating: int = 0
+    staff_rating: int = 0
+    cleanliness_rating: int = 0
+    overall_rating: Optional[str] = None
+    clinic: Optional[str] = None
+    collected_by: Optional[str] = None
+    date: Optional[str] = None
+    comments: Optional[str] = None
+
+
+@router.post("/feedback")
+async def submit_patient_feedback(feedback: FeedbackRequest, staff = Depends(verify_staff)):
+    """Submit patient feedback after consultation"""
+    feedback_data = {
+        "id": f"fb_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}",
+        "patient_name": feedback.patient_name,
+        "doctor_rating": feedback.doctor_rating,
+        "staff_rating": feedback.staff_rating,
+        "cleanliness_rating": feedback.cleanliness_rating,
+        "overall_rating": feedback.overall_rating or str(round((feedback.doctor_rating + feedback.staff_rating + feedback.cleanliness_rating) / 3, 1)),
+        "clinic": feedback.clinic,
+        "collected_by": feedback.collected_by,
+        "date": feedback.date or datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "comments": feedback.comments,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.patient_feedback.insert_one(feedback_data)
+    
+    return {
+        "success": True,
+        "message": "Feedback submitted successfully",
+        "feedback_id": feedback_data["id"]
+    }
+
+
+@router.get("/feedback/summary")
+async def get_feedback_summary(clinic: str = None, days: int = 30, staff = Depends(verify_staff)):
+    """Get feedback summary for a clinic"""
+    from datetime import timedelta
+    
+    start_date = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%Y-%m-%d")
+    
+    query = {"date": {"$gte": start_date}}
+    if clinic:
+        query["clinic"] = {"$regex": clinic, "$options": "i"}
+    
+    feedbacks = await db.patient_feedback.find(query, {"_id": 0}).to_list(500)
+    
+    if not feedbacks:
+        return {
+            "success": True,
+            "total_feedbacks": 0,
+            "avg_overall": 0,
+            "avg_doctor": 0,
+            "avg_staff": 0,
+            "avg_cleanliness": 0
+        }
+    
+    total = len(feedbacks)
+    avg_overall = sum(float(f.get("overall_rating", 0)) for f in feedbacks) / total
+    avg_doctor = sum(f.get("doctor_rating", 0) for f in feedbacks) / total
+    avg_staff = sum(f.get("staff_rating", 0) for f in feedbacks) / total
+    avg_cleanliness = sum(f.get("cleanliness_rating", 0) for f in feedbacks) / total
+    
+    return {
+        "success": True,
+        "total_feedbacks": total,
+        "avg_overall": round(avg_overall, 1),
+        "avg_doctor": round(avg_doctor, 1),
+        "avg_staff": round(avg_staff, 1),
+        "avg_cleanliness": round(avg_cleanliness, 1),
+        "feedbacks": feedbacks[:50]  # Last 50 feedbacks
+    }
+
+
 # ============ Fee Codes ============
 
 @router.get("/fee-codes")
