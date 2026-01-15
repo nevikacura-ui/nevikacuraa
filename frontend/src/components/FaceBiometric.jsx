@@ -116,7 +116,7 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
     }
   };
 
-  // Start camera with better mobile handling
+  // Start camera - simplified version matching working test page
   const startCamera = async () => {
     console.log('=== START CAMERA CALLED ===');
     setCameraStarting(true);
@@ -131,188 +131,86 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
       return;
     }
     
-    try {
-      // First check permission status
-      const permissionStatus = await checkCameraPermission();
-      console.log('Permission check result:', permissionStatus);
-      
-      if (permissionStatus === 'denied') {
-        const err = 'Camera access is blocked. Please enable camera in your browser settings and refresh the page.';
-        setCameraError(err);
-        setCameraStarting(false);
-        toast.error(err, { duration: 5000 });
-        return;
-      }
-
-      // Stop any existing stream first
-      if (streamRef.current) {
-        console.log('Stopping existing stream...');
-        streamRef.current.getTracks().forEach(track => {
-          track.stop();
-          console.log('Stopped track:', track.kind);
-        });
-        streamRef.current = null;
-      }
-      
-      // Clear video source
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
-      }
-      
-      // Small delay to ensure cleanup
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Request camera with multiple fallback constraints for better mobile compatibility
-      let stream = null;
-      const constraints = [
-        // Try ideal settings first - front camera
-        { 
-          video: { 
-            facingMode: 'user', 
-            width: { ideal: 640, max: 1280 }, 
-            height: { ideal: 480, max: 720 } 
-          },
-          audio: false
-        },
-        // Simpler front camera
-        { video: { facingMode: 'user' }, audio: false },
-        // Exact front camera (for some mobile browsers)
-        { video: { facingMode: { exact: 'user' } }, audio: false },
-        // Any front camera
-        { video: { facingMode: { ideal: 'user' } }, audio: false },
-        // Last resort - any camera
-        { video: true, audio: false }
-      ];
-      
-      let lastError = null;
-      for (const constraint of constraints) {
-        try {
-          console.log('Trying camera constraint:', JSON.stringify(constraint));
-          stream = await navigator.mediaDevices.getUserMedia(constraint);
-          console.log('SUCCESS - Got stream with constraint:', JSON.stringify(constraint));
-          console.log('Stream tracks:', stream.getTracks().map(t => ({ kind: t.kind, label: t.label, enabled: t.enabled })));
-          break;
-        } catch (e) {
-          console.log('Constraint failed:', e.name, e.message);
-          lastError = e;
-          continue;
+    // Stop any existing stream first
+    if (streamRef.current) {
+      console.log('Stopping existing stream...');
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    
+    // Clear video source
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    
+    // Small delay to ensure cleanup
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Try camera constraints - matching the working test page
+    const constraints = [
+      { name: 'Front camera (ideal)', video: { facingMode: 'user' } },
+      { name: 'Any camera', video: true },
+    ];
+    
+    let stream = null;
+    let lastError = null;
+    
+    for (const constraint of constraints) {
+      try {
+        console.log(`Trying: ${constraint.name}...`);
+        stream = await navigator.mediaDevices.getUserMedia({ video: constraint.video, audio: false });
+        console.log(`SUCCESS with: ${constraint.name}`);
+        
+        // Get track info
+        const tracks = stream.getVideoTracks();
+        if (tracks.length > 0) {
+          const settings = tracks[0].getSettings();
+          console.log(`Camera: ${tracks[0].label}`);
+          console.log(`Resolution: ${settings.width}x${settings.height}`);
         }
+        break;
+      } catch (e) {
+        console.log(`Failed: ${e.name} - ${e.message}`);
+        lastError = e;
       }
+    }
+    
+    if (!stream) {
+      const errorMsg = lastError ? `${lastError.name}: ${lastError.message}` : 'Could not access camera';
+      console.error('All camera constraints failed:', errorMsg);
+      setCameraError(errorMsg);
+      setCameraStarting(false);
+      toast.error(errorMsg);
+      return;
+    }
+    
+    // Attach to video element
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream;
+      streamRef.current = stream;
       
-      if (!stream) {
-        throw lastError || new Error('Could not access camera with any constraints');
-      }
-      
-      // Verify we have video tracks
-      const videoTracks = stream.getVideoTracks();
-      if (videoTracks.length === 0) {
-        throw new Error('No video track in stream');
-      }
-      console.log('Video track settings:', videoTracks[0].getSettings());
-      
-      if (videoRef.current) {
-        // Set stream to video element
-        videoRef.current.srcObject = stream;
-        streamRef.current = stream;
-        
-        // Set video attributes for mobile
-        videoRef.current.setAttribute('autoplay', '');
-        videoRef.current.setAttribute('playsinline', '');
-        videoRef.current.setAttribute('muted', '');
-        videoRef.current.muted = true;
-        
-        // Use a promise-based approach for loading
-        await new Promise((resolve, reject) => {
-          const video = videoRef.current;
-          
-          const handleCanPlay = () => {
-            console.log('Video can play event fired');
-            video.removeEventListener('canplay', handleCanPlay);
-            video.removeEventListener('error', handleError);
-            resolve();
-          };
-          
-          const handleError = (e) => {
-            console.error('Video error event:', e);
-            video.removeEventListener('canplay', handleCanPlay);
-            video.removeEventListener('error', handleError);
-            reject(new Error('Video element error'));
-          };
-          
-          video.addEventListener('canplay', handleCanPlay);
-          video.addEventListener('error', handleError);
-          
-          // Also set a timeout in case events don't fire
-          setTimeout(() => {
-            video.removeEventListener('canplay', handleCanPlay);
-            video.removeEventListener('error', handleError);
-            if (video.readyState >= 2) { // HAVE_CURRENT_DATA or more
-              resolve();
-            } else {
-              console.log('Timeout - video readyState:', video.readyState);
-              // Still try to resolve, video might work
-              resolve();
-            }
-          }, 3000);
-        });
-        
-        // Try to play the video
+      // Wait for video to be ready
+      videoRef.current.onloadedmetadata = async () => {
+        console.log('Video metadata loaded');
         try {
-          console.log('Attempting to play video...');
           await videoRef.current.play();
           console.log('Video playing! Dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
           setCameraActive(true);
           setCameraStarting(false);
-          toast.success('Camera started successfully!');
+          toast.success('Camera started!');
         } catch (playErr) {
-          console.error('Video play error:', playErr);
-          // On mobile, autoplay might be blocked - still set camera as active
-          // The video might start playing on user interaction
-          if (videoRef.current.readyState >= 2) {
-            setCameraActive(true);
-            setCameraStarting(false);
-            toast.success('Camera ready - tap the video if not showing');
-          } else {
-            setCameraStarting(false);
-            setCameraError('Failed to start video. Please tap the camera area to start.');
-            toast.error('Failed to start video. Please tap the camera area to start.');
-          }
+          console.log('Play error (may need user tap):', playErr.message);
+          // Still set active - user can tap to play
+          setCameraActive(true);
+          setCameraStarting(false);
         }
-      }
-    } catch (err) {
-      console.error('Camera error:', err.name, err.message, err);
+      };
       
-      let errorMsg = '';
-      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-        errorMsg = 'Camera permission denied. Enable camera in browser settings and refresh.';
-        toast.error(
-          'Camera permission denied. To enable: Open browser settings → Site settings → Camera → Allow for this site → Refresh page',
-          { duration: 10000 }
-        );
-      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-        errorMsg = 'No camera found. Please ensure your device has a working camera.';
-        toast.error(errorMsg);
-      } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
-        errorMsg = 'Camera is busy. Please close other apps using the camera and try again.';
-        toast.error(errorMsg);
-      } else if (err.name === 'OverconstrainedError') {
-        errorMsg = 'Camera settings issue. Please try again.';
-        toast.error(errorMsg);
-      } else if (err.name === 'SecurityError') {
-        errorMsg = 'Camera blocked. Please use HTTPS and grant camera permission.';
-        toast.error(errorMsg);
-      } else if (err.name === 'AbortError') {
-        errorMsg = 'Camera request was aborted. Please try again.';
-        toast.error(errorMsg);
-      } else {
-        errorMsg = 'Camera error: ' + (err.message || 'Unknown error');
-        toast.error(errorMsg);
-      }
-      
-      // Set error state for UI
-      setCameraError(errorMsg || err.message || 'Failed to access camera');
-    } finally {
-      setCameraStarting(false);
+      videoRef.current.onerror = (e) => {
+        console.error('Video error:', e);
+        setCameraError('Video playback error');
+        setCameraStarting(false);
+      };
     }
   };
 
