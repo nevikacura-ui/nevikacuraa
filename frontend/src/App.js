@@ -40,6 +40,8 @@ import DiabetesFormPublic from '@/pages/DiabetesFormPublic';
 import SimpleFaceAttendance from '@/pages/SimpleFaceAttendance';
 // Live Queue Display
 import QueuePage from '@/pages/QueuePage';
+// Patient Health Dashboard
+import HealthDashboard from '@/pages/HealthDashboard';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
