@@ -427,8 +427,36 @@ const StaffPortal = () => {
   // Open completion modal (for doctors only)
   const openCompletionModal = (appointment) => {
     setCompletionAppointment(appointment);
-    setCompletionForm({ fee_code: '', follow_up_days: '', notes: '' });
+    setCompletionForm({ fee_code: '', scan_codes: [], follow_up_days: '', notes: '' });
     setShowCompletionModal(true);
+  };
+
+  // Calculate total fee including scans
+  const calculateTotalFee = () => {
+    let total = 0;
+    if (completionForm.fee_code && FEE_CODES[completionForm.fee_code]) {
+      total += FEE_CODES[completionForm.fee_code].amount;
+    }
+    if (completionForm.scan_codes && completionForm.scan_codes.length > 0) {
+      completionForm.scan_codes.forEach(code => {
+        if (SCAN_FEES[code]) {
+          total += SCAN_FEES[code].amount;
+        }
+      });
+    }
+    return total;
+  };
+
+  // Toggle scan selection
+  const toggleScanCode = (code) => {
+    setCompletionForm(prev => {
+      const current = prev.scan_codes || [];
+      if (current.includes(code)) {
+        return { ...prev, scan_codes: current.filter(c => c !== code) };
+      } else {
+        return { ...prev, scan_codes: [...current, code] };
+      }
+    });
   };
 
   // Doctor completes appointment with fee code and follow-up
@@ -438,19 +466,23 @@ const StaffPortal = () => {
       return;
     }
     
+    const totalFee = calculateTotalFee();
+    
     setCompletingAppointment(true);
     try {
       const response = await axios.put(
         `${API}/staff/appointments/${completionAppointment.id}/doctor-complete`,
         {
           fee_code: completionForm.fee_code,
+          scan_codes: completionForm.scan_codes || [],
+          total_fee: totalFee,
           follow_up_days: completionForm.follow_up_days ? parseInt(completionForm.follow_up_days) : null,
           notes: completionForm.notes || null
         },
         getAuthHeaders()
       );
       
-      toast.success(`Appointment completed! Fee: ₹${response.data.fee_amount}`);
+      toast.success(`Appointment completed! Total Fee: ₹${totalFee}`);
       if (response.data.follow_up_date) {
         toast.success(`Follow-up scheduled for ${response.data.follow_up_date}`);
       }
