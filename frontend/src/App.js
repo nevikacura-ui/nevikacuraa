@@ -42,6 +42,8 @@ import SimpleFaceAttendance from '@/pages/SimpleFaceAttendance';
 import QueuePage from '@/pages/QueuePage';
 // Patient Health Dashboard
 import HealthDashboard from '@/pages/HealthDashboard';
+// Senior Care Charity
+import SeniorCare from '@/pages/SeniorCare';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
@@ -96,6 +98,8 @@ function App() {
             <Route path="/queue" element={<QueuePage />} />
             {/* Patient Health Dashboard */}
             <Route path="/health-dashboard" element={<HealthDashboard />} />
+            {/* Senior Care Charity */}
+            <Route path="/senior-care" element={<SeniorCare />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
