@@ -2010,7 +2010,7 @@ const StaffPortal = () => {
         {/* Pharmacy Staff View */}
         {(role === 'pharmacy_staff' || role === 'super_admin') && (
           <Tabs defaultValue="orders" className="space-y-4 mt-4">
-            <TabsList>
+            <TabsList className="flex flex-wrap">
               <TabsTrigger value="orders" data-testid="tab-pharmacy-orders">
                 <Package className="w-4 h-4 mr-2" />
                 Orders
@@ -2019,6 +2019,13 @@ const StaffPortal = () => {
                 <Gift className="w-4 h-4 mr-2" />
                 Loyalty Points
               </TabsTrigger>
+              {/* Attendance Tab for Pharmacy Staff */}
+              {staffInfo?.access_modules?.includes('attendance') && (
+                <TabsTrigger value="attendance" data-testid="tab-pharmacy-attendance">
+                  <Fingerprint className="w-4 h-4 mr-2" />
+                  Attendance
+                </TabsTrigger>
+              )}
             </TabsList>
             
             <TabsContent value="orders">
