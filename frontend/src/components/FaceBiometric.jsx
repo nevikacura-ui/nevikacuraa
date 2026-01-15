@@ -225,13 +225,21 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
     try {
       const descriptor = await detectFace();
       if (descriptor) {
-        setCapturedDescriptor(Array.from(descriptor));
+        const descriptorArray = Array.from(descriptor);
+        console.log('Face descriptor captured:', descriptorArray.length, 'values');
+        if (descriptorArray.length !== 128) {
+          toast.error(`Invalid face descriptor: expected 128 values, got ${descriptorArray.length}`);
+          setDetecting(false);
+          return;
+        }
+        setCapturedDescriptor(descriptorArray);
         toast.success('Face captured! Click "Register" to save.');
       } else {
         toast.error('Could not capture face. Try again.');
       }
     } catch (err) {
-      toast.error('Error capturing face');
+      console.error('Face capture error:', err);
+      toast.error('Error capturing face: ' + err.message);
     }
     setDetecting(false);
   };
