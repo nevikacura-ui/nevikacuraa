@@ -30,6 +30,7 @@ export default function ANCRegistration({ staffName = 'Staff', clinic = 'amnion'
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
   const [showKickCountDialog, setShowKickCountDialog] = useState(false);
   const [showSendFormDialog, setShowSendFormDialog] = useState(false);
+  const [showVisitDialog, setShowVisitDialog] = useState(false);
   
   // Send Form state
   const [sendFormData, setSendFormData] = useState({
