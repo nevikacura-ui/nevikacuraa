@@ -25,7 +25,7 @@ import SmartBiometric from './staff/SmartBiometric';
 import { 
   API, CLINICS, DOCTOR_SCHEDULES, FEE_CODES, SCAN_FEES,
   getIndianDate, getDayName, getAvailableTimeSlots, 
-  getStatusColor, getAuthHeaders, generateTimeSlots 
+  getStatusColor, getAuthHeaders, generateTimeSlots, formatIndianDate 
 } from './staff/staffUtils';
 
 const StaffPortal = () => {
