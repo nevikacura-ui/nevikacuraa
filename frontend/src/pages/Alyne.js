@@ -1225,9 +1225,25 @@ const VaccinationsSection = ({ child, region, onBack }) => {
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
 
+  const fetchVaccinations = async () => { 
+    try { 
+      const res = await fetch(`${API}/api/alyne/vaccinations/${child.id}`); 
+      const data = await res.json(); 
+      setVaccinations(data.vaccinations || []); 
+      setStats(data.stats || {}); 
+    } catch (e) { console.error('Error fetching vaccinations:', e); } 
+    finally { setLoading(false); } 
+  };
+  
+  const updateVax = async (id, status) => { 
+    try { 
+      await fetch(`${API}/api/alyne/vaccinations/${id}?status=${status}&administered_date=${new Date().toISOString().split('T')[0]}`, { method: 'PUT' }); 
+      toast.success('Updated!'); 
+      fetchVaccinations(); 
+    } catch (e) { console.error('Error updating vaccination:', e); } 
+  };
+  
   useEffect(() => { if (child) fetchVaccinations(); }, [child?.id]);
-  const fetchVaccinations = async () => { try { const res = await fetch(`${API}/api/alyne/vaccinations/${child.id}`); const data = await res.json(); setVaccinations(data.vaccinations || []); setStats(data.stats || {}); } catch (e) {} finally { setLoading(false); } };
-  const updateVax = async (id, status) => { try { await fetch(`${API}/api/alyne/vaccinations/${id}?status=${status}&administered_date=${new Date().toISOString().split('T')[0]}`, { method: 'PUT' }); toast.success('Updated!'); fetchVaccinations(); } catch (e) {} };
   const filtered = filter === 'all' ? vaccinations : vaccinations.filter(v => v.status === filter);
   const progress = stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0;
 
