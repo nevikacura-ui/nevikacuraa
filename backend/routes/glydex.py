@@ -1044,3 +1044,258 @@ async def get_diabetes_summary_report(doctor: Optional[str] = None):
         },
         "doctor": doctor or "All"
     }
+
+
+
+# ============ DIABETES FORM LINK SYSTEM (Similar to ANC) ============
+
+class DiabetesFormSendRequest(BaseModel):
+    """Request model to send diabetes form link"""
+    patient_name: str
+    patient_phone: str
+    patient_email: Optional[str] = None
+    send_via: str = "both"  # email, sms, both
+    clinic: str = "Pushpa Clinic"
+    doctor: str = "Dr. Vikas Jha"
+
+class DiabetesFormSubmission(BaseModel):
+    """Submission model for diabetes registration form"""
+    full_name: str
+    age: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    gender: Optional[str] = None
+    blood_group: Optional[str] = None
+    phone: str
+    email: Optional[str] = None
+    address: Optional[str] = None
+    emergency_contact: Optional[str] = None
+    emergency_phone: Optional[str] = None
+    diabetes_type: str
+    date_of_diagnosis: Optional[str] = None
+    family_history: bool = False
+    current_medications: Optional[str] = None
+    insulin_user: bool = False
+    insulin_type: Optional[str] = None
+    insulin_dosage: Optional[str] = None
+    medical_conditions: Optional[List[str]] = []
+    allergies: Optional[str] = None
+    previous_surgeries: Optional[str] = None
+    diet_type: Optional[str] = None
+    exercise_frequency: Optional[str] = None
+    smoking: bool = False
+    alcohol: bool = False
+    recent_fbs: Optional[str] = None
+    recent_ppbs: Optional[str] = None
+    recent_hba1c: Optional[str] = None
+    last_test_date: Optional[str] = None
+    symptoms: Optional[str] = None
+    concerns: Optional[str] = None
+    consent_given: bool = False
+
+@router.post("/form/send")
+async def send_diabetes_form_link(data: DiabetesFormSendRequest):
+    """Send Diabetes form link to patient via Email/SMS"""
+    
+    # Create form record
+    form_id = str(uuid.uuid4())
+    base_url = os.environ.get("FRONTEND_URL", "https://nevika-health-4.preview.emergentagent.com")
+    form_link = f"{base_url}/diabetes-form/{form_id}"
+    
+    form_record = {
+        "id": form_id,
+        "patient_name": data.patient_name,
+        "patient_phone": data.patient_phone,
+        "patient_email": data.patient_email,
+        "clinic": data.clinic,
+        "doctor": data.doctor,
+        "status": "allotted",  # allotted -> filled
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "sent_via": data.send_via,
+        "form_link": form_link,
+        "form_data": None,
+        "submitted_at": None
+    }
+    
+    await db.diabetes_forms.insert_one(form_record)
+    
+    # Send Email
+    email_sent = False
+    if data.patient_email and data.send_via in ["email", "both"]:
+        try:
+            email_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #10b981, #14b8a6); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                    <h1 style="margin: 0; font-size: 24px;">📋 Diabetes Registration Form</h1>
+                    <p style="margin: 10px 0 0; opacity: 0.9;">Nevika Cura Healthcare - Glydex</p>
+                </div>
+                
+                <div style="background: #ecfdf5; padding: 25px; border: 1px solid #a7f3d0;">
+                    <p style="color: #333; font-size: 16px;">Dear <strong>{data.patient_name}</strong>,</p>
+                    
+                    <p style="color: #555;">Please fill out your Diabetes Registration Form by clicking the button below:</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="{form_link}" style="background: linear-gradient(135deg, #10b981, #14b8a6); color: white; padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block;">
+                            Fill Diabetes Form
+                        </a>
+                    </div>
+                    
+                    <p style="color: #555; font-size: 14px;">Or copy this link: <br><a href="{form_link}" style="color: #10b981; word-break: break-all;">{form_link}</a></p>
+                    
+                    <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                        <p style="margin: 0; color: #92400e; font-size: 14px;">
+                            <strong>📋 Instructions:</strong><br>
+                            1. Click the link above to open the form<br>
+                            2. Fill in all required information about your diabetes history<br>
+                            3. Submit the form online<br>
+                            4. Our team will contact you to schedule your consultation
+                        </p>
+                    </div>
+                </div>
+                
+                <div style="background: #f8fafc; padding: 20px; text-align: center; border-radius: 0 0 12px 12px;">
+                    <p style="color: #64748b; font-size: 12px; margin: 0;">
+                        {data.clinic} | {data.doctor}<br>
+                        For queries: <a href="mailto:nevikacura@gmail.com" style="color: #10b981;">nevikacura@gmail.com</a>
+                    </p>
+                </div>
+            </div>
+            """
+            
+            if send_email_notification:
+                await send_email_notification(
+                    "📋 Fill Your Diabetes Registration Form - Nevika Cura",
+                    email_html,
+                    data.patient_email,
+                    "📋 Fill Your Diabetes Registration Form - Nevika Cura",
+                    email_html
+                )
+                email_sent = True
+                logger.info(f"Diabetes form email sent to {data.patient_email}")
+        except Exception as e:
+            logger.error(f"Failed to send Diabetes form email: {e}")
+    
+    # Send SMS
+    sms_sent = False
+    if data.patient_phone and data.send_via in ["sms", "both"]:
+        try:
+            sms_text = f"Dear {data.patient_name}, Please fill your Diabetes Registration Form: {form_link} - Nevika Cura Healthcare ({data.clinic})"
+            
+            if send_sms_notification:
+                await send_sms_notification(data.patient_phone, sms_text)
+                sms_sent = True
+                logger.info(f"Diabetes form SMS sent to {data.patient_phone}")
+        except Exception as e:
+            logger.error(f"Failed to send Diabetes form SMS: {e}")
+    
+    return {
+        "success": True,
+        "form_id": form_id,
+        "form_link": form_link,
+        "email_sent": email_sent,
+        "sms_sent": sms_sent,
+        "message": f"Diabetes form link sent to {data.patient_name}"
+    }
+
+@router.get("/form/{form_id}")
+async def get_diabetes_form(form_id: str):
+    """Get Diabetes form details for patient to fill"""
+    form = await db.diabetes_forms.find_one({"id": form_id}, {"_id": 0})
+    
+    if not form:
+        return {"error": "Form not found or expired"}
+    
+    return {
+        "id": form["id"],
+        "status": form["status"],
+        "patient": {
+            "name": form.get("patient_name"),
+            "phone": form.get("patient_phone"),
+            "email": form.get("patient_email")
+        },
+        "clinic": form.get("clinic"),
+        "doctor": form.get("doctor"),
+        "form_data": form.get("form_data") if form["status"] == "filled" else None
+    }
+
+@router.post("/form/{form_id}/submit")
+async def submit_diabetes_form(form_id: str, data: DiabetesFormSubmission):
+    """Submit filled Diabetes form"""
+    form = await db.diabetes_forms.find_one({"id": form_id})
+    
+    if not form:
+        return {"error": "Form not found"}
+    
+    if form["status"] == "filled":
+        return {"error": "Form already submitted"}
+    
+    # Update form with submitted data
+    await db.diabetes_forms.update_one(
+        {"id": form_id},
+        {"$set": {
+            "status": "filled",
+            "form_data": data.dict(),
+            "submitted_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Send notification to admin/staff
+    try:
+        if send_email_notification:
+            admin_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: #10b981; color: white; padding: 20px; text-align: center;">
+                    <h2 style="margin: 0;">✅ New Diabetes Form Submitted</h2>
+                </div>
+                <div style="padding: 20px; background: #ecfdf5;">
+                    <p><strong>Patient:</strong> {data.full_name}</p>
+                    <p><strong>Phone:</strong> {data.phone}</p>
+                    <p><strong>Diabetes Type:</strong> {data.diabetes_type}</p>
+                    <p><strong>HbA1c:</strong> {data.recent_hba1c or 'Not provided'}%</p>
+                    <p><strong>Insulin User:</strong> {'Yes' if data.insulin_user else 'No'}</p>
+                    <p><strong>Clinic:</strong> {form.get('clinic')}</p>
+                    <p><strong>Form ID:</strong> {form_id[:8].upper()}</p>
+                </div>
+                <div style="padding: 15px; background: #fef3c7; text-align: center;">
+                    <p style="margin: 0; color: #92400e;">Please review and schedule a consultation.</p>
+                </div>
+            </div>
+            """
+            await send_email_notification(
+                f"✅ Diabetes Form Submitted - {data.full_name}",
+                admin_html
+            )
+    except Exception as e:
+        logger.error(f"Failed to send admin notification: {e}")
+    
+    return {
+        "success": True,
+        "message": "Diabetes form submitted successfully",
+        "form_id": form_id
+    }
+
+@router.get("/forms/list")
+async def list_diabetes_forms(clinic: str = None, status: str = None):
+    """List all Diabetes forms with status for staff dashboard"""
+    query = {}
+    if clinic:
+        query["clinic"] = {"$regex": clinic, "$options": "i"}
+    if status:
+        query["status"] = status
+    
+    forms = await db.diabetes_forms.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    
+    # Get counts
+    total = len(forms)
+    allotted = len([f for f in forms if f["status"] == "allotted"])
+    filled = len([f for f in forms if f["status"] == "filled"])
+    
+    return {
+        "success": True,
+        "forms": forms,
+        "counts": {
+            "total": total,
+            "allotted": allotted,
+            "filled": filled
+        }
+    }
