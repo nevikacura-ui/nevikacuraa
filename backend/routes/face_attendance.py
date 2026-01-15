@@ -62,7 +62,7 @@ def get_image_hash(base64_data: str) -> str:
         image_bytes = base64.b64decode(base64_data)
         # Use SHA256 hash of the image (not ideal for face matching but works for exact match)
         return hashlib.sha256(image_bytes).hexdigest()[:32]
-    except:
+    except Exception:
         return hashlib.sha256(base64_data.encode()).hexdigest()[:32]
 
 @router.post("/register")
