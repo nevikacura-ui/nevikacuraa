@@ -10,6 +10,22 @@ export const CLINICS = {
   "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Neha Patel"]
 };
 
+// Clinic location details with Google Maps links
+export const CLINIC_LOCATIONS = {
+  "Pushpa Clinic": {
+    name: "Pushpa Clinic",
+    address: "Pushpa Clinic, Nagpur",
+    mapLink: "https://maps.app.goo.gl/LfFoHwVzvMEQ1Qzt9",
+    phone: "+91 9876543210"
+  },
+  "Amnion Clinic": {
+    name: "Amnion Clinic", 
+    address: "Amnion Clinic, Nagpur",
+    mapLink: "https://maps.app.goo.gl/aBr4jwCv3b6874vi8",
+    phone: "+91 9876543211"
+  }
+};
+
 // Doctor schedules - matching DiaGyn clinic availability
 export const DOCTOR_SCHEDULES = {
   "Dr. Vikas Jha": {
