@@ -578,20 +578,40 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
             ) : (
               <div className="space-y-4">
                 {/* Video Feed */}
-                <div className="relative bg-black rounded-xl overflow-hidden aspect-video max-w-md mx-auto">
+                <div 
+                  className="relative bg-black rounded-xl overflow-hidden aspect-video max-w-md mx-auto cursor-pointer"
+                  onClick={() => {
+                    // Fallback for mobile - tap to play
+                    if (videoRef.current && videoRef.current.paused) {
+                      videoRef.current.play().catch(e => console.log('Tap play error:', e));
+                    }
+                  }}
+                >
                   <video
                     ref={videoRef}
                     autoPlay
                     muted
                     playsInline
-                    className="w-full h-full object-cover mirror"
+                    webkit-playsinline="true"
+                    className="w-full h-full object-cover"
                     style={{ transform: 'scaleX(-1)' }}
                   />
                   <canvas
                     ref={canvasRef}
-                    className="absolute top-0 left-0 w-full h-full"
+                    className="absolute top-0 left-0 w-full h-full pointer-events-none"
                     style={{ transform: 'scaleX(-1)' }}
                   />
+                  
+                  {/* Loading indicator when camera not ready */}
+                  {!cameraActive && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80">
+                      <div className="text-center text-white">
+                        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
+                        <p className="text-sm">Starting camera...</p>
+                        <p className="text-xs text-gray-400 mt-1">Tap here if camera doesn't start</p>
+                      </div>
+                    </div>
+                  )}
                   
                   {/* Face detection indicator */}
                   <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-sm font-medium ${
