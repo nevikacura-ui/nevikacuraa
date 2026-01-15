@@ -1916,27 +1916,6 @@ async def verify_otp(request: OTPVerify):
     service = request.service.lower()
     
     otp_key = f"{phone}_{service}"
-                    'exp': datetime.now(timezone.utc) + timedelta(minutes=30)
-                }, JWT_SECRET, algorithm=JWT_ALGORITHM)
-                
-                logger.info(f"OTP verified via Twilio for {phone} ({service})")
-                return {
-                    "success": True,
-                    "verified": True,
-                    "verification_token": verification_token,
-                    "message": "Phone verified successfully",
-                    "method": "sms"
-                }
-            else:
-                raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
-        else:
-            error_code = result.get("code", "")
-            if error_code == "MAX_ATTEMPTS":
-                raise HTTPException(status_code=400, detail=result["error"])
-            logger.warning(f"Twilio verify failed for {service}, trying mock: {result.get('error')}")
-    
-    # Fallback to mock verification
-    otp_key = f"{phone}_{service}"
     
     if otp_key not in otp_storage:
         raise HTTPException(status_code=400, detail="OTP not found. Please request a new OTP.")
@@ -1949,13 +1928,13 @@ async def verify_otp(request: OTPVerify):
         raise HTTPException(status_code=400, detail="OTP has expired. Please request a new OTP.")
     
     # Check attempts (max 3)
-    if stored_data["attempts"] >= 3:
+    if stored_data.get("attempts", 0) >= 3:
         del otp_storage[otp_key]
         raise HTTPException(status_code=400, detail="Too many attempts. Please request a new OTP.")
     
     # Verify OTP
-    if stored_data["otp"] != otp:
-        otp_storage[otp_key]["attempts"] += 1
+    if stored_data.get("otp") != otp:
+        otp_storage[otp_key]["attempts"] = stored_data.get("attempts", 0) + 1
         remaining = 3 - otp_storage[otp_key]["attempts"]
         raise HTTPException(status_code=400, detail=f"Invalid OTP. {remaining} attempts remaining.")
     
@@ -1975,7 +1954,8 @@ async def verify_otp(request: OTPVerify):
     return {
         "success": True,
         "message": "OTP verified successfully",
-        "verification_token": verification_token
+        "verification_token": verification_token,
+        "method": "mock"
     }
 
 @api_router.post("/otp/resend")
