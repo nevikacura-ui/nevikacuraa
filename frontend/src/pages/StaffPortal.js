@@ -130,22 +130,6 @@ const StaffPortal = () => {
   // Active tab state for optimized data loading
   const [activeTab, setActiveTab] = useState('appointments');
 
-  // Fee codes configuration
-  const FEE_CODES = {
-    "NF": { label: "No Fees", amount: 0, color: "bg-gray-50 text-gray-600" },
-    "G1": { label: "General - First", amount: 150, color: "bg-gray-100 text-gray-800" },
-    "G2": { label: "General - Follow up", amount: 100, color: "bg-gray-100 text-gray-800" },
-    "S1": { label: "Speciality - First", amount: 300, color: "bg-blue-100 text-blue-800" },
-    "S2": { label: "Speciality - Follow up", amount: 200, color: "bg-blue-100 text-blue-800" },
-    "D1": { label: "Diabetes - First", amount: 500, color: "bg-purple-100 text-purple-800" },
-    "D2": { label: "Diabetes - Follow up", amount: 400, color: "bg-purple-100 text-purple-800" },
-    "D3": { label: "Diabetes - Follow up", amount: 300, color: "bg-purple-100 text-purple-800" },
-    "O1": { label: "OBGY - First", amount: 500, color: "bg-pink-100 text-pink-800" },
-    "O2": { label: "OBGY - Follow up", amount: 400, color: "bg-pink-100 text-pink-800" },
-    "O3": { label: "OBGY - Follow up", amount: 300, color: "bg-pink-100 text-pink-800" },
-    "E1": { label: "Emergency", amount: 600, color: "bg-red-100 text-red-800" },
-  };
-
   // Fetch booked slots for the selected doctor, clinic, and date
   const fetchBookedSlots = useCallback(async () => {
     if (!walkInForm.doctor || !walkInForm.clinic || !walkInForm.date) {
