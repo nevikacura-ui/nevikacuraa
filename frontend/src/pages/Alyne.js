@@ -748,7 +748,7 @@ const Alyne = () => {
               <div className="p-5 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl border border-teal-100 text-center">
                 <Baby className="w-12 h-12 text-teal-500 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-800">Personalize Your Experience</h3>
-                <p className="text-sm text-gray-500 mt-1 mb-4">Add your child's profile for vaccination tracking, growth monitoring, and personalized recommendations</p>
+                <p className="text-sm text-gray-500 mt-1 mb-4">Add your child&apos;s profile for vaccination tracking, growth monitoring, and personalized recommendations</p>
                 <Button onClick={() => setShowAddChild(true)} className="bg-teal-600 hover:bg-teal-700 rounded-full">
                   <Plus className="w-4 h-4 mr-2" />Add Child Profile
                 </Button>
