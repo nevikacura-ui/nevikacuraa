@@ -34,8 +34,10 @@ const FaceBiometric = ({ staffName = '', clinic = 'pushpa' }) => {
   const fetchTodayAttendance = async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
+      console.log(`Fetching attendance for clinic: ${clinic}, date: ${today}`);
       const res = await fetch(`${API}/api/face-attendance/daily-report?clinic=${clinic}&date=${today}`);
       const data = await res.json();
+      console.log('Attendance data:', data);
       if (data.success) {
         setTodayAttendance(data.attendance || []);
       }
@@ -46,8 +48,10 @@ const FaceBiometric = ({ staffName = '', clinic = 'pushpa' }) => {
 
   const fetchRegisteredStaff = async () => {
     try {
+      console.log(`Fetching registered staff for clinic: ${clinic}`);
       const res = await fetch(`${API}/api/face-attendance/registered-staff?clinic=${clinic}`);
       const data = await res.json();
+      console.log('Registered staff data:', data);
       if (data.success) {
         setRegisteredStaff(data.staff || []);
       }
