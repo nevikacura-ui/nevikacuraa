@@ -10,18 +10,16 @@ export const CLINICS = {
   "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Neha Patel"]
 };
 
-// Clinic location details with Google Maps links
+// Clinic location details
 export const CLINIC_LOCATIONS = {
   "Pushpa Clinic": {
     name: "Pushpa Clinic",
     address: "Pushpa Clinic, Nagpur",
-    mapLink: "https://maps.app.goo.gl/LfFoHwVzvMEQ1Qzt9",
     phone: "+91 9876543210"
   },
   "Amnion Clinic": {
     name: "Amnion Clinic", 
     address: "Amnion Clinic, Nagpur",
-    mapLink: "https://maps.app.goo.gl/aBr4jwCv3b6874vi8",
     phone: "+91 9876543211"
   }
 };

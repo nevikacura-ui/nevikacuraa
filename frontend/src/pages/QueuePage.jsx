@@ -3,21 +3,19 @@ import { useSearchParams } from 'react-router-dom';
 import LiveQueueDisplay from '@/components/LiveQueueDisplay';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MapPin, Phone, Clock, ExternalLink } from 'lucide-react';
+import { MapPin, Phone, Clock } from 'lucide-react';
 
 const CLINICS = {
   pushpa: {
     name: 'Pushpa Clinic',
     address: 'Near SBI Bank, Main Road, Pusad',
     phone: '9403890429',
-    mapLink: 'https://maps.app.goo.gl/LfFoHwVzvMEQ1Qzt9',
     hours: '10:00 AM - 2:00 PM, 5:00 PM - 9:00 PM'
   },
   amnion: {
     name: 'Amnion Clinic',
     address: 'Opposite City Mall, Station Road, Pusad',
     phone: '9403890429',
-    mapLink: 'https://maps.app.goo.gl/aBr4jwCv3b6874vi8',
     hours: '10:00 AM - 2:00 PM, 5:00 PM - 9:00 PM'
   }
 };
@@ -82,12 +80,6 @@ const QueuePage = () => {
                   <Button variant="secondary" size="sm">
                     <Phone className="w-4 h-4 mr-1" />
                     Call
-                  </Button>
-                </a>
-                <a href={clinicInfo.mapLink} target="_blank" rel="noopener noreferrer">
-                  <Button variant="secondary" size="sm">
-                    <ExternalLink className="w-4 h-4 mr-1" />
-                    Directions
                   </Button>
                 </a>
               </div>

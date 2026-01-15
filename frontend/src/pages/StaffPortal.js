@@ -4129,44 +4129,12 @@ const StaffPortal = () => {
           <footer className="mt-6 mb-4">
             <Card className="bg-gradient-to-r from-gray-50 to-slate-100 border-gray-200">
               <CardContent className="p-4">
-                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                  {/* Clinic Location */}
-                  <div className="flex-1 w-full">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-red-500" />
-                      Clinic Locations
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {Object.entries(CLINIC_LOCATIONS).map(([name, info]) => (
-                        <a
-                          key={name}
-                          href={info.mapLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`flex items-center gap-2 p-2 rounded-lg transition-all hover:shadow-md ${
-                            staffInfo?.clinic === name 
-                              ? 'bg-teal-100 border border-teal-300' 
-                              : 'bg-white border border-gray-200 hover:border-teal-300'
-                          }`}
-                        >
-                          <MapPin className={`w-4 h-4 ${staffInfo?.clinic === name ? 'text-teal-600' : 'text-gray-400'}`} />
-                          <div className="flex-1 min-w-0">
-                            <p className={`text-sm font-medium truncate ${staffInfo?.clinic === name ? 'text-teal-700' : 'text-gray-700'}`}>
-                              {name}
-                            </p>
-                          </div>
-                          <ExternalLink className="w-3 h-3 text-gray-400" />
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                  
+                <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
                   {/* QR Code Section */}
                   <div className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg border border-gray-200">
                     <QrCode className="w-5 h-5 text-indigo-500" />
                     <p className="text-xs text-gray-500 text-center">Download App</p>
                     <div className="w-20 h-20 bg-gray-100 rounded flex items-center justify-center">
-                      {/* QR Code placeholder - replace with actual QR */}
                       <img 
                         src={`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent(window.location.origin)}`}
                         alt="App QR Code"
@@ -4174,6 +4142,14 @@ const StaffPortal = () => {
                       />
                     </div>
                     <p className="text-[10px] text-gray-400">Scan to download</p>
+                  </div>
+                  
+                  {/* Contact Info */}
+                  <div className="text-center sm:text-left">
+                    <p className="text-sm text-gray-600">Need help? Call us at</p>
+                    <a href="tel:9403890429" className="text-lg font-semibold text-teal-600 hover:text-teal-700">
+                      9403890429
+                    </a>
                   </div>
                 </div>
               </CardContent>
