@@ -1613,45 +1613,12 @@ async def reset_password_with_otp(phone: str = Body(...), otp: str = Body(...), 
 
 @api_router.post("/auth/otp/verify")
 async def verify_auth_otp(request: AuthOTPVerify):
-    """Verify OTP for authentication via Twilio or fallback"""
+    """Verify OTP for login - Uses MOCK verification (no SMS for login)"""
     phone = request.phone.strip()
     otp = request.otp.strip()
     otp_key = f"auth_{phone}"
     
-    # Try Twilio verification first
-    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
-        result = await verify_twilio_otp(phone, otp)
-        if result["success"]:
-            if result["valid"]:
-                # OTP verified via Twilio - store verification state for registration
-                verification_token = str(uuid.uuid4())
-                auth_otp_storage[otp_key] = {
-                    "verified": True,
-                    "verification_token": verification_token,
-                    "expires_at": datetime.now(timezone.utc) + timedelta(minutes=30)
-                }
-                
-                # Check if user exists with this phone
-                existing_user = await db.users.find_one({"phone": phone}, {"_id": 0})
-                
-                return {
-                    "success": True,
-                    "verified": True,
-                    "verification_token": verification_token,
-                    "user_exists": existing_user is not None,
-                    "phone": phone,
-                    "method": "sms"
-                }
-            else:
-                raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
-        else:
-            error_code = result.get("code", "")
-            if error_code == "MAX_ATTEMPTS":
-                raise HTTPException(status_code=400, detail=result["error"])
-            # Fall through to mock verification
-            logger.warning(f"Twilio verify failed, trying mock: {result.get('error')}")
-    
-    # Fallback to mock OTP verification
+    # MOCK OTP verification only (SMS not used for login)
     if otp_key not in auth_otp_storage:
         raise HTTPException(status_code=400, detail="OTP not found. Please request a new OTP.")
     
@@ -1663,13 +1630,13 @@ async def verify_auth_otp(request: AuthOTPVerify):
         raise HTTPException(status_code=400, detail="OTP expired. Please request a new OTP.")
     
     # Check attempts
-    if stored_data["attempts"] >= 3:
+    if stored_data.get("attempts", 0) >= 3:
         del auth_otp_storage[otp_key]
         raise HTTPException(status_code=400, detail="Too many attempts. Please request a new OTP.")
     
     # Verify OTP
-    if otp != stored_data["otp"]:
-        auth_otp_storage[otp_key]["attempts"] += 1
+    if otp != stored_data.get("otp"):
+        auth_otp_storage[otp_key]["attempts"] = stored_data.get("attempts", 0) + 1
         remaining = 3 - auth_otp_storage[otp_key]["attempts"]
         raise HTTPException(status_code=400, detail=f"Invalid OTP. {remaining} attempts remaining.")
     
@@ -1678,6 +1645,8 @@ async def verify_auth_otp(request: AuthOTPVerify):
     auth_otp_storage[otp_key]["verified"] = True
     auth_otp_storage[otp_key]["verification_token"] = verification_token
     
+    # Check if user exists with this phone
+    existing_user = await db.users.find_one({"phone": phone}, {"_id": 0})
     # Check if user exists with this phone
     existing_user = await db.users.find_one({"phone": phone}, {"_id": 0})
     
