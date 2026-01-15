@@ -63,12 +63,6 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
     loadModels();
   }, []);
 
-  // Fetch attendance data
-  useEffect(() => {
-    fetchTodayAttendance();
-    fetchRegisteredStaff();
-  }, [clinic]);
-
   const fetchTodayAttendance = async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -93,6 +87,13 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
       console.error('Error fetching registered staff:', err);
     }
   };
+
+  // Fetch attendance data - must be after function declarations
+  useEffect(() => {
+    fetchTodayAttendance();
+    fetchRegisteredStaff();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clinic]);
 
   // Start camera - simplified version matching working test page
   const startCamera = async () => {
