@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Camera Test - Nevika Cura</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .video-container {
+      position: relative;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      margin-bottom: 15px;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .placeholder {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .placeholder svg {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+    button {
+      width: 100%;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    .status {
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    .status.info { background: #e0f2fe; color: #0369a1; }
+    .status.success { background: #dcfce7; color: #166534; }
+    .status.error { background: #fee2e2; color: #dc2626; }
+    .status.warning { background: #fef3c7; color: #92400e; }
+    .log-container {
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 15px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      margin-top: 15px;
+    }
+    .log-entry {
+      padding: 4px 0;
+      border-bottom: 1px solid #333;
+      word-break: break-all;
+    }
+    .log-entry:last-child { border-bottom: none; }
+    .log-info { color: #60a5fa; }
+    .log-success { color: #4ade80; }
+    .log-error { color: #f87171; }
+    .log-warn { color: #fbbf24; }
+    .device-info {
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+    .device-info p {
+      margin-bottom: 5px;
+      color: #475569;
+    }
+    .device-info strong {
+      color: #1e293b;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px;
+      background: #f8fafc;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .step-num {
+      background: #667eea;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .step-text {
+      font-size: 13px;
+      color: #475569;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📷 Camera Test</h1>
+    <p class="subtitle">Debug camera access for Face ID</p>
+    
+    <!-- Device Info -->
+    <div class="device-info" id="deviceInfo">
+      <p><strong>Browser:</strong> <span id="browserInfo">Detecting...</span></p>
+      <p><strong>Platform:</strong> <span id="platformInfo">Detecting...</span></p>
+      <p><strong>Secure Context:</strong> <span id="secureContext">Checking...</span></p>
+      <p><strong>Media Devices API:</strong> <span id="mediaDevices">Checking...</span></p>
+    </div>
+    
+    <!-- Status -->
+    <div class="status info" id="status">
+      Click "Test Camera" to start
+    </div>
+    
+    <!-- Video Container -->
+    <div class="video-container">
+      <video id="video" autoplay muted playsinline></video>
+      <div class="placeholder" id="placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <p>Camera preview will appear here</p>
+      </div>
+    </div>
+    
+    <!-- Buttons -->
+    <button class="btn-primary" id="startBtn" onclick="testCamera()">
+      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+      </svg>
+      Test Camera
+    </button>
+    
+    <button class="btn-secondary" id="stopBtn" onclick="stopCamera()" style="display:none;">
+      Stop Camera
+    </button>
+    
+    <button class="btn-danger" id="retryBtn" onclick="testCamera()" style="display:none;">
+      🔄 Retry
+    </button>
+    
+    <!-- Troubleshooting Steps -->
+    <div id="troubleshooting" class="hidden">
+      <h3 style="margin: 15px 0 10px; font-size: 16px;">Troubleshooting Steps:</h3>
+      <div class="step">
+        <span class="step-num">1</span>
+        <span class="step-text">When prompted, tap <strong>"Allow"</strong> for camera access</span>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <span class="step-text">If no prompt appears, go to <strong>Browser Settings → Site Settings → Camera</strong> and allow this site</span>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <span class="step-text">Close any other apps using the camera (WhatsApp, Instagram, etc.)</span>
+      </div>
+      <div class="step">
+        <span class="step-num">4</span>
+        <span class="step-text">Try refreshing this page</span>
+      </div>
+    </div>
+    
+    <!-- Console Log -->
+    <div class="log-container" id="logContainer">
+      <div class="log-entry log-info">Camera test log initialized</div>
+    </div>
+  </div>
+
+  <script>
+    let stream = null;
+    const video = document.getElementById('video');
+    const placeholder = document.getElementById('placeholder');
+    const status = document.getElementById('status');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const retryBtn = document.getElementById('retryBtn');
+    const troubleshooting = document.getElementById('troubleshooting');
+    const logContainer = document.getElementById('logContainer');
+    
+    // Detect device info
+    function detectDevice() {
+      const ua = navigator.userAgent;
+      let browser = 'Unknown';
+      if (ua.includes('Chrome')) browser = 'Chrome';
+      else if (ua.includes('Safari')) browser = 'Safari';
+      else if (ua.includes('Firefox')) browser = 'Firefox';
+      else if (ua.includes('Edge')) browser = 'Edge';
+      
+      document.getElementById('browserInfo').textContent = browser + ' - ' + ua.substring(0, 50) + '...';
+      document.getElementById('platformInfo').textContent = navigator.platform || 'Unknown';
+      document.getElementById('secureContext').textContent = window.isSecureContext ? '✅ Yes (HTTPS)' : '❌ No (HTTP)';
+      document.getElementById('mediaDevices').textContent = navigator.mediaDevices ? '✅ Available' : '❌ Not Available';
+      
+      if (!window.isSecureContext) {
+        log('WARNING: Not a secure context (HTTPS required for camera)', 'warn');
+      }
+      if (!navigator.mediaDevices) {
+        log('ERROR: MediaDevices API not available', 'error');
+      }
+    }
+    
+    function log(message, type = 'info') {
+      const entry = document.createElement('div');
+      entry.className = `log-entry log-${type}`;
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      logContainer.appendChild(entry);
+      logContainer.scrollTop = logContainer.scrollHeight;
+      console.log(`[Camera Test] ${message}`);
+    }
+    
+    function setStatus(message, type = 'info') {
+      status.className = `status ${type}`;
+      status.textContent = message;
+    }
+    
+    async function testCamera() {
+      log('=== Starting camera test ===', 'info');
+      startBtn.disabled = true;
+      retryBtn.style.display = 'none';
+      troubleshooting.classList.add('hidden');
+      setStatus('Initializing camera...', 'info');
+      
+      // Check basic requirements
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        log('ERROR: getUserMedia not supported', 'error');
+        setStatus('Camera API not supported on this browser', 'error');
+        showError();
+        return;
+      }
+      
+      // Check permission status if available
+      if (navigator.permissions && navigator.permissions.query) {
+        try {
+          const permResult = await navigator.permissions.query({ name: 'camera' });
+          log(`Permission status: ${permResult.state}`, 'info');
+          
+          if (permResult.state === 'denied') {
+            log('Camera permission is DENIED', 'error');
+            setStatus('Camera permission denied. Please enable in browser settings.', 'error');
+            showError();
+            return;
+          }
+        } catch (e) {
+          log(`Permission query not supported: ${e.message}`, 'warn');
+        }
+      }
+      
+      // Try different camera constraints
+      const constraints = [
+        { name: 'Front camera (ideal)', video: { facingMode: 'user' } },
+        { name: 'Front camera (exact)', video: { facingMode: { exact: 'user' } } },
+        { name: 'Any camera', video: true },
+        { name: 'Back camera', video: { facingMode: 'environment' } },
+      ];
+      
+      for (const constraint of constraints) {
+        log(`Trying: ${constraint.name}...`, 'info');
+        setStatus(`Trying: ${constraint.name}...`, 'info');
+        
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: constraint.video, audio: false });
+          log(`SUCCESS with: ${constraint.name}`, 'success');
+          
+          // Get track info
+          const tracks = stream.getVideoTracks();
+          if (tracks.length > 0) {
+            const settings = tracks[0].getSettings();
+            log(`Camera: ${tracks[0].label}`, 'success');
+            log(`Resolution: ${settings.width}x${settings.height}`, 'success');
+          }
+          
+          // Attach to video element
+          video.srcObject = stream;
+          placeholder.style.display = 'none';
+          
+          // Wait for video to play
+          try {
+            await video.play();
+            log('Video playing successfully!', 'success');
+            setStatus('✅ Camera working! You should see yourself above.', 'success');
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
+            return;
+          } catch (playErr) {
+            log(`Play error: ${playErr.message}`, 'warn');
+            // Still might work on tap
+            setStatus('Camera ready - tap video area if not showing', 'warning');
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
+            return;
+          }
+          
+        } catch (err) {
+          log(`Failed: ${err.name} - ${err.message}`, 'error');
+        }
+      }
+      
+      // All constraints failed
+      log('All camera constraints failed!', 'error');
+      setStatus('❌ Could not access camera. See troubleshooting below.', 'error');
+      showError();
+    }
+    
+    function showError() {
+      startBtn.disabled = false;
+      startBtn.style.display = 'none';
+      retryBtn.style.display = 'block';
+      troubleshooting.classList.remove('hidden');
+    }
+    
+    function stopCamera() {
+      if (stream) {
+        stream.getTracks().forEach(track => {
+          track.stop();
+          log(`Stopped track: ${track.kind}`, 'info');
+        });
+        stream = null;
+      }
+      video.srcObject = null;
+      placeholder.style.display = 'flex';
+      startBtn.style.display = 'block';
+      startBtn.disabled = false;
+      stopBtn.style.display = 'none';
+      setStatus('Camera stopped. Click to test again.', 'info');
+      log('Camera stopped', 'info');
+    }
+    
+    // Allow tap on video to play (for mobile)
+    video.addEventListener('click', () => {
+      if (video.paused) {
+        video.play().then(() => {
+          log('Video started on tap', 'success');
+        }).catch(e => {
+          log(`Tap play error: ${e.message}`, 'error');
+        });
+      }
+    });
+    
+    // Initialize
+    detectDevice();
+    log('Ready to test camera', 'info');
+  </script>
+</body>
+</html>
