@@ -296,6 +296,11 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
       } else {
         toast.error('Camera error: ' + (err.message || 'Unknown error'));
       }
+      
+      // Set error state for UI
+      setCameraError(err.message || 'Failed to access camera');
+    } finally {
+      setCameraStarting(false);
     }
   };
 
@@ -309,6 +314,7 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
       videoRef.current.srcObject = null;
     }
     setCameraActive(false);
+    setCameraStarting(false);
     setFaceDetected(false);
   };
 
