@@ -3802,6 +3802,14 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Face Attendance router: {e}")
 
+# Calories Tracking Router (for Evara, Glydex, Alyne food tracking)
+try:
+    from routes.calories import router as calories_router
+    app.include_router(calories_router)
+    logger.info("Calories Tracking router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Calories router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
