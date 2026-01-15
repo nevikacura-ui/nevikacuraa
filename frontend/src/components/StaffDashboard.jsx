@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -32,7 +32,7 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const accessModules = staffInfo?.access_modules || [];
+  const accessModules = useMemo(() => staffInfo?.access_modules || [], [staffInfo?.access_modules]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
