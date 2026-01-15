@@ -32,6 +32,8 @@ import Community from '@/pages/Community';
 import Reminders from '@/pages/Reminders';
 // ALYNE - Kids Health
 import Alyne from '@/pages/Alyne';
+// ANC Public Form
+import ANCFormPublic from '@/pages/ANCFormPublic';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
