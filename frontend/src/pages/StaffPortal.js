@@ -1853,22 +1853,22 @@ const StaffPortal = () => {
                 
                 {/* Forms Tab - Send registration forms */}
                 <TabsTrigger 
-                  value="forms" 
-                  data-testid="tab-forms"
+                  value="fees" 
+                  data-testid="tab-fees"
                   className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-indigo-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
                 >
-                  <Send className="w-5 h-5 sm:w-5 sm:h-5" />
-                  <span>Forms</span>
+                  <Receipt className="w-5 h-5 sm:w-5 sm:h-5" />
+                  <span>Fees</span>
                 </TabsTrigger>
                 
                 {/* Loyalty Tab - Pharmacy rewards */}
                 <TabsTrigger 
-                  value="loyalty" 
-                  data-testid="tab-loyalty"
-                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-yellow-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
+                  value="feedback" 
+                  data-testid="tab-feedback"
+                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
                 >
                   <Star className="w-5 h-5 sm:w-5 sm:h-5" />
-                  <span>Loyalty</span>
+                  <span>Feedback</span>
                 </TabsTrigger>
                 
                 {/* Attendance Tab - Orange themed */}
