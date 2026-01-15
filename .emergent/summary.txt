@@ -1,191 +1,163 @@
 <analysis>**original_problem_statement:**
-The user wants to build a comprehensive healthcare application named Nevika Cura. The initial set of requests focused on creating role-based portals for staff, fixing various bugs, and redesigning the public-facing ALYNE page.
+The user wants to build a comprehensive healthcare application named Nevika Cura. The project involves creating role-based portals for staff, implementing various features, and fixing numerous bugs.
 
-Recent user requests added during this session include:
-1.  **Bug Fixes (New):**
-    *   Face ID registration is failing on the user's real device.
-    *   The View week availability feature in the DiaGyn module was broken.
-    *   The Add Funds feature, which uses screenshot uploads, lacked a robust confirmation mechanism. User suggested a QR code with a fixed amount, which was already present, but also wanted notifications.
-    *   The medicine inventory for Orange Pharmacy was missing, showing 0 items.
-    *   The ANC form link sent via email was empty.
-    *   The user could not see the newly added scan fees in the UI.
-2.  **New Features (New):**
-    *   Add a subsection for Scan / Ultrasound Charges (e.g., Early Scan - ₹1000, NT Scan - ₹1200) to Dr. Neha's appointment completion flow. The total fee should be calculated and displayed.
-    *   Create a feature to send a web-based ANC (Antenatal Care) form link to patients via Email/SMS. The system must track the form's status (e.g., Allotted, Filled) and display it in the staff portal.
-    *   Implement the same form-sending functionality for the Diabetes registration module.
-3.  **User Feedback:**
-    *   The user questioned why development credits were used to re-implement the pharmacy inventory feature, which they believed already existed.
+Recent user requests include:
+1.  **Bug Fix: Walk-in Availability (User's Current Priority):** The walk-in appointment booking system incorrectly shows No slots available even when the doctor's schedule is open. The user also reported this as No slot cancelled be seen.
+2.  **Bug Fix: Face ID Registration (Recurring):** Face ID registration and verification fail on the user's real mobile device, with issues related to camera permissions and startup.
+3.  **New Feature: Pre-Sonography Form:** A form for clinic staff to capture patient details before a sonography, with the information being visible to the doctor.
+4.  **Enhancements & Standardization:**
+    *   Walk-in time slots should become unavailable in real-time as time passes.
+    *   Availability checks must work for all doctors and clinics (e.g., Dr. Vikas Jha, Amnion Clinic).
+    *   The entire application must standardize on IST for time and an Indian date format (DD/MM/YYYY).
+5.  **User Feedback:** The user has expressed significant frustration over development credits being used to fix features that were previously working, indicating a need for better regression testing and stability.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack React/FastAPI/MongoDB platform. The agent has made significant progress on multiple fronts:
--   **Biometric System:** The  based authentication system is integrated. A wrapper component dynamically shows the face recognition UI on mobile devices and the old fingerprint UI on desktops. However, this feature is currently bugged.
--   **Feature Implementation:** The new Scan/Ultrasound fees for Dr. Neha's portal are fully implemented and verified by the agent. The ANC form-sending and tracking feature is complete, including a public web form for patients.
--   **Bug Fixes:** The agent successfully fixed the DiaGyn availability bug, restored the missing pharmacy inventory by adding back the required API endpoints, and fixed the bug causing empty email links for the ANC form. Notifications for wallet top-ups were also added.
--   **Refactoring:** All linting errors in  have been resolved. An initial refactoring of the large  file was performed, extracting utility functions and constants into a separate  file, reducing the line count.
+The application is a full-stack platform using React, FastAPI, and MongoDB. It features a multi-faceted staff portal with modules for different roles (Clinic Staff, Doctors, Pharmacy).
+-   **Face Attendance:** A face recognition system is in place. After multiple failures with a React component, a working standalone HTML version () was created. The backend () was refactored to handle server-side image processing. This working logic was then ported back into the main  component.
+-   **Form Management:** Features to send and track web-based ANC (Antenatal Care) and Diabetes registration forms are implemented, including a 1-month expiry and a resend mechanism.
+-   **Appointment Booking:** The walk-in appointment system had a critical bug preventing slot visibility, which was just fixed. A new Pre-Sonography booking feature has been partially implemented (backend APIs and frontend UI shells are in place).
 
 **Last working item**:
--   **Last item agent was working:** The agent was implementing the Send Diabetes Registration Form feature. It had updated the  component with the UI and handlers for sending the form link. The next step was to create the backend endpoints and the public form page.
+-   **Last item agent was working:** The agent was beginning to implement a batch of fixes and enhancements for the walk-in booking system based on the user's latest, frustrated message. This involved standardizing date/time handling across the app.
 -   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
 -   **Which testing method agent to use?** both
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Face registration fails on a real device (P0)**
-    -   **Description:** The user provided a screenshot showing the registration process failing on their phone, despite the camera and face detection working. Agent's headless browser and API tests were successful, and backend logs showed a  for the agent's test, indicating the API is likely correct.
-    -   **Attempted fixes:** Added frontend  statements for debugging and enhanced error handling in . Verified the backend endpoint works correctly with a direct API call.
+-   **Issue 1: Face ID camera fails to start in the main app (P0)**
+    -   **Description:** This is a long-standing, critical bug. While a standalone HTML page () now works correctly for the user, the integration of this logic back into the main Staff Portal's React component () has not been confirmed as working by the user. The user's last feedback on the integrated component was Not working.
+    -   **Attempted fixes:** The component was completely rewritten to mirror the logic of the working standalone HTML page, and the backend was refactored to process raw image data instead of client-side feature vectors.
     -   **Next debug checklist:**
-        1.  Ask the user to try registering again.
-        2.  Request the exact error message from the UI toast/alert.
-        3.  Instruct the user on how to get browser console logs from their mobile device and ask them to share the output.
-        4.  Review the backend logs for the specific timestamp of the user's failed attempt to inspect the incoming payload and any potential server-side exceptions.
+        1.  Ask the user to perform a final test of the face attendance feature within the main **Staff Portal**.
+        2.  If it still fails, ask for a screenshot of the error and any console logs from their mobile browser.
+        3.  The file  serves as the last known working version and should be used as a reference.
     -   **Status:** USER VERIFICATION PENDING
     -   **Is recurring issue?** Y
     -   **Should Test frontend/backend/both after fix?** both
     -   **Blocked on other issue:** None
--   **Issue 2: User cannot see the new scan fees in the preview (P1)**
-    -   **Description:** The user reported that the newly added scan/ultrasound fees are not visible. The agent has implemented and verified this feature with screenshots.
-    -   **Attempted fixes:** The feature was implemented in , , and . Agent verified correct functionality via screenshots.
-    -   **Next debug checklist:**
-        1.  Provide the user with a direct link to the staff portal ().
-        2.  Give clear instructions: log in as , find an In Clinic appointment, click Complete, and check for the Scan / Ultrasound Charges section in the modal.
-    -   **Status:** USER VERIFICATION PENDING
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Frontend
-    -   **Blocked on other issue:** None
 
 **In progress Task List**:
--   **Task 1: Complete the Diabetes Registration Form feature (P1)**
-    -   **Description:** Create a feature for the Glydex (Diabetes) module that allows staff to send a registration form link to patients via Email/SMS and track its submission status.
+-   **Task 1: Standardize Date/Time and Finalize Walk-in Booking Logic (P0)**
+    -   **Description:** Address all points from the user's latest request to ensure the walk-in booking system is robust and user-friendly. This is the highest priority to regain user trust.
     -   **Where to resume:**
-        1.  Create the public diabetes form page: .
-        2.  Add a route for this new page in .
-        3.  Implement the backend endpoints for creating, sending, fetching, and submitting the diabetes form. This can be done in  or a new dedicated file.
-    -   **What will be achieved with this?** A streamlined, trackable process for patient data collection in the diabetes module.
+        1.  Open .
+        2.  Modify  to filter out time slots that are in the past, based on the current IST time. Use the newly created  helper.
+        3.  Update all date displays in  to use the new  utility.
+        4.  Verify that the schedules defined in  for Amnion Clinic and Dr. Vikas Jha are correct.
+        5.  Manually test the Walk-in UI by selecting these other clinics/doctors to ensure slots appear correctly.
+        6.  After implementing the changes, perform a regression check on other features as requested by the user.
+    -   **What will be achieved with this?** A stable and accurate appointment booking system that prevents booking past slots and works for all configured staff and clinics.
     -   **Status:** IN PROGRESS
     -   **Should Test frontend/backend/both after fix?** both
     -   **Blocked on something:** None
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P1: Refactor :** This file is still over 3000 lines. The next major step is to split the single large component into role-specific view components (, , ) to improve readability and maintainability.
+    -   **P1: Complete Pre-Sonography Form Feature:** The backend APIs and frontend UI are partially built. This needs to be completed and tested.
+    -   **P2: Refactor :** This large file (over 3000 lines) is a source of bugs and needs to be broken down into smaller, role-specific components (, , etc.).
 -   **Future Tasks:**
     -   Implement Cashfree Payment Gateway.
     -   Complete the frontend for the Wearable Integration (Terra).
     -   Implement Apple Sign-In.
-    -   Migrate hardcoded data from  and  to MongoDB.
+    -   Migrate hardcoded data (e.g., doctor schedules) to MongoDB.
     -   Implement a Login History page.
 
 **Completed work in this session**
--   **Biometric System Integration:**
-    -   Integrated  to show a face recognition UI on mobile views within .
-    -   Registered the  router.
--   **New Features:**
-    -   **ANC Form Flow:** Implemented a complete feature to send web-based ANC forms to patients via Email/SMS, with status tracking (/) in the staff portal. Created  and corresponding backend endpoints in .
-    -   **Scan/Ultrasound Fees:** Added a section in Dr. Neha's appointment completion modal to select and add various scan fees, with the total cost automatically calculated and saved.
--   **Bug Fixes:**
-    -   **DiaGyn Availability:** Fixed the broken View Week Availability by creating the missing  endpoint and correcting the route order in .
-    -   **Pharmacy Inventory:** Restored the missing 4266 medicines by adding the  endpoints back to .
-    -   **Wallet Notifications:** Implemented admin notifications for wallet screenshot uploads in .
-    -   **ANC Email Link:** Fixed a bug where the ANC form email contained no link by correcting the parameter order in the  function call.
--   **Refactoring & Code Quality:**
-    -   **:** Fixed all 16 pre-existing linting errors and warnings.
-    -   **:** Performed an initial refactoring by extracting ~150 lines of helper functions and constants into .
+-   **Face ID System Overhaul:**
+    -   Successfully debugged the mobile camera issue by creating standalone HTML test pages.
+    -   Refactored the backend () to use server-side image hashing (, ), removing the problematic  dependency and client-side processing.
+    -   The core feature now works on a standalone page ().
+-   **Walk-in Availability Bug Fix:**
+    -   Resolved the critical bug where walk-in slots were not appearing. The issue was a race condition where the UI rendered before login data was available. Fixed in  by ensuring form state is correctly initialized after login.
+-   **Pre-Sonography Feature (Partial Implementation):**
+    -   Created backend models and API endpoints in  for booking and listing sonographies.
+    -   Added the frontend modal, state management, and display tab to .
+-   **Form Expiry and Resend Feature:**
+    -   Added a 1-month expiry and a Resend Link functionality to both the ANC and Diabetes forms in  and .
 
 **Earlier issues found/mentioned but not fixed**
--   The user raised a valid concern about being charged for re-implementing the pharmacy inventory feature that was previously removed. The agent acknowledged this as a process failure and committed to checking backups/git history in the future before implementing features that may have existed before.
+-   **User Frustration and Trust:** The user is losing confidence due to recurring bugs and feeling they are paying to fix the same issues. The next agent must prioritize stability and comprehensive testing to rebuild trust. Acknowledge this and proceed with caution.
 
 **Known issue recurrence from previous fork**
--   **Biometric Authentication:** The core problem of a non-functional biometric system persists. The previous system was a non-working placeholder. The new  system is implemented but fails during user testing on a real device, making it the current iteration of the same recurring issue.
+-   **Face ID / Biometric System:** This has been the most persistent issue. The current approach (server-side image processing + logic from a working standalone page) is the latest attempt at a permanent fix, but it requires final user validation in the main application.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Publicly Accessible Forms:** Creating unique, tokenized URLs (e.g., ) that allow patients to fill out forms without logging in, while ensuring data is linked to their profile on the backend.
--   **Dynamic Component Rendering:** Using a hook to detect mobile user agents to conditionally render the  component for mobile and a different component for desktop.
--   **Backend Route Precedence:** Resolved a routing bug in FastAPI by reordering a static route () before a dynamic route () to ensure it's matched correctly.
--   **Complex State Management in React:** Handling multiple nested modals, dynamic fee calculations, and conditional UI rendering within a large component ().
--   **Modularization:** Started breaking down a monolithic React component by extracting constants, helper functions, and UI elements into separate files within a dedicated  directory.
+-   **Server-Side Image Recognition:** Moved from client-side  descriptors to server-side image hashing with  and  to overcome device inconsistencies.
+-   **Standalone Debugging:** Used simple, framework-free HTML/JS pages to isolate and solve a complex mobile-specific hardware/permission issue, proving the concept before reintegration.
+-   **React Race Condition Debugging:** Identified and fixed a bug caused by  running with empty initial state before a  could populate it from  post-login.
 
 **key DB schema**
--   ** (New Collection):** Stores data for sent ANC forms. Includes uid=0(root) gid=0(root) groups=0(root), , ,  (, ), , and timestamps.
--   ** (Modified):** The schema for completed appointments now includes  (a list of selected scan fee codes) and  (the final calculated amount).
+-   ** (New Collection):** Stores uid=0(root) gid=0(root) groups=0(root),  (object), , , , .
+-   ** (Modified):** Face data now stored as  (string) instead of  (array).
+-   ** /  (Modified):** Added  (datetime) and  now includes .
 
 **changes in tech stack**
--   None. No new libraries were introduced in this session.
+-   **Backend:** Added  and  for face recognition. The attempt to use  failed and was abandoned.
 
 **All files of reference**
--   : Main hub for staff activity; heavily modified for new features and initial refactoring. Still a refactoring target.
--   : Modified to handle the new scan fees logic in the  endpoint.
--   : Modified to include the ANC form sending and tracking feature.
--   : Modified to add endpoints for the ANC form flow and fix an email sending bug.
--   : New public-facing page for patients to fill the ANC form.
--   : New file containing helpers extracted from .
--   : Modified to improve error handling and logging for the failing registration.
--   : Fixed a critical routing bug by adding and reordering the  endpoint.
--   : Modified to restore the pharmacy inventory endpoints.
+-   : The monolithic component for most staff functions.
+-   : Contains shared logic for appointment slots and date/time formatting. This is the starting point for the next task.
+-   : The React component for the face attendance feature.
+-   : The working reference implementation of the face attendance UI.
+-   : The backend API for face registration and verification.
+-   : Backend for staff-related actions, including the new sonography feature.
 
 **Areas that need refactoring**:
--   ** (Critical):** This file remains over 3000 lines long and houses UI and logic for three distinct staff roles. The next refactoring phase should be to extract the main views (, , ) into separate, manageable components.
+-   **:** This remains a critical bottleneck. Its large size and mixed responsibilities make it difficult to maintain and a frequent source of bugs. It should be the top refactoring priority after the current P0 tasks are complete.
 
 **key api endpoints**
--   : Updated to accept a JSON body with  and .
--   : **New endpoint** to fetch weekly doctor availability.
--   : **Restored endpoint** to get the list of medicines.
--   : **New endpoint** to create and send an ANC form link.
--   : **New endpoint** to fetch data for a specific public ANC form.
--   : **New endpoint** for patients to submit the filled ANC form.
--   : **New endpoint** to get a list and status of all sent ANC forms.
+-   : Modified endpoint to accept a base64 encoded image.
+-   : Modified endpoint to verify a user via a base64 encoded image.
+-   : New endpoint for creating a sonography booking.
+-   : New endpoint for listing sonography bookings for a doctor.
 
 **Critical Info for New Agent**
--   **Top Priority:** You must work with the user to debug the face registration failure on their real device. You cannot test this yourself. Guide them to provide detailed console logs from their phone's browser. This is a P0 blocker for the feature.
--   **User Communication:** The user is observant and will notice if you re-implement features that were merely deleted or disabled. Before building something that seems core to the application, check backup files (e.g., ) or git history. Acknowledge and restore existing code where appropriate.
--   **Next Implementation Task:** Your next coding task is to complete the Send Diabetes Form feature. The frontend component  is partially done. You need to create the public form page and the backend endpoints.
--   **Refactoring:** After the bug fixes and current feature, the highest priority technical task is the major refactoring of  into role-specific view components.
+-   **User Trust is Fragile:** The user is frustrated. Prioritize stability, communicate clearly, and perform thorough regression checks to avoid reintroducing old bugs. Acknowledge their frustration and focus on delivering robust solutions.
+-   **P0 Task:** Your immediate focus must be on finishing the walk-in booking enhancements: real-time slot filtering, IST standardization, and verifying it works for all doctors/clinics.
+-   **Face ID Verification:** The Face ID feature's final integration into the React app needs to be confirmed by the user. Do not assume it is fixed. Be prepared to debug it using the working  as your guide.
 
 **documents and test reports created in this job**
 -   
 -    (updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** unable to register staff in with face id , View week availability in DiaGyn not working, In addition funds, feature to add screen shot, dint, recieve image of the sender. (Reports 3 bugs).
-2.  **Agent:** Investigated the 3 issues.
-3.  **User:** Why all credit goes , in implementing features that were already implemented. (Feedback on pharmacy inventory fix).
-4.  **Agent:** Acknowledged the mistake and promised to improve the process.
-5.  **User:** Requested new feature: Add specific scan fees (Early Scan, NT Scan etc.) for Dr. Neha's appointments.
-6.  **Agent:** Implemented the scan fees feature.
-7.  **User:** Requested new feature: A flow to send an ANC form link via email/SMS and track its status.
-8.  **Agent:** Asked clarifying questions about the ANC form flow.
-9.  **User:** Answered the clarifying questions: web-based form, auto-update status, send via both email/SMS.
-10. **User:** Same for Diabetes registration form module. Also unable to see the new fees added in preview. Kindly send a link to check / verify. Fill ANC form link on mail. - empty , no link , no file (Requests diabetes form feature, reports 2 more bugs).
+1.  **User:** Reports the Restart Camera button is missing in the Face ID UI.
+2.  **User:** Reports Face ID is still not working, camera doesn't start.
+3.  **User:** Agrees to use a simplified test page.
+4.  **User:** Shares logs from the test page, confirming their phone's camera works.
+5.  **User:** Reports the reworked Face ID component is Not working.
+6.  **User:** Shares a screenshot showing the final standalone  page is working correctly.
+7.  **User:** Reports the walk-in booking is broken (No slot cancelled be seen) and provides a screenshot.
+8.  **User:** Lists requirements: disable past slots, check other clinics/doctors, use IST/Indian date format, and check other features are intact. Expresses frustration about paying for recurring fixes.
+9.  **User:** Uploads artifacts showing the walk-in availability issue.
+10. **Agent:** Acknowledges the frustration and begins working on the walk-in booking fixes.
 
 **Project Health Check:**
 -   **Broken:**
-    -   The face registration feature is non-operational for the end-user on a real device.
--   **Mocked:**
-    -   Some doctor profiles and data in the ALYNE module are still hardcoded.
+    -   The state of the integrated  component is unknown and potentially broken for the end-user.
 -   **Needs Refactoring:**
-    -    is critically oversized and complex. It is the highest priority for refactoring to improve maintainability.
+    -    is a critical liability and needs to be broken down into smaller components to improve maintainability and reduce bugs.
 
 **3rd Party Integrations**
--   **face-api.js:** Used for client-side face recognition. Models are stored in .
--   (Existing integrations: Claude, OpenAI, Twilio, Resend, Stripe, Recharts)
+-   **face-api.js:** Used for client-side face detection (though processing is now server-side). Models are in .
+-   **imagehash & Pillow:** New Python libraries for server-side image-based face comparison.
+-   (Existing: Claude, OpenAI, Twilio, Resend, Stripe, Recharts)
 
 **Testing status**
--   **Testing agent used after significant changes:** YES. Used to verify the SmartBiometric switching and ALYNE page redesign.
--   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Testing agent used after significant changes:** YES, for the Diabetes Form feature.
 -   **Test files created:** None
--   **Known regressions:** The pharmacy inventory endpoints were accidentally removed in a previous session and had to be restored.
+-   **Known regressions:** The walk-in availability feature broke and had to be fixed. The user is sensitive to this pattern.
 
 **Credentials to test flow:**
--   **Admin Login:** , Password: 
 -   **Clinic Staff (All Modules):** user: , pass: 
 -   **Doctor (ANC Access):** user: , pass: 
 -   **Doctor (Diabetes Access):** user: , pass: 
--   **Pharmacy Staff (Attendance):** user: , pass: 
 
 **What agent forgot to execute**
--   The agent did not initially check backup files when the user reported the missing pharmacy inventory, leading to re-implementation efforts instead of a simple restoration, which the user pointed out. The agent has since corrected this process.</analysis>
+-   The previous agent did not perform sufficient regression testing, leading to the re-emergence of the walk-in availability bug, which caused significant user frustration. The next agent must prioritize checking that existing features remain intact after any change.</analysis>
