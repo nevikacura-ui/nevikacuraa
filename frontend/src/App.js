@@ -86,6 +86,8 @@ function App() {
             <Route path="/anc-form/:formId" element={<ANCFormPublic />} />
             {/* Diabetes Public Form */}
             <Route path="/diabetes-form/:formId" element={<DiabetesFormPublic />} />
+            {/* Simple Face Attendance - for debugging */}
+            <Route path="/face-attendance" element={<SimpleFaceAttendance />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
