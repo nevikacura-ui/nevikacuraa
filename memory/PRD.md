@@ -1241,18 +1241,50 @@ GET  /api/teleconsult/prescription/{id} - Get prescription (auth required)
 
 ---
 
+### Session 12 - January 15, 2026 (WALK-IN BOOKING BUG FIX)
+
+**37. Walk-in Availability Bug Fix** ✅ (Complete)
+- **Issue**: Walk-in appointment booking showed "No slots available" even when doctor's schedule was open
+- **Root Cause**: Race condition where UI rendered before login data populated the form state
+- **Fix Applied**: Form state correctly initialized after login from localStorage
+
+**38. IST Time Standardization & Indian Date Format** ✅ (Complete)
+- **Real-time Slot Filtering**: Past time slots automatically hidden based on current IST time
+- **Indian Date Format**: Added DD/MM/YYYY format display alongside date picker
+- **Files Modified**:
+  - `/app/frontend/src/pages/StaffPortal.js` - Added formatIndianDate import and usage
+  - `/app/frontend/src/pages/staff/staffUtils.js` - Already had IST helpers
+- **Features**:
+  - `isSlotPast(slotTime, dateStr)` - Filters slots that have passed
+  - `getAvailableTimeSlots()` - Automatically filters past slots for today
+  - `formatIndianDate()` - Converts YYYY-MM-DD to DD/MM/YYYY
+  - Date label shows: "Date (15/01/2026 - Thursday)"
+- **Testing**: 100% pass rate (iteration_36.json)
+  - Walk-in slots display correctly for both Pushpa and Amnion Clinics
+  - Past morning slots (11:00-14:00) correctly filtered when current time is evening
+  - Indian date format displayed in Walk-in and Emergency forms
+  - Walk-in booking successfully creates appointments
+
+**Test Credentials:**
+- Clinic Staff (Pushpa): `staff_pushpa` / `Nevika@2026C`
+- Clinic Staff (Amnion): `staff_amnion` / `Nevika@2026C`
+
+---
+
 ## Remaining Tasks
 
 ### High Priority
-- [ ] Test all new features thoroughly
+- [ ] **Face ID Verification**: User needs to confirm if FaceBiometric.jsx works in main Staff Portal (standalone HTML page works)
+- [ ] Complete Pre-Sonography Form Feature (backend APIs ready, frontend needs completion)
 - [ ] Further refactor Alyne.js into smaller components
 - [ ] Further refactor Admin.js into smaller components
 
 ### Medium Priority  
+- [ ] Refactor StaffPortal.js (3000+ lines) into role-specific components
 - [ ] Cashfree Payment Gateway
 - [ ] Terra Wearable Integration frontend
 - [ ] Apple Sign-In
 
 ### Low Priority
 - [ ] Login History page
-- [ ] Migrate hardcoded data to MongoDB
+- [ ] Migrate hardcoded data (doctor schedules) to MongoDB
