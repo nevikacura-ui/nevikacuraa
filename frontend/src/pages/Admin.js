@@ -2051,6 +2051,11 @@ const Admin = () => {
               )}
             </Card>
           </TabsContent>
+
+          {/* Clinic Analytics Tab */}
+          <TabsContent value="clinic-analytics">
+            <ClinicAnalyticsDashboard token={adminToken} clinic="all" />
+          </TabsContent>
         </Tabs>
       </main>
 
