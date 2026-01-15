@@ -130,6 +130,78 @@ async def get_featured_doctors():
     featured = [d for d in DOCTOR_PROFILES if d.get("featured")]
     return {"doctors": featured}
 
+@router.get("/availability")
+async def get_weekly_availability(days: int = 7):
+    """Get weekly doctor availability for next N days"""
+    from datetime import timedelta
+    
+    # Doctor schedules - matching clinic hours
+    DOCTOR_SCHEDULES = {
+        "Dr. Neha Patel": {
+            "pushpa": [
+                {"days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "time": "11:00-14:00", "session": "morning"},
+                {"days": ["Tuesday", "Thursday", "Saturday"], "time": "18:00-22:00", "session": "evening"}
+            ],
+            "amnion": [
+                {"days": ["Monday", "Wednesday", "Friday"], "time": "18:00-22:00", "session": "evening"}
+            ]
+        },
+        "Dr. Vikas Jha": {
+            "pushpa": [
+                {"days": ["Monday", "Wednesday", "Friday"], "time": "18:00-22:00", "session": "evening"}
+            ],
+            "amnion": [
+                {"days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "time": "11:00-14:00", "session": "morning"},
+                {"days": ["Tuesday", "Thursday", "Saturday"], "time": "18:00-22:00", "session": "evening"}
+            ]
+        }
+    }
+    
+    availability = []
+    today = datetime.now(timezone.utc)
+    
+    for i in range(days):
+        date = today + timedelta(days=i)
+        day_name = date.strftime("%A")
+        date_str = date.strftime("%Y-%m-%d")
+        
+        day_availability = {
+            "date": date_str,
+            "day": day_name,
+            "doctors": []
+        }
+        
+        for doctor_name, clinics in DOCTOR_SCHEDULES.items():
+            doctor_info = {
+                "name": doctor_name,
+                "clinics": []
+            }
+            
+            for clinic_id, schedules in clinics.items():
+                clinic_name = "Pushpa Clinic" if clinic_id == "pushpa" else "Amnion Clinic"
+                sessions = []
+                
+                for schedule in schedules:
+                    if day_name in schedule["days"]:
+                        sessions.append({
+                            "session": schedule["session"],
+                            "time": schedule["time"]
+                        })
+                
+                if sessions:
+                    doctor_info["clinics"].append({
+                        "id": clinic_id,
+                        "name": clinic_name,
+                        "sessions": sessions
+                    })
+            
+            if doctor_info["clinics"]:
+                day_availability["doctors"].append(doctor_info)
+        
+        availability.append(day_availability)
+    
+    return {"availability": availability}
+
 @router.get("/{doctor_id}")
 async def get_doctor_profile(doctor_id: str):
     """Get detailed doctor profile"""
