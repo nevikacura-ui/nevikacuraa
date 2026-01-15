@@ -176,9 +176,10 @@ async def verify_face(request: FaceVerificationRequest):
                 best_confidence = calculate_confidence(best_distance)
         
         elif has_image:
-            # Use image-based matching (simple for now - matches by face_hash)
+            # Use image-based matching (simple for now)
             # This is a placeholder - for production, use a proper face recognition service
-            input_hash = get_image_hash(request.face_data)
+            # The hash could be used for exact image matching in future
+            _ = get_image_hash(request.face_data)  # Calculate hash for future use
             
             # For now, we'll do a simple match - always accept if staff is registered
             # In production, this should use a proper face recognition API
