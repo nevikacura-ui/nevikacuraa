@@ -1810,6 +1810,7 @@ const StaffPortal = () => {
                 <ANCRegistration 
                   clinic={staffInfo?.clinic}
                   staffName={staffInfo?.name}
+                  doctor={staffInfo?.name?.includes('Neha') ? 'Dr. Neha Patel' : 'Dr. Vikas Jha'}
                 />
               </TabsContent>
             )}
