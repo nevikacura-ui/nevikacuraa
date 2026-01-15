@@ -781,7 +781,7 @@ const Alyne = () => {
               </button>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div><Label>Child's Name *</Label><Input value={newChild.name} onChange={(e) => setNewChild({...newChild, name: e.target.value})} /></div>
+              <div><Label>Child&apos;s Name *</Label><Input value={newChild.name} onChange={(e) => setNewChild({...newChild, name: e.target.value})} /></div>
               <div><Label>Date of Birth *</Label><Input type="date" value={newChild.date_of_birth} onChange={(e) => setNewChild({...newChild, date_of_birth: e.target.value})} /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
