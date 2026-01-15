@@ -2060,7 +2060,7 @@ const StaffPortal = () => {
                       </select>
                     </div>
                     <div>
-                      <Label>Date</Label>
+                      <Label>Date <span className="text-gray-500 text-xs font-normal">({formatIndianDate(walkInForm.date)} - {getDayName(walkInForm.date)})</span></Label>
                       <Input
                         type="date"
                         value={walkInForm.date}
@@ -2075,7 +2075,7 @@ const StaffPortal = () => {
                   {isFormReady && walkInForm.date && !isDoctorAvailable && (
                     <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm">
                       <AlertTriangle className="w-4 h-4 inline mr-2" />
-                      <strong>{walkInForm.doctor}</strong> is not available at {staffInfo?.clinic} on {getDayName(walkInForm.date)}. 
+                      <strong>{walkInForm.doctor}</strong> is not available at {staffInfo?.clinic} on {formatIndianDate(walkInForm.date)} ({getDayName(walkInForm.date)}). 
                       Please select a different date or doctor.
                     </div>
                   )}
