@@ -720,18 +720,26 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
             {/* Camera for Registration */}
             {cameraActive && (
               <div className="space-y-3">
-                <div className="relative bg-black rounded-xl overflow-hidden aspect-video max-w-sm mx-auto">
+                <div 
+                  className="relative bg-black rounded-xl overflow-hidden aspect-video max-w-sm mx-auto cursor-pointer"
+                  onClick={() => {
+                    if (videoRef.current && videoRef.current.paused) {
+                      videoRef.current.play().catch(e => console.log('Tap play error:', e));
+                    }
+                  }}
+                >
                   <video
                     ref={videoRef}
                     autoPlay
                     muted
                     playsInline
+                    webkit-playsinline="true"
                     className="w-full h-full object-cover"
                     style={{ transform: 'scaleX(-1)' }}
                   />
                   <canvas
                     ref={canvasRef}
-                    className="absolute top-0 left-0 w-full h-full"
+                    className="absolute top-0 left-0 w-full h-full pointer-events-none"
                     style={{ transform: 'scaleX(-1)' }}
                   />
                   <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${
