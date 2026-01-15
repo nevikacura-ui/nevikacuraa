@@ -18,6 +18,7 @@ import StaffBillingModule from '@/components/StaffBillingModule';
 import ANCRegistration from '@/components/ANCRegistration';
 import GlydexStaffPortal from '@/components/GlydexStaffPortal';
 import BiometricAttendance from '@/components/BiometricAttendance';
+import StaffDashboard from '@/components/StaffDashboard';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
