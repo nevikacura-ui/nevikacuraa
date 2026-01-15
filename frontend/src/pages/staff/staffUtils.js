@@ -48,6 +48,16 @@ export const FEE_CODES = {
   "E1": { label: "Emergency", amount: 600, color: "bg-red-100 text-red-800" },
 };
 
+// Scan/Ultrasound fees (Dr. Neha - OBGY)
+export const SCAN_FEES = {
+  "ES": { label: "Early Scan", amount: 1000, color: "bg-cyan-100 text-cyan-800" },
+  "NT": { label: "NT Scan", amount: 1200, color: "bg-cyan-100 text-cyan-800" },
+  "GS": { label: "Growth Scan", amount: 1500, color: "bg-cyan-100 text-cyan-800" },
+  "FL": { label: "Follicular", amount: 200, color: "bg-teal-100 text-teal-800" },
+  "UP": { label: "USG Pelvis", amount: 1000, color: "bg-teal-100 text-teal-800" },
+  "UT": { label: "UpT", amount: 100, color: "bg-teal-100 text-teal-800" },
+};
+
 // Helper function to generate time slots from schedule (15-minute intervals)
 export const generateTimeSlots = (startTime, endTime, interval = 15) => {
   const slots = [];
