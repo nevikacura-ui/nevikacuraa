@@ -2054,7 +2054,7 @@ const Admin = () => {
 
           {/* Clinic Analytics Tab */}
           <TabsContent value="clinic-analytics">
-            <ClinicAnalyticsDashboard token={adminToken} clinic="all" />
+            <ClinicAnalyticsDashboard token={localStorage.getItem('adminToken')} clinic="all" />
           </TabsContent>
         </Tabs>
       </main>
