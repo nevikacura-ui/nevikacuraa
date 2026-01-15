@@ -1205,6 +1205,17 @@ async def get_diabetes_form(form_id: str):
     if not form:
         return {"error": "Form not found or expired"}
     
+    # Check if form has expired (1 month = 30 days)
+    created_at = form.get("created_at")
+    if created_at and form.get("status") == "allotted":
+        try:
+            created_date = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+            expiry_date = created_date + timedelta(days=30)
+            if datetime.now(timezone.utc) > expiry_date:
+                return {"error": "This form link has expired. Please request a new form link from the clinic."}
+        except Exception:
+            pass
+    
     return {
         "id": form["id"],
         "status": form["status"],
@@ -1215,7 +1226,8 @@ async def get_diabetes_form(form_id: str):
         },
         "clinic": form.get("clinic"),
         "doctor": form.get("doctor"),
-        "form_data": form.get("form_data") if form["status"] == "filled" else None
+        "form_data": form.get("form_data") if form["status"] == "filled" else None,
+        "expires_at": (datetime.fromisoformat(created_at.replace("Z", "+00:00")) + timedelta(days=30)).isoformat() if created_at else None
     }
 
 @router.post("/form/{form_id}/submit")
