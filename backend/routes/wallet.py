@@ -19,9 +19,22 @@ router = APIRouter(prefix="/wallet", tags=["Wallet"])
 # MongoDB - injected by server.py
 db = None
 
+# Notification functions - injected by server.py
+send_email_notification = None
+send_sms_notification = None
+
 def set_db(database):
     global db
     db = database
+
+def set_notification_functions(email_fn, sms_fn):
+    global send_email_notification, send_sms_notification
+    send_email_notification = email_fn
+    send_sms_notification = sms_fn
+
+# Admin notification details
+ADMIN_EMAIL = "nevikacura@gmail.com"
+ADMIN_PHONE = "+919876543210"  # Update with actual admin phone
 
 # ============ MODELS ============
 
