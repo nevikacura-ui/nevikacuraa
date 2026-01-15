@@ -699,6 +699,28 @@ const StaffPortal = () => {
     }
   };
 
+  // Send reminders for upcoming sonography bookings
+  const sendSonographyReminders = async () => {
+    setSendingReminders(true);
+    try {
+      const res = await axios.post(`${API}/staff/sonography/send-all-reminders?minutes=30`, {}, getAuthHeaders());
+      if (res.data.success) {
+        if (res.data.sent_count > 0) {
+          toast.success(`Sent ${res.data.sent_count} reminder${res.data.sent_count > 1 ? 's' : ''} for upcoming scans`);
+          fetchSonographyBookings(); // Refresh to show updated reminder status
+        } else {
+          toast.info('No pending reminders to send (all upcoming scans already notified)');
+        }
+      } else {
+        toast.error('Failed to send reminders');
+      }
+    } catch (error) {
+      toast.error('Failed to send reminders');
+      console.error('Send reminders error:', error);
+    }
+    setSendingReminders(false);
+  };
+
   // Prefill sonography form from appointment
   const openSonographyFromAppointment = (appointment) => {
     setSonographyForm({
