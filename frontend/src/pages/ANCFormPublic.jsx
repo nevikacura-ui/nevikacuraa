@@ -21,51 +21,8 @@ const ANCFormPublic = () => {
   const [patientInfo, setPatientInfo] = useState(null);
   
   const [form, setForm] = useState({
-    // Personal Information
-    full_name: '',
-    age: '',
-    date_of_birth: '',
-    blood_group: '',
-    phone: '',
-    email: '',
-    address: '',
-    emergency_contact: '',
-    emergency_phone: '',
-    
-    // Obstetric History
-    gravida: '', // Total pregnancies
-    para: '', // Total deliveries
-    abortions: '',
-    living_children: '',
-    lmp_date: '', // Last Menstrual Period
-    edd_date: '', // Expected Delivery Date
-    
-    // Medical History
-    medical_conditions: [],
-    allergies: '',
-    current_medications: '',
-    previous_surgeries: '',
-    
-    // Family History
-    family_diabetes: false,
-    family_hypertension: false,
-    family_twins: false,
-    family_genetic: '',
-    
-    // Current Pregnancy
-    pregnancy_symptoms: '',
-    concerns: '',
-    preferred_hospital: '',
-    
-    // Consent
-    consent_given: false
-  });
 
-  useEffect(() => {
-    fetchFormData();
-  }, [formId]);
-
-  const fetchFormData = async () => {
+  const loadFormData = async () => {
     try {
       const res = await fetch(`${API}/api/anc/form/${formId}`);
       const data = await res.json();
@@ -96,6 +53,11 @@ const ANCFormPublic = () => {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    loadFormData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formId]);
 
   const handleChange = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
