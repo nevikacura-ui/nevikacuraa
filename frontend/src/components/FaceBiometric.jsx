@@ -31,21 +31,6 @@ const FaceBiometric = ({ staffName = '', clinic = 'pushpa' }) => {
   const [todayAttendance, setTodayAttendance] = useState([]);
   const [registeredStaff, setRegisteredStaff] = useState([]);
 
-  // Fetch attendance data
-  useEffect(() => {
-    fetchTodayAttendance();
-    fetchRegisteredStaff();
-  }, [clinic]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
-    };
-  }, []);
-
   const fetchTodayAttendance = async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -70,6 +55,22 @@ const FaceBiometric = ({ staffName = '', clinic = 'pushpa' }) => {
       console.error('Error fetching registered staff:', err);
     }
   };
+
+  // Fetch attendance data
+  useEffect(() => {
+    fetchTodayAttendance();
+    fetchRegisteredStaff();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clinic]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
 
   const startCamera = async () => {
     console.log('Starting camera...');
