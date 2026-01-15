@@ -1323,6 +1323,37 @@ GET  /api/teleconsult/prescription/{id} - Get prescription (auth required)
 
 ---
 
+### Session 13 - January 15, 2026 (SMS OPTIMIZATION & LOCATION)
+
+**42. Google Maps Location Links** ✅ (Complete)
+- Added clinic location Google Maps links to footer
+- **Pushpa Clinic**: https://maps.app.goo.gl/LfFoHwVzvMEQ1Qzt9
+- **Amnion Clinic**: https://maps.app.goo.gl/aBr4jwCv3b6874vi8
+- Added QR code for app download
+- Location links included in appointment confirmation SMS
+
+**43. SMS Usage Optimization** ✅ (Complete)
+- **SMS (via Twilio) used ONLY for:**
+  - Password Reset OTP
+  - DiaGyn Appointment confirmation (Walk-in, Emergency, Sonography)
+  - Orange Order confirmation & completion
+  - Proton Order confirmation & completion
+- **Mock OTP used for:**
+  - All login OTPs (Evara, Glydex, Alyne, DiaGyn, Proton)
+  - OTP displays in UI for user convenience
+- **Email used for:**
+  - All other notifications
+  - Signup verification
+  - Form submissions
+
+**Files Modified:**
+- `/app/backend/server.py` - Updated OTP endpoints to use mock for login
+- `/app/backend/routes/staff.py` - Added CLINIC_MAP_LINKS, updated confirmation SMS
+- `/app/frontend/src/pages/staff/staffUtils.js` - Added CLINIC_LOCATIONS export
+- `/app/frontend/src/pages/StaffPortal.js` - Added footer with locations and QR code
+
+---
+
 ## Remaining Tasks
 
 ### High Priority
