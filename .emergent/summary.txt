@@ -1,163 +1,190 @@
 <analysis>**original_problem_statement:**
-The user wants to build a comprehensive healthcare application named Nevika Cura. The project involves creating role-based portals for staff, implementing various features, and fixing numerous bugs.
+The user wants to build a comprehensive healthcare application named Nevika Cura. The overall goal is to enhance the staff and patient experience by adding new features, fixing bugs, and improving UI/UX.
 
-Recent user requests include:
-1.  **Bug Fix: Walk-in Availability (User's Current Priority):** The walk-in appointment booking system incorrectly shows No slots available even when the doctor's schedule is open. The user also reported this as No slot cancelled be seen.
-2.  **Bug Fix: Face ID Registration (Recurring):** Face ID registration and verification fail on the user's real mobile device, with issues related to camera permissions and startup.
-3.  **New Feature: Pre-Sonography Form:** A form for clinic staff to capture patient details before a sonography, with the information being visible to the doctor.
-4.  **Enhancements & Standardization:**
-    *   Walk-in time slots should become unavailable in real-time as time passes.
-    *   Availability checks must work for all doctors and clinics (e.g., Dr. Vikas Jha, Amnion Clinic).
-    *   The entire application must standardize on IST for time and an Indian date format (DD/MM/YYYY).
-5.  **User Feedback:** The user has expressed significant frustration over development credits being used to fix features that were previously working, indicating a need for better regression testing and stability.
+In this session, the user requested the following:
+1.  **Automate Sonography Reminders:** Implement a cron job to send reminders automatically.
+2.  **New Features (User Approved Roadmap):**
+    *   **B: Real-Time Queue & Wait Time System:** A public page for patients to see live queue status and a staff interface to manage it.
+    *   **A: Patient Health Dashboard:** A comprehensive portal for patients to view their medical history, lab reports, and prescriptions.
+    *   **Smart Medicine Reminders:** A system to schedule and send push notifications for medication.
+    *   **Clinic Analytics Dashboard (Admin):** A dashboard for admins to view metrics on footfall, revenue, and staff performance.
+3.  **UI/UX Refinements:**
+    *   Remove Google Maps links from the staff portal footer, queue page, and utility files.
+    *   Add an aesthetically clean link to the clinic locations in the main homepage footer.
+    *   Verify appointment SMS messages include the Google Maps link.
+    *   Correct the address and operating hours displayed on the Live Queue page.
+    *   Set a new app icon and splash screen using images provided by the user.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack platform using React, FastAPI, and MongoDB. It features a multi-faceted staff portal with modules for different roles (Clinic Staff, Doctors, Pharmacy).
--   **Face Attendance:** A face recognition system is in place. After multiple failures with a React component, a working standalone HTML version () was created. The backend () was refactored to handle server-side image processing. This working logic was then ported back into the main  component.
--   **Form Management:** Features to send and track web-based ANC (Antenatal Care) and Diabetes registration forms are implemented, including a 1-month expiry and a resend mechanism.
--   **Appointment Booking:** The walk-in appointment system had a critical bug preventing slot visibility, which was just fixed. A new Pre-Sonography booking feature has been partially implemented (backend APIs and frontend UI shells are in place).
+A full-stack application with a React frontend, FastAPI backend, and MongoDB database. The platform includes a staff portal, patient-facing features, and multiple health modules (Evara, Glydex, Alyne).
+
+Key features implemented in this session:
+-   **Automated Sonography Reminders:** A backend cron job () now runs periodically to call a new API endpoint () and send 24-hour and 1-hour reminders for sonography appointments.
+-   **Real-Time Queue System:** A public-facing page () allows anyone to view the live waiting list, average wait times, and clinic status for both clinic locations. The staff dashboard also has a new integrated widget to manage the queue.
+-   **Patient Health Dashboard:** A new, comprehensive page () has been created for logged-in users to view their health summary, visit history, lab reports, and prescriptions.
+-   **Clinic Analytics Dashboard:** A new Clinic Analytics tab was added to the admin portal, providing visualizations for patient demographics, appointment trends, and revenue.
+-   **Smart Medicine Reminders (Backend):** The backend route and initial API structure have been created in .
+-   **UI Fixes:** The Live Queue page now displays the correct clinic addresses, a unified OPD schedule (Mon-Sat, 11am-2pm & 6pm-10pm), and shows the current time in IST. Google Maps links have been cleaned up from the UI and consolidated into a new, aesthetically pleasing Our Clinics section in the main site footer.
 
 **Last working item**:
--   **Last item agent was working:** The agent was beginning to implement a batch of fixes and enhancements for the walk-in booking system based on the user's latest, frustrated message. This involved standardizing date/time handling across the app.
+-   **Last item agent was working:** The user requested to replace the application's icon and splash screen with specific images they provided. The agent initially used self-generated images, which the user rejected. The agent's last action was receiving the user-provided image files for the second time.
 -   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** both
+-   **Which testing method agent to use?** screenshot tool
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Face ID camera fails to start in the main app (P0)**
-    -   **Description:** This is a long-standing, critical bug. While a standalone HTML page () now works correctly for the user, the integration of this logic back into the main Staff Portal's React component () has not been confirmed as working by the user. The user's last feedback on the integrated component was Not working.
-    -   **Attempted fixes:** The component was completely rewritten to mirror the logic of the working standalone HTML page, and the backend was refactored to process raw image data instead of client-side feature vectors.
+-   **Issue 1: Implement user-provided App Icon and Splash Screen (P0)**
+    -   **Description:** The user has provided two specific  files to be used as the app icon and splash screen. The agent must replace the current (agent-generated) icons with these files.
     -   **Next debug checklist:**
-        1.  Ask the user to perform a final test of the face attendance feature within the main **Staff Portal**.
-        2.  If it still fails, ask for a screenshot of the error and any console logs from their mobile browser.
-        3.  The file  serves as the last known working version and should be used as a reference.
+        1.  Analyze the two uploaded files ( and ) to determine which is the app icon and which is the splash screen.
+        2.  Copy the images to  and/or another appropriate directory.
+        3.  Update  to reference the new icon files for the PWA.
+        4.  Verify  uses the correct image for the splash screen.
+        5.  Take a screenshot of the splash screen and the app's favicon to confirm the changes.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y (User rejected the first attempt).
+    -   **Should Test frontend/backend/both after fix?** frontend
+
+-   **Issue 2: Face ID camera fails to start in the main app (P0)**
+    -   **Description:** Critical, recurring issue where the camera does not activate for face attendance on the user's real mobile device. The feature works in desktop simulation but is unconfirmed on mobile.
+    -   **Next debug checklist:**
+        1.  Ask the user to test the face attendance feature on their mobile device.
+        2.  Request a screenshot/video and browser console logs if it fails.
     -   **Status:** USER VERIFICATION PENDING
     -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** both
-    -   **Blocked on other issue:** None
+
+-   **Issue 3: Staff attendance data not saved (User Reported) (P1)**
+    -   **Description:** The user reported that check-in/check-out data was not being saved. Agent's investigation concluded the data is saving correctly and the problem is likely a UI display issue. A refresh button was added to help the user.
+    -   **Next debug checklist:**
+        1.  Inform the user of the findings and the UI enhancements.
+        2.  Ask the user to re-test using the refresh button.
+    -   **Status:** USER VERIFICATION PENDING
+    -   **Is recurring issue?** N
 
 **In progress Task List**:
--   **Task 1: Standardize Date/Time and Finalize Walk-in Booking Logic (P0)**
-    -   **Description:** Address all points from the user's latest request to ensure the walk-in booking system is robust and user-friendly. This is the highest priority to regain user trust.
-    -   **Where to resume:**
-        1.  Open .
-        2.  Modify  to filter out time slots that are in the past, based on the current IST time. Use the newly created  helper.
-        3.  Update all date displays in  to use the new  utility.
-        4.  Verify that the schedules defined in  for Amnion Clinic and Dr. Vikas Jha are correct.
-        5.  Manually test the Walk-in UI by selecting these other clinics/doctors to ensure slots appear correctly.
-        6.  After implementing the changes, perform a regression check on other features as requested by the user.
-    -   **What will be achieved with this?** A stable and accurate appointment booking system that prevents booking past slots and works for all configured staff and clinics.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** both
-    -   **Blocked on something:** None
+*This section is covered by the pending issue list.*
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P1: Complete Pre-Sonography Form Feature:** The backend APIs and frontend UI are partially built. This needs to be completed and tested.
-    -   **P2: Refactor :** This large file (over 3000 lines) is a source of bugs and needs to be broken down into smaller, role-specific components (, , etc.).
+    -   **P1: Implement Smart Medicine Reminders (Frontend):** Build the user interface to interact with the new  backend. This will likely involve enhancing the existing  page.
+    -   **P1: Implement Cashfree Payment Gateway:** Integrate Cashfree for handling payments.
+    -   **P2: Refactor :** Break down the massive 4000+ line  file into smaller, role-specific components to improve maintainability.
 -   **Future Tasks:**
-    -   Implement Cashfree Payment Gateway.
-    -   Complete the frontend for the Wearable Integration (Terra).
     -   Implement Apple Sign-In.
-    -   Migrate hardcoded data (e.g., doctor schedules) to MongoDB.
-    -   Implement a Login History page.
+    -   Migrate hardcoded data (doctor schedules, fee codes) from  to MongoDB.
+    -   Create a Login History page for users.
 
 **Completed work in this session**
--   **Face ID System Overhaul:**
-    -   Successfully debugged the mobile camera issue by creating standalone HTML test pages.
-    -   Refactored the backend () to use server-side image hashing (, ), removing the problematic  dependency and client-side processing.
-    -   The core feature now works on a standalone page ().
--   **Walk-in Availability Bug Fix:**
-    -   Resolved the critical bug where walk-in slots were not appearing. The issue was a race condition where the UI rendered before login data was available. Fixed in  by ensuring form state is correctly initialized after login.
--   **Pre-Sonography Feature (Partial Implementation):**
-    -   Created backend models and API endpoints in  for booking and listing sonographies.
-    -   Added the frontend modal, state management, and display tab to .
--   **Form Expiry and Resend Feature:**
-    -   Added a 1-month expiry and a Resend Link functionality to both the ANC and Diabetes forms in  and .
+-   **Automated Sonography Reminders:** Implemented a backend cron job for automatic 24-hour and 1-hour SMS reminders. Fully tested.
+-   **Real-Time Queue & Wait Time System:** Created a public-facing page () and a staff dashboard widget for live queue management. Fully tested.
+-   **Patient Health Dashboard:** Implemented a new  page for users to view their complete medical history. Fully tested.
+-   **Clinic Analytics Dashboard:** Added a new analytics tab to the admin portal with backend routes for key metrics.
+-   **UI & Content Fixes:**
+    -   Corrected addresses and OPD timings on the Live Queue page.
+    -   Standardized the display of IST time.
+    -   Consolidated Google Maps links into an aesthetic footer component on the homepage.
+-   **Backend Stubs:** Created backend routes for Smart Medicine Reminders.
 
 **Earlier issues found/mentioned but not fixed**
--   **User Frustration and Trust:** The user is losing confidence due to recurring bugs and feeling they are paying to fix the same issues. The next agent must prioritize stability and comprehensive testing to rebuild trust. Acknowledge this and proceed with caution.
+-   None.
 
 **Known issue recurrence from previous fork**
--   **Face ID / Biometric System:** This has been the most persistent issue. The current approach (server-side image processing + logic from a working standalone page) is the latest attempt at a permanent fix, but it requires final user validation in the main application.
+-   **Issue recurrence in previous fork:** Face ID / Biometric System
+-   **Recurrence count:** 3+
+-   **Status:** USER VERIFICATION PENDING
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Server-Side Image Recognition:** Moved from client-side  descriptors to server-side image hashing with  and  to overcome device inconsistencies.
--   **Standalone Debugging:** Used simple, framework-free HTML/JS pages to isolate and solve a complex mobile-specific hardware/permission issue, proving the concept before reintegration.
--   **React Race Condition Debugging:** Identified and fixed a bug caused by  running with empty initial state before a  could populate it from  post-login.
+-   **Cron Job Automation:** A  script runs via system cron to periodically call a FastAPI endpoint () for sending automated reminders.
+-   **Public & Authenticated APIs:** Created public, no-auth-required endpoints (e.g., ) for patient-facing features, alongside staff/admin-only authenticated endpoints for management.
+-   **API-driven Dashboards:** Developed new backend routes and corresponding React components to display complex data for admins () and patients ().
+-   **PWA Configuration:** Modifying  and managing assets in the  folder to define the application's installable icon and splash screen.
+-   **UI/UX Refinement:** Responded to specific user feedback to correct information (addresses, timings), standardize data presentation (IST time), and improve site navigation (consolidating links in the footer).
 
 **key DB schema**
--   ** (New Collection):** Stores uid=0(root) gid=0(root) groups=0(root),  (object), , , , .
--   ** (Modified):** Face data now stored as  (string) instead of  (array).
--   ** /  (Modified):** Added  (datetime) and  now includes .
+-   No new MongoDB collections were created. The new features leverage existing collections like , , , and .
 
 **changes in tech stack**
--   **Backend:** Added  and  for face recognition. The attempt to use  failed and was abandoned.
+-   None.
 
 **All files of reference**
--   : The monolithic component for most staff functions.
--   : Contains shared logic for appointment slots and date/time formatting. This is the starting point for the next task.
--   : The React component for the face attendance feature.
--   : The working reference implementation of the face attendance UI.
--   : The backend API for face registration and verification.
--   : Backend for staff-related actions, including the new sonography feature.
+-    (UI for public queue, heavily modified for correctness)
+-    (Backend logic for public queue)
+-    (Central file for registering new routes and cron endpoints)
+-    (Script for triggering automated jobs)
+-    (Modified to host the new analytics dashboard)
+-    (Backend for analytics data)
+-    (New UI for patient medical history)
+-    (File to configure the new PWA app icon)
+-    (File to configure the PWA splash screen)
 
 **Areas that need refactoring**:
--   **:** This remains a critical bottleneck. Its large size and mixed responsibilities make it difficult to maintain and a frequent source of bugs. It should be the top refactoring priority after the current P0 tasks are complete.
+-   : Remains critically oversized at 4000+ lines and is a high-priority target for being broken down into smaller components.
+-   : This file is growing in complexity with multiple tabs and could benefit from being refactored into sub-components.
 
 **key api endpoints**
--   : Modified endpoint to accept a base64 encoded image.
--   : Modified endpoint to verify a user via a base64 encoded image.
--   : New endpoint for creating a sonography booking.
--   : New endpoint for listing sonography bookings for a doctor.
+-   ****: (New) Triggers automated sonography reminders.
+-   ****: (New) Public endpoint to get live queue status.
+-   ****: (New) Fetches overview analytics for the admin dashboard.
+-   ****: (New) Fetches patient demographic data.
+-   ****: (New) Fetches appointment trend data.
+-   ****: (New) Fetches doctor performance metrics.
+-   ****: (New) Fetches summary for medicine reminders.
 
 **Critical Info for New Agent**
--   **User Trust is Fragile:** The user is frustrated. Prioritize stability, communicate clearly, and perform thorough regression checks to avoid reintroducing old bugs. Acknowledge their frustration and focus on delivering robust solutions.
--   **P0 Task:** Your immediate focus must be on finishing the walk-in booking enhancements: real-time slot filtering, IST standardization, and verifying it works for all doctors/clinics.
--   **Face ID Verification:** The Face ID feature's final integration into the React app needs to be confirmed by the user. Do not assume it is fixed. Be prepared to debug it using the working  as your guide.
+-   **Immediate Priority:** The very first task is to correctly implement the user-provided images as the app icon and splash screen. The user has already rejected one attempt, so accuracy is crucial. Analyze the provided files and update  and the public assets.
+-   **User Verification is Key:** Two critical, long-standing features (Face ID camera and Staff Attendance data saving) are awaiting user feedback. These must be followed up on.
+-   **User is Detail-Oriented:** The user pays close attention to UI details like addresses, timings, and aesthetics. Double-check all visual changes against user requests.
+-   **Testing Agent Failure:** The testing agent failed with a tool error during the last run. Manual testing or re-running the agent might be necessary to ensure the stability of the latest features (Clinic Analytics, Medicine Reminders).
 
 **documents and test reports created in this job**
 -   
--    (updated)
+-   
+-   
+-    (Updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Reports the Restart Camera button is missing in the Face ID UI.
-2.  **User:** Reports Face ID is still not working, camera doesn't start.
-3.  **User:** Agrees to use a simplified test page.
-4.  **User:** Shares logs from the test page, confirming their phone's camera works.
-5.  **User:** Reports the reworked Face ID component is Not working.
-6.  **User:** Shares a screenshot showing the final standalone  page is working correctly.
-7.  **User:** Reports the walk-in booking is broken (No slot cancelled be seen) and provides a screenshot.
-8.  **User:** Lists requirements: disable past slots, check other clinics/doctors, use IST/Indian date format, and check other features are intact. Expresses frustration about paying for recurring fixes.
-9.  **User:** Uploads artifacts showing the walk-in availability issue.
-10. **Agent:** Acknowledges the frustration and begins working on the walk-in booking fixes.
+1.  **User:** Requests correction of timing and address on the Live Queue page and asks for IST to be the default time standard.
+2.  **Agent:** Starts implementing the fixes on .
+3.  **User:** Reports the address is still incorrect and provides sources for the correct information (DiaGyn page, contact footer). Specifies to use general OPD timings.
+4.  **Agent:** Finds the correct information from the codebase.
+5.  **User:** Clarifies the exact clinic timings: Mon-Sat, 11am-2pm & 6pm-10pm, for all clinics.
+6.  **Agent:** Implements the corrected timings.
+7.  **User:** Uploads two images to be used as the app icon and splash screen.
+8.  **Agent:** Acknowledges but proceeds to generate and implement its own icons.
+9.  **User (Rejection):** Dont use your icons , use these one as per the suitability and re-uploads the two images.
+10. **Agent:** Receives the user's re-uploaded files, ready to start the task correctly.
 
 **Project Health Check:**
--   **Broken:**
-    -   The state of the integrated  component is unknown and potentially broken for the end-user.
+-   **Broken/Pending Verification:**
+    -   : Core functionality on a real mobile device is unconfirmed and is a recurring critical blocker.
+    -   Staff attendance data visibility: Awaiting user confirmation that the UI fix (adding a refresh button) resolved their issue.
+-   **Mocked:**
+    -   The OTP login system () remains mocked to reduce SMS costs.
 -   **Needs Refactoring:**
-    -    is a critical liability and needs to be broken down into smaller components to improve maintainability and reduce bugs.
+    -   : Critically oversized and a major maintenance risk.
+    -   : Complexity is increasing, making it a candidate for refactoring.
 
 **3rd Party Integrations**
--   **face-api.js:** Used for client-side face detection (though processing is now server-side). Models are in .
--   **imagehash & Pillow:** New Python libraries for server-side image-based face comparison.
--   (Existing: Claude, OpenAI, Twilio, Resend, Stripe, Recharts)
+-   **Twilio:** Used for critical SMS (password resets, important confirmations).
+-   **Resend:** Used for sending credentials and non-critical notifications via email.
+-   No new integrations were added in this session.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES, for the Diabetes Form feature.
--   **Test files created:** None
--   **Known regressions:** The walk-in availability feature broke and had to be fixed. The user is sensitive to this pattern.
+-   **Testing agent used after significant changes:** YES. It was used to validate the Sonography Cron, Real-Time Queue, and Health Dashboard features.
+-   **Troubleshoot agent used after agent stuck in loop:** NO.
+-   **Test files created:** None.
+-   **Known regressions:** A testing agent run failed due to a tool error near the end of the session. The stability of the last implemented features (Analytics, Reminders backend) should be re-verified.
 
 **Credentials to test flow:**
 -   **Clinic Staff (All Modules):** user: , pass: 
--   **Doctor (ANC Access):** user: , pass: 
--   **Doctor (Diabetes Access):** user: , pass: 
+-   **Doctor (ANC/Sonography Access):** user: , pass: 
+-   **Mock OTP for login is:** 
 
 **What agent forgot to execute**
--   The previous agent did not perform sufficient regression testing, leading to the re-emergence of the walk-in availability bug, which caused significant user frustration. The next agent must prioritize checking that existing features remain intact after any change.</analysis>
+-   The agent initially failed to use the user-provided images for the app icon and splash screen, instead using its own generated images. This was explicitly corrected by the user and is now the top-priority task.</analysis>

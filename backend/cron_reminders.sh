@@ -1,6 +1,6 @@
 #!/bin/bash
 # Daily reminder cron job for Nevika Cura
-API_URL="https://nevika-health-5.preview.emergentagent.com"
+API_URL="https://healthcare-portal-20.preview.emergentagent.com"
 CRON_SECRET="nevikacura_cron_2026"
 
 # Send follow-up reminders
