@@ -2121,7 +2121,41 @@ const StaffPortal = () => {
                 ))
               )}
             </div>
-          </Card>
+              </Card>
+            </TabsContent>
+
+            {/* ANC Patients Tab - For Dr. Neha and OBGY doctors */}
+            {(staffInfo?.name?.toLowerCase().includes('neha') || 
+              staffInfo?.access_modules?.includes('anc') ||
+              role === 'doctor_amnion') && (
+              <TabsContent value="anc">
+                <ANCRegistration 
+                  clinic={staffInfo?.clinic}
+                  staffName={staffInfo?.name}
+                />
+              </TabsContent>
+            )}
+
+            {/* Diabetes/Glydex Tab - For Dr. Vikas and Diabetes specialists */}
+            {(staffInfo?.name?.toLowerCase().includes('vikas') || 
+              staffInfo?.access_modules?.includes('glydex') ||
+              staffInfo?.specialization?.toLowerCase()?.includes('diabetes')) && (
+              <TabsContent value="glydex">
+                <GlydexStaffPortal 
+                  staffName={staffInfo?.name}
+                  clinic={staffInfo?.clinic}
+                />
+              </TabsContent>
+            )}
+
+            {/* Biometric Attendance Tab for Doctors */}
+            <TabsContent value="biometric">
+              <BiometricAttendance 
+                clinic={staffInfo?.clinic?.toLowerCase().includes('pushpa') ? 'pushpa' : 
+                        staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 'pushpa'}
+              />
+            </TabsContent>
+          </Tabs>
         )}
 
         {/* Pharmacy Staff View */}
