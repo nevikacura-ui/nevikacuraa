@@ -1041,8 +1041,10 @@ const SymptomsSection = ({ child, region, onBack }) => {
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { fetchSymptoms(); }, []);
+  useEffect(() => { 
+    fetchSymptoms(); 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchDetails = async (id) => {
     try { 
