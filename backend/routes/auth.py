@@ -268,11 +268,6 @@ async def verify_auth_otp(request: AuthOTPVerify):
         "phone": phone,
         "method": "mock"
     }
-        "verified": True,
-        "verification_token": verification_token,
-        "phone": phone,
-        "method": "mock"
-    }
 
 @router.post("/register/otp")
 async def register_with_otp(data: OTPRegister):
