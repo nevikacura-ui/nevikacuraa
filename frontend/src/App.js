@@ -34,6 +34,8 @@ import Reminders from '@/pages/Reminders';
 import Alyne from '@/pages/Alyne';
 // ANC Public Form
 import ANCFormPublic from '@/pages/ANCFormPublic';
+// Diabetes Public Form
+import DiabetesFormPublic from '@/pages/DiabetesFormPublic';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
@@ -80,6 +82,8 @@ function App() {
             <Route path="/alyne" element={<Alyne />} />
             {/* ANC Public Form */}
             <Route path="/anc-form/:formId" element={<ANCFormPublic />} />
+            {/* Diabetes Public Form */}
+            <Route path="/diabetes-form/:formId" element={<DiabetesFormPublic />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
