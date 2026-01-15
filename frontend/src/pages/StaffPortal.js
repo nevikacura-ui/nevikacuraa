@@ -443,16 +443,18 @@ const StaffPortal = () => {
       }
       
       // Set forms with clinic
-      if (res.data.clinic) {
-        const clinicDoctors = CLINICS[res.data.clinic] || [];
+      const staffClinic = res.data.staff?.clinic || res.data.clinic;
+      if (staffClinic) {
+        const clinicDoctors = CLINICS[staffClinic] || [];
+        console.log('Setting form clinic to:', staffClinic, 'doctors:', clinicDoctors);
         setWalkInForm(prev => ({
           ...prev,
-          clinic: res.data.clinic,
+          clinic: staffClinic,
           doctor: clinicDoctors[0] || ''
         }));
         setEmergencyForm(prev => ({
           ...prev,
-          clinic: res.data.staff?.clinic || res.data.clinic,
+          clinic: staffClinic,
           doctor: clinicDoctors[0] || ''
         }));
       }
