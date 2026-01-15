@@ -244,23 +244,121 @@ export default function GlydexStaffPortal({ staffName = 'Staff', clinic = 'Pushp
     return { status: 'Unknown', color: 'bg-gray-500' };
   };
 
+  // Send Diabetes Form Link
+  const handleSendForm = async () => {
+    if (!sendFormData.patient_name || !sendFormData.patient_phone) {
+      toast.error('Please enter patient name and phone');
+      return;
+    }
+    
+    setSendingForm(true);
+    try {
+      const res = await fetch(`${API}/api/glydex/form/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...sendFormData,
+          clinic: clinic,
+          doctor: doctor
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (data.success) {
+        toast.success(`Diabetes form link sent to ${sendFormData.patient_name}!`);
+        setShowSendFormDialog(false);
+        setSendFormData({ patient_name: '', patient_phone: '', patient_email: '', send_via: 'both' });
+        fetchDiabetesForms();
+      } else {
+        toast.error(data.error || 'Failed to send form');
+      }
+    } catch (err) {
+      toast.error('Failed to send form link');
+    }
+    setSendingForm(false);
+  };
+
+  // Get form status badge
+  const getFormStatusBadge = (status) => {
+    if (status === 'filled') {
+      return <Badge className="bg-green-500 text-white"><CheckCircle2 className="w-3 h-3 mr-1" />Form Filled</Badge>;
+    }
+    return <Badge className="bg-yellow-500 text-white"><Clock className="w-3 h-3 mr-1" />Form Allotted</Badge>;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-6 text-white">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <Activity className="w-10 h-10" />
             <div>
               <h2 className="text-2xl font-bold">Glydex Staff Portal</h2>
-              <p className="text-emerald-100">Diabetes Patient Management - Dr. Vikas</p>
+              <p className="text-emerald-100">Diabetes Patient Management - {doctor}</p>
             </div>
           </div>
-          <Button onClick={() => setShowRegisterDialog(true)} className="bg-white text-emerald-600 hover:bg-emerald-50">
-            <Plus className="w-4 h-4 mr-2" /> Register Patient
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowSendFormDialog(true)} variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20">
+              <Send className="w-4 h-4 mr-2" /> Send Form Link
+            </Button>
+            <Button onClick={() => setShowRegisterDialog(true)} className="bg-white text-emerald-600 hover:bg-emerald-50">
+              <Plus className="w-4 h-4 mr-2" /> Register Patient
+            </Button>
+          </div>
+        </div>
+        
+        {/* Form Stats */}
+        <div className="flex gap-4 mt-4 pt-4 border-t border-white/20">
+          <div className="flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            <span className="text-sm">Forms Sent: <strong>{formCounts.total}</strong></span>
+          </div>
+          <div className="flex items-center gap-2 text-yellow-200">
+            <Clock className="w-4 h-4" />
+            <span className="text-sm">Pending: <strong>{formCounts.allotted}</strong></span>
+          </div>
+          <div className="flex items-center gap-2 text-green-200">
+            <CheckCircle2 className="w-4 h-4" />
+            <span className="text-sm">Filled: <strong>{formCounts.filled}</strong></span>
+          </div>
         </div>
       </div>
+
+      {/* Diabetes Forms Status Section */}
+      {diabetesForms.length > 0 && (
+        <Card className="border-l-4 border-l-emerald-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <FileText className="w-5 h-5 text-emerald-500" />
+              Diabetes Form Status
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-2 max-h-[200px] overflow-y-auto">
+              {diabetesForms.slice(0, 10).map(form => (
+                <div key={form.id} className={`flex items-center justify-between p-3 rounded-lg ${
+                  form.status === 'filled' ? 'bg-green-50 border border-green-200' : 'bg-yellow-50 border border-yellow-200'
+                }`}>
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <p className="font-medium">{form.patient_name}</p>
+                      <p className="text-sm text-gray-500">{form.patient_phone}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {getFormStatusBadge(form.status)}
+                    <span className="text-xs text-gray-400">
+                      {new Date(form.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Summary Cards */}
       {summary && (
