@@ -4,7 +4,8 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { 
   Calendar, Users, Activity, Baby, Fingerprint, Clock,
-  TrendingUp, AlertCircle, CheckCircle2, UserPlus, Package
+  TrendingUp, AlertCircle, CheckCircle2, UserPlus, Package,
+  ClipboardList, Zap, Timer, ArrowRight
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -15,6 +16,18 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
     anc: { total: 0, dueThisWeek: 0 },
     glydex: { total: 0, uncontrolled: 0 },
     attendance: { present: 0, late: 0, absent: 0 }
+  });
+  const [todaySummary, setTodaySummary] = useState({
+    totalBooked: 0,
+    completed: 0,
+    pending: 0,
+    inClinic: 0,
+    cancelled: 0,
+    emergencyCount: 0,
+    busiestSlot: null,
+    slotDistribution: {},
+    walkinCount: 0,
+    onlineCount: 0
   });
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
