@@ -253,7 +253,7 @@ export default function ANCRegistration({ staffName = 'Staff', clinic = 'amnion'
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-pink-600 to-rose-600 rounded-2xl p-6 text-white">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <Heart className="w-10 h-10" />
             <div>
@@ -261,11 +261,66 @@ export default function ANCRegistration({ staffName = 'Staff', clinic = 'amnion'
               <p className="text-pink-100">Antenatal Care Management - {clinic === 'amnion' ? 'Amnion Clinic' : 'Pushpa Clinic'}</p>
             </div>
           </div>
-          <Button onClick={() => setShowRegisterDialog(true)} className="bg-white text-pink-600 hover:bg-pink-50">
-            <Plus className="w-4 h-4 mr-2" /> Register Patient
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowSendFormDialog(true)} variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20">
+              <Send className="w-4 h-4 mr-2" /> Send Form Link
+            </Button>
+            <Button onClick={() => setShowRegisterDialog(true)} className="bg-white text-pink-600 hover:bg-pink-50">
+              <Plus className="w-4 h-4 mr-2" /> Register Patient
+            </Button>
+          </div>
+        </div>
+        
+        {/* Form Stats */}
+        <div className="flex gap-4 mt-4 pt-4 border-t border-white/20">
+          <div className="flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            <span className="text-sm">Forms Sent: <strong>{formCounts.total}</strong></span>
+          </div>
+          <div className="flex items-center gap-2 text-yellow-200">
+            <Clock className="w-4 h-4" />
+            <span className="text-sm">Pending: <strong>{formCounts.allotted}</strong></span>
+          </div>
+          <div className="flex items-center gap-2 text-green-200">
+            <CheckCircle2 className="w-4 h-4" />
+            <span className="text-sm">Filled: <strong>{formCounts.filled}</strong></span>
+          </div>
         </div>
       </div>
+
+      {/* ANC Forms Status Section */}
+      {ancForms.length > 0 && (
+        <Card className="border-l-4 border-l-pink-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <FileText className="w-5 h-5 text-pink-500" />
+              ANC Form Status
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-2 max-h-[200px] overflow-y-auto">
+              {ancForms.slice(0, 10).map(form => (
+                <div key={form.id} className={`flex items-center justify-between p-3 rounded-lg ${
+                  form.status === 'filled' ? 'bg-green-50 border border-green-200' : 'bg-yellow-50 border border-yellow-200'
+                }`}>
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <p className="font-medium">{form.patient_name}</p>
+                      <p className="text-sm text-gray-500">{form.patient_phone}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {getFormStatusBadge(form.status)}
+                    <span className="text-xs text-gray-400">
+                      {new Date(form.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Search */}
       <div className="flex gap-2">
