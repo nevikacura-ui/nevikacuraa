@@ -245,6 +245,9 @@ const FaceBiometric = ({ staffName = '', clinic = 'pushpa' }) => {
           <CardTitle className="text-lg flex items-center gap-2">
             <Camera className="w-5 h-5 text-violet-600" />
             Face Attendance
+            <span className="ml-auto text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+              {clinic.charAt(0).toUpperCase() + clinic.slice(1)} Clinic
+            </span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
