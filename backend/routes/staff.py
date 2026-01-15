@@ -876,6 +876,142 @@ async def get_todays_sonography(clinic: str = None, staff = Depends(verify_staff
     }
 
 
+@router.get("/sonography/upcoming-reminders")
+async def get_upcoming_sonography_reminders(minutes: int = 30, staff = Depends(verify_staff)):
+    """Get sonography bookings that are due within the specified minutes for reminders"""
+    from datetime import timedelta
+    
+    # Get current IST time
+    ist_offset = timedelta(hours=5, minutes=30)
+    now_utc = datetime.now(timezone.utc)
+    now_ist = now_utc + ist_offset
+    today = now_ist.strftime("%Y-%m-%d")
+    current_time = now_ist.strftime("%H:%M")
+    
+    # Calculate reminder window (current time + minutes)
+    reminder_end = (now_ist + timedelta(minutes=minutes)).strftime("%H:%M")
+    
+    # Find bookings that are:
+    # 1. Today
+    # 2. Status is 'booked' (not started or completed)
+    # 3. Booking time is within the reminder window
+    # 4. Reminder not already sent
+    query = {
+        "booking_date": today,
+        "status": "booked",
+        "booking_time": {"$gte": current_time, "$lte": reminder_end},
+        "reminder_sent": {"$ne": True}
+    }
+    
+    bookings = await db.sonography_bookings.find(query, {"_id": 0}).sort("booking_time", 1).to_list(50)
+    
+    return {
+        "success": True,
+        "date": today,
+        "current_time": current_time,
+        "reminder_window_end": reminder_end,
+        "bookings": bookings,
+        "count": len(bookings)
+    }
+
+
+@router.post("/sonography/send-reminder/{booking_id}")
+async def send_sonography_reminder(booking_id: str, staff = Depends(verify_staff)):
+    """Send reminder notification for a specific sonography booking"""
+    booking = await db.sonography_bookings.find_one({"id": booking_id})
+    
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    
+    if booking.get("reminder_sent"):
+        return {"success": True, "message": "Reminder already sent", "already_sent": True}
+    
+    # Prepare reminder message
+    patient_name = booking.get("patient_name", "Patient")
+    booking_time = booking.get("booking_time", "")
+    clinic = booking.get("clinic", "Clinic")
+    scan_type = booking.get("scan_type", "Sonography")
+    
+    # Send SMS reminder to patient
+    try:
+        phone = booking.get("mobile_number")
+        if phone and send_sms_notification:
+            sms_text = f"Reminder: {patient_name}, your {scan_type} scan is scheduled at {booking_time} today at {clinic}. Please arrive 10 mins early. - Nevika Cura"
+            await send_sms_notification(phone, sms_text)
+            logger.info(f"Sonography reminder SMS sent to {phone} for booking {booking_id}")
+    except Exception as e:
+        logger.error(f"Failed to send sonography reminder SMS: {e}")
+    
+    # Mark reminder as sent
+    await db.sonography_bookings.update_one(
+        {"id": booking_id},
+        {"$set": {"reminder_sent": True, "reminder_sent_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {
+        "success": True,
+        "message": f"Reminder sent for {patient_name}'s {scan_type} at {booking_time}",
+        "booking_id": booking_id
+    }
+
+
+@router.post("/sonography/send-all-reminders")
+async def send_all_sonography_reminders(minutes: int = 30, staff = Depends(verify_staff)):
+    """Send reminders for all upcoming sonography bookings within the time window"""
+    from datetime import timedelta
+    
+    # Get current IST time
+    ist_offset = timedelta(hours=5, minutes=30)
+    now_utc = datetime.now(timezone.utc)
+    now_ist = now_utc + ist_offset
+    today = now_ist.strftime("%Y-%m-%d")
+    current_time = now_ist.strftime("%H:%M")
+    reminder_end = (now_ist + timedelta(minutes=minutes)).strftime("%H:%M")
+    
+    # Find bookings to remind
+    query = {
+        "booking_date": today,
+        "status": "booked",
+        "booking_time": {"$gte": current_time, "$lte": reminder_end},
+        "reminder_sent": {"$ne": True}
+    }
+    
+    bookings = await db.sonography_bookings.find(query).to_list(50)
+    
+    sent_count = 0
+    failed_count = 0
+    
+    for booking in bookings:
+        try:
+            patient_name = booking.get("patient_name", "Patient")
+            booking_time = booking.get("booking_time", "")
+            clinic = booking.get("clinic", "Clinic")
+            scan_type = booking.get("scan_type", "Sonography")
+            phone = booking.get("mobile_number")
+            
+            if phone and send_sms_notification:
+                sms_text = f"Reminder: {patient_name}, your {scan_type} scan is at {booking_time} today at {clinic}. Please arrive 10 mins early. - Nevika Cura"
+                await send_sms_notification(phone, sms_text)
+                
+                # Mark as sent
+                await db.sonography_bookings.update_one(
+                    {"id": booking.get("id")},
+                    {"$set": {"reminder_sent": True, "reminder_sent_at": datetime.now(timezone.utc).isoformat()}}
+                )
+                sent_count += 1
+                logger.info(f"Sonography reminder sent for booking {booking.get('id')}")
+        except Exception as e:
+            failed_count += 1
+            logger.error(f"Failed to send reminder for booking {booking.get('id')}: {e}")
+    
+    return {
+        "success": True,
+        "message": f"Sent {sent_count} reminders, {failed_count} failed",
+        "sent_count": sent_count,
+        "failed_count": failed_count,
+        "total_due": len(bookings)
+    }
+
 
 # ============ Fee Codes ============
 
