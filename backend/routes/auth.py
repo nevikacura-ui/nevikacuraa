@@ -233,22 +233,41 @@ async def send_auth_otp(request: AuthOTPRequest):
 
 @router.post("/otp/verify")
 async def verify_auth_otp(request: AuthOTPVerify):
-    """Verify OTP for authentication"""
+    """Verify OTP for authentication - Uses MOCK verification"""
     phone = request.phone.strip()
     otp = request.otp.strip()
     
-    # Try Twilio verification first
-    result = await verify_twilio_otp(phone, otp)
-    if result.get("success"):
-        if result.get("valid"):
-            verification_token = str(uuid.uuid4())
-            return {
-                "success": True,
-                "verified": True,
-                "verification_token": verification_token,
-                "phone": phone,
-                "method": "sms"
-            }
+    # Use mock OTP verification only (no SMS verification for login)
+    otp_key = f"auth_{phone}"
+    stored = auth_otp_storage.get(otp_key)
+    
+    if not stored:
+        raise HTTPException(status_code=400, detail="OTP not found or expired. Please request a new OTP.")
+    
+    if stored["attempts"] >= 3:
+        del auth_otp_storage[otp_key]
+        raise HTTPException(status_code=400, detail="Too many attempts. Please request a new OTP.")
+    
+    if datetime.now(timezone.utc) > stored["expires_at"]:
+        del auth_otp_storage[otp_key]
+        raise HTTPException(status_code=400, detail="OTP expired. Please request a new OTP.")
+    
+    stored["attempts"] += 1
+    
+    if stored["otp"] != otp:
+        raise HTTPException(status_code=400, detail=f"Invalid OTP. {3 - stored['attempts']} attempts remaining.")
+    
+    # OTP verified successfully
+    del auth_otp_storage[otp_key]
+    verification_token = str(uuid.uuid4())
+    
+    return {
+        "success": True,
+        "verified": True,
+        "verification_token": verification_token,
+        "phone": phone,
+        "method": "mock"
+    }
         else:
             raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
     
