@@ -50,19 +50,64 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
       const token = localStorage.getItem('staffToken');
       const headers = { Authorization: `Bearer ${token}` };
 
-      // Fetch appointments count
+      // Fetch appointments count and calculate today's summary
       if (accessModules.includes('appointments')) {
         const appointmentsRes = await fetch(`${API}/api/staff/clinic/appointments?date=${today}`, { headers });
         if (appointmentsRes.ok) {
           const data = await appointmentsRes.json();
+          const appointments = data.appointments || [];
+          
+          // Calculate status counts
+          const completed = appointments.filter(a => a.status === 'Completed').length;
+          const pending = appointments.filter(a => a.status === 'Booked').length;
+          const inClinic = appointments.filter(a => a.status === 'In Clinic').length;
+          const cancelled = appointments.filter(a => a.status === 'Cancelled').length;
+          const emergencyCount = appointments.filter(a => a.appointment_type === 'EMERGENCY').length;
+          const walkinCount = appointments.filter(a => a.appointment_type === 'WALKIN' || a.appointment_type === 'WALK_IN').length;
+          const onlineCount = appointments.filter(a => a.appointment_type === 'ONLINE' || !a.appointment_type).length;
+          
+          // Calculate slot distribution to find busiest slot
+          const slotDistribution = {};
+          appointments.forEach(appt => {
+            if (appt.time) {
+              // Group by hour
+              const hour = appt.time.split(':')[0];
+              const hourLabel = `${hour}:00`;
+              slotDistribution[hourLabel] = (slotDistribution[hourLabel] || 0) + 1;
+            }
+          });
+          
+          // Find busiest slot
+          let busiestSlot = null;
+          let maxCount = 0;
+          Object.entries(slotDistribution).forEach(([slot, count]) => {
+            if (count > maxCount) {
+              maxCount = count;
+              busiestSlot = { time: slot, count };
+            }
+          });
+          
           setStats(prev => ({
             ...prev,
             appointments: {
-              total: data.appointments?.length || 0,
-              today: data.appointments?.filter(a => a.date === today).length || 0,
-              pending: data.appointments?.filter(a => a.status === 'Booked').length || 0
+              total: appointments.length,
+              today: appointments.length,
+              pending: pending
             }
           }));
+          
+          setTodaySummary({
+            totalBooked: appointments.length,
+            completed,
+            pending,
+            inClinic,
+            cancelled,
+            emergencyCount,
+            busiestSlot,
+            slotDistribution,
+            walkinCount,
+            onlineCount
+          });
         }
       }
 
