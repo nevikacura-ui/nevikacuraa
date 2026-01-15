@@ -246,6 +246,81 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
         </div>
       </div>
 
+      {/* Today's Summary Widget */}
+      {accessModules.includes('appointments') && todaySummary.totalBooked > 0 && (
+        <Card className="border-l-4 border-l-indigo-500 shadow-md" data-testid="todays-summary">
+          <CardHeader className="pb-2 px-4 pt-4">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <ClipboardList className="w-5 h-5 text-indigo-500" />
+              Today&apos;s Summary
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            {/* Status breakdown */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              <div className="bg-green-50 p-3 rounded-lg text-center">
+                <CheckCircle2 className="w-5 h-5 text-green-600 mx-auto mb-1" />
+                <p className="text-xl font-bold text-green-700">{todaySummary.completed}</p>
+                <p className="text-xs text-green-600">Completed</p>
+              </div>
+              <div className="bg-yellow-50 p-3 rounded-lg text-center">
+                <Clock className="w-5 h-5 text-yellow-600 mx-auto mb-1" />
+                <p className="text-xl font-bold text-yellow-700">{todaySummary.pending}</p>
+                <p className="text-xs text-yellow-600">Pending</p>
+              </div>
+              <div className="bg-blue-50 p-3 rounded-lg text-center">
+                <Users className="w-5 h-5 text-blue-600 mx-auto mb-1" />
+                <p className="text-xl font-bold text-blue-700">{todaySummary.inClinic}</p>
+                <p className="text-xs text-blue-600">In Clinic</p>
+              </div>
+              <div className="bg-red-50 p-3 rounded-lg text-center">
+                <Zap className="w-5 h-5 text-red-600 mx-auto mb-1" />
+                <p className="text-xl font-bold text-red-700">{todaySummary.emergencyCount}</p>
+                <p className="text-xs text-red-600">Emergency</p>
+              </div>
+            </div>
+            
+            {/* Appointment Type breakdown */}
+            <div className="flex flex-wrap gap-2 mb-3">
+              <Badge variant="outline" className="bg-white">
+                <Calendar className="w-3 h-3 mr-1 text-blue-500" />
+                Online: {todaySummary.onlineCount}
+              </Badge>
+              <Badge variant="outline" className="bg-white">
+                <UserPlus className="w-3 h-3 mr-1 text-green-500" />
+                Walk-in: {todaySummary.walkinCount}
+              </Badge>
+              {todaySummary.cancelled > 0 && (
+                <Badge variant="outline" className="bg-white text-red-600">
+                  Cancelled: {todaySummary.cancelled}
+                </Badge>
+              )}
+            </div>
+            
+            {/* Busiest slot info */}
+            {todaySummary.busiestSlot && (
+              <div className="flex items-center justify-between bg-gradient-to-r from-indigo-50 to-purple-50 p-3 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Timer className="w-4 h-4 text-indigo-600" />
+                  <span className="text-sm text-gray-700">
+                    Busiest time: <strong className="text-indigo-600">{todaySummary.busiestSlot.time}</strong>
+                    <span className="text-gray-500 ml-1">({todaySummary.busiestSlot.count} appointments)</span>
+                  </span>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-indigo-600 hover:text-indigo-700 p-2 h-auto"
+                  onClick={() => onNavigate('appointments')}
+                >
+                  View <ArrowRight className="w-3 h-3 ml-1" />
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Quick Stats Grid - 2x2 on mobile */}
       <div className="grid grid-cols-2 gap-2 sm:gap-4">
         {accessModules.includes('appointments') && (
