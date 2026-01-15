@@ -1440,6 +1440,256 @@ const StaffPortal = () => {
         </div>
       )}
       
+      {/* Pre-Sonography Booking Modal */}
+      {showSonographyModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="p-4 border-b bg-gradient-to-r from-purple-500 to-pink-500 rounded-t-lg flex-shrink-0">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <Scan className="w-5 h-5" />
+                    Book Pre-Sonography
+                  </h3>
+                  <p className="text-sm text-purple-100">Fill patient details for sonography appointment</p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setShowSonographyModal(false)} className="text-white hover:bg-white/20">
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+            
+            <form onSubmit={handleSonographySubmit} className="p-4 space-y-4 overflow-y-auto flex-1">
+              {/* Personal Details */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
+                  <User className="w-4 h-4 text-purple-500" />
+                  Patient Details
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs">Patient Name *</Label>
+                    <Input
+                      value={sonographyForm.patient_name}
+                      onChange={(e) => setSonographyForm(prev => ({ ...prev, patient_name: e.target.value }))}
+                      placeholder="Full name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Age *</Label>
+                    <Input
+                      value={sonographyForm.age}
+                      onChange={(e) => setSonographyForm(prev => ({ ...prev, age: e.target.value }))}
+                      placeholder="e.g., 28"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">LMP (Last Menstrual Period) *</Label>
+                    <Input
+                      type="date"
+                      value={sonographyForm.lmp}
+                      onChange={(e) => setSonographyForm(prev => ({ ...prev, lmp: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Mobile Number *</Label>
+                    <Input
+                      value={sonographyForm.mobile_number}
+                      onChange={(e) => setSonographyForm(prev => ({ ...prev, mobile_number: e.target.value }))}
+                      placeholder="10-digit number"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Date of Birth</Label>
+                    <Input
+                      type="date"
+                      value={sonographyForm.date_of_birth}
+                      onChange={(e) => setSonographyForm(prev => ({ ...prev, date_of_birth: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Husband Name *</Label>
+                    <Input
+                      value={sonographyForm.husband_name}
+                      onChange={(e) => setSonographyForm(prev => ({ ...prev, husband_name: e.target.value }))}
+                      placeholder="Husband's full name"
+                      required
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label className="text-xs">Full Address *</Label>
+                    <Input
+                      value={sonographyForm.address}
+                      onChange={(e) => setSonographyForm(prev => ({ ...prev, address: e.target.value }))}
+                      placeholder="Complete address"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Children Info */}
+              <div className="bg-pink-50 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-gray-700 flex items-center gap-2">
+                    <Baby className="w-4 h-4 text-pink-500" />
+                    Children Information
+                  </h4>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={sonographyForm.has_children}
+                      onChange={(e) => setSonographyForm(prev => ({ 
+                        ...prev, 
+                        has_children: e.target.checked,
+                        children: e.target.checked ? prev.children : []
+                      }))}
+                      className="rounded"
+                    />
+                    Has children?
+                  </label>
+                </div>
+                
+                {sonographyForm.has_children && (
+                  <div className="space-y-2">
+                    {sonographyForm.children.map((child, index) => (
+                      <div key={index} className="flex items-center gap-2 bg-white p-2 rounded-lg">
+                        <span className="text-xs text-gray-500 w-16">Child {index + 1}:</span>
+                        <select
+                          value={child.gender}
+                          onChange={(e) => updateChild(index, 'gender', e.target.value)}
+                          className="border rounded px-2 py-1 text-sm flex-1"
+                        >
+                          <option value="">Gender</option>
+                          <option value="boy">Boy</option>
+                          <option value="girl">Girl</option>
+                        </select>
+                        <Input
+                          value={child.age}
+                          onChange={(e) => updateChild(index, 'age', e.target.value)}
+                          placeholder="Age"
+                          className="w-20 text-sm"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeChild(index)}
+                          className="text-red-500 hover:bg-red-50 p-1"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addChild}
+                      className="w-full border-dashed"
+                    >
+                      <Plus className="w-4 h-4 mr-1" /> Add Child
+                    </Button>
+                  </div>
+                )}
+              </div>
+              
+              {/* Booking Details */}
+              <div className="bg-purple-50 rounded-lg p-4">
+                <h4 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-purple-500" />
+                  Booking Details
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
+                    <Label className="text-xs">Booking Date *</Label>
+                    <Input
+                      type="date"
+                      value={sonographyForm.booking_date}
+                      onChange={(e) => setSonographyForm(prev => ({ ...prev, booking_date: e.target.value }))}
+                      min={getIndianDate()}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Booking Time *</Label>
+                    <Input
+                      type="time"
+                      value={sonographyForm.booking_time}
+                      onChange={(e) => setSonographyForm(prev => ({ ...prev, booking_time: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Clinic</Label>
+                    <select
+                      value={sonographyForm.clinic || staffInfo?.clinic || ''}
+                      onChange={(e) => setSonographyForm(prev => ({ ...prev, clinic: e.target.value }))}
+                      className="w-full border rounded-md px-3 py-2 text-sm"
+                    >
+                      <option value="Pushpa Clinic">Pushpa Clinic</option>
+                      <option value="Amnion Clinic">Amnion Clinic</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <Label className="text-xs">Scan Type</Label>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {Object.entries(SCAN_FEES).map(([code, info]) => (
+                      <button
+                        key={code}
+                        type="button"
+                        onClick={() => setSonographyForm(prev => ({ ...prev, scan_type: code }))}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                          sonographyForm.scan_type === code
+                            ? 'bg-purple-500 text-white'
+                            : 'bg-white border border-gray-200 hover:border-purple-300'
+                        }`}
+                      >
+                        {code} - {info.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <Label className="text-xs">Notes</Label>
+                  <Input
+                    value={sonographyForm.notes}
+                    onChange={(e) => setSonographyForm(prev => ({ ...prev, notes: e.target.value }))}
+                    placeholder="Any additional notes..."
+                  />
+                </div>
+              </div>
+            </form>
+            
+            <div className="p-4 border-t bg-gray-50 flex gap-3 rounded-b-lg flex-shrink-0">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowSonographyModal(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSonographySubmit}
+                disabled={bookingSonography}
+                className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+              >
+                {bookingSonography ? (
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                ) : (
+                  <Scan className="w-4 h-4 mr-2" />
+                )}
+                Book Sonography
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+      
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between">
