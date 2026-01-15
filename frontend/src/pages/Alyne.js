@@ -529,22 +529,22 @@ const Alyne = () => {
 
             {/* ============ AANYA BY ALYNE - NEWBORN SECTION ============ */}
             {/* Prominent Aanya Logo Divider */}
-            <div className="relative py-4" data-testid="aanya-section">
-              {/* Centered Aanya Logo */}
+            <div className="relative py-6" data-testid="aanya-section">
+              {/* Centered Aanya Logo - Square with rounded corners, large */}
               <div className="flex flex-col items-center justify-center">
-                <div className="bg-gradient-to-r from-orange-100 via-pink-100 to-cyan-100 rounded-full p-3 shadow-lg mb-3">
+                <div className="bg-white rounded-3xl p-2 shadow-xl border-2 border-pink-200 mb-4">
                   <img 
                     src="https://customer-assets.emergentagent.com/job_nevika-hub/artifacts/8mqg0viu_file_00000000bf947207a0e573e6763f822a.png" 
                     alt="Aanya by Alyne"
-                    className="w-20 h-20 object-contain"
+                    className="w-36 h-36 sm:w-44 sm:h-44 object-cover rounded-2xl"
                     data-testid="aanya-logo-home"
                   />
                 </div>
-                <p className="text-xs text-gray-500 text-center">Newborn Care (0-24 months)</p>
+                <p className="text-sm text-gray-600 text-center font-medium">Newborn Care (0-24 months)</p>
               </div>
               
               {/* Aanya Feature Cards */}
-              <div className="grid grid-cols-2 gap-3 mt-4">
+              <div className="grid grid-cols-2 gap-3 mt-5">
                 {/* Aanya Newborn Care Button */}
                 <button
                   onClick={() => {
