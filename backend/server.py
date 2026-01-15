@@ -3697,6 +3697,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Clinic Management router: {e}")
 
+# Face Recognition Attendance Router (for mobile biometric)
+try:
+    from routes.face_attendance import router as face_router, set_db as set_face_db
+    set_face_db(db)
+    app.include_router(face_router, prefix="/api/face-attendance")
+    logger.info("Face Recognition Attendance router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Face Attendance router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
