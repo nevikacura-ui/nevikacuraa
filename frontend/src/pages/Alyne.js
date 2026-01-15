@@ -1030,14 +1030,27 @@ const SymptomsSection = ({ child, region, onBack }) => {
   const [selected, setSelected] = useState(null);
   const [details, setDetails] = useState(null);
 
-  useEffect(() => { fetchSymptoms(); }, []);
-
   const fetchSymptoms = async () => {
-    try { const res = await fetch(`${API}/api/alyne/symptoms`); const data = await res.json(); setSymptoms(data.symptoms || []); } catch (e) {}
+    try { 
+      const res = await fetch(`${API}/api/alyne/symptoms`); 
+      const data = await res.json(); 
+      setSymptoms(data.symptoms || []); 
+    } catch (e) { 
+      console.error('Error fetching symptoms:', e); 
+    }
   };
 
+  useEffect(() => { fetchSymptoms(); }, []);
+
   const fetchDetails = async (id) => {
-    try { const res = await fetch(`${API}/api/alyne/symptoms/${id}?region=${region}`); const data = await res.json(); setDetails(data); setSelected(id); } catch (e) {}
+    try { 
+      const res = await fetch(`${API}/api/alyne/symptoms/${id}?region=${region}`); 
+      const data = await res.json(); 
+      setDetails(data); 
+      setSelected(id); 
+    } catch (e) { 
+      console.error('Error fetching symptom details:', e); 
+    }
   };
 
   const colors = { sore_throat: 'from-orange-400 to-orange-500', cough: 'from-blue-400 to-blue-500', skin_rash: 'from-red-400 to-red-500', fever: 'from-amber-400 to-yellow-500', vomiting: 'from-purple-400 to-purple-500', diarrhea: 'from-teal-400 to-teal-500' };
