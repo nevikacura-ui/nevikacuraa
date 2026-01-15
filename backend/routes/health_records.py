@@ -53,8 +53,8 @@ async def get_health_summary(user_id: str):
     """Get complete health summary for a user"""
     db = get_db()
     
-    # Get user info
-    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0})
+    # Get user info (exclude sensitive fields)
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0, "password_hash": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
