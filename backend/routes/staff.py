@@ -808,11 +808,13 @@ async def create_sonography_booking(data: PreSonographyBooking, staff = Depends(
     
     await db.sonography_bookings.insert_one(booking_record)
     
-    # Send confirmation SMS to patient
+    # Send confirmation SMS to patient (DiaGyn Appointment - SMS allowed)
     try:
-        if send_sms_notification:
-            sms_text = f"Dear {data.patient_name}, Your sonography appointment is confirmed for {data.booking_date} at {data.booking_time}. Clinic: {data.clinic}. - Nevika Cura"
+        if send_sms_notification and data.mobile_number:
+            map_link = get_clinic_map_link(data.clinic)
+            sms_text = f"Dear {data.patient_name}, Your sonography is confirmed for {data.booking_date} at {data.booking_time}. Clinic: {data.clinic}. Location: {map_link} - Nevika Cura"
             await send_sms_notification(data.mobile_number, sms_text)
+            logger.info(f"Sonography confirmation SMS sent to {data.mobile_number}")
     except Exception as e:
         logger.error(f"Failed to send sonography booking SMS: {e}")
     
