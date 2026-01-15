@@ -114,6 +114,7 @@ const StaffPortal = () => {
   const [completionAppointment, setCompletionAppointment] = useState(null);
   const [completionForm, setCompletionForm] = useState({
     fee_code: '',
+    scan_codes: [], // Array of selected scan codes
     follow_up_days: '',
     notes: ''
   });
