@@ -59,7 +59,7 @@ class TestSonographyCronReminders:
         
         booking_data = {
             "patient_name": patient_name,
-            "age": 28,
+            "age": "28",  # Age must be string
             "lmp": "2025-12-01",
             "mobile_number": "9999999999",  # Test number
             "date_of_birth": "1997-05-15",
