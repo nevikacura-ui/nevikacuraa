@@ -1292,6 +1292,7 @@ const GrowthSection = ({ child, onBack }) => {
     finally { setLoading(false); } 
   };
   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (child) fetchGrowth(); }, [child?.id]);
 
   return (
