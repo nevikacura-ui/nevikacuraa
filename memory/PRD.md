@@ -14,80 +14,59 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 
 ## What's Been Implemented ✅
 
-### Session 12 - January 15, 2026 (SMS TEMPLATES, AUTOMATED REMINDERS, LIVE QUEUE & HEALTH DASHBOARD)
+### Session 12 - January 15-16, 2026 (MAJOR FEATURES UPDATE)
 
 **37. SMS Templates Standardization** ✅ (Complete)
-- **Walk-in & Emergency SMS**: Both templates now follow the same user-approved format
-- **Format includes**: Doctor, Clinic, Date, Token Time, arrival note, Google Maps link, contact number
-- **File**: `/app/backend/routes/staff.py`
+- Walk-in & Emergency SMS templates with Google Maps link, contact number
 
 **38. Automated Sonography Reminders (Cron Job)** ✅ (Complete)
-- **24-Hour Reminders**: Sends SMS reminder day before sonography appointment
-- **1-Hour Reminders**: Sends SMS reminder 45-75 minutes before appointment
-- **Duplicate Prevention**: Tracks `reminder_24h_sent` and `reminder_1h_sent` flags
-- **IST Timezone Support**: All scheduling uses Indian Standard Time
-- **API Endpoint**: `POST /api/cron/sonography-reminders?secret=nevika_cron_2026`
-- **Scheduler Script**: `/app/backend/scheduler.py` - runs every 15 minutes
-- **Files Modified**:
-  - `/app/backend/server.py` (Added cron endpoint)
-  - `/app/backend/scheduler.py` (Updated to call sonography reminders)
+- 24-hour and 1-hour reminders with IST timezone support
 
 **39. Real-Time Queue & Wait Time System** ✅ (Complete)
-- **Public Queue Display**: Live queue status viewable by patients without login
-- **Features**:
-  - Clinic selector (Pushpa/Amnion)
-  - Currently serving & waiting queue lists
-  - Avg wait time & estimated queue time
-  - Busy hours heatmap with peak hour recommendations
-  - "Check My Position" by phone number
-  - Remote check-in ("I'm on my way")
-- **Staff Features**:
-  - Call Next Patient button
-  - Mark consultation complete
-  - Queue analytics & efficiency score
-  - Live Queue widget on Staff Dashboard
-- **API Endpoints**:
-  - `GET /api/live-queue/status/{clinic}` - Public queue status
-  - `GET /api/live-queue/position` - Patient position lookup
-  - `GET /api/live-queue/busy-hours/{clinic}` - Busy hours heatmap
-  - `POST /api/live-queue/remote-checkin` - Remote check-in
-  - `POST /api/live-queue/staff/call-next/{clinic}` - Staff call next
-  - `POST /api/live-queue/staff/complete/{id}` - Mark complete
-  - `GET /api/live-queue/staff/analytics/{clinic}` - Analytics
-- **Frontend Pages**:
-  - `/queue` - Public queue display page
-  - Staff Dashboard Live Queue widget
-- **Files Created**:
-  - `/app/backend/routes/live_queue.py`
-  - `/app/frontend/src/components/LiveQueueDisplay.jsx`
-  - `/app/frontend/src/components/StaffQueueManager.jsx`
-  - `/app/frontend/src/pages/QueuePage.jsx`
-- **Testing**: 18/18 backend tests passed, frontend verified
+- Public queue display at `/queue` with clinic info, Google Maps, IST time
 
 **40. Patient Health Dashboard** ✅ (Complete)
-- **Comprehensive Health View**: Complete overview of patient's health journey
+- Comprehensive health view at `/health-dashboard`
+
+**41. Google Maps Links Cleanup** ✅ (Complete)
+- **Removed from**: Staff Portal footer, Queue page inline, staffUtils.js
+- **Added to**: Homepage footer "OUR CLINICS" section with aesthetic pill-shaped buttons
+- **Added to**: Live Queue page with "Get Directions on Google Maps" link and "Open in Maps" button
+- **Kept in**: Appointment SMS messages
+
+**42. Live Queue Page Enhanced** ✅ (Complete)
+- **Correct Clinic Info**: Updated addresses for Pushpa & Amnion clinics
+- **Google Maps Integration**: "Get Directions on Google Maps" link + "Open in Maps" button
+- **IST Time Display**: Shows current IST time in header and center
+- **Clinic Hours**: Morning (10 AM - 2 PM) and Evening (5 PM - 9 PM)
+- **Open/Closed Status**: Real-time status based on IST time
+
+**43. Smart Medicine Reminders** ✅ (Complete)
+- **Backend API**: `/api/medicine-reminders/*`
 - **Features**:
-  - Patient info card with health score
-  - 4 interactive stat cards (Appointments, Lab Tests, Pharmacy, Health Readings)
-  - 5 tabs: Overview, Visits, Lab Tests, Medicines, Trends
-  - Recent Activity timeline
-  - Health Insights based on blood sugar data
-  - Shareable health summary (copy to clipboard)
-- **API Endpoints**:
-  - `GET /api/health-records/summary/{user_id}` - Complete health summary
-  - `GET /api/health-records/timeline/{user_id}` - Chronological timeline
-  - `GET /api/health-records/trends/blood-sugar/{user_id}` - Blood sugar trends with insights
-  - `GET /api/health-records/family/{user_id}` - Family members
-- **Frontend Pages**:
-  - `/health-dashboard` - Main health dashboard (requires auth)
-  - Quick link from Home page (Health Dashboard button)
-  - Quick link from Profile page (View Complete Health Dashboard button)
-- **Files Created/Modified**:
-  - `/app/frontend/src/pages/HealthDashboard.jsx` (NEW)
-  - `/app/backend/routes/health_records.py` (MODIFIED - bug fixes)
-  - `/app/frontend/src/pages/Home.js` (MODIFIED - navigation link)
-  - `/app/frontend/src/pages/Profile.js` (MODIFIED - navigation button)
-- **Testing**: 11/11 backend tests passed, frontend verified
+  - Create/manage medicine reminders
+  - Auto-schedule based on frequency (once/twice/thrice daily)
+  - Log medicine taken/skipped
+  - Today's schedule with status tracking
+  - Adherence history (7/14/30 days)
+  - Low stock alerts
+  - Cron job for push notifications
+- **Frontend Component**: `MedicineReminders.jsx`
+- **Files**: `/app/backend/routes/medicine_reminders.py`
+
+**44. Clinic Analytics Dashboard (Admin)** ✅ (Complete)
+- **Backend API**: `/api/clinic-analytics/*`
+- **Features**:
+  - Dashboard overview (patients, revenue, completion rate)
+  - Patient footfall trends (daily/weekly)
+  - Revenue analytics (pharmacy, diagnostics, consultations)
+  - Doctor performance metrics
+  - Staff attendance metrics
+  - Time slot popularity analysis
+  - Clinic comparison
+- **Frontend Component**: `ClinicAnalyticsDashboard.jsx`
+- **Admin Integration**: New "Clinic Analytics" tab in Admin page
+- **Files**: `/app/backend/routes/clinic_analytics.py`, `/app/frontend/src/components/ClinicAnalyticsDashboard.jsx`
 
 **Pending User Verification:**
 - Face ID Camera functionality on mobile device
