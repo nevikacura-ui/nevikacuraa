@@ -2113,9 +2113,11 @@ const StaffPortal = () => {
                       onChange={(e) => setWalkInForm({ ...walkInForm, time: e.target.value })}
                       className="w-full p-2 border rounded-lg"
                       data-testid="walkin-time"
-                      disabled={!isDoctorAvailable || loadingSlots}
+                      disabled={!isFormReady || !isDoctorAvailable || loadingSlots}
                     >
-                      <option value="">{loadingSlots ? 'Loading slots...' : isDoctorAvailable ? 'Select time' : 'No slots available'}</option>
+                      <option value="">
+                        {!isFormReady ? 'Loading...' : loadingSlots ? 'Loading slots...' : isDoctorAvailable ? 'Select time' : 'No slots available'}
+                      </option>
                       {availableTimeSlots.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
