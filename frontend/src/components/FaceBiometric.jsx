@@ -119,10 +119,15 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
   // Start camera with better mobile handling
   const startCamera = async () => {
     console.log('=== START CAMERA CALLED ===');
+    setCameraStarting(true);
+    setCameraError(null);
     
     // Check if mediaDevices is available
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      toast.error('Camera not supported on this browser. Please use Chrome or Safari.');
+      const err = 'Camera not supported on this browser. Please use Chrome or Safari.';
+      setCameraError(err);
+      setCameraStarting(false);
+      toast.error(err);
       return;
     }
     
@@ -132,9 +137,10 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
       console.log('Permission check result:', permissionStatus);
       
       if (permissionStatus === 'denied') {
-        toast.error('Camera access is blocked. Please enable camera in your browser settings and refresh the page.', {
-          duration: 5000
-        });
+        const err = 'Camera access is blocked. Please enable camera in your browser settings and refresh the page.';
+        setCameraError(err);
+        setCameraStarting(false);
+        toast.error(err, { duration: 5000 });
         return;
       }
 
