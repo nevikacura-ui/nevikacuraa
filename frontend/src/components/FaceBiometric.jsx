@@ -134,35 +134,47 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     
-    const displaySize = { width: video.videoWidth, height: video.videoHeight };
-    faceapi.matchDimensions(canvas, displaySize);
+    // Wait for video to have valid dimensions
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+      console.log('Video not ready yet, waiting...');
+      return null;
+    }
     
-    const detection = await faceapi
-      .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
-      .withFaceLandmarks()
-      .withFaceDescriptor();
-    
-    // Clear canvas
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    if (detection) {
-      setFaceDetected(true);
+    try {
+      const displaySize = { width: video.videoWidth, height: video.videoHeight };
+      faceapi.matchDimensions(canvas, displaySize);
       
-      // Draw face box
-      const resizedDetection = faceapi.resizeResults(detection, displaySize);
+      const detection = await faceapi
+        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
+        .withFaceLandmarks()
+        .withFaceDescriptor();
       
-      // Draw green box around face
-      ctx.strokeStyle = '#22c55e';
-      ctx.lineWidth = 3;
-      const box = resizedDetection.detection.box;
-      ctx.strokeRect(box.x, box.y, box.width, box.height);
+      // Clear canvas
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Draw landmarks
-      faceapi.draw.drawFaceLandmarks(canvas, resizedDetection);
-      
-      return detection.descriptor;
-    } else {
+      if (detection) {
+        setFaceDetected(true);
+        
+        // Draw face box
+        const resizedDetection = faceapi.resizeResults(detection, displaySize);
+        
+        // Draw green box around face
+        ctx.strokeStyle = '#22c55e';
+        ctx.lineWidth = 3;
+        const box = resizedDetection.detection.box;
+        ctx.strokeRect(box.x, box.y, box.width, box.height);
+        
+        // Draw landmarks
+        faceapi.draw.drawFaceLandmarks(canvas, resizedDetection);
+        
+        return detection.descriptor;
+      } else {
+        setFaceDetected(false);
+        return null;
+      }
+    } catch (err) {
+      console.error('Face detection error:', err);
       setFaceDetected(false);
       return null;
     }
