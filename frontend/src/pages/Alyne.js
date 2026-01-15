@@ -1280,8 +1280,16 @@ const GrowthSection = ({ child, onBack }) => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchGrowth = async () => { 
+    try { 
+      const res = await fetch(`${API}/api/alyne/growth/${child.id}`); 
+      const data = await res.json(); 
+      setRecords(data.records || []); 
+    } catch (e) { console.error('Error fetching growth data:', e); } 
+    finally { setLoading(false); } 
+  };
+  
   useEffect(() => { if (child) fetchGrowth(); }, [child?.id]);
-  const fetchGrowth = async () => { try { const res = await fetch(`${API}/api/alyne/growth/${child.id}`); const data = await res.json(); setRecords(data.records || []); } catch (e) {} finally { setLoading(false); } };
 
   return (
     <div className="space-y-4">
