@@ -131,6 +131,29 @@ const StaffPortal = () => {
   // Active tab state for optimized data loading
   const [activeTab, setActiveTab] = useState('appointments');
 
+  // Sonography booking states
+  const [showSonographyModal, setShowSonographyModal] = useState(false);
+  const [sonographyBookings, setSonographyBookings] = useState([]);
+  const [loadingSonography, setLoadingSonography] = useState(false);
+  const [sonographyForm, setSonographyForm] = useState({
+    patient_name: '',
+    age: '',
+    lmp: '',
+    mobile_number: '',
+    date_of_birth: '',
+    husband_name: '',
+    address: '',
+    has_children: false,
+    children: [],
+    booking_date: getIndianDate(),
+    booking_time: '',
+    clinic: '',
+    scan_type: '',
+    notes: ''
+  });
+  const [bookingSonography, setBookingSonography] = useState(false);
+  const [selectedSonographyBooking, setSelectedSonographyBooking] = useState(null);
+
   // Fetch booked slots for the selected doctor, clinic, and date
   const fetchBookedSlots = useCallback(async () => {
     if (!walkInForm.doctor || !walkInForm.clinic || !walkInForm.date) {
