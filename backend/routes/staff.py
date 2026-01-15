@@ -309,11 +309,20 @@ async def create_emergency_appointment(data: EmergencyAppointment, staff = Depen
     await db.appointments.insert_one(appointment)
     appointment.pop("_id", None)
     
-    # Notify doctor if SMS is available
+    # Send SMS to patient with location (DiaGyn Emergency - SMS allowed)
+    if send_sms_notification and data.patient_phone:
+        try:
+            map_link = get_clinic_map_link(data.clinic)
+            sms_text = f"EMERGENCY: Dear {data.patient_name}, Please proceed immediately to {data.clinic}. Doctor: {data.doctor}. Location: {map_link} - Nevika Cura"
+            await send_sms_notification(data.patient_phone, sms_text)
+            logger.info(f"Emergency confirmation SMS sent to {data.patient_phone}")
+        except Exception as e:
+            logger.error(f"Failed to send emergency SMS: {e}")
+    
+    # Notify clinic staff
     if send_sms_notification:
         try:
             msg = f"EMERGENCY: {data.emergency_type}\nPatient: {data.patient_name}\nClinic: {data.clinic}\n- Nevika Cura Staff"
-            # Send to clinic staff number
             await send_sms_notification("9833188288", msg)
         except Exception as e:
             logger.error(f"Failed to send emergency notification: {e}")
