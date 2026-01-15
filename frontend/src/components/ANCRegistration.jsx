@@ -15,16 +15,30 @@ import {
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-export default function ANCRegistration({ staffName = 'Staff', clinic = 'amnion' }) {
+export default function ANCRegistration({ staffName = 'Staff', clinic = 'amnion', doctor = 'Dr. Neha Patel' }) {
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [kickCounts, setKickCounts] = useState([]);
   
+  // ANC Forms list
+  const [ancForms, setAncForms] = useState([]);
+  const [formCounts, setFormCounts] = useState({ total: 0, allotted: 0, filled: 0 });
+  
   // Dialogs
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
   const [showKickCountDialog, setShowKickCountDialog] = useState(false);
+  const [showSendFormDialog, setShowSendFormDialog] = useState(false);
+  
+  // Send Form state
+  const [sendFormData, setSendFormData] = useState({
+    patient_name: '',
+    patient_phone: '',
+    patient_email: '',
+    send_via: 'both'
+  });
+  const [sendingForm, setSendingForm] = useState(false);
   
   // Form
   const [registerForm, setRegisterForm] = useState({
