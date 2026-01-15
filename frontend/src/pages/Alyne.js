@@ -528,48 +528,101 @@ const Alyne = () => {
             )}
 
             {/* ============ AANYA BY ALYNE - NEWBORN SECTION ============ */}
-            {selectedChild && (parseInt(selectedChild.age_months) < 24 || selectedChild.age_display?.includes('month')) && (
-              <div className="space-y-4" data-testid="aanya-section">
-                <div className="flex items-center gap-3 px-2">
+            {/* Prominent Aanya Logo Divider */}
+            <div className="relative py-4" data-testid="aanya-section">
+              {/* Centered Aanya Logo */}
+              <div className="flex flex-col items-center justify-center">
+                <div className="bg-gradient-to-r from-orange-100 via-pink-100 to-cyan-100 rounded-full p-3 shadow-lg mb-3">
                   <img 
                     src="https://customer-assets.emergentagent.com/job_nevika-hub/artifacts/8mqg0viu_file_00000000bf947207a0e573e6763f822a.png" 
                     alt="Aanya by Alyne"
-                    className="w-12 h-12 object-contain"
+                    className="w-20 h-20 object-contain"
                     data-testid="aanya-logo-home"
                   />
-                  <div>
-                    <h3 className="font-bold text-lg bg-gradient-to-r from-orange-500 via-pink-500 to-cyan-500 bg-clip-text text-transparent">
-                      Aanya Newborn
-                    </h3>
-                    <p className="text-xs text-gray-500">— BY Alyne — Newborn Care (0-24 months)</p>
-                  </div>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-3">
-                  {/* Aanya Newborn Care Button */}
-                  <button
-                    onClick={() => setActiveCategory(FEATURE_CATEGORIES.find(c => c.id === 'aanya_newborn'))}
-                    className="bg-gradient-to-br from-pink-400 via-rose-400 to-orange-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg"
-                    data-testid="aanya-newborn-care"
-                  >
-                    <Baby className="w-8 h-8 mb-2" />
-                    <h4 className="font-bold text-sm">Newborn Care</h4>
-                    <p className="text-[10px] text-white/80 mt-1">Feeding, Sleep, Growth</p>
-                  </button>
-                  
-                  {/* Growth Charts */}
-                  <button
-                    onClick={() => setActiveCategory(FEATURE_CATEGORIES.find(c => c.id === 'aanya_newborn'))}
-                    className="bg-gradient-to-br from-cyan-400 via-teal-400 to-emerald-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg"
-                    data-testid="aanya-growth"
-                  >
-                    <TrendingUp className="w-8 h-8 mb-2" />
-                    <h4 className="font-bold text-sm">Growth Charts</h4>
-                    <p className="text-[10px] text-white/80 mt-1">WHO Standards</p>
-                  </button>
-                </div>
+                <p className="text-xs text-gray-500 text-center">Newborn Care (0-24 months)</p>
               </div>
-            )}
+              
+              {/* Aanya Feature Cards */}
+              <div className="grid grid-cols-2 gap-3 mt-4">
+                {/* Aanya Newborn Care Button */}
+                <button
+                  onClick={() => {
+                    if (!selectedChild) {
+                      toast.error('Please add a child profile first');
+                      setShowAddChild(true);
+                    } else {
+                      setActiveCategory(FEATURE_CATEGORIES.find(c => c.id === 'aanya_newborn'));
+                    }
+                  }}
+                  className="bg-gradient-to-br from-pink-400 via-rose-400 to-orange-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg"
+                  data-testid="aanya-newborn-care"
+                >
+                  <Baby className="w-8 h-8 mb-2" />
+                  <h4 className="font-bold text-sm">Newborn Care</h4>
+                  <p className="text-[10px] text-white/80 mt-1">Feeding, Sleep, Growth</p>
+                </button>
+                
+                {/* Growth Charts */}
+                <button
+                  onClick={() => {
+                    if (!selectedChild) {
+                      toast.error('Please add a child profile first');
+                      setShowAddChild(true);
+                    } else {
+                      setActiveCategory(FEATURE_CATEGORIES.find(c => c.id === 'aanya_newborn'));
+                    }
+                  }}
+                  className="bg-gradient-to-br from-cyan-400 via-teal-400 to-emerald-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg"
+                  data-testid="aanya-growth"
+                >
+                  <TrendingUp className="w-8 h-8 mb-2" />
+                  <h4 className="font-bold text-sm">Growth Charts</h4>
+                  <p className="text-[10px] text-white/80 mt-1">WHO Standards</p>
+                </button>
+                
+                {/* Milestones */}
+                <button
+                  onClick={() => {
+                    if (!selectedChild) {
+                      toast.error('Please add a child profile first');
+                      setShowAddChild(true);
+                    } else {
+                      setActiveCategory(FEATURE_CATEGORIES.find(c => c.id === 'aanya_newborn'));
+                    }
+                  }}
+                  className="bg-gradient-to-br from-purple-400 via-violet-400 to-indigo-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg"
+                  data-testid="aanya-milestones"
+                >
+                  <Star className="w-8 h-8 mb-2" />
+                  <h4 className="font-bold text-sm">Milestones</h4>
+                  <p className="text-[10px] text-white/80 mt-1">Track Development</p>
+                </button>
+                
+                {/* Health Alerts */}
+                <button
+                  onClick={() => {
+                    if (!selectedChild) {
+                      toast.error('Please add a child profile first');
+                      setShowAddChild(true);
+                    } else {
+                      setActiveCategory(FEATURE_CATEGORIES.find(c => c.id === 'aanya_newborn'));
+                    }
+                  }}
+                  className="bg-gradient-to-br from-amber-400 via-orange-400 to-red-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg"
+                  data-testid="aanya-alerts"
+                >
+                  <AlertCircle className="w-8 h-8 mb-2" />
+                  <h4 className="font-bold text-sm">Health Alerts</h4>
+                  <p className="text-[10px] text-white/80 mt-1">Safety Reminders</p>
+                </button>
+              </div>
+            </div>
+
+            {/* Divider Line */}
+            <div className="flex items-center gap-4 my-2">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            </div>
 
             {/* ============ ALYNE KIDS SECTION ============ */}
             <div className="space-y-4">
