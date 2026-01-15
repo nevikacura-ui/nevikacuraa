@@ -606,7 +606,7 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
                     autoPlay
                     muted
                     playsInline
-                    webkit-playsinline="true"
+                    webkitPlaysInline
                     className="w-full h-full object-cover"
                     style={{ transform: 'scaleX(-1)' }}
                   />
@@ -622,7 +622,7 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
                       <div className="text-center text-white">
                         <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
                         <p className="text-sm">Starting camera...</p>
-                        <p className="text-xs text-gray-400 mt-1">Tap here if camera doesn't start</p>
+                        <p className="text-xs text-gray-400 mt-1">Tap here if camera does not start</p>
                       </div>
                     </div>
                   )}
@@ -747,7 +747,7 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
                     autoPlay
                     muted
                     playsInline
-                    webkit-playsinline="true"
+                    webkitPlaysInline
                     className="w-full h-full object-cover"
                     style={{ transform: 'scaleX(-1)' }}
                   />
