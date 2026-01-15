@@ -625,17 +625,24 @@ const Alyne = () => {
             </div>
 
             {/* ============ ALYNE KIDS SECTION ============ */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 px-2">
-                <Sparkles className="w-5 h-5 text-teal-500" />
-                <h3 className="font-bold text-lg text-teal-700">ALYNE Kids</h3>
-                <span className="text-xs text-gray-500">(Ages 2-12)</span>
+            <div className="relative py-6" data-testid="alyne-kids-section">
+              {/* Centered ALYNE Kids Logo - Square with rounded corners, same size as Aanya */}
+              <div className="flex flex-col items-center justify-center">
+                <div className="bg-white rounded-3xl p-2 shadow-xl border-2 border-teal-200 mb-4">
+                  <img 
+                    src="https://customer-assets.emergentagent.com/job_fa720994-e286-48e5-9251-c55c76b2a3e2/artifacts/5vjoj4lh_file_00000000820471fab4ce0f5e54645094.png" 
+                    alt="ALYNE Kids"
+                    className="w-36 h-36 sm:w-44 sm:h-44 object-cover rounded-2xl"
+                    data-testid="alyne-kids-logo-home"
+                  />
+                </div>
               </div>
               
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {/* ALYNE Kids Feature Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
                 {FEATURE_CATEGORIES
                   .filter(cat => !cat.regionSpecific || cat.regionSpecific === selectedRegion)
-                  .filter(cat => cat.id !== 'aanya_newborn') // Exclude Aanya from main grid
+                  .filter(cat => cat.id !== 'aanya_newborn') // Exclude Aanya from this section
                   .map((cat) => (
                   <button
                     key={cat.id}
