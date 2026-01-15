@@ -73,21 +73,36 @@ const QueuePage = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Check if clinic is currently open
+  // Check if clinic is currently open based on OPD timings
   const isClinicOpen = () => {
     const hour = currentTime.getHours();
     const minute = currentTime.getMinutes();
     const currentMinutes = hour * 60 + minute;
+    const dayName = currentTime.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'Asia/Kolkata' });
     
-    // Morning: 10:00 AM - 2:00 PM (600 - 840 minutes)
-    // Evening: 5:00 PM - 9:00 PM (1020 - 1260 minutes)
-    const morningOpen = 10 * 60; // 10:00 AM
+    // Morning: 11:00 AM - 2:00 PM (660 - 840 minutes) - Mon-Sat
+    // Evening: 6:00 PM - 10:00 PM (1080 - 1320 minutes) - varies by clinic
+    const morningOpen = 11 * 60; // 11:00 AM
     const morningClose = 14 * 60; // 2:00 PM
-    const eveningOpen = 17 * 60; // 5:00 PM
-    const eveningClose = 21 * 60; // 9:00 PM
+    const eveningOpen = 18 * 60; // 6:00 PM
+    const eveningClose = 22 * 60; // 10:00 PM
     
-    return (currentMinutes >= morningOpen && currentMinutes < morningClose) ||
-           (currentMinutes >= eveningOpen && currentMinutes < eveningClose);
+    const isSunday = dayName === 'Sunday';
+    if (isSunday) return false;
+    
+    const isMorningOpen = currentMinutes >= morningOpen && currentMinutes < morningClose;
+    const isEveningOpen = currentMinutes >= eveningOpen && currentMinutes < eveningClose;
+    
+    // Check evening schedule based on clinic
+    if (selectedClinic === 'pushpa') {
+      // Pushpa evening: Tue, Thu, Sat
+      const eveningDays = ['Tuesday', 'Thursday', 'Saturday'];
+      return isMorningOpen || (isEveningOpen && eveningDays.includes(dayName));
+    } else {
+      // Amnion evening: Mon, Wed, Fri
+      const eveningDays = ['Monday', 'Wednesday', 'Friday'];
+      return isMorningOpen || (isEveningOpen && eveningDays.includes(dayName));
+    }
   };
 
   return (
