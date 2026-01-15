@@ -1302,27 +1302,13 @@ async def verify_twilio_otp(phone: str, code: str) -> dict:
 
 @api_router.post("/auth/otp/send")
 async def send_auth_otp(request: AuthOTPRequest):
-    """Send OTP for authentication - USE /auth/email-otp/send for signup instead"""
+    """Send OTP for login - Uses MOCK OTP (SMS not used for login as per cost optimization)"""
     phone = request.phone.strip()
     
     if not phone or len(phone) < 10:
         raise HTTPException(status_code=400, detail="Invalid phone number")
     
-    # Try Twilio first
-    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
-        result = await send_twilio_otp(phone)
-        if result["success"]:
-            return {
-                "success": True,
-                "message": "OTP sent to your phone via SMS",
-                "expires_in": 300,
-                "phone": phone,
-                "method": "sms"
-            }
-        else:
-            logger.warning(f"Twilio failed, falling back to mock OTP: {result.get('error')}")
-    
-    # Fallback to mock OTP (for development/testing)
+    # MOCK OTP for login (SMS not used for login OTP to save costs)
     otp = generate_otp()
     otp_key = f"auth_{phone}"
     auth_otp_storage[otp_key] = {
@@ -1331,15 +1317,16 @@ async def send_auth_otp(request: AuthOTPRequest):
         "attempts": 0
     }
     
-    logger.info(f"Mock OTP generated for {phone}: {otp}")
+    logger.info(f"Login Mock OTP generated for {phone}: {otp}")
     
     return {
         "success": True,
-        "message": "OTP sent successfully",
-        "mock_otp": otp,  # Only shown when using fallback
+        "message": "OTP generated successfully",
+        "mock_otp": otp,  # Display in UI for user to see
         "expires_in": 300,
         "phone": phone,
-        "method": "mock"
+        "method": "mock",
+        "note": "Use the displayed OTP to login"
     }
 
 # ============ EMAIL OTP ENDPOINTS (For Signup - Cost Saving) ============
