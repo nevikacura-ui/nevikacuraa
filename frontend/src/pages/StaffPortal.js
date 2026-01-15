@@ -2179,7 +2179,7 @@ const StaffPortal = () => {
                       </select>
                     </div>
                     <div>
-                      <Label>Date</Label>
+                      <Label>Date <span className="text-gray-500 text-xs font-normal">({formatIndianDate(emergencyForm.date)} - {getDayName(emergencyForm.date)})</span></Label>
                       <Input
                         type="date"
                         value={emergencyForm.date}
