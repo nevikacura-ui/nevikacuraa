@@ -2182,7 +2182,7 @@ const StaffPortal = () => {
 
             {/* Biometric Attendance Tab for Doctors */}
             <TabsContent value="biometric">
-              <BiometricAttendance 
+              <SmartBiometric 
                 clinic={staffInfo?.clinic?.toLowerCase().includes('pushpa') ? 'pushpa' : 
                         staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 'pushpa'}
               />
