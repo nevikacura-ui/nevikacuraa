@@ -338,33 +338,55 @@ async def complete_appointment(
 @router.put("/appointments/{appointment_id}/doctor-complete")
 async def doctor_complete_appointment(
     appointment_id: str,
-    diagnosis: str = None,
-    prescription: str = None,
-    follow_up_days: int = None,
-    consultation_fee: float = None,
+    data: DoctorCompletionRequest,
     staff = Depends(verify_staff)
 ):
-    """Mark appointment as completed by doctor with medical notes and send invoice"""
+    """Mark appointment as completed by doctor with fee code, scan charges, and follow-up"""
     appointment = await db.appointments.find_one({"id": appointment_id})
     if not appointment:
         raise HTTPException(status_code=404, detail="Appointment not found")
     
+    # Fee code amounts (matching frontend)
+    FEE_CODES = {
+        "NF": 0, "G1": 150, "G2": 100, "S1": 300, "S2": 200,
+        "D1": 500, "D2": 400, "D3": 300,
+        "O1": 500, "O2": 400, "O3": 300, "E1": 600
+    }
+    
+    # Scan fee amounts (Dr. Neha OBGY)
+    SCAN_FEES = {
+        "ES": 1000,  # Early Scan
+        "NT": 1200,  # NT Scan
+        "GS": 1500,  # Growth Scan
+        "FL": 200,   # Follicular
+        "UP": 1000,  # USG Pelvis
+        "UT": 100    # UpT
+    }
+    
+    # Calculate total fee
+    consultation_fee = FEE_CODES.get(data.fee_code, 0)
+    scan_total = sum(SCAN_FEES.get(code, 0) for code in (data.scan_codes or []))
+    total_fee = data.total_fee if data.total_fee else (consultation_fee + scan_total)
+    
     update_data = {
         "status": "Completed",
         "completed_at": datetime.now(timezone.utc).isoformat(),
-        "completed_by": staff.get('name', 'Doctor')
+        "completed_by": staff.get('name', 'Doctor'),
+        "fee_code": data.fee_code,
+        "fee_amount": consultation_fee,
+        "scan_codes": data.scan_codes or [],
+        "scan_amount": scan_total,
+        "total_amount": total_fee
     }
     
-    if diagnosis:
-        update_data["diagnosis"] = diagnosis
-    if prescription:
-        update_data["prescription"] = prescription
-    if consultation_fee:
-        update_data["consultation_fee"] = consultation_fee
-    if follow_up_days:
-        follow_up_date = (datetime.now(timezone.utc) + timedelta(days=follow_up_days)).strftime("%Y-%m-%d")
+    if data.notes:
+        update_data["doctor_notes"] = data.notes
+    
+    follow_up_date = None
+    if data.follow_up_days:
+        follow_up_date = (datetime.now(timezone.utc) + timedelta(days=data.follow_up_days)).strftime("%Y-%m-%d")
         update_data["follow_up_date"] = follow_up_date
-        update_data["follow_up_days"] = follow_up_days
+        update_data["follow_up_days"] = data.follow_up_days
     
     await db.appointments.update_one({"id": appointment_id}, {"$set": update_data})
     
@@ -375,7 +397,18 @@ async def doctor_complete_appointment(
         try:
             invoice_date = datetime.now().strftime("%d %b %Y")
             invoice_number = f"INV-{appointment_id[:8].upper()}"
-            fee = consultation_fee or appointment.get("consultation_fee", 500)
+            
+            # Build scan items HTML
+            scan_items_html = ""
+            for code in (data.scan_codes or []):
+                scan_name = {"ES": "Early Scan", "NT": "NT Scan", "GS": "Growth Scan", 
+                            "FL": "Follicular", "UP": "USG Pelvis", "UT": "UpT"}.get(code, code)
+                scan_items_html += f"""
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">{scan_name} ({code})</td>
+                    <td style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0;">₹{SCAN_FEES.get(code, 0):.2f}</td>
+                </tr>
+                """
             
             invoice_html = f"""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -409,7 +442,8 @@ async def doctor_complete_appointment(
                     </table>
                 </div>
                 
-                <div style="background: white; padding: 25px; border: 1px solid #e2e8f0; border-top: none;">
+                <div style="padding: 25px;">
+                    <h3 style="margin: 0 0 15px; color: #1e293b;">Charges</h3>
                     <table style="width: 100%; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #f1f5f9;">
@@ -419,22 +453,19 @@ async def doctor_complete_appointment(
                         </thead>
                         <tbody>
                             <tr>
-                                <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">Consultation Fee</td>
-                                <td style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0;">₹{fee:.2f}</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">Consultation Fee ({data.fee_code})</td>
+                                <td style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0;">₹{consultation_fee:.2f}</td>
                             </tr>
+                            {scan_items_html}
                             <tr style="font-weight: bold; background: #f8fafc;">
                                 <td style="padding: 12px;">Total</td>
-                                <td style="padding: 12px; text-align: right; color: #6366f1;">₹{fee:.2f}</td>
+                                <td style="padding: 12px; text-align: right; color: #6366f1; font-size: 18px;">₹{total_fee:.2f}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 
-                {f'<div style="background: #fef3c7; padding: 15px; border: 1px solid #f59e0b; border-radius: 8px; margin-top: 20px;"><strong>Diagnosis:</strong> {diagnosis}</div>' if diagnosis else ''}
-                
-                {f'<div style="background: #dbeafe; padding: 15px; border: 1px solid #3b82f6; border-radius: 8px; margin-top: 15px;"><strong>Prescription:</strong><br>{prescription}</div>' if prescription else ''}
-                
-                {f'<div style="background: #dcfce7; padding: 15px; border: 1px solid #22c55e; border-radius: 8px; margin-top: 15px;"><strong>Follow-up:</strong> Please schedule a follow-up appointment after {follow_up_days} days ({follow_up_date})</div>' if follow_up_days else ''}
+                {f'<div style="background: #dcfce7; padding: 15px; border: 1px solid #22c55e; border-radius: 8px; margin: 0 25px 25px;"><strong>Follow-up:</strong> Please schedule a follow-up appointment after {data.follow_up_days} days ({follow_up_date})</div>' if data.follow_up_days else ''}
                 
                 <div style="text-align: center; padding: 25px; color: #64748b; font-size: 12px;">
                     <p>Thank you for choosing Nevika Cura Healthcare</p>
@@ -456,6 +487,12 @@ async def doctor_complete_appointment(
     return {
         "message": "Appointment completed by doctor", 
         "status": "Completed",
+        "fee_code": data.fee_code,
+        "fee_amount": consultation_fee,
+        "scan_codes": data.scan_codes,
+        "scan_amount": scan_total,
+        "total_amount": total_fee,
+        "follow_up_date": follow_up_date,
         "invoice_sent": invoice_sent,
         "invoice_email": patient_email if invoice_sent else None
     }
