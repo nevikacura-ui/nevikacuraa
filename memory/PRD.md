@@ -34,23 +34,40 @@ Build a modern healthcare application for "Nevika Cura" with core services:
   - `POST /api/glydex/form/{form_id}/resend` - Resend expired form link (NEW)
 - **Testing**: 11/11 backend tests passed, frontend verified
 
-**35. Face ID Camera Permission Fix** ✅ (Complete)
+**35. Face ID Camera Permission Fix** ✅ (Complete - v2)
 - **Better Permission Handling**: `checkCameraPermission()` checks permission status before camera access
-- **Multiple Fallback Constraints**: Tries ideal → simpler → any camera for better mobile compatibility
-- **Comprehensive Error Handling**: Specific messages for NotAllowedError, NotFoundError, NotReadableError, SecurityError
-- **User-Friendly Instructions**: Clear instructions to enable camera in browser settings
+- **Multiple Fallback Constraints**: Tries 5 different camera constraints for better mobile compatibility:
+  1. Ideal front camera with dimensions
+  2. Simple front camera
+  3. Exact user-facing camera
+  4. Ideal user camera
+  5. Any available camera
+- **Comprehensive Error Handling**: Specific messages for NotAllowedError, NotFoundError, NotReadableError, SecurityError, AbortError
+- **Mobile-Friendly Video Handling**:
+  - Uses `canplay` event with timeout fallback
+  - Tap-to-play fallback for mobile autoplay restrictions
+  - Loading indicator while camera starts
+  - "Restart Camera" button for recovery
+- **Video Element Attributes**: `autoPlay`, `muted`, `playsInline` for iOS/Android compatibility
 - **File**: `/app/frontend/src/components/FaceBiometric.jsx`
 
-**36. Form Expiry System (1 Month)** ✅ (Complete)
-- **Both Diabetes & ANC Forms**: Forms expire after 30 days if not filled
-- **Expiry Check**: When patient opens form, checks if expired and shows friendly message
-- **Expiry Info in List**: Staff dashboard shows `days_until_expiry`, `is_expired`, `expires_at` for each form
-- **Resend Feature**: New endpoint to regenerate expired/old form links
-  - `POST /api/glydex/form/{form_id}/resend` - Diabetes forms
-  - `POST /api/anc/form/{form_id}/resend` - ANC forms
-- **Files**: 
-  - `/app/backend/routes/glydex.py` (Updated)
-  - `/app/backend/routes/anc_registration.py` (Updated)
+**36. Pre-Sonography Booking System** ✅ (Complete)
+- **Staff Can Book Sonography**: Clinic staff (Pushpa/Amnion) can book sonography with full patient details
+- **Patient Details Form**:
+  - Name, Age, LMP, Mobile Number, Date of Birth
+  - Husband Name, Full Address
+  - Children info (multiple children with gender & age)
+  - Booking date, time, clinic, scan type, notes
+- **Dr. Neha Dashboard**: New "Sonography" tab shows all bookings with patient details
+- **Status Tracking**: booked → in_progress → completed
+- **API Endpoints**:
+  - `POST /api/staff/sonography/book` - Create booking
+  - `GET /api/staff/sonography/bookings` - List bookings
+  - `GET /api/staff/sonography/booking/{id}` - Get details
+  - `PUT /api/staff/sonography/booking/{id}/status` - Update status
+- **Files**:
+  - `/app/frontend/src/pages/StaffPortal.js` (Modal + Sonography tab)
+  - `/app/backend/routes/staff.py` (New endpoints)
 
 ### Session 10 - January 15, 2026 (FACE BIOMETRIC, ALYNE REDESIGN & REFACTORING)
 
