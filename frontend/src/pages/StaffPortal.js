@@ -1781,7 +1781,7 @@ const StaffPortal = () => {
           <Tabs defaultValue="dashboard" className="space-y-4" onValueChange={handleTabChange}>
             {/* Color-coded Module Tabs - Mobile optimized */}
             <TabsList className="h-auto p-1.5 bg-gray-100 rounded-xl overflow-x-auto flex-wrap justify-start">
-              <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 sm:gap-2 w-full">
+              <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5 sm:gap-2 w-full">
                 <TabsTrigger 
                   value="dashboard" 
                   data-testid="tab-dashboard"
@@ -1850,6 +1850,26 @@ const StaffPortal = () => {
                     <span>Sugar</span>
                   </TabsTrigger>
                 )}
+                
+                {/* Forms Tab - Send registration forms */}
+                <TabsTrigger 
+                  value="forms" 
+                  data-testid="tab-forms"
+                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-indigo-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
+                >
+                  <Send className="w-5 h-5 sm:w-5 sm:h-5" />
+                  <span>Forms</span>
+                </TabsTrigger>
+                
+                {/* Loyalty Tab - Pharmacy rewards */}
+                <TabsTrigger 
+                  value="loyalty" 
+                  data-testid="tab-loyalty"
+                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-yellow-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
+                >
+                  <Star className="w-5 h-5 sm:w-5 sm:h-5" />
+                  <span>Loyalty</span>
+                </TabsTrigger>
                 
                 {/* Attendance Tab - Orange themed */}
                 {staffInfo?.access_modules?.includes('attendance') && (
