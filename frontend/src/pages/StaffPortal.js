@@ -1951,6 +1951,19 @@ const StaffPortal = () => {
                               Service
                             </Button>
                           )}
+                          {/* Book Sonography button - for clinic staff */}
+                          {appt.status !== 'Completed' && appt.status !== 'Cancelled' && staffInfo?.role?.includes('clinic_staff') && (
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => openSonographyFromAppointment(appt)}
+                              className="border-purple-300 text-purple-600 hover:bg-purple-50"
+                              data-testid={`book-sonography-${appt.id}`}
+                            >
+                              <Scan className="w-4 h-4 mr-1" />
+                              Sonography
+                            </Button>
+                          )}
                           {(appt.status === 'Booked' || appt.status === 'pending') && (
                             <Button 
                               size="sm" 
