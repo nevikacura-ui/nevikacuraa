@@ -27,6 +27,7 @@ Build a modern healthcare application for "Nevika Cura" with core services:
   - Staff face registration and verification
   - Check-in/Check-out attendance tracking
   - Daily attendance reports
+  - Improved error handling for camera access issues
 - **Files**: `/app/frontend/src/components/FaceBiometric.jsx`, `/app/backend/routes/face_attendance.py`
 
 **30. ALYNE Homepage Redesign** ✅ (Complete)
@@ -38,6 +39,19 @@ Build a modern healthcare application for "Nevika Cura" with core services:
   - Size: w-36 h-36 (sm: w-44 sm:h-44)
 - Both sections have matching design with rounded-3xl container and rounded-2xl logo
 - ALYNE Kids logo: User-provided colorful "ALYNE Kids" image
+
+**31. Bug Fixes - January 15, 2026** ✅ (Complete)
+- **DiaGyn Week Availability**: Fixed missing `/api/doctors/availability` endpoint
+  - Shows 7-day doctor schedules per clinic
+  - Clinic toggle (Pushpa/Amnion)
+  - Morning/Evening session times
+- **Wallet Screenshot Notification**: Added admin email & SMS notifications when user uploads payment screenshot
+  - HTML email with amount, customer details, transaction ID
+  - SMS alert to admin phone
+- **Face Biometric Camera**: Improved error handling
+  - Proper video dimension waiting
+  - Better camera permission error messages
+  - Detection threshold optimization
 
 ### Session 9 - January 15, 2026 (STAFF PORTAL MOBILE UX)
 
