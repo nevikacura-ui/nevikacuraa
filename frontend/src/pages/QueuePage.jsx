@@ -8,23 +8,25 @@ import { MapPin, Phone, Clock, ExternalLink, Navigation } from 'lucide-react';
 const CLINICS = {
   pushpa: {
     name: 'Pushpa Clinic',
-    address: 'Near Zilla Parishad, Pusad, Maharashtra 445204',
+    address: 'A-1, Sai Darshan, Near Don Bosco High School, Naigaon East',
     phone: '9403890429',
     mapLink: 'https://maps.app.goo.gl/LfFoHwVzvMEQ1Qzt9',
     hours: {
-      morning: '10:00 AM - 2:00 PM',
-      evening: '5:00 PM - 9:00 PM'
-    }
+      morning: '11:00 AM - 2:00 PM',
+      evening: '6:00 PM - 10:00 PM'
+    },
+    schedule: 'Mon-Sat: 11 AM - 2 PM | Tue, Thu, Sat: 6 PM - 10 PM'
   },
   amnion: {
     name: 'Amnion Clinic',
-    address: 'Near Bus Stand, Pusad, Maharashtra 445204',
+    address: 'G-7, Rashmi Star City Phase 5, Opp Thakur School, Naigaon East',
     mapLink: 'https://maps.app.goo.gl/aBr4jwCv3b6874vi8',
     phone: '9403890429',
     hours: {
-      morning: '10:00 AM - 2:00 PM',
-      evening: '5:00 PM - 9:00 PM'
-    }
+      morning: '11:00 AM - 2:00 PM',
+      evening: '6:00 PM - 10:00 PM'
+    },
+    schedule: 'Mon-Sat: 11 AM - 2 PM | Mon, Wed, Fri: 6 PM - 10 PM'
   }
 };
 
