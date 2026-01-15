@@ -161,6 +161,22 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
             }));
           }
         }
+
+        // Fetch live queue stats (public endpoint)
+        try {
+          const clinicParam = staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 'pushpa';
+          const queueRes = await fetch(`${API}/api/live-queue/status/${clinicParam}`);
+          if (queueRes.ok) {
+            const queueData = await queueRes.json();
+            setQueueStats({
+              waiting: queueData.stats?.total_waiting || 0,
+              serving: queueData.stats?.currently_serving || 0,
+              avgWait: queueData.stats?.avg_wait_time_minutes || 0
+            });
+          }
+        } catch (e) {
+          console.log('Queue stats fetch error:', e);
+        }
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
       }
