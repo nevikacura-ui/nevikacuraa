@@ -1363,64 +1363,52 @@ const StaffPortal = () => {
         {/* Clinic Staff View */}
         {isClinicStaff(role) && (
           <Tabs defaultValue="dashboard" className="space-y-4" onValueChange={handleTabChange}>
-            {/* Mobile-optimized Tab Navigation */}
-            <div className="overflow-x-auto pb-2 -mx-2 px-2">
-              <div className="flex gap-2 min-w-max">
-                <button
-                  onClick={() => document.querySelector('[data-state="active"]')?.click() || handleTabChange('dashboard')}
-                  data-testid="tab-dashboard"
-                  data-value="dashboard"
-                  className="staff-tab flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-md data-[state=active]:ring-2 data-[state=active]:ring-offset-2"
-                >
-                  <Users className="w-4 h-4" />
-                  <span className="hidden sm:inline">Dashboard</span>
-                  <span className="sm:hidden">Home</span>
-                </button>
+            {/* Color-coded Module Tabs - Mobile optimized */}
+            <TabsList className="h-auto p-1 bg-gray-100 rounded-xl overflow-x-auto flex-wrap justify-start">
+              <div className="grid grid-cols-4 sm:grid-cols-8 gap-1 sm:gap-2 w-full">
                 <TabsTrigger 
                   value="dashboard" 
-                  className="hidden"
-                  data-testid="tab-dashboard-hidden"
-                />
-              </div>
-            </div>
-            
-            {/* Color-coded Module Tabs */}
-            <div className="overflow-x-auto pb-2 -mx-2 px-2">
-              <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 min-w-[320px]">
+                  data-testid="tab-dashboard"
+                  className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                >
+                  <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span>Home</span>
+                </TabsTrigger>
+                
                 <TabsTrigger 
                   value="appointments" 
                   data-testid="tab-appointments"
-                  className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-blue-50 text-blue-700 hover:bg-blue-100 data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
                 >
-                  <Calendar className="w-5 h-5" />
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>Appts</span>
                 </TabsTrigger>
                 
                 <TabsTrigger 
                   value="walkin" 
                   data-testid="tab-walkin"
-                  className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-green-50 text-green-700 hover:bg-green-100 data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
                 >
-                  <UserPlus className="w-5 h-5" />
+                  <UserPlus className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>Walk-in</span>
                 </TabsTrigger>
                 
                 <TabsTrigger 
                   value="emergency" 
                   data-testid="tab-emergency"
-                  className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-red-50 text-red-700 hover:bg-red-100 data-[state=active]:bg-red-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-red-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
                 >
-                  <AlertTriangle className="w-5 h-5" />
+                  <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>SOS</span>
                 </TabsTrigger>
                 
                 <TabsTrigger 
                   value="billing" 
                   data-testid="tab-billing"
-                  className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-amber-50 text-amber-700 hover:bg-amber-100 data-[state=active]:bg-amber-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-amber-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
                 >
-                  <IndianRupee className="w-5 h-5" />
-                  <span>Billing</span>
+                  <IndianRupee className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span>Bill</span>
                 </TabsTrigger>
                 
                 {/* ANC Tab - Pink themed */}
@@ -1428,9 +1416,9 @@ const StaffPortal = () => {
                   <TabsTrigger 
                     value="anc" 
                     data-testid="tab-anc"
-                    className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-pink-50 text-pink-700 hover:bg-pink-100 data-[state=active]:bg-pink-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                    className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-pink-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
                   >
-                    <Baby className="w-5 h-5" />
+                    <Baby className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span>ANC</span>
                   </TabsTrigger>
                 )}
@@ -1440,10 +1428,10 @@ const StaffPortal = () => {
                   <TabsTrigger 
                     value="glydex" 
                     data-testid="tab-glydex"
-                    className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-purple-50 text-purple-700 hover:bg-purple-100 data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                    className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
                   >
-                    <Activity className="w-5 h-5" />
-                    <span>Diabetes</span>
+                    <Activity className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>Sugar</span>
                   </TabsTrigger>
                 )}
                 
@@ -1452,14 +1440,14 @@ const StaffPortal = () => {
                   <TabsTrigger 
                     value="attendance" 
                     data-testid="tab-attendance"
-                    className="flex flex-col items-center gap-1 p-3 rounded-xl text-xs font-medium transition-all bg-orange-50 text-orange-700 hover:bg-orange-100 data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                    className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
                   >
-                    <Fingerprint className="w-5 h-5" />
+                    <Fingerprint className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span>Attend</span>
                   </TabsTrigger>
                 )}
               </div>
-            </div>
+            </TabsList>
 
             {/* Dashboard Tab */}
             <TabsContent value="dashboard">
