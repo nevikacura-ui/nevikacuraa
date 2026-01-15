@@ -400,6 +400,18 @@ const Profile = () => {
               </div>
             </div>
           </div>
+          
+          {/* Health Dashboard Quick Link */}
+          <div className="mt-4 pt-4 border-t">
+            <Button 
+              onClick={() => navigate('/health-dashboard')}
+              className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+              data-testid="health-dashboard-btn"
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              View Complete Health Dashboard
+            </Button>
+          </div>
         </Card>
 
         <Tabs defaultValue="appointments" className="w-full">
