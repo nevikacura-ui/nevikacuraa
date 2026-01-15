@@ -1115,7 +1115,7 @@ const StaffPortal = () => {
             <div className="p-4 space-y-5 overflow-y-auto flex-1">
               {/* Fee Code Selection */}
               <div>
-                <Label className="text-sm font-semibold mb-3 block">Select Fee Code *</Label>
+                <Label className="text-sm font-semibold mb-3 block">Select Consultation Fee *</Label>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.entries(FEE_CODES).map(([code, info]) => (
                     <button
@@ -1136,6 +1136,70 @@ const StaffPortal = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Scan/Ultrasound Fees Section - Dr. Neha OBGY */}
+              {(staffInfo?.name?.toLowerCase().includes('neha') || completionAppointment?.doctor?.includes('Neha')) && (
+                <div className="bg-gradient-to-r from-cyan-50 to-teal-50 rounded-xl p-4 border border-cyan-200">
+                  <Label className="text-sm font-semibold mb-3 block text-cyan-800">
+                    <Scan className="w-4 h-4 inline mr-2" />
+                    Scan / Ultrasound Charges (Optional)
+                  </Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.entries(SCAN_FEES).map(([code, info]) => (
+                      <button
+                        key={code}
+                        onClick={() => toggleScanCode(code)}
+                        className={`p-3 rounded-lg border text-left transition-all ${
+                          completionForm.scan_codes?.includes(code)
+                            ? 'border-cyan-500 bg-cyan-100 ring-2 ring-cyan-300 shadow-md'
+                            : 'border-gray-200 bg-white hover:border-cyan-300 hover:bg-cyan-50'
+                        }`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className={`text-xs font-bold px-2 py-1 rounded ${info.color}`}>{code}</span>
+                          <span className="font-bold text-cyan-700">₹{info.amount}</span>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1">{info.label}</p>
+                        {completionForm.scan_codes?.includes(code) && (
+                          <CheckCircle2 className="w-4 h-4 text-cyan-600 absolute top-2 right-2" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  {completionForm.scan_codes?.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-cyan-200 flex justify-between items-center">
+                      <span className="text-sm text-cyan-700">
+                        {completionForm.scan_codes.length} scan(s) selected
+                      </span>
+                      <span className="font-bold text-cyan-800">
+                        +₹{completionForm.scan_codes.reduce((sum, code) => sum + (SCAN_FEES[code]?.amount || 0), 0)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Total Amount Display */}
+              {completionForm.fee_code && (
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-green-800">Total Amount</span>
+                    <span className="text-2xl font-bold text-green-700">₹{calculateTotalFee()}</span>
+                  </div>
+                  <div className="mt-2 text-xs text-green-600 space-y-1">
+                    <div className="flex justify-between">
+                      <span>Consultation ({completionForm.fee_code})</span>
+                      <span>₹{FEE_CODES[completionForm.fee_code]?.amount || 0}</span>
+                    </div>
+                    {completionForm.scan_codes?.map(code => (
+                      <div key={code} className="flex justify-between">
+                        <span>{SCAN_FEES[code]?.label} ({code})</span>
+                        <span>₹{SCAN_FEES[code]?.amount}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               
               {/* Follow-up Selection */}
               <div>
