@@ -2013,7 +2013,7 @@ const DevScreeningSection = ({ onBack }) => {
 
           <Card className="bg-amber-50 border-amber-200">
             <CardContent className="p-4">
-              <p className="text-sm text-amber-700"><Info className="w-4 h-4 inline mr-1" />If you have concerns about your child's development, talk to your pediatrician about a formal screening.</p>
+              <p className="text-sm text-amber-700"><Info className="w-4 h-4 inline mr-1" />If you have concerns about your child&apos;s development, talk to your pediatrician about a formal screening.</p>
             </CardContent>
           </Card>
         </div>
