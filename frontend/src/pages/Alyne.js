@@ -335,6 +335,7 @@ const Alyne = () => {
     name: '', date_of_birth: '', gender: 'male', blood_group: '', region: 'india'
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (user) fetchChildren();
     else setLoading(false);
