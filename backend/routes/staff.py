@@ -24,6 +24,19 @@ JWT_ALGORITHM = "HS256"
 send_email_notification = None
 send_sms_notification = None
 
+# Clinic location Google Maps links
+CLINIC_MAP_LINKS = {
+    "Pushpa Clinic": "https://maps.app.goo.gl/LfFoHwVzvMEQ1Qzt9",
+    "Amnion Clinic": "https://maps.app.goo.gl/aBr4jwCv3b6874vi8"
+}
+
+def get_clinic_map_link(clinic_name: str) -> str:
+    """Get Google Maps link for a clinic"""
+    for key, link in CLINIC_MAP_LINKS.items():
+        if key.lower() in clinic_name.lower():
+            return link
+    return CLINIC_MAP_LINKS.get("Pushpa Clinic", "")
+
 def set_db(database):
     global db
     db = database
