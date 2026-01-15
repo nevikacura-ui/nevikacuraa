@@ -187,9 +187,17 @@ const StaffPortal = () => {
   // Calculate available time slots based on doctor, clinic, and date
   // Filter out already booked slots for slot synchronization
   const availableTimeSlots = useMemo(() => {
+    console.log('=== Calculating available slots ===');
+    console.log('Doctor:', walkInForm.doctor);
+    console.log('Clinic:', walkInForm.clinic);
+    console.log('Date:', walkInForm.date);
     const allSlots = getAvailableTimeSlots(walkInForm.doctor, walkInForm.clinic, walkInForm.date);
+    console.log('All slots from schedule:', allSlots.length, allSlots.slice(0, 5));
+    console.log('Booked slots:', bookedSlots);
     // Filter out slots that are already booked (from both patient and staff bookings)
-    return allSlots.filter(slot => !bookedSlots.includes(slot));
+    const filtered = allSlots.filter(slot => !bookedSlots.includes(slot));
+    console.log('Available after filtering:', filtered.length);
+    return filtered;
   }, [walkInForm.doctor, walkInForm.clinic, walkInForm.date, bookedSlots]);
 
   // Check if doctor is available on selected date
