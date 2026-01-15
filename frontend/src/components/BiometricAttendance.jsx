@@ -18,6 +18,7 @@ export default function BiometricAttendance({ clinic = 'amnion' }) {
   const [loading, setLoading] = useState(false);
   const [monthlyReport, setMonthlyReport] = useState(null);
   const [showRegisterDevice, setShowRegisterDevice] = useState(false);
+  const [scanningFingerprint, setScanningFingerprint] = useState(false);
   
   // Registration form
   const [registerForm, setRegisterForm] = useState({
