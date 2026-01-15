@@ -2027,8 +2027,12 @@ const StaffPortal = () => {
 
         {/* Pharmacy Staff View */}
         {(role === 'pharmacy_staff' || role === 'super_admin') && (
-          <Tabs defaultValue="orders" className="space-y-4 mt-4">
-            <TabsList className="flex flex-wrap">
+          <Tabs defaultValue="dashboard" className="space-y-4 mt-4">
+            <TabsList className="flex flex-wrap gap-1">
+              <TabsTrigger value="dashboard" data-testid="tab-pharmacy-dashboard">
+                <Users className="w-4 h-4 mr-2" />
+                Dashboard
+              </TabsTrigger>
               <TabsTrigger value="orders" data-testid="tab-pharmacy-orders">
                 <Package className="w-4 h-4 mr-2" />
                 Orders
@@ -2045,6 +2049,17 @@ const StaffPortal = () => {
                 </TabsTrigger>
               )}
             </TabsList>
+
+            {/* Pharmacy Dashboard */}
+            <TabsContent value="dashboard">
+              <StaffDashboard 
+                staffInfo={staffInfo}
+                onNavigate={(tab) => {
+                  const tabElement = document.querySelector(`[data-testid="tab-pharmacy-${tab}"]`);
+                  if (tabElement) tabElement.click();
+                }}
+              />
+            </TabsContent>
             
             <TabsContent value="orders">
               <Card className="p-4">
