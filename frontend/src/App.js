@@ -78,6 +78,8 @@ function App() {
             <Route path="/reminders" element={<Reminders />} />
             {/* ALYNE - Kids Health */}
             <Route path="/alyne" element={<Alyne />} />
+            {/* ANC Public Form */}
+            <Route path="/anc-form/:formId" element={<ANCFormPublic />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
