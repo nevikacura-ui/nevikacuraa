@@ -35,14 +35,14 @@ export default function BiometricAttendance({ clinic = 'amnion' }) {
         const month = new Date().getMonth() + 1;
         
         const [attendanceRes, reportRes] = await Promise.all([
-          fetch(`${API}/api/biometric-attendance/daily-report?clinic=${clinic}&date=${today}`),
+          fetch(`${API}/api/biometric-attendance/report/${clinic}?date=${today}`),
           fetch(`${API}/api/biometric-attendance/monthly-report?clinic=${clinic}&year=${year}&month=${month}`)
         ]);
         
         const attendanceData = await attendanceRes.json();
         const reportData = await reportRes.json();
         
-        if (attendanceData.success) setTodayAttendance(attendanceData.attendance || []);
+        if (attendanceData.success) setTodayAttendance(attendanceData.report || []);
         if (reportData.success) setMonthlyReport(reportData);
       } catch (err) { console.error('Error loading data:', err); }
     };
@@ -52,9 +52,9 @@ export default function BiometricAttendance({ clinic = 'amnion' }) {
   const fetchTodayAttendance = async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
-      const res = await fetch(`${API}/api/biometric-attendance/daily-report?clinic=${clinic}&date=${today}`);
+      const res = await fetch(`${API}/api/biometric-attendance/report/${clinic}?date=${today}`);
       const data = await res.json();
-      if (data.success) setTodayAttendance(data.attendance || []);
+      if (data.success) setTodayAttendance(data.report || []);
     } catch (err) { console.error('Error fetching attendance:', err); }
   };
 
