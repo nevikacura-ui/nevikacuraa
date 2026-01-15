@@ -14,6 +14,17 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 
 ## What's Been Implemented ✅
 
+### Session 12 - January 15, 2026 (SMS TEMPLATES & VERIFICATION)
+
+**37. SMS Templates Standardization** ✅ (Complete)
+- **Walk-in & Emergency SMS**: Both templates now follow the same user-approved format
+- **Format includes**: Doctor, Clinic, Date, Token Time, arrival note, Google Maps link, contact number
+- **File**: `/app/backend/routes/staff.py`
+
+**Pending User Verification:**
+- Face ID Camera functionality on mobile device
+- Staff attendance data visibility with refresh button
+
 ### Session 11 - January 15, 2026 (DIABETES FORM FEATURE & CAMERA FIX)
 
 **34. Diabetes Registration Form System** ✅ (Complete)
