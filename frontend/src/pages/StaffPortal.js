@@ -1780,50 +1780,50 @@ const StaffPortal = () => {
         {isClinicStaff(role) && (
           <Tabs defaultValue="dashboard" className="space-y-4" onValueChange={handleTabChange}>
             {/* Color-coded Module Tabs - Mobile optimized */}
-            <TabsList className="h-auto p-1 bg-gray-100 rounded-xl overflow-x-auto flex-wrap justify-start">
-              <div className="grid grid-cols-4 sm:grid-cols-8 gap-1 sm:gap-2 w-full">
+            <TabsList className="h-auto p-1.5 bg-gray-100 rounded-xl overflow-x-auto flex-wrap justify-start">
+              <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 sm:gap-2 w-full">
                 <TabsTrigger 
                   value="dashboard" 
                   data-testid="tab-dashboard"
-                  className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
                 >
-                  <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <Users className="w-5 h-5 sm:w-5 sm:h-5" />
                   <span>Home</span>
                 </TabsTrigger>
                 
                 <TabsTrigger 
                   value="appointments" 
                   data-testid="tab-appointments"
-                  className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
                 >
-                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <Calendar className="w-5 h-5 sm:w-5 sm:h-5" />
                   <span>Appts</span>
                 </TabsTrigger>
                 
                 <TabsTrigger 
                   value="walkin" 
                   data-testid="tab-walkin"
-                  className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
                 >
-                  <UserPlus className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <UserPlus className="w-5 h-5 sm:w-5 sm:h-5" />
                   <span>Walk-in</span>
                 </TabsTrigger>
                 
                 <TabsTrigger 
                   value="emergency" 
                   data-testid="tab-emergency"
-                  className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-red-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-red-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
                 >
-                  <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <AlertTriangle className="w-5 h-5 sm:w-5 sm:h-5" />
                   <span>SOS</span>
                 </TabsTrigger>
                 
                 <TabsTrigger 
                   value="billing" 
                   data-testid="tab-billing"
-                  className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-amber-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-amber-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
                 >
-                  <IndianRupee className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <IndianRupee className="w-5 h-5 sm:w-5 sm:h-5" />
                   <span>Bill</span>
                 </TabsTrigger>
                 
@@ -1832,9 +1832,9 @@ const StaffPortal = () => {
                   <TabsTrigger 
                     value="anc" 
                     data-testid="tab-anc"
-                    className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-pink-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                    className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-pink-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
                   >
-                    <Baby className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <Baby className="w-5 h-5 sm:w-5 sm:h-5" />
                     <span>ANC</span>
                   </TabsTrigger>
                 )}
@@ -1844,9 +1844,9 @@ const StaffPortal = () => {
                   <TabsTrigger 
                     value="glydex" 
                     data-testid="tab-glydex"
-                    className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                    className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
                   >
-                    <Activity className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <Activity className="w-5 h-5 sm:w-5 sm:h-5" />
                     <span>Sugar</span>
                   </TabsTrigger>
                 )}
@@ -1856,9 +1856,9 @@ const StaffPortal = () => {
                   <TabsTrigger 
                     value="attendance" 
                     data-testid="tab-attendance"
-                    className="flex flex-col items-center gap-0.5 sm:gap-1 p-2 sm:p-3 rounded-lg text-[10px] sm:text-xs font-medium transition-all data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                    className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
                   >
-                    <Fingerprint className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <Fingerprint className="w-5 h-5 sm:w-5 sm:h-5" />
                     <span>Attend</span>
                   </TabsTrigger>
                 )}
