@@ -31,6 +31,7 @@ Build a modern healthcare application for "Nevika Cura" with core services:
   - `GET /api/glydex/form/{form_id}` - Get form details
   - `POST /api/glydex/form/{form_id}/submit` - Submit filled form
   - `GET /api/glydex/forms/list` - List all forms with status
+  - `POST /api/glydex/form/{form_id}/resend` - Resend expired form link (NEW)
 - **Testing**: 11/11 backend tests passed, frontend verified
 
 **35. Face ID Camera Permission Fix** ✅ (Complete)
@@ -39,6 +40,17 @@ Build a modern healthcare application for "Nevika Cura" with core services:
 - **Comprehensive Error Handling**: Specific messages for NotAllowedError, NotFoundError, NotReadableError, SecurityError
 - **User-Friendly Instructions**: Clear instructions to enable camera in browser settings
 - **File**: `/app/frontend/src/components/FaceBiometric.jsx`
+
+**36. Form Expiry System (1 Month)** ✅ (Complete)
+- **Both Diabetes & ANC Forms**: Forms expire after 30 days if not filled
+- **Expiry Check**: When patient opens form, checks if expired and shows friendly message
+- **Expiry Info in List**: Staff dashboard shows `days_until_expiry`, `is_expired`, `expires_at` for each form
+- **Resend Feature**: New endpoint to regenerate expired/old form links
+  - `POST /api/glydex/form/{form_id}/resend` - Diabetes forms
+  - `POST /api/anc/form/{form_id}/resend` - ANC forms
+- **Files**: 
+  - `/app/backend/routes/glydex.py` (Updated)
+  - `/app/backend/routes/anc_registration.py` (Updated)
 
 ### Session 10 - January 15, 2026 (FACE BIOMETRIC, ALYNE REDESIGN & REFACTORING)
 
