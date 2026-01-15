@@ -254,9 +254,15 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
       toast.error('Please capture your face first');
       return;
     }
+    if (capturedDescriptor.length !== 128) {
+      toast.error(`Invalid face data. Please capture face again. (Got ${capturedDescriptor.length} values, expected 128)`);
+      setCapturedDescriptor(null);
+      return;
+    }
     
     setRegistering(true);
     try {
+      console.log('Registering face with descriptor length:', capturedDescriptor.length);
       const res = await fetch(`${API}/api/face-attendance/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -269,6 +275,8 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
       });
       
       const data = await res.json();
+      console.log('Registration response:', data);
+      
       if (data.success) {
         toast.success(`Face registered for ${registerForm.staff_name}!`);
         setShowRegister(false);
@@ -277,10 +285,11 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
         stopCamera();
         fetchRegisteredStaff();
       } else {
-        toast.error(data.detail || 'Registration failed');
+        toast.error(data.detail || data.message || 'Registration failed');
       }
     } catch (err) {
-      toast.error('Registration failed');
+      console.error('Registration error:', err);
+      toast.error('Registration failed: ' + err.message);
     }
     setRegistering(false);
   };
