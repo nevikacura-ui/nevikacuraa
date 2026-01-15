@@ -438,7 +438,6 @@ const StaffPortal = () => {
       const staffClinic = res.data.staff?.clinic || res.data.clinic;
       if (staffClinic) {
         const clinicDoctors = CLINICS[staffClinic] || [];
-        console.log('Setting form clinic to:', staffClinic, 'doctors:', clinicDoctors);
         setWalkInForm(prev => ({
           ...prev,
           clinic: staffClinic,
