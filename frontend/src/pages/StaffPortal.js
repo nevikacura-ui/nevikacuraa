@@ -1293,7 +1293,7 @@ const StaffPortal = () => {
                 className="flex-1 bg-green-600 hover:bg-green-700"
               >
                 {completingAppointment ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
-                Complete (₹{FEE_CODES[completionForm.fee_code]?.amount || 0})
+                Complete (₹{calculateTotalFee()})
               </Button>
             </div>
           </Card>
