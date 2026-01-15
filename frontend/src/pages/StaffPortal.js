@@ -2079,7 +2079,7 @@ const StaffPortal = () => {
                   </div>
                   
                   {/* Doctor availability notice */}
-                  {walkInForm.doctor && walkInForm.date && !isDoctorAvailable && (
+                  {isFormReady && walkInForm.date && !isDoctorAvailable && (
                     <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm">
                       <AlertTriangle className="w-4 h-4 inline mr-2" />
                       <strong>{walkInForm.doctor}</strong> is not available at {staffInfo?.clinic} on {getDayName(walkInForm.date)}. 
