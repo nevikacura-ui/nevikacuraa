@@ -1280,6 +1280,24 @@ GET  /api/teleconsult/prescription/{id} - Get prescription (auth required)
   - Quick navigation to appointments tab
   - Only shows when appointments exist for the day
 
+**40. Push Notifications for Sonography Reminders** ✅ (Complete)
+- **New Feature**: SMS reminder system for sonography bookings
+- **Functionality**:
+  - "Send Reminders" button on Dr. Neha's Sonography tab
+  - Sends SMS to patients with scans scheduled within 30 minutes
+  - "Reminded" badge (green with Bell icon) shows on booking cards after reminder sent
+  - Prevents duplicate reminders
+- **Backend Endpoints** (added to `/app/backend/routes/staff.py`):
+  - `GET /api/staff/sonography/upcoming-reminders` - Lists bookings due for reminder
+  - `POST /api/staff/sonography/send-all-reminders` - Bulk send reminders
+  - `POST /api/staff/sonography/send-reminder/{booking_id}` - Send single reminder
+- **Frontend Changes** (in `/app/frontend/src/pages/StaffPortal.js`):
+  - Added `sendingReminders` state and `sendSonographyReminders` function
+  - Purple "Send Reminders" button with Bell icon
+  - "Reminded" badge on booking cards
+- **Testing**: 100% pass rate (iteration_38.json) - 11 backend tests passed
+- **Note**: SMS delivery depends on Twilio credentials being configured
+
 **Test Credentials:**
 - Clinic Staff (Pushpa): `staff_pushpa` / `Nevika@2026C`
 - Clinic Staff (Amnion): `staff_amnion` / `Nevika@2026C`
