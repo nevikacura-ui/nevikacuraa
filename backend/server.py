@@ -1873,35 +1873,21 @@ async def get_guest_orders(phone: str):
     }
 
 
-# ============ OTP Endpoints (Twilio SMS with Mock fallback) ============
+# ============ OTP Endpoints (Mock OTP for service login) ============
 
 @api_router.post("/otp/send")
 async def send_otp(request: OTPRequest):
-    """Send OTP to phone number via Twilio SMS (with mock fallback)"""
+    """Send OTP for service login - Uses MOCK OTP (no SMS for login)"""
     phone = request.phone.strip()
     service = request.service.lower()
     
     if not phone or len(phone) < 10:
         raise HTTPException(status_code=400, detail="Invalid phone number")
     
-    if service not in ['diagyn', 'proton', 'pharmacy']:
+    if service not in ['diagyn', 'proton', 'pharmacy', 'evara', 'glydex', 'alyne']:
         raise HTTPException(status_code=400, detail="Invalid service")
     
-    # Try Twilio first
-    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
-        result = await send_twilio_otp(phone)
-        if result["success"]:
-            return {
-                "success": True,
-                "message": f"OTP sent to your phone via SMS for {service.title()} booking",
-                "expires_in": 300,
-                "phone": phone,
-                "method": "sms"
-            }
-        else:
-            logger.warning(f"Twilio failed for {service}, using mock: {result.get('error')}")
-    
-    # Fallback to mock OTP
+    # MOCK OTP for login (SMS not used for login OTP)
     otp = generate_otp()
     otp_key = f"{phone}_{service}"
     otp_storage[otp_key] = {
@@ -1910,34 +1896,26 @@ async def send_otp(request: OTPRequest):
         "attempts": 0
     }
     
-    logger.info(f"Mock OTP generated for {phone} ({service}): {otp}")
+    logger.info(f"Login Mock OTP generated for {phone} ({service}): {otp}")
     
     return {
         "success": True,
-        "message": "OTP sent successfully",
-        "mock_otp": otp,  # Only shown when using fallback
+        "message": "OTP generated successfully",
+        "mock_otp": otp,  # Display in UI for user
         "expires_in": 300,
         "phone": phone,
-        "method": "mock"
+        "method": "mock",
+        "note": "Use the displayed OTP to login"
     }
 
 @api_router.post("/otp/verify")
 async def verify_otp(request: OTPVerify):
-    """Verify OTP via Twilio or fallback"""
+    """Verify OTP for service login - Uses MOCK verification"""
     phone = request.phone.strip()
     otp = request.otp.strip()
     service = request.service.lower()
     
-    # Try Twilio verification first
-    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
-        result = await verify_twilio_otp(phone, otp)
-        if result["success"]:
-            if result["valid"]:
-                # Generate verification token
-                verification_token = jwt.encode({
-                    'phone': phone,
-                    'service': service,
-                    'verified': True,
+    otp_key = f"{phone}_{service}"
                     'exp': datetime.now(timezone.utc) + timedelta(minutes=30)
                 }, JWT_SECRET, algorithm=JWT_ALGORITHM)
                 
