@@ -574,6 +574,123 @@ const StaffPortal = () => {
     setLoadingHistory(false);
   };
 
+  // Sonography Booking Functions
+  const fetchSonographyBookings = async () => {
+    setLoadingSonography(true);
+    try {
+      const clinic = staffInfo?.clinic || '';
+      const res = await axios.get(`${API}/staff/sonography/bookings`, {
+        params: { date: selectedDate, clinic },
+        ...getAuthHeaders()
+      });
+      setSonographyBookings(res.data.bookings || []);
+    } catch (error) {
+      console.error('Error fetching sonography bookings:', error);
+    }
+    setLoadingSonography(false);
+  };
+
+  const handleSonographySubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!sonographyForm.patient_name || !sonographyForm.mobile_number || !sonographyForm.lmp || !sonographyForm.husband_name) {
+      toast.error('Please fill required fields: Name, Mobile, LMP, Husband Name');
+      return;
+    }
+    
+    setBookingSonography(true);
+    try {
+      const res = await axios.post(`${API}/staff/sonography/book`, {
+        ...sonographyForm,
+        clinic: sonographyForm.clinic || staffInfo?.clinic || 'Pushpa Clinic'
+      }, getAuthHeaders());
+      
+      if (res.data.success) {
+        toast.success(`Sonography booked for ${sonographyForm.patient_name}`);
+        setShowSonographyModal(false);
+        setSonographyForm({
+          patient_name: '',
+          age: '',
+          lmp: '',
+          mobile_number: '',
+          date_of_birth: '',
+          husband_name: '',
+          address: '',
+          has_children: false,
+          children: [],
+          booking_date: getIndianDate(),
+          booking_time: '',
+          clinic: '',
+          scan_type: '',
+          notes: ''
+        });
+        fetchSonographyBookings();
+      } else {
+        toast.error(res.data.error || 'Failed to book sonography');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Booking failed');
+    }
+    setBookingSonography(false);
+  };
+
+  const addChild = () => {
+    setSonographyForm(prev => ({
+      ...prev,
+      children: [...prev.children, { gender: '', age: '' }]
+    }));
+  };
+
+  const removeChild = (index) => {
+    setSonographyForm(prev => ({
+      ...prev,
+      children: prev.children.filter((_, i) => i !== index)
+    }));
+  };
+
+  const updateChild = (index, field, value) => {
+    setSonographyForm(prev => ({
+      ...prev,
+      children: prev.children.map((child, i) => 
+        i === index ? { ...child, [field]: value } : child
+      )
+    }));
+  };
+
+  const updateSonographyStatus = async (bookingId, status) => {
+    try {
+      const res = await axios.put(`${API}/staff/sonography/booking/${bookingId}/status?status=${status}`, {}, getAuthHeaders());
+      if (res.data.success) {
+        toast.success(`Status updated to ${status}`);
+        fetchSonographyBookings();
+      }
+    } catch (error) {
+      toast.error('Failed to update status');
+    }
+  };
+
+  // Prefill sonography form from appointment
+  const openSonographyFromAppointment = (appointment) => {
+    setSonographyForm({
+      patient_name: appointment.patient_name || '',
+      age: '',
+      lmp: '',
+      mobile_number: appointment.patient_phone || '',
+      date_of_birth: '',
+      husband_name: '',
+      address: '',
+      has_children: false,
+      children: [],
+      booking_date: getIndianDate(),
+      booking_time: '',
+      clinic: appointment.clinic || staffInfo?.clinic || 'Pushpa Clinic',
+      scan_type: '',
+      notes: '',
+      appointment_id: appointment.id
+    });
+    setShowSonographyModal(true);
+  };
+
   // Loyalty Points Functions
   const searchLoyaltyUser = async () => {
     if (!loyaltyPhone || loyaltyPhone.length < 10) {
