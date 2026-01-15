@@ -54,10 +54,31 @@ const StaffPortal = () => {
   const [doctorClinics, setDoctorClinics] = useState([]);
   const [selectedClinic, setSelectedClinic] = useState('');
   
+  // Initialize form with data from localStorage if available
+  const getInitialFormData = () => {
+    try {
+      const info = localStorage.getItem('staffInfo');
+      if (info) {
+        const parsedInfo = JSON.parse(info);
+        const clinic = parsedInfo.clinic || '';
+        const clinicDoctors = CLINICS[clinic] || [];
+        return {
+          clinic: clinic,
+          doctor: clinicDoctors[0] || ''
+        };
+      }
+    } catch (e) {
+      console.log('Error reading staffInfo:', e);
+    }
+    return { clinic: '', doctor: '' };
+  };
+  
+  const initialData = getInitialFormData();
+  
   // Walk-in form
   const [walkInForm, setWalkInForm] = useState({
-    doctor: '',
-    clinic: '',
+    doctor: initialData.doctor,
+    clinic: initialData.clinic,
     date: getIndianDate(),
     time: '',
     patient_name: '',
@@ -66,8 +87,8 @@ const StaffPortal = () => {
   
   // Emergency form
   const [emergencyForm, setEmergencyForm] = useState({
-    doctor: '',
-    clinic: '',
+    doctor: initialData.doctor,
+    clinic: initialData.clinic,
     date: getIndianDate(),
     patient_name: '',
     patient_phone: '',
