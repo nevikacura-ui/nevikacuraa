@@ -527,12 +527,62 @@ const Alyne = () => {
               </div>
             )}
 
-            {/* Feature Categories - All Clickable */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-500 mb-4">What would you like help with?</h3>
+            {/* ============ AANYA BY ALYNE - NEWBORN SECTION ============ */}
+            {selectedChild && (parseInt(selectedChild.age_months) < 24 || selectedChild.age_display?.includes('month')) && (
+              <div className="space-y-4" data-testid="aanya-section">
+                <div className="flex items-center gap-3 px-2">
+                  <img 
+                    src="https://customer-assets.emergentagent.com/job_nevika-hub/artifacts/8mqg0viu_file_00000000bf947207a0e573e6763f822a.png" 
+                    alt="Aanya by Alyne"
+                    className="w-12 h-12 object-contain"
+                    data-testid="aanya-logo-home"
+                  />
+                  <div>
+                    <h3 className="font-bold text-lg bg-gradient-to-r from-orange-500 via-pink-500 to-cyan-500 bg-clip-text text-transparent">
+                      Aanya Newborn
+                    </h3>
+                    <p className="text-xs text-gray-500">— BY Alyne — Newborn Care (0-24 months)</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Aanya Newborn Care Button */}
+                  <button
+                    onClick={() => setActiveCategory(FEATURE_CATEGORIES.find(c => c.id === 'aanya_newborn'))}
+                    className="bg-gradient-to-br from-pink-400 via-rose-400 to-orange-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg"
+                    data-testid="aanya-newborn-care"
+                  >
+                    <Baby className="w-8 h-8 mb-2" />
+                    <h4 className="font-bold text-sm">Newborn Care</h4>
+                    <p className="text-[10px] text-white/80 mt-1">Feeding, Sleep, Growth</p>
+                  </button>
+                  
+                  {/* Growth Charts */}
+                  <button
+                    onClick={() => setActiveCategory(FEATURE_CATEGORIES.find(c => c.id === 'aanya_newborn'))}
+                    className="bg-gradient-to-br from-cyan-400 via-teal-400 to-emerald-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg"
+                    data-testid="aanya-growth"
+                  >
+                    <TrendingUp className="w-8 h-8 mb-2" />
+                    <h4 className="font-bold text-sm">Growth Charts</h4>
+                    <p className="text-[10px] text-white/80 mt-1">WHO Standards</p>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ============ ALYNE KIDS SECTION ============ */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 px-2">
+                <Sparkles className="w-5 h-5 text-teal-500" />
+                <h3 className="font-bold text-lg text-teal-700">ALYNE Kids</h3>
+                <span className="text-xs text-gray-500">(Ages 2-12)</span>
+              </div>
+              
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {FEATURE_CATEGORIES
                   .filter(cat => !cat.regionSpecific || cat.regionSpecific === selectedRegion)
+                  .filter(cat => cat.id !== 'aanya_newborn') // Exclude Aanya from main grid
                   .map((cat) => (
                   <button
                     key={cat.id}
