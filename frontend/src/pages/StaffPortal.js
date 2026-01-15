@@ -2311,13 +2311,13 @@ const StaffPortal = () => {
         {isDoctor(role) && !isClinicStaff(role) && (
           <Tabs defaultValue="appointments" className="space-y-4">
             {/* Doctor Specialty Tabs based on role */}
-            <TabsList className="h-auto p-1 bg-gray-100 rounded-xl flex-wrap justify-start">
+            <TabsList className="h-auto p-1.5 bg-gray-100 rounded-xl flex-wrap justify-start gap-1.5">
               <TabsTrigger 
                 value="appointments" 
                 data-testid="doc-tab-appointments"
-                className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-teal-500 data-[state=active]:text-white"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-teal-500 data-[state=active]:text-white min-h-[44px]"
               >
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-5 h-5" />
                 Appointments
               </TabsTrigger>
               
@@ -2328,9 +2328,9 @@ const StaffPortal = () => {
                 <TabsTrigger 
                   value="anc" 
                   data-testid="doc-tab-anc"
-                  className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-pink-500 data-[state=active]:text-white"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-pink-500 data-[state=active]:text-white min-h-[44px]"
                 >
-                  <Baby className="w-4 h-4" />
+                  <Baby className="w-5 h-5" />
                   ANC Patients
                 </TabsTrigger>
               )}
@@ -2343,9 +2343,9 @@ const StaffPortal = () => {
                   value="sonography" 
                   onClick={() => fetchSonographyBookings()}
                   data-testid="doc-tab-sonography"
-                  className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-purple-500 data-[state=active]:text-white"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-purple-500 data-[state=active]:text-white min-h-[44px]"
                 >
-                  <Scan className="w-4 h-4" />
+                  <Scan className="w-5 h-5" />
                   Sonography
                 </TabsTrigger>
               )}
@@ -2357,9 +2357,9 @@ const StaffPortal = () => {
                 <TabsTrigger 
                   value="glydex" 
                   data-testid="doc-tab-glydex"
-                  className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-purple-500 data-[state=active]:text-white"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-purple-500 data-[state=active]:text-white min-h-[44px]"
                 >
-                  <Activity className="w-4 h-4" />
+                  <Activity className="w-5 h-5" />
                   Diabetes Patients
                 </TabsTrigger>
               )}
@@ -2368,9 +2368,9 @@ const StaffPortal = () => {
               <TabsTrigger 
                 value="biometric" 
                 data-testid="doc-tab-biometric"
-                className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-orange-500 data-[state=active]:text-white"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-orange-500 data-[state=active]:text-white min-h-[44px]"
               >
-                <Fingerprint className="w-4 h-4" />
+                <Fingerprint className="w-5 h-5" />
                 Attendance
               </TabsTrigger>
             </TabsList>
