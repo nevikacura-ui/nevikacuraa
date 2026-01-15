@@ -1,0 +1,96 @@
+{
+  "summary": "Completed comprehensive testing of Live Queue & Wait Time Display system. All 7 backend endpoints working correctly. Frontend /queue page and Staff Dashboard Live Queue widget both functional.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/tests/test_live_queue.py",
+    "/app/test_reports/pytest/pytest_live_queue.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Backend: All public endpoints (status, position, busy-hours) correctly work without auth",
+    "Backend: Staff endpoints (analytics, call-next, complete) properly require Bearer token auth",
+    "Backend: Remote check-in validates appointment existence and phone number match",
+    "Backend: Busy hours heatmap correctly aggregates historical data by day/hour",
+    "Frontend: Queue page has clinic selector (Pushpa/Amnion) working correctly",
+    "Frontend: Stats cards (Being Served, Waiting, Avg Wait, Est. Queue Time) display correctly",
+    "Frontend: Check My Position and Remote Check-in forms present and functional",
+    "Frontend: Staff Dashboard Live Queue widget shows real-time stats with Call Next and Manage Queue buttons"
+  ],
+  "updated_files": [
+    "/app/tests/test_live_queue.py"
+  ],
+  "success_rate": {
+    "backend": "100% (18/18 tests passed)",
+    "frontend": "100% (all UI elements verified)"
+  },
+  "test_credentials": {
+    "staff_pushpa": {"username": "staff_pushpa", "password": "Nevika@2026C"}
+  },
+  "seed_data_creation": "None - tested with existing data (queue currently empty)",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Live Queue system fully tested. Public endpoints: GET /api/live-queue/status/{clinic}, GET /api/live-queue/position, GET /api/live-queue/busy-hours/{clinic}, POST /api/live-queue/remote-checkin. Staff endpoints (require auth): POST /api/live-queue/staff/call-next/{clinic}, POST /api/live-queue/staff/complete/{appointment_id}, GET /api/live-queue/staff/analytics/{clinic}. Frontend pages: /queue (public queue display), Staff Dashboard has Live Queue widget.",
+  "features_tested": {
+    "public_queue_status": {
+      "status": "PASS",
+      "endpoint": "GET /api/live-queue/status/{clinic}",
+      "clinics_tested": ["pushpa", "amnion"],
+      "response_fields": ["success", "clinic", "date", "current_time_ist", "currently_serving", "waiting_queue", "stats", "last_updated"]
+    },
+    "queue_position_lookup": {
+      "status": "PASS",
+      "endpoint": "GET /api/live-queue/position",
+      "params": ["appointment_id", "phone", "token"],
+      "error_handling": "Returns 400 if no params, 404 if not found"
+    },
+    "busy_hours_heatmap": {
+      "status": "PASS",
+      "endpoint": "GET /api/live-queue/busy-hours/{clinic}",
+      "response_fields": ["heatmap", "peak_hours", "recommendation"],
+      "heatmap_structure": "day, hour, hour_label, patient_count, intensity"
+    },
+    "remote_checkin": {
+      "status": "PASS",
+      "endpoint": "POST /api/live-queue/remote-checkin",
+      "required_fields": ["appointment_id", "patient_phone"],
+      "optional_fields": ["eta_minutes"],
+      "validation": "Validates appointment exists and phone matches"
+    },
+    "staff_call_next": {
+      "status": "PASS",
+      "endpoint": "POST /api/live-queue/staff/call-next/{clinic}",
+      "auth": "Bearer token required",
+      "behavior": "Returns next patient or 'No patients waiting' message"
+    },
+    "staff_complete": {
+      "status": "PASS",
+      "endpoint": "POST /api/live-queue/staff/complete/{appointment_id}",
+      "auth": "Bearer token required",
+      "error_handling": "Returns 404 for non-existent appointment"
+    },
+    "staff_analytics": {
+      "status": "PASS",
+      "endpoint": "GET /api/live-queue/staff/analytics/{clinic}",
+      "auth": "Bearer token required",
+      "response_fields": ["today_stats", "current_queue_length", "efficiency_score"]
+    },
+    "frontend_queue_page": {
+      "status": "PASS",
+      "url": "/queue",
+      "features": ["Clinic selector", "Clinic info card", "Stats cards", "Waiting queue list", "Check My Position", "Remote check-in"]
+    },
+    "frontend_staff_dashboard_widget": {
+      "status": "PASS",
+      "location": "Staff Dashboard",
+      "features": ["Being Served count", "Waiting count", "Avg Wait time", "Call Next button", "Manage Queue button", "Full View link"]
+    }
+  }
+}
