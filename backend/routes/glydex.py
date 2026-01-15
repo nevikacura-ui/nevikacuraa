@@ -1098,7 +1098,7 @@ async def send_diabetes_form_link(data: DiabetesFormSendRequest):
     
     # Create form record
     form_id = str(uuid.uuid4())
-    base_url = os.environ.get("FRONTEND_URL", "https://healthfix-1.preview.emergentagent.com")
+    base_url = os.environ.get("FRONTEND_URL", "https://nevika-health-5.preview.emergentagent.com")
     form_link = f"{base_url}/diabetes-form/{form_id}"
     
     form_record = {
@@ -1343,7 +1343,7 @@ async def resend_diabetes_form_link(form_id: str):
     
     # Create new form with same patient data
     new_form_id = str(uuid.uuid4())
-    base_url = os.environ.get("FRONTEND_URL", "https://healthfix-1.preview.emergentagent.com")
+    base_url = os.environ.get("FRONTEND_URL", "https://nevika-health-5.preview.emergentagent.com")
     new_form_link = f"{base_url}/diabetes-form/{new_form_id}"
     
     new_form_record = {
