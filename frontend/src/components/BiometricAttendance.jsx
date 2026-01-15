@@ -176,9 +176,7 @@ export default function BiometricAttendance({ clinic = 'amnion' }) {
       fetchMonthlyReport();
     } else {
       toast.error(data.detail || 'Registration failed');
-      }
     }
-    setLoading(false);
   };
 
   const handleMarkAttendance = async (staffId, type) => {
