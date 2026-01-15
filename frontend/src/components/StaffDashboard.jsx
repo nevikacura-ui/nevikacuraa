@@ -170,37 +170,37 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
   ].filter(action => accessModules.includes(action.module));
 
   return (
-    <div className="space-y-6" data-testid="staff-dashboard">
-      {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 rounded-2xl p-6 text-white shadow-lg">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="space-y-4 sm:space-y-6" data-testid="staff-dashboard">
+      {/* Welcome Header - Compact on mobile */}
+      <div className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg">
+        <div className="flex items-center justify-between">
           <div>
-            <p className="text-teal-100 text-sm">{getGreeting()}</p>
-            <h1 className="text-2xl font-bold">{staffInfo?.name}</h1>
-            <p className="text-teal-100 text-sm mt-1">
-              {staffInfo?.clinic} • {staffInfo?.role?.replace(/_/g, ' ')}
+            <p className="text-teal-100 text-xs sm:text-sm">{getGreeting()}</p>
+            <h1 className="text-lg sm:text-2xl font-bold">{staffInfo?.name}</h1>
+            <p className="text-teal-100 text-xs sm:text-sm mt-0.5 sm:mt-1">
+              {staffInfo?.clinic}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-3xl font-bold">{formatTime(currentTime)}</p>
-            <p className="text-teal-100 text-sm">{formatDate(currentTime)}</p>
+            <p className="text-xl sm:text-3xl font-bold">{formatTime(currentTime)}</p>
+            <p className="text-teal-100 text-[10px] sm:text-sm">{formatDate(currentTime)}</p>
           </div>
         </div>
       </div>
 
-      {/* Quick Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Quick Stats Grid - 2x2 on mobile */}
+      <div className="grid grid-cols-2 gap-2 sm:gap-4">
         {accessModules.includes('appointments') && (
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('appointments')}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">Today&apos;s Appointments</p>
-                  <p className="text-2xl font-bold text-blue-600">{stats.appointments.today}</p>
-                  <p className="text-xs text-gray-400">{stats.appointments.pending} pending</p>
+                  <p className="text-[10px] sm:text-sm text-gray-500">Appointments</p>
+                  <p className="text-xl sm:text-2xl font-bold text-blue-600">{stats.appointments.today}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-400">{stats.appointments.pending} pending</p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-blue-600" />
+                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Calendar className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
                 </div>
               </div>
             </CardContent>
@@ -209,15 +209,15 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
 
         {accessModules.includes('anc') && (
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('anc')}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-gray-500">ANC Patients</p>
-                  <p className="text-2xl font-bold text-pink-600">{stats.anc.total}</p>
-                  <p className="text-xs text-gray-400">{stats.anc.dueThisWeek} due this week</p>
+                  <p className="text-[10px] sm:text-sm text-gray-500">ANC Patients</p>
+                  <p className="text-xl sm:text-2xl font-bold text-pink-600">{stats.anc.total}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-400">{stats.anc.dueThisWeek} due</p>
                 </div>
-                <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
-                  <Baby className="w-6 h-6 text-pink-600" />
+                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-pink-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Baby className="w-4 h-4 sm:w-6 sm:h-6 text-pink-600" />
                 </div>
               </div>
             </CardContent>
