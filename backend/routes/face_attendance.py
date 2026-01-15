@@ -209,7 +209,7 @@ async def verify_face(request: FaceVerificationRequest):
                         "staff_name": best_match["staff_name"],
                         "staff_id": best_match["staff_id"],
                         "message": f"Already checked in at {existing_attendance['check_in']}",
-                        "confidence": confidence,
+                        "confidence": best_confidence,
                         "action": "already_checked_in"
                     }
                 
@@ -226,7 +226,7 @@ async def verify_face(request: FaceVerificationRequest):
                         "date": today,
                         "check_in": current_time,
                         "check_out": None,
-                        "confidence": confidence,
+                        "confidence": best_confidence,
                         "verified_at": datetime.now(timezone.utc).isoformat()
                     })
                 
@@ -235,11 +235,11 @@ async def verify_face(request: FaceVerificationRequest):
                     "staff_name": best_match["staff_name"],
                     "staff_id": best_match["staff_id"],
                     "message": f"Check-in successful at {current_time}",
-                    "confidence": confidence,
+                    "confidence": best_confidence,
                     "action": "check_in"
                 }
             
-            elif request.action_type == "check_out":
+            elif action_type == "check_out":
                 if not existing_attendance or not existing_attendance.get("check_in"):
                     return {
                         "verified": True,
