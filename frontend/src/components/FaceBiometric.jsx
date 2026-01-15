@@ -606,7 +606,6 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
                     autoPlay
                     muted
                     playsInline
-                    webkitPlaysInline
                     className="w-full h-full object-cover"
                     style={{ transform: 'scaleX(-1)' }}
                   />
@@ -747,7 +746,6 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
                     autoPlay
                     muted
                     playsInline
-                    webkitPlaysInline
                     className="w-full h-full object-cover"
                     style={{ transform: 'scaleX(-1)' }}
                   />
