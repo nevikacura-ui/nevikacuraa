@@ -34,22 +34,23 @@ Build a modern healthcare application for "Nevika Cura" with core services:
   - `POST /api/glydex/form/{form_id}/resend` - Resend expired form link (NEW)
 - **Testing**: 11/11 backend tests passed, frontend verified
 
-**35. Face ID Camera Permission Fix** ✅ (Complete - v2)
-- **Better Permission Handling**: `checkCameraPermission()` checks permission status before camera access
-- **Multiple Fallback Constraints**: Tries 5 different camera constraints for better mobile compatibility:
-  1. Ideal front camera with dimensions
-  2. Simple front camera
-  3. Exact user-facing camera
-  4. Ideal user camera
-  5. Any available camera
-- **Comprehensive Error Handling**: Specific messages for NotAllowedError, NotFoundError, NotReadableError, SecurityError, AbortError
-- **Mobile-Friendly Video Handling**:
-  - Uses `canplay` event with timeout fallback
-  - Tap-to-play fallback for mobile autoplay restrictions
-  - Loading indicator while camera starts
-  - "Restart Camera" button for recovery
-- **Video Element Attributes**: `autoPlay`, `muted`, `playsInline` for iOS/Android compatibility
-- **File**: `/app/frontend/src/components/FaceBiometric.jsx`
+**35. Face ID Camera Permission Fix** ✅ (Complete - v3 WORKING)
+- **Root Cause Found**: The original face-api.js implementation was too complex for mobile browsers
+- **Solution**: Simplified camera code matching the working camera-test.html approach
+- **Backend Updated**: Now accepts base64 image data (`face_data`) instead of requiring face descriptors
+- **New Standalone Page**: `/face-attendance.html` - Pure HTML/JS page that works reliably
+- **React Component Rewritten**: `FaceBiometric.jsx` - Clean implementation without face-api.js dependency
+- **Features Working**:
+  - Camera starts reliably on mobile devices
+  - Face registration by capturing photo
+  - Check-in / Check-out attendance tracking
+  - Today's attendance display
+  - Registered staff list
+- **Files Modified**:
+  - `/app/frontend/src/components/FaceBiometric.jsx` (Rewritten)
+  - `/app/backend/routes/face_attendance.py` (Updated to accept image data)
+  - `/app/frontend/public/face-attendance.html` (NEW - standalone page)
+  - `/app/frontend/public/camera-test.html` (NEW - debug page)
 
 **36. Pre-Sonography Booking System** ✅ (Complete)
 - **Staff Can Book Sonography**: Clinic staff (Pushpa/Amnion) can book sonography with full patient details
