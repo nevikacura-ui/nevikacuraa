@@ -335,12 +335,6 @@ const Alyne = () => {
     name: '', date_of_birth: '', gender: 'male', blood_group: '', region: 'india'
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (user) fetchChildren();
-    else setLoading(false);
-  }, [user]);
-
   const fetchChildren = async () => {
     try {
       const response = await fetch(`${API}/api/alyne/children/${user.id}`);
@@ -353,6 +347,12 @@ const Alyne = () => {
     } catch (error) { console.error(error); }
     finally { setLoading(false); }
   };
+
+  useEffect(() => {
+    if (user) fetchChildren();
+    else setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const handleAddChild = async () => {
     if (!user?.id) {
