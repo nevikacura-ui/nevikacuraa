@@ -181,12 +181,8 @@ const QueuePage = () => {
               <div className="flex items-start gap-2">
                 <Clock className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <div className="text-sm">
-                  <p className="text-blue-100">
-                    <span className="text-white font-medium">Morning:</span> {clinicInfo.hours.morning}
-                  </p>
-                  <p className="text-blue-100">
-                    <span className="text-white font-medium">Evening:</span> {clinicInfo.hours.evening}
-                  </p>
+                  <p className="text-white font-medium mb-1">OPD Timings:</p>
+                  <p className="text-blue-100">{clinicInfo.schedule}</p>
                 </div>
               </div>
               
