@@ -90,6 +90,30 @@ export const getIndianDate = () => {
   return istTime.toISOString().split('T')[0];
 };
 
+// Get current time in IST (HH:MM format)
+export const getIndianTime = () => {
+  const now = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const utcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
+  const istTime = new Date(utcTime + istOffset);
+  return istTime.toTimeString().slice(0, 5); // "HH:MM"
+};
+
+// Get current IST datetime
+export const getIndianDateTime = () => {
+  const now = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const utcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
+  return new Date(utcTime + istOffset);
+};
+
+// Format date to Indian format (DD/MM/YYYY)
+export const formatIndianDate = (dateStr) => {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-');
+  return `${day}/${month}/${year}`;
+};
+
 // Get day name from date
 export const getDayName = (dateStr) => {
   // Parse date parts directly to avoid timezone issues
@@ -98,8 +122,19 @@ export const getDayName = (dateStr) => {
   return date.toLocaleDateString('en-US', { weekday: 'long' });
 };
 
+// Check if a time slot is in the past (for today's date)
+export const isSlotPast = (slotTime, dateStr) => {
+  const today = getIndianDate();
+  if (dateStr !== today) return false; // Only filter for today
+  
+  const currentTime = getIndianTime();
+  // Compare times in HH:MM format
+  return slotTime < currentTime;
+};
+
 // Get available time slots for a doctor at a clinic on a specific date
-export const getAvailableTimeSlots = (doctor, clinic, dateStr) => {
+// Automatically filters out past slots for today
+export const getAvailableTimeSlots = (doctor, clinic, dateStr, filterPastSlots = true) => {
   if (!doctor || !clinic || !dateStr) return [];
   
   const dayName = getDayName(dateStr);
@@ -117,7 +152,14 @@ export const getAvailableTimeSlots = (doctor, clinic, dateStr) => {
     }
   });
   
-  return [...new Set(allSlots)].sort();
+  let uniqueSlots = [...new Set(allSlots)].sort();
+  
+  // Filter out past slots for today
+  if (filterPastSlots) {
+    uniqueSlots = uniqueSlots.filter(slot => !isSlotPast(slot, dateStr));
+  }
+  
+  return uniqueSlots;
 };
 
 // Get status color for appointments
