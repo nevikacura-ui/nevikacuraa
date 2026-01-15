@@ -262,6 +262,7 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
           await videoRef.current.play();
           console.log('Video playing! Dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
           setCameraActive(true);
+          setCameraStarting(false);
           toast.success('Camera started successfully!');
         } catch (playErr) {
           console.error('Video play error:', playErr);
@@ -269,8 +270,11 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
           // The video might start playing on user interaction
           if (videoRef.current.readyState >= 2) {
             setCameraActive(true);
+            setCameraStarting(false);
             toast.success('Camera ready - tap the video if not showing');
           } else {
+            setCameraStarting(false);
+            setCameraError('Failed to start video. Please tap the camera area to start.');
             toast.error('Failed to start video. Please tap the camera area to start.');
           }
         }
@@ -278,7 +282,9 @@ export default function FaceBiometric({ clinic = 'pushpa', staffName = '' }) {
     } catch (err) {
       console.error('Camera error:', err.name, err.message, err);
       
+      let errorMsg = '';
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        errorMsg = 'Camera permission denied. Enable camera in browser settings and refresh.';
         toast.error(
           'Camera permission denied. To enable: Open browser settings → Site settings → Camera → Allow for this site → Refresh page',
           { duration: 10000 }
