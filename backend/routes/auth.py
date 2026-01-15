@@ -268,36 +268,6 @@ async def verify_auth_otp(request: AuthOTPVerify):
         "phone": phone,
         "method": "mock"
     }
-        else:
-            raise HTTPException(status_code=400, detail="Invalid OTP. Please try again.")
-    
-    # Fallback to mock verification
-    otp_key = f"auth_{phone}"
-    
-    if otp_key not in auth_otp_storage:
-        raise HTTPException(status_code=400, detail="OTP not found. Please request a new OTP.")
-    
-    stored_data = auth_otp_storage[otp_key]
-    
-    if datetime.now(timezone.utc) > stored_data["expires_at"]:
-        del auth_otp_storage[otp_key]
-        raise HTTPException(status_code=400, detail="OTP expired. Please request a new OTP.")
-    
-    if stored_data["attempts"] >= 3:
-        del auth_otp_storage[otp_key]
-        raise HTTPException(status_code=400, detail="Too many attempts. Please request a new OTP.")
-    
-    if otp != stored_data["otp"]:
-        auth_otp_storage[otp_key]["attempts"] += 1
-        remaining = 3 - auth_otp_storage[otp_key]["attempts"]
-        raise HTTPException(status_code=400, detail=f"Invalid OTP. {remaining} attempts remaining.")
-    
-    verification_token = str(uuid.uuid4())
-    auth_otp_storage[otp_key]["verified"] = True
-    auth_otp_storage[otp_key]["verification_token"] = verification_token
-    
-    return {
-        "success": True,
         "verified": True,
         "verification_token": verification_token,
         "phone": phone,
