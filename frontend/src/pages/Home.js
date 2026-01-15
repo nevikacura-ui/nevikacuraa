@@ -137,6 +137,16 @@ const Home = () => {
                 <Search className="w-4 h-4 mr-2" />
                 Track Orders
               </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => navigate('/senior-care')}
+                data-testid="give-back-button"
+                className="font-heading text-green-600 hover:text-green-700 hover:bg-green-50"
+              >
+                <HandHeart className="w-4 h-4 mr-2" />
+                Give Back
+              </Button>
               {user ? (
                 <>
                   <Button 
