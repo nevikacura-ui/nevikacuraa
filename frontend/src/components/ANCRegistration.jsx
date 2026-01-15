@@ -206,6 +206,49 @@ export default function ANCRegistration({ staffName = 'Staff', clinic = 'amnion'
     return { label: '3rd Trimester', color: 'bg-purple-500' };
   };
 
+  // Send ANC Form Link
+  const handleSendForm = async () => {
+    if (!sendFormData.patient_name || !sendFormData.patient_phone) {
+      toast.error('Please enter patient name and phone');
+      return;
+    }
+    
+    setSendingForm(true);
+    try {
+      const res = await fetch(`${API}/api/anc/form/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...sendFormData,
+          clinic: clinic === 'amnion' ? 'Amnion Clinic' : 'Pushpa Clinic',
+          doctor: doctor
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (data.success) {
+        toast.success(`ANC form link sent to ${sendFormData.patient_name}!`);
+        setShowSendFormDialog(false);
+        setSendFormData({ patient_name: '', patient_phone: '', patient_email: '', send_via: 'both' });
+        fetchAncForms(); // Refresh forms list
+      } else {
+        toast.error(data.error || 'Failed to send form');
+      }
+    } catch (err) {
+      toast.error('Failed to send form link');
+    }
+    setSendingForm(false);
+  };
+
+  // Get form status badge
+  const getFormStatusBadge = (status) => {
+    if (status === 'filled') {
+      return <Badge className="bg-green-500 text-white"><CheckCircle2 className="w-3 h-3 mr-1" />Form Filled</Badge>;
+    }
+    return <Badge className="bg-yellow-500 text-white"><Clock className="w-3 h-3 mr-1" />Form Allotted</Badge>;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
