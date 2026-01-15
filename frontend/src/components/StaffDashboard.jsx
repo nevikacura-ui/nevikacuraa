@@ -5,7 +5,7 @@ import { Badge } from './ui/badge';
 import { 
   Calendar, Users, Activity, Baby, Fingerprint, Clock,
   TrendingUp, AlertCircle, CheckCircle2, UserPlus, Package,
-  ClipboardList, Zap, Timer, ArrowRight
+  ClipboardList, Zap, Timer, ArrowRight, ExternalLink, PlayCircle
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
