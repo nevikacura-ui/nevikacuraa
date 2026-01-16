@@ -48,6 +48,22 @@ input, textarea, [contenteditable="true"] {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* Custom Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
 /* Standalone mode (installed as app) specific styles */
 @media all and (display-mode: standalone) {
   body {
