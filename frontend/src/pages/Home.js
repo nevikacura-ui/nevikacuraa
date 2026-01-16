@@ -292,12 +292,16 @@ const Home = () => {
                 
                 {/* Card Content */}
                 <div className="relative p-4 h-full min-h-[200px] sm:min-h-[240px] flex flex-col">
-                  {/* Logo - Directly on gradient (transparent) */}
+                  {/* Logo */}
                   <div className="flex-1 flex items-center justify-center py-3">
                     <img 
                       src={service.logo} 
                       alt={service.name} 
-                      className="h-20 sm:h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-lg"
+                      className={`w-auto object-contain transition-transform duration-300 group-hover:scale-110 ${
+                        service.hasOriginalBg 
+                          ? 'h-24 sm:h-28 rounded-xl' 
+                          : 'h-20 sm:h-24 drop-shadow-lg'
+                      }`}
                       data-testid={`service-logo-${service.id}`}
                       loading="lazy"
                     />
