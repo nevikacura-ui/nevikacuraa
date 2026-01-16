@@ -295,19 +295,18 @@ const Home = () => {
                 <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full -ml-8 -mb-8 bg-white/10 transition-transform duration-500 group-hover:scale-150"></div>
                 
                 {/* Card Content */}
-                <div className="relative p-5 h-full min-h-[200px] sm:min-h-[240px] flex flex-col">
-                  {/* Logo - Directly on gradient, no container */}
-                  <div className="flex-1 flex items-center justify-center py-3">
-                    <img 
-                      src={service.logo} 
-                      alt={service.name} 
-                      className="max-h-20 sm:max-h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-lg"
-                      style={{ 
-                        filter: service.isDark ? 'brightness(1.1) drop-shadow(0 4px 6px rgba(0,0,0,0.3))' : 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))'
-                      }}
-                      data-testid={`service-logo-${service.id}`}
-                      loading="lazy"
-                    />
+                <div className="relative p-4 h-full min-h-[200px] sm:min-h-[240px] flex flex-col">
+                  {/* Logo - In a floating white card */}
+                  <div className="flex-1 flex items-center justify-center py-2">
+                    <div className="bg-white rounded-2xl p-3 shadow-lg transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                      <img 
+                        src={service.logo} 
+                        alt={service.name} 
+                        className="h-14 sm:h-16 w-auto object-contain"
+                        data-testid={`service-logo-${service.id}`}
+                        loading="lazy"
+                      />
+                    </div>
                   </div>
                   
                   {/* Explore Button */}
