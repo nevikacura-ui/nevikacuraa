@@ -646,6 +646,38 @@ const Home = () => {
           <p className="text-slate-600">Your trusted partner for complete healthcare services</p>
         </div>
 
+        {/* Install App Banner - Shows when installable */}
+        {showInstallBanner && !isStandalone && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 rounded-2xl shadow-lg animate-fadeIn" data-testid="install-banner">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center flex-shrink-0">
+                <Download className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1 text-white">
+                <h3 className="font-bold text-sm sm:text-base">Install Nevika Cura App</h3>
+                <p className="text-xs sm:text-sm text-white/80">Add to home screen for quick access & offline support</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button 
+                  onClick={handleInstallApp}
+                  className="bg-white text-teal-600 hover:bg-white/90 rounded-full px-4 py-2 text-sm font-semibold shadow-md"
+                  data-testid="install-app-btn"
+                >
+                  <Smartphone className="w-4 h-4 mr-1.5" />
+                  Install
+                </Button>
+                <button 
+                  onClick={dismissInstallBanner}
+                  className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                  aria-label="Dismiss"
+                >
+                  <X className="w-4 h-4 text-white" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Personalized Greeting Banner - For logged in users */}
         {user && (
           <div className="mb-8 p-5 bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-blue-500/10 backdrop-blur-xl rounded-3xl border border-teal-200/30 shadow-sm animate-fadeIn" data-testid="personalized-greeting">
