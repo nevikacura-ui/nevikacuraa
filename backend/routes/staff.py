@@ -300,20 +300,21 @@ Location: {map_link}
 @router.post("/appointments/emergency")
 async def create_emergency_appointment(data: EmergencyAppointment, staff = Depends(verify_staff)):
     """Create an emergency appointment"""
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    # Use provided date or today
+    appointment_date = data.date if data.date else datetime.now(timezone.utc).strftime("%Y-%m-%d")
     now_time = datetime.now(timezone.utc).strftime("%H:%M")
     
     appointment = {
         "id": str(uuid.uuid4()),
         "doctor": data.doctor,
         "clinic": data.clinic,
-        "date": today,
+        "date": appointment_date,
         "time": now_time,
         "patient_name": data.patient_name,
         "patient_phone": data.patient_phone,
         "patient_email": data.patient_email,
         "appointment_type": "EMERGENCY",
-        "emergency_type": data.emergency_type,
+        "emergency_type": data.emergency_type or "General Emergency",
         "status": "In Clinic",
         "notes": data.notes,
         "created_by": staff.get('name', 'Staff'),
