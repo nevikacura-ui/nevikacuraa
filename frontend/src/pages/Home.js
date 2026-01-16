@@ -557,68 +557,6 @@ const Home = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
-        
-        {/* Smart Search Bar */}
-        <div className="mb-8 relative" ref={searchRef} data-testid="smart-search">
-          <form onSubmit={handleSearchSubmit} className="relative">
-            <div className={`flex items-center bg-white/80 backdrop-blur-xl rounded-2xl border-2 transition-all duration-300 shadow-sm ${
-              searchFocused ? 'border-teal-400 shadow-lg shadow-teal-500/10' : 'border-slate-200'
-            }`}>
-              <Search className="w-5 h-5 text-slate-400 ml-4" />
-              <input
-                type="text"
-                placeholder="Search doctors, medicines, services..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
-                className="flex-1 px-4 py-4 bg-transparent text-slate-700 placeholder-slate-400 focus:outline-none"
-                data-testid="search-input"
-              />
-              <button
-                type="button"
-                onClick={startVoiceSearch}
-                className={`p-3 mr-2 rounded-xl transition-all ${
-                  isListening 
-                    ? 'bg-red-100 text-red-500 animate-pulse' 
-                    : 'hover:bg-slate-100 text-slate-500'
-                }`}
-                data-testid="voice-search-btn"
-              >
-                {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-              </button>
-            </div>
-            
-            {/* Search Suggestions Dropdown */}
-            {searchFocused && filteredSuggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50">
-                {filteredSuggestions.map((suggestion, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      navigate(suggestion.path);
-                      setSearchQuery('');
-                      setSearchFocused(false);
-                    }}
-                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors text-left"
-                  >
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      suggestion.type === 'service' ? 'bg-teal-100 text-teal-700' :
-                      suggestion.type === 'doctor' ? 'bg-blue-100 text-blue-700' :
-                      suggestion.type === 'medicine' ? 'bg-orange-100 text-orange-700' :
-                      suggestion.type === 'test' ? 'bg-purple-100 text-purple-700' :
-                      'bg-pink-100 text-pink-700'
-                    }`}>
-                      {suggestion.type}
-                    </span>
-                    <span className="text-slate-700">{suggestion.text}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </form>
-        </div>
 
         {/* Personalized Greeting Banner - For logged in users */}
         {user && (
