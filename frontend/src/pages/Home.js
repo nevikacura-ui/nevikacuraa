@@ -1232,10 +1232,13 @@ const Home = () => {
                 key={clinic.id}
                 className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all overflow-hidden"
               >
-                {/* Map Preview Placeholder */}
-                <div className="h-32 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center relative">
-                  <MapPin className="w-12 h-12 text-teal-500" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/80 to-transparent"></div>
+                {/* Clinic Logo */}
+                <div className="h-40 bg-white flex items-center justify-center p-4">
+                  <img 
+                    src={clinic.logo} 
+                    alt={clinic.name}
+                    className="max-h-full max-w-full object-contain"
+                  />
                 </div>
                 
                 <div className="p-5">
