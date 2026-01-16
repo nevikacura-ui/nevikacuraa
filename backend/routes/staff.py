@@ -75,7 +75,7 @@ class EmergencyAppointment(BaseModel):
     patient_name: str
     patient_phone: str
     patient_email: Optional[str] = None
-    emergency_type: str
+    emergency_type: Optional[str] = "General Emergency"
     notes: Optional[str] = None
 
 class ServiceAdd(BaseModel):
