@@ -127,7 +127,7 @@ const whyChooseUs = [
   { icon: Shield, value: '24/7', label: 'Support Available', color: 'from-purple-400 to-pink-500' }
 ];
 
-// Featured Doctors Data
+// Featured Doctors Data - Only clinic-associated doctors
 const featuredDoctors = [
   {
     id: 1,
@@ -150,37 +150,14 @@ const featuredDoctors = [
     avatar: 'AP',
     color: 'from-blue-400 to-cyan-500',
     clinic: 'DiaGyn Healthcare'
-  },
-  {
-    id: 3,
-    name: 'Dr. Priya Desai',
-    specialization: 'Diabetologist',
-    experience: '10+ Years',
-    qualification: 'MBBS, MD, Diabetes Specialist',
-    image: null,
-    avatar: 'PD',
-    color: 'from-teal-400 to-emerald-500',
-    clinic: 'Glydex Program'
-  },
-  {
-    id: 4,
-    name: 'Dr. Rajesh Kumar',
-    specialization: 'Pathologist',
-    experience: '18+ Years',
-    qualification: 'MBBS, MD (Pathology)',
-    image: null,
-    avatar: 'RK',
-    color: 'from-indigo-400 to-purple-500',
-    clinic: 'Proton Diagnostics'
   }
 ];
 
 // Certifications Data
 const certifications = [
-  { name: 'NABH', fullName: 'National Accreditation Board for Hospitals', color: 'bg-blue-100 text-blue-700' },
-  { name: 'ISO 9001', fullName: 'Quality Management Certified', color: 'bg-green-100 text-green-700' },
-  { name: 'NABL', fullName: 'National Accreditation Board for Labs', color: 'bg-purple-100 text-purple-700' },
-  { name: 'WHO-GMP', fullName: 'World Health Organization Standards', color: 'bg-teal-100 text-teal-700' }
+  { name: 'Govt Certified Sonography Centre', fullName: 'Government Registered Sonography Facility', color: 'bg-blue-100 text-blue-700' },
+  { name: 'CAP Certified Lab', fullName: 'College of American Pathologists Certified', color: 'bg-purple-100 text-purple-700' },
+  { name: 'ISO 9001', fullName: 'Quality Management Certified', color: 'bg-green-100 text-green-700' }
 ];
 
 // Services at a Glance
