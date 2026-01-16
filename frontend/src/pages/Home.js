@@ -109,21 +109,6 @@ const testimonials = [
   }
 ];
 
-// Search suggestions
-const searchSuggestions = [
-  { type: 'service', text: 'Book appointment', path: '/diagyn' },
-  { type: 'service', text: 'Order medicines', path: '/pharmacy' },
-  { type: 'service', text: 'Lab tests', path: '/proton' },
-  { type: 'doctor', text: 'Dr. Neha - Gynecologist', path: '/diagyn' },
-  { type: 'doctor', text: 'Dr. Amit - General Physician', path: '/diagyn' },
-  { type: 'medicine', text: 'Paracetamol', path: '/pharmacy' },
-  { type: 'medicine', text: 'Diabetes medications', path: '/pharmacy' },
-  { type: 'test', text: 'Blood sugar test', path: '/proton' },
-  { type: 'test', text: 'Thyroid profile', path: '/proton' },
-  { type: 'health', text: 'Women\'s health', path: '/evara' },
-  { type: 'health', text: 'Diabetes care', path: '/glydex' },
-];
-
 const Home = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
