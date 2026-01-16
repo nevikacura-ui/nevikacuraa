@@ -75,6 +75,56 @@ const Home = () => {
   const [showAuth, setShowAuth] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
+  
+  // Health Tip of the Day - Changes daily based on date
+  const [currentTip, setCurrentTip] = useState(healthTips[0]);
+  const [tipVisible, setTipVisible] = useState(true);
+  
+  // Service Spotlight Carousel
+  const [spotlightIndex, setSpotlightIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // Get greeting based on time of day
+  const getGreeting = useCallback(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return { text: 'Good Morning', icon: Sunrise };
+    if (hour < 17) return { text: 'Good Afternoon', icon: Sun };
+    return { text: 'Good Evening', icon: Moon };
+  }, []);
+  
+  const [greeting] = useState(getGreeting());
+
+  // Set daily health tip based on date
+  useEffect(() => {
+    const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    const tipIndex = dayOfYear % healthTips.length;
+    setCurrentTip(healthTips[tipIndex]);
+  }, []);
+  
+  // Auto-rotate spotlight carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setSpotlightIndex((prev) => (prev + 1) % spotlightServices.length);
+        setIsTransitioning(false);
+      }, 300);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Navigate spotlight
+  const goToSpotlight = (direction) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      if (direction === 'next') {
+        setSpotlightIndex((prev) => (prev + 1) % spotlightServices.length);
+      } else {
+        setSpotlightIndex((prev) => (prev - 1 + spotlightServices.length) % spotlightServices.length);
+      }
+      setIsTransitioning(false);
+    }, 300);
+  };
 
   // Detect if running as installed app (standalone mode)
   useEffect(() => {
