@@ -1185,10 +1185,10 @@ const Home = () => {
                 <div className="p-4 text-center">
                   <h3 className="font-bold text-slate-800">{doctor.name}</h3>
                   <p className="text-sm text-teal-600 font-medium">{doctor.specialization}</p>
+                  {doctor.experience && (
+                    <p className="text-xs text-pink-600 font-medium">{doctor.experience}</p>
+                  )}
                   <p className="text-xs text-slate-500 mt-1">{doctor.qualification}</p>
-                  <div className="flex items-center justify-center gap-2 mt-2">
-                    <span className="px-2 py-1 bg-slate-100 rounded-full text-xs text-slate-600">{doctor.experience}</span>
-                  </div>
                   <Button 
                     size="sm"
                     onClick={() => navigate('/diagyn')}
