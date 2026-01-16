@@ -1225,15 +1225,15 @@ const Home = () => {
 
         {/* Our Clinics */}
         <div className="mb-16" data-testid="clinic-locations">
-          <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">Our Clinic Locations</h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <h2 className="text-xl font-bold text-slate-800 mb-6 text-center">Our Clinic Locations</h2>
+          <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
             {clinicLocations.map((clinic) => (
               <div 
                 key={clinic.id}
-                className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all overflow-hidden"
+                className="bg-white/70 backdrop-blur-xl rounded-xl border border-slate-200/50 shadow-sm hover:shadow-md transition-all overflow-hidden"
               >
                 {/* Clinic Logo */}
-                <div className="h-40 bg-white flex items-center justify-center p-4">
+                <div className="h-24 bg-white flex items-center justify-center p-3">
                   <img 
                     src={clinic.logo} 
                     alt={clinic.name}
@@ -1241,39 +1241,30 @@ const Home = () => {
                   />
                 </div>
                 
-                <div className="p-5">
-                  <h3 className="font-bold text-lg text-slate-800 mb-2">{clinic.name}</h3>
-                  <div className="space-y-2 text-sm">
-                    <p className="text-slate-600 flex items-start gap-2">
-                      <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
+                <div className="p-3">
+                  <h3 className="font-bold text-sm text-slate-800 mb-1">{clinic.name}</h3>
+                  <div className="space-y-1 text-xs">
+                    <p className="text-slate-600 flex items-start gap-1.5">
+                      <MapPin className="w-3 h-3 text-slate-400 flex-shrink-0 mt-0.5" />
                       {clinic.address}, {clinic.city}
                     </p>
-                    <p className="text-slate-600 flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-slate-400" />
+                    <p className="text-slate-600 flex items-center gap-1.5">
+                      <Phone className="w-3 h-3 text-slate-400" />
                       {clinic.phone}
                     </p>
-                    <p className="text-slate-600 flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-slate-400" />
+                    <p className="text-slate-600 flex items-center gap-1.5">
+                      <Clock className="w-3 h-3 text-slate-400" />
                       {clinic.hours}
                     </p>
-                  </div>
-                  
-                  {/* Services Tags */}
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {clinic.services.map((service, idx) => (
-                      <span key={idx} className="px-2 py-1 bg-teal-50 text-teal-700 rounded-full text-xs font-medium">
-                        {service}
-                      </span>
-                    ))}
                   </div>
                   
                   <a 
                     href={clinic.mapLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-sm font-medium text-slate-700 transition-colors"
+                    className="mt-2 w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-medium text-slate-700 transition-colors"
                   >
-                    <MapPin className="w-4 h-4" />
+                    <MapPin className="w-3 h-3" />
                     Get Directions
                   </a>
                 </div>
