@@ -385,6 +385,57 @@ const Home = () => {
       window.matchMedia('(display-mode: standalone)').removeEventListener('change', checkStandalone);
     };
   }, []);
+  
+  // PWA Install Prompt Handler
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+      // Show banner if not already installed and not dismissed recently
+      const dismissed = localStorage.getItem('installBannerDismissed');
+      const dismissedTime = dismissed ? parseInt(dismissed) : 0;
+      const hoursSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60);
+      if (hoursSinceDismissed > 24) {
+        setShowInstallBanner(true);
+      }
+    };
+    
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    
+    // Check if already installed
+    window.addEventListener('appinstalled', () => {
+      setInstallPrompt(null);
+      setShowInstallBanner(false);
+      toast.success('App installed successfully! 🎉');
+    });
+    
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+  
+  // Handle Install App
+  const handleInstallApp = async () => {
+    if (!installPrompt) {
+      // For iOS or browsers that don't support beforeinstallprompt
+      toast.info('To install: tap Share button → Add to Home Screen');
+      return;
+    }
+    
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      setInstallPrompt(null);
+      setShowInstallBanner(false);
+    }
+  };
+  
+  // Dismiss Install Banner
+  const dismissInstallBanner = () => {
+    setShowInstallBanner(false);
+    localStorage.setItem('installBannerDismissed', Date.now().toString());
+  };
 
   // Modern Service Cards - Logo background matches card background
   const services = [
