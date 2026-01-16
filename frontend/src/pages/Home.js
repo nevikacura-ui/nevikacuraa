@@ -646,34 +646,70 @@ const Home = () => {
           <p className="text-slate-600">Your trusted partner for complete healthcare services</p>
         </div>
 
-        {/* Install App Banner - Shows when installable */}
+        {/* Install App Banner - Enhanced Design */}
         {showInstallBanner && !isStandalone && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 rounded-2xl shadow-lg animate-fadeIn" data-testid="install-banner">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center flex-shrink-0">
-                <Download className="w-6 h-6 text-white" />
+          <div className="mb-6 relative overflow-hidden rounded-2xl shadow-xl animate-fadeIn" data-testid="install-banner">
+            {/* Gradient Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-500 via-cyan-500 to-blue-600"></div>
+            
+            {/* Decorative Elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-8 -mb-8"></div>
+            
+            <div className="relative p-5">
+              <button 
+                onClick={dismissInstallBanner}
+                className="absolute top-3 right-3 p-1.5 hover:bg-white/20 rounded-full transition-colors"
+                aria-label="Dismiss"
+              >
+                <X className="w-4 h-4 text-white/80" />
+              </button>
+              
+              <div className="flex items-center gap-4">
+                {/* App Icon Preview */}
+                <div className="relative flex-shrink-0">
+                  <div className="w-16 h-16 rounded-2xl bg-white shadow-lg flex items-center justify-center overflow-hidden">
+                    <img 
+                      src="/icons/icon-72x72.png" 
+                      alt="Nevika Cura" 
+                      className="w-12 h-12 object-contain"
+                    />
+                  </div>
+                  {/* Install Badge */}
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-md">
+                    <Download className="w-3 h-3 text-white" />
+                  </div>
+                </div>
+                
+                {/* Content */}
+                <div className="flex-1 text-white min-w-0">
+                  <h3 className="font-bold text-base sm:text-lg mb-0.5">Get the App!</h3>
+                  <p className="text-xs sm:text-sm text-white/90 mb-2">Install for faster access & notifications</p>
+                  
+                  {/* Benefits */}
+                  <div className="flex flex-wrap gap-2 text-xs">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 rounded-full">
+                      <Zap className="w-3 h-3" /> Faster
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 rounded-full">
+                      <Shield className="w-3 h-3" /> Secure
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 rounded-full">
+                      <Smartphone className="w-3 h-3" /> Offline
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="flex-1 text-white">
-                <h3 className="font-bold text-sm sm:text-base">Install Nevika Cura App</h3>
-                <p className="text-xs sm:text-sm text-white/80">Add to home screen for quick access & offline support</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button 
-                  onClick={handleInstallApp}
-                  className="bg-white text-teal-600 hover:bg-white/90 rounded-full px-4 py-2 text-sm font-semibold shadow-md"
-                  data-testid="install-app-btn"
-                >
-                  <Smartphone className="w-4 h-4 mr-1.5" />
-                  Install
-                </Button>
-                <button 
-                  onClick={dismissInstallBanner}
-                  className="p-2 hover:bg-white/20 rounded-full transition-colors"
-                  aria-label="Dismiss"
-                >
-                  <X className="w-4 h-4 text-white" />
-                </button>
-              </div>
+              
+              {/* Install Button */}
+              <Button 
+                onClick={handleInstallApp}
+                className="mt-4 w-full bg-white text-teal-600 hover:bg-white/95 rounded-xl py-3 font-bold shadow-lg transition-all hover:scale-[1.02]"
+                data-testid="install-app-btn"
+              >
+                <Download className="w-5 h-5 mr-2" />
+                Add to Home Screen
+              </Button>
             </div>
           </div>
         )}
