@@ -246,6 +246,10 @@ const Home = () => {
     { clinic: 'Proton', waitTime: '~5 min', patients: 1, status: 'low' }
   ]);
   
+  // PWA Install Prompt
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
+  
   // Get greeting based on time of day
   const getGreeting = useCallback(() => {
     const hour = new Date().getHours();
