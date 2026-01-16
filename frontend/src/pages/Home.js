@@ -1141,56 +1141,25 @@ const Home = () => {
           </div>
         </div>
 
-        {/* How It Works */}
-        <div className="mb-16" data-testid="how-it-works">
-          <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">How It Works</h2>
-          <div className="relative">
-            {/* Connection Line */}
-            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-teal-200 via-blue-200 to-pink-200 -translate-y-1/2 z-0"></div>
-            
-            <div className="grid md:grid-cols-3 gap-6 relative z-10">
-              {howItWorksSteps.map((step, idx) => (
-                <div key={idx} className="relative">
-                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 text-center hover:shadow-xl transition-all">
-                    {/* Step Number */}
-                    <div className={`w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
-                      {step.step}
-                    </div>
-                    <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${step.color} bg-opacity-10 flex items-center justify-center`}>
-                      <step.icon className={`w-8 h-8 text-transparent bg-gradient-to-br ${step.color} bg-clip-text`} style={{color: idx === 0 ? '#14b8a6' : idx === 1 ? '#3b82f6' : '#ec4899'}} />
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-800 mb-2">{step.title}</h3>
-                    <p className="text-sm text-slate-600">{step.description}</p>
+        {/* How It Works - Compact Horizontal */}
+        <div className="mb-12" data-testid="how-it-works">
+          <h2 className="text-lg font-bold text-slate-800 mb-4 text-center">How It Works</h2>
+          <div className="flex items-center justify-center gap-2 sm:gap-4 flex-wrap">
+            {howItWorksSteps.map((step, idx) => (
+              <div key={idx} className="flex items-center">
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur rounded-full border border-slate-200 shadow-sm">
+                  <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center text-white font-bold text-sm`}>
+                    {step.step}
                   </div>
-                  
-                  {/* Arrow for mobile */}
-                  {idx < 2 && (
-                    <div className="md:hidden flex justify-center my-4">
-                      <ChevronRight className="w-6 h-6 text-slate-300 rotate-90" />
-                    </div>
-                  )}
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">{step.title}</p>
+                    <p className="text-xs text-slate-500 hidden sm:block">{step.description}</p>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Services at a Glance */}
-        <div className="mb-16" data-testid="services-glance">
-          <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">Services at a Glance</h2>
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
-            {quickServices.map((service, idx) => (
-              <button
-                key={idx}
-                onClick={() => navigate(service.path)}
-                className="p-4 bg-white/70 backdrop-blur rounded-2xl border border-slate-200/50 hover:shadow-lg hover:scale-105 transition-all text-center group"
-                data-testid={`quick-service-${service.name.toLowerCase().replace(' ', '-')}`}
-              >
-                <div className={`w-12 h-12 mx-auto mb-2 rounded-xl ${service.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                  <service.icon className="w-6 h-6" />
-                </div>
-                <p className="text-xs font-medium text-slate-700 truncate">{service.name}</p>
-              </button>
+                {idx < 2 && (
+                  <ArrowRight className="w-5 h-5 text-slate-300 mx-1 sm:mx-2 flex-shrink-0" />
+                )}
+              </div>
             ))}
           </div>
         </div>
