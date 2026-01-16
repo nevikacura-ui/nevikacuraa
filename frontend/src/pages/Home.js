@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import { User, Menu, X, Download, Smartphone, Search, Heart, FlaskConical, Video, Gift, Lightbulb, AlertTriangle, Activity, Pill, Shield, Package, ChevronRight, Stethoscope, Baby, ThermometerSun, Users, HandHeart } from 'lucide-react';
+import { User, Menu, X, Download, Smartphone, Search, Heart, FlaskConical, Video, Gift, Lightbulb, AlertTriangle, Activity, Pill, Shield, Package, ChevronRight, Stethoscope, Baby, ThermometerSun, Users, HandHeart, Sparkles, ArrowRight } from 'lucide-react';
 import Footer from '@/components/Footer';
 
 const Home = () => {
@@ -31,80 +31,85 @@ const Home = () => {
     };
   }, []);
 
+  // Modern Pastel Service Cards
   const services = [
     {
       id: 'diagyn',
       name: 'DiaGyn Healthcare',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg',
       description: 'Book appointments with our expert doctors',
-      bgColor: 'bg-blue-50',
-      accentColor: 'border-brand-blue',
       path: '/diagyn',
-      logoBg: 'bg-blue-50'
+      gradient: 'from-violet-100 via-purple-50 to-fuchsia-100',
+      iconBg: 'bg-violet-200',
+      iconColor: 'text-violet-600',
+      icon: Stethoscope,
+      accent: 'violet'
     },
     {
       id: 'proton',
       name: 'Proton Diagnostics',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
       description: 'Comprehensive diagnostic tests and health checkups',
-      bgColor: 'bg-indigo-50',
-      accentColor: 'border-brand-indigo',
       path: '/proton',
-      logoBg: 'bg-indigo-50'
+      gradient: 'from-sky-100 via-blue-50 to-indigo-100',
+      iconBg: 'bg-sky-200',
+      iconColor: 'text-sky-600',
+      icon: FlaskConical,
+      accent: 'sky'
     },
     {
       id: 'pharmacy',
       name: 'Orange Pharmacy',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
       description: 'Order medicines with doorstep delivery',
-      bgColor: 'bg-orange-50',
-      accentColor: 'border-brand-orange',
       path: '/pharmacy',
-      logoBg: 'bg-orange-50'
+      gradient: 'from-orange-100 via-amber-50 to-yellow-100',
+      iconBg: 'bg-orange-200',
+      iconColor: 'text-orange-600',
+      icon: Pill,
+      accent: 'orange'
     },
     {
       id: 'evara',
       name: 'Evara',
       logo: '/icons/evara-logo.png',
       description: "Women's Wellness & Care Program",
-      bgColor: '',
-      accentColor: 'border-transparent',
       path: '/evara',
-      logoBg: '',
+      gradient: 'from-pink-100 via-rose-50 to-fuchsia-100',
+      iconBg: 'bg-pink-200',
+      iconColor: 'text-pink-600',
+      icon: Heart,
+      accent: 'pink',
       customBg: '#511b63',
-      hideDecoration: true,
-      fillCard: false
+      isDark: true
     },
     {
       id: 'glydex',
       name: 'Glydex',
       logo: '/glydex-logo.png',
       description: 'Diabetes Care Portal',
-      bgColor: '',
-      accentColor: 'border-transparent',
       path: '/glydex',
-      logoBg: '',
+      gradient: 'from-teal-100 via-emerald-50 to-cyan-100',
+      iconBg: 'bg-teal-200',
+      iconColor: 'text-teal-600',
+      icon: Activity,
+      accent: 'teal',
       customBg: '#121f33',
-      hideDecoration: true,
-      fillCard: true,
-      tallerCard: true
+      isDark: true
     },
     {
       id: 'alyne',
       name: 'ALYNE',
       logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
-      description: '',
-      bgColor: '',
-      accentColor: 'border-transparent',
+      description: 'Kids Health & Wellness',
       path: '/alyne',
-      logoBg: '',
+      gradient: 'from-amber-100 via-yellow-50 to-lime-100',
+      iconBg: 'bg-amber-200',
+      iconColor: 'text-amber-600',
+      icon: Baby,
+      accent: 'amber',
       customBg: '#0a1628',
-      hideDecoration: true,
-      fillCard: true,
-      tallerCard: true,
-      logoScale: 1,
-      isGradient: false,
-      hasSparkles: false
+      isDark: true
     }
   ];
 
