@@ -341,6 +341,141 @@ const Home = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+        
+        {/* Personalized Greeting Banner - For logged in users */}
+        {user && (
+          <div className="mb-8 p-5 bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-blue-500/10 backdrop-blur-xl rounded-3xl border border-teal-200/30 shadow-sm animate-fadeIn" data-testid="personalized-greeting">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center shadow-lg">
+                {React.createElement(greeting.icon, { className: "w-7 h-7 text-white" })}
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-slate-800">
+                  {greeting.text}, {user.name?.split(' ')[0] || 'there'}! 👋
+                </h2>
+                <p className="text-sm text-slate-600">Welcome back to Nevika Cura. How can we help you today?</p>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate('/profile')}
+                className="hidden sm:flex rounded-full border-teal-200 hover:bg-teal-50"
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                My Appointments
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Health Tip of the Day */}
+        <div 
+          className={`mb-8 relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 border border-amber-200/50 shadow-sm transition-all duration-500 ${tipVisible ? 'opacity-100' : 'opacity-0'}`}
+          data-testid="health-tip-banner"
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-200/30 to-transparent rounded-full -mr-10 -mt-10"></div>
+          <div className="relative p-4 sm:p-5 flex items-center gap-4">
+            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg text-2xl sm:text-3xl">
+              {currentTip.icon}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <Lightbulb className="w-4 h-4 text-amber-600" />
+                <span className="text-xs font-semibold text-amber-700 uppercase tracking-wide">Tip of the Day • {currentTip.category}</span>
+              </div>
+              <p className="text-sm sm:text-base text-slate-700 leading-relaxed">{currentTip.tip}</p>
+            </div>
+            <button 
+              onClick={() => setTipVisible(false)}
+              className="flex-shrink-0 p-2 hover:bg-amber-100 rounded-full transition-colors"
+              aria-label="Dismiss tip"
+            >
+              <X className="w-4 h-4 text-amber-600" />
+            </button>
+          </div>
+        </div>
+
+        {/* Service Spotlight Carousel */}
+        <div className="mb-12 relative" data-testid="service-spotlight-carousel">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-amber-500" />
+              Featured Services
+            </h2>
+            <div className="flex items-center gap-2">
+              {/* Carousel Dots */}
+              <div className="flex gap-1.5 mr-2">
+                {spotlightServices.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setIsTransitioning(true);
+                      setTimeout(() => {
+                        setSpotlightIndex(idx);
+                        setIsTransitioning(false);
+                      }, 300);
+                    }}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      idx === spotlightIndex ? 'bg-teal-500 w-6' : 'bg-slate-300 hover:bg-slate-400'
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+              {/* Navigation Arrows */}
+              <button 
+                onClick={() => goToSpotlight('prev')}
+                className="p-2 rounded-full bg-white/80 hover:bg-white shadow-sm border border-slate-200 transition-all hover:scale-105"
+                aria-label="Previous"
+              >
+                <ChevronLeft className="w-4 h-4 text-slate-600" />
+              </button>
+              <button 
+                onClick={() => goToSpotlight('next')}
+                className="p-2 rounded-full bg-white/80 hover:bg-white shadow-sm border border-slate-200 transition-all hover:scale-105"
+                aria-label="Next"
+              >
+                <ChevronRight className="w-4 h-4 text-slate-600" />
+              </button>
+            </div>
+          </div>
+          
+          {/* Spotlight Card */}
+          <div 
+            className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${spotlightServices[spotlightIndex].bgImage} border border-white/50 shadow-lg transition-all duration-300 ${isTransitioning ? 'opacity-0 transform translate-x-4' : 'opacity-100 transform translate-x-0'}`}
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-white/40 to-transparent rounded-full -mr-20 -mt-20"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-white/30 to-transparent rounded-full -ml-16 -mb-16"></div>
+            
+            <div className="relative p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <div className="flex-1">
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${spotlightServices[spotlightIndex].gradient} mb-3`}>
+                  {spotlightServices[spotlightIndex].subtitle}
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
+                  {spotlightServices[spotlightIndex].title}
+                </h3>
+                <p className="text-slate-600 mb-4 max-w-md">
+                  {spotlightServices[spotlightIndex].description}
+                </p>
+                <Button 
+                  onClick={() => navigate(spotlightServices[spotlightIndex].path)}
+                  className={`rounded-full bg-gradient-to-r ${spotlightServices[spotlightIndex].gradient} hover:opacity-90 shadow-lg px-6`}
+                  data-testid={`spotlight-cta-${spotlightServices[spotlightIndex].id}`}
+                >
+                  {spotlightServices[spotlightIndex].cta}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+              
+              {/* Decorative Element */}
+              <div className={`hidden sm:flex w-32 h-32 rounded-3xl bg-gradient-to-br ${spotlightServices[spotlightIndex].gradient} items-center justify-center shadow-2xl`}>
+                <Stethoscope className="w-16 h-16 text-white/90" />
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Hero Section - Modern Asymmetric */}
         <div className="relative mb-16 md:mb-20">
           <div className="text-center md:text-left md:max-w-2xl">
