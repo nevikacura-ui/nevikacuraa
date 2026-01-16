@@ -128,13 +128,6 @@ const Home = () => {
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [testimonialTransition, setTestimonialTransition] = useState(false);
   
-  // Smart Search
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchFocused, setSearchFocused] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const searchRef = useRef(null);
-  
   // Health Stats (for logged-in users)
   const [healthStats, setHealthStats] = useState({
     lastCheckup: null,
