@@ -31,51 +31,49 @@ const Home = () => {
     };
   }, []);
 
-  // Modern Service Cards - Uniform Bright Colors with Transparent Logos
+  // Modern Service Cards - Solid Bright Colors matching logos
   const services = [
     {
       id: 'diagyn',
       name: 'DiaGyn Healthcare',
-      logo: '/icons/diagyn-transparent.png',
+      logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg',
       path: '/diagyn',
-      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      bgColor: '#4facfe' // Sky blue
     },
     {
       id: 'proton',
       name: 'Proton Diagnostics',
-      logo: '/icons/proton-transparent.png',
+      logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
       path: '/proton',
-      gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+      bgColor: '#06b6d4' // Teal
     },
     {
       id: 'pharmacy',
       name: 'Orange Pharmacy',
-      logo: '/icons/pharmacy-transparent.png',
+      logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
       path: '/pharmacy',
-      gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+      bgColor: '#f472b6' // Pink
     },
     {
       id: 'evara',
       name: 'Evara',
       logo: '/icons/evara-logo.png',
       path: '/evara',
-      gradient: 'linear-gradient(135deg, #511b63 0%, #7c3aed 100%)',
-      hasOriginalBg: true
+      bgColor: '#511b63' // Purple (brand color)
     },
     {
       id: 'glydex',
       name: 'Glydex',
       logo: '/glydex-logo.png',
       path: '/glydex',
-      gradient: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)',
-      hasOriginalBg: true
+      bgColor: '#0f172a' // Dark navy (brand color)
     },
     {
       id: 'alyne',
       name: 'ALYNE',
-      logo: '/icons/alyne-transparent.png',
+      logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
       path: '/alyne',
-      gradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)'
+      bgColor: '#fbbf24' // Golden amber
     }
   ];
 
