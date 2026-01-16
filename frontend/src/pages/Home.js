@@ -1148,6 +1148,191 @@ const Home = () => {
           </div>
         </div>
 
+        {/* Why Choose Nevika Cura */}
+        <div className="mb-16" data-testid="why-choose-us">
+          <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">Why Choose Nevika Cura?</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {whyChooseUs.map((item, idx) => (
+              <div 
+                key={idx}
+                className="relative group p-6 bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all text-center overflow-hidden"
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-5 transition-opacity`}></div>
+                <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                  <item.icon className="w-7 h-7 text-white" />
+                </div>
+                <p className="text-2xl font-bold text-slate-800">{item.value}</p>
+                <p className="text-sm text-slate-500">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* How It Works */}
+        <div className="mb-16" data-testid="how-it-works">
+          <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">How It Works</h2>
+          <div className="relative">
+            {/* Connection Line */}
+            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-teal-200 via-blue-200 to-pink-200 -translate-y-1/2 z-0"></div>
+            
+            <div className="grid md:grid-cols-3 gap-6 relative z-10">
+              {howItWorksSteps.map((step, idx) => (
+                <div key={idx} className="relative">
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 text-center hover:shadow-xl transition-all">
+                    {/* Step Number */}
+                    <div className={`w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
+                      {step.step}
+                    </div>
+                    <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${step.color} bg-opacity-10 flex items-center justify-center`}>
+                      <step.icon className={`w-8 h-8 text-transparent bg-gradient-to-br ${step.color} bg-clip-text`} style={{color: idx === 0 ? '#14b8a6' : idx === 1 ? '#3b82f6' : '#ec4899'}} />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-800 mb-2">{step.title}</h3>
+                    <p className="text-sm text-slate-600">{step.description}</p>
+                  </div>
+                  
+                  {/* Arrow for mobile */}
+                  {idx < 2 && (
+                    <div className="md:hidden flex justify-center my-4">
+                      <ChevronRight className="w-6 h-6 text-slate-300 rotate-90" />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Services at a Glance */}
+        <div className="mb-16" data-testid="services-glance">
+          <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">Services at a Glance</h2>
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+            {quickServices.map((service, idx) => (
+              <button
+                key={idx}
+                onClick={() => navigate(service.path)}
+                className="p-4 bg-white/70 backdrop-blur rounded-2xl border border-slate-200/50 hover:shadow-lg hover:scale-105 transition-all text-center group"
+                data-testid={`quick-service-${service.name.toLowerCase().replace(' ', '-')}`}
+              >
+                <div className={`w-12 h-12 mx-auto mb-2 rounded-xl ${service.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                  <service.icon className="w-6 h-6" />
+                </div>
+                <p className="text-xs font-medium text-slate-700 truncate">{service.name}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Featured Doctors */}
+        <div className="mb-16" data-testid="featured-doctors">
+          <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">Meet Our Doctors</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {featuredDoctors.map((doctor) => (
+              <div 
+                key={doctor.id}
+                className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all overflow-hidden group"
+              >
+                {/* Doctor Avatar */}
+                <div className={`h-32 bg-gradient-to-br ${doctor.color} flex items-center justify-center relative`}>
+                  <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white text-2xl font-bold border-4 border-white/30">
+                    {doctor.avatar}
+                  </div>
+                </div>
+                
+                {/* Doctor Info */}
+                <div className="p-4 text-center">
+                  <h3 className="font-bold text-slate-800">{doctor.name}</h3>
+                  <p className="text-sm text-teal-600 font-medium">{doctor.specialization}</p>
+                  <p className="text-xs text-slate-500 mt-1">{doctor.qualification}</p>
+                  <div className="flex items-center justify-center gap-2 mt-2">
+                    <span className="px-2 py-1 bg-slate-100 rounded-full text-xs text-slate-600">{doctor.experience}</span>
+                  </div>
+                  <Button 
+                    size="sm"
+                    onClick={() => navigate('/diagyn')}
+                    className={`mt-3 w-full rounded-full bg-gradient-to-r ${doctor.color} hover:opacity-90 text-white text-xs`}
+                  >
+                    Book Appointment
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Certifications & Accreditations */}
+        <div className="mb-16" data-testid="certifications">
+          <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Trusted & Certified</h2>
+          <div className="flex flex-wrap justify-center gap-3">
+            {certifications.map((cert, idx) => (
+              <div 
+                key={idx}
+                className={`px-5 py-3 rounded-full ${cert.color} font-semibold text-sm flex items-center gap-2 shadow-sm`}
+                title={cert.fullName}
+              >
+                <Award className="w-4 h-4" />
+                {cert.name}
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-sm text-slate-500 mt-4">Quality healthcare you can trust</p>
+        </div>
+
+        {/* Our Clinics */}
+        <div className="mb-16" data-testid="clinic-locations">
+          <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">Our Clinic Locations</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {clinicLocations.map((clinic) => (
+              <div 
+                key={clinic.id}
+                className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all overflow-hidden"
+              >
+                {/* Map Preview Placeholder */}
+                <div className="h-32 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center relative">
+                  <MapPin className="w-12 h-12 text-teal-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/80 to-transparent"></div>
+                </div>
+                
+                <div className="p-5">
+                  <h3 className="font-bold text-lg text-slate-800 mb-2">{clinic.name}</h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="text-slate-600 flex items-start gap-2">
+                      <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
+                      {clinic.address}, {clinic.city}
+                    </p>
+                    <p className="text-slate-600 flex items-center gap-2">
+                      <Phone className="w-4 h-4 text-slate-400" />
+                      {clinic.phone}
+                    </p>
+                    <p className="text-slate-600 flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-slate-400" />
+                      {clinic.hours}
+                    </p>
+                  </div>
+                  
+                  {/* Services Tags */}
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {clinic.services.map((service, idx) => (
+                      <span key={idx} className="px-2 py-1 bg-teal-50 text-teal-700 rounded-full text-xs font-medium">
+                        {service}
+                      </span>
+                    ))}
+                  </div>
+                  
+                  <a 
+                    href={clinic.mapLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-sm font-medium text-slate-700 transition-colors"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    Get Directions
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Help Section */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 bg-white/70 backdrop-blur-xl border border-white/50 rounded-full px-6 py-4 shadow-sm">
