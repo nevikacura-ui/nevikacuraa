@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import { User, Menu, X, Download, Smartphone, Search, Heart, FlaskConical, Video, Gift, Lightbulb, AlertTriangle, Activity, Pill, Shield, Package, ChevronRight, Stethoscope, Baby, ThermometerSun, Users, HandHeart, Sparkles, ArrowRight, Calendar, Clock, ChevronLeft, Sun, Moon, Sunrise } from 'lucide-react';
+import { User, Menu, X, Download, Smartphone, Search, Heart, FlaskConical, Video, Gift, Lightbulb, AlertTriangle, Activity, Pill, Shield, Package, ChevronRight, Stethoscope, Baby, ThermometerSun, Users, HandHeart, Sparkles, ArrowRight, Calendar, Clock, ChevronLeft, Sun, Moon, Sunrise, Mic, MicOff, Star, Quote, Flame, Trophy, Target, Zap, Timer } from 'lucide-react';
 import Footer from '@/components/Footer';
 
 // Health Tips Data - Rotates daily
@@ -67,6 +67,61 @@ const spotlightServices = [
     gradient: 'from-teal-500 to-emerald-500',
     bgImage: 'from-teal-50 to-emerald-100'
   }
+];
+
+// Testimonials Data
+const testimonials = [
+  {
+    id: 1,
+    name: "Priya Sharma",
+    location: "Mumbai",
+    rating: 5,
+    text: "Nevika Cura has transformed how I manage my family's health. The medicine delivery is super quick, and booking appointments is so easy!",
+    service: "DiaGyn Healthcare",
+    avatar: "PS"
+  },
+  {
+    id: 2,
+    name: "Rahul Mehta",
+    location: "Pune",
+    rating: 5,
+    text: "The Glydex diabetes program helped me control my sugar levels better than ever. The personalized care plan made all the difference.",
+    service: "Glydex",
+    avatar: "RM"
+  },
+  {
+    id: 3,
+    name: "Anjali Patel",
+    location: "Ahmedabad",
+    rating: 5,
+    text: "As a new mother, Evara's women wellness programs have been invaluable. The doctors are caring and the app makes everything convenient.",
+    service: "Evara",
+    avatar: "AP"
+  },
+  {
+    id: 4,
+    name: "Suresh Kumar",
+    location: "Delhi",
+    rating: 5,
+    text: "Got my full body checkup done at Proton. Professional staff, quick results, and the health dashboard helps me track everything.",
+    service: "Proton Diagnostics",
+    avatar: "SK"
+  }
+];
+
+// Search suggestions
+const searchSuggestions = [
+  { type: 'service', text: 'Book appointment', path: '/diagyn' },
+  { type: 'service', text: 'Order medicines', path: '/pharmacy' },
+  { type: 'service', text: 'Lab tests', path: '/proton' },
+  { type: 'doctor', text: 'Dr. Neha - Gynecologist', path: '/diagyn' },
+  { type: 'doctor', text: 'Dr. Amit - General Physician', path: '/diagyn' },
+  { type: 'medicine', text: 'Paracetamol', path: '/pharmacy' },
+  { type: 'medicine', text: 'Diabetes medications', path: '/pharmacy' },
+  { type: 'test', text: 'Blood sugar test', path: '/proton' },
+  { type: 'test', text: 'Thyroid profile', path: '/proton' },
+  { type: 'health', text: 'Women\'s health', path: '/evara' },
+  { type: 'health', text: 'Diabetes care', path: '/glydex' },
 ];
 
 const Home = () => {
