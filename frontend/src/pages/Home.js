@@ -57,16 +57,18 @@ const Home = () => {
     {
       id: 'evara',
       name: 'Evara',
-      logo: '/icons/evara-transparent.png',
+      logo: '/icons/evara-logo.png',
       path: '/evara',
-      gradient: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)'
+      gradient: 'linear-gradient(135deg, #511b63 0%, #7c3aed 100%)',
+      hasOriginalBg: true
     },
     {
       id: 'glydex',
       name: 'Glydex',
-      logo: '/icons/glydex-transparent.png',
+      logo: '/glydex-logo.png',
       path: '/glydex',
-      gradient: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)'
+      gradient: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)',
+      hasOriginalBg: true
     },
     {
       id: 'alyne',
