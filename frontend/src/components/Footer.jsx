@@ -141,22 +141,6 @@ const Footer = () => {
               </a>
               <span className="text-gray-700">|</span>
               <a 
-                href="/profile" 
-                className="text-sm text-gray-400 hover:text-brand-teal transition-colors"
-                data-testid="footer-my-orders"
-              >
-                My Orders
-              </a>
-              <span className="text-gray-700">|</span>
-              <a 
-                href="/queue" 
-                className="text-sm text-gray-400 hover:text-brand-teal transition-colors"
-                data-testid="footer-queue"
-              >
-                Live Queue
-              </a>
-              <span className="text-gray-700">|</span>
-              <a 
                 href="/staff" 
                 className="text-sm text-gray-400 hover:text-brand-teal transition-colors"
                 data-testid="footer-staff-portal"
@@ -174,30 +158,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Clinic Locations - Aesthetic Mini Section */}
-          <div className="border-t border-gray-800 pt-6 mb-6">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
-              <span className="text-xs text-gray-500 uppercase tracking-wider">Our Clinics</span>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <a 
-                  href="https://maps.app.goo.gl/LfFoHwVzvMEQ1Qzt9"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-xs text-gray-300 hover:text-white transition-all group"
-                  data-testid="footer-pushpa-location"
-                >
-                  <MapPin className="w-3 h-3 text-brand-teal group-hover:text-teal-400" />
-                  Pushpa Clinic
-                </a>
-                <a 
-                  href="https://maps.app.goo.gl/aBr4jwCv3b6874vi8"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-xs text-gray-300 hover:text-white transition-all group"
-                  data-testid="footer-amnion-location"
-                >
-                  <MapPin className="w-3 h-3 text-brand-teal group-hover:text-teal-400" />
-                  Amnion Clinic
+          {/* Copyright */}
                 </a>
               </div>
             </div>
