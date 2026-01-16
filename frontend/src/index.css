@@ -64,6 +64,20 @@ input, textarea, [contenteditable="true"] {
   animation: fadeIn 0.5s ease-out forwards;
 }
 
+/* Slow bounce animation for install button */
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+
 /* Standalone mode (installed as app) specific styles */
 @media all and (display-mode: standalone) {
   body {
