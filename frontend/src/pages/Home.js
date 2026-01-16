@@ -119,6 +119,131 @@ const testimonials = [
   }
 ];
 
+// Why Choose Us Data
+const whyChooseUs = [
+  { icon: Trophy, value: '20+', label: 'Years Experience', color: 'from-amber-400 to-orange-500' },
+  { icon: Users, value: '50,000+', label: 'Happy Patients', color: 'from-blue-400 to-cyan-500' },
+  { icon: Clock, value: 'Same Day', label: 'Appointments', color: 'from-teal-400 to-emerald-500' },
+  { icon: Shield, value: '24/7', label: 'Support Available', color: 'from-purple-400 to-pink-500' }
+];
+
+// Featured Doctors Data
+const featuredDoctors = [
+  {
+    id: 1,
+    name: 'Dr. Neha Sharma',
+    specialization: 'Gynecologist & Obstetrician',
+    experience: '15+ Years',
+    qualification: 'MBBS, MD (OBG), FICS',
+    image: null,
+    avatar: 'NS',
+    color: 'from-pink-400 to-rose-500',
+    clinic: 'DiaGyn Healthcare'
+  },
+  {
+    id: 2,
+    name: 'Dr. Amit Patel',
+    specialization: 'General Physician',
+    experience: '12+ Years',
+    qualification: 'MBBS, MD (Medicine)',
+    image: null,
+    avatar: 'AP',
+    color: 'from-blue-400 to-cyan-500',
+    clinic: 'DiaGyn Healthcare'
+  },
+  {
+    id: 3,
+    name: 'Dr. Priya Desai',
+    specialization: 'Diabetologist',
+    experience: '10+ Years',
+    qualification: 'MBBS, MD, Diabetes Specialist',
+    image: null,
+    avatar: 'PD',
+    color: 'from-teal-400 to-emerald-500',
+    clinic: 'Glydex Program'
+  },
+  {
+    id: 4,
+    name: 'Dr. Rajesh Kumar',
+    specialization: 'Pathologist',
+    experience: '18+ Years',
+    qualification: 'MBBS, MD (Pathology)',
+    image: null,
+    avatar: 'RK',
+    color: 'from-indigo-400 to-purple-500',
+    clinic: 'Proton Diagnostics'
+  }
+];
+
+// Certifications Data
+const certifications = [
+  { name: 'NABH', fullName: 'National Accreditation Board for Hospitals', color: 'bg-blue-100 text-blue-700' },
+  { name: 'ISO 9001', fullName: 'Quality Management Certified', color: 'bg-green-100 text-green-700' },
+  { name: 'NABL', fullName: 'National Accreditation Board for Labs', color: 'bg-purple-100 text-purple-700' },
+  { name: 'WHO-GMP', fullName: 'World Health Organization Standards', color: 'bg-teal-100 text-teal-700' }
+];
+
+// Services at a Glance
+const quickServices = [
+  { icon: Stethoscope, name: 'Consultation', path: '/diagyn', color: 'bg-blue-100 text-blue-600' },
+  { icon: FlaskConical, name: 'Lab Tests', path: '/proton', color: 'bg-purple-100 text-purple-600' },
+  { icon: Pill, name: 'Medicines', path: '/pharmacy', color: 'bg-orange-100 text-orange-600' },
+  { icon: Heart, name: 'Women Care', path: '/evara', color: 'bg-pink-100 text-pink-600' },
+  { icon: Activity, name: 'Diabetes', path: '/glydex', color: 'bg-teal-100 text-teal-600' },
+  { icon: Baby, name: 'Kids Health', path: '/alyne', color: 'bg-sky-100 text-sky-600' },
+  { icon: Video, name: 'Teleconsult', path: '/teleconsult', color: 'bg-indigo-100 text-indigo-600' },
+  { icon: Package, name: 'Health Packages', path: '/health-packages', color: 'bg-amber-100 text-amber-600' }
+];
+
+// How It Works Steps
+const howItWorksSteps = [
+  {
+    step: 1,
+    title: 'Book',
+    description: 'Choose your service & schedule appointment online',
+    icon: Calendar,
+    color: 'from-teal-400 to-cyan-500'
+  },
+  {
+    step: 2,
+    title: 'Visit or We Deliver',
+    description: 'Visit clinic or get medicines/reports at your doorstep',
+    icon: Stethoscope,
+    color: 'from-blue-400 to-indigo-500'
+  },
+  {
+    step: 3,
+    title: 'Get Healthy',
+    description: 'Track your health journey with our digital dashboard',
+    icon: Heart,
+    color: 'from-pink-400 to-rose-500'
+  }
+];
+
+// Clinic Locations
+const clinicLocations = [
+  {
+    id: 'vasai',
+    name: 'DiaGyn Vasai Clinic',
+    address: 'Shop No. 5, Evershine Mall, Vasai West',
+    city: 'Vasai, Maharashtra 401202',
+    phone: '+91 9403890429',
+    hours: 'Mon-Sat: 9AM - 9PM',
+    mapLink: 'https://maps.google.com/?q=DiaGyn+Vasai',
+    services: ['Consultations', 'Sonography', 'Lab Tests']
+  },
+  {
+    id: 'bhayandar',
+    name: 'DiaGyn Bhayandar Clinic',
+    address: 'Maxus Mall, Bhayandar West',
+    city: 'Bhayandar, Maharashtra 401101',
+    phone: '+91 9403890429',
+    hours: 'Mon-Sat: 10AM - 8PM',
+    mapLink: 'https://maps.google.com/?q=DiaGyn+Bhayandar',
+    services: ['Consultations', 'Pharmacy', 'Diagnostics']
+  }
+];
+
 const Home = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
