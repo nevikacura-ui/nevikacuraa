@@ -8,7 +8,7 @@ import os
 from datetime import datetime
 import uuid
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://healthcare-portal-20.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://medhealth-portal.preview.emergentagent.com')
 
 class TestOmniaAuthenticatedFlow:
     """Test Omnia endpoints with authenticated user using email/password registration"""
