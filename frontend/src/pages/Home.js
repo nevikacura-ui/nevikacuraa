@@ -64,7 +64,8 @@ const Home = () => {
       path: '/evara',
       bgColor: '#511b63', // Purple to match logo bg
       isDark: true,
-      fillLogo: true
+      fillLogo: true,
+      logoScale: 0.85 // Slightly smaller to match other cards
     },
     {
       id: 'glydex',
