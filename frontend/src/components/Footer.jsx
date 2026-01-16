@@ -159,10 +159,6 @@ const Footer = () => {
           </div>
 
           {/* Copyright */}
-                </a>
-              </div>
-            </div>
-          </div>
 
           {/* QR Code Download Section */}
           <div className="border-t border-gray-800 pt-6 mb-6">
