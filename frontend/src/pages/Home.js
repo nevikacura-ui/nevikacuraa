@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -6,8 +6,68 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import { User, Menu, X, Download, Smartphone, Search, Heart, FlaskConical, Video, Gift, Lightbulb, AlertTriangle, Activity, Pill, Shield, Package, ChevronRight, Stethoscope, Baby, ThermometerSun, Users, HandHeart, Sparkles, ArrowRight } from 'lucide-react';
+import { User, Menu, X, Download, Smartphone, Search, Heart, FlaskConical, Video, Gift, Lightbulb, AlertTriangle, Activity, Pill, Shield, Package, ChevronRight, Stethoscope, Baby, ThermometerSun, Users, HandHeart, Sparkles, ArrowRight, Calendar, Clock, ChevronLeft, Sun, Moon, Sunrise } from 'lucide-react';
 import Footer from '@/components/Footer';
+
+// Health Tips Data - Rotates daily
+const healthTips = [
+  { tip: "Stay hydrated! Drink at least 8 glasses of water daily for optimal health.", icon: "💧", category: "Hydration" },
+  { tip: "A 30-minute walk can boost your mood and improve cardiovascular health.", icon: "🚶", category: "Exercise" },
+  { tip: "Get 7-9 hours of quality sleep to help your body repair and rejuvenate.", icon: "😴", category: "Sleep" },
+  { tip: "Include colorful vegetables in every meal for essential vitamins and minerals.", icon: "🥗", category: "Nutrition" },
+  { tip: "Practice deep breathing for 5 minutes daily to reduce stress and anxiety.", icon: "🧘", category: "Mental Health" },
+  { tip: "Regular health check-ups can detect problems early when they're easier to treat.", icon: "🩺", category: "Prevention" },
+  { tip: "Limit screen time before bed to improve sleep quality.", icon: "📱", category: "Digital Wellness" },
+  { tip: "Wash your hands frequently to prevent the spread of infections.", icon: "🧼", category: "Hygiene" },
+  { tip: "Take short breaks every hour if you work at a desk to prevent strain.", icon: "⏰", category: "Work Health" },
+  { tip: "Laugh often! It reduces stress hormones and boosts immune function.", icon: "😄", category: "Mental Health" },
+  { tip: "Eat breakfast within an hour of waking to kickstart your metabolism.", icon: "🍳", category: "Nutrition" },
+  { tip: "Maintain good posture to prevent back pain and improve breathing.", icon: "🧍", category: "Posture" }
+];
+
+// Service Spotlight Data
+const spotlightServices = [
+  {
+    id: 'diagyn-spotlight',
+    title: 'Women\'s Health Week',
+    subtitle: 'Special consultations at DiaGyn',
+    description: 'Comprehensive gynecological care with experienced specialists',
+    cta: 'Book Now',
+    path: '/diagyn',
+    gradient: 'from-pink-500 to-rose-500',
+    bgImage: 'from-pink-50 to-rose-100'
+  },
+  {
+    id: 'proton-spotlight',
+    title: 'Full Body Checkup',
+    subtitle: 'Proton Diagnostics',
+    description: 'Complete health screening with 50+ tests at special rates',
+    cta: 'View Packages',
+    path: '/proton',
+    gradient: 'from-blue-500 to-cyan-500',
+    bgImage: 'from-blue-50 to-cyan-100'
+  },
+  {
+    id: 'pharmacy-spotlight',
+    title: 'Medicine Delivery',
+    subtitle: 'Orange Pharmacy',
+    description: 'Get your prescriptions delivered within 2 hours',
+    cta: 'Order Now',
+    path: '/pharmacy',
+    gradient: 'from-orange-500 to-amber-500',
+    bgImage: 'from-orange-50 to-amber-100'
+  },
+  {
+    id: 'glydex-spotlight',
+    title: 'Diabetes Management',
+    subtitle: 'Glydex Program',
+    description: 'Personalized care plans for better glucose control',
+    cta: 'Learn More',
+    path: '/glydex',
+    gradient: 'from-teal-500 to-emerald-500',
+    bgImage: 'from-teal-50 to-emerald-100'
+  }
+];
 
 const Home = () => {
   const navigate = useNavigate();
