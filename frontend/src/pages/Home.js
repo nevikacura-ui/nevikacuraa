@@ -284,55 +284,43 @@ const Home = () => {
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center md:text-left">Our Services</h2>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
             {services.map((service) => (
               <div
                 key={service.id}
-                className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl ${
-                  service.isDark ? '' : `bg-gradient-to-br ${service.gradient}`
-                }`}
-                style={service.isDark ? { backgroundColor: service.customBg } : {}}
+                className="group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl"
+                style={{ backgroundColor: service.bgColor }}
                 onClick={() => navigate(service.path)}
                 data-testid={`service-card-${service.id}`}
               >
                 {/* Card Content */}
-                <div className={`relative p-6 h-full min-h-[280px] flex flex-col ${service.isDark ? '' : 'bg-white/40 backdrop-blur-sm'}`}>
+                <div className="relative p-4 h-full min-h-[220px] sm:min-h-[260px] flex flex-col">
                   {/* Decorative Elements */}
-                  <div className={`absolute top-0 right-0 w-32 h-32 rounded-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-150 ${
-                    service.isDark ? 'bg-white/5' : 'bg-white/50'
+                  <div className={`absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 transition-transform duration-500 group-hover:scale-150 ${
+                    service.isDark ? 'bg-white/10' : 'bg-white/50'
                   }`}></div>
-                  <div className={`absolute bottom-0 left-0 w-24 h-24 rounded-full -ml-12 -mb-12 transition-transform duration-500 group-hover:scale-150 ${
+                  <div className={`absolute bottom-0 left-0 w-20 h-20 rounded-full -ml-10 -mb-10 transition-transform duration-500 group-hover:scale-150 ${
                     service.isDark ? 'bg-white/5' : 'bg-white/30'
                   }`}></div>
                   
-                  {/* Logo Container */}
-                  <div className="relative z-10 flex-1 flex items-center justify-center mb-4">
+                  {/* Logo Container - Enlarged */}
+                  <div className="relative z-10 flex-1 flex items-center justify-center py-4">
                     <img 
                       src={service.logo} 
                       alt={service.name} 
-                      className={`max-h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-110 ${
-                        service.isDark ? 'filter brightness-110' : 'mix-blend-multiply'
+                      className={`max-h-28 sm:max-h-32 w-auto object-contain transition-transform duration-300 group-hover:scale-110 ${
+                        service.isDark ? '' : 'mix-blend-multiply'
                       }`}
                       data-testid={`service-logo-${service.id}`}
                       loading="lazy"
                     />
                   </div>
                   
-                  {/* Text Content */}
-                  <div className="relative z-10 text-center">
-                    <h3 className={`font-bold text-lg mb-2 ${service.isDark ? 'text-white' : 'text-slate-800'}`}>
-                      {service.name}
-                    </h3>
-                    <p className={`text-sm leading-relaxed ${service.isDark ? 'text-white/70' : 'text-slate-600'}`}>
-                      {service.description}
-                    </p>
-                  </div>
-                  
-                  {/* Explore Button */}
+                  {/* Explore Button Only - No Name */}
                   <Button
                     onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                     data-testid={`service-button-${service.id}`}
-                    className={`mt-4 w-full rounded-xl py-5 font-medium shadow-lg transition-all duration-300 relative z-10 ${
+                    className={`mt-auto w-full rounded-xl py-5 font-medium shadow-lg transition-all duration-300 relative z-10 ${
                       service.isDark
                         ? 'bg-white/15 hover:bg-white/25 text-white border border-white/20 backdrop-blur' 
                         : 'bg-white/80 hover:bg-white text-slate-700 border border-white/50 hover:shadow-xl'
