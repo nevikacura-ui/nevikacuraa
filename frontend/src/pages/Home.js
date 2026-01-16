@@ -194,7 +194,7 @@ const clinicLocations = [
     address: 'A-1, Sai Darshan, Near Don Bosco High School',
     city: 'Naigaon East, Maharashtra',
     phone: '+91 9403890429',
-    hours: 'Mon-Sat: 9AM - 9PM',
+    hours: '11 AM - 2 PM, 6 PM - 10 PM',
     mapLink: 'https://maps.google.com/?q=Pushpa+Clinic+Naigaon',
     services: ['Consultations', 'Sonography', 'Lab Tests']
   },
@@ -204,7 +204,7 @@ const clinicLocations = [
     address: 'G-7, Rashmi Star City Phase 5, Opp Thakur School',
     city: 'Naigaon East, Maharashtra',
     phone: '+91 9403890429',
-    hours: 'Mon-Sat: 10AM - 8PM',
+    hours: '11 AM - 2 PM, 6 PM - 10 PM',
     mapLink: 'https://maps.google.com/?q=Amnion+Clinic+Naigaon',
     services: ['Consultations', 'Pharmacy', 'Diagnostics']
   }
