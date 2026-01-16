@@ -579,6 +579,14 @@ const Home = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
 
+        {/* Welcome Message - For all users */}
+        <div className="mb-6 text-center md:text-left">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
+            Welcome to Nevika Cura 🏥
+          </h2>
+          <p className="text-slate-600">Your trusted partner for complete healthcare services</p>
+        </div>
+
         {/* Personalized Greeting Banner - For logged in users */}
         {user && (
           <div className="mb-8 p-5 bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-blue-500/10 backdrop-blur-xl rounded-3xl border border-teal-200/30 shadow-sm animate-fadeIn" data-testid="personalized-greeting">
