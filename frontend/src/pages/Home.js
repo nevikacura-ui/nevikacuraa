@@ -31,7 +31,7 @@ const Home = () => {
     };
   }, []);
 
-  // Modern Pastel Service Cards
+  // Modern Pastel Service Cards - Brand Colors
   const services = [
     {
       id: 'diagyn',
@@ -39,11 +39,8 @@ const Home = () => {
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg',
       description: 'Book appointments with our expert doctors',
       path: '/diagyn',
-      gradient: 'from-violet-100 via-purple-50 to-fuchsia-100',
-      iconBg: 'bg-violet-200',
-      iconColor: 'text-violet-600',
-      icon: Stethoscope,
-      accent: 'violet'
+      bgColor: '#e8f4fc',
+      isDark: false
     },
     {
       id: 'proton',
@@ -51,11 +48,8 @@ const Home = () => {
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
       description: 'Comprehensive diagnostic tests and health checkups',
       path: '/proton',
-      gradient: 'from-sky-100 via-blue-50 to-indigo-100',
-      iconBg: 'bg-sky-200',
-      iconColor: 'text-sky-600',
-      icon: FlaskConical,
-      accent: 'sky'
+      bgColor: '#eef2ff',
+      isDark: false
     },
     {
       id: 'pharmacy',
@@ -63,11 +57,8 @@ const Home = () => {
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
       description: 'Order medicines with doorstep delivery',
       path: '/pharmacy',
-      gradient: 'from-orange-100 via-amber-50 to-yellow-100',
-      iconBg: 'bg-orange-200',
-      iconColor: 'text-orange-600',
-      icon: Pill,
-      accent: 'orange'
+      bgColor: '#fff7ed',
+      isDark: false
     },
     {
       id: 'evara',
@@ -75,12 +66,7 @@ const Home = () => {
       logo: '/icons/evara-logo.png',
       description: "Women's Wellness & Care Program",
       path: '/evara',
-      gradient: 'from-pink-100 via-rose-50 to-fuchsia-100',
-      iconBg: 'bg-pink-200',
-      iconColor: 'text-pink-600',
-      icon: Heart,
-      accent: 'pink',
-      customBg: '#511b63',
+      bgColor: '#511b63',
       isDark: true
     },
     {
@@ -89,12 +75,7 @@ const Home = () => {
       logo: '/glydex-logo.png',
       description: 'Diabetes Care Portal',
       path: '/glydex',
-      gradient: 'from-teal-100 via-emerald-50 to-cyan-100',
-      iconBg: 'bg-teal-200',
-      iconColor: 'text-teal-600',
-      icon: Activity,
-      accent: 'teal',
-      customBg: '#121f33',
+      bgColor: '#121f33',
       isDark: true
     },
     {
@@ -103,12 +84,7 @@ const Home = () => {
       logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
       description: 'Kids Health & Wellness',
       path: '/alyne',
-      gradient: 'from-amber-100 via-yellow-50 to-lime-100',
-      iconBg: 'bg-amber-200',
-      iconColor: 'text-amber-600',
-      icon: Baby,
-      accent: 'amber',
-      customBg: '#0a1628',
+      bgColor: '#0a1628',
       isDark: true
     }
   ];
