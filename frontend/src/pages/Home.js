@@ -310,6 +310,7 @@ const Home = () => {
                         src={service.logo} 
                         alt={service.name} 
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        style={service.logoScale ? { transform: `scale(${service.logoScale})` } : {}}
                         data-testid={`service-logo-${service.id}`}
                         loading="lazy"
                       />
