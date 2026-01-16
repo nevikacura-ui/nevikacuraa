@@ -28,6 +28,16 @@ const healthTips = [
 // Service Spotlight Data
 const spotlightServices = [
   {
+    id: 'diagyn-appointment',
+    title: 'Book Appointment',
+    subtitle: 'DiaGyn Healthcare',
+    description: 'Skip the queue! Book your doctor appointment online in just 2 minutes',
+    cta: 'Book Now',
+    path: '/diagyn',
+    gradient: 'from-teal-500 to-cyan-500',
+    bgImage: 'from-teal-50 to-cyan-100'
+  },
+  {
     id: 'diagyn-spotlight',
     title: 'Women\'s Health Week',
     subtitle: 'Special consultations at DiaGyn',
