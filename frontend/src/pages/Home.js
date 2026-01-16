@@ -31,55 +31,49 @@ const Home = () => {
     };
   }, []);
 
-  // Modern Service Cards - Uniform Bright Colors
+  // Modern Service Cards - Uniform Bright Colors with Transparent Logos
   const services = [
     {
       id: 'diagyn',
       name: 'DiaGyn Healthcare',
-      logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg',
+      logo: '/icons/diagyn-transparent.png',
       path: '/diagyn',
-      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      isDark: true
+      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     },
     {
       id: 'proton',
       name: 'Proton Diagnostics',
-      logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
+      logo: '/icons/proton-transparent.png',
       path: '/proton',
-      gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      isDark: false
+      gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
     },
     {
       id: 'pharmacy',
       name: 'Orange Pharmacy',
-      logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
+      logo: '/icons/pharmacy-transparent.png',
       path: '/pharmacy',
-      gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      isDark: true
+      gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
     },
     {
       id: 'evara',
       name: 'Evara',
       logo: '/icons/evara-logo.png',
       path: '/evara',
-      gradient: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
-      isDark: true
+      gradient: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)'
     },
     {
       id: 'glydex',
       name: 'Glydex',
       logo: '/glydex-logo.png',
       path: '/glydex',
-      gradient: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
-      isDark: true
+      gradient: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)'
     },
     {
       id: 'alyne',
       name: 'ALYNE',
-      logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
+      logo: '/icons/alyne-transparent.png',
       path: '/alyne',
-      gradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-      isDark: false
+      gradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)'
     }
   ];
 
