@@ -131,30 +131,31 @@ const whyChooseUs = [
 const featuredDoctors = [
   {
     id: 1,
-    name: 'Dr. Neha Sharma',
-    specialization: 'Gynecologist & Obstetrician',
-    experience: '15+ Years',
-    qualification: 'MBBS, MD (OBG), FICS',
+    name: 'Dr. Vikas Jha',
+    specialization: 'Physician & Diabetologist',
+    experience: '',
+    qualification: 'M.B.B.S (Mumbai), C. Diabetology (Delhi), Dip. in Diabetology (UK)',
     image: null,
-    avatar: 'NS',
-    color: 'from-pink-400 to-rose-500',
+    avatar: 'VJ',
+    color: 'from-teal-400 to-emerald-500',
     clinic: 'DiaGyn Healthcare'
   },
   {
     id: 2,
-    name: 'Dr. Amit Patel',
-    specialization: 'General Physician',
-    experience: '12+ Years',
-    qualification: 'MBBS, MD (Medicine)',
+    name: 'Dr. Neha Patel',
+    specialization: 'Obstetrician & Gynaecologist',
+    experience: 'Infertility Specialist & Laproscopic Surgeon',
+    qualification: 'M.B.B.S (Mumbai), DGO (Mumbai), FMAS (Delhi)',
     image: null,
-    avatar: 'AP',
-    color: 'from-blue-400 to-cyan-500',
+    avatar: 'NP',
+    color: 'from-pink-400 to-rose-500',
     clinic: 'DiaGyn Healthcare'
   }
 ];
 
 // Certifications Data
 const certifications = [
+  { name: 'Govt Registered Clinic', fullName: 'Government Registered Healthcare Facility', color: 'bg-teal-100 text-teal-700' },
   { name: 'Govt Certified Sonography Centre', fullName: 'Government Registered Sonography Facility', color: 'bg-blue-100 text-blue-700' },
   { name: 'CAP Certified Lab', fullName: 'College of American Pathologists Certified', color: 'bg-purple-100 text-purple-700' },
   { name: 'ISO 9001', fullName: 'Quality Management Certified', color: 'bg-green-100 text-green-700' }
