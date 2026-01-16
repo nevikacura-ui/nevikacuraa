@@ -238,63 +238,6 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
   
-  // Filter search suggestions
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      const filtered = searchSuggestions.filter(s => 
-        s.text.toLowerCase().includes(searchQuery.toLowerCase())
-      ).slice(0, 5);
-      setFilteredSuggestions(filtered);
-    } else {
-      setFilteredSuggestions([]);
-    }
-  }, [searchQuery]);
-  
-  // Voice search
-  const startVoiceSearch = () => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'en-IN';
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
-      recognition.onerror = () => {
-        setIsListening(false);
-        toast.error('Voice search not available');
-      };
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setSearchQuery(transcript);
-        setSearchFocused(true);
-      };
-      
-      recognition.start();
-    } else {
-      toast.error('Voice search not supported in this browser');
-    }
-  };
-  
-  // Handle search submit
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      // Navigate based on query
-      const match = searchSuggestions.find(s => 
-        s.text.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      if (match) {
-        navigate(match.path);
-      } else {
-        toast.info(`Searching for "${searchQuery}"...`);
-      }
-      setSearchQuery('');
-      setSearchFocused(false);
-    }
-  };
-  
   // Log health activity (for streak)
   const logHealthActivity = () => {
     if (user) {
