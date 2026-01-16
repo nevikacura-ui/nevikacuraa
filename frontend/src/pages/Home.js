@@ -139,6 +139,31 @@ const Home = () => {
   const [spotlightIndex, setSpotlightIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   
+  // Testimonials Carousel
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const [testimonialTransition, setTestimonialTransition] = useState(false);
+  
+  // Smart Search
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const searchRef = useRef(null);
+  
+  // Health Stats (for logged-in users)
+  const [healthStats, setHealthStats] = useState({
+    lastCheckup: null,
+    activePrescriptions: 0,
+    upcomingAppointments: 0,
+    healthStreak: 0
+  });
+  
+  // Live Queue Status
+  const [queueStatus, setQueueStatus] = useState([
+    { clinic: 'DiaGyn', waitTime: '~15 min', patients: 4, status: 'moderate' },
+    { clinic: 'Proton', waitTime: '~5 min', patients: 1, status: 'low' }
+  ]);
+  
   // Get greeting based on time of day
   const getGreeting = useCallback(() => {
     const hour = new Date().getHours();
@@ -148,6 +173,61 @@ const Home = () => {
   }, []);
   
   const [greeting] = useState(getGreeting());
+  
+  // API URL
+  const API = process.env.REACT_APP_BACKEND_URL;
+
+  // Fetch health stats for logged-in user
+  useEffect(() => {
+    if (user) {
+      // Simulate fetching health stats - in real app, call API
+      const storedStreak = localStorage.getItem(`healthStreak_${user.id}`) || '0';
+      const lastActivity = localStorage.getItem(`lastHealthActivity_${user.id}`);
+      
+      // Check if streak is still valid (activity within last 24 hours)
+      let streak = parseInt(storedStreak);
+      if (lastActivity) {
+        const hoursSinceActivity = (Date.now() - parseInt(lastActivity)) / (1000 * 60 * 60);
+        if (hoursSinceActivity > 48) {
+          streak = 0; // Reset streak if more than 48 hours
+          localStorage.setItem(`healthStreak_${user.id}`, '0');
+        }
+      }
+      
+      setHealthStats({
+        lastCheckup: '15 days ago',
+        activePrescriptions: 2,
+        upcomingAppointments: 1,
+        healthStreak: streak
+      });
+    }
+  }, [user]);
+  
+  // Fetch live queue status
+  useEffect(() => {
+    const fetchQueueStatus = async () => {
+      try {
+        const response = await fetch(`${API}/api/queue/status`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.clinics) {
+            setQueueStatus(data.clinics.map(c => ({
+              clinic: c.name,
+              waitTime: `~${c.estimated_wait || 10} min`,
+              patients: c.waiting || 0,
+              status: c.waiting > 5 ? 'high' : c.waiting > 2 ? 'moderate' : 'low'
+            })));
+          }
+        }
+      } catch (err) {
+        // Use default values on error
+      }
+    };
+    
+    fetchQueueStatus();
+    const interval = setInterval(fetchQueueStatus, 30000); // Update every 30s
+    return () => clearInterval(interval);
+  }, [API]);
 
   // Set daily health tip based on date
   useEffect(() => {
@@ -167,6 +247,87 @@ const Home = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
+  
+  // Auto-rotate testimonials carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTestimonialTransition(true);
+      setTimeout(() => {
+        setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
+        setTestimonialTransition(false);
+      }, 300);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Filter search suggestions
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const filtered = searchSuggestions.filter(s => 
+        s.text.toLowerCase().includes(searchQuery.toLowerCase())
+      ).slice(0, 5);
+      setFilteredSuggestions(filtered);
+    } else {
+      setFilteredSuggestions([]);
+    }
+  }, [searchQuery]);
+  
+  // Voice search
+  const startVoiceSearch = () => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-IN';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = () => {
+        setIsListening(false);
+        toast.error('Voice search not available');
+      };
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setSearchQuery(transcript);
+        setSearchFocused(true);
+      };
+      
+      recognition.start();
+    } else {
+      toast.error('Voice search not supported in this browser');
+    }
+  };
+  
+  // Handle search submit
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Navigate based on query
+      const match = searchSuggestions.find(s => 
+        s.text.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      if (match) {
+        navigate(match.path);
+      } else {
+        toast.info(`Searching for "${searchQuery}"...`);
+      }
+      setSearchQuery('');
+      setSearchFocused(false);
+    }
+  };
+  
+  // Log health activity (for streak)
+  const logHealthActivity = () => {
+    if (user) {
+      const currentStreak = parseInt(localStorage.getItem(`healthStreak_${user.id}`) || '0');
+      const newStreak = currentStreak + 1;
+      localStorage.setItem(`healthStreak_${user.id}`, newStreak.toString());
+      localStorage.setItem(`lastHealthActivity_${user.id}`, Date.now().toString());
+      setHealthStats(prev => ({ ...prev, healthStreak: newStreak }));
+      toast.success(`Health streak: ${newStreak} days! Keep it up!`);
+    }
+  };
   
   // Navigate spotlight
   const goToSpotlight = (direction) => {
