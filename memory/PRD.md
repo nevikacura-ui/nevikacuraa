@@ -12,6 +12,18 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 
 ## What's Been Implemented
 
+### Session - January 16, 2026
+
+#### Completed Features
+1. **Homepage Service Cards Fix** ✅
+   - Fixed Evara, Glydex, Alyne logos to fill entire card with uniform colors
+   - Used `object-cover` for fillLogo items to eliminate dual-color issue
+
+2. **Homepage Enhancement Features (1-3)** ✅
+   - **Health Tip of the Day**: 12 rotating daily health tips with categories, dismissible banner
+   - **Service Spotlight Carousel**: 4 featured services auto-rotating every 5 seconds with navigation
+   - **Personalized Greeting Banner**: Time-based greeting for logged-in users with quick appointment access
+
 ### Session - January 15, 2026
 
 #### Completed Features
