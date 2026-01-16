@@ -277,7 +277,7 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Services Grid - Colorful Cards with Logo Containers */}
+        {/* Services Grid - Seamless Logo & Background */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center md:text-left">Our Services</h2>
           
@@ -285,35 +285,47 @@ const Home = () => {
             {services.map((service) => (
               <div
                 key={service.id}
-                className="group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl shadow-lg"
+                className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl ${
+                  service.isDark ? 'shadow-lg' : 'shadow-md border border-gray-100'
+                }`}
                 style={{ backgroundColor: service.bgColor }}
                 onClick={() => navigate(service.path)}
                 data-testid={`service-card-${service.id}`}
               >
                 {/* Decorative circles */}
-                <div className="absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 bg-white/10 transition-transform duration-500 group-hover:scale-150"></div>
-                <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full -ml-10 -mb-10 bg-white/10 transition-transform duration-500 group-hover:scale-150"></div>
+                <div className={`absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 transition-transform duration-500 group-hover:scale-150 ${
+                  service.isDark ? 'bg-white/10' : 'bg-gray-100/50'
+                }`}></div>
+                <div className={`absolute bottom-0 left-0 w-20 h-20 rounded-full -ml-10 -mb-10 transition-transform duration-500 group-hover:scale-150 ${
+                  service.isDark ? 'bg-white/10' : 'bg-gray-100/50'
+                }`}></div>
                 
                 {/* Card Content */}
-                <div className="relative p-4 h-full min-h-[200px] sm:min-h-[240px] flex flex-col">
-                  {/* Logo in white rounded container */}
-                  <div className="flex-1 flex items-center justify-center py-3">
-                    <div className="bg-white rounded-2xl p-4 shadow-lg transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl">
-                      <img 
-                        src={service.logo} 
-                        alt={service.name} 
-                        className="h-14 sm:h-16 w-auto object-contain"
-                        data-testid={`service-logo-${service.id}`}
-                        loading="lazy"
-                      />
-                    </div>
+                <div className="relative p-3 h-full min-h-[200px] sm:min-h-[240px] flex flex-col">
+                  {/* Logo - Seamless with background */}
+                  <div className="flex-1 flex items-center justify-center">
+                    <img 
+                      src={service.logo} 
+                      alt={service.name} 
+                      className={`w-auto object-contain transition-transform duration-300 group-hover:scale-105 ${
+                        service.fillLogo 
+                          ? 'h-32 sm:h-40 max-w-full' 
+                          : 'h-20 sm:h-24'
+                      }`}
+                      data-testid={`service-logo-${service.id}`}
+                      loading="lazy"
+                    />
                   </div>
                   
                   {/* Explore Button */}
                   <Button
                     onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                     data-testid={`service-button-${service.id}`}
-                    className="mt-auto w-full rounded-xl py-4 font-semibold transition-all duration-300 relative z-10 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-lg"
+                    className={`mt-auto w-full rounded-xl py-4 font-semibold transition-all duration-300 relative z-10 shadow-lg ${
+                      service.isDark 
+                        ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
+                        : 'bg-slate-800 hover:bg-slate-900 text-white'
+                    }`}
                   >
                     Explore
                     <ChevronRight className="w-4 h-4 ml-1" />
