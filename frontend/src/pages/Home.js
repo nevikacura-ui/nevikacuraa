@@ -31,61 +31,55 @@ const Home = () => {
     };
   }, []);
 
-  // Modern Pastel Service Cards - Brand Colors
+  // Modern Service Cards - Uniform Bright Colors
   const services = [
     {
       id: 'diagyn',
       name: 'DiaGyn Healthcare',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg',
-      description: 'Book appointments with our expert doctors',
       path: '/diagyn',
-      bgColor: '#e8f4fc',
-      isDark: false
+      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      isDark: true
     },
     {
       id: 'proton',
       name: 'Proton Diagnostics',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
-      description: 'Comprehensive diagnostic tests and health checkups',
       path: '/proton',
-      bgColor: '#eef2ff',
+      gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
       isDark: false
     },
     {
       id: 'pharmacy',
       name: 'Orange Pharmacy',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
-      description: 'Order medicines with doorstep delivery',
       path: '/pharmacy',
-      bgColor: '#fff7ed',
-      isDark: false
+      gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      isDark: true
     },
     {
       id: 'evara',
       name: 'Evara',
       logo: '/icons/evara-logo.png',
-      description: "Women's Wellness & Care Program",
       path: '/evara',
-      bgColor: '#511b63',
+      gradient: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
       isDark: true
     },
     {
       id: 'glydex',
       name: 'Glydex',
       logo: '/glydex-logo.png',
-      description: 'Diabetes Care Portal',
       path: '/glydex',
-      bgColor: '#121f33',
+      gradient: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
       isDark: true
     },
     {
       id: 'alyne',
       name: 'ALYNE',
       logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
-      description: 'Kids Health & Wellness',
       path: '/alyne',
-      bgColor: '#0a1628',
-      isDark: true
+      gradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+      isDark: false
     }
   ];
 
