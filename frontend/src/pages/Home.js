@@ -1442,6 +1442,18 @@ const Home = () => {
         </section>
       )}
 
+      {/* Floating Install Button - Shows when banner is dismissed but app is installable */}
+      {installPrompt && !showInstallBanner && !isStandalone && (
+        <button
+          onClick={handleInstallApp}
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full shadow-2xl hover:shadow-xl hover:scale-105 transition-all animate-bounce-slow"
+          data-testid="floating-install-btn"
+        >
+          <Download className="w-5 h-5" />
+          <span className="font-semibold text-sm">Install App</span>
+        </button>
+      )}
+
       {/* Footer */}
       <Footer />
 
