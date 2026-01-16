@@ -1167,7 +1167,7 @@ const Home = () => {
         {/* Featured Doctors */}
         <div className="mb-16" data-testid="featured-doctors">
           <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">Meet Our Doctors</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
             {featuredDoctors.map((doctor) => (
               <div 
                 key={doctor.id}
