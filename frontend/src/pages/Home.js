@@ -558,6 +558,68 @@ const Home = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         
+        {/* Smart Search Bar */}
+        <div className="mb-8 relative" ref={searchRef} data-testid="smart-search">
+          <form onSubmit={handleSearchSubmit} className="relative">
+            <div className={`flex items-center bg-white/80 backdrop-blur-xl rounded-2xl border-2 transition-all duration-300 shadow-sm ${
+              searchFocused ? 'border-teal-400 shadow-lg shadow-teal-500/10' : 'border-slate-200'
+            }`}>
+              <Search className="w-5 h-5 text-slate-400 ml-4" />
+              <input
+                type="text"
+                placeholder="Search doctors, medicines, services..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
+                className="flex-1 px-4 py-4 bg-transparent text-slate-700 placeholder-slate-400 focus:outline-none"
+                data-testid="search-input"
+              />
+              <button
+                type="button"
+                onClick={startVoiceSearch}
+                className={`p-3 mr-2 rounded-xl transition-all ${
+                  isListening 
+                    ? 'bg-red-100 text-red-500 animate-pulse' 
+                    : 'hover:bg-slate-100 text-slate-500'
+                }`}
+                data-testid="voice-search-btn"
+              >
+                {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              </button>
+            </div>
+            
+            {/* Search Suggestions Dropdown */}
+            {searchFocused && filteredSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50">
+                {filteredSuggestions.map((suggestion, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      navigate(suggestion.path);
+                      setSearchQuery('');
+                      setSearchFocused(false);
+                    }}
+                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors text-left"
+                  >
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      suggestion.type === 'service' ? 'bg-teal-100 text-teal-700' :
+                      suggestion.type === 'doctor' ? 'bg-blue-100 text-blue-700' :
+                      suggestion.type === 'medicine' ? 'bg-orange-100 text-orange-700' :
+                      suggestion.type === 'test' ? 'bg-purple-100 text-purple-700' :
+                      'bg-pink-100 text-pink-700'
+                    }`}>
+                      {suggestion.type}
+                    </span>
+                    <span className="text-slate-700">{suggestion.text}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </form>
+        </div>
+
         {/* Personalized Greeting Banner - For logged in users */}
         {user && (
           <div className="mb-8 p-5 bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-blue-500/10 backdrop-blur-xl rounded-3xl border border-teal-200/30 shadow-sm animate-fadeIn" data-testid="personalized-greeting">
@@ -583,6 +645,108 @@ const Home = () => {
             </div>
           </div>
         )}
+        
+        {/* Quick Health Stats Widget - For logged in users */}
+        {user && (
+          <div className="mb-8 grid grid-cols-2 sm:grid-cols-4 gap-3" data-testid="health-stats-widget">
+            <div className="p-4 bg-white/70 backdrop-blur rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-md transition-all">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                  <Stethoscope className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500">Last Checkup</p>
+                  <p className="text-sm font-semibold text-slate-700">{healthStats.lastCheckup || 'Not yet'}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-white/70 backdrop-blur rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-md transition-all">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+                  <Pill className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500">Prescriptions</p>
+                  <p className="text-sm font-semibold text-slate-700">{healthStats.activePrescriptions} active</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-white/70 backdrop-blur rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-md transition-all">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-teal-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500">Upcoming</p>
+                  <p className="text-sm font-semibold text-slate-700">{healthStats.upcomingAppointments} appt</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Health Streak - Gamification */}
+            <button 
+              onClick={logHealthActivity}
+              className="p-4 bg-gradient-to-br from-amber-50 to-orange-100 backdrop-blur rounded-2xl border border-amber-200/50 shadow-sm hover:shadow-md transition-all group"
+              data-testid="health-streak-btn"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Flame className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="text-xs text-amber-600">Health Streak</p>
+                  <p className="text-sm font-bold text-amber-700">{healthStats.healthStreak} days 🔥</p>
+                </div>
+              </div>
+            </button>
+          </div>
+        )}
+        
+        {/* Live Queue Status Preview */}
+        <div className="mb-8 p-4 bg-white/60 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm" data-testid="live-queue-preview">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+              <Timer className="w-4 h-4 text-teal-500" />
+              Live Queue Status
+            </h3>
+            <button 
+              onClick={() => navigate('/queue')}
+              className="text-xs text-teal-600 hover:text-teal-700 font-medium"
+            >
+              View All →
+            </button>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-1">
+            {queueStatus.map((queue, idx) => (
+              <div 
+                key={idx}
+                className={`flex-shrink-0 px-4 py-2 rounded-xl flex items-center gap-3 ${
+                  queue.status === 'low' ? 'bg-green-50 border border-green-200' :
+                  queue.status === 'moderate' ? 'bg-amber-50 border border-amber-200' :
+                  'bg-red-50 border border-red-200'
+                }`}
+              >
+                <div className={`w-2 h-2 rounded-full animate-pulse ${
+                  queue.status === 'low' ? 'bg-green-500' :
+                  queue.status === 'moderate' ? 'bg-amber-500' :
+                  'bg-red-500'
+                }`}></div>
+                <div>
+                  <p className="text-sm font-medium text-slate-700">{queue.clinic}</p>
+                  <p className={`text-xs ${
+                    queue.status === 'low' ? 'text-green-600' :
+                    queue.status === 'moderate' ? 'text-amber-600' :
+                    'text-red-600'
+                  }`}>
+                    {queue.waitTime} • {queue.patients} waiting
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Health Tip of the Day */}
         <div 
