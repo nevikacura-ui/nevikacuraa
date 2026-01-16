@@ -67,6 +67,7 @@ const StaffLogin = ({ onLoginSuccess }) => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="pl-10"
+                autoComplete="off"
                 data-testid="staff-username"
               />
             </div>
@@ -83,6 +84,7 @@ const StaffLogin = ({ onLoginSuccess }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10"
+                autoComplete="new-password"
                 data-testid="staff-password"
               />
             </div>
