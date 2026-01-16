@@ -158,6 +158,7 @@ const certifications = [
   { name: 'Govt Registered Clinic', fullName: 'Government Registered Healthcare Facility', color: 'bg-teal-100 text-teal-700' },
   { name: 'Govt Certified Sonography Centre', fullName: 'Government Registered Sonography Facility', color: 'bg-blue-100 text-blue-700' },
   { name: 'CAP Certified Lab', fullName: 'College of American Pathologists Certified', color: 'bg-purple-100 text-purple-700' },
+  { name: 'FSSAI Approved Pharmacy', fullName: 'Food Safety and Standards Authority of India Approved', color: 'bg-orange-100 text-orange-700' },
   { name: 'ISO 9001', fullName: 'Quality Management Certified', color: 'bg-green-100 text-green-700' }
 ];
 
