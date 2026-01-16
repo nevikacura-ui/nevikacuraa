@@ -1018,6 +1018,7 @@ const StaffPortal = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter username"
                   className="pl-10"
+                  autoComplete="off"
                   data-testid="staff-username"
                 />
               </div>
@@ -1033,6 +1034,7 @@ const StaffPortal = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter password"
                   className="pl-10"
+                  autoComplete="new-password"
                   onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
                   data-testid="staff-password"
                 />
