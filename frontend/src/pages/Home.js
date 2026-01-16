@@ -31,49 +31,58 @@ const Home = () => {
     };
   }, []);
 
-  // Modern Service Cards - Solid Bright Colors matching logos
+  // Modern Service Cards - Logo background matches card background
   const services = [
     {
       id: 'diagyn',
       name: 'DiaGyn Healthcare',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg',
       path: '/diagyn',
-      bgColor: '#4facfe' // Sky blue
+      bgColor: '#ffffff', // White to match logo bg
+      isDark: false
     },
     {
       id: 'proton',
       name: 'Proton Diagnostics',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
       path: '/proton',
-      bgColor: '#06b6d4' // Teal
+      bgColor: '#ffffff', // White to match logo bg
+      isDark: false
     },
     {
       id: 'pharmacy',
       name: 'Orange Pharmacy',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
       path: '/pharmacy',
-      bgColor: '#f472b6' // Pink
+      bgColor: '#ffffff', // White to match logo bg
+      isDark: false
     },
     {
       id: 'evara',
       name: 'Evara',
       logo: '/icons/evara-logo.png',
       path: '/evara',
-      bgColor: '#511b63' // Purple (brand color)
+      bgColor: '#511b63', // Purple to match logo bg
+      isDark: true,
+      fillLogo: true
     },
     {
       id: 'glydex',
       name: 'Glydex',
       logo: '/glydex-logo.png',
       path: '/glydex',
-      bgColor: '#0f172a' // Dark navy (brand color)
+      bgColor: '#121f33', // Dark navy to match logo bg
+      isDark: true,
+      fillLogo: true
     },
     {
       id: 'alyne',
       name: 'ALYNE',
       logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
       path: '/alyne',
-      bgColor: '#fbbf24' // Golden amber
+      bgColor: '#0a1628', // Dark to match logo bg
+      isDark: true,
+      fillLogo: true
     }
   ];
 
