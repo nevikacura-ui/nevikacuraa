@@ -290,17 +290,15 @@ const Home = () => {
                 
                 {/* Card Content */}
                 <div className="relative p-4 h-full min-h-[200px] sm:min-h-[240px] flex flex-col">
-                  {/* Logo - In a floating white card */}
-                  <div className="flex-1 flex items-center justify-center py-2">
-                    <div className="bg-white rounded-2xl p-3 shadow-lg transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl">
-                      <img 
-                        src={service.logo} 
-                        alt={service.name} 
-                        className="h-14 sm:h-16 w-auto object-contain"
-                        data-testid={`service-logo-${service.id}`}
-                        loading="lazy"
-                      />
-                    </div>
+                  {/* Logo - Directly on gradient (transparent) */}
+                  <div className="flex-1 flex items-center justify-center py-3">
+                    <img 
+                      src={service.logo} 
+                      alt={service.name} 
+                      className="h-20 sm:h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-lg"
+                      data-testid={`service-logo-${service.id}`}
+                      loading="lazy"
+                    />
                   </div>
                   
                   {/* Explore Button */}
