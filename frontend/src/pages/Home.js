@@ -268,7 +268,7 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Services Grid - Uniform Gradient Cards */}
+        {/* Services Grid - Colorful Cards with Logo Containers */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center md:text-left">Our Services</h2>
           
@@ -277,32 +277,27 @@ const Home = () => {
               <div
                 key={service.id}
                 className="group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl shadow-lg"
-                style={{ background: service.gradient }}
+                style={{ backgroundColor: service.bgColor }}
                 onClick={() => navigate(service.path)}
                 data-testid={`service-card-${service.id}`}
               >
-                {/* Subtle Overlay for depth */}
-                <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-50"></div>
-                
                 {/* Decorative circles */}
-                <div className="absolute top-0 right-0 w-20 h-20 rounded-full -mr-10 -mt-10 bg-white/10 transition-transform duration-500 group-hover:scale-150"></div>
-                <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full -ml-8 -mb-8 bg-white/10 transition-transform duration-500 group-hover:scale-150"></div>
+                <div className="absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 bg-white/10 transition-transform duration-500 group-hover:scale-150"></div>
+                <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full -ml-10 -mb-10 bg-white/10 transition-transform duration-500 group-hover:scale-150"></div>
                 
                 {/* Card Content */}
                 <div className="relative p-4 h-full min-h-[200px] sm:min-h-[240px] flex flex-col">
-                  {/* Logo */}
+                  {/* Logo in white rounded container */}
                   <div className="flex-1 flex items-center justify-center py-3">
-                    <img 
-                      src={service.logo} 
-                      alt={service.name} 
-                      className={`w-auto object-contain transition-transform duration-300 group-hover:scale-110 ${
-                        service.hasOriginalBg 
-                          ? 'h-24 sm:h-28 rounded-xl' 
-                          : 'h-20 sm:h-24 drop-shadow-lg'
-                      }`}
-                      data-testid={`service-logo-${service.id}`}
-                      loading="lazy"
-                    />
+                    <div className="bg-white rounded-2xl p-4 shadow-lg transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                      <img 
+                        src={service.logo} 
+                        alt={service.name} 
+                        className="h-14 sm:h-16 w-auto object-contain"
+                        data-testid={`service-logo-${service.id}`}
+                        loading="lazy"
+                      />
+                    </div>
                   </div>
                   
                   {/* Explore Button */}
