@@ -114,8 +114,17 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background" style={{ contentVisibility: 'auto' }}>
-      <header className="border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 relative overflow-hidden" style={{ contentVisibility: 'auto' }}>
+      {/* Floating Background Blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-20 -left-32 w-96 h-96 bg-gradient-to-br from-violet-200/40 to-fuchsia-200/40 rounded-full blur-3xl animate-pulse" style={{animationDuration: '8s'}}></div>
+        <div className="absolute top-1/3 -right-32 w-80 h-80 bg-gradient-to-br from-teal-200/40 to-cyan-200/40 rounded-full blur-3xl animate-pulse" style={{animationDuration: '10s', animationDelay: '2s'}}></div>
+        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-orange-200/30 to-amber-200/30 rounded-full blur-3xl animate-pulse" style={{animationDuration: '12s', animationDelay: '4s'}}></div>
+        <div className="absolute -bottom-20 right-1/4 w-64 h-64 bg-gradient-to-br from-pink-200/30 to-rose-200/30 rounded-full blur-3xl animate-pulse" style={{animationDuration: '9s', animationDelay: '1s'}}></div>
+      </div>
+
+      {/* Header - Glassmorphism */}
+      <header className="border-b border-white/50 bg-white/60 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             {/* Logo on left */}
@@ -131,13 +140,13 @@ const Home = () => {
             </div>
             
             {/* Navigation on right */}
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-3">
               <Button 
                 variant="ghost" 
                 size="sm"
                 onClick={() => navigate('/track')}
                 data-testid="track-orders-button"
-                className="font-heading"
+                className="font-medium rounded-full hover:bg-slate-100"
               >
                 <Search className="w-4 h-4 mr-2" />
                 Track Orders
@@ -147,7 +156,7 @@ const Home = () => {
                 size="sm"
                 onClick={() => navigate('/senior-care')}
                 data-testid="give-back-button"
-                className="font-heading text-green-600 hover:text-green-700 hover:bg-green-50"
+                className="font-medium text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-full"
               >
                 <HandHeart className="w-4 h-4 mr-2" />
                 Give Back
@@ -159,7 +168,7 @@ const Home = () => {
                     size="sm"
                     onClick={() => navigate('/profile')}
                     data-testid="profile-button"
-                    className="font-heading"
+                    className="font-medium rounded-full hover:bg-slate-100"
                   >
                     <User className="w-4 h-4 mr-2" />
                     {user.name}
@@ -169,7 +178,7 @@ const Home = () => {
                     size="sm"
                     onClick={logout}
                     data-testid="logout-button"
-                    className="rounded-full"
+                    className="rounded-full border-slate-200"
                   >
                     Logout
                   </Button>
@@ -179,7 +188,7 @@ const Home = () => {
                   size="sm"
                   onClick={() => setShowAuth(true)} 
                   data-testid="login-button"
-                  className="rounded-full bg-brand-teal hover:bg-brand-teal/90"
+                  className="rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 shadow-lg shadow-teal-500/25 transition-all duration-300"
                 >
                   Login / Sign Up
                 </Button>
@@ -188,31 +197,31 @@ const Home = () => {
 
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden"
+              className="md:hidden p-2 rounded-xl bg-white/50 hover:bg-white/80 transition-colors"
               onClick={() => setShowMenu(!showMenu)}
               data-testid="mobile-menu-button"
             >
-              {showMenu ? <X /> : <Menu />}
+              {showMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Glassmorphism */}
       {showMenu && (
-        <div className="md:hidden fixed top-24 left-0 right-0 bg-white border-b shadow-lg z-40 p-4 space-y-3" data-testid="mobile-menu">
+        <div className="md:hidden fixed top-24 left-4 right-4 bg-white/90 backdrop-blur-xl border border-white/50 shadow-xl rounded-2xl z-40 p-4 space-y-2" data-testid="mobile-menu">
           <Button 
             variant="ghost" 
-            onClick={() => navigate('/track')}
-            className="w-full justify-start"
+            onClick={() => { navigate('/track'); setShowMenu(false); }}
+            className="w-full justify-start rounded-xl"
           >
             <Search className="w-4 h-4 mr-2" />
             Track Orders
           </Button>
           <Button 
             variant="ghost" 
-            onClick={() => navigate('/senior-care')}
-            className="w-full justify-start text-green-600 hover:text-green-700 hover:bg-green-50"
+            onClick={() => { navigate('/senior-care'); setShowMenu(false); }}
+            className="w-full justify-start text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl"
           >
             <HandHeart className="w-4 h-4 mr-2" />
             Give Back
@@ -221,24 +230,24 @@ const Home = () => {
             <>
               <Button 
                 variant="ghost" 
-                onClick={() => navigate('/profile')}
-                className="w-full justify-start"
+                onClick={() => { navigate('/profile'); setShowMenu(false); }}
+                className="w-full justify-start rounded-xl"
               >
                 <User className="w-4 h-4 mr-2" />
                 {user.name}
               </Button>
               <Button 
                 variant="outline" 
-                onClick={logout}
-                className="w-full"
+                onClick={() => { logout(); setShowMenu(false); }}
+                className="w-full rounded-xl"
               >
                 Logout
               </Button>
             </>
           ) : (
             <Button 
-              onClick={() => setShowAuth(true)} 
-              className="w-full bg-brand-teal hover:bg-brand-teal/90"
+              onClick={() => { setShowAuth(true); setShowMenu(false); }}
+              className="w-full rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500"
             >
               Login / Sign Up
             </Button>
@@ -247,231 +256,246 @@ const Home = () => {
       )}
 
       {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+        {/* Hero Section - Modern Asymmetric */}
+        <div className="relative mb-16 md:mb-20">
+          <div className="text-center md:text-left md:max-w-2xl">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-100 to-cyan-100 border border-teal-200/50 rounded-full text-teal-700 text-sm font-medium mb-6 shadow-sm">
+              <Sparkles className="w-4 h-4" />
+              Your Health, Our Priority
+            </div>
+            
+            {/* Main Heading */}
+            <h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight mb-6 text-slate-800 leading-[1.1]">
+              Complete Healthcare
+              <br />
+              <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 bg-clip-text text-transparent">
+                At Your Fingertips
+              </span>
+            </h1>
+            
+            {/* Subtitle */}
+            <p className="text-lg text-slate-600 max-w-xl mx-auto md:mx-0 leading-relaxed mb-8">
+              Book appointments, order medicines, get diagnostic tests - all from one trusted platform designed for your wellness journey.
+            </p>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-        {/* Hero Section */}
-        <div className="text-center mb-12 md:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-teal/10 border border-brand-teal/20 rounded-full text-brand-teal text-sm font-medium mb-6">
-            <span className="w-2 h-2 bg-brand-teal rounded-full animate-pulse"></span>
-            Your Health, Our Priority
-          </div>
-          <h1 className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6 text-foreground leading-tight">
-            Complete Healthcare<br/>
-            <span className="bg-gradient-to-r from-brand-teal to-cyan-500 bg-clip-text text-transparent">At Your Fingertips</span>
-          </h1>
-          <p className="font-body text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Book appointments, order medicines, get diagnostic tests - all from one trusted platform
-          </p>
-        </div>
-
-        {/* Services Grid - 6 cards (Logo + Tagline only) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 md:gap-6">
-          {services.map((service) => (
-            <div
-              key={service.id}
-              className={`group relative h-full ${service.tallerCard ? 'min-h-[320px]' : 'min-h-[260px]'} flex flex-col justify-between ${service.tallerCard ? 'p-6' : 'p-5'} rounded-2xl transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl border ${service.accentColor} ${service.bgColor} cursor-pointer overflow-hidden`}
-              style={service.isGradient ? { background: service.customBg } : (service.customBg ? { backgroundColor: service.customBg } : {})}
-              onClick={() => navigate(service.path)}
-              data-testid={`service-card-${service.id}`}
-            >
-              {/* Sparkle/Star decorations for ALYNE */}
-              {service.hasSparkles && (
-                <>
-                  <div className="absolute top-4 left-4 w-2 h-2 bg-white/60 rounded-full animate-pulse"></div>
-                  <div className="absolute top-8 right-8 w-1.5 h-1.5 bg-white/50 rounded-full animate-pulse" style={{animationDelay: '0.3s'}}></div>
-                  <div className="absolute top-16 left-12 w-1 h-1 bg-white/40 rounded-full animate-pulse" style={{animationDelay: '0.6s'}}></div>
-                  <div className="absolute bottom-20 right-6 w-2 h-2 bg-white/50 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-                  <div className="absolute bottom-32 left-6 w-1.5 h-1.5 bg-white/40 rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
-                  <div className="absolute top-24 right-4 w-1 h-1 bg-white/60 rounded-full animate-pulse" style={{animationDelay: '0.8s'}}></div>
-                  <div className="absolute bottom-28 right-12 w-1 h-1 bg-white/50 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
-                  <div className="absolute top-1/2 left-3 w-1.5 h-1.5 bg-white/30 rounded-full animate-pulse" style={{animationDelay: '0.7s'}}></div>
-                </>
-              )}
-              
-              {/* Background decoration - hidden for cards with hideDecoration */}
-              {!service.hideDecoration && (
-                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150"></div>
-              )}
-              
-              {/* Logo - takes most space */}
-              <div 
-                className={`flex items-center justify-center flex-1 overflow-hidden ${service.id === 'evara' || service.id === 'glydex' || service.id === 'alyne' ? 'px-0' : 'rounded-xl p-2'} ${service.logoBg}`}
-              >
-                {service.useTextLogo ? (
-                  <div className="text-center px-2 flex flex-col items-center justify-center">
-                    <h2 className="text-5xl font-black tracking-wide" style={{
-                      fontFamily: 'system-ui, -apple-system, sans-serif',
-                      background: 'linear-gradient(90deg, #2dd4bf, #3b82f6, #8b5cf6, #ec4899)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      textShadow: 'none'
-                    }}>ALYNE</h2>
-                    <p className="text-white/90 text-sm mt-2 font-medium tracking-wide">Kids by Nevika Cura</p>
-                  </div>
-                ) : service.logo ? (
-                  <img 
-                    src={service.logo} 
-                    alt={service.name} 
-                    className={`transition-transform group-hover:scale-105 ${
-                      service.fillCard ? 'w-full h-full object-cover absolute inset-0 rounded-2xl' :
-                      service.id === 'evara' ? 'w-full h-auto max-h-32 sm:max-h-36 object-contain' :
-                      service.alyneSpecial ? 'w-full max-w-[200px] h-auto object-contain mx-auto' :
-                      service.alyneFill ? 'absolute inset-0 w-full h-full object-contain rounded-2xl' :
-                      service.seamlessLogo ? 'w-full h-auto max-h-56 object-contain' :
-                      service.stretchLogo ? 'absolute inset-0 w-full h-full object-cover' :
-                      service.logoRounded ? 'w-auto max-h-28 rounded-xl shadow-md object-contain' :
-                      'w-auto max-h-28 mix-blend-multiply object-contain'
-                    }`}
-                    style={{
-                      ...(service.logoScale ? { transform: `scale(${service.logoScale})` } : {}),
-                      ...(service.id === 'alyne' ? { filter: 'brightness(1.1) contrast(1.05)' } : {})
-                    }}
-                    data-testid={`service-logo-${service.id}`}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                ) : null}
-              </div>
-              
-              {/* Tagline only - no name (hide for fillCard items) */}
-              {!service.fillCard && (
-                <p className={`text-center text-sm relative z-10 ${service.tallerCard ? 'mt-4' : 'mt-3'} ${service.customBg || service.isGradient ? 'text-white/90' : 'text-gray-600'}`}>
-                  {service.description}
-                </p>
-              )}
-              
-              <Button
-                onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
-                data-testid={`service-button-${service.id}`}
-                className={`${service.tallerCard ? 'mt-4' : 'mt-2'} w-full rounded-xl py-5 font-medium shadow-lg hover:shadow-xl transition-all duration-300 relative z-10 ${
-                  (service.customBg || service.isGradient)
-                    ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
-                    : 'bg-brand-teal hover:bg-brand-teal/90 text-white'
-                }`}
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+              <Button 
+                size="lg"
+                onClick={() => setShowAuth(true)}
+                data-testid="hero-get-started-btn"
+                className="rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 shadow-lg shadow-teal-500/30 text-base px-8 py-6 transition-all duration-300 hover:scale-105"
               >
                 Get Started
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+              <Button 
+                variant="outline"
+                size="lg"
+                onClick={() => navigate('/queue')}
+                data-testid="hero-live-queue-btn"
+                className="rounded-full border-2 border-slate-200 hover:border-slate-300 text-base px-8 py-6 hover:bg-slate-50"
+              >
+                View Live Queue
               </Button>
             </div>
-          ))}
-        </div>
-
-        {/* Quick Stats */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-4 bg-white/50 backdrop-blur rounded-xl border">
-            <p className="text-3xl font-bold text-brand-teal">6</p>
-            <p className="text-sm text-gray-500">Services</p>
-          </div>
-          <div className="text-center p-4 bg-white/50 backdrop-blur rounded-xl border">
-            <p className="text-3xl font-bold text-brand-blue">2</p>
-            <p className="text-sm text-gray-500">Clinic Locations</p>
-          </div>
-          <div className="text-center p-4 bg-white/50 backdrop-blur rounded-xl border">
-            <p className="text-3xl font-bold text-brand-orange">1000+</p>
-            <p className="text-sm text-gray-500">Medicines</p>
-          </div>
-          <div className="text-center p-4 bg-white/50 backdrop-blur rounded-xl border">
-            <p className="text-3xl font-bold text-purple-600">100+</p>
-            <p className="text-sm text-gray-500">Lab Tests</p>
           </div>
         </div>
 
-        {/* More Features Section - Always Visible */}
-        <div className="mt-12">
-          <h2 className="text-xl font-semibold text-center mb-6">More Features</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        {/* Services Grid - Bento Style */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center md:text-left">Our Services</h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+            {services.map((service) => (
+              <div
+                key={service.id}
+                className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl ${
+                  service.isDark ? '' : `bg-gradient-to-br ${service.gradient}`
+                }`}
+                style={service.isDark ? { backgroundColor: service.customBg } : {}}
+                onClick={() => navigate(service.path)}
+                data-testid={`service-card-${service.id}`}
+              >
+                {/* Card Content */}
+                <div className={`relative p-6 h-full min-h-[280px] flex flex-col ${service.isDark ? '' : 'bg-white/40 backdrop-blur-sm'}`}>
+                  {/* Decorative Elements */}
+                  <div className={`absolute top-0 right-0 w-32 h-32 rounded-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-150 ${
+                    service.isDark ? 'bg-white/5' : 'bg-white/50'
+                  }`}></div>
+                  <div className={`absolute bottom-0 left-0 w-24 h-24 rounded-full -ml-12 -mb-12 transition-transform duration-500 group-hover:scale-150 ${
+                    service.isDark ? 'bg-white/5' : 'bg-white/30'
+                  }`}></div>
+                  
+                  {/* Logo Container */}
+                  <div className="relative z-10 flex-1 flex items-center justify-center mb-4">
+                    <img 
+                      src={service.logo} 
+                      alt={service.name} 
+                      className={`max-h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-110 ${
+                        service.isDark ? 'filter brightness-110' : 'mix-blend-multiply'
+                      }`}
+                      data-testid={`service-logo-${service.id}`}
+                      loading="lazy"
+                    />
+                  </div>
+                  
+                  {/* Text Content */}
+                  <div className="relative z-10 text-center">
+                    <h3 className={`font-bold text-lg mb-2 ${service.isDark ? 'text-white' : 'text-slate-800'}`}>
+                      {service.name}
+                    </h3>
+                    <p className={`text-sm leading-relaxed ${service.isDark ? 'text-white/70' : 'text-slate-600'}`}>
+                      {service.description}
+                    </p>
+                  </div>
+                  
+                  {/* Explore Button */}
+                  <Button
+                    onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
+                    data-testid={`service-button-${service.id}`}
+                    className={`mt-4 w-full rounded-xl py-5 font-medium shadow-lg transition-all duration-300 relative z-10 ${
+                      service.isDark
+                        ? 'bg-white/15 hover:bg-white/25 text-white border border-white/20 backdrop-blur' 
+                        : 'bg-white/80 hover:bg-white text-slate-700 border border-white/50 hover:shadow-xl'
+                    }`}
+                  >
+                    Explore
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick Stats - Glassmorphism */}
+        <div className="mb-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { value: '6', label: 'Services', color: 'from-violet-500 to-purple-500' },
+              { value: '2', label: 'Clinic Locations', color: 'from-sky-500 to-blue-500' },
+              { value: '4000+', label: 'Medicines', color: 'from-orange-500 to-amber-500' },
+              { value: '100+', label: 'Lab Tests', color: 'from-pink-500 to-rose-500' }
+            ].map((stat, idx) => (
+              <div key={idx} className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl blur-xl -z-10" style={{background: `linear-gradient(to right, var(--tw-gradient-stops))`}}></div>
+                <div className="text-center p-6 bg-white/60 backdrop-blur-xl rounded-2xl border border-white/50 shadow-sm hover:shadow-lg transition-all duration-300">
+                  <p className={`text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>{stat.value}</p>
+                  <p className="text-sm text-slate-500 mt-1">{stat.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* More Features Section - Modern Grid */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center md:text-left">Quick Actions</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {/* Emergency - Highlighted */}
             <button
               onClick={() => navigate('/emergency')}
-              className="p-4 bg-red-50 backdrop-blur rounded-xl border border-red-200 hover:shadow-md transition-all text-center"
+              className="p-5 bg-gradient-to-br from-red-50 to-rose-100 backdrop-blur rounded-2xl border border-red-200/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group"
               data-testid="emergency-btn"
             >
-              <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-red-100 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-red-500" />
+              <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-red-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <AlertTriangle className="w-6 h-6 text-red-500" />
               </div>
-              <span className="text-sm font-medium text-red-700">Emergency SOS</span>
+              <span className="text-sm font-semibold text-red-700">Emergency SOS</span>
             </button>
+            
             <button
               onClick={() => navigate('/medication-tracker')}
-              className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+              className="p-5 bg-white/60 backdrop-blur rounded-2xl border border-white/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group"
               data-testid="medication-tracker-btn"
             >
-              <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-teal-100 flex items-center justify-center">
-                <Pill className="w-5 h-5 text-teal-500" />
+              <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-teal-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Pill className="w-6 h-6 text-teal-500" />
               </div>
-              <span className="text-sm font-medium">Pill Tracker</span>
+              <span className="text-sm font-semibold text-slate-700">Pill Tracker</span>
             </button>
+            
             <button
               onClick={() => navigate('/health-assessment')}
-              className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+              className="p-5 bg-white/60 backdrop-blur rounded-2xl border border-white/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group"
               data-testid="health-assessment-btn"
             >
-              <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-indigo-100 flex items-center justify-center">
-                <Activity className="w-5 h-5 text-indigo-500" />
+              <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-indigo-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Activity className="w-6 h-6 text-indigo-500" />
               </div>
-              <span className="text-sm font-medium">Risk Assessment</span>
+              <span className="text-sm font-semibold text-slate-700">Risk Assessment</span>
             </button>
+            
             <button
               onClick={() => navigate('/health-dashboard')}
-              className="p-4 bg-gradient-to-br from-red-50 to-pink-50 backdrop-blur rounded-xl border border-red-200 hover:shadow-md transition-all text-center"
+              className="p-5 bg-gradient-to-br from-rose-50 to-pink-100 backdrop-blur rounded-2xl border border-rose-200/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group"
               data-testid="my-health-btn"
             >
-              <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-red-100 flex items-center justify-center">
-                <Heart className="w-5 h-5 text-red-500" />
+              <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-rose-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Heart className="w-6 h-6 text-rose-500" />
               </div>
-              <span className="text-sm font-medium text-red-700">Health Dashboard</span>
+              <span className="text-sm font-semibold text-rose-700">Health Dashboard</span>
             </button>
+            
             <button
               onClick={() => navigate('/health-packages')}
-              className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+              className="p-5 bg-white/60 backdrop-blur rounded-2xl border border-white/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group"
               data-testid="health-packages-btn"
             >
-              <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-purple-100 flex items-center justify-center">
-                <FlaskConical className="w-5 h-5 text-purple-500" />
+              <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-purple-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <FlaskConical className="w-6 h-6 text-purple-500" />
               </div>
-              <span className="text-sm font-medium">Health Packages</span>
+              <span className="text-sm font-semibold text-slate-700">Health Packages</span>
             </button>
+            
             <button
               onClick={() => navigate('/quick-reorder')}
-              className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 backdrop-blur rounded-xl border border-green-200 hover:shadow-md transition-all text-center"
+              className="p-5 bg-gradient-to-br from-emerald-50 to-green-100 backdrop-blur rounded-2xl border border-emerald-200/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group"
               data-testid="quick-reorder-btn"
             >
-              <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-green-100 flex items-center justify-center">
-                <ChevronRight className="w-5 h-5 text-green-600" />
+              <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-emerald-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <ChevronRight className="w-6 h-6 text-emerald-600" />
               </div>
-              <span className="text-sm font-medium text-green-700">Quick Reorder</span>
+              <span className="text-sm font-semibold text-emerald-700">Quick Reorder</span>
             </button>
+            
             <button
               onClick={() => navigate('/teleconsult')}
-              className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 backdrop-blur rounded-xl border border-blue-200 hover:shadow-md transition-all text-center"
+              className="p-5 bg-gradient-to-br from-blue-50 to-sky-100 backdrop-blur rounded-2xl border border-blue-200/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group"
               data-testid="teleconsult-btn"
             >
-              <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-blue-100 flex items-center justify-center">
-                <Video className="w-5 h-5 text-blue-600" />
+              <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Video className="w-6 h-6 text-blue-600" />
               </div>
-              <span className="text-sm font-medium text-blue-700">Video Consult</span>
+              <span className="text-sm font-semibold text-blue-700">Video Consult</span>
             </button>
+            
             <button
               onClick={() => navigate('/health-tips')}
-              className="p-4 bg-white/70 backdrop-blur rounded-xl border hover:shadow-md transition-all text-center"
+              className="p-5 bg-white/60 backdrop-blur rounded-2xl border border-white/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group"
               data-testid="health-tips-btn"
             >
-              <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-yellow-100 flex items-center justify-center">
-                <Lightbulb className="w-5 h-5 text-yellow-500" />
+              <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-amber-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Lightbulb className="w-6 h-6 text-amber-500" />
               </div>
-              <span className="text-sm font-medium">Health Tips</span>
+              <span className="text-sm font-semibold text-slate-700">Health Tips</span>
             </button>
           </div>
         </div>
 
-        <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-xl border border-border/50 rounded-full px-6 py-3">
-            <span className="font-body text-muted-foreground">Need Help?</span>
+        {/* Help Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-3 bg-white/70 backdrop-blur-xl border border-white/50 rounded-full px-6 py-4 shadow-sm">
+            <span className="text-slate-600">Need Help?</span>
             <a 
               href="https://wa.me/919403890429" 
               target="_blank" 
               rel="noopener noreferrer"
               data-testid="whatsapp-link"
-              className="font-heading font-medium text-brand-teal hover:underline"
+              className="font-semibold text-teal-600 hover:text-teal-700 hover:underline transition-colors"
             >
               Contact us on WhatsApp
             </a>
@@ -479,24 +503,25 @@ const Home = () => {
         </div>
       </main>
 
-      {/* Download App Section - Hidden when running as standalone app */}
+      {/* Download App Section - Modern Gradient */}
       {!isStandalone && (
-        <section className="py-8 bg-gradient-to-r from-teal-500 to-teal-600">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-center sm:text-left">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                  <Smartphone className="w-6 h-6 text-white" />
+        <section className="py-10 bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIgMS44LTQgNC00czQgMS44IDQgNC0xLjggNC00IDQtNC0xLjgtNC00eiIvPjwvZz48L2c+PC9zdmc+')] opacity-30"></div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-center sm:text-left">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                  <Smartphone className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold text-lg">Get Nevika Cura App</h3>
-                  <p className="text-teal-100 text-sm">Healthcare at your fingertips</p>
+                  <h3 className="text-white font-bold text-xl">Get Nevika Cura App</h3>
+                  <p className="text-white/80 text-sm">Healthcare at your fingertips</p>
                 </div>
               </div>
               <a
                 href="https://customer-assets.emergentagent.com/job_caresuite/artifacts/q8j4m5st_Nevika%20Cura.apk"
                 download="Nevika Cura.apk"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-teal-600 font-semibold rounded-full hover:bg-teal-50 transition-all shadow-lg hover:shadow-xl"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-teal-600 font-bold rounded-full hover:bg-teal-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105"
                 data-testid="download-apk-btn"
               >
                 <Download className="w-5 h-5" />
