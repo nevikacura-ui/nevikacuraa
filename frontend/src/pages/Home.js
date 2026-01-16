@@ -274,7 +274,7 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Services Grid - Bento Style */}
+        {/* Services Grid - Uniform Gradient Cards */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center md:text-left">Our Services</h2>
           
@@ -282,43 +282,39 @@ const Home = () => {
             {services.map((service) => (
               <div
                 key={service.id}
-                className="group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl"
-                style={{ backgroundColor: service.bgColor }}
+                className="group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl shadow-lg"
+                style={{ background: service.gradient }}
                 onClick={() => navigate(service.path)}
                 data-testid={`service-card-${service.id}`}
               >
+                {/* Subtle Overlay for depth */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-50"></div>
+                
+                {/* Decorative circles */}
+                <div className="absolute top-0 right-0 w-20 h-20 rounded-full -mr-10 -mt-10 bg-white/10 transition-transform duration-500 group-hover:scale-150"></div>
+                <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full -ml-8 -mb-8 bg-white/10 transition-transform duration-500 group-hover:scale-150"></div>
+                
                 {/* Card Content */}
-                <div className="relative p-4 h-full min-h-[220px] sm:min-h-[260px] flex flex-col">
-                  {/* Decorative Elements */}
-                  <div className={`absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 transition-transform duration-500 group-hover:scale-150 ${
-                    service.isDark ? 'bg-white/10' : 'bg-white/50'
-                  }`}></div>
-                  <div className={`absolute bottom-0 left-0 w-20 h-20 rounded-full -ml-10 -mb-10 transition-transform duration-500 group-hover:scale-150 ${
-                    service.isDark ? 'bg-white/5' : 'bg-white/30'
-                  }`}></div>
-                  
-                  {/* Logo Container - Enlarged */}
-                  <div className="relative z-10 flex-1 flex items-center justify-center py-4">
+                <div className="relative p-5 h-full min-h-[200px] sm:min-h-[240px] flex flex-col">
+                  {/* Logo - Directly on gradient, no container */}
+                  <div className="flex-1 flex items-center justify-center py-3">
                     <img 
                       src={service.logo} 
                       alt={service.name} 
-                      className={`max-h-28 sm:max-h-32 w-auto object-contain transition-transform duration-300 group-hover:scale-110 ${
-                        service.isDark ? '' : 'mix-blend-multiply'
-                      }`}
+                      className="max-h-20 sm:max-h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-lg"
+                      style={{ 
+                        filter: service.isDark ? 'brightness(1.1) drop-shadow(0 4px 6px rgba(0,0,0,0.3))' : 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))'
+                      }}
                       data-testid={`service-logo-${service.id}`}
                       loading="lazy"
                     />
                   </div>
                   
-                  {/* Explore Button Only - No Name */}
+                  {/* Explore Button */}
                   <Button
                     onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                     data-testid={`service-button-${service.id}`}
-                    className={`mt-auto w-full rounded-xl py-5 font-medium shadow-lg transition-all duration-300 relative z-10 ${
-                      service.isDark
-                        ? 'bg-white/15 hover:bg-white/25 text-white border border-white/20 backdrop-blur' 
-                        : 'bg-white/80 hover:bg-white text-slate-700 border border-white/50 hover:shadow-xl'
-                    }`}
+                    className="mt-auto w-full rounded-xl py-4 font-semibold transition-all duration-300 relative z-10 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-lg"
                   >
                     Explore
                     <ChevronRight className="w-4 h-4 ml-1" />
