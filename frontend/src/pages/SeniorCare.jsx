@@ -52,9 +52,9 @@ const SeniorCare = () => {
       color: 'bg-blue-500',
       lightColor: 'bg-blue-50',
       offerings: [
-        { text: 'Free monthly health checkups for seniors', target: '50 seniors/month' },
+        { text: 'Subsidized monthly health checkups for seniors', target: '50 seniors/month' },
         { text: 'Subsidized doctor consultations (80% off)', target: '100 seniors/month' },
-        { text: 'Free BP, Sugar, Basic vitals monitoring', target: 'Unlimited' }
+        { text: 'Discounted BP, Sugar, Basic vitals monitoring', target: 'Unlimited' }
       ]
     },
     {
@@ -65,7 +65,9 @@ const SeniorCare = () => {
       color: 'bg-orange-500',
       lightColor: 'bg-orange-50',
       offerings: [
-        { text: 'Free delivery for bedridden seniors', target: 'Unlimited' }
+        { text: 'Free delivery for bedridden seniors', target: 'Unlimited' },
+        { text: 'Subsidized essential medicines (up to 30% off)', target: 'Ongoing' },
+        { text: 'Priority prescription processing', target: 'All seniors' }
       ]
     },
     {
@@ -76,8 +78,8 @@ const SeniorCare = () => {
       color: 'bg-indigo-500',
       lightColor: 'bg-indigo-50',
       offerings: [
-        { text: 'Free annual health screening packages', target: '200 seniors/year' },
-        { text: 'Subsidized lab tests (20% off for 60+)', target: 'Ongoing' },
+        { text: 'Subsidized annual health screening packages (50% off)', target: '200 seniors/year' },
+        { text: 'Discounted lab tests (20% off for 60+)', target: 'Ongoing' },
         { text: 'Free home sample collection for immobile seniors', target: '100/month' }
       ]
     },
@@ -89,7 +91,10 @@ const SeniorCare = () => {
       color: 'bg-purple-500',
       lightColor: 'bg-purple-50',
       offerings: [
-        { text: 'Free bone density & calcium screening', target: '5 women/month' }
+        { text: 'Subsidized bone density & calcium screening (60% off)', target: '50 women/month' },
+        { text: 'Discounted menopause wellness consultations', target: 'Ongoing' },
+        { text: 'Women\'s nutrition counseling sessions', target: 'Weekly camps' },
+        { text: 'Osteoporosis awareness programs', target: 'Monthly events' }
       ]
     },
     {
@@ -100,10 +105,11 @@ const SeniorCare = () => {
       color: 'bg-teal-500',
       lightColor: 'bg-teal-50',
       offerings: [
-        { text: 'Free HbA1c testing for diabetic seniors', target: 'Ongoing' },
-        { text: 'Subsidized insulin & diabetes medicines', target: 'Ongoing' },
-        { text: 'Free diabetes management consultations', target: '₹200/visit discount' },
-        { text: 'Diabetic diet counseling sessions', target: 'Weekly camps' }
+        { text: 'Subsidized HbA1c testing for diabetic seniors (40% off)', target: 'Ongoing' },
+        { text: 'Discounted insulin & diabetes medicines', target: 'Ongoing' },
+        { text: 'Discounted diabetes management consultations', target: '₹200/visit discount' },
+        { text: 'Diabetic diet counseling sessions', target: 'Weekly camps' },
+        { text: 'Continuous glucose monitoring support', target: '20 seniors/month' }
       ]
     }
   ];
