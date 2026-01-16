@@ -160,63 +160,51 @@ const certifications = [
   { name: 'ISO 9001', fullName: 'Quality Management Certified', color: 'bg-green-100 text-green-700' }
 ];
 
-// Services at a Glance
-const quickServices = [
-  { icon: Stethoscope, name: 'Consultation', path: '/diagyn', color: 'bg-blue-100 text-blue-600' },
-  { icon: FlaskConical, name: 'Lab Tests', path: '/proton', color: 'bg-purple-100 text-purple-600' },
-  { icon: Pill, name: 'Medicines', path: '/pharmacy', color: 'bg-orange-100 text-orange-600' },
-  { icon: Heart, name: 'Women Care', path: '/evara', color: 'bg-pink-100 text-pink-600' },
-  { icon: Activity, name: 'Diabetes', path: '/glydex', color: 'bg-teal-100 text-teal-600' },
-  { icon: Baby, name: 'Kids Health', path: '/alyne', color: 'bg-sky-100 text-sky-600' },
-  { icon: Video, name: 'Teleconsult', path: '/teleconsult', color: 'bg-indigo-100 text-indigo-600' },
-  { icon: Package, name: 'Health Packages', path: '/health-packages', color: 'bg-amber-100 text-amber-600' }
-];
-
 // How It Works Steps
 const howItWorksSteps = [
   {
     step: 1,
     title: 'Book',
-    description: 'Choose your service & schedule appointment online',
+    description: 'Choose service & schedule online',
     icon: Calendar,
     color: 'from-teal-400 to-cyan-500'
   },
   {
     step: 2,
-    title: 'Visit or We Deliver',
-    description: 'Visit clinic or get medicines/reports at your doorstep',
+    title: 'Visit or Deliver',
+    description: 'Visit clinic or doorstep delivery',
     icon: Stethoscope,
     color: 'from-blue-400 to-indigo-500'
   },
   {
     step: 3,
     title: 'Get Healthy',
-    description: 'Track your health journey with our digital dashboard',
+    description: 'Track your health journey',
     icon: Heart,
     color: 'from-pink-400 to-rose-500'
   }
 ];
 
-// Clinic Locations
+// Clinic Locations - Updated addresses from live queue
 const clinicLocations = [
   {
-    id: 'vasai',
-    name: 'DiaGyn Vasai Clinic',
-    address: 'Shop No. 5, Evershine Mall, Vasai West',
-    city: 'Vasai, Maharashtra 401202',
+    id: 'pushpa',
+    name: 'Pushpa Clinic',
+    address: 'A-1, Sai Darshan, Near Don Bosco High School',
+    city: 'Naigaon East, Maharashtra',
     phone: '+91 9403890429',
     hours: 'Mon-Sat: 9AM - 9PM',
-    mapLink: 'https://maps.google.com/?q=DiaGyn+Vasai',
+    mapLink: 'https://maps.google.com/?q=Pushpa+Clinic+Naigaon',
     services: ['Consultations', 'Sonography', 'Lab Tests']
   },
   {
-    id: 'bhayandar',
-    name: 'DiaGyn Bhayandar Clinic',
-    address: 'Maxus Mall, Bhayandar West',
-    city: 'Bhayandar, Maharashtra 401101',
+    id: 'amnion',
+    name: 'Amnion Clinic',
+    address: 'G-7, Rashmi Star City Phase 5, Opp Thakur School',
+    city: 'Naigaon East, Maharashtra',
     phone: '+91 9403890429',
     hours: 'Mon-Sat: 10AM - 8PM',
-    mapLink: 'https://maps.google.com/?q=DiaGyn+Bhayandar',
+    mapLink: 'https://maps.google.com/?q=Amnion+Clinic+Naigaon',
     services: ['Consultations', 'Pharmacy', 'Diagnostics']
   }
 ];
