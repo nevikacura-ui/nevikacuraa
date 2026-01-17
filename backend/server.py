@@ -61,6 +61,77 @@ async def health_check():
         logger.error(f"Health check failed: {e}")
         return {"status": "healthy", "service": "nevika-cura-api", "database": "reconnecting"}
 
+# ============ PUSH NOTIFICATION ENDPOINTS ============
+
+class PushSubscription(BaseModel):
+    endpoint: str
+    keys: dict
+
+@app.get("/api/push/vapid-public-key")
+async def get_vapid_public_key():
+    """Get VAPID public key for push notification subscription"""
+    if not VAPID_PUBLIC_KEY:
+        raise HTTPException(status_code=503, detail="Push notifications not configured")
+    return {"publicKey": VAPID_PUBLIC_KEY}
+
+@app.post("/api/push/subscribe")
+async def subscribe_push(subscription: PushSubscription, authorization: str = Header(None)):
+    """Subscribe to push notifications"""
+    user_id = None
+    if authorization and authorization.startswith('Bearer '):
+        try:
+            token = authorization.split(' ')[1]
+            payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+            user_id = payload.get("sub") or payload.get("user_id")
+        except:
+            pass
+    
+    sub_doc = {
+        "endpoint": subscription.endpoint,
+        "keys": subscription.keys,
+        "user_id": user_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Upsert subscription
+    await db.push_subscriptions.update_one(
+        {"endpoint": subscription.endpoint},
+        {"$set": sub_doc},
+        upsert=True
+    )
+    
+    return {"success": True, "message": "Subscription saved"}
+
+@app.post("/api/push/unsubscribe")
+async def unsubscribe_push(subscription: PushSubscription):
+    """Unsubscribe from push notifications"""
+    await db.push_subscriptions.delete_one({"endpoint": subscription.endpoint})
+    return {"success": True, "message": "Subscription removed"}
+
+@app.post("/api/push/test")
+async def test_push_notification(authorization: str = Header(None)):
+    """Send a test push notification to the authenticated user"""
+    if not authorization or not authorization.startswith('Bearer '):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    try:
+        token = authorization.split(' ')[1]
+        payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        user_id = payload.get("sub") or payload.get("user_id")
+    except:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    result = await send_push_notification(
+        user_id=user_id,
+        title="🔔 Test Notification",
+        body="Push notifications are working! You'll receive medicine reminders here.",
+        url="/smart-reminders",
+        tag="test-notification"
+    )
+    
+    return {"success": True, "message": "Test notification sent", "result": result}
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
