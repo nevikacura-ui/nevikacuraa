@@ -84,6 +84,9 @@ const DiaGyn = () => {
     email: user?.email || ''
   });
   const [loading, setLoading] = useState(false);
+  
+  // Notification prompt
+  const { showPromptAfterAction, ActionPrompt } = useNotificationPrompt();
 
   // Update current time every minute to refresh slot availability
   useEffect(() => {
