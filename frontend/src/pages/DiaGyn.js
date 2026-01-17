@@ -532,6 +532,9 @@ const DiaGyn = () => {
       
       toast.success('Appointment booked! SMS confirmation sent to you and clinic staff.');
       
+      // Show notification prompt after booking
+      showPromptAfterAction('appointment');
+      
       // Schedule email reminder if enabled (handled by backend)
       if (emailReminder && patientInfo.email) {
         toast.info('Email reminder will be sent 1 hour before your appointment.');
