@@ -3,9 +3,7 @@
   "appName": "Nevika Cura",
   "webDir": "build",
   "server": {
-    "androidScheme": "https",
-    "url": "https://www.nevikacura.com",
-    "cleartext": false
+    "androidScheme": "https"
   },
   "android": {
     "allowMixedContent": false,
