@@ -102,6 +102,8 @@ function App() {
             <Route path="/health-dashboard" element={<HealthDashboard />} />
             {/* Senior Care Charity */}
             <Route path="/senior-care" element={<SeniorCare />} />
+            {/* Smart Medicine Reminders */}
+            <Route path="/smart-reminders" element={<SmartReminders />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
