@@ -143,6 +143,48 @@ const SeniorCare = () => {
         </div>
       </section>
 
+      {/* Our Initiatives */}
+      <section className="py-10 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">Our Initiatives</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Senior / Old Age Initiative */}
+            <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white shadow-xl">
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4">
+                <Users className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">For Seniors / Old Age</h3>
+              <p className="text-white/90 text-sm leading-relaxed">
+                Dedicated healthcare support for senior citizens (60+) including subsidized checkups, 
+                medicines, diagnostic tests, and specialist consultations through our clinic network.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="px-3 py-1 bg-white/20 rounded-full text-xs">Health Checkups</span>
+                <span className="px-3 py-1 bg-white/20 rounded-full text-xs">Medicine Support</span>
+                <span className="px-3 py-1 bg-white/20 rounded-full text-xs">Home Visits</span>
+              </div>
+            </div>
+
+            {/* Animal Welfare Initiative */}
+            <div className="bg-gradient-to-br from-teal-500 to-green-500 rounded-2xl p-6 text-white shadow-xl">
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4">
+                <Heart className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">For Animals</h3>
+              <p className="text-white/90 text-sm leading-relaxed">
+                Compassionate care for stray and abandoned animals including medical treatment, 
+                vaccination drives, rescue operations, and rehabilitation support in our community.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="px-3 py-1 bg-white/20 rounded-full text-xs">Medical Care</span>
+                <span className="px-3 py-1 bg-white/20 rounded-full text-xs">Vaccination</span>
+                <span className="px-3 py-1 bg-white/20 rounded-full text-xs">Rescue & Rehab</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Mission Section */}
       <section className="py-8 px-4">
         <div className="max-w-4xl mx-auto">
