@@ -28,6 +28,17 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
    - Navigation added from Home page Quick Actions
    - 15/15 backend tests passed
 
+2. **Push Notifications for Medicine Reminders** ✅
+   - Added push notification API endpoints:
+     - `GET /api/push/vapid-public-key` - Returns VAPID public key
+     - `POST /api/push/subscribe` - Save push subscription (with/without auth)
+     - `POST /api/push/unsubscribe` - Remove subscription
+     - `POST /api/push/test` - Send test notification (requires auth)
+   - Cron endpoint `/api/medicine-reminders/cron/send-reminders` sends notifications
+   - Fixed notification URL to point to `/smart-reminders`
+   - Updated cron script with medicine reminder calls
+   - 18/18 backend tests passed
+
 ### Session - January 16, 2026
 
 #### Completed Features
