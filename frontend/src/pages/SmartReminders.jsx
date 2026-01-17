@@ -138,6 +138,8 @@ const SmartReminders = () => {
         total_quantity: 30
       });
       fetchData(true);
+      // Show notification prompt after creating reminder
+      showPromptAfterAction('medicine');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to create reminder');
     }
