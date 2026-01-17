@@ -91,6 +91,10 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 - **Clinic Timings:** Mon-Sat, 11am-2pm & 6pm-10pm
 
 ## Key Endpoints
+- `GET /api/push/vapid-public-key` - Get VAPID public key for push subscriptions
+- `POST /api/push/subscribe` - Subscribe to push notifications
+- `POST /api/push/test` - Send test push notification (requires auth)
+- `POST /api/medicine-reminders/cron/send-reminders?secret=nevika_cron_2026` - Cron to send reminders
 - `GET /api/medicine-reminders/my-reminders` - Get user's medicine reminders with stats
 - `GET /api/medicine-reminders/today` - Today's medicine schedule
 - `POST /api/medicine-reminders/create` - Create new reminder
