@@ -1,11 +1,9 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bell, X } from 'lucide-react';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { toast } from 'sonner';
-import { useAuth } from '../context/AuthContext';
 
 export function AutoNotificationPrompt() {
-  const { user } = useAuth();
   const {
     isSupported,
     permission,
@@ -15,41 +13,61 @@ export function AutoNotificationPrompt() {
   
   const [showBanner, setShowBanner] = useState(false);
   
-  // Check if dismissed from localStorage
-  const isDismissed = useMemo(() => {
-    return localStorage.getItem('notificationPromptDismissed') === 'true';
-  }, []);
-
   useEffect(() => {
-    if (isDismissed) return;
-
-    // Auto-request notifications for logged-in users after a short delay
+    // Check if app is installed (PWA) and notification not yet requested
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true;
+    
+    const notificationRequested = localStorage.getItem('notificationRequested');
+    
+    // Auto-request immediately for installed PWA or after delay for browser
     const timer = setTimeout(() => {
-      if (isSupported && !isSubscribed && permission === 'default' && user) {
-        setShowBanner(true);
+      if (isSupported && permission === 'default' && !isSubscribed) {
+        if (isStandalone && !notificationRequested) {
+          // Auto-request for installed app
+          handleAutoRequest();
+        } else if (!notificationRequested) {
+          // Show banner for browser users
+          setShowBanner(true);
+        }
       }
-    }, 3000); // Show after 3 seconds
+    }, isStandalone ? 500 : 3000);
 
     return () => clearTimeout(timer);
-  }, [isSupported, isSubscribed, permission, user, isDismissed]);
+  }, [isSupported, isSubscribed, permission]);
+
+  const handleAutoRequest = async () => {
+    localStorage.setItem('notificationRequested', 'true');
+    try {
+      const result = await Notification.requestPermission();
+      if (result === 'granted') {
+        const token = localStorage.getItem('token');
+        await subscribe(token);
+        toast.success('Notifications enabled! 🔔');
+      }
+    } catch (err) {
+      console.log('Notification permission error:', err);
+    }
+  };
 
   const handleEnable = async () => {
+    localStorage.setItem('notificationRequested', 'true');
     const token = localStorage.getItem('token');
     const success = await subscribe(token);
     if (success) {
       toast.success('Notifications enabled! You\'ll receive updates about your orders and appointments.');
       setShowBanner(false);
     } else {
-      toast.error('Failed to enable notifications. Please try again from your profile settings.');
+      toast.error('Failed to enable notifications. Please try again later.');
     }
   };
 
   const handleDismiss = () => {
     setShowBanner(false);
-    localStorage.setItem('notificationPromptDismissed', 'true');
+    localStorage.setItem('notificationRequested', 'true');
   };
 
-  if (!showBanner || isDismissed || !user) return null;
+  if (!showBanner) return null;
 
   return (
     <div className="fixed top-4 left-4 right-4 z-[100] animate-in slide-in-from-top duration-300 max-w-md mx-auto">
