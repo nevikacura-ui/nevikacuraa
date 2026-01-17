@@ -260,7 +260,7 @@ async def create_walkin_appointment(data: WalkInAppointment, staff = Depends(ver
         "patient_phone": data.patient_phone,
         "patient_email": data.patient_email,
         "appointment_type": "WALK-IN",
-        "status": "In Clinic",
+        "status": "Booked",
         "notes": data.notes,
         "created_by": staff.get('name', 'Staff'),
         "created_at": datetime.now(timezone.utc).isoformat()
