@@ -513,7 +513,7 @@ async def cron_send_medicine_reminders(secret: str = ""):
                             user_id=reminder["user_id"],
                             title="💊 Medicine Reminder",
                             body=f"Time to take {reminder.get('medicine_name')} - {reminder.get('dosage')}",
-                            url="/medication-tracker",
+                            url="/smart-reminders",
                             tag=f"med-{reminder['id']}-{time_slot}"
                         )
                         notifications_sent += 1
