@@ -196,7 +196,7 @@
     "frontend": "100% (15/15 passed)"
   },
   "test_credentials": {
-    "api_base_url": "https://medhealth-portal.preview.emergentagent.com",
+    "api_base_url": "https://carecompanion-37.preview.emergentagent.com",
     "test_user_id": "test_user_123",
     "test_child_id": "child_fc20ed0f2b58"
   },
