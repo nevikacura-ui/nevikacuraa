@@ -106,6 +106,9 @@ const SmartReminders = () => {
     fetchData();
   }, [fetchData]);
 
+  // Helper to get auth headers
+  const getHeaders = () => ({ Authorization: `Bearer ${token}` });
+
   // Create new reminder
   const handleCreateReminder = async () => {
     if (!newReminder.medicine_name || !newReminder.dosage) {
@@ -117,7 +120,7 @@ const SmartReminders = () => {
       await axios.post(`${API}/api/medicine-reminders/create`, {
         ...newReminder,
         end_date: newReminder.end_date || null
-      }, { headers });
+      }, { headers: getHeaders() });
       toast.success('Reminder created successfully!');
       setShowAddDialog(false);
       setNewReminder({
