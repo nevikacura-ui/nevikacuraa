@@ -148,7 +148,7 @@ const SmartReminders = () => {
     
     setImporting(true);
     try {
-      const res = await axios.post(`${API}/api/medicine-reminders/from-prescription/${prescriptionId.trim()}`, {}, { headers });
+      const res = await axios.post(`${API}/api/medicine-reminders/from-prescription/${prescriptionId.trim()}`, {}, { headers: getHeaders() });
       toast.success(res.data.message || 'Reminders imported successfully!');
       setShowImportDialog(false);
       setPrescriptionId('');
@@ -167,7 +167,7 @@ const SmartReminders = () => {
         reminder_id: reminderId,
         skipped,
         skip_reason: skipReason
-      }, { headers });
+      }, { headers: getHeaders() });
       
       toast.success(skipped ? 'Marked as skipped' : 'Marked as taken!');
       fetchData(true);
