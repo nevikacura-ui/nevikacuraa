@@ -1104,14 +1104,14 @@ const Home = () => {
             </button>
             
             <button
-              onClick={() => navigate('/medication-tracker')}
-              className="p-5 bg-white/60 backdrop-blur rounded-2xl border border-white/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group"
-              data-testid="medication-tracker-btn"
+              onClick={() => navigate('/smart-reminders')}
+              className="p-5 bg-gradient-to-br from-teal-50 to-emerald-100 backdrop-blur rounded-2xl border border-teal-200/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group"
+              data-testid="smart-reminders-btn"
             >
               <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-teal-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Pill className="w-6 h-6 text-teal-500" />
               </div>
-              <span className="text-sm font-semibold text-slate-700">Pill Tracker</span>
+              <span className="text-sm font-semibold text-teal-700">Smart Reminders</span>
             </button>
             
             <button
