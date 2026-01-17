@@ -226,7 +226,7 @@ async def staff_login(input: StaffLogin):
         'department': staff.get('department'),
         'clinic': staff.get('clinic'),
         'access_modules': staff.get('access_modules', []),
-        'exp': datetime.now(timezone.utc) + timedelta(hours=12)
+        'exp': datetime.now(timezone.utc) + timedelta(days=30)  # 30 days session
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
     return {
