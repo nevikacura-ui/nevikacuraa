@@ -72,14 +72,13 @@ const SmartReminders = () => {
     total_quantity: 30
   });
 
-  const headers = { Authorization: `Bearer ${token}` };
-
   // Fetch all data
   const fetchData = useCallback(async (showRefresh = false) => {
     if (!token) {
       setLoading(false);
       return;
     }
+    const headers = { Authorization: `Bearer ${token}` };
     if (showRefresh) setRefreshing(true);
     
     try {
