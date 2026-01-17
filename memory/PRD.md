@@ -12,6 +12,22 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 
 ## What's Been Implemented
 
+### Session - January 17, 2026
+
+#### Completed Features
+1. **Smart Medicine Reminders UI** ✅
+   - New `/smart-reminders` page with full CRUD functionality
+   - Today's Progress hero card with completion percentage
+   - Stats cards: Active reminders, Adherence rate, Doses taken (7d), Low stock alerts
+   - Three tabs: Today (schedule), Medicines (all reminders), History (14-day adherence chart)
+   - Add Medicine dialog with frequency options and time slots
+   - Import from Prescription feature
+   - Take/Skip buttons for pending doses
+   - Refill alerts for low stock medicines
+   - Full backend API integration at `/api/medicine-reminders/*`
+   - Navigation added from Home page Quick Actions
+   - 15/15 backend tests passed
+
 ### Session - January 16, 2026
 
 #### Completed Features
@@ -40,12 +56,10 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
    - All PWA icon sizes (72x72 to 512x512) generated
 
 2. **Senior Care Charity Module** ✅
-   - Dedicated page `/senior-care` with PSVN Charitable Trust branding
+   - Dedicated page `/senior-care` with PSVN Foundation branding
    - "Give Back" link in navigation (header + footer)
-   - 5 program initiatives: DiaGyn, Orange Pharmacy, Proton, Evara, Glydex
-   - Donation tiers: ₹300, ₹500, ₹800, ₹2000
-   - UPI payment: `pinelabs.stq4087704@pineaxis`
-   - Bank details: State Bank of Mauritius, A/C: 20229833188288, IFSC: STCB0000065
+   - Initiatives: For Seniors / Old Age, For Animals
+   - Donations removed - now self-sufficient
 
 3. **Staff Attendance Data Saving** ✅ (Bug Fix)
    - Fixed API endpoint from `/daily-report` to `/report/{clinic}`
@@ -59,13 +73,6 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
    - Refill alerts for low stock
    - Statistics and history tracking
 
-#### Previously Completed (This Session)
-- Automated Sonography Reminders (cron job)
-- Real-Time Queue System (`/queue` public page)
-- Patient Health Dashboard (`/health-dashboard`)
-- Clinic Analytics Dashboard (Admin tab)
-- UI fixes (addresses, timings, footer cleanup)
-
 ## Protected Data (DO NOT MODIFY)
 - **Medicine Inventory:** 4266 medicines
 - **Clinic Names:** Pushpa Clinic, Amnion Clinic
@@ -73,33 +80,37 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 - **Clinic Timings:** Mon-Sat, 11am-2pm & 6pm-10pm
 
 ## Key Endpoints
+- `GET /api/medicine-reminders/my-reminders` - Get user's medicine reminders with stats
+- `GET /api/medicine-reminders/today` - Today's medicine schedule
+- `POST /api/medicine-reminders/create` - Create new reminder
+- `POST /api/medicine-reminders/log` - Log medicine taken/skipped
+- `DELETE /api/medicine-reminders/{id}` - Delete reminder
+- `POST /api/medicine-reminders/from-prescription/{id}` - Import from prescription
 - `GET /api/biometric-attendance/report/{clinic}` - Daily attendance report
-- `GET /api/biometric-attendance/monthly-report` - Monthly attendance summary
-- `POST /api/biometric-attendance/mark-attendance` - Check-in/check-out
 - `GET /api/medication-tracker/today/{user_id}` - Today's medication schedule
-- `POST /api/medication-tracker/medications/{user_id}` - Add medication
-- `POST /api/medication-tracker/log/{user_id}` - Log medication taken/skipped
 - `GET /api/queue/public/{clinic}` - Live queue status
 - `GET /api/analytics/overview` - Admin analytics
 
 ## Pending User Verification
-1. **Face ID Camera** - Mobile device testing needed
-2. **Staff Attendance UI** - Confirm data is now displaying correctly
+1. **Push Notification Prompt** - Test on mobile device after PWA install
+2. **Face ID Camera** - Mobile device testing needed
+3. **App Icon Centering** - Confirm on home screen
 
 ## Upcoming Tasks (P1-P2)
 1. Cashfree Payment Gateway Integration
 2. Refactor StaffPortal.js (4000+ lines)
-3. Apple Sign-In
+3. Refactor Home.js (~2000 lines)
+4. Apple Sign-In
 
 ## Future/Backlog
 - Migrate hardcoded data to MongoDB
 - Login History page
-- Checkout round-up donations
 
 ## Test Credentials
 - **Staff:** `staff_pushpa` / `Nevika@2026C`
 - **Doctor:** `doc_neha` / `Nevika@2026C`
+- **Test User:** `testmed@test.com` / `test123`
 - **Mock OTP:** `721358`
 
 ## Test Reports
-- `/app/test_reports/iteration_42.json` - Latest (18/18 tests passed)
+- `/app/test_reports/iteration_43.json` - Latest (15/15 tests passed)
