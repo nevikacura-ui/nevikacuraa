@@ -1186,6 +1186,9 @@ const DiaGyn = () => {
           </div>
         </DialogContent>
       </Dialog>
+      
+      {/* Action notification prompt */}
+      <ActionPrompt />
     </div>
   );
 };
