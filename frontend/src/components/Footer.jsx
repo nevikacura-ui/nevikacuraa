@@ -41,7 +41,7 @@ const Footer = () => {
                   WhatsApp Support
                 </Button>
                 <a 
-                  href="https://nevikacura.com"
+                  href="https://drive.google.com/uc?export=download&id=1TaQ5PxgOaRUq_kyDux3lovWLg5Gs4nqi"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-brand-teal hover:bg-brand-teal/90 text-white rounded-md text-sm font-medium transition-colors"
