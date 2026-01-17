@@ -807,6 +807,9 @@ const SmartReminders = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Action-triggered notification prompt */}
+      <ActionPrompt />
+
       <Footer />
     </div>
   );
