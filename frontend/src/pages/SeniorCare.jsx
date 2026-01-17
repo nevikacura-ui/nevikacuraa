@@ -151,8 +151,8 @@ const SeniorCare = () => {
           {/* Logo */}
           <div className="mb-6">
             <img 
-              src="/icons/psvn-trust-logo.png" 
-              alt="PSVN Charitable Trust" 
+              src="/icons/psvn-foundation-logo.png" 
+              alt="PSVN Foundation" 
               className="w-32 h-32 md:w-40 md:h-40 mx-auto object-contain"
               data-testid="charity-logo"
             />
@@ -162,7 +162,7 @@ const SeniorCare = () => {
             Nevika Cura Senior Care
           </h1>
           <p className="text-lg md:text-xl text-purple-600 font-medium mb-4">
-            by PSVN Charitable Trust
+            by PSVN Foundation
           </p>
           <p className="text-2xl md:text-3xl font-serif italic text-green-700 mb-6">
             "Caring for Those Who Cared for Us"
