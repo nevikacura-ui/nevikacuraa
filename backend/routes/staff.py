@@ -315,7 +315,7 @@ async def create_emergency_appointment(data: EmergencyAppointment, staff = Depen
         "patient_email": data.patient_email,
         "appointment_type": "EMERGENCY",
         "emergency_type": data.emergency_type or "General Emergency",
-        "status": "In Clinic",
+        "status": "Booked",
         "notes": data.notes,
         "created_by": staff.get('name', 'Staff'),
         "created_at": datetime.now(timezone.utc).isoformat()
