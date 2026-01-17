@@ -183,6 +183,36 @@ export function usePushNotifications() {
     }
   }, []);
 
+  // Test notification directly via service worker (works in background)
+  const testBackgroundNotification = useCallback(async () => {
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      if (registration.active) {
+        registration.active.postMessage({ type: 'TEST_NOTIFICATION' });
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Background test error:', err);
+      return false;
+    }
+  }, []);
+
+  // Force update service worker
+  const updateServiceWorker = useCallback(async () => {
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      await registration.update();
+      if (registration.waiting) {
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
+      return true;
+    } catch (err) {
+      console.error('SW update error:', err);
+      return false;
+    }
+  }, []);
+
   return {
     isSupported,
     permission,
@@ -192,6 +222,8 @@ export function usePushNotifications() {
     subscribe,
     unsubscribe,
     sendTestNotification,
+    testBackgroundNotification,
+    updateServiceWorker,
     checkSubscription
   };
 }
