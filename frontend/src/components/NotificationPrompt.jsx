@@ -11,11 +11,16 @@ export function FullScreenNotificationPrompt({ onComplete }) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // Don't show on staff/admin/doctor pages
+    const isStaffPage = window.location.pathname.startsWith('/staff') || 
+                        window.location.pathname.startsWith('/admin') ||
+                        window.location.pathname.startsWith('/doctor');
+    
     // Show full screen prompt on first visit if notifications not enabled
     const hasSeenFullPrompt = localStorage.getItem('hasSeenFullNotificationPrompt');
     const notificationEnabled = permission === 'granted';
     
-    if (!hasSeenFullPrompt && isSupported && !notificationEnabled && !isSubscribed) {
+    if (!isStaffPage && !hasSeenFullPrompt && isSupported && !notificationEnabled && !isSubscribed) {
       // Show after a brief delay for better UX
       const timer = setTimeout(() => setIsVisible(true), 1500);
       return () => clearTimeout(timer);
