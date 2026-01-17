@@ -50,6 +50,9 @@ const SmartReminders = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState('today');
   
+  // Notification prompt hook
+  const { showPromptAfterAction, ActionPrompt } = useNotificationPrompt();
+  
   // Data states
   const [reminders, setReminders] = useState([]);
   const [todaySchedule, setTodaySchedule] = useState([]);
