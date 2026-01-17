@@ -128,4 +128,5 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 - **Mock OTP:** `721358`
 
 ## Test Reports
-- `/app/test_reports/iteration_43.json` - Latest (15/15 tests passed)
+- `/app/test_reports/iteration_44.json` - Latest (18/18 tests passed - Push notifications & cron)
+- `/app/test_reports/iteration_43.json` - Smart Medicine Reminders (15/15 tests passed)
