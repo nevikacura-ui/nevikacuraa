@@ -283,6 +283,13 @@ export function SmartNotificationBanner() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // Don't show on staff/admin/doctor pages
+    const isStaffPage = window.location.pathname.startsWith('/staff') || 
+                        window.location.pathname.startsWith('/admin') ||
+                        window.location.pathname.startsWith('/doctor');
+    
+    if (isStaffPage) return;
+    
     // Check if we should re-prompt
     const shouldShowBanner = () => {
       if (!isSupported || permission === 'granted' || isSubscribed) return false;
