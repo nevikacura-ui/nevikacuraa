@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import { ArrowLeft, Clock, MapPin, Ban, Shield, CheckCircle2, Loader2, Phone, CalendarDays, Wifi, WifiOff } from 'lucide-react';
 import { format, isSunday } from 'date-fns';
+import { useNotificationPrompt } from '@/components/NotificationPrompt';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
