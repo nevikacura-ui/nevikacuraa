@@ -288,7 +288,7 @@ const SmartReminders = () => {
           <CardContent className="p-6 relative">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-teal-100 text-sm mb-1">Today's Progress</p>
+                <p className="text-teal-100 text-sm mb-1">Today&apos;s Progress</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-bold">{todayProgress}%</span>
                   <span className="text-teal-200">completed</span>
@@ -417,7 +417,7 @@ const SmartReminders = () => {
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       <Calendar className="w-5 h-5 text-teal-600" />
-                      Today's Schedule
+                      Today&apos;s Schedule
                     </CardTitle>
                     <CardDescription>
                       {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
