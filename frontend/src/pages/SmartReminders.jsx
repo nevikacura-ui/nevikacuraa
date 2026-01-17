@@ -181,7 +181,7 @@ const SmartReminders = () => {
     if (!window.confirm('Delete this reminder?')) return;
     
     try {
-      await axios.delete(`${API}/api/medicine-reminders/${reminderId}`, { headers });
+      await axios.delete(`${API}/api/medicine-reminders/${reminderId}`, { headers: getHeaders() });
       toast.success('Reminder deleted');
       fetchData(true);
     } catch (error) {
