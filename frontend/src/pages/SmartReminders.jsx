@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
 import Footer from '@/components/Footer';
+import { useNotificationPrompt } from '@/components/NotificationPrompt';
 import {
   ArrowLeft, Pill, Clock, Plus, Check, X, Bell, AlertTriangle,
   RefreshCw, Loader2, Calendar, TrendingUp, ChevronRight,
