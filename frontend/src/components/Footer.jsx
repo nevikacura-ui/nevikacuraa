@@ -169,13 +169,13 @@ const Footer = () => {
               </div>
               <div className="bg-white p-2 rounded-lg">
                 <img 
-                  src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://customer-assets.emergentagent.com/job_nevikacura-3/artifacts/f1z0yrfn_Nevika%20Cura.apk"
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://nevikacura.com"
                   alt="Download Nevika Cura App QR Code"
                   className="w-28 h-28"
                   data-testid="footer-qr-code"
                 />
               </div>
-              <p className="text-xs text-gray-500">Android App • No browser bar</p>
+              <p className="text-xs text-gray-500">Scan & Install • Works on all phones</p>
             </div>
           </div>
 
