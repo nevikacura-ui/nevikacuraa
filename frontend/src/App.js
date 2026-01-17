@@ -107,7 +107,8 @@ function App() {
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
-          <AutoNotificationPrompt />
+          <FullScreenNotificationPrompt />
+          <SmartNotificationBanner />
         </div>
       </BrowserRouter>
     </AuthProvider>
