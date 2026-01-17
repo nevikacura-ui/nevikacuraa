@@ -48,7 +48,7 @@ import SeniorCare from '@/pages/SeniorCare';
 import SmartReminders from '@/pages/SmartReminders';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
-import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
+import { FullScreenNotificationPrompt, SmartNotificationBanner } from '@/components/NotificationPrompt';
 import './App.css';
 
 function App() {
