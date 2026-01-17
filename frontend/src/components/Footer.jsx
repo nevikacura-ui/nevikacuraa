@@ -41,13 +41,14 @@ const Footer = () => {
                   WhatsApp Support
                 </Button>
                 <a 
-                  href="https://customer-assets.emergentagent.com/job_nevikacura-3/artifacts/f1z0yrfn_Nevika%20Cura.apk"
-                  download
+                  href="https://nevikacura.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-brand-teal hover:bg-brand-teal/90 text-white rounded-md text-sm font-medium transition-colors"
                   data-testid="footer-download-apk"
                 >
                   <Download className="w-4 h-4" />
-                  Download Android App
+                  Get the App
                 </a>
               </div>
             </div>
