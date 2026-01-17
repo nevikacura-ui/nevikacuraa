@@ -44,6 +44,8 @@ import QueuePage from '@/pages/QueuePage';
 import HealthDashboard from '@/pages/HealthDashboard';
 // Senior Care Charity
 import SeniorCare from '@/pages/SeniorCare';
+// Smart Medicine Reminders
+import SmartReminders from '@/pages/SmartReminders';
 import { AuthProvider } from '@/context/AuthContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import AutoNotificationPrompt from '@/components/AutoNotificationPrompt';
