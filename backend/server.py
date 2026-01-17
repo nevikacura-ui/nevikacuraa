@@ -63,7 +63,7 @@ async def health_check():
 
 # ============ PUSH NOTIFICATION ENDPOINTS ============
 
-class PushSubscription(BaseModel):
+class PushSubscriptionRequest(BaseModel):
     endpoint: str
     keys: dict
 
@@ -75,7 +75,7 @@ async def get_vapid_public_key():
     return {"publicKey": VAPID_PUBLIC_KEY}
 
 @app.post("/api/push/subscribe")
-async def subscribe_push(subscription: PushSubscription, authorization: str = Header(None)):
+async def subscribe_push(subscription: PushSubscriptionRequest, authorization: str = Header(None)):
     """Subscribe to push notifications"""
     user_id = None
     if authorization and authorization.startswith('Bearer '):
@@ -104,7 +104,7 @@ async def subscribe_push(subscription: PushSubscription, authorization: str = He
     return {"success": True, "message": "Subscription saved"}
 
 @app.post("/api/push/unsubscribe")
-async def unsubscribe_push(subscription: PushSubscription):
+async def unsubscribe_push(subscription: PushSubscriptionRequest):
     """Unsubscribe from push notifications"""
     await db.push_subscriptions.delete_one({"endpoint": subscription.endpoint})
     return {"success": True, "message": "Subscription removed"}
