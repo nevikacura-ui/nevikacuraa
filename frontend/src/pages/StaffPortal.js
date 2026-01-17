@@ -2097,7 +2097,7 @@ const StaffPortal = () => {
                               Sonography
                             </Button>
                           )}
-                          {(appt.status === 'Booked' || appt.status === 'pending') && (
+                          {(appt.status === 'Booked' || appt.status === 'booked' || appt.status === 'pending' || appt.status === 'Pending') && (
                             <Button 
                               size="sm" 
                               onClick={() => handleCheckIn(appt.id)} 
