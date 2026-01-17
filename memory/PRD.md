@@ -39,6 +39,14 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
    - Updated cron script with medicine reminder calls
    - 18/18 backend tests passed
 
+3. **Aggressive Notification Prompts** ✅
+   - **Full-screen prompt** on first app open with benefits list
+   - **Action-triggered prompts** after booking appointments or adding medicine reminders
+   - **Smart re-prompt banner** - re-prompts after 24h (1st skip), 3 days (2nd), 7 days (3rd)
+   - Clear benefits: Medicine reminders, Appointment alerts, Order updates, Health tips
+   - Privacy reassurance: "Unsubscribe anytime"
+   - Stops prompting after 5 skips to respect user choice
+
 ### Session - January 16, 2026
 
 #### Completed Features
