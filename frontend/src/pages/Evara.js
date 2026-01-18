@@ -750,6 +750,7 @@ const Evara = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [programs, setPrograms] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [showChat, setShowChat] = useState(false);
