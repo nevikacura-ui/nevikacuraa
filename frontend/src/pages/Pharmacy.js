@@ -811,14 +811,20 @@ const Pharmacy = () => {
                         <button
                           key={`${med.name}-${idx}`}
                           onClick={() => addToCart(med)}
-                          className="w-full flex items-center justify-between p-3 hover:bg-orange-50 transition-colors text-left"
+                          className="w-full flex items-center justify-between p-3 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 transition-colors text-left group"
                           data-testid={`inventory-item-${idx}`}
                         >
-                          <div className="flex-1 min-w-0">
-                            <span className="font-medium text-sm text-slate-800 block truncate">{med.name}</span>
-                            <span className="text-xs text-slate-500">{med.form}</span>
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <span className="text-2xl" role="img" aria-label={med.form}>{getMedicineIcon(med.form)}</span>
+                            <div>
+                              <span className="font-medium text-sm text-slate-800 block truncate">{med.name}</span>
+                              <span className="text-xs text-orange-600 font-medium">{med.form}</span>
+                            </div>
                           </div>
-                          <Plus className="w-5 h-5 text-orange-500 flex-shrink-0 ml-2" />
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-slate-400 group-hover:text-orange-500">Add</span>
+                            <Plus className="w-5 h-5 text-orange-500 flex-shrink-0" />
+                          </div>
                         </button>
                       ))}
                       {loadingMore && (
