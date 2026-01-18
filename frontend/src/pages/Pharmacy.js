@@ -59,6 +59,77 @@ const getMedicineIcon = (form) => {
   return icons[form] || '💊';
 };
 
+// Medicine category images - professional stock photos
+const categoryImages = {
+  tablets: {
+    image: 'https://images.unsplash.com/photo-1631980839248-1a84a60c66ac?w=400&q=80',
+    label: 'Tablets & Pills',
+    icon: '💊',
+    color: 'from-blue-500 to-indigo-600'
+  },
+  capsules: {
+    image: 'https://images.unsplash.com/photo-1641561421178-db8542057811?w=400&q=80',
+    label: 'Capsules',
+    icon: '💊',
+    color: 'from-orange-500 to-red-500'
+  },
+  syrups: {
+    image: 'https://images.unsplash.com/photo-1647943746660-1640133068d5?w=400&q=80',
+    label: 'Syrups & Liquids',
+    icon: '🧴',
+    color: 'from-amber-500 to-orange-500'
+  },
+  injections: {
+    image: 'https://images.unsplash.com/photo-1763142842705-78621f9c0414?w=400&q=80',
+    label: 'Injections',
+    icon: '💉',
+    color: 'from-emerald-500 to-teal-600'
+  },
+  creams: {
+    image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&q=80',
+    label: 'Creams & Ointments',
+    icon: '🧴',
+    color: 'from-pink-500 to-rose-500'
+  },
+  drops: {
+    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&q=80',
+    label: 'Drops & Solutions',
+    icon: '💧',
+    color: 'from-cyan-500 to-blue-500'
+  }
+};
+
+// Category Card Component
+const CategoryCard = ({ category, isActive, onClick }) => {
+  const cat = categoryImages[category];
+  return (
+    <button
+      onClick={onClick}
+      className={`relative overflow-hidden rounded-2xl transition-all duration-300 group ${
+        isActive ? 'ring-4 ring-orange-400 scale-105 shadow-xl' : 'hover:scale-102 hover:shadow-lg'
+      }`}
+    >
+      <div className="aspect-[4/3] relative">
+        <img 
+          src={cat.image} 
+          alt={cat.label}
+          className="w-full h-full object-cover"
+        />
+        <div className={`absolute inset-0 bg-gradient-to-t ${cat.color} opacity-70`} />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-2">
+          <span className="text-3xl mb-1">{cat.icon}</span>
+          <span className="text-xs sm:text-sm font-semibold text-center leading-tight">{cat.label}</span>
+        </div>
+        {isActive && (
+          <div className="absolute top-2 right-2 bg-white rounded-full p-1">
+            <CheckCircle2 className="w-4 h-4 text-orange-500" />
+          </div>
+        )}
+      </div>
+    </button>
+  );
+};
+
 // ============================================
 // STEP PROGRESS COMPONENT
 // ============================================
