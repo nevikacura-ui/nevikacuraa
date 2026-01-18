@@ -240,7 +240,7 @@ const TestCategoryCard = ({ icon: Icon, title, count, color, isActive, onClick }
 );
 
 // ============================================
-// TEST CHECKBOX COMPONENT (Pastel Style)
+// TEST CHECKBOX COMPONENT (Pastel Style with Icons)
 // ============================================
 const TestCheckbox = ({ test, checked, onToggle }) => (
   <label className="flex items-center gap-2.5 py-2 px-3 rounded-xl cursor-pointer hover:bg-[#5FA8D3]/5 transition-colors group">
@@ -250,6 +250,7 @@ const TestCheckbox = ({ test, checked, onToggle }) => (
       onCheckedChange={onToggle}
       className="border-2 border-slate-300 data-[state=checked]:bg-[#5FA8D3] data-[state=checked]:border-[#5FA8D3]"
     />
+    <span className="text-lg" role="img" aria-label="test icon">{getTestIcon(test)}</span>
     <span className="text-sm text-[#1E293B] group-hover:text-[#5FA8D3] transition-colors" style={{ fontFamily: 'DM Sans, sans-serif' }}>
       {test}
     </span>
