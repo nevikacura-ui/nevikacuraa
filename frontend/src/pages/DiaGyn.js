@@ -10,11 +10,11 @@ import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
-  ArrowLeft, Clock, MapPin, Ban, Shield, CheckCircle2, Loader2, Phone, 
-  CalendarDays, Wifi, WifiOff, Star, Award, GraduationCap, Calendar,
-  ChevronLeft, ChevronRight, User, Mail, Stethoscope, Building2
+  ArrowLeft, Clock, Ban, Shield, CheckCircle2, Loader2, 
+  CalendarDays, Wifi, WifiOff, GraduationCap, Calendar,
+  ChevronLeft, ChevronRight, User, Stethoscope, Building2, Heart, Sparkles
 } from 'lucide-react';
-import { format, isSunday, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday, isPast } from 'date-fns';
+import { format, isSunday, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday } from 'date-fns';
 import { useNotificationPrompt } from '@/components/NotificationPrompt';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -25,8 +25,21 @@ const getWsUrl = () => {
   return `${protocol}//${url.host}`;
 };
 const WS_URL = getWsUrl();
-const WHATSAPP_NUMBER = '+917039020020';
 
+// ============================================
+// DESIGN SYSTEM - Serene Care Pastel Theme
+// ============================================
+const theme = {
+  primary: { main: '#5FA8D3', light: '#CAE9FF', dark: '#1B4965' },
+  secondary: { main: '#62B6CB', light: '#BEE9E8', dark: '#1B4965' },
+  accent: { main: '#FFB4A2', light: '#FFD6BA' },
+  neutral: { background: '#FDFBF7', surface: '#FFFFFF', textPrimary: '#1E293B', textSecondary: '#64748B', border: '#E2E8F0' },
+  status: { success: '#A7C957', error: '#EF476F', warning: '#FFD166' }
+};
+
+// ============================================
+// DOCTOR & CLINIC DATA
+// ============================================
 const doctors = [
   {
     id: 'vikas',
@@ -71,22 +84,175 @@ const clinics = [
   { id: 'amnion', name: 'Amnion Clinic', address: 'G-7, Rashmi Star City Phase 5, Opp Thakur School, Naigaon East', image: 'https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/pe7sn5ws_9_20260102_012214_0005.png' }
 ];
 
-// Rich Calendar Component
-const RichCalendar = ({ selectedDate, onSelect, disabledDays, doctorSchedule, clinicId }) => {
+// ============================================
+// DOCTOR PROFILE CARD - Enhanced Pastel Design
+// ============================================
+const DoctorProfileCard = ({ doctor, isSelected, onSelect }) => {
+  return (
+    <div 
+      onClick={onSelect}
+      data-testid={`doctor-card-${doctor.id}`}
+      className={`
+        relative overflow-hidden cursor-pointer transition-all duration-300 
+        rounded-3xl p-1 group
+        ${isSelected 
+          ? 'bg-gradient-to-br from-[#5FA8D3] via-[#62B6CB] to-[#FFB4A2] shadow-[0_20px_50px_rgb(0,0,0,0.1)]' 
+          : 'bg-gradient-to-br from-slate-100 to-slate-50 hover:from-[#CAE9FF] hover:to-[#BEE9E8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]'
+        }
+      `}
+    >
+      <div className="bg-white rounded-[22px] p-5 h-full">
+        {/* Selection Badge */}
+        {isSelected && (
+          <div className="absolute top-4 right-4 z-10">
+            <Badge className="bg-[#5FA8D3] text-white px-3 py-1 rounded-full flex items-center gap-1.5 shadow-lg">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Selected
+            </Badge>
+          </div>
+        )}
+
+        {/* Top Section - Image & Basic Info */}
+        <div className="flex gap-5">
+          {/* Doctor Image */}
+          <div className="relative flex-shrink-0">
+            <div className={`w-24 h-24 rounded-2xl overflow-hidden ring-4 transition-all duration-300 ${isSelected ? 'ring-[#5FA8D3]/30' : 'ring-[#BEE9E8]/50 group-hover:ring-[#5FA8D3]/20'}`}>
+              <img 
+                src={doctor.image} 
+                alt={doctor.name}
+                className="w-full h-full object-cover"
+                data-testid={`doctor-image-${doctor.id}`}
+              />
+            </div>
+            {/* Online Status */}
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#A7C957] border-2 border-white rounded-full flex items-center justify-center">
+              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+            </div>
+          </div>
+
+          {/* Name & Specialty */}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xl font-bold text-[#1B4965] mb-1 truncate" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              {doctor.name}
+            </h3>
+            <Badge className="bg-[#BEE9E8] text-[#1B4965] px-3 py-1 rounded-full text-xs font-medium border-0 mb-3">
+              <Stethoscope className="w-3 h-3 mr-1.5" />
+              {doctor.specialty}
+            </Badge>
+            
+            {/* Quick Stats */}
+            <div className="flex items-center gap-3 text-xs text-[#64748B]">
+              <span className="flex items-center gap-1">
+                <Heart className="w-3.5 h-3.5 text-[#FFB4A2]" />
+                {doctor.patients} patients
+              </span>
+              <span>•</span>
+              <span>{doctor.experience}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Degree & Qualifications - HIGHLIGHTED */}
+        <div className="mt-5 p-4 bg-gradient-to-r from-[#CAE9FF]/40 to-[#BEE9E8]/40 rounded-2xl border border-[#CAE9FF]/60">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-xl bg-[#5FA8D3]/20 flex items-center justify-center flex-shrink-0">
+              <GraduationCap className="w-4 h-4 text-[#5FA8D3]" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-[#1B4965] uppercase tracking-wide mb-1">
+                Qualifications
+              </p>
+              <p className="text-sm text-[#64748B] leading-relaxed" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                {doctor.qualifications}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Specializations */}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {doctor.specializations.map((spec, i) => (
+            <Badge 
+              key={i} 
+              variant="outline" 
+              className="text-xs bg-white border-[#E2E8F0] text-[#64748B] px-2.5 py-1 rounded-full hover:bg-[#FDFBF7] hover:border-[#5FA8D3] transition-colors"
+            >
+              {spec}
+            </Badge>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
+// CLINIC SELECTION CARD - Pastel Design
+// ============================================
+const ClinicCard = ({ clinic, isSelected, onSelect }) => {
+  return (
+    <div
+      onClick={onSelect}
+      data-testid={`clinic-card-${clinic.id}`}
+      className={`
+        relative overflow-hidden cursor-pointer transition-all duration-300 
+        rounded-3xl group
+        ${isSelected 
+          ? 'ring-2 ring-[#5FA8D3] shadow-[0_20px_50px_rgb(0,0,0,0.1)]' 
+          : 'ring-1 ring-[#E2E8F0] hover:ring-[#5FA8D3]/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]'
+        }
+      `}
+    >
+      {/* Clinic Image */}
+      <div className="h-36 overflow-hidden relative">
+        <img src={clinic.image} alt={clinic.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        {isSelected && (
+          <div className="absolute top-3 right-3">
+            <Badge className="bg-[#5FA8D3] text-white px-3 py-1 rounded-full flex items-center gap-1.5 shadow-lg">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Selected
+            </Badge>
+          </div>
+        )}
+      </div>
+      
+      {/* Clinic Info */}
+      <div className="p-5 bg-white">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#BEE9E8] flex items-center justify-center flex-shrink-0">
+            <Building2 className="w-5 h-5 text-[#1B4965]" />
+          </div>
+          <div>
+            <h3 className="font-bold text-lg text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              {clinic.name}
+            </h3>
+            <p className="text-sm text-[#64748B] mt-1 leading-relaxed" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              {clinic.address}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
+// RICH CALENDAR - Pastel Design
+// ============================================
+const RichCalendar = ({ selectedDate, onSelect, doctorSchedule, clinicId }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
   
-  // Get day of week for first day (0 = Sunday)
   const startDay = monthStart.getDay();
   const emptyDays = Array(startDay).fill(null);
   
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const fullDayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   
-  // Check if doctor is available on a given day
   const isDoctorAvailable = (date) => {
     if (!doctorSchedule || !clinicId) return true;
     const dayName = fullDayNames[date.getDay()];
@@ -102,22 +268,24 @@ const RichCalendar = ({ selectedDate, onSelect, disabledDays, doctorSchedule, cl
   };
   
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-      {/* Month Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-4">
+    <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-[#E2E8F0]">
+      {/* Month Header - Pastel Gradient */}
+      <div className="bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] px-5 py-4">
         <div className="flex items-center justify-between">
           <button 
             onClick={() => setCurrentMonth(prev => addDays(startOfMonth(prev), -1))}
-            className="p-2 hover:bg-white/20 rounded-full transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+            data-testid="calendar-prev-month"
           >
             <ChevronLeft className="w-5 h-5 text-white" />
           </button>
-          <h3 className="text-lg font-bold text-white">
+          <h3 className="text-lg font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
             {format(currentMonth, 'MMMM yyyy')}
           </h3>
           <button 
             onClick={() => setCurrentMonth(prev => addDays(endOfMonth(prev), 1))}
-            className="p-2 hover:bg-white/20 rounded-full transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+            data-testid="calendar-next-month"
           >
             <ChevronRight className="w-5 h-5 text-white" />
           </button>
@@ -125,18 +293,22 @@ const RichCalendar = ({ selectedDate, onSelect, disabledDays, doctorSchedule, cl
       </div>
       
       {/* Day Names */}
-      <div className="grid grid-cols-7 bg-gray-50 border-b">
+      <div className="grid grid-cols-7 bg-[#FDFBF7] border-b border-[#E2E8F0]">
         {dayNames.map(day => (
-          <div key={day} className={`py-2 text-center text-xs font-semibold ${day === 'Sun' ? 'text-red-400' : 'text-gray-500'}`}>
+          <div 
+            key={day} 
+            className={`py-3 text-center text-xs font-semibold ${day === 'Sun' ? 'text-[#EF476F]' : 'text-[#64748B]'}`}
+            style={{ fontFamily: 'DM Sans, sans-serif' }}
+          >
             {day}
           </div>
         ))}
       </div>
       
-      {/* Calendar Days */}
-      <div className="grid grid-cols-7 gap-1 p-2">
+      {/* Calendar Days Grid */}
+      <div className="grid grid-cols-7 gap-1.5 p-3">
         {emptyDays.map((_, i) => (
-          <div key={`empty-${i}`} className="h-10" />
+          <div key={`empty-${i}`} className="h-11" />
         ))}
         {days.map(day => {
           const disabled = isDateDisabled(day);
@@ -149,23 +321,25 @@ const RichCalendar = ({ selectedDate, onSelect, disabledDays, doctorSchedule, cl
               key={day.toString()}
               onClick={() => !disabled && onSelect(day)}
               disabled={disabled}
+              data-testid={`calendar-day-${format(day, 'yyyy-MM-dd')}`}
               className={`
-                h-10 w-full rounded-lg text-sm font-medium transition-all relative
+                h-11 w-full rounded-xl text-sm font-medium transition-all relative
                 ${disabled 
-                  ? 'text-gray-300 cursor-not-allowed' 
+                  ? 'text-[#CBD5E1] cursor-not-allowed' 
                   : isSelected 
-                    ? 'bg-blue-600 text-white shadow-lg scale-105' 
+                    ? 'bg-[#5FA8D3] text-white shadow-lg scale-105' 
                     : isTodayDate
-                      ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                      ? 'bg-[#CAE9FF] text-[#1B4965] hover:bg-[#5FA8D3] hover:text-white font-bold'
                       : isAvailable
-                        ? 'hover:bg-gray-100 text-gray-700'
-                        : 'text-gray-300'
+                        ? 'hover:bg-[#BEE9E8] text-[#1B4965]'
+                        : 'text-[#CBD5E1]'
                 }
               `}
+              style={{ fontFamily: 'DM Sans, sans-serif' }}
             >
               {format(day, 'd')}
               {isAvailable && !disabled && !isSelected && (
-                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full" />
+                <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#A7C957] rounded-full" />
               )}
             </button>
           );
@@ -173,17 +347,17 @@ const RichCalendar = ({ selectedDate, onSelect, disabledDays, doctorSchedule, cl
       </div>
       
       {/* Legend */}
-      <div className="px-4 py-3 bg-gray-50 border-t flex items-center gap-4 text-xs">
-        <span className="flex items-center gap-1">
-          <span className="w-2 h-2 bg-green-500 rounded-full" />
+      <div className="px-4 py-3 bg-[#FDFBF7] border-t border-[#E2E8F0] flex items-center gap-5 text-xs" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+        <span className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 bg-[#A7C957] rounded-full" />
           Available
         </span>
-        <span className="flex items-center gap-1">
-          <span className="w-2 h-2 bg-blue-600 rounded-full" />
+        <span className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 bg-[#5FA8D3] rounded-full" />
           Selected
         </span>
-        <span className="flex items-center gap-1">
-          <span className="w-2 h-2 bg-gray-300 rounded-full" />
+        <span className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 bg-[#CBD5E1] rounded-full" />
           Unavailable
         </span>
       </div>
@@ -191,85 +365,145 @@ const RichCalendar = ({ selectedDate, onSelect, disabledDays, doctorSchedule, cl
   );
 };
 
-// Doctor Profile Card Component
-const DoctorProfileCard = ({ doctor, isSelected, onSelect }) => {
+// ============================================
+// TIME SLOT PICKER - Pastel Design
+// ============================================
+const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDate, currentTime, loading, wsConnected }) => {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <div className="text-center">
+          <Loader2 className="w-10 h-10 animate-spin text-[#5FA8D3] mx-auto mb-3" />
+          <p className="text-[#64748B] text-sm">Loading available slots...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const unbookedSlots = slots.filter(slot => !bookedSlots.includes(slot));
+
+  if (unbookedSlots.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <div className="w-16 h-16 bg-[#FFD6BA]/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <Clock className="w-8 h-8 text-[#FFB4A2]" />
+        </div>
+        <p className="text-[#64748B] text-sm">No slots available for this day</p>
+      </div>
+    );
+  }
+
   return (
-    <Card 
-      className={`overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl ${
-        isSelected ? 'ring-2 ring-blue-500 shadow-xl scale-[1.02]' : 'hover:scale-[1.01]'
-      }`}
-      onClick={onSelect}
-      data-testid={`doctor-card-${doctor.id}`}
-    >
-      {/* Header with gradient */}
-      <div className="relative h-32 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600">
-        <div className="absolute inset-0 bg-black/10" />
-        {isSelected && (
-          <div className="absolute top-3 right-3">
-            <Badge className="bg-white text-blue-600">
-              <CheckCircle2 className="w-3 h-3 mr-1" />
-              Selected
-            </Badge>
-          </div>
-        )}
+    <div>
+      {/* Connection Status & Time Period Legend */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex gap-4 text-xs" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+          <span className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-[#FFD166]" />
+            Morning
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-[#5FA8D3]" />
+            Evening
+          </span>
+        </div>
+        <span className={`flex items-center gap-1.5 text-xs font-medium ${wsConnected ? 'text-[#A7C957]' : 'text-[#64748B]'}`}>
+          {wsConnected ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
+          {wsConnected ? 'Live Updates' : 'Offline'}
+        </span>
       </div>
-      
-      {/* Profile Image */}
-      <div className="relative px-4 -mt-16">
-        <div className="relative">
-          <img 
-            src={doctor.image} 
-            alt={doctor.name}
-            className="w-28 h-28 rounded-2xl object-cover border-4 border-white shadow-lg"
-            data-testid={`doctor-image-${doctor.id}`}
-          />
-          <div className="absolute -bottom-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
-            <Star className="w-3 h-3 fill-current" />
-            {doctor.rating}
-          </div>
-        </div>
+
+      {/* Time Slots Grid */}
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-2.5 max-h-72 overflow-y-auto pr-1">
+        {slots.map(slot => {
+          const isBooked = bookedSlots.includes(slot);
+          const hour = parseInt(slot.split(':')[0]);
+          const minute = parseInt(slot.split(':')[1]) || 0;
+          const isMorning = hour >= 11 && hour < 14;
+          const isEvening = hour >= 18 && hour <= 22;
+          
+          const isToday = selectedDate?.toDateString() === currentTime.toDateString();
+          const slotTimeInMinutes = hour * 60 + minute;
+          const currentTimeInMinutes = currentTime.getHours() * 60 + currentTime.getMinutes() + 15;
+          const isPastSlot = isToday && slotTimeInMinutes <= currentTimeInMinutes;
+          const isDisabled = isBooked || isPastSlot;
+          
+          return (
+            <button
+              key={slot}
+              onClick={() => !isDisabled && onSelect(slot)}
+              disabled={isDisabled}
+              data-testid={`slot-${slot}`}
+              title={isPastSlot ? 'Time has passed' : isBooked ? 'Already booked' : 'Available'}
+              className={`
+                py-3 px-2 text-sm rounded-xl border-2 transition-all font-medium relative
+                ${isPastSlot || isBooked
+                  ? 'bg-[#F8FAFC] text-[#CBD5E1] border-[#E2E8F0] cursor-not-allowed line-through'
+                  : selectedSlot === slot 
+                    ? 'bg-[#5FA8D3] text-white border-[#5FA8D3] shadow-lg scale-105' 
+                    : isMorning
+                      ? 'bg-[#FFD166]/10 border-[#FFD166]/30 text-[#1B4965] hover:bg-[#FFD166]/20 hover:border-[#FFD166]'
+                      : isEvening
+                        ? 'bg-[#5FA8D3]/10 border-[#5FA8D3]/30 text-[#1B4965] hover:bg-[#5FA8D3]/20 hover:border-[#5FA8D3]'
+                        : 'bg-white border-[#E2E8F0] hover:border-[#5FA8D3] text-[#1B4965]'
+                }
+              `}
+              style={{ fontFamily: 'DM Sans, sans-serif' }}
+            >
+              {(isBooked || isPastSlot) && <Ban className="w-3 h-3 inline mr-1" />}
+              {slot}
+            </button>
+          );
+        })}
       </div>
-      
-      {/* Content */}
-      <div className="p-4 pt-2">
-        <h3 className="text-xl font-bold text-gray-900">{doctor.name}</h3>
-        <p className="text-blue-600 font-medium flex items-center gap-1 mt-1">
-          <Stethoscope className="w-4 h-4" />
-          {doctor.specialty}
-        </p>
-        
-        {/* Qualifications */}
-        <div className="flex items-start gap-2 mt-3 text-sm text-gray-600">
-          <GraduationCap className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-          <p className="line-clamp-2">{doctor.qualifications}</p>
-        </div>
-        
-        {/* Stats */}
-        <div className="flex items-center gap-4 mt-4 pt-4 border-t">
-          <div className="text-center flex-1">
-            <p className="text-lg font-bold text-gray-900">{doctor.experience}</p>
-            <p className="text-xs text-gray-500">Experience</p>
-          </div>
-          <div className="h-8 w-px bg-gray-200" />
-          <div className="text-center flex-1">
-            <p className="text-lg font-bold text-gray-900">{doctor.patients}</p>
-            <p className="text-xs text-gray-500">Patients</p>
-          </div>
-        </div>
-        
-        {/* Specializations */}
-        <div className="flex flex-wrap gap-1 mt-4">
-          {doctor.specializations.map((spec, i) => (
-            <Badge key={i} variant="secondary" className="text-xs bg-blue-50 text-blue-700">
-              {spec}
-            </Badge>
-          ))}
-        </div>
-      </div>
-    </Card>
+    </div>
   );
 };
 
+// ============================================
+// STEP PROGRESS INDICATOR - Pastel Design
+// ============================================
+const StepProgress = ({ currentStep, steps }) => {
+  return (
+    <div className="mb-10">
+      <div className="flex items-center justify-between relative">
+        {/* Progress Line Background */}
+        <div className="absolute top-4 left-0 right-0 h-0.5 bg-[#E2E8F0]" />
+        {/* Progress Line Active */}
+        <div 
+          className="absolute top-4 left-0 h-0.5 bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] transition-all duration-500"
+          style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
+        />
+        
+        {steps.map((step, i) => (
+          <div key={i} className="flex flex-col items-center relative z-10">
+            <div className={`
+              w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 border-2
+              ${i + 1 < currentStep 
+                ? 'bg-[#A7C957] border-[#A7C957] text-white' 
+                : i + 1 === currentStep 
+                  ? 'bg-[#5FA8D3] border-[#5FA8D3] text-white shadow-lg scale-110' 
+                  : 'bg-white border-[#E2E8F0] text-[#64748B]'
+              }
+            `}>
+              {i + 1 < currentStep ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
+            </div>
+            <span 
+              className={`mt-2 text-xs text-center max-w-[60px] leading-tight ${i + 1 === currentStep ? 'text-[#5FA8D3] font-semibold' : 'text-[#64748B]'}`}
+              style={{ fontFamily: 'DM Sans, sans-serif' }}
+            >
+              {step}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ============================================
+// MAIN DIAGYN COMPONENT
+// ============================================
 const DiaGyn = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -301,14 +535,12 @@ const DiaGyn = () => {
   const wsRef = useRef(null);
   const [wsConnected, setWsConnected] = useState(false);
   const reconnectTimeoutRef = useRef(null);
-  const [otpMethod, setOtpMethod] = useState('');
   const [verificationToken, setVerificationToken] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef([]);
   const [showAvailability, setShowAvailability] = useState(false);
   const [weeklyAvailability, setWeeklyAvailability] = useState([]);
   const [loadingAvailability, setLoadingAvailability] = useState(false);
-  const [availabilityClinic, setAvailabilityClinic] = useState('pushpa');
   const [emailReminder, setEmailReminder] = useState(true);
   const [bookingLimits, setBookingLimits] = useState({
     canBook: true,
@@ -512,7 +744,6 @@ const DiaGyn = () => {
     try {
       const response = await axios.post(`${API}/otp/send`, { phone: patientInfo.phone, service: 'diagyn' });
       setMockOtp(response.data.mock_otp || '');
-      setOtpMethod(response.data.method || 'mock');
       setResendTimer(30);
       toast.success(response.data.method === 'sms' ? 'OTP sent to your phone!' : 'OTP sent successfully!');
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
@@ -614,13 +845,13 @@ const DiaGyn = () => {
   const selectedDoctorData = doctors.find(d => d.id === selectedDoctor);
   const selectedClinicData = clinics.find(c => c.id === selectedClinic);
 
-  const stepTitles = ['Select Doctor', 'Select Clinic', 'Date & Time', 'Verify Phone', 'Confirm'];
+  const stepTitles = ['Doctor', 'Clinic', 'Schedule', 'Verify', 'Confirm'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-[#FDFBF7]">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-xl border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-3">
+      <header className="bg-white/90 backdrop-blur-xl border-b border-[#E2E8F0] sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button 
@@ -628,14 +859,14 @@ const DiaGyn = () => {
                 size="icon"
                 onClick={() => step === 1 ? navigate('/') : setStep(step === 4 ? 3 : step === 5 ? 4 : step - 1)}
                 data-testid="back-button"
-                className="rounded-full"
+                className="rounded-full hover:bg-[#CAE9FF]/50"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5 text-[#1B4965]" />
               </Button>
               <img 
                 src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg" 
                 alt="DiaGyn" 
-                className="h-12 w-auto"
+                className="h-10 w-auto"
                 data-testid="diagyn-logo"
               />
             </div>
@@ -644,50 +875,32 @@ const DiaGyn = () => {
               size="sm"
               onClick={fetchWeeklyAvailability}
               disabled={loadingAvailability}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 rounded-full border-[#5FA8D3] text-[#5FA8D3] hover:bg-[#CAE9FF]/30"
               data-testid="view-availability-btn"
             >
               {loadingAvailability ? <Loader2 className="w-4 h-4 animate-spin" /> : <CalendarDays className="w-4 h-4" />}
-              <span className="hidden sm:inline">Weekly Schedule</span>
+              <span className="hidden sm:inline">Schedule</span>
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-6">
-        {/* Progress Steps */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            {stepTitles.map((title, i) => (
-              <div key={i} className={`flex items-center ${i < stepTitles.length - 1 ? 'flex-1' : ''}`}>
-                <div className={`
-                  w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all
-                  ${i + 1 < step ? 'bg-green-500 text-white' : i + 1 === step ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-200 text-gray-500'}
-                `}>
-                  {i + 1 < step ? <CheckCircle2 className="w-5 h-5" /> : i + 1}
-                </div>
-                {i < stepTitles.length - 1 && (
-                  <div className={`flex-1 h-1 mx-2 rounded ${i + 1 < step ? 'bg-green-500' : 'bg-gray-200'}`} />
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between">
-            {stepTitles.map((title, i) => (
-              <span key={i} className={`text-xs ${i + 1 === step ? 'text-blue-600 font-semibold' : 'text-gray-400'}`}>
-                {title}
-              </span>
-            ))}
-          </div>
-        </div>
+      <main className="max-w-5xl mx-auto px-4 py-8">
+        {/* Step Progress */}
+        <StepProgress currentStep={step} steps={stepTitles} />
 
         {/* Step 1: Select Doctor */}
         {step === 1 && (
           <div className="animate-in fade-in duration-500">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Choose Your Doctor</h1>
-              <p className="text-gray-600">Select a specialist for your consultation</p>
+            <div className="text-center mb-10">
+              <h1 className="text-3xl md:text-4xl font-bold text-[#1B4965] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                Choose Your Doctor
+              </h1>
+              <p className="text-[#64748B] max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                Select a specialist for your consultation. View their qualifications and areas of expertise.
+              </p>
             </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {doctors.map(doctor => (
                 <DoctorProfileCard
@@ -704,11 +917,12 @@ const DiaGyn = () => {
                 />
               ))}
             </div>
+            
             {selectedDoctor && (
-              <div className="mt-8 flex justify-center">
+              <div className="mt-10 flex justify-center">
                 <Button 
                   size="lg"
-                  className="bg-blue-600 hover:bg-blue-700 px-8"
+                  className="bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#1B4965] hover:to-[#5FA8D3] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
                   onClick={() => setStep(2)}
                   data-testid="continue-to-clinic"
                 >
@@ -723,53 +937,36 @@ const DiaGyn = () => {
         {/* Step 2: Select Clinic */}
         {step === 2 && (
           <div className="animate-in fade-in duration-500">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Select Clinic Location</h1>
-              <p className="text-gray-600">Choose your preferred clinic for the appointment</p>
+            <div className="text-center mb-10">
+              <h1 className="text-3xl md:text-4xl font-bold text-[#1B4965] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                Select Clinic Location
+              </h1>
+              <p className="text-[#64748B] max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                Choose your preferred clinic for the appointment with {selectedDoctorData?.name}
+              </p>
             </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {availableClinics.map(clinic => (
-                <Card 
+                <ClinicCard
                   key={clinic.id}
-                  className={`overflow-hidden cursor-pointer transition-all duration-300 ${
-                    selectedClinic === clinic.id ? 'ring-2 ring-blue-500 shadow-xl' : 'hover:shadow-lg'
-                  }`}
-                  onClick={() => {
+                  clinic={clinic}
+                  isSelected={selectedClinic === clinic.id}
+                  onSelect={() => {
                     setSelectedClinic(clinic.id);
                     setSelectedDate(null);
                     setSelectedSlot(null);
                     setBookedSlots([]);
                   }}
-                  data-testid={`clinic-card-${clinic.id}`}
-                >
-                  <div className="h-40 overflow-hidden relative">
-                    <img src={clinic.image} alt={clinic.name} className="w-full h-full object-cover" />
-                    {selectedClinic === clinic.id && (
-                      <div className="absolute top-3 right-3">
-                        <Badge className="bg-blue-600 text-white">
-                          <CheckCircle2 className="w-3 h-3 mr-1" />
-                          Selected
-                        </Badge>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <div className="flex items-start gap-3">
-                      <Building2 className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <h3 className="font-bold text-lg">{clinic.name}</h3>
-                        <p className="text-sm text-gray-600 mt-1">{clinic.address}</p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
+                />
               ))}
             </div>
+            
             {selectedClinic && (
-              <div className="mt-8 flex justify-center">
+              <div className="mt-10 flex justify-center">
                 <Button 
                   size="lg"
-                  className="bg-blue-600 hover:bg-blue-700 px-8"
+                  className="bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#1B4965] hover:to-[#5FA8D3] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
                   onClick={() => setStep(3)}
                   data-testid="continue-to-datetime"
                 >
@@ -784,9 +981,13 @@ const DiaGyn = () => {
         {/* Step 3: Date & Time */}
         {step === 3 && (
           <div className="animate-in fade-in duration-500">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Pick Your Slot</h1>
-              <p className="text-gray-600">Select a date and time that works for you</p>
+            <div className="text-center mb-10">
+              <h1 className="text-3xl md:text-4xl font-bold text-[#1B4965] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                Pick Your Slot
+              </h1>
+              <p className="text-[#64748B] max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                Select a convenient date and time for your appointment
+              </p>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -801,12 +1002,18 @@ const DiaGyn = () => {
                 
                 {/* Selected Date Info */}
                 {selectedDate && (
-                  <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                  <div className="mt-4 p-4 bg-gradient-to-r from-[#CAE9FF]/50 to-[#BEE9E8]/50 rounded-2xl border border-[#CAE9FF]">
                     <div className="flex items-center gap-3">
-                      <Calendar className="w-5 h-5 text-blue-600" />
+                      <div className="w-10 h-10 rounded-xl bg-[#5FA8D3] flex items-center justify-center">
+                        <Calendar className="w-5 h-5 text-white" />
+                      </div>
                       <div>
-                        <p className="font-semibold text-blue-900">{format(selectedDate, 'EEEE, MMMM d, yyyy')}</p>
-                        <p className="text-sm text-blue-600">{unbookedSlots.length} slots available</p>
+                        <p className="font-semibold text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                          {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                        </p>
+                        <p className="text-sm text-[#5FA8D3]">
+                          {unbookedSlots.length} slots available
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -814,82 +1021,29 @@ const DiaGyn = () => {
               </div>
               
               {/* Time Slots */}
-              <Card className="p-5">
-                <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-blue-600" />
+              <Card className="p-6 rounded-3xl border-[#E2E8F0] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                <h3 className="font-bold text-lg mb-5 flex items-center gap-2 text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <Clock className="w-5 h-5 text-[#5FA8D3]" />
                   Available Time Slots
-                  {selectedDate && (
-                    <span className={`ml-auto flex items-center gap-1 text-xs font-normal ${wsConnected ? 'text-green-600' : 'text-gray-400'}`}>
-                      {wsConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
-                      {wsConnected ? 'Live' : 'Offline'}
-                    </span>
-                  )}
                 </h3>
                 
                 {selectedDate ? (
-                  loadingSlots ? (
-                    <div className="flex items-center justify-center py-12">
-                      <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-                    </div>
-                  ) : unbookedSlots.length > 0 ? (
-                    <div>
-                      {/* Time Period Labels */}
-                      <div className="flex gap-4 mb-4 text-xs">
-                        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-amber-400"></span> Morning</span>
-                        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-indigo-500"></span> Evening</span>
-                      </div>
-                      <div className="grid grid-cols-4 gap-2 max-h-72 overflow-y-auto">
-                        {availableSlots.map(slot => {
-                          const isBooked = bookedSlots.includes(slot);
-                          const hour = parseInt(slot.split(':')[0]);
-                          const minute = parseInt(slot.split(':')[1]) || 0;
-                          const isMorning = hour >= 11 && hour < 14;
-                          const isEvening = hour >= 18 && hour <= 22;
-                          
-                          const isToday = selectedDate?.toDateString() === currentTime.toDateString();
-                          const slotTimeInMinutes = hour * 60 + minute;
-                          const currentTimeInMinutes = currentTime.getHours() * 60 + currentTime.getMinutes() + 15;
-                          const isPastSlot = isToday && slotTimeInMinutes <= currentTimeInMinutes;
-                          const isDisabled = isBooked || isPastSlot;
-                          
-                          return (
-                            <button
-                              key={slot}
-                              onClick={() => !isDisabled && setSelectedSlot(slot)}
-                              disabled={isDisabled}
-                              className={`p-3 text-sm rounded-xl border-2 transition-all font-medium ${
-                                isPastSlot
-                                  ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed line-through'
-                                  : isBooked 
-                                    ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed line-through' 
-                                    : selectedSlot === slot 
-                                      ? 'bg-blue-600 text-white border-blue-600 shadow-lg scale-105' 
-                                      : isMorning
-                                        ? 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100 hover:border-amber-400'
-                                        : isEvening
-                                          ? 'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-400'
-                                          : 'hover:border-blue-400 hover:bg-blue-50'
-                              }`}
-                              data-testid={`slot-${slot}`}
-                              title={isPastSlot ? 'Time has passed' : isBooked ? 'Already booked' : 'Available'}
-                            >
-                              {(isBooked || isPastSlot) && <Ban className="w-3 h-3 inline mr-1" />}
-                              {slot}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <Clock className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p className="text-gray-500">No slots available for this day</p>
-                    </div>
-                  )
+                  <TimeSlotPicker
+                    slots={availableSlots}
+                    bookedSlots={bookedSlots}
+                    selectedSlot={selectedSlot}
+                    onSelect={setSelectedSlot}
+                    selectedDate={selectedDate}
+                    currentTime={currentTime}
+                    loading={loadingSlots}
+                    wsConnected={wsConnected}
+                  />
                 ) : (
-                  <div className="text-center py-12">
-                    <CalendarDays className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500">Select a date to see available slots</p>
+                  <div className="text-center py-16">
+                    <div className="w-16 h-16 bg-[#CAE9FF]/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <CalendarDays className="w-8 h-8 text-[#5FA8D3]" />
+                    </div>
+                    <p className="text-[#64748B] text-sm">Select a date to see available slots</p>
                   </div>
                 )}
               </Card>
@@ -897,64 +1051,64 @@ const DiaGyn = () => {
 
             {/* Patient Info */}
             {selectedSlot && (
-              <Card className="mt-6 p-5">
-                <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                  <User className="w-5 h-5 text-blue-600" />
+              <Card className="mt-6 p-6 rounded-3xl border-[#E2E8F0] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                <h3 className="font-bold text-lg mb-5 flex items-center gap-2 text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <User className="w-5 h-5 text-[#5FA8D3]" />
                   Your Details
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <Label className="text-gray-700">Full Name *</Label>
+                    <Label className="text-[#64748B] text-sm">Full Name *</Label>
                     <Input
                       value={patientInfo.name}
                       onChange={(e) => setPatientInfo({ ...patientInfo, name: e.target.value })}
                       placeholder="Enter your name"
-                      className="mt-1"
+                      className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3] focus:ring-[#CAE9FF]"
                       data-testid="patient-name"
                     />
                   </div>
                   <div>
-                    <Label className="text-gray-700">Mobile Number *</Label>
+                    <Label className="text-[#64748B] text-sm">Mobile Number *</Label>
                     <Input
                       value={patientInfo.phone}
                       onChange={(e) => setPatientInfo({ ...patientInfo, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
                       placeholder="10-digit number"
-                      className="mt-1"
+                      className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3] focus:ring-[#CAE9FF]"
                       data-testid="patient-phone"
                     />
                     {!bookingLimits.loading && !bookingLimits.canBook && bookingLimits.activeAppointment && (
-                      <div className="mt-2 p-2 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-800">
-                        <p className="font-semibold">⚠️ Active Appointment Found</p>
+                      <div className="mt-2 p-3 bg-[#FFD166]/20 border border-[#FFD166] rounded-xl text-xs text-[#1B4965]">
+                        <p className="font-semibold">Active Appointment Found</p>
                         <p>You have an appointment on {bookingLimits.activeAppointment.date} at {bookingLimits.activeAppointment.time}</p>
                       </div>
                     )}
                   </div>
                   <div>
-                    <Label className="text-gray-700">Email (Optional)</Label>
+                    <Label className="text-[#64748B] text-sm">Email (Optional)</Label>
                     <Input
                       type="email"
                       value={patientInfo.email}
                       onChange={(e) => setPatientInfo({ ...patientInfo, email: e.target.value })}
                       placeholder="your@email.com"
-                      className="mt-1"
+                      className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3] focus:ring-[#CAE9FF]"
                       data-testid="patient-email"
                     />
                   </div>
                 </div>
                 
                 {patientInfo.email && (
-                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="mt-4 p-4 bg-[#CAE9FF]/30 rounded-xl border border-[#CAE9FF]">
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={emailReminder}
                         onChange={(e) => setEmailReminder(e.target.checked)}
-                        className="w-4 h-4 rounded border-gray-300 text-blue-600"
+                        className="w-4 h-4 rounded border-[#5FA8D3] text-[#5FA8D3] focus:ring-[#CAE9FF]"
                         data-testid="email-reminder-checkbox"
                       />
-                      <div>
-                        <span className="font-medium text-blue-800 text-sm">Email reminder 1 hour before</span>
-                      </div>
+                      <span className="font-medium text-[#1B4965] text-sm">
+                        Send me an email reminder 1 hour before appointment
+                      </span>
                     </label>
                   </div>
                 )}
@@ -962,7 +1116,7 @@ const DiaGyn = () => {
                 <div className="mt-6 flex justify-center">
                   <Button 
                     size="lg"
-                    className="bg-blue-600 hover:bg-blue-700 px-8"
+                    className="bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#1B4965] hover:to-[#5FA8D3] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
                     onClick={goToOtpStep}
                     data-testid="continue-to-otp"
                   >
@@ -978,22 +1132,26 @@ const DiaGyn = () => {
         {/* Step 4: OTP Verification */}
         {step === 4 && (
           <div className="animate-in fade-in duration-500">
-            <Card className="max-w-md mx-auto p-6">
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="w-8 h-8 text-blue-600" />
+            <Card className="max-w-md mx-auto p-8 rounded-3xl border-[#E2E8F0] shadow-[0_20px_50px_rgb(0,0,0,0.1)]">
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 bg-gradient-to-br from-[#CAE9FF] to-[#BEE9E8] rounded-2xl flex items-center justify-center mx-auto mb-5">
+                  <Shield className="w-10 h-10 text-[#5FA8D3]" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">Verify Your Phone</h2>
-                <p className="text-gray-600 mt-2">Enter the 6-digit code sent to +91 {patientInfo.phone}</p>
+                <h2 className="text-2xl font-bold text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  Verify Your Phone
+                </h2>
+                <p className="text-[#64748B] mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                  Enter the 6-digit code sent to +91 {patientInfo.phone}
+                </p>
               </div>
               
               {mockOtp && (
-                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-center">
-                  <p className="text-xs text-amber-700">Demo OTP: <span className="font-mono font-bold">{mockOtp}</span></p>
+                <div className="mb-6 p-4 bg-[#FFD166]/20 border border-[#FFD166] rounded-xl text-center">
+                  <p className="text-xs text-[#1B4965]">Demo OTP: <span className="font-mono font-bold text-lg">{mockOtp}</span></p>
                 </div>
               )}
               
-              <div className="flex justify-center gap-2 mb-6">
+              <div className="flex justify-center gap-2.5 mb-8">
                 {otp.map((digit, index) => (
                   <input
                     key={index}
@@ -1004,7 +1162,7 @@ const DiaGyn = () => {
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    className="w-12 h-14 text-center text-xl font-bold border-2 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+                    className="w-12 h-14 text-center text-xl font-bold border-2 border-[#E2E8F0] rounded-xl focus:border-[#5FA8D3] focus:ring-2 focus:ring-[#CAE9FF] outline-none transition-all text-[#1B4965]"
                     data-testid={`otp-input-${index}`}
                   />
                 ))}
@@ -1013,17 +1171,17 @@ const DiaGyn = () => {
               <Button
                 onClick={verifyOtp}
                 disabled={otpLoading || otp.join('').length !== 6}
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#1B4965] hover:to-[#5FA8D3] text-white py-6 rounded-full text-base font-semibold"
                 data-testid="verify-otp-btn"
               >
                 {otpLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify OTP'}
               </Button>
               
-              <div className="mt-4 text-center">
+              <div className="mt-5 text-center">
                 {resendTimer > 0 ? (
-                  <p className="text-sm text-gray-500">Resend OTP in {resendTimer}s</p>
+                  <p className="text-sm text-[#64748B]">Resend OTP in {resendTimer}s</p>
                 ) : (
-                  <button onClick={sendOtp} disabled={otpLoading} className="text-sm text-blue-600 hover:underline">
+                  <button onClick={sendOtp} disabled={otpLoading} className="text-sm text-[#5FA8D3] hover:text-[#1B4965] font-medium transition-colors">
                     Resend OTP
                   </button>
                 )}
@@ -1035,39 +1193,57 @@ const DiaGyn = () => {
         {/* Step 5: Confirmation */}
         {step === 5 && (
           <div className="animate-in fade-in duration-500">
-            <Card className="max-w-lg mx-auto p-6">
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle2 className="w-8 h-8 text-green-600" />
+            <Card className="max-w-lg mx-auto p-8 rounded-3xl border-[#E2E8F0] shadow-[0_20px_50px_rgb(0,0,0,0.1)]">
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 bg-gradient-to-br from-[#A7C957]/30 to-[#A7C957]/10 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                  <Sparkles className="w-10 h-10 text-[#A7C957]" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">Confirm Your Booking</h2>
+                <h2 className="text-2xl font-bold text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  Confirm Your Booking
+                </h2>
+                <p className="text-[#64748B] mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                  Review your appointment details before confirming
+                </p>
               </div>
               
-              <div className="space-y-4 bg-gray-50 rounded-xl p-4">
-                <div className="flex items-center gap-3">
-                  <img src={selectedDoctorData?.image} alt="" className="w-12 h-12 rounded-full object-cover" />
+              {/* Booking Summary */}
+              <div className="space-y-4 bg-[#FDFBF7] rounded-2xl p-5 border border-[#E2E8F0]">
+                {/* Doctor Info */}
+                <div className="flex items-center gap-4 pb-4 border-b border-[#E2E8F0]">
+                  <img 
+                    src={selectedDoctorData?.image} 
+                    alt="" 
+                    className="w-14 h-14 rounded-xl object-cover ring-2 ring-[#BEE9E8]" 
+                  />
                   <div>
-                    <p className="font-semibold">{selectedDoctorData?.name}</p>
-                    <p className="text-sm text-gray-600">{selectedDoctorData?.specialty}</p>
+                    <p className="font-bold text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                      {selectedDoctorData?.name}
+                    </p>
+                    <Badge className="bg-[#BEE9E8] text-[#1B4965] text-xs mt-1">
+                      {selectedDoctorData?.specialty}
+                    </Badge>
                   </div>
                 </div>
-                <div className="h-px bg-gray-200" />
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <p className="text-gray-500">Clinic</p>
-                    <p className="font-medium">{selectedClinicData?.name}</p>
+                
+                {/* Details Grid */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-white rounded-xl">
+                    <p className="text-xs text-[#64748B] mb-1">Clinic</p>
+                    <p className="font-semibold text-[#1B4965] text-sm">{selectedClinicData?.name}</p>
                   </div>
-                  <div>
-                    <p className="text-gray-500">Date</p>
-                    <p className="font-medium">{selectedDate && format(selectedDate, 'EEE, MMM d')}</p>
+                  <div className="p-3 bg-white rounded-xl">
+                    <p className="text-xs text-[#64748B] mb-1">Date</p>
+                    <p className="font-semibold text-[#1B4965] text-sm">
+                      {selectedDate && format(selectedDate, 'EEE, MMM d')}
+                    </p>
                   </div>
-                  <div>
-                    <p className="text-gray-500">Time</p>
-                    <p className="font-medium">{selectedSlot}</p>
+                  <div className="p-3 bg-white rounded-xl">
+                    <p className="text-xs text-[#64748B] mb-1">Time</p>
+                    <p className="font-semibold text-[#1B4965] text-sm">{selectedSlot}</p>
                   </div>
-                  <div>
-                    <p className="text-gray-500">Patient</p>
-                    <p className="font-medium">{patientInfo.name}</p>
+                  <div className="p-3 bg-white rounded-xl">
+                    <p className="text-xs text-[#64748B] mb-1">Patient</p>
+                    <p className="font-semibold text-[#1B4965] text-sm">{patientInfo.name}</p>
                   </div>
                 </div>
               </div>
@@ -1075,7 +1251,7 @@ const DiaGyn = () => {
               <Button
                 onClick={handleBooking}
                 disabled={loading}
-                className="w-full mt-6 bg-green-600 hover:bg-green-700"
+                className="w-full mt-6 bg-gradient-to-r from-[#A7C957] to-[#62B6CB] hover:from-[#62B6CB] hover:to-[#A7C957] text-white py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-xl transition-all"
                 data-testid="confirm-booking-btn"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirm Appointment'}
@@ -1087,21 +1263,21 @@ const DiaGyn = () => {
 
       {/* Weekly Availability Dialog */}
       <Dialog open={showAvailability} onOpenChange={setShowAvailability}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <CalendarDays className="w-5 h-5" />
+            <DialogTitle className="flex items-center gap-2 text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <CalendarDays className="w-5 h-5 text-[#5FA8D3]" />
               Weekly Doctor Availability
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto">
             {weeklyAvailability.map((day, i) => (
-              <div key={i} className="p-3 bg-gray-50 rounded-lg">
-                <p className="font-semibold mb-2">{day.date} ({day.day})</p>
-                <div className="space-y-1 text-sm">
+              <div key={i} className="p-4 bg-[#FDFBF7] rounded-xl border border-[#E2E8F0]">
+                <p className="font-semibold mb-2 text-[#1B4965]">{day.date} ({day.day})</p>
+                <div className="space-y-1.5 text-sm">
                   {day.doctors?.map((doc, j) => (
-                    <p key={j} className="text-gray-600">
-                      <span className="font-medium text-gray-800">{doc.name}</span> - {doc.clinics?.join(', ')}
+                    <p key={j} className="text-[#64748B]">
+                      <span className="font-medium text-[#1B4965]">{doc.name}</span> - {doc.clinics?.join(', ')}
                     </p>
                   ))}
                 </div>
