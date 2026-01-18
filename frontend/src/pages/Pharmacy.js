@@ -20,20 +20,43 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // ============================================
-// DESIGN SYSTEM - Serene Care Pastel Theme (Orange variant for Pharmacy)
+// DESIGN SYSTEM - Orange Pharmacy Vibrant Theme
 // ============================================
 const theme = {
-  primary: '#F97316',      // Orange
-  primaryLight: '#FED7AA', // Light orange
-  secondary: '#FB923C',    // Amber orange
-  accent: '#FBBF24',       // Gold
-  background: '#FFFBF5',   // Warm white
+  primary: '#EA580C',      // Deep Orange
+  primaryLight: '#FDBA74', // Bright Orange light
+  secondary: '#F59E0B',    // Amber
+  accent: '#DC2626',       // Red accent
+  background: '#FFF7ED',   // Warm cream
   surface: '#FFFFFF',
-  textPrimary: '#1E293B',
-  textSecondary: '#64748B',
-  border: '#FED7AA',
-  success: '#10B981',
-  error: '#EF4444'
+  textPrimary: '#1C1917',
+  textSecondary: '#78716C',
+  border: '#FDBA74',
+  success: '#16A34A',
+  error: '#DC2626'
+};
+
+// Medicine form icons/images
+const getMedicineIcon = (form) => {
+  const icons = {
+    'Tablet': '💊',
+    'Capsule': '💊',
+    'Syrup': '🧴',
+    'Injection': '💉',
+    'Cream': '🧴',
+    'Ointment': '🧴',
+    'Drops': '💧',
+    'Powder': '📦',
+    'Inhaler': '💨',
+    'Gel': '🧴',
+    'Suspension': '🧴',
+    'Solution': '💧',
+    'Spray': '💨',
+    'Patch': '🩹',
+    'Suppository': '💊',
+    'Manual Entry': '📝'
+  };
+  return icons[form] || '💊';
 };
 
 // ============================================
