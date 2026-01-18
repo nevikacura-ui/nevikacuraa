@@ -1399,14 +1399,14 @@ const Evara = () => {
         )}
 
         {!user && (
-          <Card className="bg-gradient-to-r from-pink-400 to-purple-400 text-white border-0">
+          <Card className="bg-gradient-to-r from-fuchsia-500 via-pink-500 to-purple-500 text-white border-0 shadow-xl rounded-3xl">
             <CardContent className="p-6 text-center">
               <Heart className="w-12 h-12 mx-auto mb-3" />
-              <h2 className="text-xl font-semibold">Welcome to Evara</h2>
+              <h2 className="text-xl font-semibold" style={{ fontFamily: 'Outfit, sans-serif' }}>Welcome to Evara</h2>
               <p className="text-white/80 text-sm mb-4">Your trusted women's wellness companion</p>
               <Button 
                 onClick={() => setShowSignup(true)}
-                className="bg-white text-pink-600 hover:bg-white/90"
+                className="bg-white text-pink-600 hover:bg-pink-100 font-semibold rounded-full px-6"
               >
                 Create Your Account
               </Button>
@@ -1418,31 +1418,39 @@ const Evara = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <button 
             onClick={() => setShowChat(true)}
-            className="p-4 bg-white rounded-xl shadow-sm border border-pink-100 hover:border-pink-300 transition-all flex flex-col items-center gap-2"
+            className="p-4 bg-gradient-to-br from-pink-500 to-fuchsia-600 rounded-2xl shadow-lg hover:shadow-xl transition-all flex flex-col items-center gap-2 text-white hover:scale-105"
           >
-            <MessageCircle className="w-6 h-6 text-pink-500" />
-            <span className="text-xs text-gray-600">Chat with Evara</span>
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <MessageCircle className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-medium">Chat with Evara</span>
           </button>
           <button 
             onClick={() => { setShowPregnancyCalc(true); }}
-            className="p-4 bg-white rounded-xl shadow-sm border border-pink-100 hover:border-pink-300 transition-all flex flex-col items-center gap-2"
+            className="p-4 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg hover:shadow-xl transition-all flex flex-col items-center gap-2 text-white hover:scale-105"
           >
-            <Calculator className="w-6 h-6 text-blue-500" />
-            <span className="text-xs text-gray-600">Pregnancy Calc</span>
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <Calculator className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-medium">Pregnancy Calc</span>
           </button>
           <button 
             onClick={() => { setShowReminders(true); fetchReminders(); }}
-            className="p-4 bg-white rounded-xl shadow-sm border border-pink-100 hover:border-pink-300 transition-all flex flex-col items-center gap-2"
+            className="p-4 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl shadow-lg hover:shadow-xl transition-all flex flex-col items-center gap-2 text-white hover:scale-105"
           >
-            <Bell className="w-6 h-6 text-purple-500" />
-            <span className="text-xs text-gray-600">Reminders</span>
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <Bell className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-medium">Reminders</span>
           </button>
           <button 
             onClick={() => { setShowPeriodLog(true); if(token) fetchPeriodHistory(); }}
-            className="p-4 bg-white rounded-xl shadow-sm border border-pink-100 hover:border-pink-300 transition-all flex flex-col items-center gap-2"
+            className="p-4 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl shadow-lg hover:shadow-xl transition-all flex flex-col items-center gap-2 text-white hover:scale-105"
           >
-            <Calendar className="w-6 h-6 text-rose-500" />
-            <span className="text-xs text-gray-600">Period Tracker</span>
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <Calendar className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-medium">Period Tracker</span>
           </button>
           <button 
             onClick={() => { 
@@ -1450,18 +1458,22 @@ const Evara = () => {
               fetchFoodDatabase(); 
               if(token) fetchCalorieLogs(); 
             }}
-            className="p-4 bg-white rounded-xl shadow-sm border border-orange-100 hover:border-orange-300 transition-all flex flex-col items-center gap-2"
+            className="p-4 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl shadow-lg hover:shadow-xl transition-all flex flex-col items-center gap-2 text-white hover:scale-105"
             data-testid="evara-calorie-tracker-btn"
           >
-            <Apple className="w-6 h-6 text-orange-500" />
-            <span className="text-xs text-gray-600">Calorie Tracker</span>
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <Apple className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-medium">Calorie Tracker</span>
           </button>
           <button 
             onClick={() => { setShowPregnancyWeeks(true); fetchPregnancyWeeks(); }}
-            className="p-4 bg-white rounded-xl shadow-sm border border-blue-100 hover:border-blue-300 transition-all flex flex-col items-center gap-2"
+            className="p-4 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl shadow-lg hover:shadow-xl transition-all flex flex-col items-center gap-2 text-white hover:scale-105"
           >
-            <Baby className="w-6 h-6 text-blue-500" />
-            <span className="text-xs text-gray-600 text-center">Week-by-Week</span>
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <Baby className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-medium text-center">Week-by-Week</span>
           </button>
         </div>
 
