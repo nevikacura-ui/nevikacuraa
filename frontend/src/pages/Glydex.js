@@ -757,17 +757,17 @@ const Glydex = () => {
   // If not logged in, show welcome screen with login prompt
   if (!token) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50">
-        <header className="border-b border-border/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500">
+        <header className="bg-white/10 backdrop-blur-xl sticky top-0 z-50 border-b border-white/20">
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={() => navigate('/')} data-testid="back-button">
+              <Button variant="ghost" onClick={() => navigate('/')} className="text-white hover:bg-white/20" data-testid="back-button">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <img 
                 src="/glydex-logo.png" 
                 alt="Glydex" 
-                className="h-16 sm:h-20 w-auto"
+                className="h-16 sm:h-20 w-auto bg-white rounded-xl p-2"
               />
             </div>
           </div>
@@ -775,27 +775,27 @@ const Glydex = () => {
 
         <main className="max-w-4xl mx-auto px-4 py-12 text-center">
           <div className="mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-100 rounded-full text-teal-700 text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full text-white text-sm font-medium mb-6 backdrop-blur-sm">
               <Heart className="w-4 h-4" />
               Diabetes Care Portal
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Take Control of Your <span className="text-teal-600">Diabetes</span>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Take Control of Your <span className="text-yellow-300">Diabetes</span>
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+            <p className="text-lg text-white/90 max-w-2xl mx-auto mb-8" style={{ fontFamily: 'DM Sans, sans-serif' }}>
               Track blood sugar, follow diet plans, and stay prepared for emergencies.
             </p>
           </div>
 
-          <Card className="max-w-md mx-auto p-8 bg-white shadow-xl">
+          <Card className="max-w-md mx-auto p-8 bg-white/95 backdrop-blur-xl shadow-2xl rounded-3xl border-0">
             <div className="text-center mb-6">
               <img src="/glydex-logo.png" alt="Glydex" className="w-24 h-24 mx-auto mb-4 object-contain" />
-              <h2 className="text-xl font-semibold mb-2">Login Required</h2>
-              <p className="text-gray-600">Please login to access Glydex Diabetes Care features</p>
+              <h2 className="text-xl font-semibold mb-2 text-slate-800">Login Required</h2>
+              <p className="text-slate-600">Please login to access Glydex Diabetes Care features</p>
             </div>
             <Button 
               onClick={() => navigate('/')}
-              className="w-full bg-teal-600 hover:bg-teal-700 text-lg py-6"
+              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-lg py-6 rounded-xl shadow-lg"
             >
               Go to Home & Login
             </Button>
@@ -807,21 +807,23 @@ const Glydex = () => {
 
   // Logged in - Show Dashboard
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-cyan-50">
-      <header className="border-b border-border/50 bg-white/80 backdrop-blur-xl sticky top-0 z-50">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
+      <header className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 sticky top-0 z-50 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={() => navigate('/')} data-testid="back-button">
+              <Button variant="ghost" onClick={() => navigate('/')} className="text-white hover:bg-white/20 rounded-full" data-testid="back-button">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <img 
                 src="/glydex-logo.png" 
                 alt="Glydex" 
-                className="h-16 sm:h-20 w-auto"
+                className="h-14 sm:h-16 w-auto bg-white rounded-xl p-1.5"
               />
             </div>
-            <span className="text-sm text-gray-500">Welcome, {user?.name || 'User'}</span>
+            <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full">
+              <span className="text-sm text-white font-medium">Welcome, {user?.name || 'User'}</span>
+            </div>
           </div>
         </div>
       </header>
