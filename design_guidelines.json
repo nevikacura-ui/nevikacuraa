@@ -1,174 +1,155 @@
 {
-  "identity": {
-    "name": "E1",
-    "role": "Anti-AI Designer",
-    "principles": [
-      "Fusion over Imitation",
-      "Emotion First",
-      "Content is King",
-      "Zoom In",
-      "Negative Space",
-      "Contrast"
-    ]
-  },
-  "project": {
-    "name": "Nevika Cura - DiaGyn Booking",
-    "type": "Healthcare SaaS",
-    "theme": "Light Mode (Pastel Medical)",
-    "emotional_tone": "Calm, Trustworthy, Empathetic, Professional"
-  },
   "design_system": {
+    "identity": {
+      "name": "Nevika Cura - Serene Care Edition",
+      "archetype": "Organic & Earthy (Trust, Calm)",
+      "vibe": "Clean, Reassuring, Patient-Centric, Pastel",
+      "principles": [
+        "Fusion over Imitation: Mix medical precision with spa-like calmness.",
+        "Emotion First: Every interaction should reduce anxiety.",
+        "Content is King: Clear, legible data over decorative fluff.",
+        "Zoom In: Focus on the task (booking/ordering) with minimal distractions.",
+        "Negative Space: Generous padding to prevent cognitive overload."
+      ]
+    },
     "colors": {
-      "palette_name": "Serene Care",
-      "primary": {
-        "main": "#5FA8D3",
-        "light": "#CAE9FF",
-        "dark": "#1B4965",
-        "description": "Soft Medical Blue - Trust & Calm"
-      },
-      "secondary": {
-        "main": "#62B6CB",
-        "light": "#BEE9E8",
-        "dark": "#1B4965",
-        "description": "Sage/Teal - Healing & Growth"
-      },
-      "accent": {
-        "main": "#FFB4A2",
-        "light": "#FFD6BA",
-        "description": "Soft Coral - Warmth & Human Touch"
-      },
-      "neutral": {
-        "background": "#FDFBF7",
+      "palette": {
+        "primary": "#5FA8D3",
+        "secondary": "#62B6CB",
+        "accent": "#FFB4A2",
+        "background": "#F8FAFC",
         "surface": "#FFFFFF",
         "text_primary": "#1E293B",
         "text_secondary": "#64748B",
-        "border": "#E2E8F0"
+        "border": "#E2E8F0",
+        "success": "#10B981",
+        "error": "#EF4444"
       },
-      "status": {
-        "success": "#A7C957",
-        "error": "#EF476F",
-        "warning": "#FFD166"
-      }
+      "usage": {
+        "primary": "Main buttons, active tabs, key icons",
+        "secondary": "Secondary buttons, subtle backgrounds, illustrations",
+        "accent": "Call to actions (urgent), notifications, highlights",
+        "background": "Global page background (soft cool grey/white)",
+        "surface": "Cards, modals, inputs"
+      },
+      "tailwind_config_instruction": "Update tailwind.config.js to include these specific colors under 'extend.colors.brand'. Use 'brand-primary', 'brand-secondary', etc."
     },
     "typography": {
-      "headings": {
-        "font_family": "Outfit, sans-serif",
-        "weights": ["500", "700"],
-        "usage": "Section titles, Doctor names, Modal headers"
+      "font_family": {
+        "heading": "Outfit, sans-serif",
+        "body": "DM Sans, sans-serif"
       },
-      "body": {
-        "font_family": "DM Sans, sans-serif",
-        "weights": ["400", "500"],
-        "usage": "Descriptions, Time slots, Form labels"
+      "scale": {
+        "h1": "text-4xl md:text-5xl font-bold tracking-tight",
+        "h2": "text-3xl md:text-4xl font-semibold tracking-tight",
+        "h3": "text-2xl font-semibold",
+        "body_lg": "text-lg leading-relaxed",
+        "body_base": "text-base leading-relaxed text-slate-600",
+        "caption": "text-sm text-slate-500"
       }
     },
     "spacing": {
-      "scale": "Tailwind Default",
-      "container_padding": "p-6 md:p-12",
+      "container_padding": "p-4 md:p-8 lg:p-12",
       "section_gap": "gap-8 md:gap-12",
-      "element_gap": "gap-4"
-    },
-    "radius": {
-      "default": "rounded-2xl",
-      "button": "rounded-full",
-      "card": "rounded-3xl"
+      "card_padding": "p-6",
+      "border_radius": "rounded-2xl"
     },
     "shadows": {
-      "card": "shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
-      "hover": "shadow-[0_8px_30px_rgb(0,0,0,0.08)]",
-      "floating": "shadow-[0_20px_50px_rgb(0,0,0,0.1)]"
+      "card": "shadow-[0_4px_20px_-4px_rgba(95,168,211,0.1)]",
+      "hover": "shadow-[0_10px_30px_-4px_rgba(95,168,211,0.2)]",
+      "dropdown": "shadow-xl border border-slate-100"
     }
   },
   "assets": {
     "images": {
-      "doctors": [
+      "diagnostics": {
+        "pathology_hero": "https://images.unsplash.com/photo-1733119883210-04f09d5f86df",
+        "imaging_hero": "https://images.unsplash.com/photo-1559000357-f6b52ddfbe37",
+        "lab_background": "https://images.unsplash.com/photo-1655210913810-33acfa96d1e6"
+      },
+      "pharmacy": {
+        "medicines_hero": "https://images.unsplash.com/photo-1762328494465-274a63177884",
+        "delivery_illustration": "https://images.unsplash.com/photo-1635311658656-4e9b5655a57c"
+      }
+    },
+    "icons": {
+      "library": "lucide-react",
+      "usage": "Use thin strokes (1.5px) for a refined look. Color them with brand-primary."
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#5FA8D3] hover:bg-[#4A90B8] text-white rounded-full px-8 py-6 shadow-lg hover:shadow-xl transition-all duration-300",
+      "secondary": "bg-[#62B6CB]/10 text-[#62B6CB] hover:bg-[#62B6CB]/20 rounded-full px-6 py-4 border border-[#62B6CB]/20",
+      "outline": "border-2 border-[#5FA8D3] text-[#5FA8D3] hover:bg-[#5FA8D3]/5 rounded-full px-6 py-4"
+    },
+    "cards": {
+      "base": "bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300",
+      "interactive": "cursor-pointer hover:-translate-y-1 hover:border-[#5FA8D3]/30"
+    },
+    "inputs": {
+      "base": "bg-slate-50 border-slate-200 focus:border-[#5FA8D3] focus:ring-[#5FA8D3]/20 rounded-xl h-12 px-4"
+    }
+  },
+  "pages": {
+    "proton": {
+      "title": "Proton Diagnostics",
+      "layout": "Tabbed Interface (Pathology | Imaging)",
+      "sections": [
         {
-          "url": "https://images.unsplash.com/photo-1758691461516-7e716e0ca135?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBkb2N0b3IlMjBwb3J0cmFpdCUyMG1lZGljYWwlMjBjb2F0fGVufDB8fHx8MTc2ODczMTA1MXww&ixlib=rb-4.1.0&q=85",
-          "alt": "Dr. Sarah Bennett - Senior Gynecologist",
-          "category": "doctor_profile"
+          "name": "Hero",
+          "content": "Calm, reassuring header with 'Book Diagnostic Tests' title. Use 'lab_background' with a soft overlay.",
+          "actions": ["Search Tests"]
         },
         {
-          "url": "https://images.unsplash.com/photo-1758691461513-88a0aef72160?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBkb2N0b3IlMjBwb3J0cmFpdCUyMG1lZGljYWwlMjBjb2F0fGVufDB8fHx8MTc2ODczMTA1MXww&ixlib=rb-4.1.0&q=85",
-          "alt": "Dr. James Wilson - Obstetrician",
-          "category": "doctor_profile"
+          "name": "Test Categories",
+          "type": "Grid",
+          "items": ["Blood Test", "Urine Test", "ECG", "Sonography", "X-Ray"],
+          "style": "Card-based grid with icons. Use 'pathology_hero' for Pathology tab and 'imaging_hero' for Imaging tab context."
         },
         {
-          "url": "https://images.unsplash.com/photo-1758691463384-771db2f192b3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBkb2N0b3IlMjBwb3J0cmFpdCUyMG1lZGljYWwlMjBjb2F0fGVufDB8fHx8MTc2ODczMTA1MXww&ixlib=rb-4.1.0&q=85",
-          "alt": "Dr. Emily Chen - Reproductive Specialist",
-          "category": "doctor_profile"
+          "name": "Booking Flow",
+          "components": ["Calendar (Shadcn)", "Time Slot Picker", "Home Collection Toggle"],
+          "instruction": "Use a step-by-step wizard or a clean single-page form. Highlight 'Home Collection' as a premium convenience."
+        }
+      ]
+    },
+    "pharmacy": {
+      "title": "Nevika Pharmacy",
+      "layout": "Search-Centric Hub",
+      "sections": [
+        {
+          "name": "Hero",
+          "content": "Prominent Search Bar for 4266+ medicines. Title: 'Order Medicines & Essentials'.",
+          "image": "medicines_hero"
         },
         {
-          "url": "https://images.unsplash.com/photo-1758691463393-a2aa9900af8a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHw0fHxwcm9mZXNzaW9uYWwlMjBkb2N0b3IlMjBwb3J0cmFpdCUyMG1lZGljYWwlMjBjb2F0fGVufDB8fHx8MTc2ODczMTA1MXww&ixlib=rb-4.1.0&q=85",
-          "alt": "Dr. Michael Ross - Surgeon",
-          "category": "doctor_profile"
+          "name": "Quick Actions",
+          "type": "Row",
+          "items": ["Upload Prescription", "Reorder", "View Cart"],
+          "style": "Large, colorful cards using the pastel palette."
+        },
+        {
+          "name": "Inventory List",
+          "type": "List/Grid",
+          "instruction": "Clean list view for medicines with 'Add to Cart' pill buttons. Show 'In Stock' badges in Green (#10B981)."
         }
       ]
     }
   },
-  "components": {
-    "DoctorCard": {
-      "description": "A visually rich card for selecting a doctor.",
-      "style": "Glassmorphism effect on white background with pastel border on selection.",
-      "elements": [
-        "Image: Circle or Rounded Square, large (w-24 h-24)",
-        "Name: Text-lg font-heading font-bold text-primary-dark",
-        "Specialty: Badge with pastel background (bg-secondary-light text-secondary-dark)",
-        "Status: Green dot for 'Available'",
-        "Interaction: Scale up slightly on hover, thick border-primary-main when selected"
-      ]
-    },
-    "BookingCalendar": {
-      "description": "Customized Shadcn Calendar for date selection.",
-      "style": "Clean, no grid lines, rounded selection indicators.",
-      "customization": [
-        "Wrapper: p-4 bg-white rounded-3xl shadow-card",
-        "Header: font-heading text-primary-dark",
-        "Day_Selected: bg-primary-main text-white rounded-full hover:bg-primary-dark",
-        "Day_Today: text-primary-main font-bold",
-        "Day_Outside: text-gray-300"
-      ]
-    },
-    "TimeSlotGrid": {
-      "description": "Grid of available time slots.",
-      "layout": "grid-cols-3 md:grid-cols-4 gap-3",
-      "states": {
-        "default": "bg-white border border-neutral-200 text-neutral-text_primary hover:border-primary-main hover:text-primary-main transition-all",
-        "selected": "bg-primary-main text-white border-primary-main shadow-md transform scale-105",
-        "disabled": "bg-neutral-100 text-neutral-300 cursor-not-allowed decoration-slice"
-      }
-    },
-    "BookingSummary": {
-      "description": "Confirmation modal or section.",
-      "style": "Dialog component with pastel accent header.",
-      "elements": [
-        "Header: 'Confirm Appointment'",
-        "Content: Summary of Doctor, Date, Time",
-        "Action: 'Confirm Booking' button (pill shaped, gradient bg)"
-      ]
-    }
-  },
-  "layout_rules": {
-    "structure": [
-      "Container: max-w-5xl mx-auto px-4 py-8",
-      "Grid: Use a 12-column grid logic. Left col (Doctor + Calendar) spans 8, Right col (Summary/Help) spans 4 on desktop.",
-      "Mobile: Stack everything vertically. Sticky bottom bar for 'Book Now' button if content is long."
-    ],
-    "white_space": "Use generous padding (py-12) between sections to create a calm flow."
-  },
-  "instructions_to_main_agent": [
-    "1. Refactor the existing DiaGyn page to use the new Pastel Medical theme.",
-    "2. Break down the large file into smaller components: `DoctorSelector`, `DateSelector`, `TimeSlotPicker`, `BookingSummary`.",
-    "3. Use the provided Unsplash images for the doctor profiles. Map them to the doctor data.",
-    "4. Implement the 'Pastel' color palette using Tailwind arbitrary values or by extending the tailwind config if necessary (prefer arbitrary values for speed if config is locked, but config extension is better for consistency).",
-    "5. Ensure the 'Book Appointment' flow feels like a wizard or a smooth single-page application.",
-    "6. Use `framer-motion` for smooth transitions between selection states (e.g., when a date is picked, the slots fade in).",
-    "7. CRITICAL: Maintain all existing logic for slot blocking and validation.",
-    "8. Add `data-testid` to all interactive elements."
+  "implementation_steps": [
+    "1. Update tailwind.config.js with the new 'brand' color palette.",
+    "2. Create a 'Layout' wrapper component that applies the global background and font settings.",
+    "3. Refactor 'Proton' page: Implement the Tabbed interface and integrate the Calendar component for booking.",
+    "4. Refactor 'Pharmacy' page: Implement the Search bar with autocomplete styling and the Medicine Grid.",
+    "5. Ensure all interactive elements have 'data-testid' attributes.",
+    "6. Verify mobile responsiveness (stack grids to 1 column on mobile)."
   ],
   "universal_guidelines": [
-    "Avoid generic 'AI slop' designs. Be bold with spacing and softness.",
-    "No pure black (#000000). Use Slate-900 or similar.",
-    "Micro-interactions are mandatory (hover, focus, active).",
-    "Use 'sonner' for toast notifications on success/error."
+    "Do not use gradients for backgrounds; use solid pastel colors or subtle textures.",
+    "Ensure text contrast ratios meet WCAG AA standards (4.5:1).",
+    "Use 'sonner' for all toast notifications.",
+    "All inputs must have clear focus states.",
+    "Avoid 'Inter' font; strictly use 'Outfit' for headings and 'DM Sans' for body."
   ]
 }
