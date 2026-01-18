@@ -3113,18 +3113,30 @@ async def get_medicine_count():
     return {"total": len(MEDICINE_INVENTORY)}
 
 @api_router.get("/pharmacy/all")
-async def get_all_medicines(page: int = 1, per_page: int = 100):
-    """Get all medicines with pagination"""
+async def get_all_medicines(page: int = 1, per_page: int = 100, search: str = None, form: str = None):
+    """Get all medicines with pagination and filtering"""
+    # Filter medicines based on search and form
+    filtered = MEDICINE_INVENTORY
+    
+    if search:
+        search_lower = search.lower()
+        filtered = [m for m in filtered if search_lower in m["name"].lower()]
+    
+    if form:
+        filtered = [m for m in filtered if m.get("form", "").lower() == form.lower()]
+    
+    # Paginate
+    total = len(filtered)
     start = (page - 1) * per_page
     end = start + per_page
-    medicines = MEDICINE_INVENTORY[start:end]
+    medicines = filtered[start:end]
     
     return {
         "medicines": medicines,
-        "total": len(MEDICINE_INVENTORY),
+        "total": total,
         "page": page,
         "per_page": per_page,
-        "total_pages": (len(MEDICINE_INVENTORY) + per_page - 1) // per_page
+        "total_pages": (total + per_page - 1) // per_page if total > 0 else 1
     }
 
 @api_router.get("/pharmacy/frequently-ordered")
