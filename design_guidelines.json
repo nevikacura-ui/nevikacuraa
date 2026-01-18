@@ -1,106 +1,174 @@
 {
-  "project_name": "Nevika Cura Redesign",
-  "design_philosophy": {
-    "theme": "Modern Pastel Healthcare",
-    "mood": "Trustworthy, Gentle, Optimistic, Clean",
-    "core_principles": [
-      "Fusion over Imitation: Mix medical precision with soft lifestyle aesthetics",
-      "Emotion First: Calming pastels to reduce patient anxiety",
-      "Glassmorphism: Use translucent layers for depth",
-      "Bento Grid: Asymmetric, modular layout for services"
+  "identity": {
+    "name": "E1",
+    "role": "Anti-AI Designer",
+    "principles": [
+      "Fusion over Imitation",
+      "Emotion First",
+      "Content is King",
+      "Zoom In",
+      "Negative Space",
+      "Contrast"
     ]
   },
-  "typography": {
-    "font_family": {
-      "heading": "Outfit, sans-serif",
-      "body": "DM Sans, sans-serif"
-    },
-    "scale": {
-      "h1": "text-5xl md:text-7xl font-bold tracking-tight",
-      "h2": "text-3xl md:text-4xl font-semibold",
-      "h3": "text-xl md:text-2xl font-medium",
-      "body": "text-base md:text-lg leading-relaxed"
-    }
+  "project": {
+    "name": "Nevika Cura - DiaGyn Booking",
+    "type": "Healthcare SaaS",
+    "theme": "Light Mode (Pastel Medical)",
+    "emotional_tone": "Calm, Trustworthy, Empathetic, Professional"
   },
-  "colors": {
-    "palette": {
+  "design_system": {
+    "colors": {
+      "palette_name": "Serene Care",
       "primary": {
-        "teal": "#2DD4BF",
-        "teal_soft": "#CCFBF1",
-        "teal_dark": "#0F766E"
+        "main": "#5FA8D3",
+        "light": "#CAE9FF",
+        "dark": "#1B4965",
+        "description": "Soft Medical Blue - Trust & Calm"
       },
       "secondary": {
-        "lavender": "#E0E7FF",
-        "lavender_dark": "#4338CA",
-        "peach": "#FFEDD5",
-        "peach_dark": "#C2410C",
-        "mint": "#D1FAE5",
-        "mint_dark": "#047857",
-        "sky": "#E0F2FE",
-        "sky_dark": "#0369A1"
+        "main": "#62B6CB",
+        "light": "#BEE9E8",
+        "dark": "#1B4965",
+        "description": "Sage/Teal - Healing & Growth"
+      },
+      "accent": {
+        "main": "#FFB4A2",
+        "light": "#FFD6BA",
+        "description": "Soft Coral - Warmth & Human Touch"
       },
       "neutral": {
-        "background": "#F8FAFC",
+        "background": "#FDFBF7",
         "surface": "#FFFFFF",
         "text_primary": "#1E293B",
-        "text_secondary": "#64748B"
+        "text_secondary": "#64748B",
+        "border": "#E2E8F0"
+      },
+      "status": {
+        "success": "#A7C957",
+        "error": "#EF476F",
+        "warning": "#FFD166"
       }
     },
-    "gradients": {
-      "hero": "bg-gradient-to-r from-teal-100 via-purple-100 to-orange-100",
-      "card_hover": "hover:bg-gradient-to-br hover:from-white/80 hover:to-white/40"
-    }
-  },
-  "layout": {
-    "grid_system": "Bento Grid (Grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6)",
-    "spacing": "Generous padding (p-6, p-8) to create breathing room",
-    "radius": "rounded-3xl (24px) for all cards and containers"
-  },
-  "components": {
-    "ServiceCard": {
-      "style": "Glassmorphism (bg-white/60 backdrop-blur-xl border border-white/50)",
-      "interaction": "Hover: Scale 1.02, Shadow-xl, Border-color-brand",
-      "content": "Icon/Image on top, Title bold, Description subtle"
+    "typography": {
+      "headings": {
+        "font_family": "Outfit, sans-serif",
+        "weights": ["500", "700"],
+        "usage": "Section titles, Doctor names, Modal headers"
+      },
+      "body": {
+        "font_family": "DM Sans, sans-serif",
+        "weights": ["400", "500"],
+        "usage": "Descriptions, Time slots, Form labels"
+      }
     },
-    "HeroSection": {
-      "style": "Centered or Asymmetric with floating 3D elements (CSS shapes)",
-      "elements": "Large gradient heading, Pill-shaped CTA, Trust badges"
+    "spacing": {
+      "scale": "Tailwind Default",
+      "container_padding": "p-6 md:p-12",
+      "section_gap": "gap-8 md:gap-12",
+      "element_gap": "gap-4"
     },
-    "AuthModal": {
-      "style": "Clean, centered dialog with pastel accents. Keep existing logic intact."
+    "radius": {
+      "default": "rounded-2xl",
+      "button": "rounded-full",
+      "card": "rounded-3xl"
     },
-    "Buttons": {
-      "primary": "bg-teal-500 text-white rounded-full hover:bg-teal-600 shadow-lg hover:shadow-teal-500/30 transition-all",
-      "secondary": "bg-white text-teal-600 border border-teal-100 rounded-full hover:bg-teal-50"
+    "shadows": {
+      "card": "shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+      "hover": "shadow-[0_8px_30px_rgb(0,0,0,0.08)]",
+      "floating": "shadow-[0_20px_50px_rgb(0,0,0,0.1)]"
     }
   },
   "assets": {
     "images": {
-      "diagyn": "https://images.unsplash.com/photo-1755050026084-49ae65b94882?q=80&w=800&auto=format&fit=crop",
-      "proton": "https://images.unsplash.com/photo-1676118036556-a6e23ddab63d?q=80&w=800&auto=format&fit=crop",
-      "pharmacy": "https://images.unsplash.com/photo-1742189406399-a683d5650e06?q=80&w=800&auto=format&fit=crop",
-      "evara": "https://images.unsplash.com/photo-1707257969667-68804d47f5da?q=80&w=800&auto=format&fit=crop",
-      "glydex": "https://images.unsplash.com/photo-1599814516324-66aa0bf16425?q=80&w=800&auto=format&fit=crop",
-      "alyne": "https://images.unsplash.com/photo-1659353888818-0e41520d086a?q=80&w=800&auto=format&fit=crop",
-      "hero_bg": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?q=80&w=1600&auto=format&fit=crop"
+      "doctors": [
+        {
+          "url": "https://images.unsplash.com/photo-1758691461516-7e716e0ca135?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBkb2N0b3IlMjBwb3J0cmFpdCUyMG1lZGljYWwlMjBjb2F0fGVufDB8fHx8MTc2ODczMTA1MXww&ixlib=rb-4.1.0&q=85",
+          "alt": "Dr. Sarah Bennett - Senior Gynecologist",
+          "category": "doctor_profile"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1758691461513-88a0aef72160?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBkb2N0b3IlMjBwb3J0cmFpdCUyMG1lZGljYWwlMjBjb2F0fGVufDB8fHx8MTc2ODczMTA1MXww&ixlib=rb-4.1.0&q=85",
+          "alt": "Dr. James Wilson - Obstetrician",
+          "category": "doctor_profile"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1758691463384-771db2f192b3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBkb2N0b3IlMjBwb3J0cmFpdCUyMG1lZGljYWwlMjBjb2F0fGVufDB8fHx8MTc2ODczMTA1MXww&ixlib=rb-4.1.0&q=85",
+          "alt": "Dr. Emily Chen - Reproductive Specialist",
+          "category": "doctor_profile"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1758691463393-a2aa9900af8a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHw0fHxwcm9mZXNzaW9uYWwlMjBkb2N0b3IlMjBwb3J0cmFpdCUyMG1lZGljYWwlMjBjb2F0fGVufDB8fHx8MTc2ODczMTA1MXww&ixlib=rb-4.1.0&q=85",
+          "alt": "Dr. Michael Ross - Surgeon",
+          "category": "doctor_profile"
+        }
+      ]
+    }
+  },
+  "components": {
+    "DoctorCard": {
+      "description": "A visually rich card for selecting a doctor.",
+      "style": "Glassmorphism effect on white background with pastel border on selection.",
+      "elements": [
+        "Image: Circle or Rounded Square, large (w-24 h-24)",
+        "Name: Text-lg font-heading font-bold text-primary-dark",
+        "Specialty: Badge with pastel background (bg-secondary-light text-secondary-dark)",
+        "Status: Green dot for 'Available'",
+        "Interaction: Scale up slightly on hover, thick border-primary-main when selected"
+      ]
     },
-    "icons": "Use Lucide-React (already installed)"
+    "BookingCalendar": {
+      "description": "Customized Shadcn Calendar for date selection.",
+      "style": "Clean, no grid lines, rounded selection indicators.",
+      "customization": [
+        "Wrapper: p-4 bg-white rounded-3xl shadow-card",
+        "Header: font-heading text-primary-dark",
+        "Day_Selected: bg-primary-main text-white rounded-full hover:bg-primary-dark",
+        "Day_Today: text-primary-main font-bold",
+        "Day_Outside: text-gray-300"
+      ]
+    },
+    "TimeSlotGrid": {
+      "description": "Grid of available time slots.",
+      "layout": "grid-cols-3 md:grid-cols-4 gap-3",
+      "states": {
+        "default": "bg-white border border-neutral-200 text-neutral-text_primary hover:border-primary-main hover:text-primary-main transition-all",
+        "selected": "bg-primary-main text-white border-primary-main shadow-md transform scale-105",
+        "disabled": "bg-neutral-100 text-neutral-300 cursor-not-allowed decoration-slice"
+      }
+    },
+    "BookingSummary": {
+      "description": "Confirmation modal or section.",
+      "style": "Dialog component with pastel accent header.",
+      "elements": [
+        "Header: 'Confirm Appointment'",
+        "Content: Summary of Doctor, Date, Time",
+        "Action: 'Confirm Booking' button (pill shaped, gradient bg)"
+      ]
+    }
+  },
+  "layout_rules": {
+    "structure": [
+      "Container: max-w-5xl mx-auto px-4 py-8",
+      "Grid: Use a 12-column grid logic. Left col (Doctor + Calendar) spans 8, Right col (Summary/Help) spans 4 on desktop.",
+      "Mobile: Stack everything vertically. Sticky bottom bar for 'Book Now' button if content is long."
+    ],
+    "white_space": "Use generous padding (py-12) between sections to create a calm flow."
   },
   "instructions_to_main_agent": [
-    "1. Update `tailwind.config.js` to include the new pastel color palette and fonts.",
-    "2. Refactor `Home.js` to use the new Bento Grid layout.",
-    "3. Replace the existing `services` array images with the new Unsplash URLs provided in `assets.images`.",
-    "4. Apply Glassmorphism styles to all cards (`bg-white/60 backdrop-blur-md`).",
-    "5. Ensure `AuthModal` logic remains 100% functional but update its UI to match the pastel theme.",
-    "6. Add floating background blobs (using CSS absolute positioning and blur) to the main container for that 'soft' feel.",
-    "7. Use `data-testid` for all interactive elements.",
-    "8. Preserve all `onClick` handlers and navigation paths."
+    "1. Refactor the existing DiaGyn page to use the new Pastel Medical theme.",
+    "2. Break down the large file into smaller components: `DoctorSelector`, `DateSelector`, `TimeSlotPicker`, `BookingSummary`.",
+    "3. Use the provided Unsplash images for the doctor profiles. Map them to the doctor data.",
+    "4. Implement the 'Pastel' color palette using Tailwind arbitrary values or by extending the tailwind config if necessary (prefer arbitrary values for speed if config is locked, but config extension is better for consistency).",
+    "5. Ensure the 'Book Appointment' flow feels like a wizard or a smooth single-page application.",
+    "6. Use `framer-motion` for smooth transitions between selection states (e.g., when a date is picked, the slots fade in).",
+    "7. CRITICAL: Maintain all existing logic for slot blocking and validation.",
+    "8. Add `data-testid` to all interactive elements."
   ],
   "universal_guidelines": [
-    "Do not use generic centered layouts. Use asymmetry.",
-    "Use 2-3x more spacing than typical designs.",
-    "Every interaction needs micro-animations.",
-    "Never use pure black (#000000). Use tinted grays (#1E293B).",
-    "Ensure accessibility contrast ratios are met even with pastel colors."
+    "Avoid generic 'AI slop' designs. Be bold with spacing and softness.",
+    "No pure black (#000000). Use Slate-900 or similar.",
+    "Micro-interactions are mandatory (hover, focus, active).",
+    "Use 'sonner' for toast notifications on success/error."
   ]
 }
