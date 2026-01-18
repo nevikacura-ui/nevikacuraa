@@ -1351,7 +1351,7 @@ const Evara = () => {
             <ArrowLeft className="w-5 h-5 text-rose-600" />
           </button>
           <div className="flex items-center gap-2">
-            <img src="/icons/evara-logo.png" alt="Evara" className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl shadow-md" />
+            <img src="/icons/evara-logo.png" alt="Evara" className="h-10 sm:h-12 w-auto object-contain" />
             <div>
               <h1 className="font-semibold text-rose-800" style={{ fontFamily: 'Outfit, sans-serif' }}>Evara</h1>
               <p className="text-xs text-rose-500">Women's Wellness</p>
