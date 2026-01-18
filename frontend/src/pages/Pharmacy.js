@@ -852,17 +852,20 @@ const Pharmacy = () => {
                 </h3>
                 <div className="space-y-2 mb-4">
                   {medicines.map((med, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-white rounded-xl border border-orange-100">
-                      <div className="flex-1">
-                        <span className="font-medium text-sm text-slate-800">{med.name}</span>
-                        <span className="ml-2 text-xs text-slate-500">{med.form}</span>
+                    <div key={idx} className="flex items-center justify-between p-3 bg-white rounded-xl border border-orange-200 shadow-sm">
+                      <div className="flex items-center gap-3 flex-1">
+                        <span className="text-2xl" role="img" aria-label={med.form}>{getMedicineIcon(med.form)}</span>
+                        <div>
+                          <span className="font-semibold text-sm text-slate-800">{med.name}</span>
+                          <span className="block text-xs text-orange-600">{med.form}</span>
+                        </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline" className="rounded-lg border-orange-200" onClick={() => updateQuantity(idx, med.quantity - 1)} data-testid={`decrease-qty-${idx}`}>
+                        <Button size="sm" variant="outline" className="rounded-lg border-orange-300 hover:bg-orange-100" onClick={() => updateQuantity(idx, med.quantity - 1)} data-testid={`decrease-qty-${idx}`}>
                           <Minus className="w-3 h-3" />
                         </Button>
-                        <span className="w-8 text-center font-medium">{med.quantity}</span>
-                        <Button size="sm" variant="outline" className="rounded-lg border-orange-200" onClick={() => updateQuantity(idx, med.quantity + 1)} disabled={med.quantity >= 20} data-testid={`increase-qty-${idx}`}>
+                        <span className="w-8 text-center font-bold text-orange-600">{med.quantity}</span>
+                        <Button size="sm" variant="outline" className="rounded-lg border-orange-300 hover:bg-orange-100" onClick={() => updateQuantity(idx, med.quantity + 1)} disabled={med.quantity >= 20} data-testid={`increase-qty-${idx}`}>
                           <Plus className="w-3 h-3" />
                         </Button>
                         <Button size="sm" variant="ghost" onClick={() => removeMedicine(idx)} className="text-red-500 hover:text-red-600 hover:bg-red-50" data-testid={`remove-medicine-${idx}`}>
