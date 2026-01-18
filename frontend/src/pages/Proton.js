@@ -268,6 +268,7 @@ const Proton = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedTests, setSelectedTests] = useState([]);
   const [customTest, setCustomTest] = useState('');
+  const [testSearchTerm, setTestSearchTerm] = useState('');
   const [prescriptionFile, setPrescriptionFile] = useState(null);
   const [prescriptionUrl, setPrescriptionUrl] = useState('');
   const [preferredDate, setPreferredDate] = useState(new Date());
