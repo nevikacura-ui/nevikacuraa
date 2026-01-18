@@ -12,7 +12,7 @@ import axios from 'axios';
 import { 
   ArrowLeft, ArrowRight, Upload, Plus, X, Heart, FlaskConical, Scan, Activity, 
   ShoppingCart, CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, 
-  Clock, AlertTriangle, Droplets, TestTube, Stethoscope, ChevronRight
+  Clock, AlertTriangle, Droplets, TestTube, Stethoscope, ChevronRight, Search
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
