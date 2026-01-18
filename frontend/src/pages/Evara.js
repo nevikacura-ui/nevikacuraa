@@ -1335,7 +1335,7 @@ const Evara = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-100 via-pink-50 to-orange-50 flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center">
-          <img src="/icons/evara-logo.png" alt="Evara" className="w-24 h-24 rounded-2xl shadow-lg" />
+          <img src="/icons/evara-logo.png" alt="Evara" className="h-24 w-auto object-contain" />
           <p className="mt-4 text-rose-600 font-medium">Loading your wellness space...</p>
         </div>
       </div>
