@@ -612,6 +612,59 @@ const Proton = () => {
               </p>
             </div>
 
+            {/* Search Tests */}
+            <Card className="p-4 rounded-2xl border-slate-200 shadow-sm">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <Input
+                  placeholder="Search tests... (e.g., CBC, Thyroid, HbA1c)"
+                  value={testSearchTerm}
+                  onChange={(e) => setTestSearchTerm(e.target.value)}
+                  className="pl-10 rounded-xl border-slate-200 focus:border-[#5FA8D3] focus:ring-[#5FA8D3]/20"
+                  data-testid="test-search"
+                />
+                {testSearchTerm && (
+                  <button 
+                    onClick={() => setTestSearchTerm('')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              
+              {/* Search Results */}
+              {testSearchTerm && filteredTests.length > 0 && (
+                <div className="mt-3 max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
+                  <div className="p-2 bg-slate-50 border-b border-slate-200 text-xs text-slate-500 font-medium">
+                    Found {filteredTests.length} tests matching "{testSearchTerm}"
+                  </div>
+                  <div className="divide-y divide-slate-100">
+                    {filteredTests.map(test => (
+                      <label 
+                        key={test} 
+                        className="flex items-center gap-3 p-3 hover:bg-[#5FA8D3]/5 cursor-pointer transition-colors"
+                      >
+                        <Checkbox
+                          checked={selectedTests.includes(test)}
+                          onCheckedChange={() => toggleTest(test)}
+                          className="border-2 border-slate-300 data-[state=checked]:bg-[#5FA8D3] data-[state=checked]:border-[#5FA8D3]"
+                        />
+                        <span className="text-lg">{getTestIcon(test)}</span>
+                        <span className="text-sm text-[#1E293B]">{test}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {testSearchTerm && filteredTests.length === 0 && (
+                <div className="mt-3 p-4 text-center text-slate-500 text-sm bg-slate-50 rounded-xl">
+                  No tests found matching "{testSearchTerm}". Try a different search term or add as custom test below.
+                </div>
+              )}
+            </Card>
+
             {/* Tab Navigation */}
             <div className="flex gap-2 p-1 bg-slate-100 rounded-2xl">
               {[
