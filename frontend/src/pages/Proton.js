@@ -36,6 +36,65 @@ const theme = {
   error: '#EF4444'
 };
 
+// Test icons based on test type
+const getTestIcon = (testName) => {
+  const lowerName = testName.toLowerCase();
+  
+  // Blood/CBC tests
+  if (lowerName.includes('cbc') || lowerName.includes('blood count') || lowerName.includes('hemoglobin') || lowerName.includes('rbc') || lowerName.includes('wbc') || lowerName.includes('platelet')) return '🩸';
+  
+  // Sugar/Diabetes tests
+  if (lowerName.includes('sugar') || lowerName.includes('glucose') || lowerName.includes('hba1c') || lowerName.includes('diabetes') || lowerName.includes('insulin') || lowerName.includes('gtt') || lowerName.includes('ogtt')) return '🍬';
+  
+  // Thyroid tests
+  if (lowerName.includes('thyroid') || lowerName.includes('tsh') || lowerName.includes('t3') || lowerName.includes('t4')) return '🦋';
+  
+  // Liver tests
+  if (lowerName.includes('liver') || lowerName.includes('lft') || lowerName.includes('sgpt') || lowerName.includes('sgot') || lowerName.includes('bilirubin') || lowerName.includes('albumin')) return '🫀';
+  
+  // Kidney tests
+  if (lowerName.includes('kidney') || lowerName.includes('renal') || lowerName.includes('creatinine') || lowerName.includes('urea') || lowerName.includes('uric') || lowerName.includes('rft') || lowerName.includes('egfr')) return '🫘';
+  
+  // Lipid tests
+  if (lowerName.includes('lipid') || lowerName.includes('cholesterol') || lowerName.includes('triglyceride') || lowerName.includes('hdl') || lowerName.includes('ldl')) return '🧈';
+  
+  // Vitamin tests
+  if (lowerName.includes('vitamin') || lowerName.includes('b12') || lowerName.includes('folate') || lowerName.includes('iron') || lowerName.includes('ferritin') || lowerName.includes('calcium') || lowerName.includes('zinc') || lowerName.includes('magnesium')) return '💊';
+  
+  // Hormone tests
+  if (lowerName.includes('hormone') || lowerName.includes('lh') || lowerName.includes('fsh') || lowerName.includes('prolactin') || lowerName.includes('estradiol') || lowerName.includes('progesterone') || lowerName.includes('testosterone') || lowerName.includes('cortisol') || lowerName.includes('amh')) return '⚗️';
+  
+  // Pregnancy tests
+  if (lowerName.includes('pregnancy') || lowerName.includes('hcg') || lowerName.includes('anc') || lowerName.includes('marker') || lowerName.includes('quadruple') || lowerName.includes('dual')) return '🤰';
+  
+  // Urine tests
+  if (lowerName.includes('urine') || lowerName.includes('urinalysis')) return '🧪';
+  
+  // Cardiac tests
+  if (lowerName.includes('cardiac') || lowerName.includes('heart') || lowerName.includes('troponin') || lowerName.includes('cpk') || lowerName.includes('bnp') || lowerName.includes('ecg')) return '❤️';
+  
+  // Infection tests
+  if (lowerName.includes('hiv') || lowerName.includes('hepatitis') || lowerName.includes('dengue') || lowerName.includes('malaria') || lowerName.includes('typhoid') || lowerName.includes('culture') || lowerName.includes('viral')) return '🦠';
+  
+  // Cancer markers
+  if (lowerName.includes('ca-') || lowerName.includes('cea') || lowerName.includes('afp') || lowerName.includes('psa') || lowerName.includes('tumor') || lowerName.includes('marker')) return '🔬';
+  
+  // Sonography/Imaging
+  if (lowerName.includes('scan') || lowerName.includes('sonography') || lowerName.includes('usg') || lowerName.includes('ultrasound') || lowerName.includes('follicular')) return '📷';
+  
+  // Sputum tests
+  if (lowerName.includes('sputum') || lowerName.includes('afb') || lowerName.includes('tb')) return '🫁';
+  
+  // Arthritis tests
+  if (lowerName.includes('arthritis') || lowerName.includes('ra factor') || lowerName.includes('ana') || lowerName.includes('ccp')) return '🦴';
+  
+  // Package/Panel
+  if (lowerName.includes('package') || lowerName.includes('profile') || lowerName.includes('panel') || lowerName.includes('checkup')) return '📦';
+  
+  // Default
+  return '🧬';
+};
+
 // ============================================
 // TEST DATA - All tests preserved
 // ============================================
