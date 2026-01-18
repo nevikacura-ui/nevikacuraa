@@ -768,9 +768,12 @@ const Pharmacy = () => {
                           className="w-full px-4 py-3 text-left hover:bg-orange-50 border-b border-orange-50 last:border-0 flex items-center justify-between transition-colors"
                           data-testid={`suggestion-${idx}`}
                         >
-                          <div>
-                            <span className="font-medium text-slate-800">{med.name}</span>
-                            <span className="ml-2 text-xs text-slate-500">{med.form}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{getMedicineIcon(med.form)}</span>
+                            <div>
+                              <span className="font-medium text-slate-800">{med.name}</span>
+                              <span className="ml-2 text-xs text-orange-600">{med.form}</span>
+                            </div>
                           </div>
                           <Plus className="w-4 h-4 text-orange-500" />
                         </button>
@@ -792,6 +795,46 @@ const Pharmacy = () => {
                 </select>
               </div>
             </Card>
+
+            {/* Category Cards - Visual Browse */}
+            <div className="space-y-3">
+              <h3 className="font-semibold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <Package className="w-5 h-5 text-orange-500" />
+                Browse by Category
+              </h3>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                <CategoryCard 
+                  category="tablets" 
+                  isActive={selectedForm === 'Tablet'} 
+                  onClick={() => setSelectedForm(selectedForm === 'Tablet' ? '' : 'Tablet')} 
+                />
+                <CategoryCard 
+                  category="capsules" 
+                  isActive={selectedForm === 'Capsule'} 
+                  onClick={() => setSelectedForm(selectedForm === 'Capsule' ? '' : 'Capsule')} 
+                />
+                <CategoryCard 
+                  category="syrups" 
+                  isActive={selectedForm === 'Syrup'} 
+                  onClick={() => setSelectedForm(selectedForm === 'Syrup' ? '' : 'Syrup')} 
+                />
+                <CategoryCard 
+                  category="injections" 
+                  isActive={selectedForm === 'Injection'} 
+                  onClick={() => setSelectedForm(selectedForm === 'Injection' ? '' : 'Injection')} 
+                />
+                <CategoryCard 
+                  category="creams" 
+                  isActive={selectedForm === 'Cream' || selectedForm === 'Ointment'} 
+                  onClick={() => setSelectedForm(selectedForm === 'Cream' ? '' : 'Cream')} 
+                />
+                <CategoryCard 
+                  category="drops" 
+                  isActive={selectedForm === 'Drops'} 
+                  onClick={() => setSelectedForm(selectedForm === 'Drops' ? '' : 'Drops')} 
+                />
+              </div>
+            </div>
 
             {/* Manual Entry */}
             <Card className="p-5 rounded-2xl border-orange-100">
