@@ -323,6 +323,7 @@ const Glydex = () => {
   // UI state
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   
   // Feature dialogs
   const [showDiet, setShowDiet] = useState(false);
