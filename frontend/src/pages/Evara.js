@@ -1333,48 +1333,48 @@ const Evara = () => {
 
   if (loading && !programs.length) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-fuchsia-500 via-pink-500 to-purple-600 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-rose-100 via-pink-50 to-orange-50 flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center">
-          <img src="/icons/evara-logo.png" alt="Evara" className="w-24 h-24 rounded-2xl bg-white p-2" />
-          <p className="mt-4 text-white font-medium">Loading your wellness space...</p>
+          <img src="/icons/evara-logo.png" alt="Evara" className="w-24 h-24 rounded-2xl shadow-lg" />
+          <p className="mt-4 text-rose-600 font-medium">Loading your wellness space...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-fuchsia-50 to-purple-100">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-fuchsia-600 via-pink-500 to-purple-600 sticky top-0 z-50 shadow-lg">
+      <header className="bg-white/80 backdrop-blur-xl border-b border-rose-100 sticky top-0 z-50 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="p-2 hover:bg-white/20 rounded-full transition-colors">
-            <ArrowLeft className="w-5 h-5 text-white" />
+          <button onClick={() => navigate('/')} className="p-2 hover:bg-rose-50 rounded-full transition-colors">
+            <ArrowLeft className="w-5 h-5 text-rose-600" />
           </button>
           <div className="flex items-center gap-2">
-            <img src="/icons/evara-logo.png" alt="Evara" className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white p-1" />
+            <img src="/icons/evara-logo.png" alt="Evara" className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl shadow-md" />
             <div>
-              <h1 className="font-semibold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>Evara</h1>
-              <p className="text-xs text-pink-200">Women's Wellness</p>
+              <h1 className="font-semibold text-rose-800" style={{ fontFamily: 'Outfit, sans-serif' }}>Evara</h1>
+              <p className="text-xs text-rose-500">Women's Wellness</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             {user ? (
-              <button onClick={logout} className="text-xs text-pink-200 hover:text-white transition-colors">
+              <button onClick={logout} className="text-xs text-rose-500 hover:text-rose-700 transition-colors">
                 Logout
               </button>
             ) : (
               <button 
                 onClick={() => setShowSignup(true)}
-                className="px-3 py-1.5 bg-white text-pink-600 text-sm font-medium rounded-full hover:bg-pink-100 shadow-md"
+                className="px-3 py-1.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-sm font-medium rounded-full hover:from-rose-600 hover:to-pink-600 shadow-md"
               >
                 Sign Up
               </button>
             )}
             <button 
               onClick={() => setShowChat(true)}
-              className="p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors"
+              className="p-2 bg-rose-100 hover:bg-rose-200 rounded-full transition-colors"
             >
-              <MessageCircle className="w-5 h-5 text-white" />
+              <MessageCircle className="w-5 h-5 text-rose-600" />
             </button>
           </div>
         </div>
@@ -1383,7 +1383,7 @@ const Evara = () => {
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Welcome Section */}
         {user && (
-          <Card className="bg-gradient-to-r from-fuchsia-500 via-pink-500 to-purple-500 text-white border-0 shadow-xl rounded-3xl overflow-hidden">
+          <Card className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white border-0 shadow-xl rounded-3xl overflow-hidden">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-white/20 rounded-full">
