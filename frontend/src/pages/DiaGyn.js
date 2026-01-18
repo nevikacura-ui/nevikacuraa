@@ -1277,7 +1277,7 @@ const DiaGyn = () => {
                 <div className="space-y-1.5 text-sm">
                   {day.doctors?.map((doc, j) => (
                     <p key={j} className="text-[#64748B]">
-                      <span className="font-medium text-[#1B4965]">{doc.name}</span> - {doc.clinics?.join(', ')}
+                      <span className="font-medium text-[#1B4965]">{doc.name}</span> - {doc.clinics?.map(c => c.name).join(', ')}
                     </p>
                   ))}
                 </div>
