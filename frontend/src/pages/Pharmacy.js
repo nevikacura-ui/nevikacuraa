@@ -1,134 +1,172 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { ArrowLeft, ArrowRight, Upload, Plus, Minus, Trash2, Search, Pill, ShoppingCart, X, Package, CreditCard, Banknote, CheckCircle2, Phone, Shield, Loader2, Gift, Crown, Award, Star, Info, ChevronRight, FileText, Trophy, Medal, TrendingUp, Calendar, AlertTriangle } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { 
+  ArrowLeft, ArrowRight, Upload, Plus, Minus, X, ShoppingCart, Pill, Search, Package, 
+  CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, Trash2, Info, FileText,
+  Crown, Star, Gift, Trophy, TrendingUp, Medal, ChevronRight, Sparkles
+} from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
-const WHATSAPP_NUMBER = '+917039030030';
 
+// ============================================
+// DESIGN SYSTEM - Serene Care Pastel Theme (Orange variant for Pharmacy)
+// ============================================
+const theme = {
+  primary: '#F97316',      // Orange
+  primaryLight: '#FED7AA', // Light orange
+  secondary: '#FB923C',    // Amber orange
+  accent: '#FBBF24',       // Gold
+  background: '#FFFBF5',   // Warm white
+  surface: '#FFFFFF',
+  textPrimary: '#1E293B',
+  textSecondary: '#64748B',
+  border: '#FED7AA',
+  success: '#10B981',
+  error: '#EF4444'
+};
+
+// ============================================
+// STEP PROGRESS COMPONENT
+// ============================================
+const StepProgress = ({ currentStep }) => {
+  const steps = [
+    { num: 1, label: 'Cart', icon: ShoppingCart },
+    { num: 2, label: 'Verify', icon: Shield },
+    { num: 3, label: 'Pay', icon: CreditCard }
+  ];
+  
+  return (
+    <div className="flex items-center gap-1 sm:gap-2">
+      {steps.map((step, idx) => (
+        <React.Fragment key={step.num}>
+          <div className={`
+            flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all
+            ${currentStep === step.num 
+              ? 'bg-orange-500 text-white shadow-lg' 
+              : currentStep > step.num 
+                ? 'bg-emerald-100 text-emerald-600' 
+                : 'bg-slate-100 text-slate-400'
+            }
+          `}>
+            {currentStep > step.num ? <CheckCircle2 className="w-4 h-4" /> : <step.icon className="w-4 h-4" />}
+            <span className="hidden sm:inline">{step.label}</span>
+          </div>
+          {idx < steps.length - 1 && (
+            <ChevronRight className="w-4 h-4 text-slate-300" />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
+// ============================================
+// MAIN PHARMACY COMPONENT
+// ============================================
 const Pharmacy = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
-  
-  // Step state: 1 = Add Medicines, 2 = OTP Verification, 3 = Enter Details & Payment
+  const searchRef = useRef(null);
+  const inventoryListRef = useRef(null);
+
   const [currentStep, setCurrentStep] = useState(1);
-  
   const [medicines, setMedicines] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [inventory, setInventory] = useState([]);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
+  const [totalMedicines, setTotalMedicines] = useState(0);
+  const [hasMoreMedicines, setHasMoreMedicines] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [forms, setForms] = useState([]);
+  const [selectedForm, setSelectedForm] = useState('');
+  const [manualMedicine, setManualMedicine] = useState({ name: '', quantity: 1 });
   const [prescriptionFile, setPrescriptionFile] = useState(null);
   const [prescriptionUrl, setPrescriptionUrl] = useState('');
-  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [uploading, setUploading] = useState(false);
   const [patientInfo, setPatientInfo] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
     email: user?.email || ''
   });
+  const [deliveryAddress, setDeliveryAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cod');
-  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
-  
-  // Inventory state
-  const [inventory, setInventory] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedForm, setSelectedForm] = useState('');
-  const [forms, setForms] = useState([]);
-  const [inventoryLoading, setInventoryLoading] = useState(true);
-  const [totalMedicines, setTotalMedicines] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMoreMedicines, setHasMoreMedicines] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const inventoryListRef = useRef(null);
-  
-  // Autocomplete state
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const searchRef = useRef(null);
-  
-  // Manual entry state
-  const [manualMedicine, setManualMedicine] = useState({ name: '', quantity: 1 });
-  
-  // OTP state
+
+  // OTP State
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [otpSent, setOtpSent] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
   const [mockOtp, setMockOtp] = useState('');
-  const [otpMethod, setOtpMethod] = useState(''); // 'sms' or 'mock'
+  const [otpMethod, setOtpMethod] = useState('');
   const [verificationToken, setVerificationToken] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef([]);
-  
-  // Booking limits state
-  const [bookingLimits, setBookingLimits] = useState({
-    canBook: true,
-    activeOrders: 0,
-    loading: true
-  });
-  
-  // Loyalty points state
+
+  // Loyalty State
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [pointsToUse, setPointsToUse] = useState(0);
   const [loadingPoints, setLoadingPoints] = useState(false);
-  
-  // Loyalty Program Info state
   const [showLoyaltyInfo, setShowLoyaltyInfo] = useState(false);
   const [loyaltyTiers, setLoyaltyTiers] = useState(null);
   const [loyaltyFAQ, setLoyaltyFAQ] = useState(null);
   const [loyaltyTerms, setLoyaltyTerms] = useState(null);
   const [userLoyaltyStatus, setUserLoyaltyStatus] = useState(null);
-  const [loyaltyTab, setLoyaltyTab] = useState('overview'); // overview, leaderboard, faq, terms
-  
-  // Leaderboard state
+  const [loyaltyTab, setLoyaltyTab] = useState('program');
   const [leaderboard, setLeaderboard] = useState([]);
-  const [leaderboardPeriod, setLeaderboardPeriod] = useState('all'); // all, weekly, monthly
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
-  const [leaderboardInfo, setLeaderboardInfo] = useState({ total_participants: 0, period_label: 'All Time' });
-
-  // Frequently ordered state
+  const [leaderboardPeriod, setLeaderboardPeriod] = useState('all');
+  const [leaderboardInfo, setLeaderboardInfo] = useState({});
   const [frequentlyOrdered, setFrequentlyOrdered] = useState([]);
   const [loadingFrequent, setLoadingFrequent] = useState(false);
+  
+  const [bookingLimits, setBookingLimits] = useState({
+    canBook: true,
+    activeOrders: 0,
+    loading: true
+  });
 
   // Check for reorder data on mount
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('reorder') === 'true') {
-      const reorderData = localStorage.getItem('reorder_data');
-      if (reorderData) {
-        try {
-          const data = JSON.parse(reorderData);
-          setMedicines(data.medicines || []);
-          setDeliveryAddress(data.delivery_address || '');
-          setPatientInfo(prev => ({
-            ...prev,
-            name: data.patient_name || prev.name,
-            phone: data.patient_phone || prev.phone
-          }));
-          localStorage.removeItem('reorder_data');
-          toast.success('Previous order loaded! Review and proceed.');
-        } catch (e) {
-          console.error('Failed to parse reorder data:', e);
-        }
-      }
+    if (location.state?.reorderMedicines) {
+      setMedicines(location.state.reorderMedicines);
+      toast.success(`${location.state.reorderMedicines.length} medicines added for reorder`);
+      window.history.replaceState({}, document.title);
     }
-  }, []);
+  }, [location.state]);
 
-  // Check booking limits when phone number changes
+  // Fetch data on mount
+  useEffect(() => {
+    fetchForms();
+    fetchTotalCount();
+    fetchInventory(1, true);
+    if (user) {
+      fetchLoyaltyPoints();
+      fetchFrequentlyOrdered();
+    }
+  }, [user]);
+
+  // Check booking limits
   useEffect(() => {
     const checkBookingLimits = async () => {
       if (!patientInfo.phone || patientInfo.phone.length < 10) {
         setBookingLimits({ canBook: true, activeOrders: 0, loading: false });
         return;
       }
-      
       try {
         const response = await axios.get(`${API}/booking-limits/status`, {
           params: { phone: patientInfo.phone }
@@ -139,71 +177,36 @@ const Pharmacy = () => {
           loading: false
         });
       } catch (error) {
-        console.error('Failed to check booking limits:', error);
         setBookingLimits({ canBook: true, activeOrders: 0, loading: false });
       }
     };
-    
     const debounce = setTimeout(checkBookingLimits, 500);
     return () => clearTimeout(debounce);
   }, [patientInfo.phone]);
 
-  // Fetch frequently ordered medicines for logged-in users
-  const fetchFrequentlyOrdered = async () => {
-    if (!user) return;
-    setLoadingFrequent(true);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${API}/pharmacy/frequently-ordered`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setFrequentlyOrdered(response.data.medicines || []);
-    } catch (error) {
-      console.error('Failed to fetch frequently ordered:', error);
+  // Autocomplete suggestions
+  useEffect(() => {
+    if (searchTerm.length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
     }
-    setLoadingFrequent(false);
-  };
-
-  useEffect(() => {
-    fetchInventory();
-    fetchForms();
-    fetchTotalCount();
-    // Fetch loyalty points and frequently ordered for logged-in users
-    if (user) {
-      fetchLoyaltyPoints();
-      fetchFrequentlyOrdered();
-    }
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setCurrentPage(1);
-      fetchInventory(1, true);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [selectedForm, searchTerm]);
-
-  // Autocomplete effect
-  useEffect(() => {
     const fetchSuggestions = async () => {
-      if (searchTerm.length < 2) {
-        setSuggestions([]);
-        return;
-      }
       try {
-        const response = await axios.get(`${API}/pharmacy/autocomplete?q=${encodeURIComponent(searchTerm)}&limit=8`);
-        setSuggestions(response.data.suggestions);
+        const response = await axios.get(`${API}/pharmacy/search`, {
+          params: { q: searchTerm, limit: 10, form: selectedForm || undefined }
+        });
+        setSuggestions(response.data.medicines || []);
         setShowSuggestions(true);
       } catch (error) {
         console.error('Autocomplete error:', error);
       }
     };
-    
     const timer = setTimeout(fetchSuggestions, 200);
     return () => clearTimeout(timer);
-  }, [searchTerm]);
+  }, [searchTerm, selectedForm]);
 
-  // Resend timer countdown
+  // Resend timer
   useEffect(() => {
     if (resendTimer > 0) {
       const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
@@ -222,17 +225,20 @@ const Pharmacy = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Fetch leaderboard when period changes
+  useEffect(() => {
+    if (loyaltyTab === 'leaderboard') {
+      fetchLeaderboard(leaderboardPeriod);
+    }
+  }, [loyaltyTab, leaderboardPeriod]);
+
   const fetchInventory = async (page = 1, reset = false) => {
     try {
       if (page === 1) setInventoryLoading(true);
       else setLoadingMore(true);
       
       const response = await axios.get(`${API}/pharmacy/all`, {
-        params: {
-          page,
-          per_page: 50,
-          search: searchTerm || undefined
-        }
+        params: { page, per_page: 50, search: searchTerm || undefined }
       });
       
       if (reset || page === 1) {
@@ -275,6 +281,21 @@ const Pharmacy = () => {
     setLoadingPoints(false);
   };
 
+  const fetchFrequentlyOrdered = async () => {
+    if (!user) return;
+    setLoadingFrequent(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API}/pharmacy/frequently-ordered`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setFrequentlyOrdered(response.data.medicines || []);
+    } catch (error) {
+      console.error('Failed to fetch frequent orders:', error);
+    }
+    setLoadingFrequent(false);
+  };
+
   const fetchLoyaltyProgramInfo = async () => {
     try {
       const [tiersRes, faqRes, termsRes] = await Promise.all([
@@ -286,7 +307,6 @@ const Pharmacy = () => {
       setLoyaltyFAQ(faqRes.data);
       setLoyaltyTerms(termsRes.data);
       
-      // Fetch user status if logged in
       if (user) {
         const statusRes = await axios.get(`${API}/pharmacy/loyalty/user-status?user_id=${user.id}`);
         setUserLoyaltyStatus(statusRes.data);
@@ -313,32 +333,6 @@ const Pharmacy = () => {
     setLeaderboardLoading(false);
   };
 
-  // Fetch leaderboard when period changes or tab switches to leaderboard
-  useEffect(() => {
-    if (loyaltyTab === 'leaderboard') {
-      fetchLeaderboard(leaderboardPeriod);
-    }
-  }, [loyaltyTab, leaderboardPeriod]);
-
-  // Calculate discount from points (100 pts = ₹10)
-  const discountAmount = (pointsToUse / 100) * 10;
-
-  const loadMoreMedicines = () => {
-    if (!loadingMore && hasMoreMedicines) {
-      const nextPage = currentPage + 1;
-      setCurrentPage(nextPage);
-      fetchInventory(nextPage);
-    }
-  };
-
-  // Scroll handler for infinite scroll
-  const handleInventoryScroll = (e) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.target;
-    if (scrollHeight - scrollTop <= clientHeight + 100 && hasMoreMedicines && !loadingMore) {
-      loadMoreMedicines();
-    }
-  };
-
   const fetchForms = async () => {
     try {
       const response = await axios.get(`${API}/pharmacy/forms`);
@@ -348,7 +342,23 @@ const Pharmacy = () => {
     }
   };
 
-  const MAX_QUANTITY = 20; // Maximum 20 strips per medicine
+  const discountAmount = (pointsToUse / 100) * 10;
+  const MAX_QUANTITY = 20;
+
+  const loadMoreMedicines = () => {
+    if (!loadingMore && hasMoreMedicines) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchInventory(nextPage);
+    }
+  };
+
+  const handleInventoryScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    if (scrollHeight - scrollTop <= clientHeight + 100 && hasMoreMedicines && !loadingMore) {
+      loadMoreMedicines();
+    }
+  };
 
   const addToCart = (medicine) => {
     const existingIndex = medicines.findIndex(m => m.name === medicine.name);
@@ -372,28 +382,22 @@ const Pharmacy = () => {
       toast.error('Please enter medicine name');
       return;
     }
-    
     if (manualMedicine.quantity > MAX_QUANTITY) {
       toast.error(`Maximum ${MAX_QUANTITY} strips allowed per medicine`);
       return;
     }
-    
     const existingIndex = medicines.findIndex(m => m.name.toLowerCase() === manualMedicine.name.toLowerCase());
     if (existingIndex >= 0) {
       const updated = [...medicines];
       const newQty = updated[existingIndex].quantity + manualMedicine.quantity;
       if (newQty > MAX_QUANTITY) {
-        toast.error(`Maximum ${MAX_QUANTITY} strips allowed per medicine. Current: ${updated[existingIndex].quantity}`);
+        toast.error(`Maximum ${MAX_QUANTITY} strips allowed. Current: ${updated[existingIndex].quantity}`);
         return;
       }
       updated[existingIndex].quantity = newQty;
       setMedicines(updated);
     } else {
-      setMedicines([...medicines, { 
-        name: manualMedicine.name.trim(), 
-        quantity: manualMedicine.quantity,
-        form: 'Manual Entry'
-      }]);
+      setMedicines([...medicines, { name: manualMedicine.name.trim(), quantity: manualMedicine.quantity, form: 'Manual Entry' }]);
     }
     toast.success(`Added ${manualMedicine.name} to cart`);
     setManualMedicine({ name: '', quantity: 1 });
@@ -417,55 +421,40 @@ const Pharmacy = () => {
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setPrescriptionFile(file);
     setUploading(true);
-
     try {
       const formData = new FormData();
       formData.append('file', file);
-      if (user) {
-        formData.append('user_id', user.id);
-      }
-
+      if (user) formData.append('user_id', user.id);
       const response = await axios.post(`${API}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           ...(user && { Authorization: `Bearer ${localStorage.getItem('token')}` })
         }
       });
-
       setPrescriptionUrl(response.data.url);
       toast.success('Prescription uploaded successfully');
     } catch (error) {
-      console.error('Upload error:', error);
       toast.error('Failed to upload prescription');
     } finally {
       setUploading(false);
     }
   };
 
-  // OTP Functions
   const sendOtp = async () => {
     if (!patientInfo.phone || patientInfo.phone.length < 10) {
       toast.error('Please enter a valid mobile number');
       return;
     }
-
     setOtpLoading(true);
     try {
-      const response = await axios.post(`${API}/otp/send`, {
-        phone: patientInfo.phone,
-        service: 'pharmacy'
-      });
-      
+      const response = await axios.post(`${API}/otp/send`, { phone: patientInfo.phone, service: 'pharmacy' });
       setOtpSent(true);
       setMockOtp(response.data.mock_otp || '');
       setOtpMethod(response.data.method || 'mock');
       setResendTimer(30);
       toast.success(response.data.method === 'sms' ? 'OTP sent to your phone!' : 'OTP sent successfully!');
-      
-      // Focus first OTP input
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to send OTP');
@@ -480,15 +469,9 @@ const Pharmacy = () => {
       toast.error('Please enter complete 6-digit OTP');
       return;
     }
-
     setOtpLoading(true);
     try {
-      const response = await axios.post(`${API}/otp/verify`, {
-        phone: patientInfo.phone,
-        otp: otpValue,
-        service: 'pharmacy'
-      });
-      
+      const response = await axios.post(`${API}/otp/verify`, { phone: patientInfo.phone, otp: otpValue, service: 'pharmacy' });
       setVerificationToken(response.data.verification_token);
       toast.success('Phone verified successfully!');
       setCurrentStep(3);
@@ -504,25 +487,17 @@ const Pharmacy = () => {
 
   const handleOtpChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
-    
     const newOtp = [...otp];
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
-    
-    // Auto-focus next input
-    if (value && index < 5) {
-      otpRefs.current[index + 1]?.focus();
-    }
+    if (value && index < 5) otpRefs.current[index + 1]?.focus();
   };
 
   const handleOtpKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      otpRefs.current[index - 1]?.focus();
-    }
+    if (e.key === 'Backspace' && !otp[index] && index > 0) otpRefs.current[index - 1]?.focus();
   };
 
   const goToStep2 = () => {
-    // Allow proceeding if prescription is uploaded OR medicines are added
     if (medicines.length === 0 && !prescriptionUrl) {
       toast.error('Please add medicines to cart OR upload a prescription');
       return;
@@ -552,7 +527,6 @@ const Pharmacy = () => {
       toast.error('Please enter delivery address');
       return;
     }
-
     setLoading(true);
     try {
       const orderData = {
@@ -564,19 +538,12 @@ const Pharmacy = () => {
         delivery_address: deliveryAddress,
         points_used: user ? pointsToUse : 0
       };
-
-      // Save to backend (sends SMS to patient and Orange Pharmacy staff)
       await axios.post(`${API}/pharmacy`, orderData, {
         headers: user ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {}
       });
-      
       toast.success('Order confirmed! SMS sent to you and Orange Pharmacy.');
-      
-      setTimeout(() => {
-        navigate('/');
-      }, 2000);
+      setTimeout(() => navigate('/'), 2000);
     } catch (error) {
-      console.error('Order error:', error);
       toast.error(error.response?.data?.detail || 'Failed to process order');
     } finally {
       setLoading(false);
@@ -586,83 +553,57 @@ const Pharmacy = () => {
   const totalItems = medicines.reduce((sum, m) => sum + m.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-[#FFFBF5]">
+      {/* Header */}
+      <header className="bg-white/90 backdrop-blur-xl border-b border-orange-100 sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <Button 
                 variant="ghost" 
+                size="icon"
                 onClick={() => currentStep > 1 ? goToStep1() : navigate('/')}
+                className="rounded-full hover:bg-orange-100"
                 data-testid="back-button"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5 text-slate-700" />
               </Button>
               <img 
                 src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg" 
                 alt="Orange Pharmacy" 
-                className="h-14 w-auto"
+                className="h-12 sm:h-14 w-auto"
                 data-testid="pharmacy-logo"
               />
             </div>
-            
-            {/* Step Indicator */}
-            <div className="flex items-center gap-1 sm:gap-2">
-              <div className={`flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm ${currentStep === 1 ? 'bg-brand-orange text-white' : 'bg-green-100 text-green-600'}`}>
-                {currentStep > 1 ? <CheckCircle2 className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}
-                <span className="hidden sm:inline">Cart</span>
-              </div>
-              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
-              <div className={`flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm ${currentStep === 2 ? 'bg-brand-orange text-white' : currentStep > 2 ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
-                {currentStep > 2 ? <CheckCircle2 className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
-                <span className="hidden sm:inline">Verify</span>
-              </div>
-              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
-              <div className={`flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm ${currentStep === 3 ? 'bg-brand-orange text-white' : 'bg-gray-100 text-gray-500'}`}>
-                <CreditCard className="w-4 h-4" />
-                <span className="hidden sm:inline">Pay</span>
-              </div>
-            </div>
+            <StepProgress currentStep={currentStep} />
           </div>
         </div>
       </header>
 
-      {/* How It Works - Order Flow Guide */}
+      {/* How It Works Banner */}
       <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center gap-2 mb-3">
-            <Info className="w-5 h-5 text-orange-600" />
-            <h3 className="font-semibold text-orange-800">How to Order Medicines</h3>
+            <Info className="w-5 h-5 text-orange-500" />
+            <h3 className="font-semibold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>How to Order Medicines</h3>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
-              <div className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
-              <div>
-                <p className="text-sm font-medium text-gray-800">Add Medicines</p>
-                <p className="text-xs text-gray-500">Search or type medicine name & quantity. Upload prescription if needed.</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { num: 1, title: 'Add Medicines', desc: 'Search or type name & quantity' },
+              { num: 2, title: 'Verify & Address', desc: 'Confirm via OTP, enter address' },
+              { num: 3, title: 'Pharmacist Call', desc: 'We confirm order & final bill' },
+              { num: 4, title: 'Delivery', desc: 'Get invoice in My Orders', success: true }
+            ].map((step) => (
+              <div key={step.num} className="flex items-start gap-2 p-3 bg-white/80 rounded-xl">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${step.success ? 'bg-emerald-500 text-white' : 'bg-orange-500 text-white'}`}>
+                  {step.num}
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-slate-800">{step.title}</p>
+                  <p className="text-xs text-slate-500">{step.desc}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
-              <div className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
-              <div>
-                <p className="text-sm font-medium text-gray-800">Verify & Address</p>
-                <p className="text-xs text-gray-500">Confirm via OTP, enter delivery address & payment mode.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
-              <div className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
-              <div>
-                <p className="text-sm font-medium text-gray-800">Pharmacist Call</p>
-                <p className="text-xs text-gray-500">Our pharmacist calls to confirm order & final bill. You approve before dispatch.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
-              <div className="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">4</div>
-              <div>
-                <p className="text-sm font-medium text-gray-800">Delivery & Invoice</p>
-                <p className="text-xs text-gray-500">Order delivered to your location. Download invoice in My Orders.</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -673,7 +614,7 @@ const Pharmacy = () => {
         onClick={() => { setShowLoyaltyInfo(true); fetchLoyaltyProgramInfo(); }}
         data-testid="loyalty-banner"
       >
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="bg-white/20 rounded-full p-2">
               <Crown className="w-5 h-5" />
@@ -694,46 +635,50 @@ const Pharmacy = () => {
         </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-5xl mx-auto px-4 py-6">
         {/* STEP 1: Add Medicines */}
         {currentStep === 1 && (
           <div className="space-y-6">
-            <div className="mb-4">
-              <h1 className="font-heading font-bold text-2xl sm:text-3xl mb-1 text-foreground">Step 1: Add Medicines</h1>
-              <p className="text-sm text-muted-foreground">Search from inventory or add manually</p>
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-slate-800 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                Add Your Medicines
+              </h1>
+              <p className="text-slate-500" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                Search from {totalMedicines.toLocaleString()}+ medicines or add manually
+              </p>
             </div>
 
             {/* Search with Autocomplete */}
-            <Card className="p-4" ref={searchRef}>
+            <Card className="p-5 rounded-2xl border-orange-100 shadow-sm" ref={searchRef}>
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1 relative">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
                     <Input
                       placeholder="Search medicines..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       onFocus={() => searchTerm.length >= 2 && setShowSuggestions(true)}
-                      className="pl-10"
+                      className="pl-10 rounded-xl border-orange-200 focus:border-orange-400 focus:ring-orange-200"
                       data-testid="medicine-search"
                     />
                   </div>
                   
                   {/* Autocomplete Dropdown */}
                   {showSuggestions && suggestions.length > 0 && (
-                    <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                    <div className="absolute z-50 w-full mt-1 bg-white border border-orange-200 rounded-xl shadow-lg max-h-64 overflow-y-auto">
                       {suggestions.map((med, idx) => (
                         <button
                           key={idx}
                           onClick={() => addToCart(med)}
-                          className="w-full px-4 py-3 text-left hover:bg-orange-50 border-b border-gray-100 last:border-0 flex items-center justify-between"
+                          className="w-full px-4 py-3 text-left hover:bg-orange-50 border-b border-orange-50 last:border-0 flex items-center justify-between transition-colors"
                           data-testid={`suggestion-${idx}`}
                         >
                           <div>
-                            <span className="font-medium text-gray-900">{med.name}</span>
-                            <span className="ml-2 text-xs text-gray-500">{med.form}</span>
+                            <span className="font-medium text-slate-800">{med.name}</span>
+                            <span className="ml-2 text-xs text-slate-500">{med.form}</span>
                           </div>
-                          <Plus className="w-4 h-4 text-brand-orange" />
+                          <Plus className="w-4 h-4 text-orange-500" />
                         </button>
                       ))}
                     </div>
@@ -743,7 +688,7 @@ const Pharmacy = () => {
                 <select
                   value={selectedForm}
                   onChange={(e) => setSelectedForm(e.target.value)}
-                  className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  className="h-10 rounded-xl border border-orange-200 bg-white px-3 py-2 text-sm focus:border-orange-400"
                   data-testid="form-filter"
                 >
                   <option value="">All Forms</option>
@@ -755,9 +700,9 @@ const Pharmacy = () => {
             </Card>
 
             {/* Manual Entry */}
-            <Card className="p-4">
-              <h3 className="font-medium mb-3 flex items-center gap-2">
-                <Pill className="w-4 h-4 text-brand-orange" />
+            <Card className="p-5 rounded-2xl border-orange-100">
+              <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <Pill className="w-4 h-4 text-orange-500" />
                 Add Medicine Manually
               </h3>
               <div className="flex gap-2">
@@ -765,7 +710,7 @@ const Pharmacy = () => {
                   placeholder="Medicine name"
                   value={manualMedicine.name}
                   onChange={(e) => setManualMedicine({ ...manualMedicine, name: e.target.value })}
-                  className="flex-1"
+                  className="flex-1 rounded-xl border-orange-200 focus:border-orange-400"
                   data-testid="manual-medicine-name"
                 />
                 <Input
@@ -774,20 +719,20 @@ const Pharmacy = () => {
                   max="20"
                   value={manualMedicine.quantity}
                   onChange={(e) => setManualMedicine({ ...manualMedicine, quantity: Math.min(parseInt(e.target.value) || 1, 20) })}
-                  className="w-20"
+                  className="w-20 rounded-xl border-orange-200"
                   data-testid="manual-medicine-qty"
                 />
-                <Button onClick={addManualMedicine} className="bg-brand-orange hover:bg-brand-orange/90" data-testid="add-manual-btn">
+                <Button onClick={addManualMedicine} className="bg-orange-500 hover:bg-orange-600 rounded-xl" data-testid="add-manual-btn">
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
             </Card>
 
-            {/* Frequently Ordered - Only for logged in users */}
+            {/* Frequently Ordered */}
             {user && frequentlyOrdered.length > 0 && (
-              <Card className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
-                <h3 className="font-medium mb-3 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-brand-orange" />
+              <Card className="p-5 rounded-2xl bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
+                <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <TrendingUp className="w-4 h-4 text-orange-500" />
                   Quick Reorder - Your Frequently Ordered
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -797,48 +742,48 @@ const Pharmacy = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => addToCart({ name: med.name, form: med.form || 'Tablet' })}
-                      className="bg-white hover:bg-orange-100 border-orange-200"
+                      className="bg-white hover:bg-orange-100 border-orange-200 rounded-xl"
                       data-testid={`frequent-med-${idx}`}
                     >
                       <Plus className="w-3 h-3 mr-1" />
                       {med.name}
-                      <span className="ml-1 text-xs text-gray-500">({med.order_count}x)</span>
+                      <span className="ml-1 text-xs text-slate-400">({med.order_count}x)</span>
                     </Button>
                   ))}
                 </div>
               </Card>
             )}
 
-            {/* Inventory List - Scrollable */}
-            <Card className="p-4">
+            {/* Inventory List */}
+            <Card className="p-5 rounded-2xl border-orange-100">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-medium flex items-center gap-2">
-                  <Package className="w-4 h-4 text-brand-orange" />
+                <h3 className="font-medium text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <Package className="w-4 h-4 text-orange-500" />
                   Available Medicines
                 </h3>
-                <span className="text-sm text-muted-foreground bg-orange-100 px-3 py-1 rounded-full">
+                <span className="text-sm text-slate-500 bg-orange-100 px-3 py-1 rounded-full">
                   Total: {totalMedicines.toLocaleString()}
                 </span>
               </div>
               
               {inventoryLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-brand-orange" />
-                  <span className="ml-2 text-muted-foreground">Loading medicines...</span>
+                  <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
+                  <span className="ml-2 text-slate-500">Loading medicines...</span>
                 </div>
               ) : (
                 <div 
                   ref={inventoryListRef}
-                  className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg"
+                  className="max-h-80 overflow-y-auto border border-orange-100 rounded-xl"
                   onScroll={handleInventoryScroll}
                   data-testid="medicine-list"
                 >
                   {inventory.length === 0 ? (
-                    <div className="p-4 text-center text-muted-foreground">
+                    <div className="p-4 text-center text-slate-500">
                       {searchTerm ? 'No medicines found matching your search' : 'No medicines available'}
                     </div>
                   ) : (
-                    <div className="divide-y divide-gray-100">
+                    <div className="divide-y divide-orange-50">
                       {inventory.map((med, idx) => (
                         <button
                           key={`${med.name}-${idx}`}
@@ -847,20 +792,19 @@ const Pharmacy = () => {
                           data-testid={`inventory-item-${idx}`}
                         >
                           <div className="flex-1 min-w-0">
-                            <span className="font-medium text-sm block truncate">{med.name}</span>
-                            <span className="text-xs text-gray-500">{med.form}</span>
+                            <span className="font-medium text-sm text-slate-800 block truncate">{med.name}</span>
+                            <span className="text-xs text-slate-500">{med.form}</span>
                           </div>
-                          <Plus className="w-5 h-5 text-brand-orange flex-shrink-0 ml-2" />
+                          <Plus className="w-5 h-5 text-orange-500 flex-shrink-0 ml-2" />
                         </button>
                       ))}
                       {loadingMore && (
                         <div className="p-3 text-center">
-                          <Loader2 className="w-5 h-5 animate-spin text-brand-orange inline-block" />
-                          <span className="ml-2 text-sm text-muted-foreground">Loading more...</span>
+                          <Loader2 className="w-5 h-5 animate-spin text-orange-500 inline-block" />
                         </div>
                       )}
                       {!hasMoreMedicines && inventory.length > 0 && (
-                        <div className="p-3 text-center text-xs text-muted-foreground bg-gray-50">
+                        <div className="p-3 text-center text-xs text-slate-400 bg-orange-50">
                           End of list • {inventory.length} medicines shown
                         </div>
                       )}
@@ -872,33 +816,27 @@ const Pharmacy = () => {
 
             {/* Cart */}
             {medicines.length > 0 && (
-              <Card className="p-4 border-brand-orange">
-                <h3 className="font-medium mb-3 flex items-center gap-2">
-                  <ShoppingCart className="w-4 h-4 text-brand-orange" />
+              <Card className="p-5 rounded-2xl border-orange-400 bg-orange-50/50">
+                <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <ShoppingCart className="w-4 h-4 text-orange-500" />
                   Your Cart ({totalItems} items)
                 </h3>
                 <div className="space-y-2 mb-4">
                   {medicines.map((med, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 bg-orange-50 rounded-lg">
+                    <div key={idx} className="flex items-center justify-between p-3 bg-white rounded-xl border border-orange-100">
                       <div className="flex-1">
-                        <span className="font-medium text-sm">{med.name}</span>
-                        <span className="ml-2 text-xs text-gray-500">{med.form}</span>
+                        <span className="font-medium text-sm text-slate-800">{med.name}</span>
+                        <span className="ml-2 text-xs text-slate-500">{med.form}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline" onClick={() => updateQuantity(idx, med.quantity - 1)} data-testid={`decrease-qty-${idx}`}>
+                        <Button size="sm" variant="outline" className="rounded-lg border-orange-200" onClick={() => updateQuantity(idx, med.quantity - 1)} data-testid={`decrease-qty-${idx}`}>
                           <Minus className="w-3 h-3" />
                         </Button>
-                        <span className="w-8 text-center">{med.quantity}</span>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          onClick={() => updateQuantity(idx, med.quantity + 1)} 
-                          disabled={med.quantity >= 20}
-                          data-testid={`increase-qty-${idx}`}
-                        >
+                        <span className="w-8 text-center font-medium">{med.quantity}</span>
+                        <Button size="sm" variant="outline" className="rounded-lg border-orange-200" onClick={() => updateQuantity(idx, med.quantity + 1)} disabled={med.quantity >= 20} data-testid={`increase-qty-${idx}`}>
                           <Plus className="w-3 h-3" />
                         </Button>
-                        <Button size="sm" variant="ghost" onClick={() => removeMedicine(idx)} className="text-red-500" data-testid={`remove-medicine-${idx}`}>
+                        <Button size="sm" variant="ghost" onClick={() => removeMedicine(idx)} className="text-red-500 hover:text-red-600 hover:bg-red-50" data-testid={`remove-medicine-${idx}`}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -908,112 +846,104 @@ const Pharmacy = () => {
               </Card>
             )}
 
-            {/* Patient Info for OTP */}
-            <Card className="p-4">
-              <h3 className="font-medium mb-3 flex items-center gap-2">
-                <Phone className="w-4 h-4 text-brand-orange" />
-                Your Details (for OTP verification)
+            {/* Patient Info */}
+            <Card className="p-5 rounded-2xl border-orange-100">
+              <h3 className="font-medium text-slate-800 mb-4 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <Phone className="w-4 h-4 text-orange-500" />
+                Your Details
               </h3>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <Label>Full Name *</Label>
+                  <Label className="text-slate-600 text-sm">Full Name *</Label>
                   <Input
                     value={patientInfo.name}
                     onChange={(e) => setPatientInfo({ ...patientInfo, name: e.target.value })}
                     placeholder="Enter your name"
+                    className="mt-1.5 rounded-xl border-orange-200 focus:border-orange-400"
                     data-testid="patient-name"
                   />
                 </div>
                 <div>
-                  <Label>Mobile Number *</Label>
+                  <Label className="text-slate-600 text-sm">Mobile Number *</Label>
                   <Input
                     value={patientInfo.phone}
                     onChange={(e) => setPatientInfo({ ...patientInfo, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
                     placeholder="10-digit mobile number"
+                    className="mt-1.5 rounded-xl border-orange-200 focus:border-orange-400"
                     data-testid="patient-phone"
                   />
-                  {/* Booking Limit Warning */}
                   {!bookingLimits.loading && !bookingLimits.canBook && (
-                    <div className="mt-2 p-2 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-800">
-                      <p className="font-semibold">⚠️ Order Limit Reached</p>
+                    <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
+                      <p className="font-semibold">Order Limit Reached</p>
                       <p>You have {bookingLimits.activeOrders} active pharmacy orders.</p>
-                      <p className="mt-1">Please wait for delivery or cancel one before placing a new order.</p>
                     </div>
                   )}
                 </div>
                 <div className="sm:col-span-2">
-                  <Label>Email (Optional)</Label>
+                  <Label className="text-slate-600 text-sm">Email (Optional)</Label>
                   <Input
                     type="email"
                     value={patientInfo.email || ''}
                     onChange={(e) => setPatientInfo({ ...patientInfo, email: e.target.value })}
                     placeholder="your@email.com"
+                    className="mt-1.5 rounded-xl border-orange-200 focus:border-orange-400"
                     data-testid="patient-email"
                   />
-                  <p className="text-xs text-gray-500 mt-1">We&apos;ll send confirmations, order updates, and delivery status to this email.</p>
                 </div>
               </div>
             </Card>
 
-            {/* Prescription Upload with Preview */}
-            <Card className="p-4">
-              <h3 className="font-medium mb-3 flex items-center gap-2">
-                <Upload className="w-4 h-4 text-brand-orange" />
+            {/* Prescription Upload */}
+            <Card className="p-5 rounded-2xl border-orange-100">
+              <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <Upload className="w-4 h-4 text-orange-500" />
                 Upload Prescription (Optional)
               </h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-4">
-                  <label className="cursor-pointer">
-                    <div className="px-4 py-2 border border-dashed border-gray-300 rounded-lg hover:border-brand-orange transition-colors">
-                      {prescriptionFile ? prescriptionFile.name : 'Click to upload'}
+              <label className="cursor-pointer block">
+                <div className={`px-4 py-6 border-2 border-dashed rounded-xl transition-colors text-center ${prescriptionUrl ? 'border-emerald-400 bg-emerald-50' : 'border-orange-200 hover:border-orange-400'}`}>
+                  {uploading ? (
+                    <div className="flex items-center justify-center gap-2 text-slate-500">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Uploading...
                     </div>
-                    <input type="file" accept="image/*,.pdf" onChange={handleFileUpload} className="hidden" data-testid="prescription-upload" />
-                  </label>
-                  {uploading && <span className="text-sm text-gray-500">Uploading...</span>}
-                  {prescriptionUrl && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                  ) : prescriptionUrl ? (
+                    <div className="flex items-center justify-center gap-2 text-emerald-600">
+                      <CheckCircle2 className="w-5 h-5" />
+                      {prescriptionFile?.name || 'Prescription uploaded'}
+                    </div>
+                  ) : (
+                    <div className="text-slate-500">
+                      <Upload className="w-8 h-8 mx-auto mb-2 text-orange-300" />
+                      <p>Click to upload prescription image or PDF</p>
+                    </div>
+                  )}
                 </div>
-                {/* Prescription Preview */}
-                {prescriptionUrl && (
-                  <div className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
-                    <p className="text-sm font-medium text-orange-800 mb-2 flex items-center gap-2">
+                <input type="file" accept="image/*,.pdf" onChange={handleFileUpload} className="hidden" data-testid="prescription-upload" />
+              </label>
+              
+              {prescriptionUrl && (
+                <div className="mt-3 p-3 bg-orange-50 rounded-xl border border-orange-200">
+                  <p className="text-sm font-medium text-orange-800 mb-2 flex items-center gap-2">
+                    <FileText className="w-4 h-4" />
+                    Prescription Preview
+                  </p>
+                  {prescriptionFile?.type?.includes('image') || prescriptionUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                    <img src={prescriptionUrl} alt="Prescription" className="max-h-40 rounded border border-orange-200 object-contain" />
+                  ) : (
+                    <a href={prescriptionUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-orange-600 hover:underline flex items-center gap-1">
                       <FileText className="w-4 h-4" />
-                      Prescription Preview
-                    </p>
-                    {prescriptionFile?.type?.includes('image') || prescriptionUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img 
-                        src={prescriptionUrl} 
-                        alt="Prescription preview" 
-                        className="max-h-40 rounded border border-gray-200 object-contain"
-                      />
-                    ) : (
-                      <a 
-                        href={prescriptionUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="text-sm text-orange-600 hover:underline flex items-center gap-1"
-                      >
-                        <FileText className="w-4 h-4" />
-                        View PDF Prescription
-                      </a>
-                    )}
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => { setPrescriptionFile(null); setPrescriptionUrl(''); }} 
-                      className="mt-2 text-red-500 h-7 text-xs"
-                    >
-                      <Trash2 className="w-3 h-3 mr-1" /> Remove
-                    </Button>
-                  </div>
-                )}
-              </div>
+                      View PDF Prescription
+                    </a>
+                  )}
+                </div>
+              )}
             </Card>
 
             {/* Continue Button */}
             <Button 
               onClick={goToStep2} 
               disabled={medicines.length === 0 && !prescriptionUrl}
-              className="w-full bg-brand-orange hover:bg-brand-orange/90 h-12 text-lg"
+              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
               data-testid="continue-to-otp"
             >
               Continue to Verify
@@ -1024,46 +954,27 @@ const Pharmacy = () => {
 
         {/* STEP 2: OTP Verification */}
         {currentStep === 2 && (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <div className="w-20 h-20 mx-auto bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                <Shield className="w-10 h-10 text-brand-orange" />
+          <div className="space-y-6 max-w-md mx-auto">
+            <Card className="p-8 rounded-3xl border-orange-100 shadow-lg">
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-orange-100 to-amber-100 rounded-2xl flex items-center justify-center mb-5">
+                  <Shield className="w-10 h-10 text-orange-500" />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  Verify Your Phone
+                </h2>
+                <p className="text-slate-500 mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                  Enter the 6-digit code sent to +91 {patientInfo.phone}
+                </p>
               </div>
-              <h1 className="font-heading font-bold text-2xl sm:text-3xl mb-2">Verify Your Phone</h1>
-              <p className="text-muted-foreground">
-                {otpMethod === 'sms' 
-                  ? <>We have sent a 6-digit OTP via SMS to <span className="font-medium text-foreground">+91 {patientInfo.phone}</span></>
-                  : <>We have sent a 6-digit OTP to <span className="font-medium text-foreground">+91 {patientInfo.phone}</span></>
-                }
-              </p>
-            </div>
 
-            {/* Mock OTP Display - Only shown in test mode */}
-            {mockOtp && otpMethod === 'mock' && (
-              <Card className="p-4 bg-yellow-50 border-yellow-200">
-                <div className="flex items-center gap-2 text-yellow-800">
-                  <Shield className="w-5 h-5" />
-                  <span className="font-medium">Test Mode:</span>
-                  <span>Your OTP is <strong className="text-xl">{mockOtp}</strong></span>
+              {mockOtp && otpMethod === 'mock' && (
+                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-center">
+                  <p className="text-sm text-amber-800">Demo OTP: <span className="font-mono font-bold text-lg">{mockOtp}</span></p>
                 </div>
-                <p className="text-xs text-yellow-600 mt-1">In production, this will be sent via SMS</p>
-              </Card>
-            )}
-            
-            {/* SMS Sent Confirmation */}
-            {otpMethod === 'sms' && (
-              <Card className="p-4 bg-green-50 border-green-200">
-                <div className="flex items-center gap-2 text-green-800">
-                  <CheckCircle2 className="w-5 h-5" />
-                  <span>OTP sent via SMS. Please check your phone.</span>
-                </div>
-              </Card>
-            )}
+              )}
 
-            {/* OTP Input */}
-            <Card className="p-6">
-              <Label className="block text-center mb-4">Enter 6-digit OTP</Label>
-              <div className="flex justify-center gap-2 sm:gap-3 mb-6">
+              <div className="flex justify-center gap-2.5 mb-8">
                 {otp.map((digit, idx) => (
                   <Input
                     key={idx}
@@ -1074,7 +985,7 @@ const Pharmacy = () => {
                     value={digit}
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                    className="w-10 h-12 sm:w-12 sm:h-14 text-center text-xl font-bold"
+                    className="w-12 h-14 text-center text-xl font-bold rounded-xl border-2 border-orange-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
                     data-testid={`otp-input-${idx}`}
                   />
                 ))}
@@ -1083,188 +994,128 @@ const Pharmacy = () => {
               <Button
                 onClick={verifyOtp}
                 disabled={otp.join('').length !== 6 || otpLoading}
-                className="w-full bg-brand-orange hover:bg-brand-orange/90 h-12"
+                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 rounded-full font-semibold"
                 data-testid="verify-otp-btn"
               >
-                {otpLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Verifying...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-5 h-5 mr-2" />
-                    Verify OTP
-                  </>
-                )}
+                {otpLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify OTP'}
               </Button>
 
-              <div className="text-center mt-4">
+              <div className="text-center mt-5">
                 {resendTimer > 0 ? (
-                  <p className="text-sm text-gray-500">Resend OTP in {resendTimer}s</p>
+                  <p className="text-sm text-slate-500">Resend OTP in {resendTimer}s</p>
                 ) : (
-                  <Button variant="link" onClick={sendOtp} disabled={otpLoading} className="text-brand-orange">
+                  <button onClick={sendOtp} disabled={otpLoading} className="text-sm text-orange-500 font-medium hover:underline">
                     Resend OTP
-                  </Button>
+                  </button>
                 )}
               </div>
             </Card>
 
-            <Button variant="outline" onClick={goToStep1} className="w-full" data-testid="back-to-cart">
+            <Button variant="outline" onClick={goToStep1} className="w-full rounded-full border-orange-200" data-testid="back-to-cart">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Cart
             </Button>
           </div>
         )}
 
-        {/* STEP 3: Details & Payment */}
+        {/* STEP 3: Delivery & Payment */}
         {currentStep === 3 && (
           <div className="space-y-6">
-            <div className="mb-4">
-              <h1 className="font-heading font-bold text-2xl sm:text-3xl mb-1 text-foreground">Step 3: Delivery & Payment</h1>
-              <div className="flex items-center gap-2 text-green-600">
-                <CheckCircle2 className="w-4 h-4" />
-                <span className="text-sm">Phone verified: +91 {patientInfo.phone}</span>
+            <div className="text-center mb-6">
+              <div className="flex items-center justify-center gap-2 text-emerald-600 mb-2">
+                <CheckCircle2 className="w-5 h-5" />
+                <span className="text-sm font-medium">Phone verified: +91 {patientInfo.phone}</span>
               </div>
+              <h1 className="text-3xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                Complete Your Order
+              </h1>
             </div>
 
             {/* Order Summary */}
-            <Card className="p-4 bg-orange-50">
-              <h3 className="font-medium mb-3 flex items-center gap-2">
-                <Package className="w-4 h-4 text-brand-orange" />
+            <Card className="p-5 rounded-2xl bg-orange-50/50 border-orange-200">
+              <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <ShoppingCart className="w-4 h-4 text-orange-500" />
                 Order Summary ({totalItems} items)
               </h3>
-              <div className="space-y-1">
+              <div className="space-y-2">
                 {medicines.map((med, idx) => (
-                  <div key={idx} className="flex justify-between text-sm">
-                    <span>{med.name}</span>
-                    <span className="text-gray-500">x{med.quantity}</span>
+                  <div key={idx} className="flex items-center justify-between p-2 bg-white rounded-lg">
+                    <span className="text-sm text-slate-700">{med.name}</span>
+                    <span className="text-sm font-medium text-orange-600">x{med.quantity}</span>
                   </div>
                 ))}
               </div>
-              {pointsToUse > 0 && (
-                <div className="mt-3 pt-3 border-t border-orange-200">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-amber-700 flex items-center gap-1">
-                      <Gift className="w-3 h-3" />
-                      Loyalty Discount ({pointsToUse} pts)
-                    </span>
-                    <span className="text-green-600 font-medium">-₹{discountAmount}</span>
-                  </div>
+              {prescriptionUrl && (
+                <div className="mt-3 pt-3 border-t border-orange-200 flex items-center gap-2 text-sm text-emerald-600">
+                  <CheckCircle2 className="w-4 h-4" />
+                  Prescription attached
                 </div>
               )}
             </Card>
 
-            {/* Loyalty Points Redemption - Only for logged-in users */}
+            {/* Loyalty Points */}
             {user && loyaltyPoints > 0 && (
-              <Card className="p-4 bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-medium flex items-center gap-2">
-                    <Gift className="w-5 h-5 text-amber-500" />
-                    Redeem Loyalty Points
-                  </h3>
-                  <div className="text-right">
-                    <p className="text-xl font-bold text-amber-600">{loyaltyPoints}</p>
-                    <p className="text-xs text-gray-500">Available Points</p>
-                  </div>
+              <Card className="p-5 rounded-2xl border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+                <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <Star className="w-4 h-4 text-amber-500" />
+                  Use Loyalty Points
+                </h3>
+                <p className="text-sm text-slate-600 mb-3">You have <span className="font-bold text-amber-600">{loyaltyPoints} points</span> (100 pts = ₹10 off)</p>
+                <div className="flex items-center gap-3">
+                  <Input
+                    type="number"
+                    min="0"
+                    max={loyaltyPoints}
+                    value={pointsToUse}
+                    onChange={(e) => setPointsToUse(Math.min(parseInt(e.target.value) || 0, loyaltyPoints))}
+                    className="w-32 rounded-xl border-amber-200"
+                    data-testid="points-input"
+                  />
+                  <span className="text-sm text-slate-600">= ₹{discountAmount.toFixed(2)} discount</span>
                 </div>
-                
-                <div className="bg-white p-3 rounded-lg border border-amber-200 mb-3">
-                  <p className="text-xs text-gray-600 mb-2">100 points = ₹10 discount</p>
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1">
-                      <Label className="text-sm">Points to Redeem</Label>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Input
-                          type="number"
-                          value={pointsToUse || ''}
-                          onChange={(e) => {
-                            const val = Math.min(parseInt(e.target.value) || 0, loyaltyPoints);
-                            setPointsToUse(Math.max(0, val));
-                          }}
-                          placeholder="0"
-                          max={loyaltyPoints}
-                          min={0}
-                          className="w-24 text-center"
-                          data-testid="points-input"
-                        />
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setPointsToUse(loyaltyPoints)}
-                          className="text-xs whitespace-nowrap"
-                          data-testid="use-all-points"
-                        >
-                          Use All
-                        </Button>
-                        {pointsToUse > 0 && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setPointsToUse(0)}
-                            className="text-xs text-gray-500"
-                          >
-                            Clear
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                    {pointsToUse > 0 && (
-                      <div className="text-right bg-green-50 p-3 rounded-lg">
-                        <p className="text-xs text-green-600">Your Discount</p>
-                        <p className="text-2xl font-bold text-green-600">₹{discountAmount}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <p className="text-xs text-gray-500">
-                  Points will be deducted after successful order placement
-                </p>
               </Card>
             )}
 
             {/* Delivery Address */}
-            <Card className="p-4">
-              <Label className="flex items-center gap-2 mb-2">
-                <Banknote className="w-4 h-4 text-brand-orange" />
+            <Card className="p-5 rounded-2xl border-orange-100">
+              <Label className="flex items-center gap-2 mb-2 font-medium text-slate-800">
                 Delivery Address *
               </Label>
               <Textarea
                 value={deliveryAddress}
                 onChange={(e) => setDeliveryAddress(e.target.value)}
                 placeholder="Enter your complete delivery address with landmark"
-                className="min-h-24"
+                className="min-h-24 rounded-xl border-orange-200 focus:border-orange-400"
                 data-testid="delivery-address"
               />
             </Card>
 
             {/* Payment Method */}
-            <Card className="p-4">
-              <Label className="flex items-center gap-2 mb-3">
-                <CreditCard className="w-4 h-4 text-brand-orange" />
+            <Card className="p-5 rounded-2xl border-orange-100">
+              <Label className="flex items-center gap-2 mb-3 font-medium text-slate-800">
+                <CreditCard className="w-4 h-4 text-orange-500" />
                 Payment Method
               </Label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setPaymentMethod('cod')}
-                  className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-colors ${
-                    paymentMethod === 'cod' ? 'border-brand-orange bg-orange-50' : 'border-gray-200'
+                  className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
+                    paymentMethod === 'cod' ? 'border-orange-500 bg-orange-50' : 'border-orange-100 hover:border-orange-300'
                   }`}
                   data-testid="payment-cod"
                 >
-                  <Banknote className="w-6 h-6" />
-                  <span className="text-sm font-medium">Cash on Delivery</span>
+                  <Banknote className="w-6 h-6 text-orange-500" />
+                  <span className="text-sm font-medium text-slate-800">Cash on Delivery</span>
                 </button>
                 <button
                   onClick={() => setPaymentMethod('card')}
-                  className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-colors ${
-                    paymentMethod === 'card' ? 'border-brand-orange bg-orange-50' : 'border-gray-200'
+                  className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
+                    paymentMethod === 'card' ? 'border-orange-500 bg-orange-50' : 'border-orange-100 hover:border-orange-300'
                   }`}
                   data-testid="payment-card"
                 >
-                  <CreditCard className="w-6 h-6" />
-                  <span className="text-sm font-medium">QR / Card on Delivery</span>
+                  <CreditCard className="w-6 h-6 text-orange-500" />
+                  <span className="text-sm font-medium text-slate-800">QR / Card on Delivery</span>
                 </button>
               </div>
             </Card>
@@ -1273,24 +1124,13 @@ const Pharmacy = () => {
             <Button 
               onClick={handleSubmit} 
               disabled={loading || !deliveryAddress.trim() || !bookingLimits.canBook}
-              className="w-full bg-brand-orange hover:bg-brand-orange/90 h-12 text-lg"
+              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-6 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
               data-testid="place-order-btn"
             >
               {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Processing...
-                </>
-              ) : !bookingLimits.canBook ? (
-                <>
-                  <AlertTriangle className="w-5 h-5 mr-2" />
-                  Complete Existing Orders First
-                </>
+                <><Loader2 className="w-5 h-5 animate-spin mr-2" /> Processing...</>
               ) : (
-                <>
-                  <CheckCircle2 className="w-5 h-5 mr-2" />
-                  Place Order
-                </>
+                <><Sparkles className="w-5 h-5 mr-2" /> Place Order</>
               )}
             </Button>
           </div>
@@ -1299,181 +1139,94 @@ const Pharmacy = () => {
 
       {/* Loyalty Program Dialog */}
       <Dialog open={showLoyaltyInfo} onOpenChange={setShowLoyaltyInfo}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white flex-shrink-0">
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Crown className="w-6 h-6" />
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-orange-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <Crown className="w-6 h-6 text-amber-500" />
               Orange Pharmacy Loyalty Program
             </DialogTitle>
-            <DialogDescription className="text-orange-100">
-              Earn rewards on every purchase
-            </DialogDescription>
           </DialogHeader>
-          
-          <Tabs value={loyaltyTab} onValueChange={setLoyaltyTab} className="flex-1 flex flex-col min-h-0">
-            <TabsList className="grid grid-cols-4 mx-4 mt-2 flex-shrink-0">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="leaderboard" className="flex items-center gap-1">
-                <Trophy className="w-3 h-3" />
-                Top 10
-              </TabsTrigger>
-              <TabsTrigger value="faq">FAQ</TabsTrigger>
-              <TabsTrigger value="terms">Terms</TabsTrigger>
+
+          <Tabs value={loyaltyTab} onValueChange={setLoyaltyTab} className="mt-2">
+            <TabsList className="grid w-full grid-cols-4 bg-orange-100 rounded-xl p-1">
+              <TabsTrigger value="program" className="rounded-lg data-[state=active]:bg-white">Program</TabsTrigger>
+              <TabsTrigger value="leaderboard" className="rounded-lg data-[state=active]:bg-white">Top 10</TabsTrigger>
+              <TabsTrigger value="faq" className="rounded-lg data-[state=active]:bg-white">FAQ</TabsTrigger>
+              <TabsTrigger value="terms" className="rounded-lg data-[state=active]:bg-white">Terms</TabsTrigger>
             </TabsList>
-            
-            <div className="flex-1 min-h-0 overflow-y-auto p-4">
-              {/* Overview Tab */}
-              <TabsContent value="overview" className="m-0">
-                {/* User Status Card */}
-                {userLoyaltyStatus && (
-                  <Card className="p-4 mb-4 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold text-gray-800">Your Status</h3>
-                      <span className="px-3 py-1 bg-amber-500 text-white text-xs font-semibold rounded-full">
-                        {userLoyaltyStatus.frequent_tier?.toUpperCase()}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-3 text-center">
-                      <div className="bg-white rounded-lg p-2">
-                        <p className="text-2xl font-bold text-orange-600">{userLoyaltyStatus.loyalty_points}</p>
-                        <p className="text-xs text-gray-500">Points</p>
+
+            <div className="mt-4">
+              {/* Program Tab */}
+              <TabsContent value="program" className="m-0 space-y-4">
+                {/* User Status */}
+                {user && userLoyaltyStatus && (
+                  <Card className="p-4 bg-gradient-to-r from-orange-100 to-amber-100 border-orange-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-orange-800">Your Status</p>
+                        <p className="text-2xl font-bold text-orange-600">{loyaltyPoints} Points</p>
                       </div>
-                      <div className="bg-white rounded-lg p-2">
-                        <p className="text-2xl font-bold text-amber-600">{userLoyaltyStatus.gold_visits}/10</p>
-                        <p className="text-xs text-gray-500">Gold Visits</p>
-                      </div>
-                      <div className="bg-white rounded-lg p-2">
-                        <p className="text-2xl font-bold text-green-600">{userLoyaltyStatus.total_orders}</p>
-                        <p className="text-xs text-gray-500">Orders</p>
+                      <div className={`px-4 py-2 rounded-full font-bold text-sm ${
+                        userLoyaltyStatus.tier === 'gold' ? 'bg-yellow-400 text-yellow-900' :
+                        userLoyaltyStatus.tier === 'silver' ? 'bg-gray-300 text-gray-700' :
+                        'bg-orange-400 text-orange-900'
+                      }`}>
+                        {userLoyaltyStatus.tier?.toUpperCase() || 'BRONZE'}
                       </div>
                     </div>
-                    {userLoyaltyStatus.gold_reward_eligible && (
-                      <div className="mt-3 p-2 bg-yellow-100 border border-yellow-300 rounded-lg text-center">
-                        <p className="text-sm font-semibold text-yellow-800">🎉 Gold Reward Unlocked! Claim your benefits.</p>
-                      </div>
-                    )}
                   </Card>
                 )}
 
                 {/* Tier Cards */}
-                <h3 className="font-semibold text-gray-800 mb-3">Loyalty Tiers</h3>
-                <div className="space-y-3 mb-4">
-                  {/* Bronze */}
-                  <Card className="p-4 border-l-4 border-l-amber-700">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 rounded-full bg-amber-700 flex items-center justify-center">
-                        <Award className="w-5 h-5 text-white" />
+                <div className="space-y-3">
+                  {[
+                    { tier: 'Bronze', color: 'orange', min: '₹0-399', points: '1 pt/₹100', benefits: ['Earn points on every purchase', 'Track order history'] },
+                    { tier: 'Silver', color: 'gray', min: '₹400-999', points: '1.5 pts/₹100', benefits: ['All Bronze benefits', '5% discount on medicines', 'Priority delivery'] },
+                    { tier: 'Gold', color: 'yellow', min: '₹1000+', points: '2 pts/₹100', benefits: ['All Silver benefits', '10% discount', 'FREE delivery', '10-Visit Reward!'] }
+                  ].map((t) => (
+                    <Card key={t.tier} className={`p-4 border-${t.color}-200 bg-${t.color}-50/50`}>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                          t.tier === 'Gold' ? 'bg-yellow-400' : t.tier === 'Silver' ? 'bg-gray-300' : 'bg-orange-400'
+                        }`}>
+                          <Crown className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">{t.tier}</h4>
+                          <p className="text-xs text-slate-500">{t.min} per bill • {t.points}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-semibold">BRONZE</h4>
-                        <p className="text-xs text-gray-500">Any Purchase Amount</p>
-                      </div>
-                    </div>
-                    <ul className="text-sm text-gray-600 space-y-1 ml-13">
-                      <li>• Earn 1 loyalty point per ₹100 spent</li>
-                      <li>• 2× points on Diagnostics</li>
-                      <li>• 20 bonus points on medicine refills</li>
-                      <li>• Redeem points for discounts & free delivery</li>
-                    </ul>
-                  </Card>
-
-                  {/* Silver */}
-                  <Card className="p-4 border-l-4 border-l-gray-400">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center">
-                        <Award className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold">SILVER</h4>
-                        <p className="text-xs text-gray-500">₹500+ per bill</p>
-                      </div>
-                    </div>
-                    <ul className="text-sm text-gray-600 space-y-1 ml-13">
-                      <li>• All Bronze benefits</li>
-                      <li>• Extra 5% discount on medicines</li>
-                      <li>• FREE delivery on qualifying orders</li>
-                    </ul>
-                  </Card>
-
-                  {/* Gold */}
-                  <Card className="p-4 border-l-4 border-l-yellow-500 bg-gradient-to-r from-yellow-50 to-amber-50">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center">
-                        <Crown className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-yellow-800">GOLD</h4>
-                        <p className="text-xs text-yellow-600">₹1000+ per bill</p>
-                      </div>
-                    </div>
-                    <ul className="text-sm text-gray-700 space-y-1 ml-13">
-                      <li>• All Silver benefits</li>
-                      <li>• Extra 10% discount on medicines</li>
-                      <li>• FREE delivery always</li>
-                      <li className="font-semibold text-yellow-700">• 10-Visit Reward: Extra discount + Free Health Checkup!</li>
-                    </ul>
-                  </Card>
+                      <ul className="text-sm text-slate-600 space-y-1 ml-13">
+                        {t.benefits.map((b, i) => <li key={i}>• {b}</li>)}
+                      </ul>
+                    </Card>
+                  ))}
                 </div>
-
-                {/* How It Works */}
-                <Card className="p-4 bg-blue-50 border-blue-200">
-                  <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
-                    <Info className="w-4 h-4" /> How It Works
-                  </h4>
-                  <ol className="text-sm text-blue-700 space-y-1 list-decimal ml-4">
-                    <li>Share your registered mobile number at billing</li>
-                    <li>Your tier is decided by your bill amount (Bronze/Silver/Gold)</li>
-                    <li>Points and visit count are added automatically</li>
-                    <li>Track everything in the Nevika Cura app</li>
-                  </ol>
-                </Card>
               </TabsContent>
 
               {/* Leaderboard Tab */}
               <TabsContent value="leaderboard" className="m-0">
-                {/* Period Selector */}
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                  <h3 className="font-semibold text-slate-800 flex items-center gap-2">
                     <Trophy className="w-5 h-5 text-amber-500" />
                     Top Customers
                   </h3>
-                  <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
-                    {[
-                      { value: 'weekly', label: 'Week' },
-                      { value: 'monthly', label: 'Month' },
-                      { value: 'all', label: 'All Time' }
-                    ].map((option) => (
+                  <div className="flex gap-1 bg-slate-100 rounded-lg p-1">
+                    {['weekly', 'monthly', 'all'].map((p) => (
                       <button
-                        key={option.value}
-                        onClick={() => setLeaderboardPeriod(option.value)}
+                        key={p}
+                        onClick={() => setLeaderboardPeriod(p)}
                         className={`px-3 py-1 text-xs rounded-md transition-all ${
-                          leaderboardPeriod === option.value
-                            ? 'bg-orange-500 text-white shadow-sm'
-                            : 'text-gray-600 hover:bg-gray-200'
+                          leaderboardPeriod === p ? 'bg-orange-500 text-white' : 'text-slate-600 hover:bg-slate-200'
                         }`}
-                        data-testid={`leaderboard-${option.value}`}
+                        data-testid={`leaderboard-${p}`}
                       >
-                        {option.label}
+                        {p === 'weekly' ? 'Week' : p === 'monthly' ? 'Month' : 'All Time'}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Stats Bar */}
-                <Card className="p-3 mb-4 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-orange-500" />
-                      <span className="text-gray-600">{leaderboardInfo.period_label}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Medal className="w-4 h-4 text-amber-500" />
-                      <span className="font-medium text-gray-800">{leaderboardInfo.total_participants} participants</span>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Leaderboard List */}
                 {leaderboardLoading ? (
                   <div className="flex items-center justify-center py-12">
                     <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
@@ -1481,87 +1234,39 @@ const Pharmacy = () => {
                 ) : leaderboard.length > 0 ? (
                   <div className="space-y-2">
                     {leaderboard.map((entry, idx) => (
-                      <Card 
-                        key={idx} 
-                        className={`p-3 transition-all hover:shadow-md ${
-                          idx === 0 ? 'bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-300' :
-                          idx === 1 ? 'bg-gradient-to-r from-gray-50 to-slate-50 border-gray-300' :
-                          idx === 2 ? 'bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200' :
-                          'bg-white'
-                        }`}
-                        data-testid={`leaderboard-entry-${idx}`}
-                      >
+                      <Card key={idx} className={`p-3 ${
+                        idx === 0 ? 'bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-300' :
+                        idx === 1 ? 'bg-gradient-to-r from-gray-50 to-slate-50 border-gray-300' :
+                        idx === 2 ? 'bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200' : ''
+                      }`} data-testid={`leaderboard-entry-${idx}`}>
                         <div className="flex items-center gap-3">
-                          {/* Rank */}
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
                             idx === 0 ? 'bg-yellow-400 text-yellow-900' :
                             idx === 1 ? 'bg-gray-300 text-gray-700' :
-                            idx === 2 ? 'bg-orange-400 text-orange-900' :
-                            'bg-gray-100 text-gray-500'
+                            idx === 2 ? 'bg-orange-400 text-orange-900' : 'bg-slate-100 text-slate-500'
                           }`}>
-                            {entry.badge ? entry.badge.icon : `#${entry.rank}`}
+                            #{entry.rank}
                           </div>
-
-                          {/* Name & Tier */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-gray-800 truncate">{entry.display_name}</span>
-                              <span className={`px-2 py-0.5 text-xs rounded-full ${
-                                entry.tier === 'gold' ? 'bg-yellow-100 text-yellow-700' :
-                                entry.tier === 'silver' ? 'bg-gray-100 text-gray-600' :
-                                'bg-orange-100 text-orange-700'
-                              }`}>
-                                {entry.tier.toUpperCase()}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
-                              <span>{entry.total_orders} orders</span>
-                              {entry.gold_visits > 0 && (
-                                <span className="flex items-center gap-1">
-                                  <Crown className="w-3 h-3 text-yellow-500" />
-                                  {entry.gold_visits} gold visits
-                                </span>
-                              )}
-                            </div>
+                          <div className="flex-1">
+                            <span className="font-medium text-slate-800">{entry.display_name}</span>
+                            <div className="text-xs text-slate-500">{entry.total_orders} orders</div>
                           </div>
-
-                          {/* Points */}
                           <div className="text-right">
                             <div className="flex items-center gap-1">
                               <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                              <span className="font-bold text-lg text-orange-600">{entry.points}</span>
+                              <span className="font-bold text-orange-600">{entry.points}</span>
                             </div>
-                            <span className="text-xs text-gray-400">points</span>
                           </div>
                         </div>
                       </Card>
                     ))}
                   </div>
                 ) : (
-                  <Card className="p-8 text-center bg-gray-50">
-                    <Trophy className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-                    <h4 className="font-semibold text-gray-600 mb-1">No Rankings Yet</h4>
-                    <p className="text-sm text-gray-400">
-                      Be the first to earn points and claim the top spot!
-                    </p>
-                    <p className="text-xs text-gray-400 mt-2">
-                      Make purchases to start earning loyalty points
-                    </p>
+                  <Card className="p-8 text-center bg-slate-50">
+                    <Trophy className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+                    <p className="text-slate-500">No rankings yet. Be the first!</p>
                   </Card>
                 )}
-
-                {/* Call to Action */}
-                <Card className="p-4 mt-4 bg-gradient-to-r from-orange-100 to-amber-100 border-orange-200">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center">
-                      <Gift className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-orange-800">Want to climb the ranks?</h4>
-                      <p className="text-xs text-orange-600">Earn 1 point per ₹100 spent. 2× points on diagnostics!</p>
-                    </div>
-                  </div>
-                </Card>
               </TabsContent>
 
               {/* FAQ Tab */}
@@ -1570,16 +1275,13 @@ const Pharmacy = () => {
                   <div className="space-y-3">
                     {loyaltyFAQ.faqs.map((faq, idx) => (
                       <Card key={idx} className="p-4">
-                        <h4 className="font-semibold text-gray-800 mb-2 flex items-start gap-2">
-                          <span className="text-orange-500 font-bold">Q:</span>
-                          {faq.q}
-                        </h4>
-                        <p className="text-sm text-gray-600 ml-5">{faq.a}</p>
+                        <h4 className="font-semibold text-slate-800 mb-2">Q: {faq.q}</h4>
+                        <p className="text-sm text-slate-600">{faq.a}</p>
                       </Card>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-gray-500">Loading FAQ...</div>
+                  <div className="text-center py-8 text-slate-500">Loading FAQ...</div>
                 )}
               </TabsContent>
 
@@ -1589,31 +1291,19 @@ const Pharmacy = () => {
                   <div className="space-y-4">
                     <div className="text-center mb-4">
                       <h3 className="font-semibold text-lg">{loyaltyTerms.title}</h3>
-                      <p className="text-xs text-gray-500">Effective: {loyaltyTerms.effective_date}</p>
+                      <p className="text-xs text-slate-500">Effective: {loyaltyTerms.effective_date}</p>
                     </div>
-                    
                     {loyaltyTerms.sections.map((section, idx) => (
                       <div key={idx} className="border-b pb-3 last:border-0">
-                        <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-orange-500" />
-                          {section.title}
-                        </h4>
-                        <ul className="text-sm text-gray-600 space-y-1">
-                          {section.content.map((item, i) => (
-                            <li key={i}>{item}</li>
-                          ))}
+                        <h4 className="font-semibold text-slate-800 mb-2">{section.title}</h4>
+                        <ul className="text-sm text-slate-600 space-y-1">
+                          {section.content.map((item, i) => <li key={i}>{item}</li>)}
                         </ul>
                       </div>
                     ))}
-                    
-                    <Card className="p-3 bg-gray-50 text-xs text-gray-500 text-center">
-                      Last Updated: {loyaltyTerms.last_updated}
-                      <br />
-                      {loyaltyTerms.acceptance}
-                    </Card>
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-gray-500">Loading Terms...</div>
+                  <div className="text-center py-8 text-slate-500">Loading Terms...</div>
                 )}
               </TabsContent>
             </div>
