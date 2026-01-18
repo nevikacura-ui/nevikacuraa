@@ -1415,6 +1415,82 @@ const Evara = () => {
           </Card>
         )}
 
+        {/* Search Box */}
+        <Card className="p-4 rounded-2xl border-0 shadow-md bg-white">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-rose-400 w-5 h-5" />
+            <Input
+              placeholder="Search features, pregnancy info, period tracking..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-11 pr-10 py-3 rounded-xl border-rose-200 focus:border-rose-500 focus:ring-rose-500/20 text-base"
+              data-testid="evara-search"
+            />
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+          
+          {/* Search Results */}
+          {searchTerm && (
+            <div className="mt-3 space-y-2">
+              {/* Filter and show matching features */}
+              {[
+                { name: 'Chat with Evara', desc: 'AI wellness assistant', icon: '💬', action: () => setShowChat(true), keywords: ['chat', 'talk', 'ask', 'ai', 'help', 'question'] },
+                { name: 'Pregnancy Calculator', desc: 'Due date & trimester', icon: '🤰', action: () => setShowPregnancyCalc(true), keywords: ['pregnancy', 'pregnant', 'due date', 'trimester', 'baby', 'conception'] },
+                { name: 'Reminders', desc: 'Medicine & appointment alerts', icon: '🔔', action: () => { setShowReminders(true); fetchReminders(); }, keywords: ['reminder', 'alert', 'medicine', 'appointment', 'notify'] },
+                { name: 'Period Tracker', desc: 'Log & predict cycles', icon: '🩸', action: () => { setShowPeriodLog(true); if(token) fetchPeriodHistory(); }, keywords: ['period', 'cycle', 'menstrual', 'menstruation', 'track', 'log'] },
+                { name: 'Calorie Tracker', desc: 'Indian foods database', icon: '🥗', action: () => { setShowCaloriesTracker(true); fetchFoodDatabase(); if(token) fetchCalorieLogs(); }, keywords: ['calorie', 'food', 'diet', 'weight', 'nutrition', 'indian'] },
+                { name: 'Week-by-Week Guide', desc: 'Pregnancy journey', icon: '👶', action: () => { setShowPregnancyWeeks(true); fetchPregnancyWeeks(); }, keywords: ['week', 'pregnancy', 'baby', 'development', 'trimester', 'fetus'] },
+                { name: 'PMS Guide', desc: 'Symptoms & relief tips', icon: '📖', action: () => setShowPMSEducation(true), keywords: ['pms', 'premenstrual', 'cramp', 'mood', 'bloating', 'symptom'] },
+                { name: 'PCOS Guide', desc: 'Management & diet tips', icon: '📚', action: () => setShowPCOSEducation(true), keywords: ['pcos', 'polycystic', 'ovary', 'hormone', 'irregular'] },
+                { name: 'Menopause Guide', desc: 'Transition & wellness', icon: '🌸', action: () => setShowMenopauseGuide(true), keywords: ['menopause', 'hot flash', 'hormone', 'transition', 'perimenopause'] },
+              ].filter(item => 
+                item.keywords.some(kw => kw.includes(searchTerm.toLowerCase())) ||
+                item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.desc.toLowerCase().includes(searchTerm.toLowerCase())
+              ).map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => { item.action(); setSearchTerm(''); }}
+                  className="w-full flex items-center gap-3 p-3 bg-rose-50 hover:bg-rose-100 rounded-xl transition-colors text-left"
+                >
+                  <span className="text-2xl">{item.icon}</span>
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-800">{item.name}</p>
+                    <p className="text-xs text-gray-500">{item.desc}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-rose-400" />
+                </button>
+              ))}
+              
+              {/* No results message */}
+              {[
+                { keywords: ['chat', 'talk', 'ask', 'ai', 'help', 'question'] },
+                { keywords: ['pregnancy', 'pregnant', 'due date', 'trimester', 'baby', 'conception'] },
+                { keywords: ['reminder', 'alert', 'medicine', 'appointment', 'notify'] },
+                { keywords: ['period', 'cycle', 'menstrual', 'menstruation', 'track', 'log'] },
+                { keywords: ['calorie', 'food', 'diet', 'weight', 'nutrition', 'indian'] },
+                { keywords: ['week', 'pregnancy', 'baby', 'development', 'trimester', 'fetus'] },
+                { keywords: ['pms', 'premenstrual', 'cramp', 'mood', 'bloating', 'symptom'] },
+                { keywords: ['pcos', 'polycystic', 'ovary', 'hormone', 'irregular'] },
+                { keywords: ['menopause', 'hot flash', 'hormone', 'transition', 'perimenopause'] },
+              ].every(item => !item.keywords.some(kw => kw.includes(searchTerm.toLowerCase()))) && 
+              !['chat with evara', 'pregnancy calculator', 'reminders', 'period tracker', 'calorie tracker', 'week-by-week guide', 'pms guide', 'pcos guide', 'menopause guide'].some(n => n.includes(searchTerm.toLowerCase())) && (
+                <div className="p-4 text-center text-gray-500 bg-gray-50 rounded-xl">
+                  <p className="text-sm">No results for "{searchTerm}"</p>
+                  <p className="text-xs mt-1">Try: pregnancy, period, pcos, calorie, reminder</p>
+                </div>
+              )}
+            </div>
+          )}
+        </Card>
+
         {/* Quick Actions - 3x2 on desktop, 2x3 on mobile */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <button 
