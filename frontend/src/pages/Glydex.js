@@ -895,77 +895,77 @@ const Glydex = () => {
         {/* Quick Actions Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
           <Card 
-            className="cursor-pointer hover:shadow-lg transition-all border-teal-200 hover:border-teal-400 active:scale-95"
+            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-gradient-to-br from-teal-500 to-cyan-600 hover:scale-105 active:scale-95"
             onClick={() => setShowSugarLog(true)}
             data-testid="log-sugar-btn"
           >
             <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner">
                 <Droplets className="w-7 h-7 text-white" />
               </div>
-              <p className="font-semibold text-gray-800">Log Sugar</p>
-              <p className="text-xs text-gray-500 mt-1">FBS & PPBS</p>
+              <p className="font-semibold text-white">Log Sugar</p>
+              <p className="text-xs text-white/80 mt-1">FBS & PPBS</p>
             </CardContent>
           </Card>
 
           <Card 
-            className="cursor-pointer hover:shadow-lg transition-all border-green-200 hover:border-green-400 active:scale-95"
+            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-gradient-to-br from-emerald-500 to-green-600 hover:scale-105 active:scale-95"
             onClick={() => setShowDiet(true)}
             data-testid="diet-plan-btn"
           >
             <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner">
                 <Apple className="w-7 h-7 text-white" />
               </div>
-              <p className="font-semibold text-gray-800">Diet Plan</p>
-              <p className="text-xs text-gray-500 mt-1">Veg & Non-Veg</p>
+              <p className="font-semibold text-white">Diet Plan</p>
+              <p className="text-xs text-white/80 mt-1">Veg & Non-Veg</p>
             </CardContent>
           </Card>
 
           <Card 
-            className="cursor-pointer hover:shadow-lg transition-all border-purple-200 hover:border-purple-400 active:scale-95"
+            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-gradient-to-br from-violet-500 to-purple-600 hover:scale-105 active:scale-95"
             onClick={() => setShowTests(true)}
             data-testid="book-tests-btn"
           >
             <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner">
                 <TestTube className="w-7 h-7 text-white" />
               </div>
-              <p className="font-semibold text-gray-800">Book Tests</p>
-              <p className="text-xs text-gray-500 mt-1">HbA1c, Lipid</p>
+              <p className="font-semibold text-white">Book Tests</p>
+              <p className="text-xs text-white/80 mt-1">HbA1c, Lipid</p>
             </CardContent>
           </Card>
 
           <Card 
-            className="cursor-pointer hover:shadow-lg transition-all border-amber-200 hover:border-amber-400 active:scale-95"
+            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-gradient-to-br from-amber-500 to-orange-600 hover:scale-105 active:scale-95"
             onClick={() => setShowWarnings(true)}
             data-testid="warning-signs-btn"
           >
             <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner">
                 <Info className="w-7 h-7 text-white" />
               </div>
-              <p className="font-semibold text-gray-800">Warning Signs</p>
-              <p className="text-xs text-gray-500 mt-1">Know symptoms</p>
+              <p className="font-semibold text-white">Warning Signs</p>
+              <p className="text-xs text-white/80 mt-1">Know symptoms</p>
             </CardContent>
           </Card>
 
           <Card 
-            className="cursor-pointer hover:shadow-lg transition-all border-indigo-200 hover:border-indigo-400 active:scale-95"
+            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-gradient-to-br from-blue-500 to-indigo-600 hover:scale-105 active:scale-95"
             onClick={() => setShowHbA1c(true)}
             data-testid="hba1c-trend-btn"
           >
             <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner">
                 <LineChart className="w-7 h-7 text-white" />
               </div>
-              <p className="font-semibold text-gray-800">HbA1c Trend</p>
-              <p className="text-xs text-gray-500 mt-1">3-month control</p>
+              <p className="font-semibold text-white">HbA1c Trend</p>
+              <p className="text-xs text-white/80 mt-1">3-month control</p>
             </CardContent>
           </Card>
 
           <Card 
-            className="cursor-pointer hover:shadow-lg transition-all border-orange-200 hover:border-orange-400 active:scale-95"
+            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-gradient-to-br from-rose-500 to-pink-600 hover:scale-105 active:scale-95"
             onClick={() => {
               setShowCaloriesTracker(true);
               fetchFoodDatabase();
@@ -974,11 +974,11 @@ const Glydex = () => {
             data-testid="calorie-tracker-btn"
           >
             <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner">
                 <Utensils className="w-7 h-7 text-white" />
               </div>
-              <p className="font-semibold text-gray-800">Calorie Tracker</p>
-              <p className="text-xs text-gray-500 mt-1">Indian Foods</p>
+              <p className="font-semibold text-white">Calorie Tracker</p>
+              <p className="text-xs text-white/80 mt-1">Indian Foods</p>
             </CardContent>
           </Card>
         </div>
