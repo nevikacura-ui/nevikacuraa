@@ -300,6 +300,34 @@ const Pharmacy = () => {
     return () => clearTimeout(timer);
   }, [searchTerm, selectedForm]);
 
+  // Filter inventory when search term or form changes
+  useEffect(() => {
+    const filterInventory = async () => {
+      setCurrentPage(1);
+      setInventoryLoading(true);
+      try {
+        const response = await axios.get(`${API}/pharmacy/all`, {
+          params: { 
+            page: 1, 
+            per_page: 50, 
+            search: searchTerm || undefined,
+            form: selectedForm || undefined
+          }
+        });
+        setInventory(response.data.medicines || []);
+        setHasMoreMedicines(1 < response.data.total_pages);
+        setTotalMedicines(response.data.total);
+      } catch (error) {
+        console.error('Failed to filter inventory:', error);
+      } finally {
+        setInventoryLoading(false);
+      }
+    };
+    
+    const debounce = setTimeout(filterInventory, 300);
+    return () => clearTimeout(debounce);
+  }, [searchTerm, selectedForm]);
+
   // Resend timer
   useEffect(() => {
     if (resendTimer > 0) {
