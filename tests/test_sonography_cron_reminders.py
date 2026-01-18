@@ -16,7 +16,7 @@ import os
 from datetime import datetime, timezone, timedelta
 import uuid
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://carecompanion-37.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://diagyn-booking.preview.emergentagent.com').rstrip('/')
 CRON_SECRET = "nevika_cron_2026"
 STAFF_USERNAME = "staff_pushpa"
 STAFF_PASSWORD = "Nevika@2026C"

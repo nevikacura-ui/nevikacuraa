@@ -13,7 +13,7 @@ import os
 import uuid
 from datetime import datetime
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://carecompanion-37.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://diagyn-booking.preview.emergentagent.com').rstrip('/')
 
 # Test data identifiers
 TEST_STAFF_ID = f"test_staff_{uuid.uuid4().hex[:8]}"
