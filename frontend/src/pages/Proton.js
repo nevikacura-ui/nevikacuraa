@@ -518,6 +518,31 @@ const Proton = () => {
     return category ? category.tests : [];
   };
 
+  // Get all tests from all categories for search
+  const getAllTests = () => {
+    const allTests = [
+      ...pathologyTests.blood,
+      ...pathologyTests.urine,
+      ...pathologyTests.sputum,
+      ...pathologyTests.packages,
+      ...imagingTests.ecg,
+      ...imagingTests.sonography
+    ];
+    // Remove duplicates
+    return [...new Set(allTests)];
+  };
+
+  // Filter tests based on search term
+  const getFilteredTests = () => {
+    if (!testSearchTerm.trim()) return [];
+    const searchLower = testSearchTerm.toLowerCase();
+    return getAllTests().filter(test => 
+      test.toLowerCase().includes(searchLower)
+    );
+  };
+
+  const filteredTests = getFilteredTests();
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Header */}
