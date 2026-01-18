@@ -893,6 +893,80 @@ const Glydex = () => {
           </Card>
         </div>
 
+        {/* Search Box */}
+        <Card className="mb-6 p-4 rounded-2xl border-0 shadow-md bg-white">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
+            <Input
+              placeholder="Search features, diet plans, tests, symptoms..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-11 pr-10 py-3 rounded-xl border-teal-200 focus:border-teal-500 focus:ring-teal-500/20 text-base"
+              data-testid="glydex-search"
+            />
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+          
+          {/* Search Results */}
+          {searchTerm && (
+            <div className="mt-3 space-y-2">
+              {/* Filter and show matching features */}
+              {[
+                { name: 'Log Blood Sugar', desc: 'Track FBS & PPBS', icon: '🩸', action: () => setShowSugarLog(true), keywords: ['sugar', 'blood', 'fbs', 'ppbs', 'glucose', 'log'] },
+                { name: 'Diet Plan', desc: 'Veg & Non-Veg options', icon: '🥗', action: () => setShowDiet(true), keywords: ['diet', 'food', 'meal', 'eat', 'nutrition', 'vegetarian'] },
+                { name: 'Book Tests', desc: 'HbA1c, Lipid Profile', icon: '🧪', action: () => setShowTests(true), keywords: ['test', 'hba1c', 'lipid', 'kidney', 'lab', 'blood'] },
+                { name: 'Warning Signs', desc: 'Know the symptoms', icon: '⚠️', action: () => setShowWarnings(true), keywords: ['warning', 'symptom', 'emergency', 'hypo', 'hyper', 'sign'] },
+                { name: 'HbA1c Trend', desc: '3-month sugar control', icon: '📈', action: () => setShowHbA1c(true), keywords: ['hba1c', 'trend', 'chart', 'control', 'average'] },
+                { name: 'Calorie Tracker', desc: 'Indian foods database', icon: '🍽️', action: () => { setShowCaloriesTracker(true); fetchFoodDatabase(); fetchCalorieLogs(); }, keywords: ['calorie', 'food', 'track', 'weight', 'indian'] },
+                { name: 'Foot Care', desc: 'Daily care tips', icon: '🦶', action: () => setShowFootCare(true), keywords: ['foot', 'care', 'neuropathy', 'wound', 'infection'] },
+                { name: 'Emergency Guide', desc: 'Hypo/Hyper emergencies', icon: '🚨', action: () => setShowEmergency(true), keywords: ['emergency', 'hypo', 'hyper', 'low', 'high', 'crisis'] },
+              ].filter(item => 
+                item.keywords.some(kw => kw.includes(searchTerm.toLowerCase())) ||
+                item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.desc.toLowerCase().includes(searchTerm.toLowerCase())
+              ).map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => { item.action(); setSearchTerm(''); }}
+                  className="w-full flex items-center gap-3 p-3 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors text-left"
+                >
+                  <span className="text-2xl">{item.icon}</span>
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-800">{item.name}</p>
+                    <p className="text-xs text-gray-500">{item.desc}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-teal-400" />
+                </button>
+              ))}
+              
+              {/* No results */}
+              {[
+                { keywords: ['sugar', 'blood', 'fbs', 'ppbs', 'glucose', 'log'] },
+                { keywords: ['diet', 'food', 'meal', 'eat', 'nutrition', 'vegetarian'] },
+                { keywords: ['test', 'hba1c', 'lipid', 'kidney', 'lab', 'blood'] },
+                { keywords: ['warning', 'symptom', 'emergency', 'hypo', 'hyper', 'sign'] },
+                { keywords: ['hba1c', 'trend', 'chart', 'control', 'average'] },
+                { keywords: ['calorie', 'food', 'track', 'weight', 'indian'] },
+                { keywords: ['foot', 'care', 'neuropathy', 'wound', 'infection'] },
+                { keywords: ['emergency', 'hypo', 'hyper', 'low', 'high', 'crisis'] },
+              ].every(item => !item.keywords.some(kw => kw.includes(searchTerm.toLowerCase()))) && 
+              !['log blood sugar', 'diet plan', 'book tests', 'warning signs', 'hba1c trend', 'calorie tracker', 'foot care', 'emergency guide'].some(n => n.includes(searchTerm.toLowerCase())) && (
+                <div className="p-4 text-center text-gray-500 bg-gray-50 rounded-xl">
+                  <p className="text-sm">No results for "{searchTerm}"</p>
+                  <p className="text-xs mt-1">Try: sugar, diet, test, warning, calorie</p>
+                </div>
+              )}
+            </div>
+          )}
+        </Card>
+
         {/* Quick Actions Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
           <Card 
