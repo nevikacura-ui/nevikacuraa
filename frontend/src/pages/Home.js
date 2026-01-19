@@ -218,6 +218,7 @@ const clinicLocations = [
 const Home = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { isMobile, isTablet, isDesktop, getResponsiveClasses } = useViewMode();
   const [showAuth, setShowAuth] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
