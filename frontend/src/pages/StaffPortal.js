@@ -4593,7 +4593,8 @@ const StaffPortal = () => {
             setWalkInForm(prev => ({
               ...prev,
               patient_name: patient.name,
-              patient_phone: patient.mobile
+              patient_phone: patient.mobile,
+              patient_id: patient.patient_id
             }));
           } else if (patientRegisterType === 'emergency') {
             setFoundEmergencyPatient(patient);
@@ -4601,7 +4602,8 @@ const StaffPortal = () => {
               ...prev,
               patient_name: patient.name,
               patient_phone: patient.mobile,
-              patient_email: ''
+              patient_email: '',
+              patient_id: patient.patient_id
             }));
           }
           setShowPatientRegisterDialog(false);
