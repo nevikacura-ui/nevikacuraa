@@ -40,13 +40,15 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
      - Compact 3-icon toggle in header (Desktop | Tablet | Mobile)
      - Full settings version with descriptions in Settings dialog
    - **Settings Dialog:** Added gear icon button (logged-in users) with ViewModeSettings
-   - **Tablet Optimizations for Home Page:**
-     - Services grid: 3 columns (vs 2 mobile, 6 desktop)
-     - Larger touch targets (280px min-height cards vs 200px)
-     - Bigger fonts and buttons (py-5 vs py-4)
-     - Quick Stats: 2 columns with larger padding
-     - Quick Actions: 2 columns with larger icons
+   - **Pages Updated:**
+     - **Home:** Services grid 3-cols, larger stats/actions, Settings dialog
+     - **DiaGyn:** Doctor/Clinic cards with larger images, fonts, padding; ViewModeSwitcher in header
+     - **StaffPortal:** Tab grid 5-cols on tablet with larger touch targets; ViewModeSwitcher in header
    - **Persistence:** View mode saved to localStorage
+
+3. **Queue Status Fix** ✅
+   - Cleared all test bookings from database
+   - Updated default queue status to show "0 waiting" instead of fake test data
 
 ### Session - January 18, 2026
 
