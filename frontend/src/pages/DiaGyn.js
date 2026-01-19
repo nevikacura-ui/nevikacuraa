@@ -792,6 +792,7 @@ const StepProgress = ({ currentStep, steps }) => {
 const DiaGyn = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isMobile, isTablet, isDesktop } = useViewMode();
   const [step, setStep] = useState(1);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedClinic, setSelectedClinic] = useState(null);
