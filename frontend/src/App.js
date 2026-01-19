@@ -113,6 +113,7 @@ function App() {
           <SmartNotificationBanner />
         </div>
       </BrowserRouter>
+      </ViewModeProvider>
     </AuthProvider>
   );
 }
