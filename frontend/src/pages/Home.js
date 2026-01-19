@@ -1497,6 +1497,24 @@ const Home = () => {
       <Footer />
 
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
+      
+      {/* Settings Dialog */}
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        <DialogContent className="max-w-md rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-slate-800">
+              <Settings className="w-5 h-5 text-[#5FA8D3]" />
+              Settings
+            </DialogTitle>
+            <DialogDescription>
+              Customize your app experience
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <ViewModeSettings />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
