@@ -952,7 +952,9 @@ const DiaGyn = () => {
             } else if (data.type === 'heartbeat') {
               ws.send(JSON.stringify({ type: 'pong' }));
             }
-          } catch (e) {}
+          } catch (e) {
+            // Silent fail for WebSocket message parsing errors
+          }
         };
 
         ws.onclose = (event) => {
