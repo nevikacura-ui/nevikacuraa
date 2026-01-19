@@ -166,6 +166,9 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 - **Clinic Timings:** Mon-Sat, 11am-2pm & 6pm-10pm
 
 ## Key Endpoints
+- `POST /api/appointments/block-slots` - Staff block appointment slots
+- `POST /api/appointments/unblock-slots` - Staff unblock appointment slots
+- `GET /api/appointments/blocked-slots` - Get blocked slots for doctor/clinic/date
 - `GET /api/push/vapid-public-key` - Get VAPID public key for push subscriptions
 - `POST /api/push/subscribe` - Subscribe to push notifications
 - `POST /api/push/test` - Send test push notification (requires auth)
