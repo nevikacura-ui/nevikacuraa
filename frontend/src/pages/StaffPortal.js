@@ -107,6 +107,12 @@ const StaffPortal = () => {
   const [foundWalkInPatient, setFoundWalkInPatient] = useState(null);
   const [foundEmergencyPatient, setFoundEmergencyPatient] = useState(null);
   
+  // Patient Database states
+  const [patientSearchQuery, setPatientSearchQuery] = useState('');
+  const [patientSearchResults, setPatientSearchResults] = useState([]);
+  const [searchingPatients, setSearchingPatients] = useState(false);
+  const [allPatients, setAllPatients] = useState([]);
+  
   // Diagnostic order form (for diagnostics staff)
   const [diagOrderForm, setDiagOrderForm] = useState({
     patient_name: '',
