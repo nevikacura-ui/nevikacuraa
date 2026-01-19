@@ -47,6 +47,7 @@ import SeniorCare from '@/pages/SeniorCare';
 // Smart Medicine Reminders
 import SmartReminders from '@/pages/SmartReminders';
 import { AuthProvider } from '@/context/AuthContext';
+import { ViewModeProvider } from '@/context/ViewModeContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { FullScreenNotificationPrompt, SmartNotificationBanner } from '@/components/NotificationPrompt';
 import './App.css';
@@ -54,9 +55,10 @@ import './App.css';
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <div className="App">
-          <Routes>
+      <ViewModeProvider>
+        <BrowserRouter>
+          <div className="App">
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/diagyn" element={<DiaGyn />} />
             <Route path="/proton" element={<Proton />} />
