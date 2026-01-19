@@ -1233,7 +1233,10 @@ const DiaGyn = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Doctor cards - Tablet: 2 cols with larger cards */}
+            <div className={`grid gap-6 ${
+              isTablet ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2'
+            }`}>
               {doctors.map(doctor => (
                 <DoctorProfileCard
                   key={doctor.id}
@@ -1246,6 +1249,7 @@ const DiaGyn = () => {
                     setSelectedSlot(null);
                     setBookedSlots([]);
                   }}
+                  isTablet={isTablet}
                 />
               ))}
             </div>
