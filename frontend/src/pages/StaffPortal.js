@@ -921,7 +921,8 @@ const StaffPortal = () => {
     try {
       await axios.post(`${API}/staff/appointments/emergency`, emergencyForm, getAuthHeaders());
       toast.success('Emergency appointment booked');
-      setEmergencyForm({ ...emergencyForm, patient_name: '', patient_phone: '', patient_email: '' });
+      setEmergencyForm({ ...emergencyForm, patient_name: '', patient_phone: '', patient_email: '', patient_id: '' });
+      setFoundEmergencyPatient(null);
       loadData();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Booking failed');
