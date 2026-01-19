@@ -87,7 +87,8 @@ const StaffPortal = () => {
     date: getIndianDate(),
     time: '',
     patient_name: '',
-    patient_phone: ''
+    patient_phone: '',
+    patient_id: ''
   });
   
   // Emergency form
@@ -97,7 +98,8 @@ const StaffPortal = () => {
     date: getIndianDate(),
     patient_name: '',
     patient_phone: '',
-    patient_email: ''
+    patient_email: '',
+    patient_id: ''
   });
   
   // Patient registration states
