@@ -2440,6 +2440,117 @@ async def get_booked_slots(doctor: str, clinic: str, date: str):
     
     return {"booked_slots": [b["time"] for b in booked if b.get("time")]}
 
+# ============ STAFF SLOT BLOCKING API ============
+class SlotBlockRequest(BaseModel):
+    doctor: str
+    clinic: str
+    date: str
+    slots: List[str]  # List of time slots to block, e.g., ["11:00", "11:15", "11:30"]
+    reason: str = "Doctor running late"
+
+@api_router.post("/appointments/block-slots")
+async def block_slots(request: SlotBlockRequest):
+    """Block slots for same-day appointments (staff/doctor use only)
+    Creates 'blocked' appointments to prevent patient bookings
+    """
+    from datetime import datetime
+    
+    # Validate date is today or future
+    try:
+        block_date = datetime.strptime(request.date, "%Y-%m-%d").date()
+        today = datetime.now().date()
+        if block_date < today:
+            raise HTTPException(status_code=400, detail="Cannot block slots for past dates")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+    
+    blocked_count = 0
+    already_blocked = []
+    
+    for slot in request.slots:
+        # Check if slot is already booked or blocked
+        existing = await db.appointments.find_one({
+            "doctor": request.doctor,
+            "clinic": request.clinic,
+            "date": request.date,
+            "time": slot,
+            "status": {"$in": ["pending", "Booked", "blocked", "In Clinic"]}
+        })
+        
+        if existing:
+            already_blocked.append(slot)
+            continue
+        
+        # Create blocked appointment
+        blocked_appointment = {
+            "doctor": request.doctor,
+            "clinic": request.clinic,
+            "date": request.date,
+            "time": slot,
+            "status": "blocked",
+            "reason": request.reason,
+            "blocked_at": datetime.now().isoformat(),
+            "patient_name": "BLOCKED",
+            "patient_phone": "0000000000"
+        }
+        
+        await db.appointments.insert_one(blocked_appointment)
+        blocked_count += 1
+        
+        # Notify connected clients via WebSocket
+        await slot_manager.broadcast_slot_update(
+            request.doctor, request.clinic, request.date, slot, "booked"
+        )
+    
+    return {
+        "success": True,
+        "blocked_count": blocked_count,
+        "already_blocked": already_blocked,
+        "message": f"Blocked {blocked_count} slots" + (f", {len(already_blocked)} already unavailable" if already_blocked else "")
+    }
+
+@api_router.post("/appointments/unblock-slots")
+async def unblock_slots(request: SlotBlockRequest):
+    """Unblock previously blocked slots"""
+    unblocked_count = 0
+    
+    for slot in request.slots:
+        result = await db.appointments.delete_one({
+            "doctor": request.doctor,
+            "clinic": request.clinic,
+            "date": request.date,
+            "time": slot,
+            "status": "blocked"
+        })
+        
+        if result.deleted_count > 0:
+            unblocked_count += 1
+            # Notify connected clients via WebSocket
+            await slot_manager.broadcast_slot_update(
+                request.doctor, request.clinic, request.date, slot, "available"
+            )
+    
+    return {
+        "success": True,
+        "unblocked_count": unblocked_count,
+        "message": f"Unblocked {unblocked_count} slots"
+    }
+
+@api_router.get("/appointments/blocked-slots")
+async def get_blocked_slots(doctor: str, clinic: str, date: str):
+    """Get manually blocked slots for a specific doctor, clinic, and date"""
+    blocked = await db.appointments.find(
+        {
+            "doctor": doctor,
+            "clinic": clinic,
+            "date": date,
+            "status": "blocked"
+        },
+        {"_id": 0, "time": 1, "reason": 1, "blocked_at": 1}
+    ).to_list(100)
+    
+    return {"blocked_slots": blocked}
+
 # ============ WEBSOCKET ENDPOINT FOR REAL-TIME SLOT UPDATES ============
 @app.websocket("/api/ws/slots")
 async def websocket_slot_updates(
