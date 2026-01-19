@@ -261,7 +261,10 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 
 ## Pending User Verification
 1. **Push Notification Prompt** - Test on mobile device after PWA install
-2. **Face ID Camera** - Mobile device testing needed
+2. **Face ID Camera** - Mobile device testing needed (recurring issue)
+
+## Session January 19, 2026 - Bug Fixes
+1. **Weekly Schedule Dialog** - Fixed [object Object] display, now shows proper clinic names with session times
 3. **App Icon Centering** - Confirm on home screen
 
 ## Upcoming Tasks (P1-P2)
