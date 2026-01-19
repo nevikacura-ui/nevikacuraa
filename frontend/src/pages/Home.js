@@ -221,6 +221,7 @@ const Home = () => {
   const { isMobile, isTablet, isDesktop, getResponsiveClasses } = useViewMode();
   const [showAuth, setShowAuth] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   
   // Health Tip of the Day - Changes daily based on date
