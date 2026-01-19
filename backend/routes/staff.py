@@ -66,6 +66,7 @@ class WalkInAppointment(BaseModel):
     patient_name: str
     patient_phone: str
     patient_email: Optional[str] = None
+    patient_id: Optional[str] = None
     time: str
     notes: Optional[str] = None
 
@@ -76,6 +77,7 @@ class EmergencyAppointment(BaseModel):
     patient_name: str
     patient_phone: str
     patient_email: Optional[str] = None
+    patient_id: Optional[str] = None
     emergency_type: Optional[str] = "General Emergency"
     notes: Optional[str] = None
 
