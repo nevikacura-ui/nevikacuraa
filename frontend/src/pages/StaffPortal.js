@@ -1802,24 +1802,26 @@ const StaffPortal = () => {
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="font-bold text-base sm:text-lg">Staff Portal</h1>
-              <p className="text-xs sm:text-sm text-gray-500 truncate max-w-[150px] sm:max-w-none">
+              <h1 className={`font-bold ${isTablet ? 'text-xl' : 'text-base sm:text-lg'}`}>Staff Portal</h1>
+              <p className={`text-gray-500 truncate ${isTablet ? 'text-sm max-w-none' : 'text-xs sm:text-sm max-w-[150px] sm:max-w-none'}`}>
                 {staffInfo?.name} • {staffInfo?.clinic}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
+            {/* View Mode Switcher */}
+            <ViewModeSwitcher compact />
             <Button 
               variant="outline" 
               size="sm" 
               onClick={handleManualRefresh}
               disabled={isRefreshing}
-              className="bg-teal-50 border-teal-200 hover:bg-teal-100 text-teal-700 px-2 sm:px-3"
+              className={`bg-teal-50 border-teal-200 hover:bg-teal-100 text-teal-700 ${isTablet ? 'px-4' : 'px-2 sm:px-3'}`}
             >
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline ml-1">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout} className="px-2 sm:px-3">
+            <Button variant="ghost" size="sm" onClick={handleLogout} className={isTablet ? 'px-4' : 'px-2 sm:px-3'}>
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline ml-1">Logout</span>
             </Button>
