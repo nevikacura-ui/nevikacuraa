@@ -20,20 +20,18 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
      - `POST /api/appointments/block-slots` - Staff can block appointment slots
      - `POST /api/appointments/unblock-slots` - Staff can unblock previously blocked slots
      - `GET /api/appointments/blocked-slots` - Get list of blocked slots for doctor/clinic/date
+   - **Access Control (Updated Jan 19):**
+     - Only the **respective doctor** can block their own slots
+     - **Super Admin** can block any doctor's slots
+     - Clinic staff can NO LONGER block slots (removed)
    - **Frontend BlockSlotsDialog:**
-     - "Block Slots" button in DiaGyn header (only visible to staff at step 3)
+     - "Block Slots" button in DiaGyn header (only visible to authorized users)
+     - **"Block All Remaining"** quick action button to select all available slots
      - Dialog shows doctor, clinic, date context
      - Grid of available slots to select for blocking
      - "Currently Blocked" section showing blocked slots with unblock option
-     - Reason input field for blocking (e.g., "Doctor running late")
-   - **Staff Role Check:**
-     - Uses `staffToken` from localStorage
-     - Validates JWT expiry and role permissions
-     - Allowed roles: super_admin, doctor, clinic_staff_pushpa, clinic_staff_amnion
-   - **Integration:**
-     - Blocked slots appear as unavailable in patient time slot picker
-     - WebSocket broadcasts notify other clients when slots are blocked/unblocked
-     - Blocked slots included in `/api/appointments/booked-slots` API
+   - **Backend Change:** Added `doctor_name` field to JWT token for doctor role verification
+   - **UI Change:** Removed full-screen push notification prompt (kept SmartNotificationBanner)
    - **Testing:** 9/9 backend tests passed, all frontend features verified
 
 ### Session - January 18, 2026
