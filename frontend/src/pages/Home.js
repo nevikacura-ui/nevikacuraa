@@ -1007,7 +1007,12 @@ const Home = () => {
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center md:text-left">Our Services</h2>
           
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
+          {/* Responsive Grid: Mobile=2cols, Tablet=3cols (larger cards), Desktop=6cols */}
+          <div className={`grid gap-4 md:gap-5 ${
+            isMobile ? 'grid-cols-2' : 
+            isTablet ? 'grid-cols-3' : 
+            'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'
+          }`}>
             {services.map((service) => (
               <div
                 key={service.id}
@@ -1026,8 +1031,10 @@ const Home = () => {
                   service.isDark ? 'bg-white/10' : 'bg-gray-100/50'
                 }`}></div>
                 
-                {/* Card Content */}
-                <div className="relative h-full min-h-[200px] sm:min-h-[240px] flex flex-col">
+                {/* Card Content - Tablet has larger cards */}
+                <div className={`relative h-full flex flex-col ${
+                  isTablet ? 'min-h-[280px]' : 'min-h-[200px] sm:min-h-[240px]'
+                }`}>
                   {/* Logo - Fill entire card for fillLogo items */}
                   {service.fillLogo ? (
                     <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
@@ -1045,19 +1052,23 @@ const Home = () => {
                       <img 
                         src={service.logo} 
                         alt={service.name} 
-                        className="h-20 sm:h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                        className={`w-auto object-contain transition-transform duration-300 group-hover:scale-105 ${
+                          isTablet ? 'h-28' : 'h-20 sm:h-24'
+                        }`}
                         data-testid={`service-logo-${service.id}`}
                         loading="lazy"
                       />
                     </div>
                   )}
                   
-                  {/* Explore Button */}
+                  {/* Explore Button - Larger on tablet */}
                   <div className={`${service.fillLogo ? 'absolute bottom-0 left-0 right-0 p-3' : 'mt-auto p-3 pt-0'}`}>
                     <Button
                       onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                       data-testid={`service-button-${service.id}`}
-                      className={`w-full rounded-xl py-4 font-semibold transition-all duration-300 relative z-10 shadow-lg ${
+                      className={`w-full rounded-xl font-semibold transition-all duration-300 relative z-10 shadow-lg ${
+                        isTablet ? 'py-5 text-base' : 'py-4'
+                      } ${
                         service.isDark 
                           ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
                           : 'bg-slate-800 hover:bg-slate-900 text-white'
