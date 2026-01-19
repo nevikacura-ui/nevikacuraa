@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://diagyn-booking.preview.emergentagent.com",
+    "url": "https://nevika-cura-2.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {
