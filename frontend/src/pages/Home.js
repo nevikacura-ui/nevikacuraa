@@ -1086,7 +1086,9 @@ const Home = () => {
 
         {/* Quick Stats - Glassmorphism */}
         <div className="mb-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className={`grid gap-4 ${
+            isTablet ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-4'
+          }`}>
             {[
               { value: '6', label: 'Services', color: 'from-violet-500 to-purple-500' },
               { value: '2', label: 'Clinic Locations', color: 'from-sky-500 to-blue-500' },
@@ -1095,9 +1097,13 @@ const Home = () => {
             ].map((stat, idx) => (
               <div key={idx} className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl blur-xl -z-10" style={{background: `linear-gradient(to right, var(--tw-gradient-stops))`}}></div>
-                <div className="text-center p-6 bg-white/60 backdrop-blur-xl rounded-2xl border border-white/50 shadow-sm hover:shadow-lg transition-all duration-300">
-                  <p className={`text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>{stat.value}</p>
-                  <p className="text-sm text-slate-500 mt-1">{stat.label}</p>
+                <div className={`text-center bg-white/60 backdrop-blur-xl rounded-2xl border border-white/50 shadow-sm hover:shadow-lg transition-all duration-300 ${
+                  isTablet ? 'p-8' : 'p-6'
+                }`}>
+                  <p className={`font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent ${
+                    isTablet ? 'text-4xl' : 'text-3xl'
+                  }`}>{stat.value}</p>
+                  <p className={`text-slate-500 mt-1 ${isTablet ? 'text-base' : 'text-sm'}`}>{stat.label}</p>
                 </div>
               </div>
             ))}
@@ -1107,17 +1113,23 @@ const Home = () => {
         {/* More Features Section - Modern Grid */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center md:text-left">Quick Actions</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          <div className={`grid gap-4 ${
+            isTablet ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
+          }`}>
             {/* Emergency - Highlighted */}
             <button
               onClick={() => navigate('/emergency')}
-              className="p-5 bg-gradient-to-br from-red-50 to-rose-100 backdrop-blur rounded-2xl border border-red-200/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group"
+              className={`bg-gradient-to-br from-red-50 to-rose-100 backdrop-blur rounded-2xl border border-red-200/50 hover:shadow-lg hover:scale-[1.02] transition-all text-center group ${
+                isTablet ? 'p-6' : 'p-5'
+              }`}
               data-testid="emergency-btn"
             >
-              <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-red-100 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <AlertTriangle className="w-6 h-6 text-red-500" />
+              <div className={`mx-auto mb-3 rounded-2xl bg-red-100 flex items-center justify-center group-hover:scale-110 transition-transform ${
+                isTablet ? 'w-14 h-14' : 'w-12 h-12'
+              }`}>
+                <AlertTriangle className={isTablet ? 'w-7 h-7 text-red-500' : 'w-6 h-6 text-red-500'} />
               </div>
-              <span className="text-sm font-semibold text-red-700">Emergency SOS</span>
+              <span className={`font-semibold text-red-700 ${isTablet ? 'text-base' : 'text-sm'}`}>Emergency SOS</span>
             </button>
             
             <button
