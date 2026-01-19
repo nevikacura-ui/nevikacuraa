@@ -297,17 +297,35 @@ const Home = () => {
   useEffect(() => {
     const fetchQueueStatus = async () => {
       try {
-        const response = await fetch(`${API}/api/queue/status`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.clinics) {
-            setQueueStatus(data.clinics.map(c => ({
-              clinic: c.name,
-              waitTime: `~${c.estimated_wait || 10} min`,
-              patients: c.waiting || 0,
-              status: c.waiting > 5 ? 'high' : c.waiting > 2 ? 'moderate' : 'low'
-            })));
+        // Fetch queue status for each clinic
+        const clinics = ['diagyn', 'proton'];
+        const results = [];
+        
+        for (const clinic of clinics) {
+          try {
+            const response = await fetch(`${API}/api/live-queue/status/${clinic}`);
+            if (response.ok) {
+              const data = await response.json();
+              results.push({
+                clinic: clinic === 'diagyn' ? 'DiaGyn' : 'Proton',
+                waitTime: `~${data.estimated_wait || 0} min`,
+                patients: data.waiting || 0,
+                status: (data.waiting || 0) > 5 ? 'high' : (data.waiting || 0) > 2 ? 'moderate' : 'low'
+              });
+            }
+          } catch (e) {
+            // Use default for this clinic
+            results.push({
+              clinic: clinic === 'diagyn' ? 'DiaGyn' : 'Proton',
+              waitTime: '~0 min',
+              patients: 0,
+              status: 'low'
+            });
           }
+        }
+        
+        if (results.length > 0) {
+          setQueueStatus(results);
         }
       } catch (err) {
         // Use default values on error
