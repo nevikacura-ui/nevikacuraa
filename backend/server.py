@@ -799,6 +799,7 @@ class Appointment(BaseModel):
     patient_name: str
     patient_phone: str
     patient_email: Optional[str] = None
+    patient_id: Optional[str] = None
     status: str = "pending"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -810,6 +811,7 @@ class AppointmentCreate(BaseModel):
     patient_name: str
     patient_phone: str
     patient_email: Optional[str] = None
+    patient_id: Optional[str] = None
     send_email_reminder: bool = True  # Send email reminder 1 hour before
 
 class DiagnosticOrder(BaseModel):
