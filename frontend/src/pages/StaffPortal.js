@@ -18,6 +18,8 @@ import StaffBillingModule from '@/components/StaffBillingModule';
 import ANCRegistration from '@/components/ANCRegistration';
 import GlydexStaffPortal from '@/components/GlydexStaffPortal';
 import StaffDashboard from '@/components/StaffDashboard';
+import { useViewMode } from '@/context/ViewModeContext';
+import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
 
 // Import refactored utilities and components
 import StaffLogin from './staff/StaffLogin';
@@ -30,6 +32,7 @@ import {
 
 const StaffPortal = () => {
   const navigate = useNavigate();
+  const { isMobile, isTablet, isDesktop } = useViewMode();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [staffInfo, setStaffInfo] = useState(null);
   const [username, setUsername] = useState('');
