@@ -811,6 +811,25 @@ const DiaGyn = () => {
     activeAppointment: null,
     loading: true
   });
+  
+  // Staff slot blocking feature
+  const [showBlockSlotsDialog, setShowBlockSlotsDialog] = useState(false);
+  
+  // Check if staff is logged in (for slot blocking feature)
+  const isStaffLoggedIn = () => {
+    const staffToken = localStorage.getItem('staffToken');
+    if (!staffToken) return false;
+    try {
+      // Decode JWT to check if it's valid and not expired
+      const payload = JSON.parse(atob(staffToken.split('.')[1]));
+      const isExpired = payload.exp * 1000 < Date.now();
+      // Check if user has a role that can block slots
+      const canBlockSlots = ['super_admin', 'doctor', 'clinic_staff_pushpa', 'clinic_staff_amnion'].includes(payload.role);
+      return !isExpired && canBlockSlots;
+    } catch (e) {
+      return false;
+    }
+  };
 
   useEffect(() => {
     const checkBookingLimits = async () => {
