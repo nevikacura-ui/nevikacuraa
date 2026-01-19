@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="10" skipped="0" tests="18" time="1.442" timestamp="2026-01-19T05:23:02.189600+00:00" hostname="agent-env-c1b3741f-5198-4cb3-8ff7-5e0fa99310a5"><testcase classname="tests.test_nevika_cura_regression.TestHealthCheck" name="test_api_health" time="0.175" /><testcase classname="tests.test_nevika_cura_regression.TestStaffLogin" name="test_staff_login_success" time="0.260" /><testcase classname="tests.test_nevika_cura_regression.TestStaffLogin" name="test_staff_login_invalid_credentials" time="0.038" /><testcase classname="tests.test_nevika_cura_regression.TestDoctorLogin" name="test_doctor_login_success" time="0.033"><failure message="AssertionError: Doctor login failed: {&quot;detail&quot;:&quot;Not Found&quot;}&#10;assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">tests/test_nevika_cura_regression.py:76: in test_doctor_login_success
+    assert response.status_code == 200, f"Doctor login failed: {response.text}"
+E   AssertionError: Doctor login failed: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="tests.test_nevika_cura_regression.TestAppointmentsAPI" name="test_get_doctors" time="0.034"><failure message="AssertionError: Failed to get doctors: {&quot;detail&quot;:&quot;Not Found&quot;}&#10;assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">tests/test_nevika_cura_regression.py:89: in test_get_doctors
+    assert response.status_code == 200, f"Failed to get doctors: {response.text}"
+E   AssertionError: Failed to get doctors: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="tests.test_nevika_cura_regression.TestAppointmentsAPI" name="test_get_clinics" time="0.071"><failure message="AssertionError: Failed to get clinics: {&quot;detail&quot;:&quot;Not Found&quot;}&#10;assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">tests/test_nevika_cura_regression.py:101: in test_get_clinics
+    assert response.status_code == 200, f"Failed to get clinics: {response.text}"
+E   AssertionError: Failed to get clinics: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="tests.test_nevika_cura_regression.TestAppointmentsAPI" name="test_get_available_slots" time="0.034" /><testcase classname="tests.test_nevika_cura_regression.TestAppointmentsAPI" name="test_get_booked_slots" time="0.035"><failure message="AssertionError: Failed to get booked slots: {&quot;detail&quot;:[{&quot;type&quot;:&quot;missing&quot;,&quot;loc&quot;:[&quot;query&quot;,&quot;doctor&quot;],&quot;msg&quot;:&quot;Field required&quot;,&quot;input&quot;:null,&quot;url&quot;:&quot;https://errors.pydantic.dev/2.12/v/missing&quot;}]}&#10;assert 422 in [200, 404]&#10; +  where 422 = &lt;Response [422]&gt;.status_code">tests/test_nevika_cura_regression.py:141: in test_get_booked_slots
+    assert response.status_code in [200, 404], f"Failed to get booked slots: {response.text}"
+E   AssertionError: Failed to get booked slots: {"detail":[{"type":"missing","loc":["query","doctor"],"msg":"Field required","input":null,"url":"https://errors.pydantic.dev/2.12/v/missing"}]}
+E   assert 422 in [200, 404]
+E    +  where 422 = &lt;Response [422]&gt;.status_code</failure></testcase><testcase classname="tests.test_nevika_cura_regression.TestAppointmentsAPI" name="test_get_blocked_slots" time="0.075"><failure message="AssertionError: Failed to get blocked slots: {&quot;detail&quot;:[{&quot;type&quot;:&quot;missing&quot;,&quot;loc&quot;:[&quot;query&quot;,&quot;doctor&quot;],&quot;msg&quot;:&quot;Field required&quot;,&quot;input&quot;:null,&quot;url&quot;:&quot;https://errors.pydantic.dev/2.12/v/missing&quot;}]}&#10;assert 422 in [200, 404]&#10; +  where 422 = &lt;Response [422]&gt;.status_code">tests/test_nevika_cura_regression.py:158: in test_get_blocked_slots
+    assert response.status_code in [200, 404], f"Failed to get blocked slots: {response.text}"
+E   AssertionError: Failed to get blocked slots: {"detail":[{"type":"missing","loc":["query","doctor"],"msg":"Field required","input":null,"url":"https://errors.pydantic.dev/2.12/v/missing"}]}
+E   assert 422 in [200, 404]
+E    +  where 422 = &lt;Response [422]&gt;.status_code</failure></testcase><testcase classname="tests.test_nevika_cura_regression.TestPharmacyAPI" name="test_get_medicines" time="0.039"><failure message="AssertionError: Failed to get medicines: {&quot;detail&quot;:&quot;Not Found&quot;}&#10;assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">tests/test_nevika_cura_regression.py:169: in test_get_medicines
+    assert response.status_code == 200, f"Failed to get medicines: {response.text}"
+E   AssertionError: Failed to get medicines: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="tests.test_nevika_cura_regression.TestPharmacyAPI" name="test_search_medicines" time="0.036"><failure message="AssertionError: Failed to search medicines: {&quot;detail&quot;:&quot;Not Found&quot;}&#10;assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">tests/test_nevika_cura_regression.py:185: in test_search_medicines
+    assert response.status_code == 200, f"Failed to search medicines: {response.text}"
+E   AssertionError: Failed to search medicines: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="tests.test_nevika_cura_regression.TestPharmacyAPI" name="test_get_inventory" time="0.032" /><testcase classname="tests.test_nevika_cura_regression.TestDiagnosticsAPI" name="test_get_diagnostic_tests" time="0.037"><failure message="AssertionError: Failed to get tests: {&quot;detail&quot;:&quot;Not Found&quot;}&#10;assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">tests/test_nevika_cura_regression.py:204: in test_get_diagnostic_tests
+    assert response.status_code == 200, f"Failed to get tests: {response.text}"
+E   AssertionError: Failed to get tests: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="tests.test_nevika_cura_regression.TestDiagnosticsAPI" name="test_search_diagnostic_tests" time="0.033"><failure message="AssertionError: Failed to search tests: {&quot;detail&quot;:&quot;Not Found&quot;}&#10;assert 404 == 200&#10; +  where 404 = &lt;Response [404]&gt;.status_code">tests/test_nevika_cura_regression.py:216: in test_search_diagnostic_tests
+    assert response.status_code == 200, f"Failed to search tests: {response.text}"
+E   AssertionError: Failed to search tests: {"detail":"Not Found"}
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404]&gt;.status_code</failure></testcase><testcase classname="tests.test_nevika_cura_regression.TestLiveQueueAPI" name="test_get_queue_status_diagyn" time="0.040" /><testcase classname="tests.test_nevika_cura_regression.TestLiveQueueAPI" name="test_get_queue_status_proton" time="0.032" /><testcase classname="tests.test_nevika_cura_regression.TestSlotBlocking" name="test_block_slots_requires_auth" time="0.034" /><testcase classname="tests.test_nevika_cura_regression.TestSlotBlocking" name="test_block_slots_with_auth" time="0.284"><failure message="AssertionError: Unexpected status: 422&#10;assert 422 in [200, 201, 400]&#10; +  where 422 = &lt;Response [422]&gt;.status_code">tests/test_nevika_cura_regression.py:289: in test_block_slots_with_auth
+    assert response.status_code in [200, 201, 400], f"Unexpected status: {response.status_code}"
+E   AssertionError: Unexpected status: 422
+E   assert 422 in [200, 201, 400]
+E    +  where 422 = &lt;Response [422]&gt;.status_code</failure></testcase></testsuite></testsuites>
