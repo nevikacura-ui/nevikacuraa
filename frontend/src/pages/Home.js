@@ -561,6 +561,15 @@ const Home = () => {
                     {user.name}
                   </Button>
                   <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setShowSettings(true)}
+                    data-testid="settings-button"
+                    className="rounded-full hover:bg-slate-100"
+                  >
+                    <Settings className="w-4 h-4" />
+                  </Button>
+                  <Button 
                     variant="outline" 
                     size="sm"
                     onClick={logout}
