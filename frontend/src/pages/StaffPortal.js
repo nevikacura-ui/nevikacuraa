@@ -2161,6 +2161,60 @@ const StaffPortal = () => {
               <Card className="p-6 max-w-lg">
                 <h2 className="font-semibold text-lg mb-4">Book Walk-in Appointment - {staffInfo?.clinic}</h2>
                 <div className="space-y-4">
+                  {/* Patient Lookup Section */}
+                  <div className="p-4 bg-teal-50 border border-teal-200 rounded-xl">
+                    <Label className="text-teal-800 font-medium mb-2 block">
+                      <Search className="w-4 h-4 inline mr-2" />
+                      Find or Register Patient
+                    </Label>
+                    <PatientLookup
+                      onPatientFound={(patient) => {
+                        setFoundWalkInPatient(patient);
+                        setWalkInForm(prev => ({
+                          ...prev,
+                          patient_name: patient.name,
+                          patient_phone: patient.mobile
+                        }));
+                      }}
+                      onNewPatient={(mobile) => {
+                        setPatientRegisterMobile(mobile);
+                        setPatientRegisterType('walk-in');
+                        setShowPatientRegisterDialog(true);
+                      }}
+                      initialMobile={walkInForm.patient_phone}
+                    />
+                  </div>
+                  
+                  {/* Show patient info if found */}
+                  {foundWalkInPatient && (
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-green-800">{foundWalkInPatient.name}</span>
+                          <Badge className="bg-green-600 text-white text-xs">{foundWalkInPatient.patient_id}</Badge>
+                        </div>
+                        <p className="text-xs text-green-700">
+                          {foundWalkInPatient.age && `${foundWalkInPatient.age} yrs • `}
+                          {foundWalkInPatient.total_visits > 0 && `${foundWalkInPatient.total_visits} previous visits`}
+                        </p>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => {
+                          setFoundWalkInPatient(null);
+                          setWalkInForm(prev => ({ ...prev, patient_name: '', patient_phone: '' }));
+                        }}
+                        className="text-green-600 hover:text-green-800"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  )}
+                  
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label>Doctor</Label>
@@ -2229,25 +2283,30 @@ const StaffPortal = () => {
                     </select>
                   </div>
                   
-                  <div>
-                    <Label>Patient Name *</Label>
-                    <Input
-                      value={walkInForm.patient_name}
-                      onChange={(e) => setWalkInForm({ ...walkInForm, patient_name: e.target.value })}
-                      placeholder="Enter patient name"
-                      data-testid="walkin-name"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label>Phone Number *</Label>
-                    <Input
-                      value={walkInForm.patient_phone}
-                      onChange={(e) => setWalkInForm({ ...walkInForm, patient_phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
-                      placeholder="10-digit mobile number"
-                      data-testid="walkin-phone"
-                    />
-                  </div>
+                  {/* Manual patient entry - only if not found via lookup */}
+                  {!foundWalkInPatient && (
+                    <>
+                      <div>
+                        <Label>Patient Name *</Label>
+                        <Input
+                          value={walkInForm.patient_name}
+                          onChange={(e) => setWalkInForm({ ...walkInForm, patient_name: e.target.value })}
+                          placeholder="Enter patient name"
+                          data-testid="walkin-name"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label>Phone Number *</Label>
+                        <Input
+                          value={walkInForm.patient_phone}
+                          onChange={(e) => setWalkInForm({ ...walkInForm, patient_phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                          placeholder="10-digit mobile number"
+                          data-testid="walkin-phone"
+                        />
+                      </div>
+                    </>
+                  )}
                   
                   <Button onClick={handleWalkInBooking} disabled={loading || !isDoctorAvailable} className="w-full bg-teal-500 hover:bg-teal-600" data-testid="walkin-submit">
                     {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <UserPlus className="w-4 h-4 mr-2" />}
