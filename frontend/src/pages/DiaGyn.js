@@ -1719,6 +1719,15 @@ const DiaGyn = () => {
         />
       )}
 
+      {/* Patient Registration Dialog */}
+      <PatientRegistrationDialog
+        open={showRegisterDialog}
+        onOpenChange={setShowRegisterDialog}
+        initialMobile={mobileForRegister}
+        registrationType="online"
+        onSuccess={handleRegistrationSuccess}
+      />
+
       <ActionPrompt />
     </div>
   );
