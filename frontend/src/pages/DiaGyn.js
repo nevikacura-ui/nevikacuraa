@@ -1692,11 +1692,18 @@ const DiaGyn = () => {
             {weeklyAvailability.map((day, i) => (
               <div key={i} className="p-4 bg-[#FDFBF7] rounded-xl border border-[#E2E8F0]">
                 <p className="font-semibold mb-2 text-[#1B4965]">{day.date} ({day.day})</p>
-                <div className="space-y-1.5 text-sm">
+                <div className="space-y-2 text-sm">
                   {day.doctors?.map((doc, j) => (
-                    <p key={j} className="text-[#64748B]">
-                      <span className="font-medium text-[#1B4965]">{doc.name}</span> - {doc.clinics?.map(c => c.name).join(', ')}
-                    </p>
+                    <div key={j} className="text-[#64748B]">
+                      <span className="font-medium text-[#1B4965]">{doc.name}</span>
+                      <div className="ml-4 mt-1 space-y-1">
+                        {doc.clinics?.map((clinic, k) => (
+                          <p key={k}>
+                            📍 {clinic.name}: {clinic.sessions?.map(s => `${s.session} (${s.time})`).join(', ')}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
