@@ -559,6 +559,16 @@ const Home = () => {
               <Button 
                 variant="ghost" 
                 size="sm"
+                onClick={() => navigate('/patient-portal')}
+                data-testid="patient-portal-button"
+                className="font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-full"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                My Records
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
                 onClick={() => navigate('/senior-care')}
                 data-testid="give-back-button"
                 className="font-medium text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-full"
