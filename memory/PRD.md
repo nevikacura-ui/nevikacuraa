@@ -12,7 +12,32 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 
 ## What's Been Implemented
 
-### Session - January 19, 2026
+### Session - January 19, 2026 (Part 2)
+
+#### Completed Features
+1. **Patient Portal Dashboard** ✅ (Verified Jan 19)
+   - **OTP Login Flow:**
+     - Mobile number input with +91 prefix
+     - Mock OTP displayed on screen for testing
+     - OTP verification returns JWT token
+     - Token stored in localStorage for session persistence
+   - **Dashboard Features:**
+     - Patient info card with name, mobile, patient ID
+     - Summary stats: Appointments, Prescriptions, Lab Tests, Bills counts
+     - Tabbed interface for viewing history:
+       - **Appointments Tab:** Shows appointment history with doctor, clinic, date, time, status badges
+       - **Prescriptions Tab:** Shows pharmacy orders with items
+       - **Lab Reports Tab:** Shows diagnostic orders with download button
+       - **Bills Tab:** Shows billing history with paid/pending status
+     - Quick Actions: Book Appointment, Order Medicines, Book Lab Test, Emergency
+     - Logout functionality clears session
+   - **Backend APIs:**
+     - `POST /api/patients/portal/send-otp?mobile=xxx` - Send login OTP
+     - `POST /api/patients/portal/verify-otp?mobile=xxx&otp=xxx` - Verify OTP, get token
+     - `GET /api/patients/portal/me` - Get logged-in patient profile (requires token)
+   - **Testing:** 16/16 backend tests passed, all frontend features verified
+
+### Session - January 19, 2026 (Part 1)
 
 #### Completed Features
 1. **Staff Slot Blocking Feature (DiaGyn)** ✅
