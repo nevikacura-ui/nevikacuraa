@@ -6,9 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
 import { useViewMode } from '@/context/ViewModeContext';
-import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
+import { ViewModeSwitcher, ViewModeSettings } from '@/components/ViewModeSwitcher';
 import { toast } from 'sonner';
-import { User, Menu, X, Download, Smartphone, Search, Heart, FlaskConical, Video, Gift, Lightbulb, AlertTriangle, Activity, Pill, Shield, Package, ChevronRight, Stethoscope, Baby, ThermometerSun, Users, HandHeart, Sparkles, ArrowRight, Calendar, Clock, ChevronLeft, Sun, Moon, Sunrise, Star, Quote, Flame, Trophy, Target, Zap, Timer, MapPin, Phone, Award, CheckCircle2 } from 'lucide-react';
+import { User, Menu, X, Download, Smartphone, Search, Heart, FlaskConical, Video, Gift, Lightbulb, AlertTriangle, Activity, Pill, Shield, Package, ChevronRight, Stethoscope, Baby, ThermometerSun, Users, HandHeart, Sparkles, ArrowRight, Calendar, Clock, ChevronLeft, Sun, Moon, Sunrise, Star, Quote, Flame, Trophy, Target, Zap, Timer, MapPin, Phone, Award, CheckCircle2, Settings } from 'lucide-react';
 import Footer from '@/components/Footer';
 
 // Health Tips Data - Rotates daily
