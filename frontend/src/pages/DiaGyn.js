@@ -1432,33 +1432,76 @@ const DiaGyn = () => {
                   Your Details
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <Label className="text-[#64748B] text-sm">Full Name *</Label>
-                    <Input
-                      value={patientInfo.name}
-                      onChange={(e) => setPatientInfo({ ...patientInfo, name: e.target.value })}
-                      placeholder="Enter your name"
-                      className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3] focus:ring-[#CAE9FF]"
-                      data-testid="patient-name"
+                  {/* Patient Lookup by Mobile */}
+                  <div className="sm:col-span-3">
+                    <Label className="text-[#64748B] text-sm mb-2 block">Find or Register Patient</Label>
+                    <PatientLookup
+                      onPatientFound={handlePatientFound}
+                      onNewPatient={handleNewPatient}
+                      initialMobile={patientInfo.phone}
                     />
                   </div>
-                  <div>
-                    <Label className="text-[#64748B] text-sm">Mobile Number *</Label>
-                    <Input
-                      value={patientInfo.phone}
-                      onChange={(e) => setPatientInfo({ ...patientInfo, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
-                      placeholder="10-digit number"
-                      className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3] focus:ring-[#CAE9FF]"
-                      data-testid="patient-phone"
-                    />
-                    {!bookingLimits.loading && !bookingLimits.canBook && bookingLimits.activeAppointment && (
-                      <div className="mt-2 p-3 bg-[#FFD166]/20 border border-[#FFD166] rounded-xl text-xs text-[#1B4965]">
-                        <p className="font-semibold">Active Appointment Found</p>
-                        <p>You have an appointment on {bookingLimits.activeAppointment.date} at {bookingLimits.activeAppointment.time}</p>
+                  
+                  {/* Show patient details if found */}
+                  {foundPatient && (
+                    <div className="sm:col-span-3 p-4 bg-[#BEE9E8]/30 border border-[#BEE9E8] rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-[#5FA8D3]/20 rounded-full flex items-center justify-center">
+                          <User className="w-6 h-6 text-[#5FA8D3]" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-[#1B4965]">{foundPatient.name}</h4>
+                            <Badge className="bg-[#5FA8D3] text-white text-xs">{foundPatient.patient_id}</Badge>
+                          </div>
+                          <p className="text-sm text-[#64748B]">
+                            {foundPatient.age && `${foundPatient.age} yrs • `}
+                            {foundPatient.gender && `${foundPatient.gender} • `}
+                            {foundPatient.total_visits > 0 && (
+                              <span className="inline-flex items-center gap-1">
+                                <History className="w-3 h-3" />
+                                {foundPatient.total_visits} visit{foundPatient.total_visits > 1 ? 's' : ''}
+                              </span>
+                            )}
+                          </p>
+                        </div>
                       </div>
-                    )}
-                  </div>
-                  <div>
+                    </div>
+                  )}
+                  
+                  {/* Manual entry fields (hidden if patient found) */}
+                  {!foundPatient && (
+                    <>
+                      <div>
+                        <Label className="text-[#64748B] text-sm">Full Name *</Label>
+                        <Input
+                          value={patientInfo.name}
+                          onChange={(e) => setPatientInfo({ ...patientInfo, name: e.target.value })}
+                          placeholder="Enter your name"
+                          className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3] focus:ring-[#CAE9FF]"
+                          data-testid="patient-name"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-[#64748B] text-sm">Mobile Number *</Label>
+                        <Input
+                          value={patientInfo.phone}
+                          onChange={(e) => setPatientInfo({ ...patientInfo, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                          placeholder="10-digit number"
+                          className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3] focus:ring-[#CAE9FF]"
+                          data-testid="patient-phone"
+                        />
+                        {!bookingLimits.loading && !bookingLimits.canBook && bookingLimits.activeAppointment && (
+                          <div className="mt-2 p-3 bg-[#FFD166]/20 border border-[#FFD166] rounded-xl text-xs text-[#1B4965]">
+                            <p className="font-semibold">Active Appointment Found</p>
+                            <p>You have an appointment on {bookingLimits.activeAppointment.date} at {bookingLimits.activeAppointment.time}</p>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                  
+                  <div className={foundPatient ? 'sm:col-span-3' : ''}>
                     <Label className="text-[#64748B] text-sm">Email (Optional)</Label>
                     <Input
                       type="email"
