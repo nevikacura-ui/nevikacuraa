@@ -523,6 +523,9 @@ const Home = () => {
             
             {/* Navigation on right */}
             <div className="hidden md:flex items-center gap-3">
+              {/* View Mode Switcher */}
+              <ViewModeSwitcher compact />
+              
               <Button 
                 variant="ghost" 
                 size="sm"
