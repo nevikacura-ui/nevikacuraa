@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
@@ -12,7 +13,7 @@ import {
   Clock, Package, FlaskConical, Stethoscope, Users, 
   Phone, Calendar, Loader2, RefreshCw, AlertTriangle, Plus, 
   Heart, Droplet, Scan, Upload, FileText, Receipt, History, X, Gift,
-  IndianRupee, Fingerprint, Baby, Activity, Bell, Send, Star, MapPin, ExternalLink, QrCode
+  IndianRupee, Fingerprint, Baby, Activity, Bell, Send, Star, MapPin, ExternalLink, QrCode, Search
 } from 'lucide-react';
 import StaffBillingModule from '@/components/StaffBillingModule';
 import ANCRegistration from '@/components/ANCRegistration';
@@ -20,6 +21,7 @@ import GlydexStaffPortal from '@/components/GlydexStaffPortal';
 import StaffDashboard from '@/components/StaffDashboard';
 import { useViewMode } from '@/context/ViewModeContext';
 import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
+import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRegistration';
 
 // Import refactored utilities and components
 import StaffLogin from './staff/StaffLogin';
