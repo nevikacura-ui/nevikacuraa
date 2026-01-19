@@ -4301,6 +4301,34 @@ const StaffPortal = () => {
           </footer>
         )}
       </main>
+      
+      {/* Patient Registration Dialog */}
+      <PatientRegistrationDialog
+        open={showPatientRegisterDialog}
+        onOpenChange={setShowPatientRegisterDialog}
+        initialMobile={patientRegisterMobile}
+        registrationType={patientRegisterType}
+        onSuccess={(patient) => {
+          if (patientRegisterType === 'walk-in') {
+            setFoundWalkInPatient(patient);
+            setWalkInForm(prev => ({
+              ...prev,
+              patient_name: patient.name,
+              patient_phone: patient.mobile
+            }));
+          } else if (patientRegisterType === 'emergency') {
+            setFoundEmergencyPatient(patient);
+            setEmergencyForm(prev => ({
+              ...prev,
+              patient_name: patient.name,
+              patient_phone: patient.mobile,
+              patient_email: ''
+            }));
+          }
+          setShowPatientRegisterDialog(false);
+          toast.success(`Patient registered: ${patient.patient_id}`);
+        }}
+      />
     </div>
   );
 };
