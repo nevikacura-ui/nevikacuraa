@@ -38,25 +38,25 @@ const PatientPortal = () => {
   
   // Check for existing session
   useEffect(() => {
+    const verifyExistingToken = async (savedToken) => {
+      try {
+        const response = await axios.get(`${API}/patients/portal/me`, {
+          headers: { 'Authorization': `Bearer ${savedToken}` }
+        });
+        setPatientInfo(response.data);
+        setToken(savedToken);
+        setIsAuthenticated(true);
+        fetchHistory(response.data.patient_id, savedToken);
+      } catch (error) {
+        localStorage.removeItem('patientToken');
+      }
+    };
+    
     const savedToken = localStorage.getItem('patientToken');
     if (savedToken) {
-      verifyToken(savedToken);
+      verifyExistingToken(savedToken);
     }
   }, []);
-  
-  const verifyToken = async (savedToken) => {
-    try {
-      const response = await axios.get(`${API}/patients/portal/me`, {
-        headers: { 'Authorization': `Bearer ${savedToken}` }
-      });
-      setPatientInfo(response.data);
-      setToken(savedToken);
-      setIsAuthenticated(true);
-      fetchHistory(response.data.patient_id, savedToken);
-    } catch (error) {
-      localStorage.removeItem('patientToken');
-    }
-  };
   
   const handleSendOtp = async () => {
     if (mobile.length < 10) {
