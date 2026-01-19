@@ -463,6 +463,268 @@ const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDa
 };
 
 // ============================================
+// BLOCK SLOTS DIALOG - Staff Only Feature
+// ============================================
+const BlockSlotsDialog = ({ 
+  open, 
+  onOpenChange, 
+  doctor, 
+  clinic, 
+  selectedDate,
+  availableSlots,
+  bookedSlots,
+  onSlotsBlocked 
+}) => {
+  const [selectedSlotsToBlock, setSelectedSlotsToBlock] = useState([]);
+  const [blockedSlots, setBlockedSlots] = useState([]);
+  const [reason, setReason] = useState('Doctor running late');
+  const [loading, setLoading] = useState(false);
+  const [loadingBlockedSlots, setLoadingBlockedSlots] = useState(false);
+
+  // Fetch currently blocked slots when dialog opens
+  useEffect(() => {
+    if (open && doctor && clinic && selectedDate) {
+      fetchBlockedSlots();
+    }
+  }, [open, doctor, clinic, selectedDate]);
+
+  const fetchBlockedSlots = async () => {
+    setLoadingBlockedSlots(true);
+    try {
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+      const response = await axios.get(`${API}/appointments/blocked-slots`, {
+        params: { doctor, clinic, date: dateStr }
+      });
+      setBlockedSlots(response.data.blocked_slots || []);
+    } catch (error) {
+      console.error('Failed to fetch blocked slots:', error);
+    } finally {
+      setLoadingBlockedSlots(false);
+    }
+  };
+
+  const toggleSlotSelection = (slot) => {
+    setSelectedSlotsToBlock(prev => 
+      prev.includes(slot) 
+        ? prev.filter(s => s !== slot)
+        : [...prev, slot]
+    );
+  };
+
+  const handleBlockSlots = async () => {
+    if (selectedSlotsToBlock.length === 0) {
+      toast.error('Please select at least one slot to block');
+      return;
+    }
+    setLoading(true);
+    try {
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+      const response = await axios.post(`${API}/appointments/block-slots`, {
+        doctor,
+        clinic,
+        date: dateStr,
+        slots: selectedSlotsToBlock,
+        reason
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('staffToken')}`
+        }
+      });
+      toast.success(response.data.message);
+      setSelectedSlotsToBlock([]);
+      fetchBlockedSlots();
+      onSlotsBlocked && onSlotsBlocked();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to block slots');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUnblockSlots = async (slotsToUnblock) => {
+    setLoading(true);
+    try {
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+      const response = await axios.post(`${API}/appointments/unblock-slots`, {
+        doctor,
+        clinic,
+        date: dateStr,
+        slots: slotsToUnblock,
+        reason: ''
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('staffToken')}`
+        }
+      });
+      toast.success(response.data.message);
+      fetchBlockedSlots();
+      onSlotsBlocked && onSlotsBlocked();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to unblock slots');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get slots that are available to block (not already booked by patients)
+  const blockableSlots = availableSlots.filter(slot => {
+    const isBookedByPatient = bookedSlots.includes(slot) && !blockedSlots.find(b => b.time === slot);
+    return !isBookedByPatient;
+  });
+
+  const blockedSlotTimes = blockedSlots.map(b => b.time);
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg rounded-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <Lock className="w-5 h-5 text-[#EF476F]" />
+            Manage Slot Blocking
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="space-y-4">
+          {/* Info Banner */}
+          <div className="p-3 bg-[#FFD166]/20 border border-[#FFD166] rounded-xl">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-[#FFD166] mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-[#1B4965]">
+                <span className="font-semibold">Staff Only:</span> Block slots to prevent patient bookings. 
+                Use this when the doctor is running late or unavailable.
+              </p>
+            </div>
+          </div>
+
+          {/* Selected Context */}
+          <div className="p-4 bg-[#FDFBF7] rounded-xl border border-[#E2E8F0]">
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <p className="text-[#64748B] text-xs">Doctor</p>
+                <p className="font-semibold text-[#1B4965]">{doctor}</p>
+              </div>
+              <div>
+                <p className="text-[#64748B] text-xs">Clinic</p>
+                <p className="font-semibold text-[#1B4965]">{clinic}</p>
+              </div>
+              <div className="col-span-2">
+                <p className="text-[#64748B] text-xs">Date</p>
+                <p className="font-semibold text-[#1B4965]">
+                  {selectedDate && format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Currently Blocked Slots */}
+          {blockedSlots.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="font-semibold text-sm text-[#1B4965] flex items-center gap-2">
+                <Lock className="w-4 h-4 text-[#EF476F]" />
+                Currently Blocked ({blockedSlots.length})
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {blockedSlots.map(slot => (
+                  <Badge 
+                    key={slot.time}
+                    className="bg-[#EF476F]/10 text-[#EF476F] border border-[#EF476F]/30 px-3 py-1.5 cursor-pointer hover:bg-[#EF476F]/20 transition-colors"
+                    onClick={() => handleUnblockSlots([slot.time])}
+                    data-testid={`blocked-slot-${slot.time}`}
+                  >
+                    <Lock className="w-3 h-3 mr-1.5" />
+                    {slot.time}
+                    <span className="ml-2 text-xs opacity-70">✕</span>
+                  </Badge>
+                ))}
+              </div>
+              <p className="text-xs text-[#64748B]">Click a slot to unblock it</p>
+            </div>
+          )}
+
+          {/* Reason Input */}
+          <div>
+            <Label className="text-[#64748B] text-sm">Reason for Blocking</Label>
+            <Input
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="e.g., Doctor running late"
+              className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3]"
+              data-testid="block-reason-input"
+            />
+          </div>
+
+          {/* Available Slots to Block */}
+          <div className="space-y-2">
+            <h4 className="font-semibold text-sm text-[#1B4965] flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#5FA8D3]" />
+              Select Slots to Block
+            </h4>
+            {loadingBlockedSlots ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-[#5FA8D3]" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-4 gap-2 max-h-48 overflow-y-auto">
+                {blockableSlots.map(slot => {
+                  const isAlreadyBlocked = blockedSlotTimes.includes(slot);
+                  const isSelected = selectedSlotsToBlock.includes(slot);
+                  
+                  return (
+                    <button
+                      key={slot}
+                      onClick={() => !isAlreadyBlocked && toggleSlotSelection(slot)}
+                      disabled={isAlreadyBlocked}
+                      data-testid={`block-slot-${slot}`}
+                      className={`
+                        py-2 px-2 text-xs rounded-lg border transition-all font-medium
+                        ${isAlreadyBlocked 
+                          ? 'bg-[#EF476F]/10 text-[#EF476F] border-[#EF476F]/30 cursor-not-allowed'
+                          : isSelected
+                            ? 'bg-[#EF476F] text-white border-[#EF476F] shadow-md'
+                            : 'bg-white border-[#E2E8F0] text-[#1B4965] hover:border-[#EF476F] hover:bg-[#EF476F]/5'
+                        }
+                      `}
+                    >
+                      {isAlreadyBlocked && <Lock className="w-3 h-3 inline mr-1" />}
+                      {slot}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="flex-1 rounded-full border-[#E2E8F0]"
+              data-testid="cancel-block-btn"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleBlockSlots}
+              disabled={loading || selectedSlotsToBlock.length === 0}
+              className="flex-1 bg-[#EF476F] hover:bg-[#EF476F]/90 text-white rounded-full"
+              data-testid="confirm-block-btn"
+            >
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                <>
+                  <Lock className="w-4 h-4 mr-2" />
+                  Block {selectedSlotsToBlock.length} Slot{selectedSlotsToBlock.length !== 1 ? 's' : ''}
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+// ============================================
 // STEP PROGRESS INDICATOR - Pastel Design
 // ============================================
 const StepProgress = ({ currentStep, steps }) => {
