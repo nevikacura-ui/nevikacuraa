@@ -1833,31 +1833,39 @@ const StaffPortal = () => {
         {/* Clinic Staff View */}
         {isClinicStaff(role) && (
           <Tabs defaultValue="dashboard" className="space-y-4" onValueChange={handleTabChange}>
-            {/* Color-coded Module Tabs - Mobile optimized */}
+            {/* Color-coded Module Tabs - Responsive for tablet */}
             <TabsList className="h-auto p-1.5 bg-gray-100 rounded-xl overflow-x-auto flex-wrap justify-start">
-              <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5 sm:gap-2 w-full">
+              <div className={`grid gap-1.5 sm:gap-2 w-full ${
+                isTablet ? 'grid-cols-5' : 'grid-cols-5 sm:grid-cols-10'
+              }`}>
                 <TabsTrigger 
                   value="dashboard" 
                   data-testid="tab-dashboard"
-                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
+                  className={`flex flex-col items-center gap-1 rounded-lg font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg ${
+                    isTablet ? 'p-4 text-sm min-h-[80px]' : 'p-3 text-xs min-h-[60px]'
+                  }`}
                 >
-                  <Users className="w-5 h-5 sm:w-5 sm:h-5" />
+                  <Users className={isTablet ? 'w-6 h-6' : 'w-5 h-5'} />
                   <span>Home</span>
                 </TabsTrigger>
                 
                 <TabsTrigger 
                   value="appointments" 
                   data-testid="tab-appointments"
-                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
+                  className={`flex flex-col items-center gap-1 rounded-lg font-medium transition-all data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:shadow-lg ${
+                    isTablet ? 'p-4 text-sm min-h-[80px]' : 'p-3 text-xs min-h-[60px]'
+                  }`}
                 >
-                  <Calendar className="w-5 h-5 sm:w-5 sm:h-5" />
+                  <Calendar className={isTablet ? 'w-6 h-6' : 'w-5 h-5'} />
                   <span>Appts</span>
                 </TabsTrigger>
                 
                 <TabsTrigger 
                   value="walkin" 
                   data-testid="tab-walkin"
-                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
+                  className={`flex flex-col items-center gap-1 rounded-lg font-medium transition-all data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:shadow-lg ${
+                    isTablet ? 'p-4 text-sm min-h-[80px]' : 'p-3 text-xs min-h-[60px]'
+                  }`}
                 >
                   <UserPlus className="w-5 h-5 sm:w-5 sm:h-5" />
                   <span>Walk-in</span>
