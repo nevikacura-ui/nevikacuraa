@@ -122,36 +122,33 @@ class TestAppointmentsAPI:
 class TestPharmacyAPI:
     """Pharmacy and medicine tests"""
     
-    def test_get_medicines(self):
-        """Test fetching medicines list"""
-        response = requests.get(f"{BASE_URL}/api/pharmacy/medicines", timeout=10)
+    def test_get_inventory(self):
+        """Test fetching pharmacy inventory"""
+        response = requests.get(f"{BASE_URL}/api/pharmacy/inventory", timeout=10)
         
-        assert response.status_code == 200, f"Failed to get medicines: {response.text}"
+        assert response.status_code == 200, f"Failed to get inventory: {response.text}"
         data = response.json()
-        if isinstance(data, dict) and "medicines" in data:
-            medicines = data["medicines"]
-        else:
-            medicines = data
-        print(f"SUCCESS: Got medicines response")
+        assert "medicines" in data, "Response missing medicines field"
+        assert "total" in data, "Response missing total field"
+        print(f"SUCCESS: Got {data.get('total', 0)} medicines in inventory")
     
     def test_search_medicines(self):
         """Test medicine search functionality"""
         response = requests.get(
-            f"{BASE_URL}/api/pharmacy/medicines",
-            params={"search": "paracetamol"},
+            f"{BASE_URL}/api/pharmacy/autocomplete",
+            params={"q": "paracetamol"},
             timeout=10
         )
         
         assert response.status_code == 200, f"Failed to search medicines: {response.text}"
         print(f"SUCCESS: Medicine search responded")
     
-    def test_get_inventory(self):
-        """Test fetching pharmacy inventory"""
-        response = requests.get(f"{BASE_URL}/api/pharmacy/inventory", timeout=10)
+    def test_get_pharmacy_forms(self):
+        """Test fetching pharmacy forms"""
+        response = requests.get(f"{BASE_URL}/api/pharmacy/forms", timeout=10)
         
-        # Accept 200 or 404 (endpoint may not exist)
-        assert response.status_code in [200, 404], f"Unexpected status: {response.status_code}"
-        print(f"SUCCESS: Inventory endpoint responded with {response.status_code}")
+        assert response.status_code == 200, f"Failed to get forms: {response.text}"
+        print(f"SUCCESS: Pharmacy forms endpoint responded")
 
 
 class TestDiagnosticsAPI:
