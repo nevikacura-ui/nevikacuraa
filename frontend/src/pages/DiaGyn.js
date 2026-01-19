@@ -816,17 +816,27 @@ const DiaGyn = () => {
   // Staff slot blocking feature
   const [showBlockSlotsDialog, setShowBlockSlotsDialog] = useState(false);
   
-  // Check if staff is logged in (for slot blocking feature)
-  const isStaffLoggedIn = () => {
+  // Check if logged-in user can block slots for the selected doctor
+  // Only the respective doctor OR super_admin can block slots
+  const canBlockSlotsForDoctor = () => {
     const staffToken = localStorage.getItem('staffToken');
     if (!staffToken) return false;
     try {
-      // Decode JWT to check if it's valid and not expired
       const payload = JSON.parse(atob(staffToken.split('.')[1]));
       const isExpired = payload.exp * 1000 < Date.now();
-      // Check if user has a role that can block slots
-      const canBlockSlots = ['super_admin', 'doctor', 'clinic_staff_pushpa', 'clinic_staff_amnion'].includes(payload.role);
-      return !isExpired && canBlockSlots;
+      if (isExpired) return false;
+      
+      // Super admin can block any doctor's slots
+      if (payload.role === 'super_admin') return true;
+      
+      // Doctor can only block their own slots
+      if (payload.role === 'doctor') {
+        const selectedDr = doctors.find(d => d.id === selectedDoctor);
+        // Match doctor_name from token with selected doctor's name
+        return payload.doctor_name === selectedDr?.name || payload.name === selectedDr?.name;
+      }
+      
+      return false;
     } catch (e) {
       return false;
     }
