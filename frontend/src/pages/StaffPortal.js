@@ -2225,7 +2225,8 @@ const StaffPortal = () => {
                         setWalkInForm(prev => ({
                           ...prev,
                           patient_name: patient.name,
-                          patient_phone: patient.mobile
+                          patient_phone: patient.mobile,
+                          patient_id: patient.patient_id
                         }));
                       }}
                       onNewPatient={(mobile) => {
