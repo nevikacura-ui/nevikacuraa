@@ -14,7 +14,7 @@ import {
   ArrowLeft, Clock, Ban, Shield, CheckCircle2, Loader2, 
   CalendarDays, Wifi, WifiOff, GraduationCap, Calendar,
   ChevronLeft, ChevronRight, User, Stethoscope, Building2, Heart, Sparkles,
-  Lock, Unlock, AlertTriangle
+  Lock, Unlock, AlertTriangle, Settings
 } from 'lucide-react';
 import { format, isSunday, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday } from 'date-fns';
 import { useNotificationPrompt } from '@/components/NotificationPrompt';
