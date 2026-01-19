@@ -46,6 +46,8 @@ import HealthDashboard from '@/pages/HealthDashboard';
 import SeniorCare from '@/pages/SeniorCare';
 // Smart Medicine Reminders
 import SmartReminders from '@/pages/SmartReminders';
+// Patient Portal
+import PatientPortal from '@/pages/PatientPortal';
 import { AuthProvider } from '@/context/AuthContext';
 import { ViewModeProvider } from '@/context/ViewModeContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
