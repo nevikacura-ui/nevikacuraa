@@ -4069,6 +4069,16 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Glydex router: {e}")
 
+# Patient Registration System
+try:
+    from routes.patients import router as patients_router, set_db as set_patients_db, set_jwt_config as set_patients_jwt
+    set_patients_db(db)
+    set_patients_jwt(JWT_SECRET)
+    app.include_router(patients_router, prefix="/api")
+    logger.info("Patient Registration router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Patient Registration router: {e}")
+
 # Biometric Attendance Router
 try:
     from routes.biometric_attendance import router as biometric_router, set_db as set_biometric_db, set_jwt_config as set_biometric_jwt
