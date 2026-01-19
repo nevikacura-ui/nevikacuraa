@@ -899,7 +899,8 @@ const StaffPortal = () => {
     try {
       await axios.post(`${API}/staff/appointments/walk-in`, walkInForm, getAuthHeaders());
       toast.success('Walk-in appointment booked');
-      setWalkInForm({ ...walkInForm, patient_name: '', patient_phone: '', time: '' });
+      setWalkInForm({ ...walkInForm, patient_name: '', patient_phone: '', patient_id: '', time: '' });
+      setFoundWalkInPatient(null);
       loadData();
       // Refresh booked slots to keep in sync
       fetchBookedSlots();
