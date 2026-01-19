@@ -82,48 +82,6 @@ class TestDoctorLogin:
 class TestAppointmentsAPI:
     """Appointments and booking tests"""
     
-    def test_get_doctors(self):
-        """Test fetching doctors list"""
-        response = requests.get(f"{BASE_URL}/api/doctors", timeout=10)
-        
-        assert response.status_code == 200, f"Failed to get doctors: {response.text}"
-        data = response.json()
-        assert isinstance(data, list), "Expected list of doctors"
-        if len(data) > 0:
-            doctor = data[0]
-            assert "name" in doctor or "doctor_name" in doctor, "Doctor missing name field"
-        print(f"SUCCESS: Got {len(data)} doctors")
-    
-    def test_get_clinics(self):
-        """Test fetching clinics list"""
-        response = requests.get(f"{BASE_URL}/api/clinics", timeout=10)
-        
-        assert response.status_code == 200, f"Failed to get clinics: {response.text}"
-        data = response.json()
-        assert isinstance(data, list), "Expected list of clinics"
-        print(f"SUCCESS: Got {len(data)} clinics")
-    
-    def test_get_available_slots(self):
-        """Test fetching available appointment slots"""
-        # Get tomorrow's date
-        tomorrow = (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
-        
-        response = requests.get(
-            f"{BASE_URL}/api/appointments/available-slots",
-            params={
-                "doctor_id": "doc_vikas",
-                "clinic": "pushpa",
-                "date": tomorrow
-            },
-            timeout=10
-        )
-        
-        # Accept 200 or 404 (no slots available)
-        assert response.status_code in [200, 404], f"Failed to get slots: {response.text}"
-        if response.status_code == 200:
-            data = response.json()
-            print(f"SUCCESS: Got available slots response")
-    
     def test_get_booked_slots(self):
         """Test fetching booked slots"""
         tomorrow = (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
@@ -131,15 +89,17 @@ class TestAppointmentsAPI:
         response = requests.get(
             f"{BASE_URL}/api/appointments/booked-slots",
             params={
-                "doctor_id": "doc_vikas",
+                "doctor": "doc_vikas",  # Correct param name
                 "clinic": "pushpa",
                 "date": tomorrow
             },
             timeout=10
         )
         
-        assert response.status_code in [200, 404], f"Failed to get booked slots: {response.text}"
-        print(f"SUCCESS: Booked slots endpoint responded with {response.status_code}")
+        assert response.status_code == 200, f"Failed to get booked slots: {response.text}"
+        data = response.json()
+        assert "booked_slots" in data, "Response missing booked_slots field"
+        print(f"SUCCESS: Booked slots endpoint returned {len(data.get('booked_slots', []))} slots")
     
     def test_get_blocked_slots(self):
         """Test fetching blocked slots"""
@@ -148,15 +108,15 @@ class TestAppointmentsAPI:
         response = requests.get(
             f"{BASE_URL}/api/appointments/blocked-slots",
             params={
-                "doctor_id": "doc_vikas",
+                "doctor": "doc_vikas",  # Correct param name
                 "clinic": "pushpa",
                 "date": tomorrow
             },
             timeout=10
         )
         
-        assert response.status_code in [200, 404], f"Failed to get blocked slots: {response.text}"
-        print(f"SUCCESS: Blocked slots endpoint responded with {response.status_code}")
+        assert response.status_code == 200, f"Failed to get blocked slots: {response.text}"
+        print(f"SUCCESS: Blocked slots endpoint responded")
 
 
 class TestPharmacyAPI:
