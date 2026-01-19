@@ -100,6 +100,13 @@ const StaffPortal = () => {
     patient_email: ''
   });
   
+  // Patient registration states
+  const [showPatientRegisterDialog, setShowPatientRegisterDialog] = useState(false);
+  const [patientRegisterMobile, setPatientRegisterMobile] = useState('');
+  const [patientRegisterType, setPatientRegisterType] = useState('walk-in');
+  const [foundWalkInPatient, setFoundWalkInPatient] = useState(null);
+  const [foundEmergencyPatient, setFoundEmergencyPatient] = useState(null);
+  
   // Diagnostic order form (for diagnostics staff)
   const [diagOrderForm, setDiagOrderForm] = useState({
     patient_name: '',
