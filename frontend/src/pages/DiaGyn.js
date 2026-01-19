@@ -91,7 +91,7 @@ const clinics = [
 // ============================================
 // DOCTOR PROFILE CARD - Enhanced Pastel Design
 // ============================================
-const DoctorProfileCard = ({ doctor, isSelected, onSelect }) => {
+const DoctorProfileCard = ({ doctor, isSelected, onSelect, isTablet = false }) => {
   return (
     <div 
       onClick={onSelect}
@@ -105,22 +105,22 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect }) => {
         }
       `}
     >
-      <div className="bg-white rounded-[22px] p-5 h-full">
+      <div className={`bg-white rounded-[22px] h-full ${isTablet ? 'p-6' : 'p-5'}`}>
         {/* Selection Badge */}
         {isSelected && (
           <div className="absolute top-4 right-4 z-10">
-            <Badge className="bg-[#5FA8D3] text-white px-3 py-1 rounded-full flex items-center gap-1.5 shadow-lg">
-              <CheckCircle2 className="w-3.5 h-3.5" />
+            <Badge className={`bg-[#5FA8D3] text-white rounded-full flex items-center gap-1.5 shadow-lg ${isTablet ? 'px-4 py-1.5 text-sm' : 'px-3 py-1'}`}>
+              <CheckCircle2 className={isTablet ? 'w-4 h-4' : 'w-3.5 h-3.5'} />
               Selected
             </Badge>
           </div>
         )}
 
         {/* Top Section - Image & Basic Info */}
-        <div className="flex gap-5">
+        <div className={`flex ${isTablet ? 'gap-6' : 'gap-5'}`}>
           {/* Doctor Image */}
           <div className="relative flex-shrink-0">
-            <div className={`w-24 h-24 rounded-2xl overflow-hidden ring-4 transition-all duration-300 ${isSelected ? 'ring-[#5FA8D3]/30' : 'ring-[#BEE9E8]/50 group-hover:ring-[#5FA8D3]/20'}`}>
+            <div className={`rounded-2xl overflow-hidden ring-4 transition-all duration-300 ${isTablet ? 'w-28 h-28' : 'w-24 h-24'} ${isSelected ? 'ring-[#5FA8D3]/30' : 'ring-[#BEE9E8]/50 group-hover:ring-[#5FA8D3]/20'}`}>
               <img 
                 src={doctor.image} 
                 alt={doctor.name}
@@ -129,25 +129,25 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect }) => {
               />
             </div>
             {/* Online Status */}
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#A7C957] border-2 border-white rounded-full flex items-center justify-center">
-              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+            <div className={`absolute -bottom-1 -right-1 bg-[#A7C957] border-2 border-white rounded-full flex items-center justify-center ${isTablet ? 'w-6 h-6' : 'w-5 h-5'}`}>
+              <span className={`bg-white rounded-full animate-pulse ${isTablet ? 'w-2.5 h-2.5' : 'w-2 h-2'}`} />
             </div>
           </div>
 
           {/* Name & Specialty */}
           <div className="flex-1 min-w-0">
-            <h3 className="text-xl font-bold text-[#1B4965] mb-1 truncate" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h3 className={`font-bold text-[#1B4965] mb-1 truncate ${isTablet ? 'text-2xl' : 'text-xl'}`} style={{ fontFamily: 'Outfit, sans-serif' }}>
               {doctor.name}
             </h3>
-            <Badge className="bg-[#BEE9E8] text-[#1B4965] px-3 py-1 rounded-full text-xs font-medium border-0 mb-3">
-              <Stethoscope className="w-3 h-3 mr-1.5" />
+            <Badge className={`bg-[#BEE9E8] text-[#1B4965] rounded-full font-medium border-0 mb-3 ${isTablet ? 'px-4 py-1.5 text-sm' : 'px-3 py-1 text-xs'}`}>
+              <Stethoscope className={isTablet ? 'w-4 h-4 mr-2' : 'w-3 h-3 mr-1.5'} />
               {doctor.specialty}
             </Badge>
             
             {/* Quick Stats */}
-            <div className="flex items-center gap-3 text-xs text-[#64748B]">
+            <div className={`flex items-center gap-3 text-[#64748B] ${isTablet ? 'text-sm' : 'text-xs'}`}>
               <span className="flex items-center gap-1">
-                <Heart className="w-3.5 h-3.5 text-[#FFB4A2]" />
+                <Heart className={isTablet ? 'w-4 h-4 text-[#FFB4A2]' : 'w-3.5 h-3.5 text-[#FFB4A2]'} />
                 {doctor.patients} patients
               </span>
               <span>•</span>
@@ -157,16 +157,16 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect }) => {
         </div>
 
         {/* Degree & Qualifications - HIGHLIGHTED */}
-        <div className="mt-5 p-4 bg-gradient-to-r from-[#CAE9FF]/40 to-[#BEE9E8]/40 rounded-2xl border border-[#CAE9FF]/60">
+        <div className={`bg-gradient-to-r from-[#CAE9FF]/40 to-[#BEE9E8]/40 rounded-2xl border border-[#CAE9FF]/60 ${isTablet ? 'mt-6 p-5' : 'mt-5 p-4'}`}>
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-xl bg-[#5FA8D3]/20 flex items-center justify-center flex-shrink-0">
-              <GraduationCap className="w-4 h-4 text-[#5FA8D3]" />
+            <div className={`rounded-xl bg-[#5FA8D3]/20 flex items-center justify-center flex-shrink-0 ${isTablet ? 'w-10 h-10' : 'w-8 h-8'}`}>
+              <GraduationCap className={isTablet ? 'w-5 h-5 text-[#5FA8D3]' : 'w-4 h-4 text-[#5FA8D3]'} />
             </div>
             <div>
-              <p className="text-xs font-semibold text-[#1B4965] uppercase tracking-wide mb-1">
+              <p className={`font-semibold text-[#1B4965] uppercase tracking-wide mb-1 ${isTablet ? 'text-sm' : 'text-xs'}`}>
                 Qualifications
               </p>
-              <p className="text-sm text-[#64748B] leading-relaxed" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className={`text-[#64748B] leading-relaxed ${isTablet ? 'text-base' : 'text-sm'}`} style={{ fontFamily: 'DM Sans, sans-serif' }}>
                 {doctor.qualifications}
               </p>
             </div>
@@ -174,7 +174,7 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect }) => {
         </div>
 
         {/* Specializations */}
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className={`flex flex-wrap gap-2 ${isTablet ? 'mt-5' : 'mt-4'}`}>
           {doctor.specializations.map((spec, i) => (
             <Badge 
               key={i} 
