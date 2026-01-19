@@ -587,12 +587,12 @@ const BlockSlotsDialog = ({
         
         <div className="space-y-4">
           {/* Info Banner */}
-          <div className="p-3 bg-[#FFD166]/20 border border-[#FFD166] rounded-xl">
+          <div className="p-3 bg-[#5FA8D3]/10 border border-[#5FA8D3]/30 rounded-xl">
             <div className="flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 text-[#FFD166] mt-0.5 flex-shrink-0" />
+              <Stethoscope className="w-4 h-4 text-[#5FA8D3] mt-0.5 flex-shrink-0" />
               <p className="text-xs text-[#1B4965]">
-                <span className="font-semibold">Staff Only:</span> Block slots to prevent patient bookings. 
-                Use this when the doctor is running late or unavailable.
+                <span className="font-semibold">Doctor Access:</span> Block your appointment slots when running late or unavailable.
+                Patients will not be able to book blocked slots.
               </p>
             </div>
           </div>
