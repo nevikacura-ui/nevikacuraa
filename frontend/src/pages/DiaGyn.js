@@ -864,6 +864,39 @@ const DiaGyn = () => {
     }
   };
 
+  // Patient lookup state
+  const [foundPatient, setFoundPatient] = useState(null);
+  const [showRegisterDialog, setShowRegisterDialog] = useState(false);
+  const [mobileForRegister, setMobileForRegister] = useState('');
+
+  // Handle patient found from lookup
+  const handlePatientFound = (patient) => {
+    setFoundPatient(patient);
+    setPatientInfo({
+      name: patient.name,
+      phone: patient.mobile,
+      email: patient.email || ''
+    });
+  };
+
+  // Handle new patient (not found)
+  const handleNewPatient = (mobile) => {
+    setMobileForRegister(mobile);
+    setShowRegisterDialog(true);
+  };
+
+  // Handle successful registration
+  const handleRegistrationSuccess = (patient) => {
+    setFoundPatient(patient);
+    setPatientInfo({
+      name: patient.name,
+      phone: patient.mobile,
+      email: ''
+    });
+    setShowRegisterDialog(false);
+    toast.success(`Patient registered: ${patient.patient_id}`);
+  };
+
   useEffect(() => {
     const checkBookingLimits = async () => {
       if (!patientInfo.phone || patientInfo.phone.length < 10) {
