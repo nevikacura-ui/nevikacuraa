@@ -6,13 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
   ArrowLeft, Clock, Ban, Shield, CheckCircle2, Loader2, 
   CalendarDays, Wifi, WifiOff, GraduationCap, Calendar,
-  ChevronLeft, ChevronRight, User, Stethoscope, Building2, Heart, Sparkles
+  ChevronLeft, ChevronRight, User, Stethoscope, Building2, Heart, Sparkles,
+  Lock, Unlock, AlertTriangle
 } from 'lucide-react';
 import { format, isSunday, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday } from 'date-fns';
 import { useNotificationPrompt } from '@/components/NotificationPrompt';
