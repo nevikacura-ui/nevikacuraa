@@ -50,6 +50,32 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
    - Cleared all test bookings from database
    - Updated default queue status to show "0 waiting" instead of fake test data
 
+4. **Patient Registration System** ✅
+   - **Backend APIs (`/app/backend/routes/patients.py`):**
+     - `POST /api/patients/register` - Register new patient (staff only)
+     - `GET /api/patients/lookup?mobile=xxx` - Lookup by mobile (public)
+     - `GET /api/patients/{id}` - Get patient details
+     - `GET /api/patients/{id}/history` - Get full history
+     - `GET /api/patients/{id}/appointments` - Appointment history
+     - `GET /api/patients/{id}/prescriptions` - Prescriptions
+     - `GET /api/patients/{id}/lab-reports` - Lab reports
+     - `GET /api/patients/{id}/bills` - Billing history
+     - `GET /api/patients/search/all` - Search patients (staff only)
+     - `POST /api/patients/portal/send-otp` - Patient portal OTP
+     - `POST /api/patients/portal/verify-otp` - Verify OTP & get token
+   - **Auto-generated Patient ID:** Format `NC-YYYY-XXXXX` (e.g., NC-2026-00001)
+   - **Frontend Components (`/app/frontend/src/components/PatientRegistration.jsx`):**
+     - `PatientLookup` - Mobile lookup with found/not-found states
+     - `PatientRegistrationForm` - Staff registration form
+     - `PatientRegistrationDialog` - Modal for registration
+     - `PatientHistory` - Display patient visit history
+     - `PatientLookupOrRegister` - Combined component
+   - **DiaGyn Integration:**
+     - Patient lookup in Step 4 (Verify)
+     - Auto-fill patient details when found
+     - Registration dialog for new patients
+     - Show visit history for returning patients
+
 ### Session - January 18, 2026
 
 #### Completed Features
