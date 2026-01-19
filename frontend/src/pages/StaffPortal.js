@@ -2120,6 +2120,9 @@ const StaffPortal = () => {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-medium">{appt.patient_name}</span>
+                            {appt.patient_id && (
+                              <Badge className="bg-indigo-100 text-indigo-700 text-xs font-normal">{appt.patient_id}</Badge>
+                            )}
                             <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(appt.status)}`}>
                               {appt.status}
                             </span>
