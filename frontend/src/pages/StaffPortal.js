@@ -859,6 +859,34 @@ const StaffPortal = () => {
     setSubmittingFeedback(false);
   };
 
+  // Search patients in database
+  const searchPatients = async (query = '') => {
+    setSearchingPatients(true);
+    try {
+      const response = await axios.get(`${API}/patients/search/all`, {
+        params: { q: query, limit: 50 },
+        ...getAuthHeaders()
+      });
+      if (query) {
+        setPatientSearchResults(response.data.patients || []);
+      } else {
+        setAllPatients(response.data.patients || []);
+        setPatientSearchResults([]);
+      }
+    } catch (error) {
+      console.error('Patient search error:', error);
+      toast.error('Failed to search patients');
+    }
+    setSearchingPatients(false);
+  };
+
+  // Load all patients on tab click
+  const loadAllPatients = async () => {
+    if (allPatients.length === 0) {
+      await searchPatients('');
+    }
+  };
+
   const handleWalkInBooking = async () => {
     if (!walkInForm.patient_name || !walkInForm.patient_phone || !walkInForm.time) {
       toast.error('Please fill all required fields');
