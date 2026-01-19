@@ -206,7 +206,7 @@ class TestSlotBlocking:
         response = requests.post(
             f"{BASE_URL}/api/appointments/block-slots",
             json={
-                "doctor_id": "doc_vikas",
+                "doctor": "doc_vikas",
                 "clinic": "pushpa",
                 "date": tomorrow,
                 "slots": ["18:00"]
@@ -224,7 +224,7 @@ class TestSlotBlocking:
         response = requests.post(
             f"{BASE_URL}/api/appointments/block-slots",
             json={
-                "doctor_id": "doc_vikas",
+                "doctor": "doc_vikas",
                 "clinic": "pushpa",
                 "date": tomorrow,
                 "slots": ["20:00"]
@@ -234,7 +234,7 @@ class TestSlotBlocking:
         )
         
         # Accept 200, 201, or 400 (slot may already be blocked)
-        assert response.status_code in [200, 201, 400], f"Unexpected status: {response.status_code}"
+        assert response.status_code in [200, 201, 400], f"Unexpected status: {response.status_code}, response: {response.text}"
         print(f"SUCCESS: Block slots with auth responded with {response.status_code}")
 
 
