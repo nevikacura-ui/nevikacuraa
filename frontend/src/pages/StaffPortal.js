@@ -2326,6 +2326,62 @@ const StaffPortal = () => {
                   Emergency appointments do NOT require a time slot. Maximum 10 per doctor per day.
                 </p>
                 
+                {/* Patient Lookup Section */}
+                <div className="p-4 bg-red-50 border border-red-200 rounded-xl mb-4">
+                  <Label className="text-red-800 font-medium mb-2 block">
+                    <Search className="w-4 h-4 inline mr-2" />
+                    Find or Register Patient
+                  </Label>
+                  <PatientLookup
+                    onPatientFound={(patient) => {
+                      setFoundEmergencyPatient(patient);
+                      setEmergencyForm(prev => ({
+                        ...prev,
+                        patient_name: patient.name,
+                        patient_phone: patient.mobile,
+                        patient_email: patient.email || ''
+                      }));
+                    }}
+                    onNewPatient={(mobile) => {
+                      setPatientRegisterMobile(mobile);
+                      setPatientRegisterType('emergency');
+                      setShowPatientRegisterDialog(true);
+                    }}
+                    initialMobile={emergencyForm.patient_phone}
+                  />
+                </div>
+                
+                {/* Show patient info if found */}
+                {foundEmergencyPatient && (
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <User className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-green-800">{foundEmergencyPatient.name}</span>
+                        <Badge className="bg-green-600 text-white text-xs">{foundEmergencyPatient.patient_id}</Badge>
+                      </div>
+                      <p className="text-xs text-green-700">
+                        {foundEmergencyPatient.age && `${foundEmergencyPatient.age} yrs • `}
+                        {foundEmergencyPatient.blood_group && `Blood: ${foundEmergencyPatient.blood_group} • `}
+                        {foundEmergencyPatient.total_visits > 0 && `${foundEmergencyPatient.total_visits} previous visits`}
+                      </p>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => {
+                        setFoundEmergencyPatient(null);
+                        setEmergencyForm(prev => ({ ...prev, patient_name: '', patient_phone: '', patient_email: '' }));
+                      }}
+                      className="text-green-600 hover:text-green-800"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+                
                 {/* Show current emergency count */}
                 {emergencyCounts[emergencyForm.doctor] && (
                   <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -2363,36 +2419,41 @@ const StaffPortal = () => {
                     </div>
                   </div>
                   
-                  <div>
-                    <Label>Patient Name *</Label>
-                    <Input
-                      value={emergencyForm.patient_name}
-                      onChange={(e) => setEmergencyForm({ ...emergencyForm, patient_name: e.target.value })}
-                      placeholder="Enter patient name"
-                      data-testid="emergency-name"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label>Phone Number *</Label>
-                    <Input
-                      value={emergencyForm.patient_phone}
-                      onChange={(e) => setEmergencyForm({ ...emergencyForm, patient_phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
-                      placeholder="10-digit mobile number"
-                      data-testid="emergency-phone"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label>Email (Optional)</Label>
-                    <Input
-                      type="email"
-                      value={emergencyForm.patient_email}
-                      onChange={(e) => setEmergencyForm({ ...emergencyForm, patient_email: e.target.value })}
-                      placeholder="patient@email.com"
-                      data-testid="emergency-email"
-                    />
-                  </div>
+                  {/* Manual patient entry - only if not found via lookup */}
+                  {!foundEmergencyPatient && (
+                    <>
+                      <div>
+                        <Label>Patient Name *</Label>
+                        <Input
+                          value={emergencyForm.patient_name}
+                          onChange={(e) => setEmergencyForm({ ...emergencyForm, patient_name: e.target.value })}
+                          placeholder="Enter patient name"
+                          data-testid="emergency-name"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label>Phone Number *</Label>
+                        <Input
+                          value={emergencyForm.patient_phone}
+                          onChange={(e) => setEmergencyForm({ ...emergencyForm, patient_phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                          placeholder="10-digit mobile number"
+                          data-testid="emergency-phone"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label>Email (Optional)</Label>
+                        <Input
+                          type="email"
+                          value={emergencyForm.patient_email}
+                          onChange={(e) => setEmergencyForm({ ...emergencyForm, patient_email: e.target.value })}
+                          placeholder="patient@email.com"
+                          data-testid="emergency-email"
+                        />
+                      </div>
+                    </>
+                  )}
                   
                   <Button 
                     onClick={handleEmergencyBooking} 
