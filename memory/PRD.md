@@ -254,6 +254,10 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 - `GET /api/medication-tracker/today/{user_id}` - Today's medication schedule
 - `GET /api/queue/public/{clinic}` - Live queue status
 - `GET /api/analytics/overview` - Admin analytics
+- `POST /api/patients/portal/send-otp?mobile=xxx` - Patient portal OTP login
+- `POST /api/patients/portal/verify-otp?mobile=xxx&otp=xxx` - Verify OTP, get patient token
+- `GET /api/patients/portal/me` - Get logged-in patient profile
+- `GET /api/patients/{id}/history` - Get full patient history
 
 ## Pending User Verification
 1. **Push Notification Prompt** - Test on mobile device after PWA install
