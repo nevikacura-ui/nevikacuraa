@@ -107,7 +107,7 @@ function App() {
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
-          <FullScreenNotificationPrompt />
+          {/* FullScreenNotificationPrompt removed per user request */}
           <SmartNotificationBanner />
         </div>
       </BrowserRouter>
