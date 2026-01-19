@@ -75,6 +75,12 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
      - Auto-fill patient details when found
      - Registration dialog for new patients
      - Show visit history for returning patients
+   - **StaffPortal Integration:**
+     - **Walk-in Tab:** Patient lookup with teal styling, auto-fills form when found
+     - **Emergency (SOS) Tab:** Patient lookup with red styling, auto-fills form when found
+     - Registration dialog opens for new patients
+     - Shows patient ID and visit history count
+     - Manual entry fields hidden when patient found via lookup
 
 ### Session - January 18, 2026
 
