@@ -323,21 +323,21 @@ export const PatientHistory = ({ patientId, compact = false }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const response = await axios.get(`${API}/patients/${patientId}/history`);
+        setHistory(response.data);
+      } catch (error) {
+        console.error('Failed to fetch history:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
     if (patientId) {
       fetchHistory();
     }
   }, [patientId]);
-
-  const fetchHistory = async () => {
-    try {
-      const response = await axios.get(`${API}/patients/${patientId}/history`);
-      setHistory(response.data);
-    } catch (error) {
-      console.error('Failed to fetch history:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (
