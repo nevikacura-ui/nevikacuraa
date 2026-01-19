@@ -1585,6 +1585,20 @@ const DiaGyn = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Block Slots Dialog - Staff Only */}
+      {selectedDoctorData && selectedClinicData && selectedDate && (
+        <BlockSlotsDialog
+          open={showBlockSlotsDialog}
+          onOpenChange={setShowBlockSlotsDialog}
+          doctor={selectedDoctorData.name}
+          clinic={selectedClinicData.name}
+          selectedDate={selectedDate}
+          availableSlots={availableSlots}
+          bookedSlots={bookedSlots}
+          onSlotsBlocked={fetchBookedSlots}
+        />
+      )}
+
       <ActionPrompt />
     </div>
   );
