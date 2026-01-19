@@ -1,0 +1,160 @@
+<analysis>**original_problem_statement:**
+The user wants to build a comprehensive healthcare application named Nevika Cura. The overall goal is to enhance the staff and patient experience by adding new features, fixing bugs, and improving UI/UX.
+
+**PRODUCT REQUIREMENTS:**
+1.  **Staff Slot Blocking:** Allow doctors/staff to manually block same-day appointment slots.
+2.  **Doctor-Specific Permissions:** Only allow doctors to block their own slots, while super-admins can block any.
+3.  **UI/UX Enhancements:** Remove the intrusive full-screen notification banner.
+4.  **Tablet View:** Introduce a tablet-responsive layout for , , and , with a view switcher in the header.
+5.  **Data Cleanup:** Clear all test bookings to see a fresh queue status and fix the underlying API bug causing incorrect counts.
+6.  **Patient Registration System:** Implement a system where patients can be registered and looked up via their mobile number. This should be integrated into the appointment booking flow for both patients and staff (Walk-in/Emergency).
+7.  **Patient Portal:** Create a dedicated portal where patients can log in using an OTP sent to their mobile number and view their complete medical history (appointments, prescriptions, lab reports, bills).
+
+**User's preferred language**: English
+
+**what currently exists?**
+A full-stack application with a React frontend, FastAPI backend, and MongoDB. The current session has successfully implemented several key features:
+-   **Staff Slot Blocking:** A fully functional and tested feature allowing staff/doctors to block appointment slots, with role-based access control and a Block All Remaining option.
+-   **Tablet Responsiveness:** A view-switcher (Desktop/Tablet/Mobile) and tablet-friendly layouts have been added to the , , and  pages.
+-   **Patient Registration:** A robust system for registering and looking up patients by mobile number has been integrated into the  (appointment booking) and  (walk-in/emergency) flows.
+-   **Patient Portal (Login):** The initial version of the  page is complete, featuring a secure, OTP-based login flow for patients. The backend APIs for this login are also complete and tested.
+
+**Last working item**:
+-   **Last item agent was working:** Building the patient portal dashboard. The OTP login flow is complete. The next step is to fetch and display the logged-in patient's full medical history (appointments, prescriptions, lab reports, etc.).
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** backend testing agent for the new data-fetching endpoints and frontend testing agent to validate the end-to-end patient login and history-viewing experience.
+-   **User Testing Done:** N
+
+**All Pending/In progress Issue list**:
+-   **Issue 1: Face ID Camera Fails to Start on Mobile (P1)**
+    -   **Description:** A critical, recurring issue where the camera does not activate for face attendance on the user's real mobile device. This has been de-prioritized by the user but remains a significant unresolved bug.
+    -   **Status:** USER VERIFICATION PENDING
+    -   **Is recurring issue?** Y
+-   **Issue 2: Final User Verification on Mobile (P1)**
+    -   **Description:** Several features implemented in previous forks need final verification by the user on their physical device after installing the Capacitor-built APK (e.g., Push Notification Prompts, App Icon).
+    -   **Status:** USER VERIFICATION PENDING
+
+**In progress Task List**:
+-   **Task 1: Complete Patient Portal Dashboard (P0)**
+    -   **Where to resume:** The file  currently handles the OTP login. The next steps are:
+        1.  In , create new API endpoints that take a patient's JWT and return their historical data (appointments, prescriptions, lab results, billing).
+        2.  In , after a successful login, call these new endpoints to fetch the data.
+        3.  Design and build the UI to display this historical data in a clear, tabbed, or sectioned layout.
+    -   **What will be achieved with this?** Patients will have a self-service portal to view their entire medical history, which is a major value-add and fulfills the user's latest request.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Both
+
+**Upcoming and Future Tasks**
+-   **Upcoming Tasks:**
+    -   **P1: Implement Cashfree Payment Gateway:** Integrate Cashfree for handling payments.
+    -   **P2: Refactor Large Components:** Break down the massive  and  files into smaller, more manageable components.
+    -   **P2: Add more category cards** to the Pharmacy page (e.g., Inhalers, Patches, Powders).
+-   **Future Tasks:**
+    -   Implement Apple Sign-In (currently blocked as the user does not have an Apple Developer account).
+    -   Migrate hardcoded data (like doctor schedules) from frontend files to the MongoDB database.
+    -   Create a Login History page for users.
+    -   Enhance search functionality with more keywords and synonyms.
+
+**Completed work in this session**
+-   **Staff Slot Blocking Feature:** Implemented and tested backend APIs and frontend UI in , including doctor-specific permissions and a Block All Remaining Slots button.
+-   **Tablet View & View Switcher:** Implemented a global view mode context and added a switcher and responsive layouts to , , and .
+-   **Patient Registration System:** Created backend APIs and a reusable frontend component () and integrated it into the  and  workflows.
+-   **Patient Portal (Login Flow):** Created the  page with a secure OTP login mechanism.
+-   **Bug Fixes & UI Cleanup:**
+    -   Fixed the live queue status on the  page by correcting the API endpoint.
+    -   Removed the intrusive full-screen notification banner.
+    -   Cleared all old test appointment data from the database.
+
+**Earlier issues found/mentioned but not fixed**
+-   **Face ID Camera Fails to Start on Mobile:** A critical, recurring issue from a previous fork that was not addressed in this session as the user prioritized new feature development.
+
+**Known issue recurrence from previous fork**
+-   **Issue recurrence in previous fork:** Face ID / Biometric System
+-   **Recurrence count:** 4+
+-   **Status:** USER VERIFICATION PENDING
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Role-Based Access Control (RBAC):** Enhanced slot blocking to be role-aware by checking the  and  fields in the JWT token to control UI visibility and API access.
+-   **Global UI State Management:** Used a React Context () to manage the global view mode (desktop, tablet, mobile) across different components.
+-   **Modular, Reusable Components:** Created  and  to encapsulate functionality and promote reuse.
+-   **API-Driven UI:** The patient registration flow uses API lookups to prevent duplicate entries and streamline staff workflows.
+
+**key DB schema**
+-   **patients (NEW):** 
+-   **appointments:**  field is used for  slots.  links to the  collection.
+
+**changes in tech stack**
+-   None.
+
+**All files of reference**
+-   
+-   
+-   
+-   
+-   
+-   
+-   
+
+**Areas that need refactoring**:
+-    (2500+ lines),  (4300+ lines), and  (1700+ lines) are monolithic and contain pre-existing linting errors. They are high-priority candidates for being broken down into smaller components to improve maintainability.
+
+**key api endpoints**
+-   : Register a new patient.
+-   : Find a patient by mobile number.
+-   : Send a login OTP to a patient's mobile.
+-   : Verify OTP and return a patient-specific JWT.
+
+**Critical Info for New Agent**
+-   Your immediate task is to **complete the Patient Portal**. The login flow is already built. You need to implement the dashboard that appears after a successful login. This will require creating new backend endpoints to securely fetch a patient's historical data (appointments, prescriptions, labs) and then building the frontend UI in  to display it.
+-   The **Face ID camera bug** is a long-standing, critical issue. It should be the next priority after the Patient Portal feature is complete and verified by the user.
+-   The user is highly engaged and provides clear, step-by-step instructions. Adhere to them closely.
+
+**documents and test reports created in this job**
+-   
+-   
+-   
+
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **Finish**: User requested to complete the current task.
+2.  **Upcoming task - no 3 And potential enhancement**: User clarified to work on the Patient Portal next.
+3.  **Finish the next task - add to staff portal**: User instructed to integrate patient registration into the Staff Portal.
+4.  **Is it possible to generate unique registration system...**: User initiated the request for the patient registration and portal feature.
+5.  **User provided detailed requirements for the registration system**: (e.g., auto-generate ID, basic info, use for booking).
+6.  **Make all feature and flow are intact**: User requested regression testing after recent changes.
+7.  **DiaGyn and proton Still show 4 waiting...**: User reported a bug with live queue counts and requested data cleanup and extending tablet view.
+8.  **1. - B 2. - a,b 3- c both**: User provided specific choices for implementing the tablet view.
+9.  **I get a tablet version...**: User initiated the request for a tablet-responsive UI.
+10. **Allow only respective doctors to block the slots directly...**: User provided follow-up requirements for the slot-blocking feature.
+
+**Project Health Check:**
+-   **Broken/Pending Verification:**
+    -   : The camera's failure to start on mobile devices remains a critical, unresolved issue.
+-   **In Progress:**
+    -   : The dashboard for viewing patient history is not yet implemented.
+-   **Needs Refactoring:**
+    -   , , and  are large monolithic files that should be broken down.
+
+**3rd Party Integrations**
+-   **Twilio:** For SMS notifications (used in OTP).
+-   **Resend:** For sending emails.
+-   **Capacitor:** For creating the native Android wrapper.
+
+**Testing status**
+-   **Testing agent used after significant changes:** YES. Used for regression testing and validating the slot-blocking feature.
+-   **Troubleshoot agent used after agent stuck in loop:** NO.
+-   **Test files created:** Yes, by the testing agent (, ).
+-   **Known regressions:** None.
+
+**Credentials to test flow:**
+-   **Clinic Staff:** user: , pass: 
+-   **Doctor:** user: , pass: 
+-   **Super Admin:** user: , pass: 
+-   **Patient Mobile for Testing:** 
+-   **Mock OTP for login:** Displayed on-screen during testing (e.g., ).
+
+**What agent forgot to execute**
+-   The agent has been following user requests diligently. The only forgotten item is the long-standing Face ID camera bug, which has been consistently de-prioritized by the user in favor of new features.</analysis>
