@@ -1167,8 +1167,8 @@ const DiaGyn = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              {/* Staff Block Slots Button - Only shown when staff is logged in */}
-              {isStaffLoggedIn() && step === 3 && selectedDoctor && selectedClinic && selectedDate && (
+              {/* Doctor Block Slots Button - Only shown when respective doctor is logged in */}
+              {canBlockSlotsForDoctor() && step === 3 && selectedDoctor && selectedClinic && selectedDate && (
                 <Button
                   variant="outline"
                   size="sm"
