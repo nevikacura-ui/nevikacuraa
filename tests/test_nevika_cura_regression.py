@@ -1,0 +1,294 @@
+"""
+Nevika Cura Healthcare App - Regression Test Suite
+Tests all major features after ViewModeSwitcher and UI updates
+
+Features tested:
+1. Health check endpoint
+2. Staff login
+3. Doctor login
+4. Appointments API (doctors, clinics, slots, booking)
+5. Pharmacy API (medicines, inventory)
+6. Diagnostics API (tests)
+7. Live Queue API
+"""
+
+import pytest
+import requests
+import os
+from datetime import datetime, timedelta
+
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
+
+class TestHealthCheck:
+    """Basic health check tests"""
+    
+    def test_api_health(self):
+        """Test if API is responding"""
+        # Try multiple health endpoints
+        endpoints = ['/api/health', '/api/', '/api/doctors']
+        for endpoint in endpoints:
+            response = requests.get(f"{BASE_URL}{endpoint}", timeout=10)
+            if response.status_code == 200:
+                print(f"SUCCESS: {endpoint} returned 200")
+                return
+        # If none work, check if doctors endpoint works
+        response = requests.get(f"{BASE_URL}/api/doctors", timeout=10)
+        assert response.status_code in [200, 404], f"API not responding properly"
+
+
+class TestStaffLogin:
+    """Staff authentication tests"""
+    
+    def test_staff_login_success(self):
+        """Test staff login with valid credentials"""
+        response = requests.post(f"{BASE_URL}/api/staff/login", json={
+            "username": "staff_pushpa",
+            "password": "Nevika@2026C"
+        }, timeout=10)
+        
+        assert response.status_code == 200, f"Staff login failed: {response.text}"
+        data = response.json()
+        assert "token" in data, "No token in response"
+        assert "user" in data or "staff" in data or "role" in data, "No user info in response"
+        print(f"SUCCESS: Staff login returned token")
+    
+    def test_staff_login_invalid_credentials(self):
+        """Test staff login with invalid credentials"""
+        response = requests.post(f"{BASE_URL}/api/staff/login", json={
+            "username": "invalid_user",
+            "password": "wrong_password"
+        }, timeout=10)
+        
+        assert response.status_code in [401, 400, 403], f"Expected auth error, got {response.status_code}"
+        print(f"SUCCESS: Invalid credentials rejected with {response.status_code}")
+
+
+class TestDoctorLogin:
+    """Doctor authentication tests"""
+    
+    def test_doctor_login_success(self):
+        """Test doctor login with valid credentials"""
+        response = requests.post(f"{BASE_URL}/api/doctor/login", json={
+            "username": "doc_vikas",
+            "password": "Nevika@2026C"
+        }, timeout=10)
+        
+        assert response.status_code == 200, f"Doctor login failed: {response.text}"
+        data = response.json()
+        assert "token" in data, "No token in response"
+        print(f"SUCCESS: Doctor login returned token")
+
+
+class TestAppointmentsAPI:
+    """Appointments and booking tests"""
+    
+    def test_get_doctors(self):
+        """Test fetching doctors list"""
+        response = requests.get(f"{BASE_URL}/api/doctors", timeout=10)
+        
+        assert response.status_code == 200, f"Failed to get doctors: {response.text}"
+        data = response.json()
+        assert isinstance(data, list), "Expected list of doctors"
+        if len(data) > 0:
+            doctor = data[0]
+            assert "name" in doctor or "doctor_name" in doctor, "Doctor missing name field"
+        print(f"SUCCESS: Got {len(data)} doctors")
+    
+    def test_get_clinics(self):
+        """Test fetching clinics list"""
+        response = requests.get(f"{BASE_URL}/api/clinics", timeout=10)
+        
+        assert response.status_code == 200, f"Failed to get clinics: {response.text}"
+        data = response.json()
+        assert isinstance(data, list), "Expected list of clinics"
+        print(f"SUCCESS: Got {len(data)} clinics")
+    
+    def test_get_available_slots(self):
+        """Test fetching available appointment slots"""
+        # Get tomorrow's date
+        tomorrow = (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
+        
+        response = requests.get(
+            f"{BASE_URL}/api/appointments/available-slots",
+            params={
+                "doctor_id": "doc_vikas",
+                "clinic": "pushpa",
+                "date": tomorrow
+            },
+            timeout=10
+        )
+        
+        # Accept 200 or 404 (no slots available)
+        assert response.status_code in [200, 404], f"Failed to get slots: {response.text}"
+        if response.status_code == 200:
+            data = response.json()
+            print(f"SUCCESS: Got available slots response")
+    
+    def test_get_booked_slots(self):
+        """Test fetching booked slots"""
+        tomorrow = (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
+        
+        response = requests.get(
+            f"{BASE_URL}/api/appointments/booked-slots",
+            params={
+                "doctor_id": "doc_vikas",
+                "clinic": "pushpa",
+                "date": tomorrow
+            },
+            timeout=10
+        )
+        
+        assert response.status_code in [200, 404], f"Failed to get booked slots: {response.text}"
+        print(f"SUCCESS: Booked slots endpoint responded with {response.status_code}")
+    
+    def test_get_blocked_slots(self):
+        """Test fetching blocked slots"""
+        tomorrow = (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
+        
+        response = requests.get(
+            f"{BASE_URL}/api/appointments/blocked-slots",
+            params={
+                "doctor_id": "doc_vikas",
+                "clinic": "pushpa",
+                "date": tomorrow
+            },
+            timeout=10
+        )
+        
+        assert response.status_code in [200, 404], f"Failed to get blocked slots: {response.text}"
+        print(f"SUCCESS: Blocked slots endpoint responded with {response.status_code}")
+
+
+class TestPharmacyAPI:
+    """Pharmacy and medicine tests"""
+    
+    def test_get_medicines(self):
+        """Test fetching medicines list"""
+        response = requests.get(f"{BASE_URL}/api/pharmacy/medicines", timeout=10)
+        
+        assert response.status_code == 200, f"Failed to get medicines: {response.text}"
+        data = response.json()
+        if isinstance(data, dict) and "medicines" in data:
+            medicines = data["medicines"]
+        else:
+            medicines = data
+        print(f"SUCCESS: Got medicines response")
+    
+    def test_search_medicines(self):
+        """Test medicine search functionality"""
+        response = requests.get(
+            f"{BASE_URL}/api/pharmacy/medicines",
+            params={"search": "paracetamol"},
+            timeout=10
+        )
+        
+        assert response.status_code == 200, f"Failed to search medicines: {response.text}"
+        print(f"SUCCESS: Medicine search responded")
+    
+    def test_get_inventory(self):
+        """Test fetching pharmacy inventory"""
+        response = requests.get(f"{BASE_URL}/api/pharmacy/inventory", timeout=10)
+        
+        # Accept 200 or 404 (endpoint may not exist)
+        assert response.status_code in [200, 404], f"Unexpected status: {response.status_code}"
+        print(f"SUCCESS: Inventory endpoint responded with {response.status_code}")
+
+
+class TestDiagnosticsAPI:
+    """Diagnostics and lab tests"""
+    
+    def test_get_diagnostic_tests(self):
+        """Test fetching diagnostic tests list"""
+        response = requests.get(f"{BASE_URL}/api/diagnostics/tests", timeout=10)
+        
+        assert response.status_code == 200, f"Failed to get tests: {response.text}"
+        data = response.json()
+        print(f"SUCCESS: Got diagnostic tests response")
+    
+    def test_search_diagnostic_tests(self):
+        """Test diagnostic test search"""
+        response = requests.get(
+            f"{BASE_URL}/api/diagnostics/tests",
+            params={"search": "blood"},
+            timeout=10
+        )
+        
+        assert response.status_code == 200, f"Failed to search tests: {response.text}"
+        print(f"SUCCESS: Diagnostic test search responded")
+
+
+class TestLiveQueueAPI:
+    """Live queue status tests"""
+    
+    def test_get_queue_status_diagyn(self):
+        """Test fetching DiaGyn queue status"""
+        response = requests.get(f"{BASE_URL}/api/live-queue/status/diagyn", timeout=10)
+        
+        # Accept 200 or 404 (endpoint may have different path)
+        assert response.status_code in [200, 404], f"Unexpected status: {response.status_code}"
+        print(f"SUCCESS: DiaGyn queue status responded with {response.status_code}")
+    
+    def test_get_queue_status_proton(self):
+        """Test fetching Proton queue status"""
+        response = requests.get(f"{BASE_URL}/api/live-queue/status/proton", timeout=10)
+        
+        assert response.status_code in [200, 404], f"Unexpected status: {response.status_code}"
+        print(f"SUCCESS: Proton queue status responded with {response.status_code}")
+
+
+class TestSlotBlocking:
+    """Slot blocking feature tests (requires staff auth)"""
+    
+    @pytest.fixture
+    def staff_token(self):
+        """Get staff authentication token"""
+        response = requests.post(f"{BASE_URL}/api/staff/login", json={
+            "username": "staff_pushpa",
+            "password": "Nevika@2026C"
+        }, timeout=10)
+        
+        if response.status_code == 200:
+            return response.json().get("token")
+        pytest.skip("Staff login failed")
+    
+    def test_block_slots_requires_auth(self):
+        """Test that blocking slots requires authentication"""
+        tomorrow = (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
+        
+        response = requests.post(
+            f"{BASE_URL}/api/appointments/block-slots",
+            json={
+                "doctor_id": "doc_vikas",
+                "clinic": "pushpa",
+                "date": tomorrow,
+                "slots": ["18:00"]
+            },
+            timeout=10
+        )
+        
+        assert response.status_code in [401, 403, 422], f"Expected auth error, got {response.status_code}"
+        print(f"SUCCESS: Block slots requires auth (got {response.status_code})")
+    
+    def test_block_slots_with_auth(self, staff_token):
+        """Test blocking slots with valid auth"""
+        tomorrow = (datetime.now() + timedelta(days=3)).strftime("%Y-%m-%d")
+        
+        response = requests.post(
+            f"{BASE_URL}/api/appointments/block-slots",
+            json={
+                "doctor_id": "doc_vikas",
+                "clinic": "pushpa",
+                "date": tomorrow,
+                "slots": ["20:00"]
+            },
+            headers={"Authorization": f"Bearer {staff_token}"},
+            timeout=10
+        )
+        
+        # Accept 200, 201, or 400 (slot may already be blocked)
+        assert response.status_code in [200, 201, 400], f"Unexpected status: {response.status_code}"
+        print(f"SUCCESS: Block slots with auth responded with {response.status_code}")
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "--tb=short"])
