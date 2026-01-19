@@ -481,14 +481,8 @@ const BlockSlotsDialog = ({
   const [loading, setLoading] = useState(false);
   const [loadingBlockedSlots, setLoadingBlockedSlots] = useState(false);
 
-  // Fetch currently blocked slots when dialog opens
-  useEffect(() => {
-    if (open && doctor && clinic && selectedDate) {
-      fetchBlockedSlots();
-    }
-  }, [open, doctor, clinic, selectedDate]);
-
-  const fetchBlockedSlots = async () => {
+  const fetchBlockedSlots = useCallback(async () => {
+    if (!doctor || !clinic || !selectedDate) return;
     setLoadingBlockedSlots(true);
     try {
       const dateStr = format(selectedDate, 'yyyy-MM-dd');
@@ -501,7 +495,14 @@ const BlockSlotsDialog = ({
     } finally {
       setLoadingBlockedSlots(false);
     }
-  };
+  }, [doctor, clinic, selectedDate]);
+
+  // Fetch currently blocked slots when dialog opens
+  useEffect(() => {
+    if (open && doctor && clinic && selectedDate) {
+      fetchBlockedSlots();
+    }
+  }, [open, doctor, clinic, selectedDate, fetchBlockedSlots]);
 
   const toggleSlotSelection = (slot) => {
     setSelectedSlotsToBlock(prev => 
