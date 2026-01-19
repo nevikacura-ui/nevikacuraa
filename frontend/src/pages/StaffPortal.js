@@ -2392,7 +2392,8 @@ const StaffPortal = () => {
                         ...prev,
                         patient_name: patient.name,
                         patient_phone: patient.mobile,
-                        patient_email: patient.email || ''
+                        patient_email: patient.email || '',
+                        patient_id: patient.patient_id
                       }));
                     }}
                     onNewPatient={(mobile) => {
