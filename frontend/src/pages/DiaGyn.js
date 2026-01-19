@@ -656,10 +656,28 @@ const BlockSlotsDialog = ({
 
           {/* Available Slots to Block */}
           <div className="space-y-2">
-            <h4 className="font-semibold text-sm text-[#1B4965] flex items-center gap-2">
-              <Clock className="w-4 h-4 text-[#5FA8D3]" />
-              Select Slots to Block
-            </h4>
+            <div className="flex items-center justify-between">
+              <h4 className="font-semibold text-sm text-[#1B4965] flex items-center gap-2">
+                <Clock className="w-4 h-4 text-[#5FA8D3]" />
+                Select Slots to Block
+              </h4>
+              {/* Block All Remaining Slots Button */}
+              {!loadingBlockedSlots && blockableSlots.filter(s => !blockedSlotTimes.includes(s)).length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const availableToBlock = blockableSlots.filter(s => !blockedSlotTimes.includes(s));
+                    setSelectedSlotsToBlock(availableToBlock);
+                  }}
+                  className="text-xs text-[#EF476F] hover:bg-[#EF476F]/10 px-2 py-1 h-auto"
+                  data-testid="block-all-slots-btn"
+                >
+                  <Ban className="w-3 h-3 mr-1" />
+                  Block All Remaining
+                </Button>
+              )}
+            </div>
             {loadingBlockedSlots ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="w-6 h-6 animate-spin text-[#5FA8D3]" />
