@@ -108,6 +108,8 @@ function App() {
             <Route path="/senior-care" element={<SeniorCare />} />
             {/* Smart Medicine Reminders */}
             <Route path="/smart-reminders" element={<SmartReminders />} />
+            {/* Patient Portal */}
+            <Route path="/patient-portal" element={<PatientPortal />} />
           </Routes>
           <Toaster position="top-center" richColors />
           <PWAInstallPrompt />
