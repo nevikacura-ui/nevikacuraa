@@ -246,8 +246,8 @@ const Home = () => {
   
   // Live Queue Status
   const [queueStatus, setQueueStatus] = useState([
-    { clinic: 'DiaGyn', waitTime: '~15 min', patients: 4, status: 'moderate' },
-    { clinic: 'Proton', waitTime: '~5 min', patients: 1, status: 'low' }
+    { clinic: 'DiaGyn', waitTime: '~0 min', patients: 0, status: 'low' },
+    { clinic: 'Proton', waitTime: '~0 min', patients: 0, status: 'low' }
   ]);
   
   // PWA Install Prompt
