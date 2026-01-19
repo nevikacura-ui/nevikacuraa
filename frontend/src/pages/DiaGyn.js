@@ -1153,17 +1153,32 @@ const DiaGyn = () => {
                 data-testid="diagyn-logo"
               />
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={fetchWeeklyAvailability}
-              disabled={loadingAvailability}
-              className="flex items-center gap-2 rounded-full border-[#5FA8D3] text-[#5FA8D3] hover:bg-[#CAE9FF]/30"
-              data-testid="view-availability-btn"
-            >
-              {loadingAvailability ? <Loader2 className="w-4 h-4 animate-spin" /> : <CalendarDays className="w-4 h-4" />}
-              <span className="hidden sm:inline">Schedule</span>
-            </Button>
+            <div className="flex items-center gap-2">
+              {/* Staff Block Slots Button - Only shown when staff is logged in */}
+              {isStaffLoggedIn() && step === 3 && selectedDoctor && selectedClinic && selectedDate && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowBlockSlotsDialog(true)}
+                  className="flex items-center gap-2 rounded-full border-[#EF476F] text-[#EF476F] hover:bg-[#EF476F]/10"
+                  data-testid="block-slots-btn"
+                >
+                  <Lock className="w-4 h-4" />
+                  <span className="hidden sm:inline">Block Slots</span>
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchWeeklyAvailability}
+                disabled={loadingAvailability}
+                className="flex items-center gap-2 rounded-full border-[#5FA8D3] text-[#5FA8D3] hover:bg-[#CAE9FF]/30"
+                data-testid="view-availability-btn"
+              >
+                {loadingAvailability ? <Loader2 className="w-4 h-4 animate-spin" /> : <CalendarDays className="w-4 h-4" />}
+                <span className="hidden sm:inline">Schedule</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
