@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/context/AuthContext';
+import { useViewMode } from '@/context/ViewModeContext';
+import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
