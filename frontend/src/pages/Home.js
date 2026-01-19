@@ -633,6 +633,14 @@ const Home = () => {
                 {user.name}
               </Button>
               <Button 
+                variant="ghost" 
+                onClick={() => { setShowSettings(true); setShowMenu(false); }}
+                className="w-full justify-start rounded-xl"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </Button>
+              <Button 
                 variant="outline" 
                 onClick={() => { logout(); setShowMenu(false); }}
                 className="w-full rounded-xl"
