@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/context/AuthContext';
 import { useViewMode } from '@/context/ViewModeContext';
 import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
+import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRegistration';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
