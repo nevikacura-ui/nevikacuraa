@@ -940,6 +940,37 @@ const StaffPortal = () => {
     setLoading(false);
   };
   
+  // Edit patient details on appointment
+  const handleEditPatient = (appointment) => {
+    setEditingAppointment(appointment);
+    setEditPatientForm({
+      patient_name: appointment.patient_name || '',
+      patient_phone: appointment.patient_phone || '',
+      age: appointment.patient_age || ''
+    });
+    setShowEditPatientModal(true);
+  };
+  
+  const handleSavePatientEdit = async () => {
+    if (!editingAppointment) return;
+    
+    setSavingPatientEdit(true);
+    try {
+      await axios.put(
+        `${API}/staff/appointments/${editingAppointment.id}/patient`,
+        editPatientForm,
+        getAuthHeaders()
+      );
+      toast.success('Patient details updated');
+      setShowEditPatientModal(false);
+      setEditingAppointment(null);
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to update');
+    }
+    setSavingPatientEdit(false);
+  };
+  
   // Add service to appointment
   const handleAddService = async () => {
     if (!selectedAppointment || !selectedService) {
