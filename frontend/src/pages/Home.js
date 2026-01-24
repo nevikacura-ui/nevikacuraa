@@ -1640,7 +1640,9 @@ const Home = () => {
       </Dialog>
 
       {/* Bottom Navigation - Mobile Only */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-200 z-50 pb-safe">
+      <nav className={`md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-200 z-50 pb-safe transition-transform duration-300 ${
+        isScrolling ? 'translate-y-full' : 'translate-y-0'
+      }`}>
         <div className="flex items-center justify-around py-2 px-4">
           {/* Home */}
           <button
