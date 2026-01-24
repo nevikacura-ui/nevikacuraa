@@ -138,6 +138,16 @@ const StaffPortal = () => {
   const [patientHistory, setPatientHistory] = useState(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
   
+  // Edit patient modal states
+  const [showEditPatientModal, setShowEditPatientModal] = useState(false);
+  const [editingAppointment, setEditingAppointment] = useState(null);
+  const [editPatientForm, setEditPatientForm] = useState({
+    patient_name: '',
+    patient_phone: '',
+    age: ''
+  });
+  const [savingPatientEdit, setSavingPatientEdit] = useState(false);
+  
   // Loyalty points states
   const [loyaltyPhone, setLoyaltyPhone] = useState('');
   const [loyaltyUser, setLoyaltyUser] = useState(null);
