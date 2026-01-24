@@ -6,13 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
-  ArrowLeft, User, Phone, Calendar, Loader2, LogOut,
-  FileText, Pill, FlaskConical, Receipt, History, Clock,
-  CheckCircle2, XCircle, AlertCircle, Download, Eye,
-  Stethoscope, Building2, CreditCard, Shield
+  ArrowLeft, User, Phone, Calendar, Loader2, LogOut, Mail, Edit2, Save, X,
+  FileText, Pill, FlaskConical, Receipt, History, Clock, Gift, Package,
+  CheckCircle2, XCircle, AlertCircle, Download, Eye, Search,
+  Stethoscope, Building2, CreditCard, Shield, Star, ChevronRight
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
@@ -36,6 +37,14 @@ const PatientPortal = () => {
   const [history, setHistory] = useState(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
   
+  // Active section
+  const [activeSection, setActiveSection] = useState('profile');
+  
+  // Edit profile states
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [editForm, setEditForm] = useState({ email: '', mobile: '' });
+  const [savingProfile, setSavingProfile] = useState(false);
+  
   // Check for existing session
   useEffect(() => {
     const verifyExistingToken = async (savedToken) => {
@@ -46,6 +55,7 @@ const PatientPortal = () => {
         setPatientInfo(response.data);
         setToken(savedToken);
         setIsAuthenticated(true);
+        setEditForm({ email: response.data.email || '', mobile: response.data.mobile || '' });
         fetchHistory(response.data.patient_id, savedToken);
       } catch (error) {
         localStorage.removeItem('patientToken');
@@ -68,7 +78,7 @@ const PatientPortal = () => {
     try {
       const response = await axios.post(`${API}/patients/portal/send-otp?mobile=${mobile}`);
       setOtpSent(true);
-      setMockOtp(response.data.mock_otp || ''); // For testing
+      setMockOtp(response.data.mock_otp || '');
       toast.success('OTP sent to your mobile number');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to send OTP. Please register at the clinic first.');
@@ -92,6 +102,7 @@ const PatientPortal = () => {
       setToken(newToken);
       setPatientInfo(patient);
       setIsAuthenticated(true);
+      setEditForm({ email: patient.email || '', mobile: patient.mobile || '' });
       toast.success(`Welcome, ${patient.name}!`);
       
       fetchHistory(patient.patient_id, newToken);
@@ -127,6 +138,35 @@ const PatientPortal = () => {
       setLoadingHistory(false);
     }
   };
+  
+  const handleSaveProfile = async () => {
+    setSavingProfile(true);
+    try {
+      await axios.put(`${API}/patients/${patientInfo.patient_id}/update`, {
+        email: editForm.email,
+        mobile: editForm.mobile
+      }, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setPatientInfo(prev => ({ ...prev, email: editForm.email, mobile: editForm.mobile }));
+      setEditingProfile(false);
+      toast.success('Profile updated successfully');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to update profile');
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+  
+  // Menu Items
+  const menuItems = [
+    { id: 'profile', icon: User, label: 'Profile Details', color: 'teal' },
+    { id: 'records', icon: FileText, label: 'Medical Records', color: 'blue' },
+    { id: 'appointments', icon: Calendar, label: 'Booked Appointments', color: 'indigo' },
+    { id: 'tests', icon: FlaskConical, label: 'Booked Tests', color: 'purple' },
+    { id: 'track', icon: Package, label: 'Track Orders', color: 'orange' },
+    { id: 'loyalty', icon: Gift, label: 'Loyalty Points', color: 'pink' },
+  ];
   
   // Login Screen
   if (!isAuthenticated) {
@@ -249,7 +289,7 @@ const PatientPortal = () => {
   
   // Dashboard Screen
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 pb-20">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-lg border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -258,7 +298,7 @@ const PatientPortal = () => {
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="font-bold text-lg text-teal-800">Patient Portal</h1>
+              <h1 className="font-bold text-lg text-teal-800">My Profile</h1>
               <p className="text-xs text-gray-500">{patientInfo?.patient_id}</p>
             </div>
           </div>
@@ -277,9 +317,9 @@ const PatientPortal = () => {
               <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
                 <User className="w-8 h-8" />
               </div>
-              <div>
+              <div className="flex-1">
                 <h2 className="text-2xl font-bold">{patientInfo?.name}</h2>
-                <div className="flex items-center gap-3 mt-1 text-teal-100">
+                <div className="flex items-center gap-3 mt-1 text-teal-100 flex-wrap">
                   <span className="flex items-center gap-1">
                     <Phone className="w-4 h-4" />
                     {patientInfo?.mobile}
@@ -290,150 +330,263 @@ const PatientPortal = () => {
               </div>
             </div>
           </div>
-          
-          {/* Quick Stats */}
-          {history && (
-            <div className="grid grid-cols-4 divide-x">
-              {[
-                { icon: Calendar, label: 'Appointments', count: history.summary.total_appointments, color: 'blue' },
-                { icon: Pill, label: 'Prescriptions', count: history.appointments?.filter(a => a.prescription).length || 0, color: 'green' },
-                { icon: FlaskConical, label: 'Lab Tests', count: history.summary.total_diagnostic_orders, color: 'purple' },
-                { icon: Receipt, label: 'Bills', count: history.summary.total_bills, color: 'orange' }
-              ].map((stat, idx) => (
-                <div key={idx} className="p-4 text-center">
-                  <stat.icon className={`w-6 h-6 mx-auto text-${stat.color}-500 mb-1`} />
-                  <p className="text-2xl font-bold text-gray-800">{stat.count}</p>
-                  <p className="text-xs text-gray-500">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-          )}
         </Card>
         
-        {/* History Tabs */}
+        {/* Menu Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          {menuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveSection(item.id)}
+              className={`p-4 rounded-2xl border-2 transition-all text-left ${
+                activeSection === item.id 
+                  ? `border-${item.color}-500 bg-${item.color}-50` 
+                  : 'border-gray-100 bg-white hover:border-gray-200'
+              }`}
+              data-testid={`menu-${item.id}`}
+            >
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${
+                activeSection === item.id ? `bg-${item.color}-500` : 'bg-gray-100'
+              }`}>
+                <item.icon className={`w-5 h-5 ${activeSection === item.id ? 'text-white' : 'text-gray-500'}`} />
+              </div>
+              <p className={`font-medium text-sm ${activeSection === item.id ? `text-${item.color}-700` : 'text-gray-700'}`}>
+                {item.label}
+              </p>
+            </button>
+          ))}
+        </div>
+        
+        {/* Content Sections */}
         {loadingHistory ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
           </div>
-        ) : history ? (
-          <Tabs defaultValue="appointments" className="space-y-4">
-            <TabsList className="bg-white rounded-xl p-1 shadow-sm grid grid-cols-4 h-auto">
-              <TabsTrigger value="appointments" className="rounded-lg py-3 data-[state=active]:bg-blue-500 data-[state=active]:text-white">
-                <Calendar className="w-4 h-4 mr-2" />
-                Appointments
-              </TabsTrigger>
-              <TabsTrigger value="prescriptions" className="rounded-lg py-3 data-[state=active]:bg-green-500 data-[state=active]:text-white">
-                <Pill className="w-4 h-4 mr-2" />
-                Prescriptions
-              </TabsTrigger>
-              <TabsTrigger value="lab-reports" className="rounded-lg py-3 data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-                <FlaskConical className="w-4 h-4 mr-2" />
-                Lab Reports
-              </TabsTrigger>
-              <TabsTrigger value="bills" className="rounded-lg py-3 data-[state=active]:bg-orange-500 data-[state=active]:text-white">
-                <Receipt className="w-4 h-4 mr-2" />
-                Bills
-              </TabsTrigger>
-            </TabsList>
+        ) : (
+          <>
+            {/* Profile Details Section */}
+            {activeSection === 'profile' && (
+              <Card className="rounded-2xl shadow-lg border-0">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-teal-700">
+                    <User className="w-5 h-5" />
+                    Profile Details
+                  </CardTitle>
+                  {!editingProfile ? (
+                    <Button variant="outline" size="sm" onClick={() => setEditingProfile(true)}>
+                      <Edit2 className="w-4 h-4 mr-2" />
+                      Edit
+                    </Button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setEditingProfile(false)}>
+                        <X className="w-4 h-4" />
+                      </Button>
+                      <Button size="sm" onClick={handleSaveProfile} disabled={savingProfile} className="bg-teal-600 hover:bg-teal-700">
+                        {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                        Save
+                      </Button>
+                    </div>
+                  )}
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-4 bg-gray-50 rounded-xl">
+                      <Label className="text-xs text-gray-500">Full Name</Label>
+                      <p className="font-semibold text-gray-800 mt-1">{patientInfo?.name}</p>
+                      <p className="text-xs text-gray-400 mt-1">Name cannot be edited</p>
+                    </div>
+                    
+                    <div className="p-4 bg-gray-50 rounded-xl">
+                      <Label className="text-xs text-gray-500">Patient ID</Label>
+                      <p className="font-semibold text-gray-800 mt-1">{patientInfo?.patient_id}</p>
+                    </div>
+                    
+                    <div className="p-4 bg-gray-50 rounded-xl">
+                      <Label className="text-xs text-gray-500">Mobile Number</Label>
+                      {editingProfile ? (
+                        <Input 
+                          value={editForm.mobile}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, mobile: e.target.value }))}
+                          className="mt-1"
+                        />
+                      ) : (
+                        <p className="font-semibold text-gray-800 mt-1 flex items-center gap-2">
+                          <Phone className="w-4 h-4 text-gray-400" />
+                          {patientInfo?.mobile}
+                        </p>
+                      )}
+                    </div>
+                    
+                    <div className="p-4 bg-gray-50 rounded-xl">
+                      <Label className="text-xs text-gray-500">Email Address</Label>
+                      {editingProfile ? (
+                        <Input 
+                          value={editForm.email}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
+                          placeholder="Enter email"
+                          className="mt-1"
+                        />
+                      ) : (
+                        <p className="font-semibold text-gray-800 mt-1 flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-gray-400" />
+                          {patientInfo?.email || 'Not provided'}
+                        </p>
+                      )}
+                    </div>
+                    
+                    {patientInfo?.age && (
+                      <div className="p-4 bg-gray-50 rounded-xl">
+                        <Label className="text-xs text-gray-500">Age</Label>
+                        <p className="font-semibold text-gray-800 mt-1">{patientInfo?.age} years</p>
+                      </div>
+                    )}
+                    
+                    {patientInfo?.gender && (
+                      <div className="p-4 bg-gray-50 rounded-xl">
+                        <Label className="text-xs text-gray-500">Gender</Label>
+                        <p className="font-semibold text-gray-800 mt-1 capitalize">{patientInfo?.gender}</p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
             
-            {/* Appointments Tab */}
-            <TabsContent value="appointments">
+            {/* Medical Records Section */}
+            {activeSection === 'records' && history && (
               <Card className="rounded-2xl shadow-lg border-0">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-blue-700">
-                    <Calendar className="w-5 h-5" />
-                    Appointment History
+                    <FileText className="w-5 h-5" />
+                    Medical Records
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {history.appointments.length === 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                    {[
+                      { label: 'Appointments', count: history.summary.total_appointments, color: 'blue' },
+                      { label: 'Prescriptions', count: history.pharmacy_orders?.length || 0, color: 'green' },
+                      { label: 'Lab Tests', count: history.summary.total_diagnostic_orders, color: 'purple' },
+                      { label: 'Total Visits', count: patientInfo?.total_visits || 0, color: 'teal' },
+                    ].map((stat, idx) => (
+                      <div key={idx} className={`p-4 bg-${stat.color}-50 rounded-xl text-center`}>
+                        <p className={`text-2xl font-bold text-${stat.color}-600`}>{stat.count}</p>
+                        <p className="text-xs text-gray-500">{stat.label}</p>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {history.appointments.slice(0, 5).map((apt, idx) => (
+                      <div key={idx} className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <Stethoscope className="w-5 h-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-800">{apt.doctor}</p>
+                            <p className="text-sm text-gray-500">{apt.date} • {apt.clinic}</p>
+                          </div>
+                        </div>
+                        <Badge className={apt.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}>
+                          {apt.status}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
+            {/* Booked Appointments Section */}
+            {activeSection === 'appointments' && history && (
+              <Card className="rounded-2xl shadow-lg border-0">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-indigo-700">
+                    <Calendar className="w-5 h-5" />
+                    Booked Appointments
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {history.appointments.filter(a => a.status !== 'Completed' && a.status !== 'Cancelled').length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
                       <Calendar className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                      <p>No appointments found</p>
+                      <p>No upcoming appointments</p>
+                      <Button className="mt-4" onClick={() => navigate('/diagyn')}>Book Appointment</Button>
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {history.appointments.map((apt, idx) => (
-                        <div key={idx} className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                              <Stethoscope className="w-6 h-6 text-blue-600" />
+                      {history.appointments.filter(a => a.status !== 'Completed' && a.status !== 'Cancelled').map((apt, idx) => (
+                        <div key={idx} className="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+                                <Stethoscope className="w-6 h-6 text-indigo-600" />
+                              </div>
+                              <div>
+                                <p className="font-semibold text-gray-800">{apt.doctor}</p>
+                                <p className="text-sm text-gray-500">{apt.clinic}</p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="font-semibold text-gray-800">{apt.doctor}</p>
-                              <p className="text-sm text-gray-500 flex items-center gap-2">
-                                <Building2 className="w-3 h-3" />
-                                {apt.clinic}
-                              </p>
-                              <p className="text-sm text-gray-500 flex items-center gap-2">
-                                <Clock className="w-3 h-3" />
-                                {apt.date} at {apt.time}
-                              </p>
-                            </div>
+                            <Badge className="bg-indigo-100 text-indigo-700">{apt.status}</Badge>
                           </div>
-                          <Badge className={`
-                            ${apt.status === 'completed' ? 'bg-green-100 text-green-700' : 
-                              apt.status === 'confirmed' ? 'bg-blue-100 text-blue-700' :
-                              apt.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                              'bg-gray-100 text-gray-700'}
-                          `}>
-                            {apt.status === 'completed' && <CheckCircle2 className="w-3 h-3 mr-1" />}
-                            {apt.status === 'cancelled' && <XCircle className="w-3 h-3 mr-1" />}
-                            {apt.status}
-                          </Badge>
+                          <div className="flex items-center gap-4 text-sm text-gray-600 mt-3">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              {apt.date}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {apt.time}
+                            </span>
+                          </div>
                         </div>
                       ))}
                     </div>
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            )}
             
-            {/* Prescriptions Tab */}
-            <TabsContent value="prescriptions">
+            {/* Booked Tests Section */}
+            {activeSection === 'tests' && history && (
               <Card className="rounded-2xl shadow-lg border-0">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-green-700">
-                    <Pill className="w-5 h-5" />
-                    Prescriptions
+                  <CardTitle className="flex items-center gap-2 text-purple-700">
+                    <FlaskConical className="w-5 h-5" />
+                    Booked Tests
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {history.pharmacy_orders.length === 0 ? (
+                  {history.diagnostic_orders.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      <Pill className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                      <p>No prescriptions found</p>
+                      <FlaskConical className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                      <p>No lab tests booked</p>
+                      <Button className="mt-4" onClick={() => navigate('/proton')}>Book Lab Test</Button>
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {history.pharmacy_orders.map((order, idx) => (
-                        <div key={idx} className="p-4 bg-gray-50 rounded-xl">
-                          <div className="flex items-center justify-between mb-3">
+                      {history.diagnostic_orders.map((order, idx) => (
+                        <div key={idx} className="p-4 bg-purple-50 rounded-xl border border-purple-100">
+                          <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                <Pill className="w-5 h-5 text-green-600" />
+                              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <FlaskConical className="w-5 h-5 text-purple-600" />
                               </div>
                               <div>
-                                <p className="font-semibold text-gray-800">Order #{order.order_id || idx + 1}</p>
+                                <p className="font-semibold text-gray-800">Test Order #{idx + 1}</p>
                                 <p className="text-xs text-gray-500">{order.created_at?.split('T')[0]}</p>
                               </div>
                             </div>
-                            <Badge className={`
-                              ${order.status === 'delivered' ? 'bg-green-100 text-green-700' : 
-                                order.status === 'processing' ? 'bg-blue-100 text-blue-700' :
-                                'bg-gray-100 text-gray-700'}
-                            `}>
+                            <Badge className={order.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'}>
                               {order.status}
                             </Badge>
                           </div>
-                          {order.items && (
-                            <div className="text-sm text-gray-600">
-                              {order.items.slice(0, 3).map((item, i) => (
-                                <p key={i}>• {item.name} x {item.quantity}</p>
-                              ))}
-                              {order.items.length > 3 && (
-                                <p className="text-gray-400">+{order.items.length - 3} more items</p>
-                              )}
+                          {order.tests && (
+                            <div className="mt-3 text-sm text-gray-600">
+                              {order.tests.slice(0, 3).join(', ')}
+                              {order.tests.length > 3 && ` +${order.tests.length - 3} more`}
                             </div>
                           )}
                         </div>
@@ -442,145 +595,115 @@ const PatientPortal = () => {
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            )}
             
-            {/* Lab Reports Tab */}
-            <TabsContent value="lab-reports">
-              <Card className="rounded-2xl shadow-lg border-0">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-purple-700">
-                    <FlaskConical className="w-5 h-5" />
-                    Lab Reports
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {history.diagnostic_orders.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      <FlaskConical className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                      <p>No lab reports found</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {history.diagnostic_orders.map((order, idx) => (
-                        <div key={idx} className="p-4 bg-gray-50 rounded-xl">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <FlaskConical className="w-5 h-5 text-purple-600" />
-                              </div>
-                              <div>
-                                <p className="font-semibold text-gray-800">
-                                  {order.tests?.join(', ') || 'Lab Test'}
-                                </p>
-                                <p className="text-xs text-gray-500">{order.created_at?.split('T')[0]}</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Badge className={`
-                                ${order.status === 'completed' ? 'bg-green-100 text-green-700' : 
-                                  order.status === 'processing' ? 'bg-blue-100 text-blue-700' :
-                                  'bg-gray-100 text-gray-700'}
-                              `}>
-                                {order.status}
-                              </Badge>
-                              {order.report_url && (
-                                <Button size="sm" variant="outline" className="rounded-lg">
-                                  <Download className="w-4 h-4 mr-1" />
-                                  Report
-                                </Button>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            {/* Bills Tab */}
-            <TabsContent value="bills">
+            {/* Track Orders Section */}
+            {activeSection === 'track' && history && (
               <Card className="rounded-2xl shadow-lg border-0">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-orange-700">
-                    <Receipt className="w-5 h-5" />
-                    Billing History
+                    <Package className="w-5 h-5" />
+                    Track Orders
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {history.bills.length === 0 ? (
+                  {history.pharmacy_orders.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      <Receipt className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                      <p>No bills found</p>
+                      <Package className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                      <p>No orders to track</p>
+                      <Button className="mt-4" onClick={() => navigate('/orange')}>Order Medicines</Button>
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {history.bills.map((bill, idx) => (
-                        <div key={idx} className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                              <Receipt className="w-5 h-5 text-orange-600" />
+                      {history.pharmacy_orders.map((order, idx) => (
+                        <div key={idx} className="p-4 bg-orange-50 rounded-xl border border-orange-100">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <Pill className="w-5 h-5 text-orange-600" />
+                              </div>
+                              <div>
+                                <p className="font-semibold text-gray-800">Order #{order.order_id || idx + 1}</p>
+                                <p className="text-xs text-gray-500">{order.created_at?.split('T')[0]}</p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="font-semibold text-gray-800">Bill #{bill.bill_number || idx + 1}</p>
-                              <p className="text-xs text-gray-500">{bill.created_at?.split('T')[0]}</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-bold text-lg text-gray-800">₹{bill.amount || 0}</p>
-                            <Badge className={bill.paid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}>
-                              {bill.paid ? 'Paid' : 'Pending'}
+                            <Badge className={
+                              order.status === 'delivered' ? 'bg-green-100 text-green-700' : 
+                              order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                              'bg-orange-100 text-orange-700'
+                            }>
+                              {order.status}
                             </Badge>
                           </div>
+                          {order.items && (
+                            <div className="text-sm text-gray-600">
+                              {order.items.slice(0, 2).map((item, i) => (
+                                <p key={i}>• {item.name} x {item.quantity}</p>
+                              ))}
+                              {order.items.length > 2 && (
+                                <p className="text-gray-400">+{order.items.length - 2} more items</p>
+                              )}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
                   )}
+                  
+                  <div className="mt-4 p-4 bg-gray-50 rounded-xl">
+                    <p className="text-sm text-gray-600 mb-3">Have an order ID? Track it here:</p>
+                    <Button variant="outline" className="w-full" onClick={() => navigate('/track')}>
+                      <Search className="w-4 h-4 mr-2" />
+                      Go to Order Tracking
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
-            </TabsContent>
-          </Tabs>
-        ) : null}
-        
-        {/* Quick Actions */}
-        <Card className="rounded-2xl shadow-lg border-0 p-6">
-          <h3 className="font-semibold text-gray-800 mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-2 gap-3">
-            <Button 
-              variant="outline" 
-              className="h-auto py-4 rounded-xl flex flex-col items-center gap-2"
-              onClick={() => navigate('/diagyn')}
-            >
-              <Calendar className="w-6 h-6 text-blue-500" />
-              <span>Book Appointment</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-auto py-4 rounded-xl flex flex-col items-center gap-2"
-              onClick={() => navigate('/pharmacy')}
-            >
-              <Pill className="w-6 h-6 text-orange-500" />
-              <span>Order Medicines</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-auto py-4 rounded-xl flex flex-col items-center gap-2"
-              onClick={() => navigate('/proton')}
-            >
-              <FlaskConical className="w-6 h-6 text-purple-500" />
-              <span>Book Lab Test</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-auto py-4 rounded-xl flex flex-col items-center gap-2"
-              onClick={() => navigate('/emergency')}
-            >
-              <AlertCircle className="w-6 h-6 text-red-500" />
-              <span>Emergency</span>
-            </Button>
-          </div>
-        </Card>
+            )}
+            
+            {/* Loyalty Points Section */}
+            {activeSection === 'loyalty' && (
+              <Card className="rounded-2xl shadow-lg border-0">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-pink-700">
+                    <Gift className="w-5 h-5" />
+                    Loyalty Points
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Star className="w-10 h-10 text-white" />
+                    </div>
+                    <p className="text-4xl font-bold text-pink-600">{patientInfo?.loyalty_points || 0}</p>
+                    <p className="text-gray-500 mt-1">Total Points</p>
+                    
+                    <div className="mt-6 p-4 bg-pink-50 rounded-xl">
+                      <p className="text-sm text-pink-700">
+                        Earn 10 points for every ₹100 spent. Redeem points for discounts on future visits!
+                      </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-4 mt-6">
+                      <div className="p-3 bg-gray-50 rounded-xl">
+                        <p className="text-lg font-bold text-gray-800">{patientInfo?.total_visits || 0}</p>
+                        <p className="text-xs text-gray-500">Total Visits</p>
+                      </div>
+                      <div className="p-3 bg-gray-50 rounded-xl">
+                        <p className="text-lg font-bold text-gray-800">{history?.pharmacy_orders?.length || 0}</p>
+                        <p className="text-xs text-gray-500">Orders</p>
+                      </div>
+                      <div className="p-3 bg-gray-50 rounded-xl">
+                        <p className="text-lg font-bold text-gray-800">{history?.summary?.total_appointments || 0}</p>
+                        <p className="text-xs text-gray-500">Appointments</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </>
+        )}
       </main>
     </div>
   );
