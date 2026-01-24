@@ -400,6 +400,50 @@ async def check_in_patient(appointment_id: str, staff = Depends(verify_staff)):
 
 # ============ Complete Appointments ============
 
+class PatientEditRequest(BaseModel):
+    patient_name: str
+    patient_phone: str
+    age: Optional[str] = None
+
+
+@router.put("/appointments/{appointment_id}/patient")
+async def update_appointment_patient(
+    appointment_id: str,
+    data: PatientEditRequest,
+    staff = Depends(verify_staff)
+):
+    """Update patient details on an appointment (Staff only)"""
+    appointment = await db.appointments.find_one({"id": appointment_id})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    update_data = {
+        "patient_name": data.patient_name,
+        "patient_phone": data.patient_phone,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "updated_by": staff.get('name', 'Staff')
+    }
+    
+    if data.age:
+        update_data["patient_age"] = data.age
+    
+    await db.appointments.update_one({"id": appointment_id}, {"$set": update_data})
+    
+    # Also update the patient record if exists
+    patient = await db.patients.find_one({"patient_id": appointment.get("patient_id")})
+    if patient:
+        patient_update = {
+            "name": data.patient_name,
+            "mobile": data.patient_phone,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        if data.age:
+            patient_update["age"] = int(data.age) if data.age.isdigit() else None
+        await db.patients.update_one({"patient_id": appointment.get("patient_id")}, {"$set": patient_update})
+    
+    return {"success": True, "message": "Patient details updated"}
+
+
 @router.put("/appointments/{appointment_id}/complete")
 async def complete_appointment(
     appointment_id: str, 
