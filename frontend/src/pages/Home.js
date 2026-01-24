@@ -1679,13 +1679,13 @@ const Home = () => {
             {/* Book Appointment - Center Highlight */}
             <button
               onClick={() => setShowBookingModal(true)}
-              className="relative -mt-6"
+              className="relative -mt-5 flex flex-col items-center"
               data-testid="nav-book-appointment"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40 hover:scale-105 transition-all">
-                <Plus className="w-8 h-8 text-white" />
+              <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40 hover:scale-105 transition-all ring-4 ring-white">
+                <Calendar className="w-6 h-6 text-white" />
               </div>
-              <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs font-semibold text-teal-600 whitespace-nowrap">Book</span>
+              <span className="mt-1 text-[10px] font-bold text-teal-600 tracking-wide">BOOK</span>
             </button>
             
             {/* Lab Tests */}
