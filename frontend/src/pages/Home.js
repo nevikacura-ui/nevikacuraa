@@ -520,7 +520,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 relative overflow-hidden" style={{ contentVisibility: 'auto' }}>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 relative" style={{ contentVisibility: 'auto' }}>
       {/* Floating Background Blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-20 -left-32 w-96 h-96 bg-gradient-to-br from-violet-200/40 to-fuchsia-200/40 rounded-full blur-3xl animate-pulse" style={{animationDuration: '8s'}}></div>
