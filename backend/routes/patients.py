@@ -279,6 +279,58 @@ async def update_patient(patient_id: str, update: PatientUpdate, staff: dict = D
     return {"success": True, "message": "Patient updated successfully"}
 
 
+class PatientSelfUpdate(BaseModel):
+    email: Optional[str] = None
+    mobile: Optional[str] = None
+
+
+@router.put("/{patient_id}/update")
+async def update_patient_self(patient_id: str, update: PatientSelfUpdate, authorization: str = Header(None)):
+    """Update patient details (Patient portal - self update, limited fields)"""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+    
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        if payload.get("sub") != patient_id:
+            raise HTTPException(status_code=403, detail="Not authorized to update this patient")
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    patient = await db.patients.find_one({"patient_id": patient_id})
+    
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    
+    # Build update document (only allow email and mobile)
+    update_doc = {}
+    if update.email is not None:
+        update_doc["email"] = update.email
+    if update.mobile is not None:
+        # Validate mobile doesn't conflict with existing
+        existing = await db.patients.find_one({
+            "mobile": update.mobile,
+            "patient_id": {"$ne": patient_id}
+        })
+        if existing:
+            raise HTTPException(status_code=400, detail="Mobile number already registered to another patient")
+        update_doc["mobile"] = update.mobile
+    
+    if update_doc:
+        update_doc["updated_at"] = datetime.now(timezone.utc).isoformat()
+        update_doc["updated_by"] = "patient_self"
+        
+        await db.patients.update_one(
+            {"patient_id": patient_id},
+            {"$set": update_doc}
+        )
+    
+    return {"success": True, "message": "Profile updated successfully"}
+
+
 # ============================================
 # PATIENT HISTORY ENDPOINTS
 # ============================================
