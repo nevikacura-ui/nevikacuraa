@@ -1685,7 +1685,7 @@ const Home = () => {
               <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40 hover:scale-105 transition-all ring-4 ring-white">
                 <Calendar className="w-6 h-6 text-white" />
               </div>
-              <span className="mt-1 text-[10px] font-bold text-teal-600 tracking-wide">BOOK</span>
+              <span className="mt-1.5 text-xs font-semibold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full">Book</span>
             </button>
             
             {/* Lab Tests */}
