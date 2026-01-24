@@ -1661,19 +1661,19 @@ const Home = () => {
               <span className="text-xs font-medium">Home</span>
             </button>
             
-            {/* Track Orders */}
+            {/* Pharmacy */}
             <button
               onClick={() => {
-                setActiveTab('track');
-                navigate('/track');
+                setActiveTab('pharmacy');
+                navigate('/orange');
               }}
               className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-                activeTab === 'track' ? 'text-teal-600' : 'text-slate-400'
+                activeTab === 'pharmacy' ? 'text-teal-600' : 'text-slate-400'
               }`}
-              data-testid="nav-track"
+              data-testid="nav-pharmacy"
             >
-              <Search className="w-5 h-5" />
-              <span className="text-xs font-medium">Track</span>
+              <Pill className="w-5 h-5" />
+              <span className="text-xs font-medium">Pharmacy</span>
             </button>
             
             {/* Book Appointment - Center Highlight */}
@@ -1688,35 +1688,35 @@ const Home = () => {
               <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs font-semibold text-teal-600 whitespace-nowrap">Book</span>
             </button>
             
-            {/* My Records */}
+            {/* Lab Tests */}
             <button
               onClick={() => {
-                setActiveTab('records');
-                navigate('/patient-portal');
+                setActiveTab('lab');
+                navigate('/proton');
               }}
               className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-                activeTab === 'records' ? 'text-teal-600' : 'text-slate-400'
+                activeTab === 'lab' ? 'text-teal-600' : 'text-slate-400'
               }`}
-              data-testid="nav-records"
+              data-testid="nav-lab"
             >
-              <History className="w-5 h-5" />
-              <span className="text-xs font-medium">Records</span>
+              <TestTube className="w-5 h-5" />
+              <span className="text-xs font-medium">Lab Tests</span>
             </button>
             
             {/* Profile / Account */}
             <button
               onClick={() => {
-                setActiveTab('account');
+                setActiveTab('profile');
                 if (user) {
-                  navigate('/profile');
+                  navigate('/patient-portal');
                 } else {
                   setShowAuth(true);
                 }
               }}
               className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-                activeTab === 'account' ? 'text-teal-600' : 'text-slate-400'
+                activeTab === 'profile' ? 'text-teal-600' : 'text-slate-400'
               }`}
-              data-testid="nav-account"
+              data-testid="nav-profile"
             >
               <User className="w-5 h-5" />
               <span className="text-xs font-medium">{user ? 'Profile' : 'Login'}</span>
