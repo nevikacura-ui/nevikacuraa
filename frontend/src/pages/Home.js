@@ -254,6 +254,10 @@ const Home = () => {
   const [installPrompt, setInstallPrompt] = useState(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   
+  // Bottom Navigation
+  const [activeTab, setActiveTab] = useState('home');
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  
   // Get greeting based on time of day
   const getGreeting = useCallback(() => {
     const hour = new Date().getHours();
