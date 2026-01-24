@@ -4664,6 +4664,64 @@ const StaffPortal = () => {
           toast.success(`Patient registered: ${patient.patient_id}`);
         }}
       />
+      
+      {/* Edit Patient Modal */}
+      <Dialog open={showEditPatientModal} onOpenChange={setShowEditPatientModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-amber-700">
+              <Edit2 className="w-5 h-5" />
+              Edit Patient Details
+            </DialogTitle>
+            <DialogDescription>
+              Update patient information for this appointment
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>Patient Name</Label>
+              <Input
+                value={editPatientForm.patient_name}
+                onChange={(e) => setEditPatientForm(prev => ({ ...prev, patient_name: e.target.value }))}
+                placeholder="Enter patient name"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label>Mobile Number</Label>
+              <Input
+                value={editPatientForm.patient_phone}
+                onChange={(e) => setEditPatientForm(prev => ({ ...prev, patient_phone: e.target.value.replace(/\D/g, '').slice(0, 10) }))}
+                placeholder="Enter mobile number"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label>Age</Label>
+              <Input
+                value={editPatientForm.age}
+                onChange={(e) => setEditPatientForm(prev => ({ ...prev, age: e.target.value }))}
+                placeholder="Enter age"
+                type="number"
+                className="mt-1"
+              />
+            </div>
+          </div>
+          <div className="flex gap-3 justify-end">
+            <Button variant="outline" onClick={() => setShowEditPatientModal(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSavePatientEdit} 
+              disabled={savingPatientEdit}
+              className="bg-amber-600 hover:bg-amber-700"
+            >
+              {savingPatientEdit ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+              Save Changes
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
