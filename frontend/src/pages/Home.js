@@ -1640,88 +1640,91 @@ const Home = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Bottom Navigation - Mobile Only */}
-      <nav className={`md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-200 z-50 pb-safe transition-transform duration-300 ${
-        isScrolling ? 'translate-y-full' : 'translate-y-0'
-      }`}>
-        <div className="flex items-center justify-around py-2 px-4">
-          {/* Home */}
-          <button
-            onClick={() => {
-              setActiveTab('home');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-              activeTab === 'home' ? 'text-teal-600' : 'text-slate-400'
-            }`}
-            data-testid="nav-home"
-          >
-            <HomeIcon className="w-5 h-5" />
-            <span className="text-xs font-medium">Home</span>
-          </button>
-          
-          {/* Track Orders */}
-          <button
-            onClick={() => {
-              setActiveTab('track');
-              navigate('/track');
-            }}
-            className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-              activeTab === 'track' ? 'text-teal-600' : 'text-slate-400'
-            }`}
-            data-testid="nav-track"
-          >
-            <Search className="w-5 h-5" />
-            <span className="text-xs font-medium">Track</span>
-          </button>
-          
-          {/* Book Appointment - Center Highlight */}
-          <button
-            onClick={() => setShowBookingModal(true)}
-            className="relative -mt-6"
-            data-testid="nav-book-appointment"
-          >
-            <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40 hover:scale-105 transition-all">
-              <Plus className="w-8 h-8 text-white" />
-            </div>
-            <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs font-semibold text-teal-600 whitespace-nowrap">Book</span>
-          </button>
-          
-          {/* My Records */}
-          <button
-            onClick={() => {
-              setActiveTab('records');
-              navigate('/patient-portal');
-            }}
-            className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-              activeTab === 'records' ? 'text-teal-600' : 'text-slate-400'
-            }`}
-            data-testid="nav-records"
-          >
-            <History className="w-5 h-5" />
-            <span className="text-xs font-medium">Records</span>
-          </button>
-          
-          {/* Profile / Account */}
-          <button
-            onClick={() => {
-              setActiveTab('account');
-              if (user) {
-                navigate('/profile');
-              } else {
-                setShowAuth(true);
-              }
-            }}
-            className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-              activeTab === 'account' ? 'text-teal-600' : 'text-slate-400'
-            }`}
-            data-testid="nav-account"
-          >
-            <User className="w-5 h-5" />
-            <span className="text-xs font-medium">{user ? 'Profile' : 'Login'}</span>
-          </button>
-        </div>
-      </nav>
+      {/* Bottom Navigation - Mobile Only - Using Portal for proper fixed positioning */}
+      {typeof document !== 'undefined' && createPortal(
+        <nav className={`md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-200 z-[9999] pb-safe transition-transform duration-300 ${
+          isScrolling ? 'translate-y-full' : 'translate-y-0'
+        }`}>
+          <div className="flex items-center justify-around py-2 px-4">
+            {/* Home */}
+            <button
+              onClick={() => {
+                setActiveTab('home');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
+                activeTab === 'home' ? 'text-teal-600' : 'text-slate-400'
+              }`}
+              data-testid="nav-home"
+            >
+              <HomeIcon className="w-5 h-5" />
+              <span className="text-xs font-medium">Home</span>
+            </button>
+            
+            {/* Track Orders */}
+            <button
+              onClick={() => {
+                setActiveTab('track');
+                navigate('/track');
+              }}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
+                activeTab === 'track' ? 'text-teal-600' : 'text-slate-400'
+              }`}
+              data-testid="nav-track"
+            >
+              <Search className="w-5 h-5" />
+              <span className="text-xs font-medium">Track</span>
+            </button>
+            
+            {/* Book Appointment - Center Highlight */}
+            <button
+              onClick={() => setShowBookingModal(true)}
+              className="relative -mt-6"
+              data-testid="nav-book-appointment"
+            >
+              <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40 hover:scale-105 transition-all">
+                <Plus className="w-8 h-8 text-white" />
+              </div>
+              <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs font-semibold text-teal-600 whitespace-nowrap">Book</span>
+            </button>
+            
+            {/* My Records */}
+            <button
+              onClick={() => {
+                setActiveTab('records');
+                navigate('/patient-portal');
+              }}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
+                activeTab === 'records' ? 'text-teal-600' : 'text-slate-400'
+              }`}
+              data-testid="nav-records"
+            >
+              <History className="w-5 h-5" />
+              <span className="text-xs font-medium">Records</span>
+            </button>
+            
+            {/* Profile / Account */}
+            <button
+              onClick={() => {
+                setActiveTab('account');
+                if (user) {
+                  navigate('/profile');
+                } else {
+                  setShowAuth(true);
+                }
+              }}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
+                activeTab === 'account' ? 'text-teal-600' : 'text-slate-400'
+              }`}
+              data-testid="nav-account"
+            >
+              <User className="w-5 h-5" />
+              <span className="text-xs font-medium">{user ? 'Profile' : 'Login'}</span>
+            </button>
+          </div>
+        </nav>,
+        document.body
+      )}
       
       {/* Bottom padding for mobile nav */}
       <div className="md:hidden h-20"></div>
