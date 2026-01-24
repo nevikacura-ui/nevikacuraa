@@ -257,6 +257,35 @@ const Home = () => {
   // Bottom Navigation
   const [activeTab, setActiveTab] = useState('home');
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  
+  // Hide bottom nav while scrolling
+  useEffect(() => {
+    let scrollTimeout;
+    
+    const handleScroll = () => {
+      setIsScrolling(true);
+      
+      // Clear existing timeout
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+      
+      // Show nav again after scrolling stops (300ms delay)
+      scrollTimeout = setTimeout(() => {
+        setIsScrolling(false);
+      }, 300);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+    };
+  }, []);
   
   // Get greeting based on time of day
   const getGreeting = useCallback(() => {
