@@ -2201,6 +2201,19 @@ const StaffPortal = () => {
                               Service
                             </Button>
                           )}
+                          {/* Edit Patient button */}
+                          {appt.status !== 'Completed' && appt.status !== 'Cancelled' && (
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleEditPatient(appt)}
+                              className="border-amber-300 text-amber-600 hover:bg-amber-50"
+                              data-testid={`edit-patient-${appt.id}`}
+                            >
+                              <Edit2 className="w-4 h-4 mr-1" />
+                              Edit
+                            </Button>
+                          )}
                           {/* Book Sonography button - for clinic staff */}
                           {appt.status !== 'Completed' && appt.status !== 'Cancelled' && staffInfo?.role?.includes('clinic_staff') && (
                             <Button 
