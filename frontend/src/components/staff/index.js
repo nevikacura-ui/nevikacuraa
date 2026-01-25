@@ -61,6 +61,3 @@ export { default as PharmacyLoyaltyTab } from './PharmacyLoyaltyTab';
 export { default as DiagnosticsOrdersTab } from './DiagnosticsOrdersTab';
 export { default as DiagnosticsCreateTab } from './DiagnosticsCreateTab';
 export { default as DiagnosticsLoyaltyTab } from './DiagnosticsLoyaltyTab';
-
-// Biometric
-export { default as SmartBiometric } from '@/pages/staff/SmartBiometric';
