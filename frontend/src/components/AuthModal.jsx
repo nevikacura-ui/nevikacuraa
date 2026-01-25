@@ -96,6 +96,7 @@ const AuthModal = ({ open, onClose }) => {
     }
     setLoading(true);
     try {
+      // Try staff auth OTP first
       const response = await sendAuthOtp(phone);
       setOtpMethod(response.method || 'sms');
       if (response.mock_otp) setMockOtp(response.mock_otp);
@@ -103,6 +104,20 @@ const AuthModal = ({ open, onClose }) => {
       setResendTimer(30);
       toast.success(response.method === 'sms' ? 'OTP sent to your phone!' : 'OTP generated!');
     } catch (error) {
+      // Staff auth failed - try patient portal OTP
+      try {
+        const patientOtpRes = await axios.post(`${API}/api/patients/portal/send-otp?mobile=${phone}`);
+        if (patientOtpRes.data.success) {
+          setOtpMethod('patient');
+          if (patientOtpRes.data.mock_otp) setMockOtp(patientOtpRes.data.mock_otp);
+          setStep('phone-otp-verify');
+          setResendTimer(30);
+          toast.success('OTP sent to your phone!');
+          return;
+        }
+      } catch (patientErr) {
+        // Both failed
+      }
       toast.error(error.response?.data?.detail || 'Failed to send OTP');
     } finally {
       setLoading(false);
