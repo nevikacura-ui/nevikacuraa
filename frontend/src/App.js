@@ -103,6 +103,7 @@ function AppContent() {
           <Route path="/pharmacy" element={<Pharmacy />} />
           <Route path="/evara" element={<Evara />} />
           <Route path="/glydex" element={<Glydex />} />
+          <Route path="/thrive360" element={<Thrive360 />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-panel" element={<AdminPanel />} />
