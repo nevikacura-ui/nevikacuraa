@@ -20,8 +20,7 @@ import {
   featuredDoctors, 
   certifications, 
   howItWorksSteps, 
-  clinicLocations, 
-  services 
+  clinicLocations
 } from '@/data/homeData';
 
 // Icon mapping for data-driven components
