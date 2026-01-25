@@ -2205,6 +2205,16 @@ const StaffPortal = () => {
               />
             </TabsContent>
 
+            {/* Analytics Tab Content - For clinic staff */}
+            {(isClinicStaff(role) || role === 'super_admin') && (
+              <TabsContent value="analytics">
+                <ClinicAnalytics
+                  staffInfo={staffInfo}
+                  selectedDate={selectedDate}
+                />
+              </TabsContent>
+            )}
+
             {/* Patient Database Tab Content - For doctors */}
             {(staffInfo?.role === 'doctor' || staffInfo?.role === 'super_admin') && (
               <TabsContent value="patients">
