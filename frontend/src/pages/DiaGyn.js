@@ -1214,7 +1214,7 @@ const DiaGyn = () => {
               <Button 
                 variant="ghost" 
                 size="icon"
-                onClick={() => step === 1 ? navigate('/') : setStep(step === 4 ? 3 : step === 5 ? 4 : step - 1)}
+                onClick={() => step === 1 ? navigate('/') : setStep(step === 4 ? 3 : step === 5 ? 4 : step === 6 ? 5 : step - 1)}
                 data-testid="back-button"
                 className="rounded-full hover:bg-[#CAE9FF]/50"
               >
