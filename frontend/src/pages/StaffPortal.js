@@ -14,7 +14,7 @@ import {
   Clock, Package, FlaskConical, Stethoscope, Users, 
   Phone, Calendar, Loader2, RefreshCw, AlertTriangle, Plus, 
   Heart, Droplet, Scan, Upload, FileText, Receipt, History, X, Gift,
-  IndianRupee, Fingerprint, Baby, Activity, Bell, Send, Star, MapPin, ExternalLink, QrCode, Search, Edit2, Save, Shield
+  IndianRupee, Baby, Activity, Bell, Send, Star, MapPin, ExternalLink, QrCode, Search, Edit2, Save, Shield
 } from 'lucide-react';
 import StaffBillingModule from '@/components/StaffBillingModule';
 import ANCRegistration from '@/components/ANCRegistration';
