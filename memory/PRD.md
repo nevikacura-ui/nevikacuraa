@@ -16,7 +16,16 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 
 ## What's Been Implemented
 
-### Session - January 25, 2026 (Part 6 - Current)
+### Session - January 25, 2026 (Part 7 - Current)
+
+#### Completed Features
+1. **Pharmacy Category Icons Updated - COMPLETE** ✅
+   - Created custom SVG `TabletIcon` component - round tablet with score line (NOT a capsule)
+   - Created custom SVG `SyrupBottleIcon` component - medicine bottle with cap, label, and measuring lines
+   - Updated `renderIcon()` function in `CategoryCard` to use custom icons
+   - Verified icons display correctly on Pharmacy page
+
+### Session - January 25, 2026 (Part 6)
 
 #### Completed Features
 1. **Attendance Feature Removed - COMPLETE** ✅
