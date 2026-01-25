@@ -1589,13 +1589,13 @@ const Home = () => {
       {/* Book Appointment Modal */}
       <Dialog open={showBookingModal} onOpenChange={setShowBookingModal}>
         <DialogContent className="max-w-sm rounded-3xl p-0 overflow-hidden">
-          <div className="bg-gradient-to-r from-teal-500 to-cyan-500 p-6 text-white">
+          <div className="bg-gradient-to-r from-orange-500 to-rose-500 p-6 text-white">
             <DialogTitle className="text-xl font-bold flex items-center gap-2">
               <Calendar className="w-6 h-6" />
-              Book Appointment
+              Book Now
             </DialogTitle>
             <DialogDescription className="text-white/80 mt-1">
-              Choose your appointment type
+              Choose your booking type
             </DialogDescription>
           </div>
           <div className="p-6 space-y-4">
@@ -1612,27 +1612,27 @@ const Home = () => {
                 <Stethoscope className="w-7 h-7 text-white" />
               </div>
               <div className="flex-1 text-left">
-                <h3 className="font-bold text-slate-800">Doctor Consultation</h3>
-                <p className="text-sm text-slate-500">Book with our specialists</p>
+                <h3 className="font-bold text-slate-800">Doctor Appointment</h3>
+                <p className="text-sm text-slate-500">Consult with our specialists</p>
               </div>
               <ChevronRight className="w-5 h-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
             </button>
             
-            {/* Diagnostic Test */}
+            {/* Sonography */}
             <button
               onClick={() => {
                 setShowBookingModal(false);
-                navigate('/proton');
+                navigate('/diagyn?service=sonography');
               }}
               className="w-full p-4 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-2xl border border-purple-100 flex items-center gap-4 transition-all group"
-              data-testid="book-diagnostic-btn"
+              data-testid="book-sonography-btn"
             >
               <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <TestTube className="w-7 h-7 text-white" />
+                <Baby className="w-7 h-7 text-white" />
               </div>
               <div className="flex-1 text-left">
-                <h3 className="font-bold text-slate-800">Diagnostic Tests</h3>
-                <p className="text-sm text-slate-500">Book lab tests & scans</p>
+                <h3 className="font-bold text-slate-800">Sonography</h3>
+                <p className="text-sm text-slate-500">Ultrasound & imaging scans</p>
               </div>
               <ChevronRight className="w-5 h-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
             </button>
