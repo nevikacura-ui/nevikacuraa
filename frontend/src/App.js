@@ -7,6 +7,7 @@ import Proton from '@/pages/Proton';
 import Pharmacy from '@/pages/Pharmacy';
 import Evara from '@/pages/Evara';
 import Glydex from '@/pages/Glydex';
+import Thrive360 from '@/pages/Thrive360';
 import Profile from '@/pages/Profile';
 import Admin from '@/pages/Admin';
 import AdminPanel from '@/pages/AdminPanel';
