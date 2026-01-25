@@ -2,7 +2,7 @@
  * Staff Portal Components Index
  * 
  * This file exports all refactored staff portal components for easy importing.
- * The migration from StaffPortal.js (4736 lines) to modular components is complete.
+ * The migration from StaffPortal.js (4736 lines) to modular components is in progress.
  * 
  * MIGRATED TABS (replaced inline code):
  * ✅ AppointmentsTab - View and manage scheduled appointments
@@ -10,10 +10,13 @@
  * ✅ EmergencyTab - Emergency appointment booking
  * ✅ FeesTab - Fee codes reference
  * ✅ FeedbackTab - Patient feedback collection
- * 
- * COMPONENTS CREATED (available for future integration):
- * - BillingTab - Fee collection and billing (StaffBillingModule used instead)
- * - PatientsTab - Patient management and database
+ * ✅ PatientsTab - Patient management and database
+ * ✅ SonographyTab - Sonography bookings management (Doctor view)
+ * ✅ PharmacyOrdersTab - Pharmacy orders management
+ * ✅ PharmacyLoyaltyTab - Pharmacy loyalty points
+ * ✅ DiagnosticsOrdersTab - Diagnostic orders management
+ * ✅ DiagnosticsCreateTab - Create diagnostic orders
+ * ✅ DiagnosticsLoyaltyTab - Diagnostics loyalty points
  * 
  * EXISTING COMPONENTS (not needing migration):
  * - ANCRegistration - Antenatal care registration
@@ -23,9 +26,8 @@
  * 
  * RESULTS:
  * - Original StaffPortal.js: 4736 lines
- * - Current StaffPortal.js: ~3988 lines
- * - Lines saved: ~748 lines (15.8% reduction)
- * - 5 tabs migrated to separate component files
+ * - Target: < 2000 lines with all tabs migrated
+ * - 12 tabs migrated to separate component files
  */
 
 // Utilities
@@ -44,9 +46,21 @@ export { default as EmergencyTab } from './EmergencyTab';
 export { default as FeesTab } from './FeesTab';
 export { default as FeedbackTab } from './FeedbackTab';
 
-// Management Tabs - CREATED (available for use)
+// Management Tabs - MIGRATED
 export { default as BillingTab } from './BillingTab';
 export { default as PatientsTab } from './PatientsTab';
+
+// Doctor Specialty Tabs - MIGRATED
+export { default as SonographyTab } from './SonographyTab';
+
+// Pharmacy Staff Tabs - MIGRATED
+export { default as PharmacyOrdersTab } from './PharmacyOrdersTab';
+export { default as PharmacyLoyaltyTab } from './PharmacyLoyaltyTab';
+
+// Diagnostics Staff Tabs - MIGRATED
+export { default as DiagnosticsOrdersTab } from './DiagnosticsOrdersTab';
+export { default as DiagnosticsCreateTab } from './DiagnosticsCreateTab';
+export { default as DiagnosticsLoyaltyTab } from './DiagnosticsLoyaltyTab';
 
 // Biometric
 export { default as SmartBiometric } from '@/pages/staff/SmartBiometric';
