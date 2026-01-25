@@ -26,10 +26,6 @@ import {
 
 // Health Tips Data - Imported from homeData.js
 // const healthTips = [...] - MOVED TO /data/homeData.js
-  { tip: "Laugh often! It reduces stress hormones and boosts immune function.", icon: "😄", category: "Mental Health" },
-  { tip: "Eat breakfast within an hour of waking to kickstart your metabolism.", icon: "🍳", category: "Nutrition" },
-  { tip: "Maintain good posture to prevent back pain and improve breathing.", icon: "🧍", category: "Posture" }
-];
 
 // Service Spotlight Data
 const spotlightServices = [
