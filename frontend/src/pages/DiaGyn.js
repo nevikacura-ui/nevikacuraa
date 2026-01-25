@@ -1282,7 +1282,7 @@ const DiaGyn = () => {
   const selectedDoctorData = doctors.find(d => d.id === selectedDoctor);
   const selectedClinicData = clinics.find(c => c.id === selectedClinic);
 
-  const stepTitles = ['Doctor', 'Clinic', 'Schedule', 'Verify', 'Fee & Pay', 'Confirm'];
+  const stepTitles = ['Doctor', 'Clinic', 'Schedule', 'Verify', 'Confirm'];
 
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
@@ -1294,7 +1294,7 @@ const DiaGyn = () => {
               <Button 
                 variant="ghost" 
                 size="icon"
-                onClick={() => step === 1 ? navigate('/') : setStep(step === 4 ? 3 : step === 5 ? 4 : step === 6 ? 5 : step - 1)}
+                onClick={() => step === 1 ? navigate('/') : setStep(step - 1)}
                 data-testid="back-button"
                 className="rounded-full hover:bg-[#CAE9FF]/50"
               >
