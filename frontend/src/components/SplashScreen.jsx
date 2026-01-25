@@ -181,22 +181,22 @@ const SplashScreen = ({ onComplete, user }) => {
               className="flex flex-col items-center gap-2 icon-disappear"
               style={{ animationDelay: animDelay }}
             >
-              <div className={`w-16 h-16 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center shadow-lg shadow-black/20 transform hover:scale-110 transition-transform`}>
-                <Icon className="w-8 h-8 text-white" />
+              <div className={`w-20 h-20 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center shadow-lg shadow-black/20 transform hover:scale-110 transition-transform`}>
+                <Icon className="w-10 h-10 text-white" />
               </div>
-              <span className="text-xs text-white/80 font-medium">{label}</span>
+              <span className="text-sm text-white/90 font-medium">{label}</span>
             </div>
           ))}
         </div>
         
         {/* Caption */}
-        <p className="text-xl text-white/90 font-medium mb-10">
+        <p className="text-xl text-white/90 font-medium mb-8">
           Your own <span className="text-teal-200 font-bold">all-in-one</span> healthcare app
         </p>
         
         {/* Action Buttons */}
         {animationComplete && (
-          <div className="space-y-4 animate-fade-in">
+          <div className="space-y-4 animate-fade-in w-full max-w-xs">
             {/* Login/Signup Button - Primary Action */}
             <Button
               onClick={handleLoginClick}
