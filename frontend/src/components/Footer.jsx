@@ -167,17 +167,17 @@ const Footer = () => {
             <div className="flex flex-col items-center justify-center gap-3">
               <div className="flex items-center gap-2 text-white">
                 <Smartphone className="w-5 h-5 text-brand-teal" />
-                <span className="font-medium">Scan to Download App</span>
+                <span className="font-medium">Scan to Visit Website</span>
               </div>
-              <div className="bg-white p-2 rounded-lg">
+              <div className="bg-white p-3 rounded-xl shadow-lg">
                 <img 
-                  src="/apk-download-qr.png"
-                  alt="Download Nevika Cura App QR Code"
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://healspace-26.preview.emergentagent.com&color=0d9488"
+                  alt="Nevika Cura Website QR Code"
                   className="w-28 h-28"
                   data-testid="footer-qr-code"
                 />
               </div>
-              <p className="text-xs text-gray-500">Scan & Install • Works on all Android phones</p>
+              <p className="text-xs text-gray-500">Scan to open Nevika Cura on your phone</p>
             </div>
           </div>
 
