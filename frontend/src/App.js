@@ -94,6 +94,7 @@ function AppContent() {
           <Route path="/glydex" element={<Glydex />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin-panel" element={<AdminPanel />} />
           <Route path="/staff" element={<StaffPortal />} />
           <Route path="/track" element={<TrackOrder />} />
           <Route path="/feedback/:token" element={<Feedback />} />
