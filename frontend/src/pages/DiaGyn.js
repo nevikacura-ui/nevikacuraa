@@ -1737,6 +1737,9 @@ const DiaGyn = () => {
       />
 
       <ActionPrompt />
+      
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 };
