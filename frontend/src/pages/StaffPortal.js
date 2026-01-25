@@ -2681,6 +2681,10 @@ const StaffPortal = () => {
                 <UserPlus className="w-4 h-4 mr-2" />
                 Create Order
               </TabsTrigger>
+              <TabsTrigger value="analytics" data-testid="tab-diag-analytics">
+                <Activity className="w-4 h-4 mr-2" />
+                Analytics
+              </TabsTrigger>
               <TabsTrigger value="loyalty" data-testid="tab-diag-loyalty">
                 <Gift className="w-4 h-4 mr-2" />
                 Loyalty Points
@@ -2709,6 +2713,11 @@ const StaffPortal = () => {
                 handleCreateDiagnosticOrder={handleCreateDiagnosticOrder}
                 toggleTestSelection={toggleTestSelection}
               />
+            </TabsContent>
+            
+            {/* Diagnostics Analytics Tab */}
+            <TabsContent value="analytics">
+              <DiagnosticsAnalytics staffInfo={staffInfo} />
             </TabsContent>
             
             {/* Loyalty Points Tab for Diagnostics Staff */}
