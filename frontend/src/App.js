@@ -164,11 +164,13 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <ViewModeProvider>
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
-      </ViewModeProvider>
+      <LanguageProvider>
+        <ViewModeProvider>
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
+        </ViewModeProvider>
+      </LanguageProvider>
     </AuthProvider>
   );
 }
