@@ -8,13 +8,13 @@ export const API = process.env.REACT_APP_BACKEND_URL + '/api';
 
 // Clinic to Doctors mapping
 export const CLINICS = {
-  'Pushpa Clinic': ['Dr. Vikas Deshmukh', 'Dr. Sunita Deshmukh'],
-  'Amnion Clinic': ['Dr. Vikas Deshmukh']
+  'Pushpa Clinic': ['Dr. Vikas Jha', 'Dr. Sunita Jha'],
+  'Amnion Clinic': ['Dr. Vikas Jha']
 };
 
 // Doctor schedules with time slots
 export const DOCTOR_SCHEDULES = {
-  'Dr. Vikas Deshmukh': {
+  'Dr. Vikas Jha': {
     'Pushpa Clinic': [
       { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '09:00 AM - 12:00 PM' },
       { days: ['Saturday'], time: '09:00 AM - 01:00 PM' }
@@ -24,7 +24,7 @@ export const DOCTOR_SCHEDULES = {
       { days: ['Saturday'], time: '04:00 PM - 07:00 PM' }
     ]
   },
-  'Dr. Sunita Deshmukh': {
+  'Dr. Sunita Jha': {
     'Pushpa Clinic': [
       { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '10:00 AM - 01:00 PM' },
       { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '05:00 PM - 08:00 PM' }
