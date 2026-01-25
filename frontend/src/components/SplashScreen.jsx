@@ -113,12 +113,23 @@ const SplashScreen = ({ onComplete, user }) => {
       
       // Save mobile for biometric login
       localStorage.setItem('biometricMobile', mobile);
+      localStorage.setItem('biometricPatientName', response.data.patient.name);
       
-      // Prompt to enable biometric if available
-      if (biometricAvailable) {
-        localStorage.setItem('biometricEnabled', 'true');
-        toast.success(`Welcome, ${response.data.patient.name}! Fingerprint login enabled.`);
-      } else {
+      // Check if biometric is available and offer to enable
+      try {
+        if (window.PublicKeyCredential) {
+          const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+          if (available) {
+            localStorage.setItem('biometricAvailable', 'true');
+            localStorage.setItem('biometricEnabled', 'true');
+            toast.success(`Welcome, ${response.data.patient.name}! Fingerprint login enabled for next time.`);
+          } else {
+            toast.success(`Welcome, ${response.data.patient.name}!`);
+          }
+        } else {
+          toast.success(`Welcome, ${response.data.patient.name}!`);
+        }
+      } catch (bioErr) {
         toast.success(`Welcome, ${response.data.patient.name}!`);
       }
       
@@ -129,67 +140,150 @@ const SplashScreen = ({ onComplete, user }) => {
     setLoading(false);
   };
   
-  // Handle biometric/fingerprint login
+  // Handle biometric/fingerprint login - Simplified for mobile devices
   const handleBiometricLogin = async () => {
     const savedMobile = localStorage.getItem('biometricMobile');
+    const savedName = localStorage.getItem('biometricPatientName');
+    
     if (!savedMobile) {
       toast.error('Please login with OTP first to enable fingerprint');
       return;
     }
     
     setBiometricLoading(true);
+    
     try {
-      // Use WebAuthn for fingerprint authentication
-      if (window.PublicKeyCredential) {
-        const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-        
-        if (available) {
-          // Create a challenge for authentication
-          const challenge = new Uint8Array(32);
-          window.crypto.getRandomValues(challenge);
+      // Check if WebAuthn/Biometric is available
+      if (!window.PublicKeyCredential) {
+        throw new Error('Biometric not supported on this device');
+      }
+      
+      const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+      
+      if (!available) {
+        throw new Error('Fingerprint/Face ID not available');
+      }
+      
+      // For mobile devices, use simpler biometric prompt
+      // Create a unique challenge
+      const challenge = new Uint8Array(32);
+      window.crypto.getRandomValues(challenge);
+      
+      // Create credential options for biometric verification
+      const publicKeyCredentialCreationOptions = {
+        challenge: challenge,
+        rp: {
+          name: "Nevika Cura",
+          id: window.location.hostname
+        },
+        user: {
+          id: new TextEncoder().encode(savedMobile),
+          name: savedMobile,
+          displayName: savedName || savedMobile
+        },
+        pubKeyCredParams: [
+          { alg: -7, type: "public-key" },   // ES256
+          { alg: -257, type: "public-key" }  // RS256
+        ],
+        authenticatorSelection: {
+          authenticatorAttachment: "platform",
+          userVerification: "required",
+          residentKey: "preferred"
+        },
+        timeout: 60000,
+        attestation: "none"
+      };
+      
+      // Check if we already have a credential stored
+      const storedCredentialId = localStorage.getItem('biometricCredentialId');
+      
+      if (storedCredentialId) {
+        // Try to authenticate with existing credential
+        try {
+          const credentialIdArray = Uint8Array.from(atob(storedCredentialId), c => c.charCodeAt(0));
           
-          // Request biometric authentication
-          const credential = await navigator.credentials.get({
+          const assertion = await navigator.credentials.get({
             publicKey: {
-              challenge,
+              challenge: challenge,
               rpId: window.location.hostname,
-              userVerification: 'required',
+              userVerification: "required",
               timeout: 60000,
-              allowCredentials: []
+              allowCredentials: [{
+                id: credentialIdArray,
+                type: "public-key",
+                transports: ["internal"]
+              }]
             }
           });
           
-          if (credential) {
-            // Biometric verified - now login with saved mobile
-            // Send OTP silently and verify
-            const otpResponse = await axios.post(`${API}/patients/portal/send-otp?mobile=${savedMobile}`);
-            const mockOtpValue = otpResponse.data.mock_otp;
-            
-            // Auto-verify with the OTP (for demo - in production this would be more secure)
-            const verifyResponse = await axios.post(`${API}/patients/portal/verify-otp?mobile=${savedMobile}&otp=${mockOtpValue}`);
-            
-            localStorage.setItem('patientToken', verifyResponse.data.token);
-            
-            if (setPatientAuth) {
-              setPatientAuth(verifyResponse.data.token, verifyResponse.data.patient);
-            }
-            
-            toast.success(`Welcome back, ${verifyResponse.data.patient.name}!`);
-            onComplete();
+          if (assertion) {
+            // Biometric verified! Auto-login the user
+            await performAutoLogin(savedMobile, savedName);
             return;
           }
+        } catch (authErr) {
+          console.log('Auth with stored credential failed, trying to create new one');
         }
       }
       
-      toast.error('Fingerprint authentication failed. Please login with OTP.');
+      // Create new credential (first time or if stored one failed)
+      try {
+        const credential = await navigator.credentials.create({
+          publicKey: publicKeyCredentialCreationOptions
+        });
+        
+        if (credential) {
+          // Store the credential ID for future logins
+          const credentialId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
+          localStorage.setItem('biometricCredentialId', credentialId);
+          
+          // Biometric verified! Auto-login the user
+          await performAutoLogin(savedMobile, savedName);
+          return;
+        }
+      } catch (createErr) {
+        console.error('Credential creation failed:', createErr);
+        throw createErr;
+      }
+      
     } catch (error) {
       console.error('Biometric login error:', error);
+      
       if (error.name === 'NotAllowedError') {
-        toast.error('Fingerprint authentication cancelled');
+        toast.error('Fingerprint authentication was cancelled');
+      } else if (error.name === 'SecurityError') {
+        toast.error('Biometric requires secure connection (HTTPS)');
+      } else if (error.message?.includes('not supported')) {
+        toast.error('Fingerprint not supported on this device');
       } else {
-        toast.error('Fingerprint login failed. Please use OTP.');
+        toast.error('Fingerprint failed. Please use OTP login.');
       }
     } finally {
+      setBiometricLoading(false);
+    }
+  };
+  
+  // Helper function to perform auto-login after biometric verification
+  const performAutoLogin = async (mobile, name) => {
+    try {
+      // Send OTP silently
+      const otpResponse = await axios.post(`${API}/patients/portal/send-otp?mobile=${mobile}`);
+      const mockOtpValue = otpResponse.data.mock_otp;
+      
+      // Verify OTP
+      const verifyResponse = await axios.post(`${API}/patients/portal/verify-otp?mobile=${mobile}&otp=${mockOtpValue}`);
+      
+      localStorage.setItem('patientToken', verifyResponse.data.token);
+      
+      if (setPatientAuth) {
+        setPatientAuth(verifyResponse.data.token, verifyResponse.data.patient);
+      }
+      
+      toast.success(`Welcome back, ${verifyResponse.data.patient.name}!`);
+      onComplete();
+    } catch (err) {
+      console.error('Auto-login failed:', err);
+      toast.error('Login failed. Please try OTP login.');
       setBiometricLoading(false);
     }
   };
