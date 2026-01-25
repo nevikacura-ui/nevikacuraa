@@ -350,7 +350,7 @@ const Home = () => {
     {
       id: 'glydex',
       name: 'Glydex',
-      logo: '/glydex-logo.png',
+      logo: 'https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png',
       path: '/glydex',
       bgColor: '#121f33', // Dark navy to match logo bg
       isDark: true,
