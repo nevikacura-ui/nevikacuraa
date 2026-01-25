@@ -354,6 +354,8 @@ async def stripe_webhook(request: Request):
 async def update_payment_reference(payment_type: str, reference_id: str, session_id: str):
     """Update the related record after successful payment"""
     try:
+        transaction = await db.payment_transactions.find_one({"session_id": session_id}, {"_id": 0})
+        
         if payment_type == "appointment":
             await db.appointments.update_one(
                 {"_id": reference_id},
@@ -403,8 +405,164 @@ async def update_payment_reference(payment_type: str, reference_id: str, session
             
         logger.info(f"Updated payment reference for {payment_type} {reference_id}")
         
+        # Send payment receipt email and SMS confirmation
+        if transaction:
+            await send_payment_receipt(transaction, payment_type)
+            await send_payment_sms_confirmation(transaction, payment_type)
+        
     except Exception as e:
         logger.error(f"Error updating payment reference: {e}")
+
+
+async def send_payment_receipt(transaction: dict, payment_type: str):
+    """Send payment receipt email to patient"""
+    if not RESEND_API_KEY:
+        logger.warning("Resend not configured, skipping payment receipt email")
+        return
+    
+    patient_name = transaction.get("patient_name", "Patient")
+    patient_email = transaction.get("patient_email")
+    amount = transaction.get("amount", 0)
+    description = transaction.get("description", "Payment")
+    session_id = transaction.get("session_id", "")[:12]
+    payment_date = datetime.now(timezone.utc).strftime("%d %b %Y, %I:%M %p")
+    
+    # Get patient email from related record if not in transaction
+    if not patient_email:
+        if payment_type == "appointment":
+            apt = await db.appointments.find_one({"appointment_id": transaction.get("reference_id")})
+            patient_email = apt.get("patient_email") if apt else None
+        elif payment_type == "pharmacy":
+            order = await db.pharmacy_orders.find_one({"order_id": transaction.get("reference_id")})
+            patient_email = order.get("patient_email") if order else None
+        elif payment_type == "lab_test":
+            booking = await db.lab_bookings.find_one({"booking_id": transaction.get("reference_id")})
+            patient_email = booking.get("patient_email") if booking else None
+    
+    if not patient_email:
+        logger.info(f"No patient email for receipt - payment type: {payment_type}")
+        return
+    
+    type_label = {
+        "appointment": "Doctor Appointment",
+        "pharmacy": "Pharmacy Order",
+        "lab_test": "Lab Test Booking"
+    }.get(payment_type, "Service")
+    
+    receipt_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; padding: 30px; background: linear-gradient(135deg, #14b8a6, #0891b2); border-radius: 15px 15px 0 0;">
+            <h1 style="color: white; margin: 0; font-size: 28px;">Payment Receipt</h1>
+            <p style="color: rgba(255,255,255,0.9); margin-top: 8px;">Nevika Cura Healthcare</p>
+        </div>
+        
+        <div style="padding: 30px; background: #f8fafc; border: 1px solid #e2e8f0;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="display: inline-block; background: #dcfce7; border-radius: 50%; padding: 15px; margin-bottom: 10px;">
+                    <span style="font-size: 30px;">✓</span>
+                </div>
+                <h2 style="color: #16a34a; margin: 0;">Payment Successful!</h2>
+            </div>
+            
+            <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 10px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Patient Name</td>
+                        <td style="padding: 10px 0; text-align: right; font-weight: bold; color: #1e293b; border-bottom: 1px solid #f1f5f9;">{patient_name}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Service Type</td>
+                        <td style="padding: 10px 0; text-align: right; font-weight: bold; color: #1e293b; border-bottom: 1px solid #f1f5f9;">{type_label}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Description</td>
+                        <td style="padding: 10px 0; text-align: right; color: #1e293b; border-bottom: 1px solid #f1f5f9;">{description}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Transaction ID</td>
+                        <td style="padding: 10px 0; text-align: right; font-family: monospace; color: #1e293b; border-bottom: 1px solid #f1f5f9;">{session_id}...</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Date & Time</td>
+                        <td style="padding: 10px 0; text-align: right; color: #1e293b; border-bottom: 1px solid #f1f5f9;">{payment_date} IST</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px 0; color: #1e293b; font-size: 18px; font-weight: bold;">Amount Paid</td>
+                        <td style="padding: 15px 0; text-align: right; font-size: 24px; font-weight: bold; color: #14b8a6;">₹{amount}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <p style="color: #64748b; font-size: 14px; text-align: center; margin: 0;">
+                Thank you for choosing Nevika Cura Healthcare.<br>
+                For any queries, contact us at <a href="tel:+919403890429" style="color: #14b8a6;">+91 9403890429</a>
+            </p>
+        </div>
+        
+        <div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 12px;">
+            <p style="margin: 0;">Nevika Cura Healthcare | www.nevikacura.com</p>
+            <p style="margin: 5px 0 0 0;">This is an automated receipt. Please save for your records.</p>
+        </div>
+    </div>
+    """
+    
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [patient_email],
+            "subject": f"Payment Receipt - ₹{amount} | Nevika Cura",
+            "html": receipt_html
+        }
+        result = await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Payment receipt email sent to {patient_email}: {result.get('id')}")
+    except Exception as e:
+        logger.error(f"Failed to send payment receipt email: {e}")
+
+
+async def send_payment_sms_confirmation(transaction: dict, payment_type: str):
+    """Send SMS confirmation for successful payment"""
+    if not twilio_client or not TWILIO_PHONE_NUMBER:
+        logger.warning("Twilio not configured, skipping payment SMS")
+        return
+    
+    patient_phone = transaction.get("patient_phone")
+    if not patient_phone:
+        return
+    
+    patient_name = transaction.get("patient_name", "Patient")
+    amount = transaction.get("amount", 0)
+    
+    type_label = {
+        "appointment": "appointment booking",
+        "pharmacy": "pharmacy order",
+        "lab_test": "lab test booking"
+    }.get(payment_type, "service")
+    
+    message = f"""Nevika Cura - Payment Confirmed!
+
+Hi {patient_name.split()[0]},
+Your payment of ₹{amount} for {type_label} is successful.
+
+Thank you for choosing Nevika Cura!
+- Nevika Cura Healthcare"""
+    
+    try:
+        formatted_to = patient_phone.strip()
+        if not formatted_to.startswith('+'):
+            if len(formatted_to) == 10:
+                formatted_to = f"+91{formatted_to}"
+            else:
+                formatted_to = f"+{formatted_to}"
+        
+        result = await asyncio.to_thread(
+            twilio_client.messages.create,
+            body=message,
+            from_=TWILIO_PHONE_NUMBER,
+            to=formatted_to
+        )
+        logger.info(f"Payment confirmation SMS sent to {patient_phone}: {result.sid}")
+    except Exception as e:
+        logger.error(f"Failed to send payment SMS: {e}")
 
 
 @router.get("/fee-codes")
