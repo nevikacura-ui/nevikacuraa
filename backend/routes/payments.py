@@ -803,3 +803,101 @@ async def generate_receipt_pdf(session_id: str):
             "Content-Disposition": f"attachment; filename={filename}"
         }
     )
+
+
+# ============ SAVED CARDS ENDPOINTS ============
+
+import jwt
+from fastapi import Header
+
+JWT_SECRET = os.environ.get('JWT_SECRET', 'your-secret-key-change-in-production')
+
+async def get_current_user_for_cards(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    try:
+        token = authorization.split(" ")[1]
+        payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        user_id = payload.get("sub") or payload.get("user_id")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        user = await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0})
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        return user
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+class SavedCardRequest(BaseModel):
+    card_number: str
+    expiry: str
+    card_holder_name: str
+
+class UpdateDefaultCard(BaseModel):
+    card_id: str
+
+@router.get("/saved-cards")
+async def get_saved_cards(user = Depends(get_current_user_for_cards)):
+    """Get user's saved payment cards"""
+    cards = await db.saved_cards.find(
+        {"user_id": user["id"], "is_active": True},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(10)
+    
+    return {"cards": cards}
+
+@router.post("/saved-cards")
+async def save_card(card: SavedCardRequest, user = Depends(get_current_user_for_cards)):
+    """Save a new payment card (stores only last 4 digits)"""
+    import uuid
+    
+    card_number_clean = card.card_number.replace(" ", "").replace("-", "")
+    last_four = card_number_clean[-4:]
+    
+    first_digit = card_number_clean[0] if card_number_clean else '0'
+    card_type = "visa" if first_digit == '4' else "mastercard" if first_digit == '5' else "rupay" if first_digit == '6' else "card"
+    
+    existing = await db.saved_cards.find_one({
+        "user_id": user["id"],
+        "last_four": last_four,
+        "expiry": card.expiry,
+        "is_active": True
+    })
+    
+    if existing:
+        raise HTTPException(status_code=400, detail="This card is already saved")
+    
+    count = await db.saved_cards.count_documents({"user_id": user["id"], "is_active": True})
+    if count >= 5:
+        raise HTTPException(status_code=400, detail="Maximum 5 cards allowed")
+    
+    card_doc = {
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"],
+        "last_four": last_four,
+        "expiry": card.expiry,
+        "card_holder_name": card.card_holder_name.upper(),
+        "card_type": card_type,
+        "is_default": count == 0,
+        "is_active": True,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.saved_cards.insert_one(card_doc)
+    card_doc.pop("_id", None)
+    
+    return {"success": True, "card": card_doc}
+
+@router.delete("/saved-cards/{card_id}")
+async def delete_saved_card(card_id: str, user = Depends(get_current_user_for_cards)):
+    """Delete a saved card"""
+    result = await db.saved_cards.update_one(
+        {"id": card_id, "user_id": user["id"]},
+        {"$set": {"is_active": False, "deleted_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Card not found")
+    return {"success": True, "message": "Card removed"}
+
