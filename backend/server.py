@@ -4179,6 +4179,16 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Enhanced Features router: {e}")
 
+# Calendar Sync Router
+try:
+    from routes.calendar_sync import router as calendar_router, set_db as set_calendar_db
+    set_calendar_db(db)
+    app.include_router(calendar_router, prefix="/api")
+    logger.info("Calendar Sync router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Calendar Sync router: {e}")
+
+
 
 app.add_middleware(
     CORSMiddleware,
