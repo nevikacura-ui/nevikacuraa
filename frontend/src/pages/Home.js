@@ -1665,10 +1665,10 @@ const Home = () => {
             <button
               onClick={() => {
                 setActiveTab('pharmacy');
-                navigate('/orange');
+                window.location.href = '/orange';
               }}
               className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-                activeTab === 'pharmacy' ? 'text-teal-600' : 'text-slate-400'
+                activeTab === 'pharmacy' ? 'text-orange-600' : 'text-slate-400'
               }`}
               data-testid="nav-pharmacy"
             >
@@ -1676,26 +1676,32 @@ const Home = () => {
               <span className="text-xs font-medium">Pharmacy</span>
             </button>
             
-            {/* Book Appointment - Center Highlight */}
+            {/* Book - Center Highlight (Orange/Coral color - more action-oriented) */}
             <button
               onClick={() => setShowBookingModal(true)}
               className="relative -mt-5 flex flex-col items-center"
               data-testid="nav-book-appointment"
             >
-              <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40 hover:scale-105 transition-all ring-4 ring-white">
-                <Calendar className="w-6 h-6 text-white" />
+              <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-rose-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 hover:scale-105 transition-all ring-4 ring-white">
+                {/* Calendar with book icon inside */}
+                <div className="relative">
+                  <Calendar className="w-7 h-7 text-white" />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-white rounded-full flex items-center justify-center">
+                    <Plus className="w-2.5 h-2.5 text-orange-500" />
+                  </div>
+                </div>
               </div>
-              <span className="mt-1.5 text-xs font-semibold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full">Book</span>
+              <span className="mt-1.5 text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">Book</span>
             </button>
             
             {/* Lab Tests */}
             <button
               onClick={() => {
                 setActiveTab('lab');
-                navigate('/proton');
+                window.location.href = '/proton';
               }}
               className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
-                activeTab === 'lab' ? 'text-teal-600' : 'text-slate-400'
+                activeTab === 'lab' ? 'text-purple-600' : 'text-slate-400'
               }`}
               data-testid="nav-lab"
             >
@@ -1707,11 +1713,7 @@ const Home = () => {
             <button
               onClick={() => {
                 setActiveTab('profile');
-                if (user) {
-                  navigate('/patient-portal');
-                } else {
-                  setShowAuth(true);
-                }
+                window.location.href = '/patient-portal';
               }}
               className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
                 activeTab === 'profile' ? 'text-teal-600' : 'text-slate-400'
