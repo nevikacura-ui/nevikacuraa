@@ -6,18 +6,24 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { useAuth } from '@/context/AuthContext';
 import { 
   Pill, Calendar, TestTube, Stethoscope, User, Phone, 
-  Loader2, ArrowRight, Building2, LogIn
+  Loader2, ArrowRight, Building2, LogIn, Fingerprint
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
 
 const SplashScreen = ({ onComplete, user }) => {
   const navigate = useNavigate();
+  const { biometricAvailable, biometricEnabled, loginWithBiometric, setPatientAuth } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // login or signup
   const [loading, setLoading] = useState(false);
+  const [biometricLoading, setBiometricLoading] = useState(false);
+  
+  // Check if user has biometric enabled (stored locally)
+  const [hasBiometricSetup, setHasBiometricSetup] = useState(false);
   
   // OTP Login states
   const [mobile, setMobile] = useState('');
@@ -28,6 +34,14 @@ const SplashScreen = ({ onComplete, user }) => {
   // Animation state
   const [animationComplete, setAnimationComplete] = useState(false);
   
+  // Check for biometric setup on mount
+  useEffect(() => {
+    const biometricSetup = localStorage.getItem('biometricEnabled');
+    const savedMobile = localStorage.getItem('biometricMobile');
+    if (biometricSetup === 'true' && savedMobile) {
+      setHasBiometricSetup(true);
+    }
+  }, []);
   // Lock body scroll when splash screen is visible
   useEffect(() => {
     document.body.style.overflow = 'hidden';
