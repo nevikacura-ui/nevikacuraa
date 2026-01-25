@@ -1180,19 +1180,22 @@ const Home = () => {
         <div className="mb-16" data-testid="why-choose-us">
           <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">Why Choose Nevika Cura?</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {whyChooseUs.map((item, idx) => (
-              <div 
-                key={idx}
-                className="relative group p-6 bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all text-center overflow-hidden"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-5 transition-opacity`}></div>
-                <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                  <item.icon className="w-7 h-7 text-white" />
+            {whyChooseUs.map((item, idx) => {
+              const IconComponent = iconMap[item.icon] || Trophy;
+              return (
+                <div 
+                  key={idx}
+                  className="relative group p-6 bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all text-center overflow-hidden"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-5 transition-opacity`}></div>
+                  <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                    <IconComponent className="w-7 h-7 text-white" />
+                  </div>
+                  <p className="text-2xl font-bold text-slate-800">{item.value}</p>
+                  <p className="text-sm text-slate-500">{item.label}</p>
                 </div>
-                <p className="text-2xl font-bold text-slate-800">{item.value}</p>
-                <p className="text-sm text-slate-500">{item.label}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
