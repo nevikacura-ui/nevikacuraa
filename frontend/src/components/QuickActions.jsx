@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Pill, TestTube, AlertTriangle, Video, Heart } from 'lucide-react';
+import { Calendar, Pill, TestTube, AlertTriangle } from 'lucide-react';
 
 const QuickActions = ({ className = '' }) => {
   const navigate = useNavigate();
@@ -29,14 +29,6 @@ const QuickActions = ({ className = '' }) => {
       path: '/proton',
       gradient: 'from-blue-500 to-indigo-500',
       shadowColor: 'shadow-blue-500/30'
-    },
-    {
-      id: 'teleconsult',
-      label: 'Video Call',
-      icon: Video,
-      path: '/teleconsultation',
-      gradient: 'from-purple-500 to-pink-500',
-      shadowColor: 'shadow-purple-500/30'
     },
     {
       id: 'emergency',
