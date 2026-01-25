@@ -185,7 +185,7 @@ const SplashScreen = ({ onComplete, user }) => {
           <div className="space-y-4 animate-fade-in">
             {/* Login/Signup Button */}
             <Button
-              onClick={() => setShowAuth(true)}
+              onClick={handleLoginClick}
               className="w-full h-14 bg-white text-teal-700 hover:bg-teal-50 rounded-2xl text-lg font-semibold shadow-xl shadow-black/20"
               data-testid="splash-login-btn"
             >
