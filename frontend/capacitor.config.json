@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://healthhelper-7.preview.emergentagent.com",
+    "url": "https://healspace-26.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {
