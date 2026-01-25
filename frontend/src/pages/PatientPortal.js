@@ -107,6 +107,12 @@ const PatientPortal = () => {
       setPatientInfo(patient);
       setIsAuthenticated(true);
       setEditForm({ email: patient.email || '', mobile: patient.mobile || '' });
+      
+      // Sync with AuthContext for global user state
+      if (setPatientAuth) {
+        setPatientAuth(newToken, patient);
+      }
+      
       toast.success(`Welcome, ${patient.name}!`);
       
       fetchHistory(patient.patient_id, newToken);
@@ -126,6 +132,12 @@ const PatientPortal = () => {
     setOtpSent(false);
     setOtp('');
     setMobile('');
+    
+    // Also logout from global auth context
+    if (authLogout) {
+      authLogout();
+    }
+    
     toast.success('Logged out successfully');
   };
   
