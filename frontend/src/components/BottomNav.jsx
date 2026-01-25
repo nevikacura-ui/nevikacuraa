@@ -133,8 +133,8 @@ const BottomNav = () => {
       const colorMap = {
         teal: 'bg-teal-500 shadow-teal-500/40',
         orange: 'bg-orange-500 shadow-orange-500/40',
-        purple: 'bg-purple-500 shadow-purple-500/40',
-        blue: 'bg-blue-500 shadow-blue-500/40'
+        blue: 'bg-blue-500 shadow-blue-500/40',
+        slate: 'bg-slate-600 shadow-slate-600/40'
       };
       return `${colorMap[item.color]} shadow-lg scale-110`;
     }
@@ -149,8 +149,8 @@ const BottomNav = () => {
       const colorMap = {
         teal: 'text-teal-600',
         orange: 'text-orange-600',
-        purple: 'text-purple-600',
-        blue: 'text-blue-600'
+        blue: 'text-blue-600',
+        slate: 'text-slate-700'
       };
       return colorMap[item.color];
     }
