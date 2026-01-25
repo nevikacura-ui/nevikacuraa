@@ -73,7 +73,7 @@ const doctors = [
     experience: '12+ Years',
     rating: 4.8,
     patients: '8,000+',
-    image: 'https://customer-assets.emergentagent.com/job_1d0b9312-d1f2-40d1-b78f-c0c28fa95ba1/artifacts/kqjjgvou_IMG-20260108-WA0000.jpg',
+    image: 'https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u05fho69_IMG-20260126-WA0000.jpg',
     specializations: ['High Risk Pregnancy', 'Laparoscopic Surgery', 'Infertility'],
     schedule: {
       amnion: [{ days: ['Monday', 'Wednesday', 'Friday'], time: '18:00-22:00' }],
