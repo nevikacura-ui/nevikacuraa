@@ -4,7 +4,7 @@
  */
 
 // API Base URL
-export const API = process.env.REACT_APP_BACKEND_URL;
+export const API = process.env.REACT_APP_BACKEND_URL + '/api';
 
 // Clinic to Doctors mapping
 export const CLINICS = {
