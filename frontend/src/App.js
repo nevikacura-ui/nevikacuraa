@@ -139,7 +139,9 @@ function AppContent() {
           {/* Live Queue Display - Public */}
           <Route path="/queue" element={<QueuePage />} />
           {/* Patient Health Dashboard */}
-          <Route path="/health-dashboard" element={<HealthDashboard />} />
+          <Route path="/health-dashboard" element={<HealthDashboardPage />} />
+          {/* Settings Page */}
+          <Route path="/settings" element={<SettingsPage />} />
           {/* Senior Care Charity */}
           <Route path="/senior-care" element={<SeniorCare />} />
           {/* Smart Medicine Reminders */}
