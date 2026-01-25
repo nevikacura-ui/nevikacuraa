@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { 
   Building2, UserRound, DollarSign, Briefcase, MessageSquare, 
@@ -19,10 +18,11 @@ const API = process.env.REACT_APP_BACKEND_URL;
 
 const AdminPanel = () => {
   const navigate = useNavigate();
-  const { user, staffToken } = useAuth();
   const [activeTab, setActiveTab] = useState('clinics');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [staffToken, setStaffToken] = useState(null);
+  const [staffInfo, setStaffInfo] = useState(null);
   
   // Data states
   const [clinics, setClinics] = useState([]);
@@ -41,22 +41,42 @@ const AdminPanel = () => {
 
   // Check admin access
   useEffect(() => {
-    if (!staffToken) {
-      toast.error('Admin access required');
+    const token = localStorage.getItem('staffToken');
+    const info = localStorage.getItem('staffInfo');
+    
+    if (!token) {
+      toast.error('Please login as admin first');
       navigate('/staff');
       return;
     }
-    // Decode token to check role
-    try {
-      const payload = JSON.parse(atob(staffToken.split('.')[1]));
-      if (!['admin', 'super_admin'].includes(payload.role)) {
-        toast.error('Admin access required');
+    
+    setStaffToken(token);
+    
+    if (info) {
+      try {
+        const parsed = JSON.parse(info);
+        setStaffInfo(parsed);
+        
+        if (!['admin', 'super_admin'].includes(parsed.role)) {
+          toast.error('Admin access required');
+          navigate('/staff');
+        }
+      } catch (e) {
         navigate('/staff');
       }
-    } catch (e) {
-      navigate('/staff');
+    } else {
+      // Decode token to check role
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (!['admin', 'super_admin'].includes(payload.role)) {
+          toast.error('Admin access required');
+          navigate('/staff');
+        }
+      } catch (e) {
+        navigate('/staff');
+      }
     }
-  }, [staffToken, navigate]);
+  }, [navigate]);
 
   // Fetch all data
   useEffect(() => {
