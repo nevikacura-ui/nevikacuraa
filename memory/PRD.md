@@ -349,12 +349,25 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 - **Clinic Timings:** Mon-Sat, 11am-2pm & 6pm-10pm
 
 ## Key Endpoints
+
+### Payment Endpoints (NEW - Stripe Integration)
+- `POST /api/payments/create-checkout` - Create Stripe checkout session
+- `GET /api/payments/status/{session_id}` - Get payment status
+- `POST /api/payments/webhook/stripe` - Stripe webhook handler
+- `GET /api/payments/fee-codes` - Get all consultation & scan fees
+- `GET /api/payments/transactions` - Get payment history with filters
+
+### Appointment Endpoints
 - `POST /api/appointments/block-slots` - Staff block appointment slots
 - `POST /api/appointments/unblock-slots` - Staff unblock appointment slots
 - `GET /api/appointments/blocked-slots` - Get blocked slots for doctor/clinic/date
+
+### Push Notification Endpoints
 - `GET /api/push/vapid-public-key` - Get VAPID public key for push subscriptions
 - `POST /api/push/subscribe` - Subscribe to push notifications
 - `POST /api/push/test` - Send test push notification (requires auth)
+
+### Medicine Reminder Endpoints
 - `POST /api/medicine-reminders/cron/send-reminders?secret=nevika_cron_2026` - Cron to send reminders
 - `GET /api/medicine-reminders/my-reminders` - Get user's medicine reminders with stats
 - `GET /api/medicine-reminders/today` - Today's medicine schedule
@@ -362,6 +375,8 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 - `POST /api/medicine-reminders/log` - Log medicine taken/skipped
 - `DELETE /api/medicine-reminders/{id}` - Delete reminder
 - `POST /api/medicine-reminders/from-prescription/{id}` - Import from prescription
+
+### Other Endpoints
 - `GET /api/biometric-attendance/report/{clinic}` - Daily attendance report
 - `GET /api/medication-tracker/today/{user_id}` - Today's medication schedule
 - `GET /api/queue/public/{clinic}` - Live queue status
