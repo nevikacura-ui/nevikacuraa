@@ -111,14 +111,9 @@ const CategoryCard = ({ category, isActive, onClick }) => {
       }`}
     >
       <div className="aspect-[4/3] relative">
-        <img 
-          src={cat.image} 
-          alt={cat.label}
-          className="w-full h-full object-cover"
-        />
-        <div className={`absolute inset-0 bg-gradient-to-t ${cat.color} opacity-70`} />
+        <div className={`absolute inset-0 bg-gradient-to-br ${cat.color}`} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-2">
-          <span className="text-3xl mb-1">{cat.icon}</span>
+          <span className="text-4xl mb-2">{cat.icon}</span>
           <span className="text-xs sm:text-sm font-semibold text-center leading-tight">{cat.label}</span>
         </div>
         {isActive && (
