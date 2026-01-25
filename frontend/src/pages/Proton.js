@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/context/AuthContext';
+import BottomNav from '@/components/BottomNav';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
