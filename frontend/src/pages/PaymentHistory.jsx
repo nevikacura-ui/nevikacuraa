@@ -500,10 +500,11 @@ Contact: +91 9403890429
                 <Button 
                   variant="outline" 
                   className="flex-1"
-                  onClick={() => downloadReceipt(selectedTransaction)}
+                  onClick={() => downloadReceiptPDF(selectedTransaction)}
+                  data-testid="download-pdf-btn"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  Download
+                  Download PDF
                 </Button>
                 <Button 
                   variant="outline" 
