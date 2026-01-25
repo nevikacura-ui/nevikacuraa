@@ -2599,6 +2599,10 @@ const StaffPortal = () => {
                 <Package className="w-4 h-4 mr-2" />
                 Orders
               </TabsTrigger>
+              <TabsTrigger value="analytics" data-testid="tab-pharmacy-analytics">
+                <Activity className="w-4 h-4 mr-2" />
+                Analytics
+              </TabsTrigger>
               <TabsTrigger value="loyalty" data-testid="tab-pharmacy-loyalty">
                 <Gift className="w-4 h-4 mr-2" />
                 Loyalty Points
@@ -2632,6 +2636,11 @@ const StaffPortal = () => {
                 loadData={loadData}
                 handlePharmacyStatusUpdate={handlePharmacyStatusUpdate}
               />
+            </TabsContent>
+            
+            {/* Pharmacy Analytics Tab */}
+            <TabsContent value="analytics">
+              <PharmacyAnalytics staffInfo={staffInfo} />
             </TabsContent>
             
             {/* Loyalty Points Tab for Pharmacy Staff */}
