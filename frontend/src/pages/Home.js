@@ -929,15 +929,75 @@ const Home = () => {
 
         {/* Services Grid - Seamless Logo & Background */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center md:text-left">Our Services</h2>
+          <h2 className="text-2xl font-bold text-slate-800 mb-2 text-center md:text-left">Our Services</h2>
+          <p className="text-slate-500 mb-8 text-center md:text-left">Complete healthcare at your fingertips</p>
           
-          {/* Responsive Grid: Mobile=2cols, Tablet=3cols (larger cards), Desktop=6cols */}
+          {/* Featured Services - Top 2 highlighted */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            {services.slice(0, 2).map((service) => (
+              <div
+                key={service.id}
+                className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl ${
+                  service.isDark ? 'shadow-lg' : 'shadow-md border border-gray-100'
+                }`}
+                style={{ backgroundColor: service.bgColor }}
+                onClick={() => navigate(service.path)}
+                data-testid={`service-card-featured-${service.id}`}
+              >
+                {/* Popular Badge */}
+                <div className="absolute top-3 left-3 z-10">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold rounded-full shadow-lg">
+                    <Star className="w-3 h-3" />
+                    Popular
+                  </span>
+                </div>
+                
+                {/* Decorative circles */}
+                <div className={`absolute top-0 right-0 w-32 h-32 rounded-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-150 ${
+                  service.isDark ? 'bg-white/10' : 'bg-gray-100/50'
+                }`}></div>
+                
+                <div className="relative flex items-center p-6 min-h-[160px]">
+                  <div className="flex-shrink-0 mr-6">
+                    <img 
+                      src={service.logo} 
+                      alt={service.name} 
+                      className="h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                      data-testid={`service-logo-featured-${service.id}`}
+                      loading="eager"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className={`text-xl font-bold mb-2 ${service.isDark ? 'text-white' : 'text-slate-800'}`}>
+                      {service.name}
+                    </h3>
+                    <p className={`text-sm mb-4 ${service.isDark ? 'text-white/80' : 'text-slate-600'}`}>
+                      {service.id === 'diagyn' ? 'Book appointments with expert doctors' : 'Order medicines with fast delivery'}
+                    </p>
+                    <Button
+                      onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
+                      className={`rounded-xl font-semibold transition-all duration-300 ${
+                        service.isDark 
+                          ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
+                          : 'bg-teal-500 hover:bg-teal-600 text-white'
+                      }`}
+                    >
+                      {service.id === 'diagyn' ? 'Book Now' : 'Order Now'}
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Other Services Grid */}
           <div className={`grid gap-4 md:gap-5 ${
             isMobile ? 'grid-cols-2' : 
-            isTablet ? 'grid-cols-3' : 
-            'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'
+            isTablet ? 'grid-cols-4' : 
+            'grid-cols-2 sm:grid-cols-4'
           }`}>
-            {services.map((service) => (
+            {services.slice(2).map((service) => (
               <div
                 key={service.id}
                 className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl ${
