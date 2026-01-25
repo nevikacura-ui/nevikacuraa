@@ -1,312 +1,204 @@
 /**
- * Staff Portal Utility Functions and Constants
- * Data can be fetched from API with fallback to static data
+ * Staff Portal Utilities
+ * Shared constants, helpers and API functions for StaffPortal and its components
  */
 
-export const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+// API Base URL
+export const API = process.env.REACT_APP_BACKEND_URL;
 
-// ============================================
-// Static Fallback Data (used if API fails)
-// ============================================
-
-// Clinic configuration with clinic IDs
+// Clinic to Doctors mapping
 export const CLINICS = {
-  "Pushpa Clinic": ["Dr. Neha Patel", "Dr. Vikas Jha"],
-  "Amnion Clinic": ["Dr. Vikas Jha", "Dr. Neha Patel"]
+  'Pushpa Clinic': ['Dr. Vikas Deshmukh', 'Dr. Sunita Deshmukh'],
+  'Amnion Clinic': ['Dr. Vikas Deshmukh']
 };
 
-// Clinic location details
-export const CLINIC_LOCATIONS = {
-  "Pushpa Clinic": {
-    name: "Pushpa Clinic",
-    address: "A-1, Sai Darshan, Near Don Bosco High School, Naigaon East",
-    phone: "+91 9403890429"
-  },
-  "Amnion Clinic": {
-    name: "Amnion Clinic", 
-    address: "G-7, Rashmi Star City Phase 5, Opp Thakur School, Naigaon East",
-    phone: "+91 9403890429"
-  }
-};
-
-// Doctor schedules - matching DiaGyn clinic availability
+// Doctor schedules with time slots
 export const DOCTOR_SCHEDULES = {
-  "Dr. Vikas Jha": {
-    "Pushpa Clinic": [
-      { days: ['Monday', 'Wednesday', 'Friday'], time: '18:00-22:00' }
+  'Dr. Vikas Deshmukh': {
+    'Pushpa Clinic': [
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '09:00 AM - 12:00 PM' },
+      { days: ['Saturday'], time: '09:00 AM - 01:00 PM' }
     ],
-    "Amnion Clinic": [
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00-14:00' },
-      { days: ['Tuesday', 'Thursday', 'Saturday'], time: '18:00-22:00' }
+    'Amnion Clinic': [
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '05:00 PM - 08:00 PM' },
+      { days: ['Saturday'], time: '04:00 PM - 07:00 PM' }
     ]
   },
-  "Dr. Neha Patel": {
-    "Amnion Clinic": [
-      { days: ['Monday', 'Wednesday', 'Friday'], time: '18:00-22:00' }
-    ],
-    "Pushpa Clinic": [
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00-14:00' },
-      { days: ['Tuesday', 'Thursday', 'Saturday'], time: '18:00-22:00' }
+  'Dr. Sunita Deshmukh': {
+    'Pushpa Clinic': [
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '10:00 AM - 01:00 PM' },
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '05:00 PM - 08:00 PM' }
     ]
   }
 };
 
-// Fee codes for appointment completion
+// Fee codes for consultations
 export const FEE_CODES = {
-  "NF": { label: "No Fees", amount: 0, color: "bg-gray-50 text-gray-600" },
-  "G1": { label: "General - First", amount: 150, color: "bg-gray-100 text-gray-800" },
-  "G2": { label: "General - Follow up", amount: 100, color: "bg-gray-100 text-gray-800" },
-  "S1": { label: "Speciality - First", amount: 300, color: "bg-blue-100 text-blue-800" },
-  "S2": { label: "Speciality - Follow up", amount: 200, color: "bg-blue-100 text-blue-800" },
-  "D1": { label: "Diabetes - First", amount: 500, color: "bg-purple-100 text-purple-800" },
-  "D2": { label: "Diabetes - Follow up", amount: 400, color: "bg-purple-100 text-purple-800" },
-  "D3": { label: "Diabetes - Follow up", amount: 300, color: "bg-purple-100 text-purple-800" },
-  "O1": { label: "OBGY - First", amount: 500, color: "bg-pink-100 text-pink-800" },
-  "O2": { label: "OBGY - Follow up", amount: 400, color: "bg-pink-100 text-pink-800" },
-  "O3": { label: "OBGY - Follow up", amount: 300, color: "bg-pink-100 text-pink-800" },
-  "E1": { label: "Emergency", amount: 600, color: "bg-red-100 text-red-800" },
+  'NF': { label: 'No Fees (Staff/Follow-up)', amount: 0 },
+  'G1': { label: 'General - First Visit', amount: 150 },
+  'G2': { label: 'General - Follow-up', amount: 100 },
+  'S1': { label: 'Speciality - First Visit', amount: 300 },
+  'S2': { label: 'Speciality - Follow-up', amount: 200 },
+  'D1': { label: 'Diabetes - First Visit', amount: 500 },
+  'D2': { label: 'Diabetes - Follow-up', amount: 400 },
+  'D3': { label: 'Diabetes - Follow-up (2nd)', amount: 300 },
+  'O1': { label: 'OBGY - First Visit', amount: 500 },
+  'O2': { label: 'OBGY - Follow-up', amount: 400 },
+  'O3': { label: 'OBGY - Follow-up (2nd)', amount: 300 },
+  'E1': { label: 'Emergency', amount: 600 }
 };
 
-// Scan/Ultrasound fees (Dr. Neha - OBGY)
+// Scan/Test fees
 export const SCAN_FEES = {
-  "ES": { label: "Early Scan", amount: 1000, color: "bg-cyan-100 text-cyan-800" },
-  "NT": { label: "NT Scan", amount: 1200, color: "bg-cyan-100 text-cyan-800" },
-  "GS": { label: "Growth Scan", amount: 1500, color: "bg-cyan-100 text-cyan-800" },
-  "FL": { label: "Follicular", amount: 200, color: "bg-teal-100 text-teal-800" },
-  "UP": { label: "USG Pelvis", amount: 1000, color: "bg-teal-100 text-teal-800" },
-  "UT": { label: "UpT", amount: 100, color: "bg-teal-100 text-teal-800" },
+  'US1': { label: 'USG Abdomen', amount: 800 },
+  'US2': { label: 'USG Pelvis', amount: 800 },
+  'US3': { label: 'USG Obstetric', amount: 1000 },
+  'US4': { label: 'USG Anomaly Scan', amount: 2000 },
+  'US5': { label: 'NT Scan', amount: 2500 },
+  'US6': { label: 'Doppler', amount: 1500 }
 };
 
-// ============================================
-// API Fetch Functions (with fallback to static)
-// ============================================
+// Day names mapping
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-export const fetchClinicConfig = async () => {
-  try {
-    const response = await fetch(`${API}/config/clinics`);
-    if (response.ok) {
-      const data = await response.json();
-      // Convert array to object format expected by StaffPortal
-      const clinics = {};
-      const locations = {};
-      data.forEach(clinic => {
-        clinics[clinic.name] = clinic.doctors;
-        locations[clinic.name] = {
-          name: clinic.name,
-          address: `${clinic.address}, ${clinic.city}`,
-          phone: clinic.phone
-        };
-      });
-      return { clinics, locations };
-    }
-  } catch (error) {
-    console.warn('Failed to fetch clinic config from API, using fallback');
-  }
-  return { clinics: CLINICS, locations: CLINIC_LOCATIONS };
+/**
+ * Get current date in Indian timezone (YYYY-MM-DD format)
+ */
+export const getIndianDate = () => {
+  const now = new Date();
+  const indianTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+  return indianTime.toISOString().split('T')[0];
 };
 
-export const fetchDoctorSchedules = async () => {
-  try {
-    const response = await fetch(`${API}/config/doctors`);
-    if (response.ok) {
-      const data = await response.json();
-      // Convert to the format expected by StaffPortal
-      const schedules = {};
-      data.forEach(doc => {
-        schedules[doc.name] = doc.schedules;
-      });
-      return schedules;
-    }
-  } catch (error) {
-    console.warn('Failed to fetch doctor schedules from API, using fallback');
-  }
-  return DOCTOR_SCHEDULES;
+/**
+ * Get day name from date string
+ */
+export const getDayName = (dateStr) => {
+  const date = new Date(dateStr + 'T00:00:00');
+  return DAY_NAMES[date.getDay()];
 };
 
-export const fetchFeeCodes = async () => {
-  try {
-    const response = await fetch(`${API}/config/fees/consultation`);
-    if (response.ok) {
-      const data = await response.json();
-      // Convert array to object format expected by StaffPortal
-      const fees = {};
-      data.forEach(fee => {
-        fees[fee.code] = { label: fee.label, amount: fee.amount, color: fee.color };
-      });
-      return fees;
-    }
-  } catch (error) {
-    console.warn('Failed to fetch fee codes from API, using fallback');
-  }
-  return FEE_CODES;
+/**
+ * Format date for display (e.g., "25 Jan 2026")
+ */
+export const formatIndianDate = (dateStr) => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr + 'T00:00:00');
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
-export const fetchScanFees = async () => {
-  try {
-    const response = await fetch(`${API}/config/fees/scan`);
-    if (response.ok) {
-      const data = await response.json();
-      // Convert array to object format expected by StaffPortal
-      const fees = {};
-      data.forEach(fee => {
-        fees[fee.code] = { label: fee.label, amount: fee.amount, color: fee.color };
-      });
-      return fees;
-    }
-  } catch (error) {
-    console.warn('Failed to fetch scan fees from API, using fallback');
-  }
-  return SCAN_FEES;
-};
-
-// Helper function to generate time slots from schedule (15-minute intervals)
-export const generateTimeSlots = (startTime, endTime, interval = 15) => {
+/**
+ * Generate time slots between start and end time
+ */
+export const generateTimeSlots = (startTime, endTime, intervalMins = 15) => {
   const slots = [];
   const [startHour, startMin] = startTime.split(':').map(Number);
   const [endHour, endMin] = endTime.split(':').map(Number);
   
-  let currentHour = startHour;
-  let currentMin = startMin;
+  let currentMins = startHour * 60 + startMin;
+  const endMins = endHour * 60 + endMin;
   
-  while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
-    const timeStr = `${currentHour.toString().padStart(2, '0')}:${currentMin.toString().padStart(2, '0')}`;
-    slots.push(timeStr);
-    
-    currentMin += interval;
-    if (currentMin >= 60) {
-      currentHour += 1;
-      currentMin = 0;
-    }
+  while (currentMins < endMins) {
+    const hours = Math.floor(currentMins / 60);
+    const mins = currentMins % 60;
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
+    slots.push(`${displayHours}:${mins.toString().padStart(2, '0')} ${period}`);
+    currentMins += intervalMins;
   }
   
   return slots;
 };
 
-// Get current date in Indian timezone (IST - UTC+5:30)
-export const getIndianDate = () => {
-  const now = new Date();
-  const istOffset = 5.5 * 60 * 60 * 1000;
-  const utcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
-  const istTime = new Date(utcTime + istOffset);
-  return istTime.toISOString().split('T')[0];
-};
-
-// Get current time in IST (HH:MM format)
-export const getIndianTime = () => {
-  const now = new Date();
-  const istOffset = 5.5 * 60 * 60 * 1000;
-  const utcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
-  const istTime = new Date(utcTime + istOffset);
-  return istTime.toTimeString().slice(0, 5); // "HH:MM"
-};
-
-// Get current IST datetime
-export const getIndianDateTime = () => {
-  const now = new Date();
-  const istOffset = 5.5 * 60 * 60 * 1000;
-  const utcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
-  return new Date(utcTime + istOffset);
-};
-
-// Format date to Indian format (DD/MM/YYYY)
-export const formatIndianDate = (dateStr) => {
-  if (!dateStr) return '';
-  const [year, month, day] = dateStr.split('-');
-  return `${day}/${month}/${year}`;
-};
-
-// Get day name from date
-export const getDayName = (dateStr) => {
-  // Parse date parts directly to avoid timezone issues
-  const [year, month, day] = dateStr.split('-').map(Number);
-  const date = new Date(year, month - 1, day); // month is 0-indexed
-  return date.toLocaleDateString('en-US', { weekday: 'long' });
-};
-
-// Check if a time slot is in the past (for today's date)
-export const isSlotPast = (slotTime, dateStr) => {
-  const today = getIndianDate();
-  if (dateStr !== today) return false; // Only filter for today
-  
-  const currentTime = getIndianTime();
-  // Compare times in HH:MM format
-  return slotTime < currentTime;
-};
-
-// Get available time slots for a doctor at a clinic on a specific date
-// Automatically filters out past slots for today
-export const getAvailableTimeSlots = (doctor, clinic, dateStr, filterPastSlots = true) => {
-  if (!doctor || !clinic || !dateStr) return [];
-  
+/**
+ * Get available time slots for a doctor at a clinic on a given day
+ */
+export const getAvailableTimeSlots = (doctor, clinic, dateStr) => {
   const dayName = getDayName(dateStr);
   const schedule = DOCTOR_SCHEDULES[doctor]?.[clinic];
   
   if (!schedule) return [];
   
-  const allSlots = [];
-  
+  let slots = [];
   schedule.forEach(slot => {
     if (slot.days.includes(dayName)) {
-      const [startTime, endTime] = slot.time.split('-');
-      const timeSlots = generateTimeSlots(startTime, endTime);
-      allSlots.push(...timeSlots);
+      // Parse time range like "09:00 AM - 12:00 PM"
+      const [startStr, endStr] = slot.time.split(' - ');
+      
+      // Convert to 24-hour format for calculation
+      const parseTime = (timeStr) => {
+        const [time, period] = timeStr.split(' ');
+        let [hours, mins] = time.split(':').map(Number);
+        if (period === 'PM' && hours !== 12) hours += 12;
+        if (period === 'AM' && hours === 12) hours = 0;
+        return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+      };
+      
+      const startTime = parseTime(startStr);
+      const endTime = parseTime(endStr);
+      
+      slots = [...slots, ...generateTimeSlots(startTime, endTime, 15)];
     }
   });
   
-  let uniqueSlots = [...new Set(allSlots)].sort();
-  
-  // Filter out past slots for today
-  if (filterPastSlots) {
-    uniqueSlots = uniqueSlots.filter(slot => !isSlotPast(slot, dateStr));
-  }
-  
-  return uniqueSlots;
+  return slots;
 };
 
-// Get status color for appointments
-export const getStatusColor = (status) => {
-  const colors = {
-    'Booked': 'bg-yellow-100 text-yellow-800',
-    'In Clinic': 'bg-blue-100 text-blue-800',
-    'Completed': 'bg-green-100 text-green-800',
-    'Cancelled': 'bg-red-100 text-red-800',
-    'No Show': 'bg-gray-100 text-gray-800',
-    'Received': 'bg-yellow-100 text-yellow-800',
-    'Processing': 'bg-blue-100 text-blue-800',
-    'Ready': 'bg-purple-100 text-purple-800',
-    'Delivered': 'bg-green-100 text-green-800',
-    'Sample Collected': 'bg-blue-100 text-blue-800',
-    'Report Ready': 'bg-purple-100 text-purple-800',
-    'ORDERED': 'bg-yellow-100 text-yellow-800',
-    'SAMPLE_COLLECTED': 'bg-blue-100 text-blue-800',
-    'PROCESSING': 'bg-purple-100 text-purple-800',
-    'COMPLETED': 'bg-green-100 text-green-800',
-    'pending': 'bg-yellow-100 text-yellow-800',
-    'processing': 'bg-blue-100 text-blue-800',
-    'ready': 'bg-green-100 text-green-800',
-    'delivered': 'bg-gray-100 text-gray-800',
-    'collected': 'bg-purple-100 text-purple-800',
-    'cancelled': 'bg-red-100 text-red-800'
-  };
-  return colors[status] || 'bg-gray-100 text-gray-800';
+/**
+ * Check if doctor is available at clinic on given day
+ */
+export const isDoctorAvailableOnDay = (doctor, clinic, dateStr) => {
+  const dayName = getDayName(dateStr);
+  const schedule = DOCTOR_SCHEDULES[doctor]?.[clinic];
+  
+  if (!schedule) return false;
+  
+  return schedule.some(slot => slot.days.includes(dayName));
 };
 
-// Format currency
+/**
+ * Get auth headers from localStorage
+ */
+export const getAuthHeaders = () => {
+  const token = localStorage.getItem('staffToken');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+/**
+ * Role checking utilities
+ */
+export const isClinicStaff = (role) => ['clinic_staff_pushpa', 'clinic_staff_amnion', 'super_admin'].includes(role);
+export const isDoctor = (role) => ['doctor', 'doctor_pushpa', 'doctor_amnion', 'super_admin'].includes(role);
+export const isPharmacyStaff = (role) => ['pharmacy_staff', 'super_admin'].includes(role);
+export const isDiagnosticsStaff = (role) => ['diagnostics_staff', 'super_admin'].includes(role);
+
+/**
+ * Format currency for display
+ */
 export const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
-    maximumFractionDigits: 0
+    minimumFractionDigits: 0
   }).format(amount);
 };
 
-// Get auth headers from localStorage
-export const getAuthHeaders = () => {
-  const token = localStorage.getItem('staffToken');
-  return {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  };
+export default {
+  API,
+  CLINICS,
+  DOCTOR_SCHEDULES,
+  FEE_CODES,
+  SCAN_FEES,
+  getIndianDate,
+  getDayName,
+  formatIndianDate,
+  generateTimeSlots,
+  getAvailableTimeSlots,
+  isDoctorAvailableOnDay,
+  getAuthHeaders,
+  isClinicStaff,
+  isDoctor,
+  isPharmacyStaff,
+  isDiagnosticsStaff,
+  formatCurrency
 };
