@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
+import axios from 'axios';
 
 const AuthModal = ({ open, onClose }) => {
-  const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login, fetchUser, biometricAvailable, biometricEnabled, loginWithBiometric } = useAuth();
+  const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login, fetchUser, biometricAvailable, biometricEnabled, loginWithBiometric, setPatientAuth } = useAuth();
   const [loading, setLoading] = useState(false);
   // Steps: method-select, email-otp, email-otp-verify, phone-otp, phone-otp-verify, password-login, register, interests, password-failed
   const [step, setStep] = useState('method-select');
