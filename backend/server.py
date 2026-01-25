@@ -4170,6 +4170,16 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Payments router: {e}")
 
+# Enhanced Features Router (Notifications, Gamification, Health Dashboard, Smart Scheduling, Multi-language)
+try:
+    from routes.enhanced_features import router as enhanced_router, set_db as set_enhanced_db
+    set_enhanced_db(db)
+    app.include_router(enhanced_router, prefix="/api/features")
+    logger.info("Enhanced Features router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Enhanced Features router: {e}")
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
