@@ -2567,13 +2567,6 @@ const StaffPortal = () => {
                 <Gift className="w-4 h-4 mr-2" />
                 Loyalty Points
               </TabsTrigger>
-              {/* Attendance Tab for Pharmacy Staff */}
-              {staffInfo?.access_modules?.includes('attendance') && (
-                <TabsTrigger value="attendance" data-testid="tab-pharmacy-attendance">
-                  <Fingerprint className="w-4 h-4 mr-2" />
-                  Attendance
-                </TabsTrigger>
-              )}
             </TabsList>
 
             {/* Pharmacy Dashboard */}
