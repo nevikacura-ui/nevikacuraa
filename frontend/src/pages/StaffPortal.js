@@ -2046,6 +2046,18 @@ const StaffPortal = () => {
                   <span>Feedback</span>
                 </TabsTrigger>
                 
+                {/* Analytics Tab - For clinic staff and managers */}
+                {(isClinicStaff(role) || role === 'super_admin') && (
+                  <TabsTrigger 
+                    value="analytics" 
+                    data-testid="tab-analytics"
+                    className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
+                  >
+                    <Activity className="w-5 h-5 sm:w-5 sm:h-5" />
+                    <span>Analytics</span>
+                  </TabsTrigger>
+                )}
+                
                 {/* Patient Database Tab - For doctors */}
                 {(staffInfo?.role === 'doctor' || staffInfo?.role === 'super_admin') && (
                   <TabsTrigger 
