@@ -2285,16 +2285,6 @@ const StaffPortal = () => {
                 <Users className="w-5 h-5" />
                 Patients
               </TabsTrigger>
-              
-              {/* Biometric Attendance for Doctors */}
-              <TabsTrigger 
-                value="biometric" 
-                data-testid="doc-tab-biometric"
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-orange-500 data-[state=active]:text-white min-h-[44px]"
-              >
-                <Fingerprint className="w-5 h-5" />
-                Attendance
-              </TabsTrigger>
             </TabsList>
 
             {/* Appointments Tab Content */}
