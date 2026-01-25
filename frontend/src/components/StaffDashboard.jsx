@@ -240,13 +240,6 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
       icon: Activity, 
       color: 'bg-purple-500',
       module: 'glydex'
-    },
-    { 
-      id: 'attendance', 
-      label: 'Mark Attendance', 
-      icon: Fingerprint, 
-      color: 'bg-orange-500',
-      module: 'attendance'
     }
   ].filter(action => accessModules.includes(action.module));
 
