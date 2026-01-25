@@ -44,7 +44,6 @@ import { ClinicAnalytics, PharmacyAnalytics, DiagnosticsAnalytics } from '@/comp
 
 // Import refactored utilities and components
 import StaffLogin from './staff/StaffLogin';
-import SmartBiometric from './staff/SmartBiometric';
 import { 
   API, CLINICS, CLINIC_LOCATIONS, DOCTOR_SCHEDULES, FEE_CODES, SCAN_FEES,
   getIndianDate, getDayName, getAvailableTimeSlots, 
