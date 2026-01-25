@@ -2215,17 +2215,6 @@ const StaffPortal = () => {
                 />
               </TabsContent>
             )}
-
-            {/* Attendance Tab Content */}
-            {staffInfo?.access_modules?.includes('attendance') && (
-              <TabsContent value="attendance">
-                <SmartBiometric 
-                  clinic={staffInfo?.clinic?.toLowerCase().includes('pushpa') ? 'pushpa' : 
-                          staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 
-                          staffInfo?.clinic?.toLowerCase().includes('pharmacy') ? 'pharmacy' : 'pushpa'}
-                />
-              </TabsContent>
-            )}
           </Tabs>
         )}
 
