@@ -1485,6 +1485,9 @@ const Pharmacy = () => {
           </Tabs>
         </DialogContent>
       </Dialog>
+      
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 };
