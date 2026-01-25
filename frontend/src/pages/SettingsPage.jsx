@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, User, Bell, Globe, Heart, Users, Shield,
   ChevronRight, LogOut, HelpCircle, FileText, Star,
-  CreditCard, BellRing, Calendar, CalendarSync
+  CreditCard, BellRing, Calendar, Download, ExternalLink, Check
 } from 'lucide-react';
 import NotificationSettings from '@/components/NotificationSettings';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -17,6 +17,120 @@ import SmartScheduling from '@/components/SmartScheduling';
 import { SyncAllAppointmentsButton } from '@/components/AddToCalendar';
 import { useLanguage } from '@/context/LanguageContext';
 import BottomNav from '@/components/BottomNav';
+
+// Calendar Sync Section Component
+const CalendarSyncSection = () => {
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white">
+          <Calendar className="w-6 h-6" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            Calendar Sync
+          </h2>
+          <p className="text-sm text-slate-500">Never miss an appointment</p>
+        </div>
+      </div>
+
+      {/* Sync All Button */}
+      <Card className="p-5 rounded-2xl">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="font-semibold text-slate-800">Sync All Appointments</h3>
+            <p className="text-sm text-slate-500">Download all upcoming appointments as a calendar file</p>
+          </div>
+        </div>
+        <SyncAllAppointmentsButton />
+      </Card>
+
+      {/* Supported Calendars */}
+      <div className="space-y-3">
+        <h3 className="font-semibold text-slate-700">Supported Calendars</h3>
+        
+        <Card className="p-4 rounded-xl">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-white shadow flex items-center justify-center">
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" fill="#4285F4"/>
+                <rect x="5" y="5" width="14" height="14" rx="1" fill="white"/>
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-slate-800">Google Calendar</p>
+              <p className="text-xs text-slate-500">Click "Add to Calendar" on any appointment</p>
+            </div>
+            <Check className="w-5 h-5 text-emerald-500" />
+          </div>
+        </Card>
+
+        <Card className="p-4 rounded-xl">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-red-600 shadow flex items-center justify-center text-white">
+              <Calendar className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-slate-800">Apple Calendar</p>
+              <p className="text-xs text-slate-500">Download .ics file to add events</p>
+            </div>
+            <Check className="w-5 h-5 text-emerald-500" />
+          </div>
+        </Card>
+
+        <Card className="p-4 rounded-xl">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-600 shadow flex items-center justify-center text-white">
+              <Calendar className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-slate-800">Outlook / Microsoft 365</p>
+              <p className="text-xs text-slate-500">Import .ics file to your calendar</p>
+            </div>
+            <Check className="w-5 h-5 text-emerald-500" />
+          </div>
+        </Card>
+
+        <Card className="p-4 rounded-xl">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-slate-100 shadow flex items-center justify-center text-slate-600">
+              <Calendar className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-slate-800">Other Calendars</p>
+              <p className="text-xs text-slate-500">Yahoo, Zoho, and any iCal-compatible app</p>
+            </div>
+            <Check className="w-5 h-5 text-emerald-500" />
+          </div>
+        </Card>
+      </div>
+
+      {/* How It Works */}
+      <Card className="p-5 rounded-2xl bg-slate-50">
+        <h3 className="font-semibold text-slate-700 mb-3">How It Works</h3>
+        <ol className="space-y-3 text-sm">
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center font-bold text-xs">1</span>
+            <span className="text-slate-600">Go to "My Appointments" in Patient Portal</span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center font-bold text-xs">2</span>
+            <span className="text-slate-600">Click the calendar icon on any upcoming appointment</span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center font-bold text-xs">3</span>
+            <span className="text-slate-600">Choose Google Calendar or download .ics file</span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="w-6 h-6 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center font-bold text-xs">4</span>
+            <span className="text-slate-600">You'll get reminders 24h and 1h before your appointment!</span>
+          </li>
+        </ol>
+      </Card>
+    </div>
+  );
+};
 
 const SettingsPage = () => {
   const { user, logout } = useAuth();
