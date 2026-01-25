@@ -138,7 +138,7 @@ class TestStaffAppointmentAPIs:
         response = requests.get(
             f"{BASE_URL}/api/appointments/booked-slots",
             params={
-                "doctor": "Dr. Vikas Deshmukh",
+                "doctor": "Dr. Vikas Jha",
                 "clinic": "Pushpa Clinic",
                 "date": "2026-01-27"  # Monday
             },
