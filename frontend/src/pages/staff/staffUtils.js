@@ -16,22 +16,20 @@ export const CLINICS = {
 export const DOCTOR_SCHEDULES = {
   'Dr. Vikas Jha': {
     'Pushpa Clinic': [
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '09:00 AM - 12:00 PM' },
-      { days: ['Saturday'], time: '09:00 AM - 01:00 PM' }
+      { days: ['Monday', 'Wednesday', 'Friday'], time: '06:00 PM - 10:00 PM' }
     ],
     'Amnion Clinic': [
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '05:00 PM - 08:00 PM' },
-      { days: ['Saturday'], time: '04:00 PM - 07:00 PM' }
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00 AM - 02:00 PM' },
+      { days: ['Tuesday', 'Thursday', 'Saturday'], time: '06:00 PM - 10:00 PM' }
     ]
   },
   'Dr. Neha Patel': {
     'Pushpa Clinic': [
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '10:00 AM - 01:00 PM' },
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '05:00 PM - 08:00 PM' }
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00 AM - 02:00 PM' },
+      { days: ['Tuesday', 'Thursday', 'Saturday'], time: '06:00 PM - 10:00 PM' }
     ],
     'Amnion Clinic': [
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '10:00 AM - 01:00 PM' },
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '05:00 PM - 08:00 PM' }
+      { days: ['Monday', 'Wednesday', 'Friday'], time: '06:00 PM - 10:00 PM' }
     ]
   }
 };
