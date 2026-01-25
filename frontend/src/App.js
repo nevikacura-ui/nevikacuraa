@@ -50,6 +50,8 @@ import SeniorCare from '@/pages/SeniorCare';
 import SmartReminders from '@/pages/SmartReminders';
 // Patient Portal
 import PatientPortal from '@/pages/PatientPortal';
+// Payment Pages
+import { PaymentSuccess, PaymentCancel } from '@/components/PaymentCheckout';
 // Splash Screen
 import SplashScreen from '@/components/SplashScreen';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
