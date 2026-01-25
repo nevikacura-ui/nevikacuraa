@@ -338,7 +338,7 @@ const PatientPortal = () => {
           {menuItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveSection(item.id)}
+              onClick={() => item.link ? navigate(item.link) : setActiveSection(item.id)}
               className={`p-4 rounded-2xl border-2 transition-all text-left ${
                 activeSection === item.id 
                   ? `border-${item.color}-500 bg-${item.color}-50` 
