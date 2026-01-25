@@ -159,10 +159,10 @@ const SplashScreen = ({ onComplete, user }) => {
         </div>
       )}
       
-      {/* Content */}
-      <div className="relative z-10 text-center max-w-md mx-auto">
+      {/* Content - Centered vertically and horizontally */}
+      <div className="relative z-10 text-center max-w-md mx-auto flex flex-col items-center justify-center">
         {/* Logo/Brand - Oval shaped with white background */}
-        <div className="mb-8">
+        <div className="mb-4">
           <div className="bg-white rounded-[40px] px-8 py-6 shadow-xl shadow-black/20">
             <img 
               src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
@@ -170,11 +170,11 @@ const SplashScreen = ({ onComplete, user }) => {
               className="h-20 w-auto object-contain"
             />
           </div>
-          <div className="h-1 w-20 bg-gradient-to-r from-teal-300 to-cyan-300 mx-auto rounded-full mt-4"></div>
+          <div className="h-1 w-20 bg-gradient-to-r from-teal-300 to-cyan-300 mx-auto rounded-full mt-3"></div>
         </div>
         
-        {/* Animated Icons - Disappearing Effect */}
-        <div className="flex justify-center gap-6 mb-8">
+        {/* Animated Icons - Bigger and centered with less gap from logo */}
+        <div className="flex justify-center items-center gap-8 mb-6">
           {icons.map(({ Icon, color, label, animDelay }, idx) => (
             <div 
               key={idx}
