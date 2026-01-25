@@ -28,6 +28,21 @@ const SplashScreen = ({ onComplete, user }) => {
   // Animation state
   const [animationComplete, setAnimationComplete] = useState(false);
   
+  // Lock body scroll when splash screen is visible
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+    };
+  }, []);
+  
   useEffect(() => {
     // Trigger animation completion after 1.5 seconds
     const timer = setTimeout(() => {
