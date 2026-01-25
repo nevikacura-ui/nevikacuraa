@@ -32,6 +32,12 @@ import FeedbackTab from '@/components/staff/FeedbackTab';
 import AppointmentsTab from '@/components/staff/AppointmentsTab';
 import BillingTab from '@/components/staff/BillingTab';
 import PatientsTab from '@/components/staff/PatientsTab';
+import SonographyTab from '@/components/staff/SonographyTab';
+import PharmacyOrdersTab from '@/components/staff/PharmacyOrdersTab';
+import PharmacyLoyaltyTab from '@/components/staff/PharmacyLoyaltyTab';
+import DiagnosticsOrdersTab from '@/components/staff/DiagnosticsOrdersTab';
+import DiagnosticsCreateTab from '@/components/staff/DiagnosticsCreateTab';
+import DiagnosticsLoyaltyTab from '@/components/staff/DiagnosticsLoyaltyTab';
 
 // Import refactored utilities and components
 import StaffLogin from './staff/StaffLogin';
