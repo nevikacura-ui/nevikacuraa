@@ -316,10 +316,10 @@ const Home = () => {
   };
 
   // Modern Service Cards - Logo background matches card background
-  // Featured services (Top 3): DiaGyn, Proton, Pharmacy
+  // Featured services (Top 3): DiaGyn, Proton, Pharmacy - All white background horizontal cards
   // Secondary services (Bottom 2x2): Evara, Glydex, Alyne, Thrive360
   const services = [
-    // Featured - Top 3
+    // Featured - Top 3 (All white background)
     {
       id: 'diagyn',
       name: 'DiaGyn Healthcare',
@@ -346,8 +346,8 @@ const Home = () => {
       description: 'Order medicines with fast delivery',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
       path: '/pharmacy',
-      bgColor: '#ff6b35',
-      isDark: true,
+      bgColor: '#ffffff',
+      isDark: false,
       featured: true
     },
     // Secondary - Bottom 2x2
