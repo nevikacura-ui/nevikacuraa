@@ -541,7 +541,7 @@ const PatientPortal = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-purple-700">
                     <FlaskConical className="w-5 h-5" />
-                    Booked Tests
+                    My Lab Tests
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -583,21 +583,101 @@ const PatientPortal = () => {
               </Card>
             )}
             
-            {/* Track Orders Section */}
-            {activeSection === 'track' && history && (
+            {/* My Orders Section (Pharmacy) */}
+            {activeSection === 'orders' && history && (
               <Card className="rounded-2xl shadow-lg border-0">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-orange-700">
-                    <Package className="w-5 h-5" />
-                    Track Orders
+                    <Pill className="w-5 h-5" />
+                    My Orders
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {history.pharmacy_orders.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
-                      <Package className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                      <p>No orders to track</p>
+                      <Pill className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                      <p>No orders yet</p>
                       <Button className="mt-4" onClick={() => navigate('/orange')}>Order Medicines</Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {history.pharmacy_orders.map((order, idx) => (
+                        <div key={idx} className="p-4 bg-orange-50 rounded-xl border border-orange-100">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <Pill className="w-5 h-5 text-orange-600" />
+                              </div>
+                              <div>
+                                <p className="font-semibold text-gray-800">Order #{order.order_id || idx + 1}</p>
+                                <p className="text-xs text-gray-500">{order.created_at?.split('T')[0]}</p>
+                              </div>
+                            </div>
+                            <Badge className={
+                              order.status === 'delivered' ? 'bg-green-100 text-green-700' : 
+                              order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                              'bg-orange-100 text-orange-700'
+                            }>
+                              {order.status}
+                            </Badge>
+                          </div>
+                          {order.items && (
+                            <div className="text-sm text-gray-600">
+                              {order.items.slice(0, 2).map((item, i) => (
+                                <p key={i}>• {item.name} x {item.quantity}</p>
+                              ))}
+                              {order.items.length > 2 && (
+                                <p className="text-gray-400">+{order.items.length - 2} more items</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+            
+            {/* Track Orders Section */}
+            {activeSection === 'track' && history && (
+              <Card className="rounded-2xl shadow-lg border-0">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-blue-700">
+                    <Package className="w-5 h-5" />
+                    Track Orders
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-6">
+                    <Package className="w-16 h-16 mx-auto mb-4 text-blue-500" />
+                    <h3 className="font-semibold text-gray-800 mb-2">Track Your Orders</h3>
+                    <p className="text-sm text-gray-500 mb-4">Enter your order ID to track delivery status</p>
+                    <Button onClick={() => navigate('/track')} className="bg-blue-600 hover:bg-blue-700">
+                      <Search className="w-4 h-4 mr-2" />
+                      Go to Order Tracking
+                    </Button>
+                  </div>
+                  
+                  {/* Recent trackable orders */}
+                  {history.pharmacy_orders.filter(o => o.status !== 'delivered').length > 0 && (
+                    <div className="mt-6 pt-4 border-t">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">Active Orders</h4>
+                      <div className="space-y-2">
+                        {history.pharmacy_orders.filter(o => o.status !== 'delivered').slice(0, 3).map((order, idx) => (
+                          <div key={idx} className="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
+                            <span className="text-sm font-medium">Order #{order.order_id || idx + 1}</span>
+                            <Badge className="bg-blue-100 text-blue-700">{order.status}</Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+            
+            {/* Loyalty Points Section */}
                     </div>
                   ) : (
                     <div className="space-y-3">
