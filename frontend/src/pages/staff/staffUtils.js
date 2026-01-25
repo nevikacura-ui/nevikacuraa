@@ -9,7 +9,7 @@ export const API = process.env.REACT_APP_BACKEND_URL + '/api';
 // Clinic to Doctors mapping
 export const CLINICS = {
   'Pushpa Clinic': ['Dr. Vikas Jha', 'Dr. Neha Patel'],
-  'Amnion Clinic': ['Dr. Vikas Jha']
+  'Amnion Clinic': ['Dr. Vikas Jha', 'Dr. Neha Patel']
 };
 
 // Doctor schedules with time slots
@@ -26,6 +26,10 @@ export const DOCTOR_SCHEDULES = {
   },
   'Dr. Neha Patel': {
     'Pushpa Clinic': [
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '10:00 AM - 01:00 PM' },
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '05:00 PM - 08:00 PM' }
+    ],
+    'Amnion Clinic': [
       { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '10:00 AM - 01:00 PM' },
       { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '05:00 PM - 08:00 PM' }
     ]
