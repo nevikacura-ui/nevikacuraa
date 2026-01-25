@@ -809,19 +809,3 @@ async def generate_receipt_pdf(session_id: str):
             "Content-Disposition": f"attachment; filename={filename}"
         }
     )
-
-    query = {}
-    
-    if payment_type:
-        query["payment_type"] = payment_type
-    if reference_id:
-        query["reference_id"] = reference_id
-    if patient_phone:
-        query["patient_phone"] = patient_phone
-    
-    transactions = await db.payment_transactions.find(
-        query,
-        {"_id": 0}
-    ).sort("created_at", -1).limit(limit).to_list(limit)
-    
-    return {"transactions": transactions, "count": len(transactions)}
