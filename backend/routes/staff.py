@@ -307,7 +307,8 @@ Location: {map_link}
 async def create_emergency_appointment(data: EmergencyAppointment, staff = Depends(verify_staff)):
     """Create an emergency appointment"""
     # Use provided date or today
-    appointment_date = data.date if data.date else datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    appointment_date = data.date if data.date else today
     now_time = datetime.now(timezone.utc).strftime("%H:%M")
     
     appointment = {
