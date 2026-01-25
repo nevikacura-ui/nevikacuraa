@@ -10,6 +10,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone
 import os
 import logging
+import resend
+import asyncio
 
 from emergentintegrations.payments.stripe.checkout import (
     StripeCheckout, 
@@ -28,6 +30,24 @@ db = client[os.environ.get('DB_NAME', 'test_database')]
 
 # Stripe API key
 STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', 'sk_test_emergent')
+
+# Resend Configuration
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'Nevika Cura <onboarding@resend.dev>')
+if RESEND_API_KEY:
+    resend.api_key = RESEND_API_KEY
+
+# Twilio Configuration
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', '')
+TWILIO_PHONE_NUMBER = os.environ.get('TWILIO_PHONE_NUMBER', '')
+twilio_client = None
+if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
+    try:
+        from twilio.rest import Client as TwilioClient
+        twilio_client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    except Exception as e:
+        logger.warning(f"Failed to initialize Twilio client: {e}")
 
 # ============================================
 # Fixed Payment Packages (Backend-defined only)
