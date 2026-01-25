@@ -17,7 +17,6 @@ const AppointmentsTab = ({
   dailyCollection,
   emergencyCounts,
   loading,
-  handleStatusChange,
   setShowSonographyModal,
   openAppointmentDetails,
   handleCheckIn,
