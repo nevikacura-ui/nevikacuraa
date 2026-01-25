@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { 
   Scan, AlertTriangle, CheckCircle2, XCircle, Clock, 
-  User, Phone, Calendar, Loader2 
+  Calendar, Loader2, Plus, Edit2
 } from 'lucide-react';
 import { getStatusColor } from '@/pages/staff/staffUtils';
 
@@ -19,7 +19,11 @@ const AppointmentsTab = ({
   loading,
   handleStatusChange,
   setShowSonographyModal,
-  openAppointmentDetails
+  openAppointmentDetails,
+  handleCheckIn,
+  handleEditPatient,
+  openSonographyFromAppointment,
+  FEE_CODES
 }) => {
   return (
     <Card className="p-3 sm:p-4" data-testid="appointments-tab-content">
@@ -41,7 +45,7 @@ const AppointmentsTab = ({
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
             className="w-40"
-            data-testid="appointments-date-picker"
+            data-testid="date-picker"
           />
         </div>
       </div>
@@ -107,8 +111,12 @@ const AppointmentsTab = ({
             <AppointmentCard 
               key={appt.id || appt.appointment_id} 
               appt={appt}
-              handleStatusChange={handleStatusChange}
+              staffInfo={staffInfo}
+              handleCheckIn={handleCheckIn}
+              handleEditPatient={handleEditPatient}
               openAppointmentDetails={openAppointmentDetails}
+              openSonographyFromAppointment={openSonographyFromAppointment}
+              FEE_CODES={FEE_CODES}
             />
           ))
         )}
@@ -142,16 +150,26 @@ const CollectionCard = ({ label, amount, count, color }) => {
 };
 
 // Appointment card sub-component
-const AppointmentCard = ({ appt, handleStatusChange, openAppointmentDetails }) => {
+const AppointmentCard = ({ 
+  appt, 
+  staffInfo,
+  handleCheckIn,
+  handleEditPatient, 
+  openAppointmentDetails,
+  openSonographyFromAppointment,
+  FEE_CODES
+}) => {
   const isEmergency = appt.appointment_type === 'EMERGENCY';
   const isWalkIn = appt.booking_type === 'walk_in';
+  const isActive = appt.status !== 'Completed' && appt.status !== 'Cancelled';
+  const isPending = ['Booked', 'booked', 'pending', 'Pending'].includes(appt.status);
+  const isWithDoctor = appt.status === 'In Clinic';
   
   return (
     <div 
-      className={`flex items-center justify-between p-4 rounded-lg cursor-pointer hover:shadow-md transition-shadow ${
+      className={`flex items-center justify-between p-4 rounded-lg ${
         isEmergency ? 'bg-red-50 border-2 border-red-300' : 'bg-gray-50'
       }`}
-      onClick={() => openAppointmentDetails && openAppointmentDetails(appt)}
       data-testid={`appointment-${appt.id || appt.appointment_id}`}
     >
       <div className="flex-1">
@@ -173,53 +191,90 @@ const AppointmentCard = ({ appt, handleStatusChange, openAppointmentDetails }) =
             <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-800">Walk-in</span>
           )}
         </div>
-        <div className="text-sm text-gray-500 mt-1 flex items-center gap-2 flex-wrap">
-          <span className="flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            {appt.time || 'No time slot'}
-          </span>
-          <span>•</span>
-          <span>{appt.doctor}</span>
-          <span>•</span>
-          <span className="flex items-center gap-1">
-            <Phone className="w-3 h-3" />
-            {appt.patient_phone}
-          </span>
+        <div className="text-sm text-gray-500 mt-1">
+          <span>{appt.time || 'No time slot'}</span> • <span>{appt.doctor}</span> • <span>{appt.patient_phone}</span>
         </div>
       </div>
       
-      {/* Quick status buttons */}
-      {handleStatusChange && appt.status !== 'Completed' && appt.status !== 'Cancelled' && (
-        <div className="flex gap-2 ml-2" onClick={(e) => e.stopPropagation()}>
-          {appt.status === 'Scheduled' && (
-            <Button 
-              size="sm" 
-              variant="outline"
-              className="text-green-600 border-green-300 hover:bg-green-50"
-              onClick={() => handleStatusChange(appt.id || appt.appointment_id, 'Checked-In')}
-            >
-              <CheckCircle2 className="w-4 h-4" />
-            </Button>
-          )}
-          {appt.status === 'Checked-In' && (
-            <Button 
-              size="sm"
-              className="bg-green-500 hover:bg-green-600 text-white"
-              onClick={() => handleStatusChange(appt.id || appt.appointment_id, 'Completed')}
-            >
-              Complete
-            </Button>
-          )}
+      {/* Action Buttons */}
+      <div className="flex gap-2 flex-wrap">
+        {/* Add Service button - only before completion */}
+        {isActive && openAppointmentDetails && (
           <Button 
             size="sm" 
             variant="outline"
-            className="text-red-600 border-red-300 hover:bg-red-50"
-            onClick={() => handleStatusChange(appt.id || appt.appointment_id, 'Cancelled')}
+            onClick={() => openAppointmentDetails(appt)}
+            data-testid={`add-service-${appt.id || appt.appointment_id}`}
           >
-            <XCircle className="w-4 h-4" />
+            <Plus className="w-4 h-4 mr-1" />
+            Service
           </Button>
-        </div>
-      )}
+        )}
+        
+        {/* Edit Patient button */}
+        {isActive && handleEditPatient && (
+          <Button 
+            size="sm" 
+            variant="outline"
+            onClick={() => handleEditPatient(appt)}
+            className="border-amber-300 text-amber-600 hover:bg-amber-50"
+            data-testid={`edit-patient-${appt.id || appt.appointment_id}`}
+          >
+            <Edit2 className="w-4 h-4 mr-1" />
+            Edit
+          </Button>
+        )}
+        
+        {/* Book Sonography button - for clinic staff */}
+        {isActive && staffInfo?.role?.includes('clinic_staff') && openSonographyFromAppointment && (
+          <Button 
+            size="sm" 
+            variant="outline"
+            onClick={() => openSonographyFromAppointment(appt)}
+            className="border-purple-300 text-purple-600 hover:bg-purple-50"
+            data-testid={`book-sonography-${appt.id || appt.appointment_id}`}
+          >
+            <Scan className="w-4 h-4 mr-1" />
+            Sonography
+          </Button>
+        )}
+        
+        {/* Check In button */}
+        {isPending && handleCheckIn && (
+          <Button 
+            size="sm" 
+            onClick={() => handleCheckIn(appt.id || appt.appointment_id)} 
+            className="bg-blue-500 hover:bg-blue-600"
+            data-testid={`checkin-${appt.id || appt.appointment_id}`}
+          >
+            <CheckCircle2 className="w-4 h-4 mr-1" />
+            Check In
+          </Button>
+        )}
+        
+        {/* With Doctor status indicator */}
+        {isWithDoctor && (
+          <span className="px-3 py-1.5 bg-yellow-100 text-yellow-800 rounded-lg text-sm flex items-center gap-1">
+            <Clock className="w-4 h-4" />
+            With Doctor
+          </span>
+        )}
+        
+        {/* Show fee code when completed */}
+        {appt.status === 'Completed' && appt.fee_code && FEE_CODES && (
+          <span className={`px-3 py-1.5 rounded-lg text-sm font-bold ${FEE_CODES[appt.fee_code]?.color || 'bg-green-100 text-green-800'}`}>
+            {appt.fee_code} • ₹{appt.fee_amount}
+          </span>
+        )}
+        
+        {/* Follow-up date */}
+        {appt.status === 'Completed' && appt.follow_up_date && (
+          <span className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-lg text-sm flex items-center gap-1">
+            <Calendar className="w-4 h-4" />
+            Follow-up: {appt.follow_up_date}
+          </span>
+        )}
+      </div>
     </div>
   );
 };
