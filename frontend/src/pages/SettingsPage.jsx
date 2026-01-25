@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, User, Bell, Globe, Heart, Users, Shield,
   ChevronRight, LogOut, HelpCircle, FileText, Star,
-  CreditCard, BellRing, Calendar
+  CreditCard, BellRing, Calendar, CalendarSync
 } from 'lucide-react';
 import NotificationSettings from '@/components/NotificationSettings';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -14,6 +14,7 @@ import FamilyMembers from '@/components/FamilyMembers';
 import PaymentManagement from '@/components/PaymentManagement';
 import PushNotificationManager from '@/components/PushNotificationManager';
 import SmartScheduling from '@/components/SmartScheduling';
+import { SyncAllAppointmentsButton } from '@/components/AddToCalendar';
 import { useLanguage } from '@/context/LanguageContext';
 import BottomNav from '@/components/BottomNav';
 
