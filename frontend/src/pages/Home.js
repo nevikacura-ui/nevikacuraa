@@ -24,6 +24,17 @@ import {
   services 
 } from '@/data/homeData';
 
+// Icon mapping for data-driven components
+const iconMap = {
+  Trophy,
+  Users,
+  Clock,
+  Shield,
+  Calendar,
+  Stethoscope,
+  Heart
+};
+
 const Home = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
