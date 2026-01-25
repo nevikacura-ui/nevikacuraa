@@ -27,59 +27,7 @@ import {
 // Health Tips Data - Imported from homeData.js
 // const healthTips = [...] - MOVED TO /data/homeData.js
 
-// Service Spotlight Data
-const spotlightServices = [
-  {
-    id: 'diagyn-appointment',
-    title: 'Book Appointment',
-    subtitle: 'DiaGyn Healthcare',
-    description: 'Skip the queue! Book your doctor appointment online in just 2 minutes',
-    cta: 'Book Now',
-    path: '/diagyn',
-    gradient: 'from-teal-500 to-cyan-500',
-    bgImage: 'from-teal-50 to-cyan-100'
-  },
-  {
-    id: 'diagyn-spotlight',
-    title: 'Women\'s Health Week',
-    subtitle: 'Special consultations at DiaGyn',
-    description: 'Comprehensive gynecological care with experienced specialists',
-    cta: 'Book Now',
-    path: '/diagyn',
-    gradient: 'from-pink-500 to-rose-500',
-    bgImage: 'from-pink-50 to-rose-100'
-  },
-  {
-    id: 'proton-spotlight',
-    title: 'Full Body Checkup',
-    subtitle: 'Proton Diagnostics',
-    description: 'Complete health screening with 50+ tests at special rates',
-    cta: 'View Packages',
-    path: '/proton',
-    gradient: 'from-blue-500 to-cyan-500',
-    bgImage: 'from-blue-50 to-cyan-100'
-  },
-  {
-    id: 'pharmacy-spotlight',
-    title: 'Medicine Delivery',
-    subtitle: 'Orange Pharmacy',
-    description: 'Get your prescriptions delivered within 2 hours',
-    cta: 'Order Now',
-    path: '/pharmacy',
-    gradient: 'from-orange-500 to-amber-500',
-    bgImage: 'from-orange-50 to-amber-100'
-  },
-  {
-    id: 'glydex-spotlight',
-    title: 'Diabetes Management',
-    subtitle: 'Glydex Program',
-    description: 'Personalized care plans for better glucose control',
-    cta: 'Learn More',
-    path: '/glydex',
-    gradient: 'from-teal-500 to-emerald-500',
-    bgImage: 'from-teal-50 to-emerald-100'
-  }
-];
+// Service Cards for grid display
 
 // Testimonials Data
 const testimonials = [
