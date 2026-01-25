@@ -108,50 +108,51 @@
                 object-fit: contain;
                 border-radius: 0;
             }
-            .google-loader {
+            /* Disappearing Icons Animation */
+            .icon-loader {
                 margin-top: 50px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 10px;
+                position: relative;
+                width: 60px;
+                height: 60px;
             }
-            .google-dot {
-                width: 14px;
-                height: 14px;
-                border-radius: 50%;
-                animation: google-bounce 1.2s ease-in-out infinite;
+            .icon-item {
+                position: absolute;
+                width: 50px;
+                height: 50px;
+                border-radius: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transform: scale(0.6);
+                animation: icon-cycle 3s ease-in-out infinite;
             }
-            .google-dot:nth-child(1) {
-                background-color: #6b21a8;
-                animation-delay: -0.3s;
+            .icon-item svg {
+                width: 26px;
+                height: 26px;
+                color: white;
             }
-            .google-dot:nth-child(2) {
-                background-color: #dc2626;
-                animation-delay: -0.15s;
-            }
-            .google-dot:nth-child(3) {
-                background-color: #f59e0b;
+            .icon-item:nth-child(1) {
+                background: linear-gradient(135deg, #f97316, #ec4899);
                 animation-delay: 0s;
             }
-            .google-dot:nth-child(4) {
-                background-color: #16a34a;
-                animation-delay: 0.15s;
+            .icon-item:nth-child(2) {
+                background: linear-gradient(135deg, #3b82f6, #6366f1);
+                animation-delay: 1s;
             }
-            @keyframes google-bounce {
-                0%, 100% {
-                    transform: translateY(0);
-                }
-                50% {
-                    transform: translateY(-15px);
-                }
+            .icon-item:nth-child(3) {
+                background: linear-gradient(135deg, #8b5cf6, #ec4899);
+                animation-delay: 2s;
             }
-            @keyframes bounce {
-                0%, 80%, 100% {
-                    transform: translateY(0);
-                }
-                40% {
-                    transform: translateY(-20px);
-                }
+            @keyframes icon-cycle {
+                0% { opacity: 0; transform: scale(0.6) translateY(10px); }
+                10% { opacity: 1; transform: scale(1) translateY(0); }
+                30% { opacity: 1; transform: scale(1) translateY(0); }
+                40% { opacity: 0; transform: scale(0.6) translateY(-10px); }
+                100% { opacity: 0; transform: scale(0.6) translateY(-10px); }
             }
         </style>
     </head>
