@@ -445,14 +445,13 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 3. **App Icon Centering** - Confirm on home screen
 
 ## Upcoming Tasks (P1-P2)
-1. Cashfree Payment Gateway Integration
-2. Refactor StaffPortal.js (4000+ lines)
-3. Refactor Home.js (~2000 lines)
-4. Apple Sign-In
+1. Face ID Camera Bug - Mobile camera fails to start (recurring issue)
+2. Complete StaffPortal.js migration to new tab components
+3. Apple Sign-In
 
 ## Future/Backlog
-- Migrate hardcoded data to MongoDB
 - Login History page
+- More Pharmacy categories
 
 ## Test Credentials
 - **Staff:** `staff_pushpa` / `Nevika@2026C`
