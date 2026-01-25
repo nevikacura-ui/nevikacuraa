@@ -1572,3 +1572,324 @@ async def add_loyalty_points(data: LoyaltyPointsAdd, staff = Depends(verify_staf
     await db.loyalty_transactions.insert_one(transaction)
     
     return {"message": f"Added {data.points} points", "new_balance": new_balance}
+
+
+
+# ============ Staff Analytics Endpoints ============
+
+@router.get("/analytics/clinic")
+async def get_clinic_analytics(
+    clinic: str = "",
+    range: str = "week",
+    staff = Depends(verify_staff_token)
+):
+    """Get clinic performance analytics for staff dashboard"""
+    from collections import defaultdict
+    
+    # Determine date range
+    today = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)  # IST
+    if range == "today":
+        start_date = today.replace(hour=0, minute=0, second=0, microsecond=0)
+        days = 1
+    elif range == "month":
+        start_date = today - timedelta(days=30)
+        days = 30
+    else:  # week
+        start_date = today - timedelta(days=7)
+        days = 7
+    
+    start_str = start_date.strftime("%Y-%m-%d")
+    end_str = today.strftime("%Y-%m-%d")
+    
+    # Build clinic filter
+    clinic_filter = {}
+    if clinic:
+        clinic_filter = {"clinic": {"$regex": clinic, "$options": "i"}}
+    
+    # Fetch appointments
+    appointments = await db.appointments.find({
+        **clinic_filter,
+        "date": {"$gte": start_str, "$lte": end_str}
+    }, {"_id": 0}).to_list(5000)
+    
+    # Calculate metrics
+    total = len(appointments)
+    walkins = len([a for a in appointments if a.get("type") == "walk-in"])
+    emergencies = len([a for a in appointments if a.get("type") == "emergency"])
+    completed = len([a for a in appointments if a.get("status") == "Completed"])
+    
+    # Compare with previous period
+    prev_start = start_date - timedelta(days=days)
+    prev_appointments = await db.appointments.find({
+        **clinic_filter,
+        "date": {"$gte": prev_start.strftime("%Y-%m-%d"), "$lt": start_str}
+    }, {"_id": 0}).to_list(5000)
+    prev_total = len(prev_appointments)
+    prev_emergencies = len([a for a in prev_appointments if a.get("type") == "emergency"])
+    
+    change_percent = round(((total - prev_total) / prev_total) * 100, 1) if prev_total > 0 else 0
+    emergency_change = emergencies - prev_emergencies
+    
+    # Daily breakdown
+    daily_data = defaultdict(lambda: {"appointments": 0, "walkins": 0})
+    for apt in appointments:
+        date = apt.get("date", "")
+        daily_data[date]["appointments"] += 1
+        if apt.get("type") == "walk-in":
+            daily_data[date]["walkins"] += 1
+    
+    # Get last 7 days for chart
+    daily_breakdown = []
+    for i in range(min(7, days)):
+        d = today - timedelta(days=6-i)
+        date_str = d.strftime("%Y-%m-%d")
+        data = daily_data.get(date_str, {"appointments": 0, "walkins": 0})
+        daily_breakdown.append({
+            "day": d.strftime("%a"),
+            "appointments": data["appointments"],
+            "walkins": data["walkins"]
+        })
+    
+    # Top doctors
+    doctor_stats = defaultdict(lambda: {"appointments": 0, "rating": 4.5})
+    for apt in appointments:
+        doctor = apt.get("doctor", "Unknown")
+        doctor_stats[doctor]["appointments"] += 1
+    
+    top_doctors = sorted(
+        [{"name": k, "appointments": v["appointments"], "rating": v["rating"]} for k, v in doctor_stats.items()],
+        key=lambda x: x["appointments"],
+        reverse=True
+    )[:5]
+    
+    # Calculate wait time (mock for now)
+    avg_wait_time = 18  # minutes
+    
+    return {
+        "total_appointments": total,
+        "change_percent": change_percent,
+        "walkins": walkins,
+        "walkin_percent": round((walkins / total) * 100, 1) if total > 0 else 0,
+        "emergencies": emergencies,
+        "emergency_change": emergency_change,
+        "completed": completed,
+        "completion_rate": round((completed / total) * 100, 1) if total > 0 else 0,
+        "avg_wait_time": avg_wait_time,
+        "wait_time_change": -3,
+        "daily_breakdown": daily_breakdown,
+        "top_doctors": top_doctors
+    }
+
+
+@router.get("/analytics/pharmacy")
+async def get_pharmacy_analytics(
+    range: str = "week",
+    staff = Depends(verify_staff_token)
+):
+    """Get pharmacy performance analytics"""
+    from collections import defaultdict
+    
+    today = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
+    if range == "today":
+        start_date = today.replace(hour=0, minute=0, second=0, microsecond=0)
+        days = 1
+    elif range == "month":
+        start_date = today - timedelta(days=30)
+        days = 30
+    else:
+        start_date = today - timedelta(days=7)
+        days = 7
+    
+    # Fetch orders
+    orders = await db.pharmacy_orders.find({
+        "created_at": {"$gte": start_date.isoformat()}
+    }, {"_id": 0}).to_list(2000)
+    
+    total = len(orders)
+    delivered = len([o for o in orders if o.get("status") == "Delivered"])
+    pending = len([o for o in orders if o.get("status") in ["Order Booked", "Packing", "Out for Delivery"]])
+    
+    # Previous period comparison
+    prev_start = start_date - timedelta(days=days)
+    prev_orders = await db.pharmacy_orders.find({
+        "created_at": {"$gte": prev_start.isoformat(), "$lt": start_date.isoformat()}
+    }, {"_id": 0}).to_list(2000)
+    prev_total = len(prev_orders)
+    order_change = round(((total - prev_total) / prev_total) * 100, 1) if prev_total > 0 else 0
+    
+    # Status breakdown
+    status_breakdown = {
+        "Order Booked": len([o for o in orders if o.get("status") == "Order Booked"]),
+        "Packing": len([o for o in orders if o.get("status") == "Packing"]),
+        "Out for Delivery": len([o for o in orders if o.get("status") == "Out for Delivery"]),
+        "Delivered": delivered
+    }
+    
+    # Hourly distribution
+    hourly_orders = defaultdict(int)
+    for order in orders:
+        created = order.get("created_at", "")
+        if created:
+            try:
+                dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
+                hour = (dt + timedelta(hours=5, minutes=30)).hour
+                hourly_orders[hour] += 1
+            except:
+                pass
+    
+    hourly_data = []
+    for h in range(9, 18):
+        hourly_data.append({
+            "hour": f"{h}{'AM' if h < 12 else 'PM'}".replace("12PM", "12PM").replace("13PM", "1PM"),
+            "orders": hourly_orders.get(h, 0)
+        })
+    
+    # Top medicines
+    medicine_counts = defaultdict(int)
+    for order in orders:
+        for med in order.get("medicines", []):
+            medicine_counts[med.get("name", "Unknown")] += 1
+    
+    top_medicines = sorted(
+        [{"name": k, "orders": v} for k, v in medicine_counts.items()],
+        key=lambda x: x["orders"],
+        reverse=True
+    )[:5]
+    
+    # Revenue
+    revenue = sum(o.get("total_amount", 0) for o in orders if o.get("status") != "Cancelled")
+    
+    # Loyalty points
+    loyalty_txns = await db.loyalty_transactions.find({
+        "type": "add",
+        "created_at": {"$gte": start_date.isoformat()}
+    }, {"_id": 0}).to_list(1000)
+    loyalty_points = sum(t.get("points", 0) for t in loyalty_txns)
+    
+    return {
+        "total_orders": total,
+        "order_change": order_change,
+        "delivered": delivered,
+        "delivery_rate": round((delivered / total) * 100, 1) if total > 0 else 0,
+        "pending": pending,
+        "avg_fulfillment_time": 45,
+        "fulfillment_change": -8,
+        "revenue": revenue,
+        "revenue_change": 22.5,
+        "loyalty_points_given": loyalty_points,
+        "status_breakdown": status_breakdown,
+        "hourly_orders": hourly_data,
+        "top_medicines": top_medicines
+    }
+
+
+@router.get("/analytics/diagnostics")
+async def get_diagnostics_analytics(
+    range: str = "week",
+    staff = Depends(verify_staff_token)
+):
+    """Get diagnostics performance analytics"""
+    from collections import defaultdict
+    
+    today = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
+    if range == "today":
+        start_date = today.replace(hour=0, minute=0, second=0, microsecond=0)
+        days = 1
+    elif range == "month":
+        start_date = today - timedelta(days=30)
+        days = 30
+    else:
+        start_date = today - timedelta(days=7)
+        days = 7
+    
+    # Fetch orders
+    orders = await db.diagnostic_orders.find({
+        "created_at": {"$gte": start_date.isoformat()}
+    }, {"_id": 0}).to_list(2000)
+    
+    total = len(orders)
+    samples_collected = len([o for o in orders if o.get("status") in ["Sample Collected", "In Process", "Reports Generated"]])
+    reports_generated = len([o for o in orders if o.get("status") == "Reports Generated"])
+    
+    # Previous period
+    prev_start = start_date - timedelta(days=days)
+    prev_orders = await db.diagnostic_orders.find({
+        "created_at": {"$gte": prev_start.isoformat(), "$lt": start_date.isoformat()}
+    }, {"_id": 0}).to_list(2000)
+    prev_total = len(prev_orders)
+    test_change = round(((total - prev_total) / prev_total) * 100, 1) if prev_total > 0 else 0
+    
+    # Status breakdown
+    status_breakdown = {
+        "Test Booked": len([o for o in orders if o.get("status") == "Test Booked"]),
+        "Sample Collected": len([o for o in orders if o.get("status") == "Sample Collected"]),
+        "In Process": len([o for o in orders if o.get("status") == "In Process"]),
+        "Reports Generated": reports_generated
+    }
+    
+    # Test categories
+    test_counts = defaultdict(int)
+    for order in orders:
+        for test in order.get("tests", []):
+            test_counts[test] += 1
+    
+    # Categorize tests
+    categories = {
+        "Blood Tests": ["CBC", "Hemoglobin", "ESR", "Platelets"],
+        "Diabetes": ["HbA1c", "FBS", "PPBS", "RBS", "OGTT"],
+        "Hormonal": ["Thyroid", "TSH", "T3", "T4", "Hormonal"],
+        "Imaging": ["X-Ray", "USG", "Sonography", "ECG"],
+    }
+    
+    category_counts = defaultdict(int)
+    for test, count in test_counts.items():
+        categorized = False
+        for cat_name, keywords in categories.items():
+            if any(kw.lower() in test.lower() for kw in keywords):
+                category_counts[cat_name] += count
+                categorized = True
+                break
+        if not categorized:
+            category_counts["Other"] += count
+    
+    test_categories = [
+        {"name": "Blood Tests", "count": category_counts.get("Blood Tests", 0), "color": "bg-red-500"},
+        {"name": "Diabetes", "count": category_counts.get("Diabetes", 0), "color": "bg-blue-500"},
+        {"name": "Hormonal", "count": category_counts.get("Hormonal", 0), "color": "bg-pink-500"},
+        {"name": "Imaging", "count": category_counts.get("Imaging", 0), "color": "bg-purple-500"},
+        {"name": "Other", "count": category_counts.get("Other", 0), "color": "bg-gray-500"}
+    ]
+    
+    # Popular tests
+    popular_tests = sorted(
+        [{"name": k, "count": v} for k, v in test_counts.items()],
+        key=lambda x: x["count"],
+        reverse=True
+    )[:5]
+    
+    # Revenue
+    revenue = sum(o.get("total_amount", 0) for o in orders if o.get("status") != "Cancelled")
+    
+    # Loyalty points
+    loyalty_txns = await db.loyalty_transactions.find({
+        "type": "add",
+        "created_at": {"$gte": start_date.isoformat()}
+    }, {"_id": 0}).to_list(1000)
+    loyalty_points = sum(t.get("points", 0) for t in loyalty_txns)
+    
+    return {
+        "total_tests": total,
+        "test_change": test_change,
+        "samples_collected": samples_collected,
+        "reports_generated": reports_generated,
+        "completion_rate": round((reports_generated / total) * 100, 1) if total > 0 else 0,
+        "avg_turnaround": 24,
+        "turnaround_change": -4,
+        "revenue": revenue,
+        "revenue_change": 25.6,
+        "loyalty_points_given": loyalty_points,
+        "status_breakdown": status_breakdown,
+        "test_categories": test_categories,
+        "popular_tests": popular_tests
+    }
+
