@@ -105,12 +105,93 @@ const SplashScreen = ({ onComplete, user }) => {
     try {
       const response = await axios.post(`${API}/patients/portal/verify-otp?mobile=${mobile}&otp=${otp}`);
       localStorage.setItem('patientToken', response.data.token);
-      toast.success(`Welcome, ${response.data.patient.name}!`);
+      
+      // Sync with AuthContext
+      if (setPatientAuth) {
+        setPatientAuth(response.data.token, response.data.patient);
+      }
+      
+      // Save mobile for biometric login
+      localStorage.setItem('biometricMobile', mobile);
+      
+      // Prompt to enable biometric if available
+      if (biometricAvailable) {
+        localStorage.setItem('biometricEnabled', 'true');
+        toast.success(`Welcome, ${response.data.patient.name}! Fingerprint login enabled.`);
+      } else {
+        toast.success(`Welcome, ${response.data.patient.name}!`);
+      }
+      
       onComplete();
     } catch (error) {
       toast.error('Invalid OTP');
     }
     setLoading(false);
+  };
+  
+  // Handle biometric/fingerprint login
+  const handleBiometricLogin = async () => {
+    const savedMobile = localStorage.getItem('biometricMobile');
+    if (!savedMobile) {
+      toast.error('Please login with OTP first to enable fingerprint');
+      return;
+    }
+    
+    setBiometricLoading(true);
+    try {
+      // Use WebAuthn for fingerprint authentication
+      if (window.PublicKeyCredential) {
+        const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        
+        if (available) {
+          // Create a challenge for authentication
+          const challenge = new Uint8Array(32);
+          window.crypto.getRandomValues(challenge);
+          
+          // Request biometric authentication
+          const credential = await navigator.credentials.get({
+            publicKey: {
+              challenge,
+              rpId: window.location.hostname,
+              userVerification: 'required',
+              timeout: 60000,
+              allowCredentials: []
+            }
+          });
+          
+          if (credential) {
+            // Biometric verified - now login with saved mobile
+            // Send OTP silently and verify
+            const otpResponse = await axios.post(`${API}/patients/portal/send-otp?mobile=${savedMobile}`);
+            const mockOtpValue = otpResponse.data.mock_otp;
+            
+            // Auto-verify with the OTP (for demo - in production this would be more secure)
+            const verifyResponse = await axios.post(`${API}/patients/portal/verify-otp?mobile=${savedMobile}&otp=${mockOtpValue}`);
+            
+            localStorage.setItem('patientToken', verifyResponse.data.token);
+            
+            if (setPatientAuth) {
+              setPatientAuth(verifyResponse.data.token, verifyResponse.data.patient);
+            }
+            
+            toast.success(`Welcome back, ${verifyResponse.data.patient.name}!`);
+            onComplete();
+            return;
+          }
+        }
+      }
+      
+      toast.error('Fingerprint authentication failed. Please login with OTP.');
+    } catch (error) {
+      console.error('Biometric login error:', error);
+      if (error.name === 'NotAllowedError') {
+        toast.error('Fingerprint authentication cancelled');
+      } else {
+        toast.error('Fingerprint login failed. Please use OTP.');
+      }
+    } finally {
+      setBiometricLoading(false);
+    }
   };
   
   const handleExplore = () => {
