@@ -2544,14 +2544,6 @@ const StaffPortal = () => {
                 setShowPatientRegisterDialog={setShowPatientRegisterDialog}
               />
             </TabsContent>
-
-            {/* Biometric Attendance Tab for Doctors */}
-            <TabsContent value="biometric">
-              <SmartBiometric 
-                clinic={staffInfo?.clinic?.toLowerCase().includes('pushpa') ? 'pushpa' : 
-                        staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 'pushpa'}
-              />
-            </TabsContent>
           </Tabs>
         )}
 
