@@ -1083,54 +1083,6 @@ const Home = () => {
             ))}
           </div>
         </div>
-                  {/* Logo - Fill entire card for fillLogo items */}
-                  {service.fillLogo ? (
-                    <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-                      <img 
-                        src={service.logo} 
-                        alt={service.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        style={service.logoScale ? { transform: `scale(${service.logoScale})` } : {}}
-                        data-testid={`service-logo-${service.id}`}
-                        loading="lazy"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex-1 flex items-center justify-center p-3">
-                      <img 
-                        src={service.logo} 
-                        alt={service.name} 
-                        className={`w-auto object-contain transition-transform duration-300 group-hover:scale-105 ${
-                          isTablet ? 'h-28' : 'h-20 sm:h-24'
-                        }`}
-                        data-testid={`service-logo-${service.id}`}
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
-                  
-                  {/* Explore Button - Larger on tablet */}
-                  <div className={`${service.fillLogo ? 'absolute bottom-0 left-0 right-0 p-3' : 'mt-auto p-3 pt-0'}`}>
-                    <Button
-                      onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
-                      data-testid={`service-button-${service.id}`}
-                      className={`w-full rounded-xl font-semibold transition-all duration-300 relative z-10 shadow-lg ${
-                        isTablet ? 'py-5 text-base' : 'py-4'
-                      } ${
-                        service.isDark 
-                          ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
-                          : 'bg-slate-800 hover:bg-slate-900 text-white'
-                      }`}
-                    >
-                      Explore
-                      <ChevronRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* Quick Stats - Glassmorphism */}
         <div className="mb-16">
