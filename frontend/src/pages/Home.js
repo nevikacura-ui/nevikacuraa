@@ -29,45 +29,7 @@ import {
 
 // Service Cards for grid display
 
-// Testimonials Data
-const testimonials = [
-  {
-    id: 1,
-    name: "Priya Sharma",
-    location: "Mumbai",
-    rating: 5,
-    text: "Nevika Cura has transformed how I manage my family's health. The medicine delivery is super quick, and booking appointments is so easy!",
-    service: "DiaGyn Healthcare",
-    avatar: "PS"
-  },
-  {
-    id: 2,
-    name: "Rahul Mehta",
-    location: "Thane",
-    rating: 5,
-    text: "The Glydex diabetes program helped me control my sugar levels better than ever. The personalized care plan made all the difference.",
-    service: "Glydex",
-    avatar: "RM"
-  },
-  {
-    id: 3,
-    name: "Anjali Patel",
-    location: "Vasai",
-    rating: 5,
-    text: "As a new mother, Evara's women wellness programs have been invaluable. The doctors are caring and the app makes everything convenient.",
-    service: "Evara",
-    avatar: "AP"
-  },
-  {
-    id: 4,
-    name: "Suresh Kumar",
-    location: "Bhayandar",
-    rating: 5,
-    text: "Got my full body checkup done at Proton. Professional staff, quick results, and the health dashboard helps me track everything.",
-    service: "Proton Diagnostics",
-    avatar: "SK"
-  }
-];
+// Data imported from homeData.js
 
 // Why Choose Us Data
 const whyChooseUs = [
