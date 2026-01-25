@@ -68,8 +68,12 @@ function AppContent() {
     // Skip splash if user is logged in or has seen it before
     const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
     const patientToken = localStorage.getItem('patientToken');
+    const staffToken = localStorage.getItem('staffToken');
     
-    if (hasSeenSplash || user || patientToken) {
+    // Also skip splash on admin/staff pages when logged in
+    const isStaffPage = window.location.pathname.includes('/admin') || window.location.pathname.includes('/staff');
+    
+    if (hasSeenSplash || user || patientToken || (staffToken && isStaffPage)) {
       setShowSplash(false);
     }
   }, [user]);
