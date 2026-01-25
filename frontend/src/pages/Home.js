@@ -956,14 +956,14 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Services Grid - Seamless Logo & Background */}
+        {/* Services Grid - New Layout */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-slate-800 mb-2 text-center md:text-left">Our Services</h2>
           <p className="text-slate-500 mb-8 text-center md:text-left">Complete healthcare at your fingertips</p>
           
-          {/* Featured Services - Top 2 highlighted */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            {services.slice(0, 2).map((service) => (
+          {/* Featured Services - Top 3 (DiaGyn, Proton, Pharmacy) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            {featuredServices.map((service) => (
               <div
                 key={service.id}
                 className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl ${
@@ -982,36 +982,36 @@ const Home = () => {
                 </div>
                 
                 {/* Decorative circles */}
-                <div className={`absolute top-0 right-0 w-32 h-32 rounded-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-150 ${
+                <div className={`absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 transition-transform duration-500 group-hover:scale-150 ${
                   service.isDark ? 'bg-white/10' : 'bg-gray-100/50'
                 }`}></div>
                 
-                <div className="relative flex items-center p-6 min-h-[160px]">
-                  <div className="flex-shrink-0 mr-6">
+                <div className="relative flex flex-col items-center p-6 min-h-[200px]">
+                  <div className="flex-1 flex items-center justify-center mb-4">
                     <img 
                       src={service.logo} 
                       alt={service.name} 
-                      className="h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                      className="h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
                       data-testid={`service-logo-featured-${service.id}`}
                       loading="eager"
                     />
                   </div>
-                  <div className="flex-1">
-                    <h3 className={`text-xl font-bold mb-2 ${service.isDark ? 'text-white' : 'text-slate-800'}`}>
+                  <div className="text-center">
+                    <h3 className={`text-lg font-bold mb-1 ${service.isDark ? 'text-white' : 'text-slate-800'}`}>
                       {service.name}
                     </h3>
-                    <p className={`text-sm mb-4 ${service.isDark ? 'text-white/80' : 'text-slate-600'}`}>
-                      {service.id === 'diagyn' ? 'Book appointments with expert doctors' : 'Order medicines with fast delivery'}
+                    <p className={`text-sm mb-4 ${service.isDark ? 'text-white/70' : 'text-slate-500'}`}>
+                      {service.description}
                     </p>
                     <Button
                       onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
-                      className={`rounded-xl font-semibold transition-all duration-300 ${
+                      className={`rounded-xl font-semibold transition-all duration-300 w-full ${
                         service.isDark 
                           ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
                           : 'bg-teal-500 hover:bg-teal-600 text-white'
                       }`}
                     >
-                      {service.id === 'diagyn' ? 'Book Now' : 'Order Now'}
+                      {service.id === 'diagyn' ? 'Book Now' : service.id === 'proton' ? 'Book Test' : 'Order Now'}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
@@ -1020,13 +1020,9 @@ const Home = () => {
             ))}
           </div>
           
-          {/* Other Services Grid */}
-          <div className={`grid gap-4 md:gap-5 ${
-            isMobile ? 'grid-cols-2' : 
-            isTablet ? 'grid-cols-4' : 
-            'grid-cols-2 sm:grid-cols-4'
-          }`}>
-            {services.slice(2).map((service) => (
+          {/* Secondary Services - 2x2 Grid (Evara, Glydex, Alyne, Thrive360) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {secondaryServices.map((service) => (
               <div
                 key={service.id}
                 className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl ${
@@ -1037,17 +1033,56 @@ const Home = () => {
                 data-testid={`service-card-${service.id}`}
               >
                 {/* Decorative circles */}
-                <div className={`absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 transition-transform duration-500 group-hover:scale-150 ${
-                  service.isDark ? 'bg-white/10' : 'bg-gray-100/50'
-                }`}></div>
-                <div className={`absolute bottom-0 left-0 w-20 h-20 rounded-full -ml-10 -mb-10 transition-transform duration-500 group-hover:scale-150 ${
+                <div className={`absolute top-0 right-0 w-20 h-20 rounded-full -mr-10 -mt-10 transition-transform duration-500 group-hover:scale-150 ${
                   service.isDark ? 'bg-white/10' : 'bg-gray-100/50'
                 }`}></div>
                 
-                {/* Card Content - Tablet has larger cards */}
-                <div className={`relative h-full flex flex-col ${
-                  isTablet ? 'min-h-[280px]' : 'min-h-[200px] sm:min-h-[240px]'
-                }`}>
+                {/* Card Content */}
+                <div className="relative h-full flex flex-col min-h-[180px] sm:min-h-[200px]">
+                  {/* Logo */}
+                  {service.fillLogo ? (
+                    <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                      <img 
+                        src={service.logo} 
+                        alt={service.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        style={service.logoScale ? { transform: `scale(${service.logoScale})` } : {}}
+                        data-testid={`service-logo-${service.id}`}
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex-1 flex items-center justify-center p-4">
+                      <img 
+                        src={service.logo} 
+                        alt={service.name} 
+                        className="h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                        data-testid={`service-logo-${service.id}`}
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Explore Button */}
+                  <div className={`${service.fillLogo ? 'absolute bottom-0 left-0 right-0 p-3' : 'mt-auto p-3 pt-0'}`}>
+                    <Button
+                      onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
+                      data-testid={`service-button-${service.id}`}
+                      className={`w-full rounded-xl font-semibold transition-all duration-300 relative z-10 shadow-lg py-3 ${
+                        service.isDark 
+                          ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
+                          : 'bg-slate-800 hover:bg-slate-900 text-white'
+                      }`}
+                    >
+                      Explore
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
                   {/* Logo - Fill entire card for fillLogo items */}
                   {service.fillLogo ? (
                     <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
