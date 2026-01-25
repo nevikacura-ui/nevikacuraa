@@ -109,12 +109,16 @@ const SplashScreen = ({ onComplete, user }) => {
       
       {/* Content */}
       <div className="relative z-10 text-center max-w-md mx-auto">
-        {/* Logo/Brand */}
+        {/* Logo/Brand - Oval shaped with white background */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">
-            Nevika<span className="text-teal-200">Cura</span>
-          </h1>
-          <div className="h-1 w-20 bg-gradient-to-r from-teal-300 to-cyan-300 mx-auto rounded-full"></div>
+          <div className="bg-white rounded-[40px] px-8 py-6 shadow-xl shadow-black/20">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
+              alt="Nevika Cura" 
+              className="h-20 w-auto object-contain"
+            />
+          </div>
+          <div className="h-1 w-20 bg-gradient-to-r from-teal-300 to-cyan-300 mx-auto rounded-full mt-4"></div>
         </div>
         
         {/* Animated Icons - Disappearing Effect */}
