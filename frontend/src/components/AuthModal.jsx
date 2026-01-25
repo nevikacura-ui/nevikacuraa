@@ -226,18 +226,6 @@ const AuthModal = ({ open, onClose }) => {
       setLoading(false);
     }
   };
-      } else {
-        // New user - show registration form
-        setRegisterForm({ ...registerForm, phone });
-        setStep('register');
-        toast.success('Phone verified! Complete your registration.');
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Invalid OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Password Login
   const handlePasswordLogin = async (e) => {
