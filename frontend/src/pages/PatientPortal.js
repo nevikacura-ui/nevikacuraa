@@ -158,13 +158,13 @@ const PatientPortal = () => {
     }
   };
   
-  // Menu Items
+  // Menu Items - Updated as per request
   const menuItems = [
     { id: 'profile', icon: User, label: 'Profile Details', color: 'teal' },
-    { id: 'records', icon: FileText, label: 'Medical Records', color: 'blue' },
-    { id: 'appointments', icon: Calendar, label: 'Booked Appointments', color: 'indigo' },
-    { id: 'tests', icon: FlaskConical, label: 'Booked Tests', color: 'purple' },
-    { id: 'track', icon: Package, label: 'Track Orders', color: 'orange' },
+    { id: 'appointments', icon: Calendar, label: 'My Appointments', color: 'indigo' },
+    { id: 'tests', icon: FlaskConical, label: 'My Lab Tests', color: 'purple' },
+    { id: 'orders', icon: Pill, label: 'My Orders', color: 'orange' },
+    { id: 'track', icon: Package, label: 'Track Orders', color: 'blue' },
     { id: 'loyalty', icon: Gift, label: 'Loyalty Points', color: 'pink' },
   ];
   
