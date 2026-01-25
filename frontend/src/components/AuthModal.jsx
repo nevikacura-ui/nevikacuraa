@@ -1,3 +1,11 @@
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
+
 const AuthModal = ({ open, onClose }) => {
   const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login, fetchUser, biometricAvailable, biometricEnabled, loginWithBiometric } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -1042,3 +1050,6 @@ const AuthModal = ({ open, onClose }) => {
     </Dialog>
   );
 };
+
+
+export default AuthModal;
