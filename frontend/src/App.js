@@ -9,6 +9,7 @@ import Evara from '@/pages/Evara';
 import Glydex from '@/pages/Glydex';
 import Profile from '@/pages/Profile';
 import Admin from '@/pages/Admin';
+import AdminPanel from '@/pages/AdminPanel';
 import StaffPortal from '@/pages/StaffPortal';
 import TrackOrder from '@/pages/TrackOrder';
 import Feedback from '@/pages/Feedback';
