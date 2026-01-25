@@ -142,25 +142,6 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
           }
         }
 
-        // Fetch Attendance stats
-        if (accessModules.includes('attendance')) {
-          const clinic = staffInfo?.clinic?.toLowerCase().includes('pushpa') ? 'pushpa' : 
-                         staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 
-                         staffInfo?.clinic?.toLowerCase().includes('pharmacy') ? 'pharmacy' : 'pushpa';
-          const attendanceRes = await fetch(`${API}/api/biometric-attendance/report/${clinic}?date=${today}`);
-          if (attendanceRes.ok) {
-            const data = await attendanceRes.json();
-            setStats(prev => ({
-              ...prev,
-              attendance: {
-                present: data.summary?.present || 0,
-                late: data.summary?.late || 0,
-                absent: data.summary?.absent || 0
-              }
-            }));
-          }
-        }
-
         // Fetch live queue stats (public endpoint)
         try {
           const clinicParam = staffInfo?.clinic?.toLowerCase().includes('amnion') ? 'amnion' : 'pushpa';
