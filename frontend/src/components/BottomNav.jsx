@@ -106,14 +106,14 @@ const BottomNav = () => {
       label: 'Lab Tests', 
       icon: TestTube, 
       path: '/proton',
-      color: 'purple'
+      color: 'blue'
     },
     { 
       id: 'profile', 
       label: user ? 'Profile' : 'Login', 
       icon: User, 
       path: '/patient-portal',
-      color: 'blue'
+      color: 'slate'
     }
   ];
 
