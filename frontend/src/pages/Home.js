@@ -721,6 +721,11 @@ const Home = () => {
               </div>
             </button>
           </div>
+          
+          {/* Health Score Widget - Gamification */}
+          <div className="mb-8">
+            <HealthScoreWidget user={user} />
+          </div>
         )}
         
         {/* Live Queue Status Preview */}
