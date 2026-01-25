@@ -297,9 +297,11 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setToken(null);
+    setPatientToken(null);
     setUser(null);
     setBiometricEnabled(false);
     localStorage.removeItem('token');
+    localStorage.removeItem('patientToken');
     localStorage.removeItem('remember_me');
   };
   
