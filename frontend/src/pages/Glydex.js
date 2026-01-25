@@ -315,10 +315,10 @@ const DIABETIC_TESTS = [
 
 const Glydex = () => {
   const navigate = useNavigate();
-  const { user, token: authToken } = useAuth();
+  const { user, token: authToken, patientToken } = useAuth();
   
-  // Use main app auth
-  const token = authToken || localStorage.getItem('token');
+  // Use main app auth or patient token
+  const token = authToken || patientToken || localStorage.getItem('token') || localStorage.getItem('patientToken');
   
   // UI state
   const [loading, setLoading] = useState(false);
