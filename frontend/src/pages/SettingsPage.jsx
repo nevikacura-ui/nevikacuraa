@@ -116,6 +116,54 @@ const SettingsPage = () => {
     );
   }
 
+  if (activeSection === 'push') {
+    return (
+      <div className="min-h-screen bg-slate-50 pb-24">
+        <div className="sticky top-0 z-40 bg-white border-b">
+          <div className="flex items-center gap-3 p-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setActiveSection(null)}
+              className="rounded-xl"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <h1 className="text-lg font-semibold">Push Notifications</h1>
+          </div>
+        </div>
+        <div className="p-4">
+          <PushNotificationManager />
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (activeSection === 'payments') {
+    return (
+      <div className="min-h-screen bg-slate-50 pb-24">
+        <div className="sticky top-0 z-40 bg-white border-b">
+          <div className="flex items-center gap-3 p-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setActiveSection(null)}
+              className="rounded-xl"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <h1 className="text-lg font-semibold">Payments & Wallet</h1>
+          </div>
+        </div>
+        <div className="p-4">
+          <PaymentManagement />
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
   if (activeSection === 'language') {
     return (
       <div className="min-h-screen bg-slate-50 pb-24">
