@@ -393,23 +393,6 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
             </CardContent>
           </Card>
         )}
-
-        {accessModules.includes('attendance') && (
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('attendance')}>
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-[10px] sm:text-sm text-gray-500">Attendance</p>
-                  <p className="text-xl sm:text-2xl font-bold text-orange-600">{stats.attendance.present}</p>
-                  <p className="text-[10px] sm:text-xs text-gray-400">{stats.attendance.late} late</p>
-                </div>
-                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Fingerprint className="w-4 h-4 sm:w-6 sm:h-6 text-orange-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       {/* Live Queue Widget */}
