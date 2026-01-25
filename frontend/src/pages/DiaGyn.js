@@ -1202,7 +1202,7 @@ const DiaGyn = () => {
   const selectedDoctorData = doctors.find(d => d.id === selectedDoctor);
   const selectedClinicData = clinics.find(c => c.id === selectedClinic);
 
-  const stepTitles = ['Doctor', 'Clinic', 'Schedule', 'Verify', 'Confirm'];
+  const stepTitles = ['Doctor', 'Clinic', 'Schedule', 'Verify', 'Fee & Pay', 'Confirm'];
 
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
