@@ -316,60 +316,87 @@ const Home = () => {
   };
 
   // Modern Service Cards - Logo background matches card background
+  // Featured services (Top 3): DiaGyn, Proton, Pharmacy
+  // Secondary services (Bottom 2x2): Evara, Glydex, Alyne, Thrive360
   const services = [
+    // Featured - Top 3
     {
       id: 'diagyn',
       name: 'DiaGyn Healthcare',
+      description: 'Book appointments with expert doctors',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg',
       path: '/diagyn',
-      bgColor: '#ffffff', // White to match logo bg
-      isDark: false
+      bgColor: '#ffffff',
+      isDark: false,
+      featured: true
     },
     {
       id: 'proton',
       name: 'Proton Diagnostics',
+      description: 'Book lab tests & health checkups',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
       path: '/proton',
-      bgColor: '#ffffff', // White to match logo bg
-      isDark: false
+      bgColor: '#ffffff',
+      isDark: false,
+      featured: true
     },
     {
       id: 'pharmacy',
       name: 'Orange Pharmacy',
+      description: 'Order medicines with fast delivery',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
       path: '/pharmacy',
-      bgColor: '#ffffff', // White to match logo bg
-      isDark: false
+      bgColor: '#ff6b35',
+      isDark: true,
+      featured: true
     },
+    // Secondary - Bottom 2x2
     {
       id: 'evara',
       name: 'Evara',
+      description: "Women's Health",
       logo: '/icons/evara-logo.png',
       path: '/evara',
-      bgColor: '#511b63', // Purple to match logo bg
+      bgColor: '#511b63',
       isDark: true,
       fillLogo: true,
-      logoScale: 0.85 // Slightly smaller to match other cards
+      logoScale: 0.85
     },
     {
       id: 'glydex',
       name: 'Glydex',
+      description: 'Diabetes Care',
       logo: 'https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png',
       path: '/glydex',
-      bgColor: '#121f33', // Dark navy to match logo bg
+      bgColor: '#121f33',
       isDark: true,
       fillLogo: true
     },
     {
       id: 'alyne',
       name: 'ALYNE',
+      description: 'Kids Health',
       logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
       path: '/alyne',
-      bgColor: '#0a1628', // Dark to match logo bg
+      bgColor: '#0a1628',
+      isDark: true,
+      fillLogo: true
+    },
+    {
+      id: 'thrive360',
+      name: 'Thrive360',
+      description: 'Mind & Body Wellness',
+      logo: 'https://customer-assets.emergentagent.com/job_healspace-26/artifacts/iijsipxg_file_00000000290072089f3c35fe8c1b2b05.png',
+      path: '/thrive360',
+      bgColor: '#1e1b4b',
       isDark: true,
       fillLogo: true
     }
   ];
+  
+  // Separate featured and secondary services
+  const featuredServices = services.filter(s => s.featured);
+  const secondaryServices = services.filter(s => !s.featured);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 relative" style={{ contentVisibility: 'auto' }}>
