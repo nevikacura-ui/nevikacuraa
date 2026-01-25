@@ -1641,7 +1641,7 @@ async def get_clinic_analytics(
     # Get last 7 days for chart
     daily_breakdown = []
     for i in range(min(7, days)):
-        d = today - timedelta(days=6-i)
+        d = now - timedelta(days=6-i)
         date_str = d.strftime("%Y-%m-%d")
         data = daily_data.get(date_str, {"appointments": 0, "walkins": 0})
         daily_breakdown.append({
