@@ -27,18 +27,28 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
    - Uses Twilio for SMS delivery
    - Triggered automatically after successful payment
 
-3. **StaffPortal.js Refactoring** ✅ (Partial)
+3. **StaffPortal.js Refactoring** ✅
    - Created `/app/frontend/src/components/staff/WalkInTab.jsx` - Walk-in booking component
    - Created `/app/frontend/src/components/staff/EmergencyTab.jsx` - Emergency booking component
    - Created `/app/frontend/src/components/staff/BillingTab.jsx` - Fee collection/billing component
    - Created `/app/frontend/src/components/staff/PatientsTab.jsx` - Patient management component
-   - Components are standalone and can be imported to replace sections of StaffPortal.js
+   - Imports added to StaffPortal.js for gradual migration
+   - Original file remains functional (4,736 lines)
 
 4. **Twilio SMS Confirmations (Already Implemented)** ✅
    - Appointment confirmations (online, walk-in, emergency)
    - Pharmacy order confirmations and status updates
    - Lab test booking confirmations and status updates
    - Payment confirmation SMS (new)
+
+5. **Payment History Dashboard** ✅
+   - New page at `/payment/history` for patients to view payment history
+   - Phone number verification flow
+   - Stats cards: Total Spent, Transactions, Paid, Pending
+   - Filterable by payment type and status
+   - Receipt view modal with download option
+   - Backend endpoint: `GET /api/patients/by-phone/{phone}` added
+   - Linked from Patient Portal menu
 
 ### Session - January 25, 2026 (Part 2)
 
