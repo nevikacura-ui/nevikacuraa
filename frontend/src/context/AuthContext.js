@@ -354,14 +354,15 @@ export const AuthProvider = ({ children }) => {
     return response.data;
   };
   
-  const refreshUser = fetchUser;
+  const refreshUser = token ? fetchUser : patientToken ? fetchPatientUser : () => {};
 
   return (
     <AuthContext.Provider value={{ 
-      user, token, loading, 
+      user, token, patientToken, loading, 
       biometricAvailable, biometricEnabled,
       login, register, logout,
       sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp,
+      setPatientAuth, // New: for patient portal login sync
       fetchUser: refreshUser,
       registerBiometric, loginWithBiometric, removeBiometric,
       getTrustedDevices, removeTrustedDevice
