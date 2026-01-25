@@ -44,6 +44,8 @@ import SimpleFaceAttendance from '@/pages/SimpleFaceAttendance';
 import QueuePage from '@/pages/QueuePage';
 // Patient Health Dashboard
 import HealthDashboard from '@/pages/HealthDashboard';
+import HealthDashboardPage from '@/pages/HealthDashboardPage';
+import SettingsPage from '@/pages/SettingsPage';
 // Senior Care Charity
 import SeniorCare from '@/pages/SeniorCare';
 // Smart Medicine Reminders
@@ -57,6 +59,7 @@ import PaymentHistory from '@/pages/PaymentHistory';
 import SplashScreen from '@/components/SplashScreen';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ViewModeProvider } from '@/context/ViewModeContext';
+import { LanguageProvider } from '@/context/LanguageContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { FullScreenNotificationPrompt, SmartNotificationBanner } from '@/components/NotificationPrompt';
 import './App.css';
