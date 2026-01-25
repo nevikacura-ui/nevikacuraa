@@ -1910,6 +1910,12 @@ const StaffPortal = () => {
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline ml-1">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
             </Button>
+            {staffInfo?.role === 'super_admin' && (
+              <Button variant="ghost" size="sm" onClick={() => navigate('/admin-panel')} className={`bg-purple-50 border-purple-200 hover:bg-purple-100 text-purple-700 ${isTablet ? 'px-4' : 'px-2 sm:px-3'}`}>
+                <Shield className="w-4 h-4" />
+                <span className="hidden sm:inline ml-1">Admin Panel</span>
+              </Button>
+            )}
             <Button variant="ghost" size="sm" onClick={handleLogout} className={isTablet ? 'px-4' : 'px-2 sm:px-3'}>
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline ml-1">Logout</span>
