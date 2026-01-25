@@ -11,6 +11,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useViewMode } from '@/context/ViewModeContext';
 import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
 import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRegistration';
+import { FeeSelector } from '@/components/PaymentCheckout';
 import BottomNav from '@/components/BottomNav';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -18,7 +19,7 @@ import {
   ArrowLeft, Clock, Ban, Shield, CheckCircle2, Loader2, 
   CalendarDays, Wifi, WifiOff, GraduationCap, Calendar,
   ChevronLeft, ChevronRight, User, Stethoscope, Building2, Heart, Sparkles,
-  Lock, Unlock, AlertTriangle, Settings, UserPlus, Phone, History
+  Lock, Unlock, AlertTriangle, Settings, UserPlus, Phone, History, CreditCard, IndianRupee
 } from 'lucide-react';
 import { format, isSunday, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday } from 'date-fns';
 import { useNotificationPrompt } from '@/components/NotificationPrompt';
