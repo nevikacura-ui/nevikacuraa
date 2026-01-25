@@ -39,6 +39,9 @@ import DiagnosticsOrdersTab from '@/components/staff/DiagnosticsOrdersTab';
 import DiagnosticsCreateTab from '@/components/staff/DiagnosticsCreateTab';
 import DiagnosticsLoyaltyTab from '@/components/staff/DiagnosticsLoyaltyTab';
 
+// Import analytics components
+import { ClinicAnalytics, PharmacyAnalytics, DiagnosticsAnalytics } from '@/components/staff/analytics';
+
 // Import refactored utilities and components
 import StaffLogin from './staff/StaffLogin';
 import SmartBiometric from './staff/SmartBiometric';
