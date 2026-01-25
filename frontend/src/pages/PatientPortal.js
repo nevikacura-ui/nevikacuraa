@@ -678,56 +678,6 @@ const PatientPortal = () => {
             )}
             
             {/* Loyalty Points Section */}
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {history.pharmacy_orders.map((order, idx) => (
-                        <div key={idx} className="p-4 bg-orange-50 rounded-xl border border-orange-100">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                                <Pill className="w-5 h-5 text-orange-600" />
-                              </div>
-                              <div>
-                                <p className="font-semibold text-gray-800">Order #{order.order_id || idx + 1}</p>
-                                <p className="text-xs text-gray-500">{order.created_at?.split('T')[0]}</p>
-                              </div>
-                            </div>
-                            <Badge className={
-                              order.status === 'delivered' ? 'bg-green-100 text-green-700' : 
-                              order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
-                              'bg-orange-100 text-orange-700'
-                            }>
-                              {order.status}
-                            </Badge>
-                          </div>
-                          {order.items && (
-                            <div className="text-sm text-gray-600">
-                              {order.items.slice(0, 2).map((item, i) => (
-                                <p key={i}>• {item.name} x {item.quantity}</p>
-                              ))}
-                              {order.items.length > 2 && (
-                                <p className="text-gray-400">+{order.items.length - 2} more items</p>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  
-                  <div className="mt-4 p-4 bg-gray-50 rounded-xl">
-                    <p className="text-sm text-gray-600 mb-3">Have an order ID? Track it here:</p>
-                    <Button variant="outline" className="w-full" onClick={() => navigate('/track')}>
-                      <Search className="w-4 h-4 mr-2" />
-                      Go to Order Tracking
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* Loyalty Points Section */}
             {activeSection === 'loyalty' && (
               <Card className="rounded-2xl shadow-lg border-0">
                 <CardHeader>
