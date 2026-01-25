@@ -4162,6 +4162,14 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Config router: {e}")
 
+# Stripe Payment Router
+try:
+    from routes.payments import router as payments_router
+    app.include_router(payments_router, prefix="/api")
+    logger.info("Stripe Payment router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Payments router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
