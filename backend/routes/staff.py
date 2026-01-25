@@ -1595,11 +1595,11 @@ async def get_clinic_analytics(
         start_date = now - timedelta(days=30)
         days = 30
     else:  # week
-        start_date = today - timedelta(days=7)
+        start_date = now - timedelta(days=7)
         days = 7
     
     start_str = start_date.strftime("%Y-%m-%d")
-    end_str = today.strftime("%Y-%m-%d")
+    end_str = now.strftime("%Y-%m-%d")
     
     # Build clinic filter
     clinic_filter = {}
