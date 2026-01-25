@@ -183,6 +183,30 @@ export const formatCurrency = (amount) => {
   }).format(amount);
 };
 
+/**
+ * Get status color class for appointment/order status badges
+ */
+export const getStatusColor = (status) => {
+  const statusColors = {
+    'Scheduled': 'bg-blue-100 text-blue-800',
+    'Confirmed': 'bg-green-100 text-green-800',
+    'Checked-In': 'bg-purple-100 text-purple-800',
+    'In Progress': 'bg-yellow-100 text-yellow-800',
+    'Completed': 'bg-gray-100 text-gray-800',
+    'Cancelled': 'bg-red-100 text-red-800',
+    'No-Show': 'bg-orange-100 text-orange-800',
+    'Walk-In': 'bg-teal-100 text-teal-800',
+    'Emergency': 'bg-red-100 text-red-800',
+    'Pending': 'bg-yellow-100 text-yellow-800',
+    'Processing': 'bg-blue-100 text-blue-800',
+    'Dispatched': 'bg-purple-100 text-purple-800',
+    'Delivered': 'bg-green-100 text-green-800',
+    'Ready': 'bg-green-100 text-green-800',
+    'Collected': 'bg-gray-100 text-gray-800'
+  };
+  return statusColors[status] || 'bg-gray-100 text-gray-800';
+};
+
 export default {
   API,
   CLINICS,
@@ -200,5 +224,6 @@ export default {
   isDoctor,
   isPharmacyStaff,
   isDiagnosticsStaff,
-  formatCurrency
+  formatCurrency,
+  getStatusColor
 };
