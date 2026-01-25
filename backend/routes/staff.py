@@ -1684,7 +1684,7 @@ async def get_clinic_analytics(
 @router.get("/analytics/pharmacy")
 async def get_pharmacy_analytics(
     range: str = "week",
-    staff = Depends(verify_staff_token)
+    staff = Depends(verify_staff)
 ):
     """Get pharmacy performance analytics"""
     from collections import defaultdict
@@ -1786,7 +1786,7 @@ async def get_pharmacy_analytics(
 @router.get("/analytics/diagnostics")
 async def get_diagnostics_analytics(
     range: str = "week",
-    staff = Depends(verify_staff_token)
+    staff = Depends(verify_staff)
 ):
     """Get diagnostics performance analytics"""
     from collections import defaultdict
