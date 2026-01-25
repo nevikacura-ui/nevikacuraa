@@ -100,7 +100,7 @@ const SplashScreen = ({ onComplete, user }) => {
   ];
   
   return (
-    <div className="fixed inset-0 z-[9999] bg-gradient-to-br from-teal-600 via-cyan-600 to-blue-700 flex flex-col items-center justify-start pt-16 p-6">
+    <div className="fixed inset-0 z-[99999] bg-gradient-to-br from-teal-600 via-cyan-600 to-blue-700 flex flex-col items-center justify-center p-6" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, minHeight: '100vh', minHeight: '100dvh' }}>
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
