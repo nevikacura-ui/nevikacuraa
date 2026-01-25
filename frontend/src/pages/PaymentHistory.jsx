@@ -149,8 +149,36 @@ const PaymentHistory = () => {
     setShowReceiptModal(true);
   };
 
-  // Download receipt as text
-  const downloadReceipt = (txn) => {
+  // Download receipt as PDF
+  const downloadReceiptPDF = async (txn) => {
+    try {
+      const response = await axios.get(
+        `${API}/api/payments/receipt/${txn.session_id}/pdf`,
+        { responseType: 'blob' }
+      );
+      
+      // Create download link
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `receipt_${txn.session_id?.slice(0, 8) || Date.now()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('PDF Receipt downloaded!');
+    } catch (error) {
+      console.error('Failed to download PDF:', error);
+      toast.error('Failed to download PDF receipt');
+      // Fallback to text download
+      downloadReceiptText(txn);
+    }
+  };
+
+  // Download receipt as text (fallback)
+  const downloadReceiptText = (txn) => {
     const receiptText = `
 NEVIKA CURA HEALTHCARE
 Payment Receipt
