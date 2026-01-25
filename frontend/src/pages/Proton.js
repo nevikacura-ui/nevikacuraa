@@ -213,29 +213,44 @@ const StepProgress = ({ currentStep }) => {
 // ============================================
 // TEST CATEGORY CARD
 // ============================================
+// ============================================
+// TEST CATEGORY CARD with hover animations
+// ============================================
 const TestCategoryCard = ({ icon: Icon, title, count, color, isActive, onClick }) => (
   <button
     onClick={onClick}
+    data-testid={`test-category-${title.toLowerCase().replace(/\s+/g, '-')}`}
     className={`
-      p-4 rounded-2xl border-2 transition-all duration-300 text-left w-full
+      p-4 rounded-2xl border-2 transition-all duration-300 ease-out text-left w-full group
+      active:scale-95 active:shadow-inner
       ${isActive 
-        ? `border-[${color}] bg-[${color}]/5 shadow-lg` 
-        : 'border-slate-200 hover:border-[#5FA8D3]/30 bg-white hover:shadow-md'
+        ? `border-[${color}] bg-[${color}]/5 shadow-lg scale-[1.02]` 
+        : 'border-slate-200 hover:border-[#5FA8D3]/30 bg-white hover:shadow-lg hover:scale-[1.02] hover:-translate-y-0.5'
       }
     `}
     style={isActive ? { borderColor: color, backgroundColor: `${color}10` } : {}}
   >
-    <div className="flex items-center gap-3">
+    {/* Shimmer effect on hover */}
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none overflow-hidden rounded-2xl">
+      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+    </div>
+    
+    <div className="flex items-center gap-3 relative">
       <div 
-        className="w-12 h-12 rounded-xl flex items-center justify-center"
+        className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
         style={{ backgroundColor: `${color}20` }}
       >
-        <Icon className="w-6 h-6" style={{ color }} />
+        <Icon className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" style={{ color }} />
       </div>
       <div>
-        <h3 className="font-semibold text-[#1E293B]" style={{ fontFamily: 'Outfit, sans-serif' }}>{title}</h3>
-        <p className="text-xs text-slate-500">{count} tests</p>
+        <h3 className="font-semibold text-[#1E293B] transition-colors group-hover:text-[#5FA8D3]" style={{ fontFamily: 'Outfit, sans-serif' }}>{title}</h3>
+        <p className="text-xs text-slate-500 transition-all group-hover:tracking-wide">{count} tests</p>
       </div>
+      {isActive && (
+        <div className="ml-auto">
+          <CheckCircle2 className="w-5 h-5 text-[#5FA8D3] animate-bounce" />
+        </div>
+      )}
     </div>
   </button>
 );
