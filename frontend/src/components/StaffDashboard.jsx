@@ -14,8 +14,7 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
   const [stats, setStats] = useState({
     appointments: { total: 0, today: 0, pending: 0 },
     anc: { total: 0, dueThisWeek: 0 },
-    glydex: { total: 0, uncontrolled: 0 },
-    attendance: { present: 0, late: 0, absent: 0 }
+    glydex: { total: 0, uncontrolled: 0 }
   });
   const [todaySummary, setTodaySummary] = useState({
     totalBooked: 0,
