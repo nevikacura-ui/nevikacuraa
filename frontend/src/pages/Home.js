@@ -721,8 +721,10 @@ const Home = () => {
               </div>
             </button>
           </div>
-          
-          {/* Health Score Widget - Gamification */}
+        )}
+        
+        {/* Health Score Widget - Gamification (for logged in users) */}
+        {user && (
           <div className="mb-8">
             <HealthScoreWidget user={user} />
           </div>
