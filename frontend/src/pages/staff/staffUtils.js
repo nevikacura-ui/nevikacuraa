@@ -1,8 +1,13 @@
 /**
  * Staff Portal Utility Functions and Constants
+ * Data can be fetched from API with fallback to static data
  */
 
 export const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+
+// ============================================
+// Static Fallback Data (used if API fails)
+// ============================================
 
 // Clinic configuration with clinic IDs
 export const CLINICS = {
@@ -14,13 +19,13 @@ export const CLINICS = {
 export const CLINIC_LOCATIONS = {
   "Pushpa Clinic": {
     name: "Pushpa Clinic",
-    address: "Pushpa Clinic, Nagpur",
-    phone: "+91 9876543210"
+    address: "A-1, Sai Darshan, Near Don Bosco High School, Naigaon East",
+    phone: "+91 9403890429"
   },
   "Amnion Clinic": {
     name: "Amnion Clinic", 
-    address: "Amnion Clinic, Nagpur",
-    phone: "+91 9876543211"
+    address: "G-7, Rashmi Star City Phase 5, Opp Thakur School, Naigaon East",
+    phone: "+91 9403890429"
   }
 };
 
@@ -70,6 +75,88 @@ export const SCAN_FEES = {
   "FL": { label: "Follicular", amount: 200, color: "bg-teal-100 text-teal-800" },
   "UP": { label: "USG Pelvis", amount: 1000, color: "bg-teal-100 text-teal-800" },
   "UT": { label: "UpT", amount: 100, color: "bg-teal-100 text-teal-800" },
+};
+
+// ============================================
+// API Fetch Functions (with fallback to static)
+// ============================================
+
+export const fetchClinicConfig = async () => {
+  try {
+    const response = await fetch(`${API}/config/clinics`);
+    if (response.ok) {
+      const data = await response.json();
+      // Convert array to object format expected by StaffPortal
+      const clinics = {};
+      const locations = {};
+      data.forEach(clinic => {
+        clinics[clinic.name] = clinic.doctors;
+        locations[clinic.name] = {
+          name: clinic.name,
+          address: `${clinic.address}, ${clinic.city}`,
+          phone: clinic.phone
+        };
+      });
+      return { clinics, locations };
+    }
+  } catch (error) {
+    console.warn('Failed to fetch clinic config from API, using fallback');
+  }
+  return { clinics: CLINICS, locations: CLINIC_LOCATIONS };
+};
+
+export const fetchDoctorSchedules = async () => {
+  try {
+    const response = await fetch(`${API}/config/doctors`);
+    if (response.ok) {
+      const data = await response.json();
+      // Convert to the format expected by StaffPortal
+      const schedules = {};
+      data.forEach(doc => {
+        schedules[doc.name] = doc.schedules;
+      });
+      return schedules;
+    }
+  } catch (error) {
+    console.warn('Failed to fetch doctor schedules from API, using fallback');
+  }
+  return DOCTOR_SCHEDULES;
+};
+
+export const fetchFeeCodes = async () => {
+  try {
+    const response = await fetch(`${API}/config/fees/consultation`);
+    if (response.ok) {
+      const data = await response.json();
+      // Convert array to object format expected by StaffPortal
+      const fees = {};
+      data.forEach(fee => {
+        fees[fee.code] = { label: fee.label, amount: fee.amount, color: fee.color };
+      });
+      return fees;
+    }
+  } catch (error) {
+    console.warn('Failed to fetch fee codes from API, using fallback');
+  }
+  return FEE_CODES;
+};
+
+export const fetchScanFees = async () => {
+  try {
+    const response = await fetch(`${API}/config/fees/scan`);
+    if (response.ok) {
+      const data = await response.json();
+      // Convert array to object format expected by StaffPortal
+      const fees = {};
+      data.forEach(fee => {
+        fees[fee.code] = { label: fee.label, amount: fee.amount, color: fee.color };
+      });
+      return fees;
+    }
+  } catch (error) {
+    console.warn('Failed to fetch scan fees from API, using fallback');
+  }
+  return SCAN_FEES;
 };
 
 // Helper function to generate time slots from schedule (15-minute intervals)
