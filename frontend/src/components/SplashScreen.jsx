@@ -117,13 +117,13 @@ const SplashScreen = ({ onComplete, user }) => {
           <div className="h-1 w-20 bg-gradient-to-r from-teal-300 to-cyan-300 mx-auto rounded-full"></div>
         </div>
         
-        {/* Animated Icons */}
+        {/* Animated Icons - Disappearing Effect */}
         <div className="flex justify-center gap-6 mb-8">
-          {icons.map(({ Icon, color, label, delay }, idx) => (
+          {icons.map(({ Icon, color, label, animDelay }, idx) => (
             <div 
               key={idx}
-              className="flex flex-col items-center gap-2 animate-fade-in-up"
-              style={{ animationDelay: delay, animationFillMode: 'both' }}
+              className="flex flex-col items-center gap-2 icon-disappear"
+              style={{ animationDelay: animDelay }}
             >
               <div className={`w-16 h-16 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center shadow-lg shadow-black/20 transform hover:scale-110 transition-transform`}>
                 <Icon className="w-8 h-8 text-white" />
