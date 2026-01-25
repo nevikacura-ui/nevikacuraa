@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { 
-  Calendar, Users, Activity, Baby, Fingerprint, Clock,
+  Calendar, Users, Activity, Baby, Clock,
   TrendingUp, AlertCircle, CheckCircle2, UserPlus, Package,
   ClipboardList, Zap, Timer, ArrowRight, ExternalLink, PlayCircle
 } from 'lucide-react';
