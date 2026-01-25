@@ -2084,7 +2084,6 @@ const StaffPortal = () => {
                 dailyCollection={dailyCollection}
                 emergencyCounts={emergencyCounts}
                 loading={loading}
-                handleStatusChange={handleStatusChange}
                 setShowSonographyModal={setShowSonographyModal}
                 openAppointmentDetails={(appt) => {
                   setSelectedAppointment(appt);
