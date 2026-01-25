@@ -24,13 +24,6 @@ import {
   services 
 } from '@/data/homeData';
 
-// Health Tips Data - Imported from homeData.js
-// const healthTips = [...] - MOVED TO /data/homeData.js
-
-// Service Cards for grid display
-
-// Data imported from homeData.js
-
 const Home = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
