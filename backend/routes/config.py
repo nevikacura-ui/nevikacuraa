@@ -309,3 +309,196 @@ async def seed_config_data():
         results["health_tips"] = len(HEALTH_TIPS_DATA["health_tips"])
     
     return {"success": True, "seeded": results}
+
+# ============================================
+# ADMIN CRUD Endpoints
+# ============================================
+
+# --- Clinics CRUD ---
+@router.post("/admin/clinics")
+async def create_clinic(clinic: dict, admin: dict = Depends(verify_admin)):
+    """Create a new clinic"""
+    clinic["created_at"] = datetime.now(timezone.utc).isoformat()
+    clinic["created_by"] = admin.get("username", "admin")
+    await db.clinics.insert_one(clinic)
+    return {"success": True, "message": "Clinic created"}
+
+@router.put("/admin/clinics/{clinic_id}")
+async def update_clinic(clinic_id: str, clinic: dict, admin: dict = Depends(verify_admin)):
+    """Update a clinic"""
+    clinic["updated_at"] = datetime.now(timezone.utc).isoformat()
+    clinic["updated_by"] = admin.get("username", "admin")
+    result = await db.clinics.update_one({"id": clinic_id}, {"$set": clinic})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Clinic not found")
+    return {"success": True, "message": "Clinic updated"}
+
+@router.delete("/admin/clinics/{clinic_id}")
+async def delete_clinic(clinic_id: str, admin: dict = Depends(verify_admin)):
+    """Delete a clinic (soft delete)"""
+    result = await db.clinics.update_one({"id": clinic_id}, {"$set": {"active": False}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Clinic not found")
+    return {"success": True, "message": "Clinic deleted"}
+
+# --- Doctors CRUD ---
+@router.post("/admin/doctors")
+async def create_doctor(doctor: dict, admin: dict = Depends(verify_admin)):
+    """Create a new doctor"""
+    doctor["created_at"] = datetime.now(timezone.utc).isoformat()
+    doctor["created_by"] = admin.get("username", "admin")
+    await db.doctors.insert_one(doctor)
+    return {"success": True, "message": "Doctor created"}
+
+@router.put("/admin/doctors/{doctor_id}")
+async def update_doctor(doctor_id: str, doctor: dict, admin: dict = Depends(verify_admin)):
+    """Update a doctor"""
+    doctor["updated_at"] = datetime.now(timezone.utc).isoformat()
+    doctor["updated_by"] = admin.get("username", "admin")
+    result = await db.doctors.update_one({"id": doctor_id}, {"$set": doctor})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Doctor not found")
+    return {"success": True, "message": "Doctor updated"}
+
+@router.delete("/admin/doctors/{doctor_id}")
+async def delete_doctor(doctor_id: str, admin: dict = Depends(verify_admin)):
+    """Delete a doctor (soft delete)"""
+    result = await db.doctors.update_one({"id": doctor_id}, {"$set": {"active": False}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Doctor not found")
+    return {"success": True, "message": "Doctor deleted"}
+
+# --- Fee Codes CRUD ---
+@router.post("/admin/fees")
+async def create_fee_code(fee: dict, admin: dict = Depends(verify_admin)):
+    """Create a new fee code"""
+    fee["created_at"] = datetime.now(timezone.utc).isoformat()
+    await db.fee_codes.insert_one(fee)
+    return {"success": True, "message": "Fee code created"}
+
+@router.put("/admin/fees/{fee_code}")
+async def update_fee_code(fee_code: str, fee: dict, admin: dict = Depends(verify_admin)):
+    """Update a fee code"""
+    fee["updated_at"] = datetime.now(timezone.utc).isoformat()
+    result = await db.fee_codes.update_one({"code": fee_code}, {"$set": fee})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Fee code not found")
+    return {"success": True, "message": "Fee code updated"}
+
+@router.delete("/admin/fees/{fee_code}")
+async def delete_fee_code(fee_code: str, admin: dict = Depends(verify_admin)):
+    """Delete a fee code"""
+    result = await db.fee_codes.delete_one({"code": fee_code})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Fee code not found")
+    return {"success": True, "message": "Fee code deleted"}
+
+# --- Services CRUD ---
+@router.post("/admin/services")
+async def create_service(service: dict, admin: dict = Depends(verify_admin)):
+    """Create a new service"""
+    service["created_at"] = datetime.now(timezone.utc).isoformat()
+    await db.services.insert_one(service)
+    return {"success": True, "message": "Service created"}
+
+@router.put("/admin/services/{service_id}")
+async def update_service(service_id: str, service: dict, admin: dict = Depends(verify_admin)):
+    """Update a service"""
+    service["updated_at"] = datetime.now(timezone.utc).isoformat()
+    result = await db.services.update_one({"id": service_id}, {"$set": service})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return {"success": True, "message": "Service updated"}
+
+@router.delete("/admin/services/{service_id}")
+async def delete_service(service_id: str, admin: dict = Depends(verify_admin)):
+    """Delete a service (soft delete)"""
+    result = await db.services.update_one({"id": service_id}, {"$set": {"active": False}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return {"success": True, "message": "Service deleted"}
+
+# --- Testimonials CRUD ---
+@router.post("/admin/testimonials")
+async def create_testimonial(testimonial: dict, admin: dict = Depends(verify_admin)):
+    """Create a new testimonial"""
+    # Auto-generate ID
+    count = await db.testimonials.count_documents({})
+    testimonial["id"] = count + 1
+    testimonial["created_at"] = datetime.now(timezone.utc).isoformat()
+    await db.testimonials.insert_one(testimonial)
+    return {"success": True, "message": "Testimonial created", "id": testimonial["id"]}
+
+@router.put("/admin/testimonials/{testimonial_id}")
+async def update_testimonial(testimonial_id: int, testimonial: dict, admin: dict = Depends(verify_admin)):
+    """Update a testimonial"""
+    testimonial["updated_at"] = datetime.now(timezone.utc).isoformat()
+    result = await db.testimonials.update_one({"id": testimonial_id}, {"$set": testimonial})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Testimonial not found")
+    return {"success": True, "message": "Testimonial updated"}
+
+@router.delete("/admin/testimonials/{testimonial_id}")
+async def delete_testimonial(testimonial_id: int, admin: dict = Depends(verify_admin)):
+    """Delete a testimonial (soft delete)"""
+    result = await db.testimonials.update_one({"id": testimonial_id}, {"$set": {"active": False}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Testimonial not found")
+    return {"success": True, "message": "Testimonial deleted"}
+
+# --- Health Tips CRUD ---
+@router.post("/admin/health-tips")
+async def create_health_tip(tip: dict, admin: dict = Depends(verify_admin)):
+    """Create a new health tip"""
+    tip["created_at"] = datetime.now(timezone.utc).isoformat()
+    await db.health_tips.insert_one(tip)
+    return {"success": True, "message": "Health tip created"}
+
+@router.put("/admin/health-tips/{tip_index}")
+async def update_health_tip(tip_index: int, tip: dict, admin: dict = Depends(verify_admin)):
+    """Update a health tip by index"""
+    tips = await db.health_tips.find({}, {"_id": 0}).to_list(100)
+    if tip_index >= len(tips):
+        raise HTTPException(status_code=404, detail="Health tip not found")
+    
+    old_tip = tips[tip_index]
+    tip["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.health_tips.update_one({"tip": old_tip["tip"]}, {"$set": tip})
+    return {"success": True, "message": "Health tip updated"}
+
+@router.delete("/admin/health-tips/{tip_index}")
+async def delete_health_tip(tip_index: int, admin: dict = Depends(verify_admin)):
+    """Delete a health tip by index"""
+    tips = await db.health_tips.find({}, {"_id": 0}).to_list(100)
+    if tip_index >= len(tips):
+        raise HTTPException(status_code=404, detail="Health tip not found")
+    
+    old_tip = tips[tip_index]
+    await db.health_tips.delete_one({"tip": old_tip["tip"]})
+    return {"success": True, "message": "Health tip deleted"}
+
+# --- Certifications CRUD ---
+@router.post("/admin/certifications")
+async def create_certification(cert: dict, admin: dict = Depends(verify_admin)):
+    """Create a new certification"""
+    cert["created_at"] = datetime.now(timezone.utc).isoformat()
+    await db.certifications.insert_one(cert)
+    return {"success": True, "message": "Certification created"}
+
+@router.put("/admin/certifications/{cert_name}")
+async def update_certification(cert_name: str, cert: dict, admin: dict = Depends(verify_admin)):
+    """Update a certification"""
+    cert["updated_at"] = datetime.now(timezone.utc).isoformat()
+    result = await db.certifications.update_one({"name": cert_name}, {"$set": cert})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Certification not found")
+    return {"success": True, "message": "Certification updated"}
+
+@router.delete("/admin/certifications/{cert_name}")
+async def delete_certification(cert_name: str, admin: dict = Depends(verify_admin)):
+    """Delete a certification"""
+    result = await db.certifications.delete_one({"name": cert_name})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Certification not found")
+    return {"success": True, "message": "Certification deleted"}
+
