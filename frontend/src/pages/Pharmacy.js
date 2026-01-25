@@ -63,39 +63,33 @@ const getMedicineIcon = (form) => {
 // Medicine category images - professional stock photos
 const categoryImages = {
   tablets: {
-    image: 'https://images.unsplash.com/photo-1631980839248-1a84a60c66ac?w=400&q=80',
     label: 'Tablets & Pills',
-    icon: '💊',
+    icon: 'pill',
     color: 'from-blue-500 to-indigo-600'
   },
   capsules: {
-    image: 'https://images.unsplash.com/photo-1641561421178-db8542057811?w=400&q=80',
     label: 'Capsules',
-    icon: '💊',
+    icon: 'capsule',
     color: 'from-orange-500 to-red-500'
   },
   syrups: {
-    image: 'https://images.unsplash.com/photo-1647943746660-1640133068d5?w=400&q=80',
     label: 'Syrups & Liquids',
-    icon: '🧴',
+    icon: 'flask',
     color: 'from-amber-500 to-orange-500'
   },
   injections: {
-    image: 'https://images.unsplash.com/photo-1763142842705-78621f9c0414?w=400&q=80',
     label: 'Injections',
-    icon: '💉',
+    icon: 'syringe',
     color: 'from-emerald-500 to-teal-600'
   },
   creams: {
-    image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&q=80',
     label: 'Creams & Ointments',
-    icon: '🧴',
+    icon: 'cream',
     color: 'from-pink-500 to-rose-500'
   },
   drops: {
-    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&q=80',
     label: 'Drops & Solutions',
-    icon: '💧',
+    icon: 'drops',
     color: 'from-cyan-500 to-blue-500'
   }
 };
@@ -103,6 +97,27 @@ const categoryImages = {
 // Category Card Component
 const CategoryCard = ({ category, isActive, onClick }) => {
   const cat = categoryImages[category];
+  
+  // Render icon based on type
+  const renderIcon = () => {
+    switch(cat.icon) {
+      case 'pill':
+        return <Pill className="w-10 h-10" />;
+      case 'capsule':
+        return <span className="text-4xl">💊</span>;
+      case 'flask':
+        return <FlaskConical className="w-10 h-10" />;
+      case 'syringe':
+        return <Syringe className="w-10 h-10" />;
+      case 'cream':
+        return <span className="text-4xl">🧴</span>;
+      case 'drops':
+        return <Droplets className="w-10 h-10" />;
+      default:
+        return <Pill className="w-10 h-10" />;
+    }
+  };
+  
   return (
     <button
       onClick={onClick}
@@ -113,8 +128,8 @@ const CategoryCard = ({ category, isActive, onClick }) => {
       <div className="aspect-[4/3] relative">
         <div className={`absolute inset-0 bg-gradient-to-br ${cat.color}`} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-2">
-          <span className="text-4xl mb-2">{cat.icon}</span>
-          <span className="text-xs sm:text-sm font-semibold text-center leading-tight">{cat.label}</span>
+          {renderIcon()}
+          <span className="text-xs sm:text-sm font-semibold text-center leading-tight mt-2">{cat.label}</span>
         </div>
         {isActive && (
           <div className="absolute top-2 right-2 bg-white rounded-full p-1">
