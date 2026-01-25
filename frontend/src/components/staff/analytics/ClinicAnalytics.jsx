@@ -1,50 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { 
-  TrendingUp, TrendingDown, Users, Calendar, Clock, 
-  Activity, AlertTriangle, CheckCircle, BarChart3,
+  Users, Calendar, Clock, 
+  AlertTriangle, CheckCircle, BarChart3,
   ArrowUpRight, ArrowDownRight, Minus
 } from 'lucide-react';
 import { API, getAuthHeaders } from '@/pages/staff/staffUtils';
 
-const ClinicAnalytics = ({ staffInfo, selectedDate }) => {
+// TrendIndicator component - extracted to avoid re-render issues
+const TrendIndicator = ({ value, suffix = '%' }) => {
+  if (value > 0) return (
+    <span className="flex items-center text-green-600 text-sm">
+      <ArrowUpRight className="w-4 h-4" />+{value}{suffix}
+    </span>
+  );
+  if (value < 0) return (
+    <span className="flex items-center text-red-600 text-sm">
+      <ArrowDownRight className="w-4 h-4" />{value}{suffix}
+    </span>
+  );
+  return <span className="flex items-center text-gray-500 text-sm"><Minus className="w-4 h-4" />0{suffix}</span>;
+};
+
+const ClinicAnalytics = ({ staffInfo }) => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState('week'); // week, month, today
+  const [timeRange, setTimeRange] = useState('week');
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [timeRange, staffInfo?.clinic]);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     try {
       const res = await axios.get(`${API}/staff/analytics/clinic`, {
-        params: { 
-          clinic: staffInfo?.clinic || '',
-          range: timeRange 
-        },
+        params: { clinic: staffInfo?.clinic || '', range: timeRange },
         headers: getAuthHeaders()
       });
       setAnalytics(res.data);
     } catch (error) {
       console.error('Error fetching analytics:', error);
-      // Set mock data for demo
+      // Demo data fallback
       setAnalytics({
-        total_appointments: 127,
-        change_percent: 12.5,
-        walkins: 45,
-        walkin_percent: 35.4,
-        emergencies: 8,
-        emergency_change: -2,
-        completed: 98,
-        completion_rate: 77.2,
-        avg_wait_time: 18,
-        wait_time_change: -3,
-        revenue: 89500,
-        revenue_change: 8.3,
+        total_appointments: 127, change_percent: 12.5,
+        walkins: 45, walkin_percent: 35.4,
+        emergencies: 8, emergency_change: -2,
+        completed: 98, completion_rate: 77.2,
+        avg_wait_time: 18, wait_time_change: -3,
         daily_breakdown: [
           { day: 'Mon', appointments: 22, walkins: 8 },
           { day: 'Tue', appointments: 19, walkins: 6 },
@@ -62,21 +63,11 @@ const ClinicAnalytics = ({ staffInfo, selectedDate }) => {
       });
     }
     setLoading(false);
-  };
+  }, [staffInfo?.clinic, timeRange]);
 
-  const TrendIndicator = ({ value, suffix = '%' }) => {
-    if (value > 0) return (
-      <span className="flex items-center text-green-600 text-sm">
-        <ArrowUpRight className="w-4 h-4" />+{value}{suffix}
-      </span>
-    );
-    if (value < 0) return (
-      <span className="flex items-center text-red-600 text-sm">
-        <ArrowDownRight className="w-4 h-4" />{value}{suffix}
-      </span>
-    );
-    return <span className="flex items-center text-gray-500 text-sm"><Minus className="w-4 h-4" />0{suffix}</span>;
-  };
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   if (loading) {
     return (
