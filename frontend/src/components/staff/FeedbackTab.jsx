@@ -5,39 +5,39 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Star, Stethoscope, Users, CheckCircle2, Loader2 } from 'lucide-react';
 
+// Star rating component - defined outside main component
+const StarRating = ({ value, onChange, label, icon: Icon, iconColor }) => (
+  <div>
+    <Label className="text-sm font-medium flex items-center gap-2">
+      <Icon className={`w-4 h-4 ${iconColor}`} />
+      {label}
+    </Label>
+    <div className="flex gap-2 mt-2">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          onClick={() => onChange(star)}
+          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+            value >= star 
+              ? 'bg-yellow-400 text-white' 
+              : 'bg-gray-200 text-gray-400'
+          }`}
+          data-testid={`star-${star}`}
+        >
+          <Star className="w-5 h-5" fill={value >= star ? 'currentColor' : 'none'} />
+        </button>
+      ))}
+    </div>
+  </div>
+);
+
 const FeedbackTab = ({
   feedbackForm,
   setFeedbackForm,
   submitFeedback,
   submittingFeedback
 }) => {
-  // Star rating component
-  const StarRating = ({ value, onChange, label, icon: Icon, iconColor }) => (
-    <div>
-      <Label className="text-sm font-medium flex items-center gap-2">
-        <Icon className={`w-4 h-4 ${iconColor}`} />
-        {label}
-      </Label>
-      <div className="flex gap-2 mt-2">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            type="button"
-            onClick={() => onChange(star)}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-              value >= star 
-                ? 'bg-yellow-400 text-white' 
-                : 'bg-gray-200 text-gray-400'
-            }`}
-            data-testid={`star-${star}`}
-          >
-            <Star className="w-5 h-5" fill={value >= star ? 'currentColor' : 'none'} />
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-
   // Calculate overall rating
   const overallRating = feedbackForm.doctorRating || feedbackForm.staffRating || feedbackForm.cleanlinessRating
     ? ((feedbackForm.doctorRating + feedbackForm.staffRating + feedbackForm.cleanlinessRating) / 3).toFixed(1)
