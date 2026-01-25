@@ -34,7 +34,7 @@ const PharmacyAnalytics = ({ staffInfo }) => {
     setLoading(true);
     try {
       const res = await axios.get(`${API}/staff/analytics/pharmacy`, {
-        params: { range: timeRange },
+        params: { time_range: timeRange },
         headers: getAuthHeaders()
       });
       setAnalytics(res.data);

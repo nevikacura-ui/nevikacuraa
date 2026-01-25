@@ -33,7 +33,7 @@ const ClinicAnalytics = ({ staffInfo }) => {
     setLoading(true);
     try {
       const res = await axios.get(`${API}/staff/analytics/clinic`, {
-        params: { clinic: staffInfo?.clinic || '', range: timeRange },
+        params: { clinic: staffInfo?.clinic || '', time_range: timeRange },
         headers: getAuthHeaders()
       });
       setAnalytics(res.data);
