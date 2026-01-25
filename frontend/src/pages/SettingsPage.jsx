@@ -166,6 +166,30 @@ const SettingsPage = () => {
     );
   }
 
+  if (activeSection === 'calendar') {
+    return (
+      <div className="min-h-screen bg-slate-50 pb-24">
+        <div className="sticky top-0 z-40 bg-white border-b">
+          <div className="flex items-center gap-3 p-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setActiveSection(null)}
+              className="rounded-xl"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <h1 className="text-lg font-semibold">Calendar Sync</h1>
+          </div>
+        </div>
+        <div className="p-4">
+          <CalendarSyncSection />
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
   if (activeSection === 'language') {
     return (
       <div className="min-h-screen bg-slate-50 pb-24">
