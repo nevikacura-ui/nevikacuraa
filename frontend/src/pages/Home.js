@@ -11,18 +11,21 @@ import { ViewModeSwitcher, ViewModeSettings } from '@/components/ViewModeSwitche
 import { toast } from 'sonner';
 import { User, Menu, X, Download, Smartphone, Search, Heart, FlaskConical, Video, Gift, Lightbulb, AlertTriangle, Activity, Pill, Shield, Package, ChevronRight, Stethoscope, Baby, ThermometerSun, Users, HandHeart, Sparkles, ArrowRight, Calendar, Clock, ChevronLeft, Sun, Moon, Sunrise, Star, Quote, Flame, Trophy, Target, Zap, Timer, MapPin, Phone, Award, CheckCircle2, Settings, FileText, Home as HomeIcon, TestTube, History, Plus } from 'lucide-react';
 import Footer from '@/components/Footer';
+import AuthModal from '@/components/AuthModal';
+import { 
+  healthTips, 
+  spotlightServices, 
+  testimonials, 
+  whyChooseUs, 
+  featuredDoctors, 
+  certifications, 
+  howItWorksSteps, 
+  clinicLocations, 
+  services 
+} from '@/data/homeData';
 
-// Health Tips Data - Rotates daily
-const healthTips = [
-  { tip: "Stay hydrated! Drink at least 8 glasses of water daily for optimal health.", icon: "💧", category: "Hydration" },
-  { tip: "A 30-minute walk can boost your mood and improve cardiovascular health.", icon: "🚶", category: "Exercise" },
-  { tip: "Get 7-9 hours of quality sleep to help your body repair and rejuvenate.", icon: "😴", category: "Sleep" },
-  { tip: "Include colorful vegetables in every meal for essential vitamins and minerals.", icon: "🥗", category: "Nutrition" },
-  { tip: "Practice deep breathing for 5 minutes daily to reduce stress and anxiety.", icon: "🧘", category: "Mental Health" },
-  { tip: "Regular health check-ups can detect problems early when they're easier to treat.", icon: "🩺", category: "Prevention" },
-  { tip: "Limit screen time before bed to improve sleep quality.", icon: "📱", category: "Digital Wellness" },
-  { tip: "Wash your hands frequently to prevent the spread of infections.", icon: "🧼", category: "Hygiene" },
-  { tip: "Take short breaks every hour if you work at a desk to prevent strain.", icon: "⏰", category: "Work Health" },
+// Health Tips Data - Imported from homeData.js
+// const healthTips = [...] - MOVED TO /data/homeData.js
   { tip: "Laugh often! It reduces stress hormones and boosts immune function.", icon: "😄", category: "Mental Health" },
   { tip: "Eat breakfast within an hour of waking to kickstart your metabolism.", icon: "🍳", category: "Nutrition" },
   { tip: "Maintain good posture to prevent back pain and improve breathing.", icon: "🧍", category: "Posture" }
