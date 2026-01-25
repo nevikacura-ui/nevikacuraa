@@ -498,11 +498,10 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
         </CardHeader>
         <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
           <div className="flex flex-wrap gap-1.5 sm:gap-2">
-            {accessModules.map(module => (
+            {accessModules.filter(m => m !== 'attendance').map(module => (
               <Badge key={module} variant="secondary" className="py-0.5 sm:py-1 px-2 sm:px-3 text-[10px] sm:text-xs">
                 {module === 'anc' && <Baby className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />}
                 {module === 'glydex' && <Activity className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />}
-                {module === 'attendance' && <Fingerprint className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />}
                 {module === 'appointments' && <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />}
                 {module === 'pharmacy' && <Package className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />}
                 {module.toUpperCase()}
