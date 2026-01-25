@@ -128,7 +128,7 @@ const categoryImages = {
   }
 };
 
-// Category Card Component
+// Category Card Component with hover animations
 const CategoryCard = ({ category, isActive, onClick }) => {
   const cat = categoryImages[category];
   
@@ -136,37 +136,54 @@ const CategoryCard = ({ category, isActive, onClick }) => {
   const renderIcon = () => {
     switch(cat.icon) {
       case 'pill':
-        return <TabletIcon className="w-12 h-12" />;
+        return <TabletIcon className="w-12 h-12 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />;
       case 'capsule':
-        return <span className="text-4xl">💊</span>;
+        return <span className="text-4xl transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-12">💊</span>;
       case 'flask':
-        return <SyrupBottleIcon className="w-12 h-12" />;
+        return <SyrupBottleIcon className="w-12 h-12 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" />;
       case 'syringe':
-        return <Syringe className="w-10 h-10" />;
+        return <Syringe className="w-10 h-10 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12" />;
       case 'cream':
-        return <span className="text-4xl">🧴</span>;
+        return <span className="text-4xl transition-transform duration-300 group-hover:scale-125 group-hover:rotate-6">🧴</span>;
       case 'drops':
-        return <Droplets className="w-10 h-10" />;
+        return <Droplets className="w-10 h-10 transition-transform duration-300 group-hover:scale-125 group-hover:-translate-y-1" />;
       default:
-        return <TabletIcon className="w-10 h-10" />;
+        return <TabletIcon className="w-10 h-10 transition-transform duration-300 group-hover:scale-110" />;
     }
   };
   
   return (
     <button
       onClick={onClick}
-      className={`relative overflow-hidden rounded-2xl transition-all duration-300 group ${
-        isActive ? 'ring-4 ring-orange-400 scale-105 shadow-xl' : 'hover:scale-102 hover:shadow-lg'
-      }`}
+      className={`relative overflow-hidden rounded-2xl transition-all duration-300 ease-out group 
+        active:scale-95 active:shadow-inner
+        ${isActive 
+          ? 'ring-4 ring-orange-400 scale-105 shadow-xl' 
+          : 'hover:scale-105 hover:shadow-xl hover:-translate-y-1'
+        }`}
+      data-testid={`category-${category}`}
     >
+      {/* Shimmer effect on hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      </div>
+      
       <div className="aspect-[4/3] relative">
-        <div className={`absolute inset-0 bg-gradient-to-br ${cat.color}`} />
+        <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} transition-all duration-300 group-hover:saturate-110`} />
+        
+        {/* Subtle pulse glow effect when active */}
+        {isActive && (
+          <div className="absolute inset-0 animate-pulse bg-white/10" />
+        )}
+        
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-2">
-          {renderIcon()}
-          <span className="text-xs sm:text-sm font-semibold text-center leading-tight mt-2">{cat.label}</span>
+          <div className="transform transition-all duration-300">
+            {renderIcon()}
+          </div>
+          <span className="text-xs sm:text-sm font-semibold text-center leading-tight mt-2 transition-all duration-300 group-hover:tracking-wide">{cat.label}</span>
         </div>
         {isActive && (
-          <div className="absolute top-2 right-2 bg-white rounded-full p-1">
+          <div className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-lg animate-bounce">
             <CheckCircle2 className="w-4 h-4 text-orange-500" />
           </div>
         )}
