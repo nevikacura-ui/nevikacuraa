@@ -4154,6 +4154,14 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Calories router: {e}")
 
+# Configuration Data Router (clinics, doctors, fees, etc.)
+try:
+    from routes.config import router as config_router
+    app.include_router(config_router, prefix="/api")
+    logger.info("Configuration Data router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Config router: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
