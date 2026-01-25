@@ -106,6 +106,7 @@ const Footer = () => {
                 <li><a href="/evara" className="hover:text-brand-teal transition-colors">Evara Women's Wellness</a></li>
                 <li><a href="/glydex" className="hover:text-brand-teal transition-colors">Glydex Diabetes Care</a></li>
                 <li><a href="/alyne" className="hover:text-brand-teal transition-colors">ALYNE Kids Health</a></li>
+                <li><a href="/thrive360" className="hover:text-brand-teal transition-colors">Thrive360 Wellness</a></li>
               </ul>
             </div>
 
