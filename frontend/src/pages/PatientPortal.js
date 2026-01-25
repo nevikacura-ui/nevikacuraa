@@ -165,6 +165,7 @@ const PatientPortal = () => {
     { id: 'tests', icon: FlaskConical, label: 'My Lab Tests', color: 'purple' },
     { id: 'orders', icon: Pill, label: 'My Orders', color: 'orange' },
     { id: 'track', icon: Package, label: 'Track Orders', color: 'blue' },
+    { id: 'payments', icon: CreditCard, label: 'Payment History', color: 'green', link: '/payment/history' },
     { id: 'loyalty', icon: Gift, label: 'Loyalty Points', color: 'pink' },
   ];
   
