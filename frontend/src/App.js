@@ -142,6 +142,9 @@ function AppContent() {
           <Route path="/smart-reminders" element={<SmartReminders />} />
           {/* Patient Portal */}
           <Route path="/patient-portal" element={<PatientPortal />} />
+          {/* Payment Routes */}
+          <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/payment/cancel" element={<PaymentCancel />} />
         </Routes>
         <Toaster position="top-center" richColors />
         <PWAInstallPrompt />
