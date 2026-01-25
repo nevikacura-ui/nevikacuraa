@@ -29,6 +29,7 @@ const SettingsPage = () => {
     { id: 'family', icon: Users, label: t('familyMembers'), description: 'Manage family health profiles', color: 'bg-pink-100 text-pink-600', onClick: () => setActiveSection('family') },
     { id: 'notifications', icon: Bell, label: t('notifications'), description: 'Email & SMS preferences', color: 'bg-violet-100 text-violet-600', onClick: () => setActiveSection('notifications') },
     { id: 'push', icon: BellRing, label: 'Push Notifications', description: 'Real-time alerts & reminders', color: 'bg-emerald-100 text-emerald-600', onClick: () => setActiveSection('push') },
+    { id: 'calendar', icon: Calendar, label: 'Calendar Sync', description: 'Sync appointments to your calendar', color: 'bg-cyan-100 text-cyan-600', onClick: () => setActiveSection('calendar') },
     { id: 'payments', icon: CreditCard, label: 'Payments & Wallet', description: 'Manage cards and wallet balance', color: 'bg-amber-100 text-amber-600', onClick: () => setActiveSection('payments') },
     { id: 'language', icon: Globe, label: t('language'), description: 'Change app language', color: 'bg-indigo-100 text-indigo-600', onClick: () => setActiveSection('language') },
     { id: 'health', icon: Heart, label: t('myHealth'), description: 'Health dashboard & achievements', color: 'bg-red-100 text-red-600', onClick: () => navigate('/health-dashboard') }
