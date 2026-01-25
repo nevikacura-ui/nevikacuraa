@@ -81,8 +81,8 @@
     "Minor: Fix icon component casing warnings in 'Why Choose Us' section - Trophy, Users, Clock, Shield icons are being rendered as HTML tags instead of React components"
   ],
   "critical_code_review_comments": [
-    "Home.js has duplicate 'services' definition - line 305 redefines services array that was already imported from homeData.js on line 24. The local definition overrides the imported one.",
-    "The imported 'services' from homeData.js is not being used - the local services array on line 305-358 is used instead"
+    "Home.js has duplicate 'services' definition - line 305 redefines services array that was already imported from homeData.js on line 24. The local definition has additional properties (fillLogo, logoScale, bgColor, isDark) not in homeData.js. Consider either: (1) removing the import of 'services' from homeData.js since it's not used, or (2) moving the enhanced services array to homeData.js",
+    "Console warnings about incorrect casing for icon components (Trophy, Users, Clock, Shield) in 'Why Choose Us' section - these are string values in whyChooseUs array but being rendered as JSX tags"
   ],
   "updated_files": [],
   "success_rate": {
