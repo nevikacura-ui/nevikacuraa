@@ -193,7 +193,7 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect, isTablet = false }) =
 };
 
 // ============================================
-// CLINIC SELECTION CARD - Pastel Design
+// CLINIC SELECTION CARD - Pastel Design with animations
 // ============================================
 const ClinicCard = ({ clinic, isSelected, onSelect }) => {
   return (
@@ -201,21 +201,26 @@ const ClinicCard = ({ clinic, isSelected, onSelect }) => {
       onClick={onSelect}
       data-testid={`clinic-card-${clinic.id}`}
       className={`
-        relative overflow-hidden cursor-pointer transition-all duration-300 
-        rounded-3xl group
+        relative overflow-hidden cursor-pointer transition-all duration-300 ease-out
+        rounded-3xl group active:scale-[0.98]
         ${isSelected 
-          ? 'ring-2 ring-[#5FA8D3] shadow-[0_20px_50px_rgb(0,0,0,0.1)]' 
-          : 'ring-1 ring-[#E2E8F0] hover:ring-[#5FA8D3]/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]'
+          ? 'ring-2 ring-[#5FA8D3] shadow-[0_20px_50px_rgb(0,0,0,0.1)] scale-[1.02]' 
+          : 'ring-1 ring-[#E2E8F0] hover:ring-[#5FA8D3]/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.1)] hover:scale-[1.02] hover:-translate-y-1'
         }
       `}
     >
+      {/* Shimmer effect on hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10">
+        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      </div>
+      
       {/* Clinic Image */}
       <div className="h-36 overflow-hidden relative">
-        <img src={clinic.image} alt={clinic.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        <img src={clinic.image} alt={clinic.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent transition-opacity group-hover:from-black/50" />
         {isSelected && (
           <div className="absolute top-3 right-3">
-            <Badge className="bg-[#5FA8D3] text-white px-3 py-1 rounded-full flex items-center gap-1.5 shadow-lg">
+            <Badge className="bg-[#5FA8D3] text-white px-3 py-1 rounded-full flex items-center gap-1.5 shadow-lg animate-bounce">
               <CheckCircle2 className="w-3.5 h-3.5" />
               Selected
             </Badge>
@@ -226,11 +231,11 @@ const ClinicCard = ({ clinic, isSelected, onSelect }) => {
       {/* Clinic Info */}
       <div className="p-5 bg-white">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#BEE9E8] flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#BEE9E8] flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
             <Building2 className="w-5 h-5 text-[#1B4965]" />
           </div>
           <div>
-            <h3 className="font-bold text-lg text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h3 className="font-bold text-lg text-[#1B4965] transition-colors group-hover:text-[#5FA8D3]" style={{ fontFamily: 'Outfit, sans-serif' }}>
               {clinic.name}
             </h3>
             <p className="text-sm text-[#64748B] mt-1 leading-relaxed" style={{ fontFamily: 'DM Sans, sans-serif' }}>
