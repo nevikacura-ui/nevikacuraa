@@ -92,11 +92,11 @@ const SplashScreen = ({ onComplete, user }) => {
     navigate('/staff');
   };
   
-  // Icons animation data
+  // Icons animation data - with disappearing effect
   const icons = [
-    { Icon: Calendar, color: 'from-blue-500 to-indigo-500', label: 'Appointments', delay: '0s' },
-    { Icon: Pill, color: 'from-orange-500 to-rose-500', label: 'Pharmacy', delay: '0.2s' },
-    { Icon: TestTube, color: 'from-purple-500 to-pink-500', label: 'Lab Tests', delay: '0.4s' },
+    { Icon: Calendar, color: 'from-blue-500 to-indigo-500', label: 'Appointments', animDelay: '0s' },
+    { Icon: Pill, color: 'from-orange-500 to-rose-500', label: 'Pharmacy', animDelay: '0.3s' },
+    { Icon: TestTube, color: 'from-purple-500 to-pink-500', label: 'Lab Tests', animDelay: '0.6s' },
   ];
   
   return (
