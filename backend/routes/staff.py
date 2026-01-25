@@ -1734,7 +1734,7 @@ async def get_pharmacy_analytics(
                 dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
                 hour = (dt + timedelta(hours=5, minutes=30)).hour
                 hourly_orders[hour] += 1
-            except:
+            except (ValueError, AttributeError):
                 pass
     
     hourly_data = []
