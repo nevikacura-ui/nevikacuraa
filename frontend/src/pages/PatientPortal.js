@@ -514,13 +514,21 @@ const PatientPortal = () => {
                                 <p className="text-sm text-gray-500">{apt.clinic}</p>
                               </div>
                             </div>
-                            <Badge className={
-                              apt.status === 'Completed' ? 'bg-green-100 text-green-700' : 
-                              apt.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
-                              'bg-indigo-100 text-indigo-700'
-                            }>
-                              {apt.status}
-                            </Badge>
+                            <div className="flex items-center gap-2">
+                              {apt.status === 'Confirmed' && apt.id && (
+                                <AddToCalendarButton 
+                                  appointmentId={apt.id} 
+                                  variant="icon-only"
+                                />
+                              )}
+                              <Badge className={
+                                apt.status === 'Completed' ? 'bg-green-100 text-green-700' : 
+                                apt.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                                'bg-indigo-100 text-indigo-700'
+                              }>
+                                {apt.status}
+                              </Badge>
+                            </div>
                           </div>
                           <div className="flex items-center gap-4 text-sm text-gray-600">
                             <span className="flex items-center gap-1">
