@@ -17,26 +17,37 @@ import {
   Crown, Star, Gift, Trophy, TrendingUp, Medal, ChevronRight, Sparkles, Droplets, Syringe
 } from 'lucide-react';
 
-// Custom Tablet Pills Icon (round pills with groove)
+// Custom Tablet Icon (round pill with score line - NOT capsule)
 const TabletIcon = ({ className }) => (
   <svg viewBox="0 0 64 64" fill="currentColor" className={className}>
-    <ellipse cx="38" cy="42" rx="22" ry="10" />
-    <path d="M38 32c12.15 0 22 4.48 22 10s-9.85 10-22 10-22-4.48-22-10 9.85-10 22-10z" fill="currentColor" opacity="0.8"/>
-    <line x1="38" y1="32" x2="38" y2="52" stroke="white" strokeWidth="2"/>
-    <circle cx="26" cy="24" r="18" />
-    <line x1="26" y1="6" x2="26" y2="42" stroke="white" strokeWidth="2.5"/>
+    {/* Main round tablet */}
+    <circle cx="32" cy="32" r="26" fill="currentColor" />
+    {/* Score line across the middle */}
+    <line x1="10" y1="32" x2="54" y2="32" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+    {/* Subtle highlight */}
+    <ellipse cx="24" cy="22" rx="8" ry="5" fill="white" opacity="0.3"/>
   </svg>
 );
 
-// Custom Syrup Bottle Icon
+// Custom Syrup Bottle Icon (medicine bottle with liquid)
 const SyrupBottleIcon = ({ className }) => (
-  <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" className={className}>
-    <rect x="18" y="6" width="28" height="10" rx="2" fill="currentColor"/>
-    <path d="M22 16 C22 16 20 20 20 24 L20 54 C20 56 22 58 24 58 L40 58 C42 58 44 56 44 54 L44 24 C44 20 42 16 42 16 Z" fill="currentColor"/>
-    <rect x="20" y="32" width="24" height="22" rx="1" fill="currentColor"/>
-    <circle cx="32" cy="43" r="8" fill="currentColor" stroke="white" strokeWidth="2"/>
-    <path d="M32 39 L32 47 M28 43 L36 43" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-    <rect x="42" y="36" width="2" height="10" rx="1" fill="white" opacity="0.5"/>
+  <svg viewBox="0 0 64 64" fill="currentColor" className={className}>
+    {/* Bottle cap */}
+    <rect x="22" y="4" width="20" height="8" rx="2" fill="currentColor"/>
+    {/* Bottle neck */}
+    <rect x="24" y="12" width="16" height="6" fill="currentColor"/>
+    {/* Main bottle body */}
+    <path d="M20 18 L20 54 C20 58 24 60 28 60 L36 60 C40 60 44 58 44 54 L44 18 Z" fill="currentColor"/>
+    {/* Liquid level indicator */}
+    <rect x="22" y="30" width="20" height="26" rx="2" fill="white" opacity="0.25"/>
+    {/* Label area */}
+    <rect x="24" y="36" width="16" height="14" rx="1" fill="white" opacity="0.4"/>
+    {/* Rx symbol on label */}
+    <text x="32" y="47" textAnchor="middle" fill="currentColor" fontSize="10" fontWeight="bold">Rx</text>
+    {/* Measuring lines */}
+    <line x1="42" y1="35" x2="40" y2="35" stroke="white" strokeWidth="1" opacity="0.5"/>
+    <line x1="42" y1="42" x2="40" y2="42" stroke="white" strokeWidth="1" opacity="0.5"/>
+    <line x1="42" y1="49" x2="40" y2="49" stroke="white" strokeWidth="1" opacity="0.5"/>
   </svg>
 );
 
