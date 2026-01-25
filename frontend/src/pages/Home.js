@@ -1646,9 +1646,9 @@ const Home = () => {
           isScrolling ? 'translate-y-full' : 'translate-y-0'
         }`}>
           <div className="flex items-center justify-around py-2 px-4">
-            {/* Option A: Always Colorful Circular Icons */}
+            {/* Option B: Single-colored icons, active icon becomes colorful */}
             
-            {/* Home - Teal Circle */}
+            {/* Home */}
             <button
               onClick={() => {
                 setActiveTab('home');
@@ -1660,14 +1660,14 @@ const Home = () => {
               <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${
                 activeTab === 'home' 
                   ? 'bg-teal-500 shadow-lg shadow-teal-500/40 scale-110' 
-                  : 'bg-teal-100'
+                  : 'bg-slate-100'
               }`}>
-                <HomeIcon className={`w-5 h-5 ${activeTab === 'home' ? 'text-white' : 'text-teal-600'}`} />
+                <HomeIcon className={`w-5 h-5 ${activeTab === 'home' ? 'text-white' : 'text-slate-500'}`} />
               </div>
-              <span className={`text-[10px] font-semibold ${activeTab === 'home' ? 'text-teal-600' : 'text-teal-500'}`}>Home</span>
+              <span className={`text-[10px] font-semibold ${activeTab === 'home' ? 'text-teal-600' : 'text-slate-500'}`}>Home</span>
             </button>
             
-            {/* Pharmacy - Orange Circle */}
+            {/* Pharmacy */}
             <button
               onClick={() => {
                 setActiveTab('pharmacy');
@@ -1679,14 +1679,14 @@ const Home = () => {
               <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${
                 activeTab === 'pharmacy' 
                   ? 'bg-orange-500 shadow-lg shadow-orange-500/40 scale-110' 
-                  : 'bg-orange-100'
+                  : 'bg-slate-100'
               }`}>
-                <Pill className={`w-5 h-5 ${activeTab === 'pharmacy' ? 'text-white' : 'text-orange-600'}`} />
+                <Pill className={`w-5 h-5 ${activeTab === 'pharmacy' ? 'text-white' : 'text-slate-500'}`} />
               </div>
-              <span className={`text-[10px] font-semibold ${activeTab === 'pharmacy' ? 'text-orange-600' : 'text-orange-500'}`}>Pharmacy</span>
+              <span className={`text-[10px] font-semibold ${activeTab === 'pharmacy' ? 'text-orange-600' : 'text-slate-500'}`}>Pharmacy</span>
             </button>
             
-            {/* Book - Center Rose Circle (Always prominent) */}
+            {/* Book - Center (Always prominent) */}
             <button
               onClick={() => setShowBookingModal(true)}
               className="relative -mt-4 flex flex-col items-center"
@@ -1698,7 +1698,7 @@ const Home = () => {
               <span className="mt-1 text-[10px] font-bold text-rose-600">Book</span>
             </button>
             
-            {/* Lab Tests - Purple Circle */}
+            {/* Lab Tests */}
             <button
               onClick={() => {
                 setActiveTab('lab');
@@ -1710,14 +1710,14 @@ const Home = () => {
               <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${
                 activeTab === 'lab' 
                   ? 'bg-purple-500 shadow-lg shadow-purple-500/40 scale-110' 
-                  : 'bg-purple-100'
+                  : 'bg-slate-100'
               }`}>
-                <TestTube className={`w-5 h-5 ${activeTab === 'lab' ? 'text-white' : 'text-purple-600'}`} />
+                <TestTube className={`w-5 h-5 ${activeTab === 'lab' ? 'text-white' : 'text-slate-500'}`} />
               </div>
-              <span className={`text-[10px] font-semibold ${activeTab === 'lab' ? 'text-purple-600' : 'text-purple-500'}`}>Lab Tests</span>
+              <span className={`text-[10px] font-semibold ${activeTab === 'lab' ? 'text-purple-600' : 'text-slate-500'}`}>Lab Tests</span>
             </button>
             
-            {/* Login - Blue Circle */}
+            {/* Login/Profile */}
             <button
               onClick={() => {
                 setActiveTab('profile');
@@ -1729,11 +1729,11 @@ const Home = () => {
               <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${
                 activeTab === 'profile' 
                   ? 'bg-blue-500 shadow-lg shadow-blue-500/40 scale-110' 
-                  : 'bg-blue-100'
+                  : 'bg-slate-100'
               }`}>
-                <User className={`w-5 h-5 ${activeTab === 'profile' ? 'text-white' : 'text-blue-600'}`} />
+                <User className={`w-5 h-5 ${activeTab === 'profile' ? 'text-white' : 'text-slate-500'}`} />
               </div>
-              <span className={`text-[10px] font-semibold ${activeTab === 'profile' ? 'text-blue-600' : 'text-blue-500'}`}>{user ? 'Profile' : 'Login'}</span>
+              <span className={`text-[10px] font-semibold ${activeTab === 'profile' ? 'text-blue-600' : 'text-slate-500'}`}>{user ? 'Profile' : 'Login'}</span>
             </button>
           </div>
         </nav>,
