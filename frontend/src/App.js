@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import Home from '@/pages/Home';
 import DiaGyn from '@/pages/DiaGyn';
@@ -48,47 +49,70 @@ import SeniorCare from '@/pages/SeniorCare';
 import SmartReminders from '@/pages/SmartReminders';
 // Patient Portal
 import PatientPortal from '@/pages/PatientPortal';
-import { AuthProvider } from '@/context/AuthContext';
+// Splash Screen
+import SplashScreen from '@/components/SplashScreen';
+import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ViewModeProvider } from '@/context/ViewModeContext';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { FullScreenNotificationPrompt, SmartNotificationBanner } from '@/components/NotificationPrompt';
 import './App.css';
 
-function App() {
+// Wrapper component to access auth context
+function AppContent() {
+  const { user } = useAuth();
+  const [showSplash, setShowSplash] = useState(true);
+  
+  // Check if splash should be shown
+  useEffect(() => {
+    // Skip splash if user is logged in or has seen it before
+    const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+    const patientToken = localStorage.getItem('patientToken');
+    
+    if (hasSeenSplash || user || patientToken) {
+      setShowSplash(false);
+    }
+  }, [user]);
+  
+  const handleSplashComplete = () => {
+    sessionStorage.setItem('hasSeenSplash', 'true');
+    setShowSplash(false);
+  };
+  
   return (
-    <AuthProvider>
-      <ViewModeProvider>
-        <BrowserRouter>
-          <div className="App">
-            <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/diagyn" element={<DiaGyn />} />
-            <Route path="/proton" element={<Proton />} />
-            <Route path="/pharmacy" element={<Pharmacy />} />
-            <Route path="/evara" element={<Evara />} />
-            <Route path="/glydex" element={<Glydex />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/staff" element={<StaffPortal />} />
-            <Route path="/track" element={<TrackOrder />} />
-            <Route path="/feedback/:token" element={<Feedback />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            <Route path="/about" element={<AboutUs />} />
-            {/* New Feature Routes */}
-            <Route path="/my-health" element={<MyHealth />} />
-            <Route path="/health-packages" element={<HealthPackages />} />
-            <Route path="/referral" element={<ReferralProgram />} />
-            <Route path="/health-tips" element={<HealthTips />} />
-            <Route path="/teleconsult" element={<Teleconsultation />} />
-            <Route path="/quick-reorder" element={<QuickReorder />} />
-            {/* High Priority Features */}
-            <Route path="/emergency" element={<EmergencyServices />} />
-            <Route path="/health-assessment" element={<HealthRiskAssessment />} />
-            <Route path="/medication-tracker" element={<MedicationTracker />} />
-            <Route path="/doctors" element={<DoctorProfiles />} />
-            <Route path="/doctors/:doctorId" element={<DoctorProfiles />} />
-            <Route path="/billing" element={<Billing />} />
+    <>
+      {showSplash && (
+        <SplashScreen onComplete={handleSplashComplete} user={user} />
+      )}
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/diagyn" element={<DiaGyn />} />
+          <Route path="/proton" element={<Proton />} />
+          <Route path="/pharmacy" element={<Pharmacy />} />
+          <Route path="/evara" element={<Evara />} />
+          <Route path="/glydex" element={<Glydex />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/staff" element={<StaffPortal />} />
+          <Route path="/track" element={<TrackOrder />} />
+          <Route path="/feedback/:token" element={<Feedback />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/about" element={<AboutUs />} />
+          {/* New Feature Routes */}
+          <Route path="/my-health" element={<MyHealth />} />
+          <Route path="/health-packages" element={<HealthPackages />} />
+          <Route path="/referral" element={<ReferralProgram />} />
+          <Route path="/health-tips" element={<HealthTips />} />
+          <Route path="/teleconsult" element={<Teleconsultation />} />
+          <Route path="/quick-reorder" element={<QuickReorder />} />
+          {/* High Priority Features */}
+          <Route path="/emergency" element={<EmergencyServices />} />
+          <Route path="/health-assessment" element={<HealthRiskAssessment />} />
+          <Route path="/medication-tracker" element={<MedicationTracker />} />
+          <Route path="/doctors" element={<DoctorProfiles />} />
+          <Route path="/doctors/:doctorId" element={<DoctorProfiles />} />
+          <Route path="/billing" element={<Billing />} />
             {/* Community & Reminders */}
             <Route path="/community" element={<Community />} />
             <Route path="/reminders" element={<Reminders />} />
