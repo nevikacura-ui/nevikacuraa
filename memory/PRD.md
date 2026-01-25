@@ -9,11 +9,45 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 - **Database:** MongoDB
 - **SMS:** Twilio (for transactional confirmations only, NOT for auth/login)
 - **Email:** Resend
-- **Payments:** Stripe (via emergentintegrations library)
+
+## Doctors
+- **Dr. Vikas Jha** - Diabetologist & Physician (Both Pushpa Clinic & Amnion Clinic)
+- **Dr. Neha Patel** - OBGYN (Both Pushpa Clinic & Amnion Clinic)
 
 ## What's Been Implemented
 
-### Session - January 25, 2026 (Part 5 - Current)
+### Session - January 25, 2026 (Part 6 - Current)
+
+#### Completed Features
+1. **Attendance Feature Removed - COMPLETE** ✅
+   - Removed attendance tab from Clinic Staff portal
+   - Removed attendance/biometric tab from Doctor portal
+   - Removed attendance tab from Pharmacy Staff portal
+   - Removed "Mark Attendance" quick action from StaffDashboard
+   - Removed attendance stats card from dashboard
+   - Removed SmartBiometric component imports
+
+2. **Doctor Names Updated - COMPLETE** ✅
+   - Changed "Dr. Vikas Deshmukh" → "Dr. Vikas Jha"
+   - Changed "Dr. Sunita Deshmukh" → "Dr. Neha Patel"
+   - Updated in staffUtils.js (CLINICS, DOCTOR_SCHEDULES)
+   - Updated in DiaGyn.js (doctors array)
+   - Both doctors now available at both clinics
+
+3. **Payment/Fee Step Removed from Booking - COMPLETE** ✅
+   - Reduced booking flow from 6 steps to 5 steps
+   - New flow: Doctor → Clinic → Schedule → Verify → Confirm
+   - Removed FeeSelector component from booking
+   - Removed payment buttons and Stripe integration from booking
+   - Appointments now booked without payment processing
+
+4. **Comprehensive Testing - COMPLETE** ✅
+   - All changes verified via testing agent (100% pass rate)
+   - Verified no attendance anywhere in portals
+   - Verified correct doctor names
+   - Verified 5-step booking flow without payment
+
+### Session - January 25, 2026 (Part 5)
 
 #### Completed Features
 1. **Staff Analytics Dashboards - COMPLETE** ✅
@@ -51,7 +85,7 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
      - `DiagnosticsCreateTab.jsx` (210 lines) - Create diagnostic orders
      - `DiagnosticsLoyaltyTab.jsx` (143 lines) - Diagnostics loyalty points
    - Created `staffUtils.js` (229 lines) - Shared utilities
-   - **Reduced StaffPortal.js from 4,736 to 2,824 lines (-1,912 lines, 40.4% reduction)**
+   - **Reduced StaffPortal.js from 4,736 to ~2,800 lines (40%+ reduction)**
    - All tabs verified working via testing agent (100% frontend success rate)
 
 ### Session - January 25, 2026 (Part 3)
