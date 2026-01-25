@@ -659,12 +659,6 @@ async def generate_receipt_pdf(session_id: str):
         spaceAfter=10,
         textColor=colors.HexColor('#1e293b')
     )
-    normal_style = ParagraphStyle(
-        'CustomNormal',
-        parent=styles['Normal'],
-        fontSize=11,
-        textColor=colors.HexColor('#334155')
-    )
     
     # Build content
     elements = []
