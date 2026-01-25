@@ -13,7 +13,7 @@ import {
   ArrowLeft, User, Phone, Calendar, Loader2, LogOut, Mail, Edit2, Save, X,
   FileText, Pill, FlaskConical, Receipt, History, Clock, Gift, Package,
   CheckCircle2, XCircle, AlertCircle, Download, Eye, Search,
-  Stethoscope, Building2, CreditCard, Shield, Star, ChevronRight
+  Stethoscope, Building2, CreditCard, Shield, Star, ChevronRight, Settings, Heart
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
