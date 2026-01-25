@@ -227,6 +227,37 @@ async def lookup_patient(mobile: str):
     }
 
 
+@router.get("/by-phone/{phone}")
+async def get_patient_by_phone(phone: str):
+    """
+    Get patient by phone number (Public - for payment history)
+    """
+    if len(phone) < 10:
+        raise HTTPException(status_code=400, detail="Invalid phone number")
+    
+    # Clean mobile number
+    clean_phone = phone.replace("+91", "").replace(" ", "").replace("-", "")[-10:]
+    
+    patient = await db.patients.find_one({
+        "$or": [
+            {"mobile": clean_phone},
+            {"mobile": f"+91{clean_phone}"},
+            {"mobile": phone}
+        ]
+    })
+    
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    
+    return {
+        "patient_id": patient["patient_id"],
+        "name": patient["name"],
+        "mobile": patient["mobile"],
+        "registered_at": patient.get("registered_at"),
+        "total_visits": patient.get("total_visits", 0)
+    }
+
+
 @router.get("/{patient_id}")
 async def get_patient(patient_id: str):
     """Get patient details by patient ID"""
