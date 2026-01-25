@@ -3,7 +3,7 @@ Stripe Payment Routes
 Handles payment processing for appointments, pharmacy orders, and lab tests
 """
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Depends, Header
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, List
