@@ -31,19 +31,67 @@ const getDeviceName = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [patientToken, setPatientToken] = useState(localStorage.getItem('patientToken'));
   const [loading, setLoading] = useState(true);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [biometricEnabled, setBiometricEnabled] = useState(false);
 
   useEffect(() => {
+    // First check for staff/admin token
     if (token) {
       fetchUser();
-    } else {
+    } 
+    // Then check for patient token
+    else if (patientToken) {
+      fetchPatientUser();
+    }
+    else {
       setLoading(false);
     }
     // Check biometric availability
     checkBiometricAvailability();
-  }, [token]);
+  }, [token, patientToken]);
+
+  // Fetch patient user from patient portal API
+  const fetchPatientUser = async () => {
+    try {
+      const response = await axios.get(`${API}/patients/portal/me`, {
+        headers: { Authorization: `Bearer ${patientToken}` }
+      });
+      // Convert patient data to user format
+      setUser({
+        id: response.data.patient_id,
+        name: response.data.name,
+        email: response.data.email,
+        phone: response.data.mobile,
+        role: 'patient',
+        patient_id: response.data.patient_id,
+        ...response.data
+      });
+    } catch (error) {
+      console.error('Failed to fetch patient user:', error);
+      // Clear invalid patient token
+      localStorage.removeItem('patientToken');
+      setPatientToken(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Set patient token (called from patient portal login)
+  const setPatientAuth = (newToken, patientData) => {
+    setPatientToken(newToken);
+    localStorage.setItem('patientToken', newToken);
+    setUser({
+      id: patientData.patient_id,
+      name: patientData.name,
+      email: patientData.email,
+      phone: patientData.mobile,
+      role: 'patient',
+      patient_id: patientData.patient_id,
+      ...patientData
+    });
+  };
 
   const checkBiometricAvailability = async () => {
     // Check if Web Authentication API is available (for browsers)
