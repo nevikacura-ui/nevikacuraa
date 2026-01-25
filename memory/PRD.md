@@ -50,6 +50,18 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
    - Backend endpoint: `GET /api/patients/by-phone/{phone}` added
    - Linked from Patient Portal menu
 
+6. **PDF Receipt Generation** ✅
+   - New endpoint: `GET /api/payments/receipt/{session_id}/pdf`
+   - Professional PDF receipt with:
+     - Nevika Cura branding
+     - Payment status banner (green for Paid, yellow for Pending)
+     - Patient details
+     - Payment details (service type, description, fee code)
+     - Amount box with teal accent
+     - Footer with contact info
+   - Uses ReportLab library for PDF generation
+   - Download button integrated in Payment History modal
+
 ### Session - January 25, 2026 (Part 2)
 
 #### Completed Features
