@@ -544,7 +544,24 @@ const Home = () => {
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+
+        {/* Global Search Bar - Hero Section */}
+        <div className="mb-6">
+          <GlobalSearch className="max-w-2xl mx-auto" />
+        </div>
+
+        {/* Quick Actions - One-tap access */}
+        <div className="mb-8">
+          <QuickActions />
+        </div>
+
+        {/* Smart Home Feed - For logged in users */}
+        {user && (
+          <div className="mb-8">
+            <SmartHomeFeed user={user} />
+          </div>
+        )}
 
         {/* Welcome Message - For all users */}
         <div className="mb-6 text-center md:text-left">
