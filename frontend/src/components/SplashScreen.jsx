@@ -145,6 +145,20 @@ const SplashScreen = ({ onComplete, user }) => {
         <div className="absolute bottom-40 right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
       </div>
       
+      {/* Skip Button - Top Right */}
+      {animationComplete && (
+        <div className="absolute top-4 right-4 z-50">
+          <button
+            onClick={handleExplore}
+            data-testid="skip-btn"
+            className="flex items-center gap-1 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors text-sm font-medium"
+          >
+            Skip
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+      
       {/* Content */}
       <div className="relative z-10 text-center max-w-md mx-auto">
         {/* Logo/Brand - Oval shaped with white background */}
@@ -183,7 +197,7 @@ const SplashScreen = ({ onComplete, user }) => {
         {/* Action Buttons */}
         {animationComplete && (
           <div className="space-y-4 animate-fade-in">
-            {/* Login/Signup Button */}
+            {/* Login/Signup Button - Primary Action */}
             <Button
               onClick={handleLoginClick}
               className="w-full h-14 bg-white text-teal-700 hover:bg-teal-50 rounded-2xl text-lg font-semibold shadow-xl shadow-black/20"
@@ -191,16 +205,6 @@ const SplashScreen = ({ onComplete, user }) => {
             >
               <User className="w-5 h-5 mr-2" />
               Login / Sign Up
-            </Button>
-            
-            {/* Explore Button */}
-            <Button
-              onClick={handleExplore}
-              variant="ghost"
-              className="w-full h-12 text-white/90 hover:text-white hover:bg-white/10 rounded-2xl text-base"
-            >
-              Explore App
-              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             
             {/* Staff Login */}
