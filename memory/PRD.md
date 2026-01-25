@@ -29,6 +29,22 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
    - New logo URL: `https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png`
    - Verified via screenshots - logo displays correctly on Home page services section
 
+2. **UX Improvements - ALL 7 IMPLEMENTED** ✅ (100% test pass rate)
+   - **Global Search Bar** (`GlobalSearch.jsx`): Search doctors, medicines, tests with dropdown results
+   - **Quick Actions** (`QuickActions.jsx`): One-tap buttons - Book Doctor, Order Meds, Lab Test, Video Call, Emergency
+   - **Smart Home Feed** (`SmartHomeFeed.jsx`): Personalized content for logged-in users
+   - **Health Score Widget** (`HealthScoreWidget.jsx`): Gamification with score, improvement tasks, points
+   - **Featured Services**: Top 2 services (DiaGyn, Pharmacy) highlighted with "Popular" badge
+   - **Unified Auth Flow**: Patient login now works from splash screen via phone OTP
+   - **Health Stats Widget**: Shows Last Checkup, Prescriptions, Upcoming, Health Streak
+
+3. **Auth Flow Fix - COMPLETE** ✅
+   - Updated `AuthContext.js` to support both `token` (staff) and `patientToken` (patient)
+   - Added `setPatientAuth` function to sync patient login with global user state
+   - Updated `AuthModal.jsx` to try patient portal login as fallback for phone OTP
+   - Updated `PatientPortal.js` to sync with AuthContext on login/logout
+   - Updated `Glydex.js` to accept both token types
+
 ### Session - January 25, 2026 (Part 7)
 
 #### Completed Features
