@@ -1665,7 +1665,7 @@ const Home = () => {
             <button
               onClick={() => {
                 setActiveTab('pharmacy');
-                window.location.href = '/orange';
+                window.location.href = '/pharmacy';
               }}
               className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
                 activeTab === 'pharmacy' ? 'text-orange-600' : 'text-slate-400'
