@@ -1,6 +1,10 @@
-// Static data for Home page components
-// DO NOT MODIFY - Contains all original data
+/**
+ * Home Page Data - Fetched from API with fallback to static data
+ */
 
+const API_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Static fallback data (used if API fails)
 export const healthTips = [
   { tip: "Stay hydrated! Drink at least 8 glasses of water daily for optimal health.", icon: "💧", category: "Hydration" },
   { tip: "A 30-minute walk can boost your mood and improve cardiovascular health.", icon: "🚶", category: "Exercise" },
@@ -197,57 +201,125 @@ export const clinicLocations = [
   }
 ];
 
-export const services = [
-  {
-    id: 'diagyn',
-    name: 'DiaGyn Healthcare',
-    logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg',
-    path: '/diagyn',
-    bgColor: '#ffffff',
-    isDark: false
-  },
-  {
-    id: 'proton',
-    name: 'Proton Diagnostics',
-    logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
-    path: '/proton',
-    bgColor: '#ffffff',
-    isDark: false
-  },
-  {
-    id: 'pharmacy',
-    name: 'Orange Pharmacy',
-    logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
-    path: '/pharmacy',
-    bgColor: '#ffffff',
-    isDark: false
-  },
-  {
-    id: 'evara',
-    name: 'Evara',
-    logo: '/icons/evara-logo.png',
-    path: '/evara',
-    bgColor: '#511b63',
-    isDark: true,
-    fillLogo: true,
-    logoScale: 0.85
-  },
-  {
-    id: 'glydex',
-    name: 'Glydex',
-    logo: '/glydex-logo.png',
-    path: '/glydex',
-    bgColor: '#121f33',
-    isDark: true,
-    fillLogo: true
-  },
-  {
-    id: 'alyne',
-    name: 'ALYNE',
-    logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
-    path: '/alyne',
-    bgColor: '#0a1628',
-    isDark: true,
-    fillLogo: true
+// API fetch functions with fallbacks
+export const fetchHealthTips = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/config/health-tips`);
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.warn('Failed to fetch health tips from API, using fallback data');
   }
-];
+  return healthTips;
+};
+
+export const fetchTodaysHealthTip = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/config/health-tip/today`);
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.warn('Failed to fetch today\'s health tip from API, using fallback');
+  }
+  // Fallback to day-based selection
+  const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+  return healthTips[dayOfYear % healthTips.length];
+};
+
+export const fetchClinics = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/config/clinics`);
+    if (response.ok) {
+      const data = await response.json();
+      // Map API response to frontend format
+      return data.map(clinic => ({
+        id: clinic.id,
+        name: clinic.name,
+        logo: clinic.logo,
+        address: clinic.address,
+        city: clinic.city,
+        phone: clinic.phone,
+        hours: clinic.hours,
+        mapLink: clinic.map_link,
+        services: clinic.services
+      }));
+    }
+  } catch (error) {
+    console.warn('Failed to fetch clinics from API, using fallback data');
+  }
+  return clinicLocations;
+};
+
+export const fetchDoctors = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/config/doctors`);
+    if (response.ok) {
+      const data = await response.json();
+      return data.map(doc => ({
+        id: doc.id,
+        name: doc.name,
+        specialization: doc.specialization,
+        qualification: doc.qualification,
+        experience: doc.experience,
+        avatar: doc.avatar,
+        color: doc.color,
+        clinic: 'DiaGyn Healthcare'
+      }));
+    }
+  } catch (error) {
+    console.warn('Failed to fetch doctors from API, using fallback data');
+  }
+  return featuredDoctors;
+};
+
+export const fetchTestimonials = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/config/testimonials`);
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.warn('Failed to fetch testimonials from API, using fallback data');
+  }
+  return testimonials;
+};
+
+export const fetchCertifications = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/config/certifications`);
+    if (response.ok) {
+      const data = await response.json();
+      return data.map(cert => ({
+        name: cert.name,
+        fullName: cert.full_name,
+        color: cert.color
+      }));
+    }
+  } catch (error) {
+    console.warn('Failed to fetch certifications from API, using fallback data');
+  }
+  return certifications;
+};
+
+export const fetchServices = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/config/services`);
+    if (response.ok) {
+      const data = await response.json();
+      return data.map(svc => ({
+        id: svc.id,
+        name: svc.name,
+        description: svc.description,
+        logo: svc.logo,
+        path: svc.path,
+        bgColor: svc.bg_color,
+        isDark: svc.is_dark
+      }));
+    }
+  } catch (error) {
+    console.warn('Failed to fetch services from API, using fallback data');
+  }
+  return null; // Will use component's default services
+};
