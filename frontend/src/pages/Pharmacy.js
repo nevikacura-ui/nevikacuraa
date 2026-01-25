@@ -14,8 +14,31 @@ import axios from 'axios';
 import { 
   ArrowLeft, ArrowRight, Upload, Plus, Minus, X, ShoppingCart, Pill, Search, Package, 
   CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, Trash2, Info, FileText,
-  Crown, Star, Gift, Trophy, TrendingUp, Medal, ChevronRight, Sparkles, FlaskConical, Droplets, Syringe
+  Crown, Star, Gift, Trophy, TrendingUp, Medal, ChevronRight, Sparkles, Droplets, Syringe
 } from 'lucide-react';
+
+// Custom Tablet Pills Icon (round pills with groove)
+const TabletIcon = ({ className }) => (
+  <svg viewBox="0 0 64 64" fill="currentColor" className={className}>
+    <ellipse cx="38" cy="42" rx="22" ry="10" />
+    <path d="M38 32c12.15 0 22 4.48 22 10s-9.85 10-22 10-22-4.48-22-10 9.85-10 22-10z" fill="currentColor" opacity="0.8"/>
+    <line x1="38" y1="32" x2="38" y2="52" stroke="white" strokeWidth="2"/>
+    <circle cx="26" cy="24" r="18" />
+    <line x1="26" y1="6" x2="26" y2="42" stroke="white" strokeWidth="2.5"/>
+  </svg>
+);
+
+// Custom Syrup Bottle Icon
+const SyrupBottleIcon = ({ className }) => (
+  <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" className={className}>
+    <rect x="18" y="6" width="28" height="10" rx="2" fill="currentColor"/>
+    <path d="M22 16 C22 16 20 20 20 24 L20 54 C20 56 22 58 24 58 L40 58 C42 58 44 56 44 54 L44 24 C44 20 42 16 42 16 Z" fill="currentColor"/>
+    <rect x="20" y="32" width="24" height="22" rx="1" fill="currentColor"/>
+    <circle cx="32" cy="43" r="8" fill="currentColor" stroke="white" strokeWidth="2"/>
+    <path d="M32 39 L32 47 M28 43 L36 43" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+    <rect x="42" y="36" width="2" height="10" rx="1" fill="white" opacity="0.5"/>
+  </svg>
+);
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
