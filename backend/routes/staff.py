@@ -1581,7 +1581,7 @@ async def add_loyalty_points(data: LoyaltyPointsAdd, staff = Depends(verify_staf
 @router.get("/analytics/clinic")
 async def get_clinic_analytics(
     clinic: str = "",
-    range: str = "week",
+    time_range: str = "week",
     staff = Depends(verify_staff)
 ):
     """Get clinic performance analytics for staff dashboard"""
@@ -1589,10 +1589,10 @@ async def get_clinic_analytics(
     
     # Determine date range
     now = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)  # IST
-    if range == "today":
+    if time_range == "today":
         start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
         days = 1
-    elif range == "month":
+    elif time_range == "month":
         start_date = now - timedelta(days=30)
         days = 30
     else:  # week
@@ -1684,17 +1684,17 @@ async def get_clinic_analytics(
 
 @router.get("/analytics/pharmacy")
 async def get_pharmacy_analytics(
-    range: str = "week",
+    time_range: str = "week",
     staff = Depends(verify_staff)
 ):
     """Get pharmacy performance analytics"""
     from collections import defaultdict
     
     today = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
-    if range == "today":
+    if time_range == "today":
         start_date = today.replace(hour=0, minute=0, second=0, microsecond=0)
         days = 1
-    elif range == "month":
+    elif time_range == "month":
         start_date = today - timedelta(days=30)
         days = 30
     else:
@@ -1786,17 +1786,17 @@ async def get_pharmacy_analytics(
 
 @router.get("/analytics/diagnostics")
 async def get_diagnostics_analytics(
-    range: str = "week",
+    time_range: str = "week",
     staff = Depends(verify_staff)
 ):
     """Get diagnostics performance analytics"""
     from collections import defaultdict
     
     today = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
-    if range == "today":
+    if time_range == "today":
         start_date = today.replace(hour=0, minute=0, second=0, microsecond=0)
         days = 1
-    elif range == "month":
+    elif time_range == "month":
         start_date = today - timedelta(days=30)
         days = 30
     else:
