@@ -1554,7 +1554,7 @@ const Home = () => {
   );
 };
 
-const AuthModal = ({ open, onClose }) => {
+export default Home;
   const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login, fetchUser, biometricAvailable, biometricEnabled, loginWithBiometric } = useAuth();
   const [loading, setLoading] = useState(false);
   // Steps: method-select, email-otp, email-otp-verify, phone-otp, phone-otp-verify, password-login, register, interests, password-failed
