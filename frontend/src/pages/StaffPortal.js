@@ -24,6 +24,12 @@ import { useViewMode } from '@/context/ViewModeContext';
 import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
 import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRegistration';
 
+// Import refactored staff tab components
+import WalkInTab from '@/components/staff/WalkInTab';
+import EmergencyTab from '@/components/staff/EmergencyTab';
+import BillingTab from '@/components/staff/BillingTab';
+import PatientsTab from '@/components/staff/PatientsTab';
+
 // Import refactored utilities and components
 import StaffLogin from './staff/StaffLogin';
 import SmartBiometric from './staff/SmartBiometric';
