@@ -4,6 +4,7 @@ Handles payment processing for appointments, pharmacy orders, and lab tests
 """
 
 from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, List
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -12,6 +13,7 @@ import os
 import logging
 import resend
 import asyncio
+import io
 
 from emergentintegrations.payments.stripe.checkout import (
     StripeCheckout, 
@@ -19,6 +21,14 @@ from emergentintegrations.payments.stripe.checkout import (
     CheckoutStatusResponse, 
     CheckoutSessionRequest
 )
+
+# PDF Generation
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch, mm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 
 router = APIRouter(prefix="/payments", tags=["Payments"])
 logger = logging.getLogger(__name__)
