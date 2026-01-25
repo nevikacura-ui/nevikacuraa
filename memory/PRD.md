@@ -7,12 +7,32 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 - **Frontend:** React with Tailwind CSS, Shadcn/UI components
 - **Backend:** FastAPI (Python)
 - **Database:** MongoDB
-- **SMS:** Twilio
+- **SMS:** Twilio (for transactional confirmations only, NOT for auth/login)
 - **Email:** Resend
+- **Payments:** Stripe (via emergentintegrations library)
 
 ## What's Been Implemented
 
-### Session - January 25, 2026
+### Session - January 25, 2026 (Part 2)
+
+#### Completed Features
+1. **Stripe Payment Integration** ✅
+   - Full payment integration for appointments, pharmacy orders, and lab tests
+   - Backend API endpoints:
+     - `POST /api/payments/create-checkout` - Creates Stripe checkout session
+     - `GET /api/payments/status/{session_id}` - Gets payment status
+     - `POST /api/payments/webhook/stripe` - Handles Stripe webhooks
+     - `GET /api/payments/fee-codes` - Returns all consultation & scan fees
+     - `GET /api/payments/transactions` - Payment history with filters
+   - Frontend components:
+     - `FeeSelector` - Categorized fee selection UI
+     - `PaymentCheckout` - Payment summary and checkout initiation
+     - `PaymentSuccess` / `PaymentCancel` - Result pages at `/payment/success` and `/payment/cancel`
+   - DiaGyn booking flow updated to 6 steps: Doctor → Clinic → Schedule → Verify → Fee & Pay → Confirm
+   - Fee codes defined: 12 consultation fees + 6 scan fees
+   - Integration uses Stripe test keys from environment
+
+### Session - January 25, 2026 (Part 1)
 
 #### Completed Features
 1. **Bottom Navigation - Option 2 Style** ✅
