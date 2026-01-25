@@ -76,10 +76,24 @@ const SonographyTab = ({
 
   // Fetch on mount and date change
   useEffect(() => {
-    if (staffInfo) {
-      fetchSonographyBookings();
-    }
-  }, [selectedDate, staffInfo?.clinic]);
+    const loadBookings = async () => {
+      if (staffInfo) {
+        setLoadingSonography(true);
+        try {
+          const clinic = staffInfo?.clinic || '';
+          const res = await axios.get(`${API}/staff/sonography/bookings`, {
+            params: { date: selectedDate, clinic },
+            headers: getAuthHeaders()
+          });
+          setSonographyBookings(res.data.bookings || []);
+        } catch (error) {
+          console.error('Error fetching sonography bookings:', error);
+        }
+        setLoadingSonography(false);
+      }
+    };
+    loadBookings();
+  }, [selectedDate, staffInfo]);
 
   return (
     <Card className="p-4" data-testid="sonography-tab">
