@@ -3,11 +3,12 @@ Configuration API Routes
 Handles clinic config, doctors, fees, and other configurable data stored in MongoDB
 """
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Header
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
+import jwt
 from datetime import datetime, timezone
 
 router = APIRouter(prefix="/config", tags=["Configuration"])
@@ -16,6 +17,31 @@ router = APIRouter(prefix="/config", tags=["Configuration"])
 mongo_url = os.environ.get('MONGO_URL')
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ.get('DB_NAME', 'nevika_cura')]
+
+# JWT config
+JWT_SECRET = os.environ.get('JWT_SECRET', 'nevika-cura-secret-key-2025')
+JWT_ALGORITHM = 'HS256'
+
+# ============================================
+# Auth Helper
+# ============================================
+
+async def verify_admin(authorization: str = Header(None)):
+    """Verify the user is an admin or super_admin"""
+    if not authorization or not authorization.startswith('Bearer '):
+        raise HTTPException(status_code=401, detail="Missing or invalid authorization header")
+    
+    token = authorization.replace('Bearer ', '')
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        role = payload.get('role', '')
+        if role not in ['admin', 'super_admin']:
+            raise HTTPException(status_code=403, detail="Admin access required")
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 # ============================================
 # Pydantic Models
