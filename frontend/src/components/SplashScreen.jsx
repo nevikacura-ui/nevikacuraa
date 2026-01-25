@@ -219,7 +219,7 @@ const SplashScreen = ({ onComplete, user }) => {
       
       {/* Auth Dialog */}
       <Dialog open={showAuth} onOpenChange={setShowAuth}>
-        <DialogContent className="max-w-sm rounded-3xl p-0 overflow-hidden z-[10000]">
+        <DialogContent className="max-w-sm rounded-3xl p-0 overflow-hidden" style={{ zIndex: 100000 }}>
           <div className="bg-gradient-to-r from-teal-500 to-cyan-500 p-6 text-white">
             <DialogTitle className="text-xl font-bold flex items-center gap-2">
               <User className="w-6 h-6" />
