@@ -837,6 +837,10 @@ const DiaGyn = () => {
     loading: true
   });
   
+  // Payment/Fee selection state
+  const [selectedFee, setSelectedFee] = useState('G1'); // Default to General - First Visit
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  
   // Staff slot blocking feature
   const [showBlockSlotsDialog, setShowBlockSlotsDialog] = useState(false);
   
