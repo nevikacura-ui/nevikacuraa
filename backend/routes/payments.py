@@ -592,6 +592,209 @@ async def get_payment_transactions(
     limit: int = 50
 ):
     """Get payment transactions with optional filters"""
+
+
+@router.get("/receipt/{session_id}/pdf")
+async def generate_receipt_pdf(session_id: str):
+    """Generate PDF receipt for a payment transaction"""
+    
+    # Find the transaction
+    transaction = await db.payment_transactions.find_one(
+        {"session_id": session_id},
+        {"_id": 0}
+    )
+    
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    
+    # Create PDF buffer
+    buffer = io.BytesIO()
+    
+    # Create PDF document
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=30*mm,
+        leftMargin=30*mm,
+        topMargin=30*mm,
+        bottomMargin=30*mm
+    )
+    
+    # Styles
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=24,
+        spaceAfter=20,
+        alignment=TA_CENTER,
+        textColor=colors.HexColor('#0d9488')
+    )
+    subtitle_style = ParagraphStyle(
+        'CustomSubtitle',
+        parent=styles['Normal'],
+        fontSize=12,
+        alignment=TA_CENTER,
+        textColor=colors.HexColor('#64748b')
+    )
+    header_style = ParagraphStyle(
+        'CustomHeader',
+        parent=styles['Heading2'],
+        fontSize=14,
+        spaceAfter=10,
+        textColor=colors.HexColor('#1e293b')
+    )
+    normal_style = ParagraphStyle(
+        'CustomNormal',
+        parent=styles['Normal'],
+        fontSize=11,
+        textColor=colors.HexColor('#334155')
+    )
+    
+    # Build content
+    elements = []
+    
+    # Header
+    elements.append(Paragraph("NEVIKA CURA HEALTHCARE", title_style))
+    elements.append(Paragraph("Payment Receipt", subtitle_style))
+    elements.append(Spacer(1, 20))
+    
+    # Receipt number and date
+    receipt_date = datetime.now(timezone.utc).strftime("%d %B %Y, %I:%M %p IST")
+    receipt_no = session_id[:12] if session_id else "N/A"
+    
+    header_data = [
+        ["Receipt No:", receipt_no],
+        ["Date:", receipt_date],
+    ]
+    header_table = Table(header_data, colWidths=[100, 300])
+    header_table.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#64748b')),
+        ('TEXTCOLOR', (1, 0), (1, -1), colors.HexColor('#1e293b')),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+    ]))
+    elements.append(header_table)
+    elements.append(Spacer(1, 20))
+    
+    # Divider line
+    elements.append(Table([[""]],colWidths=[500]))
+    
+    # Payment Status Banner
+    payment_status = transaction.get("payment_status", "pending").upper()
+    status_color = colors.HexColor('#16a34a') if payment_status == "PAID" else colors.HexColor('#ca8a04')
+    status_data = [[f"Payment Status: {payment_status}"]]
+    status_table = Table(status_data, colWidths=[500])
+    status_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), status_color),
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.white),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 12),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+        ('ROUNDEDCORNERS', [5, 5, 5, 5]),
+    ]))
+    elements.append(status_table)
+    elements.append(Spacer(1, 20))
+    
+    # Patient Details
+    elements.append(Paragraph("Patient Details", header_style))
+    patient_data = [
+        ["Name:", transaction.get("patient_name", "N/A")],
+        ["Phone:", transaction.get("patient_phone", "N/A")],
+    ]
+    patient_table = Table(patient_data, colWidths=[100, 300])
+    patient_table.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#64748b')),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(patient_table)
+    elements.append(Spacer(1, 15))
+    
+    # Payment Details
+    elements.append(Paragraph("Payment Details", header_style))
+    
+    type_labels = {
+        "appointment": "Doctor Appointment",
+        "pharmacy": "Pharmacy Order",
+        "lab_test": "Lab Test Booking"
+    }
+    payment_type = transaction.get("payment_type", "service")
+    
+    payment_data = [
+        ["Service Type:", type_labels.get(payment_type, payment_type.replace("_", " ").title())],
+        ["Description:", transaction.get("description", "N/A")],
+        ["Reference ID:", transaction.get("reference_id", "N/A")[:20] + "..." if transaction.get("reference_id") else "N/A"],
+        ["Fee Code:", transaction.get("fee_code", "N/A")],
+    ]
+    payment_table = Table(payment_data, colWidths=[100, 300])
+    payment_table.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#64748b')),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(payment_table)
+    elements.append(Spacer(1, 20))
+    
+    # Amount Box
+    amount = transaction.get("amount", 0)
+    amount_data = [
+        ["Total Amount Paid"],
+        [f"₹ {amount}"]
+    ]
+    amount_table = Table(amount_data, colWidths=[200])
+    amount_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f0fdfa')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor('#64748b')),
+        ('TEXTCOLOR', (0, 1), (-1, 1), colors.HexColor('#0d9488')),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica'),
+        ('FONTNAME', (0, 1), (-1, 1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('FONTSIZE', (0, 1), (-1, 1), 24),
+        ('TOPPADDING', (0, 0), (-1, -1), 15),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 15),
+        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#99f6e4')),
+        ('ROUNDEDCORNERS', [8, 8, 8, 8]),
+    ]))
+    elements.append(amount_table)
+    elements.append(Spacer(1, 30))
+    
+    # Footer
+    footer_style = ParagraphStyle(
+        'Footer',
+        parent=styles['Normal'],
+        fontSize=9,
+        alignment=TA_CENTER,
+        textColor=colors.HexColor('#94a3b8')
+    )
+    elements.append(Paragraph("Thank you for choosing Nevika Cura Healthcare!", footer_style))
+    elements.append(Spacer(1, 5))
+    elements.append(Paragraph("For queries, contact: +91 9403890429 | www.nevikacura.com", footer_style))
+    elements.append(Spacer(1, 10))
+    elements.append(Paragraph("This is a computer-generated receipt and does not require a signature.", footer_style))
+    
+    # Build PDF
+    doc.build(elements)
+    
+    # Prepare response
+    buffer.seek(0)
+    filename = f"receipt_{receipt_no}.pdf"
+    
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}"
+        }
+    )
+
     query = {}
     
     if payment_type:
