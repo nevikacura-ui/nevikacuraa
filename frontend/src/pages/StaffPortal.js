@@ -2612,13 +2612,6 @@ const StaffPortal = () => {
                 handleAddLoyaltyPoints={handleAddLoyaltyPoints}
               />
             </TabsContent>
-
-            {/* Attendance Tab Content for Pharmacy Staff */}
-            {staffInfo?.access_modules?.includes('attendance') && (
-              <TabsContent value="attendance">
-                <SmartBiometric clinic="pharmacy" />
-              </TabsContent>
-            )}
           </Tabs>
         )}
 
