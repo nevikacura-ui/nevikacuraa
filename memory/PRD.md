@@ -324,6 +324,7 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 - **Mock OTP:** `721358`
 
 ## Test Reports
+- `/app/test_reports/iteration_50.json` - Bottom Nav & Splash Screen (100% frontend success)
 - `/app/test_reports/iteration_49.json` - Patient Portal Dashboard (16/16 tests passed - 100% success)
 - `/app/test_reports/iteration_47.json` - Staff Slot Blocking (9/9 tests passed - 100% success)
 - `/app/test_reports/iteration_45.json` - DiaGyn Redesign (18/19 tests passed - 95% success)
