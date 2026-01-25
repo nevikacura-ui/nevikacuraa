@@ -14,7 +14,7 @@ import axios from 'axios';
 import { 
   ArrowLeft, ArrowRight, Upload, Plus, Minus, X, ShoppingCart, Pill, Search, Package, 
   CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, Trash2, Info, FileText,
-  Crown, Star, Gift, Trophy, TrendingUp, Medal, ChevronRight, Sparkles
+  Crown, Star, Gift, Trophy, TrendingUp, Medal, ChevronRight, Sparkles, FlaskConical, Droplets, Syringe
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
