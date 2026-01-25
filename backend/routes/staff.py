@@ -1581,18 +1581,18 @@ async def add_loyalty_points(data: LoyaltyPointsAdd, staff = Depends(verify_staf
 async def get_clinic_analytics(
     clinic: str = "",
     range: str = "week",
-    staff = Depends(verify_staff_token)
+    staff = Depends(verify_staff)
 ):
     """Get clinic performance analytics for staff dashboard"""
     from collections import defaultdict
     
     # Determine date range
-    today = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)  # IST
+    now = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)  # IST
     if range == "today":
-        start_date = today.replace(hour=0, minute=0, second=0, microsecond=0)
+        start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
         days = 1
     elif range == "month":
-        start_date = today - timedelta(days=30)
+        start_date = now - timedelta(days=30)
         days = 30
     else:  # week
         start_date = today - timedelta(days=7)
