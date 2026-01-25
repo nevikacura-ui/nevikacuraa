@@ -136,11 +136,11 @@ const CategoryCard = ({ category, isActive, onClick }) => {
   const renderIcon = () => {
     switch(cat.icon) {
       case 'pill':
-        return <Pill className="w-10 h-10" />;
+        return <TabletIcon className="w-12 h-12" />;
       case 'capsule':
         return <span className="text-4xl">💊</span>;
       case 'flask':
-        return <FlaskConical className="w-10 h-10" />;
+        return <SyrupBottleIcon className="w-12 h-12" />;
       case 'syringe':
         return <Syringe className="w-10 h-10" />;
       case 'cream':
@@ -148,7 +148,7 @@ const CategoryCard = ({ category, isActive, onClick }) => {
       case 'drops':
         return <Droplets className="w-10 h-10" />;
       default:
-        return <Pill className="w-10 h-10" />;
+        return <TabletIcon className="w-10 h-10" />;
     }
   };
   
