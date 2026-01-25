@@ -113,34 +113,43 @@ function AppContent() {
           <Route path="/doctors" element={<DoctorProfiles />} />
           <Route path="/doctors/:doctorId" element={<DoctorProfiles />} />
           <Route path="/billing" element={<Billing />} />
-            {/* Community & Reminders */}
-            <Route path="/community" element={<Community />} />
-            <Route path="/reminders" element={<Reminders />} />
-            {/* ALYNE - Kids Health */}
-            <Route path="/alyne" element={<Alyne />} />
-            {/* ANC Public Form */}
-            <Route path="/anc-form/:formId" element={<ANCFormPublic />} />
-            {/* Diabetes Public Form */}
-            <Route path="/diabetes-form/:formId" element={<DiabetesFormPublic />} />
-            {/* Simple Face Attendance - for debugging */}
-            <Route path="/face-attendance" element={<SimpleFaceAttendance />} />
-            {/* Live Queue Display - Public */}
-            <Route path="/queue" element={<QueuePage />} />
-            {/* Patient Health Dashboard */}
-            <Route path="/health-dashboard" element={<HealthDashboard />} />
-            {/* Senior Care Charity */}
-            <Route path="/senior-care" element={<SeniorCare />} />
-            {/* Smart Medicine Reminders */}
-            <Route path="/smart-reminders" element={<SmartReminders />} />
-            {/* Patient Portal */}
-            <Route path="/patient-portal" element={<PatientPortal />} />
-          </Routes>
-          <Toaster position="top-center" richColors />
-          <PWAInstallPrompt />
-          {/* FullScreenNotificationPrompt removed per user request */}
-          <SmartNotificationBanner />
-        </div>
-      </BrowserRouter>
+          {/* Community & Reminders */}
+          <Route path="/community" element={<Community />} />
+          <Route path="/reminders" element={<Reminders />} />
+          {/* ALYNE - Kids Health */}
+          <Route path="/alyne" element={<Alyne />} />
+          {/* ANC Public Form */}
+          <Route path="/anc-form/:formId" element={<ANCFormPublic />} />
+          {/* Diabetes Public Form */}
+          <Route path="/diabetes-form/:formId" element={<DiabetesFormPublic />} />
+          {/* Simple Face Attendance - for debugging */}
+          <Route path="/face-attendance" element={<SimpleFaceAttendance />} />
+          {/* Live Queue Display - Public */}
+          <Route path="/queue" element={<QueuePage />} />
+          {/* Patient Health Dashboard */}
+          <Route path="/health-dashboard" element={<HealthDashboard />} />
+          {/* Senior Care Charity */}
+          <Route path="/senior-care" element={<SeniorCare />} />
+          {/* Smart Medicine Reminders */}
+          <Route path="/smart-reminders" element={<SmartReminders />} />
+          {/* Patient Portal */}
+          <Route path="/patient-portal" element={<PatientPortal />} />
+        </Routes>
+        <Toaster position="top-center" richColors />
+        <PWAInstallPrompt />
+        <SmartNotificationBanner />
+      </div>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <ViewModeProvider>
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
       </ViewModeProvider>
     </AuthProvider>
   );
