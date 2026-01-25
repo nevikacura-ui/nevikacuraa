@@ -405,6 +405,7 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 - `POST /api/payments/webhook/stripe` - Stripe webhook handler
 - `GET /api/payments/fee-codes` - Get all consultation & scan fees
 - `GET /api/payments/transactions` - Get payment history with filters
+- `GET /api/payments/receipt/{session_id}/pdf` - Generate PDF receipt (NEW)
 
 ### Appointment Endpoints
 - `POST /api/appointments/block-slots` - Staff block appointment slots
