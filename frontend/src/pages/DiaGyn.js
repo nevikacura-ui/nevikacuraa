@@ -99,19 +99,24 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect, isTablet = false }) =
       onClick={onSelect}
       data-testid={`doctor-card-${doctor.id}`}
       className={`
-        relative overflow-hidden cursor-pointer transition-all duration-300 
-        rounded-3xl p-1 group
+        relative overflow-hidden cursor-pointer transition-all duration-300 ease-out
+        rounded-3xl p-1 group active:scale-[0.98]
         ${isSelected 
-          ? 'bg-gradient-to-br from-[#5FA8D3] via-[#62B6CB] to-[#FFB4A2] shadow-[0_20px_50px_rgb(0,0,0,0.1)]' 
-          : 'bg-gradient-to-br from-slate-100 to-slate-50 hover:from-[#CAE9FF] hover:to-[#BEE9E8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]'
+          ? 'bg-gradient-to-br from-[#5FA8D3] via-[#62B6CB] to-[#FFB4A2] shadow-[0_20px_50px_rgb(0,0,0,0.1)] scale-[1.01]' 
+          : 'bg-gradient-to-br from-slate-100 to-slate-50 hover:from-[#CAE9FF] hover:to-[#BEE9E8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.1)] hover:scale-[1.01] hover:-translate-y-1'
         }
       `}
     >
+      {/* Shimmer effect on hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10 rounded-3xl overflow-hidden">
+        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      </div>
+      
       <div className={`bg-white rounded-[22px] h-full ${isTablet ? 'p-6' : 'p-5'}`}>
         {/* Selection Badge */}
         {isSelected && (
           <div className="absolute top-4 right-4 z-10">
-            <Badge className={`bg-[#5FA8D3] text-white rounded-full flex items-center gap-1.5 shadow-lg ${isTablet ? 'px-4 py-1.5 text-sm' : 'px-3 py-1'}`}>
+            <Badge className={`bg-[#5FA8D3] text-white rounded-full flex items-center gap-1.5 shadow-lg animate-bounce ${isTablet ? 'px-4 py-1.5 text-sm' : 'px-3 py-1'}`}>
               <CheckCircle2 className={isTablet ? 'w-4 h-4' : 'w-3.5 h-3.5'} />
               Selected
             </Badge>
@@ -122,11 +127,11 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect, isTablet = false }) =
         <div className={`flex ${isTablet ? 'gap-6' : 'gap-5'}`}>
           {/* Doctor Image */}
           <div className="relative flex-shrink-0">
-            <div className={`rounded-2xl overflow-hidden ring-4 transition-all duration-300 ${isTablet ? 'w-28 h-28' : 'w-24 h-24'} ${isSelected ? 'ring-[#5FA8D3]/30' : 'ring-[#BEE9E8]/50 group-hover:ring-[#5FA8D3]/20'}`}>
+            <div className={`rounded-2xl overflow-hidden ring-4 transition-all duration-300 group-hover:ring-[#5FA8D3]/40 ${isTablet ? 'w-28 h-28' : 'w-24 h-24'} ${isSelected ? 'ring-[#5FA8D3]/30' : 'ring-[#BEE9E8]/50 group-hover:ring-[#5FA8D3]/20'}`}>
               <img 
                 src={doctor.image} 
                 alt={doctor.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 data-testid={`doctor-image-${doctor.id}`}
               />
             </div>
