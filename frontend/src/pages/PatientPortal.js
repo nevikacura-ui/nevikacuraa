@@ -453,85 +453,71 @@ const PatientPortal = () => {
               </Card>
             )}
             
-            {/* Medical Records Section */}
-            {activeSection === 'records' && history && (
-              <Card className="rounded-2xl shadow-lg border-0">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-blue-700">
-                    <FileText className="w-5 h-5" />
-                    Medical Records
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-                    {[
-                      { label: 'Appointments', count: history.summary.total_appointments, color: 'blue' },
-                      { label: 'Prescriptions', count: history.pharmacy_orders?.length || 0, color: 'green' },
-                      { label: 'Lab Tests', count: history.summary.total_diagnostic_orders, color: 'purple' },
-                      { label: 'Total Visits', count: patientInfo?.total_visits || 0, color: 'teal' },
-                    ].map((stat, idx) => (
-                      <div key={idx} className={`p-4 bg-${stat.color}-50 rounded-xl text-center`}>
-                        <p className={`text-2xl font-bold text-${stat.color}-600`}>{stat.count}</p>
-                        <p className="text-xs text-gray-500">{stat.label}</p>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="space-y-3">
-                    {history.appointments.slice(0, 5).map((apt, idx) => (
-                      <div key={idx} className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                            <Stethoscope className="w-5 h-5 text-blue-600" />
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-800">{apt.doctor}</p>
-                            <p className="text-sm text-gray-500">{apt.date} • {apt.clinic}</p>
-                          </div>
-                        </div>
-                        <Badge className={apt.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}>
-                          {apt.status}
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* Booked Appointments Section */}
+            {/* My Appointments Section */}
             {activeSection === 'appointments' && history && (
               <Card className="rounded-2xl shadow-lg border-0">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-indigo-700">
                     <Calendar className="w-5 h-5" />
-                    Booked Appointments
+                    My Appointments
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {history.appointments.filter(a => a.status !== 'Completed' && a.status !== 'Cancelled').length === 0 ? (
+                  {/* Summary Stats */}
+                  <div className="grid grid-cols-3 gap-3 mb-6">
+                    <div className="p-3 bg-indigo-50 rounded-xl text-center">
+                      <p className="text-xl font-bold text-indigo-600">{history.summary.total_appointments || 0}</p>
+                      <p className="text-xs text-gray-500">Total</p>
+                    </div>
+                    <div className="p-3 bg-green-50 rounded-xl text-center">
+                      <p className="text-xl font-bold text-green-600">
+                        {history.appointments.filter(a => a.status === 'Completed').length}
+                      </p>
+                      <p className="text-xs text-gray-500">Completed</p>
+                    </div>
+                    <div className="p-3 bg-blue-50 rounded-xl text-center">
+                      <p className="text-xl font-bold text-blue-600">
+                        {history.appointments.filter(a => a.status !== 'Completed' && a.status !== 'Cancelled').length}
+                      </p>
+                      <p className="text-xs text-gray-500">Upcoming</p>
+                    </div>
+                  </div>
+                  
+                  {history.appointments.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
                       <Calendar className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                      <p>No upcoming appointments</p>
+                      <p>No appointments yet</p>
                       <Button className="mt-4" onClick={() => navigate('/diagyn')}>Book Appointment</Button>
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {history.appointments.filter(a => a.status !== 'Completed' && a.status !== 'Cancelled').map((apt, idx) => (
-                        <div key={idx} className="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                      {history.appointments.map((apt, idx) => (
+                        <div key={idx} className={`p-4 rounded-xl border ${
+                          apt.status === 'Completed' ? 'bg-gray-50 border-gray-100' : 'bg-indigo-50 border-indigo-100'
+                        }`}>
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                <Stethoscope className="w-6 h-6 text-indigo-600" />
+                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                                apt.status === 'Completed' ? 'bg-green-100' : 'bg-indigo-100'
+                              }`}>
+                                <Stethoscope className={`w-5 h-5 ${
+                                  apt.status === 'Completed' ? 'text-green-600' : 'text-indigo-600'
+                                }`} />
                               </div>
                               <div>
                                 <p className="font-semibold text-gray-800">{apt.doctor}</p>
                                 <p className="text-sm text-gray-500">{apt.clinic}</p>
                               </div>
                             </div>
-                            <Badge className="bg-indigo-100 text-indigo-700">{apt.status}</Badge>
+                            <Badge className={
+                              apt.status === 'Completed' ? 'bg-green-100 text-green-700' : 
+                              apt.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                              'bg-indigo-100 text-indigo-700'
+                            }>
+                              {apt.status}
+                            </Badge>
                           </div>
-                          <div className="flex items-center gap-4 text-sm text-gray-600 mt-3">
+                          <div className="flex items-center gap-4 text-sm text-gray-600">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
                               {apt.date}
@@ -549,7 +535,7 @@ const PatientPortal = () => {
               </Card>
             )}
             
-            {/* Booked Tests Section */}
+            {/* My Lab Tests Section */}
             {activeSection === 'tests' && history && (
               <Card className="rounded-2xl shadow-lg border-0">
                 <CardHeader>
