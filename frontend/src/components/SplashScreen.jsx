@@ -104,7 +104,16 @@ const SplashScreen = ({ onComplete, user }) => {
   };
   
   const handleStaffLogin = () => {
-    navigate('/staff');
+    // Close splash screen first, then navigate
+    onComplete();
+    // Small delay to ensure splash closes before navigation
+    setTimeout(() => {
+      navigate('/staff');
+    }, 100);
+  };
+  
+  const handleLoginClick = () => {
+    setShowAuth(true);
   };
   
   // Icons animation data - with disappearing effect
