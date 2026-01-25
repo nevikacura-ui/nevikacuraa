@@ -46,24 +46,6 @@ const Home = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
-  const [showSplash, setShowSplash] = useState(true); // Controls splash/login overlay
-  const [hasSkipped, setHasSkipped] = useState(false); // Track if user skipped login
-  
-  // Check if user has previously skipped or is logged in
-  useEffect(() => {
-    const skipped = localStorage.getItem('hasSkippedLogin');
-    if (skipped === 'true' || user) {
-      setShowSplash(false);
-      setHasSkipped(skipped === 'true');
-    }
-  }, [user]);
-  
-  // Handle skip action
-  const handleSkip = () => {
-    localStorage.setItem('hasSkippedLogin', 'true');
-    setHasSkipped(true);
-    setShowSplash(false);
-  };
   
   // Health Tip of the Day - Changes daily based on date
   const [currentTip, setCurrentTip] = useState(healthTips[0]);
