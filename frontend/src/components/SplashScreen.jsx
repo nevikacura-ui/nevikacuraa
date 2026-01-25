@@ -292,6 +292,25 @@ const SplashScreen = ({ onComplete, user }) => {
         {/* Action Buttons */}
         {animationComplete && (
           <div className="space-y-4 animate-fade-in w-full max-w-xs">
+            {/* Fingerprint Login - Show if previously logged in */}
+            {hasBiometricSetup && (
+              <Button
+                onClick={handleBiometricLogin}
+                disabled={biometricLoading}
+                className="w-full h-14 bg-white/20 backdrop-blur text-white hover:bg-white/30 rounded-2xl text-lg font-semibold border border-white/30 shadow-lg"
+                data-testid="biometric-login-btn"
+              >
+                {biometricLoading ? (
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                ) : (
+                  <>
+                    <Fingerprint className="w-6 h-6 mr-2" />
+                    Login with Fingerprint
+                  </>
+                )}
+              </Button>
+            )}
+            
             {/* Login/Signup Button - Primary Action */}
             <Button
               onClick={handleLoginClick}
@@ -299,7 +318,7 @@ const SplashScreen = ({ onComplete, user }) => {
               data-testid="splash-login-btn"
             >
               <User className="w-5 h-5 mr-2" />
-              Login / Sign Up
+              {hasBiometricSetup ? 'Login with OTP' : 'Login / Sign Up'}
             </Button>
             
             {/* Staff Login */}
