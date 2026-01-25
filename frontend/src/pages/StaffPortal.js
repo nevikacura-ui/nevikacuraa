@@ -2076,209 +2076,25 @@ const StaffPortal = () => {
             </TabsContent>
 
             <TabsContent value="appointments">
-              <Card className="p-3 sm:p-4">
-                <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-                  <h2 className="font-semibold text-lg">{staffInfo?.clinic || 'Clinic'} - Appointments</h2>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowSonographyModal(true)}
-                      className="border-purple-300 text-purple-600 hover:bg-purple-50"
-                      data-testid="book-sonography-btn"
-                    >
-                      <Scan className="w-4 h-4 mr-1" />
-                      Book Sonography
-                    </Button>
-                    <Input
-                      type="date"
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      className="w-40"
-                      data-testid="date-picker"
-                    />
-                  </div>
-                </div>
-                
-                {/* Daily Collection Summary */}
-                {dailyCollection && (
-                  <div className="mb-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold text-green-800 flex items-center gap-2">
-                        💰 Today&apos;s Collection
-                      </h3>
-                      <span className="text-2xl font-bold text-green-600">₹{dailyCollection.total_collection}</span>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {dailyCollection.by_category?.general?.count > 0 && (
-                        <div className="bg-white p-2 rounded-lg text-center">
-                          <span className="text-xs text-gray-500">General</span>
-                          <p className="font-bold text-gray-700">₹{dailyCollection.by_category.general.amount}</p>
-                          <p className="text-xs text-gray-400">{dailyCollection.by_category.general.count} patients</p>
-                        </div>
-                      )}
-                      {dailyCollection.by_category?.speciality?.count > 0 && (
-                        <div className="bg-white p-2 rounded-lg text-center">
-                          <span className="text-xs text-blue-500">Speciality</span>
-                          <p className="font-bold text-blue-700">₹{dailyCollection.by_category.speciality.amount}</p>
-                          <p className="text-xs text-gray-400">{dailyCollection.by_category.speciality.count} patients</p>
-                        </div>
-                      )}
-                      {dailyCollection.by_category?.diabetes?.count > 0 && (
-                        <div className="bg-white p-2 rounded-lg text-center">
-                          <span className="text-xs text-purple-500">Diabetes</span>
-                          <p className="font-bold text-purple-700">₹{dailyCollection.by_category.diabetes.amount}</p>
-                          <p className="text-xs text-gray-400">{dailyCollection.by_category.diabetes.count} patients</p>
-                        </div>
-                      )}
-                      {dailyCollection.by_category?.obgyn?.count > 0 && (
-                        <div className="bg-white p-2 rounded-lg text-center">
-                          <span className="text-xs text-pink-500">OBGY</span>
-                          <p className="font-bold text-pink-700">₹{dailyCollection.by_category.obgyn.amount}</p>
-                          <p className="text-xs text-gray-400">{dailyCollection.by_category.obgyn.count} patients</p>
-                        </div>
-                      )}
-                    </div>
-                    {dailyCollection.total_patients > 0 && (
-                      <p className="text-xs text-green-600 mt-2 text-center">
-                        {dailyCollection.total_patients} completed consultations
-                      </p>
-                    )}
-                  </div>
-                )}
-                
-                {/* Emergency Count Display */}
-                {Object.keys(emergencyCounts).length > 0 && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-sm font-medium text-red-800 mb-2">Emergency Appointments Today:</p>
-                    <div className="flex flex-wrap gap-3">
-                      {Object.entries(emergencyCounts).map(([doctor, data]) => (
-                        <span key={doctor} className="text-sm">
-                          <span className="font-medium">{doctor}:</span>{' '}
-                          <span className={data.count >= 10 ? 'text-red-600 font-bold' : 'text-gray-700'}>
-                            {data.count}/{data.max}
-                          </span>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                <div className="space-y-3">
-                  {appointments.length === 0 ? (
-                    <p className="text-gray-500 text-center py-8">No appointments for this date</p>
-                  ) : (
-                    appointments.map((appt) => (
-                      <div 
-                        key={appt.id} 
-                        className={`flex items-center justify-between p-4 rounded-lg ${
-                          appt.appointment_type === 'EMERGENCY' 
-                            ? 'bg-red-50 border-2 border-red-300' 
-                            : 'bg-gray-50'
-                        }`}
-                        data-testid={`appointment-${appt.id}`}
-                      >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-medium">{appt.patient_name}</span>
-                            {appt.patient_id && (
-                              <Badge className="bg-indigo-100 text-indigo-700 text-xs font-normal">{appt.patient_id}</Badge>
-                            )}
-                            <span className={`px-2 py-0.5 rounded-full text-xs ${getStatusColor(appt.status)}`}>
-                              {appt.status}
-                            </span>
-                            {appt.appointment_type === 'EMERGENCY' && (
-                              <span className="px-2 py-0.5 rounded-full text-xs bg-red-500 text-white flex items-center gap-1">
-                                <AlertTriangle className="w-3 h-3" />
-                                EMERGENCY
-                              </span>
-                            )}
-                            {appt.booking_type === 'walk_in' && (
-                              <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-800">Walk-in</span>
-                            )}
-                          </div>
-                          <div className="text-sm text-gray-500 mt-1">
-                            <span>{appt.time || 'No time slot'}</span> • <span>{appt.doctor}</span> • <span>{appt.patient_phone}</span>
-                          </div>
-                        </div>
-                        <div className="flex gap-2 flex-wrap">
-                          {/* Add Service button - only before completion */}
-                          {appt.status !== 'Completed' && appt.status !== 'Cancelled' && (
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => {
-                                setSelectedAppointment(appt);
-                                setShowServiceModal(true);
-                              }}
-                              data-testid={`add-service-${appt.id}`}
-                            >
-                              <Plus className="w-4 h-4 mr-1" />
-                              Service
-                            </Button>
-                          )}
-                          {/* Edit Patient button */}
-                          {appt.status !== 'Completed' && appt.status !== 'Cancelled' && (
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => handleEditPatient(appt)}
-                              className="border-amber-300 text-amber-600 hover:bg-amber-50"
-                              data-testid={`edit-patient-${appt.id}`}
-                            >
-                              <Edit2 className="w-4 h-4 mr-1" />
-                              Edit
-                            </Button>
-                          )}
-                          {/* Book Sonography button - for clinic staff */}
-                          {appt.status !== 'Completed' && appt.status !== 'Cancelled' && staffInfo?.role?.includes('clinic_staff') && (
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => openSonographyFromAppointment(appt)}
-                              className="border-purple-300 text-purple-600 hover:bg-purple-50"
-                              data-testid={`book-sonography-${appt.id}`}
-                            >
-                              <Scan className="w-4 h-4 mr-1" />
-                              Sonography
-                            </Button>
-                          )}
-                          {(appt.status === 'Booked' || appt.status === 'booked' || appt.status === 'pending' || appt.status === 'Pending') && (
-                            <Button 
-                              size="sm" 
-                              onClick={() => handleCheckIn(appt.id)} 
-                              className="bg-blue-500 hover:bg-blue-600"
-                              data-testid={`checkin-${appt.id}`}
-                            >
-                              <CheckCircle2 className="w-4 h-4 mr-1" />
-                              Check In
-                            </Button>
-                          )}
-                          {/* Staff can only see status - NO Complete button */}
-                          {appt.status === 'In Clinic' && (
-                            <span className="px-3 py-1.5 bg-yellow-100 text-yellow-800 rounded-lg text-sm flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              With Doctor
-                            </span>
-                          )}
-                          {/* Show fee code when completed by doctor */}
-                          {appt.status === 'Completed' && appt.fee_code && (
-                            <span className={`px-3 py-1.5 rounded-lg text-sm font-bold ${FEE_CODES[appt.fee_code]?.color || 'bg-green-100 text-green-800'}`}>
-                              {appt.fee_code} • ₹{appt.fee_amount}
-                            </span>
-                          )}
-                          {appt.status === 'Completed' && appt.follow_up_date && (
-                            <span className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-lg text-sm flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
-                              Follow-up: {appt.follow_up_date}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </Card>
+              <AppointmentsTab
+                staffInfo={staffInfo}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                appointments={appointments}
+                dailyCollection={dailyCollection}
+                emergencyCounts={emergencyCounts}
+                loading={loading}
+                handleStatusChange={handleStatusChange}
+                setShowSonographyModal={setShowSonographyModal}
+                openAppointmentDetails={(appt) => {
+                  setSelectedAppointment(appt);
+                  setShowServiceModal(true);
+                }}
+                handleCheckIn={handleCheckIn}
+                handleEditPatient={handleEditPatient}
+                openSonographyFromAppointment={openSonographyFromAppointment}
+                FEE_CODES={FEE_CODES}
+              />
             </TabsContent>
 
             <TabsContent value="walkin">
