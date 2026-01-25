@@ -77,10 +77,22 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 8. **Settings Page Enhancements - COMPLETE** ✅
    - Added Push Notifications section
    - Added Payments & Wallet section
-   - 7 main menu items with full functionality
+   - Added Calendar Sync section
+   - 8 main menu items with full functionality
 
 9. **Dr. Neha Patel Photo Updated - COMPLETE** ✅
    - Updated to new image across all pages (DiaGyn, Teleconsultation)
+
+10. **Calendar Sync - COMPLETE** ✅
+    - Backend: `/app/backend/routes/calendar_sync.py`
+    - Generates iCal (.ics) files for appointments
+    - Google Calendar direct link generation
+    - Supports Apple Calendar, Outlook, Yahoo, Zoho
+    - Built-in reminders (24h and 1h before)
+    - "Sync All Appointments" feature
+    - Frontend: `/app/frontend/src/components/AddToCalendar.jsx`
+    - Calendar icon on appointment cards in Patient Portal
+    - Calendar Sync section in Settings page
 
 ### Session - January 25, 2026 (Part 6)
 
