@@ -1,160 +1,170 @@
 <analysis>**original_problem_statement:**
 The user wants to build a comprehensive healthcare application named Nevika Cura. The overall goal is to enhance the staff and patient experience by adding new features, fixing bugs, and improving UI/UX.
 
-**PRODUCT REQUIREMENTS:**
-1.  **Staff Slot Blocking:** Allow doctors/staff to manually block same-day appointment slots.
-2.  **Doctor-Specific Permissions:** Only allow doctors to block their own slots, while super-admins can block any.
-3.  **UI/UX Enhancements:** Remove the intrusive full-screen notification banner.
-4.  **Tablet View:** Introduce a tablet-responsive layout for , , and , with a view switcher in the header.
-5.  **Data Cleanup:** Clear all test bookings to see a fresh queue status and fix the underlying API bug causing incorrect counts.
-6.  **Patient Registration System:** Implement a system where patients can be registered and looked up via their mobile number. This should be integrated into the appointment booking flow for both patients and staff (Walk-in/Emergency).
-7.  **Patient Portal:** Create a dedicated portal where patients can log in using an OTP sent to their mobile number and view their complete medical history (appointments, prescriptions, lab reports, bills).
+**PRODUCT REQUIREMENTS (New & In-progress from this session):**
+1.  **UI/UX Refinements:**
+    *   Implement a single-color inactive, colorful active style for the bottom navigation bar.
+    *   Replace the initial loading screen's bouncing dots with a looping animation of disappearing service icons.
+    *   Redesign the main splash screen to feature the Nevika Cura logo in a white oval, fixing all layout and full-screen visibility issues.
+    *   Fix the non-functional Staff Login and Login / Sign Up buttons on the splash screen.
+2.  **Global Navigation:** Extend the bottom navigation bar to the , , and  pages, with theme-appropriate colors for the active icon on each page.
+3.  **Data Migration:** Migrate all hardcoded frontend data (clinics, doctors, schedules, fees, health tips, testimonials) to a MongoDB database.
+4.  **Admin Panel:** Create a new, secure admin panel UI () for a  role to perform full CRUD (Create, Read, Update, Delete) operations on the migrated configuration data.
+5.  **Code Refactoring:** Refactor the large  and  components to improve maintainability.
+6.  **Payment Integration:** Integrate a payment gateway. The user considered Cashfree but ultimately chose Stripe due to its faster setup time.
+7.  **OTP Provider:** Use Twilio for the real SMS OTP provider.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application with a React frontend, FastAPI backend, and MongoDB. The current session has successfully implemented several key features:
--   **Staff Slot Blocking:** A fully functional and tested feature allowing staff/doctors to block appointment slots, with role-based access control and a Block All Remaining option.
--   **Tablet Responsiveness:** A view-switcher (Desktop/Tablet/Mobile) and tablet-friendly layouts have been added to the , , and  pages.
--   **Patient Registration:** A robust system for registering and looking up patients by mobile number has been integrated into the  (appointment booking) and  (walk-in/emergency) flows.
--   **Patient Portal (Login):** The initial version of the  page is complete, featuring a secure, OTP-based login flow for patients. The backend APIs for this login are also complete and tested.
+The agent has successfully implemented a series of major UI/UX upgrades and backend improvements. This includes a complete redesign and fix of the loading and splash screens, a global bottom navigation system, and a partial refactoring of . Most significantly, all static configuration data has been migrated from the frontend to MongoDB, supported by a new set of backend APIs and a full-featured, role-protected Admin Panel for managing this data. The login buttons on the splash screen have been fixed. The project is now starting the integration of the Stripe payment gateway.
 
 **Last working item**:
--   **Last item agent was working:** Building the patient portal dashboard. The OTP login flow is complete. The next step is to fetch and display the logged-in patient's full medical history (appointments, prescriptions, lab reports, etc.).
+-   **Last item agent was working:** Initiating the Stripe payment integration. The agent has successfully obtained the integration playbook, installed the necessary  library, confirmed the Stripe API key is in the environment, and created the initial  file.
 -   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** backend testing agent for the new data-fetching endpoints and frontend testing agent to validate the end-to-end patient login and history-viewing experience.
+-   **Which testing method agent to use?** backend testing agent. The agent should first use  to test the  endpoint once created. After frontend integration, a full end-to-end test using the  will be required.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
 -   **Issue 1: Face ID Camera Fails to Start on Mobile (P1)**
-    -   **Description:** A critical, recurring issue where the camera does not activate for face attendance on the user's real mobile device. This has been de-prioritized by the user but remains a significant unresolved bug.
-    -   **Status:** USER VERIFICATION PENDING
-    -   **Is recurring issue?** Y
+    -   **Description:** A critical, recurring bug from previous forks where the camera does not activate for face attendance on the user's real mobile device.
+    -   **Status:** NOT STARTED
 -   **Issue 2: Final User Verification on Mobile (P1)**
-    -   **Description:** Several features implemented in previous forks need final verification by the user on their physical device after installing the Capacitor-built APK (e.g., Push Notification Prompts, App Icon).
+    -   **Description:** Several native features (e.g., Push Notification Prompts, App Icon) require final verification by the user on their physical device after installing the Capacitor-built APK.
     -   **Status:** USER VERIFICATION PENDING
 
 **In progress Task List**:
--   **Task 1: Complete Patient Portal Dashboard (P0)**
-    -   **Where to resume:** The file  currently handles the OTP login. The next steps are:
-        1.  In , create new API endpoints that take a patient's JWT and return their historical data (appointments, prescriptions, lab results, billing).
-        2.  In , after a successful login, call these new endpoints to fetch the data.
-        3.  Design and build the UI to display this historical data in a clear, tabbed, or sectioned layout.
-    -   **What will be achieved with this?** Patients will have a self-service portal to view their entire medical history, which is a major value-add and fulfills the user's latest request.
+-   **Task 1: Stripe Payment Gateway Integration (P0 - HIGHEST)**
+    -   **Description:** Integrate Stripe to handle payments for appointments, pharmacy orders, and lab tests.
+    -   **Where to resume:** Continue building out the Stripe integration. The next step is to add the payments router to , implement the  endpoint according to the playbook, and then connect it to the relevant frontend booking and ordering flows.
+    -   **What will be achieved with this?** Enables users to pay for services directly within the application.
     -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Should Test frontend/backend/both after fix?** Both.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P1: Implement Cashfree Payment Gateway:** Integrate Cashfree for handling payments.
-    -   **P2: Refactor Large Components:** Break down the massive  and  files into smaller, more manageable components.
-    -   **P2: Add more category cards** to the Pharmacy page (e.g., Inhalers, Patches, Powders).
+    -   **P1: Complete Refactoring of :** This component is still over 4,700 lines. The plan to break it down into smaller, tab-based components (, , , etc.) needs to be executed.
+    -   **P2: Twilio SMS OTP Integration:** Implement Twilio for sending real SMS OTPs for user authentication, as requested by the user.
 -   **Future Tasks:**
-    -   Implement Apple Sign-In (currently blocked as the user does not have an Apple Developer account).
-    -   Migrate hardcoded data (like doctor schedules) from frontend files to the MongoDB database.
+    -   Implement Apple Sign-In.
     -   Create a Login History page for users.
-    -   Enhance search functionality with more keywords and synonyms.
+    -   Add more product categories to the Pharmacy page.
+    -   Further refactor  by extracting more UI sections into separate components.
 
 **Completed work in this session**
--   **Staff Slot Blocking Feature:** Implemented and tested backend APIs and frontend UI in , including doctor-specific permissions and a Block All Remaining Slots button.
--   **Tablet View & View Switcher:** Implemented a global view mode context and added a switcher and responsive layouts to , , and .
--   **Patient Registration System:** Created backend APIs and a reusable frontend component () and integrated it into the  and  workflows.
--   **Patient Portal (Login Flow):** Created the  page with a secure OTP login mechanism.
--   **Bug Fixes & UI Cleanup:**
-    -   Fixed the live queue status on the  page by correcting the API endpoint.
-    -   Removed the intrusive full-screen notification banner.
-    -   Cleared all old test appointment data from the database.
+-   **UI/UX Overhaul (Splash & Navigation):**
+    -   **Loading Screen:** Replaced bouncing dots in  with a custom fade-in/out animation of service icons.
+    -   **Splash Screen:** Redesigned the splash screen to feature the Nevika Cura logo in a white oval, fixed all layout/alignment issues, and ensured it is fully full-screen without content bleed-through.
+    -   **Splash Screen Functionality:** Fixed the Login / Sign Up and Staff Login buttons to correctly trigger the auth modal and navigate to the staff portal, respectively.
+    -   **Bottom Navigation:** Implemented the user's preferred clean UI style and refactored it into a reusable  component, which was then added to the Home, Pharmacy, Lab Tests, and DiaGyn pages with theme-aware active icon colors.
+-   **Data Migration & Admin Panel:**
+    -   **Backend:** Migrated all hardcoded configuration data (clinics, doctors, fees, health tips, etc.) to MongoDB. Created new API endpoints () to serve this data and a  endpoint to populate the DB.
+    -   **Admin Panel:** Built a secure, -only Admin Panel UI () with full CRUD functionality for all migrated configuration data. This includes creating a new  role and login flow.
+-   **Refactoring ():**
+    -   Partially refactored  by extracting static data into  and the large authentication modal into , reducing the file size from ~2800 to ~1570 lines.
+-   **Testing:** Successfully ran regression tests using the testing agent after major changes, ensuring no features were broken during the refactoring and UI overhaul.
 
 **Earlier issues found/mentioned but not fixed**
--   **Face ID Camera Fails to Start on Mobile:** A critical, recurring issue from a previous fork that was not addressed in this session as the user prioritized new feature development.
+-   **Face ID Camera Fails to Start on Mobile:** This is a long-standing critical issue that has been deprioritized in past sessions but remains unfixed.
 
 **Known issue recurrence from previous fork**
 -   **Issue recurrence in previous fork:** Face ID / Biometric System
 -   **Recurrence count:** 4+
--   **Status:** USER VERIFICATION PENDING
+-   **Status:** NOT STARTED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Role-Based Access Control (RBAC):** Enhanced slot blocking to be role-aware by checking the  and  fields in the JWT token to control UI visibility and API access.
--   **Global UI State Management:** Used a React Context () to manage the global view mode (desktop, tablet, mobile) across different components.
--   **Modular, Reusable Components:** Created  and  to encapsulate functionality and promote reuse.
--   **API-Driven UI:** The patient registration flow uses API lookups to prevent duplicate entries and streamline staff workflows.
+-   **Data Migration:** Shifted application configuration from static frontend objects to a dynamic backend source (MongoDB), improving scalability and maintainability.
+-   **Role-Based Access Control (RBAC):** Implemented a  role with exclusive access to CRUD APIs and the new Admin Panel UI.
+-   **Backend API Development (FastAPI):** Created new routers, implemented database seeding, and built secure, role-protected CRUD endpoints.
+-   **Component Refactoring:** Improved code structure by breaking down a large page () into smaller, more manageable pieces (, ).
+-   **Third-Party Integration ():** Used the standard process for integrating Stripe, including playbook retrieval and library installation.
 
 **key DB schema**
--   **patients (NEW):** 
--   **appointments:**  field is used for  slots.  links to the  collection.
+-   **users:** Modified to support the new  role.
+-   **New Collections (in ):** , , , , , , .
 
 **changes in tech stack**
--   None.
+-   **:** This library was installed via pip to facilitate the Stripe integration.
 
 **All files of reference**
--   
--   
--   
--   
--   
--   
+-    (New config/admin APIs)
+-    (New admin UI)
+-    (Refactored main page)
+-    (Redesigned splash screen)
+-    (New global navigation)
+-    (New loading animation)
+-    (Stripe integration file)
 -   
 
 **Areas that need refactoring**:
--    (2500+ lines),  (4300+ lines), and  (1700+ lines) are monolithic and contain pre-existing linting errors. They are high-priority candidates for being broken down into smaller components to improve maintainability.
+-   **:** This remains a monolith at over 4,700 lines. It is the highest priority for refactoring and should be broken down into individual components for each of its tabs.
+-   **:** While partially refactored, the file is still large (~1,570 lines) and could benefit from further decomposition of its UI sections (e.g., , ).
 
 **key api endpoints**
--   : Register a new patient.
--   : Find a patient by mobile number.
--   : Send a login OTP to a patient's mobile.
--   : Verify OTP and return a patient-specific JWT.
+-   **:** (NEW) Fetches public configuration data (e.g., clinics, doctors, services).
+-   **:** (NEW) Secure CRUD endpoints for the Admin Panel, protected by the  role.
+-   **:** (NEW) A one-time endpoint used to populate the MongoDB collections from a static Python file.
+-   **:** (IN PROGRESS) Endpoint to be created to initiate a Stripe payment.
 
 **Critical Info for New Agent**
--   Your immediate task is to **complete the Patient Portal**. The login flow is already built. You need to implement the dashboard that appears after a successful login. This will require creating new backend endpoints to securely fetch a patient's historical data (appointments, prescriptions, labs) and then building the frontend UI in  to display it.
--   The **Face ID camera bug** is a long-standing, critical issue. It should be the next priority after the Patient Portal feature is complete and verified by the user.
--   The user is highly engaged and provides clear, step-by-step instructions. Adhere to them closely.
+-   Your immediate task is to **continue the Stripe payment integration**. The playbook is in context, the  library is installed, and  is created. You need to add the payments router to , implement the  endpoint, and then integrate it with the frontend booking flows.
+-   **Do not ask for Stripe keys**; they are already present in the environment and should be used as is.
+-   After completing the Stripe integration, the next high-priority tasks are **refactoring ** and addressing the **Twilio SMS OTP integration**. The recurring Face ID Camera Bug is also a top-priority issue to be aware of.
+-   A  user has been created with credentials  /  in the . Use these to log in via the staff portal and access the new Admin Panel at .
 
 **documents and test reports created in this job**
 -   
 -   
--   
+-    (Updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **Finish**: User requested to complete the current task.
-2.  **Upcoming task - no 3 And potential enhancement**: User clarified to work on the Patient Portal next.
-3.  **Finish the next task - add to staff portal**: User instructed to integrate patient registration into the Staff Portal.
-4.  **Is it possible to generate unique registration system...**: User initiated the request for the patient registration and portal feature.
-5.  **User provided detailed requirements for the registration system**: (e.g., auto-generate ID, basic info, use for booking).
-6.  **Make all feature and flow are intact**: User requested regression testing after recent changes.
-7.  **DiaGyn and proton Still show 4 waiting...**: User reported a bug with live queue counts and requested data cleanup and extending tablet view.
-8.  **1. - B 2. - a,b 3- c both**: User provided specific choices for implementing the tablet view.
-9.  **I get a tablet version...**: User initiated the request for a tablet-responsive UI.
-10. **Allow only respective doctors to block the slots directly...**: User provided follow-up requirements for the slot-blocking feature.
+1.  **User confirms the splash screen buttons are now working.** (Completed)
+2.  **Agent confirms fix and asks for next priority:** Cashfree or Face ID bug.
+3.  **User asks for a payment integration with a faster process than Cashfree.**
+4.  **Agent recommends Stripe,** noting test keys are already available for a quick start.
+5.  **User agrees: Ok go ahead with stripe.** (In Progress)
+6.  **Agent gets the Stripe playbook.**
+7.  **User asks to migrate data to MongoDB.** (Completed)
+8.  **User confirms the need for an admin panel UI.** (Completed)
+9.  **User requests refactoring of  and .** (Partially Completed)
+10. **User confirms to use Twilio as the real SMS OTP provider.** (Upcoming)
 
 **Project Health Check:**
 -   **Broken/Pending Verification:**
-    -   : The camera's failure to start on mobile devices remains a critical, unresolved issue.
+    -   : The camera failure on mobile devices is a critical, unresolved bug.
 -   **In Progress:**
-    -   : The dashboard for viewing patient history is not yet implemented.
+    -   Stripe payment integration.
 -   **Needs Refactoring:**
-    -   , , and  are large monolithic files that should be broken down.
+    -    (Critical)
+    -    (Recommended)
 
 **3rd Party Integrations**
--   **Twilio:** For SMS notifications (used in OTP).
--   **Resend:** For sending emails.
--   **Capacitor:** For creating the native Android wrapper.
+-   **Twilio:** Used for SMS notifications (pending full OTP integration).
+-   **Resend:** Used for email.
+-   **Capacitor:** Used for native Android wrapper.
+-   **Stripe:** (IN PROGRESS) - For payments, uses  library with Emergent-provided test keys.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES. Used for regression testing and validating the slot-blocking feature.
+-   **Testing agent used after significant changes:** YES, used twice for regression testing after major UI/refactoring work. All tests passed.
 -   **Troubleshoot agent used after agent stuck in loop:** NO.
--   **Test files created:** Yes, by the testing agent (, ).
--   **Known regressions:** None.
+-   **Test files created:**
+    -   
+    -   
+-   **Known regressions:** None identified in this session.
 
 **Credentials to test flow:**
+-   **Super Admin:** user: , pass:  (Accesses )
 -   **Clinic Staff:** user: , pass: 
 -   **Doctor:** user: , pass: 
--   **Super Admin:** user: , pass: 
 -   **Patient Mobile for Testing:** 
--   **Mock OTP for login:** Displayed on-screen during testing (e.g., ).
+-   **Mock OTP for login:** Displayed on-screen during testing.
 
 **What agent forgot to execute**
--   The agent has been following user requests diligently. The only forgotten item is the long-standing Face ID camera bug, which has been consistently de-prioritized by the user in favor of new features.</analysis>
+-   The agent successfully addressed all user requests from the current session. The following broader tasks were discussed but not started:
+    -   Full refactoring of  was deferred in favor of the data migration and admin panel tasks.
+    -   Twilio OTP integration was confirmed by the user but not started.
+-   The long-standing Face ID bug remains unresolved as it was deprioritized against the user's immediate feature requests.</analysis>
