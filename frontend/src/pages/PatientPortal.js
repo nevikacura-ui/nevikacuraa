@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { useAuth } from '@/context/AuthContext';
 import { 
   ArrowLeft, User, Phone, Calendar, Loader2, LogOut, Mail, Edit2, Save, X,
   FileText, Pill, FlaskConical, Receipt, History, Clock, Gift, Package,
@@ -22,6 +23,7 @@ const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND
 
 const PatientPortal = () => {
   const navigate = useNavigate();
+  const { setPatientAuth, logout: authLogout } = useAuth();
   
   // Auth states
   const [isAuthenticated, setIsAuthenticated] = useState(false);
