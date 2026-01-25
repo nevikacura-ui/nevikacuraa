@@ -19,7 +19,7 @@ logging.basicConfig(
 logger = logging.getLogger("nevika_scheduler")
 
 # Configuration
-API_URL = os.environ.get("API_URL", "https://careportalapp.preview.emergentagent.com")
+API_URL = os.environ.get("API_URL", "https://healthhelper-7.preview.emergentagent.com")
 CRON_SECRET = os.environ.get("CRON_SECRET", "nevika_cron_2026")
 
 # Scheduler intervals (in seconds)
