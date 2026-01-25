@@ -1694,66 +1694,8 @@ const DiaGyn = () => {
           </div>
         )}
 
-        {/* Step 5: Fee Selection */}
+        {/* Step 5: Final Confirmation */}
         {step === 5 && (
-          <div className="animate-in fade-in duration-500">
-            <Card className="max-w-lg mx-auto p-8 rounded-3xl border-[#E2E8F0] shadow-[0_20px_50px_rgb(0,0,0,0.1)]">
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#CAE9FF] to-[#BEE9E8] rounded-2xl flex items-center justify-center mx-auto mb-5">
-                  <CreditCard className="w-10 h-10 text-[#5FA8D3]" />
-                </div>
-                <h2 className="text-2xl font-bold text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  Select Consultation Type
-                </h2>
-                <p className="text-[#64748B] mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
-                  Choose your consultation type to see the fee
-                </p>
-              </div>
-              
-              {/* Fee Selector */}
-              <div className="mb-6">
-                <FeeSelector 
-                  selectedFee={selectedFee}
-                  onFeeSelect={setSelectedFee}
-                  doctorSpecialty={selectedDoctorData?.specialty}
-                />
-              </div>
-              
-              {/* Selected Fee Summary */}
-              <div className="bg-gradient-to-r from-[#CAE9FF]/30 to-[#BEE9E8]/30 rounded-2xl p-4 mb-6 border border-[#CAE9FF]">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-[#64748B]">Selected Fee</p>
-                    <p className="font-semibold text-[#1B4965]">{CONSULTATION_FEES[selectedFee]?.label}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-[#1B4965] flex items-center">
-                      {getSelectedFeeAmount() === 0 ? (
-                        <span className="text-green-600">Free</span>
-                      ) : (
-                        <>
-                          <IndianRupee className="w-5 h-5" />
-                          {getSelectedFeeAmount()}
-                        </>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <Button
-                onClick={() => setStep(6)}
-                className="w-full bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#1B4965] hover:to-[#5FA8D3] text-white py-6 rounded-full text-base font-semibold"
-                data-testid="continue-to-confirm-btn"
-              >
-                Continue to Confirmation
-              </Button>
-            </Card>
-          </div>
-        )}
-
-        {/* Step 6: Final Confirmation with Payment */}
-        {step === 6 && (
           <div className="animate-in fade-in duration-500">
             <Card className="max-w-lg mx-auto p-8 rounded-3xl border-[#E2E8F0] shadow-[0_20px_50px_rgb(0,0,0,0.1)]">
               <div className="text-center mb-8">
@@ -1808,69 +1750,17 @@ const DiaGyn = () => {
                     <p className="font-semibold text-[#1B4965] text-sm">{patientInfo.name}</p>
                   </div>
                 </div>
-                
-                {/* Fee Summary */}
-                <div className="p-4 bg-gradient-to-r from-[#CAE9FF]/50 to-[#BEE9E8]/50 rounded-xl border border-[#CAE9FF]">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-[#64748B]">Consultation Fee</p>
-                      <p className="font-medium text-[#1B4965] text-sm">{CONSULTATION_FEES[selectedFee]?.label}</p>
-                    </div>
-                    <p className="text-xl font-bold text-[#1B4965] flex items-center">
-                      {getSelectedFeeAmount() === 0 ? (
-                        <span className="text-green-600">Free</span>
-                      ) : (
-                        <>
-                          <IndianRupee className="w-4 h-4" />
-                          {getSelectedFeeAmount()}
-                        </>
-                      )}
-                    </p>
-                  </div>
-                </div>
               </div>
               
-              {/* Payment/Booking Button */}
-              {getSelectedFeeAmount() > 0 ? (
-                <Button
-                  onClick={handlePayment}
-                  disabled={loading || paymentLoading}
-                  className="w-full mt-6 bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#1B4965] hover:to-[#5FA8D3] text-white py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-xl transition-all"
-                  data-testid="pay-and-confirm-btn"
-                >
-                  {paymentLoading ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      <CreditCard className="w-5 h-5 mr-2" />
-                      Pay ₹{getSelectedFeeAmount()} & Confirm
-                    </>
-                  )}
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleBooking}
-                  disabled={loading}
-                  className="w-full mt-6 bg-gradient-to-r from-[#A7C957] to-[#62B6CB] hover:from-[#62B6CB] hover:to-[#A7C957] text-white py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-xl transition-all"
-                  data-testid="confirm-booking-btn"
-                >
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirm Appointment (No Payment Required)'}
-                </Button>
-              )}
-              
-              {/* Trust badges */}
-              {getSelectedFeeAmount() > 0 && (
-                <div className="flex items-center justify-center gap-4 mt-4 text-xs text-[#64748B]">
-                  <div className="flex items-center gap-1">
-                    <Shield className="w-3 h-3 text-green-500" />
-                    Secure Payment
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3 text-blue-500" />
-                    Stripe Powered
-                  </div>
-                </div>
-              )}
+              {/* Confirm Booking Button */}
+              <Button
+                onClick={handleBooking}
+                disabled={loading}
+                className="w-full mt-6 bg-gradient-to-r from-[#A7C957] to-[#62B6CB] hover:from-[#62B6CB] hover:to-[#A7C957] text-white py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-xl transition-all"
+                data-testid="confirm-booking-btn"
+              >
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirm Appointment'}
+              </Button>
             </Card>
           </div>
         )}
