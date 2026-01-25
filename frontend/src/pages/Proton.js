@@ -1131,6 +1131,9 @@ const Proton = () => {
           </div>
         )}
       </main>
+      
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 };
