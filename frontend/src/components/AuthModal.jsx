@@ -176,10 +176,56 @@ const AuthModal = ({ open, onClose }) => {
       }
       
       if (response.user_exists) {
-        // User exists - login directly
+        // User exists in staff/admin database - login directly
         await loginWithOtp(phone, otpString);
         toast.success('Logged in successfully!');
         onClose();
+      } else {
+        // User not in staff database - try patient portal login
+        try {
+          const patientResponse = await axios.post(`${API}/api/patients/portal/verify-otp?mobile=${phone}&otp=${otpString}`);
+          if (patientResponse.data.success && patientResponse.data.token) {
+            // Patient login successful
+            const { token, patient } = patientResponse.data;
+            localStorage.setItem('patientToken', token);
+            if (setPatientAuth) {
+              setPatientAuth(token, patient);
+            }
+            toast.success(`Welcome, ${patient.name}!`);
+            onClose();
+            return;
+          }
+        } catch (patientErr) {
+          console.log('Patient portal login not found, proceeding to registration');
+        }
+        
+        // Neither staff nor patient - new user, show registration form
+        setRegisterForm({ ...registerForm, phone });
+        setStep('register');
+        toast.success('Phone verified! Complete your registration.');
+      }
+    } catch (error) {
+      // Staff auth failed - try patient portal login as fallback
+      try {
+        const patientResponse = await axios.post(`${API}/api/patients/portal/verify-otp?mobile=${phone}&otp=${otpString}`);
+        if (patientResponse.data.success && patientResponse.data.token) {
+          const { token, patient } = patientResponse.data;
+          localStorage.setItem('patientToken', token);
+          if (setPatientAuth) {
+            setPatientAuth(token, patient);
+          }
+          toast.success(`Welcome, ${patient.name}!`);
+          onClose();
+          return;
+        }
+      } catch (patientErr) {
+        // Both login methods failed
+        toast.error('Invalid OTP or user not found');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
       } else {
         // New user - show registration form
         setRegisterForm({ ...registerForm, phone });
