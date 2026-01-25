@@ -52,6 +52,7 @@ import SmartReminders from '@/pages/SmartReminders';
 import PatientPortal from '@/pages/PatientPortal';
 // Payment Pages
 import { PaymentSuccess, PaymentCancel } from '@/components/PaymentCheckout';
+import PaymentHistory from '@/pages/PaymentHistory';
 // Splash Screen
 import SplashScreen from '@/components/SplashScreen';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
