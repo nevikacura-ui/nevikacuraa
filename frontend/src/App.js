@@ -146,6 +146,7 @@ function AppContent() {
           {/* Payment Routes */}
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/cancel" element={<PaymentCancel />} />
+          <Route path="/payment/history" element={<PaymentHistory />} />
         </Routes>
         <Toaster position="top-center" richColors />
         <PWAInstallPrompt />
