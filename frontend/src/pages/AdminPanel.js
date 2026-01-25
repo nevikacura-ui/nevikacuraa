@@ -80,8 +80,10 @@ const AdminPanel = () => {
 
   // Fetch all data
   useEffect(() => {
-    fetchAllData();
-  }, []);
+    if (staffToken) {
+      fetchAllData();
+    }
+  }, [staffToken]);
 
   const fetchAllData = async () => {
     setLoading(true);
