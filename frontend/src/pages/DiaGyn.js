@@ -1250,9 +1250,7 @@ const DiaGyn = () => {
         patient_phone: patientInfo.phone,
         patient_email: patientInfo.email || null,
         verification_token: verificationToken,
-        email_reminder: emailReminder && patientInfo.email ? true : false,
-        fee_code: selectedFee,
-        payment_status: getSelectedFeeAmount() === 0 ? 'not_required' : 'pending'
+        email_reminder: emailReminder && patientInfo.email ? true : false
       };
 
       await axios.post(`${API}/appointments`, bookingData);
