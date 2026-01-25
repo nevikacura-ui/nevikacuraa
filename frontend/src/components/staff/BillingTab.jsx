@@ -176,10 +176,10 @@ const BillingTab = ({
             />
           </div>
 
-          {/* Today's Appointments (Unpaid) */}
+          {/* Todays Appointments (Unpaid) */}
           <div className="space-y-2 max-h-80 overflow-y-auto">
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">
-              Today's Pending Payments ({filteredAppointments.length})
+              Pending Payments Today ({filteredAppointments.length})
             </p>
             {filteredAppointments.length > 0 ? (
               filteredAppointments.map(apt => (
