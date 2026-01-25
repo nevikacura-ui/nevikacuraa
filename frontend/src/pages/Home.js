@@ -1646,97 +1646,94 @@ const Home = () => {
           isScrolling ? 'translate-y-full' : 'translate-y-0'
         }`}>
           <div className="flex items-center justify-around py-2 px-4">
-            {/* Home - Teal/Cyan */}
+            {/* Option A: Always Colorful Circular Icons */}
+            
+            {/* Home - Teal Circle */}
             <button
               onClick={() => {
                 setActiveTab('home');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all"
+              className="flex flex-col items-center gap-1 px-2 py-1.5 transition-all"
               data-testid="nav-home"
             >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+              <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${
                 activeTab === 'home' 
-                  ? 'bg-gradient-to-br from-teal-500 to-cyan-500 shadow-lg shadow-teal-500/30' 
-                  : 'bg-teal-50'
+                  ? 'bg-teal-500 shadow-lg shadow-teal-500/40 scale-110' 
+                  : 'bg-teal-100'
               }`}>
                 <HomeIcon className={`w-5 h-5 ${activeTab === 'home' ? 'text-white' : 'text-teal-600'}`} />
               </div>
-              <span className={`text-xs font-medium ${activeTab === 'home' ? 'text-teal-600' : 'text-teal-500'}`}>Home</span>
+              <span className={`text-[10px] font-semibold ${activeTab === 'home' ? 'text-teal-600' : 'text-teal-500'}`}>Home</span>
             </button>
             
-            {/* Pharmacy - Orange */}
+            {/* Pharmacy - Orange Circle */}
             <button
               onClick={() => {
                 setActiveTab('pharmacy');
                 window.location.href = '/pharmacy';
               }}
-              className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all"
+              className="flex flex-col items-center gap-1 px-2 py-1.5 transition-all"
               data-testid="nav-pharmacy"
             >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+              <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${
                 activeTab === 'pharmacy' 
-                  ? 'bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg shadow-orange-500/30' 
-                  : 'bg-orange-50'
+                  ? 'bg-orange-500 shadow-lg shadow-orange-500/40 scale-110' 
+                  : 'bg-orange-100'
               }`}>
                 <Pill className={`w-5 h-5 ${activeTab === 'pharmacy' ? 'text-white' : 'text-orange-600'}`} />
               </div>
-              <span className={`text-xs font-medium ${activeTab === 'pharmacy' ? 'text-orange-600' : 'text-orange-500'}`}>Pharmacy</span>
+              <span className={`text-[10px] font-semibold ${activeTab === 'pharmacy' ? 'text-orange-600' : 'text-orange-500'}`}>Pharmacy</span>
             </button>
             
-            {/* Book - Center Highlight (Coral/Rose) */}
+            {/* Book - Center Rose Circle (Always prominent) */}
             <button
               onClick={() => setShowBookingModal(true)}
-              className="relative -mt-5 flex flex-col items-center"
+              className="relative -mt-4 flex flex-col items-center"
               data-testid="nav-book-appointment"
             >
-              <div className="w-14 h-14 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg shadow-rose-500/30 hover:shadow-xl hover:shadow-rose-500/40 hover:scale-105 transition-all ring-4 ring-white">
-                <div className="relative">
-                  <Calendar className="w-7 h-7 text-white" />
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-white rounded-full flex items-center justify-center">
-                    <Plus className="w-2.5 h-2.5 text-rose-500" />
-                  </div>
-                </div>
+              <div className="w-14 h-14 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg shadow-rose-500/40 hover:scale-105 transition-all ring-3 ring-white">
+                <Calendar className="w-6 h-6 text-white" />
               </div>
-              <span className="mt-1.5 text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">Book</span>
+              <span className="mt-1 text-[10px] font-bold text-rose-600">Book</span>
             </button>
             
-            {/* Lab Tests - Purple */}
+            {/* Lab Tests - Purple Circle */}
             <button
               onClick={() => {
                 setActiveTab('lab');
                 window.location.href = '/proton';
               }}
-              className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all"
+              className="flex flex-col items-center gap-1 px-2 py-1.5 transition-all"
               data-testid="nav-lab"
             >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+              <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${
                 activeTab === 'lab' 
-                  ? 'bg-gradient-to-br from-purple-500 to-violet-500 shadow-lg shadow-purple-500/30' 
-                  : 'bg-purple-50'
+                  ? 'bg-purple-500 shadow-lg shadow-purple-500/40 scale-110' 
+                  : 'bg-purple-100'
               }`}>
                 <TestTube className={`w-5 h-5 ${activeTab === 'lab' ? 'text-white' : 'text-purple-600'}`} />
               </div>
-              <span className={`text-xs font-medium ${activeTab === 'lab' ? 'text-purple-600' : 'text-purple-500'}`}>Lab Tests</span>
+              <span className={`text-[10px] font-semibold ${activeTab === 'lab' ? 'text-purple-600' : 'text-purple-500'}`}>Lab Tests</span>
             </button>
             
-            {/* Profile / Login - Blue */}
+            {/* Login - Blue Circle */}
             <button
               onClick={() => {
                 setActiveTab('profile');
                 window.location.href = '/patient-portal';
               }}
-              className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all"
+              className="flex flex-col items-center gap-1 px-2 py-1.5 transition-all"
               data-testid="nav-profile"
             >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+              <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${
                 activeTab === 'profile' 
-                  ? 'bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg shadow-blue-500/30' 
-                  : 'bg-blue-50'
+                  ? 'bg-blue-500 shadow-lg shadow-blue-500/40 scale-110' 
+                  : 'bg-blue-100'
               }`}>
                 <User className={`w-5 h-5 ${activeTab === 'profile' ? 'text-white' : 'text-blue-600'}`} />
               </div>
-              <span className={`text-xs font-medium ${activeTab === 'profile' ? 'text-blue-600' : 'text-blue-500'}`}>{user ? 'Profile' : 'Login'}</span>
+              <span className={`text-[10px] font-semibold ${activeTab === 'profile' ? 'text-blue-600' : 'text-blue-500'}`}>{user ? 'Profile' : 'Login'}</span>
             </button>
           </div>
         </nav>,
