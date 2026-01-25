@@ -1,129 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
-import axios from 'axios';
-import { User, Clock, Loader2, X, Search, IndianRupee } from 'lucide-react';
-import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRegistration';
+import { PatientLookup } from '@/components/PatientRegistration';
+import { Search, User, X, Clock, AlertTriangle, UserPlus, Loader2 } from 'lucide-react';
 import { 
-  API, CLINICS, DOCTOR_SCHEDULES, FEE_CODES,
-  getIndianDate, getDayName, getAvailableTimeSlots, getAuthHeaders, generateTimeSlots 
+  CLINICS, DOCTOR_SCHEDULES, 
+  formatIndianDate, getDayName, getIndianDate 
 } from '@/pages/staff/staffUtils';
 
-const WalkInTab = ({ 
-  staffInfo, 
-  walkInForm, 
+const WalkInTab = ({
+  staffInfo,
+  walkInForm,
   setWalkInForm,
   foundWalkInPatient,
   setFoundWalkInPatient,
   setPatientRegisterMobile,
   setPatientRegisterType,
   setShowPatientRegisterDialog,
-  fetchAppointments,
-  fetchAvailableSlots,
-  availableSlots,
-  bookedSlots
+  availableTimeSlots,
+  bookedSlots,
+  loadingSlots,
+  isFormReady,
+  isDoctorAvailable,
+  loading,
+  handleWalkInBooking
 }) => {
-  const [localLoading, setLocalLoading] = useState(false);
-  const [showFeeModal, setShowFeeModal] = useState(false);
-  const [selectedFeeCode, setSelectedFeeCode] = useState('G1');
-
-  // Get clinic doctors
-  const clinicDoctors = staffInfo?.clinic ? (CLINICS[staffInfo.clinic] || []) : [];
-
-  // Get available time slots for selected doctor and date
-  const getTimeSlots = () => {
-    if (!walkInForm.doctor || !walkInForm.date) return [];
-    
-    const doctor = walkInForm.doctor;
-    const dayName = getDayName(walkInForm.date);
-    const schedule = DOCTOR_SCHEDULES[doctor];
-    
-    if (!schedule || !schedule[walkInForm.clinic] || !schedule[walkInForm.clinic][dayName]) {
-      return [];
-    }
-    
-    const daySchedule = schedule[walkInForm.clinic][dayName];
-    let slots = [];
-    
-    daySchedule.forEach(({ start, end }) => {
-      const generated = generateTimeSlots(start, end, 15);
-      slots = [...slots, ...generated];
-    });
-    
-    // Filter out booked slots
-    const bookedTimes = bookedSlots.map(s => s.time);
-    return slots.filter(slot => !bookedTimes.includes(slot));
-  };
-
-  const handleBookWalkIn = async () => {
-    if (!walkInForm.doctor || !walkInForm.time || !walkInForm.patient_name || !walkInForm.patient_phone) {
-      toast.error('Please fill all required fields');
-      return;
-    }
-
-    setLocalLoading(true);
-    try {
-      const response = await axios.post(`${API}/appointments/walk-in`, {
-        ...walkInForm,
-        clinic: staffInfo.clinic,
-        staff_name: staffInfo.name,
-        fee_code: selectedFeeCode,
-        fee_amount: FEE_CODES[selectedFeeCode]?.amount || 0
-      }, {
-        headers: getAuthHeaders()
-      });
-      
-      toast.success('Walk-in appointment booked successfully');
-      
-      // Reset form
-      setWalkInForm({
-        doctor: clinicDoctors[0] || '',
-        clinic: staffInfo.clinic,
-        date: getIndianDate(),
-        time: '',
-        patient_name: '',
-        patient_phone: '',
-        patient_id: ''
-      });
-      setFoundWalkInPatient(null);
-      setSelectedFeeCode('G1');
-      
-      if (fetchAppointments) fetchAppointments();
-      
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to book appointment');
-    } finally {
-      setLocalLoading(false);
-    }
-  };
-
-  // Update clinic in form when staffInfo changes
-  useEffect(() => {
-    if (staffInfo?.clinic && walkInForm.clinic !== staffInfo.clinic) {
-      const clinicDocs = CLINICS[staffInfo.clinic] || [];
-      setWalkInForm(prev => ({
-        ...prev,
-        clinic: staffInfo.clinic,
-        doctor: clinicDocs[0] || ''
-      }));
-    }
-  }, [staffInfo]);
-
-  // Fetch available slots when doctor/date changes
-  useEffect(() => {
-    if (walkInForm.doctor && walkInForm.date && fetchAvailableSlots) {
-      fetchAvailableSlots(walkInForm.doctor, staffInfo?.clinic, walkInForm.date);
-    }
-  }, [walkInForm.doctor, walkInForm.date]);
-
-  const timeSlots = getTimeSlots();
+  const clinicDoctors = CLINICS[staffInfo?.clinic] || [];
 
   return (
-    <Card className="p-6 max-w-lg" data-testid="walkin-tab">
+    <Card className="p-6 max-w-lg" data-testid="walkin-tab-content">
       <h2 className="font-semibold text-lg mb-4">Book Walk-in Appointment - {staffInfo?.clinic}</h2>
       <div className="space-y-4">
         {/* Patient Lookup Section */}
@@ -172,7 +80,7 @@ const WalkInTab = ({
               size="sm"
               onClick={() => {
                 setFoundWalkInPatient(null);
-                setWalkInForm(prev => ({ ...prev, patient_name: '', patient_phone: '', patient_id: '' }));
+                setWalkInForm(prev => ({ ...prev, patient_name: '', patient_phone: '' }));
               }}
               className="text-green-600 hover:text-green-800"
             >
@@ -188,101 +96,100 @@ const WalkInTab = ({
               value={walkInForm.doctor}
               onChange={(e) => setWalkInForm({ ...walkInForm, doctor: e.target.value, time: '' })}
               className="w-full p-2 border rounded-lg"
-              data-testid="walkin-doctor-select"
+              data-testid="walkin-doctor"
             >
-              {clinicDoctors.map(doc => (
-                <option key={doc} value={doc}>{doc}</option>
-              ))}
+              {clinicDoctors.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
           </div>
           <div>
-            <Label>Date</Label>
+            <Label>Date <span className="text-gray-500 text-xs font-normal">({formatIndianDate(walkInForm.date)} - {getDayName(walkInForm.date)})</span></Label>
             <Input
               type="date"
               value={walkInForm.date}
               onChange={(e) => setWalkInForm({ ...walkInForm, date: e.target.value, time: '' })}
               min={getIndianDate()}
-              data-testid="walkin-date-input"
+              data-testid="walkin-date"
             />
           </div>
         </div>
-
-        <div>
-          <Label>Time Slot</Label>
-          <div className="grid grid-cols-4 gap-2 mt-2 max-h-40 overflow-y-auto">
-            {timeSlots.length > 0 ? (
-              timeSlots.map(slot => (
-                <Button
-                  key={slot}
-                  variant={walkInForm.time === slot ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setWalkInForm({ ...walkInForm, time: slot })}
-                  className={walkInForm.time === slot ? 'bg-teal-600' : ''}
-                  data-testid={`walkin-slot-${slot}`}
-                >
-                  {slot}
-                </Button>
-              ))
-            ) : (
-              <p className="col-span-4 text-center text-slate-500 py-2">
-                No slots available for this doctor/date
-              </p>
-            )}
+        
+        {/* Doctor availability notice */}
+        {isFormReady && walkInForm.date && !isDoctorAvailable && (
+          <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm">
+            <AlertTriangle className="w-4 h-4 inline mr-2" />
+            <strong>{walkInForm.doctor}</strong> is not available at {staffInfo?.clinic} on {formatIndianDate(walkInForm.date)} ({getDayName(walkInForm.date)}). 
+            Please select a different date or doctor.
           </div>
-        </div>
-
-        {/* Fee Selection */}
+        )}
+        
+        {/* Show schedule info */}
+        {walkInForm.doctor && DOCTOR_SCHEDULES[walkInForm.doctor]?.[staffInfo?.clinic] && (
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-sm">
+            <Clock className="w-4 h-4 inline mr-2" />
+            <strong>{walkInForm.doctor}</strong> schedule at {staffInfo?.clinic}:
+            <ul className="mt-1 ml-6 list-disc">
+              {DOCTOR_SCHEDULES[walkInForm.doctor][staffInfo?.clinic].map((slot, idx) => (
+                <li key={idx}>{slot.days.join(', ')}: {slot.time}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        
         <div>
-          <Label>Consultation Fee</Label>
+          <Label>Time Slot * 
+            {loadingSlots ? (
+              <span className="text-gray-500 text-xs ml-1"><Loader2 className="w-3 h-3 animate-spin inline" /> Loading...</span>
+            ) : availableTimeSlots.length > 0 ? (
+              <span className="text-gray-500 text-xs ml-1">({availableTimeSlots.length} slots available{bookedSlots.length > 0 ? `, ${bookedSlots.length} booked` : ''})</span>
+            ) : null}
+          </Label>
           <select
-            value={selectedFeeCode}
-            onChange={(e) => setSelectedFeeCode(e.target.value)}
+            value={walkInForm.time}
+            onChange={(e) => setWalkInForm({ ...walkInForm, time: e.target.value })}
             className="w-full p-2 border rounded-lg"
-            data-testid="walkin-fee-select"
+            data-testid="walkin-time"
+            disabled={!isFormReady || !isDoctorAvailable || loadingSlots}
           >
-            {Object.entries(FEE_CODES).map(([code, { label, amount }]) => (
-              <option key={code} value={code}>
-                {label} - ₹{amount}
-              </option>
-            ))}
+            <option value="">
+              {!isFormReady ? 'Loading...' : loadingSlots ? 'Loading slots...' : isDoctorAvailable ? 'Select time' : 'No slots available'}
+            </option>
+            {availableTimeSlots.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
-          <p className="text-sm text-slate-500 mt-1 flex items-center gap-1">
-            <IndianRupee className="w-3 h-3" />
-            Selected: {FEE_CODES[selectedFeeCode]?.label} - ₹{FEE_CODES[selectedFeeCode]?.amount}
-          </p>
         </div>
-
-        {/* Patient Info (if not found) */}
+        
+        {/* Manual patient entry - only if not found via lookup */}
         {!foundWalkInPatient && (
-          <div className="grid grid-cols-2 gap-4">
+          <>
             <div>
-              <Label>Patient Name</Label>
+              <Label>Patient Name *</Label>
               <Input
                 value={walkInForm.patient_name}
                 onChange={(e) => setWalkInForm({ ...walkInForm, patient_name: e.target.value })}
-                placeholder="Patient name"
-                data-testid="walkin-patient-name"
+                placeholder="Enter patient name"
+                data-testid="walkin-name"
               />
             </div>
+            
             <div>
-              <Label>Phone</Label>
+              <Label>Phone Number *</Label>
               <Input
                 value={walkInForm.patient_phone}
-                onChange={(e) => setWalkInForm({ ...walkInForm, patient_phone: e.target.value })}
-                placeholder="Phone number"
-                data-testid="walkin-patient-phone"
+                onChange={(e) => setWalkInForm({ ...walkInForm, patient_phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                placeholder="10-digit mobile number"
+                data-testid="walkin-phone"
               />
             </div>
-          </div>
+          </>
         )}
-
-        <Button
-          onClick={handleBookWalkIn}
-          disabled={localLoading || !walkInForm.time || !walkInForm.patient_name}
-          className="w-full bg-teal-600 hover:bg-teal-700"
-          data-testid="walkin-book-btn"
+        
+        <Button 
+          onClick={handleWalkInBooking} 
+          disabled={loading || !isDoctorAvailable} 
+          className="w-full bg-teal-500 hover:bg-teal-600" 
+          data-testid="walkin-submit"
         >
-          {localLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Book Walk-in Appointment'}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <UserPlus className="w-4 h-4 mr-2" />}
+          Book Walk-in Appointment
         </Button>
       </div>
     </Card>
