@@ -726,20 +726,39 @@ async def get_diagnostic_service_orders(staff = Depends(verify_staff)):
 @router.get("/doctor/appointments")
 async def get_doctor_appointments(
     doctor: str = None,
+    clinic: str = None,
     date: str = None,
     staff = Depends(verify_staff)
 ):
     """Get appointments for doctor view"""
     query = {}
+    
+    # Use staff's name as doctor if not specified and they are a doctor
     if doctor:
         query["doctor"] = doctor
+    elif staff.get("name") and staff.get("role") in ["doctor", "doctor_pushpa", "doctor_amnion"]:
+        query["doctor"] = staff.get("name")
+    
+    # Use staff's clinic if not specified  
+    if clinic:
+        query["clinic"] = clinic
+    elif staff.get("clinic"):
+        query["clinic"] = staff.get("clinic")
+    
     if date:
         query["date"] = date
     else:
         query["date"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     
     appointments = await db.appointments.find(query, {"_id": 0}).sort("time", 1).to_list(100)
-    return {"appointments": appointments}
+    
+    # Get unique clinics for this doctor
+    doctor_clinics = []
+    if staff.get("name"):
+        doc_apts = await db.appointments.find({"doctor": staff.get("name")}).to_list(1000)
+        doctor_clinics = list(set([apt.get("clinic") for apt in doc_apts if apt.get("clinic")]))
+    
+    return {"appointments": appointments, "doctor_clinics": doctor_clinics}
 
 
 # ============ Clinic Appointments ============
