@@ -20,6 +20,7 @@ import StaffBillingModule from '@/components/StaffBillingModule';
 import ANCRegistration from '@/components/ANCRegistration';
 import GlydexStaffPortal from '@/components/GlydexStaffPortal';
 import StaffDashboard from '@/components/StaffDashboard';
+import StaffNotificationBell from '@/components/StaffNotificationBell';
 import { useViewMode } from '@/context/ViewModeContext';
 import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
 import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRegistration';
