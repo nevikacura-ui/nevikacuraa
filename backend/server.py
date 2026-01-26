@@ -2300,6 +2300,25 @@ Please check if patient needs to reschedule."""
     await db.appointments.insert_one(doc)
     logger.info(f"Appointment created: {appointment.id}")
     
+    # Create staff notification for new appointment
+    try:
+        from routes.staff_notifications import create_staff_notification
+        await create_staff_notification(
+            db=db,
+            notification_type="new_appointment",
+            title="🆕 New Appointment Booked",
+            message=f"{appointment.patient_name} booked with {appointment.doctor} on {appointment.date} at {appointment.time}",
+            clinic=appointment.clinic,
+            appointment_id=appointment.id,
+            patient_name=appointment.patient_name,
+            doctor=appointment.doctor,
+            date=appointment.date,
+            time=appointment.time
+        )
+        logger.info(f"Staff notification created for appointment {appointment.id}")
+    except Exception as e:
+        logger.warning(f"Could not create staff notification: {e}")
+    
     # Generate WhatsApp link for appointment notification
     whatsapp_message = f"""New DiaGyn Appointment Booking
 
