@@ -4188,6 +4188,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Calendar Sync router: {e}")
 
+# Staff Notifications Router
+try:
+    from routes.staff_notifications import setup_routes as setup_notifications_routes
+    staff_notifications_router = setup_notifications_routes(db)
+    app.include_router(staff_notifications_router, prefix="/api")
+    logger.info("Staff Notifications router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Staff Notifications router: {e}")
+
 
 
 app.add_middleware(
