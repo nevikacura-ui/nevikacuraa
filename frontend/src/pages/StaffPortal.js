@@ -321,9 +321,14 @@ const StaffPortal = () => {
   // Optimized data loading - only fetch what's needed based on active tab and role
   const loadAppointmentsData = async () => {
     const role = staffInfo?.role;
+    const staffClinic = staffInfo?.clinic;
     try {
       if (isClinicStaff(role)) {
-        const res = await axios.get(`${API}/staff/clinic/appointments?date=${selectedDate}`, getAuthHeaders());
+        let url = `${API}/staff/clinic/appointments?date=${selectedDate}`;
+        if (staffClinic) {
+          url += `&clinic=${encodeURIComponent(staffClinic)}`;
+        }
+        const res = await axios.get(url, getAuthHeaders());
         setAppointments(res.data.appointments || []);
         setEmergencyCounts(res.data.emergency_counts || {});
         
