@@ -16,7 +16,20 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 
 ## What's Been Implemented
 
-### Session - January 25, 2026 (Part 8 - Current)
+### Session - January 26, 2026 (Part 9 - Current)
+
+#### Completed Features
+1. **Staff Portal Appointment Visibility Bug Fix - COMPLETE** ✅
+   - **Issue:** Appointments booked by patients were not visible to staff/doctors in the Staff Portal
+   - **Root Causes Fixed:**
+     - `StaffDashboard.jsx`: Status filter was checking for `'Booked'` but appointments have `'pending'` (lowercase)
+     - `staffUtils.js`: `getAuthHeaders()` was returning wrong format causing 401 errors
+   - **Files Modified:**
+     - `/app/frontend/src/components/StaffDashboard.jsx` - Fixed status case handling
+     - `/app/frontend/src/pages/staff/staffUtils.js` - Fixed auth headers config structure
+   - **Verified:** Dashboard shows "2 Pending", Appointments tab shows both patient appointments with all details
+
+### Session - January 25, 2026 (Part 8)
 
 #### Completed Features
 1. **Glydex Logo Replacement - COMPLETE** ✅
