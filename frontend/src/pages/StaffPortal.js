@@ -1923,6 +1923,8 @@ const StaffPortal = () => {
           <div className="flex items-center gap-1 sm:gap-2">
             {/* View Mode Switcher */}
             <ViewModeSwitcher compact />
+            {/* Real-time Notifications */}
+            <StaffNotificationBell />
             <Button 
               variant="outline" 
               size="sm" 
