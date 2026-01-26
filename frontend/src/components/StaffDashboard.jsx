@@ -58,11 +58,11 @@ export default function StaffDashboard({ staffInfo, onNavigate }) {
             const data = await appointmentsRes.json();
             const appointments = data.appointments || [];
             
-            // Calculate status counts
-            const completed = appointments.filter(a => a.status === 'Completed').length;
-            const pending = appointments.filter(a => a.status === 'Booked').length;
-            const inClinic = appointments.filter(a => a.status === 'In Clinic').length;
-            const cancelled = appointments.filter(a => a.status === 'Cancelled').length;
+            // Calculate status counts (handle both cases: 'Booked'/'pending', 'Completed'/'completed', etc.)
+            const completed = appointments.filter(a => a.status === 'Completed' || a.status === 'completed').length;
+            const pending = appointments.filter(a => a.status === 'Booked' || a.status === 'pending').length;
+            const inClinic = appointments.filter(a => a.status === 'In Clinic' || a.status === 'in_clinic' || a.status === 'checked_in').length;
+            const cancelled = appointments.filter(a => a.status === 'Cancelled' || a.status === 'cancelled').length;
             const emergencyCount = appointments.filter(a => a.appointment_type === 'EMERGENCY').length;
             const walkinCount = appointments.filter(a => a.appointment_type === 'WALKIN' || a.appointment_type === 'WALK_IN').length;
             const onlineCount = appointments.filter(a => a.appointment_type === 'ONLINE' || !a.appointment_type).length;
