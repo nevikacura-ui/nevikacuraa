@@ -753,8 +753,13 @@ async def get_clinic_appointments(
 ):
     """Get appointments for clinic view"""
     query = {}
+    
+    # Use staff's clinic if not specified
     if clinic:
         query["clinic"] = clinic
+    elif staff.get("clinic"):
+        query["clinic"] = staff.get("clinic")
+    
     if date:
         query["date"] = date
     else:
@@ -763,7 +768,14 @@ async def get_clinic_appointments(
         query["status"] = status
     
     appointments = await db.appointments.find(query, {"_id": 0}).sort("time", 1).to_list(200)
-    return {"appointments": appointments, "total": len(appointments)}
+    
+    # Calculate emergency counts
+    emergency_counts = {}
+    for apt in appointments:
+        apt_type = apt.get("appointment_type", "NORMAL")
+        emergency_counts[apt_type] = emergency_counts.get(apt_type, 0) + 1
+    
+    return {"appointments": appointments, "total": len(appointments), "emergency_counts": emergency_counts}
 
 
 @router.get("/clinic/completed-appointments")
