@@ -163,7 +163,7 @@ export const isDoctorAvailableOnDay = (doctor, clinic, dateStr) => {
  */
 export const getAuthHeaders = () => {
   const token = localStorage.getItem('staffToken');
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token ? { headers: { Authorization: `Bearer ${token}` } } : { headers: {} };
 };
 
 /**
