@@ -233,6 +233,221 @@ const EnhancementFeatures = () => {
       component: HealthPackages,
       isNew: true
     },
+    // Phase 4 - Patient Engagement
+    {
+      id: 'community-forums',
+      name: 'Community',
+      description: 'Patient support & discussions',
+      icon: MessageSquare,
+      color: 'from-purple-500 to-indigo-500',
+      component: CommunityForums,
+      isNew: true
+    },
+    {
+      id: 'ai-triage',
+      name: 'AI Triage',
+      description: 'Get preliminary health assessment',
+      icon: Brain,
+      color: 'from-blue-500 to-cyan-500',
+      component: AITriageAssistant,
+      isNew: true,
+      isAI: true
+    },
+    {
+      id: 'health-alerts',
+      name: 'Health Alerts',
+      description: 'Personalized health reminders',
+      icon: Bell,
+      color: 'from-amber-500 to-orange-500',
+      component: PredictiveHealthAlerts,
+      isNew: true
+    },
+    {
+      id: 'medical-records',
+      name: 'Smart Records',
+      description: 'AI-powered health summary',
+      icon: FileText,
+      color: 'from-indigo-500 to-purple-500',
+      component: SmartMedicalRecords,
+      isNew: true,
+      isAI: true
+    },
+    {
+      id: 'wearables',
+      name: 'Wearables',
+      description: 'Sync fitness device data',
+      icon: Watch,
+      color: 'from-pink-500 to-rose-500',
+      component: WearableIntegration,
+      isNew: true
+    },
+    {
+      id: 'health-coach',
+      name: 'Health Coach',
+      description: 'Personalized wellness goals',
+      icon: Target,
+      color: 'from-emerald-500 to-teal-500',
+      component: VirtualHealthCoach,
+      isNew: true
+    },
+    {
+      id: 'doctor-chat',
+      name: 'Doctor Chat',
+      description: 'Message your doctors',
+      icon: MessageSquare,
+      color: 'from-blue-500 to-indigo-500',
+      component: TwoWayChat,
+      isNew: true
+    },
+    {
+      id: 'consent',
+      name: 'Consent',
+      description: 'Manage data permissions',
+      icon: Shield,
+      color: 'from-slate-600 to-slate-800',
+      component: ConsentManagement,
+      isNew: true
+    },
+    // Phase 5 - Analytics & Admin (Staff features)
+    {
+      id: 'patient-analytics',
+      name: 'Patient Analytics',
+      description: 'Journey & conversion tracking',
+      icon: TrendingUp,
+      color: 'from-violet-500 to-purple-500',
+      component: PatientJourneyAnalytics,
+      isNew: true,
+      isStaff: true
+    },
+    {
+      id: 'revenue-forecast',
+      name: 'Revenue Forecast',
+      description: 'Predictive financial insights',
+      icon: DollarSign,
+      color: 'from-green-500 to-emerald-500',
+      component: RevenueForecasting,
+      isNew: true,
+      isStaff: true
+    },
+    {
+      id: 'outcomes',
+      name: 'Health Outcomes',
+      description: 'Treatment effectiveness',
+      icon: Activity,
+      color: 'from-cyan-500 to-teal-500',
+      component: HealthOutcomeTracking,
+      isNew: true,
+      isStaff: true
+    },
+    {
+      id: 'audit-trail',
+      name: 'Audit Trail',
+      description: 'Security & compliance logs',
+      icon: Shield,
+      color: 'from-slate-600 to-slate-800',
+      component: AuditTrailDashboard,
+      isNew: true,
+      isStaff: true
+    },
+    {
+      id: 'room-booking',
+      name: 'Room Booking',
+      description: 'Reserve rooms & equipment',
+      icon: DoorOpen,
+      color: 'from-blue-500 to-indigo-500',
+      component: RoomResourceBooking,
+      isNew: true,
+      isStaff: true
+    },
+    {
+      id: 'shift-management',
+      name: 'Shifts',
+      description: 'Staff scheduling',
+      icon: Calendar,
+      color: 'from-indigo-500 to-violet-500',
+      component: StaffShiftManagement,
+      isNew: true,
+      isStaff: true
+    },
+    {
+      id: 'digital-signage',
+      name: 'Queue Display',
+      description: 'Waiting room TV display',
+      icon: BarChart3,
+      color: 'from-teal-500 to-cyan-500',
+      component: DigitalSignage,
+      isNew: true,
+      isStaff: true
+    },
+    // Phase 6 - Payments & Operations
+    {
+      id: 'inventory',
+      name: 'Inventory',
+      description: 'Stock alerts & management',
+      icon: Package,
+      color: 'from-orange-500 to-amber-500',
+      component: SmartInventoryAlerts,
+      isNew: true,
+      isStaff: true
+    },
+    {
+      id: 'billing',
+      name: 'Billing',
+      description: 'Daily reconciliation',
+      icon: CreditCard,
+      color: 'from-emerald-500 to-green-500',
+      component: BillingReconciliation,
+      isNew: true,
+      isStaff: true
+    },
+    {
+      id: 'split-payment',
+      name: 'EMI & Split Pay',
+      description: 'Flexible payment options',
+      icon: CreditCard,
+      color: 'from-violet-500 to-purple-500',
+      component: SplitPayment,
+      isNew: true
+    },
+    {
+      id: 'payment-links',
+      name: 'Payment Links',
+      description: 'Send via WhatsApp/SMS',
+      icon: Link2,
+      color: 'from-blue-500 to-indigo-500',
+      component: PaymentLinks,
+      isNew: true,
+      isStaff: true
+    },
+    {
+      id: 'lab-import',
+      name: 'Lab Import',
+      description: 'Auto-import lab reports',
+      icon: FileText,
+      color: 'from-cyan-500 to-teal-500',
+      component: LabReportAutoImport,
+      isNew: true
+    },
+    {
+      id: 'broadcast',
+      name: 'Broadcast',
+      description: 'Mass patient messaging',
+      icon: Radio,
+      color: 'from-purple-500 to-indigo-500',
+      component: BroadcastMessages,
+      isNew: true,
+      isStaff: true
+    },
+    {
+      id: 'kiosk',
+      name: 'Self Check-in',
+      description: 'Patient kiosk mode',
+      icon: Scan,
+      color: 'from-teal-500 to-cyan-500',
+      component: PatientCheckinKiosk,
+      isNew: true,
+      isStaff: true
+    },
   ];
 
   const renderFeatureGrid = () => (
