@@ -1006,16 +1006,11 @@ const Pharmacy = () => {
                 <Package className="w-5 h-5 text-orange-500" />
                 Shop by Category
               </h3>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
                 <CategoryCard 
                   category="cough-cold" 
                   isActive={searchTerm === 'cold'} 
                   onClick={() => setSearchTerm(searchTerm === 'cold' ? '' : 'cold')} 
-                />
-                <CategoryCard 
-                  category="stomach-care" 
-                  isActive={searchTerm === 'digestive'} 
-                  onClick={() => setSearchTerm(searchTerm === 'digestive' ? '' : 'digestive')} 
                 />
                 <CategoryCard 
                   category="pain-relief" 
@@ -1023,34 +1018,9 @@ const Pharmacy = () => {
                   onClick={() => setSearchTerm(searchTerm === 'pain' ? '' : 'pain')} 
                 />
                 <CategoryCard 
-                  category="antibiotics" 
-                  isActive={searchTerm === 'antibiotic'} 
-                  onClick={() => setSearchTerm(searchTerm === 'antibiotic' ? '' : 'antibiotic')} 
-                />
-                <CategoryCard 
-                  category="diabetes" 
-                  isActive={searchTerm === 'diabetes'} 
-                  onClick={() => setSearchTerm(searchTerm === 'diabetes' ? '' : 'diabetes')} 
-                />
-                <CategoryCard 
-                  category="heart" 
-                  isActive={searchTerm === 'cardiac'} 
-                  onClick={() => setSearchTerm(searchTerm === 'cardiac' ? '' : 'cardiac')} 
-                />
-                <CategoryCard 
-                  category="derma" 
-                  isActive={searchTerm === 'skin'} 
-                  onClick={() => setSearchTerm(searchTerm === 'skin' ? '' : 'skin')} 
-                />
-                <CategoryCard 
-                  category="respiratory" 
-                  isActive={searchTerm === 'respiratory'} 
-                  onClick={() => setSearchTerm(searchTerm === 'respiratory' ? '' : 'respiratory')} 
-                />
-                <CategoryCard 
-                  category="eye-ear" 
-                  isActive={searchTerm === 'eye'} 
-                  onClick={() => setSearchTerm(searchTerm === 'eye' ? '' : 'eye')} 
+                  category="digestive" 
+                  isActive={searchTerm === 'digestive'} 
+                  onClick={() => setSearchTerm(searchTerm === 'digestive' ? '' : 'digestive')} 
                 />
                 <CategoryCard 
                   category="vitamins" 
@@ -1058,14 +1028,64 @@ const Pharmacy = () => {
                   onClick={() => setSearchTerm(searchTerm === 'vitamin' ? '' : 'vitamin')} 
                 />
                 <CategoryCard 
-                  category="vaccines" 
-                  isActive={searchTerm === 'vaccine'} 
-                  onClick={() => setSearchTerm(searchTerm === 'vaccine' ? '' : 'vaccine')} 
+                  category="diabetes" 
+                  isActive={searchTerm === 'diabetes'} 
+                  onClick={() => setSearchTerm(searchTerm === 'diabetes' ? '' : 'diabetes')} 
                 />
                 <CategoryCard 
-                  category="nebuliser" 
+                  category="skin-care" 
+                  isActive={searchTerm === 'skin'} 
+                  onClick={() => setSearchTerm(searchTerm === 'skin' ? '' : 'skin')} 
+                />
+                <CategoryCard 
+                  category="baby-care" 
+                  isActive={searchTerm === 'baby'} 
+                  onClick={() => setSearchTerm(searchTerm === 'baby' ? '' : 'baby')} 
+                />
+                <CategoryCard 
+                  category="heart" 
+                  isActive={searchTerm === 'cardiac'} 
+                  onClick={() => setSearchTerm(searchTerm === 'cardiac' ? '' : 'cardiac')} 
+                />
+                <CategoryCard 
+                  category="respiratory" 
+                  isActive={searchTerm === 'respiratory'} 
+                  onClick={() => setSearchTerm(searchTerm === 'respiratory' ? '' : 'respiratory')} 
+                />
+                <CategoryCard 
+                  category="womens-care" 
+                  isActive={searchTerm === 'women'} 
+                  onClick={() => setSearchTerm(searchTerm === 'women' ? '' : 'women')} 
+                />
+                <CategoryCard 
+                  category="oral-care" 
+                  isActive={searchTerm === 'oral'} 
+                  onClick={() => setSearchTerm(searchTerm === 'oral' ? '' : 'oral')} 
+                />
+                <CategoryCard 
+                  category="hair-care" 
+                  isActive={searchTerm === 'hair'} 
+                  onClick={() => setSearchTerm(searchTerm === 'hair' ? '' : 'hair')} 
+                />
+                <CategoryCard 
+                  category="first-aid" 
+                  isActive={searchTerm === 'first aid'} 
+                  onClick={() => setSearchTerm(searchTerm === 'first aid' ? '' : 'first aid')} 
+                />
+                <CategoryCard 
+                  category="devices" 
                   isActive={searchTerm === 'device'} 
                   onClick={() => setSearchTerm(searchTerm === 'device' ? '' : 'device')} 
+                />
+                <CategoryCard 
+                  category="ayurvedic" 
+                  isActive={searchTerm === 'ayurvedic'} 
+                  onClick={() => setSearchTerm(searchTerm === 'ayurvedic' ? '' : 'ayurvedic')} 
+                />
+                <CategoryCard 
+                  category="fitness" 
+                  isActive={searchTerm === 'fitness'} 
+                  onClick={() => setSearchTerm(searchTerm === 'fitness' ? '' : 'fitness')} 
                 />
               </div>
             </div>
