@@ -64,6 +64,22 @@ input, textarea, [contenteditable="true"] {
   animation: fadeIn 0.5s ease-out forwards;
 }
 
+/* Sequential word fade-in animation for splash screen */
+@keyframes fadeInWord {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fade-in-word {
+  opacity: 0;
+}
+
 /* Slow bounce animation for install button */
 @keyframes bounce-slow {
   0%, 100% {
