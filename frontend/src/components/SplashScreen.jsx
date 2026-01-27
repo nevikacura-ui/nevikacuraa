@@ -305,6 +305,12 @@ const SplashScreen = ({ onComplete, user }) => {
     setShowAuth(true);
   };
   
+  // Fading icons data
+  const icons = [
+    { Icon: Calendar, bgColor: 'bg-blue-200/80', iconColor: 'text-blue-600', label: 'Appointments' },
+    { Icon: Pill, bgColor: 'bg-orange-200/80', iconColor: 'text-orange-600', label: 'Pharmacy' },
+  ];
+  
   return (
     <div 
       className="fixed inset-0 z-[99998] flex flex-col items-center justify-start p-6 overflow-hidden"
@@ -326,7 +332,6 @@ const SplashScreen = ({ onComplete, user }) => {
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-72 h-72 bg-white/15 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-40 right-5 w-64 h-64 bg-teal-300/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-cyan-200/15 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
       </div>
       
       {/* Skip Button - Top Right */}
@@ -341,10 +346,10 @@ const SplashScreen = ({ onComplete, user }) => {
         </button>
       </div>
       
-      {/* Content - Positioned higher */}
+      {/* Content */}
       <div className="relative z-10 text-center max-w-md mx-auto flex flex-col items-center mt-16 sm:mt-20">
         {/* Logo/Brand - Oval/Pill shaped container */}
-        <div className="mb-6">
+        <div className="mb-5">
           <div className="bg-white rounded-[40px] px-8 py-5 shadow-2xl shadow-black/20">
             <img 
               src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
@@ -352,7 +357,24 @@ const SplashScreen = ({ onComplete, user }) => {
               className="h-20 w-auto object-contain"
             />
           </div>
-          <div className="h-1 w-20 bg-gradient-to-r from-teal-200 to-cyan-200 mx-auto rounded-full mt-4"></div>
+          <div className="h-1 w-20 bg-gradient-to-r from-teal-200 to-cyan-200 mx-auto rounded-full mt-3"></div>
+        </div>
+        
+        {/* Fading Icons - Appointments & Pharmacy */}
+        <div className="flex justify-center items-center gap-8 mb-5">
+          {icons.map(({ Icon, bgColor, iconColor, label }, idx) => (
+            <div 
+              key={label}
+              className="flex flex-col items-center gap-2 icon-disappear"
+              style={{ animationDelay: `${idx * 0.3}s` }}
+            >
+              <div className={`${bgColor} backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 border border-white/40`}
+                   style={{ width: '72px', height: '72px' }}>
+                <Icon className={`w-9 h-9 ${iconColor}`} />
+              </div>
+              <span className="text-sm text-white font-medium drop-shadow-sm">{label}</span>
+            </div>
+          ))}
         </div>
         
         {/* Tagline */}
