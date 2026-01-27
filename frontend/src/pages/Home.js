@@ -581,11 +581,6 @@ const Home = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
 
-        {/* Global Search Bar - Hero Section */}
-        <div className="mb-6">
-          <GlobalSearch className="max-w-2xl mx-auto" />
-        </div>
-
         {/* Quick Actions - One-tap access */}
         <div className="mb-6">
           <QuickActions />
