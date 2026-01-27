@@ -4234,6 +4234,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load AI Features router: {e}")
 
+# Phase 3 Features Router
+try:
+    from routes.phase3_features import setup_routes as setup_phase3_routes
+    phase3_router = setup_phase3_routes(db)
+    app.include_router(phase3_router, prefix="/api")
+    logger.info("Phase 3 Features router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Phase 3 Features router: {e}")
+
 
 
 app.add_middleware(
