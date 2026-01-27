@@ -41,10 +41,11 @@ def set_jwt_config(secret, algorithm="HS256"):
     JWT_SECRET = secret
     JWT_ALGORITHM = algorithm
 
-def set_notification_functions(push_func, sms_func):
-    global send_push_notification, send_sms_notification
+def set_notification_functions(push_func, sms_func, whatsapp_func=None):
+    global send_push_notification, send_sms_notification, send_whatsapp_notification
     send_push_notification = push_func
     send_sms_notification = sms_func
+    send_whatsapp_notification = whatsapp_func
 
 
 # ============ Models ============
