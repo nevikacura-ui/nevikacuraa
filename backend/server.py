@@ -4225,6 +4225,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Enhancement Features router: {e}")
 
+# AI Features Router
+try:
+    from routes.ai_features import setup_routes as setup_ai_routes
+    ai_router = setup_ai_routes(db)
+    app.include_router(ai_router, prefix="/api")
+    logger.info("AI Healthcare Features router loaded")
+except Exception as e:
+    logger.warning(f"Could not load AI Features router: {e}")
+
 
 
 app.add_middleware(
