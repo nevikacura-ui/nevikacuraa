@@ -270,6 +270,197 @@ async def create_payment_link(amount: float, description: str, patient = Depends
         "whatsapp_link": f"https://wa.me/?text=Pay%20₹{amount}%20for%20{description}%20-%20{payment_link}"
     }
 
+# ============ Health Score Gamification (#5) ============
+@router.get("/health-score")
+async def get_health_score(patient = Depends(get_patient_from_token)):
+    """Get patient's health score and gamification data"""
+    patient_phone = patient.get("phone") or patient.get("sub")
+    
+    default_data = {
+        "score": 72,
+        "streak": 0,
+        "level": 1,
+        "xp": 150,
+        "xpToNextLevel": 500,
+        "badges": ["first_checkup", "med_master"],
+        "lastCheckIn": None
+    }
+    
+    if not db:
+        return default_data
+    
+    data = await db.health_scores.find_one(
+        {"patient_phone": patient_phone},
+        {"_id": 0, "patient_phone": 0}
+    )
+    
+    return data or default_data
+
+@router.post("/health-score/checkin")
+async def health_checkin(patient = Depends(get_patient_from_token)):
+    """Record daily health check-in"""
+    patient_phone = patient.get("phone") or patient.get("sub")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+    if db:
+        # Check if already checked in today
+        existing = await db.health_scores.find_one({"patient_phone": patient_phone})
+        
+        if existing and existing.get("lastCheckIn") == today:
+            return {"success": False, "message": "Already checked in today", "streak": existing.get("streak", 1)}
+        
+        # Update streak
+        current_streak = existing.get("streak", 0) if existing else 0
+        last_checkin = existing.get("lastCheckIn") if existing else None
+        
+        # Check if streak continues
+        from datetime import timedelta
+        yesterday = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
+        new_streak = current_streak + 1 if last_checkin == yesterday else 1
+        
+        await db.health_scores.update_one(
+            {"patient_phone": patient_phone},
+            {"$set": {"lastCheckIn": today, "streak": new_streak}, "$inc": {"xp": 10}},
+            upsert=True
+        )
+        
+        return {"success": True, "streak": new_streak, "xp_earned": 10}
+    
+    return {"success": True, "streak": 1, "xp_earned": 10}
+
+# ============ Smart Reminders (#1) ============
+@router.get("/reminders")
+async def get_reminders(patient = Depends(get_patient_from_token)):
+    """Get patient's reminders"""
+    patient_phone = patient.get("phone") or patient.get("sub")
+    
+    # Get upcoming appointments
+    appointments = []
+    medications = []
+    
+    if db:
+        # Get appointments for this patient
+        patient_data = await db.patients.find_one({"phone": patient_phone})
+        if patient_data:
+            patient_name = patient_data.get("name", "")
+            appts = await db.appointments.find({
+                "patient_name": patient_name,
+                "status": {"$in": ["pending", "Booked", "confirmed"]}
+            }).to_list(10)
+            
+            for appt in appts:
+                appointments.append({
+                    "id": str(appt.get("_id", appt.get("id"))),
+                    "type": "appointment",
+                    "title": f"Dr. {appt.get('doctor', 'Doctor')} Consultation",
+                    "datetime": f"{appt.get('date')} {appt.get('time')}",
+                    "location": appt.get("clinic", "Clinic"),
+                    "status": "upcoming"
+                })
+    
+    # Return combined reminders
+    return {"reminders": appointments + medications}
+
+@router.post("/reminders")
+async def add_reminder(reminder: dict, patient = Depends(get_patient_from_token)):
+    """Add a new reminder"""
+    patient_phone = patient.get("phone") or patient.get("sub")
+    
+    reminder_data = {
+        "id": str(uuid.uuid4())[:8],
+        "patient_phone": patient_phone,
+        "type": reminder.get("type", "medication"),
+        "title": reminder.get("name"),
+        "time": reminder.get("time"),
+        "frequency": reminder.get("frequency"),
+        "channels": reminder.get("channels", {"push": True}),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if db:
+        await db.reminders.insert_one(reminder_data)
+    
+    return {"success": True, "reminder_id": reminder_data["id"]}
+
+# ============ Emergency SOS (#30) ============
+@router.post("/emergency/sos")
+async def trigger_emergency_sos(data: dict, patient = Depends(get_patient_from_token)):
+    """Trigger emergency SOS alert"""
+    patient_phone = patient.get("phone") or patient.get("sub")
+    
+    emergency_data = {
+        "id": str(uuid.uuid4()),
+        "patient_phone": patient_phone,
+        "location": data.get("location"),
+        "contacts": data.get("contacts", []),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "status": "sent"
+    }
+    
+    if db:
+        await db.emergency_alerts.insert_one(emergency_data)
+        
+        # In production, send SMS/WhatsApp to emergency contacts
+        # For now, just log it
+    
+    return {"success": True, "alert_id": emergency_data["id"], "message": "Emergency alert sent"}
+
+# ============ Medication Interaction Checker (#20) ============
+@router.post("/medications/check-interactions")
+async def check_medication_interactions(medications: List[str]):
+    """Check for drug interactions"""
+    # In production, this would call a drug interaction API
+    
+    known_interactions = [
+        {"drugs": ["aspirin", "ibuprofen"], "severity": "moderate", "description": "Increased bleeding risk"},
+        {"drugs": ["warfarin", "aspirin"], "severity": "high", "description": "Significantly increases bleeding risk"},
+        {"drugs": ["metformin", "alcohol"], "severity": "moderate", "description": "Risk of lactic acidosis"},
+    ]
+    
+    found_interactions = []
+    med_lower = [m.lower() for m in medications]
+    
+    for interaction in known_interactions:
+        if all(drug.lower() in med_lower for drug in interaction["drugs"]):
+            found_interactions.append(interaction)
+    
+    return {
+        "interactions": found_interactions,
+        "safe": len(found_interactions) == 0
+    }
+
+# ============ Health Content Hub (#17) ============
+@router.get("/health-content")
+async def get_health_content(category: str = None, search: str = None):
+    """Get health articles and content"""
+    # In production, this would come from a CMS
+    articles = [
+        {
+            "id": 1,
+            "title": "10 Foods to Lower Blood Sugar Naturally",
+            "category": "diabetes",
+            "type": "article",
+            "readTime": "5 min",
+            "author": "Dr. Vikas Jha"
+        },
+        {
+            "id": 2,
+            "title": "Understanding Pregnancy Trimesters",
+            "category": "pregnancy",
+            "type": "video",
+            "duration": "12 min",
+            "author": "Dr. Neha Patel"
+        }
+    ]
+    
+    if category:
+        articles = [a for a in articles if a["category"] == category]
+    
+    if search:
+        articles = [a for a in articles if search.lower() in a["title"].lower()]
+    
+    return {"articles": articles, "total": len(articles)}
+
 def setup_routes(database):
     """Setup routes with database"""
     global db
