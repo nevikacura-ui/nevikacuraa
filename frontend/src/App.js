@@ -53,6 +53,8 @@ import SeniorCare from '@/pages/SeniorCare';
 import SmartReminders from '@/pages/SmartReminders';
 // Patient Portal
 import PatientPortal from '@/pages/PatientPortal';
+// Enhancement Features Page
+import EnhancementFeatures from '@/pages/EnhancementFeatures';
 // Payment Pages
 import { PaymentSuccess, PaymentCancel } from '@/components/PaymentCheckout';
 import PaymentHistory from '@/pages/PaymentHistory';
