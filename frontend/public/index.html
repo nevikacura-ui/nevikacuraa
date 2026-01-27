@@ -83,21 +83,6 @@
         </noscript>
         <div id="root"></div>
         
-        <!-- Hide splash screen after app loads -->
-        <script>
-            window.addEventListener('load', function() {
-                setTimeout(function() {
-                    var splash = document.getElementById('splash-screen');
-                    if (splash) {
-                        splash.classList.add('hidden');
-                        setTimeout(function() {
-                            splash.style.display = 'none';
-                        }, 300);
-                    }
-                }, 800);
-            });
-        </script>
-        
         <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
