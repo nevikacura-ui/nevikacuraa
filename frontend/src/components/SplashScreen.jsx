@@ -383,7 +383,7 @@ const SplashScreen = ({ onComplete, user }) => {
         
         {/* Caption */}
         <p className="text-xl text-white font-medium mb-8 drop-shadow-sm">
-          Your own <span className="text-teal-100 font-bold">all-in-one</span> healthcare app
+          All your care. <span className="text-teal-100 font-bold">One app.</span>
         </p>
         
         {/* Action Buttons */}
