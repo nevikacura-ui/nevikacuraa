@@ -403,6 +403,52 @@ Location: {map_link}
         except Exception as e:
             logger.error(f"Failed to send emergency SMS: {e}")
     
+    # Send email confirmation if patient has email
+    if send_email_notification and data.patient_email:
+        try:
+            map_link = get_clinic_map_link(data.clinic)
+            patient_email_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 10px 10px 0 0;">
+                    <h1 style="color: white; margin: 0;">🚨 Emergency Appointment Confirmed</h1>
+                </div>
+                <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+                    <p style="font-size: 18px;">Hello <strong>{data.patient_name}</strong>,</p>
+                    <p>Your emergency appointment has been registered at <strong>DiaGyn Healthcare</strong>.</p>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ef4444;">
+                        <h3 style="color: #ef4444; margin-top: 0;">Emergency Details</h3>
+                        <p><strong>Type:</strong> {data.emergency_type or 'General Emergency'}</p>
+                        <p><strong>Doctor:</strong> {data.doctor}</p>
+                        <p><strong>Clinic:</strong> {data.clinic}</p>
+                        <p><strong>Date:</strong> {appointment_date}</p>
+                        <p><strong>Time:</strong> {now_time}</p>
+                    </div>
+                    
+                    <div style="background: #fee2e2; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <p style="margin: 0; color: #991b1b;"><strong>⚡ Priority Status:</strong> You will be attended on priority basis.</p>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="{map_link}" style="display: inline-block; background: #ef4444; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">📍 Get Directions</a>
+                    </div>
+                    
+                    <p style="color: #64748b; font-size: 14px; margin-top: 20px; text-align: center;">
+                        For queries: Call 9403890429<br/>
+                        - DiaGyn Healthcare
+                    </p>
+                </div>
+            </div>
+            """
+            await send_email_notification(
+                data.patient_email,
+                f"🚨 Emergency Appointment Confirmed - {data.doctor} | DiaGyn Healthcare",
+                patient_email_html
+            )
+            logger.info(f"Emergency confirmation email sent to {data.patient_email}")
+        except Exception as e:
+            logger.error(f"Failed to send emergency confirmation email: {e}")
+    
     # Notify clinic staff
     if send_sms_notification:
         try:
