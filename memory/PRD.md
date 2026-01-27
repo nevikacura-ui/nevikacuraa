@@ -21,11 +21,11 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 #### Completed Features
 1. **Splash Screen Redesign - COMPLETE** ✅
    - **New Design:**
-     - Beautiful multi-color gradient background (teal → cyan → blue → indigo → purple)
-     - Circular glassy logo container with glow effect
-     - "Nevika Cura" brand name text below logo
+     - Light teal gradient background (teal-300 → teal-500 → cyan-500)
+     - Oval/pill-shaped white logo container positioned higher on screen
+     - Pastel-colored service icons (blue, orange, purple backgrounds with matching icon colors)
      - Animated background orbs with blur effects
-     - Frosted glass icon buttons for services
+     - Clean, lighter aesthetic per user request
    - **Files Modified:**
      - `/app/frontend/src/components/SplashScreen.jsx`
 
@@ -43,6 +43,18 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
      - `/app/backend/routes/staff.py` - Multi-clinic query support
      - Database: staff collection - updated doctor records
    - **Verified:** Both Dr. Vikas and Dr. Neha can see appointments from ALL clinics with "All Clinics" filter
+
+3. **Clinic Color-Coding in Doctor Portal - COMPLETE** ✅
+   - **Feature:** Appointments now show visual color coding by clinic
+   - **Colors:**
+     - Pushpa Clinic: Teal left border + teal badge
+     - Amnion Clinic: Purple left border + purple badge
+   - **Implementation:**
+     - Added clinic-specific styling to appointment cards
+     - Border color indicates clinic at a glance
+     - Badge inside card confirms clinic name
+   - **Files Modified:**
+     - `/app/frontend/src/pages/StaffPortal.js` - Appointment card styling
 
 ### Session - January 26, 2026 (Part 9)
 
