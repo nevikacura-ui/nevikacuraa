@@ -615,6 +615,30 @@ const Proton = () => {
         </div>
       </div>
 
+      {/* Trust Badges Section - Based on reference screenshot */}
+      <div className="py-4 border-b border-slate-100 bg-white/50 backdrop-blur-sm" data-testid="proton-trust-badges">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="flex justify-between items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {[
+              { id: 'trusted-labs', icon: Shield, title: 'Trusted &', subtitle: 'Accredited Labs', gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50' },
+              { id: 'doctor-curated', icon: Stethoscope, title: 'Doctor', subtitle: 'Curated Packages', gradient: 'from-blue-600 to-blue-700', bg: 'bg-blue-50' },
+              { id: 'home-sample', icon: Clock, title: 'Home Sample', subtitle: 'Collection', gradient: 'from-pink-500 to-rose-500', bg: 'bg-pink-50' },
+              { id: 'fast-reports', icon: CheckCircle2, title: 'Accurate &', subtitle: 'Fast Reports', gradient: 'from-orange-500 to-amber-500', bg: 'bg-orange-50' }
+            ].map((badge) => (
+              <div key={badge.id} className="flex flex-col items-center text-center min-w-[80px] flex-1" data-testid={`proton-trust-${badge.id}`}>
+                <div className={`w-14 h-14 rounded-2xl ${badge.bg} flex items-center justify-center mb-2 shadow-sm`}>
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${badge.gradient} flex items-center justify-center`}>
+                    <badge.icon className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+                <p className="text-xs font-medium text-slate-700 leading-tight">{badge.title}</p>
+                <p className="text-xs font-medium text-slate-700 leading-tight">{badge.subtitle}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <main className="max-w-5xl mx-auto px-4 py-6">
         {/* STEP 1: Select Tests */}
         {currentStep === 1 && (
