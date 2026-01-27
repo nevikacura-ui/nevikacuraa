@@ -238,7 +238,7 @@ async def save_notification_prefs(prefs: NotificationPrefs, patient = Depends(ge
     """Save notification preferences"""
     patient_phone = patient.get("phone") or patient.get("sub")
     
-    if db:
+    if db is not None:
         await db.notification_preferences.update_one(
             {"patient_phone": patient_phone},
             {"$set": {**prefs.dict(), "patient_phone": patient_phone}},
@@ -254,7 +254,7 @@ async def create_payment_link(amount: float, description: str, patient = Depends
     link_id = str(uuid.uuid4())[:8]
     payment_link = f"https://nevika-health-6.preview.emergentagent.com/pay/{link_id}"
     
-    if db:
+    if db is not None:
         await db.payment_links.insert_one({
             "id": link_id,
             "amount": amount,
@@ -286,7 +286,7 @@ async def get_health_score(patient = Depends(get_patient_from_token)):
         "lastCheckIn": None
     }
     
-    if not db:
+    if db is None:
         return default_data
     
     data = await db.health_scores.find_one(
@@ -302,7 +302,7 @@ async def health_checkin(patient = Depends(get_patient_from_token)):
     patient_phone = patient.get("phone") or patient.get("sub")
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     
-    if db:
+    if db is not None:
         # Check if already checked in today
         existing = await db.health_scores.find_one({"patient_phone": patient_phone})
         
