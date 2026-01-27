@@ -497,8 +497,12 @@ async def staff_call_next_patient(clinic: str, staff = Depends(verify_staff)):
 async def staff_mark_complete(appointment_id: str, staff = Depends(verify_staff)):
     """
     Staff action: Mark patient consultation as complete
+    Sends WhatsApp confirmation to patient
     """
     now = datetime.now(timezone.utc).isoformat()
+    
+    # Get appointment details first for notification
+    appointment = await db.appointments.find_one({"id": appointment_id}, {"_id": 0})
     
     # Try appointments first
     result = await db.appointments.update_one(
@@ -512,6 +516,7 @@ async def staff_mark_complete(appointment_id: str, staff = Depends(verify_staff)
     
     if result.modified_count == 0:
         # Try walk-in queue
+        appointment = await db.patient_queue.find_one({"id": appointment_id}, {"_id": 0})
         result = await db.patient_queue.update_one(
             {"id": appointment_id},
             {"$set": {
@@ -522,6 +527,38 @@ async def staff_mark_complete(appointment_id: str, staff = Depends(verify_staff)
     
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    # Send WhatsApp completion notification
+    if send_whatsapp_notification and appointment:
+        try:
+            patient_phone = appointment.get("patient_phone") or appointment.get("phone")
+            patient_name = appointment.get("patient_name") or appointment.get("details", {}).get("name", "Patient")
+            doctor_name = appointment.get("doctor", "Doctor")
+            clinic_name = appointment.get("clinic", "Clinic")
+            
+            if patient_phone:
+                completion_message = f"""✅ *Consultation Complete*
+
+Dear *{patient_name}*,
+
+Thank you for visiting Nevika Cura!
+
+Your consultation with *{doctor_name}* at *{clinic_name}* has been completed.
+
+📋 *Next Steps:*
+• Check your prescription in the app
+• Order medicines from Orange Pharmacy
+• Book follow-up if advised
+
+Need help? Contact us via WhatsApp.
+
+*Get well soon!* 💚
+- Nevika Cura Team"""
+                
+                await send_whatsapp_notification(patient_phone, completion_message)
+                logger.info(f"WhatsApp completion sent to {patient_phone}")
+        except Exception as e:
+            logger.error(f"Failed to send WhatsApp completion: {e}")
     
     return {
         "success": True,
