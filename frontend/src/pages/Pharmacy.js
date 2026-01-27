@@ -954,42 +954,72 @@ const Pharmacy = () => {
               </div>
             </Card>
 
-            {/* Category Cards - Visual Browse */}
+            {/* Category Cards - Health-based Categories with Images */}
             <div className="space-y-3">
               <h3 className="font-semibold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 <Package className="w-5 h-5 text-orange-500" />
-                Browse by Category
+                Shop by Category
               </h3>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
                 <CategoryCard 
-                  category="tablets" 
-                  isActive={selectedForm === 'Tablet'} 
-                  onClick={() => setSelectedForm(selectedForm === 'Tablet' ? '' : 'Tablet')} 
+                  category="cough-cold" 
+                  isActive={searchTerm === 'cold'} 
+                  onClick={() => setSearchTerm(searchTerm === 'cold' ? '' : 'cold')} 
                 />
                 <CategoryCard 
-                  category="capsules" 
-                  isActive={selectedForm === 'Capsule'} 
-                  onClick={() => setSelectedForm(selectedForm === 'Capsule' ? '' : 'Capsule')} 
+                  category="stomach-care" 
+                  isActive={searchTerm === 'digestive'} 
+                  onClick={() => setSearchTerm(searchTerm === 'digestive' ? '' : 'digestive')} 
                 />
                 <CategoryCard 
-                  category="syrups" 
-                  isActive={selectedForm === 'Syrup'} 
-                  onClick={() => setSelectedForm(selectedForm === 'Syrup' ? '' : 'Syrup')} 
+                  category="pain-relief" 
+                  isActive={searchTerm === 'pain'} 
+                  onClick={() => setSearchTerm(searchTerm === 'pain' ? '' : 'pain')} 
                 />
                 <CategoryCard 
-                  category="injections" 
-                  isActive={selectedForm === 'Injection'} 
-                  onClick={() => setSelectedForm(selectedForm === 'Injection' ? '' : 'Injection')} 
+                  category="antibiotics" 
+                  isActive={searchTerm === 'antibiotic'} 
+                  onClick={() => setSearchTerm(searchTerm === 'antibiotic' ? '' : 'antibiotic')} 
                 />
                 <CategoryCard 
-                  category="creams" 
-                  isActive={selectedForm === 'Cream' || selectedForm === 'Ointment'} 
-                  onClick={() => setSelectedForm(selectedForm === 'Cream' ? '' : 'Cream')} 
+                  category="diabetes" 
+                  isActive={searchTerm === 'diabetes'} 
+                  onClick={() => setSearchTerm(searchTerm === 'diabetes' ? '' : 'diabetes')} 
                 />
                 <CategoryCard 
-                  category="drops" 
-                  isActive={selectedForm === 'Drops'} 
-                  onClick={() => setSelectedForm(selectedForm === 'Drops' ? '' : 'Drops')} 
+                  category="heart" 
+                  isActive={searchTerm === 'cardiac'} 
+                  onClick={() => setSearchTerm(searchTerm === 'cardiac' ? '' : 'cardiac')} 
+                />
+                <CategoryCard 
+                  category="derma" 
+                  isActive={searchTerm === 'skin'} 
+                  onClick={() => setSearchTerm(searchTerm === 'skin' ? '' : 'skin')} 
+                />
+                <CategoryCard 
+                  category="respiratory" 
+                  isActive={searchTerm === 'respiratory'} 
+                  onClick={() => setSearchTerm(searchTerm === 'respiratory' ? '' : 'respiratory')} 
+                />
+                <CategoryCard 
+                  category="eye-ear" 
+                  isActive={searchTerm === 'eye'} 
+                  onClick={() => setSearchTerm(searchTerm === 'eye' ? '' : 'eye')} 
+                />
+                <CategoryCard 
+                  category="vitamins" 
+                  isActive={searchTerm === 'vitamin'} 
+                  onClick={() => setSearchTerm(searchTerm === 'vitamin' ? '' : 'vitamin')} 
+                />
+                <CategoryCard 
+                  category="vaccines" 
+                  isActive={searchTerm === 'vaccine'} 
+                  onClick={() => setSearchTerm(searchTerm === 'vaccine' ? '' : 'vaccine')} 
+                />
+                <CategoryCard 
+                  category="nebuliser" 
+                  isActive={searchTerm === 'device'} 
+                  onClick={() => setSearchTerm(searchTerm === 'device' ? '' : 'device')} 
                 />
               </div>
             </div>
