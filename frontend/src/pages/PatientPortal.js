@@ -188,7 +188,7 @@ const PatientPortal = () => {
     { id: 'track', icon: Package, label: 'Track Orders', color: 'blue' },
     { id: 'payments', icon: CreditCard, label: 'Payment History', color: 'green', link: '/payment/history' },
     { id: 'loyalty', icon: Gift, label: 'Loyalty Points', color: 'pink' },
-    { id: 'notifications', icon: Settings, label: 'Notifications', color: 'amber', isNew: true },
+    { id: 'notifications', icon: Bell, label: 'Notifications', color: 'amber', isNew: true },
     { id: 'settings', icon: Settings, label: 'Settings', color: 'slate', link: '/settings' },
   ];
   
