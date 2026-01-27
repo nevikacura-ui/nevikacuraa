@@ -763,12 +763,17 @@ const Proton = () => {
                   <button
                     key={item.id}
                     onClick={() => {
-                      // Add all tests from this category
-                      item.tests.forEach(test => {
-                        if (!selectedTests.includes(test)) {
-                          toggleTest(test);
-                        }
+                      // Add all tests from this category at once
+                      setSelectedTests(prev => {
+                        const newTests = [...prev];
+                        item.tests.forEach(test => {
+                          if (!newTests.includes(test)) {
+                            newTests.push(test);
+                          }
+                        });
+                        return newTests;
                       });
+                      toast.success(`Added ${item.tests.length} tests from ${item.name}`);
                     }}
                     className="flex-shrink-0 flex flex-col items-center w-28 group"
                     data-testid={`womens-care-${item.id}`}
