@@ -64,15 +64,19 @@ const MedicationInteractionChecker = () => {
     },
   ];
 
-  useEffect(() => {
-    if (searchQuery.length >= 2) {
+  const searchMedicines = (query) => {
+    if (query.length >= 2) {
       const results = medicineDatabase.filter(med => 
-        med.name.toLowerCase().includes(searchQuery.toLowerCase())
+        med.name.toLowerCase().includes(query.toLowerCase())
       );
       setSearchResults(results);
     } else {
       setSearchResults([]);
     }
+  };
+
+  useEffect(() => {
+    searchMedicines(searchQuery);
   }, [searchQuery]);
 
   const addMedication = (med) => {
