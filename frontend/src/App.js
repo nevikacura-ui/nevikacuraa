@@ -58,6 +58,7 @@ import { PaymentSuccess, PaymentCancel } from '@/components/PaymentCheckout';
 import PaymentHistory from '@/pages/PaymentHistory';
 // Splash Screen
 import SplashScreen from '@/components/SplashScreen';
+import LoadingScreen from '@/components/LoadingScreen';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ViewModeProvider } from '@/context/ViewModeContext';
 import { LanguageProvider } from '@/context/LanguageContext';
@@ -68,22 +69,26 @@ import './App.css';
 // Wrapper component to access auth context
 function AppContent() {
   const { user } = useAuth();
-  const [showSplash, setShowSplash] = useState(true);
+  const [showLoading, setShowLoading] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
   
-  // Check if splash should be shown
+  // Check if screens should be shown
   useEffect(() => {
-    // Skip splash if user is logged in or has seen it before
     const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
     const patientToken = localStorage.getItem('patientToken');
     const staffToken = localStorage.getItem('staffToken');
-    
-    // Also skip splash on admin/staff pages when logged in
     const isStaffPage = window.location.pathname.includes('/admin') || window.location.pathname.includes('/staff');
     
     if (hasSeenSplash || user || patientToken || (staffToken && isStaffPage)) {
+      setShowLoading(false);
       setShowSplash(false);
     }
   }, [user]);
+  
+  const handleLoadingComplete = () => {
+    setShowLoading(false);
+    setShowSplash(true);
+  };
   
   const handleSplashComplete = () => {
     sessionStorage.setItem('hasSeenSplash', 'true');
@@ -92,7 +97,12 @@ function AppContent() {
   
   return (
     <>
-      {/* Single Splash Screen */}
+      {/* Loading Screen (White with animated tagline) */}
+      {showLoading && (
+        <LoadingScreen onComplete={handleLoadingComplete} minDuration={2500} />
+      )}
+      
+      {/* Splash Screen (Teal gradient with icons) */}
       {showSplash && (
         <SplashScreen onComplete={handleSplashComplete} user={user} />
       )}

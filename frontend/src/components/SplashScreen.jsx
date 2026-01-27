@@ -352,8 +352,8 @@ const SplashScreen = ({ onComplete, user }) => {
               key={label} 
               className="flex flex-col items-center gap-2"
               style={{
-                animation: 'iconFade 2.5s ease-in-out infinite',
-                animationDelay: `${idx * 0.3}s`
+                animation: 'iconFade 1.5s ease-in-out infinite',
+                animationDelay: `${idx * 0.2}s`
               }}
             >
               <div className={`${bgColor} rounded-2xl flex items-center justify-center shadow-lg border border-white/40 w-[72px] h-[72px]`}>
@@ -364,12 +364,12 @@ const SplashScreen = ({ onComplete, user }) => {
           ))}
         </div>
         
-        {/* Inline CSS for icon fading animation */}
+        {/* Inline CSS for icon fading animation - faster and more visible */}
         <style>{`
           @keyframes iconFade {
-            0% { opacity: 0.3; transform: scale(0.95); }
-            50% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0.3; transform: scale(0.95); }
+            0% { opacity: 0.2; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.2; transform: scale(0.9); }
           }
         `}</style>
         
