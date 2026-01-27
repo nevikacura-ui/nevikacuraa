@@ -592,29 +592,24 @@ const Home = () => {
           <QuickActions />
         </div>
 
-        {/* NEW: Trust Badges Section */}
+        {/* Trust Badges Section */}
         <div className="mb-6 -mx-4 sm:-mx-6 lg:-mx-8">
           <TrustBadges />
         </div>
 
-        {/* NEW: Service Tiles - Main Services Grid */}
+        {/* Service Tiles - Main Services Grid (Existing Services Only) */}
         <ServiceTiles />
 
-        {/* NEW: Quick Action Cards - Call, WhatsApp, Upload, Packages */}
+        {/* Quick Action Cards - Call, WhatsApp, Upload, Packages */}
         <QuickActionCards />
 
-        {/* NEW: Online Consultation Section with Symptom Chips */}
-        <div className="mb-6">
-          <OnlineConsultSection />
-        </div>
-
-        {/* NEW: Health Services Cards - Vaccines, Insurance, Insights */}
+        {/* Health Services Cards - Vaccines, Insurance, Insights */}
         <HealthServicesCards />
 
-        {/* NEW: Women's Care Section (Evara) */}
+        {/* Women's Care Section (Evara) */}
         <WomensCareSection />
 
-        {/* NEW: Shop by Health Concerns Grid */}
+        {/* Shop by Health Concerns Grid */}
         <HealthConcernsGrid />
 
         {/* Smart Home Feed - For logged in users */}
