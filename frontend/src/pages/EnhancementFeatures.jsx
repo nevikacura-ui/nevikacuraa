@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Trophy, BookOpen, Bell, Pill, Heart, Phone, FileText, 
-  Activity, Users, Shield, Star, Zap, Calendar, Gift, Settings
+  Activity, Users, Shield, Star, Zap, Calendar, Gift, Settings, Stethoscope
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
