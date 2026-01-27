@@ -727,6 +727,69 @@ const Proton = () => {
               ))}
             </div>
 
+            {/* Holistic Women Care Section - Evara */}
+            <div className="py-4 bg-gradient-to-br from-purple-50/50 via-pink-50/30 to-white rounded-2xl px-4 -mx-4" data-testid="womens-care-proton-section">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">👩‍⚕️</span>
+                  <h2 className="text-lg font-bold text-slate-800">Holistic Women Care</h2>
+                  <span className="px-2 py-0.5 bg-purple-500 text-white text-[10px] font-bold rounded-full flex items-center gap-1">
+                    ✨ Evara
+                  </span>
+                </div>
+                <button 
+                  onClick={() => navigate('/evara')}
+                  className="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
+                >
+                  View All <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Horizontal Scroll Grid */}
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4">
+                {[
+                  { id: 'pregnancy-tests', name: 'Pregnancy Tests', image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop', tests: ['Beta HCG', 'Pregnancy Test', 'Dual Marker', 'Quadruple Marker', 'NIPT'] },
+                  { id: 'fertility', name: 'Fertility Profile', image: 'https://images.unsplash.com/photo-1544126592-807ade215a0b?w=200&h=200&fit=crop', tests: ['AMH', 'FSH', 'LH', 'Prolactin', 'Estradiol', 'Progesterone'] },
+                  { id: 'pcos', name: 'PCOS Panel', image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop', tests: ['Free Testosterone', 'DHEAS', 'LH/FSH Ratio', 'Fasting Insulin', 'HbA1c'] },
+                  { id: 'thyroid', name: 'Thyroid Profile', image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=200&h=200&fit=crop', tests: ['TSH', 'T3', 'T4', 'Free T3', 'Free T4', 'Anti-TPO'] },
+                  { id: 'anemia', name: 'Anemia Panel', image: 'https://images.unsplash.com/photo-1615461066841-6116e61058f4?w=200&h=200&fit=crop', tests: ['CBC', 'Iron Studies', 'Ferritin', 'Vitamin B12', 'Folate'] },
+                  { id: 'postpartum', name: 'Postpartum Care', image: 'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=200&h=200&fit=crop', tests: ['CBC', 'Thyroid Panel', 'Vitamin D', 'Calcium', 'Iron Profile'] },
+                  { id: 'menopause', name: 'Menopause Panel', image: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&h=200&fit=crop', tests: ['FSH', 'LH', 'Estradiol', 'Bone Profile', 'Lipid Panel', 'Vitamin D'] },
+                  { id: 'boh', name: 'Bad Obstetric History', image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=200&h=200&fit=crop', tests: ['APLA Panel', 'Lupus Anticoagulant', 'Protein C', 'Protein S', 'Factor V Leiden'] },
+                  { id: 'prenatal', name: 'ANC Profile', image: 'https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?w=200&h=200&fit=crop', tests: ['CBC', 'Blood Group', 'HIV', 'HBsAg', 'VDRL', 'Urine R/M'] },
+                  { id: 'breast', name: 'Breast Health', image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=200&h=200&fit=crop', tests: ['CA 15-3', 'CA 125', 'Mammogram', 'Breast Ultrasound'] }
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      // Add all tests from this category
+                      item.tests.forEach(test => {
+                        if (!selectedTests.includes(test)) {
+                          toggleTest(test);
+                        }
+                      });
+                    }}
+                    className="flex-shrink-0 flex flex-col items-center w-28 group"
+                    data-testid={`womens-care-${item.id}`}
+                  >
+                    {/* Image Container */}
+                    <div className="w-24 h-24 rounded-2xl overflow-hidden mb-2 border-2 border-purple-100 shadow-sm group-hover:border-purple-300 group-hover:shadow-md transition-all duration-300">
+                      <img 
+                        src={item.image} 
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                    </div>
+                    
+                    {/* Name */}
+                    <span className="text-xs font-medium text-slate-700 text-center leading-tight line-clamp-2">{item.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Pathology Tab */}
             {activeTab === 'pathology' && (
               <div className="space-y-6">
