@@ -26,6 +26,15 @@ import {
   howItWorksSteps, 
   clinicLocations
 } from '@/data/homeData';
+import {
+  TrustBadges,
+  ServiceTiles,
+  HealthConcernsGrid,
+  QuickActionCards,
+  WomensCareSection,
+  OnlineConsultSection,
+  HealthServicesCards
+} from '@/components/home';
 
 // Icon mapping for data-driven components
 const iconMap = {
