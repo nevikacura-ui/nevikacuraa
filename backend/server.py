@@ -4054,7 +4054,7 @@ try:
     from routes.live_queue import router as live_queue_router, set_db as set_live_queue_db, set_jwt_config as set_live_queue_jwt, set_notification_functions as set_live_queue_notifications
     set_live_queue_db(db)
     set_live_queue_jwt(JWT_SECRET)
-    set_live_queue_notifications(send_push_notification, send_sms_notification)
+    set_live_queue_notifications(send_push_notification, send_sms_notification, send_whatsapp_notification)
     app.include_router(live_queue_router, prefix="/api")
     logger.info("Live Queue router loaded")
 except Exception as e:
