@@ -19,7 +19,11 @@ import {
   FamilyHub,
   LoyaltyPoints,
   SymptomChecker,
-  NotificationPreferences
+  NotificationPreferences,
+  SmartScheduleOptimizer,
+  PredictiveHealthInsights,
+  AIAppointmentSuggestions,
+  AutomatedHealthReports
 } from '@/components/enhancements';
 
 const EnhancementFeatures = () => {
