@@ -228,9 +228,6 @@ const CategoryCard = ({ category, isActive, onClick }) => {
     </button>
   );
 };
-    </button>
-  );
-};
 
 // ============================================
 // STEP PROGRESS COMPONENT
