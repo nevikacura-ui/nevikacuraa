@@ -28,7 +28,6 @@ import {
 } from '@/data/homeData';
 import {
   TrustBadges,
-  ServiceTiles,
   QuickActionCards
 } from '@/components/home';
 
