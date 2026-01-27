@@ -42,6 +42,13 @@ class AppointmentNotificationRequest(BaseModel):
     time: str
 
 
+class AppointmentCompletionRequest(BaseModel):
+    phone: str
+    patient_name: str
+    doctor_name: str
+    clinic_name: str
+
+
 class PharmacyOrderNotificationRequest(BaseModel):
     phone: str
     patient_name: str
@@ -58,36 +65,17 @@ class LabReportNotificationRequest(BaseModel):
 
 
 # ==========================================
-# Connection Management Endpoints
+# Status Endpoint
 # ==========================================
 
-@router.post("/initialize")
-async def init_whatsapp():
-    """
-    Initialize WhatsApp connection
-    Returns QR code requirement status
-    """
-    result = await initialize_whatsapp()
-    return result
-
-
-@router.get("/qr-code")
-async def get_qr_code():
-    """
-    Get QR code for WhatsApp pairing
-    Scan this with your WhatsApp mobile app
-    """
-    result = await get_whatsapp_qr()
-    return result
-
-
 @router.get("/status")
-async def get_connection_status():
-    """
-    Check if WhatsApp is connected
-    """
-    result = await check_whatsapp_connection()
-    return result
+async def get_whatsapp_status():
+    """Check WhatsApp/Twilio configuration status"""
+    return {
+        "configured": send_whatsapp is not None,
+        "provider": "Twilio WhatsApp API",
+        "status": "ready" if send_whatsapp else "not_configured"
+    }
 
 
 # ==========================================
@@ -95,23 +83,25 @@ async def get_connection_status():
 # ==========================================
 
 @router.post("/send")
-async def send_message(request: WhatsAppMessageRequest):
-    """
-    Send a custom WhatsApp message
-    """
-    result = await send_whatsapp_message(request.phone, request.message)
+async def send_custom_message(request: WhatsAppMessageRequest):
+    """Send a custom WhatsApp message"""
+    if not send_whatsapp:
+        raise HTTPException(status_code=503, detail="WhatsApp not configured")
     
-    if result.get("status") == "error":
-        raise HTTPException(status_code=500, detail=result.get("message"))
+    result = await send_whatsapp(request.phone, request.message)
+    
+    if result.get("type") == "error":
+        raise HTTPException(status_code=500, detail=result.get("error"))
     
     return result
 
 
 @router.post("/send/appointment-confirmation")
 async def send_appointment_confirmation(request: AppointmentNotificationRequest):
-    """
-    Send appointment confirmation via WhatsApp
-    """
+    """Send appointment confirmation via WhatsApp"""
+    if not send_whatsapp:
+        raise HTTPException(status_code=503, detail="WhatsApp not configured")
+    
     message = get_appointment_confirmation_message(
         patient_name=request.patient_name,
         doctor_name=request.doctor_name,
@@ -120,10 +110,10 @@ async def send_appointment_confirmation(request: AppointmentNotificationRequest)
         time=request.time
     )
     
-    result = await send_whatsapp_message(request.phone, message)
+    result = await send_whatsapp(request.phone, message)
     
-    if result.get("status") == "error":
-        raise HTTPException(status_code=500, detail=result.get("message"))
+    if result.get("type") == "error":
+        raise HTTPException(status_code=500, detail=result.get("error"))
     
     return {
         **result,
@@ -133,9 +123,10 @@ async def send_appointment_confirmation(request: AppointmentNotificationRequest)
 
 @router.post("/send/appointment-reminder")
 async def send_appointment_reminder(request: AppointmentNotificationRequest):
-    """
-    Send appointment reminder via WhatsApp
-    """
+    """Send appointment reminder via WhatsApp"""
+    if not send_whatsapp:
+        raise HTTPException(status_code=503, detail="WhatsApp not configured")
+    
     message = get_appointment_reminder_message(
         patient_name=request.patient_name,
         doctor_name=request.doctor_name,
@@ -144,10 +135,10 @@ async def send_appointment_reminder(request: AppointmentNotificationRequest):
         time=request.time
     )
     
-    result = await send_whatsapp_message(request.phone, message)
+    result = await send_whatsapp(request.phone, message)
     
-    if result.get("status") == "error":
-        raise HTTPException(status_code=500, detail=result.get("message"))
+    if result.get("type") == "error":
+        raise HTTPException(status_code=500, detail=result.get("error"))
     
     return {
         **result,
@@ -155,11 +146,35 @@ async def send_appointment_reminder(request: AppointmentNotificationRequest):
     }
 
 
+@router.post("/send/appointment-completion")
+async def send_appointment_completion(request: AppointmentCompletionRequest):
+    """Send appointment completion notification via WhatsApp"""
+    if not send_whatsapp:
+        raise HTTPException(status_code=503, detail="WhatsApp not configured")
+    
+    message = get_appointment_completion_message(
+        patient_name=request.patient_name,
+        doctor_name=request.doctor_name,
+        clinic_name=request.clinic_name
+    )
+    
+    result = await send_whatsapp(request.phone, message)
+    
+    if result.get("type") == "error":
+        raise HTTPException(status_code=500, detail=result.get("error"))
+    
+    return {
+        **result,
+        "notification_type": "appointment_completion"
+    }
+
+
 @router.post("/send/pharmacy-order")
 async def send_pharmacy_order_notification(request: PharmacyOrderNotificationRequest):
-    """
-    Send pharmacy order update via WhatsApp
-    """
+    """Send pharmacy order update via WhatsApp"""
+    if not send_whatsapp:
+        raise HTTPException(status_code=503, detail="WhatsApp not configured")
+    
     message = get_pharmacy_order_message(
         patient_name=request.patient_name,
         order_id=request.order_id,
@@ -167,10 +182,10 @@ async def send_pharmacy_order_notification(request: PharmacyOrderNotificationReq
         status=request.status
     )
     
-    result = await send_whatsapp_message(request.phone, message)
+    result = await send_whatsapp(request.phone, message)
     
-    if result.get("status") == "error":
-        raise HTTPException(status_code=500, detail=result.get("message"))
+    if result.get("type") == "error":
+        raise HTTPException(status_code=500, detail=result.get("error"))
     
     return {
         **result,
@@ -180,19 +195,20 @@ async def send_pharmacy_order_notification(request: PharmacyOrderNotificationReq
 
 @router.post("/send/lab-report")
 async def send_lab_report_notification(request: LabReportNotificationRequest):
-    """
-    Send lab report ready notification via WhatsApp
-    """
+    """Send lab report ready notification via WhatsApp"""
+    if not send_whatsapp:
+        raise HTTPException(status_code=503, detail="WhatsApp not configured")
+    
     message = get_lab_report_ready_message(
         patient_name=request.patient_name,
         test_name=request.test_name,
         order_id=request.order_id
     )
     
-    result = await send_whatsapp_message(request.phone, message)
+    result = await send_whatsapp(request.phone, message)
     
-    if result.get("status") == "error":
-        raise HTTPException(status_code=500, detail=result.get("message"))
+    if result.get("type") == "error":
+        raise HTTPException(status_code=500, detail=result.get("error"))
     
     return {
         **result,
@@ -201,44 +217,45 @@ async def send_lab_report_notification(request: LabReportNotificationRequest):
 
 
 # ==========================================
-# Utility Endpoints
+# Templates Info Endpoint
 # ==========================================
 
 @router.get("/templates")
 async def get_message_templates():
-    """
-    Get available message templates and their parameters
-    """
+    """Get available WhatsApp message templates"""
     return {
         "templates": [
             {
                 "name": "appointment_confirmation",
-                "description": "Send when appointment is booked",
+                "description": "Sent when appointment is booked",
                 "required_params": ["patient_name", "doctor_name", "clinic_name", "date", "time"],
                 "endpoint": "/api/whatsapp/send/appointment-confirmation"
             },
             {
                 "name": "appointment_reminder",
-                "description": "Send day before appointment",
+                "description": "Sent day before appointment",
                 "required_params": ["patient_name", "doctor_name", "clinic_name", "date", "time"],
                 "endpoint": "/api/whatsapp/send/appointment-reminder"
             },
             {
+                "name": "appointment_completion",
+                "description": "Sent when consultation is complete",
+                "required_params": ["patient_name", "doctor_name", "clinic_name"],
+                "endpoint": "/api/whatsapp/send/appointment-completion"
+            },
+            {
                 "name": "pharmacy_order",
-                "description": "Send pharmacy order updates",
+                "description": "Sent for pharmacy order updates",
                 "required_params": ["patient_name", "order_id", "medicines", "status"],
                 "endpoint": "/api/whatsapp/send/pharmacy-order"
             },
             {
                 "name": "lab_report",
-                "description": "Send when lab report is ready",
+                "description": "Sent when lab report is ready",
                 "required_params": ["patient_name", "test_name", "order_id"],
                 "endpoint": "/api/whatsapp/send/lab-report"
             }
         ],
-        "info": {
-            "service": "Baileys WhatsApp Integration",
-            "cost": "FREE (no per-message charges)",
-            "note": "Requires QR code scan to connect your WhatsApp Business number"
-        }
+        "provider": "Twilio WhatsApp API",
+        "note": "Professional transactional messages sent directly via Twilio"
     }
