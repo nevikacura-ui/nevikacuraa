@@ -123,6 +123,47 @@ const EnhancementFeatures = () => {
       color: 'from-gray-500 to-slate-500',
       component: NotificationPreferences
     },
+    // Phase 2 - AI Features
+    {
+      id: 'schedule-optimizer',
+      name: 'Smart Scheduler',
+      description: 'AI finds optimal appointment times',
+      icon: Zap,
+      color: 'from-indigo-500 to-purple-500',
+      component: SmartScheduleOptimizer,
+      isNew: true,
+      isAI: true
+    },
+    {
+      id: 'health-insights',
+      name: 'Health Insights',
+      description: 'AI-powered risk predictions',
+      icon: Activity,
+      color: 'from-emerald-500 to-teal-500',
+      component: PredictiveHealthInsights,
+      isNew: true,
+      isAI: true
+    },
+    {
+      id: 'find-doctor',
+      name: 'Find Doctor',
+      description: 'AI recommends specialists',
+      icon: Stethoscope,
+      color: 'from-rose-500 to-pink-500',
+      component: AIAppointmentSuggestions,
+      isNew: true,
+      isAI: true
+    },
+    {
+      id: 'health-report',
+      name: 'Health Report',
+      description: 'AI-generated health summary',
+      icon: FileText,
+      color: 'from-blue-500 to-cyan-500',
+      component: AutomatedHealthReports,
+      isNew: true,
+      isAI: true
+    },
   ];
 
   const renderFeatureGrid = () => (
