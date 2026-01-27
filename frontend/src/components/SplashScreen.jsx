@@ -305,11 +305,12 @@ const SplashScreen = ({ onComplete, user }) => {
     setShowAuth(true);
   };
   
-  // Icons with pastel colors
+  // Icons with pastel colors - each corresponds to a word
   const icons = [
-    { Icon: Calendar, bgColor: 'bg-blue-200/80', iconColor: 'text-blue-600', label: 'Appointments', animDelay: '0s' },
-    { Icon: Pill, bgColor: 'bg-orange-200/80', iconColor: 'text-orange-600', label: 'Pharmacy', animDelay: '0.3s' },
-    { Icon: TestTube, bgColor: 'bg-purple-200/80', iconColor: 'text-purple-600', label: 'Lab Tests', animDelay: '0.6s' },
+    { Icon: Calendar, bgColor: 'bg-blue-200/80', iconColor: 'text-blue-600', label: 'Book.', animDelay: '0s' },
+    { Icon: Pill, bgColor: 'bg-orange-200/80', iconColor: 'text-orange-600', label: 'Order.', animDelay: '0.4s' },
+    { Icon: TestTube, bgColor: 'bg-purple-200/80', iconColor: 'text-purple-600', label: 'Test.', animDelay: '0.8s' },
+    { Icon: Stethoscope, bgColor: 'bg-teal-200/80', iconColor: 'text-teal-600', label: 'Care.', animDelay: '1.2s' },
   ];
   
   return (
@@ -364,27 +365,35 @@ const SplashScreen = ({ onComplete, user }) => {
           <div className="h-1 w-20 bg-gradient-to-r from-teal-200 to-cyan-200 mx-auto rounded-full mt-4"></div>
         </div>
         
-        {/* Animated Icons - Pastel colors */}
-        <div className="flex justify-center items-center gap-6 mb-6">
-          {icons.map(({ Icon, bgColor, iconColor, label, animDelay }, idx) => (
-            <div 
-              key={idx}
-              className="flex flex-col items-center gap-2 icon-disappear"
-              style={{ animationDelay: animDelay }}
-            >
-              <div className={`w-18 h-18 ${bgColor} backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 transform hover:scale-110 transition-transform border border-white/40`}
-                   style={{ width: '72px', height: '72px' }}>
-                <Icon className={`w-9 h-9 ${iconColor}`} />
+        {/* Loading Phase - Icons with sequential words "Book. Order. Test. Care." */}
+        {!animationComplete && (
+          <div className="flex justify-center items-center gap-4 mb-6">
+            {icons.map(({ Icon, bgColor, iconColor, label, animDelay }, idx) => (
+              <div 
+                key={idx}
+                className="flex flex-col items-center gap-2"
+                style={{ 
+                  animation: `fadeInUp 0.5s ease-out forwards`,
+                  animationDelay: animDelay,
+                  opacity: 0
+                }}
+              >
+                <div className={`${bgColor} backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 border border-white/40`}
+                     style={{ width: '64px', height: '64px' }}>
+                  <Icon className={`w-8 h-8 ${iconColor}`} />
+                </div>
+                <span className="text-lg font-bold text-white drop-shadow-lg">{label}</span>
               </div>
-              <span className="text-sm text-white font-medium drop-shadow-sm">{label}</span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
         
-        {/* Caption */}
-        <p className="text-lg text-white/90 font-medium mb-6 drop-shadow-sm">
-          All your care. <span className="text-teal-100 font-bold">One app.</span>
-        </p>
+        {/* After Loading - Show tagline */}
+        {animationComplete && (
+          <p className="text-lg text-white/90 font-medium mb-6 drop-shadow-sm animate-fade-in">
+            All your care. <span className="text-teal-100 font-bold">One app.</span>
+          </p>
+        )}
         
         {/* Action Buttons */}
         {animationComplete && (
