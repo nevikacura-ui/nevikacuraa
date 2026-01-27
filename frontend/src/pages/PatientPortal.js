@@ -18,6 +18,8 @@ import {
   CalendarPlus
 } from 'lucide-react';
 import { AddToCalendarButton } from '@/components/AddToCalendar';
+// Enhancement Components
+import { LoyaltyPoints, FamilyHub, PrescriptionWallet, QueueTracker, NotificationPreferences } from '@/components/enhancements';
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
 
@@ -174,16 +176,19 @@ const PatientPortal = () => {
     }
   };
   
-  // Menu Items - Updated as per request
+  // Menu Items - Updated with enhancement features
   const menuItems = [
     { id: 'profile', icon: User, label: 'Profile Details', color: 'teal' },
     { id: 'health', icon: Heart, label: 'My Health', color: 'red', link: '/health-dashboard' },
+    { id: 'family', icon: Users, label: 'Family Members', color: 'cyan', isNew: true },
     { id: 'appointments', icon: Calendar, label: 'My Appointments', color: 'indigo' },
+    { id: 'prescriptions', icon: FileText, label: 'Prescriptions', color: 'emerald', isNew: true },
     { id: 'tests', icon: FlaskConical, label: 'My Lab Tests', color: 'purple' },
     { id: 'orders', icon: Pill, label: 'My Orders', color: 'orange' },
     { id: 'track', icon: Package, label: 'Track Orders', color: 'blue' },
     { id: 'payments', icon: CreditCard, label: 'Payment History', color: 'green', link: '/payment/history' },
     { id: 'loyalty', icon: Gift, label: 'Loyalty Points', color: 'pink' },
+    { id: 'notifications', icon: Settings, label: 'Notifications', color: 'amber', isNew: true },
     { id: 'settings', icon: Settings, label: 'Settings', color: 'slate', link: '/settings' },
   ];
   
