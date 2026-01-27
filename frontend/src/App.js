@@ -92,12 +92,7 @@ function AppContent() {
   
   return (
     <>
-      {/* Loading Screen - Shows first with "Book. Order. Test. Care." */}
-      {showLoading && (
-        <LoadingScreen onComplete={handleLoadingComplete} />
-      )}
-      
-      {/* Splash Screen - Shows after loading with login options */}
+      {/* Single Splash Screen */}
       {showSplash && (
         <SplashScreen onComplete={handleSplashComplete} user={user} />
       )}
