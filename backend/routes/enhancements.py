@@ -146,7 +146,9 @@ async def add_family_member(member: FamilyMember, patient = Depends(get_patient_
     if db is not None:
         await db.family_members.insert_one(member_doc)
     
-    return {"success": True, "member": member_doc}
+    # Exclude MongoDB _id from response
+    response_doc = {k: v for k, v in member_doc.items() if k != "_id"}
+    return {"success": True, "member": response_doc}
 
 # ============ Loyalty Points (#11) ============
 @router.get("/loyalty")
