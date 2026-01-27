@@ -4243,6 +4243,14 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Phase 3 Features router: {e}")
 
+# WhatsApp Notification Routes (Free Twilio Alternative)
+try:
+    from routes.whatsapp import router as whatsapp_router
+    app.include_router(whatsapp_router, prefix="/api")
+    logger.info("WhatsApp router loaded")
+except Exception as e:
+    logger.warning(f"Could not load WhatsApp router: {e}")
+
 
 
 app.add_middleware(
