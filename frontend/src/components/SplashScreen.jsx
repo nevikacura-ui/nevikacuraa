@@ -381,8 +381,25 @@ const SplashScreen = ({ onComplete, user }) => {
           ))}
         </div>
         
+        {/* Sequential Fade-in Words */}
+        <div className="flex justify-center items-center gap-3 mb-4">
+          {['Book.', 'Order.', 'Test.', 'Care.'].map((word, idx) => (
+            <span 
+              key={word}
+              className="text-2xl font-bold text-white drop-shadow-lg animate-fade-in-word"
+              style={{ 
+                animationDelay: `${idx * 0.4}s`,
+                opacity: 0,
+                animation: `fadeInWord 0.5s ease-out forwards ${idx * 0.4}s`
+              }}
+            >
+              {word}
+            </span>
+          ))}
+        </div>
+        
         {/* Caption */}
-        <p className="text-xl text-white font-medium mb-8 drop-shadow-sm">
+        <p className="text-lg text-white/90 font-medium mb-6 drop-shadow-sm">
           All your care. <span className="text-teal-100 font-bold">One app.</span>
         </p>
         
