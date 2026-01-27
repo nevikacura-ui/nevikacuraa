@@ -32,7 +32,6 @@ import {
   HealthConcernsGrid,
   QuickActionCards,
   WomensCareSection,
-  OnlineConsultSection,
   HealthServicesCards
 } from '@/components/home';
 
