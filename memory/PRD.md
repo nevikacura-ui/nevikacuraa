@@ -56,6 +56,15 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
    - **Files Modified:**
      - `/app/frontend/src/pages/StaffPortal.js` - Appointment card styling
 
+4. **Enhanced Clinic Filter Toggle - COMPLETE** ✅
+   - **Feature:** Doctors can quickly filter appointments by clinic
+   - **Design:**
+     - Pill-style toggle buttons: "All Clinics" | "Pushpa" | "Amnion"
+     - Color dots (teal/purple) indicate clinic
+     - Selected state changes button background to clinic color
+   - **Files Modified:**
+     - `/app/frontend/src/pages/StaffPortal.js` - Filter UI in doctor view
+
 ### Session - January 26, 2026 (Part 9)
 
 #### Completed Features
