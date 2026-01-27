@@ -13,7 +13,7 @@ import { useAuth } from '@/context/AuthContext';
 import { 
   ArrowLeft, User, Phone, Calendar, Loader2, LogOut, Mail, Edit2, Save, X,
   FileText, Pill, FlaskConical, Receipt, History, Clock, Gift, Package,
-  CheckCircle2, XCircle, AlertCircle, Download, Eye, Search,
+  CheckCircle2, XCircle, AlertCircle, Download, Eye, Search, Users, Bell,
   Stethoscope, Building2, CreditCard, Shield, Star, ChevronRight, Settings, Heart,
   CalendarPlus
 } from 'lucide-react';
