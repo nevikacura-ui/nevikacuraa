@@ -7,7 +7,7 @@ import requests
 import os
 from datetime import datetime
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://nevika-wellness.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://nevika-health-6.preview.emergentagent.com')
 
 class TestOmniaEndpointsNoAuth:
     """Test Omnia endpoints without authentication - should return 401"""

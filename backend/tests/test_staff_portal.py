@@ -7,7 +7,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://nevika-wellness.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://nevika-health-6.preview.emergentagent.com')
 
 # Test credentials
 STAFF_USERNAME = "staff_pushpa"
