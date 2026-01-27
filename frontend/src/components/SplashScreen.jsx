@@ -405,41 +405,6 @@ const SplashScreen = ({ onComplete, user }) => {
           </div>
         </div>
       </div>
-              data-testid="biometric-login-btn"
-            >
-              {biometricLoading ? (
-                <Loader2 className="w-6 h-6 animate-spin" />
-              ) : (
-                <>
-                  <Fingerprint className="w-6 h-6 mr-2" />
-                  Login with Fingerprint
-                </>
-              )}
-            </Button>
-          )}
-          
-          {/* Login/Signup Button - Primary Action */}
-          <Button
-            onClick={handleLoginClick}
-            className="w-full h-14 bg-white text-teal-700 hover:bg-teal-50 rounded-2xl text-lg font-semibold shadow-xl shadow-black/20"
-            data-testid="splash-login-btn"
-          >
-            <User className="w-5 h-5 mr-2" />
-            {hasBiometricSetup ? 'Login with OTP' : 'Login / Sign Up'}
-          </Button>
-          
-          {/* Staff Login */}
-          <div className="pt-6 border-t border-white/20">
-            <button
-              onClick={handleStaffLogin}
-              className="flex items-center justify-center gap-2 text-sm text-white/70 hover:text-white transition-colors mx-auto"
-            >
-              <Building2 className="w-4 h-4" />
-              Staff Login
-            </button>
-          </div>
-        </div>
-      </div>
       
       {/* Auth Dialog */}
       <Dialog open={showAuth} onOpenChange={setShowAuth}>
