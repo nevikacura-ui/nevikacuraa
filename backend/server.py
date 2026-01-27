@@ -258,47 +258,55 @@ if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
         logger.warning(f"Failed to initialize Twilio client: {e}")
 
 async def send_whatsapp_notification(to_number: str, message: str):
-    """Send WhatsApp notification using Twilio or generate wa.me link as fallback"""
+    """Send WhatsApp notification using Twilio WhatsApp API"""
     if not twilio_client or not TWILIO_WHATSAPP_FROM:
-        logger.warning("Twilio not configured, generating wa.me link instead")
-        # Generate wa.me link for manual sending
-        encoded_msg = message.replace('\n', '%0A').replace(' ', '%20').replace('*', '')
-        wa_link = f"https://wa.me/{to_number}?text={encoded_msg}"
-        logger.info(f"WhatsApp link for {to_number}: {wa_link}")
-        return {"type": "link", "url": wa_link}
+        logger.warning("Twilio WhatsApp not configured")
+        return {"type": "error", "error": "Twilio WhatsApp not configured"}
     
     try:
+        # Clean and format phone number
+        clean_number = str(to_number).replace("+", "").replace(" ", "").replace("-", "")
+        
+        # Add India country code if not present
+        if len(clean_number) == 10:
+            clean_number = "91" + clean_number
+        elif not clean_number.startswith("91") and len(clean_number) == 10:
+            clean_number = "91" + clean_number
+        
         # Format numbers for WhatsApp
-        whatsapp_to = f"whatsapp:+{to_number}" if not to_number.startswith("whatsapp:") else to_number
+        whatsapp_to = f"whatsapp:+{clean_number}"
         whatsapp_from = TWILIO_WHATSAPP_FROM if TWILIO_WHATSAPP_FROM.startswith("whatsapp:") else f"whatsapp:{TWILIO_WHATSAPP_FROM}"
+        
+        # Remove WhatsApp formatting characters for Twilio (bold asterisks)
+        # Twilio WhatsApp supports *bold* text
+        clean_message = message
         
         result = await asyncio.to_thread(
             twilio_client.messages.create,
-            body=message,
+            body=clean_message,
             from_=whatsapp_from,
             to=whatsapp_to
         )
-        logger.info(f"WhatsApp message sent to {to_number}: SID={result.sid}")
-        return {"type": "sent", "sid": result.sid}
+        logger.info(f"WhatsApp message sent to {whatsapp_to}: SID={result.sid}")
+        return {"type": "sent", "sid": result.sid, "to": whatsapp_to}
+        
     except Exception as e:
         error_msg = str(e)
         logger.error(f"Failed to send WhatsApp to {to_number}: {error_msg}")
         
-        # If Twilio fails, generate wa.me link as fallback
-        encoded_msg = message.replace('\n', '%0A').replace(' ', '%20').replace('*', '')
-        wa_link = f"https://wa.me/{to_number}?text={encoded_msg}"
-        logger.info(f"Fallback wa.me link: {wa_link}")
+        # Store the failed notification for retry
+        try:
+            await db.pending_whatsapp.insert_one({
+                "to_number": to_number,
+                "message": message,
+                "error": error_msg,
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "status": "failed"
+            })
+        except:
+            pass
         
-        # Store the notification for manual sending
-        await db.pending_whatsapp.insert_one({
-            "to_number": to_number,
-            "message": message,
-            "wa_link": wa_link,
-            "error": error_msg,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        })
-        
-        return {"type": "pending", "url": wa_link, "error": error_msg}
+        return {"type": "error", "error": error_msg}
 
 # ============ SMS Notification Functions ============
 
