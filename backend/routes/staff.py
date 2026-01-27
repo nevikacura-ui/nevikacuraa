@@ -730,7 +730,7 @@ async def get_doctor_appointments(
     date: str = None,
     staff = Depends(verify_staff)
 ):
-    """Get appointments for doctor view"""
+    """Get appointments for doctor view - supports multi-clinic doctors"""
     query = {}
     
     # Use staff's name as doctor if not specified and they are a doctor
@@ -739,10 +739,15 @@ async def get_doctor_appointments(
     elif staff.get("name") and staff.get("role") in ["doctor", "doctor_pushpa", "doctor_amnion"]:
         query["doctor"] = staff.get("name")
     
-    # Use staff's clinic if not specified  
+    # For doctors with multi-clinic access, filter by specified clinic or show all their clinics
+    doctor_clinics = staff.get("clinics", [])  # Array of clinics doctor has access to
     if clinic:
         query["clinic"] = clinic
+    elif doctor_clinics and len(doctor_clinics) > 0:
+        # Doctor has multi-clinic access - show appointments from all their clinics
+        query["clinic"] = {"$in": doctor_clinics}
     elif staff.get("clinic"):
+        # Fallback to single clinic
         query["clinic"] = staff.get("clinic")
     
     if date:
@@ -752,13 +757,10 @@ async def get_doctor_appointments(
     
     appointments = await db.appointments.find(query, {"_id": 0}).sort("time", 1).to_list(100)
     
-    # Get unique clinics for this doctor
-    doctor_clinics = []
-    if staff.get("name"):
-        doc_apts = await db.appointments.find({"doctor": staff.get("name")}).to_list(1000)
-        doctor_clinics = list(set([apt.get("clinic") for apt in doc_apts if apt.get("clinic")]))
+    # Return the list of clinics this doctor can access
+    available_clinics = doctor_clinics if doctor_clinics else ([staff.get("clinic")] if staff.get("clinic") else [])
     
-    return {"appointments": appointments, "doctor_clinics": doctor_clinics}
+    return {"appointments": appointments, "doctor_clinics": available_clinics}
 
 
 # ============ Clinic Appointments ============
