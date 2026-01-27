@@ -76,6 +76,18 @@ input, textarea, [contenteditable="true"] {
   }
 }
 
+/* Fade in and up animation for loading icons */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .animate-fade-in-word {
   opacity: 0;
 }
