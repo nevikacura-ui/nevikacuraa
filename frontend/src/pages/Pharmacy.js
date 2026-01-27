@@ -923,8 +923,12 @@ const Pharmacy = () => {
             ].map((concern) => (
               <button
                 key={concern.id}
-                onClick={() => setSearchTerm(concern.filter)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-300 rounded-full text-xs font-medium text-slate-700 transition-all whitespace-nowrap"
+                onClick={() => setSelectedCategory(selectedCategory === concern.filter ? '' : concern.filter)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
+                  selectedCategory === concern.filter 
+                    ? 'bg-orange-500 text-white border border-orange-500' 
+                    : 'bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-300 text-slate-700'
+                }`}
                 data-testid={`health-concern-${concern.id}`}
               >
                 <span>{concern.icon}</span>
@@ -944,7 +948,7 @@ const Pharmacy = () => {
                 Add Your Medicines
               </h1>
               <p className="text-slate-500" style={{ fontFamily: 'DM Sans, sans-serif' }}>
-                Search from {totalMedicines.toLocaleString()}+ medicines or add manually
+                Search from 4,000+ medicines or add manually
               </p>
             </div>
 
