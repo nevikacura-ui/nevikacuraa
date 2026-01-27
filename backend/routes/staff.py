@@ -337,9 +337,11 @@ Location: {map_link}
             </div>
             """
             await send_email_notification(
-                data.patient_email,
-                f"Walk-in Appointment Confirmed - {data.doctor} | DiaGyn Healthcare",
-                patient_email_html
+                subject=f"Walk-in Appointment - {data.patient_name}",
+                html_content=f"Walk-in registered for {data.patient_name} with {data.doctor} at {data.clinic}",
+                patient_email=data.patient_email,
+                patient_subject=f"Walk-in Appointment Confirmed - {data.doctor} | DiaGyn Healthcare",
+                patient_html=patient_email_html
             )
             logger.info(f"Walk-in confirmation email sent to {data.patient_email}")
         except Exception as e:
