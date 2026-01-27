@@ -4216,6 +4216,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Staff Notifications router: {e}")
 
+# Patient Enhancement Features Router
+try:
+    from routes.enhancements import setup_routes as setup_enhancement_routes
+    enhancement_router = setup_enhancement_routes(db)
+    app.include_router(enhancement_router, prefix="/api")
+    logger.info("Patient Enhancement Features router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Enhancement Features router: {e}")
+
 
 
 app.add_middleware(
