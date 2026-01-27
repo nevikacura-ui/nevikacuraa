@@ -482,6 +482,22 @@ Location: {map_link}
         except Exception as e:
             logger.error(f"Failed to send emergency notification: {e}")
     
+    # Send WhatsApp confirmation
+    if send_whatsapp_notification and data.patient_phone:
+        try:
+            from services.whatsapp_service import get_appointment_confirmation_message
+            whatsapp_message = get_appointment_confirmation_message(
+                patient_name=data.patient_name,
+                doctor_name=data.doctor,
+                clinic_name=data.clinic,
+                date=today,
+                time=now_time
+            )
+            await send_whatsapp_notification(data.patient_phone, whatsapp_message)
+            logger.info(f"Emergency WhatsApp confirmation sent to {data.patient_phone}")
+        except Exception as e:
+            logger.error(f"Failed to send emergency WhatsApp: {e}")
+    
     return {"message": "Emergency appointment created", "appointment": appointment}
 
 
