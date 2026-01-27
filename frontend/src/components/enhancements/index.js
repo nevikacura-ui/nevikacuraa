@@ -27,25 +27,30 @@ export { default as Teleconsultation } from './Teleconsultation';
 export { default as InsuranceIntegration } from './InsuranceIntegration';
 export { default as HealthPackages } from './HealthPackages';
 
-// Feature list for reference:
-// ✅ #1 - Smart Appointment Reminders (SmartReminders)
-// ✅ #2 - Queue Position Tracker (QueueTracker)
-// ✅ #3 - Prescription Digital Wallet (PrescriptionWallet)
-// ✅ #4 - Family Health Hub (FamilyHub)
-// ✅ #5 - Health Score Gamification (HealthScoreGamification)
-// ✅ #6 - Voice Notes for Prescriptions (VoicePrescription)
-// ✅ #7 - Smart Schedule Optimizer (SmartScheduleOptimizer) - AI
-// ✅ #8 - Predictive Health Insights (PredictiveHealthInsights) - AI
-// ✅ #9 - AI Appointment Suggestions (AIAppointmentSuggestions) - AI
-// ✅ #10 - Automated Health Reports (AutomatedHealthReports) - AI
-// ✅ #11 - Loyalty Points System (LoyaltyPoints)
-// ✅ #12 - Health Packages & Teleconsultation (HealthPackages, Teleconsultation)
-// ✅ #17 - Health Content Hub (HealthContentHub)
-// ✅ #19 - Symptom Checker (SymptomChecker)
-// ✅ #20 - Medication Interaction Checker (MedicationInteractionChecker)
-// ✅ #26 - Insurance Pre-Authorization (InsuranceIntegration)
-// ✅ #29 - Multi-language Voice Assistant (VoiceAssistant) - AI + Whisper
-// ✅ #30 - Emergency SOS (EmergencySOS)
-// ✅ #38 - Dark Mode (DarkModeToggle)
-// ✅ #42 - Insurance Integration (InsuranceIntegration)
-// ✅ #49 - Multi-channel Notifications (NotificationPreferences)
+// Phase 4 - Patient Engagement
+export { default as CommunityForums } from './CommunityForums';
+export { default as AITriageAssistant } from './AITriageAssistant';
+export { default as PredictiveHealthAlerts } from './PredictiveHealthAlerts';
+export { default as SmartMedicalRecords } from './SmartMedicalRecords';
+export { default as WearableIntegration } from './WearableIntegration';
+export { default as VirtualHealthCoach } from './VirtualHealthCoach';
+export { default as TwoWayChat } from './TwoWayChat';
+export { default as ConsentManagement } from './ConsentManagement';
+
+// Phase 5 - Analytics & Admin
+export { default as PatientJourneyAnalytics } from './PatientJourneyAnalytics';
+export { default as RevenueForecasting } from './RevenueForecasting';
+export { default as HealthOutcomeTracking } from './HealthOutcomeTracking';
+export { default as AuditTrailDashboard } from './AuditTrailDashboard';
+export { default as RoomResourceBooking } from './RoomResourceBooking';
+export { default as StaffShiftManagement } from './StaffShiftManagement';
+export { default as DigitalSignage } from './DigitalSignage';
+
+// Phase 6 - Payments & Operations
+export { default as SmartInventoryAlerts } from './SmartInventoryAlerts';
+export { default as BillingReconciliation } from './BillingReconciliation';
+export { default as SplitPayment } from './SplitPayment';
+export { default as PaymentLinks } from './PaymentLinks';
+export { default as LabReportAutoImport } from './LabReportAutoImport';
+export { default as BroadcastMessages } from './BroadcastMessages';
+export { default as PatientCheckinKiosk } from './PatientCheckinKiosk';
