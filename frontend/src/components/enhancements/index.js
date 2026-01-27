@@ -21,6 +21,12 @@ export { default as PredictiveHealthInsights } from './PredictiveHealthInsights'
 export { default as AIAppointmentSuggestions } from './AIAppointmentSuggestions';
 export { default as AutomatedHealthReports } from './AutomatedHealthReports';
 
+// Phase 3 - Voice, Teleconsultation, Insurance, Packages
+export { default as VoiceAssistant } from './VoiceAssistant';
+export { default as Teleconsultation } from './Teleconsultation';
+export { default as InsuranceIntegration } from './InsuranceIntegration';
+export { default as HealthPackages } from './HealthPackages';
+
 // Feature list for reference:
 // ✅ #1 - Smart Appointment Reminders (SmartReminders)
 // ✅ #2 - Queue Position Tracker (QueueTracker)
@@ -33,9 +39,13 @@ export { default as AutomatedHealthReports } from './AutomatedHealthReports';
 // ✅ #9 - AI Appointment Suggestions (AIAppointmentSuggestions) - AI
 // ✅ #10 - Automated Health Reports (AutomatedHealthReports) - AI
 // ✅ #11 - Loyalty Points System (LoyaltyPoints)
+// ✅ #12 - Health Packages & Teleconsultation (HealthPackages, Teleconsultation)
 // ✅ #17 - Health Content Hub (HealthContentHub)
 // ✅ #19 - Symptom Checker (SymptomChecker)
 // ✅ #20 - Medication Interaction Checker (MedicationInteractionChecker)
+// ✅ #26 - Insurance Pre-Authorization (InsuranceIntegration)
+// ✅ #29 - Multi-language Voice Assistant (VoiceAssistant) - AI + Whisper
 // ✅ #30 - Emergency SOS (EmergencySOS)
 // ✅ #38 - Dark Mode (DarkModeToggle)
+// ✅ #42 - Insurance Integration (InsuranceIntegration)
 // ✅ #49 - Multi-channel Notifications (NotificationPreferences)
