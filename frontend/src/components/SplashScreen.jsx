@@ -305,17 +305,9 @@ const SplashScreen = ({ onComplete, user }) => {
     setShowAuth(true);
   };
   
-  // Icons with pastel colors - each corresponds to a word
-  const icons = [
-    { Icon: Calendar, bgColor: 'bg-blue-200/80', iconColor: 'text-blue-600', label: 'Book.', animDelay: '0s' },
-    { Icon: Pill, bgColor: 'bg-orange-200/80', iconColor: 'text-orange-600', label: 'Order.', animDelay: '0.4s' },
-    { Icon: TestTube, bgColor: 'bg-purple-200/80', iconColor: 'text-purple-600', label: 'Test.', animDelay: '0.8s' },
-    { Icon: Stethoscope, bgColor: 'bg-teal-200/80', iconColor: 'text-teal-600', label: 'Care.', animDelay: '1.2s' },
-  ];
-  
   return (
     <div 
-      className="fixed inset-0 z-[99999] flex flex-col items-center justify-start p-6 overflow-hidden"
+      className="fixed inset-0 z-[99998] flex flex-col items-center justify-start p-6 overflow-hidden"
       style={{ 
         position: 'fixed', 
         top: 0, 
@@ -338,23 +330,21 @@ const SplashScreen = ({ onComplete, user }) => {
       </div>
       
       {/* Skip Button - Top Right */}
-      {animationComplete && (
-        <div className="absolute top-4 right-4 z-50">
-          <button
-            onClick={handleExplore}
-            data-testid="skip-btn"
-            className="flex items-center gap-1 px-4 py-2 text-white/90 hover:text-white hover:bg-white/20 rounded-full transition-colors text-sm font-medium backdrop-blur-sm"
-          >
-            Skip
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-      )}
+      <div className="absolute top-4 right-4 z-50">
+        <button
+          onClick={handleExplore}
+          data-testid="skip-btn"
+          className="flex items-center gap-1 px-4 py-2 text-white/90 hover:text-white hover:bg-white/20 rounded-full transition-colors text-sm font-medium backdrop-blur-sm"
+        >
+          Skip
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
       
       {/* Content - Positioned higher */}
       <div className="relative z-10 text-center max-w-md mx-auto flex flex-col items-center mt-16 sm:mt-20">
-        {/* Logo/Brand - Oval/Pill shaped container, positioned higher */}
-        <div className="mb-5">
+        {/* Logo/Brand - Oval/Pill shaped container */}
+        <div className="mb-6">
           <div className="bg-white rounded-[40px] px-8 py-5 shadow-2xl shadow-black/20">
             <img 
               src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
@@ -365,35 +355,10 @@ const SplashScreen = ({ onComplete, user }) => {
           <div className="h-1 w-20 bg-gradient-to-r from-teal-200 to-cyan-200 mx-auto rounded-full mt-4"></div>
         </div>
         
-        {/* Loading Phase - Icons with sequential words "Book. Order. Test. Care." */}
-        {!animationComplete && (
-          <div className="flex justify-center items-center gap-4 mb-6">
-            {icons.map(({ Icon, bgColor, iconColor, label, animDelay }, idx) => (
-              <div 
-                key={idx}
-                className="flex flex-col items-center gap-2"
-                style={{ 
-                  animation: `fadeInUp 0.5s ease-out forwards`,
-                  animationDelay: animDelay,
-                  opacity: 0
-                }}
-              >
-                <div className={`${bgColor} backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 border border-white/40`}
-                     style={{ width: '64px', height: '64px' }}>
-                  <Icon className={`w-8 h-8 ${iconColor}`} />
-                </div>
-                <span className="text-lg font-bold text-white drop-shadow-lg">{label}</span>
-              </div>
-            ))}
-          </div>
-        )}
-        
-        {/* After Loading - Show tagline */}
-        {animationComplete && (
-          <p className="text-lg text-white/90 font-medium mb-6 drop-shadow-sm animate-fade-in">
-            All your care. <span className="text-teal-100 font-bold">One app.</span>
-          </p>
-        )}
+        {/* Tagline */}
+        <p className="text-lg text-white/90 font-medium mb-6 drop-shadow-sm">
+          All your care. <span className="text-teal-100 font-bold">One app.</span>
+        </p>
         
         {/* Action Buttons */}
         {animationComplete && (
