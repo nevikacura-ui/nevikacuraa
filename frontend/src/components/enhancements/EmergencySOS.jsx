@@ -44,26 +44,6 @@ const EmergencySOS = () => {
     }
   }, []);
 
-  useEffect(() => {
-    let timer;
-    if (emergencyMode && countdown > 0) {
-      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    } else if (emergencyMode && countdown === 0) {
-      sendEmergencyAlert();
-    }
-    return () => clearTimeout(timer);
-  }, [emergencyMode, countdown]);
-
-  const triggerSOS = () => {
-    setEmergencyMode(true);
-    setCountdown(5);
-  };
-
-  const cancelSOS = () => {
-    setEmergencyMode(false);
-    setCountdown(5);
-  };
-
   const sendEmergencyAlert = async () => {
     // Vibrate device
     if (navigator.vibrate) {
@@ -94,8 +74,28 @@ const EmergencySOS = () => {
     toast.success('Emergency alert sent to your contacts!');
   };
 
+  useEffect(() => {
+    let timer;
+    if (emergencyMode && countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (emergencyMode && countdown === 0) {
+      sendEmergencyAlert();
+    }
+    return () => clearTimeout(timer);
+  }, [emergencyMode, countdown, sendEmergencyAlert]);
+
+  const triggerSOS = () => {
+    setEmergencyMode(true);
+    setCountdown(5);
+  };
+
+  const cancelSOS = () => {
+    setEmergencyMode(false);
+    setCountdown(5);
+  };
+
   const callEmergency = (number) => {
-    window.location.href = `tel:${number}`;
+    window.open(`tel:${number}`, '_self');
   };
 
   return (
