@@ -305,42 +305,26 @@ const SplashScreen = ({ onComplete, user }) => {
     setShowAuth(true);
   };
   
-  // 3 Fading icons - Calendar, Pharmacy, Blood Test
+  // 3 icons - Calendar, Pharmacy, Blood Test (simple fade-in, no loop)
   const icons = [
-    { Icon: Calendar, bgColor: 'bg-blue-200/80', iconColor: 'text-blue-600', label: 'Appointments', animDelay: '0s' },
-    { Icon: Pill, bgColor: 'bg-orange-200/80', iconColor: 'text-orange-600', label: 'Pharmacy', animDelay: '0.3s' },
-    { Icon: TestTube, bgColor: 'bg-purple-200/80', iconColor: 'text-purple-600', label: 'Lab Tests', animDelay: '0.6s' },
+    { Icon: Calendar, bgColor: 'bg-blue-200/80', iconColor: 'text-blue-600', label: 'Appointments' },
+    { Icon: Pill, bgColor: 'bg-orange-200/80', iconColor: 'text-orange-600', label: 'Pharmacy' },
+    { Icon: TestTube, bgColor: 'bg-purple-200/80', iconColor: 'text-purple-600', label: 'Lab Tests' },
   ];
   
   return (
     <div 
-      className="fixed inset-0 z-[99999] flex flex-col items-center justify-start p-6 overflow-hidden"
+      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-6 overflow-hidden"
       style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        right: 0, 
-        bottom: 0, 
-        width: '100vw',
-        height: '100vh',
-        height: '100dvh',
-        minHeight: '-webkit-fill-available',
-        overflowY: 'hidden',
         background: 'linear-gradient(165deg, #5eead4 0%, #2dd4bf 20%, #14b8a6 40%, #0d9488 60%, #0891b2 80%, #06b6d4 100%)'
       }}
     >
-      {/* Soft Animated Background Orbs */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-white/15 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-40 right-5 w-64 h-64 bg-teal-300/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-      </div>
-      
       {/* Skip Button - Top Right */}
       <div className="absolute top-4 right-4 z-50">
         <button
           onClick={handleExplore}
           data-testid="skip-btn"
-          className="flex items-center gap-1 px-4 py-2 text-white/90 hover:text-white hover:bg-white/20 rounded-full transition-colors text-sm font-medium backdrop-blur-sm"
+          className="flex items-center gap-1 px-4 py-2 text-white/90 hover:text-white hover:bg-white/20 rounded-full transition-colors text-sm font-medium"
         >
           Skip
           <ArrowRight className="w-4 h-4" />
@@ -348,10 +332,10 @@ const SplashScreen = ({ onComplete, user }) => {
       </div>
       
       {/* Content */}
-      <div className="relative z-10 text-center max-w-md mx-auto flex flex-col items-center mt-16 sm:mt-20">
-        {/* Logo/Brand - Oval/Pill shaped container */}
-        <div className="mb-5">
-          <div className="bg-white rounded-[40px] px-8 py-5 shadow-2xl shadow-black/20">
+      <div className="relative z-10 text-center max-w-md mx-auto flex flex-col items-center">
+        {/* Logo/Brand */}
+        <div className="mb-6">
+          <div className="bg-white rounded-[40px] px-8 py-5 shadow-xl">
             <img 
               src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
               alt="Nevika Cura" 
@@ -361,36 +345,66 @@ const SplashScreen = ({ onComplete, user }) => {
           <div className="h-1 w-20 bg-gradient-to-r from-teal-200 to-cyan-200 mx-auto rounded-full mt-3"></div>
         </div>
         
-        {/* 3 Fading Icons - Calendar, Pharmacy, Lab Tests */}
-        <div className="flex justify-center items-center gap-6 mb-5">
-          {icons.map(({ Icon, bgColor, iconColor, label, animDelay }, idx) => (
-            <div 
-              key={label}
-              className="flex flex-col items-center gap-2 icon-disappear"
-              style={{ animationDelay: animDelay }}
-            >
-              <div className={`${bgColor} backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 border border-white/40`}
-                   style={{ width: '72px', height: '72px' }}>
+        {/* 3 Icons - Simple display, no animation */}
+        <div className="flex justify-center items-center gap-6 mb-6">
+          {icons.map(({ Icon, bgColor, iconColor, label }) => (
+            <div key={label} className="flex flex-col items-center gap-2">
+              <div className={`${bgColor} rounded-2xl flex items-center justify-center shadow-lg border border-white/40 w-[72px] h-[72px]`}>
                 <Icon className={`w-9 h-9 ${iconColor}`} />
               </div>
-              <span className="text-sm text-white font-medium drop-shadow-sm">{label}</span>
+              <span className="text-sm text-white font-medium">{label}</span>
             </div>
           ))}
         </div>
         
         {/* Tagline */}
-        <p className="text-lg text-white/90 font-medium mb-6 drop-shadow-sm">
+        <p className="text-lg text-white/90 font-medium mb-6">
           All your care. <span className="text-teal-100 font-bold">One app.</span>
         </p>
         
         {/* Action Buttons */}
         <div className="space-y-4 w-full max-w-xs">
-          {/* Fingerprint Login - Show if previously logged in */}
+          {/* Fingerprint Login */}
           {hasBiometricSetup && (
             <Button
               onClick={handleBiometricLogin}
               disabled={biometricLoading}
               className="w-full h-14 bg-white/20 backdrop-blur text-white hover:bg-white/30 rounded-2xl text-lg font-semibold border border-white/30 shadow-lg"
+              data-testid="biometric-login-btn"
+            >
+              {biometricLoading ? (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              ) : (
+                <>
+                  <Fingerprint className="w-6 h-6 mr-2" />
+                  Login with Fingerprint
+                </>
+              )}
+            </Button>
+          )}
+          
+          {/* Login/Signup Button */}
+          <Button
+            onClick={handleLoginClick}
+            className="w-full h-14 bg-white text-teal-700 hover:bg-teal-50 rounded-2xl text-lg font-semibold shadow-xl"
+            data-testid="splash-login-btn"
+          >
+            <User className="w-5 h-5 mr-2" />
+            {hasBiometricSetup ? 'Login with OTP' : 'Login / Sign Up'}
+          </Button>
+          
+          {/* Staff Login */}
+          <div className="pt-6 border-t border-white/20">
+            <button
+              onClick={handleStaffLogin}
+              className="flex items-center justify-center gap-2 text-sm text-white/70 hover:text-white transition-colors mx-auto"
+            >
+              <Building2 className="w-4 h-4" />
+              Staff Login
+            </button>
+          </div>
+        </div>
+      </div>
               data-testid="biometric-login-btn"
             >
               {biometricLoading ? (
