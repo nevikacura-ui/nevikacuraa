@@ -345,10 +345,17 @@ const SplashScreen = ({ onComplete, user }) => {
           <div className="h-1 w-20 bg-gradient-to-r from-teal-200 to-cyan-200 mx-auto rounded-full mt-3"></div>
         </div>
         
-        {/* 3 Icons - Simple display, no animation */}
+        {/* 3 Icons with Fading Animation */}
         <div className="flex justify-center items-center gap-6 mb-6">
-          {icons.map(({ Icon, bgColor, iconColor, label }) => (
-            <div key={label} className="flex flex-col items-center gap-2">
+          {icons.map(({ Icon, bgColor, iconColor, label }, idx) => (
+            <div 
+              key={label} 
+              className="flex flex-col items-center gap-2"
+              style={{
+                animation: 'iconFade 2.5s ease-in-out infinite',
+                animationDelay: `${idx * 0.3}s`
+              }}
+            >
               <div className={`${bgColor} rounded-2xl flex items-center justify-center shadow-lg border border-white/40 w-[72px] h-[72px]`}>
                 <Icon className={`w-9 h-9 ${iconColor}`} />
               </div>
@@ -356,6 +363,15 @@ const SplashScreen = ({ onComplete, user }) => {
             </div>
           ))}
         </div>
+        
+        {/* Inline CSS for icon fading animation */}
+        <style>{`
+          @keyframes iconFade {
+            0% { opacity: 0.3; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.3; transform: scale(0.95); }
+          }
+        `}</style>
         
         {/* Tagline */}
         <p className="text-lg text-white/90 font-medium mb-6">
