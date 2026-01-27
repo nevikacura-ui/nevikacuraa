@@ -29,7 +29,6 @@ const TELECONSULT_DOCTORS = [
     qualification: 'M.B.B.S, D.G.O (Mumbai), FMAS (Delhi)',
     experience: '15+ years',
     clinic: 'DiaGyn Healthcare - Pushpa Clinic',
-    fee: 500,
     image: 'https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u05fho69_IMG-20260126-WA0000.jpg'
   },
   {
@@ -39,7 +38,6 @@ const TELECONSULT_DOCTORS = [
     qualification: 'M.B.B.S, C.Diab (RSSDI, Delhi), Dip. In Diabetology (Cardiff, UK)',
     experience: '12+ years',
     clinic: 'DiaGyn Healthcare - Amnion Clinic',
-    fee: 500,
     image: 'https://customer-assets.emergentagent.com/job_1d0b9312-d1f2-40d1-b78f-c0c28fa95ba1/artifacts/gg2swmlp_IMG-20220627-WA0003.jpg'
   }
 ];
@@ -171,11 +169,6 @@ const Teleconsultation = () => {
       return;
     }
 
-    if (walletBalance < selectedDoctor.fee) {
-      toast.error(`Insufficient wallet balance. Required: ₹${selectedDoctor.fee}, Available: ₹${walletBalance}`);
-      return;
-    }
-
     if (!formData.patient_name || !formData.patient_phone || !formData.reason) {
       toast.error('Please fill all required fields');
       return;
@@ -301,10 +294,6 @@ const Teleconsultation = () => {
                         <span className="text-xs">{doctor.clinic}</span>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xl font-bold text-green-600">₹{doctor.fee}</p>
-                      <p className="text-xs text-gray-500">per session</p>
-                    </div>
                   </div>
                 </Card>
               ))}
@@ -416,7 +405,6 @@ const Teleconsultation = () => {
                     {format(selectedDate, 'EEEE, MMMM d')} at {selectedSlot?.time12}
                   </p>
                 </div>
-                <p className="ml-auto text-xl font-bold text-green-600">₹{selectedDoctor?.fee}</p>
               </div>
             </Card>
 
@@ -500,54 +488,7 @@ const Teleconsultation = () => {
                   <span className="text-gray-600">Reason</span>
                   <span className="font-medium">{formData.reason}</span>
                 </div>
-                <hr className="my-2" />
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span className="text-green-600">₹{selectedDoctor?.fee}</span>
-                </div>
               </div>
-            </Card>
-
-            {/* Wallet Payment */}
-            <Card className={`p-4 ${walletBalance >= selectedDoctor?.fee ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Wallet className={`w-8 h-8 ${walletBalance >= selectedDoctor?.fee ? 'text-green-600' : 'text-amber-600'}`} />
-                  <div>
-                    <p className="font-semibold">Nevika Wallet</p>
-                    <p className="text-sm text-gray-600">Balance: ₹{walletBalance.toFixed(2)}</p>
-                  </div>
-                </div>
-                {walletBalance >= selectedDoctor?.fee ? (
-                  <Check className="w-6 h-6 text-green-600" />
-                ) : (
-                  <Button 
-                    size="sm" 
-                    onClick={() => setShowAddFunds(true)}
-                    className="bg-amber-500 hover:bg-amber-600"
-                    data-testid="add-funds-btn"
-                  >
-                    <Plus className="w-4 h-4 mr-1" /> Add Funds
-                  </Button>
-                )}
-              </div>
-              {walletBalance < selectedDoctor?.fee && (
-                <div className="mt-3 p-3 bg-white rounded-lg border border-amber-200">
-                  <p className="text-sm text-amber-700 flex items-center gap-1 mb-2">
-                    <AlertCircle className="w-4 h-4" />
-                    Insufficient balance. Need ₹{(selectedDoctor?.fee - walletBalance).toFixed(0)} more.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => setShowAddFunds(true)}
-                    className="w-full border-amber-400 text-amber-700 hover:bg-amber-50"
-                  >
-                    <Wallet className="w-4 h-4 mr-2" />
-                    Add ₹{Math.max(100, Math.ceil((selectedDoctor?.fee - walletBalance) / 100) * 100)} to Wallet
-                  </Button>
-                </div>
-              )}
             </Card>
 
             {/* Features */}
@@ -579,13 +520,13 @@ const Teleconsultation = () => {
               </Button>
               <Button 
                 onClick={handleBooking}
-                disabled={bookingLoading || walletBalance < selectedDoctor?.fee}
+                disabled={bookingLoading}
                 className="flex-1 bg-green-600 hover:bg-green-700"
               >
                 {bookingLoading ? (
                   <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...</>
                 ) : (
-                  <>Pay ₹{selectedDoctor?.fee} & Book</>
+                  <>Confirm Booking</>
                 )}
               </Button>
             </div>
@@ -616,10 +557,6 @@ const Teleconsultation = () => {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Date & Time</span>
                   <span>{bookingComplete.date} at {bookingComplete.time}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Amount Paid</span>
-                  <span className="text-green-600">₹{bookingComplete.fee}</span>
                 </div>
               </div>
             </Card>
