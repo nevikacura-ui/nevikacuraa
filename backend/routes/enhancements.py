@@ -35,7 +35,7 @@ async def get_patient_from_token(authorization: str = Header(None)):
 @router.get("/queue/position")
 async def get_queue_position(appointment_id: str, patient = Depends(get_patient_from_token)):
     """Get patient's position in queue"""
-    if not db:
+    if db is None:
         # Return mock data if DB not available
         return {
             "position": 3,
@@ -85,7 +85,7 @@ async def get_prescriptions(patient = Depends(get_patient_from_token)):
     """Get patient's prescriptions"""
     patient_phone = patient.get("phone") or patient.get("sub")
     
-    if not db:
+    if db is None:
         return {"prescriptions": []}
     
     prescriptions = await db.prescriptions.find(
@@ -98,7 +98,7 @@ async def get_prescriptions(patient = Depends(get_patient_from_token)):
 @router.post("/prescriptions/{prescription_id}/refill")
 async def request_refill(prescription_id: str, patient = Depends(get_patient_from_token)):
     """Request prescription refill"""
-    if db:
+    if db is not None:
         await db.refill_requests.insert_one({
             "id": str(uuid.uuid4()),
             "prescription_id": prescription_id,
@@ -121,7 +121,7 @@ async def get_family_members(patient = Depends(get_patient_from_token)):
     """Get patient's family members"""
     patient_phone = patient.get("phone") or patient.get("sub")
     
-    if not db:
+    if db is None:
         return {"members": []}
     
     members = await db.family_members.find(
