@@ -314,7 +314,7 @@ const SplashScreen = ({ onComplete, user }) => {
   
   return (
     <div 
-      className="fixed inset-0 z-[99999] bg-gradient-to-br from-teal-600 via-cyan-600 to-blue-700 flex flex-col items-center justify-center p-6 overflow-hidden"
+      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-6 overflow-hidden"
       style={{ 
         position: 'fixed', 
         top: 0, 
@@ -325,13 +325,15 @@ const SplashScreen = ({ onComplete, user }) => {
         height: '100vh',
         height: '100dvh',
         minHeight: '-webkit-fill-available',
-        overflowY: 'hidden'
+        overflowY: 'hidden',
+        background: 'linear-gradient(135deg, #0d9488 0%, #0891b2 25%, #0284c7 50%, #6366f1 75%, #8b5cf6 100%)'
       }}
     >
-      {/* Animated Background */}
+      {/* Animated Background Orbs */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-40 right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-10 left-10 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-cyan-400/15 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
       </div>
       
       {/* Skip Button - Top Right */}
@@ -340,7 +342,7 @@ const SplashScreen = ({ onComplete, user }) => {
           <button
             onClick={handleExplore}
             data-testid="skip-btn"
-            className="flex items-center gap-1 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors text-sm font-medium"
+            className="flex items-center gap-1 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors text-sm font-medium backdrop-blur-sm"
           >
             Skip
             <ArrowRight className="w-4 h-4" />
@@ -350,37 +352,48 @@ const SplashScreen = ({ onComplete, user }) => {
       
       {/* Content - Centered vertically and horizontally */}
       <div className="relative z-10 text-center max-w-md mx-auto flex flex-col items-center justify-center">
-        {/* Logo/Brand - Oval shaped with white background */}
-        <div className="mb-4">
-          <div className="bg-white rounded-[40px] px-8 py-6 shadow-xl shadow-black/20">
-            <img 
-              src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
-              alt="Nevika Cura" 
-              className="h-20 w-auto object-contain"
-            />
+        {/* Logo/Brand - Circular glassy design */}
+        <div className="mb-6">
+          <div className="relative">
+            {/* Glowing ring behind logo */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/30 to-white/10 blur-xl scale-110"></div>
+            
+            {/* Circular glass container */}
+            <div className="relative w-36 h-36 rounded-full bg-white/95 backdrop-blur-xl shadow-2xl shadow-black/30 flex items-center justify-center border-4 border-white/50 overflow-hidden">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
+                alt="Nevika Cura" 
+                className="h-24 w-24 object-contain rounded-full"
+              />
+            </div>
           </div>
-          <div className="h-1 w-20 bg-gradient-to-r from-teal-300 to-cyan-300 mx-auto rounded-full mt-3"></div>
+          
+          {/* Brand name below logo */}
+          <h1 className="mt-4 text-2xl font-bold text-white tracking-wide drop-shadow-lg">
+            Nevika Cura
+          </h1>
+          <div className="h-1 w-16 bg-gradient-to-r from-teal-300 via-cyan-300 to-purple-300 mx-auto rounded-full mt-2"></div>
         </div>
         
         {/* Animated Icons - Bigger and centered with less gap from logo */}
-        <div className="flex justify-center items-center gap-8 mb-6">
+        <div className="flex justify-center items-center gap-6 mb-6">
           {icons.map(({ Icon, color, label, animDelay }, idx) => (
             <div 
               key={idx}
               className="flex flex-col items-center gap-2 icon-disappear"
               style={{ animationDelay: animDelay }}
             >
-              <div className={`w-20 h-20 bg-gradient-to-br ${color} rounded-2xl flex items-center justify-center shadow-lg shadow-black/20 transform hover:scale-110 transition-transform`}>
-                <Icon className="w-10 h-10 text-white" />
+              <div className={`w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 transform hover:scale-110 transition-transform border border-white/30`}>
+                <Icon className="w-8 h-8 text-white" />
               </div>
-              <span className="text-sm text-white/90 font-medium">{label}</span>
+              <span className="text-xs text-white/90 font-medium">{label}</span>
             </div>
           ))}
         </div>
         
         {/* Caption */}
-        <p className="text-xl text-white/90 font-medium mb-8">
-          Your own <span className="text-teal-200 font-bold">all-in-one</span> healthcare app
+        <p className="text-lg text-white/90 font-medium mb-8">
+          Your own <span className="text-cyan-200 font-bold">all-in-one</span> healthcare app
         </p>
         
         {/* Action Buttons */}
