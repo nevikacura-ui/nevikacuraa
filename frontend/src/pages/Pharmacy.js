@@ -96,39 +96,82 @@ const getMedicineIcon = (form) => {
 
 // Medicine category images - professional stock photos
 const categoryImages = {
-  tablets: {
-    label: 'Tablets & Pills',
-    icon: 'pill',
-    color: 'from-blue-500 to-indigo-600'
+  // Health-based categories with real images from reference
+  'cough-cold': {
+    label: 'Cough, Cold & Fever',
+    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&h=200&fit=crop',
+    color: 'from-blue-400 to-indigo-500',
+    filter: 'cold'
   },
-  capsules: {
-    label: 'Capsules',
-    icon: 'capsule',
-    color: 'from-orange-500 to-red-500'
+  'stomach-care': {
+    label: 'Stomach Care',
+    image: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200&h=200&fit=crop',
+    color: 'from-amber-400 to-orange-500',
+    filter: 'digestive'
   },
-  syrups: {
-    label: 'Syrups & Liquids',
-    icon: 'flask',
-    color: 'from-amber-500 to-orange-500'
+  'pain-relief': {
+    label: 'Pain Relief & First Aid',
+    image: 'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=200&h=200&fit=crop',
+    color: 'from-red-400 to-rose-500',
+    filter: 'pain'
   },
-  injections: {
-    label: 'Injections',
-    icon: 'syringe',
-    color: 'from-emerald-500 to-teal-600'
+  'antibiotics': {
+    label: 'Antibiotics',
+    image: 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=200&h=200&fit=crop',
+    color: 'from-green-400 to-emerald-500',
+    filter: 'antibiotic'
   },
-  creams: {
-    label: 'Creams & Ointments',
-    icon: 'cream',
-    color: 'from-pink-500 to-rose-500'
+  'diabetes': {
+    label: 'Diabetes Care',
+    image: 'https://images.unsplash.com/photo-1593491205049-7f3bcdc4f8e4?w=200&h=200&fit=crop',
+    color: 'from-blue-500 to-cyan-500',
+    filter: 'diabetes'
   },
-  drops: {
-    label: 'Drops & Solutions',
-    icon: 'drops',
-    color: 'from-cyan-500 to-blue-500'
+  'heart': {
+    label: 'Heart Care',
+    image: 'https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=200&h=200&fit=crop',
+    color: 'from-red-500 to-pink-500',
+    filter: 'cardiac'
+  },
+  'derma': {
+    label: 'Derma & Skin Care',
+    image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=200&h=200&fit=crop',
+    color: 'from-pink-400 to-rose-400',
+    filter: 'skin'
+  },
+  'respiratory': {
+    label: 'Respiratory Care',
+    image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=200&h=200&fit=crop',
+    color: 'from-teal-400 to-cyan-500',
+    filter: 'respiratory'
+  },
+  'eye-ear': {
+    label: 'Eye, Ear & Oral Care',
+    image: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200&h=200&fit=crop',
+    color: 'from-purple-400 to-violet-500',
+    filter: 'eye'
+  },
+  'vitamins': {
+    label: 'Vitamins & Supplements',
+    image: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=200&h=200&fit=crop',
+    color: 'from-yellow-400 to-orange-400',
+    filter: 'vitamin'
+  },
+  'vaccines': {
+    label: 'Vaccines',
+    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&h=200&fit=crop',
+    color: 'from-emerald-400 to-green-500',
+    filter: 'vaccine'
+  },
+  'nebuliser': {
+    label: 'Nebuliser & Devices',
+    image: 'https://images.unsplash.com/photo-1631549916768-4119b4123b23?w=200&h=200&fit=crop',
+    color: 'from-slate-400 to-gray-500',
+    filter: 'device'
   }
 };
 
-// Category Card Component with hover animations
+// Category Card Component with images
 const CategoryCard = ({ category, isActive, onClick }) => {
   const cat = categoryImages[category];
   
