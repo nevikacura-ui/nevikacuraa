@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Trophy, BookOpen, Bell, Pill, Heart, Phone, FileText, 
   Activity, Users, Shield, Star, Zap, Calendar, Gift, Settings, Stethoscope,
-  Video, Mic, Package
+  Video, Mic, Package, MessageSquare, Brain, Watch, Target, TrendingUp,
+  DollarSign, BarChart3, Clipboard, DoorOpen, Radio, Scan, Link2, CreditCard
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +29,32 @@ import {
   VoiceAssistant,
   Teleconsultation,
   InsuranceIntegration,
-  HealthPackages
+  HealthPackages,
+  // Phase 4 - Patient Engagement
+  CommunityForums,
+  AITriageAssistant,
+  PredictiveHealthAlerts,
+  SmartMedicalRecords,
+  WearableIntegration,
+  VirtualHealthCoach,
+  TwoWayChat,
+  ConsentManagement,
+  // Phase 5 - Analytics & Admin
+  PatientJourneyAnalytics,
+  RevenueForecasting,
+  HealthOutcomeTracking,
+  AuditTrailDashboard,
+  RoomResourceBooking,
+  StaffShiftManagement,
+  DigitalSignage,
+  // Phase 6 - Payments & Operations
+  SmartInventoryAlerts,
+  BillingReconciliation,
+  SplitPayment,
+  PaymentLinks,
+  LabReportAutoImport,
+  BroadcastMessages,
+  PatientCheckinKiosk
 } from '@/components/enhancements';
 
 const EnhancementFeatures = () => {
