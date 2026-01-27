@@ -51,25 +51,20 @@ class TestAIFeaturesAuthenticated:
     @pytest.fixture(autouse=True)
     def setup(self):
         """Get authentication token"""
-        # Send OTP
-        otp_response = requests.post(f"{BASE_URL}/api/patients/portal/send-otp", json={
-            "phone": "9876543210"
-        })
+        # Send OTP - uses query parameter
+        otp_response = requests.post(f"{BASE_URL}/api/patients/portal/send-otp?mobile=9876543210")
         
         if otp_response.status_code != 200:
             pytest.skip("Could not send OTP for authentication")
             
         otp_data = otp_response.json()
-        test_otp = otp_data.get("test_otp")
+        test_otp = otp_data.get("mock_otp")  # API returns mock_otp
         
         if not test_otp:
             pytest.skip("No test OTP returned")
         
-        # Verify OTP
-        verify_response = requests.post(f"{BASE_URL}/api/patients/portal/verify-otp", json={
-            "phone": "9876543210",
-            "otp": test_otp
-        })
+        # Verify OTP - uses query parameters
+        verify_response = requests.post(f"{BASE_URL}/api/patients/portal/verify-otp?mobile=9876543210&otp={test_otp}")
         
         if verify_response.status_code != 200:
             pytest.skip("Could not verify OTP")
