@@ -4288,9 +4288,18 @@ try:
     from routes.whatsapp import router as whatsapp_router, set_whatsapp_function
     set_whatsapp_function(send_whatsapp_notification)
     app.include_router(whatsapp_router, prefix="/api")
-    logger.info("WhatsApp router loaded")
+    logger.info("WhatsApp router loaded (Twilio)")
 except Exception as e:
     logger.warning(f"Could not load WhatsApp router: {e}")
+
+# MSG91 WhatsApp Routes (Cost-effective alternative)
+try:
+    from routes.msg91_whatsapp import router as msg91_router, set_db as set_msg91_db
+    set_msg91_db(db)
+    app.include_router(msg91_router, prefix="/api")
+    logger.info("MSG91 WhatsApp router loaded")
+except Exception as e:
+    logger.warning(f"Could not load MSG91 WhatsApp router: {e}")
 
 
 
