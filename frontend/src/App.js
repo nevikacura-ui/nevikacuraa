@@ -58,6 +58,7 @@ import { PaymentSuccess, PaymentCancel } from '@/components/PaymentCheckout';
 import PaymentHistory from '@/pages/PaymentHistory';
 // Splash Screen
 import SplashScreen from '@/components/SplashScreen';
+import LoadingScreen from '@/components/LoadingScreen';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ViewModeProvider } from '@/context/ViewModeContext';
 import { LanguageProvider } from '@/context/LanguageContext';
@@ -68,7 +69,8 @@ import './App.css';
 // Wrapper component to access auth context
 function AppContent() {
   const { user } = useAuth();
-  const [showSplash, setShowSplash] = useState(true);
+  const [showLoading, setShowLoading] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
   
   // Check if splash should be shown
   useEffect(() => {
@@ -81,9 +83,15 @@ function AppContent() {
     const isStaffPage = window.location.pathname.includes('/admin') || window.location.pathname.includes('/staff');
     
     if (hasSeenSplash || user || patientToken || (staffToken && isStaffPage)) {
+      setShowLoading(false);
       setShowSplash(false);
     }
   }, [user]);
+  
+  const handleLoadingComplete = () => {
+    setShowLoading(false);
+    setShowSplash(true);
+  };
   
   const handleSplashComplete = () => {
     sessionStorage.setItem('hasSeenSplash', 'true');
