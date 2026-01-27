@@ -60,7 +60,6 @@ import { PaymentSuccess, PaymentCancel } from '@/components/PaymentCheckout';
 import PaymentHistory from '@/pages/PaymentHistory';
 // Splash Screen
 import SplashScreen from '@/components/SplashScreen';
-import LoadingScreen from '@/components/LoadingScreen';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ViewModeProvider } from '@/context/ViewModeContext';
 import { LanguageProvider } from '@/context/LanguageContext';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Check, Star, Clock, User, Calendar, ShoppingCart, ChevronRight, Tag, Percent } from 'lucide-react';
+import { Package, Check, Clock, User, ShoppingCart, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -36,9 +36,6 @@ const HealthPackages = () => {
           id: "basic_checkup",
           name: "Basic Health Checkup",
           description: "Essential health screening for adults",
-          price: 1499,
-          original_price: 2500,
-          discount: 40,
           includes: ["CBC", "Blood Sugar", "Lipid Profile", "Doctor Consultation"],
           recommended_for: ["Adults 18-40"],
           duration: "2-3 hours"
@@ -47,9 +44,6 @@ const HealthPackages = () => {
           id: "diabetes_care",
           name: "Diabetes Care Package",
           description: "Comprehensive diabetes monitoring",
-          price: 2499,
-          original_price: 4000,
-          discount: 38,
           includes: ["HbA1c", "Blood Sugar", "Kidney Function", "Diet Plan"],
           recommended_for: ["Diabetic patients"],
           duration: "3-4 hours",
@@ -139,32 +133,13 @@ const HealthPackages = () => {
           >
             {/* Package Header */}
             <div className={`bg-gradient-to-r ${getPackageColor(pkg.id)} p-4 text-white`}>
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-bold text-lg">{pkg.name}</h3>
-                  <p className="text-white/80 text-sm">{pkg.description}</p>
-                </div>
-                {pkg.discount && (
-                  <Badge className="bg-white/20 text-white">
-                    <Percent className="w-3 h-3 mr-1" />
-                    {pkg.discount}% OFF
-                  </Badge>
-                )}
+              <div>
+                <h3 className="font-bold text-lg">{pkg.name}</h3>
+                <p className="text-white/80 text-sm">{pkg.description}</p>
               </div>
             </div>
 
             <CardContent className="p-4">
-              {/* Price */}
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl font-bold text-gray-800">₹{pkg.price.toLocaleString()}</span>
-                {pkg.original_price && (
-                  <span className="text-gray-400 line-through">₹{pkg.original_price.toLocaleString()}</span>
-                )}
-                {pkg.discount && (
-                  <Badge className="bg-green-100 text-green-700">Save ₹{(pkg.original_price - pkg.price).toLocaleString()}</Badge>
-                )}
-              </div>
-
               {/* Includes */}
               <div className="space-y-2 mb-4">
                 <p className="text-sm font-medium text-gray-700">Includes:</p>
@@ -230,17 +205,9 @@ const HealthPackages = () => {
               {/* Package Summary */}
               <Card className={`bg-gradient-to-r ${getPackageColor(selectedPackage.id)} text-white`}>
                 <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-bold">{selectedPackage.name}</h3>
-                      <p className="text-sm text-white/80">{selectedPackage.includes?.length} tests included</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold">₹{selectedPackage.price.toLocaleString()}</p>
-                      {selectedPackage.original_price && (
-                        <p className="text-sm text-white/60 line-through">₹{selectedPackage.original_price.toLocaleString()}</p>
-                      )}
-                    </div>
+                  <div>
+                    <h3 className="font-bold">{selectedPackage.name}</h3>
+                    <p className="text-sm text-white/80">{selectedPackage.includes?.length} tests included</p>
                   </div>
                 </CardContent>
               </Card>
@@ -285,7 +252,7 @@ const HealthPackages = () => {
               {/* Book Button */}
               <Button className="w-full bg-amber-600 hover:bg-amber-700" onClick={bookPackage}>
                 <ShoppingCart className="w-4 h-4 mr-2" />
-                Book Package - ₹{selectedPackage.price.toLocaleString()}
+                Book Package
               </Button>
             </div>
           )}

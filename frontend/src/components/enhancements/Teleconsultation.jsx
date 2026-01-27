@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Video, Phone, MessageSquare, Calendar, Clock, User, MapPin, Loader2, Check, X, ExternalLink } from 'lucide-react';
+import { Video, Calendar, Clock, User, Loader2, ExternalLink } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -8,12 +8,11 @@ import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { toast } from 'sonner';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// Teleconsultation Feature (#12, #13)
+// Teleconsultation Feature (#12, #13) - Video Only
 const Teleconsultation = () => {
   const [loading, setLoading] = useState(false);
   const [consultations, setConsultations] = useState([]);
@@ -27,14 +26,8 @@ const Teleconsultation = () => {
   });
 
   const doctors = [
-    { id: 'doc_vikas', name: 'Dr. Vikas Jha', specialty: 'Diabetologist & Physician', available: true, fee: 500 },
-    { id: 'doc_neha', name: 'Dr. Neha Patel', specialty: 'OBGYN', available: true, fee: 600 }
-  ];
-
-  const consultationTypes = [
-    { id: 'video', name: 'Video Call', icon: Video, description: 'Face-to-face video consultation', fee: 500 },
-    { id: 'audio', name: 'Voice Call', icon: Phone, description: 'Audio consultation', fee: 300 },
-    { id: 'chat', name: 'Chat', icon: MessageSquare, description: 'Text-based consultation', fee: 200 }
+    { id: 'doc_vikas', name: 'Dr. Vikas Jha', specialty: 'Diabetologist & Physician', available: true },
+    { id: 'doc_neha', name: 'Dr. Neha Patel', specialty: 'OBGYN', available: true }
   ];
 
   useEffect(() => {
@@ -111,14 +104,7 @@ const Teleconsultation = () => {
     }
   };
 
-  const getTypeIcon = (type) => {
-    switch (type) {
-      case 'video': return Video;
-      case 'audio': return Phone;
-      case 'chat': return MessageSquare;
-      default: return Video;
-    }
-  };
+  const getTypeIcon = () => Video;
 
   return (
     <div className="space-y-4" data-testid="teleconsultation">
@@ -145,28 +131,20 @@ const Teleconsultation = () => {
         </CardContent>
       </Card>
 
-      {/* Consultation Types */}
-      <div className="grid grid-cols-3 gap-3">
-        {consultationTypes.map((type) => (
-          <Card 
-            key={type.id}
-            className={`cursor-pointer transition-all ${
-              bookingData.consultation_type === type.id 
-                ? 'border-2 border-blue-500 bg-blue-50' 
-                : 'hover:border-blue-200'
-            }`}
-            onClick={() => setBookingData(prev => ({ ...prev, consultation_type: type.id }))}
-          >
-            <CardContent className="p-3 text-center">
-              <type.icon className={`w-6 h-6 mx-auto mb-2 ${
-                bookingData.consultation_type === type.id ? 'text-blue-600' : 'text-gray-500'
-              }`} />
-              <p className="font-medium text-sm">{type.name}</p>
-              <p className="text-xs text-gray-500">₹{type.fee}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {/* Video Consultation Info */}
+      <Card className="border-2 border-blue-500 bg-blue-50">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+              <Video className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <p className="font-semibold text-blue-800">Video Consultation</p>
+              <p className="text-sm text-blue-600">Face-to-face consultation with your doctor</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Upcoming Consultations */}
       <Card>
@@ -253,10 +231,7 @@ const Teleconsultation = () => {
                   <p className="text-sm text-gray-500">{doctor.specialty}</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="font-bold text-blue-600">₹{doctor.fee}</p>
-                <Badge variant="outline" className="text-green-600">Available</Badge>
-              </div>
+              <Badge variant="outline" className="text-green-600">Available</Badge>
             </div>
           ))}
         </CardContent>
@@ -329,14 +304,6 @@ const Teleconsultation = () => {
                 className="mt-1"
                 rows={3}
               />
-            </div>
-
-            <div className="p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-700">
-                <strong>Consultation Fee:</strong> ₹{
-                  consultationTypes.find(t => t.id === bookingData.consultation_type)?.fee || 500
-                }
-              </p>
             </div>
 
             <Button 
