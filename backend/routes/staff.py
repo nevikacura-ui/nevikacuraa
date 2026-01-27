@@ -23,6 +23,10 @@ JWT_SECRET = None
 JWT_ALGORITHM = "HS256"
 send_email_notification = None
 send_sms_notification = None
+send_whatsapp_notification = None
+
+# WhatsApp number for Nevika Cura
+WHATSAPP_NUMBER = "919403890429"
 
 # Clinic location Google Maps links
 CLINIC_MAP_LINKS = {
@@ -46,10 +50,11 @@ def set_jwt_config(secret, algorithm="HS256"):
     JWT_SECRET = secret
     JWT_ALGORITHM = algorithm
 
-def set_notification_functions(email_func, sms_func):
-    global send_email_notification, send_sms_notification
+def set_notification_functions(email_func, sms_func, whatsapp_func=None):
+    global send_email_notification, send_sms_notification, send_whatsapp_notification
     send_email_notification = email_func
     send_sms_notification = sms_func
+    send_whatsapp_notification = whatsapp_func
 
 
 # ============ Models ============
