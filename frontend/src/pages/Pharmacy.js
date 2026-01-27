@@ -96,82 +96,122 @@ const getMedicineIcon = (form) => {
 
 // Medicine category images - professional stock photos
 const categoryImages = {
-  // Health-based categories with real images from reference
+  // Product-based categories with real images matching reference UI
   'cough-cold': {
-    label: 'Cough, Cold & Fever',
-    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&h=200&fit=crop',
+    label: 'Cold, Cough & Fever',
+    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop',
     color: 'from-blue-400 to-indigo-500',
-    filter: 'cold'
-  },
-  'stomach-care': {
-    label: 'Stomach Care',
-    image: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200&h=200&fit=crop',
-    color: 'from-amber-400 to-orange-500',
-    filter: 'digestive'
+    filter: 'cold',
+    badge: 'Best Seller'
   },
   'pain-relief': {
-    label: 'Pain Relief & First Aid',
-    image: 'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=200&h=200&fit=crop',
+    label: 'Pain Relief',
+    image: 'https://images.unsplash.com/photo-1641561421178-db8542057811?w=300&h=300&fit=crop',
     color: 'from-red-400 to-rose-500',
-    filter: 'pain'
+    filter: 'pain',
+    badge: 'Trending'
   },
-  'antibiotics': {
-    label: 'Antibiotics',
-    image: 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=200&h=200&fit=crop',
-    color: 'from-green-400 to-emerald-500',
-    filter: 'antibiotic'
-  },
-  'diabetes': {
-    label: 'Diabetes Care',
-    image: 'https://images.unsplash.com/photo-1593491205049-7f3bcdc4f8e4?w=200&h=200&fit=crop',
-    color: 'from-blue-500 to-cyan-500',
-    filter: 'diabetes'
-  },
-  'heart': {
-    label: 'Heart Care',
-    image: 'https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=200&h=200&fit=crop',
-    color: 'from-red-500 to-pink-500',
-    filter: 'cardiac'
-  },
-  'derma': {
-    label: 'Derma & Skin Care',
-    image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=200&h=200&fit=crop',
-    color: 'from-pink-400 to-rose-400',
-    filter: 'skin'
-  },
-  'respiratory': {
-    label: 'Respiratory Care',
-    image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=200&h=200&fit=crop',
-    color: 'from-teal-400 to-cyan-500',
-    filter: 'respiratory'
-  },
-  'eye-ear': {
-    label: 'Eye, Ear & Oral Care',
-    image: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200&h=200&fit=crop',
-    color: 'from-purple-400 to-violet-500',
-    filter: 'eye'
+  'digestive': {
+    label: 'Digestive Health',
+    image: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=300&h=300&fit=crop',
+    color: 'from-amber-400 to-orange-500',
+    filter: 'digestive',
+    badge: null
   },
   'vitamins': {
     label: 'Vitamins & Supplements',
-    image: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=200&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1670850756988-a1943aa0e554?w=300&h=300&fit=crop',
     color: 'from-yellow-400 to-orange-400',
-    filter: 'vitamin'
+    filter: 'vitamin',
+    badge: 'Must Have'
   },
-  'vaccines': {
-    label: 'Vaccines',
-    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&h=200&fit=crop',
-    color: 'from-emerald-400 to-green-500',
-    filter: 'vaccine'
+  'diabetes': {
+    label: 'Diabetes Care',
+    image: 'https://images.unsplash.com/photo-1685660375082-7b9b12260031?w=300&h=300&fit=crop',
+    color: 'from-blue-500 to-cyan-500',
+    filter: 'diabetes',
+    badge: null
   },
-  'nebuliser': {
-    label: 'Nebuliser & Devices',
-    image: 'https://images.unsplash.com/photo-1631549916768-4119b4123b23?w=200&h=200&fit=crop',
+  'skin-care': {
+    label: 'Skin Care',
+    image: 'https://images.unsplash.com/photo-1600634999627-c52556dff978?w=300&h=300&fit=crop',
+    color: 'from-pink-400 to-rose-400',
+    filter: 'skin',
+    badge: 'New'
+  },
+  'baby-care': {
+    label: 'Baby Care',
+    image: 'https://images.unsplash.com/photo-1620875638370-8957e4dbd830?w=300&h=300&fit=crop',
+    color: 'from-sky-400 to-blue-400',
+    filter: 'baby',
+    badge: null
+  },
+  'heart': {
+    label: 'Heart Care',
+    image: 'https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=300&h=300&fit=crop',
+    color: 'from-red-500 to-pink-500',
+    filter: 'cardiac',
+    badge: null
+  },
+  'respiratory': {
+    label: 'Respiratory',
+    image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=300&h=300&fit=crop',
+    color: 'from-teal-400 to-cyan-500',
+    filter: 'respiratory',
+    badge: null
+  },
+  'womens-care': {
+    label: 'Women Care',
+    image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&h=300&fit=crop',
+    color: 'from-purple-400 to-violet-500',
+    filter: 'women',
+    badge: 'Evara'
+  },
+  'oral-care': {
+    label: 'Oral Care',
+    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=300&h=300&fit=crop',
+    color: 'from-cyan-400 to-teal-500',
+    filter: 'oral',
+    badge: null
+  },
+  'hair-care': {
+    label: 'Hair Care',
+    image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&h=300&fit=crop',
+    color: 'from-amber-500 to-yellow-500',
+    filter: 'hair',
+    badge: null
+  },
+  'first-aid': {
+    label: 'First Aid',
+    image: 'https://images.unsplash.com/photo-1603398938378-e54eab446dde?w=300&h=300&fit=crop',
+    color: 'from-red-500 to-red-600',
+    filter: 'first aid',
+    badge: 'Essential'
+  },
+  'devices': {
+    label: 'Medical Devices',
+    image: 'https://images.unsplash.com/photo-1685485276914-6cefc2417c05?w=300&h=300&fit=crop',
     color: 'from-slate-400 to-gray-500',
-    filter: 'device'
+    filter: 'device',
+    badge: null
+  },
+  'ayurvedic': {
+    label: 'Ayurvedic Wellness',
+    image: 'https://images.unsplash.com/photo-1611241893603-3c359704e0ee?w=300&h=300&fit=crop',
+    color: 'from-green-500 to-emerald-500',
+    filter: 'ayurvedic',
+    badge: 'Natural'
+  },
+  'fitness': {
+    label: 'Fitness & Nutrition',
+    image: 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=300&h=300&fit=crop',
+    color: 'from-orange-500 to-red-500',
+    filter: 'fitness',
+    badge: null
   }
 };
 
-// Category Card Component with images
+// Category Card Component with product images and badges
 const CategoryCard = ({ category, isActive, onClick }) => {
   const cat = categoryImages[category];
   
@@ -189,41 +229,50 @@ const CategoryCard = ({ category, isActive, onClick }) => {
       data-testid={`category-${category}`}
     >
       {/* Shimmer effect on hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10">
+        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
       </div>
       
-      <div className="aspect-square relative">
-        {/* Background Image */}
+      <div className="aspect-square relative bg-gradient-to-br from-white to-slate-50">
+        {/* Badge */}
+        {cat.badge && (
+          <div className={`absolute top-2 left-2 z-20 px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm ${
+            cat.badge === 'Trending' ? 'bg-rose-500 text-white' :
+            cat.badge === 'New' ? 'bg-green-500 text-white' :
+            cat.badge === 'Best Seller' ? 'bg-amber-500 text-white' :
+            cat.badge === 'Must Have' ? 'bg-purple-500 text-white' :
+            cat.badge === 'Essential' ? 'bg-red-500 text-white' :
+            cat.badge === 'Natural' ? 'bg-emerald-500 text-white' :
+            cat.badge === 'Evara' ? 'bg-pink-500 text-white' :
+            'bg-blue-500 text-white'
+          }`}>
+            {cat.badge}
+          </div>
+        )}
+        
+        {/* Product Image */}
         <img 
           src={cat.image}
           alt={cat.label}
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
         
-        {/* Gradient overlay */}
-        <div className={`absolute inset-0 bg-gradient-to-t ${cat.color} opacity-60`} />
+        {/* Gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-        
-        {/* Subtle pulse glow effect when active */}
+        {/* Active indicator */}
         {isActive && (
-          <div className="absolute inset-0 animate-pulse bg-white/10" />
-        )}
-        
-        {/* Label at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-2">
-          <span className="text-xs sm:text-sm font-semibold text-white text-center block leading-tight transition-all duration-300 group-hover:tracking-wide drop-shadow-md">
-            {cat.label}
-          </span>
-        </div>
-        
-        {isActive && (
-          <div className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-lg animate-bounce">
+          <div className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-lg animate-bounce z-20">
             <CheckCircle2 className="w-4 h-4 text-orange-500" />
           </div>
         )}
+        
+        {/* Label at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-2 z-10">
+          <span className="text-xs sm:text-sm font-semibold text-white text-center block leading-tight transition-all duration-300 group-hover:tracking-wide drop-shadow-lg">
+            {cat.label}
+          </span>
+        </div>
       </div>
     </button>
   );
