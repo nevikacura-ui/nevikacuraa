@@ -362,13 +362,18 @@ const PatientPortal = () => {
             <button
               key={item.id}
               onClick={() => item.link ? navigate(item.link) : setActiveSection(item.id)}
-              className={`p-4 rounded-2xl border-2 transition-all text-left ${
+              className={`p-4 rounded-2xl border-2 transition-all text-left relative ${
                 activeSection === item.id 
                   ? `border-${item.color}-500 bg-${item.color}-50` 
                   : 'border-gray-100 bg-white hover:border-gray-200'
               }`}
               data-testid={`menu-${item.id}`}
             >
+              {item.isNew && (
+                <span className="absolute top-2 right-2 px-2 py-0.5 bg-teal-500 text-white text-xs rounded-full font-medium">
+                  NEW
+                </span>
+              )}
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${
                 activeSection === item.id ? `bg-${item.color}-500` : 'bg-gray-100'
               }`}>
