@@ -71,10 +71,9 @@ import './App.css';
 // Wrapper component to access auth context
 function AppContent() {
   const { user } = useAuth();
-  const [showLoading, setShowLoading] = useState(true);
-  const [showSplash, setShowSplash] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   
-  // Check if screens should be shown
+  // Check if splash should be shown
   useEffect(() => {
     const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
     const patientToken = localStorage.getItem('patientToken');
@@ -82,15 +81,9 @@ function AppContent() {
     const isStaffPage = window.location.pathname.includes('/admin') || window.location.pathname.includes('/staff');
     
     if (hasSeenSplash || user || patientToken || (staffToken && isStaffPage)) {
-      setShowLoading(false);
       setShowSplash(false);
     }
   }, [user]);
-  
-  const handleLoadingComplete = () => {
-    setShowLoading(false);
-    setShowSplash(true);
-  };
   
   const handleSplashComplete = () => {
     sessionStorage.setItem('hasSeenSplash', 'true');
@@ -99,11 +92,6 @@ function AppContent() {
   
   return (
     <>
-      {/* Loading Screen (White with animated tagline) */}
-      {showLoading && (
-        <LoadingScreen onComplete={handleLoadingComplete} minDuration={2500} />
-      )}
-      
       {/* Splash Screen (Teal gradient with icons) */}
       {showSplash && (
         <SplashScreen onComplete={handleSplashComplete} user={user} />
