@@ -2311,21 +2311,39 @@ const StaffPortal = () => {
                   
                   {/* Clinic Toggle & Date Selector */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                    {/* Clinic Toggle - Only show if doctor works at multiple clinics */}
+                    {/* Enhanced Clinic Filter with color indicators */}
                     {doctorClinics.length > 0 && (
-                      <div className="flex items-center gap-2">
-                        <label className="text-sm text-gray-600">Clinic:</label>
-                        <select
-                          value={selectedClinic}
-                          onChange={(e) => setSelectedClinic(e.target.value)}
-                          className="border rounded-lg px-3 py-1.5 text-sm bg-white min-w-[150px]"
-                          data-testid="doctor-clinic-select"
+                      <div className="flex items-center gap-2 bg-gray-50 rounded-xl p-1">
+                        <button
+                          onClick={() => setSelectedClinic('')}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                            selectedClinic === '' 
+                              ? 'bg-white shadow-sm text-gray-800' 
+                              : 'text-gray-500 hover:text-gray-700'
+                          }`}
+                          data-testid="filter-all-clinics"
                         >
-                          <option value="">All Clinics</option>
-                          {doctorClinics.map(clinic => (
-                            <option key={clinic} value={clinic}>{clinic}</option>
-                          ))}
-                        </select>
+                          All Clinics
+                        </button>
+                        {doctorClinics.map(clinic => (
+                          <button
+                            key={clinic}
+                            onClick={() => setSelectedClinic(clinic)}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                              selectedClinic === clinic 
+                                ? clinic === 'Pushpa Clinic'
+                                  ? 'bg-teal-500 text-white shadow-sm'
+                                  : 'bg-purple-500 text-white shadow-sm'
+                                : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                            data-testid={`filter-${clinic.toLowerCase().replace(' ', '-')}`}
+                          >
+                            <span className={`w-2 h-2 rounded-full ${
+                              clinic === 'Pushpa Clinic' ? 'bg-teal-400' : 'bg-purple-400'
+                            } ${selectedClinic === clinic ? 'bg-white' : ''}`}></span>
+                            {clinic.replace(' Clinic', '')}
+                          </button>
+                        ))}
                       </div>
                     )}
                     
