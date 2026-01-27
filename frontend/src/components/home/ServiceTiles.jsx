@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 
 /**
- * Service Tiles Section - 3D Isometric style cards
- * Based on reference screenshots showing Pharmacy, Lab tests, Consults, etc.
+ * Service Tiles Section - Existing Services Only
+ * DiaGyn - Consultation, Orange - Pharmacy, Proton - Diagnostic
  */
 const ServiceTiles = () => {
   const navigate = useNavigate();
@@ -12,31 +12,35 @@ const ServiceTiles = () => {
   const services = [
     {
       id: 'pharmacy',
-      name: 'Pharmacy',
+      name: 'Orange Pharmacy',
+      subtitle: 'Medicines & Wellness',
       path: '/pharmacy',
       image: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
       gradient: 'from-orange-100 to-amber-50',
       borderColor: 'border-orange-200'
     },
     {
-      id: 'lab-tests',
-      name: 'Lab Tests',
+      id: 'proton',
+      name: 'Proton Diagnostics',
+      subtitle: 'Lab Tests & Packages',
       path: '/proton',
       image: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
-      gradient: 'from-purple-100 to-violet-50',
-      borderColor: 'border-purple-200'
+      gradient: 'from-blue-100 to-cyan-50',
+      borderColor: 'border-blue-200'
     },
     {
-      id: 'consults',
-      name: 'Consults',
+      id: 'diagyn',
+      name: 'DiaGyn',
+      subtitle: 'Doctor Consultations',
       path: '/diagyn',
       image: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg',
       gradient: 'from-teal-100 to-cyan-50',
       borderColor: 'border-teal-200'
     },
     {
-      id: 'womens-health',
-      name: 'Women\'s Care',
+      id: 'evara',
+      name: 'Evara',
+      subtitle: "Women's Wellness",
       path: '/evara',
       badge: 'Evara',
       gradient: 'from-pink-100 to-rose-50',
@@ -79,7 +83,7 @@ const ServiceTiles = () => {
               <img 
                 src={service.image} 
                 alt={service.name}
-                className="h-16 w-auto object-contain mb-2 group-hover:scale-110 transition-transform duration-300"
+                className="h-14 w-auto object-contain mb-2 group-hover:scale-110 transition-transform duration-300"
               />
             ) : (
               <span className="text-4xl mb-2 group-hover:scale-110 transition-transform duration-300">{service.icon}</span>
@@ -87,6 +91,7 @@ const ServiceTiles = () => {
 
             {/* Service Name */}
             <span className="text-sm font-semibold text-slate-700">{service.name}</span>
+            <span className="text-[10px] text-slate-500">{service.subtitle}</span>
           </button>
         ))}
       </div>
