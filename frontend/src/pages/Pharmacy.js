@@ -326,6 +326,7 @@ const Pharmacy = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [medicines, setMedicines] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [inventory, setInventory] = useState([]);
