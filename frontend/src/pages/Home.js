@@ -588,9 +588,6 @@ const Home = () => {
           <TrustBadges />
         </div>
 
-        {/* Service Tiles - Main Services Grid (Existing Services Only) */}
-        <ServiceTiles />
-
         {/* Quick Action Cards - Call, WhatsApp, Upload, Packages */}
         <QuickActionCards />
 
