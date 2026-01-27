@@ -184,10 +184,6 @@ const DoctorProfiles = () => {
                       <Clock className="w-4 h-4" />
                       {selectedDoctor.timings}
                     </div>
-                    <div className="flex items-center gap-2 text-green-600 font-medium">
-                      <span>₹{selectedDoctor.consultation_fee}</span>
-                      <span className="text-gray-400 font-normal">/ consultation</span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -481,9 +477,6 @@ const DoctorProfiles = () => {
                         <span className="flex items-center gap-1">
                           <Building className="w-3 h-3" />
                           {doctor.clinic}
-                        </span>
-                        <span className="text-green-600 font-medium">
-                          ₹{doctor.consultation_fee}
                         </span>
                       </div>
                     </div>
