@@ -588,9 +588,34 @@ const Home = () => {
         </div>
 
         {/* Quick Actions - One-tap access */}
-        <div className="mb-8">
+        <div className="mb-6">
           <QuickActions />
         </div>
+
+        {/* NEW: Trust Badges Section */}
+        <div className="mb-6 -mx-4 sm:-mx-6 lg:-mx-8">
+          <TrustBadges />
+        </div>
+
+        {/* NEW: Service Tiles - Main Services Grid */}
+        <ServiceTiles />
+
+        {/* NEW: Quick Action Cards - Call, WhatsApp, Upload, Packages */}
+        <QuickActionCards />
+
+        {/* NEW: Online Consultation Section with Symptom Chips */}
+        <div className="mb-6">
+          <OnlineConsultSection />
+        </div>
+
+        {/* NEW: Health Services Cards - Vaccines, Insurance, Insights */}
+        <HealthServicesCards />
+
+        {/* NEW: Women's Care Section (Evara) */}
+        <WomensCareSection />
+
+        {/* NEW: Shop by Health Concerns Grid */}
+        <HealthConcernsGrid />
 
         {/* Smart Home Feed - For logged in users */}
         {user && (
@@ -602,9 +627,9 @@ const Home = () => {
         {/* Welcome Message - For all users */}
         <div className="mb-6 text-center md:text-left">
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-            Welcome to Nevika Cura 🏥
+            More Services 🏥
           </h2>
-          <p className="text-slate-600">Your trusted partner for complete healthcare services</p>
+          <p className="text-slate-600">Explore our complete healthcare ecosystem</p>
         </div>
 
         {/* Install App Banner - Enhanced Design */}
