@@ -10,16 +10,22 @@ export { default as SymptomChecker } from './SymptomChecker';
 export { default as FamilyHub } from './FamilyHub';
 export { default as HealthContentHub } from './HealthContentHub';
 export { default as NotificationPreferences } from './NotificationPreferences';
+export { default as HealthScoreGamification } from './HealthScoreGamification';
+export { default as SmartReminders } from './SmartReminders';
+export { default as VoicePrescription } from './VoicePrescription';
+export { default as MedicationInteractionChecker } from './MedicationInteractionChecker';
 
 // Feature list for reference:
-// #1 - Smart Appointment Reminders (Backend)
-// #2 - Queue Position Tracker ✓
-// #3 - Prescription Digital Wallet ✓
-// #4 - Family Health Hub ✓
-// #5 - Health Score Gamification (In LoyaltyPoints)
-// #11 - Loyalty Points System ✓
-// #17 - Health Content Hub ✓
-// #19 - Symptom Checker ✓
-// #30 - Emergency SOS ✓
-// #38 - Dark Mode ✓
-// #49 - Multi-channel Notifications ✓
+// ✅ #1 - Smart Appointment Reminders (SmartReminders)
+// ✅ #2 - Queue Position Tracker (QueueTracker)
+// ✅ #3 - Prescription Digital Wallet (PrescriptionWallet)
+// ✅ #4 - Family Health Hub (FamilyHub)
+// ✅ #5 - Health Score Gamification (HealthScoreGamification)
+// ✅ #6 - Voice Notes for Prescriptions (VoicePrescription)
+// ✅ #11 - Loyalty Points System (LoyaltyPoints)
+// ✅ #17 - Health Content Hub (HealthContentHub)
+// ✅ #19 - Symptom Checker (SymptomChecker)
+// ✅ #20 - Medication Interaction Checker (MedicationInteractionChecker)
+// ✅ #30 - Emergency SOS (EmergencySOS)
+// ✅ #38 - Dark Mode (DarkModeToggle)
+// ✅ #49 - Multi-channel Notifications (NotificationPreferences)
