@@ -163,6 +163,8 @@ function AppContent() {
           <Route path="/smart-reminders" element={<SmartReminders />} />
           {/* Patient Portal */}
           <Route path="/patient-portal" element={<PatientPortal />} />
+          {/* Enhancement Features */}
+          <Route path="/features" element={<EnhancementFeatures />} />
           {/* Payment Routes */}
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/cancel" element={<PaymentCancel />} />
