@@ -527,39 +527,6 @@ const SplashScreen = ({ onComplete, user }) => {
           </div>
         </DialogContent>
       </Dialog>
-      
-      {/* CSS for animations */}
-      <style>{`
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes icon-disappear {
-          0% { opacity: 0; transform: scale(0.8) translateY(10px); }
-          20% { opacity: 1; transform: scale(1) translateY(0); }
-          80% { opacity: 1; transform: scale(1) translateY(0); }
-          100% { opacity: 0; transform: scale(0.8) translateY(-10px); }
-        }
-        .animate-fade-in-up {
-          animation: fade-in-up 0.6s ease-out;
-        }
-        .animate-fade-in {
-          animation: fade-in 0.5s ease-out;
-        }
-        .icon-disappear {
-          animation: icon-disappear 2.5s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 };
