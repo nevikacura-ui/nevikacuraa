@@ -1,183 +1,107 @@
 # Nevika Cura - Product Requirements Document
 
 ## Original Problem Statement
-Build a comprehensive healthcare application named "Nevika Cura" to enhance staff and patient experience with features for appointment booking, pharmacy orders, diagnostic tests, women's wellness (Evara), diabetes care (Glydex), kids health (Alyne), and staff management.
+Build a comprehensive healthcare application named "Nevika Cura" that enhances staff and patient experience with features for appointment booking, pharmacy ordering, lab tests, and more.
 
-## Core Architecture
-- **Frontend:** React with Tailwind CSS, Shadcn/UI components
-- **Backend:** FastAPI (Python)
-- **Database:** MongoDB
-- **SMS:** Twilio
-- **Email:** Resend
-- **AI/LLM:** GPT-4o via Emergent LLM Key
+## User Personas
+1. **Patients** - Book appointments, order medicines, view lab results
+2. **Staff** - Manage appointments, handle walk-ins, process orders
+3. **Doctors** - View schedules, consult patients, manage prescriptions
 
-## Doctors
-- **Dr. Vikas Jha** - Diabetologist & Physician (Both Pushpa Clinic & Amnion Clinic)
-- **Dr. Neha Patel** - OBGYN (Both Pushpa Clinic & Amnion Clinic)
+## Core Requirements
 
----
+### Portals
+1. **Orange Pharmacy** - Medicine ordering with 4,266+ medicines catalog
+2. **Proton Diagnostics** - Lab tests and diagnostic packages
+3. **DiaGyn** - Doctor consultations
+4. **Evara** - Women's wellness services
+
+### Key Features
+- Appointment booking (scheduled, walk-in, emergency)
+- Prescription upload and processing
+- Live queue status tracking
+- Email notifications via Resend
+- SMS notifications via Twilio
+- WhatsApp notifications via Baileys (FREE)
 
 ## What's Been Implemented
 
-### Session - January 27, 2026 (Current)
+### January 28, 2026 - UI Redesign & WhatsApp Integration
+- ✅ Home page redesigned - removed search bar, cleaned up sections
+- ✅ Trust badges section added (Trusted Labs, Doctor Curated, Home Sample, Fast Reports)
+- ✅ Service tiles updated (Orange Pharmacy, Proton Diagnostics, DiaGyn, Evara)
+- ✅ Quick action cards (Full body Packages, Call, WhatsApp, Upload Prescription)
+- ✅ Pharmacy categories with image-based cards (12 health categories)
+- ✅ Proton trust badges section added
+- ✅ WhatsApp integration (number: 9403890429) for appointment confirmations
+- ✅ Medicine count verified: 4,266 records
 
-#### Phase 1 - Core Enhancement Features ✅
-Built 13 enhancement features:
-| # | Feature | Status |
-|---|---------|--------|
-| 1 | Smart Appointment Reminders | ✅ |
-| 2 | Queue Position Tracker | ✅ |
-| 3 | Prescription Digital Wallet | ✅ |
-| 4 | Family Health Hub | ✅ |
-| 5 | Health Score Gamification | ✅ |
-| 6 | Voice Prescription (Doctors) | ✅ |
-| 11 | Loyalty Points System | ✅ |
-| 17 | Health Content Hub | ✅ |
-| 19 | Symptom Checker | ✅ |
-| 20 | Medication Interaction Checker | ✅ |
-| 30 | Emergency SOS | ✅ |
-| 38 | Dark Mode Toggle | ✅ |
-| 49 | Multi-channel Notifications | ✅ |
+### Previous Implementations
+- ✅ Role-based appointment visibility (doctors/staff)
+- ✅ Staff appointment editing functionality
+- ✅ Email confirmations for walk-in/emergency appointments
+- ✅ Live queue backend functionality
+- ✅ Splash screen with loading animation
+- ✅ Loyalty points system for pharmacy
 
-#### Phase 2 - AI Features ✅
-Built 4 AI-powered features using GPT-4o via Emergent LLM Key:
-| # | Feature | Status | AI Model |
-|---|---------|--------|----------|
-| 7 | Smart Schedule Optimizer | ✅ | GPT-4o |
-| 8 | Predictive Health Insights | ✅ | GPT-4o |
-| 9 | AI Appointment Suggestions | ✅ | GPT-4o |
-| 10 | Automated Health Reports | ✅ | GPT-4o |
+## Prioritized Backlog
 
-#### Loading/Splash Screen ✅
-- Single clean splash screen (teal gradient with Nevika Cura logo)
-- Removed LoadingScreen.jsx completely (was causing multiple screens bug)
-- Only SplashScreen.jsx renders on app start
-- Skip button bypasses to home page
+### P0 (Critical)
+- User verification of WhatsApp notifications
 
-#### UI Cleanup (January 27, 2026) ✅
-- Removed all pricing (₹) from patient-facing pages
-- Teleconsultation: Only Video option (removed Voice/Chat)
-- Health Packages: No pricing displayed
-- Doctor Profiles: No consultation fees shown
+### P1 (High Priority)
+- Complete remaining enhancements (~11 features)
+- Video Consultations implementation
+- Offline Mode support
 
-#### Phase 4 - Patient Engagement Features ✅
-| # | Feature | Status |
-|---|---------|--------|
-| 18 | Community Forums | ✅ |
-| 21 | AI Triage Assistant | ✅ |
-| 22 | Predictive Health Alerts | ✅ |
-| 23 | Smart Medical Records | ✅ |
-| 24 | Wearable Device Integration | ✅ |
-| 28 | Virtual Health Coach | ✅ |
-| 35 | Consent Management | ✅ |
-| 51 | Two-way Doctor Chat | ✅ |
+### P2 (Medium Priority)
+- Widget Support for mobile
+- Apple Watch App
+- Insurance Pre-Authorization
+- Corporate/Insurance Tie-ups
 
-#### Phase 5 - Analytics & Admin Features ✅
-| # | Feature | Status |
-|---|---------|--------|
-| 31 | Patient Journey Analytics | ✅ |
-| 32 | Revenue Forecasting | ✅ |
-| 33 | Health Outcome Tracking | ✅ |
-| 34 | Audit Trail Dashboard | ✅ |
-| 41 | Room/Resource Booking | ✅ |
-| 42 | Staff Shift Management | ✅ |
-| 44 | Digital Signage (Queue Display) | ✅ |
+### P3 (Lower Priority)
+- Automated Follow-up Calls
+- AR Clinic Navigation
+- Multi-language Voice Assistant
 
-#### Phase 6 - Payments & Operations ✅
-| # | Feature | Status |
-|---|---------|--------|
-| 14 | Smart Inventory Alerts | ✅ |
-| 16 | Billing Reconciliation | ✅ |
-| 45 | Split Payment (EMI) | ✅ |
-| 48 | Payment Links (WhatsApp/SMS) | ✅ |
-| 25 | Lab Report Auto-Import | ✅ |
-| 43 | Patient Check-in Kiosk | ✅ |
-| 50 | Broadcast Messages | ✅ |
+## Tech Stack
+- **Frontend:** React with Tailwind CSS, Shadcn UI
+- **Backend:** FastAPI (Python)
+- **Database:** MongoDB
+- **Notifications:** Resend (email), Twilio (SMS), Baileys (WhatsApp)
+- **Payments:** Stripe
 
----
+## Key API Endpoints
+- `/api/pharmacy/count` - Returns medicine count (4266)
+- `/api/pharmacy/inventory` - Medicine listing
+- `/api/whatsapp/templates` - WhatsApp message templates
+- `/api/whatsapp/send/*` - Send WhatsApp notifications
+- `/api/staff/appointments/*` - Appointment management
 
-## Key Files
-
-### Phase 2 AI Files
-- `/app/backend/routes/ai_features.py` - AI APIs using emergentintegrations
-- `/app/frontend/src/components/enhancements/SmartScheduleOptimizer.jsx`
-- `/app/frontend/src/components/enhancements/PredictiveHealthInsights.jsx`
-- `/app/frontend/src/components/enhancements/AIAppointmentSuggestions.jsx`
-- `/app/frontend/src/components/enhancements/AutomatedHealthReports.jsx`
-
-### Phase 1 Files
-- `/app/frontend/src/components/enhancements/` - All 13 Phase 1 components
-- `/app/backend/routes/enhancements.py` - Phase 1 APIs
-
-### Core Files
-- `/app/frontend/src/pages/EnhancementFeatures.jsx` - Features showcase page
-- `/app/frontend/src/pages/PatientPortal.js` - Patient dashboard
-
----
-
-## AI Integration Details
-
-```python
-# Using emergentintegrations library
-from emergentintegrations.llm.chat import LlmChat, UserMessage
-
-chat = LlmChat(
-    api_key=EMERGENT_LLM_KEY,
-    session_id="unique-session-id",
-    system_message="Healthcare assistant prompt"
-).with_model("openai", "gpt-4o")
-
-response = await chat.send_message(UserMessage(text=prompt))
+## Architecture
+```
+/app/
+├── backend/
+│   ├── routes/
+│   │   ├── staff.py (WhatsApp notifications added)
+│   │   ├── whatsapp.py (NEW - WhatsApp API)
+│   │   └── pharmacy.py
+│   └── services/
+│       └── whatsapp_service.py (NEW)
+└── frontend/
+    └── src/
+        ├── components/home/
+        │   ├── TrustBadges.jsx
+        │   ├── ServiceTiles.jsx
+        │   └── QuickActionCards.jsx (WhatsApp: 919403890429)
+        └── pages/
+            ├── Home.js (redesigned)
+            └── Pharmacy.js (image categories)
 ```
 
-**Key**: `EMERGENT_LLM_KEY` in `/app/backend/.env`
+## Known Issues
+- Face ID Camera fails on mobile (low priority, no feature depends on it)
 
----
-
-## API Endpoints
-
-### Phase 2 AI APIs
-- `POST /api/ai/schedule-optimizer` - AI appointment slot suggestions
-- `POST /api/ai/health-insights` - Predictive health analysis
-- `POST /api/ai/appointment-suggestions` - AI specialist recommendations
-- `GET /api/ai/health-report` - AI-generated health summary
-
-### Phase 1 APIs
-- `GET /api/patient/health-score` - Health score & gamification
-- `POST /api/patient/health-score/checkin` - Daily check-in
-- `GET/POST /api/patient/reminders` - Smart reminders
-- `POST /api/patient/emergency/sos` - Emergency SOS
-- `POST /api/patient/medications/check-interactions` - Drug interaction check
-- `GET /api/patient/health-content` - Health articles
-
----
-
-## Test Credentials
-- **Patient:** Mobile: `9876543210` (OTP shown on screen)
-- **Staff:** user: `staff_pushpa`, pass: `Nevika@2026C`
-- **Doctor:** user: `doc_vikas`, pass: `Nevika@2026C`
-
----
-
-## Testing Status
-- **Phase 1:** 21/21 tests passed (100%)
-- **Phase 2:** 12/12 tests passed (100%)
-- **P0 Splash/Pricing Fix:** 6/6 tests passed (100%) - iteration_62.json
-- **Phase 4-6 Features:** 7/7 tests passed (100%) - iteration_63.json
-- **Total Enhancement Features:** 41 implemented (visible on /features page)
-
----
-
-## Remaining Features (30 features)
-
-### Phase 3 - Telemedicine & Integration
-- #12 Video Consultations
-- #13-16 Telemedicine features
-- #42 Insurance Integration
-
-### Phase 4 - Advanced Features
-- #18, #21-29, #31-37, #39, #43-44, #48, #50, #52
-
----
-
-Last Updated: January 27, 2026 (41 Enhancement Features Complete)
+## Last Updated
+January 28, 2026
