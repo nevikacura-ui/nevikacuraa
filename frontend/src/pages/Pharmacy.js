@@ -449,7 +449,7 @@ const Pharmacy = () => {
     return () => clearTimeout(timer);
   }, [searchTerm, selectedForm]);
 
-  // Filter inventory when search term or form changes
+  // Filter inventory when search term, form, or category changes
   useEffect(() => {
     const filterInventory = async () => {
       setCurrentPage(1);
@@ -460,7 +460,8 @@ const Pharmacy = () => {
             page: 1, 
             per_page: 50, 
             search: searchTerm || undefined,
-            form: selectedForm || undefined
+            form: selectedForm || undefined,
+            category: selectedCategory || undefined
           }
         });
         setInventory(response.data.medicines || []);
@@ -475,7 +476,7 @@ const Pharmacy = () => {
     
     const debounce = setTimeout(filterInventory, 300);
     return () => clearTimeout(debounce);
-  }, [searchTerm, selectedForm]);
+  }, [searchTerm, selectedForm, selectedCategory]);
 
   // Resend timer
   useEffect(() => {
