@@ -3245,9 +3245,29 @@ async def get_medicine_count():
     return {"total": len(MEDICINE_INVENTORY)}
 
 @api_router.get("/pharmacy/all")
-async def get_all_medicines(page: int = 1, per_page: int = 100, search: str = None, form: str = None):
-    """Get all medicines with pagination and filtering"""
-    # Filter medicines based on search and form
+async def get_all_medicines(page: int = 1, per_page: int = 100, search: str = None, form: str = None, category: str = None):
+    """Get all medicines with pagination and filtering by search, form, or category"""
+    # Category keyword mappings for filtering
+    CATEGORY_KEYWORDS = {
+        'cold': ['cold', 'cough', 'fever', 'flu', 'paracetamol', 'cetrizine', 'antihistamine', 'decongest', 'sinusitis', 'influenza', 'antiallerg'],
+        'pain': ['pain', 'analgesic', 'painkiller', 'ache', 'ibuprofen', 'diclofenac', 'aceclofenac', 'tramadol', 'muscle relaxant', 'sprain'],
+        'digestive': ['antacid', 'digestive', 'stomach', 'gastric', 'acidity', 'omeprazole', 'pantoprazole', 'ranitidine', 'domperidone', 'constipation', 'laxative', 'diarrhea', 'probiotic'],
+        'vitamin': ['vitamin', 'supplement', 'calcium', 'iron', 'zinc', 'folic', 'b12', 'multivitamin', 'd3', 'omega', 'mineral', 'nutraceutical'],
+        'diabetes': ['diabetes', 'diabetic', 'metformin', 'glimepiride', 'insulin', 'glucose', 'glycemic', 'sugar', 'sitagliptin', 'gliclazide'],
+        'skin': ['skin', 'derma', 'cream', 'ointment', 'lotion', 'acne', 'fungal', 'antifungal', 'eczema', 'psoriasis', 'moisturizer', 'sunscreen'],
+        'baby': ['baby', 'infant', 'pediatric', 'child', 'kids', 'gripe', 'teething', 'diaper', 'nappy'],
+        'cardiac': ['heart', 'cardiac', 'cardiovascular', 'bp', 'hypertension', 'amlodipine', 'atenolol', 'telmisartan', 'cholesterol', 'statin', 'blood pressure'],
+        'respiratory': ['respiratory', 'asthma', 'bronch', 'inhaler', 'nebul', 'salbutamol', 'montelukast', 'theophylline', 'copd', 'breathe'],
+        'women': ['women', 'female', 'menstrual', 'period', 'pcos', 'pregnancy', 'prenatal', 'contraceptive', 'hormonal', 'estrogen', 'progesterone'],
+        'oral': ['oral', 'dental', 'tooth', 'gum', 'mouthwash', 'toothpaste', 'fluoride', 'cavity'],
+        'hair': ['hair', 'scalp', 'dandruff', 'minoxidil', 'biotin', 'keratin', 'alopecia', 'hairfall'],
+        'first aid': ['first aid', 'bandage', 'antiseptic', 'dettol', 'betadine', 'wound', 'burn', 'cotton', 'gauze'],
+        'device': ['device', 'thermometer', 'bp monitor', 'glucometer', 'nebulizer', 'oximeter', 'syringe', 'mask', 'gloves'],
+        'ayurvedic': ['ayurvedic', 'ayurveda', 'herbal', 'churna', 'ashwagandha', 'tulsi', 'giloy', 'triphala', 'chyawanprash', 'patanjali', 'himalaya', 'dabur'],
+        'fitness': ['protein', 'whey', 'fitness', 'gym', 'energy', 'sports', 'muscle', 'bcaa', 'creatine', 'nutrition']
+    }
+    
+    # Filter medicines based on search, form, and category
     filtered = MEDICINE_INVENTORY
     
     if search:
@@ -3256,6 +3276,17 @@ async def get_all_medicines(page: int = 1, per_page: int = 100, search: str = No
     
     if form:
         filtered = [m for m in filtered if m.get("form", "").lower() == form.lower()]
+    
+    if category and category in CATEGORY_KEYWORDS:
+        keywords = CATEGORY_KEYWORDS[category]
+        category_filtered = []
+        for m in filtered:
+            name_lower = m["name"].lower()
+            form_lower = m.get("form", "").lower()
+            # Check if any keyword matches the medicine name or form
+            if any(kw in name_lower or kw in form_lower for kw in keywords):
+                category_filtered.append(m)
+        filtered = category_filtered
     
     # Paginate
     total = len(filtered)
@@ -3268,7 +3299,8 @@ async def get_all_medicines(page: int = 1, per_page: int = 100, search: str = No
         "total": total,
         "page": page,
         "per_page": per_page,
-        "total_pages": (total + per_page - 1) // per_page if total > 0 else 1
+        "total_pages": (total + per_page - 1) // per_page if total > 0 else 1,
+        "category": category
     }
 
 @api_router.get("/pharmacy/frequently-ordered")
