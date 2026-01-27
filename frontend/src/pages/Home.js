@@ -29,10 +29,7 @@ import {
 import {
   TrustBadges,
   ServiceTiles,
-  HealthConcernsGrid,
-  QuickActionCards,
-  WomensCareSection,
-  HealthServicesCards
+  QuickActionCards
 } from '@/components/home';
 
 // Icon mapping for data-driven components
