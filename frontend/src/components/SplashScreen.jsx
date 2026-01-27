@@ -305,15 +305,16 @@ const SplashScreen = ({ onComplete, user }) => {
     setShowAuth(true);
   };
   
-  // Fading icons data
+  // 3 Fading icons - Calendar, Pharmacy, Blood Test
   const icons = [
-    { Icon: Calendar, bgColor: 'bg-blue-200/80', iconColor: 'text-blue-600', label: 'Appointments' },
-    { Icon: Pill, bgColor: 'bg-orange-200/80', iconColor: 'text-orange-600', label: 'Pharmacy' },
+    { Icon: Calendar, bgColor: 'bg-blue-200/80', iconColor: 'text-blue-600', label: 'Appointments', animDelay: '0s' },
+    { Icon: Pill, bgColor: 'bg-orange-200/80', iconColor: 'text-orange-600', label: 'Pharmacy', animDelay: '0.3s' },
+    { Icon: TestTube, bgColor: 'bg-purple-200/80', iconColor: 'text-purple-600', label: 'Lab Tests', animDelay: '0.6s' },
   ];
   
   return (
     <div 
-      className="fixed inset-0 z-[99998] flex flex-col items-center justify-start p-6 overflow-hidden"
+      className="fixed inset-0 z-[99999] flex flex-col items-center justify-start p-6 overflow-hidden"
       style={{ 
         position: 'fixed', 
         top: 0, 
@@ -360,13 +361,13 @@ const SplashScreen = ({ onComplete, user }) => {
           <div className="h-1 w-20 bg-gradient-to-r from-teal-200 to-cyan-200 mx-auto rounded-full mt-3"></div>
         </div>
         
-        {/* Fading Icons - Appointments & Pharmacy */}
-        <div className="flex justify-center items-center gap-8 mb-5">
-          {icons.map(({ Icon, bgColor, iconColor, label }, idx) => (
+        {/* 3 Fading Icons - Calendar, Pharmacy, Lab Tests */}
+        <div className="flex justify-center items-center gap-6 mb-5">
+          {icons.map(({ Icon, bgColor, iconColor, label, animDelay }, idx) => (
             <div 
               key={label}
               className="flex flex-col items-center gap-2 icon-disappear"
-              style={{ animationDelay: `${idx * 0.3}s` }}
+              style={{ animationDelay: animDelay }}
             >
               <div className={`${bgColor} backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-black/10 border border-white/40`}
                    style={{ width: '72px', height: '72px' }}>
