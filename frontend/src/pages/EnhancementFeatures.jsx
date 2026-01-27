@@ -191,7 +191,10 @@ const EnhancementFeatures = () => {
             onClick={() => setActiveFeature(feature)}
             data-testid={`feature-${feature.id}`}
           >
-            {feature.isNew && (
+            {feature.isAI && (
+              <Badge className="absolute top-2 right-2 bg-purple-500 text-[10px]">AI</Badge>
+            )}
+            {feature.isNew && !feature.isAI && (
               <Badge className="absolute top-2 right-2 bg-teal-500 text-[10px]">NEW</Badge>
             )}
             <CardContent className="p-4">
