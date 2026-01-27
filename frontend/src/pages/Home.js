@@ -597,29 +597,12 @@ const Home = () => {
         {/* Quick Action Cards - Call, WhatsApp, Upload, Packages */}
         <QuickActionCards />
 
-        {/* Health Services Cards - Vaccines, Insurance, Insights */}
-        <HealthServicesCards />
-
-        {/* Women's Care Section (Evara) */}
-        <WomensCareSection />
-
-        {/* Shop by Health Concerns Grid */}
-        <HealthConcernsGrid />
-
         {/* Smart Home Feed - For logged in users */}
         {user && (
           <div className="mb-8">
             <SmartHomeFeed user={user} />
           </div>
         )}
-
-        {/* Welcome Message - For all users */}
-        <div className="mb-6 text-center md:text-left">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-            More Services 🏥
-          </h2>
-          <p className="text-slate-600">Explore our complete healthcare ecosystem</p>
-        </div>
 
         {/* Install App Banner - Enhanced Design */}
         {showInstallBanner && !isStandalone && (
