@@ -30,6 +30,7 @@ JWT_SECRET = None
 JWT_ALGORITHM = "HS256"
 send_push_notification = None
 send_sms_notification = None
+send_whatsapp_notification = None
 
 def set_db(database):
     global db
