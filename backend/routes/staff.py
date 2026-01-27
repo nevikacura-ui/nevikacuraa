@@ -443,9 +443,11 @@ Location: {map_link}
             </div>
             """
             await send_email_notification(
-                data.patient_email,
-                f"🚨 Emergency Appointment Confirmed - {data.doctor} | DiaGyn Healthcare",
-                patient_email_html
+                subject=f"🚨 Emergency - {data.patient_name}",
+                html_content=f"Emergency registered for {data.patient_name} with {data.doctor} at {data.clinic}. Type: {data.emergency_type}",
+                patient_email=data.patient_email,
+                patient_subject=f"🚨 Emergency Appointment Confirmed - {data.doctor} | DiaGyn Healthcare",
+                patient_html=patient_email_html
             )
             logger.info(f"Emergency confirmation email sent to {data.patient_email}")
         except Exception as e:
