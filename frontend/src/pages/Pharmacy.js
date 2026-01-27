@@ -819,6 +819,34 @@ const Pharmacy = () => {
         </div>
       </div>
 
+      {/* Quick Health Concerns Filter */}
+      <div className="bg-white border-b border-slate-100">
+        <div className="max-w-5xl mx-auto px-4 py-3">
+          <p className="text-xs font-medium text-slate-500 mb-2">Quick shop by health concern:</p>
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {[
+              { id: 'diabetes', name: 'Diabetes', icon: '🩸', filter: 'diabetes' },
+              { id: 'heart', name: 'Heart Care', icon: '❤️', filter: 'cardiac' },
+              { id: 'pain', name: 'Pain Relief', icon: '💊', filter: 'pain' },
+              { id: 'digestive', name: 'Digestive', icon: '🫃', filter: 'digestive' },
+              { id: 'skin', name: 'Skin Care', icon: '✨', filter: 'skin' },
+              { id: 'respiratory', name: 'Cold & Cough', icon: '🫁', filter: 'cold' },
+              { id: 'vitamins', name: 'Vitamins', icon: '💪', filter: 'vitamin' }
+            ].map((concern) => (
+              <button
+                key={concern.id}
+                onClick={() => setSearchTerm(concern.filter)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-300 rounded-full text-xs font-medium text-slate-700 transition-all whitespace-nowrap"
+                data-testid={`health-concern-${concern.id}`}
+              >
+                <span>{concern.icon}</span>
+                {concern.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <main className="max-w-5xl mx-auto px-4 py-6">
         {/* STEP 1: Add Medicines */}
         {currentStep === 1 && (
