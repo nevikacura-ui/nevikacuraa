@@ -1002,92 +1002,83 @@ const Pharmacy = () => {
               </div>
             </Card>
 
-            {/* Category Cards - Health-based Categories with Images */}
+            {/* Category Cards - Product Image Categories (12 total) */}
             <div className="space-y-3">
-              <h3 className="font-semibold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                <Package className="w-5 h-5 text-orange-500" />
-                Shop by Category
-              </h3>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <Package className="w-5 h-5 text-orange-500" />
+                  Shop by Category
+                </h3>
+                {selectedCategory && (
+                  <button 
+                    onClick={() => setSelectedCategory('')}
+                    className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+                  >
+                    Clear Filter ✕
+                  </button>
+                )}
+              </div>
+              {/* Grid: 4 cols on mobile (4x3), 6 cols on desktop (2x6) */}
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
                 <CategoryCard 
                   category="cough-cold" 
-                  isActive={searchTerm === 'cold'} 
-                  onClick={() => setSearchTerm(searchTerm === 'cold' ? '' : 'cold')} 
+                  isActive={selectedCategory === 'cold'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'cold' ? '' : 'cold')} 
                 />
                 <CategoryCard 
                   category="pain-relief" 
-                  isActive={searchTerm === 'pain'} 
-                  onClick={() => setSearchTerm(searchTerm === 'pain' ? '' : 'pain')} 
+                  isActive={selectedCategory === 'pain'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'pain' ? '' : 'pain')} 
                 />
                 <CategoryCard 
                   category="digestive" 
-                  isActive={searchTerm === 'digestive'} 
-                  onClick={() => setSearchTerm(searchTerm === 'digestive' ? '' : 'digestive')} 
+                  isActive={selectedCategory === 'digestive'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'digestive' ? '' : 'digestive')} 
                 />
                 <CategoryCard 
                   category="vitamins" 
-                  isActive={searchTerm === 'vitamin'} 
-                  onClick={() => setSearchTerm(searchTerm === 'vitamin' ? '' : 'vitamin')} 
+                  isActive={selectedCategory === 'vitamin'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'vitamin' ? '' : 'vitamin')} 
                 />
                 <CategoryCard 
                   category="diabetes" 
-                  isActive={searchTerm === 'diabetes'} 
-                  onClick={() => setSearchTerm(searchTerm === 'diabetes' ? '' : 'diabetes')} 
+                  isActive={selectedCategory === 'diabetes'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'diabetes' ? '' : 'diabetes')} 
                 />
                 <CategoryCard 
                   category="skin-care" 
-                  isActive={searchTerm === 'skin'} 
-                  onClick={() => setSearchTerm(searchTerm === 'skin' ? '' : 'skin')} 
+                  isActive={selectedCategory === 'skin'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'skin' ? '' : 'skin')} 
                 />
                 <CategoryCard 
                   category="baby-care" 
-                  isActive={searchTerm === 'baby'} 
-                  onClick={() => setSearchTerm(searchTerm === 'baby' ? '' : 'baby')} 
+                  isActive={selectedCategory === 'baby'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'baby' ? '' : 'baby')} 
                 />
                 <CategoryCard 
                   category="heart" 
-                  isActive={searchTerm === 'cardiac'} 
-                  onClick={() => setSearchTerm(searchTerm === 'cardiac' ? '' : 'cardiac')} 
+                  isActive={selectedCategory === 'cardiac'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'cardiac' ? '' : 'cardiac')} 
                 />
                 <CategoryCard 
                   category="respiratory" 
-                  isActive={searchTerm === 'respiratory'} 
-                  onClick={() => setSearchTerm(searchTerm === 'respiratory' ? '' : 'respiratory')} 
+                  isActive={selectedCategory === 'respiratory'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'respiratory' ? '' : 'respiratory')} 
                 />
                 <CategoryCard 
                   category="womens-care" 
-                  isActive={searchTerm === 'women'} 
-                  onClick={() => setSearchTerm(searchTerm === 'women' ? '' : 'women')} 
-                />
-                <CategoryCard 
-                  category="oral-care" 
-                  isActive={searchTerm === 'oral'} 
-                  onClick={() => setSearchTerm(searchTerm === 'oral' ? '' : 'oral')} 
-                />
-                <CategoryCard 
-                  category="hair-care" 
-                  isActive={searchTerm === 'hair'} 
-                  onClick={() => setSearchTerm(searchTerm === 'hair' ? '' : 'hair')} 
-                />
-                <CategoryCard 
-                  category="first-aid" 
-                  isActive={searchTerm === 'first aid'} 
-                  onClick={() => setSearchTerm(searchTerm === 'first aid' ? '' : 'first aid')} 
-                />
-                <CategoryCard 
-                  category="devices" 
-                  isActive={searchTerm === 'device'} 
-                  onClick={() => setSearchTerm(searchTerm === 'device' ? '' : 'device')} 
+                  isActive={selectedCategory === 'women'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'women' ? '' : 'women')} 
                 />
                 <CategoryCard 
                   category="ayurvedic" 
-                  isActive={searchTerm === 'ayurvedic'} 
-                  onClick={() => setSearchTerm(searchTerm === 'ayurvedic' ? '' : 'ayurvedic')} 
+                  isActive={selectedCategory === 'ayurvedic'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'ayurvedic' ? '' : 'ayurvedic')} 
                 />
                 <CategoryCard 
                   category="fitness" 
-                  isActive={searchTerm === 'fitness'} 
-                  onClick={() => setSearchTerm(searchTerm === 'fitness' ? '' : 'fitness')} 
+                  isActive={selectedCategory === 'fitness'} 
+                  onClick={() => setSelectedCategory(selectedCategory === 'fitness' ? '' : 'fitness')} 
                 />
               </div>
             </div>
