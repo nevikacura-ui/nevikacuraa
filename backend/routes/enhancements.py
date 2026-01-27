@@ -143,7 +143,7 @@ async def add_family_member(member: FamilyMember, patient = Depends(get_patient_
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
-    if db:
+    if db is not None:
         await db.family_members.insert_one(member_doc)
     
     return {"success": True, "member": member_doc}
@@ -154,7 +154,7 @@ async def get_loyalty_data(patient = Depends(get_patient_from_token)):
     """Get patient's loyalty points and tier"""
     patient_phone = patient.get("phone") or patient.get("sub")
     
-    if not db:
+    if db is None:
         return {
             "points": 750,
             "tier": "Silver",
@@ -184,7 +184,7 @@ async def earn_points(points: int, reason: str, patient = Depends(get_patient_fr
     """Add loyalty points"""
     patient_phone = patient.get("phone") or patient.get("sub")
     
-    if db:
+    if db is not None:
         await db.loyalty_points.update_one(
             {"patient_phone": patient_phone},
             {
@@ -223,7 +223,7 @@ async def get_notification_prefs(patient = Depends(get_patient_from_token)):
         "queue": {"push": True, "sms": True, "email": False, "whatsapp": True},
     }
     
-    if not db:
+    if db is None:
         return default_prefs
     
     prefs = await db.notification_preferences.find_one(
