@@ -1,6 +1,6 @@
 """
 WhatsApp Notification Routes
-Cost-effective alternative to Twilio for appointment reminders
+Professional WhatsApp messages via Twilio WhatsApp API
 """
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -8,19 +8,24 @@ from typing import Optional, List
 import logging
 
 from services.whatsapp_service import (
-    initialize_whatsapp,
-    get_whatsapp_qr,
-    check_whatsapp_connection,
-    send_whatsapp_message,
     get_appointment_confirmation_message,
     get_appointment_reminder_message,
+    get_appointment_completion_message,
     get_pharmacy_order_message,
-    get_lab_report_ready_message
+    get_lab_report_ready_message,
+    get_emergency_alert_message
 )
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/whatsapp", tags=["WhatsApp Notifications"])
+
+# Will be injected from server.py
+send_whatsapp = None
+
+def set_whatsapp_function(func):
+    global send_whatsapp
+    send_whatsapp = func
 
 
 class WhatsAppMessageRequest(BaseModel):
