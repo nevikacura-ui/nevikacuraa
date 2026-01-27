@@ -16,7 +16,35 @@ Build a comprehensive healthcare application named "Nevika Cura" to enhance staf
 
 ## What's Been Implemented
 
-### Session - January 26, 2026 (Part 9 - Current)
+### Session - January 27, 2026 (Part 10 - Current)
+
+#### Completed Features
+1. **Splash Screen Redesign - COMPLETE** ✅
+   - **New Design:**
+     - Beautiful multi-color gradient background (teal → cyan → blue → indigo → purple)
+     - Circular glassy logo container with glow effect
+     - "Nevika Cura" brand name text below logo
+     - Animated background orbs with blur effects
+     - Frosted glass icon buttons for services
+   - **Files Modified:**
+     - `/app/frontend/src/components/SplashScreen.jsx`
+
+2. **Doctor Multi-Clinic Appointment Access - COMPLETE** ✅
+   - **Issue:** Doctors couldn't see appointments from both clinics
+   - **Root Causes Fixed:**
+     - Doctor names in DB didn't match appointment doctor names
+     - Backend only filtered by single clinic, not multi-clinic array
+   - **Changes:**
+     - Updated doctor accounts in DB with correct names ("Dr. Vikas Jha", "Dr. Neha Patel")
+     - Added `clinics` array to doctor accounts (both have access to Pushpa & Amnion)
+     - Modified `/api/staff/doctor/appointments` to query all clinics in doctor's `clinics` array
+     - Added `clinics` to JWT token and login response
+   - **Files Modified:**
+     - `/app/backend/routes/staff.py` - Multi-clinic query support
+     - Database: staff collection - updated doctor records
+   - **Verified:** Both Dr. Vikas and Dr. Neha can see appointments from ALL clinics with "All Clinics" filter
+
+### Session - January 26, 2026 (Part 9)
 
 #### Completed Features
 1. **Staff Portal Appointment Visibility Bug Fix - COMPLETE** ✅
