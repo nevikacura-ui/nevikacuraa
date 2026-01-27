@@ -49,8 +49,16 @@ Built 4 AI-powered features using GPT-4o via Emergent LLM Key:
 | 10 | Automated Health Reports | ✅ | GPT-4o |
 
 #### Loading/Splash Screen ✅
-- Removed extra HTML splash screen
-- Now 2 screens: Loading (white + tagline) → Splash (teal + icons)
+- Single clean splash screen (teal gradient with Nevika Cura logo)
+- Removed LoadingScreen.jsx completely (was causing multiple screens bug)
+- Only SplashScreen.jsx renders on app start
+- Skip button bypasses to home page
+
+#### UI Cleanup (January 27, 2026) ✅
+- Removed all pricing (₹) from patient-facing pages
+- Teleconsultation: Only Video option (removed Voice/Chat)
+- Health Packages: No pricing displayed
+- Doctor Profiles: No consultation fees shown
 
 ---
 
