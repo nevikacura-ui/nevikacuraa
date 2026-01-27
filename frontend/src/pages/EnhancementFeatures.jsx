@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Trophy, BookOpen, Bell, Pill, Heart, Phone, FileText, 
-  Activity, Users, Shield, Star, Zap, Calendar, Gift, Settings, Stethoscope
+  Activity, Users, Shield, Star, Zap, Calendar, Gift, Settings, Stethoscope,
+  Video, Mic, Package
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +24,11 @@ import {
   SmartScheduleOptimizer,
   PredictiveHealthInsights,
   AIAppointmentSuggestions,
-  AutomatedHealthReports
+  AutomatedHealthReports,
+  VoiceAssistant,
+  Teleconsultation,
+  InsuranceIntegration,
+  HealthPackages
 } from '@/components/enhancements';
 
 const EnhancementFeatures = () => {
