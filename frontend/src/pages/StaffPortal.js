@@ -2413,14 +2413,18 @@ const StaffPortal = () => {
                 appointments.map((appt) => (
                   <div 
                     key={appt.id} 
-                    className={`flex items-center justify-between p-4 rounded-lg border ${
+                    className={`flex items-center justify-between p-4 rounded-lg border-l-4 ${
                       appt.appointment_type === 'EMERGENCY' 
-                        ? 'bg-red-50 border-red-300' 
+                        ? 'bg-red-50 border-red-500 border-r border-t border-b border-r-red-300 border-t-red-300 border-b-red-300' 
                         : appt.status === 'Completed'
-                        ? 'bg-green-50 border-green-200'
+                        ? 'bg-green-50 border-green-500 border-r border-t border-b border-r-green-200 border-t-green-200 border-b-green-200'
                         : appt.status === 'In Clinic'
-                        ? 'bg-yellow-50 border-yellow-200'
-                        : 'bg-white border-gray-200'
+                        ? 'bg-yellow-50 border-yellow-500 border-r border-t border-b border-r-yellow-200 border-t-yellow-200 border-b-yellow-200'
+                        : appt.clinic === 'Pushpa Clinic'
+                        ? 'bg-white border-teal-500 border-r border-t border-b border-r-gray-200 border-t-gray-200 border-b-gray-200'
+                        : appt.clinic === 'Amnion Clinic'
+                        ? 'bg-white border-purple-500 border-r border-t border-b border-r-gray-200 border-t-gray-200 border-b-gray-200'
+                        : 'bg-white border-gray-300 border-r border-t border-b border-r-gray-200 border-t-gray-200 border-b-gray-200'
                     }`}
                     data-testid={`appointment-${appt.id}`}
                   >
