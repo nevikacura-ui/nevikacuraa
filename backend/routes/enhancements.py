@@ -338,7 +338,7 @@ async def get_reminders(patient = Depends(get_patient_from_token)):
     appointments = []
     medications = []
     
-    if db:
+    if db is not None:
         # Get appointments for this patient
         patient_data = await db.patients.find_one({"phone": patient_phone})
         if patient_data:
@@ -377,7 +377,7 @@ async def add_reminder(reminder: dict, patient = Depends(get_patient_from_token)
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
-    if db:
+    if db is not None:
         await db.reminders.insert_one(reminder_data)
     
     return {"success": True, "reminder_id": reminder_data["id"]}
@@ -397,7 +397,7 @@ async def trigger_emergency_sos(data: dict, patient = Depends(get_patient_from_t
         "status": "sent"
     }
     
-    if db:
+    if db is not None:
         await db.emergency_alerts.insert_one(emergency_data)
         
         # In production, send SMS/WhatsApp to emergency contacts
