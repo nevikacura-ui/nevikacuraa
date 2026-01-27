@@ -169,6 +169,44 @@ const EnhancementFeatures = () => {
       isNew: true,
       isAI: true
     },
+    // Phase 3 - Voice, Teleconsultation, Insurance
+    {
+      id: 'voice-assistant',
+      name: 'Voice Assistant',
+      description: 'Book appointments by voice (Hindi/English/Marathi)',
+      icon: Mic,
+      color: 'from-violet-500 to-purple-500',
+      component: VoiceAssistant,
+      isNew: true,
+      isAI: true
+    },
+    {
+      id: 'teleconsult',
+      name: 'Teleconsultation',
+      description: 'Video/audio consultations',
+      icon: Video,
+      color: 'from-cyan-500 to-blue-500',
+      component: Teleconsultation,
+      isNew: true
+    },
+    {
+      id: 'insurance',
+      name: 'Insurance',
+      description: 'Manage policies & claims',
+      icon: Shield,
+      color: 'from-emerald-500 to-teal-500',
+      component: InsuranceIntegration,
+      isNew: true
+    },
+    {
+      id: 'health-packages',
+      name: 'Health Packages',
+      description: 'Discounted health checkups',
+      icon: Package,
+      color: 'from-amber-500 to-orange-500',
+      component: HealthPackages,
+      isNew: true
+    },
   ];
 
   const renderFeatureGrid = () => (
