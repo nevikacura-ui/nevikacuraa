@@ -1,273 +1,291 @@
-import React, { useState } from 'react';
-import { Pill, Search, AlertTriangle, Check, X, Info, Camera } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Pill, AlertTriangle, Check, X, Scan, Camera, FileText, Info, Shield } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
+import { toast } from 'sonner';
+
+const API = process.env.REACT_APP_BACKEND_URL;
 
 // Medication Interaction Checker (#20)
 const MedicationInteractionChecker = () => {
   const [medications, setMedications] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [interactions, setInteractions] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [interactions, setInteractions] = useState([]);
+  const [checking, setChecking] = useState(false);
 
-  const commonMedications = [
-    { id: 'metformin', name: 'Metformin', category: 'Diabetes' },
-    { id: 'aspirin', name: 'Aspirin', category: 'Pain Relief' },
-    { id: 'amlodipine', name: 'Amlodipine', category: 'Blood Pressure' },
-    { id: 'atorvastatin', name: 'Atorvastatin', category: 'Cholesterol' },
-    { id: 'omeprazole', name: 'Omeprazole', category: 'Acid Reflux' },
-    { id: 'lisinopril', name: 'Lisinopril', category: 'Blood Pressure' },
-    { id: 'levothyroxine', name: 'Levothyroxine', category: 'Thyroid' },
-    { id: 'metoprolol', name: 'Metoprolol', category: 'Heart' },
-    { id: 'gabapentin', name: 'Gabapentin', category: 'Nerve Pain' },
-    { id: 'losartan', name: 'Losartan', category: 'Blood Pressure' },
-    { id: 'ibuprofen', name: 'Ibuprofen', category: 'Pain Relief' },
-    { id: 'warfarin', name: 'Warfarin', category: 'Blood Thinner' },
+  const medicineDatabase = [
+    { id: 1, name: 'Metformin', category: 'Diabetes', generic: true },
+    { id: 2, name: 'Glimepiride', category: 'Diabetes', generic: true },
+    { id: 3, name: 'Aspirin', category: 'Blood Thinner', generic: true },
+    { id: 4, name: 'Lisinopril', category: 'Blood Pressure', generic: true },
+    { id: 5, name: 'Atorvastatin', category: 'Cholesterol', generic: true },
+    { id: 6, name: 'Amlodipine', category: 'Blood Pressure', generic: true },
+    { id: 7, name: 'Omeprazole', category: 'Acid Reflux', generic: true },
+    { id: 8, name: 'Metoprolol', category: 'Heart', generic: true },
+    { id: 9, name: 'Warfarin', category: 'Blood Thinner', generic: true },
+    { id: 10, name: 'Ibuprofen', category: 'Pain Relief', generic: true },
+    { id: 11, name: 'Paracetamol', category: 'Pain Relief', generic: true },
+    { id: 12, name: 'Vitamin D3', category: 'Supplement', generic: false },
   ];
 
-  const filteredMeds = searchTerm
-    ? commonMedications.filter(m => 
-        m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.category.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : commonMedications;
+  const knownInteractions = [
+    { 
+      drugs: ['Metformin', 'Contrast Dye'], 
+      severity: 'high', 
+      description: 'May cause lactic acidosis. Stop metformin 48h before contrast procedures.' 
+    },
+    { 
+      drugs: ['Aspirin', 'Ibuprofen'], 
+      severity: 'moderate', 
+      description: 'Both are blood thinners. Increased risk of bleeding and stomach ulcers.' 
+    },
+    { 
+      drugs: ['Warfarin', 'Aspirin'], 
+      severity: 'high', 
+      description: 'Significantly increases bleeding risk. Monitor closely.' 
+    },
+    { 
+      drugs: ['Metformin', 'Alcohol'], 
+      severity: 'moderate', 
+      description: 'Alcohol may increase risk of lactic acidosis. Limit alcohol intake.' 
+    },
+    { 
+      drugs: ['Atorvastatin', 'Grapefruit'], 
+      severity: 'moderate', 
+      description: 'Grapefruit can increase statin levels. Avoid grapefruit juice.' 
+    },
+    { 
+      drugs: ['Lisinopril', 'Potassium Supplements'], 
+      severity: 'moderate', 
+      description: 'May cause high potassium levels. Monitor potassium regularly.' 
+    },
+  ];
+
+  useEffect(() => {
+    if (searchQuery.length >= 2) {
+      const results = medicineDatabase.filter(med => 
+        med.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResults(results);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchQuery]);
 
   const addMedication = (med) => {
     if (!medications.find(m => m.id === med.id)) {
       setMedications([...medications, med]);
-      setSearchTerm('');
-      setInteractions(null);
+      setSearchQuery('');
+      setSearchResults([]);
     }
   };
 
   const removeMedication = (medId) => {
     setMedications(medications.filter(m => m.id !== medId));
-    setInteractions(null);
+    setInteractions([]);
   };
 
   const checkInteractions = () => {
-    setLoading(true);
-    // Simulated interaction check - in production, this would call a drug interaction API
+    if (medications.length < 2) {
+      toast.info('Add at least 2 medications to check interactions');
+      return;
+    }
+
+    setChecking(true);
+    
+    // Simulate API call
     setTimeout(() => {
-      const mockInteractions = {
-        severe: [],
-        moderate: [],
-        mild: [],
-        safe: []
-      };
-
-      // Check for known interactions
-      const hasAspirin = medications.find(m => m.id === 'aspirin');
-      const hasWarfarin = medications.find(m => m.id === 'warfarin');
-      const hasIbuprofen = medications.find(m => m.id === 'ibuprofen');
-      const hasMetformin = medications.find(m => m.id === 'metformin');
-      const hasLisinopril = medications.find(m => m.id === 'lisinopril');
-
-      if (hasAspirin && hasWarfarin) {
-        mockInteractions.severe.push({
-          drugs: ['Aspirin', 'Warfarin'],
-          effect: 'Increased risk of bleeding',
-          recommendation: 'Avoid combination or use under strict medical supervision'
-        });
-      }
-
-      if (hasIbuprofen && hasAspirin) {
-        mockInteractions.moderate.push({
-          drugs: ['Ibuprofen', 'Aspirin'],
-          effect: 'May reduce cardioprotective effect of aspirin',
-          recommendation: 'Take aspirin at least 30 minutes before ibuprofen'
-        });
-      }
-
-      if (hasMetformin && hasLisinopril) {
-        mockInteractions.mild.push({
-          drugs: ['Metformin', 'Lisinopril'],
-          effect: 'May slightly increase effect of blood sugar lowering',
-          recommendation: 'Monitor blood sugar levels regularly'
-        });
-      }
-
-      // Add safe combinations
-      medications.forEach(med => {
-        const hasInteraction = [...mockInteractions.severe, ...mockInteractions.moderate, ...mockInteractions.mild]
-          .some(i => i.drugs.includes(med.name));
-        if (!hasInteraction) {
-          mockInteractions.safe.push(med.name);
+      const foundInteractions = [];
+      const medNames = medications.map(m => m.name);
+      
+      knownInteractions.forEach(interaction => {
+        const matches = interaction.drugs.filter(drug => 
+          medNames.some(name => name.toLowerCase().includes(drug.toLowerCase()))
+        );
+        if (matches.length >= 2) {
+          foundInteractions.push(interaction);
         }
       });
 
-      setInteractions(mockInteractions);
-      setLoading(false);
+      setInteractions(foundInteractions);
+      setChecking(false);
+
+      if (foundInteractions.length === 0) {
+        toast.success('No known interactions found between your medications');
+      } else {
+        toast.warning(`Found ${foundInteractions.length} potential interaction(s)`);
+      }
     }, 1500);
   };
 
   const getSeverityColor = (severity) => {
     switch (severity) {
-      case 'severe': return 'bg-red-100 border-red-300 text-red-800';
-      case 'moderate': return 'bg-orange-100 border-orange-300 text-orange-800';
-      case 'mild': return 'bg-yellow-100 border-yellow-300 text-yellow-800';
-      default: return 'bg-green-100 border-green-300 text-green-800';
+      case 'high': return 'bg-red-100 text-red-700 border-red-200';
+      case 'moderate': return 'bg-amber-100 text-amber-700 border-amber-200';
+      case 'low': return 'bg-green-100 text-green-700 border-green-200';
+      default: return 'bg-gray-100 text-gray-700 border-gray-200';
     }
   };
 
   return (
-    <div className="space-y-4" data-testid="medication-checker">
+    <div className="space-y-4" data-testid="medication-interaction-checker">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          <Pill className="w-6 h-6 text-teal-600" />
+          Interaction Checker
+        </h2>
+        <Badge variant="outline">{medications.length} medicines</Badge>
+      </div>
+
+      {/* Search */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Pill className="w-6 h-6 text-teal-600" />
-            Medication Interaction Checker
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Search Input */}
+        <CardContent className="p-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
-              placeholder="Search medications..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search medicine..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
             />
           </div>
 
           {/* Search Results */}
-          {searchTerm && (
-            <div className="max-h-48 overflow-y-auto border rounded-lg divide-y">
-              {filteredMeds.map(med => (
+          {searchResults.length > 0 && (
+            <div className="mt-2 border rounded-lg divide-y max-h-48 overflow-y-auto">
+              {searchResults.map((med) => (
                 <button
                   key={med.id}
                   onClick={() => addMedication(med)}
                   className="w-full p-3 text-left hover:bg-gray-50 flex items-center justify-between"
                 >
                   <div>
-                    <p className="font-medium">{med.name}</p>
-                    <p className="text-sm text-gray-500">{med.category}</p>
+                    <span className="font-medium">{med.name}</span>
+                    <span className="text-sm text-gray-500 ml-2">{med.category}</span>
                   </div>
-                  <Badge variant="outline">+ Add</Badge>
+                  <Badge variant="outline" className="text-xs">Add</Badge>
                 </button>
               ))}
             </div>
           )}
 
-          {/* Selected Medications */}
-          {medications.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-gray-600">Selected Medications:</p>
-              <div className="flex flex-wrap gap-2">
-                {medications.map(med => (
-                  <Badge
-                    key={med.id}
-                    variant="secondary"
-                    className="flex items-center gap-1 py-1.5 px-3"
-                  >
-                    <Pill className="w-3 h-3" />
-                    {med.name}
-                    <button onClick={() => removeMedication(med.id)}>
-                      <X className="w-3 h-3 ml-1" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Scan Option */}
-          <Button variant="outline" className="w-full">
-            <Camera className="w-4 h-4 mr-2" />
-            Scan Medicine Label
-          </Button>
-
-          {/* Check Button */}
-          <Button
-            className="w-full bg-teal-600 hover:bg-teal-700"
-            disabled={medications.length < 2 || loading}
-            onClick={checkInteractions}
-          >
-            {loading ? 'Checking...' : 'Check Interactions'}
-          </Button>
+          <div className="flex gap-2 mt-3">
+            <Button variant="outline" className="flex-1" size="sm">
+              <Camera className="w-4 h-4 mr-2" />
+              Scan Medicine
+            </Button>
+            <Button variant="outline" className="flex-1" size="sm">
+              <FileText className="w-4 h-4 mr-2" />
+              From Prescription
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
+      {/* Selected Medications */}
+      {medications.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Your Medications</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {medications.map((med) => (
+                <Badge
+                  key={med.id}
+                  variant="secondary"
+                  className="pl-3 pr-1 py-2 text-sm flex items-center gap-2"
+                >
+                  <Pill className="w-3 h-3" />
+                  {med.name}
+                  <button
+                    onClick={() => removeMedication(med.id)}
+                    className="ml-1 p-1 hover:bg-gray-300 rounded"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+
+            <Button 
+              className="w-full mt-4 bg-teal-600 hover:bg-teal-700"
+              onClick={checkInteractions}
+              disabled={checking || medications.length < 2}
+            >
+              {checking ? (
+                'Checking...'
+              ) : (
+                <>
+                  <Shield className="w-4 h-4 mr-2" />
+                  Check Interactions
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Interaction Results */}
-      {interactions && (
+      {interactions.length > 0 && (
         <div className="space-y-3">
-          {/* Severe Interactions */}
-          {interactions.severe.length > 0 && (
-            <Card className={`border-2 ${getSeverityColor('severe')}`}>
+          <h3 className="font-semibold text-gray-700 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-amber-500" />
+            Potential Interactions Found
+          </h3>
+          {interactions.map((interaction, idx) => (
+            <Card key={idx} className={`border-l-4 ${getSeverityColor(interaction.severity)}`}>
               <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <AlertTriangle className="w-5 h-5" />
-                  <span className="font-semibold">Severe Interactions</span>
-                </div>
-                {interactions.severe.map((interaction, idx) => (
-                  <div key={idx} className="p-3 bg-white rounded-lg mb-2">
-                    <p className="font-medium">{interaction.drugs.join(' + ')}</p>
-                    <p className="text-sm mt-1">{interaction.effect}</p>
-                    <p className="text-sm text-red-700 mt-1 font-medium">⚠️ {interaction.recommendation}</p>
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className={`w-5 h-5 flex-shrink-0 ${
+                    interaction.severity === 'high' ? 'text-red-500' : 'text-amber-500'
+                  }`} />
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold">{interaction.drugs.join(' + ')}</span>
+                      <Badge className={`text-xs ${
+                        interaction.severity === 'high' 
+                          ? 'bg-red-500' 
+                          : 'bg-amber-500'
+                      }`}>
+                        {interaction.severity.toUpperCase()}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-gray-600">{interaction.description}</p>
                   </div>
-                ))}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Moderate Interactions */}
-          {interactions.moderate.length > 0 && (
-            <Card className={`border-2 ${getSeverityColor('moderate')}`}>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <Info className="w-5 h-5" />
-                  <span className="font-semibold">Moderate Interactions</span>
                 </div>
-                {interactions.moderate.map((interaction, idx) => (
-                  <div key={idx} className="p-3 bg-white rounded-lg mb-2">
-                    <p className="font-medium">{interaction.drugs.join(' + ')}</p>
-                    <p className="text-sm mt-1">{interaction.effect}</p>
-                    <p className="text-sm text-orange-700 mt-1">💡 {interaction.recommendation}</p>
-                  </div>
-                ))}
               </CardContent>
             </Card>
-          )}
+          ))}
 
-          {/* Mild Interactions */}
-          {interactions.mild.length > 0 && (
-            <Card className={`border-2 ${getSeverityColor('mild')}`}>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <Info className="w-5 h-5" />
-                  <span className="font-semibold">Mild Interactions</span>
-                </div>
-                {interactions.mild.map((interaction, idx) => (
-                  <div key={idx} className="p-3 bg-white rounded-lg mb-2">
-                    <p className="font-medium">{interaction.drugs.join(' + ')}</p>
-                    <p className="text-sm mt-1">{interaction.effect}</p>
-                    <p className="text-sm text-yellow-700 mt-1">ℹ️ {interaction.recommendation}</p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Safe Medications */}
-          {interactions.safe.length > 0 && (
-            <Card className={`border-2 ${getSeverityColor('safe')}`}>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Check className="w-5 h-5" />
-                  <span className="font-semibold">No Known Interactions</span>
-                </div>
-                <p className="text-sm">{interactions.safe.join(', ')} appear safe to take together.</p>
-              </CardContent>
-            </Card>
-          )}
-
-          <p className="text-xs text-gray-500 text-center">
-            *This is for informational purposes only. Always consult your doctor or pharmacist.
-          </p>
+          <Card className="bg-blue-50 border-blue-200">
+            <CardContent className="p-4 flex items-start gap-3">
+              <Info className="w-5 h-5 text-blue-500 flex-shrink-0" />
+              <p className="text-sm text-blue-700">
+                <strong>Important:</strong> This is for informational purposes only. 
+                Always consult your doctor before making changes to your medications.
+              </p>
+            </CardContent>
+          </Card>
         </div>
+      )}
+
+      {/* No Interactions */}
+      {interactions.length === 0 && medications.length >= 2 && !checking && (
+        <Card className="bg-green-50 border-green-200">
+          <CardContent className="p-6 text-center">
+            <Check className="w-12 h-12 mx-auto text-green-500 mb-4" />
+            <h3 className="font-semibold text-green-800">No Known Interactions</h3>
+            <p className="text-sm text-green-600 mt-1">
+              Your selected medications appear safe to take together
+            </p>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
