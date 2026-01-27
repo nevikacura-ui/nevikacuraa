@@ -15,6 +15,12 @@ export { default as SmartReminders } from './SmartReminders';
 export { default as VoicePrescription } from './VoicePrescription';
 export { default as MedicationInteractionChecker } from './MedicationInteractionChecker';
 
+// Phase 2 - AI Features
+export { default as SmartScheduleOptimizer } from './SmartScheduleOptimizer';
+export { default as PredictiveHealthInsights } from './PredictiveHealthInsights';
+export { default as AIAppointmentSuggestions } from './AIAppointmentSuggestions';
+export { default as AutomatedHealthReports } from './AutomatedHealthReports';
+
 // Feature list for reference:
 // ✅ #1 - Smart Appointment Reminders (SmartReminders)
 // ✅ #2 - Queue Position Tracker (QueueTracker)
@@ -22,6 +28,10 @@ export { default as MedicationInteractionChecker } from './MedicationInteraction
 // ✅ #4 - Family Health Hub (FamilyHub)
 // ✅ #5 - Health Score Gamification (HealthScoreGamification)
 // ✅ #6 - Voice Notes for Prescriptions (VoicePrescription)
+// ✅ #7 - Smart Schedule Optimizer (SmartScheduleOptimizer) - AI
+// ✅ #8 - Predictive Health Insights (PredictiveHealthInsights) - AI
+// ✅ #9 - AI Appointment Suggestions (AIAppointmentSuggestions) - AI
+// ✅ #10 - Automated Health Reports (AutomatedHealthReports) - AI
 // ✅ #11 - Loyalty Points System (LoyaltyPoints)
 // ✅ #17 - Health Content Hub (HealthContentHub)
 // ✅ #19 - Symptom Checker (SymptomChecker)
