@@ -227,6 +227,7 @@ async def staff_login(input: StaffLogin):
         'username': staff.get('username'),
         'department': staff.get('department'),
         'clinic': staff.get('clinic'),
+        'clinics': staff.get('clinics', []),  # Multi-clinic support for doctors
         'doctor_name': staff.get('doctor_name'),  # For doctor role - full name like "Dr. Vikas Jha"
         'access_modules': staff.get('access_modules', []),
         'exp': datetime.now(timezone.utc) + timedelta(days=30)  # 30 days session
@@ -239,6 +240,7 @@ async def staff_login(input: StaffLogin):
             "name": staff.get('name'),
             "role": staff.get('role'),
             "clinic": staff.get('clinic'),
+            "clinics": staff.get('clinics', []),  # Multi-clinic support
             "department": staff.get('department'),
             "doctor_name": staff.get('doctor_name'),
             "access_modules": staff.get('access_modules', [])
