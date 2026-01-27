@@ -709,46 +709,24 @@ const PatientPortal = () => {
               </Card>
             )}
             
-            {/* Loyalty Points Section */}
+            {/* Loyalty Points Section - Enhanced */}
             {activeSection === 'loyalty' && (
-              <Card className="rounded-2xl shadow-lg border-0">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-pink-700">
-                    <Gift className="w-5 h-5" />
-                    Loyalty Points
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Star className="w-10 h-10 text-white" />
-                    </div>
-                    <p className="text-4xl font-bold text-pink-600">{patientInfo?.loyalty_points || 0}</p>
-                    <p className="text-gray-500 mt-1">Total Points</p>
-                    
-                    <div className="mt-6 p-4 bg-pink-50 rounded-xl">
-                      <p className="text-sm text-pink-700">
-                        Earn 10 points for every ₹100 spent. Redeem points for discounts on future visits!
-                      </p>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 gap-4 mt-6">
-                      <div className="p-3 bg-gray-50 rounded-xl">
-                        <p className="text-lg font-bold text-gray-800">{patientInfo?.total_visits || 0}</p>
-                        <p className="text-xs text-gray-500">Total Visits</p>
-                      </div>
-                      <div className="p-3 bg-gray-50 rounded-xl">
-                        <p className="text-lg font-bold text-gray-800">{history?.pharmacy_orders?.length || 0}</p>
-                        <p className="text-xs text-gray-500">Orders</p>
-                      </div>
-                      <div className="p-3 bg-gray-50 rounded-xl">
-                        <p className="text-lg font-bold text-gray-800">{history?.summary?.total_appointments || 0}</p>
-                        <p className="text-xs text-gray-500">Appointments</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <LoyaltyPoints />
+            )}
+            
+            {/* Family Hub Section - New */}
+            {activeSection === 'family' && (
+              <FamilyHub />
+            )}
+            
+            {/* Prescriptions Section - New */}
+            {activeSection === 'prescriptions' && (
+              <PrescriptionWallet />
+            )}
+            
+            {/* Notification Preferences Section - New */}
+            {activeSection === 'notifications' && (
+              <NotificationPreferences />
             )}
           </>
         )}
