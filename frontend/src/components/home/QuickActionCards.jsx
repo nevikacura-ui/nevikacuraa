@@ -4,10 +4,14 @@ import { Phone, MessageCircle, Upload, Package } from 'lucide-react';
 
 /**
  * Quick Action Cards - Book via Call, WhatsApp, Upload Prescription, Full Body Packages
- * Based on reference screenshot
+ * WhatsApp: 9403890429
  */
 const QuickActionCards = () => {
   const navigate = useNavigate();
+  
+  // WhatsApp number for Nevika Cura
+  const WHATSAPP_NUMBER = '919403890429';
+  const PHONE_NUMBER = '+919403890429';
 
   const actions = [
     {
@@ -24,7 +28,7 @@ const QuickActionCards = () => {
       title: 'Book via',
       subtitle: 'Call',
       icon: Phone,
-      action: () => window.location.href = 'tel:+919999999999',
+      action: () => window.location.href = `tel:${PHONE_NUMBER}`,
       gradient: 'from-blue-400 to-cyan-500',
       bgGradient: 'from-blue-100 to-cyan-50'
     },
@@ -33,7 +37,7 @@ const QuickActionCards = () => {
       title: 'Book via',
       subtitle: 'WhatsApp',
       icon: MessageCircle,
-      action: () => window.open('https://wa.me/919999999999?text=Hi, I want to book an appointment', '_blank'),
+      action: () => window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Hi, I want to book an appointment at Nevika Cura`, '_blank'),
       gradient: 'from-green-400 to-emerald-500',
       bgGradient: 'from-green-100 to-emerald-50'
     },
