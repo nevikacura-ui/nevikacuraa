@@ -34,6 +34,7 @@ const portals = [
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/9lxbdskl_90.png',
     bgColor: '#1a2e35',
     fillContainer: true,
+    containLogo: true,
     tagline: 'Find Your Calm.'
   },
   // 4. Aanya Newborn
@@ -76,6 +77,8 @@ const portals = [
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/uy8wpc27_file_00000000caf871fdae54ae4c4854bbd4.png',
     bgColor: '#f5f5f5',
     fillContainer: true,
+    containLogo: true,
+    needsBorder: true,
     tagline: 'Renew Health, Stay Ahead.'
   },
   // 8. Thrive360 - Fitness Portal (formerly FitLife)
@@ -89,15 +92,18 @@ const portals = [
     fillContainer: true,
     tagline: 'Mind. Body. Life.'
   },
-  // 9. Senova - Senior Care (formerly Nivara)
+  // 9. Senova - Senior Care (formerly Nivara) - Two people with shield logo
   {
     id: 'senova',
     name: 'Senova',
     subtitle: 'Senior Care',
     path: '/senova',
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/nz0rdwvp_file_000000000dfc7230a4605006a1e3131a.png',
-    bgColor: '#3b5998',
+    bgColor: '#f0f4f8',
     fillContainer: true,
+    containLogo: true,
+    tagline: "Care for Life's Next Chapter."
+  },
     tagline: "Care for Life's Next Chapter."
   },
   // 10. Reports - Blood Charts
