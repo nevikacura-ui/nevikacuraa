@@ -1146,7 +1146,10 @@ const Home = () => {
                         className={`w-full h-full transition-transform duration-300 group-hover:scale-105 ${
                           service.containImage ? 'object-contain' : 'object-cover'
                         }`}
-                        style={service.imagePosition ? { objectPosition: service.imagePosition } : {}}
+                        style={{
+                          ...(service.imagePosition ? { objectPosition: service.imagePosition } : {}),
+                          ...(service.scale ? { transform: `scale(${service.scale})` } : {})
+                        }}
                         data-testid={`service-logo-${service.id}`}
                         loading="lazy"
                       />
