@@ -574,8 +574,68 @@ const Home = () => {
         </div>
       )}
 
+      {/* Trust Badges - Blinkit/Practo style */}
+      <TrustBadges />
+
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+
+        {/* Personalized Dashboard Cards - For logged-in users */}
+        {user && (
+          <div className="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-3" data-testid="personalized-dashboard">
+            {/* Upcoming Appointment Card */}
+            <div 
+              onClick={() => navigate('/profile')}
+              className="p-4 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl border border-teal-200/50 cursor-pointer hover:shadow-md transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-teal-500 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                <Calendar className="w-5 h-5 text-white" />
+              </div>
+              <p className="text-xs text-teal-600 font-medium">Upcoming</p>
+              <p className="text-lg font-bold text-slate-800">{healthStats.upcomingAppointments || 0}</p>
+              <p className="text-[10px] text-slate-500">Appointments</p>
+            </div>
+            
+            {/* Active Prescriptions Card */}
+            <div 
+              onClick={() => navigate('/pharmacy')}
+              className="p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl border border-orange-200/50 cursor-pointer hover:shadow-md transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                <Pill className="w-5 h-5 text-white" />
+              </div>
+              <p className="text-xs text-orange-600 font-medium">Medicines</p>
+              <p className="text-lg font-bold text-slate-800">{healthStats.activePrescriptions || 0}</p>
+              <p className="text-[10px] text-slate-500">Active Orders</p>
+            </div>
+            
+            {/* Health Streak Card */}
+            <div 
+              onClick={logHealthActivity}
+              className="p-4 bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl border border-purple-200/50 cursor-pointer hover:shadow-md transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-purple-500 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                <Flame className="w-5 h-5 text-white" />
+              </div>
+              <p className="text-xs text-purple-600 font-medium">Health Streak</p>
+              <p className="text-lg font-bold text-slate-800">{healthStats.healthStreak || 0}</p>
+              <p className="text-[10px] text-slate-500">Day Streak 🔥</p>
+            </div>
+            
+            {/* Complete Profile Nudge Card */}
+            <div 
+              onClick={() => navigate('/patient-portal')}
+              className="p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl border border-pink-200/50 cursor-pointer hover:shadow-md transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-pink-500 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                <Heart className="w-5 h-5 text-white" />
+              </div>
+              <p className="text-xs text-pink-600 font-medium">My Health</p>
+              <p className="text-lg font-bold text-slate-800">Profile</p>
+              <p className="text-[10px] text-slate-500">View Records →</p>
+            </div>
+          </div>
+        )}
 
         {/* Quick Actions - One-tap access */}
         <div className="mb-6">
