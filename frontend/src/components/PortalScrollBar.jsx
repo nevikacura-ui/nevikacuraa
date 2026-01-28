@@ -121,7 +121,8 @@ const portals = [
     name: 'PSVN',
     subtitle: 'Foundation',
     path: '/psvn-foundation',
-    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/p3zt5ovj_Pink%20Simple%20Charity%20Logo_20260128_183244_0000.png',
+    hasIcon: true,
+    icon: HandHeart,
     bgColor: '#ec4899',
     tagline: 'Care. Compassion. Community.'
   }
