@@ -2472,7 +2472,7 @@ Time: {appointment.time}"""
         await send_push_notification(
             user_id=user.id,
             title="Appointment Confirmed! 📅",
-            body=f"Your appointment with {appointment.doctor} on {appointment.date} at {appointment.time} is confirmed.",
+            body=f"Booking ID: {booking_id} | {appointment.doctor} on {appointment.date} at {appointment.time}",
             url="/profile",
             tag=f"appointment-{appointment.id}"
         )
