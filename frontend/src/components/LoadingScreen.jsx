@@ -5,10 +5,10 @@ const LoadingScreen = ({ onComplete }) => {
   const [fadeOut, setFadeOut] = useState(false);
   
   const words = [
-    { text: 'Book.', color: '#0d9488' },    // teal-600
-    { text: 'Order.', color: '#f97316' },   // orange-500
-    { text: 'Test.', color: '#8b5cf6' },    // violet-500
-    { text: 'Care.', color: '#ec4899' },    // pink-500
+    { text: 'Book.', color: '#ffffff' },      // white
+    { text: 'Order.', color: '#fef3c7' },     // amber-100
+    { text: 'Test.', color: '#e0f2fe' },      // sky-100
+    { text: 'Care.', color: '#fce7f3' },      // pink-100
   ];
   
   useEffect(() => {
@@ -63,7 +63,7 @@ const LoadingScreen = ({ onComplete }) => {
       }}
     >
       {/* Logo Container */}
-      <div className="mb-8 animate-pulse">
+      <div className="mb-8">
         <div className="bg-white rounded-[32px] px-6 py-4 shadow-2xl">
           <img 
             src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
@@ -85,7 +85,7 @@ const LoadingScreen = ({ onComplete }) => {
             }`}
             style={{ 
               color: word.color,
-              textShadow: '0 2px 10px rgba(255,255,255,0.3)',
+              textShadow: '0 2px 8px rgba(0,0,0,0.3)',
               transitionDelay: `${index * 50}ms`
             }}
           >
@@ -100,7 +100,7 @@ const LoadingScreen = ({ onComplete }) => {
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="w-2 h-2 rounded-full bg-white/60"
+              className="w-2 h-2 rounded-full bg-white/80"
               style={{
                 animation: 'loadingDot 0.8s ease-in-out infinite',
                 animationDelay: `${i * 0.15}s`
@@ -112,7 +112,7 @@ const LoadingScreen = ({ onComplete }) => {
       
       <style>{`
         @keyframes loadingDot {
-          0%, 100% { opacity: 0.3; transform: scale(0.8); }
+          0%, 100% { opacity: 0.4; transform: scale(0.8); }
           50% { opacity: 1; transform: scale(1.2); }
         }
       `}</style>
