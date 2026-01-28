@@ -15,7 +15,7 @@ BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 if not BASE_URL:
     raise ValueError("REACT_APP_BACKEND_URL environment variable not set")
 
-JWT_SECRET = os.environ.get('JWT_SECRET', 'your_jwt_secret_here')
+JWT_SECRET = os.environ.get('JWT_SECRET', 'nevika-cura-healthcare-secret-key-2025')
 
 
 def generate_test_token(user_id="test_user_123", name="Test User"):
