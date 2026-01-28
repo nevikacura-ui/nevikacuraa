@@ -98,8 +98,9 @@ function AppContent() {
         <IntroScreen onComplete={handleIntroComplete} user={user} />
       )}
       <div className="App">
-        <Routes>
-          <Route path="/" element={<Home />} />
+        <PageTransition>
+          <Routes>
+            <Route path="/" element={<Home />} />
           <Route path="/diagyn" element={<DiaGyn />} />
           <Route path="/proton" element={<Proton />} />
           <Route path="/pharmacy" element={<Pharmacy />} />
