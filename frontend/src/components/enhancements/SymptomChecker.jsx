@@ -42,8 +42,43 @@ const SymptomChecker = ({ onBookAppointment }) => {
 
   const analyzeSymptoms = async () => {
     setLoading(true);
-    // Simulated AI analysis - in production, this would call an API
-    setTimeout(() => {
+    setError(null);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const symptomNames = symptoms.map(s => s.name);
+      
+      const response = await axios.post(
+        `${API_URL}/api/symptom-checker/analyze`,
+        { symptoms: symptomNames },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      const data = response.data;
+      const hasEmergency = data.severity === 'high';
+      
+      const assessment = {
+        severity: data.severity,
+        possibleConditions: data.possible_conditions.map(c => ({
+          name: c.condition,
+          probability: c.probability
+        })),
+        recommendedSpecialist: hasEmergency ? 'Emergency' : 'General Physician',
+        urgency: data.recommendation,
+        selfCare: [
+          'Rest and stay hydrated',
+          'Monitor temperature regularly',
+          'Take OTC pain relievers if needed',
+        ],
+        disclaimer: data.disclaimer
+      };
+      
+      setAssessment(assessment);
+      setStep(3);
+    } catch (err) {
+      console.error('Symptom analysis failed:', err);
+      setError('Failed to analyze symptoms. Please try again.');
+      // Fallback to local analysis if API fails
       const hasEmergency = symptoms.some(s => ['chest_pain', 'breathing_difficulty'].includes(s.id));
       const assessment = {
         severity: hasEmergency ? 'high' : symptoms.length > 3 ? 'medium' : 'low',
@@ -62,8 +97,9 @@ const SymptomChecker = ({ onBookAppointment }) => {
       };
       setAssessment(assessment);
       setStep(3);
+    } finally {
       setLoading(false);
-    }, 2000);
+    }
   };
 
   const filteredSymptoms = commonSymptoms.filter(s => 
