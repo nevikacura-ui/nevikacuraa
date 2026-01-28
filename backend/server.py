@@ -421,14 +421,23 @@ async def send_appointment_sms(patient_phone: str, appointment_details: dict):
     time = appointment_details.get('time', '')
     booking_type = appointment_details.get('booking_type', 'online')
     booking_id = appointment_details.get('booking_id', '')
+    clinic = appointment_details.get('clinic', '').lower()
     
     # No SMS for walk-in or emergency appointments (staff handles these)
     if booking_type in ['walk_in', 'emergency']:
         logger.info(f"Skipping SMS for {booking_type} appointment")
         return None
     
-    # Short SMS for online bookings (fewer characters = cheaper)
-    message = f"Appointment confirmed. {date} {time}. Booking ID {booking_id}. Nevika Cura"
+    # Brand name based on clinic
+    if 'proton' in clinic:
+        brand = "Proton Diagnostics"
+    elif 'pharmacy' in clinic or 'orange' in clinic:
+        brand = "Orange Pharmacy"
+    else:
+        brand = "DiaGyn Healthcare"
+    
+    # Short SMS format with brand name
+    message = f"Appointment confirmed. {date} {time}. Booking ID {booking_id}. {brand}"
     
     return await send_sms_notification(patient_phone, message)
 
@@ -436,8 +445,17 @@ async def send_appointment_reminder_sms(patient_phone: str, appointment_details:
     """Send short appointment reminder SMS"""
     time = appointment_details.get('time', '')
     booking_id = appointment_details.get('booking_id', '')
+    clinic = appointment_details.get('clinic', '').lower()
     
-    message = f"Reminder: Appointment tomorrow {time}. ID {booking_id}. Nevika Cura"
+    # Brand name based on clinic
+    if 'proton' in clinic:
+        brand = "Proton Diagnostics"
+    elif 'pharmacy' in clinic or 'orange' in clinic:
+        brand = "Orange Pharmacy"
+    else:
+        brand = "DiaGyn Healthcare"
+    
+    message = f"Reminder: Appointment tomorrow {time}. ID {booking_id}. {brand}"
     
     return await send_sms_notification(patient_phone, message)
 
@@ -447,7 +465,8 @@ async def send_test_booking_sms(patient_phone: str, test_details: dict):
     time = test_details.get('time', '')
     booking_id = test_details.get('booking_id', '')
     
-    message = f"Lab test booked for {date} {time}. Booking ID {booking_id}. Nevika Cura"
+    # Lab tests are always Proton Diagnostics
+    message = f"Lab test booked for {date} {time}. Booking ID {booking_id}. Proton Diagnostics"
     
     return await send_sms_notification(patient_phone, message)
 
@@ -455,23 +474,26 @@ async def send_report_ready_sms(patient_phone: str, report_details: dict):
     """Send short report ready SMS"""
     report_type = report_details.get('type', 'Report')
     
-    message = f"{report_type} generated. View in Nevika Cura app."
+    # Reports are from Proton Diagnostics
+    message = f"{report_type} generated. View in app. Proton Diagnostics"
     
     return await send_sms_notification(patient_phone, message)
 
 async def send_medicine_order_sms(patient_phone: str, order_details: dict):
     """Send short medicine order confirmation SMS"""
-    order_id = order_details.get('order_id', order_details.get('id', '')[:8])
+    order_id = order_details.get('order_id', order_details.get('id', ''))[:8]
     
-    message = f"Medicine order confirmed. Order ID {order_id}. Nevika Cura"
+    # Medicine orders are Orange Pharmacy
+    message = f"Medicine order confirmed. Order ID {order_id}. Orange Pharmacy"
     
     return await send_sms_notification(patient_phone, message)
 
 async def send_medicine_delivered_sms(patient_phone: str, order_details: dict):
     """Send short medicine delivered SMS"""
-    order_id = order_details.get('order_id', order_details.get('id', '')[:8])
+    order_id = order_details.get('order_id', order_details.get('id', ''))[:8]
     
-    message = f"Medicine delivered. Order ID {order_id}. Nevika Cura"
+    # Medicine delivery is Orange Pharmacy
+    message = f"Medicine delivered. Order ID {order_id}. Orange Pharmacy"
     
     return await send_sms_notification(patient_phone, message)
 
