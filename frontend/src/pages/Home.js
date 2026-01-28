@@ -322,7 +322,7 @@ const Home = () => {
 
   // Modern Service Cards - Logo background matches card background
   // Featured services (Top 3): DiaGyn, Proton, Pharmacy - All white background horizontal cards
-  // Secondary services (Bottom 2x2): Evara, Glydex, Alyne, Thrive360
+  // Secondary services (Bottom grid): Evara, Glydex, Alyne, Thrive360, Serena, Corvia, Reneu, Senova
   const services = [
     // Featured - Top 3 (All white background)
     {
@@ -355,7 +355,7 @@ const Home = () => {
       isDark: false,
       featured: true
     },
-    // Secondary - Bottom 2x2
+    // Secondary - Bottom grid (8 portals)
     {
       id: 'evara',
       name: 'Evara',
@@ -390,10 +390,50 @@ const Home = () => {
     {
       id: 'thrive360',
       name: 'Thrive360',
-      description: 'Mind & Body Wellness',
-      logo: 'https://customer-assets.emergentagent.com/job_healspace-26/artifacts/iijsipxg_file_00000000290072089f3c35fe8c1b2b05.png',
+      description: 'Mind. Body. Life.',
+      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/kir756bd_Screenshot_20260129-013036.png',
       path: '/thrive360',
-      bgColor: '#1e1b4b',
+      bgColor: '#1a1a3e',
+      isDark: true,
+      fillLogo: true
+    },
+    {
+      id: 'serena',
+      name: 'Serena',
+      description: 'Mental Wellness',
+      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/9lxbdskl_90.png',
+      path: '/serena',
+      bgColor: '#1a2e35',
+      isDark: true,
+      fillLogo: true
+    },
+    {
+      id: 'corvia',
+      name: 'Corvia',
+      description: 'Heart & BP Care',
+      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/p3zt5ovj_Pink%20Simple%20Charity%20Logo_20260128_183244_0000.png',
+      path: '/corvia',
+      bgColor: '#c8f56a',
+      isDark: false,
+      fillLogo: true
+    },
+    {
+      id: 'reneu',
+      name: 'Reneu',
+      description: 'Preventive Health',
+      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/uy8wpc27_file_00000000caf871fdae54ae4c4854bbd4.png',
+      path: '/reneu',
+      bgColor: '#f5f5f5',
+      isDark: false,
+      fillLogo: true
+    },
+    {
+      id: 'senova',
+      name: 'Senova',
+      description: 'Senior Care',
+      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/nz0rdwvp_file_000000000dfc7230a4605006a1e3131a.png',
+      path: '/senova',
+      bgColor: '#3b5998',
       isDark: true,
       fillLogo: true
     }
