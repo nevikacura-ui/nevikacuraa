@@ -1156,16 +1156,18 @@ const Home = () => {
                     )}
                   </div>
                   
-                  {/* Explore Button - Fixed at bottom */}
+                  {/* Explore Button - Fixed at bottom with gradient */}
                   <div className="p-3 flex-shrink-0">
                     <Button
                       onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                       data-testid={`service-button-${service.id}`}
-                      className={`w-full rounded-xl font-semibold transition-all duration-300 shadow-lg py-2 ${
-                        service.isDark 
-                          ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
-                          : 'bg-slate-800 hover:bg-slate-900 text-white'
-                      }`}
+                      className="w-full rounded-xl font-semibold transition-all duration-300 shadow-lg py-2 text-white border-0"
+                      style={{
+                        background: service.isDark 
+                          ? 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%)' 
+                          : 'linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%)',
+                        backdropFilter: service.isDark ? 'blur(10px)' : 'none'
+                      }}
                     >
                       Explore
                       <ChevronRight className="w-4 h-4 ml-1" />
