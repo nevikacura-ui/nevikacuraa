@@ -97,6 +97,7 @@ async def send_msg91_whatsapp(
     payload = {
         "integrated_number": MSG91_WHATSAPP_NUMBER,
         "content_type": "template",
+        "messaging_product": "whatsapp",
         "payload": {
             "messaging_product": "whatsapp",
             "to": clean_phone,
