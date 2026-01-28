@@ -11,7 +11,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://healthhub-231.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://medportal-nevika.preview.emergentagent.com').rstrip('/')
 
 # Test user credentials
 TEST_EMAIL = f"test_wallet_{uuid.uuid4().hex[:8]}@test.com"

@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://healthhub-231.preview.emergentagent.com",
+    "url": "https://medportal-nevika.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {
