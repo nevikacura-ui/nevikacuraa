@@ -3126,13 +3126,22 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
     # Format prescription as clickable link
     prescription_display = f'<a href="{order.prescription_url}" target="_blank" style="color: #8b5cf6;">📎 View Prescription</a>' if order.prescription_url else 'Not uploaded'
     
+    # Generate QR code for lab test booking
+    qr_code_base64 = generate_generic_qr_code(booking_id, "lab_test", {
+        "patient_name": order.patient_name,
+        "tests": ", ".join(order.tests[:3]),
+        "date": order.preferred_date
+    })
+    
     # Send email notification for new diagnostic order
     tests_list = "<br>".join([f"• {test}" for test in order.tests])
     email_html = f"""
     <h2>🔬 New Proton Diagnostics Order</h2>
+    <h3>Booking ID: {booking_id}</h3>
     <h3>Tests Ordered:</h3>
     <p>{tests_list}</p>
     <table style="border-collapse: collapse; width: 100%;">
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Booking ID:</strong></td><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: #8b5cf6;">{booking_id}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Preferred Date:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.preferred_date}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Prescription:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{prescription_display}</td></tr>
     </table>
@@ -3147,7 +3156,7 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
     </div>
     """
     
-    # Patient confirmation email for diagnostics
+    # Patient confirmation email for diagnostics with QR code
     tests_list_patient = "".join([f"<li>{test}</li>" for test in order.tests])
     patient_diag_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -3158,11 +3167,20 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
             <p style="font-size: 18px;">Hello <strong>{order.patient_name}</strong>,</p>
             <p>Your diagnostic tests have been successfully booked at <strong>Proton Diagnostics</strong>.</p>
             
+            <!-- QR Code Section -->
+            <div style="text-align: center; margin: 25px 0; padding: 20px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 12px;">
+                <p style="color: white; margin: 0 0 10px 0; font-size: 14px;">Show this QR code at the collection center</p>
+                <div style="background: white; display: inline-block; padding: 15px; border-radius: 10px;">
+                    <img src="data:image/png;base64,{qr_code_base64}" alt="Booking QR Code" style="width: 150px; height: 150px;">
+                </div>
+                <p style="margin: 10px 0 0 0; color: white; font-size: 24px; font-weight: bold; letter-spacing: 3px;">{booking_id}</p>
+            </div>
+            
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8b5cf6;">
                 <h3 style="color: #8b5cf6; margin-top: 0;">Tests Booked</h3>
                 <ul style="line-height: 1.8;">{tests_list_patient}</ul>
                 <p><strong>Preferred Date:</strong> {order.preferred_date}</p>
-                <p><strong>Order ID:</strong> {order.id[:8]}...</p>
+                <p><strong>Booking ID:</strong> <span style="font-size: 18px; color: #8b5cf6; font-weight: bold;">{booking_id}</span></p>
             </div>
             
             <p style="color: #64748b; font-size: 14px;">
