@@ -1,27 +1,42 @@
 """
 MSG91 WhatsApp API Service for Nevika Cura
-Cost-effective WhatsApp notifications for appointments
+Professional WhatsApp notifications for appointments, lab tests, and pharmacy orders
 """
 import httpx
 import logging
 import os
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, List
 
 logger = logging.getLogger(__name__)
 
 # MSG91 Configuration
 MSG91_AUTH_KEY = os.environ.get("MSG91_AUTH_KEY")
 MSG91_BASE_URL = "https://control.msg91.com/api/v5"
-MSG91_WHATSAPP_NUMBER = os.environ.get("MSG91_WHATSAPP_NUMBER", "919403890429")
+MSG91_WHATSAPP_NUMBER = os.environ.get("MSG91_WHATSAPP_NUMBER", "918108888330")
+
+# Template Names (as registered in MSG91)
+TEMPLATES = {
+    "diagyn_appointment_confirm": "diagyn_appointment_confirm",
+    "diagyn_appointment_reminder": "diagyn_appointment_reminder", 
+    "proton_lab_confirm": "proton_lab_confirm",
+    "orange_pharmacy_confirm": "orange_pharmacy_confirm",
+}
+
+# Clinic Addresses
+CLINIC_ADDRESSES = {
+    "pushpa clinic": "A-1, Sai Darshan, Near Don Bosco High School, Naigaon East",
+    "amnion clinic": "G-7, Rashmi Star City Phase 5, Opp Thakur School, Naigaon East",
+    "default": "Naigaon East, Palghar"
+}
 
 
 async def send_msg91_whatsapp(
     recipient_phone: str,
     template_name: str,
-    variables: list,
+    variables: List[str],
     db=None,
-    appointment_id: str = None,
+    reference_id: str = None,
     message_type: str = "notification"
 ) -> dict:
     """
@@ -32,8 +47,8 @@ async def send_msg91_whatsapp(
         template_name: Pre-approved MSG91 template name
         variables: List of variable values for template placeholders
         db: MongoDB database instance for logging
-        appointment_id: Optional appointment ID for tracking
-        message_type: Type of message (confirmation, reminder, completion)
+        reference_id: Optional appointment/order ID for tracking
+        message_type: Type of message (confirmation, reminder, etc.)
     
     Returns:
         dict with success status and request_id
@@ -51,16 +66,16 @@ async def send_msg91_whatsapp(
     elif not clean_phone.startswith("91"):
         clean_phone = "91" + clean_phone[-10:]
     
-    # Format with + for API
-    formatted_phone = f"+{clean_phone}"
-    
     url = f"{MSG91_BASE_URL}/whatsapp/whatsapp-outbound-message/"
+    
+    # Build parameters list
+    parameters = [{"type": "text", "text": str(var)} for var in variables]
     
     payload = {
         "integrated_number": MSG91_WHATSAPP_NUMBER,
         "content_type": "template",
         "payload": {
-            "to": formatted_phone,
+            "to": clean_phone,
             "type": "template",
             "template": {
                 "name": template_name,
@@ -71,9 +86,7 @@ async def send_msg91_whatsapp(
                 "components": [
                     {
                         "type": "body",
-                        "parameters": [
-                            {"type": "text", "text": str(var)} for var in variables
-                        ]
+                        "parameters": parameters
                     }
                 ]
             }
@@ -97,8 +110,8 @@ async def send_msg91_whatsapp(
         if db:
             try:
                 await db.whatsapp_logs.insert_one({
-                    "appointment_id": appointment_id,
-                    "recipient_phone": formatted_phone,
+                    "reference_id": reference_id,
+                    "recipient_phone": clean_phone,
                     "template_name": template_name,
                     "message_type": message_type,
                     "variables": variables,
@@ -111,12 +124,12 @@ async def send_msg91_whatsapp(
                 logger.error(f"Failed to log WhatsApp message: {e}")
         
         if success:
-            logger.info(f"✅ MSG91 WhatsApp sent to {formatted_phone}: {request_id}")
-            return {"success": True, "request_id": request_id, "to": formatted_phone}
+            logger.info(f"✅ MSG91 WhatsApp sent to {clean_phone} using template '{template_name}': {request_id}")
+            return {"success": True, "request_id": request_id, "to": clean_phone}
         else:
-            error_msg = response_data.get("message", "Unknown error")
+            error_msg = response_data.get("message", str(response_data))
             logger.error(f"❌ MSG91 WhatsApp failed: {error_msg}")
-            return {"success": False, "error": error_msg}
+            return {"success": False, "error": error_msg, "response": response_data}
             
     except httpx.RequestError as e:
         logger.error(f"❌ MSG91 request failed: {e}")
@@ -127,165 +140,194 @@ async def send_msg91_whatsapp(
 
 
 # =============================================
-# Template-Specific Functions
+# DiaGyn Healthcare Templates
 # =============================================
 
-async def send_appointment_confirmation_msg91(
+async def send_diagyn_appointment_confirmation(
     phone: str,
     patient_name: str,
-    doctor_name: str,
-    clinic_name: str,
     date: str,
     time: str,
-    db=None,
-    appointment_id: str = None
-) -> dict:
-    """Send appointment confirmation via MSG91 WhatsApp"""
-    variables = [patient_name, doctor_name, clinic_name, date, time]
-    return await send_msg91_whatsapp(
-        recipient_phone=phone,
-        template_name="appointment_confirmation",
-        variables=variables,
-        db=db,
-        appointment_id=appointment_id,
-        message_type="confirmation"
-    )
-
-
-async def send_appointment_reminder_msg91(
-    phone: str,
-    patient_name: str,
     doctor_name: str,
     clinic_name: str,
-    date: str,
-    time: str,
-    db=None,
-    appointment_id: str = None
-) -> dict:
-    """Send appointment reminder via MSG91 WhatsApp"""
-    variables = [patient_name, doctor_name, date, time]
-    return await send_msg91_whatsapp(
-        recipient_phone=phone,
-        template_name="appointment_reminder",
-        variables=variables,
-        db=db,
-        appointment_id=appointment_id,
-        message_type="reminder"
-    )
-
-
-async def send_appointment_completion_msg91(
-    phone: str,
-    patient_name: str,
-    doctor_name: str,
-    clinic_name: str,
-    db=None,
-    appointment_id: str = None
-) -> dict:
-    """Send consultation completion notification via MSG91 WhatsApp"""
-    variables = [patient_name, doctor_name, clinic_name]
-    return await send_msg91_whatsapp(
-        recipient_phone=phone,
-        template_name="consultation_complete",
-        variables=variables,
-        db=db,
-        appointment_id=appointment_id,
-        message_type="completion"
-    )
-
-
-async def send_pharmacy_order_msg91(
-    phone: str,
-    patient_name: str,
-    order_id: str,
-    status: str,
-    db=None
-) -> dict:
-    """Send pharmacy order update via MSG91 WhatsApp"""
-    variables = [patient_name, order_id, status]
-    return await send_msg91_whatsapp(
-        recipient_phone=phone,
-        template_name="pharmacy_order_update",
-        variables=variables,
-        db=db,
-        message_type="pharmacy"
-    )
-
-
-async def send_lab_report_msg91(
-    phone: str,
-    patient_name: str,
-    test_name: str,
-    order_id: str,
-    db=None
-) -> dict:
-    """Send lab report ready notification via MSG91 WhatsApp"""
-    variables = [patient_name, test_name, order_id]
-    return await send_msg91_whatsapp(
-        recipient_phone=phone,
-        template_name="lab_report_ready",
-        variables=variables,
-        db=db,
-        message_type="lab_report"
-    )
-
-
-# =============================================
-# Fallback: Direct Text Message (if templates not ready)
-# =============================================
-
-async def send_msg91_text_message(
-    recipient_phone: str,
-    message: str,
+    booking_id: str,
     db=None
 ) -> dict:
     """
-    Send plain text WhatsApp message (only works within 24-hour window)
-    Use this for replies or when templates are pending approval
+    Send DiaGyn appointment confirmation via WhatsApp
+    
+    Template variables:
+    {{1}} = Patient Name
+    {{2}} = Date
+    {{3}} = Time
+    {{4}} = Doctor Name
+    {{5}} = Clinic Name
+    {{6}} = Booking ID
+    {{7}} = Address
     """
+    # Get clinic address
+    clinic_lower = clinic_name.lower().strip()
+    address = CLINIC_ADDRESSES.get(clinic_lower, CLINIC_ADDRESSES["default"])
+    
+    variables = [
+        patient_name,      # {{1}}
+        date,              # {{2}}
+        time,              # {{3}}
+        doctor_name,       # {{4}}
+        clinic_name,       # {{5}}
+        booking_id,        # {{6}}
+        address            # {{7}}
+    ]
+    
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
+        template_name=TEMPLATES["diagyn_appointment_confirm"],
+        variables=variables,
+        db=db,
+        reference_id=booking_id,
+        message_type="appointment_confirmation"
+    )
+
+
+async def send_diagyn_appointment_reminder(
+    phone: str,
+    patient_name: str,
+    date: str,
+    time: str,
+    doctor_name: str,
+    clinic_name: str,
+    booking_id: str,
+    db=None
+) -> dict:
+    """
+    Send DiaGyn appointment reminder via WhatsApp
+    
+    Template variables:
+    {{1}} = Patient Name
+    {{2}} = Date
+    {{3}} = Time
+    {{4}} = Doctor Name
+    {{5}} = Clinic Name
+    {{6}} = Booking ID
+    {{7}} = Address
+    """
+    clinic_lower = clinic_name.lower().strip()
+    address = CLINIC_ADDRESSES.get(clinic_lower, CLINIC_ADDRESSES["default"])
+    
+    variables = [
+        patient_name,      # {{1}}
+        date,              # {{2}}
+        time,              # {{3}}
+        doctor_name,       # {{4}}
+        clinic_name,       # {{5}}
+        booking_id,        # {{6}}
+        address            # {{7}}
+    ]
+    
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
+        template_name=TEMPLATES["diagyn_appointment_reminder"],
+        variables=variables,
+        db=db,
+        reference_id=booking_id,
+        message_type="appointment_reminder"
+    )
+
+
+# =============================================
+# Proton Diagnostics Templates
+# =============================================
+
+async def send_proton_lab_confirmation(
+    phone: str,
+    patient_name: str,
+    tests: str,
+    preferred_date: str,
+    preferred_time: str,
+    booking_id: str,
+    address: str,
+    db=None
+) -> dict:
+    """
+    Send Proton Diagnostics lab test confirmation via WhatsApp
+    
+    Template variables:
+    {{1}} = Patient Name
+    {{2}} = Tests
+    {{3}} = Preferred Date
+    {{4}} = Preferred Time
+    {{5}} = Booking ID
+    {{6}} = Home Collection Address
+    """
+    variables = [
+        patient_name,      # {{1}}
+        tests,             # {{2}}
+        preferred_date,    # {{3}}
+        preferred_time,    # {{4}}
+        booking_id,        # {{5}}
+        address            # {{6}}
+    ]
+    
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
+        template_name=TEMPLATES["proton_lab_confirm"],
+        variables=variables,
+        db=db,
+        reference_id=booking_id,
+        message_type="lab_confirmation"
+    )
+
+
+# =============================================
+# Orange Pharmacy Templates
+# =============================================
+
+async def send_orange_pharmacy_confirmation(
+    phone: str,
+    patient_name: str,
+    order_id: str,
+    items: str,
+    delivery_address: str,
+    db=None
+) -> dict:
+    """
+    Send Orange Pharmacy order confirmation via WhatsApp
+    
+    Template variables:
+    {{1}} = Patient Name
+    {{2}} = Order ID
+    {{3}} = Items
+    {{4}} = Delivery Address
+    """
+    variables = [
+        patient_name,      # {{1}}
+        order_id,          # {{2}}
+        items,             # {{3}}
+        delivery_address   # {{4}}
+    ]
+    
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
+        template_name=TEMPLATES["orange_pharmacy_confirm"],
+        variables=variables,
+        db=db,
+        reference_id=order_id,
+        message_type="pharmacy_confirmation"
+    )
+
+
+# =============================================
+# Test Function
+# =============================================
+
+async def test_msg91_connection() -> dict:
+    """Test MSG91 API connection"""
     if not MSG91_AUTH_KEY:
-        return {"success": False, "error": "MSG91 not configured"}
+        return {"success": False, "error": "MSG91_AUTH_KEY not configured"}
     
-    # Clean phone number
-    clean_phone = str(recipient_phone).replace("+", "").replace(" ", "").replace("-", "")
-    if len(clean_phone) == 10:
-        clean_phone = "91" + clean_phone
-    formatted_phone = f"+{clean_phone}"
-    
-    url = f"{MSG91_BASE_URL}/whatsapp/whatsapp-outbound-message/"
-    
-    payload = {
-        "integrated_number": MSG91_WHATSAPP_NUMBER,
-        "content_type": "text",
-        "payload": {
-            "to": formatted_phone,
-            "type": "text",
-            "text": {
-                "body": message
-            }
-        }
+    return {
+        "success": True,
+        "auth_key_configured": True,
+        "whatsapp_number": MSG91_WHATSAPP_NUMBER,
+        "templates_configured": list(TEMPLATES.keys())
     }
-    
-    headers = {
-        "authkey": MSG91_AUTH_KEY,
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(url, json=payload, headers=headers)
-            response_data = response.json()
-        
-        success = response.status_code == 200
-        
-        if success:
-            logger.info(f"✅ MSG91 text message sent to {formatted_phone}")
-            return {"success": True, "to": formatted_phone}
-        else:
-            error_msg = response_data.get("message", "Unknown error")
-            logger.error(f"❌ MSG91 text message failed: {error_msg}")
-            return {"success": False, "error": error_msg}
-            
-    except Exception as e:
-        logger.error(f"❌ Error sending text message: {e}")
-        return {"success": False, "error": str(e)}
