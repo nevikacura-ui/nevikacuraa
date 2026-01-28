@@ -22,7 +22,10 @@ import io
 import asyncio
 import resend
 import json
+import base64
 from pywebpush import webpush, WebPushException
+import qrcode
+from io import BytesIO
 
 # Import data from modular files
 from data.medicine_inventory import MEDICINE_INVENTORY
