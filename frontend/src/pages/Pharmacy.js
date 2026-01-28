@@ -886,6 +886,32 @@ const Pharmacy = () => {
         </div>
       </div>
 
+      {/* Consultation Help Banner - For users confused about what to order */}
+      <div className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white" data-testid="consultation-help-banner">
+        <div className="max-w-5xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 rounded-full p-2 flex-shrink-0">
+                <Stethoscope className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm">Not sure what to order?</p>
+                <p className="text-xs opacity-90">Book a FREE consultation • Pharmacist will call & generate prescription</p>
+              </div>
+            </div>
+            <Button
+              onClick={() => navigate('/diagyn')}
+              variant="secondary"
+              size="sm"
+              className="bg-white text-teal-600 hover:bg-teal-50 rounded-full font-semibold flex-shrink-0"
+              data-testid="book-consultation-btn"
+            >
+              Book Consult
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Loyalty Program Banner */}
       <div 
         className="bg-gradient-to-r from-orange-500 to-amber-500 text-white cursor-pointer hover:from-orange-600 hover:to-amber-600 transition-colors"
