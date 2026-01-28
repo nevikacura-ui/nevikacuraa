@@ -401,12 +401,11 @@ const Home = () => {
       id: 'serena',
       name: 'Serena',
       description: 'Mental Wellness',
-      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/9lxbdskl_90.png',
+      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/dvk4b9gj_90.png',
       path: '/serena',
       bgColor: '#1a2e35',
       isDark: true,
-      fillLogo: true,
-      logoScale: 0.85
+      containLogo: true
     },
     {
       id: 'corvia',
@@ -432,12 +431,11 @@ const Home = () => {
       id: 'senova',
       name: 'Senova',
       description: 'Senior Care',
+      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/fb3a722w_file_000000000dfc7230a4605006a1e3131a.png',
       path: '/senova',
-      bgColor: 'linear-gradient(135deg, #f97316 0%, #22c55e 100%)',
-      isDark: true,
-      useGradient: true,
-      useIcon: true,
-      iconName: 'Users'
+      bgColor: '#f0f4f8',
+      isDark: false,
+      containLogo: true
     }
   ];
   
