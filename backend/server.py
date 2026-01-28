@@ -501,24 +501,20 @@ async def send_pharmacy_order_sms(patient_phone: str, order_details: dict):
     """Send short pharmacy order confirmation SMS"""
     order_id = order_details.get('order_id', order_details.get('id', ''))[:8]
     
-    # Short SMS format
-    message = f"Medicine order confirmed. Order ID {order_id}. Nevika Cura"
+    # Orange Pharmacy branding
+    message = f"Medicine order confirmed. Order ID {order_id}. Orange Pharmacy"
     
     return await send_sms_notification(patient_phone, message)
 
 async def send_pharmacy_status_sms(patient_phone: str, order_id: str, status: str):
     """Send short pharmacy order status SMS"""
-    status_messages = {
-        "Packing": "Order being packed.",
-        "Out for Delivery": "Order out for delivery.",
-        "Delivered": "Medicine delivered."
-    }
-    
-    # Short SMS format
+    # Short SMS format with Orange Pharmacy brand
     if status == "Delivered":
-        message = f"Medicine delivered. Order ID {order_id[:8]}. Nevika Cura"
+        message = f"Medicine delivered. Order ID {order_id[:8]}. Orange Pharmacy"
+    elif status == "Out for Delivery":
+        message = f"Order out for delivery. ID {order_id[:8]}. Orange Pharmacy"
     else:
-        message = f"Order update: {status_messages.get(status, status)}. ID {order_id[:8]}. Nevika Cura"
+        message = f"Order update: {status}. ID {order_id[:8]}. Orange Pharmacy"
     
     return await send_sms_notification(patient_phone, message)
 
