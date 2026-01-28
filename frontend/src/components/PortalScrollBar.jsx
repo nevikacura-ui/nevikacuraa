@@ -34,7 +34,7 @@ const portals = [
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/9lxbdskl_90.png',
     bgColor: '#1a2e35',
     fillContainer: true,
-    containLogo: true,
+    largePadding: true,
     tagline: 'Find Your Calm.'
   },
   // 4. Aanya Newborn
@@ -92,16 +92,16 @@ const portals = [
     fillContainer: true,
     tagline: 'Mind. Body. Life.'
   },
-  // 9. Senova - Senior Care (formerly Nivara) - Two people with shield logo
+  // 9. Senova - Senior Care (formerly Nivara) - Two color people logo (orange + green only)
   {
     id: 'senova',
     name: 'Senova',
     subtitle: 'Senior Care',
     path: '/senova',
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/nz0rdwvp_file_000000000dfc7230a4605006a1e3131a.png',
-    bgColor: '#f0f4f8',
+    bgColor: '#ffffff',
     fillContainer: true,
-    containLogo: true,
+    needsBorder: true,
     tagline: "Care for Life's Next Chapter."
   },
   // 10. Reports - Blood Charts
@@ -124,7 +124,7 @@ const portals = [
     icon: BarChart3,
     bgColor: '#16a34a'
   },
-  // 12. PSVN Foundation
+  // 12. PSVN Foundation - Enlarged logo
   {
     id: 'psvn',
     name: 'PSVN',
@@ -133,6 +133,7 @@ const portals = [
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/ik0oidgy_Screenshot_20260129-011553.png',
     bgColor: '#ffffff',
     fillContainer: true,
+    needsBorder: true,
     tagline: 'Care. Compassion. Community.'
   }
 ];
