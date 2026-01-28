@@ -496,57 +496,38 @@ Thank you!
 async def send_pharmacy_status_sms(patient_phone: str, order_id: str, status: str):
     """Send pharmacy order status update SMS"""
     status_messages = {
-        "Packing": "Your order is being packed.",
-        "Out for Delivery": "Your order is out for delivery! 🚚",
-        "Delivered": "Your order has been delivered. Thank you!"
+        "Packing": "Order being packed.",
+        "Out for Delivery": "Order out for delivery.",
+        "Delivered": "Medicine delivered."
     }
     
-    message = f"""Nevika Cura - Order Update
-
-Order ID: {order_id[:8]}
-Status: {status}
-
-{status_messages.get(status, f'Your order status: {status}')}
-
-- Orange Pharmacy"""
+    # Short SMS format
+    if status == "Delivered":
+        message = f"Medicine delivered. Order ID {order_id[:8]}. Nevika Cura"
+    else:
+        message = f"Order update: {status_messages.get(status, status)}. ID {order_id[:8]}. Nevika Cura"
     
     return await send_sms_notification(patient_phone, message)
 
 async def send_diagnostic_order_sms(patient_phone: str, order_details: dict):
-    """Send diagnostic test booking confirmation SMS to patient"""
-    order_id = order_details.get('id', '')[:8]
-    tests = order_details.get('tests', [])
-    tests_count = len(tests) if isinstance(tests, list) else 1
+    """Send short diagnostic test booking SMS"""
+    order_id = order_details.get('id', order_details.get('booking_id', ''))[:8]
+    date = order_details.get('date', '')
+    time = order_details.get('time', '8:00 AM')
     
-    message = f"""Nevika Cura - Test Booked!
-
-Order ID: {order_id}
-Tests: {tests_count} test(s)
-Status: Test Booked
-
-Our team will contact you for sample collection.
-
-Thank you!
-- Proton Diagnostics"""
+    # Short SMS format
+    message = f"Lab test booked for {date} {time}. Booking ID {order_id}. Nevika Cura"
     
     return await send_sms_notification(patient_phone, message)
 
 async def send_diagnostic_status_sms(patient_phone: str, order_id: str, status: str, report_url: str = None):
-    """Send diagnostic test status update SMS"""
-    status_messages = {
-        "Sample Collected": "Your sample has been collected.",
-        "In Process": "Your test is being processed.",
-        "Reports Generated": "Your reports are ready! Check your email or visit our portal."
-    }
+    """Send short diagnostic test status SMS"""
     
-    message = f"""Nevika Cura - Test Update
-
-Order ID: {order_id[:8]}
-Status: {status}
-
-{status_messages.get(status, f'Your test status: {status}')}
-
-- Proton Diagnostics"""
+    # Short SMS format
+    if status == "Reports Generated":
+        message = f"Report generated. View in Nevika Cura app."
+    else:
+        message = f"Test update: {status}. ID {order_id[:8]}. Nevika Cura"
     
     return await send_sms_notification(patient_phone, message)
 
