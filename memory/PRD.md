@@ -33,16 +33,22 @@ Build a comprehensive healthcare application named "Nevika Cura" that enhances s
 - ✅ **Portal Scroll Bar - 12 Portals:**
   1. Evara - Women's Health
   2. Glydex - Diabetes Care
-  3. Thrive Mind - Mental Wellness (replaced Thrive360)
+  3. **Serena** - Mental Wellness & Meditation (tree person logo) - *NEW*
   4. Aanya - Newborn Care
   5. Alyne Kids - Child Care
-  6. Cardyra - Heart & BP Care
-  7. Vireya - Preventive Health
-  8. FitLife - Physical Health
-  9. Nivara - Senior Care
+  6. **Corvia** - Heart, Hypertension & Cholesterol (lime green heart logo) - *NEW*
+  7. **Reneu** - Preventive Health (leaf person logo) - *NEW*
+  8. **Thrive360** - Fitness & Physical Wellness (runner logo) - *NEW*
+  9. **Senova** - Senior Care (people with shield logo) - *NEW*
   10. Reports - Blood Charts
   11. Health Log - Weight & Logs
-  12. PSVN Foundation
+  12. PSVN Foundation (HandHeart icon)
+- ✅ **Portal Page Renaming Complete:**
+  - FitLife → Thrive360 (fitness portal with custom runner logo)
+  - ThriveMind → Serena (mental wellness with tree/person logo)
+  - Cardyra → Corvia (heart/hypertension with heart logo)
+  - Nivara → Senova (senior care with people/shield logo)
+  - Vireya → Reneu (preventive health with leaf/person logo)
 - ✅ **Consultation Banners** - Added to Pharmacy & Proton pages for confused users
 - ✅ **Page Transitions** - Smooth fade-in animations using framer-motion
 - ✅ **Sand Background** (#F5F5F4) - Applied across Home, Pharmacy, Proton, Profile pages
