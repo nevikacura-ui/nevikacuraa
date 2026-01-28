@@ -778,6 +778,27 @@ async def doctor_complete_appointment(
         except Exception as e:
             logger.error(f"Failed to send invoice email: {e}")
     
+    # Send WhatsApp "Thank you" notification via MSG91
+    whatsapp_sent = False
+    patient_phone = appointment.get("patient_phone") or appointment.get("phone")
+    if patient_phone and send_diagyn_appointment_completed:
+        try:
+            doctor_name = appointment.get('doctor', 'Doctor').replace('Dr. ', '')
+            follow_up_text = f"{data.follow_up_days} days" if data.follow_up_days else "As advised"
+            feedback_link = f"https://nevikacura.com/feedback/{appointment_id}"
+            
+            await send_diagyn_appointment_completed(
+                phone=patient_phone,
+                patient_name=appointment.get('patient_name', 'Patient'),
+                doctor_name=doctor_name,
+                follow_up=follow_up_text,
+                feedback_link=feedback_link
+            )
+            whatsapp_sent = True
+            logger.info(f"WhatsApp thank you sent for appointment {appointment_id}")
+        except Exception as e:
+            logger.warning(f"Failed to send WhatsApp thank you: {e}")
+    
     return {
         "message": "Appointment completed by doctor", 
         "status": "Completed",
@@ -788,7 +809,8 @@ async def doctor_complete_appointment(
         "total_amount": total_fee,
         "follow_up_date": follow_up_date,
         "invoice_sent": invoice_sent,
-        "invoice_email": patient_email if invoice_sent else None
+        "invoice_email": patient_email if invoice_sent else None,
+        "whatsapp_sent": whatsapp_sent
     }
 
 
