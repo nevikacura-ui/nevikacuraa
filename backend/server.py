@@ -2996,8 +2996,9 @@ Tried to order: {', '.join(input.tests[:3])}
 
 Please check if orders need to be updated or completed."""
 
-            await send_sms_notification(STAFF_PHONE_NUMBERS.get('proton', ['9833188288'])[0], staff_message)
-            logger.info(f"Staff notified about diagnostic order limit for {input.patient_phone}")
+            # Staff SMS DISABLED - using email notifications instead
+            # await send_sms_notification(STAFF_PHONE_NUMBERS.get('proton', ['9833188288'])[0], staff_message)
+            logger.info(f"Staff notified (via email) about diagnostic order limit for {input.patient_phone}")
         except Exception as e:
             logger.error(f"Failed to notify staff about diagnostic order limit: {e}")
         
