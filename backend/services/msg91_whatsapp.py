@@ -115,7 +115,7 @@ async def send_msg91_whatsapp(
         request_id = response_data.get("request_id", response_data.get("id", "unknown"))
         
         # Log to database if available
-        if db:
+        if db is not None:
             try:
                 await db.whatsapp_logs.insert_one({
                     "reference_id": reference_id,
