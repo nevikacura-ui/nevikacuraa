@@ -195,14 +195,15 @@ const PortalScrollBar = () => {
         </button>
       )}
 
-      {/* Scrollable Container - 12 portals */}
+      {/* Scrollable Container - 12 portals filling desktop */}
       <div
         ref={scrollRef}
-        className="flex items-center gap-3 px-4 py-3 overflow-x-auto scroll-smooth"
+        className="flex items-center justify-center gap-2 md:gap-3 lg:gap-4 px-2 md:px-4 py-4 overflow-x-auto scroll-smooth"
         style={{ 
           scrollbarWidth: 'none', 
           msOverflowStyle: 'none',
-          WebkitOverflowScrolling: 'touch'
+          WebkitOverflowScrolling: 'touch',
+          scrollBehavior: 'smooth'
         }}
       >
         {portals.map((portal) => {
@@ -216,18 +217,18 @@ const PortalScrollBar = () => {
               className={`flex-shrink-0 transition-all duration-300 ${
                 isActive 
                   ? 'scale-105 ring-3 ring-teal-500 ring-offset-2 ring-offset-[#F5F5F4] rounded-2xl' 
-                  : 'hover:scale-105 hover:shadow-xl'
+                  : 'hover:scale-110 hover:shadow-2xl'
               }`}
               data-testid={`portal-btn-${portal.id}`}
               title={portal.name}
             >
-              {/* Logo/Icon Container - 72x72 for 12 to fit better */}
+              {/* Logo/Icon Container - Large icons to fill desktop (12 icons) */}
               <div 
-                className="w-[72px] h-[72px] md:w-[76px] md:h-[76px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
+                className="w-[80px] h-[80px] sm:w-[90px] sm:h-[90px] md:w-[100px] md:h-[100px] lg:w-[120px] lg:h-[120px] xl:w-[130px] xl:h-[130px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
                 style={{ backgroundColor: portal.bgColor }}
               >
                 {portal.hasIcon ? (
-                  <IconComponent className="w-9 h-9 text-white" />
+                  <IconComponent className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 text-white" />
                 ) : portal.fillContainer ? (
                   <img 
                     src={portal.logo} 
