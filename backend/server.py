@@ -2449,36 +2449,55 @@ Time: {appointment.time}"""
     </div>
     """
     
-    # Patient confirmation email
+    # Generate QR code for patient email
+    qr_code_base64 = generate_booking_qr_code(
+        booking_id=booking_id,
+        patient_name=appointment.patient_name,
+        doctor=appointment.doctor,
+        clinic=appointment.clinic,
+        date=appointment.date,
+        time=appointment.time
+    )
+    
+    # Patient confirmation email with QR code
     patient_appt_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 10px 10px 0 0;">
-            <h1 style="color: white; margin: 0;">Appointment Confirmed! 📅</h1>
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0;">Appointment Confirmed! ✓</h1>
         </div>
         <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
             <p style="font-size: 18px;">Hello <strong>{appointment.patient_name}</strong>,</p>
-            <p>Your appointment has been successfully booked at <strong>DiaGyn Healthcare</strong>.</p>
+            <p>Your appointment has been successfully booked at <strong>Nevika Cura Healthcare</strong>.</p>
             
-            <div style="text-align: center; margin: 20px 0; padding: 15px; background: #0d9488; border-radius: 8px;">
-                <p style="margin: 0; color: white; font-size: 14px;">Your Booking ID</p>
-                <p style="margin: 5px 0 0 0; color: white; font-size: 28px; font-weight: bold; letter-spacing: 2px;">{booking_id}</p>
+            <!-- QR Code Section -->
+            <div style="text-align: center; margin: 25px 0; padding: 20px; background: white; border-radius: 12px; border: 2px dashed #0d9488;">
+                <p style="margin: 0 0 10px 0; color: #64748b; font-size: 12px;">SCAN QR CODE AT CLINIC FOR CHECK-IN</p>
+                <img src="data:image/png;base64,{qr_code_base64}" alt="Booking QR Code" style="width: 150px; height: 150px;" />
+                <div style="margin-top: 15px; padding: 10px; background: #0d9488; border-radius: 8px; display: inline-block;">
+                    <p style="margin: 0; color: white; font-size: 12px;">Booking ID</p>
+                    <p style="margin: 5px 0 0 0; color: white; font-size: 24px; font-weight: bold; letter-spacing: 3px;">{booking_id}</p>
+                </div>
             </div>
             
-            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
-                <h3 style="color: #3b82f6; margin-top: 0;">Appointment Details</h3>
-                <p><strong>Doctor:</strong> {appointment.doctor}</p>
-                <p><strong>Clinic:</strong> {appointment.clinic}</p>
-                <p><strong>Date:</strong> {appointment.date}</p>
-                <p><strong>Time:</strong> {appointment.time}</p>
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0d9488;">
+                <h3 style="color: #0d9488; margin-top: 0;">📋 Appointment Details</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="padding: 8px 0; color: #64748b;">Doctor</td><td style="padding: 8px 0; font-weight: 600;">{appointment.doctor}</td></tr>
+                    <tr><td style="padding: 8px 0; color: #64748b;">Clinic</td><td style="padding: 8px 0; font-weight: 600;">{appointment.clinic}</td></tr>
+                    <tr><td style="padding: 8px 0; color: #64748b;">Date</td><td style="padding: 8px 0; font-weight: 600;">{appointment.date}</td></tr>
+                    <tr><td style="padding: 8px 0; color: #64748b;">Time</td><td style="padding: 8px 0; font-weight: 600;">{appointment.time}</td></tr>
+                </table>
             </div>
             
-            <p style="color: #64748b; font-size: 14px;">
-                Please arrive 15 minutes before your scheduled time. Bring any relevant medical records or prescriptions.
-            </p>
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 0; color: #92400e; font-size: 14px;">
+                    <strong>💡 Tip:</strong> Arrive 15 minutes early. Bring this email or screenshot the QR code for quick check-in.
+                </p>
+            </div>
             
-            <div style="text-align: center; margin-top: 30px; padding: 15px; background: #dbeafe; border-radius: 8px;">
-                <p style="margin: 0; color: #1e40af;"><strong>Need to reschedule?</strong></p>
-                <p style="margin: 5px 0 0 0; color: #3b82f6;">Contact us: 7039020020</p>
+            <div style="text-align: center; margin-top: 30px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
+                <p style="margin: 0; color: #475569;"><strong>Need help?</strong></p>
+                <p style="margin: 5px 0 0 0; color: #0d9488; font-size: 18px; font-weight: bold;">📞 7039020020</p>
             </div>
         </div>
     </div>
@@ -2488,7 +2507,7 @@ Time: {appointment.time}"""
         f"New Appointment - {appointment.doctor} on {appointment.date} ({booking_id})", 
         email_html,
         patient_email=appointment.patient_email,
-        patient_subject=f"Appointment Confirmed - {booking_id} | {appointment.doctor} on {appointment.date}",
+        patient_subject=f"✓ Booking Confirmed: {booking_id} | {appointment.doctor} on {appointment.date}",
         patient_html=patient_appt_html
     )
     
