@@ -3329,6 +3329,9 @@ Please check if orders need delivery update."""
     order_data = input.model_dump()
     del order_data['points_used']  # Remove as we add it separately with discount
     
+    # Generate unique booking ID for pharmacy order
+    booking_id = await generate_booking_id("Orange Pharmacy", db, "pharmacy")
+    
     order = PharmacyOrder(
         user_id=user.id if user else None,
         points_used=points_used,
@@ -3338,9 +3341,10 @@ Please check if orders need delivery update."""
     
     doc = order.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
+    doc['booking_id'] = booking_id  # Add booking ID to order
     
     await db.pharmacy_orders.insert_one(doc)
-    logger.info(f"Pharmacy order created: {order.id}")
+    logger.info(f"Pharmacy order created: {order.id} with booking_id: {booking_id}")
     
     # Generate WhatsApp link for order notification
     medicines_text = ", ".join([f"{m.get('name', 'Unknown')} x{m.get('quantity', 1)}" for m in order.medicines[:3]])
