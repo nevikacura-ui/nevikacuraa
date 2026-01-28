@@ -131,8 +131,17 @@ async def send_msg91_whatsapp(
         # Log full response for debugging
         logger.info(f"MSG91 Response - Status: {response.status_code}, Data: {response_data}")
         
-        success = response.status_code == 200 and response_data.get("type") != "error"
-        request_id = response_data.get("request_id", response_data.get("id", response_data.get("message_id", "unknown")))
+        # Check for success - MSG91 returns status: "success" or hasError: false
+        success = (
+            response.status_code == 200 and 
+            response_data.get("type") != "error" and
+            response_data.get("status") == "success" and
+            not response_data.get("hasError", True)
+        )
+        
+        # Extract message_uuid from nested data object
+        data_obj = response_data.get("data", {})
+        request_id = data_obj.get("message_uuid", response_data.get("request_id", response_data.get("id", "unknown")))
         
         # Log to database if available
         if db is not None:
