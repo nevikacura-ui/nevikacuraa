@@ -58,12 +58,12 @@ import EnhancementFeatures from '@/pages/EnhancementFeatures';
 // Payment Pages
 import { PaymentSuccess, PaymentCancel } from '@/components/PaymentCheckout';
 import PaymentHistory from '@/pages/PaymentHistory';
-// New Portal Pages
-import ThriveMind from '@/pages/ThriveMind';
-import Cardyra from '@/pages/Cardyra';
-import Vireya from '@/pages/Vireya';
-import FitLife from '@/pages/FitLife';
-import Nivara from '@/pages/Nivara';
+// New Portal Pages (Renamed)
+import Serena from '@/pages/Serena';
+import Corvia from '@/pages/Corvia';
+import Reneu from '@/pages/Reneu';
+import Thrive360New from '@/pages/Thrive360New';
+import Senova from '@/pages/Senova';
 import PSVNFoundation from '@/pages/PSVNFoundation';
 // Intro Screen (Loading + Splash combined)
 import IntroScreen from '@/components/IntroScreen';
@@ -113,13 +113,13 @@ function AppContent() {
           <Route path="/evara" element={<AnimatedPage><Evara /></AnimatedPage>} />
           <Route path="/glydex" element={<AnimatedPage><Glydex /></AnimatedPage>} />
           <Route path="/thrive360" element={<AnimatedPage><Thrive360 /></AnimatedPage>} />
-          {/* New Portal Routes */}
-          <Route path="/thrive-mind" element={<ThriveMind />} />
-          <Route path="/cardyra" element={<Cardyra />} />
-          <Route path="/vireya" element={<Vireya />} />
-          <Route path="/fitlife" element={<FitLife />} />
-          <Route path="/nivara" element={<Nivara />} />
-          <Route path="/psvn-foundation" element={<PSVNFoundation />} />
+          {/* New Portal Routes (Renamed) */}
+          <Route path="/serena" element={<AnimatedPage><Serena /></AnimatedPage>} />
+          <Route path="/corvia" element={<AnimatedPage><Corvia /></AnimatedPage>} />
+          <Route path="/reneu" element={<AnimatedPage><Reneu /></AnimatedPage>} />
+          <Route path="/thrive360" element={<AnimatedPage><Thrive360New /></AnimatedPage>} />
+          <Route path="/senova" element={<AnimatedPage><Senova /></AnimatedPage>} />
+          <Route path="/psvn-foundation" element={<AnimatedPage><PSVNFoundation /></AnimatedPage>} />
           <Route path="/aanya" element={<AnimatedPage><Alyne /></AnimatedPage>} />
           <Route path="/profile" element={<AnimatedPage><Profile /></AnimatedPage>} />
           <Route path="/admin" element={<Admin />} />

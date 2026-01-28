@@ -25,16 +25,15 @@ const portals = [
     logo: 'https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png',
     bgColor: '#121f33'
   },
-  // 3. Thrive Mind - Mental Health (replacing Thrive360)
+  // 3. Serena - Mental Health & Meditation (formerly Thrive Mind)
   {
-    id: 'thrivemind',
-    name: 'Thrive Mind',
+    id: 'serena',
+    name: 'Serena',
     subtitle: 'Mental Wellness',
-    path: '/thrive-mind',
-    hasIcon: true,
-    icon: Brain,
-    bgColor: '#6366f1',
-    tagline: 'Strong Minds. Balanced Lives.'
+    path: '/serena',
+    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/9lxbdskl_90.png',
+    bgColor: '#1a2e35',
+    tagline: 'Find Your Calm.'
   },
   // 4. Aanya Newborn
   {
@@ -56,49 +55,45 @@ const portals = [
     bgColor: '#e8f5e9',
     fillContainer: true
   },
-  // 6. Cardyra - Heart, BP & Cardiac Risk
+  // 6. Corvia - Heart, Hypertension & Cholesterol (formerly Cardyra)
   {
-    id: 'cardyra',
-    name: 'Cardyra',
+    id: 'corvia',
+    name: 'Corvia',
     subtitle: 'Heart & BP Care',
-    path: '/cardyra',
-    hasIcon: true,
-    icon: HeartPulse,
-    bgColor: '#dc2626',
-    tagline: 'Strong Hearts. Longer Lives.'
+    path: '/corvia',
+    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/nz0rdwvp_file_000000000dfc7230a4605006a1e3131a.png',
+    bgColor: '#c8f56a',
+    tagline: 'Healthy Heart & Prevention.'
   },
-  // 7. Vireya - Preventive & Lifestyle Medicine
+  // 7. Reneu - Preventive & Lifestyle Medicine (formerly Vireya)
   {
-    id: 'vireya',
-    name: 'Vireya',
+    id: 'reneu',
+    name: 'Reneu',
     subtitle: 'Preventive Health',
-    path: '/vireya',
-    hasIcon: true,
-    icon: Shield,
-    bgColor: '#059669',
-    tagline: 'Prevent. Protect. Prosper.'
+    path: '/reneu',
+    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/uy8wpc27_file_00000000caf871fdae54ae4c4854bbd4.png',
+    bgColor: '#f5f5f5',
+    tagline: 'Renew Health, Stay Ahead.'
   },
-  // 8. FitLife - Physical Health, Yoga & Physio
+  // 8. Thrive360 - Fitness Portal (formerly FitLife)
   {
-    id: 'fitlife',
-    name: 'FitLife',
-    subtitle: 'Physical Health',
-    path: '/fitlife',
-    hasIcon: true,
-    icon: Dumbbell,
-    bgColor: '#f97316',
-    tagline: 'Move. Strengthen. Thrive.'
+    id: 'thrive360',
+    name: 'Thrive360',
+    subtitle: 'Fitness & Wellness',
+    path: '/thrive360',
+    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/tx5fggdz_91.png',
+    bgColor: '#1a1a3e',
+    tagline: 'Health in Motion.'
   },
-  // 9. Nivara - Senior Care
+  // 9. Senova - Senior Care (formerly Nivara)
   {
-    id: 'nivara',
-    name: 'Nivara',
+    id: 'senova',
+    name: 'Senova',
     subtitle: 'Senior Care',
-    path: '/nivara',
-    hasIcon: true,
-    icon: Users,
-    bgColor: '#0891b2',
-    tagline: 'Comfort. Care. Dignity.'
+    path: '/senova',
+    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/p3zt5ovj_Pink%20Simple%20Charity%20Logo_20260128_183244_0000.png',
+    bgColor: '#3b5998',
+    tagline: "Care for Life's Next Chapter."
   },
   // 10. Reports - Blood Charts
   {
@@ -126,9 +121,8 @@ const portals = [
     name: 'PSVN',
     subtitle: 'Foundation',
     path: '/psvn-foundation',
-    hasIcon: true,
-    icon: HandHeart,
-    bgColor: '#7c3aed',
+    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/p3zt5ovj_Pink%20Simple%20Charity%20Logo_20260128_183244_0000.png',
+    bgColor: '#ec4899',
     tagline: 'Care. Compassion. Community.'
   }
 ];
