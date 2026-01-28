@@ -46,8 +46,8 @@ const AITriageAssistant = () => {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('patientToken');
-      const res = await fetch(`${API}/api/ai/triage`, {
+      const token = localStorage.getItem('patientToken') || localStorage.getItem('token');
+      const res = await fetch(`${API}/api/ai-triage`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
