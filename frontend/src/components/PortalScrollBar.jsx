@@ -132,7 +132,7 @@ const portals = [
     bgColor: '#ffffff',
     fillContainer: true,
     containLogo: true,
-    scale: 1.4,
+    scale: 1.8,
     tagline: 'Care. Compassion. Community.'
   }
 ];
