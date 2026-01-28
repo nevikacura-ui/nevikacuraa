@@ -140,6 +140,118 @@ async def send_test_sms(request: TestSMSRequest):
         return {"success": False, "error": str(e)}
 
 
+# ============ TEST MSG91 WHATSAPP ENDPOINT ============
+
+class TestWhatsAppRequest(BaseModel):
+    phone: str
+    template: str = "diagyn_appointment_confirm"  # diagyn_appointment_confirm, proton_lab_confirm, orange_pharmacy_confirm
+
+@api_router.post("/test/send-whatsapp")
+async def send_test_whatsapp(request: TestWhatsAppRequest):
+    """Send test WhatsApp message via MSG91 to verify integration."""
+    
+    # Sample data for testing
+    sample_data = {
+        "diagyn_appointment_confirm": {
+            "patient_name": "Test Patient",
+            "date": datetime.now().strftime("%d/%m/%Y"),
+            "time": "10:30 AM",
+            "doctor_name": "Dr. Vikas Jha",
+            "clinic_name": "Pushpa Clinic",
+            "booking_id": f"PC-TEST{datetime.now().strftime('%H%M')}"
+        },
+        "diagyn_appointment_reminder": {
+            "patient_name": "Test Patient",
+            "date": (datetime.now() + timedelta(days=1)).strftime("%d/%m/%Y"),
+            "time": "11:00 AM",
+            "doctor_name": "Dr. Neha Patel",
+            "clinic_name": "Amnion Clinic",
+            "booking_id": f"AC-TEST{datetime.now().strftime('%H%M')}"
+        },
+        "proton_lab_confirm": {
+            "patient_name": "Test Patient",
+            "tests": "CBC, Lipid Profile, HbA1c",
+            "preferred_date": datetime.now().strftime("%d/%m/%Y"),
+            "preferred_time": "8:00 AM - 10:00 AM",
+            "booking_id": f"PD-TEST{datetime.now().strftime('%H%M')}",
+            "address": "Test Address, Naigaon East"
+        },
+        "orange_pharmacy_confirm": {
+            "patient_name": "Test Patient",
+            "order_id": f"OP-TEST{datetime.now().strftime('%H%M')}",
+            "items": "Metformin 500mg, Paracetamol",
+            "delivery_address": "Test Delivery Address, Naigaon"
+        }
+    }
+    
+    try:
+        if request.template == "diagyn_appointment_confirm":
+            data = sample_data["diagyn_appointment_confirm"]
+            result = await send_diagyn_appointment_confirmation(
+                phone=request.phone,
+                patient_name=data["patient_name"],
+                date=data["date"],
+                time=data["time"],
+                doctor_name=data["doctor_name"],
+                clinic_name=data["clinic_name"],
+                booking_id=data["booking_id"],
+                db=db
+            )
+        elif request.template == "diagyn_appointment_reminder":
+            data = sample_data["diagyn_appointment_reminder"]
+            result = await send_diagyn_appointment_reminder(
+                phone=request.phone,
+                patient_name=data["patient_name"],
+                date=data["date"],
+                time=data["time"],
+                doctor_name=data["doctor_name"],
+                clinic_name=data["clinic_name"],
+                booking_id=data["booking_id"],
+                db=db
+            )
+        elif request.template == "proton_lab_confirm":
+            data = sample_data["proton_lab_confirm"]
+            result = await send_proton_lab_confirmation(
+                phone=request.phone,
+                patient_name=data["patient_name"],
+                tests=data["tests"],
+                preferred_date=data["preferred_date"],
+                preferred_time=data["preferred_time"],
+                booking_id=data["booking_id"],
+                address=data["address"],
+                db=db
+            )
+        elif request.template == "orange_pharmacy_confirm":
+            data = sample_data["orange_pharmacy_confirm"]
+            result = await send_orange_pharmacy_confirmation(
+                phone=request.phone,
+                patient_name=data["patient_name"],
+                order_id=data["order_id"],
+                items=data["items"],
+                delivery_address=data["delivery_address"],
+                db=db
+            )
+        else:
+            return {"success": False, "error": f"Unknown template: {request.template}"}
+        
+        return {
+            "success": result.get("success", False),
+            "template": request.template,
+            "phone": request.phone,
+            "sample_data": data,
+            "msg91_response": result
+        }
+    except Exception as e:
+        logger.error(f"Test WhatsApp failed: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+
+@api_router.get("/test/msg91-status")
+async def check_msg91_status():
+    """Check MSG91 WhatsApp configuration status."""
+    return await test_msg91_connection()
+
+
 # ============ SEND CREDENTIALS EMAIL ============
 
 class CredentialsEmailRequest(BaseModel):
