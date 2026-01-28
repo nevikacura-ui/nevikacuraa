@@ -2473,7 +2473,7 @@ const StaffPortal = () => {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium text-lg">{appt.patient_name}</span>
                         {appt.booking_id && (
-                          <Badge className="bg-teal-100 text-teal-700 text-xs font-bold border border-teal-300">{appt.booking_id}</Badge>
+                          <Badge className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-xs font-bold px-2.5 py-1 shadow-sm">{appt.booking_id}</Badge>
                         )}
                         {appt.patient_id && (
                           <Badge className="bg-indigo-100 text-indigo-700 text-xs font-normal">{appt.patient_id}</Badge>
@@ -2509,6 +2509,12 @@ const StaffPortal = () => {
                           <Phone className="w-3.5 h-3.5" />
                           {appt.patient_phone}
                         </span>
+                        {appt.booking_id && (
+                          <span className="flex items-center gap-1 text-teal-600 font-medium">
+                            <span className="text-xs">ID:</span>
+                            {appt.booking_id}
+                          </span>
+                        )}
                         {appt.clinic && (
                           <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                             appt.clinic === 'Pushpa Clinic' 
