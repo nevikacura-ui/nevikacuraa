@@ -92,16 +92,15 @@ const portals = [
     fillContainer: true,
     tagline: 'Mind. Body. Life.'
   },
-  // 9. Senova - Senior Care (formerly Nivara) - Two color people logo (orange + green only)
+  // 9. Senova - Senior Care (formerly Nivara) - Two color icon (orange + green)
   {
     id: 'senova',
     name: 'Senova',
     subtitle: 'Senior Care',
     path: '/senova',
-    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/nz0rdwvp_file_000000000dfc7230a4605006a1e3131a.png',
-    bgColor: '#ffffff',
-    fillContainer: true,
-    needsBorder: true,
+    hasIcon: true,
+    icon: Users,
+    bgColor: '#3b82f6',
     tagline: "Care for Life's Next Chapter."
   },
   // 10. Reports - Blood Charts
@@ -124,7 +123,7 @@ const portals = [
     icon: BarChart3,
     bgColor: '#16a34a'
   },
-  // 12. PSVN Foundation - Enlarged logo
+  // 12. PSVN Foundation - Full fill logo
   {
     id: 'psvn',
     name: 'PSVN',
