@@ -156,3 +156,20 @@ Build a comprehensive healthcare application named "Nevika Cura" that enhances s
 
 ## Last Updated
 January 28, 2026
+
+---
+
+## Code Architecture (Portal Pages)
+```
+/app/frontend/src/
+├── components/
+│   └── PortalScrollBar.jsx  # 12 portals with custom logos
+├── pages/
+│   ├── Serena.js           # Mental wellness (formerly ThriveMind)
+│   ├── Corvia.js           # Heart/BP care (formerly Cardyra)
+│   ├── Reneu.js            # Preventive health (formerly Vireya)
+│   ├── Thrive360New.js     # Fitness (formerly FitLife)
+│   ├── Senova.js           # Senior care (formerly Nivara)
+│   └── PSVNFoundation.js   # Foundation page
+└── App.js                   # Updated routes
+```
