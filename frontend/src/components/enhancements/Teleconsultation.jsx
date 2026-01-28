@@ -57,18 +57,27 @@ const Teleconsultation = () => {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('patientToken');
-      const res = await fetch(`${API}/api/features/teleconsult/request`, {
+      const token = localStorage.getItem('patientToken') || localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      
+      const res = await fetch(`${API}/api/teleconsultation/book`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(bookingData)
+        body: JSON.stringify({
+          doctor_id: bookingData.doctor_id,
+          patient_name: user.name || 'Patient',
+          patient_phone: user.phone || '',
+          reason: bookingData.reason || 'General consultation',
+          preferred_date: bookingData.preferred_date,
+          preferred_time: bookingData.preferred_time
+        })
       });
 
       const data = await res.json();
-      if (data.success) {
+      if (data.session_id) {
         toast.success('Teleconsultation booked successfully!');
         setShowBooking(false);
         setBookingData({
