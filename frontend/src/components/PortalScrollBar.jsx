@@ -91,7 +91,7 @@ const portals = [
     name: 'Senova',
     subtitle: 'Senior Care',
     path: '/senova',
-    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/p3zt5ovj_Pink%20Simple%20Charity%20Logo_20260128_183244_0000.png',
+    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/uy8wpc27_file_00000000caf871fdae54ae4c4854bbd4.png',
     bgColor: '#3b5998',
     tagline: "Care for Life's Next Chapter."
   },
