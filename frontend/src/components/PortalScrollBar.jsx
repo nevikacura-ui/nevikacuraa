@@ -131,6 +131,7 @@ const portals = [
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/ik0oidgy_Screenshot_20260129-011553.png',
     bgColor: '#ffffff',
     fillContainer: true,
+    containLogo: true,
     tagline: 'Care. Compassion. Community.'
   }
 ];
