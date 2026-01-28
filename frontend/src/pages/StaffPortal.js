@@ -1969,7 +1969,7 @@ const StaffPortal = () => {
           loadData(false);
           toast.success(`${appointment.patient_name} checked in!`);
         }}
-        staffToken={staffToken}
+        staffToken={localStorage.getItem('staffToken')}
       />
 
       <main className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
