@@ -404,17 +404,16 @@ const Home = () => {
   const secondaryServices = services.filter(s => !s.featured);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 relative" style={{ contentVisibility: 'auto' }}>
-      {/* Floating Background Blobs */}
+    <div className="min-h-screen bg-[#F5F5F4] relative font-body" style={{ contentVisibility: 'auto' }}>
+      {/* Subtle Background Pattern */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-20 -left-32 w-96 h-96 bg-gradient-to-br from-violet-200/40 to-fuchsia-200/40 rounded-full blur-3xl animate-pulse" style={{animationDuration: '8s'}}></div>
-        <div className="absolute top-1/3 -right-32 w-80 h-80 bg-gradient-to-br from-teal-200/40 to-cyan-200/40 rounded-full blur-3xl animate-pulse" style={{animationDuration: '10s', animationDelay: '2s'}}></div>
-        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-orange-200/30 to-amber-200/30 rounded-full blur-3xl animate-pulse" style={{animationDuration: '12s', animationDelay: '4s'}}></div>
-        <div className="absolute -bottom-20 right-1/4 w-64 h-64 bg-gradient-to-br from-pink-200/30 to-rose-200/30 rounded-full blur-3xl animate-pulse" style={{animationDuration: '9s', animationDelay: '1s'}}></div>
+        <div className="absolute top-20 -left-32 w-96 h-96 bg-gradient-to-br from-teal-100/30 to-cyan-100/30 rounded-full blur-3xl" style={{animationDuration: '8s'}}></div>
+        <div className="absolute top-1/3 -right-32 w-80 h-80 bg-gradient-to-br from-teal-100/20 to-emerald-100/20 rounded-full blur-3xl" style={{animationDuration: '10s'}}></div>
+        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-orange-100/20 to-amber-100/20 rounded-full blur-3xl" style={{animationDuration: '12s'}}></div>
       </div>
 
-      {/* Header - Glassmorphism */}
-      <header className="border-b border-white/50 bg-white/60 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
+      {/* Header - Clean & Modern */}
+      <header className="border-b border-slate-200/50 bg-white/90 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             {/* Logo on left */}
