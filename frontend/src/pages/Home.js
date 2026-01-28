@@ -1128,21 +1128,26 @@ const Home = () => {
                 className={`group rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl ${
                   service.isDark ? 'shadow-lg' : 'shadow-md border border-gray-200'
                 }`}
-                style={{ backgroundColor: service.bgColor }}
+                style={service.useGradient ? { background: service.bgColor } : { backgroundColor: service.bgColor }}
                 onClick={() => navigate(service.path)}
                 data-testid={`service-card-${service.id}`}
               >
                 {/* Card Content - Taller layout to prevent overlap */}
                 <div className="h-[200px] sm:h-[220px] flex flex-col">
-                  {/* Logo Section - Takes most of the space */}
+                  {/* Logo/Icon Section - Takes most of the space */}
                   <div className="flex-1 flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={service.logo} 
-                      alt={service.name} 
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      data-testid={`service-logo-${service.id}`}
-                      loading="lazy"
-                    />
+                    {service.useIcon ? (
+                      <Users className="w-16 h-16 sm:w-20 sm:h-20 text-white" />
+                    ) : (
+                      <img 
+                        src={service.logo} 
+                        alt={service.name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        style={service.logoScale ? { transform: `scale(${service.logoScale})` } : {}}
+                        data-testid={`service-logo-${service.id}`}
+                        loading="lazy"
+                      />
+                    )}
                   </div>
                   
                   {/* Explore Button - Fixed at bottom */}
