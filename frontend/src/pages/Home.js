@@ -1118,8 +1118,8 @@ const Home = () => {
             ))}
           </div>
           
-          {/* Secondary Services - 2x2 Grid (Evara, Glydex, Alyne, Thrive360) */}
-          <div className="grid grid-cols-2 gap-4 mt-6">
+          {/* Secondary Services - 2x4 Grid (Evara, Glydex, Alyne, Thrive360, Serena, Corvia, Reneu, Senova) */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             {secondaryServices.map((service) => (
               <div
                 key={service.id}
