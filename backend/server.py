@@ -4310,6 +4310,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Enhancement Features V2 router: {e}")
 
+# Enhancement Features V3 Routes (Admin & Analytics)
+try:
+    from routes.enhancements_v3 import router as enhancements_v3_router, set_db as set_enhancements_v3_db
+    set_enhancements_v3_db(db)
+    app.include_router(enhancements_v3_router, prefix="/api")
+    logger.info("Enhancement Features V3 router loaded (Audit Trail, Revenue Forecast, Health Outcomes, Shifts, Signage)")
+except Exception as e:
+    logger.warning(f"Could not load Enhancement Features V3 router: {e}")
+
 
 
 app.add_middleware(
