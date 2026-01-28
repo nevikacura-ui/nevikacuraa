@@ -113,6 +113,14 @@ function AppContent() {
           <Route path="/evara" element={<AnimatedPage><Evara /></AnimatedPage>} />
           <Route path="/glydex" element={<AnimatedPage><Glydex /></AnimatedPage>} />
           <Route path="/thrive360" element={<AnimatedPage><Thrive360 /></AnimatedPage>} />
+          {/* New Portal Routes */}
+          <Route path="/thrive-mind" element={<ThriveMind />} />
+          <Route path="/cardyra" element={<Cardyra />} />
+          <Route path="/vireya" element={<Vireya />} />
+          <Route path="/fitlife" element={<FitLife />} />
+          <Route path="/nivara" element={<Nivara />} />
+          <Route path="/psvn-foundation" element={<PSVNFoundation />} />
+          <Route path="/aanya" element={<AnimatedPage><Alyne /></AnimatedPage>} />
           <Route path="/profile" element={<AnimatedPage><Profile /></AnimatedPage>} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-panel" element={<AdminPanel />} />
