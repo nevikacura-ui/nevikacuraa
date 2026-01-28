@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Star, FileText, BarChart3 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileText, BarChart3 } from 'lucide-react';
 
 // Portal data with original logos - Health & Wellness focused
 const portals = [
@@ -27,18 +27,19 @@ const portals = [
   },
   {
     id: 'alyne',
-    name: 'Alyne',
+    name: 'Alyne Kids',
     path: '/alyne',
-    logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
-    bgColor: '#0a1628'
+    logo: 'https://customer-assets.emergentagent.com/job_nevika-health-7/artifacts/d1163tpj_Screenshot_20260128-154605.png',
+    bgColor: '#e8f5e9',
+    lightBg: true
   },
   {
     id: 'aanya',
-    name: 'Aanya',
+    name: 'Aanya Newborn',
     path: '/aanya',
-    hasIcon: true,
-    icon: Star,
-    bgColor: '#db2777'
+    logo: 'https://customer-assets.emergentagent.com/job_nevika-health-7/artifacts/or3lea1i_Screenshot_20260128-154553.png',
+    bgColor: '#fce4ec',
+    lightBg: true
   },
   {
     id: 'reports',
@@ -83,13 +84,13 @@ const PortalScrollBar = () => {
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -150, behavior: 'smooth' });
+      scrollRef.current.scrollBy({ left: -200, behavior: 'smooth' });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 150, behavior: 'smooth' });
+      scrollRef.current.scrollBy({ left: 200, behavior: 'smooth' });
     }
   };
 
@@ -108,10 +109,10 @@ const PortalScrollBar = () => {
       {showLeftArrow && (
         <button
           onClick={scrollLeft}
-          className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white/80 backdrop-blur shadow-md rounded-full flex items-center justify-center hover:bg-white transition-all"
+          className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center hover:bg-white transition-all border border-slate-200"
           aria-label="Scroll left"
         >
-          <ChevronLeft className="w-4 h-4 text-slate-600" />
+          <ChevronLeft className="w-5 h-5 text-slate-600" />
         </button>
       )}
 
@@ -119,18 +120,23 @@ const PortalScrollBar = () => {
       {showRightArrow && (
         <button
           onClick={scrollRight}
-          className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white/80 backdrop-blur shadow-md rounded-full flex items-center justify-center hover:bg-white transition-all"
+          className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center hover:bg-white transition-all border border-slate-200"
           aria-label="Scroll right"
         >
-          <ChevronRight className="w-4 h-4 text-slate-600" />
+          <ChevronRight className="w-5 h-5 text-slate-600" />
         </button>
       )}
 
-      {/* Scrollable Container - Reduced by 0.2x (52x52 icons) */}
+      {/* Scrollable Container - Sized for 4 items visible */}
       <div
         ref={scrollRef}
-        className="flex items-center gap-3 px-4 py-2.5 overflow-x-auto scrollbar-hide"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        className="flex items-center gap-3 px-3 py-3 overflow-x-auto scroll-smooth"
+        style={{ 
+          scrollbarWidth: 'none', 
+          msOverflowStyle: 'none',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory'
+        }}
       >
         {portals.map((portal) => {
           const isActive = activePortal === portal.id;
@@ -140,26 +146,27 @@ const PortalScrollBar = () => {
             <button
               key={portal.id}
               onClick={() => navigate(portal.path)}
-              className={`flex-shrink-0 transition-all duration-300 ${
+              className={`flex-shrink-0 transition-all duration-300 scroll-snap-align-start ${
                 isActive 
-                  ? 'scale-110 ring-2 ring-teal-500 ring-offset-2 ring-offset-[#F5F5F4]' 
+                  ? 'scale-105 ring-2 ring-teal-500 ring-offset-2 ring-offset-[#F5F5F4] rounded-2xl' 
                   : 'hover:scale-105'
               }`}
+              style={{ scrollSnapAlign: 'start' }}
               data-testid={`portal-btn-${portal.id}`}
               title={portal.name}
             >
-              {/* Logo/Icon Container - 52x52 (reduced by 0.2x from 64) */}
+              {/* Logo/Icon Container - 80x80 for 4 items visible */}
               <div 
-                className="w-[52px] h-[52px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
+                className="w-20 h-20 rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
                 style={{ backgroundColor: portal.bgColor }}
               >
                 {portal.hasIcon ? (
-                  <IconComponent className="w-6 h-6 text-white" />
+                  <IconComponent className="w-9 h-9 text-white" />
                 ) : (
                   <img 
                     src={portal.logo} 
                     alt={portal.name}
-                    className="w-11 h-11 object-contain"
+                    className={`${portal.lightBg ? 'w-full h-full' : 'w-16 h-16'} object-contain`}
                     loading="lazy"
                   />
                 )}
@@ -171,11 +178,18 @@ const PortalScrollBar = () => {
 
       {/* Gradient Fades */}
       {showLeftArrow && (
-        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#F5F5F4] to-transparent pointer-events-none"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-[#F5F5F4] to-transparent pointer-events-none"></div>
       )}
       {showRightArrow && (
-        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#F5F5F4] to-transparent pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-[#F5F5F4] to-transparent pointer-events-none"></div>
       )}
+
+      {/* Custom CSS for fluid scrolling */}
+      <style>{`
+        [data-testid="portal-scroll-bar"] > div::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 };
