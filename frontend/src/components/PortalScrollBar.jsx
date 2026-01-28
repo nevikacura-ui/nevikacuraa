@@ -270,7 +270,7 @@ const PortalScrollBar = () => {
                   <img 
                     src={portal.logo} 
                     alt={portal.name}
-                    className={`w-full h-full ${portal.containLogo ? 'object-contain p-1' : 'object-cover'}`}
+                    className={`${portal.largePadding ? 'w-[90%] h-[90%] object-contain' : portal.containLogo ? 'w-full h-full object-contain p-2' : 'w-full h-full object-cover'}`}
                     loading="lazy"
                   />
                 ) : (
