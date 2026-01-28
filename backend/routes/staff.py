@@ -512,6 +512,22 @@ async def get_emergency_count(doctor: str, date: str, staff = Depends(verify_sta
     return {"doctor": doctor, "date": date, "emergency_count": count}
 
 
+# ============ Get Appointment by Booking ID (for QR Scanner) ============
+
+@router.get("/appointments/by-booking-id/{booking_id}")
+async def get_appointment_by_booking_id(booking_id: str, staff = Depends(verify_staff)):
+    """Get appointment details by booking ID (used by QR scanner)"""
+    appointment = await db.appointments.find_one(
+        {"booking_id": booking_id},
+        {"_id": 0}
+    )
+    
+    if not appointment:
+        raise HTTPException(status_code=404, detail=f"Appointment not found with booking ID: {booking_id}")
+    
+    return appointment
+
+
 # ============ Check-in ============
 
 @router.put("/appointments/{appointment_id}/check-in")
