@@ -98,14 +98,14 @@ const Teleconsultation = () => {
 
   const joinConsultation = async (consultationId) => {
     try {
-      const token = localStorage.getItem('patientToken');
-      const res = await fetch(`${API}/api/features/teleconsult/${consultationId}/join`, {
+      const token = localStorage.getItem('patientToken') || localStorage.getItem('token');
+      const res = await fetch(`${API}/api/teleconsultation/${consultationId}/start`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
 
       const data = await res.json();
-      if (data.success && data.meeting_link) {
+      if (data.meeting_link) {
         window.open(data.meeting_link, '_blank');
       }
     } catch (error) {
