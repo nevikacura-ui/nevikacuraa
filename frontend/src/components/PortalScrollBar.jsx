@@ -137,6 +137,8 @@ const PortalScrollBar = () => {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [activePortal, setActivePortal] = useState(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
 
   // Determine active portal based on current path
   useEffect(() => {
@@ -144,6 +146,26 @@ const PortalScrollBar = () => {
     const active = portals.find(p => currentPath === p.path || currentPath.startsWith(p.path + '/'));
     setActivePortal(active?.id || null);
   }, [location.pathname]);
+
+  // Handle page scroll to hide/show portal bar
+  useEffect(() => {
+    const handlePageScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Show bar when scrolling up or near top
+      if (currentScrollY < 100 || currentScrollY < lastScrollY.current) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY.current && currentScrollY > 150) {
+        // Hide bar when scrolling down
+        setIsVisible(false);
+      }
+      
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handlePageScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handlePageScroll);
+  }, []);
 
   // Handle scroll arrows visibility
   const handleScroll = () => {
@@ -175,7 +197,12 @@ const PortalScrollBar = () => {
   }, []);
 
   return (
-    <div className="relative bg-[#F5F5F4] border-b border-slate-200/50 sticky top-[60px] z-40" data-testid="portal-scroll-bar">
+    <div 
+      className={`relative bg-[#F5F5F4] border-b border-slate-200/50 sticky top-[60px] z-40 transition-transform duration-300 ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      }`} 
+      data-testid="portal-scroll-bar"
+    >
       {/* Left Arrow */}
       {showLeftArrow && (
         <button
