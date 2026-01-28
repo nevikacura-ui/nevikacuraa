@@ -104,8 +104,6 @@ const portals = [
     containLogo: true,
     tagline: "Care for Life's Next Chapter."
   },
-    tagline: "Care for Life's Next Chapter."
-  },
   // 10. Reports - Blood Charts
   {
     id: 'reports',
