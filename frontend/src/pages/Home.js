@@ -16,6 +16,7 @@ import GlobalSearch from '@/components/GlobalSearch';
 import QuickActions from '@/components/QuickActions';
 import HealthScoreWidget from '@/components/HealthScoreWidget';
 import SmartHomeFeed from '@/components/SmartHomeFeed';
+import PortalScrollBar from '@/components/PortalScrollBar';
 import { 
   healthTips, 
   spotlightServices, 
