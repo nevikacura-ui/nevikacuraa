@@ -1937,6 +1937,16 @@ const StaffPortal = () => {
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline ml-1">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
             </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setShowQRScanner(true)}
+              className={`bg-cyan-50 border-cyan-200 hover:bg-cyan-100 text-cyan-700 ${isTablet ? 'px-4' : 'px-2 sm:px-3'}`}
+              data-testid="qr-scanner-btn"
+            >
+              <QrCode className="w-4 h-4" />
+              <span className="hidden sm:inline ml-1">QR Check-In</span>
+            </Button>
             {staffInfo?.role === 'super_admin' && (
               <Button variant="ghost" size="sm" onClick={() => navigate('/admin-panel')} className={`bg-purple-50 border-purple-200 hover:bg-purple-100 text-purple-700 ${isTablet ? 'px-4' : 'px-2 sm:px-3'}`}>
                 <Shield className="w-4 h-4" />
@@ -1950,6 +1960,17 @@ const StaffPortal = () => {
           </div>
         </div>
       </header>
+
+      {/* QR Scanner Modal */}
+      <QRScanner 
+        isOpen={showQRScanner}
+        onClose={() => setShowQRScanner(false)}
+        onCheckInSuccess={(appointment) => {
+          loadData(false);
+          toast.success(`${appointment.patient_name} checked in!`);
+        }}
+        staffToken={staffToken}
+      />
 
       <main className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
         {/* Clinic Staff View */}
