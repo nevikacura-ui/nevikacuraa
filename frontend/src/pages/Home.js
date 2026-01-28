@@ -1130,22 +1130,19 @@ const Home = () => {
                 onClick={() => navigate(service.path)}
                 data-testid={`service-card-${service.id}`}
               >
-                {/* Card Content - Taller layout to prevent overlap */}
+                {/* Card Content */}
                 <div className="h-[200px] sm:h-[220px] flex flex-col">
-                  {/* Logo/Icon Section - Takes most of the space */}
-                  <div className="flex-1 flex items-center justify-center overflow-hidden p-2">
+                  {/* Logo Section - Fills the card */}
+                  <div className="flex-1 overflow-hidden">
                     {service.useIcon ? (
-                      <Users className="w-16 h-16 sm:w-20 sm:h-20 text-white" />
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Users className="w-16 h-16 sm:w-20 sm:h-20 text-white" />
+                      </div>
                     ) : (
                       <img 
                         src={service.logo} 
                         alt={service.name} 
-                        className={`transition-transform duration-300 group-hover:scale-105 ${
-                          service.containLogo 
-                            ? 'w-full h-full object-contain' 
-                            : 'w-full h-full object-cover'
-                        }`}
-                        style={service.logoScale ? { transform: `scale(${service.logoScale})` } : {}}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         data-testid={`service-logo-${service.id}`}
                         loading="lazy"
                       />
