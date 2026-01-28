@@ -150,13 +150,26 @@ async def send_test_sms(request: TestSMSRequest):
 
 class TestWhatsAppRequest(BaseModel):
     phone: str
-    template: str = "diagyn_appointment_confirm"  # diagyn_appointment_confirm, proton_lab_confirm, orange_pharmacy_confirm
+    template: str = "diagyn_appointment_confirm"
 
 @api_router.post("/test/send-whatsapp")
 async def send_test_whatsapp(request: TestWhatsAppRequest):
-    """Send test WhatsApp message via MSG91 to verify integration."""
+    """Send test WhatsApp message via MSG91 to verify integration.
     
-    # Sample data for testing
+    Available templates:
+    - diagyn_appointment_confirm
+    - diagyn_appointment_reminder
+    - diagyn_one_hour_reminder
+    - diagyn_walkin_emergency
+    - diagyn_appointment_completed
+    - proton_lab_confirm
+    - proton_report_ready
+    - proton_sonography_confirm
+    - orange_pharmacy_confirm
+    - orange_order_delivered
+    """
+    
+    # Sample data for testing all templates
     sample_data = {
         "diagyn_appointment_confirm": {
             "patient_name": "Test Patient",
@@ -174,6 +187,27 @@ async def send_test_whatsapp(request: TestWhatsAppRequest):
             "clinic_name": "Amnion Clinic",
             "booking_id": f"AC-TEST{datetime.now().strftime('%H%M')}"
         },
+        "diagyn_one_hour_reminder": {
+            "patient_name": "Test Patient",
+            "date": datetime.now().strftime("%d/%m/%Y"),
+            "time": "02:30 PM",
+            "doctor_name": "Dr. Vikas Jha",
+            "clinic_name": "Pushpa Clinic",
+            "booking_id": f"PC-TEST{datetime.now().strftime('%H%M')}"
+        },
+        "diagyn_walkin_emergency": {
+            "patient_name": "Test Patient",
+            "appointment_type": "Walk-in",
+            "doctor_name": "Dr. Neha Patel",
+            "clinic_name": "Amnion Clinic",
+            "token_number": f"W-{datetime.now().strftime('%H%M')}"
+        },
+        "diagyn_appointment_completed": {
+            "patient_name": "Test Patient",
+            "doctor_name": "Dr. Vikas Jha",
+            "follow_up_date": (datetime.now() + timedelta(days=15)).strftime("%d/%m/%Y"),
+            "feedback_url": "https://nevikacura.com/feedback/PC-TEST"
+        },
         "proton_lab_confirm": {
             "patient_name": "Test Patient",
             "tests": "CBC, Lipid Profile, HbA1c",
@@ -182,63 +216,93 @@ async def send_test_whatsapp(request: TestWhatsAppRequest):
             "booking_id": f"PD-TEST{datetime.now().strftime('%H%M')}",
             "address": "Test Address, Naigaon East"
         },
+        "proton_report_ready": {
+            "patient_name": "Test Patient",
+            "tests": "CBC, Lipid Profile",
+            "booking_id": f"PD-TEST{datetime.now().strftime('%H%M')}",
+            "report_date": datetime.now().strftime("%d/%m/%Y"),
+            "download_url": "https://nevikacura.com/reports/PD-TEST"
+        },
+        "proton_sonography_confirm": {
+            "patient_name": "Test Patient",
+            "scan_type": "Whole Abdomen USG",
+            "date": datetime.now().strftime("%d/%m/%Y"),
+            "time": "11:00 AM",
+            "booking_id": f"PD-TEST{datetime.now().strftime('%H%M')}"
+        },
         "orange_pharmacy_confirm": {
             "patient_name": "Test Patient",
             "order_id": f"OP-TEST{datetime.now().strftime('%H%M')}",
             "items": "Metformin 500mg, Paracetamol",
             "delivery_address": "Test Delivery Address, Naigaon"
+        },
+        "orange_order_delivered": {
+            "patient_name": "Test Patient",
+            "order_id": f"OP-TEST{datetime.now().strftime('%H%M')}",
+            "delivered_time": datetime.now().strftime("%d/%m/%Y, %I:%M %p"),
+            "invoice_url": "https://nevikacura.com/invoice/OP-TEST"
         }
     }
     
     try:
+        data = sample_data.get(request.template)
+        if not data:
+            return {"success": False, "error": f"Unknown template: {request.template}", "available_templates": list(sample_data.keys())}
+        
         if request.template == "diagyn_appointment_confirm":
-            data = sample_data["diagyn_appointment_confirm"]
             result = await send_diagyn_appointment_confirmation(
-                phone=request.phone,
-                patient_name=data["patient_name"],
-                date=data["date"],
-                time=data["time"],
-                doctor_name=data["doctor_name"],
-                clinic_name=data["clinic_name"],
-                booking_id=data["booking_id"],
-                db=db
+                phone=request.phone, patient_name=data["patient_name"], date=data["date"],
+                time=data["time"], doctor_name=data["doctor_name"], clinic_name=data["clinic_name"],
+                booking_id=data["booking_id"], db=db
             )
         elif request.template == "diagyn_appointment_reminder":
-            data = sample_data["diagyn_appointment_reminder"]
             result = await send_diagyn_appointment_reminder(
-                phone=request.phone,
-                patient_name=data["patient_name"],
-                date=data["date"],
-                time=data["time"],
-                doctor_name=data["doctor_name"],
-                clinic_name=data["clinic_name"],
-                booking_id=data["booking_id"],
-                db=db
+                phone=request.phone, patient_name=data["patient_name"], date=data["date"],
+                time=data["time"], doctor_name=data["doctor_name"], clinic_name=data["clinic_name"],
+                booking_id=data["booking_id"], db=db
+            )
+        elif request.template == "diagyn_one_hour_reminder":
+            result = await send_diagyn_one_hour_reminder(
+                phone=request.phone, patient_name=data["patient_name"], date=data["date"],
+                time=data["time"], doctor_name=data["doctor_name"], clinic_name=data["clinic_name"],
+                booking_id=data["booking_id"], db=db
+            )
+        elif request.template == "diagyn_walkin_emergency":
+            result = await send_diagyn_walkin_emergency(
+                phone=request.phone, patient_name=data["patient_name"], appointment_type=data["appointment_type"],
+                doctor_name=data["doctor_name"], clinic_name=data["clinic_name"], token_number=data["token_number"], db=db
+            )
+        elif request.template == "diagyn_appointment_completed":
+            result = await send_diagyn_appointment_completed(
+                phone=request.phone, patient_name=data["patient_name"], doctor_name=data["doctor_name"],
+                follow_up_date=data["follow_up_date"], feedback_url=data["feedback_url"], db=db
             )
         elif request.template == "proton_lab_confirm":
-            data = sample_data["proton_lab_confirm"]
             result = await send_proton_lab_confirmation(
-                phone=request.phone,
-                patient_name=data["patient_name"],
-                tests=data["tests"],
-                preferred_date=data["preferred_date"],
-                preferred_time=data["preferred_time"],
-                booking_id=data["booking_id"],
-                address=data["address"],
-                db=db
+                phone=request.phone, patient_name=data["patient_name"], tests=data["tests"],
+                preferred_date=data["preferred_date"], preferred_time=data["preferred_time"],
+                booking_id=data["booking_id"], address=data["address"], db=db
+            )
+        elif request.template == "proton_report_ready":
+            result = await send_proton_report_ready(
+                phone=request.phone, patient_name=data["patient_name"], tests=data["tests"],
+                booking_id=data["booking_id"], report_date=data["report_date"], download_url=data["download_url"], db=db
+            )
+        elif request.template == "proton_sonography_confirm":
+            result = await send_proton_sonography_confirmation(
+                phone=request.phone, patient_name=data["patient_name"], scan_type=data["scan_type"],
+                date=data["date"], time=data["time"], booking_id=data["booking_id"], db=db
             )
         elif request.template == "orange_pharmacy_confirm":
-            data = sample_data["orange_pharmacy_confirm"]
             result = await send_orange_pharmacy_confirmation(
-                phone=request.phone,
-                patient_name=data["patient_name"],
-                order_id=data["order_id"],
-                items=data["items"],
-                delivery_address=data["delivery_address"],
-                db=db
+                phone=request.phone, patient_name=data["patient_name"], order_id=data["order_id"],
+                items=data["items"], delivery_address=data["delivery_address"], db=db
             )
-        else:
-            return {"success": False, "error": f"Unknown template: {request.template}"}
+        elif request.template == "orange_order_delivered":
+            result = await send_orange_order_delivered(
+                phone=request.phone, patient_name=data["patient_name"], order_id=data["order_id"],
+                delivered_time=data["delivered_time"], invoice_url=data["invoice_url"], db=db
+            )
         
         return {
             "success": result.get("success", False),
