@@ -2473,7 +2473,7 @@ const StaffPortal = () => {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium text-lg">{appt.patient_name}</span>
                         {appt.booking_id && (
-                          <Badge className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-xs font-bold px-2.5 py-1 shadow-sm">{appt.booking_id}</Badge>
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-teal-500 text-white shadow-sm">{appt.booking_id}</span>
                         )}
                         {appt.patient_id && (
                           <Badge className="bg-indigo-100 text-indigo-700 text-xs font-normal">{appt.patient_id}</Badge>
