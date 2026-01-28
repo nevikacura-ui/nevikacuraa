@@ -29,7 +29,7 @@ const PSVNFoundation = () => {
 
   return (
     <AnimatedPage>
-      <div className="min-h-screen bg-[#F5F5F4]">
+      <div className="min-h-screen bg-[#F5F5F4]" data-testid="psvn-foundation-page">
         {/* Header with PSVN Foundation Logo */}
         <header className="bg-gradient-to-r from-pink-500 to-rose-500 text-white sticky top-0 z-50">
           <div className="max-w-5xl mx-auto px-4 py-4">
