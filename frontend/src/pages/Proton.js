@@ -639,6 +639,32 @@ const Proton = () => {
         </div>
       </div>
 
+      {/* Consultation Help Banner - For users confused about tests or want report review */}
+      <div className="bg-gradient-to-r from-violet-500 to-purple-600 text-white" data-testid="consultation-help-banner">
+        <div className="max-w-5xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 rounded-full p-2 flex-shrink-0">
+                <Stethoscope className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm">Not sure which test to book?</p>
+                <p className="text-xs opacity-90">Consult our doctors • Get test recommendations • Review reports</p>
+              </div>
+            </div>
+            <Button
+              onClick={() => navigate('/diagyn')}
+              variant="secondary"
+              size="sm"
+              className="bg-white text-violet-600 hover:bg-violet-50 rounded-full font-semibold flex-shrink-0"
+              data-testid="book-doctor-btn"
+            >
+              Consult Doctor
+            </Button>
+          </div>
+        </div>
+      </div>
+
       <main className="max-w-5xl mx-auto px-4 py-6">
         {/* STEP 1: Select Tests */}
         {currentStep === 1 && (
