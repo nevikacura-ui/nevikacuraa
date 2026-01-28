@@ -131,6 +131,157 @@ async def send_test_sms(request: TestSMSRequest):
         return {"success": False, "error": str(e)}
 
 
+# ============ SEND CREDENTIALS EMAIL ============
+
+class CredentialsEmailRequest(BaseModel):
+    email: str
+
+@api_router.post("/test/send-credentials")
+async def send_credentials_email(request: CredentialsEmailRequest):
+    """Send all staff/doctor login credentials to the specified email."""
+    if not RESEND_API_KEY:
+        return {"success": False, "error": "Email not configured"}
+    
+    app_url = "https://healthcare-app-31.preview.emergentagent.com"
+    
+    credentials_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; padding: 30px; background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); border-radius: 15px 15px 0 0;">
+            <h1 style="color: white; margin: 0; font-size: 28px;">Nevika Cura - Login Credentials</h1>
+            <p style="color: #ccfbf1; margin: 10px 0 0 0;">Healthcare Management System</p>
+        </div>
+        
+        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 15px 15px;">
+            <p style="font-size: 16px; color: #334155;">Here are all the login credentials for your healthcare application:</p>
+            
+            <!-- App URL -->
+            <div style="background: #0d9488; padding: 15px 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
+                <p style="margin: 0; color: white; font-size: 14px;">Application URL</p>
+                <a href="{app_url}" style="color: #ccfbf1; font-size: 18px; font-weight: bold; text-decoration: none;">{app_url}</a>
+            </div>
+            
+            <!-- Staff Portal -->
+            <h2 style="color: #0d9488; border-bottom: 2px solid #0d9488; padding-bottom: 10px; margin-top: 30px;">
+                🏥 Staff Portal ({app_url}/staff)
+            </h2>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                <tr style="background: #f1f5f9;">
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Role</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Username</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Password</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Clinic/Access</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">👩‍⚕️ Doctor (OBGY)</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;"><strong>doc_neha</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #dcfce7;"><strong>drneha123</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Amnion Clinic</td>
+                </tr>
+                <tr style="background: #f8fafc;">
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">👨‍⚕️ Doctor (Diabetes)</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;"><strong>doc_vikas</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #dcfce7;"><strong>drvikas123</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Pushpa Clinic</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">👤 Clinic Staff</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;"><strong>staff_pushpa</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #dcfce7;"><strong>staff123</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Pushpa Clinic</td>
+                </tr>
+                <tr style="background: #f8fafc;">
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">👤 Clinic Staff</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;"><strong>staff_amnion</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #dcfce7;"><strong>staff123</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Amnion Clinic</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">💊 Pharmacy Staff</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;"><strong>staff_pharmacy</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #dcfce7;"><strong>pharmacy123</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Orange Pharmacy</td>
+                </tr>
+                <tr style="background: #f8fafc;">
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">🔬 Lab Staff</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;"><strong>staff_proton</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #dcfce7;"><strong>proton123</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">Proton Diagnostics</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">🔐 Super Admin</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #fef3c7;"><strong>super_admin</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-family: monospace; background: #dcfce7;"><strong>admin123</strong></td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0;">All Access</td>
+                </tr>
+            </table>
+            
+            <!-- Booking ID Prefixes -->
+            <h2 style="color: #8b5cf6; border-bottom: 2px solid #8b5cf6; padding-bottom: 10px; margin-top: 30px;">
+                🎫 Booking ID Prefixes
+            </h2>
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                <tr style="background: #f1f5f9;">
+                    <th style="padding: 10px; text-align: left; border: 1px solid #e2e8f0;">Prefix</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid #e2e8f0;">Service Type</th>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: bold; color: #0d9488;">DG-XXXXX</td>
+                    <td style="padding: 10px; border: 1px solid #e2e8f0;">DiaGyn / Amnion Clinic Appointments</td>
+                </tr>
+                <tr style="background: #f8fafc;">
+                    <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: bold; color: #0d9488;">PC-XXXXX</td>
+                    <td style="padding: 10px; border: 1px solid #e2e8f0;">Pushpa Clinic Appointments</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: bold; color: #f97316;">RX-XXXXX</td>
+                    <td style="padding: 10px; border: 1px solid #e2e8f0;">Orange Pharmacy Orders</td>
+                </tr>
+                <tr style="background: #f8fafc;">
+                    <td style="padding: 10px; border: 1px solid #e2e8f0; font-weight: bold; color: #8b5cf6;">LB-XXXXX</td>
+                    <td style="padding: 10px; border: 1px solid #e2e8f0;">Proton Diagnostics Lab Tests</td>
+                </tr>
+            </table>
+            
+            <!-- Important Notes -->
+            <div style="background: #fef3c7; padding: 20px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #f59e0b;">
+                <h3 style="color: #92400e; margin: 0 0 10px 0;">⚠️ Important Notes</h3>
+                <ul style="color: #78350f; margin: 0; padding-left: 20px;">
+                    <li>Staff Portal URL: <strong>{app_url}/staff</strong></li>
+                    <li>Patient Portal URL: <strong>{app_url}</strong> (requires signup/login)</li>
+                    <li>Doctors can complete consultations and select fees</li>
+                    <li>Staff can check-in patients and scan QR codes</li>
+                    <li>All confirmation emails now include QR codes</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f0fdfa; border-radius: 10px;">
+                <p style="margin: 0; color: #0d9488; font-weight: bold;">Questions or Issues?</p>
+                <p style="margin: 5px 0 0 0; color: #14b8a6;">Contact: nevikacura@gmail.com</p>
+            </div>
+        </div>
+    </div>
+    """
+    
+    try:
+        result = await asyncio.to_thread(resend.Emails.send, {
+            "from": SENDER_EMAIL,
+            "to": request.email,
+            "subject": "🔐 Nevika Cura - All Login Credentials & Booking ID Guide",
+            "html": credentials_html
+        })
+        
+        logger.info(f"Credentials email sent to {request.email}")
+        return {
+            "success": True,
+            "email_id": result.get('id'),
+            "sent_to": request.email
+        }
+    except Exception as e:
+        logger.error(f"Failed to send credentials email: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+
 # ============ PUSH NOTIFICATION ENDPOINTS ============
 
 class PushSubscriptionRequest(BaseModel):
