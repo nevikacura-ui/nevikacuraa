@@ -198,7 +198,7 @@ const PortalScrollBar = () => {
 
   return (
     <div 
-      className="relative bg-[#F5F5F4] border-b border-slate-200/50 sticky top-[60px] z-40" 
+      className="relative bg-[#F5F5F4] border-b border-slate-200/50 sticky top-[60px] z-40 overflow-hidden" 
       data-testid="portal-scroll-bar"
     >
       {/* Left Arrow */}
