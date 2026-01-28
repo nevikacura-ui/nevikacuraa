@@ -476,25 +476,16 @@ async def send_medicine_delivered_sms(patient_phone: str, order_details: dict):
     return await send_sms_notification(patient_phone, message)
 
 async def send_pharmacy_order_sms(patient_phone: str, order_details: dict):
-    """Send pharmacy order confirmation SMS to patient"""
-    order_id = order_details.get('id', '')[:8]
-    medicines_count = len(order_details.get('medicines', []))
+    """Send short pharmacy order confirmation SMS"""
+    order_id = order_details.get('order_id', order_details.get('id', ''))[:8]
     
-    message = f"""Nevika Cura - Order Confirmed!
-
-Order ID: {order_id}
-Items: {medicines_count} medicine(s)
-Status: Order Booked
-
-We'll notify you when your order is out for delivery.
-
-Thank you!
-- Orange Pharmacy"""
+    # Short SMS format
+    message = f"Medicine order confirmed. Order ID {order_id}. Nevika Cura"
     
     return await send_sms_notification(patient_phone, message)
 
 async def send_pharmacy_status_sms(patient_phone: str, order_id: str, status: str):
-    """Send pharmacy order status update SMS"""
+    """Send short pharmacy order status SMS"""
     status_messages = {
         "Packing": "Order being packed.",
         "Out for Delivery": "Order out for delivery.",
