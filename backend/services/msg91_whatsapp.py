@@ -128,8 +128,11 @@ async def send_msg91_whatsapp(
             response = await client.post(url, json=payload, headers=headers)
             response_data = response.json()
         
+        # Log full response for debugging
+        logger.info(f"MSG91 Response - Status: {response.status_code}, Data: {response_data}")
+        
         success = response.status_code == 200 and response_data.get("type") != "error"
-        request_id = response_data.get("request_id", response_data.get("id", "unknown"))
+        request_id = response_data.get("request_id", response_data.get("id", response_data.get("message_id", "unknown")))
         
         # Log to database if available
         if db is not None:
