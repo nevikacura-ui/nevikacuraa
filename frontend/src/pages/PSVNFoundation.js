@@ -30,8 +30,8 @@ const PSVNFoundation = () => {
   return (
     <AnimatedPage>
       <div className="min-h-screen bg-[#F5F5F4]">
-        {/* Header */}
-        <header className="bg-gradient-to-r from-violet-600 to-purple-600 text-white sticky top-0 z-50">
+        {/* Header with PSVN Foundation Logo */}
+        <header className="bg-gradient-to-r from-pink-500 to-rose-500 text-white sticky top-0 z-50">
           <div className="max-w-5xl mx-auto px-4 py-4">
             <div className="flex items-center gap-4">
               <Button 
@@ -39,12 +39,17 @@ const PSVNFoundation = () => {
                 size="icon"
                 onClick={() => navigate('/')}
                 className="rounded-full bg-white/20 hover:bg-white/30 text-white"
+                data-testid="psvn-back-btn"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                  <HandHeart className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-white/90">
+                  <img 
+                    src="https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/p3zt5ovj_Pink%20Simple%20Charity%20Logo_20260128_183244_0000.png" 
+                    alt="PSVN Foundation" 
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <div>
                   <h1 className="text-xl font-bold">PSVN Foundation</h1>
