@@ -405,7 +405,7 @@ const Home = () => {
       path: '/serena',
       bgColor: '#1a2e35',
       isDark: true,
-      containLogo: true
+      fillLogo: true
     },
     {
       id: 'corvia',
@@ -435,7 +435,7 @@ const Home = () => {
       path: '/senova',
       bgColor: '#f0f4f8',
       isDark: false,
-      containLogo: true
+      fillLogo: true
     }
   ];
   
