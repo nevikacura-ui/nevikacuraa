@@ -255,7 +255,9 @@ const PortalScrollBar = () => {
             >
               {/* Logo/Icon Container - Mobile: 4 icons visible (~82px), Desktop: all 12 fit */}
               <div 
-                className="w-[82px] h-[82px] sm:w-[88px] sm:h-[88px] md:w-[95px] md:h-[95px] lg:w-[108px] lg:h-[108px] xl:w-[120px] xl:h-[120px] 2xl:w-[135px] 2xl:h-[135px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
+                className={`w-[82px] h-[82px] sm:w-[88px] sm:h-[88px] md:w-[95px] md:h-[95px] lg:w-[108px] lg:h-[108px] xl:w-[120px] xl:h-[120px] 2xl:w-[135px] 2xl:h-[135px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300 ${
+                  portal.needsBorder ? 'border-2 border-gray-200' : ''
+                }`}
                 style={{ backgroundColor: portal.bgColor }}
               >
                 {portal.hasIcon ? (
@@ -264,7 +266,7 @@ const PortalScrollBar = () => {
                   <img 
                     src={portal.logo} 
                     alt={portal.name}
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full ${portal.containLogo ? 'object-contain p-1' : 'object-cover'}`}
                     loading="lazy"
                   />
                 ) : (
