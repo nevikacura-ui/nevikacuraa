@@ -1132,7 +1132,7 @@ const Home = () => {
                 data-testid={`service-card-${service.id}`}
               >
                 {/* Card Content */}
-                <div className="h-[200px] sm:h-[220px] flex flex-col">
+                <div className="h-[200px] sm:h-[220px] flex flex-col relative">
                   {/* Logo Section - Fills the card */}
                   <div className="flex-1 overflow-hidden">
                     {service.useIcon ? (
@@ -1149,6 +1149,20 @@ const Home = () => {
                         loading="lazy"
                       />
                     )}
+                  </div>
+                  
+                  {/* Name & Tagline Overlay - Top of card */}
+                  <div className={`absolute top-0 left-0 right-0 p-2 sm:p-3 ${
+                    service.isDark 
+                      ? 'bg-gradient-to-b from-black/50 to-transparent' 
+                      : 'bg-gradient-to-b from-white/70 to-transparent'
+                  }`}>
+                    <h4 className={`text-sm sm:text-base font-bold ${service.isDark ? 'text-white' : 'text-slate-800'}`}>
+                      {service.name}
+                    </h4>
+                    <p className={`text-[10px] sm:text-xs ${service.isDark ? 'text-white/80' : 'text-slate-600'}`}>
+                      {service.description}
+                    </p>
                   </div>
                   
                   {/* Explore Button - Fixed at bottom */}
