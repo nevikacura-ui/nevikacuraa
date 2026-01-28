@@ -796,9 +796,55 @@ class GuestUser(BaseModel):
     phone: str
     email: Optional[EmailStr] = None
 
+# Booking ID Generator for Patient Bookings
+async def generate_booking_id(clinic: str, db_instance) -> str:
+    """
+    Generate unique booking ID based on clinic:
+    AC-XXXXX - Amnion Clinic
+    OP-XXXXX - Orange Pharmacy  
+    PD-XXXXX - Proton Diagnostics
+    PC-XXXXX - Pushpa Clinic
+    """
+    clinic_prefixes = {
+        "diagyn": "AC",      # Amnion Clinic (DiaGyn)
+        "amnion": "AC",      # Amnion Clinic
+        "amnion clinic": "AC",
+        "pharmacy": "OP",    # Orange Pharmacy
+        "orange pharmacy": "OP",
+        "proton": "PD",      # Proton Diagnostics
+        "proton diagnostics": "PD",
+        "pushpa": "PC",      # Pushpa Clinic
+        "pushpa clinic": "PC",
+    }
+    
+    # Get prefix based on clinic name (case-insensitive)
+    clinic_lower = clinic.lower().strip()
+    prefix = "NC"  # Default: Nevika Cura
+    
+    for key, val in clinic_prefixes.items():
+        if key in clinic_lower:
+            prefix = val
+            break
+    
+    # Get next sequence number from database
+    counter = await db_instance.booking_counters.find_one_and_update(
+        {"prefix": prefix},
+        {"$inc": {"seq": 1}},
+        upsert=True,
+        return_document=True
+    )
+    
+    seq_num = counter.get("seq", 1) if counter else 1
+    
+    # Format: PREFIX-XXXXX (5 digits, zero-padded)
+    booking_id = f"{prefix}-{seq_num:05d}"
+    
+    return booking_id
+
 class Appointment(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    booking_id: Optional[str] = None  # Patient-facing booking ID (AC-00001, OP-00001, etc.)
     user_id: Optional[str] = None
     doctor: str
     clinic: str
