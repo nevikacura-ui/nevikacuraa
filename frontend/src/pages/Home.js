@@ -406,7 +406,8 @@ const Home = () => {
       bgColor: '#1a2e35',
       isDark: true,
       fillLogo: true,
-      containImage: true
+      containImage: true,
+      scale: 1.3
     },
     {
       id: 'corvia',
