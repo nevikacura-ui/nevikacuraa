@@ -18,9 +18,9 @@ const IntroScreen = ({ onComplete, user }) => {
   const navigate = useNavigate();
   const { setPatientAuth } = useAuth();
   
-  // Simple phase state: 'loading' or 'splash'
-  const [phase, setPhase] = useState('loading');
-  const [wordIndex, setWordIndex] = useState(0);
+  // Start with 'init' to prevent flash, then go to 'loading'
+  const [phase, setPhase] = useState('init');
+  const [wordIndex, setWordIndex] = useState(-1);
   
   // Auth states
   const [showAuth, setShowAuth] = useState(false);
@@ -45,8 +45,8 @@ const IntroScreen = ({ onComplete, user }) => {
   // Check biometric
   useEffect(() => {
     const setup = localStorage.getItem('biometricEnabled');
-    const mobile = localStorage.getItem('biometricMobile');
-    if (setup === 'true' && mobile) setHasBiometricSetup(true);
+    const savedMobile = localStorage.getItem('biometricMobile');
+    if (setup === 'true' && savedMobile) setHasBiometricSetup(true);
   }, []);
   
   // Check logged in
@@ -54,6 +54,15 @@ const IntroScreen = ({ onComplete, user }) => {
     const token = localStorage.getItem('patientToken');
     if (token || user) onComplete();
   }, [user, onComplete]);
+  
+  // Initialize - start the loading phase
+  useEffect(() => {
+    // Small delay to ensure component is mounted
+    const initTimer = setTimeout(() => {
+      setPhase('loading');
+    }, 50);
+    return () => clearTimeout(initTimer);
+  }, []);
   
   // Loading animation - show words then switch to splash
   useEffect(() => {
