@@ -33,6 +33,7 @@ const portals = [
     path: '/serena',
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/9lxbdskl_90.png',
     bgColor: '#1a2e35',
+    fillContainer: true,
     tagline: 'Find Your Calm.'
   },
   // 4. Aanya Newborn
@@ -63,6 +64,7 @@ const portals = [
     path: '/corvia',
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/p3zt5ovj_Pink%20Simple%20Charity%20Logo_20260128_183244_0000.png',
     bgColor: '#c8f56a',
+    fillContainer: true,
     tagline: 'Healthy Heart & Prevention.'
   },
   // 7. Reneu - Preventive & Lifestyle Medicine (formerly Vireya)
@@ -73,6 +75,7 @@ const portals = [
     path: '/reneu',
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/uy8wpc27_file_00000000caf871fdae54ae4c4854bbd4.png',
     bgColor: '#f5f5f5',
+    fillContainer: true,
     tagline: 'Renew Health, Stay Ahead.'
   },
   // 8. Thrive360 - Fitness Portal (formerly FitLife)
