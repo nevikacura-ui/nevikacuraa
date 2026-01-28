@@ -353,6 +353,7 @@ const StaffPortal = () => {
           url += `&clinic=${encodeURIComponent(selectedClinic)}`;
         }
         const res = await axios.get(url, getAuthHeaders());
+        console.log('Appointments received:', res.data.appointments);
         setAppointments(res.data.appointments || []);
         
         if (res.data.doctor_clinics && res.data.doctor_clinics.length > 0) {
