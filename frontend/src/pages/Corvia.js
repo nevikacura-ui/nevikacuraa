@@ -46,7 +46,7 @@ const Corvia = () => {
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-[#c8f56a]">
                   <img 
-                    src="https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/nz0rdwvp_file_000000000dfc7230a4605006a1e3131a.png" 
+                    src="https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/p3zt5ovj_Pink%20Simple%20Charity%20Logo_20260128_183244_0000.png" 
                     alt="Corvia" 
                     className="w-full h-full object-contain"
                   />
