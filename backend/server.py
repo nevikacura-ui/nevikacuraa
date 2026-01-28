@@ -2341,8 +2341,12 @@ Please check if patient needs to reschedule."""
     if existing:
         raise HTTPException(status_code=400, detail="This time slot is already booked. Please select another slot.")
     
+    # Generate booking ID for patient bookings
+    booking_id = await generate_booking_id(input.clinic, db)
+    
     appointment = Appointment(
         user_id=user.id if user else None,
+        booking_id=booking_id,
         **input.model_dump()
     )
     
@@ -2350,9 +2354,10 @@ Please check if patient needs to reschedule."""
     doc['created_at'] = doc['created_at'].isoformat()
     doc['appointment_type'] = "NORMAL"  # Customer bookings are always NORMAL
     doc['send_email_reminder'] = input.send_email_reminder  # Store email reminder preference
+    doc['booked_by'] = "patient"  # Mark as patient booking
     
     await db.appointments.insert_one(doc)
-    logger.info(f"Appointment created: {appointment.id}")
+    logger.info(f"Appointment created: {appointment.id} with booking_id: {booking_id}")
     
     # Create staff notification for new appointment
     try:
