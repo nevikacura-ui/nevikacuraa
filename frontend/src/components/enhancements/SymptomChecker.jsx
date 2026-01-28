@@ -4,6 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Symptom Checker (#19)
 const SymptomChecker = ({ onBookAppointment }) => {
@@ -12,6 +15,7 @@ const SymptomChecker = ({ onBookAppointment }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [assessment, setAssessment] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const commonSymptoms = [
     { id: 'fever', name: 'Fever', icon: '🌡️', category: 'general' },
