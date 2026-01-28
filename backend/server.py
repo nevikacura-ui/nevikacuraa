@@ -2381,21 +2381,21 @@ Please check if patient needs to reschedule."""
     # Generate WhatsApp link for appointment notification
     whatsapp_message = f"""New DiaGyn Appointment Booking
 
+Booking ID: {booking_id}
 Patient: {appointment.patient_name}
 Phone: {appointment.patient_phone}
 
 Doctor: {appointment.doctor}
 Clinic: {appointment.clinic}
 Date: {appointment.date}
-Time: {appointment.time}
-
-Booking ID: {appointment.id[:8]}"""
+Time: {appointment.time}"""
     
     whatsapp_link = f"https://wa.me/917039020020?text={whatsapp_message.replace(chr(10), '%0A').replace(' ', '%20')}"
     
     # Send email notification for new appointment
     email_html = f"""
     <h2>📅 New DiaGyn Appointment Booking</h2>
+    <p><strong>Booking ID:</strong> <span style="font-size: 18px; color: #0d9488;">{booking_id}</span></p>
     <table style="border-collapse: collapse; width: 100%;">
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Doctor:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{appointment.doctor}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Clinic:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{appointment.clinic}</td></tr>
