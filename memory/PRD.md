@@ -21,94 +21,57 @@ Build a comprehensive healthcare application named "Nevika Cura" that enhances s
 - Prescription upload and processing
 - Live queue status tracking
 - Email notifications via Resend
-- SMS notifications via Twilio
+- SMS notifications via Twilio (brand-specific, shortened templates)
 - WhatsApp notifications via MSG91 (configured, pending user activation)
 
 ## What's Been Implemented
 
+### January 28, 2026 - SMS Testing & Staff Portal Fix
+- ✅ Created `/api/test/send-sms` endpoint for direct SMS testing
+- ✅ Sent 3 test SMS to verify brand-specific templates:
+  - DiaGyn Healthcare (appointment)
+  - Proton Diagnostics (lab test)
+  - Orange Pharmacy (medicine order)
+- ✅ Fixed Staff Portal JavaScript error (`staffToken is not defined`)
+- ✅ Verified QR Scanner backend endpoint works
+
+### January 28, 2026 - Booking ID & QR Code System
+- ✅ Booking ID generation with clinic-specific prefixes (AC, OP, PD, PC)
+- ✅ QR code generation and embedding in confirmation emails
+- ✅ Staff Portal QR Scanner UI component
+- ✅ Backend endpoint for QR code check-in lookup
+
+### January 28, 2026 - SMS Optimization
+- ✅ Shortened all SMS templates to reduce costs
+- ✅ Brand-specific sender names (DiaGyn, Proton, Orange)
+- ✅ Disabled all SMS notifications to staff (email only)
+- ✅ Patient SMS retained for appointments, lab tests, pharmacy
+
 ### January 28, 2026 - Loading Screen & UI Updates
-- ✅ Created new Loading Screen with "Book. Order. Test. Care." sequential word animation
+- ✅ Created IntroScreen with "Book. Order. Test. Care." animation
 - ✅ Words fade in with colors: Book (teal), Order (orange), Test (violet), Care (pink)
-- ✅ Loading screen duration: ~1.1 seconds before transitioning to splash
-- ✅ Removed Trust Badges section from Home page (as requested)
-- ✅ Flow: Loading Screen → Splash Screen → Home Page
+- ✅ Removed Trust Badges section from Home page
 
 ### January 28, 2026 - Enhancement Features Backend (30+ APIs)
 
 #### Enhancement V2 APIs (`/api/enhancements/*`)
-- ✅ **AI Triage Assistant** - Symptom analysis with urgency classification
-- ✅ **Symptom Checker** - Condition probability analysis
-- ✅ **Teleconsultation** - Video consultation booking & management
-- ✅ **Community Forums** - Patient discussion posts & comments
-- ✅ **Wearable Integration** - Sync data from Apple Watch, Fitbit, Google Fit
-- ✅ **Insurance Integration** - Claims submission & tracking
-- ✅ **Broadcast Messages** - Mass notifications to patients/staff
-- ✅ **Virtual Health Coach** - AI wellness guidance & goals
-- ✅ **Two-Way Chat** - Patient-doctor messaging
-- ✅ **Staff Performance Analytics** - Performance metrics
-- ✅ **Patient Check-in Kiosk** - Self-service check-in
-- ✅ **Room & Resource Booking** - Conference/procedure room scheduling
-- ✅ **Smart Inventory Alerts** - Low stock notifications
-- ✅ **Split Payment** - Multi-method payment processing
-- ✅ **Voice Prescription** - Speech-to-prescription
-- ✅ **Data Export** - Patient health data export
+- ✅ AI Triage Assistant, Symptom Checker
+- ✅ Teleconsultation booking & management
+- ✅ Community Forums
+- ✅ Wearable Integration (Apple Watch, Fitbit, Google Fit)
+- ✅ Insurance Integration, Broadcast Messages
+- ✅ Virtual Health Coach, Two-Way Chat
+- ✅ Staff Performance Analytics
+- ✅ Patient Check-in Kiosk, Room & Resource Booking
+- ✅ Smart Inventory Alerts, Split Payment
+- ✅ Voice Prescription, Data Export
 
 #### Enhancement V3 APIs (`/api/admin/*`)
-- ✅ **Audit Trail Dashboard** - Activity logging & tracking
-- ✅ **Revenue Forecasting** - ML-based revenue predictions
-- ✅ **Health Outcome Tracking** - Patient improvement metrics
-- ✅ **Staff Shift Management** - Schedule & swap requests
-- ✅ **Digital Signage** - Lobby display content management
-- ✅ **Lab Report Auto-Import** - OCR-based report parsing
-- ✅ **Consent Management** - Patient consent recording
-- ✅ **Billing Reconciliation** - Payment tracking & reminders
-- ✅ **Predictive Health Alerts** - AI-generated risk alerts
-- ✅ **Patient Context Card** - Complete patient summary
-
-### January 28, 2026 - MSG91 Integration
-- ✅ MSG91 Auth Key configured
-- ✅ MSG91 WhatsApp routes loaded
-- ⏳ Pending: User completing Facebook/Meta verification
-
-### January 27, 2026 - UI Redesign
-- ✅ Home page redesigned with Trust Badges
-- ✅ Pharmacy categories with image-based cards
-- ✅ Quick Shop pills filtering verified working
-- ✅ Medicine count: 4,266 records
-
-## API Endpoints Summary
-
-### Enhancement V2 Endpoints
-| Endpoint | Method | Auth | Description |
-|----------|--------|------|-------------|
-| `/api/enhancements/ai-triage` | POST | Yes | AI symptom triage |
-| `/api/enhancements/symptom-checker/analyze` | POST | Yes | Symptom analysis |
-| `/api/enhancements/teleconsultation/book` | POST | Yes | Book video consult |
-| `/api/enhancements/teleconsultation/sessions` | GET | Yes | List sessions |
-| `/api/enhancements/community/posts` | GET | No | List forum posts |
-| `/api/enhancements/community/posts` | POST | Yes | Create post |
-| `/api/enhancements/wearables/sync` | POST | Yes | Sync device data |
-| `/api/enhancements/wearables/insights` | GET | Yes | Health insights |
-| `/api/enhancements/insurance/claims` | POST | Yes | Submit claim |
-| `/api/enhancements/broadcast/send` | POST | Yes | Send broadcast |
-| `/api/enhancements/health-coach/advice` | GET | Yes | Get coaching |
-| `/api/enhancements/chat/start` | POST | Yes | Start chat |
-| `/api/enhancements/rooms/availability` | GET | No | Room availability |
-| `/api/enhancements/inventory/alerts` | GET | Yes | Stock alerts |
-| `/api/enhancements/payments/split` | POST | Yes | Split payment |
-
-### Enhancement V3 Endpoints (Admin)
-| Endpoint | Method | Auth | Description |
-|----------|--------|------|-------------|
-| `/api/admin/audit-trail` | GET | Yes | Activity logs |
-| `/api/admin/analytics/revenue-forecast` | GET | Yes | Revenue predictions |
-| `/api/admin/analytics/health-outcomes` | GET | Yes | Patient outcomes |
-| `/api/admin/analytics/predictive-alerts` | GET | Yes | Risk alerts |
-| `/api/admin/shifts/schedule` | GET | Yes | Staff schedules |
-| `/api/admin/signage/content` | GET | No | Display content |
-| `/api/admin/billing/reconciliation` | GET | Yes | Payment tracking |
-| `/api/admin/consent/{phone}` | GET | Yes | Patient consents |
-| `/api/admin/patient-context/{phone}` | GET | Yes | Patient summary |
+- ✅ Audit Trail Dashboard, Revenue Forecasting
+- ✅ Health Outcome Tracking, Staff Shift Management
+- ✅ Digital Signage, Lab Report Auto-Import
+- ✅ Consent Management, Billing Reconciliation
+- ✅ Predictive Health Alerts, Patient Context Card
 
 ## Tech Stack
 - **Frontend:** React with Tailwind CSS, Shadcn UI
@@ -116,52 +79,60 @@ Build a comprehensive healthcare application named "Nevika Cura" that enhances s
 - **Database:** MongoDB
 - **Notifications:** Resend (email), Twilio (SMS), MSG91 (WhatsApp)
 - **Payments:** Stripe
+- **QR Code:** qrcode (backend), html5-qrcode (frontend)
 
 ## Architecture
 ```
 /app/
 ├── backend/
+│   ├── server.py (main app, notification functions, SMS templates)
 │   ├── routes/
-│   │   ├── enhancements.py (13 patient APIs)
-│   │   ├── enhancements_v2.py (16 new APIs - AI, Teleconsult, Community, etc.)
-│   │   ├── enhancements_v3.py (14 admin APIs - Analytics, Audit, Shifts, etc.)
-│   │   ├── msg91_whatsapp.py (WhatsApp via MSG91)
-│   │   └── ... (other routes)
+│   │   ├── staff.py (QR scanner endpoint)
+│   │   ├── enhancements.py
+│   │   ├── enhancements_v2.py
+│   │   └── enhancements_v3.py
 │   └── services/
 │       └── msg91_whatsapp.py
 └── frontend/
     └── src/
-        └── components/
-            └── enhancements/ (46 UI components)
+        ├── components/
+        │   ├── IntroScreen.jsx (unified loading/splash)
+        │   └── QRScanner.jsx
+        └── pages/
+            └── StaffPortal.js (QR Check-In button added)
 ```
 
-## Testing Results
-- **Backend Tests:** 24/24 passed (100%)
-- **Test Report:** `/app/test_reports/iteration_64.json`
+## Staff Portal Access
+- **Username:** staff_pushpa
+- **Password:** staff123
+- **Role:** clinic_staff_pushpa
+- **Clinic:** Pushpa Clinic
 
 ## Prioritized Backlog
 
 ### P0 (Critical)
+- ~~Send test SMS to verify templates~~ ✅ DONE
 - Complete MSG91 Facebook verification (user action)
-- Test WhatsApp notifications end-to-end
 
 ### P1 (High Priority)
-- Connect frontend enhancement components to new backend APIs
-- Implement real AI/ML for triage and predictions
+- Connect frontend enhancement components to backend APIs
+- Test Staff Portal QR Scanner end-to-end
+- Verify Pharmacy category filtering (awaiting user confirmation)
+- Integrate QR emails for Lab Tests & Pharmacy orders
 
 ### P2 (Medium Priority)
+- Implement real AI/ML for triage and predictions
 - Real wearable device SDK integration
 - Production OCR for lab reports
-- Speech-to-text for voice prescriptions
 
 ### P3 (Future)
+- Video teleconsultation
 - Apple Watch App
 - AR Clinic Navigation
-- Multi-language Voice Assistant
 
 ## Known Issues
 - Face ID Camera fails on mobile (low priority)
-- Enhancement APIs return mock data when DB is empty (by design for demo)
+- Enhancement APIs return mock data when DB is empty (by design)
 
 ## Last Updated
 January 28, 2026
