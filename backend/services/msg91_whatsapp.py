@@ -7,6 +7,10 @@ import logging
 import os
 from datetime import datetime, timezone
 from typing import Optional, List
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +18,10 @@ logger = logging.getLogger(__name__)
 MSG91_AUTH_KEY = os.environ.get("MSG91_AUTH_KEY")
 MSG91_BASE_URL = "https://control.msg91.com/api/v5"
 MSG91_WHATSAPP_NUMBER = os.environ.get("MSG91_WHATSAPP_NUMBER", "918108888330")
+
+# Log configuration status
+logger.info(f"MSG91 Auth Key configured: {bool(MSG91_AUTH_KEY)}")
+logger.info(f"MSG91 WhatsApp Number: {MSG91_WHATSAPP_NUMBER}")
 
 # Template Names (as registered in MSG91)
 TEMPLATES = {
