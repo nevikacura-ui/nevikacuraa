@@ -1077,69 +1077,6 @@ const Home = () => {
               </div>
             ))}
           </div>
-          
-          {/* Secondary Services - 2x2 Grid (Evara, Glydex, Alyne, Thrive360) */}
-          <div className="grid grid-cols-2 gap-4">
-            {secondaryServices.map((service) => (
-              <div
-                key={service.id}
-                className={`group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl ${
-                  service.isDark ? 'shadow-lg' : 'shadow-md border border-gray-100'
-                }`}
-                style={{ backgroundColor: service.bgColor }}
-                onClick={() => navigate(service.path)}
-                data-testid={`service-card-${service.id}`}
-              >
-                {/* Decorative circles */}
-                <div className={`absolute top-0 right-0 w-20 h-20 rounded-full -mr-10 -mt-10 transition-transform duration-500 group-hover:scale-150 ${
-                  service.isDark ? 'bg-white/10' : 'bg-gray-100/50'
-                }`}></div>
-                
-                {/* Card Content */}
-                <div className="relative h-full flex flex-col min-h-[180px] sm:min-h-[200px]">
-                  {/* Logo */}
-                  {service.fillLogo ? (
-                    <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-                      <img 
-                        src={service.logo} 
-                        alt={service.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        style={service.logoScale ? { transform: `scale(${service.logoScale})` } : {}}
-                        data-testid={`service-logo-${service.id}`}
-                        loading="lazy"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex-1 flex items-center justify-center p-4">
-                      <img 
-                        src={service.logo} 
-                        alt={service.name} 
-                        className="h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                        data-testid={`service-logo-${service.id}`}
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
-                  
-                  {/* Explore Button */}
-                  <div className={`${service.fillLogo ? 'absolute bottom-0 left-0 right-0 p-3' : 'mt-auto p-3 pt-0'}`}>
-                    <Button
-                      onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
-                      data-testid={`service-button-${service.id}`}
-                      className={`w-full rounded-xl font-semibold transition-all duration-300 relative z-10 shadow-lg py-3 ${
-                        service.isDark 
-                          ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
-                          : 'bg-slate-800 hover:bg-slate-900 text-white'
-                      }`}
-                    >
-                      Explore
-                      <ChevronRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Quick Stats - Glassmorphism */}
