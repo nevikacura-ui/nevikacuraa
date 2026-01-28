@@ -1054,7 +1054,7 @@ const Home = () => {
         </div>
 
         {/* Services Grid - New Layout */}
-        <div className="mb-16">
+        <div className="mb-16 overflow-hidden">
           <h2 className="text-2xl font-bold text-slate-800 mb-2 text-center md:text-left">Our Services</h2>
           <p className="text-slate-500 mb-8 text-center md:text-left">Complete healthcare at your fingertips</p>
           
