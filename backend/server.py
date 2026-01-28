@@ -3394,6 +3394,26 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
         "tests": order.tests
     })
     
+    # Send WhatsApp confirmation via MSG91
+    try:
+        tests_text = ", ".join(order.tests[:3]) + ("..." if len(order.tests) > 3 else "")
+        whatsapp_result = await send_proton_lab_confirmation(
+            phone=order.patient_phone,
+            patient_name=order.patient_name,
+            tests=tests_text,
+            preferred_date=order.preferred_date,
+            preferred_time=order.preferred_time or "To be confirmed",
+            booking_id=booking_id,
+            address=order.address or "Home collection address to be confirmed",
+            db=db
+        )
+        if whatsapp_result.get("success"):
+            logger.info(f"✅ WhatsApp lab confirmation sent for booking {booking_id}")
+        else:
+            logger.warning(f"⚠️ WhatsApp lab confirmation failed: {whatsapp_result.get('error')}")
+    except Exception as e:
+        logger.error(f"❌ WhatsApp lab notification error: {e}")
+    
     # Send SMS notification to Proton Diagnostics staff
     await notify_staff_new_order({
         "id": order.id,
