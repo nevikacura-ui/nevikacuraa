@@ -272,6 +272,7 @@ const PortalScrollBar = () => {
                     src={portal.logo} 
                     alt={portal.name}
                     className={`${portal.largePadding ? 'w-[90%] h-[90%] object-contain' : portal.containLogo ? 'w-full h-full object-contain p-2' : 'w-full h-full object-cover'}`}
+                    style={portal.scale ? { transform: `scale(${portal.scale})` } : {}}
                     loading="lazy"
                   />
                 ) : (
