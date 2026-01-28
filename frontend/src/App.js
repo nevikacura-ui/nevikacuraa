@@ -58,6 +58,13 @@ import EnhancementFeatures from '@/pages/EnhancementFeatures';
 // Payment Pages
 import { PaymentSuccess, PaymentCancel } from '@/components/PaymentCheckout';
 import PaymentHistory from '@/pages/PaymentHistory';
+// New Portal Pages
+import ThriveMind from '@/pages/ThriveMind';
+import Cardyra from '@/pages/Cardyra';
+import Vireya from '@/pages/Vireya';
+import FitLife from '@/pages/FitLife';
+import Nivara from '@/pages/Nivara';
+import PSVNFoundation from '@/pages/PSVNFoundation';
 // Intro Screen (Loading + Splash combined)
 import IntroScreen from '@/components/IntroScreen';
 // Page Transitions
