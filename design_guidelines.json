@@ -1,155 +1,98 @@
 {
-  "design_system": {
-    "identity": {
-      "name": "Nevika Cura - Serene Care Edition",
-      "archetype": "Organic & Earthy (Trust, Calm)",
-      "vibe": "Clean, Reassuring, Patient-Centric, Pastel",
-      "principles": [
-        "Fusion over Imitation: Mix medical precision with spa-like calmness.",
-        "Emotion First: Every interaction should reduce anxiety.",
-        "Content is King: Clear, legible data over decorative fluff.",
-        "Zoom In: Focus on the task (booking/ordering) with minimal distractions.",
-        "Negative Space: Generous padding to prevent cognitive overload."
-      ]
+  "identity": {
+    "name": "E1",
+    "role": "Creative Designer",
+    "principles": [
+      "Fusion over Imitation",
+      "Emotion First",
+      "Content is King",
+      "Zoom In",
+      "Negative Space",
+      "Contrast"
+    ]
+  },
+  "typography": {
+    "fonts": {
+      "heading": "Outfit",
+      "body": "DM Sans"
     },
-    "colors": {
-      "palette": {
-        "primary": "#5FA8D3",
-        "secondary": "#62B6CB",
-        "accent": "#FFB4A2",
-        "background": "#F8FAFC",
-        "surface": "#FFFFFF",
-        "text_primary": "#1E293B",
-        "text_secondary": "#64748B",
-        "border": "#E2E8F0",
-        "success": "#10B981",
-        "error": "#EF4444"
+    "rules": [
+      "Headings (Outfit): Use tracking-tight for sizes above 24px. Weights: 500 (Medium) or 700 (Bold). Avoid 400 for headings.",
+      "Body (DM Sans): Use leading-relaxed for readability. Weights: 400 (Regular) for text, 500 (Medium) for labels.",
+      "Caps: Use uppercase + tracking-widest + text-xs for overlines/labels (e.g., 'PATIENT ID').",
+      "Numbers: Use tabular-nums for data/pricing to ensure alignment."
+    ]
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "name": "Teal",
+        "hex": "#0D9488",
+        "usage": "Primary Actions, Active States, Brand Identity"
       },
-      "usage": {
-        "primary": "Main buttons, active tabs, key icons",
-        "secondary": "Secondary buttons, subtle backgrounds, illustrations",
-        "accent": "Call to actions (urgent), notifications, highlights",
-        "background": "Global page background (soft cool grey/white)",
-        "surface": "Cards, modals, inputs"
+      "secondary": {
+        "name": "Sand",
+        "hex": "#F5F5F4",
+        "usage": "App Backgrounds, Subtle Sections"
       },
-      "tailwind_config_instruction": "Update tailwind.config.js to include these specific colors under 'extend.colors.brand'. Use 'brand-primary', 'brand-secondary', etc."
-    },
-    "typography": {
-      "font_family": {
-        "heading": "Outfit, sans-serif",
-        "body": "DM Sans, sans-serif"
+      "accent": {
+        "name": "Orange",
+        "hex": "#F97316",
+        "usage": "Urgent Notifications, Call to Actions (Secondary)"
       },
-      "scale": {
-        "h1": "text-4xl md:text-5xl font-bold tracking-tight",
-        "h2": "text-3xl md:text-4xl font-semibold tracking-tight",
-        "h3": "text-2xl font-semibold",
-        "body_lg": "text-lg leading-relaxed",
-        "body_base": "text-base leading-relaxed text-slate-600",
-        "caption": "text-sm text-slate-500"
+      "neutral": {
+        "text_main": "#0F172A",
+        "text_muted": "#64748B",
+        "border": "#E2E8F0"
       }
     },
-    "spacing": {
-      "container_padding": "p-4 md:p-8 lg:p-12",
-      "section_gap": "gap-8 md:gap-12",
-      "card_padding": "p-6",
-      "border_radius": "rounded-2xl"
+    "theme_strategy": "Light Mode First. Use 'Sand' (#F5F5F4) as the main app background to reduce clinical harshness. Use White (#FFFFFF) for content cards to create lift.",
+    "gradients": "Avoid full-screen gradients. Use subtle mesh gradients in 'Teal' and 'Sand' for Hero sections only."
+  },
+  "layout": {
+    "spacing_scale": "Generous. Use p-6 or p-8 for cards. Gap-6 for grids.",
+    "grid_system": {
+      "dashboard": "Bento Grid (Grid-cols-1 md:grid-cols-4). Mix square and rectangular widgets.",
+      "lists": "Clean Rows. No heavy borders. Use border-b only.",
+      "mobile": "Single column. Bottom Navigation for primary app sections."
     },
-    "shadows": {
-      "card": "shadow-[0_4px_20px_-4px_rgba(95,168,211,0.1)]",
-      "hover": "shadow-[0_10px_30px_-4px_rgba(95,168,211,0.2)]",
-      "dropdown": "shadow-xl border border-slate-100"
+    "radius": "Rounded-xl (12px) or Rounded-2xl (16px) for a friendly, approachable feel."
+  },
+  "components": {
+    "buttons": {
+      "style": "Pill-shaped or Soft Rounded (rounded-lg).",
+      "interaction": "Scale down slightly on click (active:scale-95). Hover: Lift slightly."
+    },
+    "cards": {
+      "style": "Flat White with subtle shadow (shadow-sm). Border-border/50.",
+      "hover": "Hover: shadow-md and border-teal-500/30 transition-all."
+    },
+    "inputs": {
+      "style": "Filled 'Sand' background (bg-secondary) with bottom border focus, OR standard outlined with generous padding."
+    },
+    "navigation": {
+      "mobile": "Bottom Tab Bar. Glassmorphism effect (backdrop-blur-lg).",
+      "desktop": "Sidebar or Top Header with clear hierarchy."
     }
   },
   "assets": {
     "images": {
-      "diagnostics": {
-        "pathology_hero": "https://images.unsplash.com/photo-1733119883210-04f09d5f86df",
-        "imaging_hero": "https://images.unsplash.com/photo-1559000357-f6b52ddfbe37",
-        "lab_background": "https://images.unsplash.com/photo-1655210913810-33acfa96d1e6"
-      },
-      "pharmacy": {
-        "medicines_hero": "https://images.unsplash.com/photo-1762328494465-274a63177884",
-        "delivery_illustration": "https://images.unsplash.com/photo-1635311658656-4e9b5655a57c"
-      }
+      "doctor_consult": "https://images.unsplash.com/photo-1659353887222-630895f23cc5?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "clinic_interior": "https://images.unsplash.com/photo-1762625570087-6d98fca29531?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "pharmacy_shelves": "https://images.unsplash.com/photo-1580281657527-47f249e8f4df?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "lab_microscope": "https://images.unsplash.com/photo-1631556760585-2e846196d5a9?crop=entropy&cs=srgb&fm=jpg&q=85"
     },
-    "icons": {
-      "library": "lucide-react",
-      "usage": "Use thin strokes (1.5px) for a refined look. Color them with brand-primary."
-    }
+    "icons": "Use Lucide-React (default). For medical specifics, ensure clarity."
   },
-  "components": {
-    "buttons": {
-      "primary": "bg-[#5FA8D3] hover:bg-[#4A90B8] text-white rounded-full px-8 py-6 shadow-lg hover:shadow-xl transition-all duration-300",
-      "secondary": "bg-[#62B6CB]/10 text-[#62B6CB] hover:bg-[#62B6CB]/20 rounded-full px-6 py-4 border border-[#62B6CB]/20",
-      "outline": "border-2 border-[#5FA8D3] text-[#5FA8D3] hover:bg-[#5FA8D3]/5 rounded-full px-6 py-4"
-    },
-    "cards": {
-      "base": "bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300",
-      "interactive": "cursor-pointer hover:-translate-y-1 hover:border-[#5FA8D3]/30"
-    },
-    "inputs": {
-      "base": "bg-slate-50 border-slate-200 focus:border-[#5FA8D3] focus:ring-[#5FA8D3]/20 rounded-xl h-12 px-4"
-    }
-  },
-  "pages": {
-    "proton": {
-      "title": "Proton Diagnostics",
-      "layout": "Tabbed Interface (Pathology | Imaging)",
-      "sections": [
-        {
-          "name": "Hero",
-          "content": "Calm, reassuring header with 'Book Diagnostic Tests' title. Use 'lab_background' with a soft overlay.",
-          "actions": ["Search Tests"]
-        },
-        {
-          "name": "Test Categories",
-          "type": "Grid",
-          "items": ["Blood Test", "Urine Test", "ECG", "Sonography", "X-Ray"],
-          "style": "Card-based grid with icons. Use 'pathology_hero' for Pathology tab and 'imaging_hero' for Imaging tab context."
-        },
-        {
-          "name": "Booking Flow",
-          "components": ["Calendar (Shadcn)", "Time Slot Picker", "Home Collection Toggle"],
-          "instruction": "Use a step-by-step wizard or a clean single-page form. Highlight 'Home Collection' as a premium convenience."
-        }
-      ]
-    },
-    "pharmacy": {
-      "title": "Nevika Pharmacy",
-      "layout": "Search-Centric Hub",
-      "sections": [
-        {
-          "name": "Hero",
-          "content": "Prominent Search Bar for 4266+ medicines. Title: 'Order Medicines & Essentials'.",
-          "image": "medicines_hero"
-        },
-        {
-          "name": "Quick Actions",
-          "type": "Row",
-          "items": ["Upload Prescription", "Reorder", "View Cart"],
-          "style": "Large, colorful cards using the pastel palette."
-        },
-        {
-          "name": "Inventory List",
-          "type": "List/Grid",
-          "instruction": "Clean list view for medicines with 'Add to Cart' pill buttons. Show 'In Stock' badges in Green (#10B981)."
-        }
-      ]
-    }
-  },
-  "implementation_steps": [
-    "1. Update tailwind.config.js with the new 'brand' color palette.",
-    "2. Create a 'Layout' wrapper component that applies the global background and font settings.",
-    "3. Refactor 'Proton' page: Implement the Tabbed interface and integrate the Calendar component for booking.",
-    "4. Refactor 'Pharmacy' page: Implement the Search bar with autocomplete styling and the Medicine Grid.",
-    "5. Ensure all interactive elements have 'data-testid' attributes.",
-    "6. Verify mobile responsiveness (stack grids to 1 column on mobile)."
-  ],
   "universal_guidelines": [
-    "Do not use gradients for backgrounds; use solid pastel colors or subtle textures.",
-    "Ensure text contrast ratios meet WCAG AA standards (4.5:1).",
-    "Use 'sonner' for all toast notifications.",
-    "All inputs must have clear focus states.",
-    "Avoid 'Inter' font; strictly use 'Outfit' for headings and 'DM Sans' for body."
-  ]
+    "Do not use 'Inter' for headings.",
+    "Do not use purple or teal for CTAs indiscriminately. Use the defined Primary Teal.",
+    "Avoid center-aligned text for long content.",
+    "Use 'sonner' for toasts.",
+    "Ensure all interactive elements have 'data-testid'.",
+    "Mobile images max-height: 80vh.",
+    "Use 'lenis' for smooth scrolling if possible.",
+    "Glassmorphism: Use backdrop-blur-xl with a white/70 background for overlays."
+  ],
+  "instructions_to_main_agent": "Implement the 'Nevika Cura' dashboard using the Bento Grid layout. Use the provided images for the respective sections (Doctor booking, Pharmacy, Lab). Ensure the 'Sand' background is used to differentiate from the white cards. Focus on the 'Mobile-First' experience."
 }
