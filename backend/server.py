@@ -2366,7 +2366,7 @@ Please check if patient needs to reschedule."""
             db=db,
             notification_type="new_appointment",
             title="🆕 New Appointment Booked",
-            message=f"{appointment.patient_name} booked with {appointment.doctor} on {appointment.date} at {appointment.time}",
+            message=f"{appointment.patient_name} ({booking_id}) booked with {appointment.doctor} on {appointment.date} at {appointment.time}",
             clinic=appointment.clinic,
             appointment_id=appointment.id,
             patient_name=appointment.patient_name,
