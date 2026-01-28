@@ -1133,14 +1133,18 @@ const Home = () => {
                 {/* Card Content - Taller layout to prevent overlap */}
                 <div className="h-[200px] sm:h-[220px] flex flex-col">
                   {/* Logo/Icon Section - Takes most of the space */}
-                  <div className="flex-1 flex items-center justify-center overflow-hidden">
+                  <div className="flex-1 flex items-center justify-center overflow-hidden p-2">
                     {service.useIcon ? (
                       <Users className="w-16 h-16 sm:w-20 sm:h-20 text-white" />
                     ) : (
                       <img 
                         src={service.logo} 
                         alt={service.name} 
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        className={`transition-transform duration-300 group-hover:scale-105 ${
+                          service.containLogo 
+                            ? 'w-full h-full object-contain' 
+                            : 'w-full h-full object-cover'
+                        }`}
                         style={service.logoScale ? { transform: `scale(${service.logoScale})` } : {}}
                         data-testid={`service-logo-${service.id}`}
                         loading="lazy"
