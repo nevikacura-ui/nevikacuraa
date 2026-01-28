@@ -128,10 +128,10 @@ const PortalScrollBar = () => {
         </button>
       )}
 
-      {/* Scrollable Container */}
+      {/* Scrollable Container - Always start from left with scroll */}
       <div
         ref={scrollRef}
-        className="flex items-center justify-start md:justify-center gap-4 px-14 md:px-6 py-4 overflow-x-auto scroll-smooth"
+        className="flex items-center gap-4 px-4 py-4 overflow-x-auto scroll-smooth"
         style={{ 
           scrollbarWidth: 'none', 
           msOverflowStyle: 'none',
@@ -154,7 +154,7 @@ const PortalScrollBar = () => {
               data-testid={`portal-btn-${portal.id}`}
               title={portal.name}
             >
-              {/* Logo/Icon Container - Responsive sizing */}
+              {/* Logo/Icon Container */}
               <div 
                 className="w-[76px] h-[76px] md:w-20 md:h-20 rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
                 style={{ backgroundColor: portal.bgColor }}
@@ -169,11 +169,11 @@ const PortalScrollBar = () => {
                     loading="lazy"
                   />
                 ) : portal.enlargeLogo ? (
-                  // Thrive360 - extra large logo
+                  // Thrive360 - extra large logo (scale 150%)
                   <img 
                     src={portal.logo} 
                     alt={portal.name}
-                    className="w-full h-full object-contain scale-125"
+                    className="w-full h-full object-contain scale-150"
                     loading="lazy"
                   />
                 ) : (
@@ -193,10 +193,10 @@ const PortalScrollBar = () => {
 
       {/* Gradient Fades */}
       {showLeftArrow && (
-        <div className="absolute left-0 top-0 bottom-0 w-14 bg-gradient-to-r from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
       )}
       {showRightArrow && (
-        <div className="absolute right-0 top-0 bottom-0 w-14 bg-gradient-to-l from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
       )}
 
       {/* Hide scrollbar */}
