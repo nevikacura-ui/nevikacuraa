@@ -112,7 +112,6 @@ function AppContent() {
           <Route path="/pharmacy" element={<AnimatedPage><Pharmacy /></AnimatedPage>} />
           <Route path="/evara" element={<AnimatedPage><Evara /></AnimatedPage>} />
           <Route path="/glydex" element={<AnimatedPage><Glydex /></AnimatedPage>} />
-          <Route path="/thrive360" element={<AnimatedPage><Thrive360 /></AnimatedPage>} />
           {/* New Portal Routes (Renamed) */}
           <Route path="/serena" element={<AnimatedPage><Serena /></AnimatedPage>} />
           <Route path="/corvia" element={<AnimatedPage><Corvia /></AnimatedPage>} />
