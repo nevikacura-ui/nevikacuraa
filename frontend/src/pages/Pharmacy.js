@@ -220,23 +220,29 @@ const CategoryCard = ({ category, isActive, onClick }) => {
   return (
     <button
       onClick={onClick}
-      className={`relative overflow-hidden rounded-2xl transition-all duration-300 ease-out group 
-        active:scale-95 active:shadow-inner
+      className={`flex flex-col items-center transition-all duration-300 ease-out group 
+        active:scale-95
         ${isActive 
-          ? 'ring-4 ring-orange-400 scale-105 shadow-xl' 
-          : 'hover:scale-105 hover:shadow-xl hover:-translate-y-1'
+          ? 'scale-105' 
+          : 'hover:scale-105 hover:-translate-y-1'
         }`}
       data-testid={`category-${category}`}
     >
-      {/* Shimmer effect on hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10">
-        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-      </div>
-      
-      <div className="aspect-square relative bg-gradient-to-br from-white to-slate-50">
+      {/* Circular Image Container */}
+      <div className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden shadow-md transition-all duration-300
+        ${isActive 
+          ? 'ring-3 ring-orange-400 shadow-lg shadow-orange-200' 
+          : 'hover:shadow-lg group-hover:ring-2 group-hover:ring-orange-200'
+        }`}
+      >
+        {/* Shimmer effect on hover */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10">
+          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+        </div>
+        
         {/* Badge */}
         {cat.badge && (
-          <div className={`absolute top-2 left-2 z-20 px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm ${
+          <div className={`absolute -top-1 -right-1 z-20 w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold shadow-sm ${
             cat.badge === 'Trending' ? 'bg-rose-500 text-white' :
             cat.badge === 'New' ? 'bg-green-500 text-white' :
             cat.badge === 'Best Seller' ? 'bg-amber-500 text-white' :
@@ -246,7 +252,7 @@ const CategoryCard = ({ category, isActive, onClick }) => {
             cat.badge === 'Evara' ? 'bg-pink-500 text-white' :
             'bg-blue-500 text-white'
           }`}>
-            {cat.badge}
+            ★
           </div>
         )}
         
@@ -254,26 +260,26 @@ const CategoryCard = ({ category, isActive, onClick }) => {
         <img 
           src={cat.image}
           alt={cat.label}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
         
-        {/* Gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        
-        {/* Active indicator */}
+        {/* Active checkmark */}
         {isActive && (
-          <div className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-lg animate-bounce z-20">
-            <CheckCircle2 className="w-4 h-4 text-orange-500" />
+          <div className="absolute inset-0 bg-orange-500/20 flex items-center justify-center">
+            <CheckCircle2 className="w-6 h-6 text-orange-500 bg-white rounded-full" />
           </div>
         )}
-        
-        {/* Label at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-2 z-10">
-          <span className="text-xs sm:text-sm font-semibold text-white text-center block leading-tight transition-all duration-300 group-hover:tracking-wide drop-shadow-lg">
-            {cat.label}
-          </span>
-        </div>
       </div>
+      
+      {/* Label below image */}
+      <span className={`mt-2 text-[10px] sm:text-xs font-medium text-center leading-tight max-w-[70px] sm:max-w-[80px] transition-all duration-300
+        ${isActive 
+          ? 'text-orange-600 font-semibold' 
+          : 'text-gray-700 group-hover:text-orange-600'
+        }`}
+      >
+        {cat.label}
+      </span>
     </button>
   );
 };
