@@ -58,9 +58,8 @@ import EnhancementFeatures from '@/pages/EnhancementFeatures';
 // Payment Pages
 import { PaymentSuccess, PaymentCancel } from '@/components/PaymentCheckout';
 import PaymentHistory from '@/pages/PaymentHistory';
-// Loading & Splash Screen
-import LoadingScreen from '@/components/LoadingScreen';
-import SplashScreen from '@/components/SplashScreen';
+// Intro Screen (Loading + Splash combined)
+import IntroScreen from '@/components/IntroScreen';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ViewModeProvider } from '@/context/ViewModeContext';
 import { LanguageProvider } from '@/context/LanguageContext';
@@ -71,10 +70,9 @@ import './App.css';
 // Wrapper component to access auth context
 function AppContent() {
   const { user } = useAuth();
-  const [showLoading, setShowLoading] = useState(true);
-  const [showSplash, setShowSplash] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
   
-  // Check if loading/splash should be shown
+  // Check if intro should be shown
   useEffect(() => {
     const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
     const patientToken = localStorage.getItem('patientToken');
@@ -82,31 +80,20 @@ function AppContent() {
     const isStaffPage = window.location.pathname.includes('/admin') || window.location.pathname.includes('/staff');
     
     if (hasSeenSplash || user || patientToken || (staffToken && isStaffPage)) {
-      setShowLoading(false);
-      setShowSplash(false);
+      setShowIntro(false);
     }
   }, [user]);
   
-  const handleLoadingComplete = () => {
-    setShowLoading(false);
-    setShowSplash(true);
-  };
-  
-  const handleSplashComplete = () => {
+  const handleIntroComplete = () => {
     sessionStorage.setItem('hasSeenSplash', 'true');
-    setShowSplash(false);
+    setShowIntro(false);
   };
   
   return (
     <>
-      {/* Loading Screen - Book. Order. Test. Care. */}
-      {showLoading && (
-        <LoadingScreen onComplete={handleLoadingComplete} />
-      )}
-      
-      {/* Splash Screen (Teal gradient with icons) */}
-      {showSplash && (
-        <SplashScreen onComplete={handleSplashComplete} user={user} />
+      {/* Intro Screen (Loading animation -> Splash) */}
+      {showIntro && (
+        <IntroScreen onComplete={handleIntroComplete} user={user} />
       )}
       <div className="App">
         <Routes>
