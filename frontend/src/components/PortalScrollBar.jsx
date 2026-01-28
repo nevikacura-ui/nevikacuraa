@@ -177,10 +177,10 @@ const PortalScrollBar = () => {
       {showLeftArrow && (
         <button
           onClick={scrollLeft}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 transition-all border border-slate-200"
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 transition-all border border-slate-200"
           aria-label="Scroll left"
         >
-          <ChevronLeft className="w-5 h-5 text-slate-600" />
+          <ChevronLeft className="w-6 h-6 text-slate-600" />
         </button>
       )}
 
@@ -188,10 +188,10 @@ const PortalScrollBar = () => {
       {showRightArrow && (
         <button
           onClick={scrollRight}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 transition-all border border-slate-200"
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 transition-all border border-slate-200"
           aria-label="Scroll right"
         >
-          <ChevronRight className="w-5 h-5 text-slate-600" />
+          <ChevronRight className="w-6 h-6 text-slate-600" />
         </button>
       )}
 
