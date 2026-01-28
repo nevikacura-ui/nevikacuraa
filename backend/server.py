@@ -817,24 +817,41 @@ class GuestUser(BaseModel):
     email: Optional[EmailStr] = None
 
 # Booking ID Generator for Patient Bookings
-async def generate_booking_id(clinic: str, db_instance) -> str:
+async def generate_booking_id(clinic: str, db_instance, booking_type: str = "appointment") -> str:
     """
-    Generate unique booking ID based on clinic:
-    AC-XXXXX - Amnion Clinic
-    OP-XXXXX - Orange Pharmacy  
-    PD-XXXXX - Proton Diagnostics
-    PC-XXXXX - Pushpa Clinic
+    Generate unique booking ID based on clinic/service type.
+    First 2 characters identify the service type easily:
+    
+    Appointments:
+    DG-XXXXX - DiaGyn (Amnion Clinic) appointments
+    PC-XXXXX - Pushpa Clinic appointments
+    
+    Orders:
+    RX-XXXXX - Orange Pharmacy (Rx = prescription/pharmacy)
+    LB-XXXXX - Proton Diagnostics (Lab tests)
+    
+    Other:
+    NC-XXXXX - Nevika Cura (default)
     """
+    
+    # Prefixes based on service/clinic - easy to identify
     clinic_prefixes = {
-        "diagyn": "AC",      # Amnion Clinic (DiaGyn)
-        "amnion": "AC",      # Amnion Clinic
-        "amnion clinic": "AC",
-        "pharmacy": "OP",    # Orange Pharmacy
-        "orange pharmacy": "OP",
-        "proton": "PD",      # Proton Diagnostics
-        "proton diagnostics": "PD",
-        "pushpa": "PC",      # Pushpa Clinic
+        # Clinic Appointments
+        "diagyn": "DG",              # DiaGyn clinic
+        "amnion": "DG",              # Amnion = DiaGyn
+        "amnion clinic": "DG",
+        "diagyn - amnion clinic": "DG",
+        "pushpa": "PC",              # Pushpa Clinic
         "pushpa clinic": "PC",
+        
+        # Service Orders
+        "pharmacy": "RX",            # Pharmacy (Rx = prescription)
+        "orange pharmacy": "RX",
+        "orange": "RX",
+        "proton": "LB",              # Lab tests
+        "proton diagnostics": "LB",
+        "diagnostics": "LB",
+        "lab": "LB",
     }
     
     # Get prefix based on clinic name (case-insensitive)
@@ -856,7 +873,7 @@ async def generate_booking_id(clinic: str, db_instance) -> str:
     
     seq_num = counter.get("seq", 1) if counter else 1
     
-    # Format: PREFIX-XXXXX (5 digits, zero-padded)
+    # Format: PREFIX-XXXXX (5 digits, zero-padded) - always unique per prefix
     booking_id = f"{prefix}-{seq_num:05d}"
     
     return booking_id
