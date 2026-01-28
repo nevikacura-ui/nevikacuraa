@@ -2423,6 +2423,11 @@ Time: {appointment.time}"""
             <p style="font-size: 18px;">Hello <strong>{appointment.patient_name}</strong>,</p>
             <p>Your appointment has been successfully booked at <strong>DiaGyn Healthcare</strong>.</p>
             
+            <div style="text-align: center; margin: 20px 0; padding: 15px; background: #0d9488; border-radius: 8px;">
+                <p style="margin: 0; color: white; font-size: 14px;">Your Booking ID</p>
+                <p style="margin: 5px 0 0 0; color: white; font-size: 28px; font-weight: bold; letter-spacing: 2px;">{booking_id}</p>
+            </div>
+            
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
                 <h3 style="color: #3b82f6; margin-top: 0;">Appointment Details</h3>
                 <p><strong>Doctor:</strong> {appointment.doctor}</p>
@@ -2444,10 +2449,10 @@ Time: {appointment.time}"""
     """
     
     await send_email_notification(
-        f"New Appointment - {appointment.doctor} on {appointment.date}", 
+        f"New Appointment - {appointment.doctor} on {appointment.date} ({booking_id})", 
         email_html,
         patient_email=appointment.patient_email,
-        patient_subject=f"Appointment Confirmed - {appointment.doctor} on {appointment.date}",
+        patient_subject=f"Appointment Confirmed - {booking_id} | {appointment.doctor} on {appointment.date}",
         patient_html=patient_appt_html
     )
     
@@ -2458,6 +2463,7 @@ Time: {appointment.time}"""
         "time": appointment.time,
         "patient_name": appointment.patient_name,
         "patient_phone": appointment.patient_phone,
+        "booking_id": booking_id,
         "booked_by": "Patient (Online)"
     }, "online")
     
