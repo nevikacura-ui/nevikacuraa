@@ -4380,6 +4380,7 @@ For queries: 9403890429
                         patient_name = apt.get("patient_name", "Patient")
                         doctor = apt.get("doctor", "your doctor")
                         clinic = apt.get("clinic", "clinic")
+                        booking_id = apt.get("booking_id", apt.get("id", "N/A"))
                         
                         # Send Push Notification
                         if user_id:
@@ -4391,9 +4392,10 @@ For queries: 9403890429
                                 tag=f"reminder-1h-{apt.get('id')}"
                             )
                         
-                        # Send SMS Reminder
+                        # Send SMS & WhatsApp Reminders
                         patient_phone = apt.get("patient_phone") or apt.get("phone")
                         if patient_phone:
+                            # SMS Reminder
                             sms_msg = f"""⏰ DiaGyn - 1 Hour Reminder
 
 Dear {patient_name},
@@ -4406,6 +4408,21 @@ Time: {apt_time}
 Please arrive 10 mins early!
 - Nevika Cura"""
                             await send_sms_notification(patient_phone, sms_msg)
+                            
+                            # WhatsApp Reminder via MSG91
+                            try:
+                                await send_diagyn_one_hour_reminder(
+                                    phone=patient_phone,
+                                    patient_name=patient_name,
+                                    date=apt_date,
+                                    time=apt_time,
+                                    doctor_name=doctor,
+                                    clinic_name=clinic,
+                                    booking_id=booking_id
+                                )
+                                logger.info(f"WhatsApp 1h reminder sent for {booking_id}")
+                            except Exception as wa_err:
+                                logger.warning(f"WhatsApp 1h reminder failed for {booking_id}: {wa_err}")
                         
                         # Mark as sent
                         await db.appointments.update_one(
