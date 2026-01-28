@@ -26,10 +26,6 @@ const CommunityForums = () => {
   const [newPost, setNewPost] = useState({ title: '', content: '', category: 'general' });
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    fetchPosts();
-  }, [selectedCategory]);
-
   const fetchPosts = async () => {
     try {
       const token = localStorage.getItem('patientToken') || localStorage.getItem('token');
@@ -85,6 +81,11 @@ const CommunityForums = () => {
       ]);
     }
   };
+
+  useEffect(() => {
+    fetchPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory]);
 
   const handleLike = async (postId) => {
     try {
