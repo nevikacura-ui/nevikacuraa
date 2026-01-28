@@ -36,13 +36,13 @@ const Teleconsultation = () => {
 
   const fetchConsultations = async () => {
     try {
-      const token = localStorage.getItem('patientToken');
-      const res = await fetch(`${API}/api/features/teleconsult/upcoming`, {
+      const token = localStorage.getItem('patientToken') || localStorage.getItem('token');
+      const res = await fetch(`${API}/api/teleconsultation/sessions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      if (data.success) {
-        setConsultations(data.consultations || []);
+      if (data.sessions) {
+        setConsultations(data.sessions || []);
       }
     } catch (error) {
       console.error('Failed to fetch consultations:', error);
