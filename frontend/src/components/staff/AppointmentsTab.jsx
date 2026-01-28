@@ -174,6 +174,9 @@ const AppointmentCard = ({
       <div className="flex-1">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-medium">{appt.patient_name}</span>
+          {appt.booking_id && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold bg-teal-500 text-white">{appt.booking_id}</span>
+          )}
           {appt.patient_id && (
             <Badge className="bg-indigo-100 text-indigo-700 text-xs font-normal">{appt.patient_id}</Badge>
           )}
