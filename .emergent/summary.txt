@@ -1,208 +1,200 @@
 <analysis>**original_problem_statement:**
 The user wants to build a comprehensive healthcare application named Nevika Cura.
 
-The initial problem was to overhaul the UI/UX of the main pages, fix category filtering, and replace Twilio with a cost-effective WhatsApp API (MSG91).
+The initial scope was a UI/UX overhaul, fixing category filtering, and replacing Twilio with a cost-effective WhatsApp API (MSG91).
 
-The scope expanded during the session to include:
-1.  **New Loading Screen:** Implement a new animated loading screen that flows smoothly into the splash screen.
-2.  **Booking ID Generation:** Create a custom booking ID for all patient-generated appointments with a clinic-specific prefix (e.g., , ).
-3.  **QR Code Integration:** Display the booking ID in the Staff/Doctor portal, send a QR code of the booking ID in confirmation emails, and add a QR code scanner to the Staff Portal to check patients in.
-4.  **SMS Optimization:** Shorten all SMS templates to reduce costs and make them brand-specific (e.g., DiaGyn Healthcare instead of Nevika Cura).
-5.  **Disable Staff SMS:** Disable all SMS notifications to staff, doctors, and admins, relying on email for internal communication.
-6.  **Backend Enhancements:** Implement mocked-up backend APIs for ~30 enhancement features.
+This has since expanded to include:
+1.  **New Loading Screen:** Implemented a new animated loading screen.
+2.  **Booking ID Generation:** Create a unique, prefixed booking ID for all appointments/orders (e.g., , ).
+3.  **QR Code Integration:** Send QR codes in confirmation emails for all services (appointments, labs, pharmacy). Add a QR scanner to the Staff Portal for check-ins.
+4.  **SMS Optimization & Disabling:** Shorten patient SMS templates and disable all internal SMS to staff.
+5.  **UI/UX Enhancements:** Add Blinkit/Zepto/Practo-like UI features, including Trust Badges, personalized dashboard cards, micro-animations, and dark mode support. Clean up the Pharmacy category UI.
+6.  **Portal Functionality:** Ensure patient details (including booking ID) are visible in Staff/Doctor portals, staff can check patients in, and doctors can complete consultations.
+7.  **MSG91 WhatsApp Integration:** Fully integrate MSG91 for all patient-facing notifications, replacing SMS where possible. This includes creating and implementing numerous detailed templates for confirmations, reminders, delivery updates, report readiness, and more.
+8.  **Backend Enhancements:** Implement mocked-up backend APIs for ~30 enhancement features.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack React/FastAPI app. A major UI overhaul has been completed. A new, unified  component provides a smooth animated loading-to-splash-screen flow.
+The application is a full-stack React/FastAPI/MongoDB app with a recently overhauled UI. A unified  provides a smooth loading animation.
 
-The backend now has a robust booking ID generation system that creates unique, prefixed IDs (e.g., ) for appointments and stores them in the database. All patient-facing notifications (email, SMS, push) have been updated to include this booking ID. Confirmation emails now contain a QR code of the booking ID.
+The backend features a robust booking ID system (, , , ), and QR codes are generated and sent in confirmation emails for appointments, lab tests, and pharmacy orders. The Staff and Doctor portals have been fixed to correctly display this  on patient appointment cards.
 
-All SMS templates have been shortened and made brand-specific based on the clinic associated with the booking. All SMS notifications to staff personnel have been disabled, with email being the designated channel for internal alerts.
+UI/UX improvements have been implemented on the Home page, including Trust Badges and personalized cards. The Pharmacy page has a cleaner UI for its category filters.
 
-A QR code scanner has been added to the Staff Portal UI, along with the backend endpoint () needed to look up and check in patients.
-
-Finally, mocked-up backend endpoints for over 30 enhancement features have been created across , , and . These have been tested and are ready for frontend integration.
+The MSG91 WhatsApp integration is significantly underway. The API service is set up, and over 10 templates have been defined based on user specifications. The system can send test messages, but a final configuration issue is preventing delivery to the user's device.
 
 **Last working item**:
-*   **Last item agent was working:** The agent was working on a multi-part user request. It had just finished disabling all SMS notifications to staff and was attempting to send a final test SMS to the user's phone number () to verify the new brand-specific, shortened templates. The attempt was blocked by the application's own business logic, which prevents creating duplicate appointments for the same phone number.
-*   **Status:** IN PROGRESS
-*   **Agent Testing Done:** Y
-*   **Which testing method agent to use?** backend testing agent. The agent should first resolve the duplicate booking issue (either by finding and canceling the existing appointment for that phone number or by using a direct SMS test endpoint) and then send the test SMS as requested.
-*   **User Testing Done:** N
+- **Last item agent was working:** The agent was debugging why test WhatsApp messages sent via the newly integrated MSG91 service were not being received by the user, despite the API call returning a success message. By analyzing a screenshot from the user showing an API error from the MSG91 dashboard, the agent identified the root cause: the API payload was missing the required  parameter.
+- **Status:** IN PROGRESS
+- **Agent Testing Done:** Y
+- **Which testing method agent to use?** backend testing agent
+- **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-*   **Issue 1: Send Final Test SMS to User (P0)**
-    *   **Description:** The user requested a test SMS to  to verify the new templates. The agent was blocked by the app's duplicate booking prevention rule.
-    *   **Attempted fixes:** Tried booking with the same number, which failed as expected.
-    *   **Next debug checklist:**
-        1.  Create a temporary, direct test endpoint (e.g., ) that bypasses the booking logic.
-        2.  Use this endpoint to send a sample message to .
-        3.  Alternatively, query the  collection in the database to find and cancel/complete the existing active appointment for that phone number, then try the normal booking flow again.
-    *   **Why fix this issue and what will be achieved with the fix?** To fulfill the user's explicit request for verification and close out the SMS task.
-    *   **Status:** BLOCKED
-    *   **Is recurring issue?** N
-    *   **Should Test frontend/backend/both after fix?** Backend
-    *   **Blocked on other issue:** Blocked on the application's own business logic.
-
-*   **Issue 2: Pharmacy category pills not filtering (P1)**
-    *   **Description:** The handoff summary mentioned that the Quick shop by health concern pills on the Pharmacy page might not be filtering correctly.
-    *   **Attempted fixes:** The agent in this session investigated and concluded via backend API tests and frontend screenshots that the filtering **is working correctly**.
-    *   **Next debug checklist:** No debugging needed. Awaiting user confirmation.
-    *   **Why fix this issue and what will be achieved with the fix?** This is a core UX feature. Confirmation is needed to close this recurring issue.
-    *   **Status:** USER VERIFICATION PENDING
-    *   **Is recurring issue?** Y
-    *   **Should Test frontend/backend/both after fix?** Frontend
-    *   **Blocked on other issue:** None
+- **Issue 1: Fix and Verify MSG91 WhatsApp Delivery (P0)**
+    - **Description:** Test messages sent via the MSG91 API are not being delivered because the  parameter is missing from the JSON payload.
+    - **Attempted fixes:** The agent sent multiple test messages and confirmed the API returned a 200 status, but the user did not receive them.
+    - **Next debug checklist:**
+        1.  Edit .
+        2.  Locate the  function.
+        3.  In the  dictionary for the  call, add the key-value pair .
+        4.  Restart the backend service.
+        5.  Use the  endpoint to send another test message to the user's number ().
+        6.  Ask the user to confirm receipt of the message on WhatsApp.
+    - **Why fix this issue and what will be achieved with the fix?** This is the final blocker for completing the MSG91 WhatsApp integration, a major user requirement.
+    - **Status:** IN PROGRESS
+    - **Is recurring issue?** N
+    - **Should Test frontend/backend/both after fix?** Backend
+    - **Blocked on other issue:** None.
 
 **In progress Task List**:
-*   **Task 1: Complete MSG91 WhatsApp API Integration (P0)**
-    *   **Description:** Finalize the switch to MSG91 for sending professional WhatsApp messages. The agent has already configured the Auth Key.
-    *   **Where to resume:**
-        1.  Wait for the user to resolve their MSG91/Facebook 2FA account lockout issue.
-        2.  Once the user provides access and **Template IDs/Names**, update the notification calls in  and  to use the  service.
-        3.  Thoroughly test the new notification flow.
-    *   **What will be achieved with this?** A cost-effective, professional WhatsApp notification system.
-    *   **Status:** BLOCKED
-    *   **Should Test frontend/backend/both after fix?** Backend
-    *   **Blocked on something:** Waiting for the user to resolve their external account issue and provide credentials (Template IDs).
-
-*   **Task 2: Integrate QR Emails for Lab/Pharmacy (P2)**
-    *   **Description:** The user requested that QR codes be sent via email for lab test bookings and pharmacy orders, similar to how they are for appointments.
-    *   **Where to resume:**
-        1.  Locate the order creation logic for lab tests () and pharmacy ( or ).
-        2.  In the email notification step for these flows, call the generic  function with the order ID.
-        3.  Update the respective email templates to display the QR code.
-    *   **What will be achieved with this?** A consistent check-in/verification process across all bookable services.
-    *   **Status:** NOT STARTED
-    *   **Should Test frontend/backend/both after fix?** Backend
-    *   **Blocked on something:** None
+- **Task 1: Complete MSG91 WhatsApp Integration (P0)**
+    - **Description:** After fixing the delivery issue, the agent must integrate the newly defined templates into the application's logic.
+    - **Where to resume:**
+        1.  **Implement Cron Job for Reminders:** Create a cron job (e.g., using  which may already be in use) that runs periodically, queries for upcoming appointments, and triggers .
+        2.  **Implement Post-Consultation Trigger:** In  or , after a doctor successfully completes a consultation, trigger an API call that sends the  WhatsApp message.
+        3.  **Implement Report Ready Trigger:** In the staff workflow for uploading lab reports, add a trigger to call the API that sends the  message.
+        4.  **Implement Order Delivered Trigger:** In the pharmacy staff workflow for marking an order as delivered, add a trigger to call the API that sends the  message.
+        5.  **Implement Walk-in/Emergency Trigger:** In , when a staff member creates a new walk-in or emergency appointment, trigger the API to send the  message.
+    - **What will be achieved with this?** A fully automated, professional WhatsApp notification system covering the entire patient journey.
+    - **Status:** IN PROGRESS
+    - **Should Test frontend/backend/both after fix?** Both
+    - **Blocked on something:** Issue 1: Fix and Verify MSG91 WhatsApp Delivery.
 
 **Upcoming and Future Tasks**
 *   **Upcoming Tasks:**
-    *   **P1: Connect Frontend to Backend Enhancement APIs:** The ~30 enhancement features have mocked backend APIs. The next step is to wire up the frontend components in  to call these new APIs.
-    *   **P1: User Verification of Intro Screen:** The user needs to test the new unified intro/splash screen flow on a mobile device to confirm it's smooth and correct.
-    *   **P2: Test Staff Portal QR Scanner:** The UI and backend for the QR scanner are complete. It needs to be tested end-to-end by logging in as a staff member, scanning a QR code, and verifying the patient is checked in.
+    *   **P1: Test Staff Portal QR Scanner End-to-End:** The UI and backend are verified. A full test is needed: book an appointment, get the QR code from the email, log in as staff, use the scanner on the QR code, and verify the patient is checked in on the backend.
+    *   **P1: Connect Frontend to Backend Enhancement APIs:** Wire up the frontend components in  to call the mocked backend APIs.
+    *   **P2: User Verification of Intro Screen:** The user needs to test the unified intro/splash screen flow on a mobile device.
 *   **Future Tasks:**
-    *   Refactor  to move appointment, pharmacy, and diagnostics logic into their own dedicated route files.
+    *   Refactor the monolithic  into smaller, dedicated route files.
     *   Delete obsolete components:  and .
-    *   Implement real AI/ML models to replace the mocked logic in the enhancement APIs (e.g., Symptom Checker, AI Triage).
+    *   Implement real AI/ML models to replace the mocked logic in the enhancement APIs.
     *   Implement video teleconsultation.
+    *   Remove temporary test endpoints and debug  statements.
 
 **Completed work in this session**
-- **Backend Enhancements:** Implemented and tested mocked-up APIs for ~30 features (e.g., AI Triage, Community Forums, Revenue Forecasting) in  and .
-- **Booking ID System:** Created a system to generate and assign unique, prefixed booking IDs (e.g., ) to all patient appointments.
-- **QR Code Generation:** Integrated  library to generate QR codes for booking IDs and include them in confirmation emails.
-- **Staff Portal QR Scanner:** Added a Scan QR button and a functional QR scanner component to the Staff Portal UI, along with a backend endpoint to look up appointments by booking ID for check-in.
-- **SMS Optimization:**
-    - Rewrote all SMS templates to be shorter (~50-80 characters) to reduce costs.
-    - Made SMS sender names brand-specific based on the clinic.
-    - **Disabled all SMS notifications to staff/admins**, replacing them with email notifications.
-- **UI/UX Refinements:**
-    - Created a single, unified  component to provide a smooth, animated loading-to-splash screen transition, fixing a jerky multi-screen flow.
-    - Removed the Trust Badges section from the Home page as requested.
-- **Bug Fix Investigation:** Confirmed that the Quick Shop pills on the Pharmacy page are working correctly. Confirmed that staff-booked appointments are not being auto-checked-in.
-- **MSG91 Configuration:** Added the user-provided MSG91 Auth Key to the backend environment and confirmed the service is recognized.
+- **Staff Portal and Login Fixed:**
+  - Resolved staff login failures by identifying the correct database () being used by the backend and resetting the password.
+  - Fixed a critical JavaScript bug () in  that blocked access to the dashboard.
+  - **Successfully added the  badge next to the patient's name** in the appointment cards in both the Staff and Doctor portals by locating and modifying the correct nested component ().
+- **UI/UX Improvements Implemented:**
+  - Redesigned the Pharmacy Shop by Category section to have separate circular images and text for a cleaner look.
+  - Added a Trust Badges section to the Home page.
+  - Added CSS for micro-animations (shimmer, hover effects) and basic dark mode support.
+- **MSG91 WhatsApp Integration Progress:**
+  - Guided the user to activate their MSG91 number and create templates.
+  - Defined and refined 10+ detailed WhatsApp templates with correct variables and contact numbers.
+  - Configured the backend service () with all templates and dynamic Google Maps URLs for clinics.
+  - Integrated the initial confirmation notifications (appointment, lab, pharmacy) into the backend booking flows in .
+- **Testing & Verification:**
+  - Sent test SMS messages to the user to confirm template shortening and branding.
+  - Verified that all key portal functionalities requested by the user are working via screenshots (patient details visible, check-in button present, doctor schedules correct, etc.).
+  - Verified pharmacy category filtering is working as expected.
+  - Sent a comprehensive credentials email to .
+  - Added QR codes to the confirmation emails for lab tests and pharmacy orders.
 
 **Earlier issues found/mentioned but not fixed**
-*   **Face ID Camera Fails to Start on Mobile:** A known, low-priority issue from previous sessions. No feature currently depends on it.
+*   **Face ID Camera Fails to Start on Mobile:** A known, low-priority issue from previous sessions.
 
 **Known issue recurrence from previous fork**
 - **Issue recurrence in previous fork:** Quick shop by health concern pills not filtering.
-- **Recurrence count:** 1 (in handoff)
-- **Status:** USER VERIFICATION PENDING (Agent believes it is fixed, but user needs to confirm due to its recurring nature).
+- **Recurrence count:** 1
+- **Status:** USER VERIFICATION PENDING (Agent has tested and confirmed it works, but awaiting final user sign-off).
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-*   **Unified Component Refactoring:** Replaced two separate, conflicting components (, ) with a single, state-managed  component to create a smooth, phased animation flow.
-*   **Dynamic ID Generation:** Implemented a counter-based system within MongoDB to generate sequential, prefixed booking IDs.
-*   **QR Code Integration:** Used the  library on the backend to generate a base64 image of a QR code and embedded it directly into an HTML email template. Used the  library on the frontend for camera-based scanning.
-*   **Configuration-driven Content:** SMS templates now dynamically pull the correct brand name (, , etc.) based on the appointment's clinic property.
-*   **API Mocking:** Rapidly created a wide range of placeholder API endpoints for future development, allowing frontend work to proceed in parallel.
+*   **3rd Party API Integration (MSG91):** Setting up services, handling environment variables, constructing API payloads, and debugging API errors by inspecting user-provided screenshots.
+*   **Dynamic Content in Notifications:** Using variables in templates and backend logic to dynamically insert correct clinic-specific Google Maps URLs.
+*   **Frontend Component Debugging:** Tracing state and props through nested components ( ->  -> ) to fix a visual bug ( not displaying).
+*   **Database Debugging:** Identifying that the application was connected to  instead of , which was causing login issues due to stale data.
+*   **UI/UX Enhancement:** Implementing user-requested visual upgrades using CSS animations, new components (), and refactoring existing component styles ().
 
 **key DB schema**
-*   **appointments:** { , : , , , ... } - Added .
-*   **counters:** { :  (e.g., 'booking_AC'), :  } - New collection to track the next number for each booking ID prefix.
+*   No new changes to the DB schema in this session.
 
 **changes in tech stack**
-*   **Frontend:** Added  for QR scanning capabilities.
-*   **Backend:** Added  for generating QR code images.
+*   **Backend:**  was added to  to ensure environment variables are loaded correctly at the module level.
 
 **All files of reference**
-*   **Created Files:**
-    *   
-    *   
-    *   
-    *   
-*   **Modified Files:**
-    *   : Heavily modified for booking IDs, QR codes, SMS logic, and disabling staff notifications.
-    *   : Added new endpoint for QR code lookup.
-    *   : Replaced splash/loading components with .
-    *   : Removed Trust Badges section.
-    *   : Added QR scanner UI and logic.
-    *   : Removed  to prevent double-rendering issues during development.
-*   **Deprecated Files (To be deleted):**
-    *   
-    *   
+*   **Created/Heavily Modified:**
+    *   : New service to handle all MSG91 WhatsApp logic.
+    *   : Modified to add Trust Badges and other UI improvements.
+    *   : Modified for new category card design.
+    *   : Modified to add the booking ID badge, fixing a major UI issue.
+*   **Modified:**
+    *   : Integrated MSG91 calls, added test endpoints.
+    *   : Updated with correct MSG91 number.
+    *   : Fixed JS error.
+    *   : Added animations.
+*   **Viewed:**
+    *   : To find Google Maps URLs.
 
 **Areas that need refactoring**:
-*    has grown excessively large. The appointment creation logic (over 500 lines) should be extracted into its own route file (e.g., ) for better maintainability.
-*   The old  and  files are now dead code and should be deleted to avoid confusion.
+*    is still monolithic and a prime candidate for being broken into smaller route files.
+*   The numerous temporary test endpoints (, , ) should be removed.
+*    statements added for debugging in  should be cleaned up.
 
 **key api endpoints**
-*   : Modified to generate and add a .
-*   : **NEW** endpoint to fetch appointment details for QR code check-in.
-*    and : **NEW** set of ~30 mocked endpoints for features like community forums, revenue forecasting, etc.
+*   : **NEW (Temporary)** For testing SMS templates.
+*   : **NEW (Temporary)** For testing WhatsApp templates.
+*   : **NEW (Temporary)** To send login details to the user.
+*   : **NEW** To check MSG91 configuration.
+*   : Verified.
+*   : Modified to trigger WhatsApp notifications.
+*   : Modified to trigger WhatsApp notifications.
+*   : Modified to trigger WhatsApp notifications.
 
 **Critical Info for New Agent**
-*   **Do not work on MSG91.** It is blocked pending user action on their Facebook/MSG91 accounts.
-*   Your first task should be to resolve the pending test SMS request for the user. Create a temporary direct-test endpoint to bypass the duplicate booking logic.
-*   The intro/splash screen flow was completely refactored into a single component: . The old  and  are obsolete.
-*   All SMS to staff have been disabled by commenting out the calls in . Patient SMS remains active. SMS templates are now short and brand-specific.
-*   The backend enhancement APIs are all mocked; they return static data and do not interact with the database. The next logical step is to connect the frontend components to these mock APIs.
+*   **The top priority is fixing the MSG91 integration.** The issue is a missing  in the API payload in . Fix this first, then test delivery.
+*   After fixing delivery, you must **implement the triggers for the newer WhatsApp templates** (reminders, completion, delivery, etc.). This will involve creating a cron job and adding API calls to the frontend/backend staff workflows.
+*   The booking ID display issue in the staff/doctor portal is **FIXED**. The key was modifying , not .
+*   Staff login credentials are known:  / . The backend connects to , not .
 
 **documents and test reports created in this job**
-*   
 *    (Updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Requested brand-specific SMS templates instead of Nevika Cura. (Status: **COMPLETED**)
-2.  **Agent:** Reported 3 SMS were sent and prepared to update templates.
-3.  **User:** Asked how many SMS were sent to know the cost. (Status: **COMPLETED**)
-4.  **Agent:** Summarized the completed QR Scanner feature.
-5.  **User:** Provided multiple requests: Test SMS delivery once, integrate QR emails for other services, add QR scanner to staff portal, and check if staff appointments are auto-checked-in. (Status: **IN PROGRESS**)
-6.  **Agent:** Summarized the completed shorter SMS templates.
-7.  **User:** Requested shorter SMS templates to save cost and enabled QR codes for all emails. (Status: **COMPLETED**)
-8.  **Agent:** Summarized the booking ID feature completion.
-9.  **User:** Requested to show the booking ID in the staff/doctor portal and send it as a QR code in emails and as an ID in SMS/WhatsApp. (Status: **COMPLETED**)
-10. **User:** Requested a custom booking ID system for patient-booked appointments with clinic-specific prefixes. (Status: **COMPLETED**)
+1.  **User**: Requested 4 new WhatsApp templates (delivered, report ready, 1-hour reminder, walk-in). (Status: **COMPLETED**, templates defined)
+2.  **User**: Requested a Thank you template for after appointment completion. (Status: **COMPLETED**, template defined)
+3.  **User**: Asked to shorten the Thank you template. (Status: **COMPLETED**, template revised)
+4.  **User**: Asked to shorten it further to only include Dr. name, follow-up, and feedback. (Status: **COMPLETED**, template revised)
+5.  **User**: Asked to shorten the walk-in/emergency template. (Status: **COMPLETED**, template revised)
+6.  **User**: Requested adding a dynamic Google Maps URL to the 1-hour reminder. (Status: **COMPLETED**, logic implemented)
+7.  **User**: Asked for a Sonography booking template. (Status: **COMPLETED**, template defined)
+8.  **User**: Confirmed all templates were created in MSG91 and asked to complete the integration. (Status: **IN PROGRESS**)
+9.  **User**: Reported not receiving the test WhatsApp messages. (Status: **IN PROGRESS**)
+10. **User**: Provided a screenshot of the MSG91 error log, revealing the missing  parameter. (Status: **IN PROGRESS**, root cause found)
 
 **Project Health Check:**
 *   **Broken:**
-    *   WhatsApp notifications are non-functional as the MSG91 integration is incomplete and blocked by the user.
+    *   **WhatsApp notifications are non-functional** due to the missing  API parameter. This is the highest priority fix.
 *   **Mocked:**
-    *   Approximately 30+ enhancement features have mocked backend APIs that return static data (e.g., AI Triage, Symptom Checker, Revenue Forecasting). They are not connected to the frontend or real logic.
+    *   Approximately 30+ enhancement features have mocked backend APIs.
+    *   Several new WhatsApp notification triggers (reminders, completion, delivery) are not yet implemented.
 
 **3rd Party Integrations**
 *   **Resend (Email):** Integrated and functional.
 *   **Stripe (Payments):** Integrated.
-*   **Twilio (SMS Notifications):** Integrated and functional. Now used only for patient notifications.
-*   **MSG91 (WhatsApp):** **IN PROGRESS & BLOCKED**. Auth key is configured, but integration is paused pending user resolving their account lockout.
-*   **OpenAI GPT-4o, OpenAI Whisper:** Available via Emergent LLM Key.
-*   **html5-qrcode (Frontend):** Newly added for QR code scanning.
-*   **qrcode (Backend):** Newly added for QR code generation.
+*   **Twilio (SMS):** Integrated and functional (used for patient SMS only).
+*   **MSG91 (WhatsApp):** **IN PROGRESS**. Auth key is configured, templates are approved. Integration is implemented but blocked on a minor API payload fix.
+*   **html5-qrcode (Frontend):** Integrated for QR code scanning.
+*   **qrcode (Backend):** Integrated for QR code generation.
 
 **Testing status**
-*   **Testing agent used after significant changes:** YES (for the backend enhancement APIs).
+*   **Testing agent used after significant changes:** NO
 *   **Troubleshoot agent used after agent stuck in loop:** NO
 *   **Test files created:** []
 *   **Known regressions:** None.
 
 **Credentials to test flow:**
-*   **Staff/Doctor Login:** Credentials are unknown. The agent was unable to log into the staff portal. A test/seed account may need to be created to test staff-specific features like the QR scanner.
-*   **MSG91:** Blocked, no credentials available for testing.
+*   **Staff Login:**  / 
+*   **Doctor Login:**  /  or  / 
+*   **Admin Login:**  / 
+*   **MSG91:** Auth Key is in .
 
 **What agent forgot to execute**
-*   The agent created a generic function for QR code emails but did not explicitly integrate it into the lab test booking and pharmacy order confirmation flows as requested by the user. This remains a pending task.</analysis>
+*   The agent defined all the new WhatsApp templates requested by the user but did not proceed to implement the triggers for them in the application logic (e.g., cron job for reminders, triggers for order delivered, report ready, etc.). This is captured in the In progress Task List.</analysis>
