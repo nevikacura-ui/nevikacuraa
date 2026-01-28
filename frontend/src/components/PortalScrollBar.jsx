@@ -23,7 +23,8 @@ const portals = [
     name: 'Thrive360',
     path: '/thrive360',
     logo: 'https://customer-assets.emergentagent.com/job_healspace-26/artifacts/iijsipxg_file_00000000290072089f3c35fe8c1b2b05.png',
-    bgColor: '#1e1b4b'
+    bgColor: '#1e1b4b',
+    enlargeLogo: true
   },
   {
     id: 'alyne',
@@ -105,32 +106,32 @@ const PortalScrollBar = () => {
 
   return (
     <div className="relative bg-[#F5F5F4] border-b border-slate-200/50 sticky top-[60px] z-40" data-testid="portal-scroll-bar">
-      {/* Left Arrow - Positioned outside scroll area */}
+      {/* Left Arrow */}
       {showLeftArrow && (
         <button
           onClick={scrollLeft}
-          className="absolute left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 transition-all border border-slate-200"
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 transition-all border border-slate-200"
           aria-label="Scroll left"
         >
           <ChevronLeft className="w-5 h-5 text-slate-600" />
         </button>
       )}
 
-      {/* Right Arrow - Positioned outside scroll area */}
+      {/* Right Arrow */}
       {showRightArrow && (
         <button
           onClick={scrollRight}
-          className="absolute right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 transition-all border border-slate-200"
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 transition-all border border-slate-200"
           aria-label="Scroll right"
         >
           <ChevronRight className="w-5 h-5 text-slate-600" />
         </button>
       )}
 
-      {/* Scrollable Container - Extra padding to prevent arrow overlap */}
+      {/* Scrollable Container */}
       <div
         ref={scrollRef}
-        className="flex items-center gap-3 px-12 py-3 overflow-x-auto scroll-smooth"
+        className="flex items-center justify-start md:justify-center gap-4 px-14 md:px-6 py-4 overflow-x-auto scroll-smooth"
         style={{ 
           scrollbarWidth: 'none', 
           msOverflowStyle: 'none',
@@ -147,15 +148,15 @@ const PortalScrollBar = () => {
               onClick={() => navigate(portal.path)}
               className={`flex-shrink-0 transition-all duration-300 ${
                 isActive 
-                  ? 'scale-105 ring-2 ring-teal-500 ring-offset-2 ring-offset-[#F5F5F4] rounded-2xl' 
-                  : 'hover:scale-105'
+                  ? 'scale-105 ring-3 ring-teal-500 ring-offset-2 ring-offset-[#F5F5F4] rounded-2xl' 
+                  : 'hover:scale-105 hover:shadow-xl'
               }`}
               data-testid={`portal-btn-${portal.id}`}
               title={portal.name}
             >
-              {/* Logo/Icon Container - 80x80 with larger logos inside */}
+              {/* Logo/Icon Container - Responsive sizing */}
               <div 
-                className="w-20 h-20 rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
+                className="w-[76px] h-[76px] md:w-20 md:h-20 rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
                 style={{ backgroundColor: portal.bgColor }}
               >
                 {portal.hasIcon ? (
@@ -167,11 +168,20 @@ const PortalScrollBar = () => {
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />
-                ) : (
+                ) : portal.enlargeLogo ? (
+                  // Thrive360 - extra large logo
                   <img 
                     src={portal.logo} 
                     alt={portal.name}
-                    className="w-[72px] h-[72px] object-contain"
+                    className="w-full h-full object-contain scale-125"
+                    loading="lazy"
+                  />
+                ) : (
+                  // Standard logos - fill the container
+                  <img 
+                    src={portal.logo} 
+                    alt={portal.name}
+                    className="w-full h-full object-contain p-1"
                     loading="lazy"
                   />
                 )}
@@ -181,12 +191,12 @@ const PortalScrollBar = () => {
         })}
       </div>
 
-      {/* Gradient Fades - Wider to match arrow positions */}
+      {/* Gradient Fades */}
       {showLeftArrow && (
-        <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-14 bg-gradient-to-r from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
       )}
       {showRightArrow && (
-        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-14 bg-gradient-to-l from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
       )}
 
       {/* Hide scrollbar */}
