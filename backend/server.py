@@ -27,6 +27,15 @@ from pywebpush import webpush, WebPushException
 import qrcode
 from io import BytesIO
 
+# Import MSG91 WhatsApp service
+from services.msg91_whatsapp import (
+    send_diagyn_appointment_confirmation,
+    send_diagyn_appointment_reminder,
+    send_proton_lab_confirmation,
+    send_orange_pharmacy_confirmation,
+    test_msg91_connection
+)
+
 # Import data from modular files
 from data.medicine_inventory import MEDICINE_INVENTORY
 from data.diagnostic_tests import DIAGNOSTIC_TESTS, DIAGNOSTIC_TEST_PRICES
