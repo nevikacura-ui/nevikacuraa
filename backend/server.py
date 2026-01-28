@@ -2540,6 +2540,7 @@ Time: {appointment.time}"""
         "clinic": appointment.clinic,
         "date": appointment.date,
         "time": appointment.time,
+        "booking_id": booking_id,
         "booking_type": "online"
     })
     
@@ -2550,6 +2551,7 @@ Time: {appointment.time}"""
         "clinic": appointment.clinic,
         "date": appointment.date,
         "time": appointment.time,
+        "booking_id": booking_id,
         "booking_type": "online"
     })
     
