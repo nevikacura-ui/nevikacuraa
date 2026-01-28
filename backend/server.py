@@ -973,36 +973,31 @@ async def generate_booking_id(clinic: str, db_instance, booking_type: str = "app
     Generate unique booking ID based on clinic/service type.
     First 2 characters identify the service type easily:
     
-    Appointments:
-    DG-XXXXX - DiaGyn (Amnion Clinic) appointments
-    PC-XXXXX - Pushpa Clinic appointments
-    
-    Orders:
-    RX-XXXXX - Orange Pharmacy (Rx = prescription/pharmacy)
-    LB-XXXXX - Proton Diagnostics (Lab tests)
-    
-    Other:
+    AC-XXXXX - Amnion Clinic (DiaGyn)
+    PC-XXXXX - Pushpa Clinic
+    OP-XXXXX - Orange Pharmacy
+    PD-XXXXX - Proton Diagnostics
     NC-XXXXX - Nevika Cura (default)
     """
     
     # Prefixes based on service/clinic - easy to identify
     clinic_prefixes = {
         # Clinic Appointments
-        "diagyn": "DG",              # DiaGyn clinic
-        "amnion": "DG",              # Amnion = DiaGyn
-        "amnion clinic": "DG",
-        "diagyn - amnion clinic": "DG",
+        "diagyn": "AC",              # Amnion Clinic
+        "amnion": "AC",              
+        "amnion clinic": "AC",
+        "diagyn - amnion clinic": "AC",
         "pushpa": "PC",              # Pushpa Clinic
         "pushpa clinic": "PC",
         
         # Service Orders
-        "pharmacy": "RX",            # Pharmacy (Rx = prescription)
-        "orange pharmacy": "RX",
-        "orange": "RX",
-        "proton": "LB",              # Lab tests
-        "proton diagnostics": "LB",
-        "diagnostics": "LB",
-        "lab": "LB",
+        "pharmacy": "OP",            # Orange Pharmacy
+        "orange pharmacy": "OP",
+        "orange": "OP",
+        "proton": "PD",              # Proton Diagnostics
+        "proton diagnostics": "PD",
+        "diagnostics": "PD",
+        "lab": "PD",
     }
     
     # Get prefix based on clinic name (case-insensitive)
