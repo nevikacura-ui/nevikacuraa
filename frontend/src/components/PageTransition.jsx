@@ -1,46 +1,22 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-// Page transition variants
-const pageVariants = {
-  initial: {
-    opacity: 0,
-    y: 10,
-  },
-  in: {
-    opacity: 1,
-    y: 0,
-  },
-  out: {
-    opacity: 0,
-    y: -10,
-  }
-};
-
-const pageTransition = {
-  type: 'tween',
-  ease: 'easeInOut',
-  duration: 0.25
-};
-
-export const PageTransition = ({ children }) => {
-  const location = useLocation();
-  
+// Page transition wrapper with smooth animation
+const AnimatedPage = ({ children }) => {
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        initial="initial"
-        animate="in"
-        exit="out"
-        variants={pageVariants}
-        transition={pageTransition}
-        className="w-full"
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -12 }}
+      transition={{
+        type: 'tween',
+        ease: 'easeInOut',
+        duration: 0.3
+      }}
+      className="w-full"
+    >
+      {children}
+    </motion.div>
   );
 };
 
@@ -50,30 +26,6 @@ export const FadeIn = ({ children, delay = 0, className = '' }) => (
     initial={{ opacity: 0, y: 15 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.4, delay, ease: 'easeOut' }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
-
-// Slide In from left
-export const SlideInLeft = ({ children, delay = 0, className = '' }) => (
-  <motion.div
-    initial={{ opacity: 0, x: -20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.35, delay, ease: 'easeOut' }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
-
-// Slide In from right
-export const SlideInRight = ({ children, delay = 0, className = '' }) => (
-  <motion.div
-    initial={{ opacity: 0, x: 20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.35, delay, ease: 'easeOut' }}
     className={className}
   >
     {children}
@@ -124,4 +76,5 @@ export const StaggerItem = ({ children, className = '' }) => (
   </motion.div>
 );
 
-export default PageTransition;
+export { AnimatedPage };
+export default AnimatedPage;
