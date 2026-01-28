@@ -83,6 +83,7 @@ const portals = [
     path: '/thrive360',
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/tx5fggdz_91.png',
     bgColor: '#1a1a3e',
+    fillContainer: true,
     tagline: 'Health in Motion.'
   },
   // 9. Senova - Senior Care (formerly Nivara)
@@ -93,6 +94,7 @@ const portals = [
     path: '/senova',
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/nz0rdwvp_file_000000000dfc7230a4605006a1e3131a.png',
     bgColor: '#3b5998',
+    fillContainer: true,
     tagline: "Care for Life's Next Chapter."
   },
   // 10. Reports - Blood Charts
@@ -123,6 +125,7 @@ const portals = [
     path: '/psvn-foundation',
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/ik0oidgy_Screenshot_20260129-011553.png',
     bgColor: '#ffffff',
+    fillContainer: true,
     tagline: 'Care. Compassion. Community.'
   }
 ];
