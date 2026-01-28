@@ -30,10 +30,12 @@ Build a comprehensive healthcare application named "Nevika Cura" that enhances s
 ## What's Been Implemented
 
 ### January 28, 2026 - UI/UX Enhancements (Blinkit/Zepto Style)
-- ✅ **Portal Scroll Bar** - Horizontal scrolling toggle at top with DiaGyn, Proton, Pharmacy, Evara, Glydex, Alyne, Thrive360
-- ✅ **Sand Background** - Changed app background to #F5F5F4 for softer, less clinical feel
+- ✅ **Portal Scroll Bar** - Horizontal scrolling toggle at top with all 7 portals (DiaGyn, Proton, Pharmacy, Evara, Glydex, Alyne, Thrive360)
+- ✅ **Quick Action Chips** - Added "Book", "Test", "Order" etc. action buttons below each portal in scroll bar
+- ✅ **Sand Background** - Changed app background to #F5F5F4 across Home, Pharmacy, Proton, Profile pages
 - ✅ **Removed Duplicate Services Grid** - Secondary services (Evara, Glydex, etc.) now accessible only via top scroll bar
 - ✅ **Design Guidelines Updated** - `/app/design_guidelines.json` with Outfit/DM Sans fonts, color palette
+- ✅ **Card Enhancements** - White cards with subtle shadows on "How It Works" sections
 
 ### January 28, 2026 - WhatsApp Triggers Implementation
 - ✅ **1-Hour Reminder** - Added MSG91 WhatsApp to cron job for appointment reminders
