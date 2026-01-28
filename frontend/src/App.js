@@ -62,7 +62,6 @@ import PaymentHistory from '@/pages/PaymentHistory';
 import IntroScreen from '@/components/IntroScreen';
 // Page Transitions
 import { AnimatedPage } from '@/components/PageTransition';
-import { AnimatePresence } from 'framer-motion';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ViewModeProvider } from '@/context/ViewModeContext';
 import { LanguageProvider } from '@/context/LanguageContext';
