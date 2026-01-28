@@ -405,7 +405,8 @@ const Home = () => {
       path: '/serena',
       bgColor: '#1a2e35',
       isDark: true,
-      fillLogo: true
+      fillLogo: true,
+      imagePosition: 'center 5%'
     },
     {
       id: 'corvia',
