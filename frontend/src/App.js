@@ -60,6 +60,8 @@ import { PaymentSuccess, PaymentCancel } from '@/components/PaymentCheckout';
 import PaymentHistory from '@/pages/PaymentHistory';
 // Intro Screen (Loading + Splash combined)
 import IntroScreen from '@/components/IntroScreen';
+// Page Transitions
+import { PageTransition } from '@/components/PageTransition';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ViewModeProvider } from '@/context/ViewModeContext';
 import { LanguageProvider } from '@/context/LanguageContext';
