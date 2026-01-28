@@ -1124,27 +1124,27 @@ const Home = () => {
               <div
                 key={service.id}
                 className={`group rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl ${
-                  service.isDark ? 'shadow-lg' : 'shadow-md border border-gray-100'
+                  service.isDark ? 'shadow-lg' : 'shadow-md border border-gray-200'
                 }`}
                 style={{ backgroundColor: service.bgColor }}
                 onClick={() => navigate(service.path)}
                 data-testid={`service-card-${service.id}`}
               >
-                {/* Card Content - Simple Layout */}
-                <div className="h-[180px] sm:h-[200px] flex flex-col">
-                  {/* Logo Section */}
-                  <div className="flex-1 flex items-center justify-center overflow-hidden p-3">
+                {/* Card Content - Taller layout to prevent overlap */}
+                <div className="h-[200px] sm:h-[220px] flex flex-col">
+                  {/* Logo Section - Takes most of the space */}
+                  <div className="flex-1 flex items-center justify-center overflow-hidden">
                     <img 
                       src={service.logo} 
                       alt={service.name} 
-                      className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       data-testid={`service-logo-${service.id}`}
                       loading="lazy"
                     />
                   </div>
                   
-                  {/* Explore Button */}
-                  <div className="p-3 pt-0">
+                  {/* Explore Button - Fixed at bottom */}
+                  <div className="p-3 flex-shrink-0">
                     <Button
                       onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                       data-testid={`service-button-${service.id}`}
