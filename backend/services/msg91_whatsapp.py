@@ -105,7 +105,7 @@ async def send_msg91_whatsapp(
             "template": {
                 "name": template_name,
                 "language": {
-                    "code": "en",
+                    "code": "en_US",
                     "policy": "deterministic"
                 },
                 "components": [
