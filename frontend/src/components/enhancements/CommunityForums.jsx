@@ -31,53 +31,60 @@ const CommunityForums = () => {
   }, [selectedCategory]);
 
   const fetchPosts = async () => {
-    // Mock data for community posts
-    setPosts([
-      {
-        id: '1',
-        title: 'Managing blood sugar during festivals',
-        content: 'Any tips for maintaining blood sugar levels during Diwali when there are so many sweets around?',
-        author: 'Rajesh K.',
-        category: 'diabetes',
-        likes: 24,
-        replies: 8,
-        created_at: '2 hours ago',
-        isDoctor: false
-      },
-      {
-        id: '2',
-        title: 'First trimester fatigue - is this normal?',
-        content: 'I am 8 weeks pregnant and feeling extremely tired all the time. Is this normal?',
-        author: 'Priya M.',
-        category: 'pregnancy',
-        likes: 18,
-        replies: 12,
-        created_at: '5 hours ago',
-        isDoctor: false
-      },
-      {
-        id: '3',
-        title: 'Doctor Verified: Exercise tips for diabetics',
-        content: 'Here are some safe exercises for patients with Type 2 diabetes...',
-        author: 'Dr. Vikas Jha',
-        category: 'diabetes',
-        likes: 156,
-        replies: 34,
-        created_at: '1 day ago',
-        isDoctor: true
-      },
-      {
-        id: '4',
-        title: 'Best foods for immunity boost',
-        content: 'What foods should I include in my diet to boost immunity naturally?',
-        author: 'Amit S.',
-        category: 'nutrition',
-        likes: 42,
-        replies: 15,
-        created_at: '3 days ago',
-        isDoctor: false
+    try {
+      const token = localStorage.getItem('patientToken') || localStorage.getItem('token');
+      const categoryParam = selectedCategory ? `?category=${selectedCategory}` : '';
+      const res = await fetch(`${API}/api/community/posts${categoryParam}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.posts) {
+        setPosts(data.posts);
+      } else {
+        // Fallback mock data
+        setPosts([
+          {
+            id: '1',
+            title: 'Managing blood sugar during festivals',
+            content: 'Any tips for maintaining blood sugar levels during Diwali when there are so many sweets around?',
+            author: 'Rajesh K.',
+            category: 'diabetes',
+            likes: 24,
+            replies: 8,
+            created_at: '2 hours ago',
+            isDoctor: false
+          },
+          {
+            id: '2',
+            title: 'First trimester fatigue - is this normal?',
+            content: 'I am 8 weeks pregnant and feeling extremely tired all the time. Is this normal?',
+            author: 'Priya M.',
+            category: 'pregnancy',
+            likes: 18,
+            replies: 12,
+            created_at: '5 hours ago',
+            isDoctor: false
+          }
+        ]);
       }
-    ]);
+    } catch (error) {
+      console.error('Failed to fetch posts:', error);
+      // Fallback mock data
+      setPosts([
+        {
+          id: '1',
+          title: 'Managing blood sugar during festivals',
+          content: 'Any tips for maintaining blood sugar levels during Diwali?',
+          author: 'Rajesh K.',
+          category: 'diabetes',
+          likes: 24,
+          replies: 8,
+          created_at: '2 hours ago',
+          isDoctor: false
+        }
+      ]);
+    }
+  };
   };
 
   const handleCreatePost = async () => {
