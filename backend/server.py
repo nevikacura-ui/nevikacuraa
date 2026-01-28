@@ -3394,6 +3394,14 @@ Delivery: {order.delivery_address or 'Not provided'}"""
     </div>
     """
     
+    # Generate QR code for pharmacy order
+    medicines_preview = ", ".join([m.get('name', 'Unknown') for m in order.medicines[:2]]) if order.medicines else "See prescription"
+    qr_code_base64 = generate_generic_qr_code(booking_id, "pharmacy", {
+        "patient_name": order.patient_name,
+        "medicines": medicines_preview,
+        "delivery_address": order.delivery_address or "Pickup"
+    })
+    
     # Discount info for patient email
     patient_discount_html = f'''
         <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: center;">
@@ -3403,7 +3411,7 @@ Delivery: {order.delivery_address or 'Not provided'}"""
         </div>
     ''' if order.points_used > 0 else ''
     
-    # Patient confirmation email for pharmacy
+    # Patient confirmation email for pharmacy with QR code
     medicines_list_patient = "".join([f"<li>{m.get('name', 'Unknown')} - Qty: {m.get('quantity', 1)}</li>" for m in order.medicines]) if order.medicines else '<li><em>Medicines as per prescription</em></li>'
     patient_pharmacy_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -3413,10 +3421,20 @@ Delivery: {order.delivery_address or 'Not provided'}"""
         <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
             <p style="font-size: 18px;">Hello <strong>{order.patient_name}</strong>,</p>
             <p>Your order has been successfully placed at <strong>Orange Pharmacy</strong>.</p>
+            
+            <!-- QR Code Section -->
+            <div style="text-align: center; margin: 25px 0; padding: 20px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border-radius: 12px;">
+                <p style="color: white; margin: 0 0 10px 0; font-size: 14px;">Show this QR code for pickup/delivery verification</p>
+                <div style="background: white; display: inline-block; padding: 15px; border-radius: 10px;">
+                    <img src="data:image/png;base64,{qr_code_base64}" alt="Order QR Code" style="width: 150px; height: 150px;">
+                </div>
+                <p style="margin: 10px 0 0 0; color: white; font-size: 24px; font-weight: bold; letter-spacing: 3px;">{booking_id}</p>
+            </div>
+            
             {patient_discount_html}
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f97316;">
                 <h3 style="color: #f97316; margin-top: 0;">Order Details</h3>
-                <p><strong>Order ID:</strong> {order.id[:8]}...</p>
+                <p><strong>Order ID:</strong> <span style="font-size: 18px; color: #f97316; font-weight: bold;">{booking_id}</span></p>
                 <p><strong>Status:</strong> <span style="background: #fef3c7; padding: 4px 8px; border-radius: 4px; color: #d97706;">Order Booked</span></p>
                 <h4>Medicines:</h4>
                 <ul style="line-height: 1.8;">{medicines_list_patient}</ul>
@@ -3436,10 +3454,10 @@ Delivery: {order.delivery_address or 'Not provided'}"""
     """
     
     await send_email_notification(
-        f"New Pharmacy Order - {order.patient_name}", 
+        f"New Pharmacy Order - {order.patient_name} ({booking_id})", 
         email_html,
         patient_email=order.patient_email,
-        patient_subject=f"Order Confirmed - Orange Pharmacy #{order.id[:8]}",
+        patient_subject=f"Order Confirmed - Orange Pharmacy {booking_id}",
         patient_html=patient_pharmacy_html
     )
     
@@ -3449,7 +3467,7 @@ Delivery: {order.delivery_address or 'Not provided'}"""
         await send_push_notification(
             user_id=user.id,
             title="Order Placed! 💊",
-            body=f"Your order with {medicine_count} item(s) has been placed. We'll notify you when it's out for delivery.",
+            body=f"Your order {booking_id} with {medicine_count} item(s) has been placed. We'll notify you when it's out for delivery.",
             url="/profile",
             tag=f"pharmacy-{order.id}"
         )
@@ -3457,6 +3475,7 @@ Delivery: {order.delivery_address or 'Not provided'}"""
     # Send SMS confirmation to patient
     await send_pharmacy_order_sms(order.patient_phone, {
         "id": order.id,
+        "booking_id": booking_id,
         "medicines": order.medicines
     })
     
