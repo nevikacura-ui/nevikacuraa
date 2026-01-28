@@ -121,9 +121,8 @@ const portals = [
     name: 'PSVN',
     subtitle: 'Foundation',
     path: '/psvn-foundation',
-    hasIcon: true,
-    icon: HandHeart,
-    bgColor: '#ec4899',
+    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/ik0oidgy_Screenshot_20260129-011553.png',
+    bgColor: '#ffffff',
     tagline: 'Care. Compassion. Community.'
   }
 ];
