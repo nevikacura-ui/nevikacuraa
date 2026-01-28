@@ -1,62 +1,135 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, FileText, BarChart3 } from 'lucide-react';
+import { 
+  ChevronLeft, ChevronRight, FileText, BarChart3, Heart, Activity, 
+  Brain, Baby, Smile, HeartPulse, Shield, Dumbbell, Users, HandHeart
+} from 'lucide-react';
 
-// Portal data with original logos - Health & Wellness focused
+// Portal data - 12 Health & Wellness Portals
 const portals = [
+  // 1. Evara - Women's Health
   {
     id: 'evara',
     name: 'Evara',
+    subtitle: "Women's Health",
     path: '/evara',
     logo: '/icons/evara-logo.png',
     bgColor: '#511b63'
   },
+  // 2. Glydex - Diabetes Care
   {
     id: 'glydex',
     name: 'Glydex',
+    subtitle: 'Diabetes Care',
     path: '/glydex',
     logo: 'https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png',
     bgColor: '#121f33'
   },
+  // 3. Thrive Mind - Mental Health (replacing Thrive360)
   {
-    id: 'thrive360',
-    name: 'Thrive360',
-    path: '/thrive360',
-    logo: 'https://customer-assets.emergentagent.com/job_healspace-26/artifacts/iijsipxg_file_00000000290072089f3c35fe8c1b2b05.png',
-    bgColor: '#1e1b4b',
-    enlargeLogo: true
+    id: 'thrivemind',
+    name: 'Thrive Mind',
+    subtitle: 'Mental Wellness',
+    path: '/thrive-mind',
+    hasIcon: true,
+    icon: Brain,
+    bgColor: '#6366f1',
+    tagline: 'Strong Minds. Balanced Lives.'
   },
-  {
-    id: 'alyne',
-    name: 'Alyne Kids',
-    path: '/alyne',
-    logo: 'https://customer-assets.emergentagent.com/job_nevika-health-7/artifacts/d1163tpj_Screenshot_20260128-154605.png',
-    bgColor: '#e8f5e9',
-    fillContainer: true
-  },
+  // 4. Aanya Newborn
   {
     id: 'aanya',
-    name: 'Aanya Newborn',
+    name: 'Aanya',
+    subtitle: 'Newborn Care',
     path: '/aanya',
     logo: 'https://customer-assets.emergentagent.com/job_nevika-health-7/artifacts/or3lea1i_Screenshot_20260128-154553.png',
     bgColor: '#fce4ec',
     fillContainer: true
   },
+  // 5. Alyne Kids - Child Care
+  {
+    id: 'alyne',
+    name: 'Alyne Kids',
+    subtitle: 'Child Care',
+    path: '/alyne',
+    logo: 'https://customer-assets.emergentagent.com/job_nevika-health-7/artifacts/d1163tpj_Screenshot_20260128-154605.png',
+    bgColor: '#e8f5e9',
+    fillContainer: true
+  },
+  // 6. Cardyra - Heart, BP & Cardiac Risk
+  {
+    id: 'cardyra',
+    name: 'Cardyra',
+    subtitle: 'Heart & BP Care',
+    path: '/cardyra',
+    hasIcon: true,
+    icon: HeartPulse,
+    bgColor: '#dc2626',
+    tagline: 'Strong Hearts. Longer Lives.'
+  },
+  // 7. Vireya - Preventive & Lifestyle Medicine
+  {
+    id: 'vireya',
+    name: 'Vireya',
+    subtitle: 'Preventive Health',
+    path: '/vireya',
+    hasIcon: true,
+    icon: Shield,
+    bgColor: '#059669',
+    tagline: 'Prevent. Protect. Prosper.'
+  },
+  // 8. FitLife - Physical Health, Yoga & Physio
+  {
+    id: 'fitlife',
+    name: 'FitLife',
+    subtitle: 'Physical Health',
+    path: '/fitlife',
+    hasIcon: true,
+    icon: Dumbbell,
+    bgColor: '#f97316',
+    tagline: 'Move. Strengthen. Thrive.'
+  },
+  // 9. Nivara - Senior Care
+  {
+    id: 'nivara',
+    name: 'Nivara',
+    subtitle: 'Senior Care',
+    path: '/nivara',
+    hasIcon: true,
+    icon: Users,
+    bgColor: '#0891b2',
+    tagline: 'Comfort. Care. Dignity.'
+  },
+  // 10. Reports - Blood Charts
   {
     id: 'reports',
     name: 'Reports',
+    subtitle: 'Blood Charts',
     path: '/health-dashboard',
     hasIcon: true,
     icon: FileText,
     bgColor: '#ea580c'
   },
+  // 11. Health Log - Weight & Logs
   {
     id: 'healthchart',
     name: 'Health Log',
+    subtitle: 'Weight & Logs',
     path: '/my-health',
     hasIcon: true,
     icon: BarChart3,
-    bgColor: '#059669'
+    bgColor: '#16a34a'
+  },
+  // 12. PSVN Foundation
+  {
+    id: 'psvn',
+    name: 'PSVN',
+    subtitle: 'Foundation',
+    path: '/psvn-foundation',
+    hasIcon: true,
+    icon: HandHeart,
+    bgColor: '#7c3aed',
+    tagline: 'Care. Compassion. Community.'
   }
 ];
 
@@ -128,10 +201,10 @@ const PortalScrollBar = () => {
         </button>
       )}
 
-      {/* Scrollable Container - Always start from left with scroll */}
+      {/* Scrollable Container - 12 portals */}
       <div
         ref={scrollRef}
-        className="flex items-center gap-4 px-4 py-4 overflow-x-auto scroll-smooth"
+        className="flex items-center gap-3 px-4 py-3 overflow-x-auto scroll-smooth"
         style={{ 
           scrollbarWidth: 'none', 
           msOverflowStyle: 'none',
@@ -154,13 +227,13 @@ const PortalScrollBar = () => {
               data-testid={`portal-btn-${portal.id}`}
               title={portal.name}
             >
-              {/* Logo/Icon Container */}
+              {/* Logo/Icon Container - 72x72 for 12 to fit better */}
               <div 
-                className="w-[76px] h-[76px] md:w-20 md:h-20 rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
+                className="w-[72px] h-[72px] md:w-[76px] md:h-[76px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
                 style={{ backgroundColor: portal.bgColor }}
               >
                 {portal.hasIcon ? (
-                  <IconComponent className="w-10 h-10 text-white" />
+                  <IconComponent className="w-9 h-9 text-white" />
                 ) : portal.fillContainer ? (
                   <img 
                     src={portal.logo} 
@@ -168,16 +241,7 @@ const PortalScrollBar = () => {
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />
-                ) : portal.enlargeLogo ? (
-                  // Thrive360 - extra large logo (scale 150%)
-                  <img 
-                    src={portal.logo} 
-                    alt={portal.name}
-                    className="w-full h-full object-contain scale-150"
-                    loading="lazy"
-                  />
                 ) : (
-                  // Standard logos - fill the container
                   <img 
                     src={portal.logo} 
                     alt={portal.name}
