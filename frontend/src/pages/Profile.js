@@ -349,8 +349,8 @@ const Profile = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border/50 bg-white/70 backdrop-blur-xl sticky top-0 z-50">
+    <div className="min-h-screen bg-[#F5F5F4]">
+      <header className="border-b border-slate-200/50 bg-white/90 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -358,15 +358,17 @@ const Profile = () => {
                 variant="ghost" 
                 onClick={() => navigate('/')}
                 data-testid="back-button"
+                className="rounded-full hover:bg-slate-100"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <h1 className="font-heading text-2xl font-semibold">My Profile</h1>
+              <h1 className="font-heading text-2xl font-semibold text-slate-800">My Profile</h1>
             </div>
             <Button 
               variant="outline" 
               onClick={logout}
               data-testid="logout-button"
+              className="rounded-full"
             >
               Logout
             </Button>
@@ -374,24 +376,24 @@ const Profile = () => {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* User Info Card with Loyalty Points */}
-        <Card className="p-6 mb-8">
+        <Card className="p-6 mb-8 bg-white shadow-sm border-slate-100 rounded-2xl">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-brand-teal/10 flex items-center justify-center">
-                <User className="w-8 h-8 text-brand-teal" />
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center shadow-lg">
+                <User className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h2 className="font-heading text-2xl font-semibold" data-testid="user-name">{user.name}</h2>
-                <p className="font-body text-muted-foreground" data-testid="user-email">{user.email}</p>
-                <p className="font-body text-muted-foreground" data-testid="user-phone">{user.phone}</p>
+                <h2 className="font-heading text-2xl font-semibold text-slate-800" data-testid="user-name">{user.name}</h2>
+                <p className="font-body text-slate-500" data-testid="user-email">{user.email}</p>
+                <p className="font-body text-slate-500" data-testid="user-phone">{user.phone}</p>
               </div>
             </div>
             
             {/* Loyalty Points Display */}
-            <div className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl px-5 py-3" data-testid="loyalty-points-card">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl px-5 py-3 shadow-sm" data-testid="loyalty-points-card">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
                 <Star className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -402,10 +404,10 @@ const Profile = () => {
           </div>
           
           {/* Health Dashboard Quick Link */}
-          <div className="mt-4 pt-4 border-t">
+          <div className="mt-4 pt-4 border-t border-slate-100">
             <Button 
               onClick={() => navigate('/health-dashboard')}
-              className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+              className="w-full sm:w-auto bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 rounded-xl shadow-lg shadow-teal-500/20"
               data-testid="health-dashboard-btn"
             >
               <FileText className="w-4 h-4 mr-2" />
@@ -415,8 +417,8 @@ const Profile = () => {
         </Card>
 
         <Tabs defaultValue="appointments" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="appointments" data-testid="appointments-tab">
+          <TabsList className="grid w-full grid-cols-5 bg-white rounded-xl p-1 shadow-sm">
+            <TabsTrigger value="appointments" data-testid="appointments-tab" className="rounded-lg">
               <Calendar className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Appointments</span>
             </TabsTrigger>
