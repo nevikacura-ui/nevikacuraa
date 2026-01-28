@@ -97,10 +97,55 @@ const CommunityForums = () => {
     setNewPost({ title: '', content: '', category: 'general' });
   };
 
-  const handleLike = (postId) => {
-    setPosts(posts.map(p => 
-      p.id === postId ? { ...p, likes: p.likes + 1 } : p
-    ));
+  const handleLike = async (postId) => {
+    try {
+      const token = localStorage.getItem('patientToken') || localStorage.getItem('token');
+      await fetch(`${API}/api/community/posts/${postId}/like`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPosts(posts.map(p => 
+        p.id === postId ? { ...p, likes: p.likes + 1 } : p
+      ));
+    } catch (error) {
+      // Still update UI optimistically
+      setPosts(posts.map(p => 
+        p.id === postId ? { ...p, likes: p.likes + 1 } : p
+      ));
+    }
+  };
+
+  const handleCreatePost = async () => {
+    if (!newPost.title || !newPost.content) {
+      toast.error('Please fill in title and content');
+      return;
+    }
+    
+    try {
+      const token = localStorage.getItem('patientToken') || localStorage.getItem('token');
+      const res = await fetch(`${API}/api/community/posts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: newPost.title,
+          content: newPost.content,
+          category: newPost.category
+        })
+      });
+      
+      const data = await res.json();
+      if (data.post_id) {
+        toast.success('Post created successfully!');
+        setShowNewPost(false);
+        setNewPost({ title: '', content: '', category: 'general' });
+        fetchPosts();
+      }
+    } catch (error) {
+      toast.error('Failed to create post');
+    }
   };
 
   const filteredPosts = posts.filter(post => {
