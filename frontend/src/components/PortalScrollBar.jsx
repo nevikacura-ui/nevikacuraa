@@ -198,10 +198,10 @@ const PortalScrollBar = () => {
         </button>
       )}
 
-      {/* Scrollable Container - 12 portals filling desktop */}
+      {/* Scrollable Container - 4 on mobile, 12 on desktop */}
       <div
         ref={scrollRef}
-        className="flex items-center justify-center gap-2 md:gap-3 lg:gap-4 px-2 md:px-4 py-4 overflow-x-auto scroll-smooth"
+        className="flex items-center lg:justify-center gap-2 sm:gap-3 md:gap-2 lg:gap-3 xl:gap-4 px-3 md:px-4 py-4 overflow-x-auto scroll-smooth"
         style={{ 
           scrollbarWidth: 'none', 
           msOverflowStyle: 'none',
@@ -225,13 +225,13 @@ const PortalScrollBar = () => {
               data-testid={`portal-btn-${portal.id}`}
               title={portal.name}
             >
-              {/* Logo/Icon Container - Extra Large icons to fill desktop (12 icons) */}
+              {/* Logo/Icon Container - Mobile: 4 icons visible, Desktop: all 12 fit */}
               <div 
-                className="w-[85px] h-[85px] sm:w-[95px] sm:h-[95px] md:w-[110px] md:h-[110px] lg:w-[130px] lg:h-[130px] xl:w-[140px] xl:h-[140px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
+                className="w-[80px] h-[80px] sm:w-[85px] sm:h-[85px] md:w-[90px] md:h-[90px] lg:w-[110px] lg:h-[110px] xl:w-[130px] xl:h-[130px] 2xl:w-[140px] 2xl:h-[140px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
                 style={{ backgroundColor: portal.bgColor }}
               >
                 {portal.hasIcon ? (
-                  <IconComponent className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 text-white" />
+                  <IconComponent className="w-10 h-10 sm:w-10 sm:h-10 md:w-11 md:h-11 lg:w-14 lg:h-14 xl:w-16 xl:h-16 text-white" />
                 ) : portal.fillContainer ? (
                   <img 
                     src={portal.logo} 
