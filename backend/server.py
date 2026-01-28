@@ -422,6 +422,7 @@ async def send_appointment_sms(patient_phone: str, appointment_details: dict):
     date = appointment_details.get('date', '')
     time = appointment_details.get('time', '')
     booking_type = appointment_details.get('booking_type', 'online')
+    booking_id = appointment_details.get('booking_id', '')
     
     if booking_type == 'walk_in':
         message = f"""DiaGyn Healthcare - Walk-in Registered!
@@ -451,19 +452,20 @@ Please proceed directly to the clinic.
 - DiaGyn Healthcare
   Call: 9403890429"""
     else:
-        # Online booking
-        message = f"""DiaGyn Healthcare - Appointment Confirmed!
+        # Online booking with Booking ID
+        message = f"""Nevika Cura - Booking Confirmed!
 
+Booking ID: {booking_id}
 Doctor: {doctor}
 Clinic: {clinic}
 Date: {date}
 Time: {time}
 
-Note: The appointment time is your arrival time at the clinic, not the exact consultation time. Patients will be attended in sequence.
+Show this ID at reception for quick check-in.
+Arrive 10 mins early.
 
-Please arrive 10 mins early. For queries, call 9403890429.
-
-- DiaGyn Healthcare"""
+- Nevika Cura Healthcare
+  Call: 7039020020"""
     
     return await send_sms_notification(patient_phone, message)
 
