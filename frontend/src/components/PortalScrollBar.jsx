@@ -225,9 +225,9 @@ const PortalScrollBar = () => {
               data-testid={`portal-btn-${portal.id}`}
               title={portal.name}
             >
-              {/* Logo/Icon Container - Large icons to fill desktop (12 icons) */}
+              {/* Logo/Icon Container - Extra Large icons to fill desktop (12 icons) */}
               <div 
-                className="w-[80px] h-[80px] sm:w-[90px] sm:h-[90px] md:w-[100px] md:h-[100px] lg:w-[120px] lg:h-[120px] xl:w-[130px] xl:h-[130px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
+                className="w-[85px] h-[85px] sm:w-[95px] sm:h-[95px] md:w-[110px] md:h-[110px] lg:w-[130px] lg:h-[130px] xl:w-[140px] xl:h-[140px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
                 style={{ backgroundColor: portal.bgColor }}
               >
                 {portal.hasIcon ? (
