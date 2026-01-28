@@ -575,6 +575,9 @@ const Home = () => {
         </div>
       )}
 
+      {/* Portal Scroll Bar - Blinkit/Zepto style horizontal toggle */}
+      <PortalScrollBar />
+
       {/* Trust Badges - Blinkit/Practo style */}
       <TrustBadges />
 
