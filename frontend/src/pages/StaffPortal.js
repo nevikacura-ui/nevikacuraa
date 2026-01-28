@@ -2449,6 +2449,9 @@ const StaffPortal = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium text-lg">{appt.patient_name}</span>
+                        {appt.booking_id && (
+                          <Badge className="bg-teal-100 text-teal-700 text-xs font-bold border border-teal-300">{appt.booking_id}</Badge>
+                        )}
                         {appt.patient_id && (
                           <Badge className="bg-indigo-100 text-indigo-700 text-xs font-normal">{appt.patient_id}</Badge>
                         )}
@@ -2463,6 +2466,9 @@ const StaffPortal = () => {
                         )}
                         {appt.booking_type === 'walk_in' && (
                           <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-800">Walk-in</span>
+                        )}
+                        {appt.booked_by === 'patient' && (
+                          <span className="px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800">Online</span>
                         )}
                         {/* Show fee code if completed */}
                         {appt.fee_code && (
