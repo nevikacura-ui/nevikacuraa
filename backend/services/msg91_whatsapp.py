@@ -25,10 +25,19 @@ logger.info(f"MSG91 WhatsApp Number: {MSG91_WHATSAPP_NUMBER}")
 
 # Template Names (as registered in MSG91)
 TEMPLATES = {
+    # DiaGyn Templates
     "diagyn_appointment_confirm": "diagyn_appointment_confirm",
-    "diagyn_appointment_reminder": "diagyn_appointment_reminder", 
+    "diagyn_appointment_reminder": "diagyn_appointment_reminder",
+    "diagyn_one_hour_reminder": "diagyn_one_hour_reminder",
+    "diagyn_walkin_emergency": "diagyn_walkin_emergency",
+    "diagyn_appointment_completed": "diagyn_appointment_completed",
+    # Proton Templates
     "proton_lab_confirm": "proton_lab_confirm",
+    "proton_report_ready": "proton_report_ready",
+    "proton_sonography_confirm": "proton_sonography_confirm",
+    # Orange Pharmacy Templates
     "orange_pharmacy_confirm": "orange_pharmacy_confirm",
+    "orange_order_delivered": "orange_order_delivered",
 }
 
 # Clinic Addresses
@@ -37,6 +46,23 @@ CLINIC_ADDRESSES = {
     "amnion clinic": "G-7, Rashmi Star City Phase 5, Opp Thakur School, Naigaon East",
     "default": "Naigaon East, Palghar"
 }
+
+# Google Maps URLs for clinics
+CLINIC_MAP_URLS = {
+    "pushpa clinic": "https://maps.google.com/?q=Pushpa+Clinic+Naigaon",
+    "amnion clinic": "https://maps.google.com/?q=Amnion+Clinic+Naigaon",
+    "proton diagnostics": "https://maps.google.com/?q=Proton+Diagnostics+Naigaon",
+    "default": "https://maps.google.com/?q=Naigaon+East"
+}
+
+
+def get_clinic_map_url(clinic_name: str) -> str:
+    """Get Google Maps URL for a clinic"""
+    clinic_lower = clinic_name.lower().strip()
+    for key, url in CLINIC_MAP_URLS.items():
+        if key in clinic_lower:
+            return url
+    return CLINIC_MAP_URLS["default"]
 
 
 async def send_msg91_whatsapp(
@@ -49,17 +75,6 @@ async def send_msg91_whatsapp(
 ) -> dict:
     """
     Send WhatsApp message via MSG91 API
-    
-    Args:
-        recipient_phone: Phone number (with or without country code)
-        template_name: Pre-approved MSG91 template name
-        variables: List of variable values for template placeholders
-        db: MongoDB database instance for logging
-        reference_id: Optional appointment/order ID for tracking
-        message_type: Type of message (confirmation, reminder, etc.)
-    
-    Returns:
-        dict with success status and request_id
     """
     if not MSG91_AUTH_KEY:
         logger.warning("MSG91_AUTH_KEY not configured")
@@ -161,19 +176,7 @@ async def send_diagyn_appointment_confirmation(
     booking_id: str,
     db=None
 ) -> dict:
-    """
-    Send DiaGyn appointment confirmation via WhatsApp
-    
-    Template variables:
-    {{1}} = Patient Name
-    {{2}} = Date
-    {{3}} = Time
-    {{4}} = Doctor Name
-    {{5}} = Clinic Name
-    {{6}} = Booking ID
-    {{7}} = Address
-    """
-    # Get clinic address
+    """Send DiaGyn appointment confirmation via WhatsApp"""
     clinic_lower = clinic_name.lower().strip()
     address = CLINIC_ADDRESSES.get(clinic_lower, CLINIC_ADDRESSES["default"])
     
@@ -207,18 +210,7 @@ async def send_diagyn_appointment_reminder(
     booking_id: str,
     db=None
 ) -> dict:
-    """
-    Send DiaGyn appointment reminder via WhatsApp
-    
-    Template variables:
-    {{1}} = Patient Name
-    {{2}} = Date
-    {{3}} = Time
-    {{4}} = Doctor Name
-    {{5}} = Clinic Name
-    {{6}} = Booking ID
-    {{7}} = Address
-    """
+    """Send DiaGyn appointment reminder (day before) via WhatsApp"""
     clinic_lower = clinic_name.lower().strip()
     address = CLINIC_ADDRESSES.get(clinic_lower, CLINIC_ADDRESSES["default"])
     
@@ -242,6 +234,93 @@ async def send_diagyn_appointment_reminder(
     )
 
 
+async def send_diagyn_one_hour_reminder(
+    phone: str,
+    patient_name: str,
+    date: str,
+    time: str,
+    doctor_name: str,
+    clinic_name: str,
+    booking_id: str,
+    db=None
+) -> dict:
+    """Send DiaGyn 1-hour reminder via WhatsApp with Google Maps location"""
+    map_url = get_clinic_map_url(clinic_name)
+    
+    variables = [
+        patient_name,      # {{1}}
+        date,              # {{2}}
+        time,              # {{3}}
+        doctor_name,       # {{4}}
+        clinic_name,       # {{5}}
+        booking_id,        # {{6}}
+        map_url            # {{7}} - Google Maps URL
+    ]
+    
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
+        template_name=TEMPLATES["diagyn_one_hour_reminder"],
+        variables=variables,
+        db=db,
+        reference_id=booking_id,
+        message_type="one_hour_reminder"
+    )
+
+
+async def send_diagyn_walkin_emergency(
+    phone: str,
+    patient_name: str,
+    appointment_type: str,  # "Walk-in" or "EMERGENCY"
+    doctor_name: str,
+    clinic_name: str,
+    token_number: str,
+    db=None
+) -> dict:
+    """Send DiaGyn walk-in/emergency confirmation via WhatsApp"""
+    variables = [
+        patient_name,      # {{1}}
+        appointment_type,  # {{2}} - "Walk-in" or "EMERGENCY"
+        doctor_name,       # {{3}}
+        clinic_name,       # {{4}}
+        token_number       # {{5}}
+    ]
+    
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
+        template_name=TEMPLATES["diagyn_walkin_emergency"],
+        variables=variables,
+        db=db,
+        reference_id=token_number,
+        message_type="walkin_emergency"
+    )
+
+
+async def send_diagyn_appointment_completed(
+    phone: str,
+    patient_name: str,
+    doctor_name: str,
+    follow_up_date: str,
+    feedback_url: str,
+    db=None
+) -> dict:
+    """Send DiaGyn appointment completed / thank you via WhatsApp"""
+    variables = [
+        patient_name,      # {{1}}
+        doctor_name,       # {{2}}
+        follow_up_date,    # {{3}}
+        feedback_url       # {{4}}
+    ]
+    
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
+        template_name=TEMPLATES["diagyn_appointment_completed"],
+        variables=variables,
+        db=db,
+        reference_id=None,
+        message_type="appointment_completed"
+    )
+
+
 # =============================================
 # Proton Diagnostics Templates
 # =============================================
@@ -256,17 +335,7 @@ async def send_proton_lab_confirmation(
     address: str,
     db=None
 ) -> dict:
-    """
-    Send Proton Diagnostics lab test confirmation via WhatsApp
-    
-    Template variables:
-    {{1}} = Patient Name
-    {{2}} = Tests
-    {{3}} = Preferred Date
-    {{4}} = Preferred Time
-    {{5}} = Booking ID
-    {{6}} = Home Collection Address
-    """
+    """Send Proton Diagnostics lab test confirmation via WhatsApp"""
     variables = [
         patient_name,      # {{1}}
         tests,             # {{2}}
@@ -286,6 +355,65 @@ async def send_proton_lab_confirmation(
     )
 
 
+async def send_proton_report_ready(
+    phone: str,
+    patient_name: str,
+    tests: str,
+    booking_id: str,
+    report_date: str,
+    download_url: str,
+    db=None
+) -> dict:
+    """Send Proton Diagnostics report ready via WhatsApp"""
+    variables = [
+        patient_name,      # {{1}}
+        tests,             # {{2}}
+        booking_id,        # {{3}}
+        report_date,       # {{4}}
+        download_url       # {{5}}
+    ]
+    
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
+        template_name=TEMPLATES["proton_report_ready"],
+        variables=variables,
+        db=db,
+        reference_id=booking_id,
+        message_type="report_ready"
+    )
+
+
+async def send_proton_sonography_confirmation(
+    phone: str,
+    patient_name: str,
+    scan_type: str,
+    date: str,
+    time: str,
+    booking_id: str,
+    db=None
+) -> dict:
+    """Send Proton Sonography booking confirmation via WhatsApp"""
+    map_url = CLINIC_MAP_URLS.get("proton diagnostics", CLINIC_MAP_URLS["default"])
+    
+    variables = [
+        patient_name,      # {{1}}
+        scan_type,         # {{2}}
+        date,              # {{3}}
+        time,              # {{4}}
+        booking_id,        # {{5}}
+        map_url            # {{6}}
+    ]
+    
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
+        template_name=TEMPLATES["proton_sonography_confirm"],
+        variables=variables,
+        db=db,
+        reference_id=booking_id,
+        message_type="sonography_confirmation"
+    )
+
+
 # =============================================
 # Orange Pharmacy Templates
 # =============================================
@@ -298,15 +426,7 @@ async def send_orange_pharmacy_confirmation(
     delivery_address: str,
     db=None
 ) -> dict:
-    """
-    Send Orange Pharmacy order confirmation via WhatsApp
-    
-    Template variables:
-    {{1}} = Patient Name
-    {{2}} = Order ID
-    {{3}} = Items
-    {{4}} = Delivery Address
-    """
+    """Send Orange Pharmacy order confirmation via WhatsApp"""
     variables = [
         patient_name,      # {{1}}
         order_id,          # {{2}}
@@ -324,6 +444,32 @@ async def send_orange_pharmacy_confirmation(
     )
 
 
+async def send_orange_order_delivered(
+    phone: str,
+    patient_name: str,
+    order_id: str,
+    delivered_time: str,
+    invoice_url: str,
+    db=None
+) -> dict:
+    """Send Orange Pharmacy order delivered via WhatsApp"""
+    variables = [
+        patient_name,      # {{1}}
+        order_id,          # {{2}}
+        delivered_time,    # {{3}}
+        invoice_url        # {{4}}
+    ]
+    
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
+        template_name=TEMPLATES["orange_order_delivered"],
+        variables=variables,
+        db=db,
+        reference_id=order_id,
+        message_type="order_delivered"
+    )
+
+
 # =============================================
 # Test Function
 # =============================================
@@ -337,5 +483,6 @@ async def test_msg91_connection() -> dict:
         "success": True,
         "auth_key_configured": True,
         "whatsapp_number": MSG91_WHATSAPP_NUMBER,
-        "templates_configured": list(TEMPLATES.keys())
+        "templates_configured": list(TEMPLATES.keys()),
+        "clinic_map_urls": CLINIC_MAP_URLS
     }
