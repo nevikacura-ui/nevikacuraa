@@ -406,7 +406,7 @@ const Home = () => {
       bgColor: '#1a2e35',
       isDark: true,
       fillLogo: true,
-      imagePosition: 'center 15%'
+      imagePosition: 'center 10%'
     },
     {
       id: 'corvia',
