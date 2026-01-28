@@ -21,6 +21,7 @@ import ANCRegistration from '@/components/ANCRegistration';
 import GlydexStaffPortal from '@/components/GlydexStaffPortal';
 import StaffDashboard from '@/components/StaffDashboard';
 import StaffNotificationBell from '@/components/StaffNotificationBell';
+import QRScanner from '@/components/QRScanner';
 import { useViewMode } from '@/context/ViewModeContext';
 import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
 import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRegistration';
