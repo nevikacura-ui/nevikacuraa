@@ -4301,6 +4301,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load MSG91 WhatsApp router: {e}")
 
+# Enhancement Features V2 Routes (AI Triage, Teleconsultation, Community, etc.)
+try:
+    from routes.enhancements_v2 import router as enhancements_v2_router, set_db as set_enhancements_v2_db
+    set_enhancements_v2_db(db)
+    app.include_router(enhancements_v2_router, prefix="/api")
+    logger.info("Enhancement Features V2 router loaded (AI Triage, Teleconsultation, Community, Insurance, Wearables)")
+except Exception as e:
+    logger.warning(f"Could not load Enhancement Features V2 router: {e}")
+
 
 
 app.add_middleware(
