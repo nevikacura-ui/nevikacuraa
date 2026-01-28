@@ -216,6 +216,7 @@ const StaffPortal = () => {
   const [sonographyBookings, setSonographyBookings] = useState([]);
   const [loadingSonography, setLoadingSonography] = useState(false);
   const [sendingReminders, setSendingReminders] = useState(false);
+  const [showQRScanner, setShowQRScanner] = useState(false);
   const [sonographyForm, setSonographyForm] = useState({
     patient_name: '',
     age: '',
