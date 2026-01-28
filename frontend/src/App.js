@@ -159,7 +159,6 @@ function AppContent() {
           <Route path="/payment/cancel" element={<PaymentCancel />} />
           <Route path="/payment/history" element={<PaymentHistory />} />
         </Routes>
-        </PageTransition>
         <Toaster position="top-center" richColors />
         <PWAInstallPrompt />
         <SmartNotificationBanner />
