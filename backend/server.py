@@ -857,6 +857,111 @@ Time: {time}"""
     
     return base64_qr
 
+def generate_generic_qr_code(booking_id: str, booking_type: str, details: dict) -> str:
+    """
+    Generate QR code for any booking type (appointment, lab test, medicine order).
+    """
+    if booking_type == "appointment":
+        qr_data = f"""NEVIKA CURA - APPOINTMENT
+ID: {booking_id}
+Patient: {details.get('patient_name', '')}
+Doctor: {details.get('doctor', '')}
+Clinic: {details.get('clinic', '')}
+Date: {details.get('date', '')}
+Time: {details.get('time', '')}"""
+    elif booking_type == "lab_test":
+        qr_data = f"""NEVIKA CURA - LAB TEST
+ID: {booking_id}
+Patient: {details.get('patient_name', '')}
+Tests: {details.get('tests', '')}
+Date: {details.get('date', '')}
+Time: {details.get('time', '')}"""
+    elif booking_type == "medicine_order":
+        qr_data = f"""NEVIKA CURA - MEDICINE ORDER
+ID: {booking_id}
+Patient: {details.get('patient_name', '')}
+Items: {details.get('items_count', '')}
+Status: {details.get('status', 'Confirmed')}"""
+    else:
+        qr_data = f"""NEVIKA CURA BOOKING
+ID: {booking_id}
+{details.get('summary', '')}"""
+    
+    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=6, border=2)
+    qr.add_data(qr_data)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color="#0d9488", back_color="white")
+    buffer = BytesIO()
+    img.save(buffer, format='PNG')
+    buffer.seek(0)
+    
+    return base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+def generate_booking_email_template(booking_id: str, booking_type: str, details: dict) -> str:
+    """
+    Generate unified email template with QR code for any booking type.
+    """
+    qr_code_base64 = generate_generic_qr_code(booking_id, booking_type, details)
+    
+    # Type-specific colors and titles
+    type_configs = {
+        "appointment": {"color": "#0d9488", "icon": "📅", "title": "Appointment Confirmed"},
+        "lab_test": {"color": "#8b5cf6", "icon": "🔬", "title": "Lab Test Booked"},
+        "medicine_order": {"color": "#f97316", "icon": "💊", "title": "Medicine Order Confirmed"},
+        "report_ready": {"color": "#22c55e", "icon": "📋", "title": "Report Ready"},
+    }
+    
+    config = type_configs.get(booking_type, {"color": "#0d9488", "icon": "✓", "title": "Booking Confirmed"})
+    
+    # Build details table
+    details_rows = ""
+    for key, value in details.items():
+        if key not in ['patient_name', 'patient_email', 'patient_phone', 'qr_code'] and value:
+            label = key.replace('_', ' ').title()
+            details_rows += f'<tr><td style="padding: 8px 0; color: #64748b;">{label}</td><td style="padding: 8px 0; font-weight: 600;">{value}</td></tr>'
+    
+    html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, {config['color']} 0%, {config['color']}cc 100%); border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0;">{config['icon']} {config['title']}</h1>
+        </div>
+        <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
+            <p style="font-size: 18px;">Hello <strong>{details.get('patient_name', 'Patient')}</strong>,</p>
+            
+            <!-- QR Code Section -->
+            <div style="text-align: center; margin: 25px 0; padding: 20px; background: white; border-radius: 12px; border: 2px dashed {config['color']};">
+                <p style="margin: 0 0 10px 0; color: #64748b; font-size: 12px;">SCAN QR CODE FOR QUICK CHECK-IN</p>
+                <img src="data:image/png;base64,{qr_code_base64}" alt="Booking QR Code" style="width: 150px; height: 150px;" />
+                <div style="margin-top: 15px; padding: 10px; background: {config['color']}; border-radius: 8px; display: inline-block;">
+                    <p style="margin: 0; color: white; font-size: 12px;">Booking ID</p>
+                    <p style="margin: 5px 0 0 0; color: white; font-size: 24px; font-weight: bold; letter-spacing: 3px;">{booking_id}</p>
+                </div>
+            </div>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid {config['color']};">
+                <h3 style="color: {config['color']}; margin-top: 0;">📋 Details</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    {details_rows}
+                </table>
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 0; color: #92400e; font-size: 14px;">
+                    <strong>💡 Tip:</strong> Screenshot this QR code for quick check-in at the clinic.
+                </p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
+                <p style="margin: 0; color: #475569;"><strong>Need help?</strong></p>
+                <p style="margin: 5px 0 0 0; color: {config['color']}; font-size: 18px; font-weight: bold;">📞 7039020020</p>
+            </div>
+        </div>
+    </div>
+    """
+    
+    return html
+
 class Appointment(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
