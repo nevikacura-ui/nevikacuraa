@@ -391,7 +391,7 @@ const Home = () => {
       id: 'thrive360',
       name: 'Thrive360',
       description: 'Mind. Body. Life.',
-      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/tx5fggdz_91.png',
+      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/qb3buukl_91.png',
       path: '/thrive360',
       bgColor: '#1a1a3e',
       isDark: true,

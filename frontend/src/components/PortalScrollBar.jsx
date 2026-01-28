@@ -81,7 +81,7 @@ const portals = [
     name: 'Thrive360',
     subtitle: 'Mind. Body. Life.',
     path: '/thrive360',
-    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/tx5fggdz_91.png',
+    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/qb3buukl_91.png',
     bgColor: '#1a1a3e',
     fillContainer: true,
     tagline: 'Mind. Body. Life.'
