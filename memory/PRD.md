@@ -15,6 +15,9 @@ Build a comprehensive healthcare application named "Nevika Cura" that enhances s
 2. **Proton Diagnostics** - Lab tests and diagnostic packages
 3. **DiaGyn** - Doctor consultations (Amnion & Pushpa Clinics)
 4. **Evara** - Women's wellness services
+5. **Glydex** - Diabetes care
+6. **Alyne** - Kids health
+7. **Thrive360** - Mind & body wellness
 
 ### Booking ID System
 | Prefix | Service Type |
@@ -25,6 +28,17 @@ Build a comprehensive healthcare application named "Nevika Cura" that enhances s
 | PD-XXXXX | Proton Diagnostics lab tests |
 
 ## What's Been Implemented
+
+### January 28, 2026 - UI/UX Enhancements (Blinkit/Zepto Style)
+- ✅ **Portal Scroll Bar** - Horizontal scrolling toggle at top with DiaGyn, Proton, Pharmacy, Evara, Glydex, Alyne, Thrive360
+- ✅ **Sand Background** - Changed app background to #F5F5F4 for softer, less clinical feel
+- ✅ **Removed Duplicate Services Grid** - Secondary services (Evara, Glydex, etc.) now accessible only via top scroll bar
+- ✅ **Design Guidelines Updated** - `/app/design_guidelines.json` with Outfit/DM Sans fonts, color palette
+
+### January 28, 2026 - WhatsApp Triggers Implementation
+- ✅ **1-Hour Reminder** - Added MSG91 WhatsApp to cron job for appointment reminders
+- ✅ **Post-Consultation Thank You** - Added WhatsApp notification when doctor completes appointment
+- ⏳ **MSG91 Templates** - Created but pending Meta approval (IN REVIEW status)
 
 ### January 28, 2026 - UI/UX Improvements
 - ✅ **Pharmacy Categories** - Separated image and text for cleaner look (circular images with labels below)
