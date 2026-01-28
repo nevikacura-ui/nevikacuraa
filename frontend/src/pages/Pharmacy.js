@@ -14,7 +14,8 @@ import axios from 'axios';
 import { 
   ArrowLeft, ArrowRight, Upload, Plus, Minus, X, ShoppingCart, Pill, Search, Package, 
   CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, Trash2, Info, FileText,
-  Crown, Star, Gift, Trophy, TrendingUp, Medal, ChevronRight, Sparkles, Droplets, Syringe
+  Crown, Star, Gift, Trophy, TrendingUp, Medal, ChevronRight, Sparkles, Droplets, Syringe,
+  Stethoscope
 } from 'lucide-react';
 
 // Custom Tablet Icon (round pill with score line - NOT capsule)
