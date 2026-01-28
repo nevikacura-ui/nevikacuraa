@@ -560,7 +560,7 @@ const Proton = () => {
   const filteredTests = getFilteredTests();
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F5F5F4]">
       {/* Header */}
       <header className="bg-white/90 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 py-3">
@@ -588,11 +588,11 @@ const Proton = () => {
       </header>
 
       {/* How It Works Banner */}
-      <div className="bg-gradient-to-r from-[#5FA8D3]/10 to-[#62B6CB]/10 border-b border-[#5FA8D3]/20">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-[#5FA8D3]/20">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center gap-2 mb-3">
             <FlaskConical className="w-5 h-5 text-[#5FA8D3]" />
-            <h3 className="font-semibold text-[#1E293B]" style={{ fontFamily: 'Outfit, sans-serif' }}>How to Book Diagnostic Tests</h3>
+            <h3 className="font-semibold text-[#1E293B] font-heading">How to Book Diagnostic Tests</h3>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
@@ -601,7 +601,7 @@ const Proton = () => {
               { num: 3, title: 'Phlebotomist Call', desc: 'We confirm timing & location' },
               { num: 4, title: 'Reports Ready', desc: 'Download from My Orders', success: true }
             ].map((step) => (
-              <div key={step.num} className="flex items-start gap-2 p-3 bg-white/80 rounded-xl">
+              <div key={step.num} className="flex items-start gap-2 p-3 bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${step.success ? 'bg-[#10B981] text-white' : 'bg-[#5FA8D3] text-white'}`}>
                   {step.num}
                 </div>
