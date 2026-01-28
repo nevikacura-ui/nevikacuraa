@@ -1,0 +1,123 @@
+import React, { useState, useEffect } from 'react';
+
+const LoadingScreen = ({ onComplete }) => {
+  const [currentWordIndex, setCurrentWordIndex] = useState(-1);
+  const [fadeOut, setFadeOut] = useState(false);
+  
+  const words = [
+    { text: 'Book.', color: '#0d9488' },    // teal-600
+    { text: 'Order.', color: '#f97316' },   // orange-500
+    { text: 'Test.', color: '#8b5cf6' },    // violet-500
+    { text: 'Care.', color: '#ec4899' },    // pink-500
+  ];
+  
+  useEffect(() => {
+    // Lock body scroll
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+    };
+  }, []);
+  
+  useEffect(() => {
+    // Animate words sequentially
+    const wordInterval = 200; // 200ms per word
+    const totalDuration = 1100; // 1.1 seconds total
+    
+    // Start showing words
+    const wordTimers = words.map((_, index) => {
+      return setTimeout(() => {
+        setCurrentWordIndex(index);
+      }, index * wordInterval);
+    });
+    
+    // Start fade out
+    const fadeTimer = setTimeout(() => {
+      setFadeOut(true);
+    }, totalDuration - 200);
+    
+    // Complete and transition
+    const completeTimer = setTimeout(() => {
+      onComplete();
+    }, totalDuration);
+    
+    return () => {
+      wordTimers.forEach(timer => clearTimeout(timer));
+      clearTimeout(fadeTimer);
+      clearTimeout(completeTimer);
+    };
+  }, [onComplete]);
+  
+  return (
+    <div 
+      className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center transition-opacity duration-200 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
+      style={{ 
+        background: 'linear-gradient(165deg, #5eead4 0%, #2dd4bf 20%, #14b8a6 40%, #0d9488 60%, #0891b2 80%, #06b6d4 100%)'
+      }}
+    >
+      {/* Logo Container */}
+      <div className="mb-8 animate-pulse">
+        <div className="bg-white rounded-[32px] px-6 py-4 shadow-2xl">
+          <img 
+            src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
+            alt="Nevika Cura" 
+            className="h-16 w-auto object-contain"
+          />
+        </div>
+      </div>
+      
+      {/* Words Container */}
+      <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap px-4">
+        {words.map((word, index) => (
+          <span
+            key={word.text}
+            className={`text-2xl sm:text-3xl md:text-4xl font-bold transition-all duration-300 ${
+              index <= currentWordIndex 
+                ? 'opacity-100 translate-y-0' 
+                : 'opacity-0 translate-y-4'
+            }`}
+            style={{ 
+              color: word.color,
+              textShadow: '0 2px 10px rgba(255,255,255,0.3)',
+              transitionDelay: `${index * 50}ms`
+            }}
+          >
+            {word.text}
+          </span>
+        ))}
+      </div>
+      
+      {/* Subtle loading indicator */}
+      <div className="mt-8">
+        <div className="flex gap-1">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="w-2 h-2 rounded-full bg-white/60"
+              style={{
+                animation: 'loadingDot 0.8s ease-in-out infinite',
+                animationDelay: `${i * 0.15}s`
+              }}
+            />
+          ))}
+        </div>
+      </div>
+      
+      <style>{`
+        @keyframes loadingDot {
+          0%, 100% { opacity: 0.3; transform: scale(0.8); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default LoadingScreen;
