@@ -3376,9 +3376,11 @@ Delivery: {order.delivery_address or 'Not provided'}"""
     medicines_list = "<br>".join([f"• {m.get('name', 'Unknown')} (Qty: {m.get('quantity', 1)})" for m in order.medicines]) if order.medicines else '<em>No medicines specified - Check prescription</em>'
     email_html = f"""
     <h2>💊 New Orange Pharmacy Order</h2>
+    <h3>Booking ID: <span style="color: #f97316;">{booking_id}</span></h3>
     <h3>Medicines Ordered:</h3>
     <p>{medicines_list}</p>
     <table style="border-collapse: collapse; width: 100%;">
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Booking ID:</strong></td><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: #f97316;">{booking_id}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Delivery Address:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.delivery_address or 'Not provided'}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Prescription:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{prescription_display}</td></tr>
         {discount_html}
