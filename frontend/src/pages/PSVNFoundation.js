@@ -44,12 +44,8 @@ const PSVNFoundation = () => {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-white/90">
-                  <img 
-                    src="https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/p3zt5ovj_Pink%20Simple%20Charity%20Logo_20260128_183244_0000.png" 
-                    alt="PSVN Foundation" 
-                    className="w-full h-full object-contain"
-                  />
+                <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-white/20">
+                  <HandHeart className="w-7 h-7 text-white" />
                 </div>
                 <div>
                   <h1 className="text-xl font-bold">PSVN Foundation</h1>
