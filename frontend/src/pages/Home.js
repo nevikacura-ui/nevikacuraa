@@ -401,13 +401,11 @@ const Home = () => {
       id: 'serena',
       name: 'Serena',
       description: 'Mental Wellness',
-      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/dvk4b9gj_90.png',
+      logo: 'https://customer-assets.emergentagent.com/job_medportal-nevika/artifacts/rnobb9t9_90.png',
       path: '/serena',
       bgColor: '#1a2e35',
       isDark: true,
-      fillLogo: true,
-      containImage: true,
-      scale: 1.3
+      fillLogo: true
     },
     {
       id: 'corvia',
