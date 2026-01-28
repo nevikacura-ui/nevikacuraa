@@ -1130,8 +1130,8 @@ const Home = () => {
                 onClick={() => navigate(service.path)}
                 data-testid={`service-card-${service.id}`}
               >
-                {/* Decorative circles */}
-                <div className={`absolute top-0 right-0 w-20 h-20 rounded-full -mr-10 -mt-10 transition-transform duration-500 group-hover:scale-150 ${
+                {/* Decorative circles - hidden to prevent overflow */}
+                <div className={`absolute top-0 right-0 w-20 h-20 rounded-full -mr-10 -mt-10 transition-transform duration-500 group-hover:scale-150 hidden ${
                   service.isDark ? 'bg-white/10' : 'bg-gray-100/50'
                 }`}></div>
                 
