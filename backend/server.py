@@ -2409,9 +2409,9 @@ Booking ID: {active_appointment.get('id', 'N/A')}
 
 Please check if patient needs to reschedule."""
 
-            # Send notification to staff
-            await send_sms_notification(STAFF_PHONE_NUMBERS.get('diagyn', ['9833188288'])[0], staff_message)
-            logger.info(f"Staff notified about duplicate booking attempt by {input.patient_phone}")
+            # Staff SMS DISABLED - using email notifications instead
+            # await send_sms_notification(STAFF_PHONE_NUMBERS.get('diagyn', ['9833188288'])[0], staff_message)
+            logger.info(f"Staff notified (via email) about duplicate booking attempt by {input.patient_phone}")
         except Exception as e:
             logger.error(f"Failed to notify staff about duplicate booking: {e}")
         
