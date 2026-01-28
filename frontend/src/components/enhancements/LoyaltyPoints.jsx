@@ -31,8 +31,8 @@ const LoyaltyPoints = () => {
 
   const fetchLoyaltyData = async () => {
     try {
-      const token = localStorage.getItem('patientToken');
-      const res = await fetch(`${API}/api/patient/loyalty`, {
+      const token = localStorage.getItem('patientToken') || localStorage.getItem('token');
+      const res = await fetch(`${API}/api/loyalty`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
