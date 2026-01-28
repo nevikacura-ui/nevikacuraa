@@ -31,8 +31,14 @@ from io import BytesIO
 from services.msg91_whatsapp import (
     send_diagyn_appointment_confirmation,
     send_diagyn_appointment_reminder,
+    send_diagyn_one_hour_reminder,
+    send_diagyn_walkin_emergency,
+    send_diagyn_appointment_completed,
     send_proton_lab_confirmation,
+    send_proton_report_ready,
+    send_proton_sonography_confirmation,
     send_orange_pharmacy_confirmation,
+    send_orange_order_delivered,
     test_msg91_connection
 )
 
