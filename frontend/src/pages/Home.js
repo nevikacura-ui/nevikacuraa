@@ -405,7 +405,8 @@ const Home = () => {
       path: '/serena',
       bgColor: '#1a2e35',
       isDark: true,
-      fillLogo: true
+      fillLogo: true,
+      logoScale: 0.85
     },
     {
       id: 'corvia',
@@ -431,11 +432,12 @@ const Home = () => {
       id: 'senova',
       name: 'Senova',
       description: 'Senior Care',
-      logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/nz0rdwvp_file_000000000dfc7230a4605006a1e3131a.png',
       path: '/senova',
-      bgColor: '#3b5998',
+      bgColor: 'linear-gradient(135deg, #f97316 0%, #22c55e 100%)',
       isDark: true,
-      fillLogo: true
+      useGradient: true,
+      useIcon: true,
+      iconName: 'Users'
     }
   ];
   
