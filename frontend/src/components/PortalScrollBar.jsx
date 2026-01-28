@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, TestTube, Pill, Heart, Activity, Baby, Sparkles } from 'lucide-react';
 
 // Portal data with colors matching their brand identity
 const portals = [
@@ -11,7 +11,8 @@ const portals = [
     path: '/diagyn',
     logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg',
     bgColor: '#0d9488',
-    textColor: '#ffffff'
+    actionLabel: 'Book',
+    actionIcon: Calendar
   },
   {
     id: 'proton',
@@ -20,7 +21,8 @@ const portals = [
     path: '/proton',
     logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
     bgColor: '#7c3aed',
-    textColor: '#ffffff'
+    actionLabel: 'Test',
+    actionIcon: TestTube
   },
   {
     id: 'pharmacy',
@@ -29,7 +31,8 @@ const portals = [
     path: '/pharmacy',
     logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg',
     bgColor: '#f97316',
-    textColor: '#ffffff'
+    actionLabel: 'Order',
+    actionIcon: Pill
   },
   {
     id: 'evara',
@@ -38,7 +41,8 @@ const portals = [
     path: '/evara',
     logo: '/icons/evara-logo.png',
     bgColor: '#511b63',
-    textColor: '#ffffff'
+    actionLabel: 'Explore',
+    actionIcon: Heart
   },
   {
     id: 'glydex',
@@ -47,7 +51,8 @@ const portals = [
     path: '/glydex',
     logo: 'https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png',
     bgColor: '#121f33',
-    textColor: '#ffffff'
+    actionLabel: 'Manage',
+    actionIcon: Activity
   },
   {
     id: 'alyne',
@@ -56,7 +61,8 @@ const portals = [
     path: '/alyne',
     logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
     bgColor: '#0a1628',
-    textColor: '#ffffff'
+    actionLabel: 'Care',
+    actionIcon: Baby
   },
   {
     id: 'thrive360',
@@ -65,7 +71,8 @@ const portals = [
     path: '/thrive360',
     logo: 'https://customer-assets.emergentagent.com/job_healspace-26/artifacts/iijsipxg_file_00000000290072089f3c35fe8c1b2b05.png',
     bgColor: '#1e1b4b',
-    textColor: '#ffffff'
+    actionLabel: 'Start',
+    actionIcon: Sparkles
   }
 ];
 
@@ -115,12 +122,12 @@ const PortalScrollBar = () => {
   }, []);
 
   return (
-    <div className="relative bg-white/80 backdrop-blur-lg border-b border-slate-100 sticky top-[72px] z-40" data-testid="portal-scroll-bar">
+    <div className="relative bg-white/90 backdrop-blur-lg border-b border-slate-100 sticky top-[72px] z-40" data-testid="portal-scroll-bar">
       {/* Left Arrow */}
       {showLeftArrow && (
         <button
           onClick={scrollLeft}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 backdrop-blur shadow-md rounded-full flex items-center justify-center hover:bg-white transition-all"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white shadow-md rounded-full flex items-center justify-center hover:bg-slate-50 transition-all"
           aria-label="Scroll left"
         >
           <ChevronLeft className="w-4 h-4 text-slate-600" />
@@ -131,7 +138,7 @@ const PortalScrollBar = () => {
       {showRightArrow && (
         <button
           onClick={scrollRight}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 backdrop-blur shadow-md rounded-full flex items-center justify-center hover:bg-white transition-all"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white shadow-md rounded-full flex items-center justify-center hover:bg-slate-50 transition-all"
           aria-label="Scroll right"
         >
           <ChevronRight className="w-4 h-4 text-slate-600" />
@@ -141,62 +148,75 @@ const PortalScrollBar = () => {
       {/* Scrollable Container */}
       <div
         ref={scrollRef}
-        className="flex items-center gap-2 px-4 py-3 overflow-x-auto scrollbar-hide scroll-smooth"
+        className="flex items-center gap-2 px-3 py-2.5 overflow-x-auto scrollbar-hide scroll-smooth"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {portals.map((portal) => {
           const isActive = activePortal === portal.id;
+          const ActionIcon = portal.actionIcon;
           
           return (
-            <button
+            <div
               key={portal.id}
-              onClick={() => navigate(portal.path)}
-              className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 ${
-                isActive 
-                  ? 'bg-gradient-to-r from-teal-500 to-cyan-500 shadow-lg shadow-teal-500/30 scale-105' 
-                  : 'bg-slate-50 hover:bg-slate-100 hover:scale-102'
-              }`}
-              data-testid={`portal-btn-${portal.id}`}
+              className="flex-shrink-0 flex flex-col items-center gap-1"
             >
-              {/* Portal Logo */}
-              <div 
-                className={`w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden ${
-                  isActive ? 'bg-white/20' : ''
+              {/* Portal Button */}
+              <button
+                onClick={() => navigate(portal.path)}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300 ${
+                  isActive 
+                    ? 'bg-gradient-to-r from-teal-500 to-cyan-500 shadow-lg shadow-teal-500/20' 
+                    : 'bg-slate-50 hover:bg-slate-100'
                 }`}
-                style={{ backgroundColor: isActive ? 'transparent' : portal.bgColor + '15' }}
+                data-testid={`portal-btn-${portal.id}`}
               >
-                <img 
-                  src={portal.logo} 
-                  alt={portal.name}
-                  className="w-6 h-6 object-contain"
-                  loading="lazy"
-                />
-              </div>
-              
-              {/* Portal Name & Subtitle */}
-              <div className="text-left">
-                <p className={`text-xs font-bold leading-tight ${
-                  isActive ? 'text-white' : 'text-slate-800'
+                {/* Portal Logo */}
+                <div 
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center overflow-hidden ${
+                    isActive ? 'bg-white/20' : ''
+                  }`}
+                  style={{ backgroundColor: isActive ? 'transparent' : portal.bgColor + '15' }}
+                >
+                  <img 
+                    src={portal.logo} 
+                    alt={portal.name}
+                    className="w-5 h-5 object-contain"
+                    loading="lazy"
+                  />
+                </div>
+                
+                {/* Portal Name */}
+                <span className={`text-xs font-semibold whitespace-nowrap ${
+                  isActive ? 'text-white' : 'text-slate-700'
                 }`}>
                   {portal.name}
-                </p>
-                <p className={`text-[10px] leading-tight ${
-                  isActive ? 'text-white/80' : 'text-slate-500'
-                }`}>
-                  {portal.subtitle}
-                </p>
-              </div>
-            </button>
+                </span>
+              </button>
+              
+              {/* Quick Action Chip - Below the portal button */}
+              <button
+                onClick={() => navigate(portal.path)}
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-all hover:scale-105 active:scale-95"
+                style={{ 
+                  backgroundColor: portal.bgColor + '15',
+                  color: portal.bgColor
+                }}
+                data-testid={`portal-action-${portal.id}`}
+              >
+                <ActionIcon className="w-3 h-3" />
+                {portal.actionLabel}
+              </button>
+            </div>
           );
         })}
       </div>
 
       {/* Gradient Fades */}
       {showLeftArrow && (
-        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white/90 to-transparent pointer-events-none"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
       )}
       {showRightArrow && (
-        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/90 to-transparent pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
       )}
     </div>
   );
