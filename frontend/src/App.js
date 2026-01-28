@@ -98,37 +98,38 @@ function AppContent() {
       {showIntro && (
         <IntroScreen onComplete={handleIntroComplete} user={user} />
       )}
-      <div className="App animate-fadeIn">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/diagyn" element={<DiaGyn />} />
-          <Route path="/proton" element={<Proton />} />
-          <Route path="/pharmacy" element={<Pharmacy />} />
-          <Route path="/evara" element={<Evara />} />
-          <Route path="/glydex" element={<Glydex />} />
-          <Route path="/thrive360" element={<Thrive360 />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin-panel" element={<AdminPanel />} />
-          <Route path="/staff" element={<StaffPortal />} />
-          <Route path="/track" element={<TrackOrder />} />
-          <Route path="/feedback/:token" element={<Feedback />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsOfService />} />
-          <Route path="/about" element={<AboutUs />} />
-          {/* New Feature Routes */}
-          <Route path="/my-health" element={<MyHealth />} />
-          <Route path="/health-packages" element={<HealthPackages />} />
-          <Route path="/referral" element={<ReferralProgram />} />
-          <Route path="/health-tips" element={<HealthTips />} />
-          <Route path="/teleconsult" element={<Teleconsultation />} />
-          <Route path="/quick-reorder" element={<QuickReorder />} />
-          {/* High Priority Features */}
-          <Route path="/emergency" element={<EmergencyServices />} />
-          <Route path="/health-assessment" element={<HealthRiskAssessment />} />
-          <Route path="/medication-tracker" element={<MedicationTracker />} />
-          <Route path="/doctors" element={<DoctorProfiles />} />
-          <Route path="/doctors/:doctorId" element={<DoctorProfiles />} />
+      <div className="App">
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route path="/" element={<AnimatedPage><Home /></AnimatedPage>} />
+            <Route path="/diagyn" element={<AnimatedPage><DiaGyn /></AnimatedPage>} />
+            <Route path="/proton" element={<AnimatedPage><Proton /></AnimatedPage>} />
+            <Route path="/pharmacy" element={<AnimatedPage><Pharmacy /></AnimatedPage>} />
+            <Route path="/evara" element={<AnimatedPage><Evara /></AnimatedPage>} />
+            <Route path="/glydex" element={<AnimatedPage><Glydex /></AnimatedPage>} />
+            <Route path="/thrive360" element={<AnimatedPage><Thrive360 /></AnimatedPage>} />
+            <Route path="/profile" element={<AnimatedPage><Profile /></AnimatedPage>} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin-panel" element={<AdminPanel />} />
+            <Route path="/staff" element={<StaffPortal />} />
+            <Route path="/track" element={<AnimatedPage><TrackOrder /></AnimatedPage>} />
+            <Route path="/feedback/:token" element={<Feedback />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/about" element={<AboutUs />} />
+            {/* New Feature Routes */}
+            <Route path="/my-health" element={<AnimatedPage><MyHealth /></AnimatedPage>} />
+            <Route path="/health-packages" element={<AnimatedPage><HealthPackages /></AnimatedPage>} />
+            <Route path="/referral" element={<AnimatedPage><ReferralProgram /></AnimatedPage>} />
+            <Route path="/health-tips" element={<AnimatedPage><HealthTips /></AnimatedPage>} />
+            <Route path="/teleconsult" element={<AnimatedPage><Teleconsultation /></AnimatedPage>} />
+            <Route path="/quick-reorder" element={<AnimatedPage><QuickReorder /></AnimatedPage>} />
+            {/* High Priority Features */}
+            <Route path="/emergency" element={<AnimatedPage><EmergencyServices /></AnimatedPage>} />
+            <Route path="/health-assessment" element={<AnimatedPage><HealthRiskAssessment /></AnimatedPage>} />
+            <Route path="/medication-tracker" element={<AnimatedPage><MedicationTracker /></AnimatedPage>} />
+            <Route path="/doctors" element={<AnimatedPage><DoctorProfiles /></AnimatedPage>} />
+            <Route path="/doctors/:doctorId" element={<AnimatedPage><DoctorProfiles /></AnimatedPage>} />
           <Route path="/billing" element={<Billing />} />
           {/* Community & Reminders */}
           <Route path="/community" element={<Community />} />
