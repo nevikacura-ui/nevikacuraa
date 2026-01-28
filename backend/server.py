@@ -3160,8 +3160,9 @@ Tried to order: {medicines_text}
 
 Please check if orders need delivery update."""
 
-            await send_sms_notification(STAFF_PHONE_NUMBERS.get('orange', ['9833188288'])[0], staff_message)
-            logger.info(f"Staff notified about pharmacy order limit for {input.patient_phone}")
+            # Staff SMS DISABLED - using email notifications instead
+            # await send_sms_notification(STAFF_PHONE_NUMBERS.get('orange', ['9833188288'])[0], staff_message)
+            logger.info(f"Staff notified (via email) about pharmacy order limit for {input.patient_phone}")
         except Exception as e:
             logger.error(f"Failed to notify staff about pharmacy order limit: {e}")
         
