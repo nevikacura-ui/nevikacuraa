@@ -92,7 +92,7 @@ const portals = [
     fillContainer: true,
     tagline: 'Mind. Body. Life.'
   },
-  // 9. Senova - Senior Care (formerly Nivara) - Two color people logo
+  // 9. Senova - Senior Care (formerly Nivara) - Two color people logo (enlarged)
   {
     id: 'senova',
     name: 'Senova',
@@ -102,6 +102,7 @@ const portals = [
     bgColor: '#ffffff',
     fillContainer: true,
     needsBorder: true,
+    scale: 1.3,
     tagline: "Care for Life's Next Chapter."
   },
   // 10. Reports - Blood Charts
@@ -124,7 +125,7 @@ const portals = [
     icon: BarChart3,
     bgColor: '#16a34a'
   },
-  // 12. PSVN Foundation - Full fill logo
+  // 12. PSVN Foundation - Full fill logo (enlarged)
   {
     id: 'psvn',
     name: 'PSVN',
@@ -134,6 +135,7 @@ const portals = [
     bgColor: '#ffffff',
     fillContainer: true,
     needsBorder: true,
+    scale: 1.5,
     tagline: 'Care. Compassion. Community.'
   }
 ];
