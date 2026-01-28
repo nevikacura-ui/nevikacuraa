@@ -85,17 +85,6 @@ const CommunityForums = () => {
       ]);
     }
   };
-  };
-
-  const handleCreatePost = async () => {
-    if (!newPost.title || !newPost.content) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-    toast.success('Post created successfully! It will be reviewed by moderators.');
-    setShowNewPost(false);
-    setNewPost({ title: '', content: '', category: 'general' });
-  };
 
   const handleLike = async (postId) => {
     try {
