@@ -3675,6 +3675,26 @@ Delivery: {order.delivery_address or 'Not provided'}"""
         "medicines": order.medicines
     })
     
+    # Send WhatsApp confirmation via MSG91
+    try:
+        medicines_text = ", ".join([m.get('name', 'Medicine') for m in order.medicines[:3]]) if order.medicines else "As per prescription"
+        if len(order.medicines) > 3:
+            medicines_text += "..."
+        whatsapp_result = await send_orange_pharmacy_confirmation(
+            phone=order.patient_phone,
+            patient_name=order.patient_name,
+            order_id=booking_id,
+            items=medicines_text,
+            delivery_address=order.delivery_address or "To be confirmed",
+            db=db
+        )
+        if whatsapp_result.get("success"):
+            logger.info(f"✅ WhatsApp pharmacy confirmation sent for order {booking_id}")
+        else:
+            logger.warning(f"⚠️ WhatsApp pharmacy confirmation failed: {whatsapp_result.get('error')}")
+    except Exception as e:
+        logger.error(f"❌ WhatsApp pharmacy notification error: {e}")
+    
     # Send SMS notification to Orange Pharmacy staff
     await notify_staff_new_order({
         "id": order.id,
