@@ -844,6 +844,39 @@ async def generate_booking_id(clinic: str, db_instance) -> str:
     
     return booking_id
 
+def generate_booking_qr_code(booking_id: str, patient_name: str, doctor: str, clinic: str, date: str, time: str) -> str:
+    """
+    Generate QR code containing booking details as base64 string for email embedding.
+    """
+    qr_data = f"""NEVIKA CURA BOOKING
+ID: {booking_id}
+Patient: {patient_name}
+Doctor: {doctor}
+Clinic: {clinic}
+Date: {date}
+Time: {time}"""
+    
+    # Create QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=6,
+        border=2,
+    )
+    qr.add_data(qr_data)
+    qr.make(fit=True)
+    
+    # Create image with teal color
+    img = qr.make_image(fill_color="#0d9488", back_color="white")
+    
+    # Convert to base64
+    buffer = BytesIO()
+    img.save(buffer, format='PNG')
+    buffer.seek(0)
+    base64_qr = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    
+    return base64_qr
+
 class Appointment(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
