@@ -31,7 +31,7 @@ async def get_admin_from_token(authorization: str = Header(None)):
         token = authorization.split(' ')[1]
         payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
         return payload
-    except:
+    except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 

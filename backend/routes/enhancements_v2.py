@@ -31,7 +31,7 @@ async def get_user_from_token(authorization: str = Header(None)):
         token = authorization.split(' ')[1]
         payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
         return payload
-    except:
+    except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 # ============================================================
@@ -939,12 +939,12 @@ async def kiosk_patient_checkin(
     
     if db is not None:
         # Find and update appointment
-        result = await db.appointments.update_one(
+        update_result = await db.appointments.update_one(
             {"id": appointment_id},
             {"$set": {"status": "In Clinic", "checked_in_at": datetime.now(timezone.utc).isoformat()}}
         )
         
-        if result.modified_count == 0:
+        if update_result.modified_count == 0:
             # Try finding by phone
             if phone:
                 appointment = await db.appointments.find_one({"patient_phone": phone, "status": "Booked"})
