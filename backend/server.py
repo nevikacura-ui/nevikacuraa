@@ -416,56 +416,62 @@ Test: {test_name}
     return await send_staff_sms_notification(department, message)
 
 async def send_appointment_sms(patient_phone: str, appointment_details: dict):
-    """Send appointment confirmation SMS to patient"""
-    doctor = appointment_details.get('doctor', 'Doctor')
-    clinic = appointment_details.get('clinic', 'Clinic')
+    """Send short appointment confirmation SMS to patient (only for online bookings)"""
     date = appointment_details.get('date', '')
     time = appointment_details.get('time', '')
     booking_type = appointment_details.get('booking_type', 'online')
     booking_id = appointment_details.get('booking_id', '')
     
-    if booking_type == 'walk_in':
-        message = f"""DiaGyn Healthcare - Walk-in Registered!
+    # No SMS for walk-in or emergency appointments (staff handles these)
+    if booking_type in ['walk_in', 'emergency']:
+        logger.info(f"Skipping SMS for {booking_type} appointment")
+        return None
+    
+    # Short SMS for online bookings (fewer characters = cheaper)
+    message = f"Appointment confirmed. {date} {time}. Booking ID {booking_id}. Nevika Cura"
+    
+    return await send_sms_notification(patient_phone, message)
 
-Doctor: {doctor}
-Clinic: {clinic}
-Date: {date}
-Token Time: {time}
+async def send_appointment_reminder_sms(patient_phone: str, appointment_details: dict):
+    """Send short appointment reminder SMS"""
+    time = appointment_details.get('time', '')
+    booking_id = appointment_details.get('booking_id', '')
+    
+    message = f"Reminder: Appointment tomorrow {time}. ID {booking_id}. Nevika Cura"
+    
+    return await send_sms_notification(patient_phone, message)
 
-Note: The time mentioned is your arrival slot. Patients are attended in sequence.
+async def send_test_booking_sms(patient_phone: str, test_details: dict):
+    """Send short lab test booking SMS"""
+    date = test_details.get('date', '')
+    time = test_details.get('time', '')
+    booking_id = test_details.get('booking_id', '')
+    
+    message = f"Lab test booked for {date} {time}. Booking ID {booking_id}. Nevika Cura"
+    
+    return await send_sms_notification(patient_phone, message)
 
-Please wait in the clinic. You will be called shortly.
+async def send_report_ready_sms(patient_phone: str, report_details: dict):
+    """Send short report ready SMS"""
+    report_type = report_details.get('type', 'Report')
+    
+    message = f"{report_type} generated. View in Nevika Cura app."
+    
+    return await send_sms_notification(patient_phone, message)
 
-- DiaGyn Healthcare
-  Call: 9403890429"""
-    elif booking_type == 'emergency':
-        message = f"""DiaGyn Healthcare - Emergency Appointment!
+async def send_medicine_order_sms(patient_phone: str, order_details: dict):
+    """Send short medicine order confirmation SMS"""
+    order_id = order_details.get('order_id', order_details.get('id', '')[:8])
+    
+    message = f"Medicine order confirmed. Order ID {order_id}. Nevika Cura"
+    
+    return await send_sms_notification(patient_phone, message)
 
-Doctor: {doctor}
-Clinic: {clinic}
-Date: {date}
-
-EMERGENCY PRIORITY - You will be attended on priority basis.
-
-Please proceed directly to the clinic.
-
-- DiaGyn Healthcare
-  Call: 9403890429"""
-    else:
-        # Online booking with Booking ID
-        message = f"""Nevika Cura - Booking Confirmed!
-
-Booking ID: {booking_id}
-Doctor: {doctor}
-Clinic: {clinic}
-Date: {date}
-Time: {time}
-
-Show this ID at reception for quick check-in.
-Arrive 10 mins early.
-
-- Nevika Cura Healthcare
-  Call: 7039020020"""
+async def send_medicine_delivered_sms(patient_phone: str, order_details: dict):
+    """Send short medicine delivered SMS"""
+    order_id = order_details.get('order_id', order_details.get('id', '')[:8])
+    
+    message = f"Medicine delivered. Order ID {order_id}. Nevika Cura"
     
     return await send_sms_notification(patient_phone, message)
 
