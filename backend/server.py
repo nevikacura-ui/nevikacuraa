@@ -64,6 +64,73 @@ async def health_check():
         logger.error(f"Health check failed: {e}")
         return {"status": "healthy", "service": "nevika-cura-api", "database": "reconnecting"}
 
+# ============ DIRECT TEST SMS ENDPOINT ============
+
+class TestSMSRequest(BaseModel):
+    phone: str
+    message: Optional[str] = None
+    template_type: Optional[str] = "appointment"  # appointment, reminder, lab_test, pharmacy
+
+@api_router.post("/test/send-sms")
+async def send_test_sms(request: TestSMSRequest):
+    """Direct test endpoint to send SMS without booking logic.
+    
+    This bypasses all validation and duplicate checks - use only for testing.
+    
+    Templates:
+    - appointment: "Appointment confirmed. {date} {time}. Booking ID {id}. {brand}"
+    - reminder: "Reminder: Appointment tomorrow {time}. ID {id}. {brand}"
+    - lab_test: "Lab test booked for {date} {time}. Booking ID {id}. Proton Diagnostics"
+    - pharmacy: "Medicine order confirmed. Order ID {id}. Orange Pharmacy"
+    """
+    if not twilio_client or not TWILIO_PHONE_NUMBER:
+        return {"success": False, "error": "Twilio SMS not configured"}
+    
+    # Generate sample booking ID
+    sample_id = f"TEST-{datetime.now().strftime('%H%M%S')}"
+    date = datetime.now().strftime("%Y-%m-%d")
+    time = datetime.now().strftime("%I:%M %p")
+    
+    # Template-based messages
+    templates = {
+        "appointment": f"Appointment confirmed. {date} {time}. Booking ID {sample_id}. DiaGyn Healthcare",
+        "reminder": f"Reminder: Appointment tomorrow {time}. ID {sample_id}. DiaGyn Healthcare",
+        "lab_test": f"Lab test booked for {date} {time}. Booking ID {sample_id}. Proton Diagnostics",
+        "pharmacy": f"Medicine order confirmed. Order ID {sample_id}. Orange Pharmacy",
+    }
+    
+    # Use custom message or template
+    message = request.message or templates.get(request.template_type, templates["appointment"])
+    
+    try:
+        # Format phone number
+        formatted_phone = request.phone.strip()
+        if not formatted_phone.startswith('+'):
+            if len(formatted_phone) == 10:
+                formatted_phone = f"+91{formatted_phone}"
+            else:
+                formatted_phone = f"+{formatted_phone}"
+        
+        result = await asyncio.to_thread(
+            twilio_client.messages.create,
+            body=message,
+            from_=TWILIO_PHONE_NUMBER,
+            to=formatted_phone
+        )
+        
+        logger.info(f"Test SMS sent to {formatted_phone}: sid={result.sid}")
+        return {
+            "success": True,
+            "sid": result.sid,
+            "to": formatted_phone,
+            "message": message,
+            "template_type": request.template_type
+        }
+    except Exception as e:
+        logger.error(f"Test SMS failed: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+
 # ============ PUSH NOTIFICATION ENDPOINTS ============
 
 class PushSubscriptionRequest(BaseModel):
