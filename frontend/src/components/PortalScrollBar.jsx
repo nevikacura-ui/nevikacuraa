@@ -225,9 +225,9 @@ const PortalScrollBar = () => {
               data-testid={`portal-btn-${portal.id}`}
               title={portal.name}
             >
-              {/* Logo/Icon Container - Mobile: 4 icons visible (~85px), Desktop: all 12 fit */}
+              {/* Logo/Icon Container - Mobile: 4 icons visible (~82px), Desktop: all 12 fit */}
               <div 
-                className="w-[82px] h-[82px] sm:w-[88px] sm:h-[88px] md:w-[95px] md:h-[95px] lg:w-[115px] lg:h-[115px] xl:w-[130px] xl:h-[130px] 2xl:w-[145px] 2xl:h-[145px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
+                className="w-[82px] h-[82px] sm:w-[88px] sm:h-[88px] md:w-[95px] md:h-[95px] lg:w-[108px] lg:h-[108px] xl:w-[120px] xl:h-[120px] 2xl:w-[135px] 2xl:h-[135px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300"
                 style={{ backgroundColor: portal.bgColor }}
               >
                 {portal.hasIcon ? (
