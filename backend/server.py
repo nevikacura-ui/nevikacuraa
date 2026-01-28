@@ -4890,10 +4890,11 @@ except Exception as e:
 
 # Staff Routes (extracted from server.py)
 try:
-    from routes.staff import router as staff_router, set_db as set_staff_db, set_jwt_config as set_staff_jwt, set_notification_functions as set_staff_notif
+    from routes.staff import router as staff_router, set_db as set_staff_db, set_jwt_config as set_staff_jwt, set_notification_functions as set_staff_notif, set_msg91_functions as set_staff_msg91
     set_staff_db(db)
     set_staff_jwt(JWT_SECRET, JWT_ALGORITHM)
     set_staff_notif(send_email_notification, send_sms_notification, send_whatsapp_notification)
+    set_staff_msg91(completed_func=send_diagyn_appointment_completed)
     app.include_router(staff_router, prefix="/api")
     logger.info("Staff router loaded")
 except Exception as e:
