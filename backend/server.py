@@ -3091,6 +3091,9 @@ Please check if orders need to be updated or completed."""
             detail="You already have 2 active diagnostic orders. Please wait for them to be completed or cancel one before placing a new order."
         )
     
+    # Generate unique booking ID for lab test
+    booking_id = await generate_booking_id("Proton Diagnostics", db, "lab_test")
+    
     order = DiagnosticOrder(
         user_id=user.id if user else None,
         **input.model_dump()
@@ -3098,9 +3101,10 @@ Please check if orders need to be updated or completed."""
     
     doc = order.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
+    doc['booking_id'] = booking_id  # Add booking ID to order
     
     await db.diagnostic_orders.insert_one(doc)
-    logger.info(f"Diagnostic order created: {order.id}")
+    logger.info(f"Diagnostic order created: {order.id} with booking_id: {booking_id}")
     
     # Generate WhatsApp link for order notification
     tests_text = ", ".join(order.tests[:3])
