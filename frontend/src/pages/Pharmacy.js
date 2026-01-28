@@ -831,7 +831,7 @@ const Pharmacy = () => {
   const totalItems = medicines.reduce((sum, m) => sum + m.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
+    <div className="min-h-screen bg-[#F5F5F4]">
       {/* Header */}
       <header className="bg-gradient-to-r from-orange-600 to-amber-500 sticky top-0 z-50 shadow-lg">
         <div className="max-w-5xl mx-auto px-4 py-3">
@@ -859,11 +859,11 @@ const Pharmacy = () => {
       </header>
 
       {/* How It Works Banner */}
-      <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-orange-100">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center gap-2 mb-3">
             <Info className="w-5 h-5 text-orange-500" />
-            <h3 className="font-semibold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>How to Order Medicines</h3>
+            <h3 className="font-semibold text-slate-800 font-heading">How to Order Medicines</h3>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
@@ -872,7 +872,7 @@ const Pharmacy = () => {
               { num: 3, title: 'Pharmacist Call', desc: 'We confirm order & final bill' },
               { num: 4, title: 'Delivery', desc: 'Get invoice in My Orders', success: true }
             ].map((step) => (
-              <div key={step.num} className="flex items-start gap-2 p-3 bg-white/80 rounded-xl">
+              <div key={step.num} className="flex items-start gap-2 p-3 bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${step.success ? 'bg-emerald-500 text-white' : 'bg-orange-500 text-white'}`}>
                   {step.num}
                 </div>
