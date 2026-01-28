@@ -582,11 +582,6 @@ const Home = () => {
           <QuickActions />
         </div>
 
-        {/* Trust Badges Section */}
-        <div className="mb-6 -mx-4 sm:-mx-6 lg:-mx-8">
-          <TrustBadges />
-        </div>
-
         {/* Quick Action Cards - Call, WhatsApp, Upload, Packages */}
         <QuickActionCards />
 
