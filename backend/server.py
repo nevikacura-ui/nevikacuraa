@@ -2836,6 +2836,25 @@ Time: {appointment.time}"""
         "booking_type": "online"
     })
     
+    # Send WhatsApp confirmation via MSG91
+    try:
+        whatsapp_result = await send_diagyn_appointment_confirmation(
+            phone=appointment.patient_phone,
+            patient_name=appointment.patient_name,
+            date=appointment.date,
+            time=appointment.time,
+            doctor_name=appointment.doctor,
+            clinic_name=appointment.clinic,
+            booking_id=booking_id,
+            db=db
+        )
+        if whatsapp_result.get("success"):
+            logger.info(f"✅ WhatsApp confirmation sent for booking {booking_id}")
+        else:
+            logger.warning(f"⚠️ WhatsApp confirmation failed: {whatsapp_result.get('error')}")
+    except Exception as e:
+        logger.error(f"❌ WhatsApp notification error: {e}")
+    
     # Send SMS notification to DiaGyn staff
     await notify_staff_new_appointment({
         "patient_name": appointment.patient_name,
