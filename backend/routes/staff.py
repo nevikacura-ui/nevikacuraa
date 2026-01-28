@@ -24,6 +24,7 @@ JWT_ALGORITHM = "HS256"
 send_email_notification = None
 send_sms_notification = None
 send_whatsapp_notification = None
+send_diagyn_appointment_completed = None  # MSG91 WhatsApp function
 
 # WhatsApp number for Nevika Cura
 WHATSAPP_NUMBER = "919403890429"
@@ -55,6 +56,11 @@ def set_notification_functions(email_func, sms_func, whatsapp_func=None):
     send_email_notification = email_func
     send_sms_notification = sms_func
     send_whatsapp_notification = whatsapp_func
+
+def set_msg91_functions(completed_func=None):
+    """Set MSG91 WhatsApp functions"""
+    global send_diagyn_appointment_completed
+    send_diagyn_appointment_completed = completed_func
 
 
 # ============ Models ============
