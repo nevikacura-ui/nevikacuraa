@@ -524,19 +524,21 @@ async def send_diagnostic_order_sms(patient_phone: str, order_details: dict):
     date = order_details.get('date', '')
     time = order_details.get('time', '8:00 AM')
     
-    # Short SMS format
-    message = f"Lab test booked for {date} {time}. Booking ID {order_id}. Nevika Cura"
+    # Proton Diagnostics branding
+    message = f"Lab test booked for {date} {time}. Booking ID {order_id}. Proton Diagnostics"
     
     return await send_sms_notification(patient_phone, message)
 
 async def send_diagnostic_status_sms(patient_phone: str, order_id: str, status: str, report_url: str = None):
     """Send short diagnostic test status SMS"""
     
-    # Short SMS format
+    # Proton Diagnostics branding
     if status == "Reports Generated":
-        message = f"Report generated. View in Nevika Cura app."
+        message = f"Report generated. View in app. Proton Diagnostics"
+    elif status == "Sample Collected":
+        message = f"Sample collected. ID {order_id[:8]}. Proton Diagnostics"
     else:
-        message = f"Test update: {status}. ID {order_id[:8]}. Nevika Cura"
+        message = f"Test update: {status}. ID {order_id[:8]}. Proton Diagnostics"
     
     return await send_sms_notification(patient_phone, message)
 
