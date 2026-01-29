@@ -179,6 +179,8 @@ function AppContent() {
           {/* Proton Report Download - Patient Access */}
           <Route path="/report/:bookingId" element={<ProtonReportDownload />} />
           <Route path="/report" element={<ProtonReportDownload />} />
+          {/* Pharmacy Product Page - Full Page View */}
+          <Route path="/pharmacy/product/:productId" element={<PharmacyProductPage />} />
         </Routes>
         <Toaster position="top-center" richColors />
         <PWAInstallPrompt />
