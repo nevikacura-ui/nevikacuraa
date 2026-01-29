@@ -201,12 +201,13 @@ const IntroScreen = ({ onComplete, user }) => {
       </button>
       
       <div className="text-center max-w-md mx-auto">
-        {/* Logo */}
-        <div className="mb-6">
-          <div className="bg-white rounded-[40px] px-8 py-5 shadow-xl inline-block">
-            <img src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
-              alt="Nevika Cura" className="h-20 w-auto" />
-          </div>
+        {/* Logo - New Nevika Cura Logo */}
+        <div className="mb-8">
+          <img 
+            src="https://customer-assets.emergentagent.com/job_nevikacura-4/artifacts/p00in1sl_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260129_222657_0000.png" 
+            alt="Nevika Cura - A Healthcare Group" 
+            className="h-32 w-auto mx-auto object-contain"
+          />
         </div>
         
         {/* Icons */}
