@@ -52,12 +52,11 @@ export const FEE_CODES = {
 
 // Scan/Test fees
 export const SCAN_FEES = {
-  'US1': { label: 'USG Abdomen', amount: 800 },
-  'US2': { label: 'USG Pelvis', amount: 800 },
-  'US3': { label: 'USG Obstetric', amount: 1000 },
-  'US4': { label: 'USG Anomaly Scan', amount: 2000 },
-  'US5': { label: 'NT Scan', amount: 2500 },
-  'US6': { label: 'Doppler', amount: 1500 }
+  'ES': { label: 'Early Scan', amount: 1000 },
+  'GS': { label: 'Growth Scan', amount: 1500 },
+  'UP': { label: 'USG Pelvis', amount: 1000 },
+  'NT': { label: 'NT Scan', amount: 1200 },
+  'FM': { label: 'Follicular Monitoring', amount: 200 }
 };
 
 // Day names mapping
