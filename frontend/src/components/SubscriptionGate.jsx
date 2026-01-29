@@ -92,12 +92,22 @@ const SubscriptionGate = ({
 
     setValidatingCoupon(true);
     try {
+      // Get device ID for security binding
+      const deviceId = localStorage.getItem('device_id') || 
+        (() => {
+          const newId = 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+          localStorage.setItem('device_id', newId);
+          return newId;
+        })();
+
       const res = await fetch(`${API}/api/subscriptions/validate-coupon`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           coupon_code: couponCode.toUpperCase(),
-          plan_type: planType
+          plan_type: planType,
+          email: patientEmail || null,
+          device_id: deviceId
         })
       });
       const data = await res.json();
