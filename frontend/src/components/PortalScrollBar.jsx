@@ -228,7 +228,8 @@ const PortalScrollBar = () => {
       {showLeftArrow && (
         <button
           onClick={scrollLeft}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 transition-all border border-slate-200"
+          className="absolute left-2 top-1/2 z-20 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 border border-slate-200"
+          style={{ transform: 'translateY(-50%) translateZ(0)' }}
           aria-label="Scroll left"
         >
           <ChevronLeft className="w-6 h-6 text-slate-600" />
@@ -239,22 +240,25 @@ const PortalScrollBar = () => {
       {showRightArrow && (
         <button
           onClick={scrollRight}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 transition-all border border-slate-200"
+          className="absolute right-2 top-1/2 z-20 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 border border-slate-200"
+          style={{ transform: 'translateY(-50%) translateZ(0)' }}
           aria-label="Scroll right"
         >
           <ChevronRight className="w-6 h-6 text-slate-600" />
         </button>
       )}
 
-      {/* Scrollable Container - 4 on mobile, 12 on desktop */}
+      {/* Scrollable Container - GPU Accelerated */}
       <div
         ref={scrollRef}
-        className="flex items-center lg:justify-center gap-3 sm:gap-3 md:gap-2 lg:gap-3 xl:gap-4 px-2 md:px-4 py-4 overflow-x-auto scroll-smooth"
+        className="flex items-center lg:justify-center gap-3 sm:gap-3 md:gap-2 lg:gap-3 xl:gap-4 px-2 md:px-4 py-4 overflow-x-auto"
         style={{ 
           scrollbarWidth: 'none', 
           msOverflowStyle: 'none',
           WebkitOverflowScrolling: 'touch',
-          scrollBehavior: 'smooth'
+          scrollBehavior: 'smooth',
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden'
         }}
       >
         {portals.map((portal) => {
