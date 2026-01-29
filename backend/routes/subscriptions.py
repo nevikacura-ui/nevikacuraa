@@ -579,3 +579,637 @@ async def admin_generate_coupons(
         "expires_at": expiry_date.isoformat(),
         "sample_codes": [c["code"] for c in coupons[:10]]
     }
+
+# ==================== FREE TRIAL ====================
+
+class FreeTrialRequest(BaseModel):
+    patient_id: str
+    patient_name: str
+    patient_email: str
+    plan_type: str
+    device_id: Optional[str] = None
+
+@router.post("/free-trial/start")
+async def start_free_trial(request: FreeTrialRequest):
+    """Start a 7-day free trial for a plan"""
+    plan = SUBSCRIPTION_PLANS.get(request.plan_type)
+    if not plan:
+        raise HTTPException(status_code=400, detail="Invalid plan type")
+    
+    # Check if user already had a trial
+    existing_trial = await db.free_trials.find_one({
+        "patient_id": request.patient_id,
+        "plan_type": request.plan_type
+    })
+    
+    if existing_trial:
+        return {
+            "success": False,
+            "message": "You have already used your free trial for this plan",
+            "trial_used_on": existing_trial.get("started_at")
+        }
+    
+    # Create trial
+    trial_days = plan.get("free_trial_days", 7)
+    start_date = datetime.now(timezone.utc)
+    end_date = start_date + timedelta(days=trial_days)
+    
+    trial = {
+        "trial_id": f"TRIAL-{request.plan_type.upper()[:3]}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+        "patient_id": request.patient_id,
+        "patient_name": request.patient_name,
+        "patient_email": request.patient_email,
+        "plan_type": request.plan_type,
+        "device_id": request.device_id,
+        "started_at": start_date.isoformat(),
+        "ends_at": end_date.isoformat(),
+        "status": "active",
+        "converted_to_paid": False
+    }
+    
+    await db.free_trials.insert_one(trial)
+    
+    # Also create a temporary subscription
+    temp_subscription = {
+        "subscription_id": f"SUB-TRIAL-{request.plan_type.upper()[:3]}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+        "patient_id": request.patient_id,
+        "patient_name": request.patient_name,
+        "patient_email": request.patient_email,
+        "plan_type": request.plan_type,
+        "plan_name": f"{plan['name']} (Trial)",
+        "amount_paid": 0,
+        "payment_method": "free_trial",
+        "status": "trial",
+        "start_date": start_date.isoformat(),
+        "end_date": end_date.isoformat(),
+        "is_trial": True,
+        "features": plan["features"],
+        "created_at": start_date.isoformat()
+    }
+    
+    await db.subscriptions.insert_one(temp_subscription)
+    
+    # Award points for starting trial
+    await award_points(request.patient_id, 50, "Started free trial", "trial_start")
+    
+    return {
+        "success": True,
+        "message": f"Your {trial_days}-day free trial has started!",
+        "trial": {
+            "trial_id": trial["trial_id"],
+            "ends_at": end_date.isoformat(),
+            "days_remaining": trial_days
+        }
+    }
+
+@router.get("/free-trial/status/{plan_type}/{patient_id}")
+async def check_trial_status(plan_type: str, patient_id: str):
+    """Check if user has used or has active trial"""
+    trial = await db.free_trials.find_one({
+        "patient_id": patient_id,
+        "plan_type": plan_type
+    })
+    
+    if not trial:
+        return {
+            "has_trial": False,
+            "can_start_trial": True,
+            "message": "Free trial available"
+        }
+    
+    end_date = datetime.fromisoformat(trial["ends_at"].replace("Z", "+00:00"))
+    now = datetime.now(timezone.utc)
+    
+    if now < end_date and trial["status"] == "active":
+        days_remaining = (end_date - now).days
+        return {
+            "has_trial": True,
+            "is_active": True,
+            "can_start_trial": False,
+            "days_remaining": days_remaining,
+            "ends_at": trial["ends_at"]
+        }
+    
+    return {
+        "has_trial": True,
+        "is_active": False,
+        "can_start_trial": False,
+        "message": "Trial already used",
+        "used_on": trial["started_at"]
+    }
+
+# ==================== REFERRAL PROGRAM ====================
+
+@router.post("/referral/generate")
+async def generate_referral_code(patient_id: str, patient_name: str):
+    """Generate a unique referral code for a user"""
+    # Check if user already has a referral code
+    existing = await db.referral_codes.find_one({"patient_id": patient_id})
+    
+    if existing:
+        return {
+            "success": True,
+            "referral_code": existing["code"],
+            "referral_link": f"https://nevikacura.com/join?ref={existing['code']}",
+            "stats": {
+                "total_referrals": existing.get("total_referrals", 0),
+                "successful_referrals": existing.get("successful_referrals", 0),
+                "rewards_earned": existing.get("rewards_earned", 0)
+            }
+        }
+    
+    # Generate new code
+    code = f"REF-{patient_name[:3].upper()}-{random.randint(1000, 9999)}"
+    
+    referral = {
+        "code": code,
+        "patient_id": patient_id,
+        "patient_name": patient_name,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "total_referrals": 0,
+        "successful_referrals": 0,
+        "rewards_earned": 0,
+        "is_active": True
+    }
+    
+    await db.referral_codes.insert_one(referral)
+    
+    return {
+        "success": True,
+        "referral_code": code,
+        "referral_link": f"https://nevikacura.com/join?ref={code}",
+        "rewards": {
+            "referrer_gets": "1 month FREE subscription",
+            "referee_gets": "20% off first subscription"
+        }
+    }
+
+@router.post("/referral/apply")
+async def apply_referral_code(referral_code: str, new_patient_id: str, new_patient_name: str):
+    """Apply a referral code for a new user"""
+    referral = await db.referral_codes.find_one({
+        "code": referral_code.upper(),
+        "is_active": True
+    })
+    
+    if not referral:
+        return {"success": False, "message": "Invalid referral code"}
+    
+    # Check if already used by this patient
+    existing_use = await db.referral_uses.find_one({
+        "referral_code": referral_code.upper(),
+        "used_by_patient_id": new_patient_id
+    })
+    
+    if existing_use:
+        return {"success": False, "message": "You have already used a referral code"}
+    
+    # Record the referral use
+    use_record = {
+        "referral_code": referral_code.upper(),
+        "referrer_id": referral["patient_id"],
+        "used_by_patient_id": new_patient_id,
+        "used_by_name": new_patient_name,
+        "used_at": datetime.now(timezone.utc).isoformat(),
+        "reward_given": False,
+        "discount_percent": 20
+    }
+    
+    await db.referral_uses.insert_one(use_record)
+    
+    # Update referral stats
+    await db.referral_codes.update_one(
+        {"code": referral_code.upper()},
+        {"$inc": {"total_referrals": 1}}
+    )
+    
+    return {
+        "success": True,
+        "message": "Referral code applied! You get 20% off your first subscription",
+        "discount_percent": 20
+    }
+
+@router.post("/referral/reward")
+async def process_referral_reward(referral_code: str, new_patient_id: str):
+    """Process reward when referred user makes first purchase"""
+    use_record = await db.referral_uses.find_one({
+        "referral_code": referral_code.upper(),
+        "used_by_patient_id": new_patient_id,
+        "reward_given": False
+    })
+    
+    if not use_record:
+        return {"success": False, "message": "No pending referral reward"}
+    
+    referral = await db.referral_codes.find_one({"code": referral_code.upper()})
+    
+    if not referral:
+        return {"success": False, "message": "Referral code not found"}
+    
+    # Give referrer 30 days free subscription extension
+    referrer_id = referral["patient_id"]
+    
+    # Find referrer's active subscription and extend it
+    active_sub = await db.subscriptions.find_one({
+        "patient_id": referrer_id,
+        "status": "active"
+    })
+    
+    reward_days = 30
+    
+    if active_sub:
+        current_end = datetime.fromisoformat(active_sub["end_date"].replace("Z", "+00:00"))
+        new_end = current_end + timedelta(days=reward_days)
+        
+        await db.subscriptions.update_one(
+            {"subscription_id": active_sub["subscription_id"]},
+            {"$set": {"end_date": new_end.isoformat()}}
+        )
+    
+    # Update referral stats
+    await db.referral_codes.update_one(
+        {"code": referral_code.upper()},
+        {
+            "$inc": {
+                "successful_referrals": 1,
+                "rewards_earned": reward_days
+            }
+        }
+    )
+    
+    # Mark reward as given
+    await db.referral_uses.update_one(
+        {"_id": use_record["_id"]},
+        {"$set": {"reward_given": True, "rewarded_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    # Award points to both
+    await award_points(referrer_id, 500, "Referral converted", "referral_success")
+    await award_points(new_patient_id, 100, "Joined via referral", "referral_join")
+    
+    return {
+        "success": True,
+        "message": f"Referrer rewarded with {reward_days} days free!",
+        "referrer_id": referrer_id,
+        "reward_days": reward_days
+    }
+
+@router.get("/referral/stats/{patient_id}")
+async def get_referral_stats(patient_id: str):
+    """Get referral statistics for a user"""
+    referral = await db.referral_codes.find_one({"patient_id": patient_id})
+    
+    if not referral:
+        return {
+            "has_referral_code": False,
+            "message": "Generate your referral code to start earning rewards!"
+        }
+    
+    referral.pop("_id", None)
+    
+    # Get list of successful referrals
+    successful = await db.referral_uses.find({
+        "referral_code": referral["code"],
+        "reward_given": True
+    }).to_list(50)
+    
+    return {
+        "has_referral_code": True,
+        "code": referral["code"],
+        "link": f"https://nevikacura.com/join?ref={referral['code']}",
+        "stats": {
+            "total_shared": referral.get("total_referrals", 0),
+            "successful_conversions": referral.get("successful_referrals", 0),
+            "total_days_earned": referral.get("rewards_earned", 0)
+        },
+        "recent_referrals": [{"name": r.get("used_by_name", "User"), "date": r.get("used_at")} for r in successful[:5]]
+    }
+
+# ==================== GAMIFICATION & POINTS ====================
+
+async def award_points(patient_id: str, points: int, reason: str, action_type: str):
+    """Award points to a patient"""
+    point_record = {
+        "patient_id": patient_id,
+        "points": points,
+        "reason": reason,
+        "action_type": action_type,
+        "awarded_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.patient_points.insert_one(point_record)
+    
+    # Update total points
+    await db.patients.update_one(
+        {"id": patient_id},
+        {"$inc": {"total_points": points}}
+    )
+    
+    return point_record
+
+@router.get("/points/{patient_id}")
+async def get_patient_points(patient_id: str):
+    """Get patient's points and history"""
+    # Get total points
+    patient = await db.patients.find_one({"id": patient_id})
+    total_points = patient.get("total_points", 0) if patient else 0
+    
+    # Get point history
+    history = await db.patient_points.find(
+        {"patient_id": patient_id}
+    ).sort("awarded_at", -1).to_list(50)
+    
+    for h in history:
+        h.pop("_id", None)
+    
+    # Calculate level
+    level = "Bronze"
+    if total_points >= 5000:
+        level = "Platinum"
+    elif total_points >= 2000:
+        level = "Gold"
+    elif total_points >= 500:
+        level = "Silver"
+    
+    return {
+        "total_points": total_points,
+        "level": level,
+        "next_level_points": {"Bronze": 500, "Silver": 2000, "Gold": 5000, "Platinum": 10000}.get(level, 10000),
+        "history": history[:20],
+        "redemption_value": f"₹{total_points // 10} discount available"
+    }
+
+@router.post("/points/award")
+async def award_points_endpoint(patient_id: str, points: int, reason: str, action_type: str = "manual"):
+    """Award points to a patient (admin/system use)"""
+    result = await award_points(patient_id, points, reason, action_type)
+    return {"success": True, "awarded": points, "reason": reason}
+
+@router.post("/points/redeem")
+async def redeem_points(patient_id: str, points_to_redeem: int):
+    """Redeem points for discount"""
+    patient = await db.patients.find_one({"id": patient_id})
+    total_points = patient.get("total_points", 0) if patient else 0
+    
+    if points_to_redeem > total_points:
+        return {"success": False, "message": "Insufficient points"}
+    
+    if points_to_redeem < 100:
+        return {"success": False, "message": "Minimum 100 points required for redemption"}
+    
+    # Calculate discount (10 points = ₹1)
+    discount_amount = points_to_redeem // 10
+    
+    # Deduct points
+    await db.patients.update_one(
+        {"id": patient_id},
+        {"$inc": {"total_points": -points_to_redeem}}
+    )
+    
+    # Record redemption
+    redemption = {
+        "patient_id": patient_id,
+        "points_redeemed": points_to_redeem,
+        "discount_amount": discount_amount,
+        "redeemed_at": datetime.now(timezone.utc).isoformat(),
+        "status": "active",
+        "expires_at": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
+    }
+    
+    result = await db.point_redemptions.insert_one(redemption)
+    
+    return {
+        "success": True,
+        "discount_code": f"PTS-{str(result.inserted_id)[-8:].upper()}",
+        "discount_amount": discount_amount,
+        "points_used": points_to_redeem,
+        "remaining_points": total_points - points_to_redeem,
+        "valid_until": redemption["expires_at"]
+    }
+
+# ==================== STREAKS ====================
+
+@router.post("/streaks/log")
+async def log_streak_activity(patient_id: str, activity_type: str):
+    """Log activity for streak tracking"""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+    # Check if already logged today
+    existing = await db.streak_logs.find_one({
+        "patient_id": patient_id,
+        "activity_type": activity_type,
+        "date": today
+    })
+    
+    if existing:
+        return {"success": True, "message": "Already logged today", "streak_maintained": True}
+    
+    # Log the activity
+    await db.streak_logs.insert_one({
+        "patient_id": patient_id,
+        "activity_type": activity_type,
+        "date": today,
+        "logged_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    # Calculate streak
+    streak_count = 1
+    check_date = datetime.now(timezone.utc) - timedelta(days=1)
+    
+    for _ in range(365):  # Max 365 days
+        prev_log = await db.streak_logs.find_one({
+            "patient_id": patient_id,
+            "activity_type": activity_type,
+            "date": check_date.strftime("%Y-%m-%d")
+        })
+        
+        if prev_log:
+            streak_count += 1
+            check_date -= timedelta(days=1)
+        else:
+            break
+    
+    # Award bonus points for streaks
+    bonus_points = 0
+    if streak_count == 7:
+        bonus_points = 100
+        await award_points(patient_id, bonus_points, "7-day streak!", "streak_7")
+    elif streak_count == 30:
+        bonus_points = 500
+        await award_points(patient_id, bonus_points, "30-day streak!", "streak_30")
+    elif streak_count == 100:
+        bonus_points = 2000
+        await award_points(patient_id, bonus_points, "100-day streak!", "streak_100")
+    elif streak_count % 7 == 0:
+        bonus_points = 50
+        await award_points(patient_id, bonus_points, f"{streak_count}-day streak!", f"streak_{streak_count}")
+    
+    # Update patient's streak record
+    await db.patients.update_one(
+        {"id": patient_id},
+        {
+            "$set": {
+                f"streaks.{activity_type}": streak_count,
+                f"streaks.{activity_type}_last_date": today
+            }
+        },
+        upsert=True
+    )
+    
+    return {
+        "success": True,
+        "streak_count": streak_count,
+        "bonus_points": bonus_points,
+        "message": f"🔥 {streak_count} day streak!" if streak_count > 1 else "Streak started!"
+    }
+
+@router.get("/streaks/{patient_id}")
+async def get_streaks(patient_id: str):
+    """Get patient's streak information"""
+    patient = await db.patients.find_one({"id": patient_id})
+    streaks = patient.get("streaks", {}) if patient else {}
+    
+    return {
+        "streaks": {
+            "health_logging": streaks.get("health_logging", 0),
+            "medication": streaks.get("medication", 0),
+            "exercise": streaks.get("exercise", 0),
+            "app_checkin": streaks.get("app_checkin", 0)
+        },
+        "badges": await get_patient_badges(patient_id),
+        "next_milestone": get_next_streak_milestone(max(streaks.values()) if streaks else 0)
+    }
+
+async def get_patient_badges(patient_id: str):
+    """Get patient's earned badges"""
+    badges = await db.patient_badges.find({"patient_id": patient_id}).to_list(50)
+    return [{"name": b["badge_name"], "earned_at": b["earned_at"]} for b in badges]
+
+def get_next_streak_milestone(current_streak: int):
+    """Get the next streak milestone"""
+    milestones = [7, 14, 30, 60, 100, 200, 365]
+    for m in milestones:
+        if current_streak < m:
+            return {"days": m, "days_remaining": m - current_streak}
+    return {"days": 365, "days_remaining": 0, "message": "Maximum streak achieved!"}
+
+# ==================== TIERED CHECKOUT ====================
+
+class TieredCheckoutRequest(BaseModel):
+    plan_type: str
+    tier: str  # starter, standard, premium, annual
+    patient_id: str
+    patient_name: str
+    patient_phone: str
+    patient_email: Optional[str] = None
+    coupon_code: Optional[str] = None
+    referral_code: Optional[str] = None
+
+@router.post("/checkout/tiered")
+async def create_tiered_checkout(request: TieredCheckoutRequest):
+    """Create checkout for a specific tier"""
+    import stripe
+    
+    if not stripe_api_key:
+        raise HTTPException(status_code=500, detail="Payment not configured")
+    
+    stripe.api_key = stripe_api_key
+    
+    plan = SUBSCRIPTION_PLANS.get(request.plan_type)
+    if not plan:
+        raise HTTPException(status_code=400, detail="Invalid plan type")
+    
+    tiers = plan.get("tiers", {})
+    tier_info = tiers.get(request.tier)
+    
+    if not tier_info:
+        raise HTTPException(status_code=400, detail="Invalid tier")
+    
+    price = tier_info["price"]
+    duration_days = tier_info["duration_days"]
+    
+    # Apply referral discount if applicable
+    if request.referral_code:
+        referral_use = await db.referral_uses.find_one({
+            "referral_code": request.referral_code.upper(),
+            "used_by_patient_id": request.patient_id,
+            "reward_given": False
+        })
+        if referral_use:
+            discount_percent = referral_use.get("discount_percent", 20)
+            price = int(price * (100 - discount_percent) / 100)
+    
+    # Apply coupon if provided
+    if request.coupon_code:
+        coupon = await db.coupons.find_one({
+            "code": request.coupon_code.upper(),
+            "is_active": True
+        })
+        if coupon:
+            discount = coupon.get("discount_percent", 0)
+            price = int(price * (100 - discount) / 100)
+    
+    if price == 0:
+        # Free subscription
+        subscription = await activate_subscription(
+            patient_id=request.patient_id,
+            patient_name=request.patient_name,
+            patient_phone=request.patient_phone,
+            patient_email=request.patient_email,
+            plan_type=request.plan_type,
+            payment_method="coupon",
+            coupon_code=request.coupon_code,
+            amount_paid=0
+        )
+        
+        # Process referral reward
+        if request.referral_code:
+            await process_referral_reward(request.referral_code, request.patient_id)
+        
+        return {
+            "free_subscription": True,
+            "subscription_id": subscription["subscription_id"],
+            "message": "Subscription activated!"
+        }
+    
+    # Create Stripe checkout
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'inr',
+                    'product_data': {
+                        'name': f"{plan['name']} - {tier_info['name']}",
+                        'description': f"{duration_days} days access"
+                    },
+                    'unit_amount': price * 100
+                },
+                'quantity': 1
+            }],
+            mode='payment',
+            success_url=f"{os.environ.get('FRONTEND_URL', 'https://nevikacura.com')}/{request.plan_type}?success=true&session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{os.environ.get('FRONTEND_URL', 'https://nevikacura.com')}/{request.plan_type}?canceled=true",
+            metadata={
+                'patient_id': request.patient_id,
+                'patient_name': request.patient_name,
+                'patient_phone': request.patient_phone,
+                'patient_email': request.patient_email or '',
+                'plan_type': request.plan_type,
+                'tier': request.tier,
+                'duration_days': str(duration_days),
+                'coupon_code': request.coupon_code or '',
+                'referral_code': request.referral_code or ''
+            }
+        )
+        
+        return {
+            "checkout_url": session.url,
+            "session_id": session.id,
+            "amount": price,
+            "tier": tier_info["name"],
+            "duration_days": duration_days
+        }
+    except Exception as e:
+        logger.error(f"Stripe error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
