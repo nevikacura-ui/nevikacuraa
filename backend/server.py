@@ -4845,6 +4845,16 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Glydex router: {e}")
 
+# Subscription Management Router
+try:
+    from routes.subscriptions import router as subscriptions_router, set_db as set_subscriptions_db, set_stripe_key as set_subscriptions_stripe
+    set_subscriptions_db(db)
+    set_subscriptions_stripe(stripe_api_key)
+    app.include_router(subscriptions_router, prefix="/api")
+    logger.info("Subscription Management router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Subscriptions router: {e}")
+
 # Patient Registration System
 try:
     from routes.patients import router as patients_router, set_db as set_patients_db, set_jwt_config as set_patients_jwt
