@@ -208,7 +208,7 @@ async def create_subscription_checkout(request: SubscriptionCreateRequest):
     if not stripe_api_key:
         raise HTTPException(status_code=500, detail="Payment system not configured")
     
-    host_url = os.environ.get("REACT_APP_BACKEND_URL", "https://medportal-nevika.preview.emergentagent.com")
+    host_url = os.environ.get("REACT_APP_BACKEND_URL", "https://nevikacura-4.preview.emergentagent.com")
     webhook_url = f"{host_url}/api/webhook/subscription"
     
     stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
