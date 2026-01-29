@@ -242,9 +242,8 @@ async def send_pharmacy_notification(patient_phone: str, order_details: dict, db
             phone=patient_phone,
             patient_name=order_details.get('patient_name', 'Customer'),
             order_id=order_details.get('order_id', ''),
-            items_summary=order_details.get('items_summary', 'Medicine order'),
-            total=str(order_details.get('total', 0)),
-            delivery_type=order_details.get('delivery_type', 'Home Delivery'),
+            items=order_details.get('items_summary', 'Medicine order'),
+            delivery_address=order_details.get('delivery_address', 'Home Delivery'),
             db=db
         )
         return result
