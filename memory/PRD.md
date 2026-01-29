@@ -189,6 +189,26 @@ January 29, 2026
 - Other templates pending Meta approval
 - Twilio SMS now used only for OTP verification
 
+### Coupon Security & Validity (January 29, 2026) ✅
+- **Glydex**: Validity changed from 365 → **180 days (6 months)**
+- **Evara**: Validity changed from 365 → **270 days (9 months)**
+- **Security**: Coupons now bind to device_id + email on first validation
+- Prevents coupon sharing across different devices/accounts
+
+### Login with Email ✅
+- Added "Login with Email" button to both Evara and Glydex
+- Existing users can now login via email OTP without password
+
+### Glydex Email-Only Signup ✅
+- Extended email OTP signup to Glydex page
+- Same 3-step flow as Evara: Email → OTP → Complete Profile
+
+### Clinic Locations UI Redesign ✅
+- Modern card design with gradient headers
+- Service tags (Consultations, Sonography, Lab Tests)
+- Colorful icon boxes for address, phone, hours
+- Gradient "Get Directions" buttons with hover effects
+
 ---
 
 ## Code Architecture (Portal Pages)
