@@ -13,11 +13,9 @@ const portals = [
     name: 'Evara',
     subtitle: "Women's Health",
     path: '/evara',
-    logo: 'https://customer-assets.emergentagent.com/job_6dbb72e5-3d8c-4457-b227-0fe352290e2f/artifacts/9i5r5fd8_Screenshot_20260129-225536.png',
+    logo: '/icons/evara-logo.png',
     bgColor: '#511b63',
-    fillContainer: true,
-    useCrop: true,
-    cropIndex: 0  // First card in the screenshot
+    fillContainer: true
   },
   // 2. Glydex - Diabetes Care (Full branded logo with text)
   {
