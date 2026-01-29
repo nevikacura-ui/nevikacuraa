@@ -1473,48 +1473,96 @@ const Home = () => {
           <p className="text-center text-sm text-slate-500 mt-4">Quality healthcare you can trust</p>
         </div>
 
-        {/* Our Clinics */}
+        {/* Our Clinics - Redesigned */}
         <div className="mb-16" data-testid="clinic-locations">
-          <h2 className="text-xl font-bold text-slate-800 mb-6 text-center">Our Clinic Locations</h2>
-          <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
-            {clinicLocations.map((clinic) => (
+          <div className="text-center mb-8">
+            <span className="inline-block px-4 py-1.5 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 rounded-full text-teal-600 text-sm font-medium mb-3">
+              Visit Us
+            </span>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Our Clinic Locations</h2>
+            <p className="text-slate-500 mt-2 max-w-md mx-auto">Experience quality healthcare at our state-of-the-art facilities</p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {clinicLocations.map((clinic, index) => (
               <div 
                 key={clinic.id}
-                className="bg-white/70 backdrop-blur-xl rounded-xl border border-slate-200/50 shadow-sm hover:shadow-md transition-all overflow-hidden"
+                className="group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                {/* Clinic Logo */}
-                <div className="h-24 bg-white flex items-center justify-center p-3">
-                  <img 
-                    src={clinic.logo} 
-                    alt={clinic.name}
-                    className="max-h-full max-w-full object-contain"
-                  />
+                {/* Clinic Header with Gradient */}
+                <div className={`h-32 relative ${index === 0 ? 'bg-gradient-to-br from-orange-400 via-amber-400 to-yellow-400' : 'bg-gradient-to-br from-teal-400 via-cyan-400 to-blue-400'}`}>
+                  <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center p-4">
+                    <img 
+                      src={clinic.logo} 
+                      alt={clinic.name}
+                      className="max-h-24 max-w-[80%] object-contain drop-shadow-sm"
+                    />
+                  </div>
+                  {/* Decorative corner */}
+                  <div className={`absolute top-0 right-0 w-20 h-20 ${index === 0 ? 'bg-orange-500/20' : 'bg-teal-500/20'} rounded-bl-full`}></div>
                 </div>
                 
-                <div className="p-3">
-                  <h3 className="font-bold text-sm text-slate-800 mb-1">{clinic.name}</h3>
-                  <div className="space-y-1 text-xs">
-                    <p className="text-slate-600 flex items-start gap-1.5">
-                      <MapPin className="w-3 h-3 text-slate-400 flex-shrink-0 mt-0.5" />
-                      {clinic.address}, {clinic.city}
-                    </p>
-                    <p className="text-slate-600 flex items-center gap-1.5">
-                      <Phone className="w-3 h-3 text-slate-400" />
-                      {clinic.phone}
-                    </p>
-                    <p className="text-slate-600 flex items-center gap-1.5">
-                      <Clock className="w-3 h-3 text-slate-400" />
-                      {clinic.hours}
-                    </p>
+                {/* Clinic Details */}
+                <div className="p-5">
+                  <h3 className="font-bold text-lg text-slate-800 mb-3 group-hover:text-teal-600 transition-colors">
+                    {clinic.name}
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    {/* Address */}
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+                        <MapPin className="w-4 h-4 text-slate-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-slate-600 leading-relaxed">{clinic.address}</p>
+                        <p className="text-sm text-slate-500">{clinic.city}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Phone */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-4 h-4 text-green-600" />
+                      </div>
+                      <a href={`tel:${clinic.phone}`} className="text-sm text-slate-700 hover:text-teal-600 font-medium transition-colors">
+                        {clinic.phone}
+                      </a>
+                    </div>
+                    
+                    {/* Hours */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                        <Clock className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <p className="text-sm text-slate-600">{clinic.hours}</p>
+                    </div>
                   </div>
                   
+                  {/* Services Tags */}
+                  {clinic.services && (
+                    <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100">
+                      {clinic.services.map((service, idx) => (
+                        <span key={idx} className="px-2.5 py-1 bg-slate-50 text-slate-600 text-xs font-medium rounded-full">
+                          {service}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Get Directions Button */}
                   <a 
                     href={clinic.mapLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-medium text-slate-700 transition-colors"
+                    className={`mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                      index === 0 
+                        ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:shadow-lg hover:shadow-orange-500/25' 
+                        : 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-teal-500/25'
+                    }`}
                   >
-                    <MapPin className="w-3 h-3" />
+                    <Navigation className="w-4 h-4" />
                     Get Directions
                   </a>
                 </div>
