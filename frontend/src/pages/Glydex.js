@@ -948,17 +948,212 @@ const Glydex = () => {
           <Card className="max-w-md mx-auto p-8 bg-white/95 backdrop-blur-xl shadow-2xl rounded-3xl border-0">
             <div className="text-center mb-6">
               <img src="https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png" alt="Glydex" className="w-24 h-24 mx-auto mb-4 object-contain" />
-              <h2 className="text-xl font-semibold mb-2 text-slate-800">Login Required</h2>
-              <p className="text-slate-600">Please login to access Glydex Diabetes Care features</p>
+              <h2 className="text-xl font-semibold mb-2 text-slate-800">Get Started with Glydex</h2>
+              <p className="text-slate-600">Create an account or login to access Diabetes Care features</p>
             </div>
-            <Button 
-              onClick={() => navigate('/')}
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-lg py-6 rounded-xl shadow-lg"
-            >
-              Go to Home & Login
-            </Button>
+            <div className="space-y-3">
+              <Button 
+                onClick={() => setShowSignup(true)}
+                className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-lg py-6 rounded-xl shadow-lg"
+                data-testid="glydex-signup-btn"
+              >
+                <Mail className="w-5 h-5 mr-2" />
+                Continue with Email
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => { setShowSignup(true); setLoginMode(true); }}
+                className="w-full text-lg py-6 rounded-xl border-2"
+                data-testid="glydex-login-btn"
+              >
+                Login with Email
+              </Button>
+            </div>
           </Card>
         </main>
+        
+        {/* Email Signup/Login Dialog */}
+        <Dialog open={showSignup} onOpenChange={(open) => { if (!open) resetSignupForm(); setShowSignup(open); }}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Droplets className="w-5 h-5 text-emerald-500" />
+                {emailOtpSent && !emailVerificationToken ? 'Verify Email' : 
+                 emailVerificationToken ? 'Complete Profile' : 
+                 loginMode ? 'Welcome Back' : 'Join Glydex'}
+              </DialogTitle>
+              <DialogDescription>
+                {emailOtpSent && !emailVerificationToken ? 
+                  `Enter the 6-digit code sent to ${signupData.email}` :
+                 emailVerificationToken ? 
+                  'Finish setting up your account' :
+                 loginMode ?
+                  'Login with your email to continue' :
+                  'Verify your email to start tracking your diabetes'}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+              {/* Step 1: Email Input */}
+              {!emailOtpSent && (
+                <>
+                  <div>
+                    <Label>Email Address *</Label>
+                    <div className="relative">
+                      <Mail className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                      <Input 
+                        type="email"
+                        placeholder="your@email.com"
+                        className="pl-10"
+                        value={signupData.email}
+                        onChange={(e) => setSignupData({...signupData, email: e.target.value})}
+                        data-testid="glydex-email-input"
+                        onKeyDown={(e) => e.key === 'Enter' && sendEmailOtp()}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {loginMode ? 'We will send a login code to your email' : 'We will send a verification code to your email'}
+                    </p>
+                  </div>
+                  
+                  <Button 
+                    onClick={sendEmailOtp}
+                    className="w-full bg-emerald-500 hover:bg-emerald-600"
+                    disabled={emailOtpLoading || !signupData.email}
+                    data-testid="glydex-send-otp-btn"
+                  >
+                    {emailOtpLoading ? 'Sending...' : loginMode ? 'Send Login Code' : 'Continue with Email'}
+                  </Button>
+                  
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white px-2 text-gray-500">or</span>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    variant="outline"
+                    onClick={() => setLoginMode(!loginMode)}
+                    className="w-full"
+                    data-testid="glydex-toggle-login-btn"
+                  >
+                    {loginMode ? 'Create New Account' : 'Login with Email'}
+                  </Button>
+                </>
+              )}
+
+              {/* Step 2: OTP Verification */}
+              {emailOtpSent && !emailVerificationToken && (
+                <>
+                  <div>
+                    <Label>Verification Code</Label>
+                    <div className="flex gap-2 mt-2 justify-center">
+                      {emailOtp.map((digit, idx) => (
+                        <Input
+                          key={idx}
+                          id={`glydex-otp-${idx}`}
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={1}
+                          value={digit}
+                          onChange={(e) => handleEmailOtpChange(idx, e.target.value)}
+                          onKeyDown={(e) => handleEmailOtpKeyDown(idx, e)}
+                          className="w-10 h-12 text-center text-lg font-mono"
+                          data-testid={`glydex-otp-input-${idx}`}
+                        />
+                      ))}
+                    </div>
+                    {mockEmailOtp && (
+                      <p className="text-xs text-center text-amber-600 mt-2 bg-amber-50 p-2 rounded">
+                        Demo OTP: <strong>{mockEmailOtp}</strong>
+                      </p>
+                    )}
+                  </div>
+                  
+                  <Button 
+                    onClick={verifyEmailOtp}
+                    className="w-full bg-emerald-500 hover:bg-emerald-600"
+                    disabled={emailOtpLoading || emailOtp.join('').length !== 6}
+                    data-testid="glydex-verify-otp-btn"
+                  >
+                    {emailOtpLoading ? 'Verifying...' : 'Verify Code'}
+                  </Button>
+                  
+                  <div className="flex justify-between items-center text-sm">
+                    <button onClick={() => setEmailOtpSent(false)} className="text-gray-500 hover:text-gray-700">
+                      ← Change Email
+                    </button>
+                    {otpResendTimer > 0 ? (
+                      <span className="text-gray-400">Resend in {otpResendTimer}s</span>
+                    ) : (
+                      <button onClick={sendEmailOtp} className="text-emerald-600 hover:underline">Resend Code</button>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Step 3: Complete Registration */}
+              {emailVerificationToken && (
+                <>
+                  <div className="p-3 bg-green-50 rounded-lg flex items-center gap-2">
+                    <Check className="w-5 h-5 text-green-600" />
+                    <span className="text-sm text-green-700">Email verified: {signupData.email}</span>
+                  </div>
+                  
+                  <div>
+                    <Label>Full Name *</Label>
+                    <div className="relative">
+                      <User className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                      <Input placeholder="Your name" className="pl-10" value={signupData.name}
+                        onChange={(e) => setSignupData({...signupData, name: e.target.value})}
+                        data-testid="glydex-name-input"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label>Phone Number (Optional)</Label>
+                    <div className="relative">
+                      <Phone className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                      <Input placeholder="10-digit mobile number" className="pl-10" value={signupData.phone}
+                        onChange={(e) => setSignupData({...signupData, phone: e.target.value})}
+                        data-testid="glydex-phone-input"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label>Password *</Label>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                      <Input type="password" placeholder="Create a password (min 6 characters)" className="pl-10"
+                        value={signupData.password}
+                        onChange={(e) => setSignupData({...signupData, password: e.target.value})}
+                        data-testid="glydex-password-input"
+                      />
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={completeRegistration}
+                    className="w-full bg-emerald-500 hover:bg-emerald-600"
+                    disabled={loading}
+                    data-testid="glydex-complete-signup-btn"
+                  >
+                    {loading ? 'Creating Account...' : 'Create Account'}
+                  </Button>
+                </>
+              )}
+              
+              <p className="text-xs text-center text-gray-400">
+                This account works with Nevika Cura app too!
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
