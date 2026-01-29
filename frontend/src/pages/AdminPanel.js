@@ -479,6 +479,11 @@ const AdminPanel = () => {
               {certifications.map((cert, i) => renderItemCard('certification', cert, i))}
             </div>
           </TabsContent>
+
+          {/* Subscriptions Tab */}
+          <TabsContent value="subscriptions">
+            <SubscriptionsManager />
+          </TabsContent>
         </Tabs>
       </main>
 
