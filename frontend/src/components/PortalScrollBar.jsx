@@ -269,11 +269,16 @@ const PortalScrollBar = () => {
             <button
               key={portal.id}
               onClick={() => navigate(portal.path)}
-              className={`flex-shrink-0 transition-all duration-300 ${
+              className={`flex-shrink-0 ${
                 isActive 
-                  ? 'scale-105 ring-3 ring-teal-500 ring-offset-2 ring-offset-[#F5F5F4] rounded-2xl' 
-                  : 'hover:scale-110 hover:shadow-2xl'
+                  ? 'ring-3 ring-teal-500 ring-offset-2 ring-offset-[#F5F5F4] rounded-2xl' 
+                  : ''
               }`}
+              style={{
+                transform: isActive ? 'scale(1.05) translateZ(0)' : 'translateZ(0)',
+                transition: 'transform 0.2s ease-out',
+                backfaceVisibility: 'hidden'
+              }}
               data-testid={`portal-btn-${portal.id}`}
               title={portal.name}
             >
