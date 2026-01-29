@@ -1802,9 +1802,6 @@ async def complete_membership(request: CompleteMembershipRequest):
         "expires_at": end_date.isoformat()
     }
 
-        "next_milestone": get_next_streak_milestone(max(streaks.values()) if streaks else 0)
-    }
-
 async def get_patient_badges(patient_id: str):
     """Get patient's earned badges"""
     badges = await db.patient_badges.find({"patient_id": patient_id}).to_list(50)
