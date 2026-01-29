@@ -213,42 +213,42 @@ const IntroScreen = ({ onComplete, user }) => {
         {/* Icons */}
         <div className="flex justify-center gap-6 mb-6">
           {[
-            { Icon: Calendar, bg: 'bg-blue-200/80', color: 'text-blue-600', label: 'Appointments' },
-            { Icon: Pill, bg: 'bg-orange-200/80', color: 'text-orange-600', label: 'Pharmacy' },
-            { Icon: TestTube, bg: 'bg-purple-200/80', color: 'text-purple-600', label: 'Lab Tests' },
+            { Icon: Calendar, bg: 'bg-teal-500', color: 'text-white', label: 'Appointments' },
+            { Icon: Pill, bg: 'bg-teal-500', color: 'text-white', label: 'Pharmacy' },
+            { Icon: TestTube, bg: 'bg-teal-500', color: 'text-white', label: 'Lab Tests' },
           ].map(({ Icon, bg, color, label }) => (
             <div key={label} className="flex flex-col items-center gap-2">
-              <div className={`${bg} rounded-2xl w-[72px] h-[72px] flex items-center justify-center shadow-lg border border-white/40`}>
+              <div className={`${bg} rounded-2xl w-[72px] h-[72px] flex items-center justify-center shadow-lg`}>
                 <Icon className={`w-9 h-9 ${color}`} />
               </div>
-              <span className="text-sm text-white font-medium">{label}</span>
+              <span className="text-sm text-white/80 font-medium">{label}</span>
             </div>
           ))}
         </div>
         
         {/* Tagline */}
-        <p className="text-lg text-white/90 font-medium mb-6">
-          All your care. <span className="text-teal-100 font-bold">One app.</span>
+        <p className="text-lg text-white/80 font-medium mb-6">
+          All your care. <span className="text-teal-400 font-bold">One app.</span>
         </p>
         
         {/* Buttons */}
         <div className="space-y-4 max-w-xs mx-auto">
           {hasBiometricSetup && (
             <Button onClick={handleBiometricLogin} disabled={biometricLoading}
-              className="w-full h-14 bg-white/20 text-white hover:bg-white/30 rounded-2xl text-lg font-semibold border border-white/30">
+              className="w-full h-14 bg-white/10 text-white hover:bg-white/20 rounded-2xl text-lg font-semibold border border-white/20">
               {biometricLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Fingerprint className="w-6 h-6 mr-2" />Fingerprint</>}
             </Button>
           )}
           
           <Button onClick={() => setShowAuth(true)} data-testid="splash-login-btn"
-            className="w-full h-14 bg-white text-teal-700 hover:bg-teal-50 rounded-2xl text-lg font-semibold shadow-xl">
+            className="w-full h-14 bg-teal-500 text-white hover:bg-teal-600 rounded-2xl text-lg font-semibold shadow-xl">
             <User className="w-5 h-5 mr-2" />
             {hasBiometricSetup ? 'Login with OTP' : 'Login / Sign Up'}
           </Button>
           
-          <div className="pt-6 border-t border-white/20">
+          <div className="pt-6 border-t border-white/10">
             <button onClick={() => { onComplete(); setTimeout(() => navigate('/staff'), 100); }}
-              className="flex items-center justify-center gap-2 text-sm text-white/70 hover:text-white mx-auto">
+              className="flex items-center justify-center gap-2 text-sm text-white/50 hover:text-white/80 mx-auto">
               <Building2 className="w-4 h-4" /> Staff Login
             </button>
           </div>
