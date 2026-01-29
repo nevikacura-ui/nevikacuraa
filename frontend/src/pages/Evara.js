@@ -1679,6 +1679,7 @@ const Evara = () => {
             </p>
           </CardContent>
         </Card>
+        </SubscriptionGate>
       </main>
 
       {/* Signup/Login Dialog */}
