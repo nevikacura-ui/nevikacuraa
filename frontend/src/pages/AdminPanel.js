@@ -555,7 +555,7 @@ const AdminPanel = () => {
                   <p className="text-xs text-slate-500">{item.location}</p>
                 </div>
               </div>
-              <p className="text-sm text-slate-600 mt-2 line-clamp-2">"{item.text}"</p>
+              <p className="text-sm text-slate-600 mt-2 line-clamp-2">&quot;{item.text}&quot;</p>
             </>
           )}
           {type === 'healthTip' && (
