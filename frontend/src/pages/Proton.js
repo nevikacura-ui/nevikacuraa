@@ -773,7 +773,10 @@ const Proton = () => {
               </div>
 
               {/* Horizontal Scroll Grid */}
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4">
+              <div 
+                className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+              >
                 {[
                   { id: 'pregnancy-tests', name: 'Pregnancy Tests', image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop', tests: ['Beta HCG', 'Pregnancy Test', 'Dual Marker', 'Quadruple Marker', 'NIPT'] },
                   { id: 'fertility', name: 'Fertility Profile', image: 'https://images.unsplash.com/photo-1544126592-807ade215a0b?w=200&h=200&fit=crop', tests: ['AMH', 'FSH', 'LH', 'Prolactin', 'Estradiol', 'Progesterone'] },
