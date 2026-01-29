@@ -215,12 +215,9 @@ const PharmacyProductPage = () => {
           {product.form || 'Medicine'} {product.pack_size && `• ${product.pack_size}`}
         </p>
 
-        {/* Price */}
+        {/* Price Info */}
         <div className="mt-3">
-          <span className="text-lg font-bold text-slate-900">
-            ₹{product.price || '---'}
-          </span>
-          <p className="text-xs text-slate-400 mt-0.5">Inclusive of all taxes</p>
+          <p className="text-xs text-slate-500">Price will be informed after discount before processing the order</p>
         </div>
 
         {/* Prescription Info */}
@@ -422,11 +419,10 @@ const PharmacyProductPage = () => {
       {/* Bottom Fixed Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 z-50">
         <div className="flex items-center justify-between max-w-lg mx-auto">
-          {/* Quantity & Price */}
+          {/* Quantity Info */}
           <div>
             <p className="text-sm text-slate-500">{product.pack_size || '1 Strip'}</p>
-            <p className="text-lg font-bold text-slate-900">₹{product.price || '---'}</p>
-            <p className="text-xs text-slate-400">Inclusive of all taxes</p>
+            <p className="text-xs text-slate-400">Price informed before order</p>
           </div>
           
           {/* Quantity Selector & Add Button */}
