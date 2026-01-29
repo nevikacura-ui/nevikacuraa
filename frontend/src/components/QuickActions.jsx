@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Pill, TestTube, AlertTriangle } from 'lucide-react';
+import { Calendar, Pill, TestTube, AlertTriangle, ScanLine, HeartPulse, Stethoscope } from 'lucide-react';
 
 const QuickActions = ({ className = '' }) => {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ const QuickActions = ({ className = '' }) => {
     {
       id: 'book-doctor',
       label: 'Book Doctor',
-      icon: Calendar,
+      icon: Stethoscope,
       path: '/diagyn',
       gradient: 'from-teal-500 to-cyan-500',
       shadowColor: 'shadow-teal-500/30'
@@ -31,6 +31,22 @@ const QuickActions = ({ className = '' }) => {
       shadowColor: 'shadow-blue-500/30'
     },
     {
+      id: 'sonography',
+      label: 'Sonography',
+      icon: ScanLine,
+      path: '/proton?section=sonography',
+      gradient: 'from-purple-500 to-violet-500',
+      shadowColor: 'shadow-purple-500/30'
+    },
+    {
+      id: 'ecg',
+      label: 'Book ECG',
+      icon: HeartPulse,
+      path: '/proton?section=ecg',
+      gradient: 'from-pink-500 to-rose-500',
+      shadowColor: 'shadow-pink-500/30'
+    },
+    {
       id: 'emergency',
       label: 'Emergency',
       icon: AlertTriangle,
@@ -43,15 +59,15 @@ const QuickActions = ({ className = '' }) => {
 
   return (
     <div className={`${className}`}>
-      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {actions.map((action) => (
           <button
             key={action.id}
             onClick={() => navigate(action.path)}
-            className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r ${action.gradient} text-white font-medium text-sm shadow-lg ${action.shadowColor} hover:scale-105 active:scale-95 transition-all duration-200 ${action.pulse ? 'animate-pulse' : ''}`}
+            className={`flex-shrink-0 flex items-center gap-2.5 px-5 py-3 rounded-full bg-gradient-to-r ${action.gradient} text-white font-semibold text-sm shadow-lg ${action.shadowColor} hover:scale-105 active:scale-95 transition-all duration-200 ${action.pulse ? 'animate-pulse' : ''}`}
             data-testid={`quick-action-${action.id}`}
           >
-            <action.icon className="w-4 h-4" />
+            <action.icon className="w-5 h-5" />
             <span>{action.label}</span>
           </button>
         ))}
