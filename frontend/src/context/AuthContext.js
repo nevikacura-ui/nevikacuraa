@@ -398,6 +398,7 @@ export const AuthProvider = ({ children }) => {
       biometricAvailable, biometricEnabled,
       login, register, logout,
       sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp,
+      sendEmailOtp, verifyEmailOtp, loginWithEmailOtp, registerWithEmailOtp,
       setPatientAuth, // New: for patient portal login sync
       fetchUser: refreshUser,
       registerBiometric, loginWithBiometric, removeBiometric,
