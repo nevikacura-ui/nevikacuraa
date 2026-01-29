@@ -194,6 +194,42 @@ export const AuthProvider = ({ children }) => {
     return response.data;
   };
 
+  // Email OTP authentication methods
+  const sendEmailOtp = async (email) => {
+    const response = await axios.post(`${API}/auth/email-otp/send`, { email: email.toLowerCase() });
+    return response.data;
+  };
+
+  const verifyEmailOtp = async (email, otp) => {
+    const response = await axios.post(`${API}/auth/email-otp/verify`, { email: email.toLowerCase(), otp });
+    return response.data;
+  };
+
+  const loginWithEmailOtp = async (email, verification_token) => {
+    const response = await axios.post(`${API}/auth/email-otp/login`, { 
+      email: email.toLowerCase(), 
+      verification_token 
+    });
+    setToken(response.data.token);
+    setUser(response.data.user);
+    localStorage.setItem('token', response.data.token);
+    return response.data;
+  };
+
+  const registerWithEmailOtp = async (email, verification_token, name, phone = '', password) => {
+    const response = await axios.post(`${API}/auth/register`, { 
+      email: email.toLowerCase(),
+      verification_token,
+      name,
+      phone,
+      password
+    });
+    setToken(response.data.token);
+    setUser(response.data.user);
+    localStorage.setItem('token', response.data.token);
+    return response.data;
+  };
+
   // Biometric authentication
   const registerBiometric = async () => {
     if (!token) throw new Error('Must be logged in to register biometric');
