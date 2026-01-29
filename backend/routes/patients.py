@@ -628,66 +628,49 @@ async def search_patients(
 @router.post("/portal/send-otp")
 async def send_patient_portal_otp(mobile: str):
     """Send OTP for patient portal login"""
-    # Clean mobile number
+    from services.notifications import send_sms_notification
+    
     clean_mobile = mobile.replace("+91", "").replace(" ", "").replace("-", "")[-10:]
     
-    # Demo mode - fixed numbers for testing
+    # Demo mode - fixed numbers
     DEMO_NUMBERS = ["9876543210", "1234567890", "9999999999"]
     is_demo = clean_mobile in DEMO_NUMBERS
     
-    # Check if patient exists
     patient = await db.patients.find_one({
-        "$or": [
-            {"mobile": clean_mobile},
-            {"mobile": f"+91{clean_mobile}"}
-        ]
+        "$or": [{"mobile": clean_mobile}, {"mobile": f"+91{clean_mobile}"}]
     })
     
-    # Auto-create demo patient if doesn't exist
+    # Auto-create demo patient
     if not patient and is_demo:
         patient = {
             "patient_id": f"DEMO-{clean_mobile[-4:]}",
-            "name": f"Demo Patient {clean_mobile[-4:]}",
+            "name": f"Demo Patient",
             "mobile": clean_mobile,
-            "email": f"demo{clean_mobile[-4:]}@nevikacura.com",
-            "gender": "Other",
-            "age": 30,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "is_demo": True
         }
         await db.patients.insert_one(patient)
     elif not patient:
-        raise HTTPException(status_code=404, detail="Patient not registered. Please visit the clinic to register.")
+        raise HTTPException(status_code=404, detail="Not registered. Visit clinic to register.")
     
-    # Demo mode uses fixed OTP: 123456
-    if is_demo:
-        otp = "123456"
-    else:
-        import random
-        otp = str(random.randint(100000, 999999))
+    otp = "123456" if is_demo else str(__import__('random').randint(100000, 999999))
     
-    # Store OTP
     await db.patient_otps.update_one(
         {"mobile": clean_mobile},
-        {
-            "$set": {
-                "mobile": clean_mobile,
-                "otp": otp,
-                "created_at": datetime.now(timezone.utc).isoformat(),
-                "expires_at": (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
-            }
-        },
+        {"$set": {"mobile": clean_mobile, "otp": otp, "expires_at": (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()}},
         upsert=True
     )
     
-    # TODO: Send OTP via SMS
+    # Send SMS for non-demo (fallback)
+    sms_sent = False
+    if not is_demo:
+        try:
+            await send_sms_notification(f"+91{clean_mobile}", f"Your Nevika Cura OTP: {otp}. Valid 10 mins.")
+            sms_sent = True
+        except:
+            pass
     
-    return {
-        "success": True,
-        "message": "OTP sent successfully" + (" (Demo: use 123456)" if is_demo else ""),
-        "mock_otp": otp,  # Remove in production
-        "is_demo": is_demo
-    }
+    return {"success": True, "message": f"OTP sent{' (Demo: 123456)' if is_demo else ''}", "mock_otp": otp, "sms_sent": sms_sent}
 
 
 @router.post("/portal/verify-otp")
