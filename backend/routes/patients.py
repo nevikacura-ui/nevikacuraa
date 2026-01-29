@@ -631,6 +631,10 @@ async def send_patient_portal_otp(mobile: str):
     # Clean mobile number
     clean_mobile = mobile.replace("+91", "").replace(" ", "").replace("-", "")[-10:]
     
+    # Demo mode - fixed numbers for testing
+    DEMO_NUMBERS = ["9876543210", "1234567890", "9999999999"]
+    is_demo = clean_mobile in DEMO_NUMBERS
+    
     # Check if patient exists
     patient = await db.patients.find_one({
         "$or": [
@@ -639,12 +643,28 @@ async def send_patient_portal_otp(mobile: str):
         ]
     })
     
-    if not patient:
+    # Auto-create demo patient if doesn't exist
+    if not patient and is_demo:
+        patient = {
+            "patient_id": f"DEMO-{clean_mobile[-4:]}",
+            "name": f"Demo Patient {clean_mobile[-4:]}",
+            "mobile": clean_mobile,
+            "email": f"demo{clean_mobile[-4:]}@nevikacura.com",
+            "gender": "Other",
+            "age": 30,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "is_demo": True
+        }
+        await db.patients.insert_one(patient)
+    elif not patient:
         raise HTTPException(status_code=404, detail="Patient not registered. Please visit the clinic to register.")
     
-    # Generate OTP (mock for now)
-    import random
-    otp = str(random.randint(100000, 999999))
+    # Demo mode uses fixed OTP: 123456
+    if is_demo:
+        otp = "123456"
+    else:
+        import random
+        otp = str(random.randint(100000, 999999))
     
     # Store OTP
     await db.patient_otps.update_one(
@@ -664,8 +684,9 @@ async def send_patient_portal_otp(mobile: str):
     
     return {
         "success": True,
-        "message": "OTP sent successfully",
-        "mock_otp": otp  # Remove in production
+        "message": "OTP sent successfully" + (" (Demo: use 123456)" if is_demo else ""),
+        "mock_otp": otp,  # Remove in production
+        "is_demo": is_demo
     }
 
 
