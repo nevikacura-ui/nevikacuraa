@@ -944,7 +944,7 @@ const Pharmacy = () => {
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-4 py-3">
           <p className="text-xs font-medium text-slate-500 mb-2">Quick shop by health concern:</p>
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
               { id: 'diabetes', name: 'Diabetes', icon: '🩸', filter: 'diabetes' },
               { id: 'heart', name: 'Heart Care', icon: '❤️', filter: 'cardiac' },
@@ -952,7 +952,12 @@ const Pharmacy = () => {
               { id: 'digestive', name: 'Digestive', icon: '🫃', filter: 'digestive' },
               { id: 'skin', name: 'Skin Care', icon: '✨', filter: 'skin' },
               { id: 'respiratory', name: 'Cold & Cough', icon: '🫁', filter: 'cold' },
-              { id: 'vitamins', name: 'Vitamins', icon: '💪', filter: 'vitamin' }
+              { id: 'vitamins', name: 'Vitamins', icon: '💪', filter: 'vitamin' },
+              { id: 'eye', name: 'Eye Care', icon: '👁️', filter: 'eye' },
+              { id: 'bone', name: 'Bone & Joint', icon: '🦴', filter: 'bone' },
+              { id: 'mental', name: 'Mental Health', icon: '🧠', filter: 'mental' },
+              { id: 'thyroid', name: 'Thyroid', icon: '🦋', filter: 'thyroid' },
+              { id: 'immunity', name: 'Immunity', icon: '🛡️', filter: 'immunity' }
             ].map((concern) => (
               <button
                 key={concern.id}
