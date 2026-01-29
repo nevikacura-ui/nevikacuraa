@@ -203,9 +203,13 @@ const PortalScrollBar = () => {
 
   return (
     <div 
-      className={`relative bg-[#F5F5F4] border-b border-slate-200/50 sticky top-[60px] z-40 overflow-hidden transition-all duration-300 ease-in-out ${
+      className={`relative bg-[#F5F5F4] border-b border-slate-200/50 sticky top-[60px] z-40 overflow-hidden ${
         isVisible ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0 border-b-0'
       }`}
+      style={{ 
+        transition: 'max-height 0.3s ease-out, opacity 0.2s ease-out',
+        willChange: 'max-height, opacity'
+      }}
       data-testid="portal-scroll-bar"
     >
       {/* Left Arrow */}
