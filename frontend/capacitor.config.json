@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://nevikacura-4.preview.emergentagent.com",
+    "url": "https://healix-portal-2.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {
