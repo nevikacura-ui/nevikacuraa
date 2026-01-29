@@ -1884,13 +1884,16 @@ const Evara = () => {
             <DialogTitle className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-pink-500" />
               {emailOtpSent && !emailVerificationToken ? 'Verify Email' : 
-               emailVerificationToken ? 'Complete Profile' : 'Join Evara'}
+               emailVerificationToken ? 'Complete Profile' : 
+               loginMode ? 'Welcome Back' : 'Join Evara'}
             </DialogTitle>
             <DialogDescription>
               {emailOtpSent && !emailVerificationToken ? 
                 `Enter the 6-digit code sent to ${signupData.email}` :
                emailVerificationToken ? 
                 'Finish setting up your account' :
+               loginMode ?
+                'Login with your email to continue' :
                 'Verify your email to start your wellness journey'}
             </DialogDescription>
           </DialogHeader>
@@ -1914,7 +1917,7 @@ const Evara = () => {
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    We'll send a verification code to your email
+                    {loginMode ? 'We will send a login code to your email' : 'We will send a verification code to your email'}
                   </p>
                 </div>
                 
@@ -1924,7 +1927,25 @@ const Evara = () => {
                   disabled={emailOtpLoading || !signupData.email}
                   data-testid="evara-send-otp-btn"
                 >
-                  {emailOtpLoading ? 'Sending...' : 'Continue with Email'}
+                  {emailOtpLoading ? 'Sending...' : loginMode ? 'Send Login Code' : 'Continue with Email'}
+                </Button>
+                
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white px-2 text-gray-500">or</span>
+                  </div>
+                </div>
+                
+                <Button 
+                  variant="outline"
+                  onClick={() => setLoginMode(!loginMode)}
+                  className="w-full"
+                  data-testid="evara-toggle-login-btn"
+                >
+                  {loginMode ? 'Create New Account' : 'Login with Email'}
                 </Button>
               </>
             )}
