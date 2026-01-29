@@ -1874,22 +1874,127 @@ const Evara = () => {
         </SubscriptionGate>
       </main>
 
-      {/* Signup/Login Dialog */}
-      <Dialog open={showSignup} onOpenChange={setShowSignup}>
+      {/* Signup/Login Dialog with Email OTP */}
+      <Dialog open={showSignup} onOpenChange={(open) => {
+        if (!open) resetSignupForm();
+        setShowSignup(open);
+      }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-pink-500" />
-              {loginMode ? 'Welcome Back' : 'Join Evara'}
+              {emailOtpSent && !emailVerificationToken ? 'Verify Email' : 
+               emailVerificationToken ? 'Complete Profile' : 'Join Evara'}
             </DialogTitle>
             <DialogDescription>
-              {loginMode ? 'Sign in to continue your wellness journey' : 'Create your account to start your wellness journey'}
+              {emailOtpSent && !emailVerificationToken ? 
+                `Enter the 6-digit code sent to ${signupData.email}` :
+               emailVerificationToken ? 
+                'Finish setting up your account' :
+                'Verify your email to start your wellness journey'}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
-            {!loginMode && (
+            {/* Step 1: Email Input */}
+            {!emailOtpSent && (
               <>
+                <div>
+                  <Label>Email Address *</Label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                    <Input 
+                      type="email"
+                      placeholder="your@email.com"
+                      className="pl-10"
+                      value={signupData.email}
+                      onChange={(e) => setSignupData({...signupData, email: e.target.value})}
+                      data-testid="evara-email-input"
+                      onKeyDown={(e) => e.key === 'Enter' && sendEmailOtp()}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    We'll send a verification code to your email
+                  </p>
+                </div>
+                
+                <Button 
+                  onClick={sendEmailOtp}
+                  className="w-full bg-pink-500 hover:bg-pink-600"
+                  disabled={emailOtpLoading || !signupData.email}
+                  data-testid="evara-send-otp-btn"
+                >
+                  {emailOtpLoading ? 'Sending...' : 'Continue with Email'}
+                </Button>
+              </>
+            )}
+
+            {/* Step 2: OTP Verification */}
+            {emailOtpSent && !emailVerificationToken && (
+              <>
+                <div>
+                  <Label>Verification Code</Label>
+                  <div className="flex gap-2 mt-2 justify-center">
+                    {emailOtp.map((digit, idx) => (
+                      <Input
+                        key={idx}
+                        id={`evara-otp-${idx}`}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e) => handleEmailOtpChange(idx, e.target.value)}
+                        onKeyDown={(e) => handleEmailOtpKeyDown(idx, e)}
+                        className="w-10 h-12 text-center text-lg font-mono"
+                        data-testid={`evara-otp-input-${idx}`}
+                      />
+                    ))}
+                  </div>
+                  {mockEmailOtp && (
+                    <p className="text-xs text-center text-amber-600 mt-2 bg-amber-50 p-2 rounded">
+                      Demo OTP: <strong>{mockEmailOtp}</strong>
+                    </p>
+                  )}
+                </div>
+                
+                <Button 
+                  onClick={verifyEmailOtp}
+                  className="w-full bg-pink-500 hover:bg-pink-600"
+                  disabled={emailOtpLoading || emailOtp.join('').length !== 6}
+                  data-testid="evara-verify-otp-btn"
+                >
+                  {emailOtpLoading ? 'Verifying...' : 'Verify Code'}
+                </Button>
+                
+                <div className="flex justify-between items-center text-sm">
+                  <button 
+                    onClick={() => setEmailOtpSent(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    ← Change Email
+                  </button>
+                  {otpResendTimer > 0 ? (
+                    <span className="text-gray-400">Resend in {otpResendTimer}s</span>
+                  ) : (
+                    <button 
+                      onClick={sendEmailOtp}
+                      className="text-pink-600 hover:underline"
+                    >
+                      Resend Code
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* Step 3: Complete Registration */}
+            {emailVerificationToken && (
+              <>
+                <div className="p-3 bg-green-50 rounded-lg flex items-center gap-2">
+                  <Check className="w-5 h-5 text-green-600" />
+                  <span className="text-sm text-green-700">Email verified: {signupData.email}</span>
+                </div>
+                
                 <div>
                   <Label>Full Name *</Label>
                   <div className="relative">
@@ -1899,11 +2004,13 @@ const Evara = () => {
                       className="pl-10"
                       value={signupData.name}
                       onChange={(e) => setSignupData({...signupData, name: e.target.value})}
+                      data-testid="evara-name-input"
                     />
                   </div>
                 </div>
+                
                 <div>
-                  <Label>Phone Number *</Label>
+                  <Label>Phone Number (Optional)</Label>
                   <div className="relative">
                     <Phone className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
                     <Input 
@@ -1911,59 +2018,36 @@ const Evara = () => {
                       className="pl-10"
                       value={signupData.phone}
                       onChange={(e) => setSignupData({...signupData, phone: e.target.value})}
+                      data-testid="evara-phone-input"
                     />
                   </div>
                 </div>
+                
+                <div>
+                  <Label>Password *</Label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+                    <Input 
+                      type="password"
+                      placeholder="Create a password (min 6 characters)"
+                      className="pl-10"
+                      value={signupData.password}
+                      onChange={(e) => setSignupData({...signupData, password: e.target.value})}
+                      data-testid="evara-password-input"
+                    />
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={completeRegistration}
+                  className="w-full bg-pink-500 hover:bg-pink-600"
+                  disabled={loading}
+                  data-testid="evara-complete-signup-btn"
+                >
+                  {loading ? 'Creating Account...' : 'Create Account'}
+                </Button>
               </>
             )}
-            
-            <div>
-              <Label>Email *</Label>
-              <div className="relative">
-                <Mail className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
-                <Input 
-                  type="email"
-                  placeholder="your@email.com"
-                  className="pl-10"
-                  value={signupData.email}
-                  onChange={(e) => setSignupData({...signupData, email: e.target.value})}
-                  required
-                />
-              </div>
-            </div>
-            
-            <div>
-              <Label>Password *</Label>
-              <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
-                <Input 
-                  type="password"
-                  placeholder="Create a password"
-                  className="pl-10"
-                  value={signupData.password}
-                  onChange={(e) => setSignupData({...signupData, password: e.target.value})}
-                  required
-                />
-              </div>
-            </div>
-            
-            <Button 
-              onClick={handleSignup} 
-              className="w-full bg-pink-500 hover:bg-pink-600"
-              disabled={loading}
-            >
-              {loading ? 'Please wait...' : (loginMode ? 'Sign In' : 'Create Account')}
-            </Button>
-            
-            <p className="text-center text-sm text-gray-500">
-              {loginMode ? "Don't have an account? " : "Already have an account? "}
-              <button 
-                onClick={() => setLoginMode(!loginMode)}
-                className="text-pink-600 hover:underline"
-              >
-                {loginMode ? 'Sign Up' : 'Sign In'}
-              </button>
-            </p>
             
             <p className="text-xs text-center text-gray-400">
               This account works with Nevika Cura app too!
