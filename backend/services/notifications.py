@@ -209,24 +209,29 @@ async def send_whatsapp_notification(to_number: str, message: str):
 
 # ============ Appointment Notifications ============
 
+async def send_appointment_notification(patient_phone: str, appointment_details: dict, db=None):
+    """Send appointment confirmation via MSG91 WhatsApp (primary)"""
+    from services.msg91_whatsapp import send_diagyn_appointment_confirmation
+    
+    try:
+        result = await send_diagyn_appointment_confirmation(
+            phone=patient_phone,
+            patient_name=appointment_details.get('patient_name', 'Patient'),
+            date=appointment_details.get('date', ''),
+            time=appointment_details.get('time', ''),
+            doctor_name=appointment_details.get('doctor', 'Doctor'),
+            clinic_name=appointment_details.get('clinic', 'Clinic'),
+            booking_id=appointment_details.get('booking_id', ''),
+            db=db
+        )
+        return result
+    except Exception as e:
+        logger.error(f"MSG91 WhatsApp failed: {e}")
+        return {"success": False, "error": str(e)}
+
 async def send_appointment_sms(patient_phone: str, appointment_details: dict):
-    """Send appointment confirmation SMS"""
-    message = f"""🏥 Nevika Cura - Appointment Confirmed
-
-Dear {appointment_details.get('patient_name', 'Patient')},
-
-Your appointment is confirmed:
-📅 Date: {appointment_details.get('date')}
-⏰ Time: {appointment_details.get('time')}
-👨‍⚕️ Doctor: {appointment_details.get('doctor')}
-🏢 Clinic: {appointment_details.get('clinic')}
-🔢 Token: {appointment_details.get('token_number', 'N/A')}
-
-Please arrive 10 minutes early.
-
-Need help? Call: 9403890429"""
-
-    return await send_sms_notification(patient_phone, message)
+    """Legacy SMS - deprecated, use send_appointment_notification instead"""
+    return await send_appointment_notification(patient_phone, appointment_details)
 
 async def send_pharmacy_order_sms(patient_phone: str, order_details: dict):
     """Send pharmacy order confirmation SMS"""
