@@ -831,6 +831,13 @@ const Glydex = () => {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6">
+        <SubscriptionGate
+          planType="glydex"
+          patientId={user?.id || user?.patient_id || localStorage.getItem('patientId')}
+          patientName={user?.name}
+          patientPhone={user?.phone}
+          patientEmail={user?.email}
+        >
         {/* Health Guides Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {/* Emergency Alert Banner */}
