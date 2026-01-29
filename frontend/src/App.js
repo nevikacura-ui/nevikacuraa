@@ -135,6 +135,7 @@ function AppContent() {
           {/* New Feature Routes */}
           <Route path="/my-health" element={<AnimatedPage><MyHealth /></AnimatedPage>} />
           <Route path="/health-packages" element={<AnimatedPage><HealthPackages /></AnimatedPage>} />
+          <Route path="/membership-plans" element={<AnimatedPage><MembershipPlans /></AnimatedPage>} />
           <Route path="/referral" element={<AnimatedPage><ReferralProgram /></AnimatedPage>} />
           <Route path="/health-tips" element={<AnimatedPage><HealthTips /></AnimatedPage>} />
           <Route path="/teleconsult" element={<AnimatedPage><Teleconsultation /></AnimatedPage>} />
