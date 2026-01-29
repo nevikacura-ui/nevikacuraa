@@ -1185,71 +1185,232 @@ const Pharmacy = () => {
               </Card>
             )}
 
-            {/* Inventory List */}
+            {/* Inventory List - Blinkit Style */}
             <Card className="p-5 rounded-2xl border-orange-100">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-4">
                 <h3 className="font-medium text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
                   <Package className="w-4 h-4 text-orange-500" />
                   Available Medicines
                 </h3>
-                <span className="text-sm text-slate-500 bg-orange-100 px-3 py-1 rounded-full">
-                  Total: {totalMedicines.toLocaleString()}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-500 bg-orange-100 px-3 py-1 rounded-full">
+                    {totalMedicines.toLocaleString()} items
+                  </span>
+                  {/* View Mode Toggle */}
+                  <div className="flex bg-slate-100 rounded-lg p-1">
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className={`p-1.5 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-orange-500' : 'text-slate-400'}`}
+                    >
+                      <Grid3X3 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('list')}
+                      className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-orange-500' : 'text-slate-400'}`}
+                    >
+                      <List className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
               </div>
               
               {inventoryLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
-                  <span className="ml-2 text-slate-500">Loading medicines...</span>
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+                  <span className="ml-3 text-slate-500">Loading medicines...</span>
                 </div>
               ) : (
                 <div 
                   ref={inventoryListRef}
-                  className="max-h-80 overflow-y-auto border border-orange-100 rounded-xl"
+                  className="max-h-[500px] overflow-y-auto"
                   onScroll={handleInventoryScroll}
                   data-testid="medicine-list"
                 >
                   {inventory.length === 0 ? (
-                    <div className="p-4 text-center text-slate-500">
+                    <div className="p-8 text-center text-slate-500">
+                      <Package className="w-12 h-12 mx-auto mb-3 text-slate-300" />
                       {searchTerm ? 'No medicines found matching your search' : 'No medicines available'}
                     </div>
-                  ) : (
-                    <div className="divide-y divide-orange-50">
+                  ) : viewMode === 'grid' ? (
+                    /* GRID VIEW - Blinkit Style */
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                       {inventory.map((med, idx) => (
-                        <button
+                        <div
                           key={`${med.name}-${idx}`}
-                          onClick={() => addToCart(med)}
-                          className="w-full flex items-center justify-between p-3 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 transition-colors text-left group"
+                          className="bg-white rounded-xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-orange-200 transition-all cursor-pointer group"
+                          onClick={() => { setSelectedMedicine(med); setShowProductDetail(true); }}
                           data-testid={`inventory-item-${idx}`}
                         >
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <span className="text-2xl" role="img" aria-label={med.form}>{getMedicineIcon(med.form)}</span>
-                            <div>
-                              <span className="font-medium text-sm text-slate-800 block truncate">{med.name}</span>
-                              <span className="text-xs text-orange-600 font-medium">{med.form}</span>
+                          {/* Product Image */}
+                          <div className="aspect-square bg-gradient-to-br from-orange-50 to-amber-50 p-4 relative">
+                            {med.image ? (
+                              <img 
+                                src={med.image} 
+                                alt={med.name}
+                                className="w-full h-full object-contain"
+                                onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                              />
+                            ) : null}
+                            <div className={`${med.image ? 'hidden' : 'flex'} w-full h-full items-center justify-center`}>
+                              <span className="text-5xl">{getMedicineIcon(med.form)}</span>
+                            </div>
+                            {/* Quick Add Button */}
+                            <button
+                              onClick={(e) => { e.stopPropagation(); addToCart(med); }}
+                              className="absolute bottom-2 right-2 w-8 h-8 bg-orange-500 hover:bg-orange-600 text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <Plus className="w-5 h-5" />
+                            </button>
+                          </div>
+                          {/* Product Info */}
+                          <div className="p-3">
+                            <span className="text-[10px] text-orange-600 font-semibold uppercase tracking-wide">{med.form}</span>
+                            <h4 className="font-medium text-sm text-slate-800 leading-tight line-clamp-2 mt-1 min-h-[2.5rem]">
+                              {med.name}
+                            </h4>
+                            <div className="flex items-center justify-between mt-2">
+                              <span className="text-xs text-slate-400">Tap for details</span>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); addToCart(med); }}
+                                className="text-xs font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                              >
+                                <Plus className="w-3 h-3" /> ADD
+                              </button>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-slate-400 group-hover:text-orange-500">Add</span>
-                            <Plus className="w-5 h-5 text-orange-500 flex-shrink-0" />
-                          </div>
-                        </button>
+                        </div>
                       ))}
-                      {loadingMore && (
-                        <div className="p-3 text-center">
-                          <Loader2 className="w-5 h-5 animate-spin text-orange-500 inline-block" />
+                    </div>
+                  ) : (
+                    /* LIST VIEW */
+                    <div className="divide-y divide-orange-50 border border-orange-100 rounded-xl overflow-hidden">
+                      {inventory.map((med, idx) => (
+                        <div
+                          key={`${med.name}-${idx}`}
+                          onClick={() => { setSelectedMedicine(med); setShowProductDetail(true); }}
+                          className="flex items-center gap-4 p-3 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 transition-colors cursor-pointer group"
+                          data-testid={`inventory-item-${idx}`}
+                        >
+                          {/* Image */}
+                          <div className="w-16 h-16 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+                            {med.image ? (
+                              <img src={med.image} alt={med.name} className="w-full h-full object-contain p-1" />
+                            ) : (
+                              <span className="text-3xl">{getMedicineIcon(med.form)}</span>
+                            )}
+                          </div>
+                          {/* Details */}
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10px] text-orange-600 font-semibold uppercase">{med.form}</span>
+                            <h4 className="font-medium text-sm text-slate-800 truncate">{med.name}</h4>
+                            <p className="text-xs text-slate-400 mt-0.5">Tap for more details</p>
+                          </div>
+                          {/* Add Button */}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); addToCart(med); }}
+                            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-semibold flex items-center gap-1 shadow-sm"
+                          >
+                            <Plus className="w-4 h-4" /> ADD
+                          </button>
                         </div>
-                      )}
-                      {!hasMoreMedicines && inventory.length > 0 && (
-                        <div className="p-3 text-center text-xs text-slate-400 bg-orange-50">
-                          End of list • {inventory.length} medicines shown
-                        </div>
-                      )}
+                      ))}
+                    </div>
+                  )}
+                  {loadingMore && (
+                    <div className="p-4 text-center">
+                      <Loader2 className="w-6 h-6 animate-spin text-orange-500 inline-block" />
+                    </div>
+                  )}
+                  {!hasMoreMedicines && inventory.length > 0 && (
+                    <div className="p-4 text-center text-xs text-slate-400 bg-orange-50 rounded-xl mt-3">
+                      End of list • {inventory.length} medicines shown
                     </div>
                   )}
                 </div>
               )}
             </Card>
+
+            {/* Product Detail Dialog - Blinkit Style */}
+            <Dialog open={showProductDetail} onOpenChange={setShowProductDetail}>
+              <DialogContent className="max-w-lg p-0 overflow-hidden">
+                {selectedMedicine && (
+                  <>
+                    {/* Product Image Section */}
+                    <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-8 relative">
+                      <button 
+                        onClick={() => setShowProductDetail(false)}
+                        className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-slate-50"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <div className="w-48 h-48 mx-auto flex items-center justify-center">
+                        {selectedMedicine.image ? (
+                          <img 
+                            src={selectedMedicine.image} 
+                            alt={selectedMedicine.name}
+                            className="w-full h-full object-contain"
+                          />
+                        ) : (
+                          <span className="text-8xl">{getMedicineIcon(selectedMedicine.form)}</span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Product Details */}
+                    <div className="p-6">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <span className="inline-block px-2 py-1 bg-orange-100 text-orange-600 text-xs font-semibold rounded-full mb-2">
+                            {selectedMedicine.form}
+                          </span>
+                          <h2 className="text-xl font-bold text-slate-800 leading-tight">
+                            {selectedMedicine.name}
+                          </h2>
+                        </div>
+                      </div>
+                      
+                      {/* Info Cards */}
+                      <div className="grid grid-cols-3 gap-3 mt-4">
+                        <div className="bg-slate-50 rounded-xl p-3 text-center">
+                          <Clock className="w-5 h-5 text-slate-400 mx-auto mb-1" />
+                          <p className="text-[10px] text-slate-500">Delivery</p>
+                          <p className="text-xs font-semibold text-slate-700">Same Day</p>
+                        </div>
+                        <div className="bg-slate-50 rounded-xl p-3 text-center">
+                          <Truck className="w-5 h-5 text-slate-400 mx-auto mb-1" />
+                          <p className="text-[10px] text-slate-500">Shipping</p>
+                          <p className="text-xs font-semibold text-slate-700">Free</p>
+                        </div>
+                        <div className="bg-slate-50 rounded-xl p-3 text-center">
+                          <Shield className="w-5 h-5 text-slate-400 mx-auto mb-1" />
+                          <p className="text-[10px] text-slate-500">Quality</p>
+                          <p className="text-xs font-semibold text-slate-700">Verified</p>
+                        </div>
+                      </div>
+                      
+                      {/* Description */}
+                      <div className="mt-4 p-4 bg-orange-50 rounded-xl">
+                        <h4 className="font-semibold text-sm text-slate-700 mb-2">Product Details</h4>
+                        <ul className="text-sm text-slate-600 space-y-1">
+                          <li>• Form: {selectedMedicine.form}</li>
+                          <li>• Category: {selectedMedicine.category || 'General Medicine'}</li>
+                          <li>• Prescription may be required for certain medicines</li>
+                        </ul>
+                      </div>
+                      
+                      {/* Add to Cart Button */}
+                      <button
+                        onClick={() => { addToCart(selectedMedicine); setShowProductDetail(false); }}
+                        className="w-full mt-6 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all"
+                      >
+                        <Plus className="w-5 h-5" />
+                        Add to Cart
+                      </button>
+                    </div>
+                  </>
+                )}
+              </DialogContent>
+            </Dialog>
 
             {/* Cart */}
             {medicines.length > 0 && (
