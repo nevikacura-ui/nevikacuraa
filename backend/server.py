@@ -4057,11 +4057,49 @@ async def get_report_trends(patient_id: str, test_name: str = None):
             }
     
     return {
+        "success": True,
         "patient_id": patient_id,
-        "trends": trends,
+        "parameters": [
+            {
+                "name": test_type,
+                "currentValue": data.get("latest_value", data.get("values", [{}])[0].get("value", 0)),
+                "unit": data.get("values", [{}])[0].get("unit", ""),
+                "trend": "increasing" if data.get("trend") == "up" else "decreasing" if data.get("trend") == "down" else "stable",
+                "status": data.get("values", [{}])[0].get("status", "normal"),
+                "lastDate": data.get("latest_date", data.get("values", [{}])[0].get("date", "")),
+                "normalRange": parse_reference_range(data.get("values", [{}])[0].get("reference_range", "")),
+                "values": [{"value": v.get("value"), "date": v.get("date"), "status": v.get("status", "normal")} for v in data.get("values", [])],
+                "insight": generate_insight(test_type, data)
+            }
+            for test_type, data in trends.items()
+        ],
         "total_tests": len(trends),
         "last_updated": datetime.now(timezone.utc).isoformat()
     }
+
+def parse_reference_range(ref_range: str):
+    """Parse reference range string into min/max"""
+    try:
+        if "-" in ref_range:
+            parts = ref_range.replace(" ", "").split("-")
+            return {"min": float(parts[0]), "max": float(parts[1])}
+    except:
+        pass
+    return {"min": None, "max": None}
+
+def generate_insight(test_type: str, data: dict):
+    """Generate insight for a parameter"""
+    trend = data.get("trend", "stable")
+    status = data.get("values", [{}])[0].get("status", "normal")
+    
+    insights = {
+        "normal": f"Your {test_type} levels are within normal range. Keep up the healthy lifestyle!",
+        "borderline": f"Your {test_type} is borderline. Consider dietary changes and follow-up testing.",
+        "high": f"Your {test_type} is elevated. Please consult with your doctor for guidance.",
+        "low": f"Your {test_type} is below normal. Discuss supplementation options with your doctor."
+    }
+    
+    return insights.get(status, f"Your {test_type} levels are being monitored.")
 
 @api_router.post("/diagnostics/results")
 async def save_lab_result(
