@@ -19,6 +19,7 @@ import AboutUs from '@/pages/AboutUs';
 // New Feature Pages
 import MyHealth from '@/pages/MyHealth';
 import HealthPackages from '@/pages/HealthPackages';
+import MembershipPlans from '@/pages/MembershipPlans';
 import ReferralProgram from '@/pages/ReferralProgram';
 import HealthTips from '@/pages/HealthTips';
 import Teleconsultation from '@/pages/Teleconsultation';
