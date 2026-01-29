@@ -2474,11 +2474,8 @@ const StaffPortal = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium text-lg">{appt.patient_name}</span>
-                        {appt.booking_id && (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-teal-500 text-white shadow-sm">{appt.booking_id}</span>
-                        )}
                         {appt.patient_id && (
-                          <Badge className="bg-indigo-100 text-indigo-700 text-xs font-normal">{appt.patient_id}</Badge>
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-teal-500 text-white shadow-sm">{appt.patient_id}</span>
                         )}
                         <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(appt.status)}`}>
                           {appt.status}
@@ -2512,8 +2509,8 @@ const StaffPortal = () => {
                           {appt.patient_phone}
                         </span>
                         {appt.booking_id && (
-                          <span className="flex items-center gap-1 text-teal-600 font-medium">
-                            <span className="text-xs">ID:</span>
+                          <span className="flex items-center gap-1 text-gray-500">
+                            <span className="text-xs">Booking:</span>
                             {appt.booking_id}
                           </span>
                         )}
