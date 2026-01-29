@@ -218,7 +218,7 @@ const PharmacyProductPage = () => {
         {/* Price */}
         <div className="mt-3">
           <span className="text-lg font-bold text-slate-900">
-            MRP ₹{product.price || '---'}
+            ₹{product.price || '---'}
           </span>
           <p className="text-xs text-slate-400 mt-0.5">Inclusive of all taxes</p>
         </div>
