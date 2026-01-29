@@ -4010,6 +4010,38 @@ async def get_all_medicines(page: int = 1, per_page: int = 100, search: str = No
         "category": category
     }
 
+@api_router.get("/pharmacy/search")
+async def search_medicines(q: str, limit: int = 15, form: str = None):
+    """Search medicines for autocomplete - starts matching from first character"""
+    if not q:
+        return {"medicines": []}
+    
+    search_lower = q.lower()
+    filtered = MEDICINE_INVENTORY
+    
+    # Filter by form first if provided
+    if form:
+        filtered = [m for m in filtered if m.get("form", "").lower() == form.lower()]
+    
+    # Search matching - prioritize medicines starting with the search term
+    starts_with = []
+    contains = []
+    
+    for m in filtered:
+        name_lower = m["name"].lower()
+        if name_lower.startswith(search_lower):
+            starts_with.append(m)
+        elif search_lower in name_lower:
+            contains.append(m)
+    
+    # Combine results - prioritizing those that start with the search term
+    results = starts_with + contains
+    
+    return {
+        "medicines": results[:limit],
+        "total": len(results)
+    }
+
 @api_router.get("/pharmacy/frequently-ordered")
 async def get_frequently_ordered(user = Depends(get_current_user_optional)):
     """Get user's frequently ordered medicines based on past orders"""
