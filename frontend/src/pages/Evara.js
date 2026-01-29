@@ -936,6 +936,183 @@ const Evara = () => {
     toast.success('Logged out successfully');
   };
 
+  // Email OTP Verification Functions
+  const sendEmailOtp = async () => {
+    if (!signupData.email || !signupData.email.includes('@')) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+    
+    setEmailOtpLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/auth/email-otp/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: signupData.email.toLowerCase() })
+      });
+      
+      const data = await res.json();
+      
+      if (data.success) {
+        setEmailOtpSent(true);
+        setMockEmailOtp(data.mock_otp || '');
+        setOtpResendTimer(60);
+        toast.success('Verification code sent to your email!');
+      } else {
+        toast.error(data.detail || 'Failed to send verification code');
+      }
+    } catch (error) {
+      toast.error('Failed to send verification code');
+    } finally {
+      setEmailOtpLoading(false);
+    }
+  };
+
+  const verifyEmailOtp = async () => {
+    const otpValue = emailOtp.join('');
+    if (otpValue.length !== 6) {
+      toast.error('Please enter complete 6-digit code');
+      return;
+    }
+    
+    setEmailOtpLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/auth/email-otp/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: signupData.email.toLowerCase(), 
+          otp: otpValue 
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (data.success && data.verified) {
+        setEmailVerificationToken(data.verification_token);
+        
+        if (data.user_exists) {
+          // User exists - proceed to login
+          const loginRes = await fetch(`${API_URL}/api/auth/email-otp/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: signupData.email.toLowerCase(),
+              verification_token: data.verification_token
+            })
+          });
+          
+          const loginData = await loginRes.json();
+          
+          if (loginData.token) {
+            setToken(loginData.token);
+            localStorage.setItem('evara_token', loginData.token);
+            localStorage.setItem('token', loginData.token);
+            setUser(loginData.user);
+            setShowSignup(false);
+            resetSignupForm();
+            toast.success('Welcome back!');
+            fetchProfile();
+          } else {
+            toast.error(loginData.detail || 'Login failed');
+          }
+        } else {
+          // New user - proceed to complete registration
+          toast.success('Email verified! Complete your profile.');
+        }
+      } else {
+        toast.error(data.detail || 'Invalid verification code');
+        setEmailOtp(['', '', '', '', '', '']);
+      }
+    } catch (error) {
+      toast.error('Verification failed');
+    } finally {
+      setEmailOtpLoading(false);
+    }
+  };
+
+  const completeRegistration = async () => {
+    if (!signupData.name.trim()) {
+      toast.error('Please enter your name');
+      return;
+    }
+    if (!signupData.password || signupData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: signupData.email.toLowerCase(),
+          name: signupData.name,
+          phone: signupData.phone || '',
+          password: signupData.password,
+          verification_token: emailVerificationToken
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (data.token) {
+        setToken(data.token);
+        localStorage.setItem('evara_token', data.token);
+        localStorage.setItem('token', data.token);
+        setUser(data.user);
+        setShowSignup(false);
+        resetSignupForm();
+        toast.success('Account created successfully!');
+        fetchProfile();
+      } else {
+        toast.error(data.detail || 'Registration failed');
+      }
+    } catch (error) {
+      toast.error('Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmailOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+    const newOtp = [...emailOtp];
+    newOtp[index] = value.slice(-1);
+    setEmailOtp(newOtp);
+    
+    // Auto-focus next input
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`evara-otp-${index + 1}`);
+      if (nextInput) nextInput.focus();
+    }
+  };
+
+  const handleEmailOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !emailOtp[index] && index > 0) {
+      const prevInput = document.getElementById(`evara-otp-${index - 1}`);
+      if (prevInput) prevInput.focus();
+    }
+  };
+
+  const resetSignupForm = () => {
+    setSignupData({ name: '', email: '', phone: '', password: '' });
+    setEmailOtpSent(false);
+    setEmailOtp(['', '', '', '', '', '']);
+    setEmailVerificationToken('');
+    setMockEmailOtp('');
+    setLoginMode(false);
+  };
+
+  // OTP Resend Timer effect
+  useEffect(() => {
+    if (otpResendTimer > 0) {
+      const timer = setTimeout(() => setOtpResendTimer(otpResendTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [otpResendTimer]);
+
   const fetchProfile = async () => {
     try {
       const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
