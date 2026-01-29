@@ -2628,6 +2628,10 @@ const StaffPortal = () => {
                 <Package className="w-4 h-4 mr-2" />
                 Orders
               </TabsTrigger>
+              <TabsTrigger value="images" data-testid="tab-pharmacy-images" className="bg-gradient-to-r from-orange-500 to-amber-500 text-white data-[state=active]:from-orange-600 data-[state=active]:to-amber-600">
+                <Image className="w-4 h-4 mr-2" />
+                Manage Images
+              </TabsTrigger>
               <TabsTrigger value="analytics" data-testid="tab-pharmacy-analytics">
                 <Activity className="w-4 h-4 mr-2" />
                 Analytics
@@ -2658,6 +2662,47 @@ const StaffPortal = () => {
                 loadData={loadData}
                 handlePharmacyStatusUpdate={handlePharmacyStatusUpdate}
               />
+            </TabsContent>
+
+            {/* Medicine Images Management Tab */}
+            <TabsContent value="images">
+              <Card className="border-2 border-orange-200">
+                <CardHeader className="bg-gradient-to-r from-orange-50 to-amber-50">
+                  <CardTitle className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg">
+                      <Image className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-slate-800">Medicine Image Manager</h2>
+                      <p className="text-sm text-slate-500 font-normal">Add product images to Orange Pharmacy medicines</p>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="text-center space-y-6">
+                    <div className="w-24 h-24 mx-auto rounded-2xl bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center">
+                      <Image className="w-12 h-12 text-orange-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-800 mb-2">Upload Medicine Images</h3>
+                      <p className="text-slate-600 max-w-md mx-auto">
+                        Add images to 4,266 medicines in the Orange Pharmacy catalog. 
+                        Customers will see these images when browsing products.
+                      </p>
+                    </div>
+                    <Button 
+                      onClick={() => navigate('/medicine-images')}
+                      size="lg"
+                      className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all"
+                      data-testid="open-image-manager-btn"
+                    >
+                      <Image className="w-5 h-5 mr-3" />
+                      Open Image Manager
+                    </Button>
+                    <p className="text-xs text-slate-400">No login required • Bulk CSV upload supported</p>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
             
             {/* Pharmacy Analytics Tab */}
