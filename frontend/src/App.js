@@ -172,6 +172,8 @@ function AppContent() {
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/cancel" element={<PaymentCancel />} />
           <Route path="/payment/history" element={<PaymentHistory />} />
+          {/* Medicine Image Upload - No Login Required */}
+          <Route path="/medicine-images" element={<MedicineImageUpload />} />
         </Routes>
         <Toaster position="top-center" richColors />
         <PWAInstallPrompt />
