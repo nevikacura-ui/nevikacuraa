@@ -4,7 +4,7 @@ import json
 from datetime import datetime, timedelta
 
 class NevikaHealthcareAPITester:
-    def __init__(self, base_url="https://healix-portal-2.preview.emergentagent.com"):
+    def __init__(self, base_url="https://cura-platform-1.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
