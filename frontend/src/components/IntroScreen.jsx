@@ -192,7 +192,7 @@ const IntroScreen = ({ onComplete, user }) => {
   // RENDER SPLASH PHASE
   return (
     <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-6"
-      style={{ background: 'linear-gradient(165deg, #5eead4 0%, #2dd4bf 20%, #14b8a6 40%, #0d9488 60%, #0891b2 80%, #06b6d4 100%)' }}>
+      style={{ background: 'linear-gradient(165deg, #4DD4C4 0%, #3CC9B9 25%, #2BBFAE 50%, #1AB5A3 75%, #0AAB98 100%)' }}>
       
       {/* Skip */}
       <button onClick={onComplete} data-testid="skip-btn"
@@ -201,12 +201,12 @@ const IntroScreen = ({ onComplete, user }) => {
       </button>
       
       <div className="text-center max-w-md mx-auto">
-        {/* Logo - New Nevika Cura Logo */}
-        <div className="mb-8">
+        {/* Logo - New Nevika Cura Logo - Enlarged, No Box */}
+        <div className="mb-6">
           <img 
             src="https://customer-assets.emergentagent.com/job_nevikacura-4/artifacts/p00in1sl_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260129_222657_0000.png" 
             alt="Nevika Cura - A Healthcare Group" 
-            className="h-32 w-auto mx-auto object-contain"
+            className="h-48 sm:h-56 w-auto mx-auto object-contain"
           />
         </div>
         
