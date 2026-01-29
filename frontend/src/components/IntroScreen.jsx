@@ -192,7 +192,7 @@ const IntroScreen = ({ onComplete, user }) => {
   // RENDER SPLASH PHASE
   return (
     <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-6"
-      style={{ background: '#5DCFC0' }}>
+      style={{ background: '#4ECDC4' }}>
       
       {/* Skip */}
       <button onClick={onComplete} data-testid="skip-btn"
