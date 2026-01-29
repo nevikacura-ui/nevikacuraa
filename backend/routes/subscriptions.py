@@ -28,35 +28,63 @@ def set_stripe_key(key):
     global stripe_api_key
     stripe_api_key = key
 
-# Subscription Plans
+# Subscription Plans - Updated pricing
 SUBSCRIPTION_PLANS = {
     "glydex": {
         "name": "Glydex Premium",
         "description": "Comprehensive Diabetes Management",
         "price": 3600,
         "currency": "INR",
-        "duration_days": 180,  # 6 months
+        "duration_days": 180,  # 6 months free access
+        "billing_period": "yearly",  # ₹3600/year
         "features": [
             "Personalized diet plans",
             "Blood sugar tracking & analytics",
             "Doctor consultations",
             "Medicine reminders",
-            "Monthly health reports"
-        ]
+            "Monthly health reports",
+            "AI-powered health insights",
+            "Priority support"
+        ],
+        "tiers": {
+            "starter": {"price": 499, "duration_days": 30, "name": "Starter (1 Month)"},
+            "standard": {"price": 1299, "duration_days": 90, "name": "Standard (3 Months)", "popular": True},
+            "premium": {"price": 2199, "duration_days": 180, "name": "Premium (6 Months)", "best_value": True},
+            "annual": {"price": 3600, "duration_days": 365, "name": "Annual", "includes_free": 180}
+        },
+        "free_trial_days": 7,
+        "family_plan": {
+            "duo": {"price": 5499, "users": 2, "duration_days": 180},
+            "family": {"price": 8999, "users": 4, "duration_days": 365}
+        }
     },
     "evara": {
         "name": "Evara Premium",
         "description": "Complete Women's Health Care",
         "price": 3600,
         "currency": "INR",
-        "duration_days": 270,  # 9 months
+        "duration_days": 270,  # 9 months free access
+        "billing_period": "yearly",  # ₹3600/year
         "features": [
             "Personalized care plans",
             "Cycle & pregnancy tracking",
             "Expert consultations",
             "Health reminders",
-            "Monthly wellness reports"
-        ]
+            "Monthly wellness reports",
+            "AI health assistant",
+            "Priority support"
+        ],
+        "tiers": {
+            "starter": {"price": 499, "duration_days": 30, "name": "Starter (1 Month)"},
+            "standard": {"price": 1299, "duration_days": 90, "name": "Standard (3 Months)", "popular": True},
+            "premium": {"price": 2499, "duration_days": 180, "name": "Premium (6 Months)", "best_value": True},
+            "annual": {"price": 3600, "duration_days": 365, "name": "Annual", "includes_free": 270}
+        },
+        "free_trial_days": 7,
+        "family_plan": {
+            "duo": {"price": 4999, "users": 2, "duration_days": 180},
+            "family": {"price": 7999, "users": 4, "duration_days": 365}
+        }
     }
 }
 
