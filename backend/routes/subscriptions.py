@@ -1077,6 +1077,269 @@ async def get_streaks(patient_id: str):
             "app_checkin": streaks.get("app_checkin", 0)
         },
         "badges": await get_patient_badges(patient_id),
+
+
+# ==================== GUEST CHECKOUT (NO LOGIN REQUIRED) ====================
+
+class GuestCheckoutRequest(BaseModel):
+    plan_type: str
+    tier: str
+    email: str
+    device_id: Optional[str] = None
+    coupon_code: Optional[str] = None
+    referral_code: Optional[str] = None
+    temp_patient_id: Optional[str] = None
+
+@router.post("/checkout/guest")
+async def create_guest_checkout(request: GuestCheckoutRequest):
+    """Create checkout for guest user - NO LOGIN REQUIRED"""
+    import stripe
+    
+    if not stripe_api_key:
+        raise HTTPException(status_code=500, detail="Payment not configured")
+    
+    stripe.api_key = stripe_api_key
+    
+    plan = SUBSCRIPTION_PLANS.get(request.plan_type)
+    if not plan:
+        raise HTTPException(status_code=400, detail="Invalid plan type")
+    
+    tiers = plan.get("tiers", {})
+    tier_info = tiers.get(request.tier)
+    
+    if not tier_info:
+        raise HTTPException(status_code=400, detail="Invalid tier")
+    
+    price = tier_info["price"]
+    duration_days = tier_info["duration_days"]
+    
+    # Generate temp patient ID if not provided
+    temp_id = request.temp_patient_id or f"guest_{datetime.now().strftime('%Y%m%d%H%M%S')}_{random.randint(1000, 9999)}"
+    
+    # Apply referral discount
+    if request.referral_code:
+        referral_use = await db.referral_uses.find_one({
+            "referral_code": request.referral_code.upper(),
+            "used_by_email": request.email.lower()
+        })
+        if referral_use:
+            discount_percent = referral_use.get("discount_percent", 20)
+            price = int(price * (100 - discount_percent) / 100)
+    
+    # Apply coupon
+    if request.coupon_code:
+        coupon = await db.coupons.find_one({
+            "code": request.coupon_code.upper(),
+            "is_active": True
+        })
+        if coupon and not coupon.get("used_by"):
+            discount = coupon.get("discount_percent", 0)
+            price = int(price * (100 - discount) / 100)
+            
+            # If 100% discount, activate subscription immediately
+            if discount >= 100:
+                # Mark coupon as used
+                await db.coupons.update_one(
+                    {"code": request.coupon_code.upper()},
+                    {"$set": {
+                        "used_by": request.email,
+                        "used_by_email": request.email.lower(),
+                        "used_by_device_id": request.device_id,
+                        "used_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+                
+                # Create pending membership
+                pending = {
+                    "temp_id": temp_id,
+                    "email": request.email.lower(),
+                    "plan_type": request.plan_type,
+                    "tier": request.tier,
+                    "duration_days": duration_days,
+                    "payment_status": "completed",
+                    "payment_method": "coupon",
+                    "coupon_code": request.coupon_code.upper(),
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "membership_completed": False
+                }
+                await db.pending_memberships.insert_one(pending)
+                
+                return {
+                    "free_subscription": True,
+                    "temp_id": temp_id,
+                    "message": "Coupon applied! Complete your membership details."
+                }
+    
+    if price == 0:
+        return {
+            "free_subscription": True,
+            "temp_id": temp_id,
+            "message": "Free subscription activated!"
+        }
+    
+    # Create Stripe checkout for guest
+    frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('REACT_APP_BACKEND_URL', 'https://nevikacura.com'))
+    
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            customer_email=request.email,
+            line_items=[{
+                'price_data': {
+                    'currency': 'inr',
+                    'product_data': {
+                        'name': f"{plan['name']} - {tier_info['name']}",
+                        'description': f"{duration_days} days premium access"
+                    },
+                    'unit_amount': price * 100
+                },
+                'quantity': 1
+            }],
+            mode='payment',
+            success_url=f"{frontend_url}/{request.plan_type}?success=true&membership=pending&session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{frontend_url}/{request.plan_type}?canceled=true",
+            metadata={
+                'temp_patient_id': temp_id,
+                'email': request.email,
+                'plan_type': request.plan_type,
+                'tier': request.tier,
+                'duration_days': str(duration_days),
+                'coupon_code': request.coupon_code or '',
+                'referral_code': request.referral_code or '',
+                'is_guest': 'true'
+            }
+        )
+        
+        # Store pending membership
+        pending = {
+            "temp_id": temp_id,
+            "email": request.email.lower(),
+            "plan_type": request.plan_type,
+            "tier": request.tier,
+            "duration_days": duration_days,
+            "stripe_session_id": session.id,
+            "payment_status": "pending",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "membership_completed": False
+        }
+        await db.pending_memberships.insert_one(pending)
+        
+        return {
+            "checkout_url": session.url,
+            "session_id": session.id,
+            "amount": price,
+            "tier": tier_info["name"],
+            "duration_days": duration_days
+        }
+    except Exception as e:
+        logger.error(f"Stripe guest checkout error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+class CompleteMembershipRequest(BaseModel):
+    email: str
+    plan_type: str
+    name: str
+    phone: str
+    age: Optional[str] = None
+    gender: Optional[str] = None
+    address: Optional[str] = None
+
+@router.post("/complete-membership")
+async def complete_membership(request: CompleteMembershipRequest):
+    """Complete membership after payment - fill in user details"""
+    # Find pending membership
+    pending = await db.pending_memberships.find_one({
+        "email": request.email.lower(),
+        "plan_type": request.plan_type,
+        "membership_completed": False
+    })
+    
+    if not pending:
+        return {"success": False, "message": "No pending membership found for this email"}
+    
+    # Create or update patient record
+    patient_id = f"PAT-{datetime.now().strftime('%Y%m%d%H%M%S')}-{random.randint(1000, 9999)}"
+    
+    patient = {
+        "id": patient_id,
+        "name": request.name,
+        "email": request.email.lower(),
+        "phone": request.phone,
+        "age": request.age,
+        "gender": request.gender,
+        "address": request.address,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "source": "subscription_purchase"
+    }
+    
+    # Check if patient with email already exists
+    existing = await db.patients.find_one({"email": request.email.lower()})
+    if existing:
+        patient_id = existing["id"]
+        # Update existing patient
+        await db.patients.update_one(
+            {"email": request.email.lower()},
+            {"$set": {
+                "name": request.name,
+                "phone": request.phone,
+                "age": request.age or existing.get("age"),
+                "gender": request.gender or existing.get("gender"),
+                "address": request.address or existing.get("address")
+            }}
+        )
+    else:
+        await db.patients.insert_one(patient)
+    
+    # Create subscription
+    plan = SUBSCRIPTION_PLANS[request.plan_type]
+    duration_days = pending.get("duration_days", plan["duration_days"])
+    
+    start_date = datetime.now(timezone.utc)
+    end_date = start_date + timedelta(days=duration_days)
+    
+    subscription = {
+        "subscription_id": f"SUB-{request.plan_type.upper()[:3]}-{datetime.now().strftime('%Y%m%d%H%M%S')}-{random.randint(1000, 9999)}",
+        "patient_id": patient_id,
+        "patient_name": request.name,
+        "patient_phone": request.phone,
+        "patient_email": request.email.lower(),
+        "plan_type": request.plan_type,
+        "plan_name": plan["name"],
+        "tier": pending.get("tier", "annual"),
+        "amount_paid": pending.get("amount_paid", 0),
+        "payment_method": pending.get("payment_method", "stripe"),
+        "coupon_code": pending.get("coupon_code"),
+        "status": "active",
+        "start_date": start_date.isoformat(),
+        "end_date": end_date.isoformat(),
+        "features": plan["features"],
+        "created_at": start_date.isoformat()
+    }
+    
+    await db.subscriptions.insert_one(subscription)
+    
+    # Mark pending membership as completed
+    await db.pending_memberships.update_one(
+        {"_id": pending["_id"]},
+        {"$set": {
+            "membership_completed": True,
+            "completed_at": datetime.now(timezone.utc).isoformat(),
+            "patient_id": patient_id,
+            "subscription_id": subscription["subscription_id"]
+        }}
+    )
+    
+    # Award welcome points
+    await award_points(patient_id, 200, "Welcome bonus - Subscription activated", "welcome_bonus")
+    
+    return {
+        "success": True,
+        "message": "Membership activated successfully!",
+        "subscription_id": subscription["subscription_id"],
+        "patient_id": patient_id,
+        "expires_at": end_date.isoformat()
+    }
+
         "next_milestone": get_next_streak_milestone(max(streaks.values()) if streaks else 0)
     }
 
