@@ -1232,6 +1232,8 @@ async def get_streaks(patient_id: str):
             "app_checkin": streaks.get("app_checkin", 0)
         },
         "badges": await get_patient_badges(patient_id),
+        "next_milestone": get_next_streak_milestone(max(streaks.values()) if streaks else 0)
+    }
 
 
 # ==================== GUEST CHECKOUT (NO LOGIN REQUIRED) ====================
