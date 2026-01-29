@@ -175,6 +175,9 @@ function AppContent() {
           <Route path="/payment/history" element={<PaymentHistory />} />
           {/* Medicine Image Upload - No Login Required */}
           <Route path="/medicine-images" element={<MedicineImageUpload />} />
+          {/* Proton Report Download - Patient Access */}
+          <Route path="/report/:bookingId" element={<ProtonReportDownload />} />
+          <Route path="/report" element={<ProtonReportDownload />} />
         </Routes>
         <Toaster position="top-center" richColors />
         <PWAInstallPrompt />
