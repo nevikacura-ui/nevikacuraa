@@ -64,6 +64,7 @@ import Reneu from '@/pages/Reneu';
 import Thrive360New from '@/pages/Thrive360New';
 import Senova from '@/pages/Senova';
 import PSVNFoundation from '@/pages/PSVNFoundation';
+import MedicineImageUpload from '@/pages/MedicineImageUpload';
 // Intro Screen (Loading + Splash combined)
 import IntroScreen from '@/components/IntroScreen';
 // Page Transitions
