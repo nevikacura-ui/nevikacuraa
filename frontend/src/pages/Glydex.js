@@ -470,6 +470,10 @@ const Glydex = () => {
           const loginData = await loginRes.json();
           if (loginData.token) {
             localStorage.setItem('token', loginData.token);
+            // Save patientId for subscription flow
+            if (loginData.user?.id) {
+              localStorage.setItem('patientId', loginData.user.id);
+            }
             window.location.reload();
           } else {
             toast.error(loginData.detail || 'Login failed');
