@@ -49,10 +49,12 @@ const Home = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { isMobile, isTablet, isDesktop, getResponsiveClasses } = useViewMode();
+  const { language, setLanguage, t, languages } = useLanguage();
   const [showAuth, setShowAuth] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
+  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   
   // Health Tip of the Day - Changes daily based on date
   const [currentTip, setCurrentTip] = useState(healthTips[0]);
