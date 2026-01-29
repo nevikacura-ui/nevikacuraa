@@ -1008,6 +1008,10 @@ const Evara = () => {
             setToken(loginData.token);
             localStorage.setItem('evara_token', loginData.token);
             localStorage.setItem('token', loginData.token);
+            // Save patientId for subscription flow
+            if (loginData.user?.id) {
+              localStorage.setItem('patientId', loginData.user.id);
+            }
             setUser(loginData.user);
             setShowSignup(false);
             resetSignupForm();
