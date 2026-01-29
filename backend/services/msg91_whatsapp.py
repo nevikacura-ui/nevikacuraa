@@ -398,6 +398,46 @@ async def send_proton_report_ready(
     )
 
 
+async def send_proton_report_delivered(
+    phone: str,
+    patient_name: str,
+    tests: str,
+    booking_id: str,
+    delivery_date: str,
+    delivery_time: str,
+    delivered_by: str,
+    db=None
+) -> dict:
+    """
+    Send Proton Diagnostics report delivered notification via WhatsApp
+    
+    Template variables:
+    {{1}} - Patient Name
+    {{2}} - Test Names
+    {{3}} - Booking ID
+    {{4}} - Delivery Date
+    {{5}} - Delivery Time
+    {{6}} - Delivered By (staff name)
+    """
+    variables = [
+        patient_name,      # {{1}} - Patient Name
+        tests,             # {{2}} - Test Names  
+        booking_id,        # {{3}} - Booking ID
+        delivery_date,     # {{4}} - Delivery Date
+        delivery_time,     # {{5}} - Delivery Time
+        delivered_by       # {{6}} - Delivered By
+    ]
+    
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
+        template_name=TEMPLATES["proton_report_delivered"],
+        variables=variables,
+        db=db,
+        reference_id=booking_id,
+        message_type="report_delivered"
+    )
+
+
 async def send_proton_sonography_confirmation(
     phone: str,
     patient_name: str,
