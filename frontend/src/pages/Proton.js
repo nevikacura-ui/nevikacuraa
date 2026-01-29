@@ -914,7 +914,7 @@ const Proton = () => {
             {/* Imaging Tab */}
             {activeTab === 'imaging' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="p-5 rounded-2xl border-slate-200">
+                <Card id="ecg-section" className="p-5 rounded-2xl border-slate-200">
                   <h4 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
                     <Activity className="w-4 h-4 text-red-500" />
                     ECG
@@ -924,7 +924,7 @@ const Proton = () => {
                   ))}
                 </Card>
                 
-                <Card className="p-5 rounded-2xl border-slate-200">
+                <Card id="sonography-section" className="p-5 rounded-2xl border-slate-200">
                   <h4 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
                     <Heart className="w-4 h-4 text-pink-500" />
                     Sonography
