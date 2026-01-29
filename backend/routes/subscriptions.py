@@ -88,6 +88,161 @@ SUBSCRIPTION_PLANS = {
     }
 }
 
+# ==================== ALL-IN-ONE MEMBERSHIP PLANS ====================
+MEMBERSHIP_PLANS = {
+    "basic": {
+        "name": "Basic Membership",
+        "description": "Essential healthcare services",
+        "monthly": {"price": 999, "duration_days": 30},
+        "quarterly": {"price": 2499, "duration_days": 90, "savings": 498},
+        "yearly": {"price": 7999, "duration_days": 365, "savings": 3989},
+        "includes": {
+            "consultation": {"visits": 2, "desc": "2 GP consultations/month"},
+            "pharmacy": {"discount": 10, "desc": "10% off on medicines"},
+            "diagnostic": {"discount": 15, "desc": "15% off on tests"},
+            "portal": None
+        },
+        "features": [
+            "2 GP consultations per month",
+            "10% discount on pharmacy",
+            "15% discount on diagnostics",
+            "Health records access",
+            "Basic teleconsultation"
+        ]
+    },
+    "standard": {
+        "name": "Standard Membership",
+        "description": "Complete healthcare package",
+        "monthly": {"price": 1999, "duration_days": 30},
+        "quarterly": {"price": 4999, "duration_days": 90, "savings": 1998, "popular": True},
+        "yearly": {"price": 14999, "duration_days": 365, "savings": 8989},
+        "includes": {
+            "consultation": {"visits": 4, "desc": "4 consultations/month"},
+            "pharmacy": {"discount": 15, "desc": "15% off on medicines"},
+            "diagnostic": {"discount": 20, "desc": "20% off on tests"},
+            "portal": {"portals": ["glydex", "evara"], "desc": "Choose 1 portal"}
+        },
+        "features": [
+            "4 consultations per month (GP + Specialist)",
+            "15% discount on pharmacy",
+            "20% discount on diagnostics",
+            "1 Health portal access (Glydex/Evara)",
+            "Priority appointments",
+            "24/7 teleconsultation"
+        ]
+    },
+    "premium": {
+        "name": "Premium Membership",
+        "description": "Comprehensive health & wellness",
+        "monthly": {"price": 3499, "duration_days": 30},
+        "quarterly": {"price": 8999, "duration_days": 90, "savings": 1498},
+        "yearly": {"price": 29999, "duration_days": 365, "savings": 11989, "best_value": True},
+        "includes": {
+            "consultation": {"visits": "unlimited", "desc": "Unlimited consultations"},
+            "pharmacy": {"discount": 20, "desc": "20% off + free delivery"},
+            "diagnostic": {"discount": 25, "desc": "25% off on tests"},
+            "portal": {"portals": ["glydex", "evara", "corvia", "thrive360"], "desc": "All portals"}
+        },
+        "features": [
+            "Unlimited consultations",
+            "20% discount on pharmacy + FREE delivery",
+            "25% discount on diagnostics",
+            "All health portals access",
+            "1 Executive health checkup/year",
+            "Personal health manager",
+            "Home visits (2/year)",
+            "Insurance assistance"
+        ]
+    }
+}
+
+# ==================== FAMILY PLANS ====================
+FAMILY_PLANS = {
+    "diagnostic_only": {
+        "name": "Family Diagnostic Plan",
+        "description": "Lab tests for the whole family",
+        "members": 4,
+        "monthly": {"price": 1499, "duration_days": 30},
+        "quarterly": {"price": 3999, "duration_days": 90, "savings": 498},
+        "yearly": {"price": 12999, "duration_days": 365, "savings": 4989},
+        "includes": {
+            "diagnostic_discount": 25,
+            "free_tests_per_month": 2,
+            "home_collection": True
+        },
+        "features": [
+            "25% off on all lab tests",
+            "2 free basic tests/member/month",
+            "Free home sample collection",
+            "Family health dashboard",
+            "Shared reports access"
+        ]
+    },
+    "diagnostic_pharmacy": {
+        "name": "Family Diagnostic + Pharmacy",
+        "description": "Tests & medicines for family",
+        "members": 4,
+        "monthly": {"price": 2499, "duration_days": 30},
+        "quarterly": {"price": 6499, "duration_days": 90, "savings": 998, "popular": True},
+        "yearly": {"price": 21999, "duration_days": 365, "savings": 7989},
+        "includes": {
+            "diagnostic_discount": 25,
+            "pharmacy_discount": 15,
+            "free_tests_per_month": 2,
+            "free_delivery": True
+        },
+        "features": [
+            "25% off on all lab tests",
+            "15% off on pharmacy",
+            "2 free basic tests/member/month",
+            "Free medicine delivery",
+            "Refill reminders for family",
+            "Family health dashboard"
+        ]
+    },
+    "complete_family": {
+        "name": "Complete Family Care",
+        "description": "Full healthcare for family",
+        "members": 4,
+        "monthly": {"price": 4999, "duration_days": 30},
+        "quarterly": {"price": 12999, "duration_days": 90, "savings": 1998},
+        "yearly": {"price": 44999, "duration_days": 365, "savings": 14989, "best_value": True},
+        "includes": {
+            "consultation_visits": 8,
+            "diagnostic_discount": 30,
+            "pharmacy_discount": 20,
+            "free_tests_per_month": 4,
+            "home_visits": 2
+        },
+        "features": [
+            "8 family consultations/month",
+            "30% off on all lab tests",
+            "20% off on pharmacy + FREE delivery",
+            "4 free tests/month (shared)",
+            "2 home doctor visits/year",
+            "All family members on same plan",
+            "Priority appointments",
+            "24/7 family health helpline"
+        ]
+    },
+    "portal_family": {
+        "name": "Family Portal Access",
+        "description": "Health portals for entire family",
+        "members": 4,
+        "portals": ["glydex", "evara", "corvia", "thrive360"],
+        "monthly": {"price": 1999, "duration_days": 30},
+        "quarterly": {"price": 4999, "duration_days": 90, "savings": 998},
+        "yearly": {"price": 16999, "duration_days": 365, "savings": 6989},
+        "features": [
+            "All 4 health portals access",
+            "Personalized plans for each member",
+            "Family health tracking",
+            "Shared progress reports",
+            "Family wellness challenges"
+        ]
+    }
+}
+
 # Pydantic Models
 class CouponValidateRequest(BaseModel):
     coupon_code: str
