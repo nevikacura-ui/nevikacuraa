@@ -64,6 +64,8 @@ SUBSCRIPTION_PLANS = {
 class CouponValidateRequest(BaseModel):
     coupon_code: str
     plan_type: str  # glydex or evara
+    email: Optional[str] = None  # For security binding check
+    device_id: Optional[str] = None  # For security binding check
 
 class CouponValidateResponse(BaseModel):
     valid: bool
@@ -77,6 +79,7 @@ class SubscriptionCreateRequest(BaseModel):
     patient_phone: str
     patient_email: Optional[str] = None
     coupon_code: Optional[str] = None
+    device_id: Optional[str] = None  # For security binding
 
 class AdminValidityRequest(BaseModel):
     patient_id: str
