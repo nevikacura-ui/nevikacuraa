@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Lock, Unlock, Gift, CreditCard, Check, Star, Sparkles, Calendar, Clock, Users, Share2, Zap, Crown, X } from 'lucide-react';
+import { Lock, Unlock, Gift, CreditCard, Check, Star, Sparkles, Calendar, Clock, Users, Share2, Zap, Crown, X, Mail, User, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -27,11 +27,22 @@ const SubscriptionGate = ({
   const [processingPayment, setProcessingPayment] = useState(false);
   const [planDetails, setPlanDetails] = useState(null);
   
-  // New states for enhanced features
+  // Enhanced states
   const [selectedTier, setSelectedTier] = useState('annual');
   const [referralCode, setReferralCode] = useState('');
   const [trialStatus, setTrialStatus] = useState(null);
   const [showReferralInput, setShowReferralInput] = useState(false);
+  
+  // NEW: Buy without login - Email only for checkout
+  const [checkoutEmail, setCheckoutEmail] = useState(patientEmail || '');
+  const [showMembershipForm, setShowMembershipForm] = useState(false);
+  const [membershipFormData, setMembershipFormData] = useState({
+    name: '',
+    phone: '',
+    age: '',
+    gender: '',
+    address: ''
+  });
 
   const planColors = {
     glydex: {
@@ -67,6 +78,8 @@ const SubscriptionGate = ({
       }
     } catch (error) {
       console.error('Failed to fetch plan details:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,50 +117,6 @@ const SubscriptionGate = ({
     }
   };
 
-  const startFreeTrial = async () => {
-    if (!patientId || !patientEmail) {
-      toast.error('Please login to start your free trial');
-      return;
-    }
-
-    setProcessingPayment(true);
-    try {
-      const deviceId = localStorage.getItem('device_id') || 
-        (() => {
-          const newId = 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-          localStorage.setItem('device_id', newId);
-          return newId;
-        })();
-
-      const res = await fetch(`${API}/api/subscriptions/free-trial/start`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          patient_id: patientId,
-          patient_name: patientName || 'User',
-          patient_email: patientEmail,
-          plan_type: planType,
-          device_id: deviceId
-        })
-      });
-      
-      const data = await res.json();
-      
-      if (data.success) {
-        toast.success(`🎉 ${data.message}`);
-        setHasSubscription(true);
-        setShowPayment(false);
-        checkSubscription();
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error('Failed to start trial');
-    } finally {
-      setProcessingPayment(false);
-    }
-  };
-
   const validateCoupon = async () => {
     if (!couponCode.trim()) {
       toast.error('Please enter a coupon code');
@@ -169,7 +138,7 @@ const SubscriptionGate = ({
         body: JSON.stringify({
           coupon_code: couponCode.toUpperCase(),
           plan_type: planType,
-          email: patientEmail || null,
+          email: checkoutEmail || null,
           device_id: deviceId
         })
       });
@@ -189,36 +158,50 @@ const SubscriptionGate = ({
     }
   };
 
-  const handleSubscribe = async () => {
-    if (!patientId || !patientPhone) {
-      toast.error('Please login to subscribe');
+  // NEW: Purchase without requiring login - just email
+  const handlePurchase = async () => {
+    // Validate email only
+    if (!checkoutEmail || !checkoutEmail.includes('@')) {
+      toast.error('Please enter a valid email address');
       return;
     }
 
     setProcessingPayment(true);
     try {
-      const res = await fetch(`${API}/api/subscriptions/checkout/tiered`, {
+      const deviceId = localStorage.getItem('device_id') || 
+        (() => {
+          const newId = 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+          localStorage.setItem('device_id', newId);
+          return newId;
+        })();
+
+      // Generate a temporary patient ID for checkout
+      const tempPatientId = patientId || `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      const res = await fetch(`${API}/api/subscriptions/checkout/guest`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           plan_type: planType,
           tier: selectedTier,
-          patient_id: patientId,
-          patient_name: patientName || 'Patient',
-          patient_phone: patientPhone,
-          patient_email: patientEmail,
+          email: checkoutEmail.toLowerCase(),
+          device_id: deviceId,
           coupon_code: couponValid ? couponCode.toUpperCase() : null,
-          referral_code: referralCode || null
+          referral_code: referralCode || null,
+          temp_patient_id: tempPatientId
         })
       });
       const data = await res.json();
 
       if (data.free_subscription) {
         toast.success('🎉 Subscription activated with coupon!');
-        setHasSubscription(true);
+        // Show membership form after successful free activation
         setShowPayment(false);
-        checkSubscription();
+        setShowMembershipForm(true);
       } else if (data.checkout_url) {
+        // Store email for post-payment form
+        localStorage.setItem('pending_membership_email', checkoutEmail);
+        localStorage.setItem('pending_membership_plan', planType);
         window.location.href = data.checkout_url;
       } else {
         toast.error(data.detail || 'Failed to create checkout');
@@ -227,6 +210,38 @@ const SubscriptionGate = ({
       toast.error('Payment processing failed');
     } finally {
       setProcessingPayment(false);
+    }
+  };
+
+  // Submit membership form after payment
+  const submitMembershipForm = async () => {
+    if (!membershipFormData.name || !membershipFormData.phone) {
+      toast.error('Please fill in your name and phone number');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API}/api/subscriptions/complete-membership`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: checkoutEmail,
+          plan_type: planType,
+          ...membershipFormData
+        })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success('🎉 Membership activated! Welcome aboard!');
+        setShowMembershipForm(false);
+        // Refresh to show subscription
+        window.location.reload();
+      } else {
+        toast.error(data.message || 'Failed to complete membership');
+      }
+    } catch (error) {
+      toast.error('Failed to submit membership form');
     }
   };
 
@@ -244,6 +259,97 @@ const SubscriptionGate = ({
     return (
       <div className="flex items-center justify-center min-h-[200px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  // Membership Form Modal (shown after payment)
+  if (showMembershipForm) {
+    return (
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md bg-white rounded-2xl shadow-2xl">
+          <CardHeader className={`bg-gradient-to-r ${colors.primary} text-white rounded-t-2xl`}>
+            <CardTitle className="text-xl flex items-center gap-2">
+              <Check className="w-6 h-6" />
+              Complete Your Membership
+            </CardTitle>
+            <p className="text-white/80 text-sm">Just a few details to activate your account</p>
+          </CardHeader>
+          
+          <CardContent className="p-6 space-y-4">
+            <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+              <Check className="w-8 h-8 text-green-500 mx-auto mb-2" />
+              <p className="text-green-700 font-medium">Payment Successful!</p>
+              <p className="text-green-600 text-sm">Fill this form to activate your membership</p>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-medium text-gray-700">Full Name *</label>
+                <Input
+                  placeholder="Enter your full name"
+                  value={membershipFormData.name}
+                  onChange={(e) => setMembershipFormData({...membershipFormData, name: e.target.value})}
+                  className="mt-1"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-gray-700">Phone Number *</label>
+                <Input
+                  placeholder="10-digit mobile number"
+                  value={membershipFormData.phone}
+                  onChange={(e) => setMembershipFormData({...membershipFormData, phone: e.target.value})}
+                  className="mt-1"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Age</label>
+                  <Input
+                    placeholder="Age"
+                    type="number"
+                    value={membershipFormData.age}
+                    onChange={(e) => setMembershipFormData({...membershipFormData, age: e.target.value})}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Gender</label>
+                  <select
+                    value={membershipFormData.gender}
+                    onChange={(e) => setMembershipFormData({...membershipFormData, gender: e.target.value})}
+                    className="mt-1 w-full h-10 rounded-md border border-gray-200 px-3"
+                  >
+                    <option value="">Select</option>
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-gray-700">Address (Optional)</label>
+                <Input
+                  placeholder="Your address"
+                  value={membershipFormData.address}
+                  onChange={(e) => setMembershipFormData({...membershipFormData, address: e.target.value})}
+                  className="mt-1"
+                />
+              </div>
+            </div>
+
+            <Button
+              onClick={submitMembershipForm}
+              className={`w-full bg-gradient-to-r ${colors.primary} text-white py-3 rounded-xl`}
+            >
+              <Check className="w-5 h-5 mr-2" />
+              Activate Membership
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -273,32 +379,20 @@ const SubscriptionGate = ({
       {/* Locked Content Preview */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/80 to-white z-10 flex items-end justify-center pb-8">
-          <div className="flex flex-col sm:flex-row gap-3">
-            {trialStatus?.can_start_trial && (
-              <Button 
-                onClick={startFreeTrial}
-                disabled={processingPayment}
-                className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all"
-              >
-                <Zap className="w-5 h-5 mr-2" />
-                Start 7-Day Free Trial
-              </Button>
-            )}
-            <Button 
-              onClick={() => setShowPayment(true)}
-              className={`bg-gradient-to-r ${colors.primary} text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all`}
-            >
-              <Crown className="w-5 h-5 mr-2" />
-              Get Premium
-            </Button>
-          </div>
+          <Button 
+            onClick={() => setShowPayment(true)}
+            className={`bg-gradient-to-r ${colors.primary} text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all`}
+          >
+            <Crown className="w-5 h-5 mr-2" />
+            Get Premium - No Login Required
+          </Button>
         </div>
         <div className="blur-sm pointer-events-none opacity-50">
           {children}
         </div>
       </div>
 
-      {/* Enhanced Subscription Modal */}
+      {/* Enhanced Purchase Modal - NO LOGIN REQUIRED */}
       {showPayment && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
           <Card className="w-full max-w-lg bg-white rounded-2xl shadow-2xl animate-in fade-in zoom-in duration-300 my-4">
@@ -315,10 +409,27 @@ const SubscriptionGate = ({
                   {planDetails?.name || `${planType} Premium`}
                 </CardTitle>
                 <p className="text-white/80 text-sm mt-2">{planDetails?.description}</p>
+                <Badge className="mt-2 bg-white/20 text-white">No Login Required</Badge>
               </div>
             </CardHeader>
             
             <CardContent className="p-5 space-y-5">
+              {/* Email Input - Primary CTA */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  Your Email Address
+                </label>
+                <Input
+                  type="email"
+                  placeholder="Enter your email to continue"
+                  value={checkoutEmail}
+                  onChange={(e) => setCheckoutEmail(e.target.value)}
+                  className="text-lg py-3"
+                />
+                <p className="text-xs text-gray-500">We'll send your membership details here</p>
+              </div>
+
               {/* Tiered Pricing */}
               <div className="space-y-3">
                 <h4 className="font-semibold text-gray-800 flex items-center gap-2">
@@ -333,7 +444,7 @@ const SubscriptionGate = ({
                       onClick={() => setSelectedTier(key)}
                       className={`relative p-3 rounded-xl border-2 text-left transition-all ${
                         selectedTier === key 
-                          ? `${colors.border} ${colors.light} ring-2 ring-${colors.accent}-400` 
+                          ? `${colors.border} ${colors.light} ring-2 ring-offset-1` 
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -351,36 +462,13 @@ const SubscriptionGate = ({
                       <div className="text-xs text-gray-500">{tier.name}</div>
                       {tier.includes_free && (
                         <div className="text-[10px] text-green-600 mt-1">
-                          +{tier.includes_free/30}mo free access
+                          +{Math.round(tier.includes_free/30)}mo free access
                         </div>
                       )}
                     </button>
                   ))}
                 </div>
               </div>
-
-              {/* Free Trial Banner */}
-              {trialStatus?.can_start_trial && (
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                      <Zap className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-green-800">Try 7 Days Free!</p>
-                      <p className="text-xs text-green-600">No payment required. Cancel anytime.</p>
-                    </div>
-                    <Button 
-                      size="sm"
-                      onClick={startFreeTrial}
-                      disabled={processingPayment}
-                      className="bg-green-500 hover:bg-green-600 text-white"
-                    >
-                      Start Trial
-                    </Button>
-                  </div>
-                </div>
-              )}
 
               {/* Features */}
               <div className="space-y-2">
@@ -448,11 +536,11 @@ const SubscriptionGate = ({
                 </div>
               </div>
 
-              {/* Subscribe Button */}
+              {/* Purchase Button */}
               <Button
-                onClick={handleSubscribe}
-                disabled={processingPayment}
-                className={`w-full bg-gradient-to-r ${colors.primary} text-white py-3 rounded-xl shadow-lg hover:shadow-xl transition-all text-lg`}
+                onClick={handlePurchase}
+                disabled={processingPayment || !checkoutEmail}
+                className={`w-full bg-gradient-to-r ${colors.primary} text-white py-4 rounded-xl shadow-lg hover:shadow-xl transition-all text-lg`}
               >
                 {processingPayment ? (
                   <span className="flex items-center gap-2">
@@ -462,7 +550,7 @@ const SubscriptionGate = ({
                 ) : (
                   <span className="flex items-center justify-center gap-2">
                     <CreditCard className="w-5 h-5" />
-                    Pay ₹{getTierPrice(selectedTier)} for {getTierDays(selectedTier)} days
+                    Buy Now - ₹{getTierPrice(selectedTier)}
                   </span>
                 )}
               </Button>
@@ -476,6 +564,10 @@ const SubscriptionGate = ({
                   <Check className="w-3 h-3" /> Cancel Anytime
                 </span>
               </div>
+
+              <p className="text-center text-xs text-gray-400">
+                Fill your details after payment to activate membership
+              </p>
             </CardContent>
           </Card>
         </div>
