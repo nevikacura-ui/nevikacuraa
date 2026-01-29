@@ -517,6 +517,10 @@ const Glydex = () => {
       const data = await res.json();
       if (data.token) {
         localStorage.setItem('token', data.token);
+        // Save patientId for subscription flow
+        if (data.user?.id) {
+          localStorage.setItem('patientId', data.user.id);
+        }
         toast.success('Account created successfully!');
         window.location.reload();
       } else {
