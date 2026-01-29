@@ -5055,6 +5055,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Medicine Images router: {e}")
 
+# Proton Report Download API
+try:
+    from routes.proton_reports import router as proton_reports_router, set_db as set_proton_reports_db
+    set_proton_reports_db(db)
+    app.include_router(proton_reports_router, prefix="/api")
+    logger.info("Proton Reports Download router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Proton Reports router: {e}")
+
 
 
 app.add_middleware(
