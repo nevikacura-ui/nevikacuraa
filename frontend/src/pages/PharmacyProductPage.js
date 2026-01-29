@@ -14,7 +14,7 @@ const PHARMACY_INFO = {
   name: "Orange Pharmacy",
   fssai: "21525019003800",
   drugLicense: ["MH-PL1-610138", "MH-PL1-610139"],
-  address: "A-1, Sai Darshan, Near Don Bosco High School, Naigaon East, Palghar 401208",
+  address: "A-4, Sai Darshan, Near Don Bosco High School, Naigaon East, Palghar 401208",
   email: "support@nevikacura.com",
   phone: "+91 98765 43210",
   disclaimer: "Product information is as provided by the seller and for informational purposes only. Not exhaustive. Provides only an overview of products. The transaction does not create any doctor-patient relationship. You are advised to consult a doctor for details and further diagnosis/assessment of your medical condition and suitability. Please refer to the applicable Terms of Use and Privacy Policy. Orange Pharmacy is not responsible or liable for any aspects of the products including information displayed."

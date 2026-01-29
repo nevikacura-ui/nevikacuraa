@@ -8,7 +8,7 @@ import { MapPin, Phone, Clock, ExternalLink, Navigation } from 'lucide-react';
 const CLINICS = {
   pushpa: {
     name: 'Pushpa Clinic',
-    address: 'A-1, Sai Darshan, Near Don Bosco High School, Naigaon East',
+    address: 'A-4, Sai Darshan, Near Don Bosco High School, Naigaon East',
     phone: '9403890429',
     mapLink: 'https://maps.app.goo.gl/LfFoHwVzvMEQ1Qzt9',
     schedule: 'Mon - Sat: 11 AM - 2 PM & 6 PM - 10 PM'

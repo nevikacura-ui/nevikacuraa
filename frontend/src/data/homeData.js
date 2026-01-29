@@ -181,7 +181,7 @@ export const clinicLocations = [
     id: 'pushpa',
     name: 'Pushpa Clinic',
     logo: 'https://customer-assets.emergentagent.com/job_medhealth-portal/artifacts/x55478bz_5_20260102_012214_0001.png',
-    address: 'A-1, Sai Darshan, Near Don Bosco High School',
+    address: 'A-4, Sai Darshan, Near Don Bosco High School',
     city: 'Naigaon East, Maharashtra',
     phone: '+91 9403890429',
     hours: '11 AM - 2 PM, 6 PM - 10 PM',
