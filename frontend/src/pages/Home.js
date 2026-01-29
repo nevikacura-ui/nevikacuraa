@@ -355,7 +355,7 @@ const Home = () => {
       isDark: false,
       featured: true
     },
-    // Secondary - Bottom grid (8 portals)
+    // Secondary - Bottom grid (8 portals) - Using full branded logos
     {
       id: 'evara',
       name: 'Evara',
@@ -364,8 +364,7 @@ const Home = () => {
       path: '/evara',
       bgColor: '#511b63',
       isDark: true,
-      fillLogo: true,
-      logoScale: 0.85
+      fillLogo: true
     },
     {
       id: 'glydex',
