@@ -152,20 +152,28 @@ const PortalScrollBar = () => {
     setActivePortal(active?.id || null);
   }, [location.pathname]);
 
-  // Handle page scroll to hide/show portal bar
+  // Handle page scroll to hide/show portal bar - OPTIMIZED with RAF
   useEffect(() => {
+    let ticking = false;
+    
     const handlePageScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // Show bar when scrolling up or near top
-      if (currentScrollY < 100 || currentScrollY < lastScrollY.current) {
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY.current && currentScrollY > 150) {
-        // Hide bar when scrolling down
-        setIsVisible(false);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          
+          // Show bar when scrolling up or near top
+          if (currentScrollY < 100 || currentScrollY < lastScrollY.current) {
+            setIsVisible(true);
+          } else if (currentScrollY > lastScrollY.current && currentScrollY > 150) {
+            // Hide bar when scrolling down
+            setIsVisible(false);
+          }
+          
+          lastScrollY.current = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
       }
-      
-      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener('scroll', handlePageScroll, { passive: true });
