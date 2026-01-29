@@ -1383,6 +1383,13 @@ const Evara = () => {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        <SubscriptionGate
+          planType="evara"
+          patientId={user?.id || user?.patient_id || localStorage.getItem('patientId')}
+          patientName={user?.name}
+          patientPhone={user?.phone}
+          patientEmail={user?.email}
+        >
         {/* Welcome Section */}
         {user && (
           <Card className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white border-0 shadow-xl rounded-3xl overflow-hidden">
