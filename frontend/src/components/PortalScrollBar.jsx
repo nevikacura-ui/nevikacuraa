@@ -211,12 +211,16 @@ const PortalScrollBar = () => {
 
   return (
     <div 
-      className={`relative bg-[#F5F5F4] border-b border-slate-200/50 sticky top-[60px] z-40 overflow-hidden ${
-        isVisible ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0 border-b-0'
-      }`}
+      className="relative bg-[#F5F5F4] border-b border-slate-200/50 sticky top-[60px] z-40 overflow-hidden"
       style={{ 
-        transition: 'max-height 0.3s ease-out, opacity 0.2s ease-out',
-        willChange: 'max-height, opacity'
+        transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
+        opacity: isVisible ? 1 : 0,
+        transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out',
+        willChange: 'transform',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+        perspective: 1000,
+        WebkitPerspective: 1000
       }}
       data-testid="portal-scroll-bar"
     >
