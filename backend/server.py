@@ -5046,6 +5046,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Enhancement Features V3 router: {e}")
 
+# Medicine Images Upload (No Login Required)
+try:
+    from routes.medicine_images import router as medicine_images_router, set_db as set_medicine_images_db
+    set_medicine_images_db(db)
+    app.include_router(medicine_images_router, prefix="/api")
+    logger.info("Medicine Images Upload router loaded (No Login Required)")
+except Exception as e:
+    logger.warning(f"Could not load Medicine Images router: {e}")
+
 
 
 app.add_middleware(
