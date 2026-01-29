@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Phone, MessageCircle, Upload, Package } from 'lucide-react';
+import { Phone, MessageCircle, Upload, Crown } from 'lucide-react';
 
 /**
- * Quick Action Cards - Book via Call, WhatsApp, Upload Prescription, Full Body Packages
+ * Quick Action Cards - Membership Plans, Book via Call, WhatsApp, Upload Prescription
  * WhatsApp: 9403890429
  */
 const QuickActionCards = () => {
@@ -15,13 +15,13 @@ const QuickActionCards = () => {
 
   const actions = [
     {
-      id: 'full-body',
-      title: 'Full body',
-      subtitle: 'Packages',
-      icon: Package,
-      path: '/health-packages',
-      gradient: 'from-purple-400 to-violet-500',
-      bgGradient: 'from-purple-100 to-violet-50'
+      id: 'membership-plans',
+      title: 'Membership',
+      subtitle: 'Plans',
+      icon: Crown,
+      path: '/membership-plans',
+      gradient: 'from-amber-400 to-orange-500',
+      bgGradient: 'from-amber-100 to-orange-50'
     },
     {
       id: 'book-call',
