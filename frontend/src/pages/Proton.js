@@ -324,16 +324,33 @@ const Proton = () => {
     loading: true
   });
 
-  // Check for pre-selected tests from Glydex
+  // Check for pre-selected tests from Glydex or section navigation
   useEffect(() => {
     const testsParam = searchParams.get('tests');
     const fromParam = searchParams.get('from');
+    const sectionParam = searchParams.get('section');
+    
     if (testsParam && fromParam === 'glydex') {
       const preSelectedTests = decodeURIComponent(testsParam).split(',');
       setSelectedTests(preSelectedTests);
       setActiveTab('pathology');
       setActiveCategory('diabetes');
       toast.success(`${preSelectedTests.length} test${preSelectedTests.length > 1 ? 's' : ''} pre-selected from Glydex`);
+    }
+    
+    // Handle section navigation from QuickActions
+    if (sectionParam === 'sonography') {
+      setActiveTab('imaging');
+      setTimeout(() => {
+        const el = document.getElementById('sonography-section');
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    } else if (sectionParam === 'ecg') {
+      setActiveTab('imaging');
+      setTimeout(() => {
+        const el = document.getElementById('ecg-section');
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
     }
   }, [searchParams]);
 
