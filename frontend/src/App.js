@@ -173,6 +173,8 @@ function AppContent() {
           <Route path="/patient-portal" element={<PatientPortal />} />
           {/* Enhancement Features */}
           <Route path="/features" element={<EnhancementFeatures />} />
+          {/* How to Install App */}
+          <Route path="/install" element={<AnimatedPage><HowToInstall /></AnimatedPage>} />
           {/* Payment Routes */}
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/cancel" element={<PaymentCancel />} />
