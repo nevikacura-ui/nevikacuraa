@@ -4577,6 +4577,366 @@ async def get_frequently_ordered(user = Depends(get_current_user_optional)):
     
     return {"medicines": frequent}
 
+# ==================== PRESCRIPTION EMAIL NOTIFICATION ====================
+
+@api_router.post("/pharmacy/prescription-upload")
+async def upload_prescription_with_email(
+    patient_name: str = Body(...),
+    patient_phone: str = Body(...),
+    prescription_url: str = Body(...),
+    notes: str = Body("")
+):
+    """Upload prescription and send email notification to nevikacura@gmail.com"""
+    from services.resend_email import send_email_notification
+    
+    upload = {
+        "id": f"PRESC-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}",
+        "patient_name": patient_name,
+        "patient_phone": patient_phone,
+        "prescription_url": prescription_url,
+        "notes": notes,
+        "status": "pending_review",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.prescription_uploads.insert_one(upload)
+    
+    # Send email to nevikacura@gmail.com
+    try:
+        email_html = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #f97316;">📋 New Prescription Upload</h2>
+            <p><strong>Patient:</strong> {patient_name}</p>
+            <p><strong>Phone:</strong> {patient_phone}</p>
+            <p><strong>Notes:</strong> {notes or 'No notes'}</p>
+            <p><strong>Upload ID:</strong> {upload['id']}</p>
+            <p><strong>Time:</strong> {datetime.now().strftime('%d %b %Y, %I:%M %p')}</p>
+            <p style="margin-top: 20px;">
+                <a href="{prescription_url}" style="background: #f97316; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">
+                    📎 View Prescription
+                </a>
+            </p>
+        </div>
+        """
+        
+        await send_email_notification(
+            to_email="nevikacura@gmail.com",
+            subject=f"New Prescription Upload - {patient_name}",
+            html_content=email_html
+        )
+        upload["email_sent"] = True
+    except Exception as e:
+        logger.error(f"Failed to send prescription email: {e}")
+        upload["email_sent"] = False
+    
+    upload.pop("_id", None)
+    
+    return {
+        "success": True,
+        "upload_id": upload["id"],
+        "message": "Prescription uploaded! Our pharmacy team will review and contact you."
+    }
+
+# ==================== REFILL REMINDERS ====================
+
+class RefillReminderRequest(BaseModel):
+    patient_phone: str
+    patient_name: str
+    medicine_name: str
+    quantity_bought: int
+    doses_per_day: int = 1
+    purchase_date: Optional[str] = None
+
+@api_router.post("/pharmacy/refill-reminder")
+async def set_refill_reminder(request: RefillReminderRequest):
+    """Set automatic refill reminder based on medicine quantity and dosage"""
+    purchase_date = datetime.fromisoformat(request.purchase_date) if request.purchase_date else datetime.now(timezone.utc)
+    
+    # Calculate days until medicine runs out
+    days_supply = request.quantity_bought // request.doses_per_day
+    refill_date = purchase_date + timedelta(days=max(1, days_supply - 3))  # Remind 3 days before
+    
+    reminder = {
+        "id": f"REFILL-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}",
+        "patient_phone": request.patient_phone,
+        "patient_name": request.patient_name,
+        "medicine_name": request.medicine_name,
+        "quantity_bought": request.quantity_bought,
+        "doses_per_day": request.doses_per_day,
+        "purchase_date": purchase_date.isoformat(),
+        "refill_date": refill_date.isoformat(),
+        "days_supply": days_supply,
+        "status": "scheduled",
+        "reminded": False,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.refill_reminders.insert_one(reminder)
+    reminder.pop("_id", None)
+    
+    return {
+        "success": True,
+        "reminder_id": reminder["id"],
+        "refill_date": refill_date.strftime("%d %b %Y"),
+        "days_until_refill": days_supply - 3,
+        "message": f"We'll remind you to refill {request.medicine_name} on {refill_date.strftime('%d %b')}"
+    }
+
+@api_router.get("/pharmacy/refill-reminders/{patient_phone}")
+async def get_patient_refill_reminders(patient_phone: str):
+    """Get all refill reminders for a patient"""
+    reminders = await db.refill_reminders.find({
+        "patient_phone": patient_phone,
+        "status": "scheduled"
+    }).sort("refill_date", 1).to_list(20)
+    
+    for r in reminders:
+        r.pop("_id", None)
+    
+    return {"reminders": reminders}
+
+# ==================== SUBSCRIPTION BOX (Monthly Auto-Delivery) ====================
+
+class SubscriptionBoxRequest(BaseModel):
+    patient_name: str
+    patient_phone: str
+    patient_email: Optional[str] = None
+    address: str
+    medicines: List[dict]  # [{name, quantity, doses_per_day}]
+    frequency: str = "monthly"  # monthly, bi-weekly
+    start_date: Optional[str] = None
+
+@api_router.post("/pharmacy/subscription-box")
+async def create_subscription_box(request: SubscriptionBoxRequest):
+    """Create monthly medicine subscription box with auto-delivery"""
+    start = datetime.fromisoformat(request.start_date) if request.start_date else datetime.now(timezone.utc)
+    
+    # Calculate next delivery dates
+    frequency_days = 30 if request.frequency == "monthly" else 14
+    
+    subscription = {
+        "id": f"SUBBOX-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}",
+        "patient_name": request.patient_name,
+        "patient_phone": request.patient_phone,
+        "patient_email": request.patient_email,
+        "address": request.address,
+        "medicines": request.medicines,
+        "frequency": request.frequency,
+        "frequency_days": frequency_days,
+        "start_date": start.isoformat(),
+        "next_delivery": start.isoformat(),
+        "status": "active",
+        "deliveries_completed": 0,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.medicine_subscriptions.insert_one(subscription)
+    subscription.pop("_id", None)
+    
+    return {
+        "success": True,
+        "subscription_id": subscription["id"],
+        "next_delivery": start.strftime("%d %b %Y"),
+        "frequency": request.frequency,
+        "message": f"Medicine subscription box created! First delivery on {start.strftime('%d %b %Y')}"
+    }
+
+@api_router.get("/pharmacy/subscription-box/{patient_phone}")
+async def get_subscription_boxes(patient_phone: str):
+    """Get active subscription boxes for a patient"""
+    subscriptions = await db.medicine_subscriptions.find({
+        "patient_phone": patient_phone,
+        "status": "active"
+    }).to_list(10)
+    
+    for s in subscriptions:
+        s.pop("_id", None)
+    
+    return {"subscriptions": subscriptions}
+
+@api_router.post("/pharmacy/subscription-box/{subscription_id}/pause")
+async def pause_subscription_box(subscription_id: str):
+    """Pause a subscription box"""
+    result = await db.medicine_subscriptions.update_one(
+        {"id": subscription_id},
+        {"$set": {"status": "paused", "paused_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    return {"success": True, "message": "Subscription paused. You can resume anytime."}
+
+@api_router.post("/pharmacy/subscription-box/{subscription_id}/resume")
+async def resume_subscription_box(subscription_id: str):
+    """Resume a paused subscription box"""
+    result = await db.medicine_subscriptions.update_one(
+        {"id": subscription_id},
+        {
+            "$set": {
+                "status": "active",
+                "resumed_at": datetime.now(timezone.utc).isoformat(),
+                "next_delivery": (datetime.now(timezone.utc) + timedelta(days=1)).isoformat()
+            }
+        }
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    return {"success": True, "message": "Subscription resumed! Next delivery scheduled."}
+
+# ==================== EXPRESS DELIVERY ====================
+
+class ExpressDeliveryRequest(BaseModel):
+    order_id: Optional[str] = None
+    patient_name: str
+    patient_phone: str
+    address: str
+    medicines: List[dict]
+    notes: Optional[str] = None
+
+@api_router.post("/pharmacy/express-delivery")
+async def create_express_delivery(request: ExpressDeliveryRequest):
+    """Create express 2-hour delivery order with extra fee"""
+    EXPRESS_FEE = 50  # ₹50 express delivery fee
+    
+    order = {
+        "id": f"EXPRESS-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}",
+        "patient_name": request.patient_name,
+        "patient_phone": request.patient_phone,
+        "address": request.address,
+        "medicines": request.medicines,
+        "notes": request.notes,
+        "delivery_type": "express",
+        "express_fee": EXPRESS_FEE,
+        "estimated_delivery": (datetime.now(timezone.utc) + timedelta(hours=2)).isoformat(),
+        "status": "processing",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.pharmacy_orders.insert_one(order)
+    order.pop("_id", None)
+    
+    # Notify staff urgently
+    try:
+        await notify_staff_new_order({
+            "id": order["id"],
+            "patient_name": request.patient_name,
+            "test_name": "🚀 EXPRESS DELIVERY - 2 HOUR",
+            "type": "Express"
+        }, "orange")
+    except Exception as e:
+        logger.error(f"Failed to notify staff about express delivery: {e}")
+    
+    return {
+        "success": True,
+        "order_id": order["id"],
+        "express_fee": EXPRESS_FEE,
+        "estimated_delivery": (datetime.now(timezone.utc) + timedelta(hours=2)).strftime("%I:%M %p"),
+        "message": f"Express delivery confirmed! Your medicines will arrive by {(datetime.now() + timedelta(hours=2)).strftime('%I:%M %p')}"
+    }
+
+@api_router.get("/pharmacy/express-fee")
+async def get_express_delivery_fee():
+    """Get current express delivery fee"""
+    return {
+        "express_fee": 50,
+        "estimated_time": "2 hours",
+        "available": True,
+        "hours": "9 AM - 9 PM"
+    }
+
+# ==================== MEDICINE HISTORY & QUICK REORDER ====================
+
+@api_router.get("/pharmacy/history/{patient_phone}")
+async def get_medicine_purchase_history(patient_phone: str, limit: int = 50):
+    """Get complete medicine purchase history for a patient"""
+    orders = await db.pharmacy_orders.find({
+        "patient_phone": patient_phone
+    }).sort("created_at", -1).to_list(limit)
+    
+    # Aggregate medicine purchases
+    medicine_history = {}
+    order_list = []
+    
+    for order in orders:
+        order.pop("_id", None)
+        order_list.append({
+            "id": order.get("id"),
+            "date": order.get("created_at"),
+            "status": order.get("status"),
+            "medicine_count": len(order.get("medicines", []))
+        })
+        
+        for med in order.get("medicines", []):
+            name = med.get("name", "Unknown")
+            if name not in medicine_history:
+                medicine_history[name] = {
+                    "name": name,
+                    "form": med.get("form", ""),
+                    "total_quantity": 0,
+                    "order_count": 0,
+                    "last_ordered": order.get("created_at")
+                }
+            medicine_history[name]["total_quantity"] += med.get("quantity", 1)
+            medicine_history[name]["order_count"] += 1
+    
+    # Sort by order count
+    sorted_history = sorted(medicine_history.values(), key=lambda x: x["order_count"], reverse=True)
+    
+    return {
+        "patient_phone": patient_phone,
+        "total_orders": len(order_list),
+        "orders": order_list[:20],
+        "medicines": sorted_history,
+        "quick_reorder": sorted_history[:5]  # Top 5 for quick reorder
+    }
+
+@api_router.post("/pharmacy/quick-reorder")
+async def quick_reorder_medicines(
+    patient_phone: str = Body(...),
+    patient_name: str = Body(...),
+    address: str = Body(...),
+    medicines: List[str] = Body(...)  # List of medicine names
+):
+    """Quick reorder from previous purchases"""
+    # Get full medicine info from inventory
+    order_medicines = []
+    for med_name in medicines:
+        med_info = next((m for m in MEDICINE_INVENTORY if m["name"] == med_name), None)
+        if med_info:
+            order_medicines.append({
+                "name": med_info["name"],
+                "form": med_info["form"],
+                "quantity": 1
+            })
+    
+    if not order_medicines:
+        raise HTTPException(status_code=400, detail="No valid medicines to reorder")
+    
+    # Create order
+    order = {
+        "id": f"ORD-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}",
+        "patient_name": patient_name,
+        "patient_phone": patient_phone,
+        "address": address,
+        "medicines": order_medicines,
+        "order_type": "quick_reorder",
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.pharmacy_orders.insert_one(order)
+    order.pop("_id", None)
+    
+    return {
+        "success": True,
+        "order_id": order["id"],
+        "medicines": [m["name"] for m in order_medicines],
+        "message": "Quick reorder placed! We'll contact you to confirm."
+    }
+
 # ============ Admin Configuration ============
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'nevikacura2026')  # Change in production
 
