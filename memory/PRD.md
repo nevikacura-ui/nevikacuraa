@@ -132,12 +132,16 @@ Build a comprehensive healthcare application named "Nevika Cura" that enhances s
 ### P0 (Critical)
 - ~~Booking ID in Staff Portal~~ ✅ DONE
 - ~~Pharmacy category UI improvement~~ ✅ DONE
-- Complete MSG91 Facebook verification (user action)
+- ~~Email-only signup flow~~ ✅ DONE (Evara)
+- ~~Subscription system (Glydex/Evara)~~ ✅ DONE
+- Complete MSG91 Facebook verification (user action required)
 
 ### P1 (High Priority)
+- Extend email-only signup to Glydex and other portals
 - Connect frontend enhancement components to backend APIs (~30 features)
 - Test Staff Portal QR Scanner end-to-end
 - Test doctor consultation completion flow end-to-end
+- Get remaining 9 MSG91 templates approved by Meta
 
 ### P2 (Medium Priority)
 - Implement real AI/ML for triage and predictions
