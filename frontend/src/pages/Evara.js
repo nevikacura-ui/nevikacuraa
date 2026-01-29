@@ -874,8 +874,15 @@ const Evara = () => {
   };
 
   const handleSignup = async () => {
-    if (!signupData.name || !signupData.phone || !signupData.password) {
-      toast.error('Please fill in all required fields');
+    if (!signupData.name || !signupData.email || !signupData.password) {
+      toast.error('Please fill in all required fields (Name, Email, Password)');
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(signupData.email)) {
+      toast.error('Please enter a valid email address');
       return;
     }
 
@@ -884,7 +891,7 @@ const Evara = () => {
       const endpoint = loginMode ? '/api/auth/login' : '/api/auth/register';
       const body = loginMode 
         ? { email: signupData.email, password: signupData.password }
-        : signupData;
+        : { ...signupData, email: signupData.email };
       
       const res = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
