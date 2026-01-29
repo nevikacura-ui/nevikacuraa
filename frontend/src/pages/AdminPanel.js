@@ -258,7 +258,7 @@ const SubscriptionsManager = () => {
                 onChange={(e) => setGrantForm({...grantForm, plan_type: e.target.value})}
               >
                 <option value="glydex">Glydex (Diabetes Care)</option>
-                <option value="evara">Evara (Women's Wellness)</option>
+                <option value="evara">Evara (Womens Wellness)</option>
               </select>
             </div>
             <div>
