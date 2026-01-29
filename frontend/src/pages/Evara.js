@@ -1733,7 +1733,7 @@ const Evara = () => {
             )}
             
             <div>
-              <Label>Email {loginMode ? '*' : '(Optional)'}</Label>
+              <Label>Email *</Label>
               <div className="relative">
                 <Mail className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
                 <Input 
@@ -1742,6 +1742,7 @@ const Evara = () => {
                   className="pl-10"
                   value={signupData.email}
                   onChange={(e) => setSignupData({...signupData, email: e.target.value})}
+                  required
                 />
               </div>
             </div>
@@ -1756,6 +1757,7 @@ const Evara = () => {
                   className="pl-10"
                   value={signupData.password}
                   onChange={(e) => setSignupData({...signupData, password: e.target.value})}
+                  required
                 />
               </div>
             </div>
