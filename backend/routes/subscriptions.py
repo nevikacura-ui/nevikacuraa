@@ -35,7 +35,7 @@ SUBSCRIPTION_PLANS = {
         "description": "Comprehensive Diabetes Management",
         "price": 3600,
         "currency": "INR",
-        "duration_days": 365,
+        "duration_days": 180,  # 6 months
         "features": [
             "Personalized diet plans",
             "Blood sugar tracking & analytics",
@@ -49,7 +49,7 @@ SUBSCRIPTION_PLANS = {
         "description": "Complete Women's Health Care",
         "price": 3600,
         "currency": "INR",
-        "duration_days": 365,
+        "duration_days": 270,  # 9 months
         "features": [
             "Personalized care plans",
             "Cycle & pregnancy tracking",
