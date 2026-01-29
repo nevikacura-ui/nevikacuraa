@@ -1287,7 +1287,7 @@ const Pharmacy = () => {
                       {inventory.map((med, idx) => (
                         <div
                           key={`${med.name}-${idx}`}
-                          onClick={() => { setSelectedMedicine(med); setShowProductDetail(true); }}
+                          onClick={() => navigate(`/pharmacy/product/${encodeURIComponent(med.name)}`, { state: { product: med } })}
                           className="flex items-center gap-4 p-3 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 transition-colors cursor-pointer group"
                           data-testid={`inventory-item-${idx}`}
                         >
