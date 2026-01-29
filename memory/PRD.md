@@ -155,7 +155,35 @@ Build a comprehensive healthcare application named "Nevika Cura" that enhances s
 - Face ID Camera fails on mobile (low priority)
 
 ## Last Updated
-January 28, 2026
+January 29, 2026
+
+## Recent Updates (January 29, 2026)
+
+### Email-Only Signup Flow ✅
+- **Evara page** now uses email OTP verification instead of SMS
+- 3-step signup: Email → OTP Verification → Complete Profile
+- Phone number is now optional
+- Email OTP endpoints: `/api/auth/email-otp/send`, `/api/auth/email-otp/verify`
+- AuthContext updated with `sendEmailOtp`, `verifyEmailOtp`, `loginWithEmailOtp`, `registerWithEmailOtp`
+
+### Subscription System (Glydex/Evara) ✅
+- Backend routes: `/app/backend/routes/subscriptions.py`
+- 400 coupon codes generated (200 Glydex + 200 Evara)
+- Coupon PDF sent to `nevikacura@gmail.com` via Resend
+- `SubscriptionGate` component protects premium content
+- Admin panel has subscription management UI
+
+### Pharmacy Pills Filtering ✅
+- Health concern pills now properly filter medicines
+- Categories: Diabetes, Heart Care, Pain Relief, Digestive, Skin Care, Cold & Cough, Vitamins, Eye Care, Bone & Joint
+
+### Header Stutter Fix ✅
+- Applied `will-change-transform` CSS optimization to PortalScrollBar
+
+### MSG91 WhatsApp Status
+- Only 1/10 templates approved by Meta (diagyn_appointment_confirm)
+- Other templates pending Meta approval
+- Twilio SMS now used only for OTP verification
 
 ---
 
