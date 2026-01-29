@@ -791,6 +791,14 @@ const Evara = () => {
   });
   const [loginMode, setLoginMode] = useState(false);
   
+  // Email OTP verification state
+  const [emailOtpSent, setEmailOtpSent] = useState(false);
+  const [emailOtp, setEmailOtp] = useState(['', '', '', '', '', '']);
+  const [emailOtpLoading, setEmailOtpLoading] = useState(false);
+  const [emailVerificationToken, setEmailVerificationToken] = useState('');
+  const [mockEmailOtp, setMockEmailOtp] = useState('');
+  const [otpResendTimer, setOtpResendTimer] = useState(0);
+  
   // Onboarding form state
   const [onboardingData, setOnboardingData] = useState({
     age: '',
