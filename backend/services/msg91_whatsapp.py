@@ -43,7 +43,7 @@ TEMPLATES = {
 
 # Clinic Addresses
 CLINIC_ADDRESSES = {
-    "pushpa clinic": "A-1, Sai Darshan, Near Don Bosco High School, Naigaon East",
+    "pushpa clinic": "A-4, Sai Darshan, Near Don Bosco High School, Naigaon East",
     "amnion clinic": "G-7, Rashmi Star City Phase 5, Opp Thakur School, Naigaon East",
     "default": "Naigaon East, Palghar"
 }

@@ -6,7 +6,7 @@ CLINICS_DATA = {
         {
             "id": "pushpa_clinic",
             "name": "Pushpa Clinic",
-            "address": "A-1, Sai Darshan, Near Don Bosco High School",
+            "address": "A-4, Sai Darshan, Near Don Bosco High School",
             "city": "Naigaon East, Maharashtra",
             "phone": "+91 9403890429",
             "hours": "11 AM - 2 PM, 6 PM - 10 PM",
