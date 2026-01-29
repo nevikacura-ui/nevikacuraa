@@ -1399,6 +1399,311 @@ class CompleteMembershipRequest(BaseModel):
     gender: Optional[str] = None
     address: Optional[str] = None
 
+
+# ==================== MEMBERSHIP PLAN ENDPOINTS ====================
+
+@router.get("/membership-plans")
+async def get_membership_plans():
+    """Get all membership plans"""
+    return {
+        "plans": MEMBERSHIP_PLANS,
+        "family_plans": FAMILY_PLANS
+    }
+
+@router.get("/membership-plans/{plan_id}")
+async def get_membership_plan_details(plan_id: str):
+    """Get specific membership plan details"""
+    plan = MEMBERSHIP_PLANS.get(plan_id)
+    if not plan:
+        plan = FAMILY_PLANS.get(plan_id)
+    
+    if not plan:
+        raise HTTPException(status_code=404, detail="Plan not found")
+    
+    return {"plan": plan}
+
+class MembershipPurchaseRequest(BaseModel):
+    plan_type: str  # basic, standard, premium, diagnostic_only, etc.
+    billing_cycle: str  # monthly, quarterly, yearly
+    email: str
+    family_members: Optional[List[dict]] = None  # For family plans [{name, relation, phone, email}]
+    coupon_code: Optional[str] = None
+
+@router.post("/membership/purchase")
+async def purchase_membership(request: MembershipPurchaseRequest):
+    """Purchase a membership plan (no login required)"""
+    import stripe
+    
+    if not stripe_api_key:
+        raise HTTPException(status_code=500, detail="Payment not configured")
+    
+    stripe.api_key = stripe_api_key
+    
+    # Get plan
+    plan = MEMBERSHIP_PLANS.get(request.plan_type)
+    is_family = False
+    
+    if not plan:
+        plan = FAMILY_PLANS.get(request.plan_type)
+        is_family = True
+    
+    if not plan:
+        raise HTTPException(status_code=400, detail="Invalid plan type")
+    
+    billing = plan.get(request.billing_cycle)
+    if not billing:
+        raise HTTPException(status_code=400, detail="Invalid billing cycle")
+    
+    price = billing["price"]
+    duration_days = billing["duration_days"]
+    
+    # Apply coupon
+    if request.coupon_code:
+        coupon = await db.coupons.find_one({
+            "code": request.coupon_code.upper(),
+            "is_active": True
+        })
+        if coupon:
+            discount = coupon.get("discount_percent", 0)
+            price = int(price * (100 - discount) / 100)
+    
+    if price == 0:
+        # Free membership with 100% coupon
+        membership = {
+            "id": f"MEM-{datetime.now().strftime('%Y%m%d%H%M%S')}-{random.randint(1000, 9999)}",
+            "email": request.email.lower(),
+            "plan_type": request.plan_type,
+            "plan_name": plan["name"],
+            "billing_cycle": request.billing_cycle,
+            "is_family": is_family,
+            "family_members": request.family_members or [],
+            "amount_paid": 0,
+            "payment_method": "coupon",
+            "coupon_code": request.coupon_code,
+            "status": "pending_details",
+            "start_date": datetime.now(timezone.utc).isoformat(),
+            "end_date": (datetime.now(timezone.utc) + timedelta(days=duration_days)).isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.memberships.insert_one(membership)
+        
+        return {
+            "success": True,
+            "free_membership": True,
+            "membership_id": membership["id"],
+            "message": "Membership activated! Please complete your profile."
+        }
+    
+    # Create Stripe checkout
+    frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('REACT_APP_BACKEND_URL', 'https://nevikacura.com'))
+    
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            customer_email=request.email,
+            line_items=[{
+                'price_data': {
+                    'currency': 'inr',
+                    'product_data': {
+                        'name': f"{plan['name']} - {request.billing_cycle.capitalize()}",
+                        'description': plan.get('description', '')
+                    },
+                    'unit_amount': price * 100
+                },
+                'quantity': 1
+            }],
+            mode='payment',
+            success_url=f"{frontend_url}/membership?success=true&plan={request.plan_type}&session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{frontend_url}/membership?canceled=true",
+            metadata={
+                'email': request.email,
+                'plan_type': request.plan_type,
+                'billing_cycle': request.billing_cycle,
+                'is_family': str(is_family),
+                'duration_days': str(duration_days),
+                'coupon_code': request.coupon_code or ''
+            }
+        )
+        
+        # Store pending membership
+        pending = {
+            "session_id": session.id,
+            "email": request.email.lower(),
+            "plan_type": request.plan_type,
+            "billing_cycle": request.billing_cycle,
+            "is_family": is_family,
+            "family_members": request.family_members or [],
+            "price": price,
+            "status": "payment_pending",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.pending_memberships.insert_one(pending)
+        
+        return {
+            "checkout_url": session.url,
+            "session_id": session.id,
+            "amount": price,
+            "plan_name": plan["name"]
+        }
+    except Exception as e:
+        logger.error(f"Stripe membership error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+class CompleteMembershipDetailsRequest(BaseModel):
+    email: str
+    name: str
+    phone: str
+    age: Optional[str] = None
+    gender: Optional[str] = None
+    address: Optional[str] = None
+    family_members: Optional[List[dict]] = None
+
+@router.post("/membership/complete-details")
+async def complete_membership_details(request: CompleteMembershipDetailsRequest):
+    """Complete membership details after payment"""
+    # Find pending membership
+    membership = await db.memberships.find_one({
+        "email": request.email.lower(),
+        "status": "pending_details"
+    })
+    
+    if not membership:
+        return {"success": False, "message": "No pending membership found"}
+    
+    # Update with details
+    update_data = {
+        "member_name": request.name,
+        "member_phone": request.phone,
+        "member_age": request.age,
+        "member_gender": request.gender,
+        "member_address": request.address,
+        "status": "active",
+        "activated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if request.family_members:
+        update_data["family_members"] = request.family_members
+    
+    await db.memberships.update_one(
+        {"id": membership["id"]},
+        {"$set": update_data}
+    )
+    
+    return {
+        "success": True,
+        "message": "Membership activated successfully!",
+        "membership_id": membership["id"]
+    }
+
+@router.get("/membership/status/{email}")
+async def get_membership_status(email: str):
+    """Get membership status for an email"""
+    membership = await db.memberships.find_one({
+        "email": email.lower(),
+        "status": "active"
+    })
+    
+    if not membership:
+        return {"has_membership": False}
+    
+    membership.pop("_id", None)
+    
+    # Check if expired
+    end_date = datetime.fromisoformat(membership.get("end_date", "").replace("Z", "+00:00"))
+    now = datetime.now(timezone.utc)
+    
+    if now > end_date:
+        return {
+            "has_membership": True,
+            "status": "expired",
+            "expired_on": membership["end_date"]
+        }
+    
+    days_remaining = (end_date - now).days
+    
+    return {
+        "has_membership": True,
+        "status": "active",
+        "membership": membership,
+        "days_remaining": days_remaining
+    }
+
+# ==================== FAMILY PLAN ENDPOINTS ====================
+
+@router.get("/family-plans")
+async def get_family_plans():
+    """Get all family plans"""
+    return {"plans": FAMILY_PLANS}
+
+class FamilyMemberRequest(BaseModel):
+    membership_id: str
+    name: str
+    relation: str
+    phone: str
+    email: Optional[str] = None
+    age: Optional[str] = None
+
+@router.post("/family/add-member")
+async def add_family_member(request: FamilyMemberRequest):
+    """Add a family member to an existing family plan"""
+    membership = await db.memberships.find_one({"id": request.membership_id})
+    
+    if not membership:
+        raise HTTPException(status_code=404, detail="Membership not found")
+    
+    if not membership.get("is_family"):
+        raise HTTPException(status_code=400, detail="Not a family plan")
+    
+    # Check member limit
+    plan = FAMILY_PLANS.get(membership["plan_type"])
+    max_members = plan.get("members", 4) if plan else 4
+    
+    current_members = membership.get("family_members", [])
+    if len(current_members) >= max_members:
+        raise HTTPException(status_code=400, detail=f"Maximum {max_members} members allowed")
+    
+    new_member = {
+        "id": f"FAM-{random.randint(1000, 9999)}",
+        "name": request.name,
+        "relation": request.relation,
+        "phone": request.phone,
+        "email": request.email,
+        "age": request.age,
+        "added_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.memberships.update_one(
+        {"id": request.membership_id},
+        {"$push": {"family_members": new_member}}
+    )
+    
+    return {
+        "success": True,
+        "message": f"{request.name} added to family plan",
+        "member_id": new_member["id"]
+    }
+
+@router.get("/family/members/{membership_id}")
+async def get_family_members(membership_id: str):
+    """Get all family members for a membership"""
+    membership = await db.memberships.find_one({"id": membership_id})
+    
+    if not membership:
+        raise HTTPException(status_code=404, detail="Membership not found")
+    
+    return {
+        "membership_id": membership_id,
+        "plan_name": membership.get("plan_name"),
+        "members": membership.get("family_members", []),
+        "primary_member": {
+            "name": membership.get("member_name"),
+            "phone": membership.get("member_phone"),
+            "email": membership.get("email")
+        }
+    }
+
+
 @router.post("/complete-membership")
 async def complete_membership(request: CompleteMembershipRequest):
     """Complete membership after payment - fill in user details"""
