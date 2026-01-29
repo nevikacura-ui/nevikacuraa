@@ -3414,7 +3414,267 @@ async def get_appointments(user = Depends(get_current_user)):
     
     return appointments
 
-@api_router.post("/diagnostics", response_model=DiagnosticOrder)
+# ==================== WAITLIST FEATURE ====================
+
+class WaitlistRequest(BaseModel):
+    patient_name: str
+    patient_phone: str
+    patient_email: Optional[str] = None
+    doctor_id: str
+    doctor_name: str
+    preferred_date: str
+    service_type: str = "diagyn"
+    notes: Optional[str] = None
+
+@api_router.post("/appointments/waitlist")
+async def join_waitlist(request: WaitlistRequest):
+    """Join waitlist when preferred slot is not available"""
+    waitlist_entry = {
+        "id": f"WL-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}",
+        "patient_name": request.patient_name,
+        "patient_phone": request.patient_phone,
+        "patient_email": request.patient_email,
+        "doctor_id": request.doctor_id,
+        "doctor_name": request.doctor_name,
+        "preferred_date": request.preferred_date,
+        "service_type": request.service_type,
+        "notes": request.notes,
+        "status": "waiting",
+        "notified": False,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.appointment_waitlist.insert_one(waitlist_entry)
+    waitlist_entry.pop("_id", None)
+    
+    # Get position in waitlist
+    position = await db.appointment_waitlist.count_documents({
+        "doctor_id": request.doctor_id,
+        "preferred_date": request.preferred_date,
+        "status": "waiting"
+    })
+    
+    return {
+        "success": True,
+        "waitlist_id": waitlist_entry["id"],
+        "position": position,
+        "message": f"You're #{position} on the waitlist. We'll notify you when a slot opens."
+    }
+
+@api_router.get("/appointments/waitlist/{patient_phone}")
+async def get_waitlist_status(patient_phone: str):
+    """Get waitlist entries for a patient"""
+    entries = await db.appointment_waitlist.find({
+        "patient_phone": patient_phone,
+        "status": "waiting"
+    }).to_list(20)
+    
+    for e in entries:
+        e.pop("_id", None)
+        # Calculate position
+        e["position"] = await db.appointment_waitlist.count_documents({
+            "doctor_id": e["doctor_id"],
+            "preferred_date": e["preferred_date"],
+            "status": "waiting",
+            "created_at": {"$lte": e["created_at"]}
+        })
+    
+    return {"waitlist_entries": entries}
+
+@api_router.post("/appointments/waitlist/notify")
+async def notify_waitlist_slot_available(doctor_id: str = Body(...), date: str = Body(...), time: str = Body(...)):
+    """Notify waitlist patients when slot becomes available"""
+    # Find first waiting patient
+    waiting = await db.appointment_waitlist.find_one({
+        "doctor_id": doctor_id,
+        "preferred_date": date,
+        "status": "waiting",
+        "notified": False
+    })
+    
+    if not waiting:
+        return {"success": False, "message": "No patients in waitlist"}
+    
+    # Mark as notified
+    await db.appointment_waitlist.update_one(
+        {"id": waiting["id"]},
+        {"$set": {"notified": True, "notified_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    # TODO: Send WhatsApp/SMS notification
+    
+    return {
+        "success": True,
+        "patient_notified": waiting["patient_name"],
+        "phone": waiting["patient_phone"]
+    }
+
+# ==================== QUICK RESCHEDULE ====================
+
+class RescheduleRequest(BaseModel):
+    appointment_id: str
+    new_date: str
+    new_time: str
+    reason: Optional[str] = None
+
+@api_router.post("/appointments/reschedule")
+async def quick_reschedule(request: RescheduleRequest):
+    """Reschedule appointment in 2 taps without cancelling"""
+    # Find the appointment
+    appointment = await db.appointments.find_one({"id": request.appointment_id})
+    
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    if appointment.get("status") in ["completed", "cancelled"]:
+        raise HTTPException(status_code=400, detail="Cannot reschedule completed or cancelled appointment")
+    
+    # Store old details
+    old_date = appointment.get("date")
+    old_time = appointment.get("time")
+    
+    # Update appointment
+    await db.appointments.update_one(
+        {"id": request.appointment_id},
+        {
+            "$set": {
+                "date": request.new_date,
+                "time": request.new_time,
+                "status": "rescheduled",
+                "rescheduled_at": datetime.now(timezone.utc).isoformat(),
+                "reschedule_reason": request.reason
+            },
+            "$push": {
+                "reschedule_history": {
+                    "old_date": old_date,
+                    "old_time": old_time,
+                    "new_date": request.new_date,
+                    "new_time": request.new_time,
+                    "reason": request.reason,
+                    "changed_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        }
+    )
+    
+    # Free up old slot and notify waitlist
+    await notify_waitlist_slot_available(
+        doctor_id=appointment.get("doctor_id", ""),
+        date=old_date,
+        time=old_time
+    )
+    
+    return {
+        "success": True,
+        "message": f"Appointment rescheduled to {request.new_date} at {request.new_time}",
+        "old_slot": f"{old_date} {old_time}",
+        "new_slot": f"{request.new_date} {request.new_time}"
+    }
+
+# ==================== LIVE QUEUE STATUS ====================
+
+@api_router.get("/appointments/queue/{doctor_id}")
+async def get_live_queue_status(doctor_id: str, date: str = None):
+    """Get real-time queue status for a doctor"""
+    if not date:
+        date = datetime.now().strftime("%Y-%m-%d")
+    
+    # Get today's appointments for this doctor
+    appointments = await db.appointments.find({
+        "doctor_id": doctor_id,
+        "date": date,
+        "status": {"$in": ["confirmed", "checked_in", "in_progress"]}
+    }).sort("time", 1).to_list(50)
+    
+    # Count statuses
+    waiting = 0
+    in_progress = 0
+    completed_today = await db.appointments.count_documents({
+        "doctor_id": doctor_id,
+        "date": date,
+        "status": "completed"
+    })
+    
+    queue = []
+    for idx, appt in enumerate(appointments):
+        appt.pop("_id", None)
+        status = appt.get("status")
+        
+        if status == "checked_in":
+            waiting += 1
+            queue.append({
+                "position": waiting,
+                "patient_name": appt.get("patient_name", "")[:20],  # Privacy
+                "time": appt.get("time"),
+                "status": "waiting",
+                "estimated_wait": f"{waiting * 15} min"  # ~15 min per patient
+            })
+        elif status == "in_progress":
+            in_progress += 1
+    
+    return {
+        "doctor_id": doctor_id,
+        "date": date,
+        "queue": queue,
+        "stats": {
+            "patients_waiting": waiting,
+            "currently_with_doctor": in_progress,
+            "completed_today": completed_today,
+            "average_wait_time": f"{waiting * 12} min"
+        },
+        "last_updated": datetime.now(timezone.utc).isoformat()
+    }
+
+@api_router.get("/appointments/my-position/{appointment_id}")
+async def get_my_queue_position(appointment_id: str):
+    """Get patient's position in queue"""
+    appointment = await db.appointments.find_one({"id": appointment_id})
+    
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    # Count patients ahead
+    patients_ahead = await db.appointments.count_documents({
+        "doctor_id": appointment.get("doctor_id"),
+        "date": appointment.get("date"),
+        "status": {"$in": ["checked_in", "in_progress"]},
+        "time": {"$lt": appointment.get("time")}
+    })
+    
+    return {
+        "appointment_id": appointment_id,
+        "position": patients_ahead + 1,
+        "patients_ahead": patients_ahead,
+        "estimated_wait": f"{patients_ahead * 12} min",
+        "your_time": appointment.get("time"),
+        "status": appointment.get("status"),
+        "message": f"You're #{patients_ahead + 1} in queue" if patients_ahead > 0 else "You're next!"
+    }
+
+@api_router.post("/appointments/check-in/{appointment_id}")
+async def patient_check_in(appointment_id: str):
+    """Patient checks in for their appointment"""
+    result = await db.appointments.update_one(
+        {"id": appointment_id, "status": "confirmed"},
+        {
+            "$set": {
+                "status": "checked_in",
+                "checked_in_at": datetime.now(timezone.utc).isoformat()
+            }
+        }
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=400, detail="Appointment not found or already checked in")
+    
+    # Get position
+    position_data = await get_my_queue_position(appointment_id)
+    
+    return {
+        "success": True,
+        "message": "Check-in successful!",
+        **position_data
+    }
 async def create_diagnostic_order(input: DiagnosticOrderCreate, user = Depends(get_current_user)):
     # ORDER LIMIT: Check if user already has 2 active diagnostic orders
     active_orders = await db.diagnostic_orders.find({
