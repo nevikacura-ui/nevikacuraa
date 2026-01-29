@@ -3481,6 +3481,103 @@ async def get_waitlist_status(patient_phone: str):
     
     return {"waitlist_entries": entries}
 
+@api_router.get("/appointments/waitlist/status")
+async def check_waitlist_status(patient_id: str, doctor_id: str):
+    """Check if patient is on waitlist for a specific doctor"""
+    entry = await db.appointment_waitlist.find_one({
+        "patient_id": patient_id,
+        "doctor_id": doctor_id,
+        "status": "waiting"
+    }, {"_id": 0})
+    
+    if entry:
+        position = await db.appointment_waitlist.count_documents({
+            "doctor_id": doctor_id,
+            "status": "waiting",
+            "created_at": {"$lt": entry.get("created_at", "")}
+        }) + 1
+        return {
+            "success": True,
+            "on_waitlist": True,
+            "position": position,
+            "estimated_wait": "1-2 days" if position <= 3 else "3-5 days"
+        }
+    
+    return {"success": True, "on_waitlist": False}
+
+@api_router.post("/appointments/waitlist/join")
+async def join_waitlist_new(
+    patient_id: str = Body(...),
+    patient_name: str = Body(...),
+    patient_phone: str = Body(...),
+    doctor_id: str = Body(...),
+    doctor_name: str = Body(None),
+    clinic: str = Body("diagyn"),
+    preferred_dates: list = Body([]),
+    notify_via: str = Body("both"),
+    priority: str = Body("normal")
+):
+    """Join waitlist for a doctor"""
+    import uuid
+    
+    # Check if already on waitlist
+    existing = await db.appointment_waitlist.find_one({
+        "patient_id": patient_id,
+        "doctor_id": doctor_id,
+        "status": "waiting"
+    })
+    
+    if existing:
+        return {"success": False, "message": "Already on waitlist for this doctor"}
+    
+    waitlist_entry = {
+        "id": f"WL-{uuid.uuid4().hex[:8].upper()}",
+        "patient_id": patient_id,
+        "patient_name": patient_name,
+        "patient_phone": patient_phone,
+        "doctor_id": doctor_id,
+        "doctor_name": doctor_name,
+        "clinic": clinic,
+        "preferred_dates": preferred_dates,
+        "notify_via": notify_via,
+        "priority": priority,
+        "status": "waiting",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "notified": False
+    }
+    
+    await db.appointment_waitlist.insert_one(waitlist_entry)
+    
+    # Get position
+    position = await db.appointment_waitlist.count_documents({
+        "doctor_id": doctor_id,
+        "status": "waiting"
+    })
+    
+    return {
+        "success": True,
+        "waitlist_id": waitlist_entry["id"],
+        "position": position,
+        "estimated_wait": "1-2 days" if position <= 3 else "3-5 days",
+        "message": f"You're #{position} on the waitlist"
+    }
+
+@api_router.post("/appointments/waitlist/leave")
+async def leave_waitlist(
+    patient_id: str = Body(...),
+    doctor_id: str = Body(...)
+):
+    """Leave/cancel waitlist entry"""
+    result = await db.appointment_waitlist.update_one(
+        {"patient_id": patient_id, "doctor_id": doctor_id, "status": "waiting"},
+        {"$set": {"status": "cancelled", "cancelled_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    if result.modified_count > 0:
+        return {"success": True, "message": "Removed from waitlist"}
+    
+    return {"success": False, "message": "Not found on waitlist"}
+
 @api_router.post("/appointments/waitlist/notify")
 async def notify_waitlist_slot_available(doctor_id: str = Body(...), date: str = Body(...), time: str = Body(...)):
     """Notify waitlist patients when slot becomes available"""
