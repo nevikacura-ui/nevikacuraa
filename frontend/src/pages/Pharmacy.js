@@ -1238,7 +1238,7 @@ const Pharmacy = () => {
                         <div
                           key={`${med.name}-${idx}`}
                           className="bg-white rounded-xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-orange-200 transition-all cursor-pointer group"
-                          onClick={() => { setSelectedMedicine(med); setShowProductDetail(true); }}
+                          onClick={() => navigate(`/pharmacy/product/${encodeURIComponent(med.name)}`, { state: { product: med } })}
                           data-testid={`inventory-item-${idx}`}
                         >
                           {/* Product Image */}
