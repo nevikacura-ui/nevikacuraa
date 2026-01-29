@@ -396,6 +396,162 @@ const Glydex = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
+  // Email OTP Signup State (for non-logged in users)
+  const [showSignup, setShowSignup] = useState(false);
+  const [signupData, setSignupData] = useState({ name: '', email: '', phone: '', password: '' });
+  const [loginMode, setLoginMode] = useState(false);
+  const [emailOtpSent, setEmailOtpSent] = useState(false);
+  const [emailOtp, setEmailOtp] = useState(['', '', '', '', '', '']);
+  const [emailOtpLoading, setEmailOtpLoading] = useState(false);
+  const [emailVerificationToken, setEmailVerificationToken] = useState('');
+  const [mockEmailOtp, setMockEmailOtp] = useState('');
+  const [otpResendTimer, setOtpResendTimer] = useState(0);
+
+  // OTP Resend Timer effect
+  useEffect(() => {
+    if (otpResendTimer > 0) {
+      const timer = setTimeout(() => setOtpResendTimer(otpResendTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [otpResendTimer]);
+
+  // Email OTP Functions
+  const sendEmailOtp = async () => {
+    if (!signupData.email || !signupData.email.includes('@')) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+    setEmailOtpLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/auth/email-otp/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: signupData.email.toLowerCase() })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEmailOtpSent(true);
+        setMockEmailOtp(data.mock_otp || '');
+        setOtpResendTimer(60);
+        toast.success('Verification code sent to your email!');
+      } else {
+        toast.error(data.detail || 'Failed to send verification code');
+      }
+    } catch (error) {
+      toast.error('Failed to send verification code');
+    } finally {
+      setEmailOtpLoading(false);
+    }
+  };
+
+  const verifyEmailOtp = async () => {
+    const otpValue = emailOtp.join('');
+    if (otpValue.length !== 6) {
+      toast.error('Please enter complete 6-digit code');
+      return;
+    }
+    setEmailOtpLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/auth/email-otp/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: signupData.email.toLowerCase(), otp: otpValue })
+      });
+      const data = await res.json();
+      if (data.success && data.verified) {
+        setEmailVerificationToken(data.verification_token);
+        if (data.user_exists) {
+          // Login existing user
+          const loginRes = await fetch(`${API_URL}/api/auth/email-otp/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: signupData.email.toLowerCase(), verification_token: data.verification_token })
+          });
+          const loginData = await loginRes.json();
+          if (loginData.token) {
+            localStorage.setItem('token', loginData.token);
+            window.location.reload();
+          } else {
+            toast.error(loginData.detail || 'Login failed');
+          }
+        } else {
+          toast.success('Email verified! Complete your profile.');
+        }
+      } else {
+        toast.error(data.detail || 'Invalid verification code');
+        setEmailOtp(['', '', '', '', '', '']);
+      }
+    } catch (error) {
+      toast.error('Verification failed');
+    } finally {
+      setEmailOtpLoading(false);
+    }
+  };
+
+  const completeRegistration = async () => {
+    if (!signupData.name.trim()) {
+      toast.error('Please enter your name');
+      return;
+    }
+    if (!signupData.password || signupData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: signupData.email.toLowerCase(),
+          name: signupData.name,
+          phone: signupData.phone || '',
+          password: signupData.password,
+          verification_token: emailVerificationToken
+        })
+      });
+      const data = await res.json();
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        toast.success('Account created successfully!');
+        window.location.reload();
+      } else {
+        toast.error(data.detail || 'Registration failed');
+      }
+    } catch (error) {
+      toast.error('Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmailOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+    const newOtp = [...emailOtp];
+    newOtp[index] = value.slice(-1);
+    setEmailOtp(newOtp);
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`glydex-otp-${index + 1}`);
+      if (nextInput) nextInput.focus();
+    }
+  };
+
+  const handleEmailOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !emailOtp[index] && index > 0) {
+      const prevInput = document.getElementById(`glydex-otp-${index - 1}`);
+      if (prevInput) prevInput.focus();
+    }
+  };
+
+  const resetSignupForm = () => {
+    setSignupData({ name: '', email: '', phone: '', password: '' });
+    setEmailOtpSent(false);
+    setEmailOtp(['', '', '', '', '', '']);
+    setEmailVerificationToken('');
+    setMockEmailOtp('');
+    setLoginMode(false);
+  };
+
   useEffect(() => {
     if (token) {
       fetchProfile();
