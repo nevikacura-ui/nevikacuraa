@@ -104,7 +104,7 @@ const portals = [
     fillContainer: true,
     tagline: "Care for Life's Next Chapter."
   },
-  // 10. Reports - Blood Charts (Icon-based)
+  // 10. Reports - Blood Charts (Icon-based with pastel background)
   {
     id: 'reports',
     name: 'Reports',
@@ -112,9 +112,10 @@ const portals = [
     path: '/health-dashboard',
     hasIcon: true,
     icon: FileText,
-    bgColor: '#ea580c'
+    bgColor: '#FFF5F0',  // Light peach pastel
+    iconColor: '#ea580c'  // Orange icon
   },
-  // 11. Health Log - Weight & Logs (Icon-based)
+  // 11. Health Log - Weight & Logs (Icon-based with pastel background)
   {
     id: 'healthchart',
     name: 'Health Log',
@@ -122,7 +123,8 @@ const portals = [
     path: '/my-health',
     hasIcon: true,
     icon: BarChart3,
-    bgColor: '#16a34a'
+    bgColor: '#F0FFF4',  // Light green pastel
+    iconColor: '#16a34a'  // Green icon
   },
   // 12. PSVN Foundation
   {
