@@ -2254,11 +2254,11 @@ const StaffPortal = () => {
         {isDoctor(role) && !isClinicStaff(role) && (
           <Tabs defaultValue="appointments" className="space-y-4">
             {/* Doctor Specialty Tabs based on role */}
-            <TabsList className="h-auto p-1.5 bg-gray-100 rounded-xl flex-wrap justify-start gap-1.5">
+            <TabsList className="h-auto p-1.5 bg-gray-100 rounded-xl flex gap-1.5 overflow-x-auto" style={{ flexWrap: 'nowrap' }}>
               <TabsTrigger 
                 value="appointments" 
                 data-testid="doc-tab-appointments"
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-teal-500 data-[state=active]:text-white min-h-[44px]"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-teal-500 data-[state=active]:text-white min-h-[44px] whitespace-nowrap"
               >
                 <Calendar className="w-5 h-5" />
                 Appointments
