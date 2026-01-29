@@ -256,18 +256,45 @@ async def send_pharmacy_order_sms(patient_phone: str, order_details: dict):
     """Legacy SMS - deprecated, use send_pharmacy_notification instead"""
     return await send_pharmacy_notification(patient_phone, order_details)
 
+async def send_diagnostic_notification(patient_phone: str, order_details: dict, db=None):
+    """Send diagnostic order confirmation via MSG91 WhatsApp"""
+    from services.msg91_whatsapp import send_proton_lab_confirmation
+    
+    try:
+        result = await send_proton_lab_confirmation(
+            phone=patient_phone,
+            patient_name=order_details.get('patient_name', 'Patient'),
+            tests=order_details.get('tests', 'Lab tests'),
+            preferred_date=order_details.get('date', 'To be scheduled'),
+            preferred_time=order_details.get('time', 'Morning'),
+            booking_id=order_details.get('order_id', ''),
+            address=order_details.get('address', 'Proton Diagnostics, Naigaon'),
+            db=db
+        )
+        return result
+    except Exception as e:
+        logger.error(f"MSG91 Diagnostic WhatsApp failed: {e}")
+        return {"success": False, "error": str(e)}
+
 async def send_diagnostic_order_sms(patient_phone: str, order_details: dict):
-    """Send diagnostic order confirmation SMS"""
-    message = f"""🔬 Nevika Cura - Test Booked
+    """Legacy SMS - deprecated, use send_diagnostic_notification instead"""
+    return await send_diagnostic_notification(patient_phone, order_details)
 
-Order #{order_details.get('order_id', '')[:8]}
-
-Your test booking is confirmed.
-Tests: {order_details.get('test_count', 1)} test(s)
-Date: {order_details.get('date', 'To be scheduled')}
-
-We'll contact you for sample collection.
-
-Help: 9403890429"""
-
-    return await send_sms_notification(patient_phone, message)
+async def send_report_ready_notification(patient_phone: str, report_details: dict, db=None):
+    """Send Proton report ready notification via MSG91 WhatsApp"""
+    from services.msg91_whatsapp import send_proton_report_ready
+    
+    try:
+        result = await send_proton_report_ready(
+            phone=patient_phone,
+            patient_name=report_details.get('patient_name', 'Patient'),
+            tests=report_details.get('tests', 'Lab tests'),
+            booking_id=report_details.get('order_id', ''),
+            report_date=report_details.get('report_date', datetime.now().strftime('%d/%m/%Y')),
+            download_url=report_details.get('download_url', 'https://nevikacura.com/reports'),
+            db=db
+        )
+        return result
+    except Exception as e:
+        logger.error(f"MSG91 Report Ready WhatsApp failed: {e}")
+        return {"success": False, "error": str(e)}
