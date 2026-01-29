@@ -233,22 +233,28 @@ async def send_appointment_sms(patient_phone: str, appointment_details: dict):
     """Legacy SMS - deprecated, use send_appointment_notification instead"""
     return await send_appointment_notification(patient_phone, appointment_details)
 
+async def send_pharmacy_notification(patient_phone: str, order_details: dict, db=None):
+    """Send pharmacy order confirmation via MSG91 WhatsApp"""
+    from services.msg91_whatsapp import send_orange_pharmacy_confirmation
+    
+    try:
+        result = await send_orange_pharmacy_confirmation(
+            phone=patient_phone,
+            patient_name=order_details.get('patient_name', 'Customer'),
+            order_id=order_details.get('order_id', ''),
+            items_summary=order_details.get('items_summary', 'Medicine order'),
+            total=str(order_details.get('total', 0)),
+            delivery_type=order_details.get('delivery_type', 'Home Delivery'),
+            db=db
+        )
+        return result
+    except Exception as e:
+        logger.error(f"MSG91 Pharmacy WhatsApp failed: {e}")
+        return {"success": False, "error": str(e)}
+
 async def send_pharmacy_order_sms(patient_phone: str, order_details: dict):
-    """Send pharmacy order confirmation SMS"""
-    message = f"""💊 Nevika Cura - Order Confirmed
-
-Order #{order_details.get('order_id', '')[:8]}
-
-Your medicine order has been received.
-Total: ₹{order_details.get('total', 0)}
-Delivery: {order_details.get('delivery_type', 'Standard')}
-
-We'll update you on dispatch.
-
-Track: nevikacura.com/track
-Help: 9403890429"""
-
-    return await send_sms_notification(patient_phone, message)
+    """Legacy SMS - deprecated, use send_pharmacy_notification instead"""
+    return await send_pharmacy_notification(patient_phone, order_details)
 
 async def send_diagnostic_order_sms(patient_phone: str, order_details: dict):
     """Send diagnostic order confirmation SMS"""
