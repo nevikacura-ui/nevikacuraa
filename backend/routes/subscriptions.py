@@ -1802,19 +1802,6 @@ async def complete_membership(request: CompleteMembershipRequest):
         "expires_at": end_date.isoformat()
     }
 
-async def get_patient_badges(patient_id: str):
-    """Get patient's earned badges"""
-    badges = await db.patient_badges.find({"patient_id": patient_id}).to_list(50)
-    return [{"name": b["badge_name"], "earned_at": b["earned_at"]} for b in badges]
-
-def get_next_streak_milestone(current_streak: int):
-    """Get the next streak milestone"""
-    milestones = [7, 14, 30, 60, 100, 200, 365]
-    for m in milestones:
-        if current_streak < m:
-            return {"days": m, "days_remaining": m - current_streak}
-    return {"days": 365, "days_remaining": 0, "message": "Maximum streak achieved!"}
-
 # ==================== TIERED CHECKOUT ====================
 
 class TieredCheckoutRequest(BaseModel):
