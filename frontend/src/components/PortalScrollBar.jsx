@@ -5,33 +5,37 @@ import {
   Brain, Baby, Smile, HeartPulse, Shield, Dumbbell, Users, HandHeart
 } from 'lucide-react';
 
-// Portal data - 12 Health & Wellness Portals
+// Portal data - 12 Health & Wellness Portals - Full branded logos
 const portals = [
-  // 1. Evara - Women's Health
+  // 1. Evara - Women's Health (Full branded logo with text)
   {
     id: 'evara',
     name: 'Evara',
     subtitle: "Women's Health",
     path: '/evara',
-    logo: '/icons/evara-logo.png',
-    bgColor: '#511b63'
+    logo: 'https://customer-assets.emergentagent.com/job_6dbb72e5-3d8c-4457-b227-0fe352290e2f/artifacts/9i5r5fd8_Screenshot_20260129-225536.png',
+    bgColor: '#511b63',
+    fillContainer: true,
+    useCrop: true,
+    cropIndex: 0  // First card in the screenshot
   },
-  // 2. Glydex - Diabetes Care
+  // 2. Glydex - Diabetes Care (Full branded logo with text)
   {
     id: 'glydex',
     name: 'Glydex',
     subtitle: 'Diabetes Care',
     path: '/glydex',
     logo: 'https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png',
-    bgColor: '#121f33'
+    bgColor: '#121f33',
+    fillContainer: true
   },
-  // 3. Serena - Mental Health & Meditation (formerly Thrive Mind)
+  // 3. Serena - Mental Health & Meditation
   {
     id: 'serena',
     name: 'Serena',
     subtitle: 'Mental Wellness',
     path: '/serena',
-    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/9lxbdskl_90.png',
+    logo: 'https://customer-assets.emergentagent.com/job_medportal-nevika/artifacts/rnobb9t9_90.png',
     bgColor: '#1a2e35',
     fillContainer: true,
     tagline: 'Find Your Calm.'
@@ -43,7 +47,7 @@ const portals = [
     subtitle: 'Newborn Care',
     path: '/aanya',
     logo: 'https://customer-assets.emergentagent.com/job_nevika-health-7/artifacts/or3lea1i_Screenshot_20260128-154553.png',
-    bgColor: '#fce4ec',
+    bgColor: '#e8f5f0',
     fillContainer: true
   },
   // 5. Alyne Kids - Child Care
@@ -52,11 +56,11 @@ const portals = [
     name: 'Alyne Kids',
     subtitle: 'Child Care',
     path: '/alyne',
-    logo: 'https://customer-assets.emergentagent.com/job_nevika-health-7/artifacts/d1163tpj_Screenshot_20260128-154605.png',
-    bgColor: '#e8f5e9',
+    logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
+    bgColor: '#0a1628',
     fillContainer: true
   },
-  // 6. Corvia - Heart, Hypertension & Cholesterol (formerly Cardyra)
+  // 6. Corvia - Heart, Hypertension & Cholesterol
   {
     id: 'corvia',
     name: 'Corvia',
@@ -67,7 +71,7 @@ const portals = [
     fillContainer: true,
     tagline: 'Healthy Heart & Prevention.'
   },
-  // 7. Reneu - Preventive & Lifestyle Medicine (formerly Vireya)
+  // 7. Reneu - Preventive & Lifestyle Medicine
   {
     id: 'reneu',
     name: 'Reneu',
@@ -80,7 +84,7 @@ const portals = [
     needsBorder: true,
     tagline: 'Renew Health, Stay Ahead.'
   },
-  // 8. Thrive360 - Fitness Portal (formerly FitLife)
+  // 8. Thrive360 - Fitness Portal
   {
     id: 'thrive360',
     name: 'Thrive360',
@@ -91,18 +95,18 @@ const portals = [
     fillContainer: true,
     tagline: 'Mind. Body. Life.'
   },
-  // 9. Senova - Senior Care (formerly Nivara)
+  // 9. Senova - Senior Care (Full branded logo)
   {
     id: 'senova',
     name: 'Senova',
     subtitle: 'Senior Care',
     path: '/senova',
-    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/nz0rdwvp_file_000000000dfc7230a4605006a1e3131a.png',
+    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/fb3a722w_file_000000000dfc7230a4605006a1e3131a.png',
     bgColor: '#f0f4f8',
     fillContainer: true,
     tagline: "Care for Life's Next Chapter."
   },
-  // 10. Reports - Blood Charts
+  // 10. Reports - Blood Charts (Icon-based)
   {
     id: 'reports',
     name: 'Reports',
@@ -112,7 +116,7 @@ const portals = [
     icon: FileText,
     bgColor: '#ea580c'
   },
-  // 11. Health Log - Weight & Logs
+  // 11. Health Log - Weight & Logs (Icon-based)
   {
     id: 'healthchart',
     name: 'Health Log',
