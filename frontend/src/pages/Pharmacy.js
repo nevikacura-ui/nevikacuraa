@@ -439,9 +439,9 @@ const Pharmacy = () => {
     return () => clearTimeout(debounce);
   }, [patientInfo.phone]);
 
-  // Autocomplete suggestions
+  // Autocomplete suggestions - trigger from 1st character
   useEffect(() => {
-    if (searchTerm.length < 2) {
+    if (searchTerm.length < 1) {
       setSuggestions([]);
       setShowSuggestions(false);
       return;
@@ -449,7 +449,7 @@ const Pharmacy = () => {
     const fetchSuggestions = async () => {
       try {
         const response = await axios.get(`${API}/pharmacy/search`, {
-          params: { q: searchTerm, limit: 10, form: selectedForm || undefined }
+          params: { q: searchTerm, limit: 15, form: selectedForm || undefined }
         });
         setSuggestions(response.data.medicines || []);
         setShowSuggestions(true);
@@ -457,7 +457,7 @@ const Pharmacy = () => {
         console.error('Autocomplete error:', error);
       }
     };
-    const timer = setTimeout(fetchSuggestions, 200);
+    const timer = setTimeout(fetchSuggestions, 150);  // Faster response
     return () => clearTimeout(timer);
   }, [searchTerm, selectedForm]);
 
