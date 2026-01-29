@@ -192,63 +192,62 @@ const IntroScreen = ({ onComplete, user }) => {
   // RENDER SPLASH PHASE
   return (
     <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-6"
-      style={{ background: '#000000' }}>
+      style={{ background: 'linear-gradient(165deg, #5eead4 0%, #2dd4bf 20%, #14b8a6 40%, #0d9488 60%, #0891b2 80%, #06b6d4 100%)' }}>
       
       {/* Skip */}
       <button onClick={onComplete} data-testid="skip-btn"
-        className="absolute top-4 right-4 flex items-center gap-1 px-4 py-2 text-white/70 hover:text-white rounded-full text-sm font-medium">
+        className="absolute top-4 right-4 flex items-center gap-1 px-4 py-2 text-white/90 hover:text-white rounded-full text-sm font-medium">
         Skip <ArrowRight className="w-4 h-4" />
       </button>
       
       <div className="text-center max-w-md mx-auto">
-        {/* Logo - Nevika Cura Logo on Black */}
-        <div className="mb-8">
-          <img 
-            src="https://customer-assets.emergentagent.com/job_nevikacura-4/artifacts/cdntpx60_3715.png" 
-            alt="Nevika Cura - A Healthcare Group" 
-            className="h-40 sm:h-48 w-auto mx-auto object-contain"
-          />
+        {/* Logo */}
+        <div className="mb-6">
+          <div className="bg-white rounded-[40px] px-8 py-5 shadow-xl inline-block">
+            <img src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
+              alt="Nevika Cura" className="h-20 w-auto" />
+          </div>
         </div>
         
         {/* Icons */}
         <div className="flex justify-center gap-6 mb-6">
           {[
-            { Icon: Calendar, bg: 'bg-teal-500', color: 'text-white', label: 'Appointments' },
-            { Icon: Pill, bg: 'bg-teal-500', color: 'text-white', label: 'Pharmacy' },
-            { Icon: TestTube, bg: 'bg-teal-500', color: 'text-white', label: 'Lab Tests' },
+            { Icon: Calendar, bg: 'bg-blue-200/80', color: 'text-blue-600', label: 'Appointments' },
+            { Icon: Pill, bg: 'bg-orange-200/80', color: 'text-orange-600', label: 'Pharmacy' },
+            { Icon: TestTube, bg: 'bg-purple-200/80', color: 'text-purple-600', label: 'Lab Tests' },
           ].map(({ Icon, bg, color, label }) => (
             <div key={label} className="flex flex-col items-center gap-2">
-              <div className={`${bg} rounded-2xl w-[72px] h-[72px] flex items-center justify-center shadow-lg`}>
+              <div className={`${bg} rounded-2xl w-[72px] h-[72px] flex items-center justify-center shadow-lg border border-white/40`}>
                 <Icon className={`w-9 h-9 ${color}`} />
               </div>
-              <span className="text-sm text-white/80 font-medium">{label}</span>
+              <span className="text-sm text-white font-medium">{label}</span>
             </div>
           ))}
         </div>
         
         {/* Tagline */}
-        <p className="text-lg text-white/80 font-medium mb-6">
-          All your care. <span className="text-teal-400 font-bold">One app.</span>
+        <p className="text-lg text-white/90 font-medium mb-6">
+          All your care. <span className="text-teal-100 font-bold">One app.</span>
         </p>
         
         {/* Buttons */}
         <div className="space-y-4 max-w-xs mx-auto">
           {hasBiometricSetup && (
             <Button onClick={handleBiometricLogin} disabled={biometricLoading}
-              className="w-full h-14 bg-white/10 text-white hover:bg-white/20 rounded-2xl text-lg font-semibold border border-white/20">
+              className="w-full h-14 bg-white/20 text-white hover:bg-white/30 rounded-2xl text-lg font-semibold border border-white/30">
               {biometricLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Fingerprint className="w-6 h-6 mr-2" />Fingerprint</>}
             </Button>
           )}
           
           <Button onClick={() => setShowAuth(true)} data-testid="splash-login-btn"
-            className="w-full h-14 bg-teal-500 text-white hover:bg-teal-600 rounded-2xl text-lg font-semibold shadow-xl">
+            className="w-full h-14 bg-white text-teal-700 hover:bg-teal-50 rounded-2xl text-lg font-semibold shadow-xl">
             <User className="w-5 h-5 mr-2" />
             {hasBiometricSetup ? 'Login with OTP' : 'Login / Sign Up'}
           </Button>
           
-          <div className="pt-6 border-t border-white/10">
+          <div className="pt-6 border-t border-white/20">
             <button onClick={() => { onComplete(); setTimeout(() => navigate('/staff'), 100); }}
-              className="flex items-center justify-center gap-2 text-sm text-white/50 hover:text-white/80 mx-auto">
+              className="flex items-center justify-center gap-2 text-sm text-white/70 hover:text-white mx-auto">
               <Building2 className="w-4 h-4" /> Staff Login
             </button>
           </div>
