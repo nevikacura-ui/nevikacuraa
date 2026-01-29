@@ -336,3 +336,25 @@ GET  /api/diagnostics/trends/{patient_id}
 
 ## Last Updated
 January 29, 2026 - 22:30
+
+---
+
+## Updates (January 30, 2026)
+
+### Header Cleanup ✅
+- Removed Language Selector toggle from header
+- Removed Dark Mode toggle from header
+- Removed View Mode Switcher from header
+- Header now shows only: Logo + Hamburger menu (clean design)
+
+### Video Instructions Email Sent ✅
+- Comprehensive 2-minute video storyboard sent to nevikacura@gmail.com
+- Covers: App installation (Android/iOS), Doctor booking, Medicine ordering, Lab tests, Portal exploration
+- For Gemini Veo video generation
+- Email ID: bee6689f-7e44-426e-84ea-cee4ecb6853f
+
+### Components Ready for Integration
+- **ReportTrendsChart.jsx** - Ready at `/app/frontend/src/components/`
+- **AppointmentWaitlist.jsx** - Ready at `/app/frontend/src/components/`
+- Integration pending for Health Dashboard, DiaGyn, Proton pages
+
