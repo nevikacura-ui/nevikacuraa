@@ -1005,7 +1005,7 @@ const Pharmacy = () => {
                       placeholder="Search medicines..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      onFocus={() => searchTerm.length >= 2 && setShowSuggestions(true)}
+                      onFocus={() => searchTerm.length >= 1 && setShowSuggestions(true)}
                       className="pl-10 rounded-xl border-orange-200 focus:border-orange-400 focus:ring-orange-200"
                       data-testid="medicine-search"
                     />
@@ -1013,24 +1013,45 @@ const Pharmacy = () => {
                   
                   {/* Autocomplete Dropdown */}
                   {showSuggestions && suggestions.length > 0 && (
-                    <div className="absolute z-50 w-full mt-1 bg-white border border-orange-200 rounded-xl shadow-lg max-h-64 overflow-y-auto">
-                      {suggestions.map((med, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => addToCart(med)}
-                          className="w-full px-4 py-3 text-left hover:bg-orange-50 border-b border-orange-50 last:border-0 flex items-center justify-between transition-colors"
-                          data-testid={`suggestion-${idx}`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">{getMedicineIcon(med.form)}</span>
-                            <div>
-                              <span className="font-medium text-slate-800">{med.name}</span>
-                              <span className="ml-2 text-xs text-orange-600">{med.form}</span>
+                    <div className="absolute z-50 w-full mt-1 bg-white border border-orange-200 rounded-xl shadow-lg max-h-72 overflow-y-auto">
+                      <div className="px-3 py-2 text-xs text-slate-500 bg-orange-50 border-b border-orange-100">
+                        {suggestions.length} matches found
+                      </div>
+                      {suggestions.map((med, idx) => {
+                        // Highlight matching text
+                        const name = med.name || '';
+                        const lowerName = name.toLowerCase();
+                        const lowerSearch = searchTerm.toLowerCase();
+                        const matchIndex = lowerName.indexOf(lowerSearch);
+                        
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => addToCart(med)}
+                            className="w-full px-4 py-3 text-left hover:bg-orange-50 border-b border-orange-50 last:border-0 flex items-center justify-between transition-colors"
+                            data-testid={`suggestion-${idx}`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg">{getMedicineIcon(med.form)}</span>
+                              <div>
+                                <span className="font-medium text-slate-800">
+                                  {matchIndex >= 0 ? (
+                                    <>
+                                      {name.substring(0, matchIndex)}
+                                      <span className="bg-yellow-200 text-orange-700 font-semibold">
+                                        {name.substring(matchIndex, matchIndex + searchTerm.length)}
+                                      </span>
+                                      {name.substring(matchIndex + searchTerm.length)}
+                                    </>
+                                  ) : name}
+                                </span>
+                                <span className="ml-2 text-xs text-orange-600">{med.form}</span>
+                              </div>
                             </div>
-                          </div>
-                          <Plus className="w-4 h-4 text-orange-500" />
-                        </button>
-                      ))}
+                            <Plus className="w-4 h-4 text-orange-500" />
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
