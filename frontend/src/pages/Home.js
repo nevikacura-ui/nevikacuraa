@@ -468,7 +468,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             {/* Logo on left */}
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
               <img 
                 src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
                 alt="Nevika Cura" 
@@ -477,6 +477,42 @@ const Home = () => {
                 loading="eager"
                 fetchPriority="high"
               />
+              
+              {/* Language Selector - Next to Logo */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+                  className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors text-sm"
+                  data-testid="language-selector"
+                >
+                  <Globe className="w-4 h-4 text-slate-600" />
+                  <span className="hidden sm:inline text-slate-700 font-medium">{languages[language]?.nativeName || 'EN'}</span>
+                </button>
+                
+                {showLanguageMenu && (
+                  <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 py-1 min-w-[140px]">
+                    {Object.entries(languages).map(([code, lang]) => (
+                      <button
+                        key={code}
+                        onClick={() => {
+                          setLanguage(code);
+                          setShowLanguageMenu(false);
+                        }}
+                        className={`w-full px-3 py-2 text-left hover:bg-slate-50 flex items-center gap-2 ${
+                          language === code ? 'bg-teal-50 text-teal-700' : 'text-slate-700'
+                        }`}
+                        data-testid={`lang-${code}`}
+                      >
+                        <span className="text-sm">{lang.nativeName}</span>
+                        {language === code && <CheckCircle2 className="w-4 h-4 text-teal-600 ml-auto" />}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              {/* Dark Mode Toggle */}
+              <DarkModeToggle compact />
             </div>
             
             {/* Navigation on right */}
