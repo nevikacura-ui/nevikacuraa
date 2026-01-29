@@ -262,7 +262,7 @@ const Footer = () => {
                 <MapPin className="w-5 h-5 text-gray-500 mt-0.5" />
                 <div>
                   <p className="font-medium text-gray-800">Locations</p>
-                  <p className="text-sm text-gray-600">Pushpa Clinic - A-1, Sai Darshan, Near Don Bosco High School, Naigaon East</p>
+                  <p className="text-sm text-gray-600">Pushpa Clinic - A-4, Sai Darshan, Near Don Bosco High School, Naigaon East</p>
                   <p className="text-sm text-gray-600 mt-1">Amnion Clinic - G-7, Rashmi Star City Phase 5, Opp Thakur School, Naigaon East</p>
                 </div>
               </div>
