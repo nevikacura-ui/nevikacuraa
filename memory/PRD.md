@@ -225,3 +225,114 @@ January 29, 2026
 │   └── PSVNFoundation.js   # Foundation page
 └── App.js                   # Updated routes
 ```
+
+---
+
+## Latest Updates (January 29, 2026 - Session 2)
+
+### Membership Plans System ✅
+**Complete membership and family plan system with checkout flow**
+
+**Individual Plans (3 tiers):**
+- **Basic Membership**: ₹999/month, ₹2499/quarter, ₹7999/year
+  - 5% pharmacy discount, 10% lab discount, access to 1 portal
+- **Standard Membership** (Popular): ₹1999/month, ₹4999/quarter, ₹14999/year
+  - 10% pharmacy discount, 15% lab discount, access to 4 portals, priority booking
+- **Premium Membership** (Best Value): ₹3499/month, ₹8999/quarter, ₹29999/year
+  - 20% pharmacy discount, 30% lab discount, all portals, home doctor visits
+
+**Family Plans (4 options for up to 4 members):**
+- Family Diagnostic Plan: ₹3999/quarter
+- Family Diagnostic + Pharmacy: ₹6499/quarter
+- Complete Family Care: ₹12999/quarter
+- Family Portal Access: ₹4999/quarter
+
+**Files:**
+- `/app/frontend/src/pages/MembershipPlans.js` - Main membership page
+- `/app/backend/routes/subscriptions.py` - Updated with membership endpoints
+
+### How to Install Page ✅
+**Step-by-step PWA installation guide at `/install`**
+
+- **Android (Chrome)** tab: 5 steps with tips
+- **iPhone (Safari)** tab: 5 steps with tips
+- Benefits section: Faster Loading, Secure, Works Offline, Notifications
+- FAQ section
+- WhatsApp support button
+
+**File:** `/app/frontend/src/pages/HowToInstall.js`
+
+### Homepage Quick Actions Update ✅
+- Replaced "Full Body Package" with **"Membership Plans"** button
+- Crown icon with amber/orange gradient
+- Navigates to `/membership-plans`
+
+**File:** `/app/frontend/src/components/home/QuickActionCards.jsx`
+
+### Report Trends Chart Component ✅
+**Reusable component for visualizing lab report trends**
+
+- Parameter selection pills
+- Mini bar chart visualization
+- Status indicators (Normal, Borderline, High/Low)
+- Insights and history table
+- Time range selector (3mo, 6mo, 1yr, All)
+
+**File:** `/app/frontend/src/components/ReportTrendsChart.jsx`
+
+### Appointment Waitlist Component ✅
+**Join waitlist when slots unavailable**
+
+- Preferred date selection (next 7 days)
+- Notification method (SMS, WhatsApp, Both)
+- Position tracking
+- Leave waitlist option
+
+**Files:**
+- `/app/frontend/src/components/AppointmentWaitlist.jsx`
+- Backend endpoints in `/app/backend/server.py`
+
+### Backend API Additions
+```
+GET  /api/subscriptions/membership-plans
+GET  /api/subscriptions/membership-plans/{plan_id}
+POST /api/subscriptions/membership/purchase
+GET  /api/appointments/waitlist/status
+POST /api/appointments/waitlist/join
+POST /api/appointments/waitlist/leave
+GET  /api/diagnostics/trends/{patient_id}
+```
+
+---
+
+## Promotional Video Storyboard ✅
+**5-in-1 video script provided for Nevika Cura promotional video:**
+1. How to Install from Chrome (Add to Home Screen)
+2. Book Doctor Appointment (DiaGyn flow)
+3. Order Medicines (Orange Pharmacy flow)
+4. Book Lab Tests (Proton Diagnostics flow)
+5. Explore Health Portals (Evara, Glydex, Corvia, Reneu, Thrive360, Senova, Serena)
+
+---
+
+## Testing Status
+- **Test Report:** `/app/test_reports/iteration_68.json`
+- **Backend Tests:** 12/12 passed (100%)
+- **Frontend Tests:** All passed (100%)
+- **Components tested:** MembershipPlans, HowToInstall, QuickActionCards, Checkout Modal
+
+---
+
+## Upcoming Tasks (P0)
+1. Build UI for Report Trends on Proton/Health Dashboard pages
+2. Integrate AppointmentWaitlist into DiaGyn booking flow
+3. Build Home Sample Collection UI for Proton
+4. Build Pharmacy Features UI (refill reminders, monthly box)
+5. Test prescription upload email to nevikacura@gmail.com
+
+## Known Issues
+- MSG91 WhatsApp templates pending Meta approval
+- Stripe API key is test key (payment will fail in test environment)
+
+## Last Updated
+January 29, 2026 - 22:30
