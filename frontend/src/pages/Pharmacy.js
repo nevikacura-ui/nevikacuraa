@@ -356,6 +356,11 @@ const Pharmacy = () => {
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [loading, setLoading] = useState(false);
+  
+  // Product Detail Dialog State (Blinkit-style)
+  const [selectedMedicine, setSelectedMedicine] = useState(null);
+  const [showProductDetail, setShowProductDetail] = useState(false);
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
 
   // OTP State
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
