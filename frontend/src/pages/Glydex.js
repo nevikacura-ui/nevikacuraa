@@ -15,7 +15,7 @@ import {
   ArrowLeft, Heart, Activity, AlertTriangle, Droplets, Apple, 
   Calendar, TrendingUp, TrendingDown, Pill, Phone,
   Utensils, TestTube, ChevronRight, Info, CheckCircle, AlertCircle,
-  LineChart, Target, Trash2, Share2, FileDown, Search, X
+  LineChart, Target, Trash2, Share2, FileDown, Search, X, Mail, User, Lock, Check
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
