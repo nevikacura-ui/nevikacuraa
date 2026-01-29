@@ -1146,8 +1146,9 @@ class User(BaseModel):
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
-    phone: str
+    phone: str = ""  # Make phone optional
     name: str
+    verification_token: str = ""  # Optional email verification token
 
 class UserLogin(BaseModel):
     email: EmailStr
