@@ -282,12 +282,17 @@ const PortalScrollBar = () => {
               data-testid={`portal-btn-${portal.id}`}
               title={portal.name}
             >
-              {/* Logo/Icon Container - Mobile: 4 icons visible (~82px), Desktop: all 12 fit */}
+              {/* Logo/Icon Container - GPU Accelerated */}
               <div 
-                className={`w-[82px] h-[82px] sm:w-[88px] sm:h-[88px] md:w-[95px] md:h-[95px] lg:w-[108px] lg:h-[108px] xl:w-[120px] xl:h-[120px] 2xl:w-[135px] 2xl:h-[135px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300 ${
+                className={`w-[82px] h-[82px] sm:w-[88px] sm:h-[88px] md:w-[95px] md:h-[95px] lg:w-[108px] lg:h-[108px] xl:w-[120px] xl:h-[120px] 2xl:w-[135px] 2xl:h-[135px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg ${
                   portal.needsBorder ? 'border-2 border-gray-200' : ''
                 }`}
-                style={portal.useGradient ? { background: portal.bgColor } : { backgroundColor: portal.bgColor }}
+                style={{
+                  backgroundColor: portal.useGradient ? undefined : portal.bgColor,
+                  background: portal.useGradient ? portal.bgColor : undefined,
+                  transform: 'translateZ(0)',
+                  backfaceVisibility: 'hidden'
+                }}
               >
                 {portal.hasIcon ? (
                   <IconComponent className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 text-white" />
