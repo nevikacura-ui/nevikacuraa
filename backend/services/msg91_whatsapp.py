@@ -34,6 +34,7 @@ TEMPLATES = {
     # Proton Templates
     "proton_lab_confirm": "proton_lab_confirm",
     "proton_report_ready": "proton_report_ready",
+    "proton_report_delivered": "proton_report_delivered",  # NEW: Report delivered notification
     "proton_sonography_confirm": "proton_sonography_confirm",
     # Orange Pharmacy Templates
     "orange_pharmacy_confirm": "orange_pharmacy_confirm",
