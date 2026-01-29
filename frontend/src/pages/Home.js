@@ -453,8 +453,15 @@ const Home = () => {
         <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-orange-100/20 to-amber-100/20 rounded-full blur-3xl" style={{animationDuration: '12s'}}></div>
       </div>
 
-      {/* Header - Clean & Modern */}
-      <header className="border-b border-slate-200/50 bg-white/90 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
+      {/* Header - Clean & Modern - GPU Accelerated */}
+      <header 
+        className="border-b border-slate-200/50 bg-white/90 backdrop-blur-xl sticky top-0 z-50 shadow-sm"
+        style={{
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden'
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             {/* Logo on left */}
