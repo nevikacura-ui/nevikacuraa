@@ -1250,6 +1250,7 @@ const Glydex = () => {
             </div>
           </CardContent>
         </Card>
+        </SubscriptionGate>
       </main>
 
       {/* Sugar Log Dialog */}
