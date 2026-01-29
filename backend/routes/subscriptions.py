@@ -115,7 +115,7 @@ async def get_plan_details(plan_type: str):
 
 @router.post("/validate-coupon")
 async def validate_coupon(request: CouponValidateRequest):
-    """Validate a coupon code"""
+    """Validate a coupon code with device and email binding security"""
     coupon = await db.coupons.find_one({
         "code": request.coupon_code.upper(),
         "plan_type": request.plan_type,
@@ -136,6 +136,40 @@ async def validate_coupon(request: CouponValidateRequest):
             discount_percent=0,
             message="Coupon code already used"
         )
+    
+    # SECURITY: Check device and email binding
+    # If coupon was previously attempted (bound to device/email), verify it matches
+    bound_email = coupon.get("bound_email")
+    bound_device = coupon.get("bound_device_id")
+    
+    if bound_email or bound_device:
+        # Coupon is already bound, verify caller matches
+        if bound_email and request.email and bound_email.lower() != request.email.lower():
+            return CouponValidateResponse(
+                valid=False,
+                discount_percent=0,
+                message="This coupon is registered to a different email"
+            )
+        if bound_device and request.device_id and bound_device != request.device_id:
+            return CouponValidateResponse(
+                valid=False,
+                discount_percent=0,
+                message="This coupon is registered to a different device"
+            )
+    else:
+        # First time validation - bind to email and device
+        if request.email or request.device_id:
+            update_fields = {}
+            if request.email:
+                update_fields["bound_email"] = request.email.lower()
+            if request.device_id:
+                update_fields["bound_device_id"] = request.device_id
+            update_fields["bound_at"] = datetime.now(timezone.utc).isoformat()
+            
+            await db.coupons.update_one(
+                {"code": request.coupon_code.upper()},
+                {"$set": update_fields}
+            )
     
     # Check expiry
     if coupon.get("expires_at"):
