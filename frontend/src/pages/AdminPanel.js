@@ -378,6 +378,10 @@ const AdminPanel = () => {
               <Award className="w-4 h-4" />
               <span className="hidden sm:inline">Certs</span>
             </TabsTrigger>
+            <TabsTrigger value="subscriptions" className="flex items-center gap-1 text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white data-[state=active]:from-purple-600 data-[state=active]:to-pink-600">
+              <Shield className="w-4 h-4" />
+              <span className="hidden sm:inline">Subs</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* Clinics Tab */}
