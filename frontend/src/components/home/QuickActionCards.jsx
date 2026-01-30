@@ -1,9 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Phone, MessageCircle, Upload, Crown } from 'lucide-react';
+import { Phone, MessageCircle, Upload } from 'lucide-react';
+import NevikaCuraOneBanner from './NevikaCuraOneBanner';
 
 /**
- * Quick Action Cards - Membership Plans, Book via Call, WhatsApp, Upload Prescription
+ * Quick Action Cards - Nevika Cura ONE, Book via Call, WhatsApp, Upload Prescription
  * WhatsApp: 9403890429
  */
 const QuickActionCards = () => {
@@ -14,15 +15,6 @@ const QuickActionCards = () => {
   const PHONE_NUMBER = '+919403890429';
 
   const actions = [
-    {
-      id: 'membership-plans',
-      title: 'Membership',
-      subtitle: 'Plans',
-      icon: Crown,
-      path: '/membership-plans',
-      gradient: 'from-amber-400 to-orange-500',
-      bgGradient: 'from-amber-100 to-orange-50'
-    },
     {
       id: 'book-call',
       title: 'Book via',
@@ -63,6 +55,10 @@ const QuickActionCards = () => {
   return (
     <div className="py-4" data-testid="quick-action-cards-section">
       <div className="grid grid-cols-4 gap-2">
+        {/* Nevika Cura ONE - First position */}
+        <NevikaCuraOneBanner variant="compact" />
+        
+        {/* Other actions */}
         {actions.map((action) => (
           <button
             key={action.id}
