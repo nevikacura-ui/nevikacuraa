@@ -67,10 +67,51 @@ const SubscriptionGate = ({
 
   const colors = planColors[planType] || planColors.glydex;
 
+  // Check for staff login first - staff gets free access
   useEffect(() => {
-    checkSubscription();
-    fetchPlanDetails();
-    checkTrialStatus();
+    const checkStaffAccess = () => {
+      const staffToken = localStorage.getItem('staffToken');
+      const staffUser = localStorage.getItem('staffUser');
+      
+      if (staffToken && staffUser) {
+        try {
+          const staff = JSON.parse(staffUser);
+          // Check if staff role allows free access (admin, doctor, or any staff)
+          const allowedRoles = ['super_admin', 'admin', 'doctor', 'clinic_staff', 'pharmacy_staff', 'lab_staff'];
+          if (staff.role && allowedRoles.includes(staff.role)) {
+            setIsStaffUser(true);
+            setStaffInfo(staff);
+            setHasSubscription(true);
+            setSubscriptionInfo({
+              staff_access: true,
+              staff_name: staff.name || staff.username,
+              staff_role: staff.role,
+              message: 'Staff access - No subscription required'
+            });
+            setLoading(false);
+            if (onSubscriptionActive) {
+              onSubscriptionActive({
+                staff_access: true,
+                has_subscription: true,
+                staff_name: staff.name || staff.username
+              });
+            }
+            return true;
+          }
+        } catch (e) {
+          console.error('Failed to parse staff user:', e);
+        }
+      }
+      return false;
+    };
+
+    // Check staff access first
+    if (!checkStaffAccess()) {
+      // If not staff, proceed with normal subscription check
+      checkSubscription();
+      fetchPlanDetails();
+      checkTrialStatus();
+    }
   }, [patientId, planType]);
 
   const fetchPlanDetails = async () => {
