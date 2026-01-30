@@ -369,6 +369,28 @@ const NevikaCuraOne = () => {
             </h3>
             
             <div>
+              <label className="text-sm text-slate-600 mb-1 block">Full Name</label>
+              <Input
+                type="text"
+                placeholder="Your full name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="bg-white border-slate-200 focus:border-amber-500 focus:ring-amber-500"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm text-slate-600 mb-1 block">Phone Number</label>
+              <Input
+                type="tel"
+                placeholder="10-digit mobile number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                className="bg-white border-slate-200 focus:border-amber-500 focus:ring-amber-500"
+              />
+            </div>
+            
+            <div>
               <label className="text-sm text-slate-600 mb-1 block">Email Address</label>
               <Input
                 type="email"
@@ -398,9 +420,10 @@ const NevikaCuraOne = () => {
             </div>
 
             <Button
-              onClick={handlePayment}
-              disabled={processing || !email}
+              onClick={handleProceedToPayment}
+              disabled={processing || !email || !phone || !name}
               className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-6 rounded-2xl text-lg font-bold shadow-lg disabled:opacity-50"
+              data-testid="proceed-to-payment-btn"
             >
               {processing ? (
                 <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Processing...</>
@@ -409,11 +432,84 @@ const NevikaCuraOne = () => {
               )}
             </Button>
 
+            {/* Payment Methods Info */}
+            <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
+              <CreditCard className="w-4 h-4" />
+              <span>UPI • Cards • NetBanking • Wallets</span>
+            </div>
+
             <p className="text-xs text-center text-slate-500">
-              Secure payment powered by Stripe. Cancel anytime.
+              Secure payment powered by Cashfree. Cancel anytime.
             </p>
           </CardContent>
         </Card>
+
+        {/* Payment Dialog */}
+        <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Crown className="w-5 h-5 text-amber-500" />
+                Confirm Payment
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+              {/* Order Summary */}
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+                <h4 className="font-semibold text-amber-800 mb-2">Order Summary</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Plan</span>
+                    <span className="font-medium">Nevika Cura ONE - {selectedPricing?.duration}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Name</span>
+                    <span className="font-medium">{name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Phone</span>
+                    <span className="font-medium">{phone}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Email</span>
+                    <span className="font-medium">{email}</span>
+                  </div>
+                  <hr className="border-amber-200" />
+                  <div className="flex justify-between text-lg font-bold text-amber-800">
+                    <span>Total</span>
+                    <span>₹{selectedPricing?.price.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Options */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-slate-800">Pay with</h4>
+                
+                <Button
+                  onClick={handleCashfreePayment}
+                  disabled={processing}
+                  className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-4 rounded-xl"
+                  data-testid="cashfree-pay-btn"
+                >
+                  {processing ? (
+                    <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Processing...</>
+                  ) : (
+                    <div className="flex items-center justify-center gap-3">
+                      <Smartphone className="w-5 h-5" />
+                      <span>UPI / Cards / NetBanking</span>
+                    </div>
+                  )}
+                </Button>
+                
+                <p className="text-xs text-center text-slate-500">
+                  You will be redirected to secure payment page
+                </p>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Trust Badges */}
         <div className="flex justify-center gap-6 py-4">
