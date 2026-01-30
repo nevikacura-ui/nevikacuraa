@@ -401,11 +401,24 @@ const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDa
 
   if (unbookedSlots.length === 0) {
     return (
-      <div className="text-center py-16">
-        <div className="w-16 h-16 bg-[#FFD6BA]/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <Clock className="w-8 h-8 text-[#FFB4A2]" />
+      <div className="space-y-4">
+        <div className="text-center py-8">
+          <div className="w-16 h-16 bg-[#FFD6BA]/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Clock className="w-8 h-8 text-[#FFB4A2]" />
+          </div>
+          <p className="text-[#64748B] text-sm">No slots available for this day</p>
+          <p className="text-[#94A3B8] text-xs mt-1">Try selecting another date or join the waitlist below</p>
         </div>
-        <p className="text-[#64748B] text-sm">No slots available for this day</p>
+        
+        {/* Waitlist Component */}
+        <AppointmentWaitlist
+          doctorId={doctor?.id}
+          doctorName={doctor?.name}
+          clinic={clinic}
+          patientId={patientData?.id}
+          patientName={patientData?.name}
+          patientPhone={patientData?.phone}
+        />
       </div>
     );
   }
