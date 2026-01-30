@@ -1181,6 +1181,13 @@ const DiaGyn = () => {
   };
 
   const handleBooking = async () => {
+    // Get fee for selected doctor
+    const doctor = doctors.find(d => d.id === selectedDoctor);
+    setAppointmentFee(doctor?.consultationFee || 500);
+    setShowPaymentDialog(true);
+  };
+
+  const handlePaymentSuccess = async (paymentInfo) => {
     setLoading(true);
     try {
       const doctor = doctors.find(d => d.id === selectedDoctor);
@@ -1195,7 +1202,9 @@ const DiaGyn = () => {
         patient_phone: patientInfo.phone,
         patient_email: patientInfo.email || null,
         verification_token: verificationToken,
-        email_reminder: emailReminder && patientInfo.email ? true : false
+        email_reminder: emailReminder && patientInfo.email ? true : false,
+        payment_method: paymentInfo.method,
+        cashfree_order_id: paymentInfo.orderId || null
       };
 
       await axios.post(`${API}/appointments`, bookingData);
