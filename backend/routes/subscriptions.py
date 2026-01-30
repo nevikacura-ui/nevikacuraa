@@ -18,15 +18,10 @@ router = APIRouter(prefix="/subscriptions", tags=["Subscriptions"])
 
 # Database reference
 db = None
-stripe_api_key = None
 
 def set_db(database):
     global db
     db = database
-
-def set_stripe_key(key):
-    global stripe_api_key
-    stripe_api_key = key
 
 # Subscription Plans - Updated pricing
 SUBSCRIPTION_PLANS = {
