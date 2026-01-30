@@ -895,6 +895,8 @@ const DiaGyn = () => {
   const [foundPatient, setFoundPatient] = useState(null);
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
   const [mobileForRegister, setMobileForRegister] = useState('');
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [appointmentFee, setAppointmentFee] = useState(500);
 
   // Handle patient found from lookup
   const handlePatientFound = (patient) => {
