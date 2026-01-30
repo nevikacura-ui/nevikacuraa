@@ -4,12 +4,11 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, User, Bell, Globe, Heart, Users, Shield,
+  ArrowLeft, User, Bell, Heart, Users, Shield,
   ChevronRight, LogOut, HelpCircle, FileText, Star,
   CreditCard, BellRing, Calendar, Download, ExternalLink, Check
 } from 'lucide-react';
 import NotificationSettings from '@/components/NotificationSettings';
-import LanguageSelector from '@/components/LanguageSelector';
 import FamilyMembers from '@/components/FamilyMembers';
 import PaymentManagement from '@/components/PaymentManagement';
 import PushNotificationManager from '@/components/PushNotificationManager';
