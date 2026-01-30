@@ -958,26 +958,52 @@ const Proton = () => {
 
             {/* Imaging Tab */}
             {activeTab === 'imaging' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card id="ecg-section" className="p-5 rounded-2xl border-slate-200">
-                  <h4 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-red-500" />
-                    ECG
-                  </h4>
-                  {imagingTests.ecg.map(test => (
-                    <TestCheckbox key={test} test={test} checked={selectedTests.includes(test)} onToggle={() => toggleTest(test)} />
-                  ))}
-                </Card>
-                
-                <Card id="sonography-section" className="p-5 rounded-2xl border-slate-200">
-                  <h4 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
-                    <Heart className="w-4 h-4 text-pink-500" />
-                    Sonography
-                  </h4>
-                  {imagingTests.sonography.map(test => (
-                    <TestCheckbox key={test} test={test} checked={selectedTests.includes(test)} onToggle={() => toggleTest(test)} />
-                  ))}
-                </Card>
+              <div className="space-y-4">
+                {/* Medical Imaging Visual */}
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="relative rounded-2xl overflow-hidden h-32 group">
+                    <img 
+                      src="https://images.unsplash.com/photo-1682706841281-f723c5bfcd83?w=400&h=200&fit=crop"
+                      alt="ECG Heart Monitor"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
+                      <span className="text-white text-sm font-medium">ECG Monitoring</span>
+                    </div>
+                  </div>
+                  <div className="relative rounded-2xl overflow-hidden h-32 group">
+                    <img 
+                      src="https://images.unsplash.com/photo-1691935152546-3a9e05f4010b?w=400&h=200&fit=crop"
+                      alt="Sonography Equipment"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
+                      <span className="text-white text-sm font-medium">Ultrasound Imaging</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card id="ecg-section" className="p-5 rounded-2xl border-slate-200">
+                    <h4 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
+                      <Activity className="w-4 h-4 text-red-500" />
+                      ECG
+                    </h4>
+                    {imagingTests.ecg.map(test => (
+                      <TestCheckbox key={test} test={test} checked={selectedTests.includes(test)} onToggle={() => toggleTest(test)} />
+                    ))}
+                  </Card>
+                  
+                  <Card id="sonography-section" className="p-5 rounded-2xl border-slate-200">
+                    <h4 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
+                      <Heart className="w-4 h-4 text-pink-500" />
+                      Sonography
+                    </h4>
+                    {imagingTests.sonography.map(test => (
+                      <TestCheckbox key={test} test={test} checked={selectedTests.includes(test)} onToggle={() => toggleTest(test)} />
+                    ))}
+                  </Card>
+                </div>
               </div>
             )}
 
