@@ -6323,6 +6323,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Subscriptions router: {e}")
 
+# Cashfree Payment Gateway Router
+try:
+    from routes.cashfree import router as cashfree_router, set_db as set_cashfree_db
+    set_cashfree_db(db)
+    app.include_router(cashfree_router, prefix="/api/payments")
+    logger.info("Cashfree Payment Gateway router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Cashfree router: {e}")
+
 # Patient Registration System
 try:
     from routes.patients import router as patients_router, set_db as set_patients_db, set_jwt_config as set_patients_jwt
