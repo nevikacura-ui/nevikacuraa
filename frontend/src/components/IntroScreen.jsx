@@ -205,74 +205,86 @@ const IntroScreen = ({ onComplete, user }) => {
     );
   }
 
-  // RENDER SPLASH PHASE - Vibrant Blinkit/Zepto style
+  // RENDER SPLASH PHASE - Refined Premium Teal
   return (
-    <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-6 bg-[#FF6B35]">
+    <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-6"
+      style={{ background: `linear-gradient(180deg, ${THEME.gradientTop} 0%, ${THEME.gradientBottom} 100%)` }}>
       
-      {/* Skip */}
+      {/* Skip - Improved opacity 90% + accessibility */}
       <button onClick={onComplete} data-testid="skip-btn"
-        className="absolute top-4 right-4 flex items-center gap-1 px-4 py-2 text-white/90 hover:text-white rounded-full text-sm font-medium">
+        className="absolute top-4 right-4 flex items-center gap-1 px-4 py-2 text-white/90 hover:text-white rounded-full text-sm font-medium transition-colors">
         Skip <ArrowRight className="w-4 h-4" />
       </button>
       
       <div className="text-center max-w-md mx-auto">
-        {/* Logo */}
+        {/* Logo Card - Elevated with depth, +4px radius */}
         <div className="mb-6">
-          <div className="bg-white rounded-[40px] px-8 py-5 shadow-xl inline-block">
+          <div className="bg-white rounded-[44px] px-8 py-5 inline-block"
+            style={{ 
+              boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+              border: '1px solid rgba(255,255,255,0.25)'
+            }}>
             <img src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
               alt="Nevika Cura" className="h-20 w-auto" />
           </div>
         </div>
         
-        {/* Icons - Circular with pictures */}
+        {/* Icons - Softer pastel medical tones */}
         <div className="flex justify-center gap-5 mb-6">
           {[
-            { Icon: Calendar, bg: 'bg-white', emoji: '📅', label: 'Appointments' },
-            { Icon: Pill, bg: 'bg-white', emoji: '💊', label: 'Pharmacy' },
-            { Icon: TestTube, bg: 'bg-white', emoji: '🧪', label: 'Lab Tests' },
+            { Icon: Calendar, bg: THEME.iconColors.appointments, emoji: '📅', label: 'Appointments' },
+            { Icon: Pill, bg: THEME.iconColors.pharmacy, emoji: '💊', label: 'Pharmacy' },
+            { Icon: TestTube, bg: THEME.iconColors.labTests, emoji: '🧪', label: 'Lab Tests' },
           ].map(({ emoji, bg, label }) => (
             <div key={label} className="flex flex-col items-center gap-2">
-              <div className={`${bg} rounded-full w-[72px] h-[72px] flex items-center justify-center shadow-xl border-4 border-white/50`}>
+              <div className="rounded-full w-[72px] h-[72px] flex items-center justify-center border-4 border-white/30"
+                style={{ backgroundColor: bg, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
                 <span className="text-4xl">{emoji}</span>
               </div>
-              <span className="text-sm text-white font-bold">{label}</span>
+              <span className="text-sm text-white font-bold" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.15)' }}>{label}</span>
             </div>
           ))}
         </div>
         
-        {/* Tagline */}
-        <p className="text-xl text-white font-bold mb-6">
-          All your care. <span className="text-yellow-300">One app.</span>
+        {/* Tagline - +2px font, 1.2 line height for elderly-friendly */}
+        <p className="text-[1.375rem] text-white font-bold mb-6" style={{ lineHeight: '1.2' }}>
+          All your care. <span className="text-yellow-200">One app.</span>
         </p>
         
         {/* Buttons */}
         <div className="space-y-4 max-w-xs mx-auto">
           {hasBiometricSetup && (
             <Button onClick={handleBiometricLogin} disabled={biometricLoading}
-              className="w-full h-14 bg-white/20 text-white hover:bg-white/30 rounded-full text-lg font-bold border-2 border-white/40">
+              className="w-full h-14 bg-white/20 text-white hover:bg-white/30 rounded-full text-lg font-bold border-2 border-white/40 transition-all">
               {biometricLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Fingerprint className="w-6 h-6 mr-2" />Fingerprint</>}
             </Button>
           )}
           
+          {/* CTA Button - Deep teal text, font-weight 600, faint inner shadow */}
           <Button onClick={() => setShowAuth(true)} data-testid="splash-login-btn"
-            className="w-full h-14 bg-white text-[#FF6B35] hover:bg-yellow-50 rounded-full text-lg font-bold shadow-xl">
+            className="w-full h-14 bg-white hover:bg-gray-50 rounded-full text-lg font-semibold transition-all"
+            style={{ 
+              color: THEME.accent,
+              boxShadow: '0 4px 16px rgba(0,0,0,0.15), inset 0 1px 2px rgba(0,0,0,0.05)'
+            }}>
             <User className="w-5 h-5 mr-2" />
             {hasBiometricSetup ? 'Login with OTP' : 'Login / Sign Up'}
           </Button>
           
           <div className="pt-6 border-t border-white/20">
             <button onClick={() => { onComplete(); setTimeout(() => navigate('/staff'), 100); }}
-              className="flex items-center justify-center gap-2 text-sm text-white/70 hover:text-white mx-auto">
+              className="flex items-center justify-center gap-2 text-sm text-white/80 hover:text-white mx-auto transition-colors">
               <Building2 className="w-4 h-4" /> Staff Login
             </button>
           </div>
         </div>
       </div>
       
-      {/* Auth Dialog */}
+      {/* Auth Dialog - Themed with refined teal */}
       <Dialog open={showAuth} onOpenChange={setShowAuth}>
         <DialogContent className="max-w-sm rounded-3xl p-0" style={{ zIndex: 100000 }}>
-          <div className="bg-[#FF6B35] p-6 text-white rounded-t-3xl">
+          <div className="p-6 text-white rounded-t-3xl"
+            style={{ background: `linear-gradient(135deg, ${THEME.gradientTop} 0%, ${THEME.gradientBottom} 100%)` }}>
             <DialogTitle className="text-xl font-bold flex items-center gap-2">
               <User className="w-6 h-6" /> Patient Login
             </DialogTitle>
@@ -292,7 +304,8 @@ const IntroScreen = ({ onComplete, user }) => {
                   </div>
                 </div>
                 <Button onClick={handleSendOtp} disabled={loading || mobile.length < 10}
-                  className="w-full h-12 bg-[#FF6B35] hover:bg-orange-600 rounded-full font-bold">
+                  className="w-full h-12 rounded-full font-bold"
+                  style={{ backgroundColor: THEME.gradientBottom }}>
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send OTP'}
                 </Button>
               </>
@@ -300,16 +313,18 @@ const IntroScreen = ({ onComplete, user }) => {
               <>
                 <div className="text-center mb-4">
                   <p>OTP sent to <strong>+91 {mobile}</strong></p>
-                  <button onClick={() => { setOtpSent(false); setOtp(''); }} className="text-[#FF6B35] text-sm underline font-bold">Change</button>
+                  <button onClick={() => { setOtpSent(false); setOtp(''); }} 
+                    className="text-sm underline font-bold" style={{ color: THEME.accent }}>Change</button>
                 </div>
-                {mockOtp && <div className="p-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-center">
-                  <p className="text-xs text-orange-700">Test OTP: <strong className="text-lg">{mockOtp}</strong></p>
+                {mockOtp && <div className="p-3 bg-teal-50 border-2 border-teal-200 rounded-xl text-center">
+                  <p className="text-xs text-teal-700">Test OTP: <strong className="text-lg">{mockOtp}</strong></p>
                 </div>}
                 <Input type="text" placeholder="Enter OTP" value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   className="h-12 text-center text-xl tracking-widest rounded-xl font-bold" maxLength={6} />
                 <Button onClick={handleVerifyOtp} disabled={loading || otp.length < 6}
-                  className="w-full h-12 bg-[#FF6B35] hover:bg-orange-600 rounded-full font-bold">
+                  className="w-full h-12 rounded-full font-bold"
+                  style={{ backgroundColor: THEME.gradientBottom }}>
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Login'}
                 </Button>
               </>
