@@ -12,6 +12,7 @@ import { useViewMode } from '@/context/ViewModeContext';
 import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
 import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRegistration';
 import BottomNav from '@/components/BottomNav';
+import CashfreeCheckout from '@/components/CashfreeCheckout';
 import { toast } from 'sonner';
 import axios from 'axios';
 import AppointmentWaitlist from '@/components/AppointmentWaitlist';
