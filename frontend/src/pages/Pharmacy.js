@@ -2024,6 +2024,253 @@ const Pharmacy = () => {
           </Tabs>
         </DialogContent>
       </Dialog>
+
+      {/* Refill Reminders Dialog */}
+      <Dialog open={showRefillDialog} onOpenChange={setShowRefillDialog}>
+        <DialogContent className="max-w-md mx-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Clock className="w-5 h-5 text-blue-500" />
+              Refill Reminders
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Create New Reminder Form */}
+            <Card className="p-4 bg-blue-50 border-blue-200">
+              <h4 className="font-semibold text-slate-800 mb-3">Create New Reminder</h4>
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-sm text-slate-600">Medicine Name *</Label>
+                  <Input
+                    value={refillForm.medicine_name}
+                    onChange={(e) => setRefillForm({...refillForm, medicine_name: e.target.value})}
+                    placeholder="e.g., Metformin 500mg"
+                    className="mt-1"
+                    data-testid="refill-medicine-name"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-sm text-slate-600">Dosage</Label>
+                    <Input
+                      value={refillForm.dosage}
+                      onChange={(e) => setRefillForm({...refillForm, dosage: e.target.value})}
+                      placeholder="e.g., 1 tablet"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm text-slate-600">Frequency</Label>
+                    <select
+                      value={refillForm.frequency}
+                      onChange={(e) => setRefillForm({...refillForm, frequency: e.target.value})}
+                      className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                    >
+                      <option value="Daily">Daily</option>
+                      <option value="Twice Daily">Twice Daily</option>
+                      <option value="Weekly">Weekly</option>
+                      <option value="Monthly">Monthly</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-sm text-slate-600">Reminder Time</Label>
+                    <Input
+                      type="time"
+                      value={refillForm.reminder_time}
+                      onChange={(e) => setRefillForm({...refillForm, reminder_time: e.target.value})}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm text-slate-600">Notify Via</Label>
+                    <select
+                      value={refillForm.reminder_type}
+                      onChange={(e) => setRefillForm({...refillForm, reminder_type: e.target.value})}
+                      className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                    >
+                      <option value="sms">SMS</option>
+                      <option value="whatsapp">WhatsApp</option>
+                      <option value="both">Both</option>
+                    </select>
+                  </div>
+                </div>
+                <Button
+                  onClick={createRefillReminder}
+                  className="w-full bg-blue-500 hover:bg-blue-600"
+                  data-testid="create-refill-btn"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Reminder
+                </Button>
+              </div>
+            </Card>
+
+            {/* Existing Reminders */}
+            <div>
+              <h4 className="font-semibold text-slate-800 mb-2">Your Active Reminders</h4>
+              {loadingRefills ? (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+                </div>
+              ) : refillReminders.length > 0 ? (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {refillReminders.map((reminder, idx) => (
+                    <Card key={idx} className="p-3 flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-sm text-slate-800">{reminder.medicine_name}</p>
+                        <p className="text-xs text-slate-500">{reminder.frequency} • {reminder.reminder_time}</p>
+                      </div>
+                      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">Active</span>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card className="p-4 bg-slate-50 text-center">
+                  <p className="text-sm text-slate-500">No reminders yet. Create one above!</p>
+                </Card>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Subscription Box Dialog */}
+      <Dialog open={showSubscriptionDialog} onOpenChange={setShowSubscriptionDialog}>
+        <DialogContent className="max-w-md mx-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Package className="w-5 h-5 text-purple-500" />
+              Monthly Subscription Box
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Benefits */}
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+              <h4 className="font-semibold text-purple-800 mb-2">Why Subscribe?</h4>
+              <ul className="space-y-1.5 text-sm text-purple-700">
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-purple-500" />
+                  Save 10% on every order
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-purple-500" />
+                  Free home delivery
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-purple-500" />
+                  Never run out of medicines
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-purple-500" />
+                  Pause or cancel anytime
+                </li>
+              </ul>
+            </div>
+
+            {/* Create Subscription */}
+            {medicines.length > 0 ? (
+              <Card className="p-4 border-purple-200">
+                <h4 className="font-semibold text-slate-800 mb-3">Subscribe to Your Cart</h4>
+                <div className="space-y-3">
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    <p className="text-xs text-slate-500 mb-2">Medicines in cart:</p>
+                    {medicines.slice(0, 3).map((med, idx) => (
+                      <p key={idx} className="text-sm font-medium text-slate-700">{med.name} × {med.quantity}</p>
+                    ))}
+                    {medicines.length > 3 && (
+                      <p className="text-xs text-slate-400">+{medicines.length - 3} more</p>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-sm text-slate-600">Delivery Day</Label>
+                      <select
+                        value={subscriptionForm.delivery_day}
+                        onChange={(e) => setSubscriptionForm({...subscriptionForm, delivery_day: parseInt(e.target.value)})}
+                        className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                      >
+                        {[1,5,10,15,20,25].map(day => (
+                          <option key={day} value={day}>{day}th of month</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-sm text-slate-600">Frequency</Label>
+                      <select
+                        value={subscriptionForm.delivery_frequency}
+                        onChange={(e) => setSubscriptionForm({...subscriptionForm, delivery_frequency: e.target.value})}
+                        className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                      >
+                        <option value="monthly">Monthly</option>
+                        <option value="bimonthly">Every 2 Months</option>
+                        <option value="quarterly">Quarterly</option>
+                      </select>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={createSubscriptionBox}
+                    className="w-full bg-purple-500 hover:bg-purple-600"
+                    data-testid="create-subscription-btn"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Start Subscription (Save 10%)
+                  </Button>
+                </div>
+              </Card>
+            ) : (
+              <Card className="p-4 bg-amber-50 border-amber-200">
+                <p className="text-sm text-amber-800 text-center">
+                  Add medicines to your cart first, then subscribe for auto-delivery!
+                </p>
+              </Card>
+            )}
+
+            {/* Existing Subscriptions */}
+            <div>
+              <h4 className="font-semibold text-slate-800 mb-2">Your Subscriptions</h4>
+              {loadingSubscriptions ? (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="w-6 h-6 animate-spin text-purple-500" />
+                </div>
+              ) : subscriptionBoxes.length > 0 ? (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {subscriptionBoxes.map((sub, idx) => (
+                    <Card key={idx} className="p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="font-medium text-sm text-slate-800">{sub.medicines?.length || 0} medicines</p>
+                        <span className={`px-2 py-0.5 text-xs rounded-full ${
+                          sub.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {sub.status === 'active' ? 'Active' : 'Paused'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mb-2">
+                        {sub.delivery_frequency} delivery on {sub.delivery_day}th
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toggleSubscription(sub.id, sub.status)}
+                        className="w-full"
+                      >
+                        {sub.status === 'active' ? 'Pause' : 'Resume'}
+                      </Button>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card className="p-4 bg-slate-50 text-center">
+                  <p className="text-sm text-slate-500">No subscriptions yet.</p>
+                </Card>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
       
       {/* Bottom Navigation */}
       <BottomNav />
