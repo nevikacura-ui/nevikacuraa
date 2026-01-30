@@ -71,7 +71,7 @@ const SubscriptionGate = ({
   useEffect(() => {
     const checkStaffAccess = () => {
       const staffToken = localStorage.getItem('staffToken');
-      const staffUser = localStorage.getItem('staffUser');
+      const staffUser = localStorage.getItem('staffInfo'); // Staff portal stores as 'staffInfo'
       
       if (staffToken && staffUser) {
         try {
