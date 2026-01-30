@@ -1115,3 +1115,60 @@ CASHFREE_ENVIRONMENT=production
 ## Last Updated
 January 30, 2026 - 12:20
 
+---
+
+## Cashfree Integration for All Services (January 30, 2026)
+
+### Reusable Component Created
+**File:** `/app/frontend/src/components/CashfreeCheckout.jsx`
+
+A reusable payment dialog component that supports:
+- **Cash on Delivery (COD)** option
+- **Online Payment** via Cashfree (UPI, Cards, NetBanking, Wallets)
+- Order summary display
+- Payment method selection with visual indicators
+
+### Services Integrated
+
+#### 1. Pharmacy (Orange Pharmacy)
+**File:** `/app/frontend/src/pages/Pharmacy.js`
+- Added `CashfreeCheckout` component
+- Payment triggered on order confirmation
+- Supports COD and Online payment
+- Return URL: `/pharmacy?payment=success&order_id=`
+
+#### 2. Lab Tests (Proton Diagnostics)
+**File:** `/app/frontend/src/pages/Proton.js`
+- Added `CashfreeCheckout` component
+- Payment triggered on booking confirmation
+- Supports COD and Online payment
+- Return URL: `/proton?payment=success&order_id=`
+
+#### 3. Appointments (DiaGyn Clinic)
+**File:** `/app/frontend/src/pages/DiaGyn.js`
+- Added `CashfreeCheckout` component
+- Payment triggered on appointment booking
+- Supports COD and Online payment
+- Return URL: `/diagyn?payment=success&order_id=`
+
+### Payment Flow (All Services)
+```
+1. User fills order details
+2. Clicks Confirm/Book
+3. Payment dialog opens
+4. User selects COD or Online
+5. If Online → Cashfree checkout
+6. On success → Order confirmed with payment info
+7. SMS/Email notification sent
+```
+
+### Backend Updates
+All order endpoints now accept:
+- `payment_method`: 'cod' | 'online'
+- `cashfree_order_id`: Order ID from Cashfree (for online payments)
+
+---
+
+## Last Updated
+January 30, 2026 - 14:10
+
