@@ -558,3 +558,87 @@ January 29, 2026 - 22:30
 - Amber: #FF9800
 - Blue: #3F51B5
 
+
+
+---
+
+## Two-Tiered Authentication System V2 (January 30, 2026) ✅
+
+### Overview
+Complete authentication overhaul implementing a two-tiered system to reduce user friction:
+
+**1. Guest Mode (SMS OTP via Twilio)**
+- One-time orders without creating account
+- Phone verification via Twilio SMS OTP
+- 2-hour session token
+- Only **Order ID** generated (no Registration ID)
+- Use case: Quick pharmacy orders, lab tests, appointments
+
+**2. Sign-up Mode (Email OTP via Resend)**
+- Persistent account creation
+- Email verification via OTP
+- 30-day authentication token
+- Both **Registration ID** (NC-REG-YYYY-XXXXX) and **Order ID** generated
+- Once signed up → stays logged in → can access all free portals without re-login
+
+### Files Created/Modified
+- `/app/backend/routes/auth_v2.py` - New authentication routes
+- `/app/frontend/src/components/AuthDialogV2.jsx` - New auth dialog with 3 tabs
+- `/app/frontend/src/components/IntroScreen.jsx` - Updated to use AuthDialogV2
+
+### Backend API Endpoints
+```
+POST /api/auth/v2/guest/send-otp    - Send SMS OTP (Twilio)
+POST /api/auth/v2/guest/verify-otp  - Verify & get guest session token
+POST /api/auth/v2/signup/send-otp   - Send email OTP (Resend)
+POST /api/auth/v2/signup/verify-otp - Verify & create account
+POST /api/auth/v2/login/send-otp    - Send login email OTP
+POST /api/auth/v2/login/verify-otp  - Verify & get auth token
+GET  /api/auth/v2/me               - Get current user profile
+POST /api/auth/v2/validate-token   - Check token validity
+POST /api/auth/v2/logout           - Logout (client-side)
+```
+
+### Frontend AuthDialogV2 Tabs
+1. **Guest** - "Quick Checkout" - Phone input with +91 prefix
+2. **Sign Up** - Name + Email + Optional Phone
+3. **Login** - Email only (for existing users)
+
+### Testing Status
+- **Backend:** 100% pass (20/20 tests)
+- **Frontend:** 100% pass (all UI elements verified)
+- **Test Report:** `/app/test_reports/iteration_69.json`
+
+### Splash Screen Refinements
+Applied 6 UI polish tweaks:
+1. Refined Teal Gradient: Top #4FE3C1 → Bottom #0F9D8C
+2. Logo Card Elevation: 8px shadow, 25% border
+3. Softer Icon Tiles: Pastel medical tones
+4. CTA Button: Deep teal #0F6F66, 600 weight, inner shadow
+5. Accessibility: +2px tagline, 90% Skip opacity, 1.2 line-height
+6. Yellow-200 accent on "One app."
+
+---
+
+## Upcoming Tasks
+
+### P0 (Critical)
+- Build Home Sample Collection UI for Proton (backend ready)
+- Build Pharmacy Features UI (refill reminders, monthly subscription box)
+- Test prescription upload email to nevikacura@gmail.com
+- Portal-specific membership forms
+
+### P1 (High Priority)
+- Video teleconsultation
+- Waitlist notifications when slot opens
+- MyUpchar API integration (pending API key)
+
+### P2 (Medium)
+- Refactor monolithic server.py into smaller route files
+- Refactor Home.js into smaller components
+
+---
+
+## Last Updated
+January 30, 2026 - 01:40
+
