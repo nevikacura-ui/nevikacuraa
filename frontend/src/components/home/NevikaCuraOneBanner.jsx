@@ -24,7 +24,6 @@ import {
  * - Annual: ₹9,999
  */
 const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
-  const navigate = useNavigate();
   const [showDetails, setShowDetails] = useState(false);
   const [selectedDuration, setSelectedDuration] = useState('half-yearly');
   const [checkoutEmail, setCheckoutEmail] = useState('');
