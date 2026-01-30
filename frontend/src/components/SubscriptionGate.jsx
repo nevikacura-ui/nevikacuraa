@@ -27,6 +27,10 @@ const SubscriptionGate = ({
   const [processingPayment, setProcessingPayment] = useState(false);
   const [planDetails, setPlanDetails] = useState(null);
   
+  // Staff bypass state
+  const [isStaffUser, setIsStaffUser] = useState(false);
+  const [staffInfo, setStaffInfo] = useState(null);
+  
   // Enhanced states
   const [selectedTier, setSelectedTier] = useState('annual');
   const [referralCode, setReferralCode] = useState('');
