@@ -302,60 +302,58 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
       
       {/* Details Modal - Reuse from above */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-lg max-h-[85vh] flex flex-col p-0 z-[100]" onClick={(e) => e.stopPropagation()}>
-          <DialogHeader className="p-6 pb-0">
+        <DialogContent className="max-w-lg h-[90vh] sm:h-auto sm:max-h-[85vh] flex flex-col p-0 z-[100]" onClick={(e) => e.stopPropagation()}>
+          <DialogHeader className="p-4 pb-2 shrink-0">
             <DialogTitle className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
-                <Crown className="w-7 h-7 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
+                <Crown className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>Nevika Cura ONE</h2>
-                <p className="text-sm text-slate-500 font-normal">One Membership. Complete Care.</p>
+                <h2 className="text-lg font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>Nevika Cura ONE</h2>
+                <p className="text-xs text-slate-500 font-normal">One Membership. Complete Care.</p>
               </div>
             </DialogTitle>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto px-6 pb-4 space-y-5">
-            {/* Benefits */}
+          <div className="flex-1 overflow-y-auto px-4 pb-2 space-y-4 min-h-0">
+            {/* Benefits - Compact */}
             <div>
-              <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+              <h3 className="font-semibold text-slate-800 mb-2 text-sm flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-amber-500" />
                 Member Benefits
               </h3>
-              <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-1.5">
                 {benefits.map((benefit, idx) => (
-                  <div key={idx} className="flex items-center gap-3 p-2 rounded-lg bg-slate-50">
-                    <div className={`w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm`}>
-                      <benefit.icon className={`w-4 h-4 ${benefit.color}`} />
-                    </div>
-                    <span className="text-sm text-slate-700">{benefit.text}</span>
+                  <div key={idx} className="flex items-center gap-2 p-1.5 rounded-lg bg-slate-50">
+                    <benefit.icon className={`w-4 h-4 ${benefit.color} shrink-0`} />
+                    <span className="text-xs text-slate-700">{benefit.text}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Portals Access */}
+            {/* Portals Access - Compact */}
             <div>
-              <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+              <h3 className="font-semibold text-slate-800 mb-2 text-sm flex items-center gap-2">
                 <Star className="w-4 h-4 text-purple-500" />
-                Access All 12 Portals
+                All 12 Portals
               </h3>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1">
                 {portals.map((portal, idx) => (
-                  <span key={idx} className="px-2 py-1 bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 text-xs rounded-full border border-purple-100">
+                  <span key={idx} className="px-1.5 py-0.5 bg-purple-50 text-purple-700 text-[10px] rounded-full border border-purple-100">
                     {portal}
                   </span>
                 ))}
               </div>
             </div>
 
-            {/* Pricing */}
+            {/* Pricing - Compact */}
             <div>
-              <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+              <h3 className="font-semibold text-slate-800 mb-2 text-sm flex items-center gap-2">
                 <Crown className="w-4 h-4 text-orange-500" />
                 Choose Your Plan
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {pricing.map((plan, idx) => (
                   <div
                     key={idx}
@@ -363,34 +361,28 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
                       e.stopPropagation();
                       setSelectedDuration(plan.duration.toLowerCase());
                     }}
-                    className={`w-full p-3 rounded-xl border-2 text-left transition-all hover:shadow-md cursor-pointer ${
+                    className={`w-full p-2.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
                       selectedDuration === plan.duration.toLowerCase()
-                        ? 'border-amber-500 bg-gradient-to-r from-amber-50 to-orange-50 ring-2 ring-amber-300'
+                        ? 'border-amber-500 bg-amber-50 ring-1 ring-amber-300'
                         : plan.bestValue 
-                          ? 'border-amber-400 bg-gradient-to-r from-amber-50 to-orange-50' 
+                          ? 'border-amber-300 bg-amber-50/50' 
                           : plan.popular 
-                            ? 'border-purple-300 bg-purple-50' 
-                            : 'border-slate-200 hover:border-slate-300'
+                            ? 'border-purple-300 bg-purple-50/50' 
+                            : 'border-slate-200'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-slate-800">{plan.duration}</span>
-                          {plan.popular && (
-                            <span className="px-2 py-0.5 bg-purple-500 text-white text-[10px] font-medium rounded-full">POPULAR</span>
-                          )}
-                          {plan.bestValue && (
-                            <span className="px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-medium rounded-full">BEST VALUE</span>
-                          )}
-                        </div>
-                        {plan.savings && (
-                          <p className="text-xs text-green-600 mt-0.5">Save {plan.savings}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-slate-800 text-sm">{plan.duration}</span>
+                        {plan.popular && (
+                          <span className="px-1.5 py-0.5 bg-purple-500 text-white text-[9px] font-medium rounded-full">POPULAR</span>
+                        )}
+                        {plan.bestValue && (
+                          <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] font-medium rounded-full">BEST</span>
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-bold text-slate-800">₹{plan.price.toLocaleString()}</p>
-                        <p className="text-xs text-slate-500">₹{plan.perMonth}/mo</p>
+                        <p className="text-base font-bold text-slate-800">₹{plan.price.toLocaleString()}</p>
                       </div>
                     </div>
                   </div>
@@ -399,18 +391,16 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
             </div>
           </div>
 
-          {/* Sticky Footer - Email + Button */}
-          <div className="border-t bg-white p-4 space-y-3">
-            <div>
-              <input
-                type="email"
-                placeholder="Enter your email to continue"
-                value={checkoutEmail}
-                onChange={(e) => setCheckoutEmail(e.target.value)}
-                onClick={(e) => e.stopPropagation()}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-              />
-            </div>
+          {/* Sticky Footer - Email + Button - ALWAYS VISIBLE */}
+          <div className="border-t bg-white p-3 space-y-2 shrink-0">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={checkoutEmail}
+              onChange={(e) => setCheckoutEmail(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            />
             <Button 
               onClick={async (e) => {
                 e.stopPropagation();
@@ -452,12 +442,12 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
                 }
               }}
               disabled={processingPayment || !selectedDuration || !checkoutEmail}
-              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-4 rounded-xl text-base font-semibold shadow-lg disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-3 rounded-xl text-sm font-semibold shadow-lg disabled:opacity-50"
             >
               {processingPayment ? (
                 <>Processing...</>
               ) : (
-                <><Crown className="w-5 h-5 mr-2" /> Pay ₹{pricing.find(p => p.duration.toLowerCase() === selectedDuration)?.price.toLocaleString() || '5,499'}</>
+                <><Crown className="w-4 h-4 mr-2" /> Pay ₹{pricing.find(p => p.duration.toLowerCase() === selectedDuration)?.price.toLocaleString() || '5,499'}</>
               )}
             </Button>
           </div>
