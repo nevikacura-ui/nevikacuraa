@@ -66,7 +66,7 @@ export function FullScreenNotificationPrompt({ onComplete }) {
   ];
 
   return (
-    <div className="fixed inset-0 z-[200] bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-800 flex flex-col items-center justify-center p-6 animate-in fade-in duration-500">
+    <div className="fixed inset-0 z-[40] bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-800 flex flex-col items-center justify-center p-6 animate-in fade-in duration-500">
       {/* Decorative elements */}
       <div className="absolute top-10 left-10 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
       <div className="absolute bottom-20 right-10 w-40 h-40 bg-emerald-400/10 rounded-full blur-3xl" />
@@ -226,7 +226,7 @@ export function ActionNotificationPrompt({
   };
 
   return (
-    <div className="fixed inset-0 z-[150] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[40] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 animate-in fade-in duration-300">
       <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl animate-in slide-in-from-bottom duration-500">
         {/* Header */}
         <div className={`bg-gradient-to-r ${message.color} p-6 text-white text-center relative overflow-hidden`}>
@@ -351,7 +351,7 @@ export function SmartNotificationBanner() {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-[100] max-w-md mx-auto animate-in slide-in-from-bottom duration-500">
+    <div className="fixed bottom-20 left-4 right-4 z-[40] max-w-md mx-auto animate-in slide-in-from-bottom duration-500">
       <div className="bg-gradient-to-r from-teal-500 to-emerald-600 rounded-2xl shadow-2xl overflow-hidden">
         <div className="p-4">
           <div className="flex items-start gap-3">
