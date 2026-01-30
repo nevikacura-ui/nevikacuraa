@@ -5559,6 +5559,114 @@ async def send_medicine_refill_notification(user_id: str, medicine_name: str, da
     
     return {"success": True, "result": result}
 
+
+# ============ PORTAL MEMBERSHIP FORMS ============
+
+class PortalMembershipFormRequest(BaseModel):
+    """Portal-specific membership form submission"""
+    name: str
+    phone: str
+    email: str
+    age: int
+    gender: str
+    existing_conditions: Optional[str] = None
+    current_medications: Optional[str] = None
+    allergies: Optional[str] = None
+    emergency_contact_name: Optional[str] = None
+    emergency_contact_phone: Optional[str] = None
+    emergency_contact_relation: Optional[str] = None
+    plan_type: str  # evara, glydex, corvia, serena, etc.
+    portal_specific: Optional[Dict] = None
+
+
+@api_router.post("/memberships/portal-form")
+async def submit_portal_membership_form(form: PortalMembershipFormRequest):
+    """
+    Submit portal-specific membership form
+    Stores health profile for personalized care
+    """
+    try:
+        form_id = str(uuid.uuid4())
+        
+        # Create membership profile document
+        membership_profile = {
+            "id": form_id,
+            "phone": form.phone,
+            "email": form.email,
+            "name": form.name,
+            "age": form.age,
+            "gender": form.gender,
+            "health_info": {
+                "existing_conditions": form.existing_conditions,
+                "current_medications": form.current_medications,
+                "allergies": form.allergies
+            },
+            "emergency_contact": {
+                "name": form.emergency_contact_name,
+                "phone": form.emergency_contact_phone,
+                "relation": form.emergency_contact_relation
+            },
+            "plan_type": form.plan_type,
+            "portal_specific": form.portal_specific or {},
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "status": "active"
+        }
+        
+        # Upsert based on phone number and plan type
+        await db.membership_profiles.update_one(
+            {"phone": form.phone, "plan_type": form.plan_type},
+            {"$set": membership_profile},
+            upsert=True
+        )
+        
+        # Also update user profile if exists
+        await db.users.update_one(
+            {"phone": form.phone},
+            {
+                "$set": {
+                    "name": form.name,
+                    "age": form.age,
+                    "gender": form.gender,
+                    "health_info": membership_profile["health_info"],
+                    "emergency_contact": membership_profile["emergency_contact"],
+                    f"{form.plan_type}_profile": form.portal_specific
+                }
+            }
+        )
+        
+        logger.info(f"Membership form submitted: {form.plan_type} - {form.phone}")
+        
+        return {
+            "success": True,
+            "message": "Membership form submitted successfully",
+            "profile_id": form_id,
+            "plan_type": form.plan_type
+        }
+        
+    except Exception as e:
+        logger.error(f"Error submitting membership form: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/memberships/portal-form/{phone}")
+async def get_portal_membership_forms(phone: str):
+    """Get all membership forms for a user by phone"""
+    try:
+        profiles = await db.membership_profiles.find(
+            {"phone": phone},
+            {"_id": 0}
+        ).to_list(20)
+        
+        return {
+            "success": True,
+            "profiles": profiles,
+            "count": len(profiles)
+        }
+    except Exception as e:
+        logger.error(f"Error fetching membership forms: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/cron/check-expiring-subscriptions")
 async def cron_check_expiring_subscriptions(secret: str = ""):
     """Cron job to check and notify expiring subscriptions"""
