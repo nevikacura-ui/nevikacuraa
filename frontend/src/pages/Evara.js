@@ -1789,7 +1789,7 @@ const Evara = () => {
         </div>
 
         {/* Subscription Banner */}
-        {token && !userSubscription?.has_subscription && (
+        {effectiveToken && !userSubscription?.has_subscription && !isStaffLoggedIn && (
           <Card 
             className="bg-gradient-to-r from-pink-500 to-rose-500 border-0 cursor-pointer hover:shadow-lg transition-all"
             onClick={() => { setShowSubscription(true); fetchSubscriptionPlans(); }}
@@ -1806,6 +1806,26 @@ const Evara = () => {
                 </div>
               </div>
               <ChevronRight className="w-6 h-6 text-white" />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Staff Access Badge */}
+        {isStaffLoggedIn && (
+          <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center">
+                  <Crown className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="font-semibold text-amber-800">Staff Access</p>
+                  <p className="text-sm text-amber-600">Welcome, {effectiveUser?.name}</p>
+                </div>
+              </div>
+              <span className="px-3 py-1 bg-amber-500 text-white text-xs font-medium rounded-full uppercase">
+                {effectiveUser?.staffRole?.replace('_', ' ')}
+              </span>
             </CardContent>
           </Card>
         )}
