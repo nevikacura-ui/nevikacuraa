@@ -10,7 +10,7 @@ import { useViewMode } from '@/context/ViewModeContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { ViewModeSwitcher, ViewModeSettings } from '@/components/ViewModeSwitcher';
 import { toast } from 'sonner';
-import { User, Menu, X, Download, Smartphone, Search, Heart, FlaskConical, Video, Gift, Lightbulb, AlertTriangle, Activity, Pill, Shield, Package, ChevronRight, Stethoscope, Baby, ThermometerSun, Users, HandHeart, Sparkles, ArrowRight, Calendar, Clock, ChevronLeft, Sun, Moon, Sunrise, Star, Quote, Flame, Trophy, Target, Zap, Timer, MapPin, Phone, Award, CheckCircle2, Settings, FileText, Home as HomeIcon, TestTube, History, Plus, Navigation, Globe } from 'lucide-react';
+import { User, Menu, X, Download, Smartphone, Search, Heart, FlaskConical, Video, Gift, Lightbulb, AlertTriangle, Activity, Pill, Shield, Package, ChevronRight, Stethoscope, Baby, ThermometerSun, Users, HandHeart, Sparkles, ArrowRight, Calendar, Clock, ChevronLeft, Sun, Moon, Sunrise, Star, Quote, Flame, Trophy, Target, Zap, Timer, MapPin, Phone, Award, CheckCircle2, Settings, FileText, Home as HomeIcon, TestTube, History, Plus, Navigation } from 'lucide-react';
 import Footer from '@/components/Footer';
 import AuthModal from '@/components/AuthModal';
 import GlobalSearch from '@/components/GlobalSearch';
