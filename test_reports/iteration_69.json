@@ -1,0 +1,92 @@
+{
+  "summary": "Completed testing of new two-tiered authentication system (Auth V2). All backend APIs working correctly. Frontend AuthDialogV2 component displays all three tabs (Guest, Sign Up, Login) with proper UI elements.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_api_tests": {
+      "status": "PASS",
+      "tests_passed": 20,
+      "tests_failed": 0,
+      "endpoints_tested": [
+        "POST /api/auth/v2/guest/send-otp - Guest SMS OTP via Twilio",
+        "POST /api/auth/v2/guest/verify-otp - Guest OTP verification",
+        "POST /api/auth/v2/signup/send-otp - Sign-up Email OTP",
+        "POST /api/auth/v2/signup/verify-otp - Sign-up verification & account creation",
+        "POST /api/auth/v2/login/send-otp - Login Email OTP",
+        "POST /api/auth/v2/login/verify-otp - Login verification",
+        "GET /api/auth/v2/me - Get current user profile",
+        "POST /api/auth/v2/validate-token - Token validation",
+        "POST /api/auth/v2/logout - Logout"
+      ],
+      "key_validations": {
+        "guest_otp": "Twilio SMS OTP working - no mock_otp returned",
+        "signup_otp": "Email OTP returns mock_otp (Resend unavailable - MOCKED)",
+        "login_otp": "Email OTP returns mock_otp (Resend unavailable - MOCKED)",
+        "registration_id_format": "NC-REG-YYYY-XXXXX format verified",
+        "jwt_token": "30-day token for registered users, 2-hour for guests"
+      }
+    },
+    "frontend_ui_tests": {
+      "status": "PASS",
+      "intro_screen": {
+        "skip_button": "Present with data-testid='skip-btn'",
+        "login_signup_button": "Present with data-testid='splash-login-btn'"
+      },
+      "auth_dialog_v2": {
+        "guest_tab": {
+          "header": "Quick Checkout",
+          "phone_input": "Present with +91 prefix",
+          "send_otp_button": "Present",
+          "otp_verification": "OTP input and Verify & Continue button appear after sending"
+        },
+        "signup_tab": {
+          "header": "Create Account",
+          "name_input": "Present (Full Name)",
+          "email_input": "Present (Email Address)",
+          "phone_input": "Present (Mobile - Optional)",
+          "create_account_button": "Present"
+        },
+        "login_tab": {
+          "header": "Welcome Back",
+          "email_input": "Present (Email Address)",
+          "send_login_code_button": "Present",
+          "signup_link": "Present (Don't have an account? Sign Up)"
+        }
+      }
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_auth_v2.py",
+    "/app/test_reports/pytest/pytest_auth_v2.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Auth V2 routes properly implement two-tiered authentication",
+    "Guest mode uses real Twilio SMS OTP (working)",
+    "Sign-up/Login modes use Resend for email OTP (MOCKED - returns mock_otp when Resend unavailable)",
+    "Registration ID format NC-REG-YYYY-XXXXX correctly generated",
+    "JWT tokens properly configured (30 days for registered, 2 hours for guests)",
+    "All data-testid attributes present in AuthDialogV2 component",
+    "IntroScreen correctly integrates AuthDialogV2"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_auth_v2.py"
+  ],
+  "success_rate": {
+    "backend": "100% (20/20 tests passed)",
+    "frontend": "100% (all UI elements verified)"
+  },
+  "test_credentials": {},
+  "seed_data_creation": "Test users created during signup tests with TEST_ prefix emails",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Auth V2 system fully implemented and tested. Guest mode uses real Twilio SMS OTP. Sign-up and Login modes use Resend for email OTP but currently return mock_otp since Resend service is unavailable. Frontend AuthDialogV2 component has three tabs (Guest, Sign Up, Login) with proper data-testid attributes. Registration ID format is NC-REG-YYYY-XXXXX.",
+  "mocked_api_note": "Email OTP (Sign-up and Login) returns mock_otp in response when Resend email service is unavailable. Guest SMS OTP uses real Twilio integration."
+}
