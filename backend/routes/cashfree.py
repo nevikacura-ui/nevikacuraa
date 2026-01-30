@@ -192,9 +192,8 @@ async def get_order_status(order_id: str):
         
         # Get latest status from Cashfree
         try:
-            cashfree = get_cashfree_client()
-            api_version = "2023-08-01"
-            response = cashfree.PGFetchOrder(api_version, order_id)
+            cashfree = init_cashfree()
+            response = cashfree.PGFetchOrder(API_VERSION, order_id, None)
             
             if response and response.data:
                 cf_status = response.data.order_status
