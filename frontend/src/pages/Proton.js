@@ -687,6 +687,37 @@ const Proton = () => {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 py-6">
+        {/* Your Health Trends - Toggle Section */}
+        {patientInfo.phone && patientInfo.phone.length === 10 && (
+          <div className="mb-6">
+            <button
+              onClick={() => setShowTrends(!showTrends)}
+              className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl border border-teal-200 hover:shadow-md transition-all"
+              data-testid="show-trends-btn"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-teal-500 flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left">
+                  <h3 className="font-semibold text-teal-800">Your Health Trends</h3>
+                  <p className="text-xs text-teal-600">View your previous test results & trends</p>
+                </div>
+              </div>
+              <ChevronRight className={`w-5 h-5 text-teal-600 transition-transform ${showTrends ? 'rotate-90' : ''}`} />
+            </button>
+            
+            {showTrends && (
+              <div className="mt-4">
+                <ReportTrendsChart 
+                  patientId={patientInfo.phone}
+                  patientPhone={patientInfo.phone}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
         {/* STEP 1: Select Tests */}
         {currentStep === 1 && (
           <div className="space-y-6">
