@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/context/AuthContext';
 import BottomNav from '@/components/BottomNav';
 import ReportTrendsChart from '@/components/ReportTrendsChart';
+import CashfreeCheckout from '@/components/CashfreeCheckout';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
