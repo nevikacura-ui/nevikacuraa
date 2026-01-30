@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
+import AuthDialogV2 from './AuthDialogV2';
 import { 
   Pill, Calendar, TestTube, User, 
-  Loader2, ArrowRight, Building2, Fingerprint
+  ArrowRight, Building2, Fingerprint, Loader2
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
@@ -34,17 +31,10 @@ const IntroScreen = ({ onComplete, user }) => {
   const [phase, setPhase] = useState('init');
   const [wordIndex, setWordIndex] = useState(-1);
   
-  // Auth states
+  // Auth dialog state
   const [showAuth, setShowAuth] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [biometricLoading, setBiometricLoading] = useState(false);
   const [hasBiometricSetup, setHasBiometricSetup] = useState(false);
-  
-  // OTP states
-  const [mobile, setMobile] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [mockOtp, setMockOtp] = useState('');
   
   const words = ['Book.', 'Order.', 'Test.', 'Care.'];
   
@@ -54,22 +44,25 @@ const IntroScreen = ({ onComplete, user }) => {
     return () => { document.body.style.overflow = ''; };
   }, []);
   
-  // Check biometric
+  // Check biometric setup
   useEffect(() => {
     const setup = localStorage.getItem('biometricEnabled');
-    const savedMobile = localStorage.getItem('biometricMobile');
-    if (setup === 'true' && savedMobile) setHasBiometricSetup(true);
+    const savedEmail = localStorage.getItem('authUser');
+    if (setup === 'true' && savedEmail) setHasBiometricSetup(true);
   }, []);
   
-  // Check logged in
+  // Check if already logged in
   useEffect(() => {
-    const token = localStorage.getItem('patientToken');
-    if (token || user) onComplete();
+    // Check for new auth token first, then legacy token
+    const authToken = localStorage.getItem('authToken');
+    const patientToken = localStorage.getItem('patientToken');
+    if (authToken || patientToken || user) {
+      onComplete();
+    }
   }, [user, onComplete]);
   
   // Initialize - start the loading phase
   useEffect(() => {
-    // Small delay to ensure component is mounted
     const initTimer = setTimeout(() => {
       setPhase('loading');
     }, 50);
@@ -80,12 +73,10 @@ const IntroScreen = ({ onComplete, user }) => {
   useEffect(() => {
     if (phase !== 'loading') return;
     
-    // Show each word
     const wordTimer = setInterval(() => {
       setWordIndex(prev => {
         if (prev >= words.length - 1) {
           clearInterval(wordTimer);
-          // Switch to splash after all words shown
           setTimeout(() => setPhase('splash'), 300);
           return prev;
         }
@@ -96,38 +87,31 @@ const IntroScreen = ({ onComplete, user }) => {
     return () => clearInterval(wordTimer);
   }, [phase]);
   
-  // Auth handlers
-  const handleSendOtp = async () => {
-    if (mobile.length < 10) { toast.error('Enter valid 10-digit number'); return; }
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API}/patients/portal/send-otp?mobile=${mobile}`);
-      setOtpSent(true);
-      setMockOtp(res.data.mock_otp || '');
-      toast.success('OTP sent!');
-    } catch (e) {
-      toast.error(e.response?.status === 404 ? 'Mobile not registered' : 'Failed to send OTP');
-    }
-    setLoading(false);
-  };
-  
-  const handleVerifyOtp = async () => {
-    if (otp.length < 6) { toast.error('Enter 6-digit OTP'); return; }
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API}/patients/portal/verify-otp?mobile=${mobile}&otp=${otp}`);
-      localStorage.setItem('patientToken', res.data.token);
-      localStorage.setItem('biometricMobile', mobile);
-      if (setPatientAuth) setPatientAuth(res.data.token, res.data.patient);
-      toast.success(`Welcome, ${res.data.patient.name}!`);
+  // Handle successful authentication
+  const handleAuthSuccess = (userData, token, isGuest) => {
+    if (isGuest) {
+      // Guest users get temporary access
+      toast.success('Guest session started! Complete your order.');
       onComplete();
-    } catch { toast.error('Invalid OTP'); }
-    setLoading(false);
+    } else {
+      // Registered users get full access
+      if (setPatientAuth) {
+        setPatientAuth(token, userData);
+      }
+      // Also store as legacy token for backward compatibility
+      localStorage.setItem('patientToken', token);
+      onComplete();
+    }
   };
   
+  // Biometric login handler
   const handleBiometricLogin = async () => {
-    const savedMobile = localStorage.getItem('biometricMobile');
-    if (!savedMobile) { toast.error('Login with OTP first'); return; }
+    const savedUser = localStorage.getItem('authUser');
+    if (!savedUser) {
+      toast.error('Please login first');
+      return;
+    }
+    
     setBiometricLoading(true);
     try {
       if (!window.PublicKeyCredential) throw new Error('Not supported');
@@ -145,14 +129,17 @@ const IntroScreen = ({ onComplete, user }) => {
         });
       }
       
-      // Auto login
-      const otpRes = await axios.post(`${API}/patients/portal/send-otp?mobile=${savedMobile}`);
-      const verifyRes = await axios.post(`${API}/patients/portal/verify-otp?mobile=${savedMobile}&otp=${otpRes.data.mock_otp}`);
-      localStorage.setItem('patientToken', verifyRes.data.token);
-      if (setPatientAuth) setPatientAuth(verifyRes.data.token, verifyRes.data.patient);
-      toast.success(`Welcome back!`);
-      onComplete();
-    } catch { toast.error('Fingerprint failed'); }
+      // If biometric succeeds, use existing token
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        toast.success('Welcome back!');
+        onComplete();
+      } else {
+        throw new Error('No saved session');
+      }
+    } catch (e) {
+      toast.error('Biometric login failed. Please use login.');
+    }
     setBiometricLoading(false);
   };
 
@@ -268,7 +255,7 @@ const IntroScreen = ({ onComplete, user }) => {
               boxShadow: '0 4px 16px rgba(0,0,0,0.15), inset 0 1px 2px rgba(0,0,0,0.05)'
             }}>
             <User className="w-5 h-5 mr-2" />
-            {hasBiometricSetup ? 'Login with OTP' : 'Login / Sign Up'}
+            Login / Sign Up
           </Button>
           
           <div className="pt-6 border-t border-white/20">
@@ -280,58 +267,13 @@ const IntroScreen = ({ onComplete, user }) => {
         </div>
       </div>
       
-      {/* Auth Dialog - Themed with refined teal */}
-      <Dialog open={showAuth} onOpenChange={setShowAuth}>
-        <DialogContent className="max-w-sm rounded-3xl p-0" style={{ zIndex: 100000 }}>
-          <div className="p-6 text-white rounded-t-3xl"
-            style={{ background: `linear-gradient(135deg, ${THEME.gradientTop} 0%, ${THEME.gradientBottom} 100%)` }}>
-            <DialogTitle className="text-xl font-bold flex items-center gap-2">
-              <User className="w-6 h-6" /> Patient Login
-            </DialogTitle>
-            <DialogDescription className="text-white/80 mt-1">Enter your registered mobile</DialogDescription>
-          </div>
-          
-          <div className="p-6 space-y-4">
-            {!otpSent ? (
-              <>
-                <div>
-                  <Label className="font-bold">Mobile Number</Label>
-                  <div className="flex mt-1.5">
-                    <div className="flex items-center px-3 bg-gray-100 rounded-l-xl border border-r-0 font-bold">+91</div>
-                    <Input type="tel" placeholder="Enter mobile" value={mobile}
-                      onChange={(e) => setMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                      className="rounded-l-none rounded-r-xl h-12" />
-                  </div>
-                </div>
-                <Button onClick={handleSendOtp} disabled={loading || mobile.length < 10}
-                  className="w-full h-12 rounded-full font-bold"
-                  style={{ backgroundColor: THEME.gradientBottom }}>
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send OTP'}
-                </Button>
-              </>
-            ) : (
-              <>
-                <div className="text-center mb-4">
-                  <p>OTP sent to <strong>+91 {mobile}</strong></p>
-                  <button onClick={() => { setOtpSent(false); setOtp(''); }} 
-                    className="text-sm underline font-bold" style={{ color: THEME.accent }}>Change</button>
-                </div>
-                {mockOtp && <div className="p-3 bg-teal-50 border-2 border-teal-200 rounded-xl text-center">
-                  <p className="text-xs text-teal-700">Test OTP: <strong className="text-lg">{mockOtp}</strong></p>
-                </div>}
-                <Input type="text" placeholder="Enter OTP" value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  className="h-12 text-center text-xl tracking-widest rounded-xl font-bold" maxLength={6} />
-                <Button onClick={handleVerifyOtp} disabled={loading || otp.length < 6}
-                  className="w-full h-12 rounded-full font-bold"
-                  style={{ backgroundColor: THEME.gradientBottom }}>
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Login'}
-                </Button>
-              </>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* New Auth Dialog V2 */}
+      <AuthDialogV2 
+        open={showAuth}
+        onOpenChange={setShowAuth}
+        onAuthSuccess={handleAuthSuccess}
+        mode="default"
+      />
     </div>
   );
 };
