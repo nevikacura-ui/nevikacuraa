@@ -113,6 +113,9 @@ const NevikaCuraOne = () => {
       
       const selectedPricing = pricing.find(p => p.id === selectedPlan);
       
+      // Use HTTPS return URL (required by Cashfree)
+      const returnUrl = API.replace('http://', 'https://').replace('/api', '') || window.location.origin.replace('http://', 'https://');
+      
       // Create order with Cashfree
       const res = await fetch(`${API}/api/payments/cashfree/create-order`, {
         method: 'POST',
@@ -126,7 +129,7 @@ const NevikaCuraOne = () => {
           product_type: 'membership',
           product_id: `MEMBERSHIP_${selectedPlan.toUpperCase()}`,
           membership_plan: planMapping[selectedPlan],
-          return_url: `${window.location.origin}/one?order_id=`
+          return_url: `${returnUrl}/one?order_id=`
         })
       });
       
@@ -136,7 +139,7 @@ const NevikaCuraOne = () => {
         // Load Cashfree SDK and open checkout
         await loadCashfreeCheckout(data.payment_session_id, data.order_id);
       } else {
-        toast.error(data.detail || 'Failed to create payment order');
+        toast.error(data.detail || data.message || 'Failed to create payment order');
       }
     } catch (error) {
       console.error('Payment error:', error);
