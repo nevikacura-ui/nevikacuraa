@@ -14,6 +14,18 @@ import {
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
 
+// Refined Teal Theme - Premium Medical Trust
+const THEME = {
+  gradientTop: '#4FE3C1',      // Fresh, welcoming teal
+  gradientBottom: '#0F9D8C',    // Deep, medical trust teal
+  accent: '#0F6F66',            // CTA text - deep teal
+  iconColors: {
+    appointments: '#E6F4FF',    // Soft blue
+    pharmacy: '#FFF4D6',        // Warm cream
+    labTests: '#F0E9FF',        // Light lavender
+  }
+};
+
 const IntroScreen = ({ onComplete, user }) => {
   const navigate = useNavigate();
   const { setPatientAuth } = useAuth();
