@@ -1032,3 +1032,86 @@ Returns:
 ## Last Updated
 January 30, 2026 - 07:22
 
+---
+
+## Cashfree Payment Gateway Integration (January 30, 2026)
+
+### Backend Implementation
+**File:** `/app/backend/routes/cashfree.py`
+
+**Endpoints:**
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/payments/cashfree/create-order` | POST | Create payment order, returns session_id |
+| `/api/payments/cashfree/order-status/{order_id}` | GET | Get order status |
+| `/api/payments/cashfree/verify/{order_id}` | GET | Verify payment after redirect |
+| `/api/payments/cashfree/webhook` | POST | Handle payment webhooks |
+
+**Configuration (.env):**
+```
+CASHFREE_CLIENT_ID=1181139f92143ce73f51e8686579311811
+CASHFREE_CLIENT_SECRET=cfsk_ma_prod_...
+CASHFREE_ENVIRONMENT=production
+```
+
+**Database Collection:** `cashfree_orders`
+```json
+{
+  "order_id": "NC_MEMBERSHIP_timestamp",
+  "cf_order_id": "Cashfree order ID",
+  "payment_session_id": "For frontend checkout",
+  "customer_id": "User ID",
+  "customer_name": "Name",
+  "customer_email": "Email",
+  "customer_phone": "Phone",
+  "amount": 999,
+  "product_type": "membership|pharmacy|lab_test|appointment",
+  "membership_plan": "monthly|half_yearly|yearly",
+  "order_status": "ACTIVE|PAID|FAILED",
+  "payment_status": "PENDING|SUCCESS|FAILED",
+  "payment_gateway": "cashfree"
+}
+```
+
+### Frontend Implementation
+**File:** `/app/frontend/src/pages/NevikaCuraOne.js`
+
+**Features:**
+- Full Name, Phone, Email fields for payment
+- Order summary with savings display
+- Payment dialog with UPI/Cards/NetBanking/Wallets options
+- Cashfree JS SDK integration for popup checkout
+- Payment verification on return redirect
+- Success/Failure status screens
+
+**Checkout Flow:**
+1. User fills form → clicks "Pay"
+2. Backend creates order → returns payment_session_id
+3. Frontend loads Cashfree SDK → opens checkout popup
+4. User completes payment → redirected to /one?order_id=XXX
+5. Frontend verifies payment → shows success/failure screen
+6. On success → membership automatically activated
+
+### Membership Pricing
+| Plan | Price | Per Month |
+|------|-------|-----------|
+| Monthly | ₹999 | ₹999 |
+| Half-Yearly | ₹5,499 | ₹917 |
+| Annual | ₹9,999 | ₹833 |
+
+### Post-Payment Actions
+- **Membership:** Auto-activate membership with correct duration
+- **Pharmacy:** Confirm order
+- **Lab Tests:** Confirm booking
+- **Appointments:** Confirm appointment
+
+### SDK Details
+- **Package:** `cashfree-pg==5.0.5`
+- **API Version:** `2023-08-01`
+- **Frontend SDK:** `https://sdk.cashfree.com/js/v3/cashfree.js`
+
+---
+
+## Last Updated
+January 30, 2026 - 12:20
+
