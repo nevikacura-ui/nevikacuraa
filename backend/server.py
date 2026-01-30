@@ -6423,6 +6423,13 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Proton Reports router: {e}")
 
+# Authentication V2 Routes (Two-Tiered: Guest SMS OTP + Email Sign-up)
+try:
+    from routes.auth_v2 import router as auth_v2_router
+    app.include_router(auth_v2_router, prefix="/api")
+    logger.info("Authentication V2 router loaded (Guest SMS OTP + Email Sign-up)")
+except Exception as e:
+    logger.warning(f"Could not load Auth V2 router: {e}")
 
 
 app.add_middleware(
