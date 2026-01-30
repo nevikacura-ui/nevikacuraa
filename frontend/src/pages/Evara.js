@@ -856,6 +856,9 @@ const Evara = () => {
     is_recurring: false
   });
   
+  // Portal Membership Form state
+  const [showMembershipForm, setShowMembershipForm] = useState(false);
+  
   // Period tracking state
   const [periodData, setPeriodData] = useState({
     start_date: '',
