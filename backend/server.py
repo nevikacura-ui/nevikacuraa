@@ -547,9 +547,6 @@ async def test_push_notification(authorization: str = Header(None)):
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Stripe API key for payment processing
-stripe_api_key = os.environ.get("STRIPE_API_KEY")
-
 # ============ WEBSOCKET CONNECTION MANAGER ============
 class SlotConnectionManager:
     """Manages WebSocket connections for real-time slot updates"""
