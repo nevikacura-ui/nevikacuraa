@@ -1779,6 +1779,23 @@ const DiaGyn = () => {
 
       <ActionPrompt />
       
+      {/* Cashfree Payment Dialog */}
+      <CashfreeCheckout
+        open={showPaymentDialog}
+        onOpenChange={setShowPaymentDialog}
+        orderDetails={{
+          type: 'appointment',
+          amount: appointmentFee,
+          productId: `APPT_${Date.now()}`,
+          customerName: patientInfo.name,
+          customerEmail: patientInfo.email,
+          customerPhone: patientInfo.phone
+        }}
+        onPaymentSuccess={handlePaymentSuccess}
+        allowCOD={true}
+        returnPath="/diagyn"
+      />
+      
       {/* Bottom Navigation */}
       <BottomNav />
     </div>
