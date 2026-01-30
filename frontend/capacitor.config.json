@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://medport-1.preview.emergentagent.com",
+    "url": "https://healthapp-hub-1.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {

@@ -428,7 +428,7 @@ async def create_subscription_checkout(request: SubscriptionCreateRequest):
     if not stripe_api_key:
         raise HTTPException(status_code=500, detail="Payment system not configured")
     
-    host_url = os.environ.get("REACT_APP_BACKEND_URL", "https://medport-1.preview.emergentagent.com")
+    host_url = os.environ.get("REACT_APP_BACKEND_URL", "https://healthapp-hub-1.preview.emergentagent.com")
     webhook_url = f"{host_url}/api/webhook/subscription"
     
     stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
@@ -1514,7 +1514,7 @@ async def purchase_membership(request: MembershipPurchaseRequest):
         }
     
     # Create Stripe checkout using emergentintegrations
-    frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('REACT_APP_BACKEND_URL', 'https://medport-1.preview.emergentagent.com'))
+    frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('REACT_APP_BACKEND_URL', 'https://healthapp-hub-1.preview.emergentagent.com'))
     
     try:
         from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionRequest
