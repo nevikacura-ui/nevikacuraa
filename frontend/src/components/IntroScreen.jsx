@@ -156,22 +156,28 @@ const IntroScreen = ({ onComplete, user }) => {
     setBiometricLoading(false);
   };
 
-  // RENDER INIT PHASE - show solid bright background
+  // RENDER INIT PHASE - refined teal gradient
   if (phase === 'init') {
     return (
-      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#0EA5E9]">
+      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center"
+        style={{ background: `linear-gradient(180deg, ${THEME.gradientTop} 0%, ${THEME.gradientBottom} 100%)` }}>
       </div>
     );
   }
 
-  // RENDER LOADING PHASE - Blinkit/Zepto style
+  // RENDER LOADING PHASE - Refined Teal with premium feel
   if (phase === 'loading') {
     return (
-      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#0EA5E9]">
+      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center"
+        style={{ background: `linear-gradient(180deg, ${THEME.gradientTop} 0%, ${THEME.gradientBottom} 100%)` }}>
         
-        {/* Logo */}
+        {/* Logo - Elevated with depth */}
         <div className="mb-8">
-          <div className="bg-white rounded-[32px] px-6 py-4 shadow-2xl">
+          <div className="bg-white rounded-[36px] px-6 py-4"
+            style={{ 
+              boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+              border: '1px solid rgba(255,255,255,0.25)'
+            }}>
             <img src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
               alt="Nevika Cura" className="h-16 w-auto" />
           </div>
@@ -182,7 +188,7 @@ const IntroScreen = ({ onComplete, user }) => {
           {words.map((word, i) => (
             <span key={word} 
               className={`text-2xl sm:text-3xl font-bold text-white transition-all duration-300 ${i <= wordIndex ? 'opacity-100' : 'opacity-0'}`}
-              style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+              style={{ textShadow: '0 2px 8px rgba(0,0,0,0.2)' }}>
               {word}
             </span>
           ))}
