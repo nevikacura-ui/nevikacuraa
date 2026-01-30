@@ -6289,11 +6289,10 @@ except Exception as e:
 
 # Evara - Women's Wellness Router
 try:
-    from routes.evara import router as evara_router, set_db as set_evara_db, set_auth_dependencies as set_evara_auth, set_sms_function, set_stripe_key
+    from routes.evara import router as evara_router, set_db as set_evara_db, set_auth_dependencies as set_evara_auth, set_sms_function
     set_evara_db(db)
     set_evara_auth(get_current_user, get_current_user_optional)
     set_sms_function(send_sms_notification)
-    set_stripe_key(stripe_api_key)
     app.include_router(evara_router, prefix="/api")
     logger.info("Evara Women's Wellness router loaded")
 except Exception as e:
@@ -6312,9 +6311,8 @@ except Exception as e:
 
 # Subscription Management Router
 try:
-    from routes.subscriptions import router as subscriptions_router, set_db as set_subscriptions_db, set_stripe_key as set_subscriptions_stripe
+    from routes.subscriptions import router as subscriptions_router, set_db as set_subscriptions_db
     set_subscriptions_db(db)
-    set_subscriptions_stripe(stripe_api_key)
     app.include_router(subscriptions_router, prefix="/api")
     logger.info("Subscription Management router loaded")
 except Exception as e:
