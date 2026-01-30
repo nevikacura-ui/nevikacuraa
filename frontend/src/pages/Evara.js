@@ -775,6 +775,32 @@ const Evara = () => {
   const [programContent, setProgramContent] = useState(null);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('evara_token'));
+  
+  // Staff access check
+  const staffToken = localStorage.getItem('staffToken');
+  const staffInfo = localStorage.getItem('staffInfo');
+  const isStaffLoggedIn = !!(staffToken && staffInfo);
+  
+  // Effective token includes staff token
+  const effectiveToken = token || staffToken;
+  
+  // Create effective user for staff
+  const getStaffAsUser = () => {
+    if (!isStaffLoggedIn) return null;
+    try {
+      const staff = JSON.parse(staffInfo);
+      return {
+        name: staff.name || staff.username,
+        id: staff.id || 'staff_' + staff.username,
+        phone: staff.phone || '',
+        email: staff.email || '',
+        isStaff: true,
+        staffRole: staff.role
+      };
+    } catch (e) { return null; }
+  };
+  
+  const effectiveUser = user || getStaffAsUser();
 
   // Subscription state
   const [showSubscription, setShowSubscription] = useState(false);
