@@ -512,6 +512,11 @@ const Proton = () => {
       toast.error('Please select a preferred date');
       return;
     }
+    // Validate address for home collection
+    if (collectionType === 'home' && !patientInfo.address?.trim()) {
+      toast.error('Please enter your address for home sample collection');
+      return;
+    }
     setLoading(true);
     try {
       const orderData = {
@@ -522,13 +527,18 @@ const Proton = () => {
         patient_name: patientInfo.name,
         patient_phone: patientInfo.phone,
         patient_email: patientInfo.email || null,
-        patient_address: patientInfo.address || null,
-        payment_method: paymentMethod
+        patient_address: collectionType === 'home' ? patientInfo.address : null,
+        payment_method: paymentMethod,
+        collection_type: collectionType
       };
       await axios.post(`${API}/diagnostics`, orderData, {
         headers: user ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {}
       });
-      toast.success('Test booking confirmed! SMS sent to you and Proton Diagnostics.');
+      
+      const successMessage = collectionType === 'home' 
+        ? 'Home sample collection booked! Our phlebotomist will call you to confirm timing.'
+        : 'Test booking confirmed! Please visit our collection center on the selected date.';
+      toast.success(successMessage);
       setTimeout(() => navigate('/'), 2000);
     } catch (error) {
       toast.error('Failed to process booking');
