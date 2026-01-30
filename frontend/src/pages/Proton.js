@@ -520,6 +520,17 @@ const Proton = () => {
       toast.error('Please enter your address for home sample collection');
       return;
     }
+    
+    // Calculate total
+    const total = selectedTests.reduce((sum, test) => {
+      // Estimate ₹500-1500 per test, will be confirmed by lab
+      return sum + 800;
+    }, 0);
+    setOrderTotal(total);
+    setShowPaymentDialog(true);
+  };
+
+  const handlePaymentSuccess = async (paymentInfo) => {
     setLoading(true);
     try {
       const orderData = {
@@ -531,7 +542,8 @@ const Proton = () => {
         patient_phone: patientInfo.phone,
         patient_email: patientInfo.email || null,
         patient_address: collectionType === 'home' ? patientInfo.address : null,
-        payment_method: paymentMethod,
+        payment_method: paymentInfo.method,
+        cashfree_order_id: paymentInfo.orderId || null,
         collection_type: collectionType
       };
       await axios.post(`${API}/diagnostics`, orderData, {
