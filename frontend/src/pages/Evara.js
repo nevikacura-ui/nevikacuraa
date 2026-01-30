@@ -1878,6 +1878,28 @@ const Evara = () => {
           </Card>
         )}
 
+        {/* Complete Health Profile Card */}
+        {effectiveUser && (
+          <Card 
+            className="bg-gradient-to-r from-rose-50 to-pink-50 border-rose-200 cursor-pointer hover:shadow-md transition-all"
+            onClick={() => setShowMembershipForm(true)}
+            data-testid="complete-health-profile-evara"
+          >
+            <CardContent className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center">
+                  <ClipboardList className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="font-semibold text-rose-800">Complete Health Profile</p>
+                  <p className="text-sm text-rose-600">Get personalized care recommendations</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-rose-400" />
+            </CardContent>
+          </Card>
+        )}
+
         {/* Education Quick Links */}
         <div className="grid grid-cols-2 gap-3">
           <button 
