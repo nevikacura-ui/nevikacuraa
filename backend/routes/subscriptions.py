@@ -1444,14 +1444,10 @@ class MembershipPurchaseRequest(BaseModel):
 
 @router.post("/membership/purchase")
 async def purchase_membership(request: MembershipPurchaseRequest):
-    """Purchase a membership plan (no login required)"""
-    import stripe
-    
-    if not stripe_api_key:
-        raise HTTPException(status_code=500, detail="Payment not configured")
-    
-    stripe.api_key = stripe_api_key
-    
+    """
+    DEPRECATED: Use /api/payments/cashfree/create-order instead
+    This endpoint now redirects to Cashfree payment gateway
+    """
     # Get plan
     plan = MEMBERSHIP_PLANS.get(request.plan_type)
     is_family = False
@@ -1508,55 +1504,15 @@ async def purchase_membership(request: MembershipPurchaseRequest):
             "message": "Membership activated! Please complete your profile."
         }
     
-    # Create Stripe checkout using emergentintegrations
-    frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('REACT_APP_BACKEND_URL', 'https://healthapp-hub-1.preview.emergentagent.com'))
-    
-    try:
-        from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionRequest
-        
-        webhook_url = f"{frontend_url}/api/webhook/stripe"
-        stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
-        
-        checkout_request = CheckoutSessionRequest(
-            amount=float(price),  # Keep as float for Stripe
-            currency="inr",
-            success_url=f"{frontend_url}/membership-plans?success=true&plan={request.plan_type}&session_id={{CHECKOUT_SESSION_ID}}",
-            cancel_url=f"{frontend_url}/membership-plans?canceled=true",
-            metadata={
-                'email': request.email,
-                'plan_type': request.plan_type,
-                'billing_cycle': request.billing_cycle,
-                'is_family': str(is_family),
-                'duration_days': str(duration_days),
-                'coupon_code': request.coupon_code or ''
-            }
-        )
-        
-        session = await stripe_checkout.create_checkout_session(checkout_request)
-        
-        # Store pending membership
-        pending = {
-            "session_id": session.session_id,
-            "email": request.email.lower(),
-            "plan_type": request.plan_type,
-            "billing_cycle": request.billing_cycle,
-            "is_family": is_family,
-            "family_members": request.family_members or [],
-            "price": price,
-            "status": "payment_pending",
-            "created_at": datetime.now(timezone.utc).isoformat()
-        }
-        await db.pending_memberships.insert_one(pending)
-        
-        return {
-            "checkout_url": session.url,
-            "session_id": session.session_id,
-            "amount": price,
-            "plan_name": plan["name"]
-        }
-    except Exception as e:
-        logger.error(f"Stripe membership error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    # Redirect to Cashfree - return info for frontend to create Cashfree order
+    return {
+        "success": False,
+        "redirect_to_cashfree": True,
+        "plan_name": plan["name"],
+        "amount": price,
+        "billing_cycle": request.billing_cycle,
+        "message": "Please use /api/payments/cashfree/create-order for payment"
+    }
 
 class CompleteMembershipDetailsRequest(BaseModel):
     email: str
