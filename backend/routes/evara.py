@@ -972,92 +972,26 @@ async def get_subscription_plans():
 
 @router.post("/subscription/checkout")
 async def create_subscription_checkout(request: SubscriptionCheckoutRequest, http_request: Request, user = Depends(lambda: get_current_user)):
-    """Create a Stripe checkout session for Evara subscription"""
-    if not user:
-        raise HTTPException(status_code=401, detail="Authentication required")
-    
-    if request.plan_id not in EVARA_SUBSCRIPTION_PLANS:
-        raise HTTPException(status_code=400, detail="Invalid subscription plan")
-    
-    plan = EVARA_SUBSCRIPTION_PLANS[request.plan_id]
-    
-    try:
-        host_url = str(http_request.base_url).rstrip('/')
-        webhook_url = f"{host_url}api/webhook/stripe"
-        stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
-        
-        origin_url = request.origin_url.rstrip('/')
-        success_url = f"{origin_url}/evara?payment=success&session_id={{CHECKOUT_SESSION_ID}}"
-        cancel_url = f"{origin_url}/evara?payment=cancelled"
-        
-        checkout_request = CheckoutSessionRequest(
-            amount=plan["amount"],
-            currency=plan["currency"],
-            success_url=success_url,
-            cancel_url=cancel_url,
-            metadata={
-                "user_id": user.id,
-                "user_email": user.email,
-                "plan_id": request.plan_id,
-                "plan_name": plan["name"],
-                "duration_days": str(plan["duration_days"])
-            }
-        )
-        
-        session: CheckoutSessionResponse = await stripe_checkout.create_checkout_session(checkout_request)
-        
-        transaction = {
-            "id": str(uuid.uuid4()),
-            "user_id": user.id,
-            "user_email": user.email,
-            "session_id": session.session_id,
-            "plan_id": request.plan_id,
-            "plan_name": plan["name"],
-            "amount": plan["amount"],
-            "currency": plan["currency"],
-            "duration_days": plan["duration_days"],
-            "payment_status": "pending",
-            "created_at": datetime.now(timezone.utc).isoformat()
-        }
-        await db.payment_transactions.insert_one(transaction)
-        
-        return {
-            "checkout_url": session.url,
-            "session_id": session.session_id
-        }
-    except Exception as e:
-        logger.error(f"Stripe checkout error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to create checkout session")
+    """
+    DEPRECATED: Use /api/payments/cashfree/create-order instead
+    This endpoint is no longer functional - Stripe has been replaced with Cashfree
+    """
+    raise HTTPException(
+        status_code=410, 
+        detail="This endpoint is deprecated. Please use /api/payments/cashfree/create-order for payments"
+    )
 
 
 @router.get("/subscription/status/{session_id}")
 async def get_subscription_status(session_id: str, http_request: Request):
-    """Check payment status and update subscription"""
-    try:
-        host_url = str(http_request.base_url).rstrip('/')
-        webhook_url = f"{host_url}api/webhook/stripe"
-        stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
-        
-        status_response = await stripe_checkout.get_session_status(session_id)
-        
-        transaction = await db.payment_transactions.find_one({"session_id": session_id}, {"_id": 0})
-        
-        if not transaction:
-            return {"status": "unknown", "message": "Transaction not found"}
-        
-        if status_response.payment_status == "paid" and transaction.get("payment_status") == "pending":
-            await db.payment_transactions.update_one(
-                {"session_id": session_id},
-                {"$set": {
-                    "payment_status": "paid",
-                    "paid_at": datetime.now(timezone.utc).isoformat()
-                }}
-            )
-            
-            subscription_end = datetime.now(timezone.utc) + timedelta(days=transaction.get("duration_days", 30))
-            await db.users.update_one(
-                {"id": transaction["user_id"]},
-                {"$set": {
+    """
+    DEPRECATED: Use /api/payments/cashfree/verify/{order_id} instead
+    This endpoint is no longer functional - Stripe has been replaced with Cashfree
+    """
+    raise HTTPException(
+        status_code=410,
+        detail="This endpoint is deprecated. Please use /api/payments/cashfree/verify/{order_id} for payment status"
+    )
                     "evara_subscription": {
                         "active": True,
                         "plan_id": transaction["plan_id"],
