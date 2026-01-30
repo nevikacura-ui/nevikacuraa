@@ -27,6 +27,12 @@ import {
 const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
   const navigate = useNavigate();
   const [showDetails, setShowDetails] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState('half-yearly');
+  const [checkoutEmail, setCheckoutEmail] = useState('');
+  const [processingPayment, setProcessingPayment] = useState(false);
+  const [showEmailInput, setShowEmailInput] = useState(false);
+
+  const API = process.env.REACT_APP_BACKEND_URL || '';
 
   const benefits = [
     { icon: Star, text: 'All 12 Portals Access', color: 'text-amber-500' },
