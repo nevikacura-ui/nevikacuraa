@@ -2942,6 +2942,21 @@ const Glydex = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Portal Membership Form */}
+      <PortalMembershipForm
+        open={showMembershipForm}
+        onOpenChange={setShowMembershipForm}
+        planType="glydex"
+        existingData={effectiveUser ? {
+          name: effectiveUser.name,
+          phone: effectiveUser.phone,
+          email: effectiveUser.email
+        } : null}
+        onSuccess={() => {
+          toast.success('Health profile submitted successfully!');
+        }}
+      />
     </div>
   );
 };
