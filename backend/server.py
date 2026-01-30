@@ -6425,7 +6425,8 @@ except Exception as e:
 
 # Authentication V2 Routes (Two-Tiered: Guest SMS OTP + Email Sign-up)
 try:
-    from routes.auth_v2 import router as auth_v2_router
+    from routes.auth_v2 import router as auth_v2_router, set_db as set_auth_v2_db
+    set_auth_v2_db(db)
     app.include_router(auth_v2_router, prefix="/api")
     logger.info("Authentication V2 router loaded (Guest SMS OTP + Email Sign-up)")
 except Exception as e:
