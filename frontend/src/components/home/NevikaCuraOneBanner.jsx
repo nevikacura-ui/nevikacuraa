@@ -302,8 +302,8 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
       
       {/* Details Modal - Reuse from above */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-          <DialogHeader>
+        <DialogContent className="max-w-lg max-h-[85vh] flex flex-col p-0" onClick={(e) => e.stopPropagation()}>
+          <DialogHeader className="p-6 pb-0">
             <DialogTitle className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
                 <Crown className="w-7 h-7 text-white" />
@@ -315,7 +315,7 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-5 mt-4">
+          <div className="flex-1 overflow-y-auto px-6 pb-4 space-y-5">
             {/* Benefits */}
             <div>
               <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
@@ -363,7 +363,7 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
                       e.stopPropagation();
                       setSelectedDuration(plan.duration.toLowerCase());
                     }}
-                    className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:shadow-md cursor-pointer ${
+                    className={`w-full p-3 rounded-xl border-2 text-left transition-all hover:shadow-md cursor-pointer ${
                       selectedDuration === plan.duration.toLowerCase()
                         ? 'border-amber-500 bg-gradient-to-r from-amber-50 to-orange-50 ring-2 ring-amber-300'
                         : plan.bestValue 
@@ -389,33 +389,28 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="text-xl font-bold text-slate-800">₹{plan.price.toLocaleString()}</p>
-                        <p className="text-xs text-slate-500">₹{plan.perMonth}/month</p>
+                        <p className="text-lg font-bold text-slate-800">₹{plan.price.toLocaleString()}</p>
+                        <p className="text-xs text-slate-500">₹{plan.perMonth}/mo</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
+          </div>
 
-            {/* Email Input Section */}
-            {selectedDuration && (
-              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                <p className="text-sm font-medium text-slate-700 mb-2">Enter your email to continue</p>
-                <div className="flex gap-2">
-                  <input
-                    type="email"
-                    placeholder="your@email.com"
-                    value={checkoutEmail}
-                    onChange={(e) => setCheckoutEmail(e.target.value)}
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* CTA */}
+          {/* Sticky Footer - Email + Button */}
+          <div className="border-t bg-white p-4 space-y-3">
+            <div>
+              <input
+                type="email"
+                placeholder="Enter your email to continue"
+                value={checkoutEmail}
+                onChange={(e) => setCheckoutEmail(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+              />
+            </div>
             <Button 
               onClick={async (e) => {
                 e.stopPropagation();
@@ -457,12 +452,12 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
                 }
               }}
               disabled={processingPayment || !selectedDuration || !checkoutEmail}
-              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-6 rounded-xl text-lg font-semibold shadow-lg disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-4 rounded-xl text-base font-semibold shadow-lg disabled:opacity-50"
             >
               {processingPayment ? (
                 <>Processing...</>
               ) : (
-                <><Crown className="w-5 h-5 mr-2" /> Get Nevika Cura ONE</>
+                <><Crown className="w-5 h-5 mr-2" /> Pay ₹{pricing.find(p => p.duration.toLowerCase() === selectedDuration)?.price.toLocaleString() || '5,499'}</>
               )}
             </Button>
           </div>
