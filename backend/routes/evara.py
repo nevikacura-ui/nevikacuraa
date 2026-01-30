@@ -992,25 +992,6 @@ async def get_subscription_status(session_id: str, http_request: Request):
         status_code=410,
         detail="This endpoint is deprecated. Please use /api/payments/cashfree/verify/{order_id} for payment status"
     )
-                    "evara_subscription": {
-                        "active": True,
-                        "plan_id": transaction["plan_id"],
-                        "plan_name": transaction["plan_name"],
-                        "start_date": datetime.now(timezone.utc).isoformat(),
-                        "end_date": subscription_end.isoformat()
-                    }
-                }}
-            )
-        
-        return {
-            "status": status_response.payment_status,
-            "plan_name": transaction.get("plan_name"),
-            "amount": transaction.get("amount"),
-            "currency": transaction.get("currency")
-        }
-    except Exception as e:
-        logger.error(f"Status check error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to check payment status")
 
 
 @router.get("/subscription/user")
