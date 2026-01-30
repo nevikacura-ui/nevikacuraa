@@ -11,12 +11,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import SubscriptionGate from '@/components/SubscriptionGate';
+import PortalMembershipForm from '@/components/PortalMembershipForm';
 import { 
   ArrowLeft, Heart, Calendar, MessageCircle, Bell, 
   Sparkles, Activity, Baby, Flower2, Users, Send,
   ChevronRight, Plus, Clock, Calculator, BookOpen,
   Apple, Dumbbell, Info, AlertTriangle, User, Mail, Phone, Lock,
-  Home, Video, PlayCircle, MapPin, Share2, Crown, FileDown, Search, X, Check
+  Home, Video, PlayCircle, MapPin, Share2, Crown, FileDown, Search, X, Check, ClipboardList
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
