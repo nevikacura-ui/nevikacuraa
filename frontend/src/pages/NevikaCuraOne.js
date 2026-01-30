@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 import { 
   Crown, Star, Sparkles, Check, ArrowLeft, Loader2,
   Stethoscope, TestTube, Pill, Heart, Home, Calendar,
-  ChevronRight, Shield, Gift
+  ChevronRight, Shield, Gift, CreditCard, Smartphone
 } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 
@@ -15,12 +17,45 @@ const API = process.env.REACT_APP_BACKEND_URL || '';
 /**
  * Nevika Cura ONE - Premium Membership Page
  * "One Membership. Complete Care."
+ * Supports Cashfree Payment Gateway
  */
 const NevikaCuraOne = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [selectedPlan, setSelectedPlan] = useState('half-yearly');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [name, setName] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState(null);
+
+  // Check for payment return
+  useEffect(() => {
+    const orderId = searchParams.get('order_id');
+    if (orderId) {
+      verifyPayment(orderId);
+    }
+  }, [searchParams]);
+
+  const verifyPayment = async (orderId) => {
+    try {
+      const res = await fetch(`${API}/api/payments/cashfree/verify/${orderId}`);
+      const data = await res.json();
+      
+      if (data.success) {
+        setPaymentStatus('success');
+        toast.success('Payment successful! Your membership is now active.');
+        setTimeout(() => navigate('/'), 3000);
+      } else {
+        setPaymentStatus('failed');
+        toast.error('Payment was not completed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Verification error:', error);
+      setPaymentStatus('error');
+    }
+  };
 
   const benefits = [
     { icon: Star, text: 'Access to All 12 Health Portals', color: 'text-amber-500', bg: 'bg-amber-50' },
@@ -51,43 +86,137 @@ const NevikaCuraOne = () => {
     { name: 'Orange', desc: 'Pharmacy', color: 'bg-orange-100 text-orange-700' },
   ];
 
-  const handlePayment = async () => {
+  const handleProceedToPayment = () => {
     if (!email || !email.includes('@')) {
-      alert('Please enter a valid email address');
+      toast.error('Please enter a valid email address');
       return;
     }
+    if (!phone || phone.length < 10) {
+      toast.error('Please enter a valid phone number');
+      return;
+    }
+    if (!name || name.trim().length < 2) {
+      toast.error('Please enter your name');
+      return;
+    }
+    setShowPaymentDialog(true);
+  };
 
+  const handleCashfreePayment = async () => {
     setProcessing(true);
     try {
-      const billingCycle = selectedPlan === 'monthly' ? 'monthly' 
-        : selectedPlan === 'half-yearly' ? 'quarterly' 
-        : 'yearly';
-
-      const res = await fetch(`${API}/api/subscriptions/membership/purchase`, {
+      const planMapping = {
+        'monthly': 'monthly',
+        'half-yearly': 'half_yearly',
+        'annual': 'yearly'
+      };
+      
+      const selectedPricing = pricing.find(p => p.id === selectedPlan);
+      
+      // Create order with Cashfree
+      const res = await fetch(`${API}/api/payments/cashfree/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          plan_type: 'premium',
-          billing_cycle: billingCycle,
-          email: email.toLowerCase()
+          customer_id: `USER_${Date.now()}`,
+          customer_name: name.trim(),
+          customer_email: email.toLowerCase().trim(),
+          customer_phone: phone.replace(/\D/g, ''),
+          amount: selectedPricing.price,
+          product_type: 'membership',
+          product_id: `MEMBERSHIP_${selectedPlan.toUpperCase()}`,
+          membership_plan: planMapping[selectedPlan],
+          return_url: `${window.location.origin}/one?order_id=`
         })
       });
+      
       const data = await res.json();
-
-      if (data.checkout_url) {
-        window.location.href = data.checkout_url;
+      
+      if (data.success && data.payment_session_id) {
+        // Load Cashfree SDK and open checkout
+        await loadCashfreeCheckout(data.payment_session_id, data.order_id);
       } else {
-        alert(data.detail || 'Failed to create checkout');
+        toast.error(data.detail || 'Failed to create payment order');
       }
     } catch (error) {
       console.error('Payment error:', error);
-      alert('Payment failed. Please try again.');
+      toast.error('Payment failed. Please try again.');
     } finally {
       setProcessing(false);
+      setShowPaymentDialog(false);
     }
   };
 
+  const loadCashfreeCheckout = useCallback(async (sessionId, orderId) => {
+    try {
+      // Dynamically load Cashfree SDK
+      const script = document.createElement('script');
+      script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+      script.async = true;
+      
+      script.onload = () => {
+        const cashfree = window.Cashfree({
+          mode: 'production' // Use 'sandbox' for testing
+        });
+        
+        const checkoutOptions = {
+          paymentSessionId: sessionId,
+          redirectTarget: '_self' // Redirect in same window
+        };
+        
+        cashfree.checkout(checkoutOptions).then(() => {
+          console.log('Payment initiated');
+        }).catch((error) => {
+          console.error('Checkout error:', error);
+          toast.error('Could not open payment page. Please try again.');
+        });
+      };
+      
+      script.onerror = () => {
+        toast.error('Failed to load payment gateway. Please try again.');
+      };
+      
+      document.body.appendChild(script);
+    } catch (error) {
+      console.error('Cashfree load error:', error);
+      toast.error('Payment initialization failed');
+    }
+  }, []);
+
   const selectedPricing = pricing.find(p => p.id === selectedPlan);
+
+  // Show payment status screen if returning from payment
+  if (paymentStatus === 'success') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center p-4">
+        <Card className="max-w-md w-full text-center p-8">
+          <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
+            <Check className="w-10 h-10 text-green-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-green-800 mb-2">Payment Successful!</h2>
+          <p className="text-gray-600 mb-4">Your Nevika Cura ONE membership is now active.</p>
+          <p className="text-sm text-gray-500">Redirecting to home...</p>
+        </Card>
+      </div>
+    );
+  }
+
+  if (paymentStatus === 'failed') {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-red-50 to-white flex items-center justify-center p-4">
+        <Card className="max-w-md w-full text-center p-8">
+          <div className="w-20 h-20 mx-auto bg-red-100 rounded-full flex items-center justify-center mb-4">
+            <ArrowLeft className="w-10 h-10 text-red-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-red-800 mb-2">Payment Failed</h2>
+          <p className="text-gray-600 mb-4">Your payment could not be processed. Please try again.</p>
+          <Button onClick={() => setPaymentStatus(null)} className="bg-red-600 hover:bg-red-700">
+            Try Again
+          </Button>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-orange-50 to-white pb-24">
