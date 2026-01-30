@@ -508,7 +508,7 @@ async def login_verify_otp(request: EmailOTPVerify):
 # ============ USER PROFILE ============
 
 @router.get("/me")
-async def get_current_user(authorization: str = None):
+async def get_current_user(authorization: str = Header(None)):
     """Get current logged-in user profile"""
     if not authorization:
         raise HTTPException(status_code=401, detail="Not authenticated")
