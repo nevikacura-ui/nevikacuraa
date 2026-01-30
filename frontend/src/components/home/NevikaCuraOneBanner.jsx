@@ -160,13 +160,19 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
                   {pricing.map((plan, idx) => (
                     <button
                       key={idx}
-                      onClick={() => navigate(`/membership-plans?plan=one&duration=${plan.duration.toLowerCase()}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Store selected plan and show email input
+                        setSelectedDuration(plan.duration.toLowerCase());
+                      }}
                       className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:shadow-md ${
-                        plan.bestValue 
-                          ? 'border-amber-400 bg-gradient-to-r from-amber-50 to-orange-50' 
-                          : plan.popular 
-                            ? 'border-purple-300 bg-purple-50' 
-                            : 'border-slate-200 hover:border-slate-300'
+                        selectedDuration === plan.duration.toLowerCase()
+                          ? 'border-amber-500 bg-gradient-to-r from-amber-50 to-orange-50 ring-2 ring-amber-300'
+                          : plan.bestValue 
+                            ? 'border-amber-400 bg-gradient-to-r from-amber-50 to-orange-50' 
+                            : plan.popular 
+                              ? 'border-purple-300 bg-purple-50' 
+                              : 'border-slate-200 hover:border-slate-300'
                       }`}
                     >
                       <div className="flex items-center justify-between">
