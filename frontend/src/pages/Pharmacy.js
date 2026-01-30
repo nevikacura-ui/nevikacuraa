@@ -389,6 +389,26 @@ const Pharmacy = () => {
   const [frequentlyOrdered, setFrequentlyOrdered] = useState([]);
   const [loadingFrequent, setLoadingFrequent] = useState(false);
   
+  // Refill Reminder & Subscription States
+  const [showRefillDialog, setShowRefillDialog] = useState(false);
+  const [showSubscriptionDialog, setShowSubscriptionDialog] = useState(false);
+  const [refillForm, setRefillForm] = useState({
+    medicine_name: '',
+    dosage: '',
+    frequency: 'Daily',
+    reminder_time: '08:00',
+    reminder_type: 'sms'
+  });
+  const [subscriptionForm, setSubscriptionForm] = useState({
+    medicines: [],
+    delivery_day: 1,
+    delivery_frequency: 'monthly'
+  });
+  const [refillReminders, setRefillReminders] = useState([]);
+  const [subscriptionBoxes, setSubscriptionBoxes] = useState([]);
+  const [loadingRefills, setLoadingRefills] = useState(false);
+  const [loadingSubscriptions, setLoadingSubscriptions] = useState(false);
+  
   const [bookingLimits, setBookingLimits] = useState({
     canBook: true,
     activeOrders: 0,
