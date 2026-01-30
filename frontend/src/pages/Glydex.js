@@ -426,6 +426,9 @@ const Glydex = () => {
   const [emailVerificationToken, setEmailVerificationToken] = useState('');
   const [mockEmailOtp, setMockEmailOtp] = useState('');
   const [otpResendTimer, setOtpResendTimer] = useState(0);
+  
+  // Portal Membership Form state
+  const [showMembershipForm, setShowMembershipForm] = useState(false);
 
   // OTP Resend Timer effect
   useEffect(() => {
