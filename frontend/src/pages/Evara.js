@@ -1625,7 +1625,7 @@ const Evara = () => {
                   <Sparkles className="w-8 h-8" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold" style={{ fontFamily: 'Outfit, sans-serif' }}>Welcome, {user.name}!</h2>
+                  <h2 className="text-xl font-semibold" style={{ fontFamily: 'Outfit, sans-serif' }}>Welcome, {effectiveUser?.name || 'User'}!</h2>
                   <p className="text-white/80 text-sm">Your personalized wellness journey continues</p>
                 </div>
               </div>
