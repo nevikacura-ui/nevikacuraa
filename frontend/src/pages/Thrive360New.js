@@ -24,7 +24,7 @@ const API = process.env.REACT_APP_BACKEND_URL;
 const Thrive360New = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('programs');
-  const [activeMode, setActiveMode] = useState('gym'); // 'gym' or 'home'
+  const [activeMode, setActiveMode] = useState('gym');
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [showWorkoutDialog, setShowWorkoutDialog] = useState(false);
   const [showTimerDialog, setShowTimerDialog] = useState(false);
@@ -32,74 +32,71 @@ const Thrive360New = () => {
   const [showVitaminDialog, setShowVitaminDialog] = useState(false);
   
   // Timer state
-  const [timerMode, setTimerMode] = useState('rest'); // 'rest', 'hiit', 'rep'
   const [timerSeconds, setTimerSeconds] = useState(60);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [currentSet, setCurrentSet] = useState(1);
   const [currentRep, setCurrentRep] = useState(0);
   const timerRef = useRef(null);
-  
-  // User profile
-  const [userProfile, setUserProfile] = useState({
-    name: '',
-    goal: 'fitness', // 'fitness', 'weight_loss', 'muscle_gain', 'rehab'
-    fitnessLevel: 'beginner',
-    injuries: []
-  });
 
-  // Core programs
+  // Core programs with fitness images
   const programs = [
     { 
       id: 'strength',
-      icon: Dumbbell, 
       title: 'Strength Training', 
-      desc: 'Personalized workout plans & guidance',
-      color: 'from-red-500 to-orange-600',
+      desc: 'Build muscle & get stronger',
+      color: '#FF6B6B',
+      bgColor: '#FFE8E8',
+      image: 'https://images.unsplash.com/photo-1581009146145-b5ef050c149a?w=200&h=200&fit=crop',
       levels: ['Beginner', 'Intermediate', 'Advanced'],
       duration: '45-60 min'
     },
     { 
       id: 'yoga',
-      icon: PersonStanding, 
       title: 'Yoga & Meditation', 
-      desc: 'Mind-body wellness programs',
-      color: 'from-purple-500 to-violet-600',
-      levels: ['Morning Routine', 'Evening Calm', 'Stress Relief'],
+      desc: 'Mind-body wellness',
+      color: '#9B59B6',
+      bgColor: '#F3E5F5',
+      image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=200&h=200&fit=crop',
+      levels: ['Morning', 'Evening', 'Stress Relief'],
       duration: '20-45 min'
     },
     { 
       id: 'physio',
-      icon: Footprints, 
       title: 'Physiotherapy', 
-      desc: 'Injury recovery & mobility improvement',
-      color: 'from-teal-500 to-cyan-600',
-      levels: ['Knee Pain', 'Back Pain', 'Shoulder'],
+      desc: 'Injury recovery & rehab',
+      color: '#00BCD4',
+      bgColor: '#E0F7FA',
+      image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=200&h=200&fit=crop',
+      levels: ['Knee', 'Back', 'Shoulder'],
       duration: '30-40 min'
     },
     { 
       id: 'weight',
-      icon: Scale, 
-      title: 'Weight Management', 
-      desc: 'Fat loss & muscle building programs',
-      color: 'from-green-500 to-emerald-600',
-      levels: ['Fat Loss', 'Muscle Gain', 'Maintenance'],
+      title: 'Weight Loss', 
+      desc: 'Burn fat effectively',
+      color: '#4CAF50',
+      bgColor: '#E8F5E9',
+      image: 'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=200&h=200&fit=crop',
+      levels: ['Fat Loss', 'Toning', 'Maintenance'],
       duration: '45 min'
     },
     { 
       id: 'cardio',
-      icon: Heart, 
-      title: 'Cardio Fitness', 
-      desc: 'Heart-healthy exercise routines',
-      color: 'from-pink-500 to-rose-600',
-      levels: ['Walking', 'Running', 'Cycling'],
-      duration: '30-60 min'
+      title: 'Cardio & HIIT', 
+      desc: 'Heart-pumping workouts',
+      color: '#FF9800',
+      bgColor: '#FFF3E0',
+      image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=200&h=200&fit=crop',
+      levels: ['Low', 'Medium', 'High Intensity'],
+      duration: '30-45 min'
     },
     { 
       id: 'sports',
-      icon: Trophy, 
-      title: 'Sports Rehab', 
-      desc: 'Athletic performance & recovery',
-      color: 'from-amber-500 to-yellow-600',
+      title: 'Sports Training', 
+      desc: 'Athletic performance',
+      color: '#3F51B5',
+      bgColor: '#E8EAF6',
+      image: 'https://images.unsplash.com/photo-1461896836934- voices?w=200&h=200&fit=crop',
       levels: ['Cricket', 'Football', 'Badminton'],
       duration: '45-60 min'
     }
@@ -107,10 +104,10 @@ const Thrive360New = () => {
 
   // Running plans
   const runningPlans = [
-    { name: 'Couch to 5K', weeks: 8, level: 'Beginner', goal: '5 km in 8 weeks' },
-    { name: '10K Training', weeks: 10, level: 'Intermediate', goal: '10 km comfortably' },
-    { name: 'Half Marathon', weeks: 12, level: 'Advanced', goal: '21.1 km race ready' },
-    { name: 'Speed Builder', weeks: 6, level: 'Intermediate', goal: 'Improve pace' }
+    { name: 'Couch to 5K', weeks: 8, level: 'Beginner', goal: '5 km', color: '#FF6B6B', image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=150&h=150&fit=crop' },
+    { name: '10K Training', weeks: 10, level: 'Intermediate', goal: '10 km', color: '#FF9800', image: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=150&h=150&fit=crop' },
+    { name: 'Half Marathon', weeks: 12, level: 'Advanced', goal: '21.1 km', color: '#9B59B6', image: 'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=150&h=150&fit=crop' },
+    { name: 'Speed Builder', weeks: 6, level: 'Intermediate', goal: 'Faster pace', color: '#4CAF50', image: 'https://images.unsplash.com/photo-1461896836934-fffceb?w=150&h=150&fit=crop' }
   ];
 
   // Gym schedules
@@ -118,6 +115,7 @@ const Thrive360New = () => {
     '3day': {
       name: '3-Day Split',
       desc: 'Perfect for beginners',
+      color: '#FF6B6B',
       days: [
         { day: 'Day 1', focus: 'Chest + Triceps', exercises: ['Bench Press', 'Incline Dumbbell', 'Tricep Dips', 'Pushdowns'] },
         { day: 'Day 2', focus: 'Back + Biceps', exercises: ['Deadlift', 'Lat Pulldown', 'Barbell Rows', 'Bicep Curls'] },
@@ -125,11 +123,12 @@ const Thrive360New = () => {
       ]
     },
     '6day': {
-      name: '6-Day PPL Split',
+      name: '6-Day PPL',
       desc: 'Push/Pull/Legs x 2',
+      color: '#9B59B6',
       days: [
-        { day: 'Day 1', focus: 'Push (Chest/Shoulder/Tri)', exercises: ['Bench Press', 'Shoulder Press', 'Lateral Raises', 'Tricep Extensions'] },
-        { day: 'Day 2', focus: 'Pull (Back/Biceps)', exercises: ['Pull-ups', 'Barbell Rows', 'Face Pulls', 'Hammer Curls'] },
+        { day: 'Day 1', focus: 'Push', exercises: ['Bench Press', 'Shoulder Press', 'Lateral Raises', 'Tricep Extensions'] },
+        { day: 'Day 2', focus: 'Pull', exercises: ['Pull-ups', 'Barbell Rows', 'Face Pulls', 'Hammer Curls'] },
         { day: 'Day 3', focus: 'Legs', exercises: ['Squats', 'Romanian Deadlift', 'Leg Curls', 'Calf Raises'] },
         { day: 'Day 4', focus: 'Push', exercises: ['Incline Press', 'Arnold Press', 'Cable Flyes', 'Overhead Extensions'] },
         { day: 'Day 5', focus: 'Pull', exercises: ['Deadlift', 'Cable Rows', 'Rear Delt Flyes', 'Preacher Curls'] },
@@ -138,12 +137,12 @@ const Thrive360New = () => {
     }
   };
 
-  // Vitamin checks
+  // Vitamin tests
   const vitaminTests = [
-    { name: 'Vitamin D', symptoms: ['Fatigue', 'Bone pain', 'Muscle weakness'], price: 599 },
-    { name: 'Vitamin B12', symptoms: ['Tiredness', 'Weakness', 'Numbness'], price: 499 },
-    { name: 'Iron Profile', symptoms: ['Hair fall', 'Pale skin', 'Breathlessness'], price: 699 },
-    { name: 'Complete Vitamin Panel', symptoms: ['Overall health check'], price: 1499 }
+    { name: 'Vitamin D', symptoms: ['Fatigue', 'Bone pain'], price: 599 },
+    { name: 'Vitamin B12', symptoms: ['Tiredness', 'Numbness'], price: 499 },
+    { name: 'Iron Profile', symptoms: ['Hair fall', 'Weakness'], price: 699 },
+    { name: 'Complete Panel', symptoms: ['Full check'], price: 1499 }
   ];
 
   // Timer functions
@@ -152,10 +151,9 @@ const Thrive360New = () => {
       timerRef.current = setInterval(() => {
         setTimerSeconds(prev => {
           if (prev <= 1) {
-            // Play sound or vibrate
             if (navigator.vibrate) navigator.vibrate(500);
             setIsTimerRunning(false);
-            toast.success('Timer Complete! Rest over.');
+            toast.success('⏰ Rest complete! Go again!');
             return 0;
           }
           return prev - 1;
@@ -170,38 +168,11 @@ const Thrive360New = () => {
     setIsTimerRunning(true);
   };
 
-  const pauseTimer = () => {
-    setIsTimerRunning(false);
-  };
-
-  const resetTimer = () => {
-    setIsTimerRunning(false);
-    setTimerSeconds(60);
-  };
-
-  const handleInjuryReport = () => {
-    setShowInjuryDialog(true);
-  };
-
-  const handleVitaminCheck = () => {
-    setShowVitaminDialog(true);
-  };
-
-  const bookDoctorConsult = () => {
-    toast.success('Redirecting to orthopedic consultation...');
-    navigate('/diagyn?doctor=vikas&type=ortho');
-  };
-
-  const bookVitaminTest = (test) => {
-    toast.success(`${test.name} test booked! Proton Diagnostics will call you.`);
-    setShowVitaminDialog(false);
-  };
-
   return (
     <AnimatedPage>
-      <div className="min-h-screen bg-[#F5F5F4] pb-20" data-testid="thrive360-page">
-        {/* Header */}
-        <header className="bg-gradient-to-r from-[#1a1a3e] to-[#2d2d5a] text-white sticky top-0 z-50">
+      <div className="min-h-screen bg-[#FAFAFA] pb-20" data-testid="thrive360-page">
+        {/* Vibrant Header */}
+        <header className="bg-[#FF6B6B] text-white sticky top-0 z-50">
           <div className="max-w-5xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -214,138 +185,137 @@ const Thrive360New = () => {
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-[#1a1a3e]">
-                    <img 
-                      src="https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/tx5fggdz_91.png" 
-                      alt="Thrive360" 
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div>
-                    <h1 className="text-xl font-bold tracking-wide">THRIVE360</h1>
-                    <p className="text-sm opacity-90">Health in Motion</p>
-                  </div>
+                <div>
+                  <h1 className="text-2xl font-black tracking-tight">THRIVE360</h1>
+                  <p className="text-sm text-white/90 font-medium">Health in Motion 💪</p>
                 </div>
               </div>
               
-              {/* Quick Timer Button */}
               <Button 
                 onClick={() => setShowTimerDialog(true)}
-                variant="ghost"
-                className="rounded-full bg-white/20 hover:bg-white/30"
+                className="bg-white text-[#FF6B6B] hover:bg-white/90 rounded-full font-bold"
                 data-testid="timer-btn"
               >
-                <Timer className="w-5 h-5" />
+                <Timer className="w-5 h-5 mr-1" />
+                Timer
               </Button>
             </div>
           </div>
         </header>
 
-        {/* Trust Badges */}
-        <div className="bg-white border-b border-slate-200">
-          <div className="max-w-5xl mx-auto px-4 py-3">
-            <div className="flex justify-between items-center gap-4 overflow-x-auto">
+        {/* Trust Badges - Colorful Pills */}
+        <div className="bg-white border-b shadow-sm py-3 overflow-x-auto">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="flex gap-3">
               {[
-                { icon: Award, text: 'Certified Trainers' },
-                { icon: Clock, text: 'Flexible Timings' },
-                { icon: Play, text: 'Video Guided' },
-                { icon: CheckCircle2, text: 'Progress Tracking' }
+                { icon: '🏆', text: 'Certified Trainers', bg: 'bg-amber-100', color: 'text-amber-700' },
+                { icon: '⏰', text: 'Flexible Timings', bg: 'bg-blue-100', color: 'text-blue-700' },
+                { icon: '▶️', text: 'Video Guided', bg: 'bg-purple-100', color: 'text-purple-700' },
+                { icon: '📊', text: 'Track Progress', bg: 'bg-green-100', color: 'text-green-700' }
               ].map((feature, idx) => (
-                <div key={idx} className="flex items-center gap-2 flex-shrink-0">
-                  <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                    <feature.icon className="w-4 h-4 text-indigo-700" />
-                  </div>
-                  <span className="text-xs font-medium text-slate-700 whitespace-nowrap">{feature.text}</span>
+                <div key={idx} className={`flex items-center gap-2 px-4 py-2 rounded-full ${feature.bg} flex-shrink-0`}>
+                  <span className="text-lg">{feature.icon}</span>
+                  <span className={`text-sm font-semibold ${feature.color} whitespace-nowrap`}>{feature.text}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Hero Section */}
-        <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 text-white py-8 px-4">
+        {/* Hero Section - Vibrant */}
+        <div className="bg-gradient-to-br from-[#FF6B6B] via-[#FF8E53] to-[#FFA726] text-white py-8 px-4">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Fitness, Yoga & Physical Wellness</h2>
-            <p className="text-white/80 mb-6 max-w-xl">
-              Transform your body and mind with expert-guided fitness programs. From yoga to strength training, we have something for everyone.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button 
-                onClick={() => setShowWorkoutDialog(true)}
-                className="bg-white text-indigo-900 hover:bg-white/90 rounded-xl"
-                data-testid="book-session-btn"
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                Book Session
-              </Button>
-              <Button 
-                variant="outline"
-                className="border-white/30 text-white hover:bg-white/10 rounded-xl"
-              >
-                <Play className="w-4 h-4 mr-2" />
-                Watch Demo
-              </Button>
+            <div className="flex items-center gap-6">
+              <div className="flex-1">
+                <h2 className="text-3xl sm:text-4xl font-black mb-2">
+                  Transform Your Body 🔥
+                </h2>
+                <p className="text-white/90 mb-6 text-lg">
+                  From yoga to HIIT, strength to cardio. Expert-guided programs for everyone.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Button 
+                    onClick={() => setShowWorkoutDialog(true)}
+                    className="bg-white text-[#FF6B6B] hover:bg-white/90 rounded-full px-6 font-bold shadow-lg"
+                    data-testid="book-session-btn"
+                  >
+                    <Calendar className="w-5 h-5 mr-2" />
+                    Book Session
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="border-2 border-white text-white hover:bg-white/20 rounded-full px-6 font-bold"
+                  >
+                    <Play className="w-5 h-5 mr-2" />
+                    Watch Demo
+                  </Button>
+                </div>
+              </div>
+              {/* Decorative circles */}
+              <div className="hidden md:block relative">
+                <div className="w-32 h-32 bg-white/20 rounded-full absolute -top-4 -right-4"></div>
+                <div className="w-24 h-24 bg-white/30 rounded-full"></div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Mode Selector: Gym vs Home */}
-        <div className="bg-white border-b shadow-sm">
-          <div className="max-w-5xl mx-auto px-4 py-3">
+        {/* Mode Toggle - Pill Style */}
+        <div className="bg-white shadow-sm py-4">
+          <div className="max-w-5xl mx-auto px-4">
             <div className="flex items-center gap-4">
-              <span className="text-sm font-medium text-slate-600">Workout Mode:</span>
-              <div className="flex gap-2">
+              <span className="text-sm font-bold text-slate-700">MODE:</span>
+              <div className="flex gap-2 bg-slate-100 p-1 rounded-full">
                 <button
                   onClick={() => setActiveMode('gym')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
                     activeMode === 'gym'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-[#FF6B6B] text-white shadow-md'
+                      : 'text-slate-600 hover:text-slate-800'
                   }`}
                   data-testid="mode-gym"
                 >
                   <Dumbbell className="w-4 h-4" />
-                  Gym Workout
+                  Gym
                 </button>
                 <button
                   onClick={() => setActiveMode('home')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
                     activeMode === 'home'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-[#4CAF50] text-white shadow-md'
+                      : 'text-slate-600 hover:text-slate-800'
                   }`}
                   data-testid="mode-home"
                 >
                   <Home className="w-4 h-4" />
-                  Home Exercise
+                  Home
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Section Tabs */}
-        <div className="bg-white border-b shadow-sm">
+        {/* Section Tabs - Colorful */}
+        <div className="bg-white border-b shadow-sm sticky top-[72px] z-40">
           <div className="max-w-5xl mx-auto px-4 py-3">
             <div className="flex gap-2 overflow-x-auto pb-1">
               {[
-                { id: 'programs', label: 'Programs', icon: Target },
-                { id: 'running', label: 'Running', icon: Footprints },
-                { id: 'schedules', label: 'Gym Schedules', icon: Calendar },
-                { id: 'medical', label: 'Medical Support', icon: Stethoscope }
+                { id: 'programs', label: 'Programs', icon: '🎯', color: '#FF6B6B' },
+                { id: 'running', label: 'Running', icon: '🏃', color: '#FF9800' },
+                { id: 'schedules', label: 'Schedules', icon: '📅', color: '#9B59B6' },
+                { id: 'medical', label: 'Medical', icon: '🏥', color: '#00BCD4' }
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveSection(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
-                    activeSection === tab.id
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
+                  style={{ 
+                    backgroundColor: activeSection === tab.id ? tab.color : '#F1F5F9',
+                    color: activeSection === tab.id ? 'white' : '#475569'
+                  }}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap shadow-sm"
                   data-testid={`tab-${tab.id}`}
                 >
-                  <tab.icon className="w-4 h-4" />
+                  <span className="text-lg">{tab.icon}</span>
                   {tab.label}
                 </button>
               ))}
@@ -358,47 +328,75 @@ const Thrive360New = () => {
           {/* PROGRAMS SECTION */}
           {activeSection === 'programs' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                <Target className="w-5 h-5 text-indigo-600" />
-                Core Programs {activeMode === 'home' && <Badge variant="outline">Home Exercises</Badge>}
+              <h3 className="text-xl font-black text-slate-800 flex items-center gap-2">
+                🎯 Core Programs
+                {activeMode === 'home' && <Badge className="bg-green-100 text-green-700 font-bold">No Equipment</Badge>}
               </h3>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                 {programs.map((program) => (
                   <Card 
                     key={program.id}
-                    className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+                    className="overflow-hidden hover:shadow-xl transition-all cursor-pointer group border-0 shadow-md"
                     onClick={() => {
                       setSelectedProgram(program);
                       setShowWorkoutDialog(true);
                     }}
                     data-testid={`program-${program.id}`}
                   >
-                    <div className={`h-2 bg-gradient-to-r ${program.color}`} />
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-3">
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${program.color} flex items-center justify-center flex-shrink-0`}>
-                          <program.icon className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-slate-800 group-hover:text-indigo-600 transition-colors">
-                            {program.title}
-                          </h4>
-                          <p className="text-sm text-slate-500 mb-2">{program.desc}</p>
-                          <div className="flex items-center gap-2 text-xs text-slate-400">
-                            <Clock className="w-3 h-3" />
-                            {program.duration}
-                          </div>
+                    <div className="relative">
+                      {/* Circular Image */}
+                      <div className="absolute top-4 right-4 z-10">
+                        <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                          <img 
+                            src={program.image} 
+                            alt={program.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => e.target.src = `https://via.placeholder.com/100/${program.color.slice(1)}/ffffff?text=${program.title[0]}`}
+                          />
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-1 mt-3">
-                        {program.levels.map((level, idx) => (
-                          <Badge key={idx} variant="outline" className="text-xs">{level}</Badge>
+                      
+                      {/* Colored Header */}
+                      <div 
+                        className="h-24 flex items-end p-4"
+                        style={{ backgroundColor: program.bgColor }}
+                      >
+                        <h4 
+                          className="font-black text-lg"
+                          style={{ color: program.color }}
+                        >
+                          {program.title}
+                        </h4>
+                      </div>
+                    </div>
+                    
+                    <CardContent className="p-4 pt-2">
+                      <p className="text-sm text-slate-500 mb-3">{program.desc}</p>
+                      
+                      <div className="flex items-center gap-2 text-xs text-slate-400 mb-3">
+                        <Clock className="w-3 h-3" />
+                        {program.duration}
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {program.levels.slice(0, 2).map((level, idx) => (
+                          <Badge 
+                            key={idx} 
+                            className="text-xs font-medium"
+                            style={{ backgroundColor: program.bgColor, color: program.color }}
+                          >
+                            {level}
+                          </Badge>
                         ))}
                       </div>
-                      <Button className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl">
+                      
+                      <Button 
+                        className="w-full rounded-full font-bold"
+                        style={{ backgroundColor: program.color }}
+                      >
                         <Play className="w-4 h-4 mr-2" />
-                        Start Program
+                        Start
                       </Button>
                     </CardContent>
                   </Card>
@@ -410,43 +408,56 @@ const Thrive360New = () => {
           {/* RUNNING SECTION */}
           {activeSection === 'running' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                <Footprints className="w-5 h-5 text-indigo-600" />
-                Running Plans
-              </h3>
+              <h3 className="text-xl font-black text-slate-800">🏃 Running Plans</h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {runningPlans.map((plan, idx) => (
-                  <Card key={idx} className="p-4 hover:shadow-lg transition-all" data-testid={`running-${idx}`}>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-semibold text-slate-800 text-lg">{plan.name}</h4>
-                        <Badge className="mt-1 bg-indigo-100 text-indigo-700">{plan.level}</Badge>
-                        <p className="text-sm text-slate-500 mt-2">{plan.goal}</p>
-                        <p className="text-xs text-slate-400 mt-1">{plan.weeks} weeks program</p>
+                  <Card key={idx} className="overflow-hidden hover:shadow-xl transition-all border-0 shadow-md" data-testid={`running-${idx}`}>
+                    <div className="flex">
+                      {/* Circular Image */}
+                      <div className="w-28 flex items-center justify-center p-4" style={{ backgroundColor: `${plan.color}20` }}>
+                        <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                          <img 
+                            src={plan.image} 
+                            alt={plan.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => e.target.src = `https://via.placeholder.com/100/${plan.color.slice(1)}/ffffff?text=🏃`}
+                          />
+                        </div>
                       </div>
-                      <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center">
-                        <Footprints className="w-7 h-7 text-white" />
+                      
+                      <div className="flex-1 p-4">
+                        <h4 className="font-black text-lg text-slate-800">{plan.name}</h4>
+                        <Badge 
+                          className="mt-1 font-bold"
+                          style={{ backgroundColor: `${plan.color}20`, color: plan.color }}
+                        >
+                          {plan.level}
+                        </Badge>
+                        <p className="text-sm text-slate-500 mt-2">Goal: {plan.goal}</p>
+                        <p className="text-xs text-slate-400">{plan.weeks} weeks program</p>
+                        
+                        <Button 
+                          className="mt-3 rounded-full font-bold"
+                          style={{ backgroundColor: plan.color }}
+                        >
+                          Start Plan
+                        </Button>
                       </div>
                     </div>
-                    <Button className="w-full mt-4 bg-pink-500 hover:bg-pink-600 rounded-xl">
-                      Start Plan
-                    </Button>
                   </Card>
                 ))}
               </div>
 
-              {/* Running Tips */}
-              <Card className="p-4 bg-rose-50 border-rose-200">
-                <h4 className="font-medium text-rose-800 mb-2 flex items-center gap-2">
-                  <Zap className="w-4 h-4" />
-                  Running Tips
+              {/* Tips Card */}
+              <Card className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200 border-2">
+                <h4 className="font-black text-orange-700 mb-2 flex items-center gap-2">
+                  💡 Pro Tips
                 </h4>
-                <ul className="text-sm text-rose-700 space-y-1">
-                  <li>• Always warm up 5-10 minutes before running</li>
-                  <li>• Stay hydrated - drink water before and after</li>
-                  <li>• Cool down with stretching to prevent injury</li>
-                  <li>• Listen to your body - rest when needed</li>
+                <ul className="text-sm text-orange-600 space-y-1 font-medium">
+                  <li>• Warm up 5-10 minutes before running</li>
+                  <li>• Stay hydrated - drink before and after</li>
+                  <li>• Cool down with stretching</li>
                 </ul>
               </Card>
             </div>
@@ -455,31 +466,44 @@ const Thrive360New = () => {
           {/* GYM SCHEDULES SECTION */}
           {activeSection === 'schedules' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-indigo-600" />
-                Structured Gym Schedules
-              </h3>
+              <h3 className="text-xl font-black text-slate-800">📅 Gym Schedules</h3>
               
               {Object.entries(gymSchedules).map(([key, schedule]) => (
-                <Card key={key} className="overflow-hidden" data-testid={`schedule-${key}`}>
-                  <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4">
-                    <CardTitle className="flex items-center justify-between">
-                      <span>{schedule.name}</span>
-                      <Badge className="bg-white/20 text-white">{schedule.desc}</Badge>
-                    </CardTitle>
-                  </CardHeader>
+                <Card key={key} className="overflow-hidden border-0 shadow-lg" data-testid={`schedule-${key}`}>
+                  <div 
+                    className="py-4 px-5 flex items-center justify-between"
+                    style={{ backgroundColor: schedule.color }}
+                  >
+                    <div>
+                      <h4 className="text-xl font-black text-white">{schedule.name}</h4>
+                      <p className="text-white/80 text-sm">{schedule.desc}</p>
+                    </div>
+                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                      <Dumbbell className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                  
                   <CardContent className="p-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       {schedule.days.map((day, idx) => (
-                        <div key={idx} className="bg-slate-50 rounded-xl p-3">
+                        <div 
+                          key={idx} 
+                          className="rounded-2xl p-4"
+                          style={{ backgroundColor: `${schedule.color}10` }}
+                        >
                           <div className="flex items-center justify-between mb-2">
-                            <span className="font-semibold text-slate-800">{day.day}</span>
-                            <Badge variant="outline" className="text-xs">{day.focus}</Badge>
+                            <span className="font-black text-slate-800">{day.day}</span>
+                            <Badge 
+                              className="font-bold text-xs"
+                              style={{ backgroundColor: `${schedule.color}20`, color: schedule.color }}
+                            >
+                              {day.focus}
+                            </Badge>
                           </div>
                           <ul className="space-y-1">
                             {day.exercises.map((ex, exIdx) => (
                               <li key={exIdx} className="text-sm text-slate-600 flex items-center gap-2">
-                                <CheckCircle2 className="w-3 h-3 text-green-500" />
+                                <CheckCircle2 className="w-3 h-3" style={{ color: schedule.color }} />
                                 {ex}
                               </li>
                             ))}
@@ -487,117 +511,81 @@ const Thrive360New = () => {
                         </div>
                       ))}
                     </div>
-                    <Button className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl">
+                    
+                    <Button 
+                      className="w-full mt-4 rounded-full font-bold"
+                      style={{ backgroundColor: schedule.color }}
+                    >
                       <Calendar className="w-4 h-4 mr-2" />
                       Start This Schedule
                     </Button>
                   </CardContent>
                 </Card>
               ))}
-
-              {/* Weekly Progression */}
-              <Card className="p-4 bg-amber-50 border-amber-200">
-                <h4 className="font-medium text-amber-800 mb-2 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4" />
-                  Weekly Progression Tips
-                </h4>
-                <ul className="text-sm text-amber-700 space-y-1">
-                  <li>• Increase weight by 2.5-5kg when you can complete all sets easily</li>
-                  <li>• Take a deload week every 4-6 weeks (reduce weight by 40%)</li>
-                  <li>• Rest at least 48 hours between training same muscle group</li>
-                </ul>
-              </Card>
             </div>
           )}
 
           {/* MEDICAL SUPPORT SECTION */}
           {activeSection === 'medical' && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                <Stethoscope className="w-5 h-5 text-indigo-600" />
-                Medical & Diagnostic Support
-              </h3>
+              <h3 className="text-xl font-black text-slate-800">🏥 Medical Support</h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Injury / Pain Report */}
-                <Card className="p-6 border-2 border-red-100 hover:border-red-300 transition-all">
-                  <div className="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mb-4">
-                    <AlertTriangle className="w-7 h-7 text-red-600" />
+                {/* Injury Report */}
+                <Card className="p-6 border-2 border-red-100 hover:border-red-300 transition-all shadow-md">
+                  <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-4xl">🤕</span>
                   </div>
-                  <h4 className="font-semibold text-slate-800 text-lg mb-2">Report Injury / Pain</h4>
-                  <p className="text-sm text-slate-500 mb-4">
-                    Experiencing pain during workouts? Report it and get professional guidance.
+                  <h4 className="font-black text-slate-800 text-xl text-center mb-2">Report Injury</h4>
+                  <p className="text-sm text-slate-500 text-center mb-4">
+                    Pain during workouts? Get professional guidance.
                   </p>
                   <Button 
-                    onClick={handleInjuryReport}
-                    className="w-full bg-red-500 hover:bg-red-600 rounded-xl"
+                    onClick={() => setShowInjuryDialog(true)}
+                    className="w-full bg-[#FF6B6B] hover:bg-red-500 rounded-full font-bold"
                     data-testid="report-injury-btn"
                   >
                     <AlertTriangle className="w-4 h-4 mr-2" />
-                    Report Injury
+                    Report Now
                   </Button>
                 </Card>
 
                 {/* Vitamin Check */}
-                <Card className="p-6 border-2 border-green-100 hover:border-green-300 transition-all">
-                  <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-4">
-                    <TestTube className="w-7 h-7 text-green-600" />
+                <Card className="p-6 border-2 border-green-100 hover:border-green-300 transition-all shadow-md">
+                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-4xl">💊</span>
                   </div>
-                  <h4 className="font-semibold text-slate-800 text-lg mb-2">Vitamin & Deficiency Check</h4>
-                  <p className="text-sm text-slate-500 mb-4">
-                    Fatigue? Poor recovery? Muscle cramps? Check your vitamin levels.
+                  <h4 className="font-black text-slate-800 text-xl text-center mb-2">Vitamin Check</h4>
+                  <p className="text-sm text-slate-500 text-center mb-4">
+                    Fatigue? Cramps? Check your vitamin levels.
                   </p>
                   <Button 
-                    onClick={handleVitaminCheck}
-                    className="w-full bg-green-500 hover:bg-green-600 rounded-xl"
+                    onClick={() => setShowVitaminDialog(true)}
+                    className="w-full bg-[#4CAF50] hover:bg-green-600 rounded-full font-bold"
                     data-testid="vitamin-check-btn"
                   >
                     <TestTube className="w-4 h-4 mr-2" />
-                    Check Vitamins
+                    Check Now
                   </Button>
                 </Card>
               </div>
 
-              {/* Doctor Referral Info */}
-              <Card className="p-4 bg-blue-50 border-blue-200">
-                <div className="flex items-start gap-3">
-                  <Stethoscope className="w-6 h-6 text-blue-600 flex-shrink-0" />
-                  <div>
-                    <h4 className="font-medium text-blue-800">Orthopedic & Sports Medicine</h4>
-                    <p className="text-sm text-blue-700 mt-1">
-                      For persistent pain or injuries, our sports medicine specialist Dr. Vikas is available for consultation.
-                    </p>
+              {/* Doctor Card */}
+              <Card className="p-5 bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-3xl">👨‍⚕️</span>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-black text-blue-800 text-lg">Sports Medicine</h4>
+                    <p className="text-sm text-blue-600">Dr. Vikas - Orthopedic Specialist</p>
                     <Button 
-                      variant="outline"
-                      onClick={bookDoctorConsult}
-                      className="mt-3 border-blue-300 text-blue-700 rounded-xl"
+                      onClick={() => navigate('/diagyn?doctor=vikas')}
+                      className="mt-2 bg-blue-500 hover:bg-blue-600 rounded-full font-bold"
                     >
-                      Book Ortho Consult
+                      Book Consult
                     </Button>
                   </div>
-                </div>
-              </Card>
-
-              {/* Injury Escalation Flow */}
-              <Card className="p-4">
-                <h4 className="font-medium text-slate-800 mb-3">Injury → Care Escalation Flow</h4>
-                <div className="flex items-center gap-2 overflow-x-auto pb-2">
-                  {[
-                    { step: '1', text: 'Report Pain', color: 'bg-amber-500' },
-                    { step: '2', text: 'Physio Protocol', color: 'bg-teal-500' },
-                    { step: '3', text: 'Doctor Consult', color: 'bg-blue-500' },
-                    { step: '4', text: 'Modified Plan', color: 'bg-green-500' }
-                  ].map((s, idx) => (
-                    <React.Fragment key={s.step}>
-                      <div className="flex flex-col items-center flex-shrink-0">
-                        <div className={`w-10 h-10 ${s.color} text-white rounded-full flex items-center justify-center font-bold`}>
-                          {s.step}
-                        </div>
-                        <span className="text-xs text-slate-600 mt-1 text-center whitespace-nowrap">{s.text}</span>
-                      </div>
-                      {idx < 3 && <ChevronRight className="w-5 h-5 text-slate-300 flex-shrink-0" />}
-                    </React.Fragment>
-                  ))}
                 </div>
               </Card>
             </div>
@@ -605,81 +593,76 @@ const Thrive360New = () => {
 
         </main>
 
-        {/* Timer Dialog */}
+        {/* Timer Dialog - Vibrant */}
         <Dialog open={showTimerDialog} onOpenChange={setShowTimerDialog}>
           <DialogContent className="max-w-sm">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Timer className="w-5 h-5 text-indigo-600" />
-                Workout Timer
+              <DialogTitle className="flex items-center gap-2 text-xl font-black">
+                ⏱️ Workout Timer
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              {/* Timer Display */}
-              <div className="text-center py-6 bg-slate-100 rounded-2xl">
-                <div className="text-6xl font-bold text-indigo-600 font-mono">
+              <div className="text-center py-8 bg-gradient-to-br from-[#FF6B6B] to-[#FF8E53] rounded-3xl">
+                <div className="text-7xl font-black text-white font-mono">
                   {Math.floor(timerSeconds / 60)}:{(timerSeconds % 60).toString().padStart(2, '0')}
                 </div>
-                <p className="text-slate-500 mt-2">
-                  {timerMode === 'rest' ? 'Rest Timer' : timerMode === 'hiit' ? 'HIIT Interval' : 'Rep Counter'}
+                <p className="text-white/80 mt-2 font-bold">
+                  {isTimerRunning ? '💪 GO GO GO!' : 'Ready to rest?'}
                 </p>
               </div>
 
-              {/* Quick Timer Buttons */}
               <div className="grid grid-cols-4 gap-2">
                 {[30, 45, 60, 90].map((sec) => (
                   <Button
                     key={sec}
-                    variant="outline"
                     onClick={() => startTimer(sec)}
-                    className="rounded-xl"
+                    className="rounded-full bg-slate-100 text-slate-700 hover:bg-[#FF6B6B] hover:text-white font-bold"
                   >
                     {sec}s
                   </Button>
                 ))}
               </div>
 
-              {/* Controls */}
               <div className="flex gap-2">
                 {!isTimerRunning ? (
-                  <Button onClick={() => startTimer(timerSeconds)} className="flex-1 bg-green-500 hover:bg-green-600 rounded-xl">
-                    <Play className="w-4 h-4 mr-2" />
+                  <Button onClick={() => startTimer(timerSeconds)} className="flex-1 bg-[#4CAF50] hover:bg-green-600 rounded-full font-bold">
+                    <Play className="w-5 h-5 mr-2" />
                     Start
                   </Button>
                 ) : (
-                  <Button onClick={pauseTimer} className="flex-1 bg-amber-500 hover:bg-amber-600 rounded-xl">
-                    <Pause className="w-4 h-4 mr-2" />
+                  <Button onClick={() => setIsTimerRunning(false)} className="flex-1 bg-[#FF9800] hover:bg-orange-600 rounded-full font-bold">
+                    <Pause className="w-5 h-5 mr-2" />
                     Pause
                   </Button>
                 )}
-                <Button onClick={resetTimer} variant="outline" className="rounded-xl">
-                  <RotateCcw className="w-4 h-4" />
+                <Button onClick={() => { setIsTimerRunning(false); setTimerSeconds(60); }} variant="outline" className="rounded-full">
+                  <RotateCcw className="w-5 h-5" />
                 </Button>
               </div>
 
               {/* Set/Rep Counter */}
-              <div className="bg-slate-50 rounded-xl p-4">
-                <div className="flex items-center justify-between">
+              <div className="bg-slate-100 rounded-2xl p-4">
+                <div className="flex items-center justify-around">
                   <div className="text-center">
-                    <p className="text-xs text-slate-500">Set</p>
+                    <p className="text-xs text-slate-500 font-bold">SET</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <Button size="icon" variant="outline" onClick={() => setCurrentSet(Math.max(1, currentSet - 1))} className="h-8 w-8">
+                      <Button size="icon" variant="outline" onClick={() => setCurrentSet(Math.max(1, currentSet - 1))} className="h-8 w-8 rounded-full">
                         <Minus className="w-4 h-4" />
                       </Button>
-                      <span className="text-2xl font-bold text-slate-800 w-8 text-center">{currentSet}</span>
-                      <Button size="icon" variant="outline" onClick={() => setCurrentSet(currentSet + 1)} className="h-8 w-8">
+                      <span className="text-3xl font-black text-[#FF6B6B] w-10 text-center">{currentSet}</span>
+                      <Button size="icon" variant="outline" onClick={() => setCurrentSet(currentSet + 1)} className="h-8 w-8 rounded-full">
                         <Plus className="w-4 h-4" />
                       </Button>
                     </div>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-slate-500">Reps</p>
+                    <p className="text-xs text-slate-500 font-bold">REPS</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <Button size="icon" variant="outline" onClick={() => setCurrentRep(Math.max(0, currentRep - 1))} className="h-8 w-8">
+                      <Button size="icon" variant="outline" onClick={() => setCurrentRep(Math.max(0, currentRep - 1))} className="h-8 w-8 rounded-full">
                         <Minus className="w-4 h-4" />
                       </Button>
-                      <span className="text-2xl font-bold text-slate-800 w-8 text-center">{currentRep}</span>
-                      <Button size="icon" variant="outline" onClick={() => setCurrentRep(currentRep + 1)} className="h-8 w-8">
+                      <span className="text-3xl font-black text-[#4CAF50] w-10 text-center">{currentRep}</span>
+                      <Button size="icon" variant="outline" onClick={() => setCurrentRep(currentRep + 1)} className="h-8 w-8 rounded-full">
                         <Plus className="w-4 h-4" />
                       </Button>
                     </div>
@@ -690,90 +673,80 @@ const Thrive360New = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Injury Report Dialog */}
+        {/* Injury Dialog */}
         <Dialog open={showInjuryDialog} onOpenChange={setShowInjuryDialog}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-red-600">
-                <AlertTriangle className="w-5 h-5" />
-                Report Injury / Pain
+              <DialogTitle className="flex items-center gap-2 text-xl font-black text-red-600">
+                🤕 Report Injury
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label>Pain Location</Label>
+                <Label className="font-bold">Where does it hurt?</Label>
                 <div className="grid grid-cols-3 gap-2 mt-2">
                   {['Knee', 'Back', 'Shoulder', 'Ankle', 'Wrist', 'Neck'].map((area) => (
-                    <Button key={area} variant="outline" className="rounded-xl text-sm">
+                    <Button key={area} variant="outline" className="rounded-full font-bold">
                       {area}
                     </Button>
                   ))}
                 </div>
               </div>
               <div>
-                <Label>Pain Level (1-10)</Label>
+                <Label className="font-bold">Pain Level (1-10)</Label>
                 <div className="flex gap-1 mt-2">
                   {[1,2,3,4,5,6,7,8,9,10].map((level) => (
                     <button
                       key={level}
-                      className={`w-8 h-8 rounded-lg text-sm font-medium ${
+                      className={`w-8 h-8 rounded-full text-sm font-bold ${
                         level <= 3 ? 'bg-green-100 text-green-700' :
                         level <= 6 ? 'bg-amber-100 text-amber-700' :
                         'bg-red-100 text-red-700'
-                      } hover:opacity-80`}
+                      } hover:scale-110 transition-transform`}
                     >
                       {level}
                     </button>
                   ))}
                 </div>
               </div>
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
-                <p className="text-sm text-amber-800">
-                  <strong>Recommendation:</strong> Based on your pain level, we suggest starting with physiotherapy protocols. If pain persists, doctor consultation will be unlocked.
-                </p>
-              </div>
               <div className="flex gap-2">
-                <Button variant="outline" className="flex-1 rounded-xl" onClick={() => setShowInjuryDialog(false)}>
+                <Button variant="outline" className="flex-1 rounded-full font-bold" onClick={() => setShowInjuryDialog(false)}>
                   Start Physio
                 </Button>
-                <Button className="flex-1 bg-red-500 hover:bg-red-600 rounded-xl" onClick={bookDoctorConsult}>
-                  Consult Doctor
+                <Button className="flex-1 bg-[#FF6B6B] rounded-full font-bold" onClick={() => { navigate('/diagyn?doctor=vikas'); setShowInjuryDialog(false); }}>
+                  See Doctor
                 </Button>
               </div>
             </div>
           </DialogContent>
         </Dialog>
 
-        {/* Vitamin Check Dialog */}
+        {/* Vitamin Dialog */}
         <Dialog open={showVitaminDialog} onOpenChange={setShowVitaminDialog}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-green-600">
-                <TestTube className="w-5 h-5" />
-                Vitamin & Deficiency Tests
+              <DialogTitle className="flex items-center gap-2 text-xl font-black text-green-600">
+                💊 Vitamin Tests
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
-              <p className="text-sm text-slate-600">
-                Select a test below. Proton Diagnostics will call you to confirm and schedule home sample collection.
-              </p>
               {vitaminTests.map((test, idx) => (
                 <Card 
                   key={idx} 
-                  className="p-3 hover:shadow-md cursor-pointer transition-all"
-                  onClick={() => bookVitaminTest(test)}
+                  className="p-4 hover:shadow-lg cursor-pointer transition-all border-2 hover:border-green-300"
+                  onClick={() => { toast.success(`${test.name} booked! Lab will call you.`); setShowVitaminDialog(false); }}
                 >
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-semibold text-slate-800">{test.name}</h4>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <h4 className="font-bold text-slate-800">{test.name}</h4>
+                      <div className="flex gap-1 mt-1">
                         {test.symptoms.map((s, sIdx) => (
                           <Badge key={sIdx} variant="outline" className="text-xs">{s}</Badge>
                         ))}
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="font-bold text-green-600">₹{test.price}</span>
+                      <span className="font-black text-green-600 text-lg">₹{test.price}</span>
                       <p className="text-xs text-slate-400">Home Collection</p>
                     </div>
                   </div>
@@ -783,49 +756,49 @@ const Thrive360New = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Workout Session Dialog */}
+        {/* Workout Booking Dialog */}
         <Dialog open={showWorkoutDialog} onOpenChange={setShowWorkoutDialog}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                {selectedProgram && <selectedProgram.icon className="w-5 h-5 text-indigo-600" />}
-                Book {selectedProgram?.title || 'Session'}
+              <DialogTitle className="flex items-center gap-2 text-xl font-black">
+                📅 Book {selectedProgram?.title || 'Session'}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label>Session Type</Label>
+                <Label className="font-bold">Session Type</Label>
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                  <Button variant="outline" className="rounded-xl">
+                  <Button variant="outline" className="rounded-full font-bold">
                     <Play className="w-4 h-4 mr-2" />
-                    Video Session
+                    Video
                   </Button>
-                  <Button variant="outline" className="rounded-xl">
+                  <Button variant="outline" className="rounded-full font-bold">
                     <User className="w-4 h-4 mr-2" />
                     In-Person
                   </Button>
                 </div>
               </div>
               <div>
-                <Label>Preferred Date</Label>
-                <Input type="date" className="mt-2" />
+                <Label className="font-bold">Date</Label>
+                <Input type="date" className="mt-2 rounded-xl" />
               </div>
               <div>
-                <Label>Preferred Time</Label>
+                <Label className="font-bold">Time</Label>
                 <select className="w-full border rounded-xl px-3 py-2 mt-2">
-                  <option>Morning (6 AM - 9 AM)</option>
-                  <option>Mid-Morning (9 AM - 12 PM)</option>
-                  <option>Evening (5 PM - 8 PM)</option>
+                  <option>🌅 Morning (6-9 AM)</option>
+                  <option>☀️ Mid-Day (9-12 PM)</option>
+                  <option>🌆 Evening (5-8 PM)</option>
                 </select>
               </div>
               <Button 
-                className="w-full bg-indigo-600 hover:bg-indigo-700 rounded-xl"
+                className="w-full rounded-full font-bold text-lg py-6"
+                style={{ backgroundColor: selectedProgram?.color || '#FF6B6B' }}
                 onClick={() => {
-                  toast.success('Session booked! Trainer will contact you soon.');
+                  toast.success('🎉 Session booked! Trainer will contact you.');
                   setShowWorkoutDialog(false);
                 }}
               >
-                <CheckCircle2 className="w-4 h-4 mr-2" />
+                <CheckCircle2 className="w-5 h-5 mr-2" />
                 Confirm Booking
               </Button>
             </div>
