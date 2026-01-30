@@ -203,6 +203,7 @@ const Profile = () => {
   
   // Health record upload state
   const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const [showMembershipDashboard, setShowMembershipDashboard] = useState(false);
   const [uploadData, setUploadData] = useState({
     record_type: 'prescription',
     title: '',
