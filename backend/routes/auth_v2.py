@@ -558,7 +558,7 @@ async def get_current_user(authorization: str = Header(None)):
 # ============ TOKEN VALIDATION ============
 
 @router.post("/validate-token")
-async def validate_token(authorization: str = None):
+async def validate_token(authorization: str = Header(None)):
     """Validate if token is still valid"""
     if not authorization:
         return {"valid": False, "reason": "No token provided"}
