@@ -252,7 +252,11 @@ async def send_test_whatsapp(request: TestWhatsAppRequest):
         if not data:
             return {"success": False, "error": f"Unknown template: {request.template}", "available_templates": list(sample_data.keys())}
         
+        # Debug: Log which branch we're about to enter
+        logger.info(f"🎯 Dispatching to template handler: '{request.template}'")
+        
         if request.template == "diagyn_appointment_confirm":
+            logger.info("➡️ Entering diagyn_appointment_confirm branch")
             result = await send_diagyn_appointment_confirmation(
                 phone=request.phone, patient_name=data["patient_name"], date=data["date"],
                 time=data["time"], doctor_name=data["doctor_name"], clinic_name=data["clinic_name"],
