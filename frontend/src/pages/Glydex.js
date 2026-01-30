@@ -1197,6 +1197,60 @@ const Glydex = () => {
           patientPhone={user?.phone}
           patientEmail={user?.email}
         >
+        
+        {/* Hero Image Banner */}
+        <div className="relative rounded-3xl overflow-hidden mb-6 shadow-xl">
+          <img 
+            src="https://images.unsplash.com/photo-1624454002429-40ed87a5ec04?w=1200&h=400&fit=crop"
+            alt="Diabetes Care"
+            className="w-full h-44 object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/80 via-teal-800/60 to-transparent">
+            <div className="p-6 h-full flex flex-col justify-center max-w-md">
+              <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                Smart Diabetes Management
+              </h2>
+              <p className="text-emerald-100 text-sm">
+                Track your glucose, manage diet plans, and stay on top of your health with personalized insights.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats Banner */}
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="relative rounded-2xl overflow-hidden h-24 group shadow-md">
+            <img 
+              src="https://images.unsplash.com/photo-1599814516324-66aa0bf16425?w=300&h=150&fit=crop"
+              alt="Glucose Monitor"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-teal-700/80 to-transparent flex items-end p-2">
+              <span className="text-white text-xs font-medium">Track Sugar</span>
+            </div>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden h-24 group shadow-md">
+            <img 
+              src="https://images.pexels.com/photos/7653112/pexels-photo-7653112.jpeg?w=300&h=150&fit=crop"
+              alt="Family Care"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-emerald-700/80 to-transparent flex items-end p-2">
+              <span className="text-white text-xs font-medium">Family Support</span>
+            </div>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden h-24 group shadow-md">
+            <img 
+              src="https://images.unsplash.com/photo-1685485276219-cbdf9309be1a?w=300&h=150&fit=crop"
+              alt="Health Monitoring"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-cyan-700/80 to-transparent flex items-end p-2">
+              <span className="text-white text-xs font-medium">Daily Monitoring</span>
+            </div>
+          </div>
+        </div>
+
         {/* Health Guides Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {/* Emergency Alert Banner */}
