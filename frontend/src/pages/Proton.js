@@ -1400,6 +1400,31 @@ const Proton = () => {
               </div>
             </Card>
 
+            {/* Pricing Summary Card */}
+            {collectionType === 'home' && (
+              <Card className="p-5 rounded-2xl border-slate-200 bg-gradient-to-br from-slate-50 to-teal-50/30" data-testid="pricing-summary-card">
+                <h3 className="font-medium text-[#1E293B] mb-4 flex items-center gap-2">
+                  <Banknote className="w-4 h-4 text-[#5FA8D3]" />
+                  Home Collection Charges
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center py-2 border-b border-slate-200">
+                    <span className="text-sm text-slate-600">Home Visit Fee</span>
+                    <span className="text-sm font-medium text-slate-700">₹50</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-sm text-slate-600">Discount (Orders above ₹2000)</span>
+                    <span className="text-sm font-medium text-[#10B981]">-₹50</span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 border-t-2 border-[#5FA8D3]/20 mt-2">
+                    <span className="font-semibold text-[#1E293B]">Home Visit Total</span>
+                    <span className="font-bold text-lg text-[#5FA8D3]">₹0*</span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">*Home collection is FREE for test orders above ₹2000. A ₹50 fee applies for orders below ₹2000.</p>
+                </div>
+              </Card>
+            )}
+
             {/* Submit Button */}
             <Button 
               onClick={handleSubmit} 
