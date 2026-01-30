@@ -303,30 +303,6 @@ const SettingsPage = () => {
     );
   }
 
-  if (activeSection === 'language') {
-    return (
-      <div className="min-h-screen bg-slate-50 pb-24">
-        <div className="sticky top-0 z-40 bg-white border-b">
-          <div className="flex items-center gap-3 p-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setActiveSection(null)}
-              className="rounded-xl"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <h1 className="text-lg font-semibold">{t('language')}</h1>
-          </div>
-        </div>
-        <div className="p-4">
-          <LanguageSelector showDialog={true} onClose={() => setActiveSection(null)} />
-        </div>
-        <BottomNav />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
       {/* Header */}
