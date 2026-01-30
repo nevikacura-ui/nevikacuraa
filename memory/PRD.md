@@ -955,3 +955,80 @@ Integrated into Evara and Glydex pages:
 ## Last Updated
 January 30, 2026 - 06:55
 
+---
+
+## Enhancement: Membership Benefits Dashboard (January 30, 2026 - Session 4 Continued)
+
+### Component Created
+**File:** `/app/frontend/src/components/MembershipDashboard.jsx`
+
+A comprehensive dashboard component for Nevika Cura ONE members showing:
+
+**Membership Status Card:**
+- Plan name, type, and billing cycle
+- Days remaining with visual progress bar
+- Start/end dates
+
+**Usage Stats:**
+- Pharmacy orders count
+- Lab test bookings count
+- Appointments count
+- Portals visited count
+- Estimated savings calculation (based on discount percentages)
+
+**Active Discounts Section:**
+- 25% off Orange Pharmacy
+- 30% off Proton Diagnostics
+- FREE Home Sample Collection
+- VIP Priority Booking
+
+**Portal Access Grid:**
+- All 12 portals with icons and categories
+- Visual indicator for visited portals
+- Click to navigate to any portal
+
+### Backend Endpoint
+**Endpoint:** `GET /api/subscriptions/membership/dashboard/{email}`
+
+Returns:
+```json
+{
+  "has_membership": true,
+  "status": "active",
+  "membership": {
+    "plan_name": "Nevika Cura ONE",
+    "billing_cycle": "quarterly",
+    "start_date": "...",
+    "end_date": "...",
+    "amount_paid": 5499
+  },
+  "days_remaining": 179,
+  "usage_stats": {
+    "pharmacy_orders": 0,
+    "lab_bookings": 0,
+    "appointments": 0,
+    "portals_visited": 0,
+    "estimated_savings": 0
+  },
+  "active_discounts": [...],
+  "all_portals": [...]
+}
+```
+
+### Integration in Profile Page
+**File:** `/app/frontend/src/pages/Profile.js`
+
+- Added "Nevika Cura ONE" button card in Profile page
+- Opens MembershipDashboard in a dialog
+- Shows membership status, discounts, and portal access
+
+### Files Modified
+- `/app/frontend/src/components/MembershipDashboard.jsx` (NEW)
+- `/app/frontend/src/pages/Profile.js` (Updated - imports, state, UI)
+- `/app/backend/routes/subscriptions.py` (Updated - dashboard endpoint)
+
+---
+
+## Last Updated
+January 30, 2026 - 07:22
+
