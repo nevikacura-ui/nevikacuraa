@@ -254,7 +254,7 @@ const IntroScreen = ({ onComplete, user }) => {
       {/* Auth Dialog */}
       <Dialog open={showAuth} onOpenChange={setShowAuth}>
         <DialogContent className="max-w-sm rounded-3xl p-0" style={{ zIndex: 100000 }}>
-          <div className="bg-gradient-to-r from-teal-500 to-cyan-500 p-6 text-white">
+          <div className="bg-[#FF6B35] p-6 text-white rounded-t-3xl">
             <DialogTitle className="text-xl font-bold flex items-center gap-2">
               <User className="w-6 h-6" /> Patient Login
             </DialogTitle>
@@ -265,16 +265,16 @@ const IntroScreen = ({ onComplete, user }) => {
             {!otpSent ? (
               <>
                 <div>
-                  <Label>Mobile Number</Label>
+                  <Label className="font-bold">Mobile Number</Label>
                   <div className="flex mt-1.5">
-                    <div className="flex items-center px-3 bg-gray-100 rounded-l-xl border border-r-0">+91</div>
+                    <div className="flex items-center px-3 bg-gray-100 rounded-l-xl border border-r-0 font-bold">+91</div>
                     <Input type="tel" placeholder="Enter mobile" value={mobile}
                       onChange={(e) => setMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
                       className="rounded-l-none rounded-r-xl h-12" />
                   </div>
                 </div>
                 <Button onClick={handleSendOtp} disabled={loading || mobile.length < 10}
-                  className="w-full h-12 bg-teal-600 hover:bg-teal-700 rounded-xl">
+                  className="w-full h-12 bg-[#FF6B35] hover:bg-orange-600 rounded-full font-bold">
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send OTP'}
                 </Button>
               </>
@@ -282,16 +282,16 @@ const IntroScreen = ({ onComplete, user }) => {
               <>
                 <div className="text-center mb-4">
                   <p>OTP sent to <strong>+91 {mobile}</strong></p>
-                  <button onClick={() => { setOtpSent(false); setOtp(''); }} className="text-teal-600 text-sm underline">Change</button>
+                  <button onClick={() => { setOtpSent(false); setOtp(''); }} className="text-[#FF6B35] text-sm underline font-bold">Change</button>
                 </div>
-                {mockOtp && <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-center">
-                  <p className="text-xs text-amber-700">Test OTP: <strong className="text-lg">{mockOtp}</strong></p>
+                {mockOtp && <div className="p-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-center">
+                  <p className="text-xs text-orange-700">Test OTP: <strong className="text-lg">{mockOtp}</strong></p>
                 </div>}
                 <Input type="text" placeholder="Enter OTP" value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  className="h-12 text-center text-xl tracking-widest rounded-xl" maxLength={6} />
+                  className="h-12 text-center text-xl tracking-widest rounded-xl font-bold" maxLength={6} />
                 <Button onClick={handleVerifyOtp} disabled={loading || otp.length < 6}
-                  className="w-full h-12 bg-teal-600 hover:bg-teal-700 rounded-xl">
+                  className="w-full h-12 bg-[#FF6B35] hover:bg-orange-600 rounded-full font-bold">
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Login'}
                 </Button>
               </>
