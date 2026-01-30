@@ -20,9 +20,6 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from io import BytesIO
 from fastapi.responses import StreamingResponse
 
-# Stripe imports
-from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionRequest, CheckoutSessionResponse
-
 # LLM imports for AI chat
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 
@@ -35,7 +32,6 @@ db = None
 get_current_user = None
 get_current_user_optional = None
 send_sms_notification = None
-stripe_api_key = None
 
 def set_db(database):
     global db
@@ -49,10 +45,6 @@ def set_auth_dependencies(auth_func, auth_optional_func):
 def set_sms_function(sms_func):
     global send_sms_notification
     send_sms_notification = sms_func
-
-def set_stripe_key(key):
-    global stripe_api_key
-    stripe_api_key = key
 
 
 # ============ EVARA MODELS ============
