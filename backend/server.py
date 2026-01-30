@@ -303,6 +303,8 @@ async def send_test_whatsapp(request: TestWhatsAppRequest):
                 phone=request.phone, patient_name=data["patient_name"], order_id=data["order_id"],
                 delivered_time=data["delivered_time"], invoice_url=data["invoice_url"], db=db
             )
+        else:
+            return {"success": False, "error": f"No handler for template: {request.template}"}
         
         return {
             "success": result.get("success", False),
