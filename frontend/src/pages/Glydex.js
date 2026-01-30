@@ -11,11 +11,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import SubscriptionGate from '@/components/SubscriptionGate';
+import PortalMembershipForm from '@/components/PortalMembershipForm';
 import { 
   ArrowLeft, Heart, Activity, AlertTriangle, Droplets, Apple, 
   Calendar, TrendingUp, TrendingDown, Pill, Phone,
   Utensils, TestTube, ChevronRight, Info, CheckCircle, AlertCircle,
-  LineChart, Target, Trash2, Share2, FileDown, Search, X, Mail, User, Lock, Check
+  LineChart, Target, Trash2, Share2, FileDown, Search, X, Mail, User, Lock, Check, ClipboardList
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
