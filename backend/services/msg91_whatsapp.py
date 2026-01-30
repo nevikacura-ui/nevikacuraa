@@ -77,6 +77,9 @@ async def send_msg91_whatsapp(
     """
     Send WhatsApp message via MSG91 API
     """
+    # Debug: Log the exact template name received
+    logger.info(f"📤 send_msg91_whatsapp called with template_name: '{template_name}'")
+    
     if not MSG91_AUTH_KEY:
         logger.warning("MSG91_AUTH_KEY not configured")
         return {"success": False, "error": "MSG91 not configured"}
