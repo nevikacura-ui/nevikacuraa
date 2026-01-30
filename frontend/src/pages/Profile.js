@@ -405,6 +405,26 @@ const Profile = () => {
             </div>
           </div>
           
+          {/* Nevika Cura ONE Membership Card */}
+          <div className="mt-4 pt-4 border-t border-slate-100">
+            <button
+              onClick={() => setShowMembershipDashboard(true)}
+              className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 via-orange-50 to-rose-50 rounded-2xl border border-amber-200 hover:shadow-md transition-all group"
+              data-testid="membership-dashboard-btn"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <Crown className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="font-semibold text-amber-900">Nevika Cura ONE</p>
+                  <p className="text-sm text-amber-700">View benefits, discounts & usage stats</p>
+                </div>
+              </div>
+              <ArrowLeft className="w-5 h-5 text-amber-500 rotate-180 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+          
           {/* Health Dashboard Quick Link */}
           <div className="mt-4 pt-4 border-t border-slate-100">
             <Button 
