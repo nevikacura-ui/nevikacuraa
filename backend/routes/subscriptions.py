@@ -1513,27 +1513,20 @@ async def purchase_membership(request: MembershipPurchaseRequest):
             "message": "Membership activated! Please complete your profile."
         }
     
-    # Create Stripe checkout
-    frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('REACT_APP_BACKEND_URL', 'https://nevikacura.com'))
+    # Create Stripe checkout using emergentintegrations
+    frontend_url = os.environ.get('FRONTEND_URL', os.environ.get('REACT_APP_BACKEND_URL', 'https://medport-1.preview.emergentagent.com'))
     
     try:
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            customer_email=request.email,
-            line_items=[{
-                'price_data': {
-                    'currency': 'inr',
-                    'product_data': {
-                        'name': f"{plan['name']} - {request.billing_cycle.capitalize()}",
-                        'description': plan.get('description', '')
-                    },
-                    'unit_amount': price * 100
-                },
-                'quantity': 1
-            }],
-            mode='payment',
-            success_url=f"{frontend_url}/membership?success=true&plan={request.plan_type}&session_id={{CHECKOUT_SESSION_ID}}",
-            cancel_url=f"{frontend_url}/membership?canceled=true",
+        from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionRequest
+        
+        webhook_url = f"{frontend_url}/api/webhook/stripe"
+        stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
+        
+        checkout_request = CheckoutSessionRequest(
+            amount=float(price),  # Keep as float for Stripe
+            currency="inr",
+            success_url=f"{frontend_url}/membership-plans?success=true&plan={request.plan_type}&session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{frontend_url}/membership-plans?canceled=true",
             metadata={
                 'email': request.email,
                 'plan_type': request.plan_type,
@@ -1544,9 +1537,11 @@ async def purchase_membership(request: MembershipPurchaseRequest):
             }
         )
         
+        session = await stripe_checkout.create_checkout_session(checkout_request)
+        
         # Store pending membership
         pending = {
-            "session_id": session.id,
+            "session_id": session.session_id,
             "email": request.email.lower(),
             "plan_type": request.plan_type,
             "billing_cycle": request.billing_cycle,
@@ -1560,7 +1555,7 @@ async def purchase_membership(request: MembershipPurchaseRequest):
         
         return {
             "checkout_url": session.url,
-            "session_id": session.id,
+            "session_id": session.session_id,
             "amount": price,
             "plan_name": plan["name"]
         }
