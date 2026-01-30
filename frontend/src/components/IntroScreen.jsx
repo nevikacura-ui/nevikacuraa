@@ -223,21 +223,21 @@ const IntroScreen = ({ onComplete, user }) => {
         </div>
         
         {/* Tagline */}
-        <p className="text-lg text-white/90 font-medium mb-6">
-          All your care. <span className="text-teal-100 font-bold">One app.</span>
+        <p className="text-xl text-white font-bold mb-6">
+          All your care. <span className="text-yellow-300">One app.</span>
         </p>
         
         {/* Buttons */}
         <div className="space-y-4 max-w-xs mx-auto">
           {hasBiometricSetup && (
             <Button onClick={handleBiometricLogin} disabled={biometricLoading}
-              className="w-full h-14 bg-white/20 text-white hover:bg-white/30 rounded-2xl text-lg font-semibold border border-white/30">
+              className="w-full h-14 bg-white/20 text-white hover:bg-white/30 rounded-full text-lg font-bold border-2 border-white/40">
               {biometricLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Fingerprint className="w-6 h-6 mr-2" />Fingerprint</>}
             </Button>
           )}
           
           <Button onClick={() => setShowAuth(true)} data-testid="splash-login-btn"
-            className="w-full h-14 bg-white text-teal-700 hover:bg-teal-50 rounded-2xl text-lg font-semibold shadow-xl">
+            className="w-full h-14 bg-white text-[#FF6B35] hover:bg-yellow-50 rounded-full text-lg font-bold shadow-xl">
             <User className="w-5 h-5 mr-2" />
             {hasBiometricSetup ? 'Login with OTP' : 'Login / Sign Up'}
           </Button>
