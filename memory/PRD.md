@@ -684,6 +684,60 @@ Applied 6 UI polish tweaks:
 
 ---
 
+## P1 Features Implementation (January 30, 2026)
+
+### Home Sample Collection UI ✅
+**File:** `/app/frontend/src/pages/Proton.js`
+- Collection type toggle: "Home Collection" vs "Visit Center"
+- Address input field for home collection
+- Home Collection Process info (phlebotomist call, doorstep collection, email reports)
+- Visit Center locations displayed (Proton Central & Manewada)
+- Collection type now sent to backend API
+
+### Smart Pharmacy Features ✅
+**File:** `/app/frontend/src/pages/Pharmacy.js`
+- New "Smart Pharmacy Features" section with two feature cards
+- **Refill Reminders:**
+  - Create reminder with medicine name, dosage, frequency, time, notification type
+  - View active reminders
+  - SMS/WhatsApp notification options
+- **Subscription Box:**
+  - Auto-delivery every month with 10% discount
+  - Free home delivery
+  - Pause/cancel anytime
+  - View active subscriptions
+
+### Prescription Upload Email ✅
+**Endpoint:** `POST /api/pharmacy/prescription-upload`
+- Email sent to nevikacura@gmail.com with prescription details
+- Upload ID generated with PRESC- prefix
+- Tested successfully
+
+**Testing Status:** ✅ 100% pass (iteration_71.json)
+
+---
+
+## Upcoming Tasks
+
+### P1 (High Priority)
+- ~~Build Home Sample Collection UI~~ ✅ DONE
+- ~~Build Pharmacy Features UI (refill reminders, subscription box)~~ ✅ DONE
+- ~~Test Prescription Email end-to-end~~ ✅ DONE
+- Build Portal-Specific Membership Forms
+- Wire up Report Trends & Waitlist UI with real data
+
+### P2 (Medium Priority)
+- Video teleconsultation
+- Waitlist notifications when slot opens
+- MyUpchar API integration (pending API key)
+- Refactor `server.py` into separate route files
+
+### Known Issues
+- MSG91 WhatsApp templates pending Meta approval
+- Face ID camera fails on mobile (low priority)
+
+---
+
 ## Last Updated
-January 30, 2026 - 02:00
+January 30, 2026 - 02:15
 
