@@ -1438,6 +1438,9 @@ const DiaGyn = () => {
                     currentTime={currentTime}
                     loading={loadingSlots}
                     wsConnected={wsConnected}
+                    doctor={selectedDoctorData}
+                    clinic={selectedClinic}
+                    patientData={{ id: patientPhone, name: patientName, phone: patientPhone }}
                   />
                 ) : (
                   <div className="text-center py-16">
