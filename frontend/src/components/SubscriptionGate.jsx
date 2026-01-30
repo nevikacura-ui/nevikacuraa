@@ -400,6 +400,28 @@ const SubscriptionGate = ({
   }
 
   if (hasSubscription) {
+    // Staff access - show special badge
+    if (isStaffUser && subscriptionInfo?.staff_access) {
+      return (
+        <>
+          <div className="mb-4 p-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Crown className="w-5 h-5 text-amber-600" />
+              <span className="font-medium text-amber-800">Staff Access</span>
+              <Badge className="bg-amber-500 text-white">
+                {staffInfo?.role?.replace('_', ' ').toUpperCase()}
+              </Badge>
+            </div>
+            <div className="text-sm text-amber-700">
+              Welcome, {staffInfo?.name || staffInfo?.username}
+            </div>
+          </div>
+          {children}
+        </>
+      );
+    }
+
+    // Regular subscription
     return (
       <>
         <div className={`mb-4 p-3 rounded-xl ${colors.light} ${colors.border} border flex items-center justify-between`}>
