@@ -882,6 +882,76 @@ Applied 6 UI polish tweaks:
 
 ---
 
+## Latest Updates (January 30, 2026 - Session 4)
+
+### Nevika Cura ONE Dedicated Page ✅
+**File:** `/app/frontend/src/pages/NevikaCuraOne.js`
+**Route:** `/one`
+
+Converted the Nevika Cura ONE membership from a modal to a dedicated page:
+
+**Benefits Section:**
+- Access to All 12 Health Portals
+- 25% Discount on Pharmacy
+- 30% Discount on Lab Tests
+- Priority Booking at Clinics
+- Free Home Sample Collection
+
+**Pricing Plans:**
+| Duration | Price | Per Month | Tags |
+|----------|-------|-----------|------|
+| Monthly | ₹999 | ₹999/month | - |
+| Half-Yearly | ₹5,499 | ₹917/month | POPULAR |
+| Annual | ₹9,999 | ₹833/month | BEST VALUE |
+
+**Features:**
+- Portal access grid showing all 12 portals
+- Email input for checkout
+- Stripe payment integration
+- Trust badges (Secure Payment, Instant Access, 24/7 Support)
+
+### QuickActionCards Updated ✅
+**File:** `/app/frontend/src/components/home/QuickActionCards.jsx`
+
+- Simplified to navigate to `/one` page instead of using `NevikaCuraOneBanner` modal
+- Added "NEW" badge to the Nevika Cura ONE button
+- Cleaner code with no modal dependencies
+
+### Portal Membership Forms Integration ✅
+**Component:** `/app/frontend/src/components/PortalMembershipForm.jsx`
+
+Integrated into Evara and Glydex pages:
+
+**Evara Page:**
+- "Complete Health Profile" card added
+- Opens PortalMembershipForm with `planType="evara"`
+- Portal-specific questions: Last period date, cycle length, pregnancy status, PCOS diagnosis, menopause status
+
+**Glydex Page:**
+- "Complete Health Profile" card added
+- Opens PortalMembershipForm with `planType="glydex"`
+- Portal-specific questions: Diabetes type, diagnosis year, HbA1c value, insulin use, glucose monitoring method
+
+**Form Fields (Step 1 - Basic Info):**
+- Full Name, Phone, Email, Age, Gender
+- Health Information: Existing Conditions, Current Medications, Allergies
+- Emergency Contact: Name, Phone, Relation
+
+**Form Fields (Step 2 - Portal-Specific):**
+- Dynamically generated based on portal type
+
+### Backend Endpoint ✅
+**Endpoint:** `POST /api/memberships/portal-form`
+**Collection:** `membership_inquiries`
+
+### Testing Status
+- **Test Report:** `/app/test_reports/iteration_73.json`
+- **Backend Tests:** 14/14 passed (100%)
+- **Frontend Tests:** All passed (100%)
+- **Test File Created:** `/app/backend/tests/test_nevika_cura_one.py`
+
+---
+
 ## Last Updated
-January 30, 2026 - 02:35
+January 30, 2026 - 06:55
 
