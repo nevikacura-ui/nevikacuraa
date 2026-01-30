@@ -46,7 +46,7 @@ const Thrive360New = () => {
       desc: 'Build muscle & get stronger',
       color: '#FF6B6B',
       bgColor: '#FFE8E8',
-      image: 'https://images.unsplash.com/photo-1581009146145-b5ef050c149a?w=200&h=200&fit=crop',
+      emoji: '💪',
       levels: ['Beginner', 'Intermediate', 'Advanced'],
       duration: '45-60 min'
     },
@@ -56,7 +56,7 @@ const Thrive360New = () => {
       desc: 'Mind-body wellness',
       color: '#9B59B6',
       bgColor: '#F3E5F5',
-      image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=200&h=200&fit=crop',
+      emoji: '🧘',
       levels: ['Morning', 'Evening', 'Stress Relief'],
       duration: '20-45 min'
     },
@@ -66,7 +66,7 @@ const Thrive360New = () => {
       desc: 'Injury recovery & rehab',
       color: '#00BCD4',
       bgColor: '#E0F7FA',
-      image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=200&h=200&fit=crop',
+      emoji: '🏥',
       levels: ['Knee', 'Back', 'Shoulder'],
       duration: '30-40 min'
     },
@@ -76,7 +76,7 @@ const Thrive360New = () => {
       desc: 'Burn fat effectively',
       color: '#4CAF50',
       bgColor: '#E8F5E9',
-      image: 'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=200&h=200&fit=crop',
+      emoji: '🔥',
       levels: ['Fat Loss', 'Toning', 'Maintenance'],
       duration: '45 min'
     },
@@ -86,7 +86,7 @@ const Thrive360New = () => {
       desc: 'Heart-pumping workouts',
       color: '#FF9800',
       bgColor: '#FFF3E0',
-      image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=200&h=200&fit=crop',
+      emoji: '❤️',
       levels: ['Low', 'Medium', 'High Intensity'],
       duration: '30-45 min'
     },
@@ -96,7 +96,7 @@ const Thrive360New = () => {
       desc: 'Athletic performance',
       color: '#3F51B5',
       bgColor: '#E8EAF6',
-      image: 'https://images.unsplash.com/photo-1461896836934- voices?w=200&h=200&fit=crop',
+      emoji: '🏆',
       levels: ['Cricket', 'Football', 'Badminton'],
       duration: '45-60 min'
     }
@@ -104,10 +104,10 @@ const Thrive360New = () => {
 
   // Running plans
   const runningPlans = [
-    { name: 'Couch to 5K', weeks: 8, level: 'Beginner', goal: '5 km', color: '#FF6B6B', image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=150&h=150&fit=crop' },
-    { name: '10K Training', weeks: 10, level: 'Intermediate', goal: '10 km', color: '#FF9800', image: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=150&h=150&fit=crop' },
-    { name: 'Half Marathon', weeks: 12, level: 'Advanced', goal: '21.1 km', color: '#9B59B6', image: 'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=150&h=150&fit=crop' },
-    { name: 'Speed Builder', weeks: 6, level: 'Intermediate', goal: 'Faster pace', color: '#4CAF50', image: 'https://images.unsplash.com/photo-1461896836934-fffceb?w=150&h=150&fit=crop' }
+    { name: 'Couch to 5K', weeks: 8, level: 'Beginner', goal: '5 km', color: '#FF6B6B', emoji: '🏃' },
+    { name: '10K Training', weeks: 10, level: 'Intermediate', goal: '10 km', color: '#FF9800', emoji: '🏃‍♂️' },
+    { name: 'Half Marathon', weeks: 12, level: 'Advanced', goal: '21.1 km', color: '#9B59B6', emoji: '🏅' },
+    { name: 'Speed Builder', weeks: 6, level: 'Intermediate', goal: 'Faster pace', color: '#4CAF50', emoji: '⚡' }
   ];
 
   // Gym schedules
