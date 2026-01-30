@@ -302,6 +302,8 @@ const Proton = () => {
   const [loading, setLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState('pregnancy');
   const [activeTab, setActiveTab] = useState('pathology');
+  const [collectionType, setCollectionType] = useState('home'); // 'home' or 'center'
+  const [showTrends, setShowTrends] = useState(false);
 
   const timeSlots = [
     { value: '08:00-10:00', label: '8:00 AM - 10:00 AM' },
