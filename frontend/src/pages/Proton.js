@@ -765,7 +765,7 @@ const Proton = () => {
               {testSearchTerm && filteredTests.length > 0 && (
                 <div className="mt-3 max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
                   <div className="p-2 bg-slate-50 border-b border-slate-200 text-xs text-slate-500 font-medium">
-                    Found {filteredTests.length} tests matching "{testSearchTerm}"
+                    Found {filteredTests.length} tests matching &quot;{testSearchTerm}&quot;
                   </div>
                   <div className="divide-y divide-slate-100">
                     {filteredTests.map(test => (
@@ -788,7 +788,7 @@ const Proton = () => {
               
               {testSearchTerm && filteredTests.length === 0 && (
                 <div className="mt-3 p-4 text-center text-slate-500 text-sm bg-slate-50 rounded-xl">
-                  No tests found matching "{testSearchTerm}". Try a different search term or add as custom test below.
+                  No tests found matching &quot;{testSearchTerm}&quot;. Try a different search term or add as custom test below.
                 </div>
               )}
             </Card>
