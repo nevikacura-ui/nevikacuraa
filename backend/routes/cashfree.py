@@ -27,19 +27,23 @@ def set_db(database):
     global db
     db = database
 
-# Initialize Cashfree - Set class attributes
+# Initialize Cashfree - Pass credentials to constructor
 def init_cashfree():
     """Initialize Cashfree SDK with credentials"""
-    Cashfree.XClientId = os.environ.get("CASHFREE_CLIENT_ID")
-    Cashfree.XClientSecret = os.environ.get("CASHFREE_CLIENT_SECRET")
+    client_id = os.environ.get("CASHFREE_CLIENT_ID")
+    client_secret = os.environ.get("CASHFREE_CLIENT_SECRET")
     
     env = os.environ.get("CASHFREE_ENVIRONMENT", "sandbox")
     if env == "production":
-        Cashfree.XEnvironment = Cashfree.PRODUCTION
+        environment = Cashfree.PRODUCTION
     else:
-        Cashfree.XEnvironment = Cashfree.SANDBOX
+        environment = Cashfree.SANDBOX
     
-    return Cashfree()
+    return Cashfree(
+        XEnvironment=environment,
+        XClientId=client_id,
+        XClientSecret=client_secret
+    )
 
 # API Version
 API_VERSION = "2023-08-01"
