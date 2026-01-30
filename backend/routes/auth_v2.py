@@ -155,7 +155,7 @@ async def guest_send_otp(request: GuestOTPRequest):
     else:
         # Fallback: Generate mock OTP for development
         otp = generate_otp()
-        db = db
+        global db
         await db.guest_otps.update_one(
             {"phone": phone},
             {
@@ -219,7 +219,7 @@ async def guest_verify_otp(request: GuestOTPVerify):
         }
     
     # Fallback: Check mock OTP
-    db = db
+    global db
     otp_record = await db.guest_otps.find_one({"phone": phone})
     
     if not otp_record:
@@ -272,7 +272,7 @@ async def signup_send_otp(request: SignUpRequest):
     Step 1 of sign-up: Send OTP to email address.
     Creates persistent account with Registration ID.
     """
-    db = db
+    global db
     email = request.email.lower().strip()
     
     # Check if email already registered
@@ -317,7 +317,7 @@ async def signup_verify_otp(request: EmailOTPVerify):
     Step 2 of sign-up: Verify email OTP and create account.
     Returns Registration ID and persistent auth token.
     """
-    db = db
+    global db
     email = request.email.lower().strip()
     otp = request.otp.strip()
     
@@ -399,7 +399,7 @@ async def login_send_otp(request: LoginRequest):
     Send login OTP to existing user's email.
     Uses cached email for quick re-login.
     """
-    db = db
+    global db
     email = request.email.lower().strip()
     
     # Check if user exists
@@ -439,7 +439,7 @@ async def login_verify_otp(request: EmailOTPVerify):
     """
     Verify login OTP and return auth token.
     """
-    db = db
+    global db
     email = request.email.lower().strip()
     otp = request.otp.strip()
     otp_key = f"login_{email}"
@@ -528,7 +528,7 @@ async def get_current_user(authorization: str = None):
             }
         
         elif user_type == "registered":
-            db = db
+            global db
             user = await db.registered_users.find_one({"id": payload.get("sub")}, {"_id": 0})
             
             if not user:
