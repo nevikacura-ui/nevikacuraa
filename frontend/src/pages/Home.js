@@ -33,6 +33,7 @@ import {
   TrustBadges,
   QuickActionCards
 } from '@/components/home';
+import NevikaCuraOneBanner from '@/components/home/NevikaCuraOneBanner';
 
 // Icon mapping for data-driven components
 const iconMap = {
