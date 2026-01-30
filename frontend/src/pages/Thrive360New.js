@@ -412,15 +412,13 @@ const Thrive360New = () => {
                 {runningPlans.map((plan, idx) => (
                   <Card key={idx} className="overflow-hidden hover:shadow-xl transition-all border-0 shadow-md" data-testid={`running-${idx}`}>
                     <div className="flex">
-                      {/* Circular Image */}
+                      {/* Circular Emoji */}
                       <div className="w-28 flex items-center justify-center p-4" style={{ backgroundColor: `${plan.color}20` }}>
-                        <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                          <img 
-                            src={plan.image} 
-                            alt={plan.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => e.target.src = `https://via.placeholder.com/100/${plan.color.slice(1)}/ffffff?text=🏃`}
-                          />
+                        <div 
+                          className="w-20 h-20 rounded-full flex items-center justify-center border-4 border-white shadow-lg"
+                          style={{ backgroundColor: `${plan.color}30` }}
+                        >
+                          <span className="text-4xl">{plan.emoji}</span>
                         </div>
                       </div>
                       
