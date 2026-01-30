@@ -302,7 +302,7 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
       
       {/* Details Modal - Reuse from above */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-lg h-[90vh] sm:h-auto sm:max-h-[85vh] flex flex-col p-0 z-[100]" onClick={(e) => e.stopPropagation()}>
+        <DialogContent className="max-w-lg h-[85vh] sm:h-auto sm:max-h-[80vh] flex flex-col p-0 z-[100] mb-16 sm:mb-0" onClick={(e) => e.stopPropagation()}>
           <DialogHeader className="p-4 pb-2 shrink-0">
             <DialogTitle className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
