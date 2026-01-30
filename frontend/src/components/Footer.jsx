@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Phone, Mail, MapPin, Clock, Shield, FileText, Users, X, Download, Smartphone, HandHeart } from 'lucide-react';
+import { 
+  MessageCircle, Phone, Mail, MapPin, Clock, Shield, FileText, Users, X, Download, Smartphone, HandHeart,
+  Stethoscope, TestTube, ShoppingBag, Heart, Baby, Activity, Flower2, Brain, Sparkles, Pill
+} from 'lucide-react';
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -12,29 +15,54 @@ const Footer = () => {
     window.open('https://wa.me/919403890429?text=Hi, I need help with Nevika Cura Healthcare services.', '_blank');
   };
 
+  // My Services - Core clinical services
+  const myServices = [
+    { name: 'DiaGyn Healthcare', href: '/diagyn', icon: Stethoscope, color: 'text-rose-500' },
+    { name: 'Proton Diagnostics', href: '/proton', icon: TestTube, color: 'text-cyan-500' },
+    { name: 'Orange Pharmacy', href: '/pharmacy', icon: Pill, color: 'text-orange-500' },
+  ];
+
+  // Health Portal - Wellness & specialty services
+  const healthPortal = [
+    { name: 'Evara (PCOS Care)', href: '/evara', icon: Flower2, color: 'text-pink-400' },
+    { name: 'Glydex (Diabetes)', href: '/glydex', icon: Activity, color: 'text-emerald-500' },
+    { name: 'Corvia (Heart Health)', href: '/corvia', icon: Heart, color: 'text-red-500' },
+    { name: 'Alyne (Kids Health)', href: '/alyne', icon: Baby, color: 'text-blue-400' },
+    { name: 'Aanya (Newborn)', href: '/aanya', icon: Baby, color: 'text-pink-300' },
+    { name: 'Thrive 360', href: '/thrive360', icon: Sparkles, color: 'text-purple-500' },
+    { name: 'Serena (Mental Health)', href: '/serena', icon: Brain, color: 'text-indigo-500' },
+    { name: 'Sonova (Fertility)', href: '/sonova', icon: Heart, color: 'text-rose-400' },
+    { name: 'Reneu (Senior Care)', href: '/reneu', icon: HandHeart, color: 'text-teal-500' },
+  ];
+
   return (
     <>
-      <footer className="bg-gray-900 text-gray-300 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          {/* Main Footer Content */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+      <footer className="bg-gradient-to-b from-slate-900 to-slate-950 text-gray-300 mt-auto" data-testid="footer">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          
+          {/* Main Footer Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+            
             {/* Brand Column */}
-            <div className="col-span-2 md:col-span-1">
-              <div className="flex items-center gap-2 mb-4">
+            <div className="lg:col-span-1">
+              <div className="flex items-center gap-3 mb-4">
                 <img 
                   src="/icons/icon-72x72.png" 
                   alt="Nevika Cura" 
-                  className="w-10 h-10 rounded-lg"
+                  className="w-12 h-12 rounded-xl shadow-lg"
                 />
-                <span className="font-heading text-xl font-bold text-white">Nevika Cura</span>
+                <div>
+                  <span className="font-heading text-xl font-bold text-white">Nevika Cura</span>
+                  <p className="text-xs text-gray-500">Your Healthcare Partner</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-400 mb-4">
-                Your trusted healthcare partner for appointments, diagnostics, pharmacy, and women's wellness.
+              <p className="text-sm text-gray-400 mb-5 leading-relaxed">
+                Comprehensive healthcare solutions for appointments, diagnostics, pharmacy, and specialized wellness programs.
               </p>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3">
                 <Button
                   onClick={openWhatsApp}
-                  className="bg-green-600 hover:bg-green-700 text-white gap-2"
+                  className="bg-green-600 hover:bg-green-700 text-white gap-2 rounded-xl"
                   data-testid="footer-whatsapp-btn"
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -44,7 +72,7 @@ const Footer = () => {
                   href="https://drive.google.com/uc?export=download&id=1TaQ5PxgOaRUq_kyDux3lovWLg5Gs4nqi"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-brand-teal hover:bg-brand-teal/90 text-white rounded-md text-sm font-medium transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white rounded-xl text-sm font-medium transition-all shadow-md hover:shadow-lg"
                   data-testid="footer-download-apk"
                 >
                   <Download className="w-4 h-4" />
@@ -53,123 +81,146 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* Quick Links */}
+            {/* My Services Column */}
             <div>
-              <h4 className="font-semibold text-white mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a 
-                    href="/about"
-                    className="hover:text-brand-teal transition-colors"
-                    data-testid="footer-about-link"
-                  >
-                    About Us
-                  </a>
-                </li>
-                <li>
-                  <a 
-                    href="/privacy"
-                    className="hover:text-brand-teal transition-colors"
-                    data-testid="footer-privacy-link"
-                  >
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a 
-                    href="/terms"
-                    className="hover:text-brand-teal transition-colors"
-                    data-testid="footer-terms-link"
-                  >
-                    Terms & Conditions
-                  </a>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => setShowContact(true)}
-                    className="hover:text-brand-teal transition-colors"
-                    data-testid="footer-contact-link"
-                  >
-                    Contact Us
-                  </button>
-                </li>
+              <h4 className="font-semibold text-white mb-5 flex items-center gap-2">
+                <div className="w-1.5 h-5 bg-gradient-to-b from-orange-400 to-rose-500 rounded-full"></div>
+                My Services
+              </h4>
+              <ul className="space-y-3">
+                {myServices.map((service) => (
+                  <li key={service.name}>
+                    <Link
+                      to={service.href}
+                      className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group"
+                      data-testid={`footer-${service.href.slice(1)}`}
+                    >
+                      <service.icon className={`w-4 h-4 ${service.color} group-hover:scale-110 transition-transform`} />
+                      <span className="text-sm">{service.name}</span>
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            {/* Services */}
+            {/* Health Portal Column */}
             <div>
-              <h4 className="font-semibold text-white mb-4">Our Services</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/diagyn" className="hover:text-brand-teal transition-colors">DiaGyn Healthcare</a></li>
-                <li><a href="/proton" className="hover:text-brand-teal transition-colors">Proton Diagnostics</a></li>
-                <li><a href="/pharmacy" className="hover:text-brand-teal transition-colors">Orange Pharmacy</a></li>
-                <li><a href="/evara" className="hover:text-brand-teal transition-colors">Evara Women's Wellness</a></li>
-                <li><a href="/glydex" className="hover:text-brand-teal transition-colors">Glydex Diabetes Care</a></li>
-                <li><a href="/alyne" className="hover:text-brand-teal transition-colors">ALYNE Kids Health</a></li>
-                <li><a href="/thrive360" className="hover:text-brand-teal transition-colors">Thrive360 Wellness</a></li>
+              <h4 className="font-semibold text-white mb-5 flex items-center gap-2">
+                <div className="w-1.5 h-5 bg-gradient-to-b from-purple-400 to-pink-500 rounded-full"></div>
+                Health Portal
+              </h4>
+              <ul className="space-y-2.5 max-h-72 overflow-y-auto pr-2 scrollbar-thin">
+                {healthPortal.map((service) => (
+                  <li key={service.name}>
+                    <Link
+                      to={service.href}
+                      className="flex items-center gap-2.5 text-gray-400 hover:text-white transition-colors group"
+                      data-testid={`footer-${service.href.slice(1)}`}
+                    >
+                      <service.icon className={`w-3.5 h-3.5 ${service.color} group-hover:scale-110 transition-transform`} />
+                      <span className="text-sm">{service.name}</span>
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            {/* Contact Info */}
+            {/* Contact & Quick Links Column */}
             <div>
-              <h4 className="font-semibold text-white mb-4">Contact</h4>
-              <ul className="space-y-3 text-sm">
-                <li className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-brand-teal" />
-                  <a href="tel:+919403890429" className="hover:text-brand-teal">9403890429</a>
+              <h4 className="font-semibold text-white mb-5 flex items-center gap-2">
+                <div className="w-1.5 h-5 bg-gradient-to-b from-teal-400 to-blue-500 rounded-full"></div>
+                Contact & Links
+              </h4>
+              <ul className="space-y-3 text-sm mb-6">
+                <li className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center">
+                    <Phone className="w-4 h-4 text-teal-400" />
+                  </div>
+                  <a href="tel:+919403890429" className="hover:text-teal-400 transition-colors">9403890429</a>
                 </li>
-                <li className="flex items-center gap-2">
-                  <MessageCircle className="w-4 h-4 text-green-500" />
-                  <a href="https://wa.me/919403890429" target="_blank" rel="noopener noreferrer" className="hover:text-brand-teal">9403890429</a>
+                <li className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+                    <MessageCircle className="w-4 h-4 text-green-400" />
+                  </div>
+                  <a href="https://wa.me/919403890429" target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors">WhatsApp Us</a>
                 </li>
-                <li className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-brand-teal" />
-                  <a href="mailto:help@nevikacura.com" className="hover:text-brand-teal">help@nevikacura.com</a>
+                <li className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <Mail className="w-4 h-4 text-blue-400" />
+                  </div>
+                  <a href="mailto:help@nevikacura.com" className="hover:text-blue-400 transition-colors">help@nevikacura.com</a>
                 </li>
               </ul>
+              
+              <div className="pt-4 border-t border-slate-800">
+                <ul className="space-y-2 text-sm">
+                  <li>
+                    <Link to="/about" className="text-gray-400 hover:text-white transition-colors" data-testid="footer-about-link">
+                      About Us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors" data-testid="footer-privacy-link">
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/terms" className="text-gray-400 hover:text-white transition-colors" data-testid="footer-terms-link">
+                      Terms & Conditions
+                    </Link>
+                  </li>
+                  <li>
+                    <button 
+                      onClick={() => setShowContact(true)}
+                      className="text-gray-400 hover:text-white transition-colors"
+                      data-testid="footer-contact-link"
+                    >
+                      Contact Us
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
           {/* Portal Links Section */}
-          <div className="border-t border-gray-800 pt-6 mb-6">
+          <div className="border-t border-slate-800 pt-6 mb-6">
             <div className="flex flex-wrap items-center justify-center gap-6">
-              <a 
-                href="/senior-care" 
+              <Link 
+                to="/senior-care" 
                 className="inline-flex items-center gap-1.5 text-sm text-green-400 hover:text-green-300 transition-colors font-medium"
                 data-testid="footer-give-back"
               >
                 <HandHeart className="w-4 h-4" />
                 Give Back
-              </a>
-              <span className="text-gray-700">|</span>
-              <a 
-                href="/staff" 
-                className="text-sm text-gray-400 hover:text-brand-teal transition-colors"
+              </Link>
+              <span className="text-slate-700">|</span>
+              <Link 
+                to="/staff" 
+                className="text-sm text-gray-400 hover:text-teal-400 transition-colors"
                 data-testid="footer-staff-portal"
               >
                 Staff Portal
-              </a>
-              <span className="text-gray-700">|</span>
-              <a 
-                href="/admin" 
-                className="text-sm text-gray-400 hover:text-brand-teal transition-colors"
+              </Link>
+              <span className="text-slate-700">|</span>
+              <Link 
+                to="/admin" 
+                className="text-sm text-gray-400 hover:text-teal-400 transition-colors"
                 data-testid="footer-admin"
               >
                 Admin
-              </a>
+              </Link>
             </div>
           </div>
 
-          {/* Copyright */}
-
-          {/* QR Code Download Section */}
-          <div className="border-t border-gray-800 pt-6 mb-6">
-            <div className="flex flex-col items-center justify-center gap-3">
+          {/* QR Code Section */}
+          <div className="border-t border-slate-800 pt-8 mb-8">
+            <div className="flex flex-col items-center justify-center gap-4">
               <div className="flex items-center gap-2 text-white">
-                <Smartphone className="w-5 h-5 text-brand-teal" />
+                <Smartphone className="w-5 h-5 text-teal-400" />
                 <span className="font-medium">Scan to Visit Website</span>
               </div>
-              <div className="bg-white p-3 rounded-xl shadow-lg">
+              <div className="bg-white p-3 rounded-2xl shadow-xl">
                 <img 
                   src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://medport-1.preview.emergentagent.com&color=0d9488"
                   alt="Nevika Cura Website QR Code"
@@ -182,12 +233,14 @@ const Footer = () => {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-slate-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-gray-500">
               © {new Date().getFullYear()} Nevika Cura Healthcare. All rights reserved.
             </p>
-            <div className="flex items-center gap-4 text-sm text-gray-500">
-              <span>Made with ❤️ in India</span>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <span>Made with</span>
+              <Heart className="w-4 h-4 text-red-500 fill-red-500" />
+              <span>in India</span>
             </div>
           </div>
         </div>
@@ -198,7 +251,7 @@ const Footer = () => {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Phone className="w-5 h-5 text-brand-teal" />
+              <Phone className="w-5 h-5 text-teal-500" />
               Contact Us
             </DialogTitle>
           </DialogHeader>
@@ -206,10 +259,10 @@ const Footer = () => {
             <div className="grid gap-4">
               <a 
                 href="tel:+919403890429"
-                className="flex items-center gap-4 p-4 rounded-lg border hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-4 p-4 rounded-xl border hover:bg-gray-50 transition-colors"
               >
-                <div className="w-12 h-12 rounded-full bg-brand-teal/10 flex items-center justify-center">
-                  <Phone className="w-6 h-6 text-brand-teal" />
+                <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center">
+                  <Phone className="w-6 h-6 text-teal-600" />
                 </div>
                 <div>
                   <p className="font-medium text-gray-800">Call Us</p>
@@ -221,9 +274,9 @@ const Footer = () => {
                 href="https://wa.me/919403890429"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 p-4 rounded-lg border hover:bg-green-50 transition-colors"
+                className="flex items-center gap-4 p-4 rounded-xl border hover:bg-green-50 transition-colors"
               >
-                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
                   <MessageCircle className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
@@ -234,9 +287,9 @@ const Footer = () => {
 
               <a 
                 href="mailto:help@nevikacura.com"
-                className="flex items-center gap-4 p-4 rounded-lg border hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-4 p-4 rounded-xl border hover:bg-blue-50 transition-colors"
               >
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
                   <Mail className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
@@ -246,9 +299,9 @@ const Footer = () => {
               </a>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-slate-50 p-4 rounded-xl">
               <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-gray-500 mt-0.5" />
+                <Clock className="w-5 h-5 text-slate-500 mt-0.5" />
                 <div>
                   <p className="font-medium text-gray-800">Working Hours</p>
                   <p className="text-sm text-gray-600">Monday - Saturday: 11:00 AM - 10:00 PM</p>
@@ -257,9 +310,9 @@ const Footer = () => {
               </div>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-slate-50 p-4 rounded-xl">
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-gray-500 mt-0.5" />
+                <MapPin className="w-5 h-5 text-slate-500 mt-0.5" />
                 <div>
                   <p className="font-medium text-gray-800">Locations</p>
                   <p className="text-sm text-gray-600">Pushpa Clinic - A-4, Sai Darshan, Near Don Bosco High School, Naigaon East</p>
