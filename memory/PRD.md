@@ -726,7 +726,9 @@ Applied 6 UI polish tweaks:
 - ~~Wire up Report Trends & Waitlist UI~~ ✅ DONE
 - ~~Redesign Evara & Glydex pages with images~~ ✅ DONE
 - ~~Create structured Footer component~~ ✅ DONE
-- Build Portal-Specific Membership Forms
+- ~~Build Portal-Specific Membership Forms~~ ✅ DONE
+- ~~Implement Nevika Cura ONE membership plan~~ ✅ DONE
+- ~~Staff bypass for Evara/Glydex~~ ✅ DONE
 
 ### P2 (Medium Priority)
 - Video teleconsultation
@@ -737,6 +739,77 @@ Applied 6 UI polish tweaks:
 ### Known Issues
 - MSG91 WhatsApp templates pending Meta approval
 - Face ID camera fails on mobile (low priority)
+
+---
+
+## Latest Session - January 30, 2026 (02:45)
+
+### Nevika Cura ONE Membership Plan ✅
+**Components:**
+- `/app/frontend/src/components/home/NevikaCuraOneBanner.jsx` - Hero banner & Quick action
+- Backend endpoint: `POST /api/memberships/portal-form`
+
+**Features:**
+- Tagline: "One Membership. Complete Care."
+- Access to all 12 portals
+- 25% off on Pharmacy
+- 30% off on Lab Tests
+- Priority booking at both clinics
+- Free home collection
+
+**Pricing:**
+| Duration | Price | Per Month |
+|----------|-------|-----------|
+| Monthly | ₹999 | ₹999 |
+| Half-Yearly | ₹5,499 | ₹917 |
+| Annual | ₹9,999 | ₹833 |
+
+**Placement:**
+- Option A: Hero banner at top of home page ✅
+- Option D: Quick Action card (replaced "Membership Plans") ✅
+
+### Staff Bypass for Evara/Glydex ✅
+**Files Modified:**
+- `/app/frontend/src/components/SubscriptionGate.jsx`
+- `/app/frontend/src/pages/Evara.js`
+- `/app/frontend/src/pages/Glydex.js`
+
+**How it works:**
+- Staff login at `/staff` stores `staffToken` and `staffInfo` in localStorage
+- SubscriptionGate checks for staff token before subscription check
+- Staff with roles (admin, doctor, clinic_staff, etc.) get automatic free access
+- Shows "Staff Access" badge with role indicator
+
+### Portal Membership Forms ✅
+**Component:** `/app/frontend/src/components/PortalMembershipForm.jsx`
+**Backend:** `POST /api/memberships/portal-form`
+
+**Basic Fields:**
+- Name, Phone, Email, Age, Gender
+
+**Health Info:**
+- Existing Conditions, Current Medications, Allergies
+
+**Emergency Contact:**
+- Name, Phone, Relation
+
+**Portal-Specific Questions:**
+- **Evara**: Last period date, cycle length, pregnancy status, PCOS diagnosis, menopause status
+- **Glydex**: Diabetes type, diagnosis year, HbA1c, insulin use, glucose monitoring
+- **Corvia**: Heart condition, BP reading, cholesterol, family history, exercise frequency
+- **Serena**: Mental health concerns, therapy history, stress level, sleep hours, meditation
+
+### Evara Wellness Images ✅
+**File:** `/app/frontend/src/pages/Evara.js`
+- Added "Mind & Body Wellness" image banner
+- Added "Self Care & Nutrition" image banner
+- Makes portal more intuitive and user-friendly
+
+### UI Cleanup ✅
+- Removed Language Selector from Settings page
+- Removed unused DarkModeToggle import from Home.js
+- Removed unused Globe icon import
+- Removed Proton medical images (as requested)
 
 ---
 
