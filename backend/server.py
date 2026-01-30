@@ -5070,6 +5070,334 @@ async def quick_reorder_medicines(
         "message": "Quick reorder placed! We'll contact you to confirm."
     }
 
+# ==================== SENOVA SENIOR CARE APIs ====================
+
+class SeniorProfile(BaseModel):
+    name: str
+    age: int
+    phone: str
+    address: Optional[str] = None
+    conditions: Optional[list] = []
+    emergency_contacts: Optional[dict] = None
+    
+class FamilyContacts(BaseModel):
+    senior_phone: str
+    primary: dict
+    secondary: Optional[dict] = None
+
+class MedicineReminder(BaseModel):
+    senior_phone: str
+    medicine: str
+    time: str
+    frequency: str = "daily"
+    family_alert: bool = True
+
+@api_router.post("/senova/profile")
+async def save_senior_profile(profile: SeniorProfile):
+    """Save or update senior profile"""
+    existing = await db.senior_profiles.find_one({"phone": profile.phone})
+    
+    profile_data = {
+        "name": profile.name,
+        "age": profile.age,
+        "phone": profile.phone,
+        "address": profile.address,
+        "conditions": profile.conditions,
+        "emergency_contacts": profile.emergency_contacts,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if existing:
+        await db.senior_profiles.update_one(
+            {"phone": profile.phone},
+            {"$set": profile_data}
+        )
+        return {"success": True, "message": "Profile updated", "profile_id": existing.get("id")}
+    else:
+        profile_data["id"] = f"SNR-{uuid.uuid4().hex[:8].upper()}"
+        profile_data["created_at"] = datetime.now(timezone.utc).isoformat()
+        await db.senior_profiles.insert_one(profile_data)
+        return {"success": True, "message": "Profile created", "profile_id": profile_data["id"]}
+
+@api_router.get("/senova/profile/{phone}")
+async def get_senior_profile(phone: str):
+    """Get senior profile by phone"""
+    profile = await db.senior_profiles.find_one({"phone": phone}, {"_id": 0})
+    if profile:
+        return {"success": True, "profile": profile}
+    return {"success": False, "message": "Profile not found"}
+
+@api_router.post("/senova/family-contacts")
+async def save_family_contacts(contacts: FamilyContacts):
+    """Save family contacts for a senior"""
+    contact_data = {
+        "senior_phone": contacts.senior_phone,
+        "primary": contacts.primary,
+        "secondary": contacts.secondary,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.senior_family_contacts.update_one(
+        {"senior_phone": contacts.senior_phone},
+        {"$set": contact_data},
+        upsert=True
+    )
+    
+    return {"success": True, "message": "Family contacts saved"}
+
+@api_router.get("/senova/family-contacts/{senior_phone}")
+async def get_family_contacts(senior_phone: str):
+    """Get family contacts for a senior"""
+    contacts = await db.senior_family_contacts.find_one({"senior_phone": senior_phone}, {"_id": 0})
+    if contacts:
+        return {"success": True, "contacts": contacts}
+    return {"success": False, "message": "No contacts found"}
+
+@api_router.post("/senova/reminder")
+async def add_medicine_reminder(reminder: MedicineReminder):
+    """Add medicine reminder for a senior"""
+    reminder_data = {
+        "id": f"REM-{uuid.uuid4().hex[:8].upper()}",
+        "senior_phone": reminder.senior_phone,
+        "medicine": reminder.medicine,
+        "time": reminder.time,
+        "frequency": reminder.frequency,
+        "family_alert": reminder.family_alert,
+        "active": True,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.senior_reminders.insert_one(reminder_data)
+    
+    return {
+        "success": True,
+        "reminder_id": reminder_data["id"],
+        "message": f"Reminder set for {reminder.medicine} at {reminder.time}"
+    }
+
+@api_router.get("/senova/reminders/{senior_phone}")
+async def get_reminders(senior_phone: str):
+    """Get all active reminders for a senior"""
+    reminders = await db.senior_reminders.find(
+        {"senior_phone": senior_phone, "active": True},
+        {"_id": 0}
+    ).to_list(50)
+    return {"success": True, "reminders": reminders}
+
+@api_router.delete("/senova/reminder/{reminder_id}")
+async def delete_reminder(reminder_id: str):
+    """Delete a medicine reminder"""
+    result = await db.senior_reminders.update_one(
+        {"id": reminder_id},
+        {"$set": {"active": False}}
+    )
+    if result.modified_count > 0:
+        return {"success": True, "message": "Reminder deleted"}
+    return {"success": False, "message": "Reminder not found"}
+
+@api_router.post("/senova/quick-refill")
+async def senova_quick_refill(
+    senior_phone: str = Body(...),
+    senior_name: str = Body(None)
+):
+    """Quick medicine refill for seniors - pharmacist will call"""
+    profile = await db.senior_profiles.find_one({"phone": senior_phone})
+    
+    request_data = {
+        "id": f"SQR-{uuid.uuid4().hex[:8].upper()}",
+        "senior_phone": senior_phone,
+        "senior_name": senior_name or (profile.get("name") if profile else "Senior"),
+        "address": profile.get("address") if profile else None,
+        "type": "medicine_refill",
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.senova_quick_requests.insert_one(request_data)
+    
+    # Notify family
+    if profile and profile.get("emergency_contacts"):
+        family = await db.senior_family_contacts.find_one({"senior_phone": senior_phone})
+        if family and family.get("primary", {}).get("phone"):
+            # TODO: Send SMS/WhatsApp notification to family
+            pass
+    
+    return {
+        "success": True,
+        "request_id": request_data["id"],
+        "message": "Refill request sent! Pharmacist will call shortly."
+    }
+
+@api_router.post("/senova/quick-test")
+async def senova_quick_test(
+    senior_phone: str = Body(...),
+    senior_name: str = Body(None),
+    test_type: str = Body("routine")
+):
+    """Quick lab test booking for seniors - technician will call"""
+    profile = await db.senior_profiles.find_one({"phone": senior_phone})
+    
+    request_data = {
+        "id": f"SQT-{uuid.uuid4().hex[:8].upper()}",
+        "senior_phone": senior_phone,
+        "senior_name": senior_name or (profile.get("name") if profile else "Senior"),
+        "address": profile.get("address") if profile else None,
+        "test_type": test_type,
+        "type": "lab_test",
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.senova_quick_requests.insert_one(request_data)
+    
+    return {
+        "success": True,
+        "request_id": request_data["id"],
+        "message": "Test booking request sent! Lab technician will call shortly."
+    }
+
+# ==================== WAITLIST NOTIFICATION SYSTEM ====================
+
+@api_router.post("/appointments/waitlist/notify-available")
+async def notify_waitlist_slot_available(
+    doctor_id: str = Body(...),
+    available_date: str = Body(...),
+    available_slot: str = Body(...)
+):
+    """Notify waitlisted patients when a slot becomes available"""
+    # Find all waiting patients for this doctor
+    waitlist = await db.appointment_waitlist.find({
+        "doctor_id": doctor_id,
+        "status": "waiting"
+    }).sort("created_at", 1).to_list(10)
+    
+    notified_count = 0
+    
+    for entry in waitlist:
+        # Check if preferred date matches (if specified)
+        preferred_dates = entry.get("preferred_dates", [])
+        if preferred_dates and available_date not in preferred_dates:
+            continue
+        
+        # Send notification
+        notify_via = entry.get("notify_via", "both")
+        patient_phone = entry.get("patient_phone")
+        patient_name = entry.get("patient_name")
+        doctor_name = entry.get("doctor_name", "Doctor")
+        
+        notification_message = f"Hi {patient_name}! A slot is now available with {doctor_name} on {available_date} at {available_slot}. Book now on Nevika Cura app!"
+        
+        # Update entry as notified
+        await db.appointment_waitlist.update_one(
+            {"id": entry["id"]},
+            {
+                "$set": {
+                    "notified": True,
+                    "notified_at": datetime.now(timezone.utc).isoformat(),
+                    "available_slot": f"{available_date} {available_slot}"
+                }
+            }
+        )
+        
+        notified_count += 1
+        
+        # TODO: Actually send SMS/WhatsApp via MSG91
+        # if notify_via in ["sms", "both"]:
+        #     send_sms(patient_phone, notification_message)
+        # if notify_via in ["whatsapp", "both"]:
+        #     send_whatsapp(patient_phone, notification_message)
+    
+    return {
+        "success": True,
+        "notified_count": notified_count,
+        "message": f"Notified {notified_count} patients from waitlist"
+    }
+
+@api_router.post("/appointments/waitlist/process-cancellation")
+async def process_appointment_cancellation(
+    doctor_id: str = Body(...),
+    cancelled_date: str = Body(...),
+    cancelled_slot: str = Body(...)
+):
+    """When an appointment is cancelled, automatically notify waitlist"""
+    # First notify waitlist
+    result = await notify_waitlist_slot_available(
+        doctor_id=doctor_id,
+        available_date=cancelled_date,
+        available_slot=cancelled_slot
+    )
+    
+    return {
+        "success": True,
+        "action": "cancellation_processed",
+        "waitlist_notified": result.get("notified_count", 0)
+    }
+
+# ==================== THRIVE360 FITNESS APIs ====================
+
+@api_router.post("/thrive360/session")
+async def book_fitness_session(
+    program: str = Body(...),
+    session_type: str = Body(...),  # video, in-person
+    preferred_date: str = Body(...),
+    preferred_time: str = Body(...),
+    user_phone: str = Body(...),
+    user_name: str = Body(None)
+):
+    """Book a fitness/yoga session"""
+    session_data = {
+        "id": f"FIT-{uuid.uuid4().hex[:8].upper()}",
+        "program": program,
+        "session_type": session_type,
+        "preferred_date": preferred_date,
+        "preferred_time": preferred_time,
+        "user_phone": user_phone,
+        "user_name": user_name,
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.fitness_sessions.insert_one(session_data)
+    
+    return {
+        "success": True,
+        "session_id": session_data["id"],
+        "message": "Session booked! Trainer will contact you to confirm."
+    }
+
+@api_router.post("/thrive360/injury-report")
+async def report_fitness_injury(
+    pain_location: str = Body(...),
+    pain_level: int = Body(...),
+    user_phone: str = Body(...),
+    user_name: str = Body(None),
+    notes: str = Body(None)
+):
+    """Report an injury during fitness activities"""
+    report_data = {
+        "id": f"INJ-{uuid.uuid4().hex[:8].upper()}",
+        "pain_location": pain_location,
+        "pain_level": pain_level,
+        "user_phone": user_phone,
+        "user_name": user_name,
+        "notes": notes,
+        "recommendation": "physio" if pain_level <= 6 else "doctor_consult",
+        "status": "reported",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.fitness_injuries.insert_one(report_data)
+    
+    return {
+        "success": True,
+        "report_id": report_data["id"],
+        "recommendation": report_data["recommendation"],
+        "message": "Injury reported. " + (
+            "We recommend starting with physiotherapy protocols." if pain_level <= 6 
+            else "Please consult a doctor for this pain level."
+        )
+    }
+
 # ============ Admin Configuration ============
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'nevikacura2026')  # Change in production
 
