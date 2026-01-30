@@ -206,18 +206,18 @@ const IntroScreen = ({ onComplete, user }) => {
           </div>
         </div>
         
-        {/* Icons */}
-        <div className="flex justify-center gap-6 mb-6">
+        {/* Icons - Circular with pictures */}
+        <div className="flex justify-center gap-5 mb-6">
           {[
-            { Icon: Calendar, bg: 'bg-blue-200/80', color: 'text-blue-600', label: 'Appointments' },
-            { Icon: Pill, bg: 'bg-orange-200/80', color: 'text-orange-600', label: 'Pharmacy' },
-            { Icon: TestTube, bg: 'bg-purple-200/80', color: 'text-purple-600', label: 'Lab Tests' },
-          ].map(({ Icon, bg, color, label }) => (
+            { Icon: Calendar, bg: 'bg-white', emoji: '📅', label: 'Appointments' },
+            { Icon: Pill, bg: 'bg-white', emoji: '💊', label: 'Pharmacy' },
+            { Icon: TestTube, bg: 'bg-white', emoji: '🧪', label: 'Lab Tests' },
+          ].map(({ emoji, bg, label }) => (
             <div key={label} className="flex flex-col items-center gap-2">
-              <div className={`${bg} rounded-2xl w-[72px] h-[72px] flex items-center justify-center shadow-lg border border-white/40`}>
-                <Icon className={`w-9 h-9 ${color}`} />
+              <div className={`${bg} rounded-full w-[72px] h-[72px] flex items-center justify-center shadow-xl border-4 border-white/50`}>
+                <span className="text-4xl">{emoji}</span>
               </div>
-              <span className="text-sm text-white font-medium">{label}</span>
+              <span className="text-sm text-white font-bold">{label}</span>
             </div>
           ))}
         </div>
