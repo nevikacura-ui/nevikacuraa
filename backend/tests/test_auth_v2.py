@@ -47,7 +47,8 @@ class TestGuestModeOTP:
     
     def test_guest_send_otp_with_country_code(self):
         """Test sending OTP with +91 prefix - should normalize to 10 digits"""
-        phone = f"+919876{random.randint(10000, 99999)}"
+        # Use a fixed valid phone number with +91 prefix
+        phone = "+919876543210"
         response = requests.post(
             f"{BASE_URL}/api/auth/v2/guest/send-otp",
             json={"phone": phone}
@@ -58,7 +59,7 @@ class TestGuestModeOTP:
         assert data["success"] == True
         # Phone should be normalized to 10 digits (last 10 chars)
         assert len(data["phone"]) == 10
-        assert data["phone"].startswith("9876")
+        assert data["phone"] == "9876543210"
     
     def test_guest_verify_otp_invalid_format(self):
         """Test verifying OTP with invalid format"""
