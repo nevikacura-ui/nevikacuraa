@@ -1283,6 +1283,28 @@ const Glydex = () => {
           </Card>
         </div>
 
+        {/* Complete Health Profile Card */}
+        {effectiveUser && (
+          <Card 
+            className="mb-6 bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 cursor-pointer hover:shadow-md transition-all"
+            onClick={() => setShowMembershipForm(true)}
+            data-testid="complete-health-profile-glydex"
+          >
+            <CardContent className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
+                  <ClipboardList className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="font-semibold text-emerald-800">Complete Health Profile</p>
+                  <p className="text-sm text-emerald-600">Get personalized diabetes care recommendations</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-emerald-400" />
+            </CardContent>
+          </Card>
+        )}
+
         {/* Search Box */}
         <Card className="mb-6 p-4 rounded-2xl border-0 shadow-md bg-white">
           <div className="relative">
