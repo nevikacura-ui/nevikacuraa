@@ -145,7 +145,6 @@ const SettingsPage = () => {
     { id: 'push', icon: BellRing, label: 'Push Notifications', description: 'Real-time alerts & reminders', color: 'bg-emerald-100 text-emerald-600', onClick: () => setActiveSection('push') },
     { id: 'calendar', icon: Calendar, label: 'Calendar Sync', description: 'Sync appointments to your calendar', color: 'bg-cyan-100 text-cyan-600', onClick: () => setActiveSection('calendar') },
     { id: 'payments', icon: CreditCard, label: 'Payments & Wallet', description: 'Manage cards and wallet balance', color: 'bg-amber-100 text-amber-600', onClick: () => setActiveSection('payments') },
-    { id: 'language', icon: Globe, label: t('language'), description: 'Change app language', color: 'bg-indigo-100 text-indigo-600', onClick: () => setActiveSection('language') },
     { id: 'health', icon: Heart, label: t('myHealth'), description: 'Health dashboard & achievements', color: 'bg-red-100 text-red-600', onClick: () => navigate('/health-dashboard') }
   ];
 
