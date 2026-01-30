@@ -1028,6 +1028,95 @@ const Proton = () => {
               </div>
             </Card>
 
+            {/* Sample Collection Type */}
+            <Card className="p-5 rounded-2xl border-slate-200" data-testid="sample-collection-card">
+              <h3 className="font-medium text-[#1E293B] mb-4 flex items-center gap-2">
+                <Home className="w-4 h-4 text-[#5FA8D3]" />
+                Sample Collection
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => setCollectionType('home')}
+                  data-testid="home-collection-btn"
+                  className={`p-4 rounded-2xl border-2 text-left transition-all ${
+                    collectionType === 'home'
+                      ? 'border-[#5FA8D3] bg-[#5FA8D3]/5'
+                      : 'border-slate-200 hover:border-[#5FA8D3]/50'
+                  }`}
+                >
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+                    collectionType === 'home' ? 'bg-[#5FA8D3]/20' : 'bg-slate-100'
+                  }`}>
+                    <Home className={`w-6 h-6 ${collectionType === 'home' ? 'text-[#5FA8D3]' : 'text-slate-500'}`} />
+                  </div>
+                  <h4 className="font-semibold text-[#1E293B]">Home Collection</h4>
+                  <p className="text-xs text-slate-500 mt-1">Phlebotomist visits your home</p>
+                  <p className="text-xs text-[#10B981] font-medium mt-2">FREE for orders above ₹500</p>
+                </button>
+                
+                <button
+                  onClick={() => setCollectionType('center')}
+                  data-testid="center-collection-btn"
+                  className={`p-4 rounded-2xl border-2 text-left transition-all ${
+                    collectionType === 'center'
+                      ? 'border-[#5FA8D3] bg-[#5FA8D3]/5'
+                      : 'border-slate-200 hover:border-[#5FA8D3]/50'
+                  }`}
+                >
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+                    collectionType === 'center' ? 'bg-[#5FA8D3]/20' : 'bg-slate-100'
+                  }`}>
+                    <MapPin className={`w-6 h-6 ${collectionType === 'center' ? 'text-[#5FA8D3]' : 'text-slate-500'}`} />
+                  </div>
+                  <h4 className="font-semibold text-[#1E293B]">Visit Center</h4>
+                  <p className="text-xs text-slate-500 mt-1">Walk-in to our collection center</p>
+                  <p className="text-xs text-slate-400 mt-2">Central Nagpur & Manewada</p>
+                </button>
+              </div>
+              
+              {collectionType === 'home' && (
+                <div className="mt-4 space-y-3">
+                  <div>
+                    <Label className="text-slate-600 text-sm">Complete Address *</Label>
+                    <Textarea
+                      value={patientInfo.address}
+                      onChange={(e) => setPatientInfo({ ...patientInfo, address: e.target.value })}
+                      placeholder="Enter full address with landmark for home sample collection"
+                      rows={2}
+                      className="mt-1.5 rounded-xl border-slate-200 focus:border-[#5FA8D3]"
+                      data-testid="home-address"
+                    />
+                  </div>
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-700">
+                    <p className="font-medium">Home Collection Process:</p>
+                    <ul className="mt-1 space-y-0.5 text-blue-600">
+                      <li>• Our phlebotomist will call 30 mins before arrival</li>
+                      <li>• Sample collected at your doorstep</li>
+                      <li>• Reports sent via email within 24 hours</li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+              
+              {collectionType === 'center' && (
+                <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <h4 className="font-medium text-[#1E293B] mb-3">Collection Centers</h4>
+                  <div className="space-y-3">
+                    <div className="bg-white rounded-lg p-3 border border-slate-100">
+                      <p className="font-semibold text-sm text-[#1E293B]">Proton Diagnostics - Central</p>
+                      <p className="text-xs text-slate-500 mt-1">A-4 Orange Pharmacy Building, Central Nagpur</p>
+                      <p className="text-xs text-slate-400">Mon-Sat: 7:00 AM - 7:00 PM</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-3 border border-slate-100">
+                      <p className="font-semibold text-sm text-[#1E293B]">Proton Diagnostics - Manewada</p>
+                      <p className="text-xs text-slate-500 mt-1">Near Manewada Square</p>
+                      <p className="text-xs text-slate-400">Mon-Sat: 8:00 AM - 6:00 PM</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Card>
+
             {/* Prescription Upload */}
             <Card className="p-5 rounded-2xl border-slate-200">
               <h3 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
