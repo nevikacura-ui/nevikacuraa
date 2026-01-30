@@ -5,8 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
   ArrowLeft, Shield, Activity, Stethoscope, Calendar, Phone, CheckCircle2, 
-  Clock, Heart, Brain, Syringe, FlaskConical, Users, Star, ChevronRight,
-  Sparkles, Target, TrendingUp, AlertCircle, Package, Gift, Zap
+  Clock, Heart, Sparkles, ChevronRight, Users, Star, Leaf
 } from 'lucide-react';
 import { AnimatedPage } from '@/components/PageTransition';
 import { toast } from 'sonner';
@@ -17,173 +16,127 @@ const Reneu = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('packages');
 
-  const features = [
-    { icon: Shield, text: 'Preventive Focus' },
-    { icon: Clock, text: 'Early Detection' },
-    { icon: Activity, text: 'Complete Checkups' },
-    { icon: CheckCircle2, text: 'Expert Doctors' }
-  ];
+  // Hero images for visual appeal
+  const heroImages = {
+    main: 'https://images.unsplash.com/photo-6798766/pexels-photo-6798766.jpeg',
+    checkup: 'https://images.pexels.com/photos/7659566/pexels-photo-7659566.jpeg',
+    family: 'https://images.unsplash.com/photo-1683189592146-e02da4cf0733?w=400',
+    vaccine: 'https://images.pexels.com/photos/5973352/pexels-photo-5973352.jpeg'
+  };
 
-  // Preventive Health Packages
+  // Preventive Health Packages with images
   const healthPackages = [
     {
       name: 'Basic Health Check',
       price: 999,
       originalPrice: 1499,
       tests: 35,
+      image: 'https://images.pexels.com/photos/6798766/pexels-photo-6798766.jpeg',
       includes: ['CBC', 'Lipid Profile', 'Blood Sugar', 'Liver Function', 'Kidney Function', 'Thyroid'],
       recommended: 'Everyone above 25',
-      duration: '3-4 hours'
+      duration: '3-4 hours',
+      color: 'from-emerald-400 to-teal-500'
     },
     {
       name: 'Comprehensive Health Check',
       price: 2499,
       originalPrice: 3999,
       tests: 65,
+      image: 'https://images.pexels.com/photos/7659566/pexels-photo-7659566.jpeg',
       includes: ['All Basic Tests', 'Vitamin Panel', 'Cardiac Markers', 'Diabetes Markers', 'Urine Analysis', 'ECG'],
       recommended: 'Ages 35+',
       duration: '4-5 hours',
-      popular: true
+      popular: true,
+      color: 'from-blue-400 to-indigo-500'
     },
     {
       name: 'Executive Health Check',
       price: 4999,
       originalPrice: 7999,
       tests: 85,
+      image: 'https://images.unsplash.com/photo-1752659985958-cb2bc9e5875e?w=400',
       includes: ['All Comprehensive Tests', 'Full Body CT', 'TMT/Stress Test', 'Ultrasound Abdomen', 'Bone Density', 'Cancer Markers'],
       recommended: 'Ages 40+ / Corporate',
-      duration: 'Full Day'
+      duration: 'Full Day',
+      color: 'from-purple-400 to-pink-500'
     },
     {
       name: 'Senior Citizen Package',
       price: 3499,
       originalPrice: 5499,
       tests: 70,
+      image: 'https://images.unsplash.com/photo-1683189592146-e02da4cf0733?w=400',
       includes: ['Heart Health Panel', 'Bone Health', 'Vision & Hearing', 'Memory Screening', 'Fall Risk Assessment', 'Nutrition Panel'],
       recommended: 'Ages 60+',
-      duration: '5-6 hours'
+      duration: '5-6 hours',
+      color: 'from-amber-400 to-orange-500'
     }
   ];
 
-  // Cancer Screening Packages
+  // Cancer Screening with visual categories
   const cancerScreening = {
     men: [
-      { name: 'Prostate Cancer Screening', tests: ['PSA Test', 'Digital Rectal Exam'], age: '50+', price: 1299 },
-      { name: 'Colon Cancer Screening', tests: ['FIT Test', 'Colonoscopy (if needed)'], age: '45+', price: 1499 },
-      { name: 'Lung Cancer Screening', tests: ['Low-dose CT', 'Chest X-ray'], age: '55+ (smokers)', price: 2999 },
-      { name: 'Oral Cancer Screening', tests: ['Visual Exam', 'Biopsy (if needed)'], age: '40+', price: 799 }
+      { name: 'Prostate Cancer', tests: ['PSA Test', 'Digital Rectal Exam'], age: '50+', price: 1299, emoji: '🔬' },
+      { name: 'Colon Cancer', tests: ['FIT Test', 'Colonoscopy'], age: '45+', price: 1499, emoji: '🩺' },
+      { name: 'Lung Cancer', tests: ['Low-dose CT', 'Chest X-ray'], age: '55+ (smokers)', price: 2999, emoji: '🫁' },
+      { name: 'Oral Cancer', tests: ['Visual Exam', 'Biopsy'], age: '40+', price: 799, emoji: '👄' }
     ],
     women: [
-      { name: 'Breast Cancer Screening', tests: ['Mammography', 'Clinical Breast Exam'], age: '40+', price: 1499 },
-      { name: 'Cervical Cancer Screening', tests: ['Pap Smear', 'HPV Test'], age: '21+', price: 999 },
-      { name: 'Ovarian Cancer Screening', tests: ['CA-125', 'Transvaginal Ultrasound'], age: '35+', price: 1799 },
-      { name: 'Colon Cancer Screening', tests: ['FIT Test', 'Colonoscopy (if needed)'], age: '45+', price: 1499 }
+      { name: 'Breast Cancer', tests: ['Mammography', 'Clinical Exam'], age: '40+', price: 1499, emoji: '🎀' },
+      { name: 'Cervical Cancer', tests: ['Pap Smear', 'HPV Test'], age: '21+', price: 999, emoji: '🌸' },
+      { name: 'Ovarian Cancer', tests: ['CA-125', 'Ultrasound'], age: '35+', price: 1799, emoji: '🔮' },
+      { name: 'Colon Cancer', tests: ['FIT Test', 'Colonoscopy'], age: '45+', price: 1499, emoji: '🩺' }
     ]
   };
 
-  // Vaccine Packages
+  // Vaccines with visual representation
   const vaccines = [
-    { 
-      name: 'Flu Vaccine', 
-      desc: 'Annual influenza protection', 
-      price: 1500, 
-      doses: 1, 
-      recommended: 'Everyone, annually',
-      icon: '💉'
-    },
-    { 
-      name: 'Pneumonia Vaccine', 
-      desc: 'Pneumococcal protection', 
-      price: 4500, 
-      doses: 1, 
-      recommended: '65+ or chronic illness',
-      icon: '🫁'
-    },
-    { 
-      name: 'Hepatitis B', 
-      desc: 'Liver protection', 
-      price: 3000, 
-      doses: 3, 
-      recommended: 'Healthcare workers',
-      icon: '🔬'
-    },
-    { 
-      name: 'Shingles Vaccine', 
-      desc: 'Herpes zoster prevention', 
-      price: 15000, 
-      doses: 2, 
-      recommended: '50+',
-      icon: '🛡️'
-    },
-    { 
-      name: 'HPV Vaccine', 
-      desc: 'Cancer prevention', 
-      price: 12000, 
-      doses: 3, 
-      recommended: 'Ages 9-45',
-      icon: '✨'
-    },
-    { 
-      name: 'Tdap Booster', 
-      desc: 'Tetanus, Diphtheria, Pertussis', 
-      price: 2500, 
-      doses: 1, 
-      recommended: 'Every 10 years',
-      icon: '💪'
-    }
+    { name: 'Flu Vaccine', desc: 'Annual influenza protection', price: 1500, doses: 1, recommended: 'Everyone, annually', image: 'https://images.pexels.com/photos/5973352/pexels-photo-5973352.jpeg', color: 'bg-blue-100' },
+    { name: 'Pneumonia Vaccine', desc: 'Pneumococcal protection', price: 4500, doses: 1, recommended: '65+ or chronic illness', image: 'https://images.unsplash.com/photo-1608326389417-d3f9cc46de04?w=200', color: 'bg-teal-100' },
+    { name: 'Hepatitis B', desc: 'Liver protection', price: 3000, doses: 3, recommended: 'Healthcare workers', image: 'https://images.unsplash.com/photo-1623867822372-3cd497e3b383?w=200', color: 'bg-green-100' },
+    { name: 'Shingles Vaccine', desc: 'Herpes zoster prevention', price: 15000, doses: 2, recommended: '50+', image: 'https://images.unsplash.com/photo-1608422050828-485141c98429?w=200', color: 'bg-purple-100' },
+    { name: 'HPV Vaccine', desc: 'Cancer prevention', price: 12000, doses: 3, recommended: 'Ages 9-45', image: 'https://images.unsplash.com/photo-1609009630912-f16dcf3e03a6?w=200', color: 'bg-pink-100' },
+    { name: 'Tdap Booster', desc: 'Tetanus, Diphtheria, Pertussis', price: 2500, doses: 1, recommended: 'Every 10 years', image: 'https://images.pexels.com/photos/8577983/pexels-photo-8577983.jpeg', color: 'bg-amber-100' }
   ];
 
-  // Yearly Consultation Packages
+  // Yearly Plans
   const consultationPackages = [
     {
-      name: 'Individual Wellness Plan',
+      name: 'Individual Wellness',
       price: 4999,
       duration: '1 Year',
-      includes: [
-        '4 Doctor Consultations',
-        '1 Comprehensive Health Check',
-        'Diet Consultation',
-        'Fitness Assessment',
-        '24/7 Teleconsultation Access'
-      ],
-      savings: 2000
+      includes: ['4 Doctor Consultations', '1 Comprehensive Health Check', 'Diet Consultation', 'Fitness Assessment', '24/7 Teleconsultation'],
+      savings: 2000,
+      icon: '👤',
+      color: 'from-green-400 to-emerald-500'
     },
     {
-      name: 'Family Wellness Plan',
+      name: 'Family Wellness',
       price: 9999,
       duration: '1 Year',
       members: 4,
-      includes: [
-        '12 Doctor Consultations (shared)',
-        '4 Basic Health Checks',
-        'Family Diet Plan',
-        'Pediatric Checkup (if applicable)',
-        'Priority Appointments'
-      ],
+      includes: ['12 Doctor Consultations', '4 Basic Health Checks', 'Family Diet Plan', 'Pediatric Checkup', 'Priority Appointments'],
       savings: 5000,
-      popular: true
+      popular: true,
+      icon: '👨‍👩‍👧‍👦',
+      color: 'from-blue-400 to-indigo-500'
     },
     {
-      name: 'Premium Health Plan',
+      name: 'Premium Health',
       price: 14999,
       duration: '1 Year',
-      includes: [
-        'Unlimited GP Consultations',
-        '2 Executive Health Checks',
-        'Specialist Referrals',
-        'Home Visit (2/year)',
-        'Personal Health Manager',
-        'Insurance Assistance'
-      ],
-      savings: 8000
+      includes: ['Unlimited GP Consultations', '2 Executive Health Checks', 'Specialist Referrals', 'Home Visit (2/year)', 'Personal Health Manager'],
+      savings: 8000,
+      icon: '👑',
+      color: 'from-purple-400 to-pink-500'
     }
   ];
 
   return (
     <AnimatedPage>
-      <div className="min-h-screen bg-[#F5F5F4]" data-testid="reneu-page">
-        {/* Header */}
-        <header className="bg-gradient-to-r from-slate-700 to-slate-600 text-white sticky top-0 z-50">
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white" data-testid="reneu-page">
+        {/* Header with Nature Theme */}
+        <header className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white sticky top-0 z-50">
           <div className="max-w-5xl mx-auto px-4 py-4">
             <div className="flex items-center gap-4">
               <Button 
@@ -204,24 +157,29 @@ const Reneu = () => {
                   />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold tracking-wide">RENEU</h1>
-                  <p className="text-sm opacity-90">Preventive Health</p>
+                  <h1 className="text-xl font-bold tracking-wide flex items-center gap-2">
+                    RENEU <Leaf className="w-5 h-5 text-green-300" />
+                  </h1>
+                  <p className="text-sm text-emerald-100">Preventive Health & Wellness</p>
                 </div>
               </div>
             </div>
           </div>
         </header>
 
-        {/* Trust Badges */}
-        <div className="bg-white border-b border-slate-200">
+        {/* Trust Badges - Colorful Pills */}
+        <div className="bg-white border-b border-emerald-100 shadow-sm">
           <div className="max-w-5xl mx-auto px-4 py-3">
-            <div className="flex justify-between items-center gap-4 overflow-x-auto">
-              {features.map((feature, idx) => (
-                <div key={idx} className="flex items-center gap-2 flex-shrink-0">
-                  <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
-                    <feature.icon className="w-4 h-4 text-slate-700" />
-                  </div>
-                  <span className="text-xs font-medium text-slate-700 whitespace-nowrap">{feature.text}</span>
+            <div className="flex justify-between items-center gap-3 overflow-x-auto">
+              {[
+                { emoji: '🛡️', text: 'Preventive Focus', bg: 'bg-emerald-50 text-emerald-700' },
+                { emoji: '⏰', text: 'Early Detection', bg: 'bg-blue-50 text-blue-700' },
+                { emoji: '✅', text: 'Complete Checkups', bg: 'bg-purple-50 text-purple-700' },
+                { emoji: '👨‍⚕️', text: 'Expert Doctors', bg: 'bg-amber-50 text-amber-700' }
+              ].map((feature, idx) => (
+                <div key={idx} className={`flex items-center gap-2 px-3 py-1.5 rounded-full flex-shrink-0 ${feature.bg}`}>
+                  <span className="text-lg">{feature.emoji}</span>
+                  <span className="text-xs font-semibold whitespace-nowrap">{feature.text}</span>
                 </div>
               ))}
             </div>
@@ -230,93 +188,222 @@ const Reneu = () => {
 
         {/* Main Content */}
         <main className="max-w-5xl mx-auto px-4 py-6">
-          {/* Hero */}
-          <Card className="p-6 mb-6 bg-gradient-to-br from-slate-50 to-stone-100 border-slate-200">
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">Preventive Health & Wellness</h2>
-            <p className="text-slate-600 mb-4">
-              Prevention is better than cure. Comprehensive health packages, cancer screenings, 
-              vaccinations, and yearly wellness plans to keep you healthy.
-            </p>
-            <div className="flex gap-3 flex-wrap">
-              <Button className="bg-slate-800 hover:bg-slate-900 rounded-xl" data-testid="reneu-book-btn">
-                <Calendar className="w-4 h-4 mr-2" />
-                Book Health Check
-              </Button>
-              <Button variant="outline" className="rounded-xl border-slate-300 text-slate-700">
-                <Phone className="w-4 h-4 mr-2" />
-                Consult Expert
-              </Button>
+          {/* Hero Section with Image */}
+          <Card className="overflow-hidden mb-6 border-0 shadow-xl">
+            <div className="relative h-48 sm:h-56">
+              <img 
+                src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800"
+                alt="Healthy Lifestyle"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/80 to-transparent" />
+              <div className="absolute inset-0 p-6 flex flex-col justify-center">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                  Prevention is Better Than Cure
+                </h2>
+                <p className="text-emerald-100 text-sm sm:text-base max-w-md mb-4">
+                  Comprehensive health packages, cancer screenings, vaccinations & yearly wellness plans
+                </p>
+                <div className="flex gap-3 flex-wrap">
+                  <Button className="bg-white text-emerald-700 hover:bg-emerald-50 rounded-full shadow-lg" data-testid="reneu-book-btn">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Book Health Check
+                  </Button>
+                  <Button variant="outline" className="rounded-full border-white/50 text-white hover:bg-white/20">
+                    <Phone className="w-4 h-4 mr-2" />
+                    Consult Expert
+                  </Button>
+                </div>
+              </div>
             </div>
           </Card>
 
-          {/* Tabs */}
-          <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+          {/* Tabs - Modern Pill Style */}
+          <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
             {[
-              { id: 'packages', label: 'Health Packages', icon: Package },
-              { id: 'cancer', label: 'Cancer Screening', icon: Target },
-              { id: 'vaccines', label: 'Vaccines', icon: Syringe },
-              { id: 'plans', label: 'Yearly Plans', icon: Calendar }
+              { id: 'packages', label: 'Health Packages', emoji: '📋' },
+              { id: 'cancer', label: 'Cancer Screening', emoji: '🎯' },
+              { id: 'vaccines', label: 'Vaccines', emoji: '💉' },
+              { id: 'plans', label: 'Yearly Plans', emoji: '📅' }
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap flex items-center gap-2 ${
+                className={`px-4 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap flex items-center gap-2 ${
                   activeTab === tab.id 
-                    ? 'bg-slate-800 text-white' 
-                    : 'bg-white text-slate-600 hover:bg-slate-100'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-200' 
+                    : 'bg-white text-gray-600 hover:bg-emerald-50 border border-gray-200'
                 }`}
                 data-testid={`tab-${tab.id}`}
               >
-                <tab.icon className="w-4 h-4" />
+                <span>{tab.emoji}</span>
                 {tab.label}
               </button>
             ))}
           </div>
 
-          {/* Health Packages Tab */}
+          {/* Health Packages Tab - Card with Images */}
           {activeTab === 'packages' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800">Preventive Health Checkup Packages</h3>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">🏥</span>
+                <h3 className="text-xl font-bold text-gray-800">Preventive Health Checkup Packages</h3>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {healthPackages.map((pkg, idx) => (
                   <Card 
                     key={idx} 
-                    className={`p-4 hover:shadow-lg transition-all ${pkg.popular ? 'ring-2 ring-green-500' : ''}`}
+                    className={`overflow-hidden hover:shadow-xl transition-all ${pkg.popular ? 'ring-2 ring-emerald-500' : ''}`}
                     data-testid={`health-package-${idx}`}
                   >
-                    {pkg.popular && (
-                      <Badge className="absolute -top-2 -right-2 bg-green-500 text-white">Most Popular</Badge>
-                    )}
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h4 className="font-bold text-slate-800">{pkg.name}</h4>
-                        <p className="text-sm text-slate-500">{pkg.tests} Tests • {pkg.duration}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-slate-800">₹{pkg.price}</p>
-                        <p className="text-sm text-slate-400 line-through">₹{pkg.originalPrice}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-3">
-                      <p className="text-xs font-semibold text-slate-600 mb-1">Includes:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {pkg.includes.slice(0, 4).map((item, i) => (
-                          <Badge key={i} variant="outline" className="text-xs">{item}</Badge>
-                        ))}
-                        {pkg.includes.length > 4 && (
-                          <Badge variant="outline" className="text-xs">+{pkg.includes.length - 4} more</Badge>
-                        )}
+                    {/* Image Header */}
+                    <div className="relative h-32">
+                      <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover" />
+                      <div className={`absolute inset-0 bg-gradient-to-r ${pkg.color} opacity-60`} />
+                      {pkg.popular && (
+                        <Badge className="absolute top-3 right-3 bg-yellow-400 text-yellow-900 shadow-lg">
+                          ⭐ Most Popular
+                        </Badge>
+                      )}
+                      <div className="absolute bottom-3 left-3 text-white">
+                        <h4 className="font-bold text-lg drop-shadow-md">{pkg.name}</h4>
+                        <p className="text-sm opacity-90">{pkg.tests} Tests • {pkg.duration}</p>
                       </div>
                     </div>
                     
-                    <div className="flex justify-between items-center">
-                      <p className="text-xs text-green-600">
-                        <CheckCircle2 className="w-3 h-3 inline mr-1" />
-                        {pkg.recommended}
+                    {/* Content */}
+                    <div className="p-4">
+                      <div className="flex justify-between items-center mb-3">
+                        <div>
+                          <p className="text-2xl font-bold text-gray-800">₹{pkg.price.toLocaleString()}</p>
+                          <p className="text-sm text-gray-400 line-through">₹{pkg.originalPrice.toLocaleString()}</p>
+                        </div>
+                        <Badge className="bg-green-100 text-green-700">
+                          Save ₹{pkg.originalPrice - pkg.price}
+                        </Badge>
+                      </div>
+                      
+                      <div className="mb-3">
+                        <div className="flex flex-wrap gap-1">
+                          {pkg.includes.slice(0, 4).map((item, i) => (
+                            <Badge key={i} variant="outline" className="text-xs bg-gray-50">{item}</Badge>
+                          ))}
+                          {pkg.includes.length > 4 && (
+                            <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700">
+                              +{pkg.includes.length - 4} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-between items-center">
+                        <p className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" />
+                          {pkg.recommended}
+                        </p>
+                        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 rounded-full">
+                          Book Now
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Cancer Screening Tab - Visual Cards */}
+          {activeTab === 'cancer' && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">🎯</span>
+                <h3 className="text-xl font-bold text-gray-800">Cancer Screening Programs</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">Early detection saves lives. Regular screenings can detect cancer before symptoms appear.</p>
+              
+              {/* Men's Screening */}
+              <Card className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+                <h4 className="font-bold text-blue-800 mb-4 flex items-center gap-2 text-lg">
+                  <span className="text-2xl">👨</span>
+                  Men's Cancer Screening
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {cancerScreening.men.map((screen, idx) => (
+                    <div key={idx} className="p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all" data-testid={`men-screen-${idx}`}>
+                      <div className="flex items-start gap-3">
+                        <span className="text-3xl">{screen.emoji}</span>
+                        <div className="flex-1">
+                          <h5 className="font-bold text-gray-800">{screen.name}</h5>
+                          <p className="text-xs text-gray-500 mt-1">{screen.tests.join(', ')}</p>
+                          <div className="flex items-center justify-between mt-2">
+                            <Badge className="bg-blue-100 text-blue-700">Age {screen.age}</Badge>
+                            <span className="font-bold text-gray-800">₹{screen.price}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Women's Screening */}
+              <Card className="p-5 bg-gradient-to-br from-pink-50 to-rose-50 border-pink-200">
+                <h4 className="font-bold text-pink-800 mb-4 flex items-center gap-2 text-lg">
+                  <span className="text-2xl">👩</span>
+                  Women's Cancer Screening
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {cancerScreening.women.map((screen, idx) => (
+                    <div key={idx} className="p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all" data-testid={`women-screen-${idx}`}>
+                      <div className="flex items-start gap-3">
+                        <span className="text-3xl">{screen.emoji}</span>
+                        <div className="flex-1">
+                          <h5 className="font-bold text-gray-800">{screen.name}</h5>
+                          <p className="text-xs text-gray-500 mt-1">{screen.tests.join(', ')}</p>
+                          <div className="flex items-center justify-between mt-2">
+                            <Badge className="bg-pink-100 text-pink-700">Age {screen.age}</Badge>
+                            <span className="font-bold text-gray-800">₹{screen.price}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {/* Vaccines Tab - Visual Grid */}
+          {activeTab === 'vaccines' && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">💉</span>
+                <h3 className="text-xl font-bold text-gray-800">Adult Vaccination Program</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">Stay protected with essential vaccines for adults.</p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {vaccines.map((vaccine, idx) => (
+                  <Card key={idx} className="overflow-hidden hover:shadow-xl transition-all group" data-testid={`vaccine-${idx}`}>
+                    <div className="relative h-28">
+                      <img src={vaccine.image} alt={vaccine.name} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute bottom-2 left-3 right-3">
+                        <h4 className="font-bold text-white drop-shadow-md">{vaccine.name}</h4>
+                      </div>
+                    </div>
+                    <div className={`p-4 ${vaccine.color}`}>
+                      <p className="text-sm text-gray-600 mb-2">{vaccine.desc}</p>
+                      <div className="flex justify-between items-center mb-2">
+                        <Badge variant="outline" className="bg-white">{vaccine.doses} dose{vaccine.doses > 1 ? 's' : ''}</Badge>
+                        <p className="font-bold text-gray-800">₹{vaccine.price.toLocaleString()}</p>
+                      </div>
+                      <p className="text-xs text-emerald-700 mb-3 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" />
+                        {vaccine.recommended}
                       </p>
-                      <Button size="sm" className="bg-slate-800 hover:bg-slate-900">
-                        Book Now
+                      <Button size="sm" variant="outline" className="w-full bg-white hover:bg-gray-50 rounded-full">
+                        Book Vaccination
                       </Button>
                     </div>
                   </Card>
@@ -325,150 +412,86 @@ const Reneu = () => {
             </div>
           )}
 
-          {/* Cancer Screening Tab */}
-          {activeTab === 'cancer' && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800">Cancer Screening Programs</h3>
-              <p className="text-slate-600 text-sm mb-4">Early detection saves lives. Regular screenings can detect cancer before symptoms appear.</p>
-              
-              {/* Men's Screening */}
-              <Card className="p-4 border-blue-200">
-                <h4 className="font-semibold text-blue-700 mb-3 flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Men's Cancer Screening
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {cancerScreening.men.map((screen, idx) => (
-                    <div key={idx} className="p-3 bg-blue-50 rounded-xl" data-testid={`men-screen-${idx}`}>
-                      <div className="flex justify-between items-start">
-                        <h5 className="font-medium text-slate-800">{screen.name}</h5>
-                        <Badge className="bg-blue-100 text-blue-700">₹{screen.price}</Badge>
-                      </div>
-                      <p className="text-xs text-slate-500 mt-1">{screen.tests.join(', ')}</p>
-                      <p className="text-xs text-blue-600 mt-1">Recommended: {screen.age}</p>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              {/* Women's Screening */}
-              <Card className="p-4 border-pink-200">
-                <h4 className="font-semibold text-pink-700 mb-3 flex items-center gap-2">
-                  <Heart className="w-5 h-5" />
-                  Women's Cancer Screening
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {cancerScreening.women.map((screen, idx) => (
-                    <div key={idx} className="p-3 bg-pink-50 rounded-xl" data-testid={`women-screen-${idx}`}>
-                      <div className="flex justify-between items-start">
-                        <h5 className="font-medium text-slate-800">{screen.name}</h5>
-                        <Badge className="bg-pink-100 text-pink-700">₹{screen.price}</Badge>
-                      </div>
-                      <p className="text-xs text-slate-500 mt-1">{screen.tests.join(', ')}</p>
-                      <p className="text-xs text-pink-600 mt-1">Recommended: {screen.age}</p>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </div>
-          )}
-
-          {/* Vaccines Tab */}
-          {activeTab === 'vaccines' && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800">Adult Vaccination Program</h3>
-              <p className="text-slate-600 text-sm mb-4">Stay protected with essential vaccines for adults.</p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {vaccines.map((vaccine, idx) => (
-                  <Card key={idx} className="p-4 hover:shadow-lg transition-all" data-testid={`vaccine-${idx}`}>
-                    <div className="text-3xl mb-2">{vaccine.icon}</div>
-                    <h4 className="font-bold text-slate-800">{vaccine.name}</h4>
-                    <p className="text-sm text-slate-500 mb-2">{vaccine.desc}</p>
-                    <div className="flex justify-between items-center mb-2">
-                      <Badge variant="outline">{vaccine.doses} dose{vaccine.doses > 1 ? 's' : ''}</Badge>
-                      <p className="font-bold text-slate-800">₹{vaccine.price}</p>
-                    </div>
-                    <p className="text-xs text-green-600 mb-3">
-                      <CheckCircle2 className="w-3 h-3 inline mr-1" />
-                      {vaccine.recommended}
-                    </p>
-                    <Button size="sm" variant="outline" className="w-full">
-                      Book Vaccination
-                    </Button>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Yearly Plans Tab */}
+          {/* Yearly Plans Tab - Premium Cards */}
           {activeTab === 'plans' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800">Yearly Consultation Packages</h3>
-              <p className="text-slate-600 text-sm mb-4">Comprehensive care plans with significant savings.</p>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">📅</span>
+                <h3 className="text-xl font-bold text-gray-800">Yearly Wellness Plans</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">Comprehensive care plans with significant savings.</p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {consultationPackages.map((plan, idx) => (
                   <Card 
                     key={idx} 
-                    className={`p-4 hover:shadow-lg transition-all ${plan.popular ? 'ring-2 ring-green-500 relative' : ''}`}
+                    className={`overflow-hidden hover:shadow-xl transition-all ${plan.popular ? 'ring-2 ring-emerald-500 relative' : ''}`}
                     data-testid={`yearly-plan-${idx}`}
                   >
                     {plan.popular && (
-                      <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-green-500 text-white">Best Value</Badge>
+                      <div className="absolute -top-1 left-1/2 -translate-x-1/2 z-10">
+                        <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg">
+                          ⭐ Best Value
+                        </Badge>
+                      </div>
                     )}
-                    <div className="text-center mb-4 pt-2">
-                      <h4 className="font-bold text-slate-800 text-lg">{plan.name}</h4>
-                      {plan.members && (
-                        <p className="text-sm text-slate-500">Up to {plan.members} family members</p>
-                      )}
-                      <p className="text-3xl font-bold text-slate-800 mt-2">₹{plan.price}</p>
-                      <p className="text-sm text-slate-500">/{plan.duration}</p>
-                      <Badge className="bg-green-100 text-green-700 mt-2">Save ₹{plan.savings}</Badge>
+                    
+                    {/* Gradient Header */}
+                    <div className={`h-24 bg-gradient-to-r ${plan.color} flex items-center justify-center pt-2`}>
+                      <span className="text-5xl">{plan.icon}</span>
                     </div>
                     
-                    <div className="space-y-2 mb-4">
-                      {plan.includes.map((item, i) => (
-                        <div key={i} className="flex items-center gap-2 text-sm">
-                          <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
-                          <span className="text-slate-700">{item}</span>
-                        </div>
-                      ))}
+                    <div className="p-4 pt-3">
+                      <div className="text-center mb-4">
+                        <h4 className="font-bold text-gray-800 text-lg">{plan.name}</h4>
+                        {plan.members && (
+                          <p className="text-sm text-gray-500">Up to {plan.members} family members</p>
+                        )}
+                        <p className="text-3xl font-bold text-gray-800 mt-2">₹{plan.price.toLocaleString()}</p>
+                        <p className="text-sm text-gray-500">/{plan.duration}</p>
+                        <Badge className="bg-green-100 text-green-700 mt-2">Save ₹{plan.savings.toLocaleString()}</Badge>
+                      </div>
+                      
+                      <div className="space-y-2 mb-4">
+                        {plan.includes.map((item, i) => (
+                          <div key={i} className="flex items-center gap-2 text-sm">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                            <span className="text-gray-700">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <Button className={`w-full rounded-full bg-gradient-to-r ${plan.color} hover:opacity-90`}>
+                        Choose Plan
+                      </Button>
                     </div>
-                    
-                    <Button className="w-full bg-slate-800 hover:bg-slate-900">
-                      Choose Plan
-                    </Button>
                   </Card>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Why Preventive Care */}
-          <Card className="p-6 mt-8 bg-gradient-to-r from-slate-800 to-slate-700 text-white">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Sparkles className="w-6 h-6" />
+          {/* Why Preventive Care - Stats Section */}
+          <Card className="p-6 mt-8 bg-gradient-to-r from-emerald-600 to-teal-600 text-white overflow-hidden relative">
+            <div className="absolute top-0 right-0 opacity-10">
+              <Leaf className="w-48 h-48" />
+            </div>
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2 relative z-10">
+              <Sparkles className="w-6 h-6 text-yellow-300" />
               Why Preventive Care Matters
             </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-              <div>
-                <p className="text-3xl font-bold">80%</p>
-                <p className="text-sm opacity-80">of diseases preventable</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold">5x</p>
-                <p className="text-sm opacity-80">ROI on prevention</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold">90%</p>
-                <p className="text-sm opacity-80">early cancer survival</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold">10+</p>
-                <p className="text-sm opacity-80">years life extension</p>
-              </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center relative z-10">
+              {[
+                { value: '80%', label: 'of diseases preventable' },
+                { value: '5x', label: 'ROI on prevention' },
+                { value: '90%', label: 'early cancer survival' },
+                { value: '10+', label: 'years life extension' }
+              ].map((stat, idx) => (
+                <div key={idx} className="p-3 bg-white/10 rounded-2xl backdrop-blur-sm">
+                  <p className="text-3xl font-bold text-yellow-300">{stat.value}</p>
+                  <p className="text-sm opacity-90">{stat.label}</p>
+                </div>
+              ))}
             </div>
           </Card>
         </main>
