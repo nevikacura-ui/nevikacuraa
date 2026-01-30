@@ -933,6 +933,14 @@ const Pharmacy = () => {
       toast.error('Please enter delivery address');
       return;
     }
+    // Estimate total (pharmacist will confirm final bill)
+    const itemCount = medicines.reduce((sum, m) => sum + m.quantity, 0);
+    const estimated = itemCount * 100; // Rough estimate ₹100 per item
+    setEstimatedTotal(estimated);
+    setShowPaymentDialog(true);
+  };
+
+  const handlePaymentSuccess = async (paymentInfo) => {
     setLoading(true);
     try {
       const orderData = {
@@ -942,7 +950,9 @@ const Pharmacy = () => {
         patient_phone: patientInfo.phone,
         patient_email: patientInfo.email || null,
         delivery_address: deliveryAddress,
-        points_used: user ? pointsToUse : 0
+        points_used: user ? pointsToUse : 0,
+        payment_method: paymentInfo.method,
+        cashfree_order_id: paymentInfo.orderId || null
       };
       await axios.post(`${API}/pharmacy`, orderData, {
         headers: user ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {}
