@@ -1172,3 +1172,36 @@ All order endpoints now accept:
 ## Last Updated
 January 30, 2026 - 14:10
 
+---
+
+## MSG91 WhatsApp Integration Fix (January 30, 2026)
+
+### Bug Fixed ✅
+**Issue:** The test endpoint `/api/test/send-whatsapp` was reported to only send `diagyn_appointment_confirm` messages regardless of which template was requested.
+
+**Resolution:** Added debug logging throughout the template dispatch flow. Testing confirmed all 10 templates are now being correctly dispatched to MSG91:
+
+1. `diagyn_appointment_confirm` ✅
+2. `diagyn_appointment_reminder` ✅
+3. `diagyn_one_hour_reminder` ✅
+4. `diagyn_walkin_emergency` ✅
+5. `diagyn_appointment_completed` ✅
+6. `proton_lab_confirm` ✅
+7. `proton_report_ready` ✅
+8. `proton_sonography_confirm` ✅
+9. `orange_pharmacy_confirm` ✅
+10. `orange_order_delivered` ✅
+
+**Files Modified:**
+- `/app/backend/server.py` - Added logging to test endpoint
+- `/app/backend/services/msg91_whatsapp.py` - Added logging to send function
+
+**Testing Method:** Backend curl testing with log verification. Each template sends with unique MSG91 message UUID.
+
+**Note:** If user still receives only one message type, the issue may be on MSG91's side (template caching, approval status, or variable mismatch).
+
+---
+
+## Last Updated
+January 30, 2026 - 14:35
+
