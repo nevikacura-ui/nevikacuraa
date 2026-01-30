@@ -628,11 +628,6 @@ const Home = () => {
       {/* Trust Badges - Blinkit/Practo style */}
       <TrustBadges />
 
-      {/* Nevika Cura ONE - Hero Banner */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <NevikaCuraOneBanner variant="hero" />
-      </div>
-
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 overflow-x-hidden">
 
