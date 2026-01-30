@@ -14,6 +14,7 @@ import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRe
 import BottomNav from '@/components/BottomNav';
 import { toast } from 'sonner';
 import axios from 'axios';
+import AppointmentWaitlist from '@/components/AppointmentWaitlist';
 import { 
   ArrowLeft, Clock, Ban, Shield, CheckCircle2, Loader2, 
   CalendarDays, Wifi, WifiOff, GraduationCap, Calendar,
