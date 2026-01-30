@@ -1463,6 +1463,23 @@ const Proton = () => {
       
       {/* Bottom Navigation */}
       <BottomNav />
+
+      {/* Cashfree Payment Dialog */}
+      <CashfreeCheckout
+        open={showPaymentDialog}
+        onOpenChange={setShowPaymentDialog}
+        orderDetails={{
+          type: 'lab_test',
+          amount: orderTotal,
+          productId: `LAB_${Date.now()}`,
+          customerName: patientInfo.name,
+          customerEmail: patientInfo.email,
+          customerPhone: patientInfo.phone
+        }}
+        onPaymentSuccess={handlePaymentSuccess}
+        allowCOD={true}
+        returnPath="/proton"
+      />
     </div>
   );
 };
