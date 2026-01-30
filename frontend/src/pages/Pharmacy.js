@@ -637,6 +637,105 @@ const Pharmacy = () => {
     setLeaderboardLoading(false);
   };
 
+  // Fetch Refill Reminders
+  const fetchRefillReminders = async () => {
+    if (!patientInfo.phone || patientInfo.phone.length < 10) return;
+    setLoadingRefills(true);
+    try {
+      const response = await axios.get(`${API}/pharmacy/refill-reminders/${patientInfo.phone}`);
+      setRefillReminders(response.data.reminders || []);
+    } catch (error) {
+      console.error('Failed to fetch refill reminders:', error);
+    }
+    setLoadingRefills(false);
+  };
+
+  // Create Refill Reminder
+  const createRefillReminder = async () => {
+    if (!refillForm.medicine_name.trim()) {
+      toast.error('Please enter medicine name');
+      return;
+    }
+    if (!patientInfo.phone || patientInfo.phone.length < 10) {
+      toast.error('Please enter your phone number first');
+      return;
+    }
+    try {
+      await axios.post(`${API}/pharmacy/refill-reminder`, {
+        patient_phone: patientInfo.phone,
+        patient_name: patientInfo.name || 'Patient',
+        medicine_name: refillForm.medicine_name,
+        dosage: refillForm.dosage,
+        frequency: refillForm.frequency,
+        reminder_time: refillForm.reminder_time,
+        reminder_type: refillForm.reminder_type
+      });
+      toast.success('Refill reminder created! You will be notified when it\'s time to reorder.');
+      setShowRefillDialog(false);
+      setRefillForm({ medicine_name: '', dosage: '', frequency: 'Daily', reminder_time: '08:00', reminder_type: 'sms' });
+      fetchRefillReminders();
+    } catch (error) {
+      toast.error('Failed to create reminder');
+    }
+  };
+
+  // Fetch Subscription Boxes
+  const fetchSubscriptionBoxes = async () => {
+    if (!patientInfo.phone || patientInfo.phone.length < 10) return;
+    setLoadingSubscriptions(true);
+    try {
+      const response = await axios.get(`${API}/pharmacy/subscription-box/${patientInfo.phone}`);
+      setSubscriptionBoxes(response.data.subscriptions || []);
+    } catch (error) {
+      console.error('Failed to fetch subscription boxes:', error);
+    }
+    setLoadingSubscriptions(false);
+  };
+
+  // Create Subscription Box
+  const createSubscriptionBox = async () => {
+    if (medicines.length === 0) {
+      toast.error('Please add medicines to your cart first');
+      return;
+    }
+    if (!patientInfo.phone || patientInfo.phone.length < 10) {
+      toast.error('Please enter your phone number first');
+      return;
+    }
+    if (!deliveryAddress.trim()) {
+      toast.error('Please enter delivery address');
+      return;
+    }
+    try {
+      await axios.post(`${API}/pharmacy/subscription-box`, {
+        patient_phone: patientInfo.phone,
+        patient_name: patientInfo.name || 'Patient',
+        patient_email: patientInfo.email || null,
+        medicines: medicines.map(m => ({ name: m.name, quantity: m.quantity })),
+        delivery_address: deliveryAddress,
+        delivery_day: subscriptionForm.delivery_day,
+        delivery_frequency: subscriptionForm.delivery_frequency
+      });
+      toast.success('Monthly subscription created! Your medicines will be auto-delivered.');
+      setShowSubscriptionDialog(false);
+      fetchSubscriptionBoxes();
+    } catch (error) {
+      toast.error('Failed to create subscription');
+    }
+  };
+
+  // Pause/Resume Subscription
+  const toggleSubscription = async (subscriptionId, currentStatus) => {
+    try {
+      const endpoint = currentStatus === 'active' ? 'pause' : 'resume';
+      await axios.post(`${API}/pharmacy/subscription-box/${subscriptionId}/${endpoint}`);
+      toast.success(`Subscription ${endpoint === 'pause' ? 'paused' : 'resumed'}!`);
+      fetchSubscriptionBoxes();
+    } catch (error) {
+      toast.error('Failed to update subscription');
+    }
+  };
+
   const fetchForms = async () => {
     try {
       const response = await axios.get(`${API}/pharmacy/forms`);
