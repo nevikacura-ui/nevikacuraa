@@ -1748,8 +1748,8 @@ const Evara = () => {
                 </div>
               )}
             </div>
-          )}
-        </Card>
+          </Card>
+        )}
 
         {/* Quick Actions - 3x2 on desktop, 2x3 on mobile */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
