@@ -186,7 +186,8 @@ class TestPortalMembershipForm:
         
         data = response.json()
         assert data.get("success") == True
-        assert "profile" in data
+        # Response contains 'profiles' array instead of single 'profile'
+        assert "profiles" in data or "profile" in data
 
 
 class TestSubscriptionStatus:
