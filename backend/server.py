@@ -6421,14 +6421,6 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Config router: {e}")
 
-# Stripe Payment Router
-try:
-    from routes.payments import router as payments_router
-    app.include_router(payments_router, prefix="/api")
-    logger.info("Stripe Payment router loaded")
-except Exception as e:
-    logger.warning(f"Could not load Payments router: {e}")
-
 # Enhanced Features Router (Notifications, Gamification, Health Dashboard, Smart Scheduling, Multi-language)
 try:
     from routes.enhanced_features import router as enhanced_router, set_db as set_enhanced_db
