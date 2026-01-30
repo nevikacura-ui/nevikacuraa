@@ -8,9 +8,7 @@ from typing import Optional
 from datetime import datetime, timezone, timedelta
 import os
 import logging
-import hmac
-import hashlib
-import base64
+import json
 
 # Cashfree SDK
 from cashfree_pg.models.create_order_request import CreateOrderRequest
@@ -29,9 +27,9 @@ def set_db(database):
     global db
     db = database
 
-# Initialize Cashfree
-def get_cashfree_client():
-    """Initialize and return Cashfree client"""
+# Initialize Cashfree - Set class attributes
+def init_cashfree():
+    """Initialize Cashfree SDK with credentials"""
     Cashfree.XClientId = os.environ.get("CASHFREE_CLIENT_ID")
     Cashfree.XClientSecret = os.environ.get("CASHFREE_CLIENT_SECRET")
     
@@ -42,6 +40,9 @@ def get_cashfree_client():
         Cashfree.XEnvironment = Cashfree.SANDBOX
     
     return Cashfree()
+
+# API Version
+API_VERSION = "2023-08-01"
 
 # Request/Response Models
 class CashfreeOrderRequest(BaseModel):
