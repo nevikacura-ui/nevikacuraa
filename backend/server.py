@@ -169,6 +169,9 @@ async def send_test_whatsapp(request: TestWhatsAppRequest):
     - orange_order_delivered
     """
     
+    # Debug: Log exact request received
+    logger.info(f"🔍 WhatsApp Test Request - Phone: {request.phone}, Template: '{request.template}'")
+    
     # Sample data for testing all templates
     sample_data = {
         "diagyn_appointment_confirm": {
