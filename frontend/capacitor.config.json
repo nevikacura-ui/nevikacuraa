@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://cura-login.preview.emergentagent.com",
+    "url": "https://nevikacura-5.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {
