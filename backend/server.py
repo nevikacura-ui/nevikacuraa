@@ -291,6 +291,7 @@ async def send_test_whatsapp(request: TestWhatsAppRequest):
                 booking_id=data["booking_id"], address=data["address"], db=db
             )
         elif request.template == "proton_report_ready":
+            logger.info("➡️ Entering proton_report_ready branch")
             result = await send_proton_report_ready(
                 phone=request.phone, patient_name=data["patient_name"], tests=data["tests"],
                 booking_id=data["booking_id"], report_date=data["report_date"], download_url=data["download_url"], db=db
