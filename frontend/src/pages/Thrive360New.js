@@ -345,15 +345,13 @@ const Thrive360New = () => {
                     data-testid={`program-${program.id}`}
                   >
                     <div className="relative">
-                      {/* Circular Image */}
+                      {/* Circular Emoji Icon */}
                       <div className="absolute top-4 right-4 z-10">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                          <img 
-                            src={program.image} 
-                            alt={program.title}
-                            className="w-full h-full object-cover"
-                            onError={(e) => e.target.src = `https://via.placeholder.com/100/${program.color.slice(1)}/ffffff?text=${program.title[0]}`}
-                          />
+                        <div 
+                          className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-4 border-white"
+                          style={{ backgroundColor: program.bgColor }}
+                        >
+                          <span className="text-3xl">{program.emoji}</span>
                         </div>
                       </div>
                       
