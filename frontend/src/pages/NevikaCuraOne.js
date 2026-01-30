@@ -13,6 +13,7 @@ import {
 import BottomNav from '@/components/BottomNav';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
+const PRODUCTION_DOMAIN = process.env.REACT_APP_PRODUCTION_DOMAIN || 'https://nevikacura.com';
 
 /**
  * Nevika Cura ONE - Premium Membership Page
