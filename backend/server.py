@@ -4722,7 +4722,6 @@ async def upload_prescription_with_email(
     notes: str = Body("")
 ):
     """Upload prescription and send email notification to nevikacura@gmail.com"""
-    from services.resend_email import send_email_notification
     
     upload = {
         "id": f"PRESC-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}",
@@ -4755,7 +4754,6 @@ async def upload_prescription_with_email(
         """
         
         await send_email_notification(
-            to_email="nevikacura@gmail.com",
             subject=f"New Prescription Upload - {patient_name}",
             html_content=email_html
         )
