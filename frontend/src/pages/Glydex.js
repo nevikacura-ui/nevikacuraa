@@ -318,8 +318,27 @@ const Glydex = () => {
   const navigate = useNavigate();
   const { user, token: authToken, patientToken } = useAuth();
   
-  // Use main app auth or patient token
-  const token = authToken || patientToken || localStorage.getItem('token') || localStorage.getItem('patientToken');
+  // Use main app auth or patient token OR staff token (staff gets full access)
+  const staffToken = localStorage.getItem('staffToken');
+  const staffInfo = localStorage.getItem('staffInfo');
+  const isStaffLoggedIn = !!(staffToken && staffInfo);
+  
+  const token = authToken || patientToken || localStorage.getItem('token') || localStorage.getItem('patientToken') || staffToken;
+  
+  // Create a user object for staff if staff is logged in
+  const effectiveUser = user || (isStaffLoggedIn ? (() => {
+    try {
+      const staff = JSON.parse(staffInfo);
+      return {
+        name: staff.name || staff.username,
+        id: staff.id || 'staff_' + staff.username,
+        phone: staff.phone || '',
+        email: staff.email || '',
+        isStaff: true,
+        staffRole: staff.role
+      };
+    } catch (e) { return null; }
+  })() : null);
   
   // UI state
   const [loading, setLoading] = useState(false);
