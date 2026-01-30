@@ -1092,7 +1092,7 @@ const Proton = () => {
                   </div>
                   <h4 className="font-semibold text-[#1E293B]">Home Collection</h4>
                   <p className="text-xs text-slate-500 mt-1">Phlebotomist visits your home</p>
-                  <p className="text-xs text-[#10B981] font-medium mt-2">FREE for orders above ₹500</p>
+                  <p className="text-xs text-[#10B981] font-medium mt-2">₹50/visit (FREE for orders above ₹2000)</p>
                 </button>
                 
                 <button
