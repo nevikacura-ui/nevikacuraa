@@ -1608,20 +1608,53 @@ const Evara = () => {
         )}
 
         {!user && (
-          <Card className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white border-0 shadow-xl rounded-3xl">
-            <CardContent className="p-6 text-center">
-              <Heart className="w-12 h-12 mx-auto mb-3" />
-              <h2 className="text-xl font-semibold" style={{ fontFamily: 'Outfit, sans-serif' }}>Welcome to Evara</h2>
-              <p className="text-white/80 text-sm mb-4">Your trusted women's wellness companion</p>
-              <Button 
-                onClick={() => setShowSignup(true)}
-                className="bg-white text-rose-600 hover:bg-rose-50 font-semibold rounded-full px-6"
-              >
-                Create Your Account
-              </Button>
+          <Card className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white border-0 shadow-xl rounded-3xl overflow-hidden">
+            <CardContent className="p-0">
+              <div className="relative">
+                <img 
+                  src="https://images.unsplash.com/photo-1763192903155-61d2f537cb46?w=800&h=400&fit=crop"
+                  alt="Women Wellness"
+                  className="w-full h-40 object-cover opacity-30"
+                />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
+                  <Heart className="w-12 h-12 mx-auto mb-3" />
+                  <h2 className="text-xl font-semibold" style={{ fontFamily: 'Outfit, sans-serif' }}>Welcome to Evara</h2>
+                  <p className="text-white/80 text-sm mb-4">Your trusted women's wellness companion</p>
+                  <Button 
+                    onClick={() => setShowSignup(true)}
+                    className="bg-white text-rose-600 hover:bg-rose-50 font-semibold rounded-full px-6"
+                  >
+                    Create Your Account
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}
+
+        {/* Wellness Image Banner */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="relative rounded-2xl overflow-hidden h-28 group shadow-md">
+            <img 
+              src="https://images.pexels.com/photos/5992888/pexels-photo-5992888.jpeg?w=400&h=200&fit=crop"
+              alt="Yoga & Wellness"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-rose-600/70 to-transparent flex items-end p-3">
+              <span className="text-white text-sm font-medium">Mind & Body</span>
+            </div>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden h-28 group shadow-md">
+            <img 
+              src="https://images.pexels.com/photos/6539969/pexels-photo-6539969.jpeg?w=400&h=200&fit=crop"
+              alt="Women's Health"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-pink-600/70 to-transparent flex items-end p-3">
+              <span className="text-white text-sm font-medium">Self Care</span>
+            </div>
+          </div>
+        </div>
 
         {/* Search Box */}
         <Card className="p-4 rounded-2xl border-0 shadow-md bg-white">
