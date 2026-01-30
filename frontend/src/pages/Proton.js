@@ -1064,7 +1064,7 @@ const Proton = () => {
                     className="mt-1.5 rounded-xl border-slate-200 focus:border-[#5FA8D3]"
                     data-testid="patient-email"
                   />
-                  <p className="text-xs text-slate-400 mt-1">We'll send confirmations and test reports to this email.</p>
+                  <p className="text-xs text-slate-400 mt-1">We&apos;ll send confirmations and test reports to this email.</p>
                 </div>
               </div>
             </Card>
