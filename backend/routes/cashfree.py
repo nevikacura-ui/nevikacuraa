@@ -440,17 +440,16 @@ async def verify_payment(order_id: str):
         
         # Get latest status from Cashfree
         try:
-            cashfree = get_cashfree_client()
-            api_version = "2023-08-01"
+            cashfree = init_cashfree()
             
             # Fetch order
-            order_response = cashfree.PGFetchOrder(api_version, order_id)
+            order_response = cashfree.PGFetchOrder(API_VERSION, order_id, None)
             
             if order_response and order_response.data:
                 cf_status = order_response.data.order_status
                 
                 # Fetch payments for this order
-                payments_response = cashfree.PGOrderFetchPayments(api_version, order_id)
+                payments_response = cashfree.PGOrderFetchPayments(API_VERSION, order_id, None)
                 
                 payment_info = None
                 if payments_response and payments_response.data:
