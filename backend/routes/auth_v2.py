@@ -12,7 +12,7 @@ import resend
 import os
 from datetime import datetime, timezone, timedelta
 from typing import Optional
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel, EmailStr
 
 from services.sms import send_twilio_otp, verify_twilio_otp
