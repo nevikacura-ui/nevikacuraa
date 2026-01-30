@@ -361,13 +361,18 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
                 {pricing.map((plan, idx) => (
                   <div
                     key={idx}
-                    onClick={() => navigate(`/membership-plans?plan=one&duration=${plan.duration.toLowerCase()}`)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedDuration(plan.duration.toLowerCase());
+                    }}
                     className={`w-full p-4 rounded-xl border-2 text-left transition-all hover:shadow-md cursor-pointer ${
-                      plan.bestValue 
-                        ? 'border-amber-400 bg-gradient-to-r from-amber-50 to-orange-50' 
-                        : plan.popular 
-                          ? 'border-purple-300 bg-purple-50' 
-                          : 'border-slate-200 hover:border-slate-300'
+                      selectedDuration === plan.duration.toLowerCase()
+                        ? 'border-amber-500 bg-gradient-to-r from-amber-50 to-orange-50 ring-2 ring-amber-300'
+                        : plan.bestValue 
+                          ? 'border-amber-400 bg-gradient-to-r from-amber-50 to-orange-50' 
+                          : plan.popular 
+                            ? 'border-purple-300 bg-purple-50' 
+                            : 'border-slate-200 hover:border-slate-300'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -395,13 +400,72 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
               </div>
             </div>
 
+            {/* Email Input Section */}
+            {selectedDuration && (
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <p className="text-sm font-medium text-slate-700 mb-2">Enter your email to continue</p>
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    value={checkoutEmail}
+                    onChange={(e) => setCheckoutEmail(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  />
+                </div>
+              </div>
+            )}
+
             {/* CTA */}
             <Button 
-              onClick={() => navigate('/membership-plans?plan=one')}
-              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-6 rounded-xl text-lg font-semibold shadow-lg"
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (!checkoutEmail || !checkoutEmail.includes('@')) {
+                  alert('Please enter a valid email address');
+                  return;
+                }
+                
+                setProcessingPayment(true);
+                try {
+                  const billingCycle = selectedDuration === 'monthly' ? 'monthly' 
+                    : selectedDuration === 'half-yearly' ? 'quarterly' 
+                    : 'yearly';
+                  
+                  const res = await fetch(`${API}/api/subscriptions/membership/purchase`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      plan_type: 'premium',
+                      billing_cycle: billingCycle,
+                      email: checkoutEmail.toLowerCase()
+                    })
+                  });
+                  const data = await res.json();
+                  
+                  if (data.checkout_url) {
+                    window.location.href = data.checkout_url;
+                  } else if (data.free_membership) {
+                    alert('Membership activated!');
+                    setShowDetails(false);
+                  } else {
+                    alert(data.detail || 'Failed to create checkout');
+                  }
+                } catch (error) {
+                  console.error('Payment error:', error);
+                  alert('Payment processing failed. Please try again.');
+                } finally {
+                  setProcessingPayment(false);
+                }
+              }}
+              disabled={processingPayment || !selectedDuration || !checkoutEmail}
+              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-6 rounded-xl text-lg font-semibold shadow-lg disabled:opacity-50"
             >
-              <Crown className="w-5 h-5 mr-2" />
-              Get Nevika Cura ONE
+              {processingPayment ? (
+                <>Processing...</>
+              ) : (
+                <><Crown className="w-5 h-5 mr-2" /> Get Nevika Cura ONE</>
+              )}
             </Button>
           </div>
         </DialogContent>
