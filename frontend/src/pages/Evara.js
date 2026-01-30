@@ -1669,10 +1669,36 @@ const Evara = () => {
               </button>
             )}
           </div>
-          
-          {/* Search Results */}
-          {searchTerm && (
-            <div className="mt-3 space-y-2">
+        </Card>
+
+        {/* Wellness Image Banner - Making Evara more intuitive */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="relative rounded-2xl overflow-hidden h-28 group shadow-md">
+            <img 
+              src="https://images.pexels.com/photos/5992888/pexels-photo-5992888.jpeg?w=400&h=200&fit=crop"
+              alt="Yoga & Wellness"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-rose-600/70 to-transparent flex items-end p-3">
+              <span className="text-white text-sm font-medium">Mind & Body Wellness</span>
+            </div>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden h-28 group shadow-md">
+            <img 
+              src="https://images.pexels.com/photos/6539969/pexels-photo-6539969.jpeg?w=400&h=200&fit=crop"
+              alt="Self Care"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-pink-600/70 to-transparent flex items-end p-3">
+              <span className="text-white text-sm font-medium">Self Care & Nutrition</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Search Results - Moved inside Card */}
+        {searchTerm && (
+          <Card className="p-4 rounded-2xl border-0 shadow-md bg-white">
+            <div className="space-y-2">
               {/* Filter and show matching features */}
               {[
                 { name: 'Chat with Evara', desc: 'AI wellness assistant', icon: '💬', action: () => setShowChat(true), keywords: ['chat', 'talk', 'ask', 'ai', 'help', 'question'] },
