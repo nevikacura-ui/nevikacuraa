@@ -147,7 +147,7 @@ const IntroScreen = ({ onComplete, user }) => {
   // RENDER INIT PHASE - show solid bright background
   if (phase === 'init') {
     return (
-      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#FF6B35]">
+      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#0EA5E9]">
       </div>
     );
   }
@@ -155,7 +155,7 @@ const IntroScreen = ({ onComplete, user }) => {
   // RENDER LOADING PHASE - Blinkit/Zepto style
   if (phase === 'loading') {
     return (
-      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#FF6B35]">
+      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#0EA5E9]">
         
         {/* Logo */}
         <div className="mb-8">
