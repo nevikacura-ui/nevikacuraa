@@ -144,20 +144,18 @@ const IntroScreen = ({ onComplete, user }) => {
     setBiometricLoading(false);
   };
 
-  // RENDER INIT PHASE - show gradient background only
+  // RENDER INIT PHASE - show solid bright background
   if (phase === 'init') {
     return (
-      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center"
-        style={{ background: 'linear-gradient(165deg, #5eead4 0%, #2dd4bf 20%, #14b8a6 40%, #0d9488 60%, #0891b2 80%, #06b6d4 100%)' }}>
+      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#FF6B35]">
       </div>
     );
   }
 
-  // RENDER LOADING PHASE
+  // RENDER LOADING PHASE - Blinkit/Zepto style
   if (phase === 'loading') {
     return (
-      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center"
-        style={{ background: 'linear-gradient(165deg, #5eead4 0%, #2dd4bf 20%, #14b8a6 40%, #0d9488 60%, #0891b2 80%, #06b6d4 100%)' }}>
+      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#FF6B35]">
         
         {/* Logo */}
         <div className="mb-8">
