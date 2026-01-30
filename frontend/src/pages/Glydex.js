@@ -1202,7 +1202,7 @@ const Glydex = () => {
               />
             </div>
             <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full">
-              <span className="text-sm text-white font-medium">Welcome, {user?.name || 'User'}</span>
+              <span className="text-sm text-white font-medium">Welcome, {effectiveUser?.name || 'User'}</span>
             </div>
           </div>
         </div>
