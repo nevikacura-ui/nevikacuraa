@@ -70,6 +70,7 @@ import MedicineImageUpload from '@/pages/MedicineImageUpload';
 import ProtonReportDownload from '@/pages/ProtonReportDownload';
 import PharmacyProductPage from '@/pages/PharmacyProductPage';
 import HowToInstall from '@/pages/HowToInstall';
+import NevikaCuraOne from '@/pages/NevikaCuraOne';
 // Intro Screen (Loading + Splash combined)
 import IntroScreen from '@/components/IntroScreen';
 // Page Transitions
