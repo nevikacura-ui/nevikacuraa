@@ -889,40 +889,6 @@ const Proton = () => {
             {/* Pathology Tab */}
             {activeTab === 'pathology' && (
               <div className="space-y-6">
-                {/* Medical Lab Visual Banner */}
-                <div className="grid grid-cols-3 gap-3 mb-2">
-                  <div className="relative rounded-xl overflow-hidden h-24 group">
-                    <img 
-                      src="https://images.unsplash.com/photo-1579154341184-22069e4614d2?w=300&h=150&fit=crop"
-                      alt="Blood Test Tubes"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-2">
-                      <span className="text-white text-xs font-medium">Blood Tests</span>
-                    </div>
-                  </div>
-                  <div className="relative rounded-xl overflow-hidden h-24 group">
-                    <img 
-                      src="https://images.pexels.com/photos/3908182/pexels-photo-3908182.jpeg?w=300&h=150&fit=crop"
-                      alt="Sample Collection"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-2">
-                      <span className="text-white text-xs font-medium">Sample Containers</span>
-                    </div>
-                  </div>
-                  <div className="relative rounded-xl overflow-hidden h-24 group">
-                    <img 
-                      src="https://images.unsplash.com/photo-1583912267670-6575ad472688?w=300&h=150&fit=crop"
-                      alt="Lab Analysis"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-2">
-                      <span className="text-white text-xs font-medium">Lab Analysis</span>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Category Quick Select */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                   {testCategories.map((cat) => (
@@ -993,30 +959,6 @@ const Proton = () => {
             {/* Imaging Tab */}
             {activeTab === 'imaging' && (
               <div className="space-y-4">
-                {/* Medical Imaging Visual */}
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="relative rounded-2xl overflow-hidden h-32 group">
-                    <img 
-                      src="https://images.unsplash.com/photo-1682706841281-f723c5bfcd83?w=400&h=200&fit=crop"
-                      alt="ECG Heart Monitor"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
-                      <span className="text-white text-sm font-medium">ECG Monitoring</span>
-                    </div>
-                  </div>
-                  <div className="relative rounded-2xl overflow-hidden h-32 group">
-                    <img 
-                      src="https://images.unsplash.com/photo-1691935152546-3a9e05f4010b?w=400&h=200&fit=crop"
-                      alt="Sonography Equipment"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
-                      <span className="text-white text-sm font-medium">Ultrasound Imaging</span>
-                    </div>
-                  </div>
-                </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card id="ecg-section" className="p-5 rounded-2xl border-slate-200">
                     <h4 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
