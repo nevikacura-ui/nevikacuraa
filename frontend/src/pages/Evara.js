@@ -1633,7 +1633,7 @@ const Evara = () => {
           </Card>
         )}
 
-        {!user && (
+        {!effectiveUser && (
           <Card className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white border-0 shadow-xl rounded-3xl">
             <CardContent className="p-6 text-center">
               <Heart className="w-12 h-12 mx-auto mb-3" />
