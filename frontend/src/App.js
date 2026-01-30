@@ -142,6 +142,7 @@ function AppContent() {
           <Route path="/health-tips" element={<AnimatedPage><HealthTips /></AnimatedPage>} />
           <Route path="/teleconsult" element={<AnimatedPage><Teleconsultation /></AnimatedPage>} />
           <Route path="/quick-reorder" element={<AnimatedPage><QuickReorder /></AnimatedPage>} />
+          <Route path="/color-test" element={<ColorTest />} />
           {/* High Priority Features */}
           <Route path="/emergency" element={<AnimatedPage><EmergencyServices /></AnimatedPage>} />
           <Route path="/health-assessment" element={<AnimatedPage><HealthRiskAssessment /></AnimatedPage>} />
