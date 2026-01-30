@@ -1064,6 +1064,61 @@ const Pharmacy = () => {
         </div>
       </div>
 
+      {/* Smart Pharmacy Features - Refill Reminders & Subscription Box */}
+      <div className="bg-gradient-to-br from-slate-50 to-orange-50 border-b border-orange-100" data-testid="smart-pharmacy-features">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-5 h-5 text-orange-500" />
+            <h3 className="font-semibold text-slate-800">Smart Pharmacy Features</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {/* Refill Reminders Card */}
+            <button
+              onClick={() => { setShowRefillDialog(true); fetchRefillReminders(); }}
+              className="p-4 bg-white rounded-2xl border-2 border-transparent hover:border-orange-300 shadow-sm hover:shadow-md transition-all text-left group"
+              data-testid="refill-reminders-btn"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <Clock className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-slate-800 group-hover:text-orange-600 transition-colors">Refill Reminders</h4>
+                  <p className="text-xs text-slate-500 mt-0.5">Never miss a dose! Get SMS/WhatsApp reminders when medicine runs low.</p>
+                  {refillReminders.length > 0 && (
+                    <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] rounded-full font-medium">
+                      {refillReminders.length} active
+                    </span>
+                  )}
+                </div>
+              </div>
+            </button>
+
+            {/* Monthly Subscription Box Card */}
+            <button
+              onClick={() => { setShowSubscriptionDialog(true); fetchSubscriptionBoxes(); }}
+              className="p-4 bg-white rounded-2xl border-2 border-transparent hover:border-orange-300 shadow-sm hover:shadow-md transition-all text-left group"
+              data-testid="subscription-box-btn"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <Package className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-slate-800 group-hover:text-orange-600 transition-colors">Subscription Box</h4>
+                  <p className="text-xs text-slate-500 mt-0.5">Auto-delivery every month. Save 10% on regular medicines.</p>
+                  {subscriptionBoxes.length > 0 && (
+                    <span className="inline-block mt-1 px-2 py-0.5 bg-purple-100 text-purple-700 text-[10px] rounded-full font-medium">
+                      {subscriptionBoxes.length} active
+                    </span>
+                  )}
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Quick Health Concerns Filter */}
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-4 py-3">
