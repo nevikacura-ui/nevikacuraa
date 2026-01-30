@@ -1586,9 +1586,9 @@ const Evara = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {user ? (
+            {effectiveUser ? (
               <button onClick={logout} className="text-xs text-rose-500 hover:text-rose-700 transition-colors">
-                Logout
+                {isStaffLoggedIn ? 'Staff: ' + effectiveUser?.name : 'Logout'}
               </button>
             ) : (
               <button 
@@ -1611,13 +1611,13 @@ const Evara = () => {
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         <SubscriptionGate
           planType="evara"
-          patientId={user?.id || user?.patient_id || localStorage.getItem('patientId')}
-          patientName={user?.name}
-          patientPhone={user?.phone}
-          patientEmail={user?.email}
+          patientId={effectiveUser?.id || user?.patient_id || localStorage.getItem('patientId')}
+          patientName={effectiveUser?.name}
+          patientPhone={effectiveUser?.phone}
+          patientEmail={effectiveUser?.email}
         >
         {/* Welcome Section */}
-        {user && (
+        {effectiveUser && (
           <Card className="bg-gradient-to-r from-rose-400 via-pink-400 to-orange-300 text-white border-0 shadow-xl rounded-3xl overflow-hidden">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
