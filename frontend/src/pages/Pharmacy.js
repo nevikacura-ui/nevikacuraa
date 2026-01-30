@@ -2287,6 +2287,23 @@ const Pharmacy = () => {
       
       {/* Bottom Navigation */}
       <BottomNav />
+
+      {/* Cashfree Payment Dialog */}
+      <CashfreeCheckout
+        open={showPaymentDialog}
+        onOpenChange={setShowPaymentDialog}
+        orderDetails={{
+          type: 'pharmacy',
+          amount: estimatedTotal,
+          productId: `PHARMACY_${Date.now()}`,
+          customerName: patientInfo.name,
+          customerEmail: patientInfo.email,
+          customerPhone: patientInfo.phone
+        }}
+        onPaymentSuccess={handlePaymentSuccess}
+        allowCOD={true}
+        returnPath="/pharmacy"
+      />
     </div>
   );
 };
