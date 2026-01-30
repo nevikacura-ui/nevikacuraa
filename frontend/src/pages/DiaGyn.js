@@ -385,7 +385,7 @@ const RichCalendar = ({ selectedDate, onSelect, doctorSchedule, clinicId }) => {
 // ============================================
 // TIME SLOT PICKER - Pastel Design
 // ============================================
-const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDate, currentTime, loading, wsConnected }) => {
+const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDate, currentTime, loading, wsConnected, doctor, clinic, patientData }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
