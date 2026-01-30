@@ -113,8 +113,8 @@ const NevikaCuraOne = () => {
       
       const selectedPricing = pricing.find(p => p.id === selectedPlan);
       
-      // Use HTTPS return URL (required by Cashfree)
-      const returnUrl = API.replace('http://', 'https://').replace('/api', '') || window.location.origin.replace('http://', 'https://');
+      // Use production domain for Cashfree (whitelisted domain)
+      const returnUrl = 'https://nevikacura.com';
       
       // Create order with Cashfree
       const res = await fetch(`${API}/api/payments/cashfree/create-order`, {
