@@ -302,8 +302,8 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
       
       {/* Details Modal - Reuse from above */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-lg h-[85vh] sm:h-auto sm:max-h-[80vh] flex flex-col p-0 z-[100] mb-16 sm:mb-0" onClick={(e) => e.stopPropagation()}>
-          <DialogHeader className="p-4 pb-2 shrink-0">
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto p-0 z-[100]" onClick={(e) => e.stopPropagation()}>
+          <DialogHeader className="p-4 pb-2 sticky top-0 bg-white z-10 border-b">
             <DialogTitle className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
                 <Crown className="w-6 h-6 text-white" />
@@ -315,7 +315,7 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
             </DialogTitle>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto px-4 pb-2 space-y-4 min-h-0">
+          <div className="px-4 pb-4 space-y-4">
             {/* Benefits - Compact */}
             <div>
               <h3 className="font-semibold text-slate-800 mb-2 text-sm flex items-center gap-2">
@@ -389,67 +389,67 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* Sticky Footer - Email + Button - ALWAYS VISIBLE */}
-          <div className="border-t bg-white p-3 space-y-2 shrink-0">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={checkoutEmail}
-              onChange={(e) => setCheckoutEmail(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            />
-            <Button 
-              onClick={async (e) => {
-                e.stopPropagation();
-                if (!checkoutEmail || !checkoutEmail.includes('@')) {
-                  alert('Please enter a valid email address');
-                  return;
-                }
-                
-                setProcessingPayment(true);
-                try {
-                  const billingCycle = selectedDuration === 'monthly' ? 'monthly' 
-                    : selectedDuration === 'half-yearly' ? 'quarterly' 
-                    : 'yearly';
-                  
-                  const res = await fetch(`${API}/api/subscriptions/membership/purchase`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      plan_type: 'premium',
-                      billing_cycle: billingCycle,
-                      email: checkoutEmail.toLowerCase()
-                    })
-                  });
-                  const data = await res.json();
-                  
-                  if (data.checkout_url) {
-                    window.location.href = data.checkout_url;
-                  } else if (data.free_membership) {
-                    alert('Membership activated!');
-                    setShowDetails(false);
-                  } else {
-                    alert(data.detail || 'Failed to create checkout');
+            {/* Email + Payment Button - Now part of scrollable content */}
+            <div className="space-y-3 pt-2 border-t">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={checkoutEmail}
+                onChange={(e) => setCheckoutEmail(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+              />
+              <Button 
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  if (!checkoutEmail || !checkoutEmail.includes('@')) {
+                    alert('Please enter a valid email address');
+                    return;
                   }
-                } catch (error) {
-                  console.error('Payment error:', error);
-                  alert('Payment processing failed. Please try again.');
-                } finally {
-                  setProcessingPayment(false);
-                }
-              }}
-              disabled={processingPayment || !selectedDuration || !checkoutEmail}
-              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-3 rounded-xl text-sm font-semibold shadow-lg disabled:opacity-50"
-            >
-              {processingPayment ? (
-                <>Processing...</>
-              ) : (
-                <><Crown className="w-4 h-4 mr-2" /> Pay ₹{pricing.find(p => p.duration.toLowerCase() === selectedDuration)?.price.toLocaleString() || '5,499'}</>
-              )}
-            </Button>
+                  
+                  setProcessingPayment(true);
+                  try {
+                    const billingCycle = selectedDuration === 'monthly' ? 'monthly' 
+                      : selectedDuration === 'half-yearly' ? 'quarterly' 
+                      : 'yearly';
+                    
+                    const res = await fetch(`${API}/api/subscriptions/membership/purchase`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        plan_type: 'premium',
+                        billing_cycle: billingCycle,
+                        email: checkoutEmail.toLowerCase()
+                      })
+                    });
+                    const data = await res.json();
+                    
+                    if (data.checkout_url) {
+                      window.location.href = data.checkout_url;
+                    } else if (data.free_membership) {
+                      alert('Membership activated!');
+                      setShowDetails(false);
+                    } else {
+                      alert(data.detail || 'Failed to create checkout');
+                    }
+                  } catch (error) {
+                    console.error('Payment error:', error);
+                    alert('Payment processing failed. Please try again.');
+                  } finally {
+                    setProcessingPayment(false);
+                  }
+                }}
+                disabled={processingPayment || !selectedDuration || !checkoutEmail}
+                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-3 rounded-xl text-sm font-semibold shadow-lg disabled:opacity-50"
+              >
+                {processingPayment ? (
+                  <>Processing...</>
+                ) : (
+                  <><Crown className="w-4 h-4 mr-2" /> Pay ₹{pricing.find(p => p.duration.toLowerCase() === selectedDuration)?.price.toLocaleString() || '5,499'}</>
+                )}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
