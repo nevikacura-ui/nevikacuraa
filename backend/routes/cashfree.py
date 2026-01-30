@@ -104,25 +104,25 @@ async def create_cashfree_order(request: CashfreeOrderRequest):
         
         # Get return URL
         frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
-        return_url = request.return_url or f"{frontend_url}/payment-success?order_id={order_id}"
+        return_url = request.return_url or f"{frontend_url}/one?order_id={order_id}"
         
-        # Initialize Cashfree client
-        cashfree = get_cashfree_client()
+        # Initialize Cashfree
+        cashfree = init_cashfree()
+        
+        # Clean phone number - remove +91 and get last 10 digits
+        clean_phone = request.customer_phone.replace("+91", "").replace("+", "").replace(" ", "")[-10:]
         
         # Create customer details
         customer_details = CustomerDetails(
             customer_id=request.customer_id,
+            customer_phone=clean_phone,
             customer_email=request.customer_email,
-            customer_phone=request.customer_phone.replace("+91", "").replace("+", "")[-10:],  # Clean phone number
             customer_name=request.customer_name
         )
         
-        # Create order meta
-        backend_url = os.environ.get("FRONTEND_URL", "").replace("http://", "https://")
+        # Create order meta with return URL
         order_meta = OrderMeta(
-            return_url=return_url,
-            notify_url=f"{backend_url}/api/payments/cashfree/webhook",
-            payment_methods="cc,dc,upi,nb,wallet,paylater"
+            return_url=return_url
         )
         
         # Create order request
@@ -131,13 +131,11 @@ async def create_cashfree_order(request: CashfreeOrderRequest):
             order_amount=float(request.amount),
             order_currency="INR",
             customer_details=customer_details,
-            order_meta=order_meta,
-            order_note=f"Nevika Cura - {request.product_type.replace('_', ' ').title()}"
+            order_meta=order_meta
         )
         
         # Call Cashfree API
-        api_version = "2023-08-01"
-        response = cashfree.PGCreateOrder(api_version, create_order_request)
+        response = cashfree.PGCreateOrder(API_VERSION, create_order_request, None, None)
         
         if response and response.data:
             # Save order to database
@@ -163,7 +161,7 @@ async def create_cashfree_order(request: CashfreeOrderRequest):
             
             await db.cashfree_orders.insert_one(order_doc)
             
-            logger.info(f"Cashfree order created: {order_id}")
+            logger.info(f"Cashfree order created: {order_id}, cf_order_id: {response.data.cf_order_id}")
             
             return CashfreeOrderResponse(
                 success=True,
