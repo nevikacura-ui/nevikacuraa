@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Phone, MessageCircle, Upload } from 'lucide-react';
-import NevikaCuraOneBanner from './NevikaCuraOneBanner';
+import { Phone, MessageCircle, Upload, Crown } from 'lucide-react';
 
 /**
  * Quick Action Cards - Nevika Cura ONE, Book via Call, WhatsApp, Upload Prescription
@@ -15,6 +14,16 @@ const QuickActionCards = () => {
   const PHONE_NUMBER = '+919403890429';
 
   const actions = [
+    {
+      id: 'nevika-one',
+      title: 'Nevika Cura',
+      subtitle: 'ONE',
+      icon: Crown,
+      path: '/one',
+      gradient: 'from-amber-400 to-orange-500',
+      bgGradient: 'from-amber-100 via-orange-50 to-rose-50',
+      badge: 'NEW'
+    },
     {
       id: 'book-call',
       title: 'Book via',
@@ -55,10 +64,6 @@ const QuickActionCards = () => {
   return (
     <div className="py-4" data-testid="quick-action-cards-section">
       <div className="grid grid-cols-4 gap-2">
-        {/* Nevika Cura ONE - First position */}
-        <NevikaCuraOneBanner variant="compact" />
-        
-        {/* Other actions */}
         {actions.map((action) => (
           <button
             key={action.id}
@@ -66,6 +71,15 @@ const QuickActionCards = () => {
             className={`relative overflow-hidden rounded-xl bg-gradient-to-br ${action.bgGradient} border border-white/50 p-3 flex flex-col items-center justify-center min-h-[100px] transition-all duration-300 hover:scale-105 hover:shadow-lg group`}
             data-testid={`quick-action-${action.id}`}
           >
+            {/* Badge */}
+            {action.badge && (
+              <div className="absolute top-1 right-1">
+                <span className="px-1.5 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[8px] font-bold rounded-full">
+                  {action.badge}
+                </span>
+              </div>
+            )}
+            
             {/* Icon */}
             <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center mb-2 shadow-md group-hover:scale-110 transition-transform`}>
               <action.icon className="w-5 h-5 text-white" />

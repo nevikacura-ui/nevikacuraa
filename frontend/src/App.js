@@ -189,6 +189,8 @@ function AppContent() {
           <Route path="/report" element={<ProtonReportDownload />} />
           {/* Pharmacy Product Page - Full Page View */}
           <Route path="/pharmacy/product/:productId" element={<PharmacyProductPage />} />
+          {/* Nevika Cura ONE Membership Page */}
+          <Route path="/one" element={<AnimatedPage><NevikaCuraOne /></AnimatedPage>} />
         </Routes>
         <Toaster position="top-center" richColors />
         <PWAInstallPrompt />
