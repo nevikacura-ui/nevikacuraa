@@ -1642,6 +1642,142 @@ async def get_membership_status(email: str):
         "days_remaining": days_remaining
     }
 
+@router.get("/membership/dashboard/{email}")
+async def get_membership_dashboard(email: str):
+    """Get membership dashboard with usage stats and active discounts"""
+    # Get active membership
+    membership = await db.memberships.find_one({
+        "email": email.lower(),
+        "status": "active"
+    })
+    
+    if not membership:
+        return {
+            "has_membership": False,
+            "message": "No active membership found"
+        }
+    
+    membership_id = str(membership.get("_id", ""))
+    membership.pop("_id", None)
+    
+    # Check if expired
+    end_date = datetime.fromisoformat(membership.get("end_date", "").replace("Z", "+00:00"))
+    now = datetime.now(timezone.utc)
+    
+    if now > end_date:
+        return {
+            "has_membership": True,
+            "status": "expired",
+            "expired_on": membership["end_date"]
+        }
+    
+    days_remaining = (end_date - now).days
+    
+    # Get usage stats
+    # Count pharmacy orders
+    pharmacy_orders = await db.pharmacy_orders.count_documents({
+        "$or": [
+            {"email": email.lower()},
+            {"patient_email": email.lower()}
+        ]
+    })
+    
+    # Count lab test bookings
+    lab_bookings = await db.lab_bookings.count_documents({
+        "$or": [
+            {"email": email.lower()},
+            {"patient_email": email.lower()}
+        ]
+    })
+    
+    # Count appointments
+    appointments = await db.appointments.count_documents({
+        "$or": [
+            {"email": email.lower()},
+            {"patient_email": email.lower()}
+        ]
+    })
+    
+    # Calculate estimated savings (based on discount rates)
+    # Pharmacy: 25% discount, Lab: 30% discount
+    # Using mock averages: Pharmacy order avg ₹500, Lab test avg ₹1000
+    pharmacy_savings = pharmacy_orders * 500 * 0.25  # 25% of ₹500 average
+    lab_savings = lab_bookings * 1000 * 0.30  # 30% of ₹1000 average
+    total_savings = pharmacy_savings + lab_savings
+    
+    # Get portal access history (which portals user has visited)
+    portal_visits = await db.portal_visits.find({"email": email.lower()}).to_list(100)
+    visited_portals = list(set([v.get("portal") for v in portal_visits if v.get("portal")]))
+    
+    # Active discounts
+    active_discounts = [
+        {
+            "service": "Orange Pharmacy",
+            "discount": "25%",
+            "description": "On all medicines and health products",
+            "color": "orange"
+        },
+        {
+            "service": "Proton Diagnostics",
+            "discount": "30%",
+            "description": "On all lab tests and packages",
+            "color": "cyan"
+        },
+        {
+            "service": "Home Collection",
+            "discount": "FREE",
+            "description": "Free home sample collection",
+            "color": "green"
+        },
+        {
+            "service": "Priority Booking",
+            "discount": "VIP",
+            "description": "Priority slots at DiaGyn clinics",
+            "color": "purple"
+        }
+    ]
+    
+    # All portals included
+    all_portals = [
+        {"name": "Evara", "category": "PCOS Care", "icon": "🌸"},
+        {"name": "Glydex", "category": "Diabetes", "icon": "💉"},
+        {"name": "Corvia", "category": "Heart Health", "icon": "❤️"},
+        {"name": "Serena", "category": "Mental Wellness", "icon": "🧘"},
+        {"name": "Thrive360", "category": "Fitness", "icon": "🏃"},
+        {"name": "Alyne", "category": "Kids Health", "icon": "👶"},
+        {"name": "Aanya", "category": "Newborn Care", "icon": "🍼"},
+        {"name": "Senova", "category": "Senior Care", "icon": "👴"},
+        {"name": "Reneu", "category": "Preventive Health", "icon": "🛡️"},
+        {"name": "DiaGyn", "category": "Clinic Services", "icon": "🏥"},
+        {"name": "Proton", "category": "Lab Tests", "icon": "🧪"},
+        {"name": "Orange", "category": "Pharmacy", "icon": "💊"}
+    ]
+    
+    return {
+        "has_membership": True,
+        "status": "active",
+        "membership": {
+            "id": membership_id,
+            "plan_name": membership.get("plan_name", "Nevika Cura ONE"),
+            "plan_type": membership.get("plan_type", "premium"),
+            "billing_cycle": membership.get("billing_cycle", "monthly"),
+            "start_date": membership.get("start_date"),
+            "end_date": membership.get("end_date"),
+            "amount_paid": membership.get("amount", 0)
+        },
+        "days_remaining": days_remaining,
+        "usage_stats": {
+            "pharmacy_orders": pharmacy_orders,
+            "lab_bookings": lab_bookings,
+            "appointments": appointments,
+            "portals_visited": len(visited_portals),
+            "estimated_savings": round(total_savings)
+        },
+        "active_discounts": active_discounts,
+        "all_portals": all_portals,
+        "visited_portals": visited_portals
+    }
+
 # ==================== FAMILY PLAN ENDPOINTS ====================
 
 @router.get("/family-plans")
