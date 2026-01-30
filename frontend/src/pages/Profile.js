@@ -14,9 +14,10 @@ import { toast } from 'sonner';
 import { 
   ArrowLeft, Calendar, FileText, Pill, User, Settings, Star, 
   FolderOpen, Upload, Trash2, RefreshCw, Eye, Download, Plus,
-  Fingerprint, Smartphone, Shield, Monitor
+  Fingerprint, Smartphone, Shield, Monitor, Crown
 } from 'lucide-react';
 import PushNotificationSettings from '@/components/PushNotificationSettings';
+import MembershipDashboard from '@/components/MembershipDashboard';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
