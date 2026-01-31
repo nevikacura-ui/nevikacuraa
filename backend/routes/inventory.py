@@ -92,12 +92,36 @@ class TestUpdate(BaseModel):
 
 @router.get("/pharmacy/inventory")
 async def get_pharmacy_inventory(staff = Depends(get_staff_user)):
-    """Get all medicines in pharmacy inventory"""
+    """Get all medicines in pharmacy inventory - combines pharmacy_inventory and medicines_catalog"""
     try:
-        medicines = await db.pharmacy_inventory.find({}).to_list(1000)
-        for med in medicines:
+        medicines = []
+        
+        # Get from pharmacy_inventory (staff-added medicines)
+        staff_medicines = await db.pharmacy_inventory.find({}).to_list(10000)
+        for med in staff_medicines:
             med['id'] = str(med.pop('_id'))
-        return {"medicines": medicines}
+            med['source'] = 'staff'
+            medicines.append(med)
+        
+        # Get from medicines_catalog (pre-loaded medicines)
+        catalog_medicines = await db.medicines_catalog.find({'active': {'$ne': False}}).to_list(10000)
+        for med in catalog_medicines:
+            med['_id'] = str(med.get('_id', ''))
+            medicines.append({
+                'id': med.get('id') or med['_id'],
+                'name': med.get('name', ''),
+                'image_url': med.get('image') or med.get('image_url', ''),
+                'mrp': med.get('price') or med.get('mrp', 0),
+                'discount_percent': med.get('discount_percent', 0),
+                'sale_price': med.get('sale_price') or med.get('price') or med.get('mrp', 0),
+                'category': med.get('category', ''),
+                'description': med.get('description', ''),
+                'stock': med.get('stock', 0),
+                'unit': med.get('unit') or med.get('form', 'strip'),
+                'source': 'catalog'
+            })
+        
+        return {"medicines": medicines, "total": len(medicines)}
     except Exception as e:
         logger.error(f"Failed to get pharmacy inventory: {e}")
         raise HTTPException(status_code=500, detail="Failed to load inventory")
