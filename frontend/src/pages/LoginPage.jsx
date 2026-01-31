@@ -32,7 +32,8 @@ const LoginPage = () => {
     
     setLoading(true);
     try {
-      const res = await fetch(`${API}/api/auth/v2/signup/send-otp`, {
+      // Try login first (for existing users)
+      const res = await fetch(`${API}/api/auth/v2/login/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -43,6 +44,15 @@ const LoginPage = () => {
       if (data.success) {
         toast.success('OTP sent to your email');
         setOtpSent(true);
+        setIsNewUser(false);
+        // Show mock OTP if provided (dev mode)
+        if (data.mock_otp) {
+          toast.info(`Dev OTP: ${data.mock_otp}`, { duration: 10000 });
+        }
+      } else if (data.detail?.includes('not found') || data.detail?.includes('not registered')) {
+        // User doesn't exist - need to sign up
+        toast.info('New user? Please provide your name to register.');
+        setIsNewUser(true);
       } else {
         toast.error(data.detail || 'Failed to send OTP');
       }
