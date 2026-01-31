@@ -157,7 +157,7 @@ async def get_public_medicines(
 async def get_pharmacy_inventory(
     staff = Depends(get_staff_user),
     page: int = 1,
-    limit: int = 50,
+    limit: int = 5000,
     search: str = None,
     form: str = None
 ):
