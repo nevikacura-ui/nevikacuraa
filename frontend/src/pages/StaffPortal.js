@@ -324,7 +324,7 @@ const StaffPortal = () => {
   }, []);
 
   // Helper to check clinic staff roles
-  const isClinicStaff = (role) => ['clinic_staff_pushpa', 'clinic_staff_amnion', 'super_admin'].includes(role);
+  const isClinicStaff = (role) => ['clinic_staff_pushpa', 'clinic_staff_amnion', 'diagyn_staff', 'super_admin'].includes(role);
   const isDoctor = (role) => ['doctor', 'doctor_pushpa', 'doctor_amnion', 'super_admin'].includes(role);
 
   // Optimized data loading - only fetch what's needed based on active tab and role
