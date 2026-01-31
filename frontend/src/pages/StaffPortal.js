@@ -2257,6 +2257,7 @@ const StaffPortal = () => {
             <TabsContent value="emergency">
               <EmergencyTab
                 staffInfo={staffInfo}
+                activeClinic={availableClinics.length > 1 ? activeClinic : staffInfo?.clinic}
                 emergencyForm={emergencyForm}
                 setEmergencyForm={setEmergencyForm}
                 foundEmergencyPatient={foundEmergencyPatient}
