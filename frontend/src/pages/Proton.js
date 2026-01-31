@@ -1161,14 +1161,9 @@ const Proton = () => {
                   <h4 className="font-medium text-[#1E293B] mb-3">Collection Centers</h4>
                   <div className="space-y-3">
                     <div className="bg-white rounded-lg p-3 border border-slate-100">
-                      <p className="font-semibold text-sm text-[#1E293B]">Proton Diagnostics - Central</p>
-                      <p className="text-xs text-slate-500 mt-1">A-4 Orange Pharmacy Building, Central Nagpur</p>
+                      <p className="font-semibold text-sm text-[#1E293B]">Proton Diagnostics - Naigaon</p>
+                      <p className="text-xs text-slate-500 mt-1">Shop no 3, Sai Darshan, Near Don Bosco School, Naigaon East 401208</p>
                       <p className="text-xs text-slate-400">Mon-Sat: 7:00 AM - 7:00 PM</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-3 border border-slate-100">
-                      <p className="font-semibold text-sm text-[#1E293B]">Proton Diagnostics - Manewada</p>
-                      <p className="text-xs text-slate-500 mt-1">Near Manewada Square</p>
-                      <p className="text-xs text-slate-400">Mon-Sat: 8:00 AM - 6:00 PM</p>
                     </div>
                   </div>
                 </div>
