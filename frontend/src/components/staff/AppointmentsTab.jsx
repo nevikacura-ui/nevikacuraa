@@ -192,6 +192,12 @@ const AppointmentCard = ({
           {isWalkIn && (
             <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-800">Walk-in</span>
           )}
+          {appt.booked_by && appt.booked_by.includes('Staff') && !isWalkIn && (
+            <span className="px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800">Staff Booked</span>
+          )}
+          {!isWalkIn && !isEmergency && !appt.booked_by?.includes('Staff') && (
+            <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-800">Online</span>
+          )}
         </div>
         <div className="text-sm text-gray-500 mt-1">
           <span>{appt.time || 'No time slot'}</span> • <span>{appt.doctor}</span> • <span>{appt.patient_phone}</span>
