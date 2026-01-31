@@ -25,9 +25,10 @@ class TestStaffLogin:
         assert response.status_code == 200, f"Login failed: {response.text}"
         data = response.json()
         assert "token" in data, "No token in response"
-        assert data.get("role") in ["super_admin", "admin"], f"Expected admin role, got: {data.get('role')}"
-        print(f"✓ Super admin login successful, role: {data.get('role')}")
-        return data["token"]
+        # Role is in staff object, not at root level
+        staff_role = data.get("staff", {}).get("role") or data.get("role")
+        assert staff_role in ["super_admin", "admin"], f"Expected admin role, got: {staff_role}"
+        print(f"✓ Super admin login successful, role: {staff_role}")
     
     def test_pharmacy_staff_login(self):
         """Test pharmacy staff login"""
