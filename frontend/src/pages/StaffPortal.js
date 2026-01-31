@@ -2630,6 +2630,10 @@ const StaffPortal = () => {
                 <Package className="w-4 h-4 mr-2" />
                 Orders
               </TabsTrigger>
+              <TabsTrigger value="inventory" data-testid="tab-pharmacy-inventory" className="bg-gradient-to-r from-green-500 to-emerald-500 text-white data-[state=active]:from-green-600 data-[state=active]:to-emerald-600">
+                <Package className="w-4 h-4 mr-2" />
+                Medicine Inventory
+              </TabsTrigger>
               <TabsTrigger value="images" data-testid="tab-pharmacy-images" className="bg-gradient-to-r from-orange-500 to-amber-500 text-white data-[state=active]:from-orange-600 data-[state=active]:to-amber-600">
                 <Image className="w-4 h-4 mr-2" />
                 Manage Images
@@ -2664,6 +2668,11 @@ const StaffPortal = () => {
                 loadData={loadData}
                 handlePharmacyStatusUpdate={handlePharmacyStatusUpdate}
               />
+            </TabsContent>
+
+            {/* Medicine Inventory Tab */}
+            <TabsContent value="inventory">
+              <MedicineInventoryTab />
             </TabsContent>
 
             {/* Medicine Images Management Tab */}
