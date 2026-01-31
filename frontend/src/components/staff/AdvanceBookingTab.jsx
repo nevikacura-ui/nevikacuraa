@@ -275,10 +275,60 @@ const AdvanceBookingTab = ({
         ))}
       </div>
       
+      {/* Step 0: Select Clinic (only for multi-clinic staff) */}
+      {step === 0 && hasMultipleClinics && (
+        <div className="space-y-4">
+          <Label className="text-base font-medium">Select Clinic</Label>
+          <div className="grid gap-2">
+            {clinicOptions.map(clinic => (
+              <button
+                key={clinic}
+                onClick={() => {
+                  setSelectedClinic(clinic);
+                  setSelectedDoctor('');
+                  setSelectedDate('');
+                  setSelectedSlot('');
+                  setStep(1);
+                }}
+                className={`p-4 border rounded-xl text-left hover:border-teal-400 hover:bg-teal-50 transition-all ${
+                  selectedClinic === clinic ? 'border-teal-500 bg-teal-50' : 'border-gray-200'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+                    <Calendar className="w-5 h-5 text-teal-600" />
+                  </div>
+                  <div>
+                    <div className="font-medium">{clinic}</div>
+                    <div className="text-xs text-gray-500">
+                      {CLINICS[clinic]?.length || 0} doctors available
+                    </div>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      
       {/* Step 1: Select Doctor */}
       {step === 1 && (
         <div className="space-y-4">
-          <Label className="text-base font-medium">Select Doctor</Label>
+          <div className="flex items-center justify-between">
+            <Label className="text-base font-medium">Select Doctor</Label>
+            {hasMultipleClinics && (
+              <Button variant="ghost" size="sm" onClick={() => setStep(0)}>
+                <ChevronLeft className="w-4 h-4 mr-1" /> Change Clinic
+              </Button>
+            )}
+          </div>
+          
+          {currentClinic && (
+            <div className="p-2 bg-teal-50 rounded-lg text-sm text-teal-700 mb-2">
+              Booking for: <strong>{currentClinic}</strong>
+            </div>
+          )}
+          
           <div className="grid gap-2">
             {clinicDoctors.map(doctor => (
               <button
