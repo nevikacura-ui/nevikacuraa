@@ -1015,7 +1015,7 @@ const Pharmacy = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { num: 1, title: 'Add Medicines', desc: 'Search or type name & quantity' },
-              { num: 2, title: 'Verify & Address', desc: 'Confirm via OTP, enter address' },
+              { num: 2, title: 'Your Details', desc: 'Enter name, phone & email' },
               { num: 3, title: 'Pharmacist Call', desc: 'We confirm order & final bill' },
               { num: 4, title: 'Delivery', desc: 'Get invoice in My Orders', success: true }
             ].map((step) => (
