@@ -1385,7 +1385,35 @@ January 30, 2026 - 14:35
 ---
 
 ## Last Updated
-January 31, 2026 - 13:55
+January 31, 2026 - 14:30
+
+## Session Update - January 31, 2026 (14:30)
+
+### Critical Bug Fix: Slot Booking Not Syncing
+
+**Root Cause:** Inconsistent date formats in the database
+- Some appointments stored as `YYYY-MM-DD` (ISO format)
+- Others stored as `DD/MM/YYYY` (legacy format)
+- The `booked-slots` API was doing exact string matching, missing appointments with different date formats
+
+**Fix Applied:**
+1. Added `normalize_date_format()` helper function to convert dates to ISO format
+2. Added `get_date_patterns()` helper to generate multiple date patterns for queries
+3. Updated `/api/appointments/booked-slots` endpoint to query with multiple date formats
+4. Updated appointment creation to normalize dates before storage
+5. Updated slot blocking check to handle legacy date formats
+
+**Files Modified:**
+- `/app/backend/server.py`:
+  - Added `normalize_date_format()` function (line ~1458)
+  - Added `get_date_patterns()` function (line ~1476)
+  - Updated `get_booked_slots()` endpoint (line ~3138)
+  - Updated appointment creation slot check (line ~2920)
+
+**Testing:**
+- Verified slots now correctly show as booked for both date formats
+- Example: Query for `2026-01-31` now finds appointments stored as `31/01/2026`
+
 
 ## Session Update - January 31, 2026 (13:55)
 
