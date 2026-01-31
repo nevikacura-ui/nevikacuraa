@@ -483,17 +483,17 @@ const Home = () => {
   const secondaryServices = services.filter(s => !s.featured);
 
   return (
-    <div className="min-h-screen bg-white relative font-body" style={{ contentVisibility: 'auto' }}>
-      {/* Subtle Background Pattern - White theme */}
+    <div className={`min-h-screen bg-gradient-to-br ${currentTheme.bgGradient} relative font-body transition-all duration-500`} style={{ contentVisibility: 'auto' }}>
+      {/* Subtle Background Pattern - Themed */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-20 -left-32 w-96 h-96 bg-gradient-to-br from-slate-50/50 to-slate-100/30 rounded-full blur-3xl" style={{animationDuration: '8s'}}></div>
-        <div className="absolute top-1/3 -right-32 w-80 h-80 bg-gradient-to-br from-teal-50/30 to-cyan-50/30 rounded-full blur-3xl" style={{animationDuration: '10s'}}></div>
-        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-slate-50/30 to-gray-50/30 rounded-full blur-3xl" style={{animationDuration: '12s'}}></div>
+        <div className={`absolute top-20 -left-32 w-96 h-96 bg-gradient-to-br ${currentTheme.bgGradient} opacity-50 rounded-full blur-3xl`} style={{animationDuration: '8s'}}></div>
+        <div className={`absolute top-1/3 -right-32 w-80 h-80 bg-gradient-to-br ${currentTheme.bgGradient} opacity-30 rounded-full blur-3xl`} style={{animationDuration: '10s'}}></div>
+        <div className={`absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br ${currentTheme.bgGradient} opacity-30 rounded-full blur-3xl`} style={{animationDuration: '12s'}}></div>
       </div>
 
       {/* Header - Zepto/Blinkit Style with Service Tabs */}
       <header 
-        className="bg-white sticky top-0 z-50 shadow-sm"
+        className={`${currentTheme.headerBg} sticky top-0 z-50 shadow-lg transition-all duration-500`}
         style={{
           transform: 'translateZ(0)',
           backfaceVisibility: 'hidden',
@@ -501,15 +501,15 @@ const Home = () => {
         }}
       >
         {/* Top Row - Logo + Actions */}
-        <div className="border-b border-slate-100">
+        <div className="border-b border-white/20">
           <div className="max-w-7xl mx-auto px-4 py-2.5">
             <div className="flex items-center justify-between">
               {/* Logo */}
               <img 
                 src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
                 alt="Nevika Cura" 
-                className="h-10 sm:h-12 w-auto object-contain cursor-pointer"
-                onClick={() => navigate('/')}
+                className="h-10 sm:h-12 w-auto object-contain cursor-pointer bg-white rounded-lg p-1"
+                onClick={() => setActiveService('home')}
                 data-testid="main-logo"
                 loading="eager"
                 fetchPriority="high"
@@ -522,7 +522,7 @@ const Home = () => {
                   size="sm"
                   onClick={() => navigate('/staff')}
                   data-testid="staff-portal-btn"
-                  className="hidden sm:flex text-xs font-medium text-slate-600 hover:text-teal-600 hover:bg-teal-50 rounded-full"
+                  className="hidden sm:flex text-xs font-medium text-white/90 hover:text-white hover:bg-white/20 rounded-full"
                 >
                   <Shield className="w-3.5 h-3.5 mr-1.5" />
                   Staff Portal
@@ -533,7 +533,7 @@ const Home = () => {
                     size="sm"
                     onClick={() => navigate('/profile')}
                     data-testid="profile-button"
-                    className="rounded-full hover:bg-slate-100"
+                    className="rounded-full hover:bg-white/20 text-white"
                   >
                     <User className="w-4 h-4" />
                   </Button>
@@ -542,7 +542,7 @@ const Home = () => {
                     size="sm"
                     onClick={() => navigate('/login')} 
                     data-testid="login-button"
-                    className="rounded-full bg-teal-500 hover:bg-teal-600 text-white text-xs px-4"
+                    className="rounded-full bg-white hover:bg-white/90 text-slate-800 text-xs px-4"
                   >
                     Login
                   </Button>
@@ -553,55 +553,71 @@ const Home = () => {
         </div>
 
         {/* Row 2 - Main Service Tabs (Zepto style) */}
-        <div className="border-b border-slate-100 bg-gradient-to-b from-white to-slate-50/50">
+        <div className="bg-white/10 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide">
-              {/* Nevika Cura */}
+              {/* Nevika Cura / Home */}
               <button
-                onClick={() => navigate('/')}
-                className="flex-shrink-0 px-4 py-2 bg-white border-2 border-teal-500 rounded-full flex items-center gap-2 hover:shadow-md transition-all"
+                onClick={() => setActiveService('home')}
+                className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
+                  activeService === 'home' 
+                    ? 'bg-white text-teal-600 shadow-lg' 
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
                 data-testid="nav-nevikacura"
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center">
-                  <Heart className="w-4 h-4 text-white" />
+                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'home' ? 'from-teal-500 to-cyan-500' : 'from-white/30 to-white/10'} flex items-center justify-center`}>
+                  <Heart className={`w-4 h-4 ${activeService === 'home' ? 'text-white' : 'text-white'}`} />
                 </div>
-                <span className="font-bold text-teal-600 text-sm whitespace-nowrap">Nevika Cura</span>
+                <span className="font-bold text-sm whitespace-nowrap">Nevika Cura</span>
               </button>
               
-              {/* DiaGyn - Large Zepto style */}
+              {/* DiaGyn */}
               <button
-                onClick={() => navigate('/diagyn')}
-                className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full flex items-center gap-2 hover:border-teal-300 hover:shadow-md transition-all"
+                onClick={() => setActiveService('diagyn')}
+                className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
+                  activeService === 'diagyn' 
+                    ? 'bg-white text-teal-600 shadow-lg' 
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
                 data-testid="nav-diagyn"
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center">
+                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'diagyn' ? 'from-teal-500 to-cyan-500' : 'from-white/30 to-white/10'} flex items-center justify-center`}>
                   <Stethoscope className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-semibold text-slate-700 text-sm whitespace-nowrap">DiaGyn</span>
+                <span className="font-semibold text-sm whitespace-nowrap">DiaGyn</span>
               </button>
               
-              {/* Proton - Large Zepto style */}
+              {/* Proton */}
               <button
-                onClick={() => navigate('/proton')}
-                className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full flex items-center gap-2 hover:border-purple-300 hover:shadow-md transition-all"
+                onClick={() => setActiveService('proton')}
+                className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
+                  activeService === 'proton' 
+                    ? 'bg-white text-blue-600 shadow-lg' 
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
                 data-testid="nav-proton"
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center">
+                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'proton' ? 'from-blue-500 to-indigo-500' : 'from-white/30 to-white/10'} flex items-center justify-center`}>
                   <FlaskConical className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-semibold text-slate-700 text-sm whitespace-nowrap">Proton</span>
+                <span className="font-semibold text-sm whitespace-nowrap">Proton</span>
               </button>
               
-              {/* Orange - Large Zepto style */}
+              {/* Orange Pharmacy */}
               <button
-                onClick={() => navigate('/pharmacy')}
-                className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full flex items-center gap-2 hover:border-orange-300 hover:shadow-md transition-all"
+                onClick={() => setActiveService('pharmacy')}
+                className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
+                  activeService === 'pharmacy' 
+                    ? 'bg-white text-orange-600 shadow-lg' 
+                    : 'bg-white/20 text-white hover:bg-white/30'
+                }`}
                 data-testid="nav-orange"
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center">
+                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'pharmacy' ? 'from-orange-500 to-amber-500' : 'from-white/30 to-white/10'} flex items-center justify-center`}>
                   <Package className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-semibold text-slate-700 text-sm whitespace-nowrap">Orange</span>
+                <span className="font-semibold text-sm whitespace-nowrap">Orange</span>
               </button>
             </div>
           </div>
