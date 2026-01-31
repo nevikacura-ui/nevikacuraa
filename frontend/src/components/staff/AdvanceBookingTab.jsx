@@ -36,8 +36,8 @@ const AdvanceBookingTab = ({
   const currentClinic = selectedClinic || activeClinic || staffInfo?.clinic;
   const clinicDoctors = CLINICS[currentClinic] || [];
   
-  // Booking flow steps
-  const [step, setStep] = useState(1); // 1: Doctor, 2: Date, 3: Slot, 4: Patient Details
+  // Booking flow steps: 0 (Clinic if multi), 1: Doctor, 2: Date, 3: Slot, 4: Patient Details
+  const [step, setStep] = useState(hasMultipleClinics ? 0 : 1);
   
   // Form state
   const [selectedDoctor, setSelectedDoctor] = useState('');
