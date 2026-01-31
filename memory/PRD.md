@@ -1389,7 +1389,36 @@ January 31, 2026 - 14:30
 
 ## Session Update - January 31, 2026 (14:48)
 
-### Unified Staff Portal for Both Clinics ✅
+### Color Theme System (Zepto-Style) ✅
+
+**Implemented distinct color themes for each service page:**
+
+1. **Nevika Cura (Home)** - `/`
+   - Clean white background
+   - Subtle gray blobs for visual interest
+   - Neutral design as the landing hub
+
+2. **DiaGyn (Appointments)** - `/diagyn`
+   - Teal/cyan gradient: `from-teal-50 via-cyan-50/50 to-white`
+   - Teal accent bar at top
+   - Header border: teal-100
+
+3. **Proton (Lab Tests)** - `/proton`
+   - Blue/indigo gradient: `from-blue-50 via-indigo-50/30 to-white`
+   - Blue-purple accent bar at top
+   - Healthcare blue theme
+
+4. **Orange Pharmacy** - `/pharmacy`
+   - Orange/amber gradient: `from-orange-50 via-amber-50/30 to-white`
+   - Orange accent bar at top
+   - Warm, inviting pharmacy theme
+
+**Files Modified:**
+- `/app/frontend/src/pages/Home.js` - White background
+- `/app/frontend/src/pages/DiaGyn.js` - Teal theme
+- `/app/frontend/src/pages/Proton.js` - Blue theme
+- `/app/frontend/src/pages/Pharmacy.js` - Orange theme
+
 
 **Created `staff_diagyn` account:**
 - Username: `staff_diagyn`
