@@ -1278,7 +1278,7 @@ const DiaGyn = () => {
               <img 
                 src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg" 
                 alt="DiaGyn" 
-                className="h-10 w-auto"
+                className="h-10 w-auto rounded-lg bg-white p-1"
                 data-testid="diagyn-logo"
               />
             </div>
