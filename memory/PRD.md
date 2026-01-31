@@ -1327,7 +1327,63 @@ January 30, 2026 - 14:35
 
 ---
 
-## Last Updated
-January 31, 2026 - 10:00
+## January 31, 2026 - Session Updates
 
+### P0: Order Cancellation for Admin ✅
+- **Backend**: Endpoint `/api/admin/orders/cancel/{order_type}/{order_id}` fully functional
+- **Frontend**: Added cancel buttons to `PharmacyOrdersTab.jsx` and `DiagnosticsOrdersTab.jsx`
+- Only visible to admin/super_admin roles
+- Confirmation dialog before cancelling
+- Orders marked as 'cancelled' with timestamp and cancelled_by fields
+
+### P1: Disable Guest Checkout OTP Verification ✅
+- **Pharmacy.js**: OTP step (step 2) is now skipped
+  - Email is now mandatory (validated with `@` check)
+  - Flow: Cart → Details → Pay (no verify step)
+  - Step label changed from "Verify" to "Details"
+- **Proton.js**: OTP step (step 2) is now skipped
+  - Email is now mandatory for report delivery
+  - Flow: Select Tests → Details → Book (no verify step)
+  - Step label changed from "Verify" to "Details"
+- **DiaGyn.js**: Already had OTP skip (done in previous session)
+
+### Backlog Items Completed ✅
+- **API Verification**: `/api/diagnostics/trends/{patient_id}` and `/api/appointments/waitlist/*` endpoints verified working
+- **Face ID Mobile Fix**: Enhanced camera constraints for better mobile compatibility
+  - Added `{ ideal: 'user' }` facingMode
+  - Added resolution constraints (640x480 ideal)
+  - Explicit attribute setting via JavaScript
+
+### Testing Status
+- All 13 backend tests passed (100%)
+- Frontend code review verified all features
+- Test file created: `/app/backend/tests/test_otp_skip_cancel_order.py`
+
+---
+
+## Updated Backlog
+
+### P0 (Critical) - All Complete ✅
+- ~~Order Cancellation for Admin~~ ✅
+- ~~Disable Guest Checkout OTP~~ ✅
+
+### P1 (High Priority)
+- ⏸️ "Consult Expert" link (blocked - needs URL from user)
+- Waitlist notification backend implementation
+- Server.py modularization (6691 lines)
+
+### P2 (Medium Priority)
+- Migrate 4266 medicines from static file to database
+- Break down StaffPortal.js component
+- Real AI/ML for triage and predictions
+
+### P3 (Future)
+- Video teleconsultation
+- Apple Watch App
+- AR Clinic Navigation
+
+---
+
+## Last Updated
+January 31, 2026 - 12:30
 
