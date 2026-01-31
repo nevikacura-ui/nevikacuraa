@@ -206,7 +206,9 @@ const CashfreeCheckout = ({
               </>
             ) : (
               <div className="text-center py-4 bg-amber-50 rounded-lg border border-amber-200">
-                <p className="text-amber-700 font-medium">Amount to be confirmed by pharmacist</p>
+                <p className="text-amber-700 font-medium">
+                  {orderDetails.type === 'pharmacy' ? 'Amount to be confirmed by pharmacist' : 'Amount to be confirmed by lab'}
+                </p>
                 <p className="text-sm text-amber-600 mt-1">You'll receive a call with the final bill</p>
               </div>
             )}
