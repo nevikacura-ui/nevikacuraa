@@ -314,9 +314,9 @@ const SplashScreen = ({ onComplete, user }) => {
   
   // 3 icons - Calendar, Pharmacy, Blood Test (simple fade-in, no loop)
   const icons = [
-    { Icon: Calendar, bgColor: 'bg-blue-200/80', iconColor: 'text-blue-600', label: 'Appointments' },
-    { Icon: Pill, bgColor: 'bg-orange-200/80', iconColor: 'text-orange-600', label: 'Pharmacy' },
-    { Icon: TestTube, bgColor: 'bg-purple-200/80', iconColor: 'text-purple-600', label: 'Lab Tests' },
+    { Icon: Calendar, bgColor: 'bg-blue-200/80', iconColor: 'text-blue-600', label: 'Appointments', path: '/diagyn' },
+    { Icon: Pill, bgColor: 'bg-orange-200/80', iconColor: 'text-orange-600', label: 'Pharmacy', path: '/pharmacy' },
+    { Icon: TestTube, bgColor: 'bg-purple-200/80', iconColor: 'text-purple-600', label: 'Lab Tests', path: '/proton' },
   ];
   
   return (
