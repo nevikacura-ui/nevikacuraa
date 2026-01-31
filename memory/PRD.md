@@ -403,7 +403,7 @@ January 29, 2026 - 22:30
 - Auto-refill toggle option
 
 **9. Old Age Homes Directory**
-- 4 Nagpur locations listed
+- 4 Naigaon locations listed
 - Type (Trust/Paid/Medical Care)
 - Emergency availability indicator
 - Direct call buttons
@@ -1261,7 +1261,7 @@ January 30, 2026 - 14:35
 
 ### 7. Content Updates ✅
 - **Footer:** Changed from "Made with love in India" to "Doctor-Led. Patient-Focused. Designed, Managed & Owned by Nevika Cura Doctors."
-- **Senova:** Old age homes changed from Nagpur to Mumbai-Vasai region
+- **Senova:** Old age homes changed from Naigaon to Mumbai-Vasai region
 - **Proton:** Collection centre address updated to "Shop no 3, Sai Darshan, Near Don Bosco School, Naigaon East 401208"
 
 ### 8. OTP System ✅

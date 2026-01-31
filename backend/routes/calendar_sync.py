@@ -89,9 +89,9 @@ def generate_ical_event(appointment: dict, clinic_details: dict = None) -> str:
     if clinic_details:
         location = f"{clinic}, {clinic_details.get('address', '')}"
     elif "Pushpa" in clinic:
-        location = "Pushpa Clinic, Nagpur"
+        location = "Pushpa Clinic, Naigaon"
     elif "Amnion" in clinic:
-        location = "Amnion Clinic, Nagpur"
+        location = "Amnion Clinic, Naigaon"
     
     # Build iCal content
     ical = f"""BEGIN:VCALENDAR
@@ -159,9 +159,9 @@ def generate_google_calendar_url(appointment: dict) -> str:
     
     location = clinic
     if "Pushpa" in clinic:
-        location = "Pushpa Clinic, Nagpur"
+        location = "Pushpa Clinic, Naigaon"
     elif "Amnion" in clinic:
-        location = "Amnion Clinic, Nagpur"
+        location = "Amnion Clinic, Naigaon"
     
     params = {
         "action": "TEMPLATE",

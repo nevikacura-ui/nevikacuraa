@@ -192,7 +192,7 @@ class TestPharmacy:
             "medicines": [
                 {"name": "Paracetamol 500mg", "quantity": 2, "price": 25}
             ],
-            "delivery_address": "123 Test Street, Nagpur"
+            "delivery_address": "123 Test Street, Naigaon"
         })
         assert response.status_code == 200
         data = response.json()

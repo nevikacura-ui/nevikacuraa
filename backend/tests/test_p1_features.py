@@ -123,7 +123,7 @@ class TestSubscriptionBox:
             "patient_name": "TEST_Subscription_Patient",
             "patient_phone": test_phone,
             "patient_email": "test@example.com",
-            "address": "123 Test Street, Nagpur",
+            "address": "123 Test Street, Naigaon",
             "medicines": [
                 {"name": "Metformin 500mg", "quantity": 30},
                 {"name": "Amlodipine 5mg", "quantity": 30}
@@ -146,7 +146,7 @@ class TestSubscriptionBox:
         response = requests.post(f"{BASE_URL}/api/pharmacy/subscription-box", json={
             "patient_name": "TEST_BiWeekly_Patient",
             "patient_phone": test_phone,
-            "address": "456 Test Avenue, Nagpur",
+            "address": "456 Test Avenue, Naigaon",
             "medicines": [{"name": "Vitamin D3", "quantity": 14}],
             "frequency": "bi-weekly"
         })
@@ -176,7 +176,7 @@ class TestSubscriptionBox:
         create_response = requests.post(f"{BASE_URL}/api/pharmacy/subscription-box", json={
             "patient_name": "TEST_Pause_Patient",
             "patient_phone": test_phone,
-            "address": "789 Test Road, Nagpur",
+            "address": "789 Test Road, Naigaon",
             "medicines": [{"name": "Test Medicine", "quantity": 30}],
             "frequency": "monthly"
         })
@@ -200,7 +200,7 @@ class TestSubscriptionBox:
         create_response = requests.post(f"{BASE_URL}/api/pharmacy/subscription-box", json={
             "patient_name": "TEST_Resume_Patient",
             "patient_phone": test_phone,
-            "address": "101 Test Lane, Nagpur",
+            "address": "101 Test Lane, Naigaon",
             "medicines": [{"name": "Test Medicine 2", "quantity": 30}],
             "frequency": "monthly"
         })
