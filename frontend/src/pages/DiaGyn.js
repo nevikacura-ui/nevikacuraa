@@ -1271,9 +1271,9 @@ const DiaGyn = () => {
                 size="icon"
                 onClick={() => step === 1 ? navigate('/') : setStep(step - 1)}
                 data-testid="back-button"
-                className="rounded-full hover:bg-[#CAE9FF]/50"
+                className="rounded-full bg-white/20 hover:bg-white/30 text-white"
               >
-                <ArrowLeft className="w-5 h-5 text-[#1B4965]" />
+                <ArrowLeft className="w-5 h-5" />
               </Button>
               <img 
                 src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg" 
