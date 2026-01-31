@@ -29,6 +29,33 @@ Build a comprehensive healthcare application named "Nevika Cura" that enhances s
 
 ## What's Been Implemented
 
+### January 31, 2026 - Zepto-Style Theme Switching (COMPLETED)
+- ✅ **Dynamic Service Tabs** - Home page now has Zepto-style service tabs
+- ✅ **Theme Configurations:**
+  - **Nevika Cura (Home)**: White/clean header with teal accent tabs
+  - **DiaGyn**: Teal/cyan gradient header and background
+  - **Proton**: Blue/indigo gradient header and background
+  - **Orange**: Orange/amber gradient header and background
+- ✅ **Tab-Based Navigation** - Clicking tabs changes entire page theme dynamically
+- ✅ **Service Quick Actions** - Each service tab shows relevant quick action buttons
+
+### January 31, 2026 - QR Code Email Fix (COMPLETED)
+- ✅ **CID Attachments** - Changed QR codes from base64 data URIs to CID attachments for better email client compatibility
+- ✅ **Fallback Design** - Booking ID is now prominently displayed as primary identifier
+- ✅ **Updated Email Templates:**
+  - Appointment confirmation emails
+  - Pharmacy order emails
+  - Lab test booking emails
+- ✅ **Email Sender Updated** - Changed from `noreply@nevikacura.com` to `onboarding@resend.dev` for better delivery
+
+### January 31, 2026 - WhatsApp API Guide Provided
+- ✅ **Baileys Integration Guide** - Comprehensive playbook for WhatsApp Web API integration with:
+  - Node.js microservice for WhatsApp protocol
+  - FastAPI backend integration
+  - React QR code scanner component
+  - Session persistence and reconnection handling
+  - Task bot command examples
+
 ### January 28, 2026 - UI/UX Enhancements (Blinkit/Zepto Style)
 - ✅ **Portal Scroll Bar - 12 Portals:**
   1. Evara - Women's Health
