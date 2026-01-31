@@ -190,13 +190,15 @@ class TestDiagnosticsOrderFlow:
     def test_diagnostics_order_creation_without_otp(self):
         """Test that diagnostics order can be created without OTP verification"""
         from datetime import datetime, timedelta
+        import random
         
-        # Create a test order - this simulates the guest checkout flow
+        # Create a test order with unique phone - this simulates the guest checkout flow
+        unique_phone = f"98765{random.randint(10000, 99999)}"
         preferred_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
         order_data = {
             "tests": ["CBC (Complete Blood Count)", "Lipid Profile"],
             "patient_name": "Test Patient OTP Skip",
-            "patient_phone": "9876543210",
+            "patient_phone": unique_phone,
             "patient_email": "test@example.com",
             "patient_address": "123 Test Street, Mumbai",
             "preferred_date": preferred_date,
