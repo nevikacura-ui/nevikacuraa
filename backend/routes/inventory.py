@@ -289,10 +289,39 @@ async def delete_medicine(medicine_id: str, staff = Depends(get_staff_user)):
 
 @router.get("/diagnostics/inventory")
 async def get_diagnostics_inventory(staff = Depends(get_staff_user)):
-    """Get all tests in diagnostics inventory"""
+    """Get all tests in diagnostics inventory - combines diagnostics_inventory and diagnostic_tests_catalog"""
     try:
-        tests = await db.diagnostics_inventory.find({}).to_list(1000)
-        for test in tests:
+        tests = []
+        
+        # Get from diagnostics_inventory (staff-added tests)
+        staff_tests = await db.diagnostics_inventory.find({}).to_list(10000)
+        for test in staff_tests:
+            test['id'] = str(test.pop('_id'))
+            test['source'] = 'staff'
+            tests.append(test)
+        
+        # Get from diagnostic_tests_catalog (pre-loaded tests)
+        catalog_tests = await db.diagnostic_tests_catalog.find({'active': {'$ne': False}}).to_list(10000)
+        for test in catalog_tests:
+            tests.append({
+                'id': test.get('id') or str(test.get('_id', '')),
+                'name': test.get('name', ''),
+                'image_url': test.get('image') or test.get('image_url', ''),
+                'cost': test.get('price') or test.get('cost', 0),
+                'discount_percent': test.get('discount_percent', 0),
+                'sale_price': test.get('sale_price') or test.get('price') or test.get('cost', 0),
+                'category': test.get('category', ''),
+                'description': test.get('description', ''),
+                'report_time': test.get('report_time') or test.get('turnaround_time', ''),
+                'sample_type': test.get('sample_type', ''),
+                'preparation': test.get('preparation') or test.get('instructions', ''),
+                'source': 'catalog'
+            })
+        
+        return {"tests": tests, "total": len(tests)}
+    except Exception as e:
+        logger.error(f"Failed to get diagnostics inventory: {e}")
+        raise HTTPException(status_code=500, detail="Failed to load inventory")
             test['id'] = str(test.pop('_id'))
         return {"tests": tests}
     except Exception as e:
