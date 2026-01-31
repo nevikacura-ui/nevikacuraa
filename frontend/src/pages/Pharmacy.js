@@ -1607,7 +1607,7 @@ const Pharmacy = () => {
                   )}
                 </div>
                 <div className="sm:col-span-2">
-                  <Label className="text-slate-600 text-sm">Email (Optional)</Label>
+                  <Label className="text-slate-600 text-sm">Email <span className="text-red-500">*</span></Label>
                   <Input
                     type="email"
                     value={patientInfo.email || ''}
@@ -1615,7 +1615,9 @@ const Pharmacy = () => {
                     placeholder="your@email.com"
                     className="mt-1.5 rounded-xl border-orange-200 focus:border-orange-400"
                     data-testid="patient-email"
+                    required
                   />
+                  <p className="text-xs text-slate-500 mt-1">Required for order updates and invoice</p>
                 </div>
               </div>
             </Card>
