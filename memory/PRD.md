@@ -1267,7 +1267,7 @@ January 30, 2026 - 14:35
 ### 8. OTP System ✅
 - Twilio SMS OTP is already integrated and working
 - Demo OTP only shows when Twilio fails (fallback mode)
-- Real SMS sent via Twilio Verify Service
+- ~~Real SMS sent via Twilio Verify Service~~ **REMOVED - SMS OTP disabled to reduce costs**
 
 ---
 
@@ -1277,20 +1277,57 @@ January 30, 2026 - 14:35
 - `/app/backend/routes/inventory.py` - Inventory management APIs
 - `/app/frontend/src/components/staff/MedicineInventoryTab.jsx`
 - `/app/frontend/src/components/staff/TestInventoryTab.jsx`
+- `/app/frontend/src/pages/LoginPage.jsx` - **NEW** Dedicated login page
 
 ### Modified Files
 - `/app/backend/server.py` - Route decorators, coupon validation, image upload
-- `/app/frontend/src/pages/Home.js` - New Zepto-style header
+- `/app/frontend/src/pages/Home.js` - New Zepto-style header with icon tabs
 - `/app/frontend/src/pages/StaffPortal.js` - Inventory tabs
 - `/app/frontend/src/components/CashfreeCheckout.jsx` - Coupon support
 - `/app/frontend/src/components/Footer.jsx` - New tagline
 - `/app/frontend/src/pages/Senova.js` - Mumbai-Vasai addresses
-- `/app/frontend/src/pages/Proton.js` - Naigaon address
+- `/app/frontend/src/pages/Proton.js` - Naigaon address, email required
+- `/app/frontend/src/pages/Pharmacy.js` - Email required
+- `/app/frontend/src/pages/DiaGyn.js` - Email required, OTP verification skipped
 - `/app/frontend/src/components/PortalScrollBar.jsx` - Sticky position fix
+- `/app/frontend/src/App.js` - Login page routing
+
+---
+
+## Major Updates - January 31, 2026 (Second Batch)
+
+### 1. New Dedicated Login Page ✅
+- Removed login modal/dropdown
+- Created `/login` page with three options:
+  - Email + OTP (Recommended, "Best" badge)
+  - Email + Password (Traditional)
+  - WhatsApp + OTP (Coming Soon placeholder)
+- Staff Portal Login shown separately at bottom
+- No SMS OTP option
+
+### 2. Inventory Export Options ✅
+- CSV, Excel (.xls), PDF export buttons added to:
+  - Medicine Inventory (Pharmacy staff)
+  - Test Inventory (Diagnostics staff)
+
+### 3. Email Now Required ✅
+- Pharmacy orders: Email required for order updates
+- Proton lab tests: Email required for report delivery
+- DiaGyn appointments: Email required for confirmation
+- OTP verification temporarily skipped (until WhatsApp API ready)
+
+### 4. Header Icons Fixed ✅
+- DiaGyn: Pink/Rose gradient with Stethoscope icon
+- Proton: Purple/Indigo gradient with FlaskConical icon
+- Orange: Orange/Amber gradient with Package icon
+
+### 5. SMS/Twilio Removed ✅
+- SMS OTP option removed from all auth flows
+- Cost savings for the clinic
 
 ---
 
 ## Last Updated
-January 31, 2026 - 09:00
+January 31, 2026 - 10:00
 
 
