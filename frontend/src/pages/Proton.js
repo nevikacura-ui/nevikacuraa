@@ -1128,7 +1128,7 @@ const Proton = () => {
                   </div>
                   <h4 className="font-semibold text-[#1E293B]">Visit Center</h4>
                   <p className="text-xs text-slate-500 mt-1">Walk-in to our collection center</p>
-                  <p className="text-xs text-slate-400 mt-2">Central Nagpur & Manewada</p>
+                  <p className="text-xs text-slate-400 mt-2">Naigaon East Collection Center</p>
                 </button>
               </div>
               
