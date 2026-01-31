@@ -154,37 +154,79 @@ async def get_public_medicines(
 # ============ Staff Pharmacy Inventory Endpoints ============
 
 @router.get("/pharmacy/inventory")
-async def get_pharmacy_inventory(staff = Depends(get_staff_user)):
-    """Get all medicines in pharmacy inventory - combines pharmacy_inventory and medicines_catalog"""
+async def get_pharmacy_inventory(
+    staff = Depends(get_staff_user),
+    page: int = 1,
+    limit: int = 50,
+    search: str = None,
+    form: str = None
+):
+    """Get all medicines in pharmacy inventory - includes 4266 static medicines"""
     try:
+        # Start with static inventory (4266 medicines)
+        all_medicines = MEDICINE_INVENTORY.copy()
+        
+        # Filter by search
+        if search:
+            search_lower = search.lower()
+            all_medicines = [m for m in all_medicines if search_lower in m.get('name', '').lower()]
+        
+        # Filter by form/category
+        if form and form.lower() != 'all':
+            form_lower = form.lower()
+            all_medicines = [m for m in all_medicines if form_lower in m.get('form', '').lower()]
+        
+        # Get unique forms for filter
+        forms = list(set(m.get('form', 'Other') for m in MEDICINE_INVENTORY))
+        
+        # Paginate
+        total = len(all_medicines)
+        skip = (page - 1) * limit
+        paginated = all_medicines[skip:skip + limit]
+        
+        # Format medicines
         medicines = []
-        
-        # Get from pharmacy_inventory (staff-added medicines)
-        staff_medicines = await db.pharmacy_inventory.find({}).to_list(10000)
-        for med in staff_medicines:
-            med['id'] = str(med.pop('_id'))
-            med['source'] = 'staff'
-            medicines.append(med)
-        
-        # Get from medicines_catalog (pre-loaded medicines)
-        catalog_medicines = await db.medicines_catalog.find({'active': {'$ne': False}}).to_list(10000)
-        for med in catalog_medicines:
-            med['_id'] = str(med.get('_id', ''))
+        for med in paginated:
             medicines.append({
-                'id': med.get('id') or med['_id'],
+                'id': med.get('name', '').replace(' ', '_'),
                 'name': med.get('name', ''),
-                'image_url': med.get('image') or med.get('image_url', ''),
-                'mrp': med.get('price') or med.get('mrp', 0),
-                'discount_percent': med.get('discount_percent', 0),
-                'sale_price': med.get('sale_price') or med.get('price') or med.get('mrp', 0),
-                'category': med.get('category', ''),
-                'description': med.get('description', ''),
-                'stock': med.get('stock', 0),
-                'unit': med.get('unit') or med.get('form', 'strip'),
-                'source': 'catalog'
+                'form': med.get('form', 'Other'),
+                'category': med.get('form', 'Other'),
+                'mrp': 0,
+                'sale_price': 0,
+                'discount_percent': 0,
+                'stock': 100,
+                'unit': med.get('form', 'unit'),
+                'source': 'static'
             })
         
-        return {"medicines": medicines, "total": len(medicines)}
+        # Also add staff-added medicines from DB
+        if db:
+            staff_medicines = await db.pharmacy_inventory.find({}).to_list(1000)
+            for med in staff_medicines:
+                med_obj = {
+                    'id': str(med.pop('_id', '')),
+                    'name': med.get('name', ''),
+                    'form': med.get('unit', 'Other'),
+                    'category': med.get('category', ''),
+                    'mrp': med.get('mrp', 0),
+                    'sale_price': med.get('sale_price', 0),
+                    'discount_percent': med.get('discount_percent', 0),
+                    'stock': med.get('stock', 0),
+                    'unit': med.get('unit', 'unit'),
+                    'source': 'staff'
+                }
+                medicines.insert(0, med_obj)  # Staff-added at top
+                total += 1
+        
+        return {
+            "medicines": medicines,
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "total_pages": (total + limit - 1) // limit,
+            "categories": sorted(forms)
+        }
     except Exception as e:
         logger.error(f"Failed to get pharmacy inventory: {e}")
         raise HTTPException(status_code=500, detail="Failed to load inventory")
