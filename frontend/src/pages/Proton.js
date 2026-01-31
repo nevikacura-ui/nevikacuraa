@@ -515,6 +515,11 @@ const Proton = () => {
       toast.error('Please select a preferred date');
       return;
     }
+    // Validate email
+    if (!patientInfo.email || !patientInfo.email.includes('@')) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
     // Validate address for home collection
     if (collectionType === 'home' && !patientInfo.address?.trim()) {
       toast.error('Please enter your address for home sample collection');
