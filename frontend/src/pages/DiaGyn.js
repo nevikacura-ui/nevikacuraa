@@ -398,7 +398,11 @@ const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDa
     );
   }
 
-  const unbookedSlots = slots.filter(slot => !bookedSlots.includes(slot));
+  // Safety check for slots array
+  const safeSlots = Array.isArray(slots) ? slots : [];
+  const safeBookedSlots = Array.isArray(bookedSlots) ? bookedSlots : [];
+  
+  const unbookedSlots = safeSlots.filter(slot => !safeBookedSlots.includes(slot));
 
   if (unbookedSlots.length === 0) {
     return (
