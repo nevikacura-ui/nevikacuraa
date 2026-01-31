@@ -2262,7 +2262,12 @@ const StaffPortal = () => {
                 staffInfo={staffInfo}
                 activeClinic={availableClinics.length > 1 ? activeClinic : staffInfo?.clinic}
                 availableClinics={availableClinics}
-                onBookingComplete={() => fetchTodayAppointments()}
+                onBookingComplete={(bookingData) => {
+                  // Refresh appointments list after booking
+                  loadAppointmentsData();
+                  // Show success message
+                  toast.success(`Appointment booked: ${bookingData?.booking_id || 'Success'}`);
+                }}
               />
             </TabsContent>
             
