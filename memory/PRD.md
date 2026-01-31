@@ -1387,32 +1387,42 @@ January 30, 2026 - 14:35
 ## Last Updated
 January 31, 2026 - 14:30
 
-## Session Update - January 31, 2026 (14:30)
+## Session Update - January 31, 2026 (14:48)
 
-### Critical Bug Fix: Slot Booking Not Syncing
+### Unified Staff Portal for Both Clinics ✅
 
-**Root Cause:** Inconsistent date formats in the database
-- Some appointments stored as `YYYY-MM-DD` (ISO format)
-- Others stored as `DD/MM/YYYY` (legacy format)
-- The `booked-slots` API was doing exact string matching, missing appointments with different date formats
+**Created `staff_diagyn` account:**
+- Username: `staff_diagyn`
+- Password: `diagyn123`
+- Role: `diagyn_staff`
+- Access to both Pushpa Clinic and Amnion Clinic
 
-**Fix Applied:**
-1. Added `normalize_date_format()` helper function to convert dates to ISO format
-2. Added `get_date_patterns()` helper to generate multiple date patterns for queries
-3. Updated `/api/appointments/booked-slots` endpoint to query with multiple date formats
-4. Updated appointment creation to normalize dates before storage
-5. Updated slot blocking check to handle legacy date formats
+**UI Features Added:**
+1. **Clinic Toggle Bar** - Purple gradient bar at the top with two buttons
+   - Pushpa Clinic (orange when active)
+   - Amnion Clinic (teal when active)
+2. **"Currently Managing: [Clinic Name]"** - Clear indicator below toggle
+3. **Header Badge** - Color-coded badge showing active clinic
+4. **Toast Notification** - Shows "Switched to [Clinic]" on toggle
+5. **Automatic Data Refresh** - Appointments and walk-ins reload on switch
 
 **Files Modified:**
-- `/app/backend/server.py`:
-  - Added `normalize_date_format()` function (line ~1458)
-  - Added `get_date_patterns()` function (line ~1476)
-  - Updated `get_booked_slots()` endpoint (line ~3138)
-  - Updated appointment creation slot check (line ~2920)
+- `/app/frontend/src/pages/StaffPortal.js`:
+  - Added `activeClinic` and `availableClinics` state
+  - Added `handleClinicSwitch()` function
+  - Added clinic toggle UI component
+  - Updated `loadAppointmentsData()` to use activeClinic
+  - Added `diagyn_staff` to `isClinicStaff()` check
+- `/app/frontend/src/pages/staff/staffUtils.js`:
+  - Confirmed Dr. Neha Patel (not Jha) in CLINICS config
+- `/app/backend/routes/staff.py`:
+  - Already returns `clinics` array for multi-clinic access
+- Database: Created `staff_diagyn` account with both clinics
 
-**Testing:**
-- Verified slots now correctly show as booked for both date formats
-- Example: Query for `2026-01-31` now finds appointments stored as `31/01/2026`
+### Slot Booking Fix (from earlier) ✅
+- Fixed date format inconsistency (YYYY-MM-DD vs DD/MM/YYYY)
+- Added `normalize_date_format()` and `get_date_patterns()` helpers
+- Updated booked-slots endpoint to query with multiple date formats
 
 
 ## Session Update - January 31, 2026 (13:55)
