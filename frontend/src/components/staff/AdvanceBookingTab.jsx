@@ -252,7 +252,7 @@ const AdvanceBookingTab = ({
     <Card className="p-6 max-w-lg" data-testid="advance-booking-tab">
       <div className="flex items-center gap-2 mb-4">
         <Calendar className="w-5 h-5 text-teal-600" />
-        <h2 className="font-semibold text-lg">Advance Booking - {currentClinic}</h2>
+        <h2 className="font-semibold text-lg">Book Appointment {currentClinic ? `- ${currentClinic}` : ''}</h2>
       </div>
       
       <p className="text-sm text-gray-500 mb-4">
@@ -261,7 +261,7 @@ const AdvanceBookingTab = ({
       
       {/* Progress indicator */}
       <div className="flex items-center gap-2 mb-6">
-        {[1, 2, 3, 4].map(s => (
+        {(hasMultipleClinics ? [0, 1, 2, 3, 4] : [1, 2, 3, 4]).map(s => (
           <div key={s} className="flex items-center">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
               step > s ? 'bg-green-500 text-white' : 
