@@ -689,7 +689,7 @@ const Senova = () => {
                 Nearby Old Age Homes
               </h3>
               <p className="text-sm text-slate-600">
-                Directory of old age homes in Nagpur for long-term care planning or emergency relocation.
+                Directory of old age homes in Mumbai-Vasai region for long-term care planning or emergency relocation.
               </p>
               
               <div className="space-y-3">
