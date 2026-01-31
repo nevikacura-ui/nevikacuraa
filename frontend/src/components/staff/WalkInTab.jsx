@@ -13,6 +13,7 @@ import {
 
 const WalkInTab = ({
   staffInfo,
+  activeClinic,
   walkInForm,
   setWalkInForm,
   foundWalkInPatient,
@@ -28,11 +29,13 @@ const WalkInTab = ({
   loading,
   handleWalkInBooking
 }) => {
-  const clinicDoctors = CLINICS[staffInfo?.clinic] || [];
+  // Use activeClinic for multi-clinic staff, otherwise use staffInfo.clinic
+  const currentClinic = activeClinic || staffInfo?.clinic;
+  const clinicDoctors = CLINICS[currentClinic] || [];
 
   return (
     <Card className="p-6 max-w-lg" data-testid="walkin-tab-content">
-      <h2 className="font-semibold text-lg mb-4">Book Walk-in Appointment - {staffInfo?.clinic}</h2>
+      <h2 className="font-semibold text-lg mb-4">Book Walk-in Appointment - {currentClinic}</h2>
       <div className="space-y-4">
         {/* Patient Lookup Section */}
         <div className="p-4 bg-teal-50 border border-teal-200 rounded-xl">
