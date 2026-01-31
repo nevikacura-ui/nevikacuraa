@@ -1600,7 +1600,6 @@ const Home = () => {
           </div>
         </div>
       </main>
-      )}
 
       {/* Download App Section - Modern Gradient */}
       {!isStandalone && (
