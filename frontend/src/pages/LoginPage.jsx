@@ -35,13 +35,25 @@ const LoginPage = () => {
     setLoading(true);
     try {
       // Try login first (for existing users)
-      const res = await fetch(`${API}/api/auth/v2/login/send-otp`, {
+      const url = `${API}/api/auth/v2/login/send-otp`;
+      console.log('Sending OTP request to:', url);
+      
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
       
+      console.log('Response status:', res.status);
+      
+      if (res.status === 404) {
+        // Route not found - could be a deployment issue
+        toast.error('Service temporarily unavailable. Please try again.');
+        return;
+      }
+      
       const data = await res.json();
+      console.log('Response data:', data);
       
       if (data.success) {
         toast.success('OTP sent to your email');
@@ -61,6 +73,7 @@ const LoginPage = () => {
         toast.error(data.detail || 'Failed to send OTP');
       }
     } catch (error) {
+      console.error('OTP request error:', error);
       toast.error('Failed to send OTP');
     } finally {
       setLoading(false);
