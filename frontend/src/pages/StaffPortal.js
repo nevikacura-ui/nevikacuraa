@@ -2120,7 +2120,7 @@ const StaffPortal = () => {
                   }`}
                 >
                   <Calendar className="w-5 h-5 sm:w-5 sm:h-5" />
-                  <span>Advance</span>
+                  <span>Book Appt</span>
                 </TabsTrigger>
                 
                 <TabsTrigger 
