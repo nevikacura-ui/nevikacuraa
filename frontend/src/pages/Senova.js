@@ -101,12 +101,12 @@ const Senova = () => {
     }
   ];
 
-  // Old age homes data
+  // Old age homes data - Mumbai/Vasai region
   const oldAgeHomes = [
-    { name: 'Shanti Niketan Old Age Home', type: 'Trust', location: 'Dharampeth, Nagpur', phone: '0712-2547123', emergency: true },
-    { name: 'Matoshri Vrudhashram', type: 'Paid', location: 'Sitabuldi, Nagpur', phone: '0712-2735489', emergency: false },
-    { name: 'Snehalaya Senior Care', type: 'Medical Care', location: 'Manewada, Nagpur', phone: '0712-2891234', emergency: true },
-    { name: 'Prayas Foundation', type: 'Trust', location: 'Civil Lines, Nagpur', phone: '0712-2562345', emergency: false }
+    { name: 'Shanti Niketan Old Age Home', type: 'Trust', location: 'Vasai West, Mumbai', phone: '0250-2342123', emergency: true },
+    { name: 'Matoshri Vrudhashram', type: 'Paid', location: 'Nalasopara East, Vasai', phone: '0250-2825489', emergency: false },
+    { name: 'Snehalaya Senior Care', type: 'Medical Care', location: 'Naigaon East, Vasai', phone: '0250-2991234', emergency: true },
+    { name: 'Prayas Foundation', type: 'Trust', location: 'Virar West, Vasai', phone: '0250-2562345', emergency: false }
   ];
 
   // Government schemes
