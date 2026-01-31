@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import { 
   Plus, Edit2, Trash2, Package, IndianRupee, Percent, 
-  Image, Save, Search, Loader2, Upload 
+  Image, Save, Search, Loader2, Upload, Download, FileSpreadsheet, FileText
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -26,6 +26,7 @@ const MedicineInventoryTab = () => {
   const [editingMedicine, setEditingMedicine] = useState(null);
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [exporting, setExporting] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -66,6 +67,134 @@ const MedicineInventoryTab = () => {
   useEffect(() => {
     fetchMedicines();
   }, []);
+
+  // Export functions
+  const exportToCSV = () => {
+    const headers = ['Name', 'Category', 'MRP', 'Discount %', 'Sale Price', 'Stock', 'Unit'];
+    const rows = medicines.map(m => [
+      m.name || '',
+      m.category || '',
+      m.mrp || 0,
+      m.discount_percent || 0,
+      m.sale_price || m.mrp || 0,
+      m.stock || 0,
+      m.unit || 'strip'
+    ]);
+    
+    const csvContent = [headers.join(','), ...rows.map(r => r.map(c => `"${c}"`).join(','))].join('\n');
+    downloadFile(csvContent, 'medicine_inventory.csv', 'text/csv');
+    toast.success('CSV exported successfully');
+  };
+
+  const exportToExcel = async () => {
+    setExporting(true);
+    try {
+      // Create a simple Excel-compatible XML
+      const xmlContent = `<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet">
+  <Worksheet ss:Name="Medicine Inventory">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Name</Data></Cell>
+        <Cell><Data ss:Type="String">Category</Data></Cell>
+        <Cell><Data ss:Type="String">MRP</Data></Cell>
+        <Cell><Data ss:Type="String">Discount %</Data></Cell>
+        <Cell><Data ss:Type="String">Sale Price</Data></Cell>
+        <Cell><Data ss:Type="String">Stock</Data></Cell>
+        <Cell><Data ss:Type="String">Unit</Data></Cell>
+      </Row>
+      ${medicines.map(m => `
+      <Row>
+        <Cell><Data ss:Type="String">${m.name || ''}</Data></Cell>
+        <Cell><Data ss:Type="String">${m.category || ''}</Data></Cell>
+        <Cell><Data ss:Type="Number">${m.mrp || 0}</Data></Cell>
+        <Cell><Data ss:Type="Number">${m.discount_percent || 0}</Data></Cell>
+        <Cell><Data ss:Type="Number">${m.sale_price || m.mrp || 0}</Data></Cell>
+        <Cell><Data ss:Type="Number">${m.stock || 0}</Data></Cell>
+        <Cell><Data ss:Type="String">${m.unit || 'strip'}</Data></Cell>
+      </Row>`).join('')}
+    </Table>
+  </Worksheet>
+</Workbook>`;
+      
+      downloadFile(xmlContent, 'medicine_inventory.xls', 'application/vnd.ms-excel');
+      toast.success('Excel exported successfully');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const exportToPDF = () => {
+    // Create printable HTML and open in new window for PDF
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Medicine Inventory - Nevika Cura</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          h1 { color: #0d9488; text-align: center; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          th { background-color: #0d9488; color: white; }
+          tr:nth-child(even) { background-color: #f9f9f9; }
+          .footer { margin-top: 20px; text-align: center; color: #666; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <h1>🏥 Medicine Inventory</h1>
+        <p style="text-align: center; color: #666;">Orange Pharmacy - Nevika Cura Healthcare</p>
+        <p style="text-align: center; color: #666;">Generated on: ${new Date().toLocaleDateString('en-IN')}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Medicine Name</th>
+              <th>Category</th>
+              <th>MRP (₹)</th>
+              <th>Discount</th>
+              <th>Sale Price (₹)</th>
+              <th>Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${medicines.map((m, i) => `
+              <tr>
+                <td>${i + 1}</td>
+                <td>${m.name || '-'}</td>
+                <td>${m.category || '-'}</td>
+                <td>₹${m.mrp || 0}</td>
+                <td>${m.discount_percent || 0}%</td>
+                <td>₹${m.sale_price || m.mrp || 0}</td>
+                <td>${m.stock || 0} ${m.unit || 'strip'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <p class="footer">Total Items: ${medicines.length} | Doctor-Led. Patient-Focused.</p>
+      </body>
+      </html>
+    `;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.print();
+    toast.success('PDF ready for download');
+  };
+
+  const downloadFile = (content, filename, type) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   // Handle image upload
   const handleImageUpload = async (e) => {
@@ -199,14 +328,48 @@ const MedicineInventoryTab = () => {
             data-testid="medicine-search"
           />
         </div>
-        <Button 
-          onClick={() => { resetForm(); setEditingMedicine(null); setShowAddDialog(true); }}
-          className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
-          data-testid="add-medicine-btn"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Medicine
-        </Button>
+        <div className="flex gap-2 flex-wrap">
+          {/* Export Buttons */}
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={exportToCSV}
+            className="text-green-600 border-green-200 hover:bg-green-50"
+            data-testid="export-csv-btn"
+          >
+            <Download className="w-4 h-4 mr-1" />
+            CSV
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={exportToExcel}
+            disabled={exporting}
+            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+            data-testid="export-excel-btn"
+          >
+            <FileSpreadsheet className="w-4 h-4 mr-1" />
+            Excel
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={exportToPDF}
+            className="text-red-600 border-red-200 hover:bg-red-50"
+            data-testid="export-pdf-btn"
+          >
+            <FileText className="w-4 h-4 mr-1" />
+            PDF
+          </Button>
+          <Button 
+            onClick={() => { resetForm(); setEditingMedicine(null); setShowAddDialog(true); }}
+            className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
+            data-testid="add-medicine-btn"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Medicine
+          </Button>
+        </div>
       </div>
 
       {/* Medicine List */}
