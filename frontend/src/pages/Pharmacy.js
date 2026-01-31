@@ -1684,7 +1684,7 @@ const Pharmacy = () => {
               className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
               data-testid="continue-to-otp"
             >
-              Continue to Verify
+              Continue
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
