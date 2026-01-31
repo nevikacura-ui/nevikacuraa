@@ -461,13 +461,13 @@ const StaffPortal = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, staffInfo]);
 
-  // Reload appointments when date or clinic changes
+  // Reload appointments when date, clinic, or activeClinic changes
   useEffect(() => {
     if (isAuthenticated && staffInfo && activeTab === 'appointments') {
       loadAppointmentsData();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDate, selectedClinic]);
+  }, [selectedDate, selectedClinic, activeClinic]);
 
   // Reload pharmacy when date changes
   useEffect(() => {
