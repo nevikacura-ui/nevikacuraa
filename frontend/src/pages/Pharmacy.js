@@ -976,9 +976,9 @@ const Pharmacy = () => {
   const totalItems = medicines.reduce((sum, m) => sum + m.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 via-amber-50/30 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-orange-100 via-amber-100 to-orange-50">
       {/* Orange Theme Accent Bar */}
-      <div className="h-1 bg-gradient-to-r from-orange-400 via-amber-500 to-orange-600" />
+      <div className="h-2 bg-gradient-to-r from-orange-400 via-amber-500 to-orange-600" />
       
       {/* Header */}
       <header className="bg-gradient-to-r from-orange-600 to-amber-500 sticky top-0 z-50 shadow-lg">
