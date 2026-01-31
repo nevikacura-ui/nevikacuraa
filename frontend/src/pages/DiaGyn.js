@@ -1473,7 +1473,7 @@ const DiaGyn = () => {
                     wsConnected={wsConnected}
                     doctor={selectedDoctorData}
                     clinic={selectedClinic}
-                    patientData={{ id: patientPhone, name: patientName, phone: patientPhone }}
+                    patientData={{ id: patientInfo.phone, name: patientInfo.name, phone: patientInfo.phone }}
                   />
                 ) : (
                   <div className="text-center py-16">
