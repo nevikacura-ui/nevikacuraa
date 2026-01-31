@@ -105,14 +105,15 @@ const WalkInTab = ({
             </select>
           </div>
           <div>
-            <Label>Date <span className="text-gray-500 text-xs font-normal">({formatIndianDate(walkInForm.date)} - {getDayName(walkInForm.date)})</span></Label>
+            <Label>Date <span className="text-gray-500 text-xs font-normal">(Today Only)</span></Label>
             <Input
               type="date"
-              value={walkInForm.date}
-              onChange={(e) => setWalkInForm({ ...walkInForm, date: e.target.value, time: '' })}
-              min={getIndianDate()}
+              value={getIndianDate()}
+              disabled
+              className="bg-gray-100"
               data-testid="walkin-date"
             />
+            <p className="text-xs text-gray-500 mt-1">Walk-in is for same-day only. Use "Advance Booking" for future dates.</p>
           </div>
         </div>
         
