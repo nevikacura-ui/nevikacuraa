@@ -2263,10 +2263,18 @@ const StaffPortal = () => {
                 activeClinic={availableClinics.length > 1 ? activeClinic : staffInfo?.clinic}
                 availableClinics={availableClinics}
                 onBookingComplete={(bookingData) => {
+                  // Switch to appointments tab and set date to the booked date
+                  if (bookingData?.date) {
+                    setSelectedDate(bookingData.date);
+                    setActiveTab('appointments');
+                  }
                   // Refresh appointments list after booking
-                  loadAppointmentsData();
-                  // Show success message
-                  toast.success(`Appointment booked: ${bookingData?.booking_id || 'Success'}`);
+                  setTimeout(() => loadAppointmentsData(), 100);
+                  // Show success message with navigation hint
+                  toast.success(`Appointment booked: ${bookingData?.booking_id || 'Success'}`, {
+                    description: 'Switched to Appts tab to view the booking',
+                    duration: 4000
+                  });
                 }}
               />
             </TabsContent>
