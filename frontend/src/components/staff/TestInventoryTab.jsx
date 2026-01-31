@@ -332,14 +332,48 @@ const TestInventoryTab = () => {
             data-testid="test-search"
           />
         </div>
-        <Button 
-          onClick={() => { resetForm(); setEditingTest(null); setShowAddDialog(true); }}
-          className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
-          data-testid="add-test-btn"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Test
-        </Button>
+        <div className="flex gap-2 flex-wrap">
+          {/* Export Buttons */}
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={exportToCSV}
+            className="text-green-600 border-green-200 hover:bg-green-50"
+            data-testid="export-csv-btn"
+          >
+            <Download className="w-4 h-4 mr-1" />
+            CSV
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={exportToExcel}
+            disabled={exporting}
+            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+            data-testid="export-excel-btn"
+          >
+            <FileSpreadsheet className="w-4 h-4 mr-1" />
+            Excel
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={exportToPDF}
+            className="text-red-600 border-red-200 hover:bg-red-50"
+            data-testid="export-pdf-btn"
+          >
+            <FileText className="w-4 h-4 mr-1" />
+            PDF
+          </Button>
+          <Button 
+            onClick={() => { resetForm(); setEditingTest(null); setShowAddDialog(true); }}
+            className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
+            data-testid="add-test-btn"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Test
+          </Button>
+        </div>
       </div>
 
       {/* Test List */}
