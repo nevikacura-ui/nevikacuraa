@@ -201,7 +201,7 @@ async def get_pharmacy_inventory(
             })
         
         # Also add staff-added medicines from DB
-        if db:
+        if db is not None:
             staff_medicines = await db.pharmacy_inventory.find({}).to_list(1000)
             for med in staff_medicines:
                 med_obj = {
