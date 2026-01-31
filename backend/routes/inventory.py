@@ -11,6 +11,12 @@ from pydantic import BaseModel
 import jwt
 import os
 
+# Import static medicine inventory (4266 medicines)
+try:
+    from data.medicine_inventory import MEDICINE_INVENTORY
+except ImportError:
+    MEDICINE_INVENTORY = []
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Inventory"])
