@@ -614,34 +614,8 @@ const Proton = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-blue-50">
-      {/* Blue Theme Accent Bar */}
-      <div className="h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
-      
-      {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-indigo-600 sticky top-0 z-50 shadow-lg">
-        <div className="max-w-5xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={() => currentStep > 1 ? goToStep1() : navigate('/')}
-                className="rounded-full bg-white/20 hover:bg-white/30 text-white"
-                data-testid="back-button"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <img 
-                src="/proton-logo.png" 
-                alt="Proton Diagnostics" 
-                className="h-12 sm:h-14 w-auto rounded-lg bg-white p-1"
-                data-testid="proton-logo"
-              />
-            </div>
-            <StepProgress currentStep={currentStep} />
-          </div>
-        </div>
-      </header>
+      {/* Shared Service Header with Zepto-style tabs */}
+      <ServiceHeader />
 
       {/* How It Works Banner */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-[#5FA8D3]/20">
