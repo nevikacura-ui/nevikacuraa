@@ -96,9 +96,14 @@ export const ServiceHeader = () => {
                   size="sm"
                   onClick={() => navigate('/profile')}
                   data-testid="profile-button"
-                  className={`rounded-full ${currentTheme.isLight ? 'hover:bg-slate-100 text-slate-800' : 'hover:bg-white/20 text-white'}`}
+                  className={`rounded-full flex items-center gap-2 ${currentTheme.isLight ? 'hover:bg-slate-100 text-slate-800' : 'hover:bg-white/20 text-white'}`}
                 >
-                  <User className="w-4 h-4" />
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center ${currentTheme.isLight ? 'bg-teal-100' : 'bg-white/20'}`}>
+                    <User className="w-4 h-4" />
+                  </div>
+                  <span className="hidden sm:inline text-sm font-medium max-w-[120px] truncate">
+                    {user.name || user.email?.split('@')[0] || 'Profile'}
+                  </span>
                 </Button>
               ) : (
                 <Button 
