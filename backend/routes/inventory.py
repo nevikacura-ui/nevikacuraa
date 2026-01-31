@@ -88,7 +88,84 @@ class TestUpdate(BaseModel):
     sample_type: Optional[str] = None
     preparation: Optional[str] = None
 
-# ============ Pharmacy Inventory Endpoints ============
+# ============ Public Medicine Catalog (for patients) ============
+
+@router.get("/medicines/catalog")
+async def get_public_medicines(
+    page: int = 1,
+    limit: int = 50,
+    search: str = None,
+    category: str = None
+):
+    """Get medicines catalog for patients - public endpoint"""
+    try:
+        skip = (page - 1) * limit
+        medicines = []
+        
+        # Build filter
+        filter_query = {'active': {'$ne': False}}
+        if search:
+            filter_query['name'] = {'$regex': search, '$options': 'i'}
+        if category and category != 'all':
+            filter_query['category'] = category
+        
+        # Get from medicines_catalog
+        catalog_medicines = await db.medicines_catalog.find(filter_query).skip(skip).limit(limit).to_list(limit)
+        total_catalog = await db.medicines_catalog.count_documents(filter_query)
+        
+        for med in catalog_medicines:
+            medicines.append({
+                'id': med.get('id') or str(med.get('_id', '')),
+                'name': med.get('name', ''),
+                'image_url': med.get('image') or med.get('image_url', ''),
+                'mrp': med.get('price') or med.get('mrp', 0),
+                'discount_percent': med.get('discount_percent', 0),
+                'sale_price': med.get('sale_price') or med.get('price') or med.get('mrp', 0),
+                'category': med.get('category', ''),
+                'unit': med.get('unit') or med.get('form', 'strip'),
+                'stock': med.get('stock', 0)
+            })
+        
+        # Also get from pharmacy_inventory (staff-added)
+        staff_filter = {}
+        if search:
+            staff_filter['name'] = {'$regex': search, '$options': 'i'}
+        if category and category != 'all':
+            staff_filter['category'] = category
+            
+        staff_medicines = await db.pharmacy_inventory.find(staff_filter).skip(skip).limit(limit).to_list(limit)
+        total_staff = await db.pharmacy_inventory.count_documents(staff_filter)
+        
+        for med in staff_medicines:
+            medicines.append({
+                'id': med.get('id') or str(med.get('_id', '')),
+                'name': med.get('name', ''),
+                'image_url': med.get('image_url', ''),
+                'mrp': med.get('mrp', 0),
+                'discount_percent': med.get('discount_percent', 0),
+                'sale_price': med.get('sale_price') or med.get('mrp', 0),
+                'category': med.get('category', ''),
+                'unit': med.get('unit', 'strip'),
+                'stock': med.get('stock', 0)
+            })
+        
+        # Get categories
+        categories = await db.medicines_catalog.distinct('category')
+        staff_cats = await db.pharmacy_inventory.distinct('category')
+        all_categories = list(set(categories + staff_cats))
+        
+        return {
+            "medicines": medicines,
+            "total": total_catalog + total_staff,
+            "page": page,
+            "limit": limit,
+            "categories": all_categories
+        }
+    except Exception as e:
+        logger.error(f"Failed to get medicines catalog: {e}")
+        raise HTTPException(status_code=500, detail="Failed to load medicines")
+
+# ============ Staff Pharmacy Inventory Endpoints ============
 
 @router.get("/pharmacy/inventory")
 async def get_pharmacy_inventory(staff = Depends(get_staff_user)):
