@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { 
   Mail, Lock, MessageCircle, Shield, Loader2, 
-  ArrowLeft, CheckCircle2, Clock 
+  ArrowLeft, CheckCircle2, Clock, UserPlus 
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
@@ -244,6 +244,22 @@ const LoginPage = () => {
           <h1 className="text-2xl font-bold text-slate-800 mb-2">Welcome to Nevika Cura</h1>
           <p className="text-slate-600">Choose how you want to sign in</p>
         </div>
+
+        {/* Quick Sign Up Banner - Prominent for new users */}
+        {!otpSent && !isNewUser && activeTab === 'email-otp' && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-xl">
+            <p className="text-sm text-teal-800 font-medium mb-2">New to Nevika Cura?</p>
+            <Button
+              onClick={() => setIsNewUser(true)}
+              variant="outline"
+              className="w-full border-teal-500 text-teal-600 hover:bg-teal-50"
+              data-testid="signup-btn-banner"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Create New Account
+            </Button>
+          </div>
+        )}
 
         {/* Login Method Selection */}
         <div className="space-y-3 mb-6">
