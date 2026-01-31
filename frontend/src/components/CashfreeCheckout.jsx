@@ -187,11 +187,62 @@ const CashfreeCheckout = ({
               <span className="text-slate-600">Order Type</span>
               <span className="font-medium capitalize">{orderDetails.type.replace('_', ' ')}</span>
             </div>
-            <div className="flex justify-between items-center text-lg font-bold">
+            <div className="flex justify-between items-center">
+              <span className="text-slate-600">Subtotal</span>
+              <span className="font-medium">₹{orderDetails.amount?.toLocaleString()}</span>
+            </div>
+            {discountAmount > 0 && (
+              <div className="flex justify-between items-center text-green-600">
+                <span>Discount ({appliedCoupon?.code})</span>
+                <span>-₹{discountAmount?.toLocaleString()}</span>
+              </div>
+            )}
+            <div className="flex justify-between items-center text-lg font-bold mt-2 pt-2 border-t">
               <span className="text-slate-800">Total Amount</span>
-              <span className="text-green-600">₹{orderDetails.amount?.toLocaleString()}</span>
+              <span className="text-green-600">₹{finalAmount?.toLocaleString()}</span>
             </div>
           </div>
+
+          {/* Coupon Code Section */}
+          {allowCoupon && (
+            <div className="border border-slate-200 rounded-xl p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Tag className="w-4 h-4 text-orange-500" />
+                <span className="text-sm font-medium text-slate-700">Have a coupon?</span>
+              </div>
+              {appliedCoupon ? (
+                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-2">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-green-500" />
+                    <span className="font-medium text-green-700">{appliedCoupon.code}</span>
+                    <span className="text-sm text-green-600">(-₹{discountAmount})</span>
+                  </div>
+                  <button onClick={removeCoupon} className="text-slate-400 hover:text-red-500">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Input
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Enter coupon code"
+                    className="flex-1 uppercase"
+                    data-testid="coupon-input"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={validateCoupon}
+                    disabled={validatingCoupon || !couponCode.trim()}
+                    data-testid="apply-coupon-btn"
+                  >
+                    {validatingCoupon ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Payment Methods */}
           <div className="space-y-3">
