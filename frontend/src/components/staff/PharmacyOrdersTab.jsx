@@ -179,7 +179,7 @@ const PharmacyOrdersTab = ({
                 </div>
               )}
               
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap items-center">
                 {['Order Booked', 'Packing', 'Out for Delivery', 'Delivered'].map(status => (
                   <Button
                     key={status}
@@ -188,6 +188,7 @@ const PharmacyOrdersTab = ({
                     onClick={() => handlePharmacyStatusUpdate(order.id, status)}
                     disabled={
                       order.status === status || 
+                      order.status === 'cancelled' ||
                       (status === 'Out for Delivery' && !order.bill_url)
                     }
                     className={order.status === status ? 'bg-orange-500' : ''}
@@ -197,6 +198,48 @@ const PharmacyOrdersTab = ({
                     {status}
                   </Button>
                 ))}
+                
+                {/* Admin Cancel Button */}
+                {isAdmin && order.status !== 'cancelled' && order.status !== 'Delivered' && (
+                  <>
+                    {showCancelConfirm === order.id ? (
+                      <div className="flex items-center gap-2 ml-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+                        <AlertTriangle className="w-4 h-4 text-red-600" />
+                        <span className="text-sm text-red-700">Cancel order?</span>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleCancelOrder(order.id)}
+                          disabled={cancellingOrder === order.id}
+                          data-testid={`confirm-cancel-pharmacy-${order.id}`}
+                        >
+                          {cancellingOrder === order.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : 'Yes'}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setShowCancelConfirm(null)}
+                          data-testid={`abort-cancel-pharmacy-${order.id}`}
+                        >
+                          No
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setShowCancelConfirm(order.id)}
+                        className="ml-2 text-red-600 border-red-200 hover:bg-red-50"
+                        data-testid={`cancel-pharmacy-${order.id}`}
+                      >
+                        <XCircle className="w-4 h-4 mr-1" />
+                        Cancel
+                      </Button>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           ))
