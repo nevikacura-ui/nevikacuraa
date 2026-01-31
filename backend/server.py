@@ -3034,7 +3034,7 @@ Time: {appointment.time}"""
         time=appointment.time
     )
     
-    # Patient confirmation email with QR code
+    # Patient confirmation email with QR code using CID attachment
     patient_appt_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); border-radius: 10px 10px 0 0;">
@@ -3044,14 +3044,18 @@ Time: {appointment.time}"""
             <p style="font-size: 18px;">Hello <strong>{appointment.patient_name}</strong>,</p>
             <p>Your appointment has been successfully booked at <strong>Nevika Cura Healthcare</strong>.</p>
             
-            <!-- QR Code Section -->
-            <div style="text-align: center; margin: 25px 0; padding: 20px; background: white; border-radius: 12px; border: 2px dashed #0d9488;">
-                <p style="margin: 0 0 10px 0; color: #64748b; font-size: 12px;">SCAN QR CODE AT CLINIC FOR CHECK-IN</p>
-                <img src="data:image/png;base64,{qr_code_base64}" alt="Booking QR Code" style="width: 150px; height: 150px;" />
-                <div style="margin-top: 15px; padding: 10px; background: #0d9488; border-radius: 8px; display: inline-block;">
-                    <p style="margin: 0; color: white; font-size: 12px;">Booking ID</p>
-                    <p style="margin: 5px 0 0 0; color: white; font-size: 24px; font-weight: bold; letter-spacing: 3px;">{booking_id}</p>
-                </div>
+            <!-- Booking ID Section - Primary Focus -->
+            <div style="text-align: center; margin: 25px 0; padding: 25px; background: white; border-radius: 12px; border: 2px solid #0d9488;">
+                <p style="margin: 0 0 5px 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Your Booking ID</p>
+                <p style="margin: 0; color: #0d9488; font-size: 32px; font-weight: bold; letter-spacing: 4px; font-family: monospace;">{booking_id}</p>
+                <p style="margin: 15px 0 0 0; color: #94a3b8; font-size: 11px;">Show this ID at the reception for quick check-in</p>
+            </div>
+            
+            <!-- QR Code Section - Using CID attachment -->
+            <div style="text-align: center; margin: 20px 0; padding: 15px; background: white; border-radius: 12px; border: 1px dashed #e2e8f0;">
+                <p style="margin: 0 0 10px 0; color: #94a3b8; font-size: 11px; text-transform: uppercase;">Scan for Quick Check-in</p>
+                <img src="cid:qrcode_{booking_id}" alt="QR Code" style="width: 140px; height: 140px; border-radius: 8px;" />
+                <p style="margin: 10px 0 0 0; color: #cbd5e1; font-size: 10px;">If QR not visible, use Booking ID above</p>
             </div>
             
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0d9488;">
@@ -3066,7 +3070,7 @@ Time: {appointment.time}"""
             
             <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
                 <p style="margin: 0; color: #92400e; font-size: 14px;">
-                    <strong>💡 Tip:</strong> Arrive 15 minutes early. Bring this email or screenshot the QR code for quick check-in.
+                    <strong>💡 Tip:</strong> Arrive 15 minutes early. Save your Booking ID <strong>{booking_id}</strong> for quick check-in.
                 </p>
             </div>
             
