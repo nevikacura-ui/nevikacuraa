@@ -1248,7 +1248,8 @@ const DiaGyn = () => {
 
   const availableClinics = getAvailableClinics();
   const availableSlots = getAvailableSlots();
-  const unbookedSlots = availableSlots.filter(slot => !bookedSlots.includes(slot));
+  const safeBookedSlots = Array.isArray(bookedSlots) ? bookedSlots : [];
+  const unbookedSlots = availableSlots.filter(slot => !safeBookedSlots.includes(slot));
 
   const selectedDoctorData = doctors.find(d => d.id === selectedDoctor);
   const selectedClinicData = clinics.find(c => c.id === selectedClinic);
