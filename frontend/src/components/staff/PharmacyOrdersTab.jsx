@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
-  Package, Calendar, FileText, Receipt, Upload 
+  Package, Calendar, FileText, Receipt, Upload, XCircle, AlertTriangle, Loader2
 } from 'lucide-react';
 import { 
-  API, getStatusColor 
+  API, getStatusColor, getAuthHeaders
 } from '@/pages/staff/staffUtils';
 
 const PharmacyOrdersTab = ({ 
@@ -16,8 +16,33 @@ const PharmacyOrdersTab = ({
   setPharmacyDate,
   pharmacyDateCounts,
   loadData,
-  handlePharmacyStatusUpdate
+  handlePharmacyStatusUpdate,
+  staffRole = ''
 }) => {
+  const [cancellingOrder, setCancellingOrder] = useState(null);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(null);
+  
+  // Check if user has admin role
+  const isAdmin = ['super_admin', 'admin'].includes(staffRole);
+  
+  // Cancel order handler (admin only)
+  const handleCancelOrder = async (orderId) => {
+    setCancellingOrder(orderId);
+    try {
+      const response = await axios.post(
+        `${API}/admin/orders/cancel/pharmacy/${orderId}`,
+        {},
+        getAuthHeaders()
+      );
+      toast.success(response.data.message || 'Order cancelled successfully');
+      setShowCancelConfirm(null);
+      loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to cancel order');
+    } finally {
+      setCancellingOrder(null);
+    }
+  };
 
   // Upload bill handler
   const handleBillUpload = async (orderId, file) => {
