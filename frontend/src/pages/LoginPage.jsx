@@ -51,9 +51,11 @@ const LoginPage = () => {
         if (data.mock_otp) {
           toast.info(`Dev OTP: ${data.mock_otp}`, { duration: 10000 });
         }
-      } else if (data.detail?.includes('not found') || data.detail?.includes('not registered')) {
+      } else if (data.detail?.toLowerCase().includes('not found') || 
+                 data.detail?.toLowerCase().includes('not registered') ||
+                 data.detail?.toLowerCase().includes('sign up')) {
         // User doesn't exist - need to sign up
-        toast.info('New user? Please provide your name to register.');
+        toast.info('New user detected! Please provide your name to create an account.');
         setIsNewUser(true);
       } else {
         toast.error(data.detail || 'Failed to send OTP');
