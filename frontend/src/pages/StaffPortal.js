@@ -1971,7 +1971,16 @@ const StaffPortal = () => {
             <div>
               <h1 className={`font-bold ${isTablet ? 'text-xl' : 'text-base sm:text-lg'}`}>Staff Portal</h1>
               <p className={`text-gray-500 truncate ${isTablet ? 'text-sm max-w-none' : 'text-xs sm:text-sm max-w-[150px] sm:max-w-none'}`}>
-                {staffInfo?.name} • {staffInfo?.clinic}
+                {staffInfo?.name} {availableClinics.length > 1 && (
+                  <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+                    activeClinic === 'Pushpa Clinic' 
+                      ? 'bg-orange-100 text-orange-700' 
+                      : 'bg-teal-100 text-teal-700'
+                  }`}>
+                    {activeClinic}
+                  </span>
+                )}
+                {availableClinics.length <= 1 && staffInfo?.clinic && ` • ${staffInfo?.clinic}`}
               </p>
             </div>
           </div>
