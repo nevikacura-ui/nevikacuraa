@@ -4640,7 +4640,7 @@ Delivery: {order.delivery_address or 'Not provided'}"""
         </div>
     ''' if order.points_used > 0 else ''
     
-    # Patient confirmation email for pharmacy with QR code
+    # Patient confirmation email for pharmacy with QR code using CID
     medicines_list_patient = "".join([f"<li>{m.get('name', 'Unknown')} - Qty: {m.get('quantity', 1)}</li>" for m in order.medicines]) if order.medicines else '<li><em>Medicines as per prescription</em></li>'
     patient_pharmacy_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -4651,13 +4651,18 @@ Delivery: {order.delivery_address or 'Not provided'}"""
             <p style="font-size: 18px;">Hello <strong>{order.patient_name}</strong>,</p>
             <p>Your order has been successfully placed at <strong>Orange Pharmacy</strong>.</p>
             
-            <!-- QR Code Section -->
-            <div style="text-align: center; margin: 25px 0; padding: 20px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border-radius: 12px;">
-                <p style="color: white; margin: 0 0 10px 0; font-size: 14px;">Show this QR code for pickup/delivery verification</p>
-                <div style="background: white; display: inline-block; padding: 15px; border-radius: 10px;">
-                    <img src="data:image/png;base64,{qr_code_base64}" alt="Order QR Code" style="width: 150px; height: 150px;">
-                </div>
-                <p style="margin: 10px 0 0 0; color: white; font-size: 24px; font-weight: bold; letter-spacing: 3px;">{booking_id}</p>
+            <!-- Booking ID Section - Primary Focus -->
+            <div style="text-align: center; margin: 25px 0; padding: 25px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border-radius: 12px;">
+                <p style="margin: 0 0 5px 0; color: white; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Your Order ID</p>
+                <p style="margin: 0; color: white; font-size: 32px; font-weight: bold; letter-spacing: 4px; font-family: monospace;">{booking_id}</p>
+                <p style="margin: 15px 0 0 0; color: rgba(255,255,255,0.8); font-size: 11px;">Show this ID for pickup/delivery verification</p>
+            </div>
+            
+            <!-- QR Code Section - Using CID attachment -->
+            <div style="text-align: center; margin: 20px 0; padding: 15px; background: white; border-radius: 12px; border: 1px dashed #e2e8f0;">
+                <p style="margin: 0 0 10px 0; color: #94a3b8; font-size: 11px; text-transform: uppercase;">Scan for Quick Verification</p>
+                <img src="cid:qrcode_{booking_id}" alt="QR Code" style="width: 140px; height: 140px; border-radius: 8px;" />
+                <p style="margin: 10px 0 0 0; color: #cbd5e1; font-size: 10px;">If QR not visible, use Order ID above</p>
             </div>
             
             {patient_discount_html}
@@ -4682,12 +4687,21 @@ Delivery: {order.delivery_address or 'Not provided'}"""
     </div>
     """
     
+    # Create QR code attachment for CID embedding
+    pharmacy_qr_attachments = [{
+        "filename": f"qrcode_{booking_id}.png",
+        "content": qr_code_base64,
+        "content_type": "image/png",
+        "content_id": f"qrcode_{booking_id}"
+    }]
+    
     await send_email_notification(
         f"New Pharmacy Order - {order.patient_name} ({booking_id})", 
         email_html,
         patient_email=order.patient_email,
         patient_subject=f"Order Confirmed - Orange Pharmacy {booking_id}",
-        patient_html=patient_pharmacy_html
+        patient_html=patient_pharmacy_html,
+        attachments=pharmacy_qr_attachments
     )
     
     # Send push notification if user is logged in
