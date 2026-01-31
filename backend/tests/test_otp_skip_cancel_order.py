@@ -146,11 +146,14 @@ class TestPharmacyOrderFlow:
     
     def test_pharmacy_order_creation_without_otp(self):
         """Test that pharmacy order can be created without OTP verification"""
-        # Create a test order - this simulates the guest checkout flow
+        # Create a test order with unique phone - this simulates the guest checkout flow
+        import random
+        unique_phone = f"98765{random.randint(10000, 99999)}"
+        
         order_data = {
             "medicines": [{"name": "Paracetamol 500mg", "quantity": 2}],
             "patient_name": "Test Patient OTP Skip",
-            "patient_phone": "9876543210",
+            "patient_phone": unique_phone,
             "patient_email": "test@example.com",
             "delivery_address": "123 Test Street, Mumbai",
             "payment_method": "cod"
