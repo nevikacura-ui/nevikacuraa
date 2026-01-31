@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Loader2, CreditCard, Smartphone, Banknote, ChevronRight } from 'lucide-react';
+import { Loader2, CreditCard, Smartphone, Banknote, ChevronRight, Tag, X, Check } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 const PRODUCTION_DOMAIN = process.env.REACT_APP_PRODUCTION_DOMAIN || 'https://nevikacura.com';
@@ -18,10 +19,62 @@ const CashfreeCheckout = ({
   onPaymentSuccess,
   onPaymentCancel,
   allowCOD = true,  // Allow Cash on Delivery option
+  allowCoupon = true,  // Allow discount coupon code
   returnPath = '/'  // Path to return after payment
 }) => {
   const [processing, setProcessing] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(allowCOD ? 'cod' : 'online');
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
+  const [discountAmount, setDiscountAmount] = useState(0);
+
+  const finalAmount = Math.max(0, orderDetails.amount - discountAmount);
+
+  const validateCoupon = async () => {
+    if (!couponCode.trim()) {
+      toast.error('Please enter a coupon code');
+      return;
+    }
+    
+    setValidatingCoupon(true);
+    try {
+      const res = await fetch(`${API}/api/coupons/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: couponCode.trim().toUpperCase(),
+          amount: orderDetails.amount,
+          type: orderDetails.type
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (data.valid) {
+        setAppliedCoupon({
+          code: couponCode.trim().toUpperCase(),
+          discount: data.discount,
+          type: data.discount_type
+        });
+        setDiscountAmount(data.discount);
+        toast.success(`Coupon applied! You save ₹${data.discount}`);
+      } else {
+        toast.error(data.message || 'Invalid coupon code');
+      }
+    } catch (error) {
+      console.error('Coupon validation error:', error);
+      toast.error('Failed to validate coupon');
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setDiscountAmount(0);
+    setCouponCode('');
+  };
 
   const handleCashfreePayment = async () => {
     setProcessing(true);
