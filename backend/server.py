@@ -4670,10 +4670,13 @@ async def get_pharmacy_orders(user = Depends(get_current_user)):
     
     return orders
 
-# ============ Pharmacy Inventory Endpoints ============
-@api_router.get("/pharmacy/inventory")
-async def get_pharmacy_inventory(search: Optional[str] = None, form: Optional[str] = None, limit: int = 50):
-    """Get pharmacy inventory with optional filtering"""
+# ============ Pharmacy Inventory Endpoints (handled by inventory router) ============
+# The main inventory endpoints are in /app/backend/routes/inventory.py
+# This endpoint is kept for backward compatibility with public API calls
+
+@api_router.get("/pharmacy/inventory-legacy")
+async def get_pharmacy_inventory_legacy(search: Optional[str] = None, form: Optional[str] = None, limit: int = 5000):
+    """Legacy endpoint - use /api/pharmacy/inventory instead with staff auth"""
     inventory = MEDICINE_INVENTORY.copy()
     
     if search:
@@ -4684,7 +4687,7 @@ async def get_pharmacy_inventory(search: Optional[str] = None, form: Optional[st
         form_lower = form.lower()
         inventory = [m for m in inventory if form_lower in m["form"].lower()]
     
-    # Limit results for autocomplete performance
+    # Return all medicines (up to limit)
     limited_inventory = inventory[:limit]
     
     return {"medicines": limited_inventory, "total": len(inventory), "showing": len(limited_inventory)}
