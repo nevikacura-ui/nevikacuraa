@@ -292,13 +292,6 @@ const SplashScreen = ({ onComplete, user }) => {
     onComplete();
   };
   
-  const handleServiceClick = (service) => {
-    onComplete();
-    setTimeout(() => {
-      navigate(service);
-    }, 100);
-  };
-  
   const handleStaffLogin = () => {
     // Close splash screen first, then navigate
     onComplete();
