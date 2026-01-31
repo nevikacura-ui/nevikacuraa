@@ -1300,6 +1300,8 @@ ID: {booking_id}
 def generate_booking_email_template(booking_id: str, booking_type: str, details: dict) -> str:
     """
     Generate unified email template with QR code for any booking type.
+    Uses CID attachment for QR code image to ensure email client compatibility.
+    Returns tuple of (html_content, qr_image_bytes) for attachment handling.
     """
     qr_code_base64 = generate_generic_qr_code(booking_id, booking_type, details)
     
@@ -1320,6 +1322,9 @@ def generate_booking_email_template(booking_id: str, booking_type: str, details:
             label = key.replace('_', ' ').title()
             details_rows += f'<tr><td style="padding: 8px 0; color: #64748b;">{label}</td><td style="padding: 8px 0; font-weight: 600;">{value}</td></tr>'
     
+    # Create text-based booking reference for fallback
+    booking_id_formatted = f"{booking_id[:3]}-{booking_id[3:8] if len(booking_id) > 8 else booking_id[3:]}"
+    
     html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, {config['color']} 0%, {config['color']}cc 100%); border-radius: 10px 10px 0 0;">
@@ -1328,14 +1333,18 @@ def generate_booking_email_template(booking_id: str, booking_type: str, details:
         <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
             <p style="font-size: 18px;">Hello <strong>{details.get('patient_name', 'Patient')}</strong>,</p>
             
-            <!-- QR Code Section -->
-            <div style="text-align: center; margin: 25px 0; padding: 20px; background: white; border-radius: 12px; border: 2px dashed {config['color']};">
-                <p style="margin: 0 0 10px 0; color: #64748b; font-size: 12px;">SCAN QR CODE FOR QUICK CHECK-IN</p>
-                <img src="data:image/png;base64,{qr_code_base64}" alt="Booking QR Code" style="width: 150px; height: 150px;" />
-                <div style="margin-top: 15px; padding: 10px; background: {config['color']}; border-radius: 8px; display: inline-block;">
-                    <p style="margin: 0; color: white; font-size: 12px;">Booking ID</p>
-                    <p style="margin: 5px 0 0 0; color: white; font-size: 24px; font-weight: bold; letter-spacing: 3px;">{booking_id}</p>
-                </div>
+            <!-- Booking ID Section - Primary Focus -->
+            <div style="text-align: center; margin: 25px 0; padding: 25px; background: white; border-radius: 12px; border: 2px solid {config['color']};">
+                <p style="margin: 0 0 5px 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Your Booking ID</p>
+                <p style="margin: 0; color: {config['color']}; font-size: 32px; font-weight: bold; letter-spacing: 4px; font-family: monospace;">{booking_id}</p>
+                <p style="margin: 15px 0 0 0; color: #94a3b8; font-size: 11px;">Show this ID at the reception for quick check-in</p>
+            </div>
+            
+            <!-- QR Code Section - Uses CID for better email client support -->
+            <div style="text-align: center; margin: 20px 0; padding: 15px; background: white; border-radius: 12px; border: 1px dashed #e2e8f0;">
+                <p style="margin: 0 0 10px 0; color: #94a3b8; font-size: 11px; text-transform: uppercase;">Scan for Quick Check-in</p>
+                <img src="cid:qrcode_{booking_id}" alt="QR Code - Use Booking ID if image not visible" style="width: 140px; height: 140px; border-radius: 8px;" />
+                <p style="margin: 10px 0 0 0; color: #cbd5e1; font-size: 10px;">If QR code is not visible, use the Booking ID above</p>
             </div>
             
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid {config['color']};">
@@ -1347,7 +1356,7 @@ def generate_booking_email_template(booking_id: str, booking_type: str, details:
             
             <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
                 <p style="margin: 0; color: #92400e; font-size: 14px;">
-                    <strong>💡 Tip:</strong> Screenshot this QR code for quick check-in at the clinic.
+                    <strong>💡 Tip:</strong> Save this email or note down your Booking ID <strong>{booking_id}</strong> for quick check-in.
                 </p>
             </div>
             
@@ -1359,7 +1368,7 @@ def generate_booking_email_template(booking_id: str, booking_type: str, details:
     </div>
     """
     
-    return html
+    return html, qr_code_base64
 
 class Appointment(BaseModel):
     model_config = ConfigDict(extra="ignore")
