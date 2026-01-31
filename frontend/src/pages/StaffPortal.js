@@ -2132,15 +2132,6 @@ const StaffPortal = () => {
                   <span>SOS</span>
                 </TabsTrigger>
                 
-                <TabsTrigger 
-                  value="billing" 
-                  data-testid="tab-billing"
-                  className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-amber-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
-                >
-                  <IndianRupee className="w-5 h-5 sm:w-5 sm:h-5" />
-                  <span>Bill</span>
-                </TabsTrigger>
-                
                 {/* ANC Tab - Pink themed */}
                 {staffInfo?.access_modules?.includes('anc') && (
                   <TabsTrigger 
