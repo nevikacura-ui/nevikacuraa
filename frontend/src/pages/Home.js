@@ -51,7 +51,6 @@ const Home = () => {
   const { isMobile, isTablet, isDesktop, getResponsiveClasses } = useViewMode();
   const { language, setLanguage, t, languages } = useLanguage();
   const [showAuth, setShowAuth] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   
