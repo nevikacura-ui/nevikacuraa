@@ -1,157 +1,154 @@
 <analysis>**original_problem_statement:**
-The user requested a comprehensive set of features, bug fixes, and UI/UX enhancements for the Nevika Cura application. The core requirements included:
-1.  **Bug Fixes:** Address failures in staff logins, non-functional pharmacy/lab order creation, and a bug in the MSG91 WhatsApp notification system.
-2.  **UI/UX Overhaul:** Redesign the main page header to a Zepto-style layout, create a dedicated login page to replace the modal, fix broken images, update addresses from Nagpur to Naigaon/Mumbai, remove the view-mode switcher, and improve the mobile layout of the staff portal.
-3.  **Feature Implementation:** Create inventory management systems for the pharmacy and lab staff portals with capabilities for adding/editing items and exporting data (CSV, PDF, Excel). Implement a discount coupon system for checkouts.
-4.  **Authentication Changes:** Remove the dependency on Twilio SMS for OTPs due to cost, make email a mandatory field for all orders/appointments, and introduce a Coming Soon placeholder for future WhatsApp-based OTPs.
-5.  **Data & Content:** Ensure the full catalog of 4266 medicines is visible to users and staff, and remove deprecated items like Video Consultation from the backlog.
+The user's initial request involved fixing critical bugs (appointment crashes, OTP failures), implementing a Zepto-style themed UI, and adding a unified staff portal.
+
+Over the session, the requirements evolved significantly based on user feedback. The current high-priority tasks are:
+1.  **Login/Signup Flow:** Add an explicit Sign Up option on the login page. After a user logs in, display their name or email in the header to show they are authenticated.
+2.  **Staff Portal Appointment Sync:** Ensure all appointment types (Walk-in, SOS, and newly booked from the Book Appt tab) appear together in the Appts tab, filterable by date.
+3.  **Email OTP Verification:** The user was not receiving OTP emails. The root cause was the Resend account being in test mode and using a non-verified sender domain. A fix has been implemented, but it awaits user verification.
+4.  **MSG91 OTP Guide:** Provide a specific guide for creating a WhatsApp OTP template on MSG91.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application has been significantly updated. The initial MSG91 WhatsApp bug is resolved. Critical bugs preventing staff login and order creation for the pharmacy and lab have been fixed. The UI has been overhauled with a new multi-row header on the homepage, a dedicated login page, and improved mobile layouts for the new staff inventory management tabs. The authentication flow no longer relies on Twilio SMS; instead, it mandates an email for all guest transactions. The inventory system now correctly sources data from a static file containing all 4266 medicines, and staff portals have new interfaces to manage and export inventory. A coupon code feature has also been added to the checkout process.
+The application is a full-stack React/FastAPI project. A global navigation header () has been implemented, providing a consistent, themed navigation experience across the Home, DiaGyn, Proton, and Pharmacy pages, as requested by the user. The staff portal has been updated to separate Walk-in (same-day) and Book Appt (future-dated) functionalities, and the Bill tab has been removed. Critical fixes for QR codes in emails (using CID attachments) and doctor fees have also been completed.
 
 **Last working item**:
--   **Last item agent was working:** The agent finished a major refactor of the inventory system. The user wanted to see all 4266 medicines, which were found in a static file () instead of the database. The agent updated all relevant backend endpoints in  to use this static file as the source of truth, ensuring the full catalog is displayed for both staff and patients.
--   **Status:** USER VERIFICATION PENDING
--   **Agent Testing Done:** Y
--   **Which testing method agent to use?** N/A
+-   **Last item agent was working:** The agent was addressing two user requests simultaneously:
+    1.  Improving the Login/Signup flow by making the Sign Up option clearer and displaying user info in the header after login. The agent was analyzing .
+    2.  Ensuring all appointment types (walk-in, SOS, booked) are consolidated in the staff portal's Appts tab.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Frontend testing agent (to verify login/signup, header display, and the consolidated appointments tab).
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Crash on Appointment Page (P1)**
-    -   **Description:** User reported the appointment page () crashes in the preview environment.
-    -   **Attempted fixes:** The agent could not reproduce the crash. The page loaded successfully in both desktop and mobile views.
+-   **Issue 1: Consolidate All Appointment Types in Staff Portal (P0)**
+    -   **Description:** The user wants the Appts tab in the staff portal to be a single source of truth, displaying all appointment types (Walk-in, SOS, and those from Book Appointment) for the selected date. The current implementation does not correctly sync or display these together.
+    -   **Attempted fixes:** The  callback was corrected to trigger a data refresh, and a success toast was added. The agent determined appointments were being saved, but the user was not changing the date in the Appts tab to see future bookings. This UX is not acceptable to the user.
     -   **Next debug checklist:**
-        1.  Ask the user for specific steps to reproduce the crash (e.g., are they logged in, what device, which actions were taken before the crash).
-        2.  Review the code in  for any heavy computations or hooks that could cause issues under specific conditions.
-    -   **Why fix this issue and what will be achieved with the fix?** The appointment booking flow is critical. Fixing this will ensure users can schedule appointments without interruption.
-    -   **Status:** BLOCKED
+        1.  In , modify the  function to fetch all appointment types from the backend for the given date.
+        2.  Ensure the backend endpoint () can return a consolidated list.
+        3.  After a booking is completed in , ensure the  callback refreshes the Appts tab and switches the view to the date of the newly booked appointment.
+    -   **Why fix this issue and what will be achieved with the fix?** To provide a unified, intuitive view of all scheduled appointments for staff, improving operational efficiency and reducing confusion.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Both
+
+-   **Issue 2: Improve Login/Signup Flow and Header Display (P0)**
+    -   **Description:** The login page lacks a clear Sign Up option for new users. After login, there is no visual confirmation in the header that the user is authenticated.
+    -   **Attempted fixes:** None yet. The agent was in the analysis phase.
+    -   **Next debug checklist:**
+        1.  Edit  to add a visible Sign Up button or a toggle between Login and Signup forms.
+        2.  Upon successful login, store user details (name, email) in a global state (e.g., React Context).
+        3.  Modify  to conditionally render the user's name/email if authenticated, or a Login button if not.
+    -   **Why fix this issue and what will be achieved with the fix?** To enhance user experience by simplifying the registration process and providing clear authentication status.
+    -   **Status:** NOT STARTED
     -   **Is recurring issue?** N
     -   **Should Test frontend/backend/both after fix?** Frontend
-    -   **Blocked on other issue:** None
+
+-   **Issue 3: Email OTP Delivery (P1)**
+    -   **Description:** Users were not receiving OTP emails on addresses other than the Resend account owner's. The agent identified the cause (test mode + unverified sender domain) and updated the sender email to .
+    -   **Attempted fixes:** The  environment variable in  was updated. Backend logs confirm Resend's API accepted the request.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a core authentication feature required for user registration and login.
+    -   **Status:** USER VERIFICATION PENDING
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Backend (verified by user testing the login flow).
 
 **In progress Task List**:
 -   None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P0: Implement Order Cancellation:** Create functionality for an admin role to cancel Proton and Orange orders. This will require a new backend endpoint and UI elements in the staff portal.
-    -   **P1: Disable Guest Checkout OTP Verification:** While email is now mandatory, the backend OTP verification logic for guest checkouts might still be active. This needs to be fully disabled as requested, until a WhatsApp OTP solution is ready.
+    -   **P1: Provide MSG91 WhatsApp OTP Template Guide:** Assist the user in creating a valid OTP template on the MSG91 platform, as they are facing issues with it.
 -   **Future Tasks:**
-    -   Make the Consult Expert link functional (currently blocked pending a URL from the user).
-    -   Verify API-driven components  and  end-to-end.
-    -   Implement backend for waitlist notifications.
-    -   Refactor the monolithic  file.
+    -   **P2:** Create a database cleanup script for inconsistent appointment data.
+    -   **P2:** Migrate the static medicine inventory to a MongoDB collection.
+    -   **P2:** Refactor the monolithic  into modular routers.
 
 **Completed work in this session**
--   **MSG91 WhatsApp Bug Fix (DONE):** Resolved the issue where the test endpoint sent the wrong template.
--   **Critical Bug Fixes (DONE):**
-    -   Fixed staff logins by resetting passwords.
-    -   Fixed pharmacy and lab order creation by adding missing API route decorators in .
--   **UI/UX Overhaul (DONE):**
-    -   Redesigned the homepage header with Zepto-style service tabs and a scrollable portal icon bar.
-    -   Created a dedicated  page, removing the old modal.
-    -   Replaced broken header logos with  icons.
-    -   Updated all Nagpur address references to Naigaon or Mumbai - Vasai.
-    -   Removed the  component from all pages.
--   **Authentication Flow Rework (DONE):**
-    -   Removed dependency on Twilio SMS for OTPs by making email compulsory for all orders.
--   **Inventory Management Feature (DONE):**
-    -   Built and integrated  and  into the staff portal.
-    -   The new tabs feature a mobile-friendly list view with search, filters, pagination, and data export (CSV, Excel, PDF).
-    -   Ensured the inventory system displays the full catalog of 4266 medicines by sourcing from a static data file.
--   **Coupon Code Feature (DONE):** Implemented a coupon code field in the checkout component and a backend validation endpoint.
+-   **Global Themed Navigation Header:** Implemented a persistent, Zepto-style header () that changes theme and navigates to the correct pages (, , ) when tabs are clicked.
+-   **QR Code in Emails Fixed:** Replaced unreliable base64 QR codes with robust CID attachments in all order confirmation emails ().
+-   **Staff Portal Enhancements:**
+    -   Restricted the Walk-in tab to same-day bookings.
+    -   Created a new Book Appt tab () for future-dated appointments, complete with a multi-step flow and clinic selection for multi-clinic staff.
+    -   Removed the Bill tab from the staff portal navigation.
+-   **UI Fixes:**
+    -   Removed consultation fees from the DiaGyn page.
+    -   Fixed logos on the themed headers for the Proton and DiaGyn pages.
 
 **Earlier issues found/mentioned but not fixed**
--   **Face ID Camera Fails to Start on Mobile:** Low-priority issue carried over from a previous session.
+-   **Face ID Camera Fails to Start on Mobile:** A low-priority issue that has not been addressed.
 
 **Known issue recurrence from previous fork**
--   None.
+-   **Email OTP not working:** This recurring issue was investigated, and the root cause (Resend test mode) was identified. A fix was implemented and is pending user verification.
+-   **Appointment booking issues:** The initial crash was fixed, but it led to a new regression where booked appointments do not sync correctly to the main appointments list in the staff portal.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Static Data Source:** The application's medicine catalog is now powered by a static Python list () in , which is a temporary solution to display a large dataset without database migration.
--   **Frontend Routing:** A dedicated route () was added using , with logic in  to conditionally bypass the app's initial splash screen.
--   **API Development (FastAPI):** A new modular router () was created and successfully integrated into the main  application to handle inventory and coupon logic.
+-   **Shared Component Architecture:** A global  was created to provide a consistent navigation and theming experience across the application, demonstrating a move towards a more modular frontend.
+-   **CID Email Attachments:** Fixed broken images in emails by using the  library to attach QR codes as CID (Content-ID) assets instead of embedding them as base64 data, a more reliable method for email client compatibility.
+-   **Role-Based Conditional UI:** The  was enhanced to show a clinic selection step only for multi-clinic staff users, demonstrating dynamic UI rendering based on user roles/data.
 
 **key DB schema**
--   : Stores new medicine items added by staff via the portal.
--   : Stores new test items added by staff via the portal.
--   : Stores staff user accounts.
+- No direct schema changes were made.
 
 **changes in tech stack**
--   **Authentication:** The system has pivoted from a reliance on Twilio SMS OTPs to using mandatory email addresses for user identification during guest checkouts.
+-   None.
 
 **All files of reference**
--   : Core logic for the new inventory and coupon features.
--   : Source of the 4266 medicines.
--   : Contains the new header implementation.
--   : The new dedicated login page.
--   : The redesigned UI for pharmacy staff.
--   , , : Contain the logic for mandatory email on orders.
-
-**Areas that need refactoring**:
--   The use of a large static file () for the catalog is not scalable and should be migrated to a database with proper indexing and pagination.
--   The main  file remains a monolith and would benefit from further modularization.
--    is a large component that could be broken down into smaller, more manageable pieces.
-
-**key api endpoints**
--   ****: (FIXED) Creates a pharmacy order.
--   ****: (FIXED) Creates a diagnostic test order.
--   ****: (NEW) Retrieves the list of medicines for the staff portal.
--   ****: (NEW) Adds or updates a medicine.
--   ****: (NEW) A public endpoint for browsing all medicines.
--   ****: (NEW) Validates a discount coupon.
+-   : The primary file for the next task (improving login/signup).
+-   : The container for the staff-facing features, including the appointment tabs.
+-   : The component responsible for booking future appointments.
+-   : The global header component.
+-   : Contains the logic for QR code email attachments.
+-   : Contains the email OTP sending logic.
 
 **Critical Info for New Agent**
--   **Inventory Data Source:** Be aware that the main list of 4266 medicines is loaded from a static file (), not the database. The  and  DB collections are only for *new* items added by staff.
--   **Authentication:** Do not use Twilio SMS for OTPs. The current flow relies on mandatory email collection for guest orders. The user plans to add a WhatsApp-based OTP solution in the future.
--   **User-Reported Crash:** The user reported a crash on the  appointment page which has not been reproduced. Be prepared to investigate this if the user provides more details.
--   **Immediate Next Task:** The most critical pending feature is implementing order cancellation for admins.
+-   **The Header is Settled:** The user is now happy with the global navigation header. It should persist across the Home, DiaGyn, Proton, and Pharmacy pages, with tabs that navigate to the correct page while updating the header's theme. Do not change this behavior.
+-   **Focus on Core User Flows:** The immediate priorities are fixing the login/signup experience and the staff appointment list. These are critical for the application's usability.
+-   **Email OTP Status:** The backend fix for email OTP has been deployed. Before attempting further changes, guide the user to test it with a non-owner email address to verify if the issue is resolved.
+-   **Consolidated Appointments:** The user explicitly wants a single, unified view in the Appts tab for all appointment types. Simply telling the user to change the date is not a sufficient solution. The system should be intuitive.
 
 **documents and test reports created in this job**
--    (updated with latest changes).
+-    (updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Appointment page crashes; need to see all 4266 medicines; remove video consultation/MyUpchar from backlog. (Status: **Partially Addressed** - Inventory fixed, crash not reproduced).
-2.  **User:** Staff portal is congested on mobile; improve inventory view; remove view switcher; update Nagpur text. (Status: **Completed**).
-3.  **User:** Confirmed need for PDF/Excel/CSV export; requested removal of Twilio due to cost and to make email compulsory. Also requested UI fixes for login. (Status: **Completed**).
-4.  **User:** Agreed to Coming Soon for WhatsApp OTP and temporarily removing guest OTP verification. (Status: **Completed**).
-5.  **User:** Provided clarification on UI mockups (Zepto/Blinkit style), new addresses, and deferred a pending task. (Status: **Completed**).
-6.  **User:** Submitted a large batch of requests including bug fixes, UI changes, and new features. (Status: **Completed**).
-7.  **User:** Approved the initial plan. (Status: **Completed**).
-8.  **User:** Reported the MSG91 bug. (Status: **Resolved**).
-9.  **User:** Provided a number for testing. (Status: **Resolved**).
-10. **User:** Confirmed templates were ready. (Status: **Resolved**).
+1.  **User:** Asks for the home page theme to be white and approves fixing the QR code. (Status: **Completed**)
+2.  **User:** Reports new issues: remove doctor fees, remove wrongly added sections, fix missing logos, and requests help with MSG91. (Status: **Partially Addressed**)
+3.  **User:** Clarifies the desired navigation behavior (theme switch without page change). (Status: **Misunderstanding**)
+4.  **User:** Confirms the agent's updated plan to fix UI issues. (Status: **Addressed**)
+5.  **User:** Approves the agent's plan. (Status: **Completed**)
+6.  **User:** Re-clarifies the final desired navigation: tabs navigate to new pages while keeping the themed header. (Status: **Completed**)
+7.  **User:** Reports email OTP is still failing with Dev OTP. (Status: **IN PROGRESS**)
+8.  **User:** Prioritizes the OTP fix and requests new staff portal features (same-day walk-in, future booking tab). (Status: **Partially Addressed**)
+9.  **User:** Provides Resend screenshots confirming the delivery issue and clarifies naming for the new staff tab. (Status: **Addressed**)
+10. **User (Latest):** Reports that booked appointments don't appear in the Appts tab, asks to remove the Bill tab, requests a consolidated appointment view, and asks for login/signup improvements. (Status: **IN PROGRESS**)
 
 **Project Health Check:**
 -   **Broken:**
-    -   **Appointment Page ():** User reported a crash that the agent could not reproduce. This is a potential high-priority bug if it persists.
+    -   Staff portal appointment syncing and display.
+    -   Login/Signup user experience (no clear Sign Up or post-login user info).
 -   **Mocked:**
-    -   The WhatsApp + OTP login option is a non-functional placeholder.
-    -   The Consult Expert link is a placeholder.
+    -   Consult Expert link remains a placeholder.
+-   **Pending Verification:**
+    -   Email OTP delivery to external addresses after the sender domain was fixed.
 
 **3rd Party Integrations**
--   **Cashfree:** Primary payment gateway, fully integrated.
--   **MSG91 (WhatsApp):** Used for notifications, fully functional.
--   **Twilio (SMS):** Deprecated for OTPs per user request. No new features should use it.
--   **Resend (Email):** Used for email notifications, working.
+-   **Cashfree:** Payment gateway.
+-   **MSG91 (WhatsApp):** User requires assistance with creating an OTP template.
+-   **Resend (Email):** Used for OTPs. Configuration was updated to use a verified sender domain.
+-   **Twilio (SMS):** Deprecated.
 
 **Testing status**
 -   **Testing agent used after significant changes:** NO
--   **Troubleshoot agent used after agent stuck in loop:** NO
 -   **Test files created:** None.
--   **Known regressions:** A potential crash on the appointment page was reported by the user after the latest batch of changes.
+-   **Known regressions:** The staff portal's appointment display is a new regression after implementing the advanced booking feature.
 
 **Credentials to test flow:**
--   **Guest Checkout:** Requires a valid email address; no OTP verification is performed.
--   **Staff Login:** Navigate to the  page and use the Staff Portal Login section.
-    -   **Pharmacy:**  / 
-    -   **Lab:**  / 
+-   **Staff Login:**  /  (for multi-clinic and appointment features).
+-   **Guest/User Login:** Use any test email. If OTP delivery fails for external emails, use  as a fallback for testing.
 
 **What agent forgot to execute**
--   The agent did not implement the feature allowing an admin to cancel Proton and Orange orders.
--   The agent did not explicitly disable the backend OTP verification check for guest users, which was part of the request to remove dependency on Twilio.</analysis>
+-   The agent has not yet provided the specific guide for creating a **WhatsApp OTP template in MSG91**. A generic guide was generated, but the user's specific request for MSG91 was not addressed.</analysis>
