@@ -3082,12 +3082,21 @@ Time: {appointment.time}"""
     </div>
     """
     
+    # Create QR code attachment for CID embedding
+    qr_attachments = [{
+        "filename": f"qrcode_{booking_id}.png",
+        "content": qr_code_base64,
+        "content_type": "image/png",
+        "content_id": f"qrcode_{booking_id}"
+    }]
+    
     await send_email_notification(
         f"New Appointment - {appointment.doctor} on {appointment.date} ({booking_id})", 
         email_html,
         patient_email=appointment.patient_email,
         patient_subject=f"✓ Booking Confirmed: {booking_id} | {appointment.doctor} on {appointment.date}",
-        patient_html=patient_appt_html
+        patient_html=patient_appt_html,
+        attachments=qr_attachments
     )
     
     # Send WhatsApp notification to doctor
