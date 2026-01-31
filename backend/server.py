@@ -2917,11 +2917,16 @@ Please check if patient needs to reschedule."""
             detail=f"You already have an active appointment on {active_appointment.get('date')} at {active_appointment.get('time')} with {active_appointment.get('doctor')}. Please complete or cancel it before booking a new one."
         )
     
+    # Normalize the date to ISO format
+    normalized_date = normalize_date_format(input.date)
+    date_patterns = get_date_patterns(normalized_date)
+    
     # SLOT BLOCKING: Check if slot is already booked (includes pending from patient bookings)
+    # Query with multiple date formats to handle legacy data
     existing = await db.appointments.find_one({
         "doctor": input.doctor,
         "clinic": input.clinic,
-        "date": input.date,
+        "date": {"$in": date_patterns},
         "time": input.time,
         "status": {"$in": ["pending", "Booked", "In Clinic", "Completed"]}
     })
@@ -2939,6 +2944,7 @@ Please check if patient needs to reschedule."""
     )
     
     doc = appointment.model_dump()
+    doc['date'] = normalized_date  # Store normalized date
     doc['created_at'] = doc['created_at'].isoformat()
     doc['appointment_type'] = "NORMAL"  # Customer bookings are always NORMAL
     doc['send_email_reminder'] = input.send_email_reminder  # Store email reminder preference
