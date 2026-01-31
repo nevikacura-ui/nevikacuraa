@@ -612,12 +612,12 @@ const Proton = () => {
   const filteredTests = getFilteredTests();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-indigo-50/30 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-blue-50">
       {/* Blue Theme Accent Bar */}
-      <div className="h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+      <div className="h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
       
       {/* Header */}
-      <header className="bg-white/95 backdrop-blur-xl border-b border-blue-100 sticky top-0 z-50 shadow-sm">
+      <header className="bg-gradient-to-r from-blue-600 to-indigo-600 sticky top-0 z-50 shadow-lg">
         <div className="max-w-5xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -625,15 +625,15 @@ const Proton = () => {
                 variant="ghost" 
                 size="icon"
                 onClick={() => currentStep > 1 ? goToStep1() : navigate('/')}
-                className="rounded-full hover:bg-[#5FA8D3]/10"
+                className="rounded-full bg-white/20 hover:bg-white/30 text-white"
                 data-testid="back-button"
               >
-                <ArrowLeft className="w-5 h-5 text-[#1E293B]" />
+                <ArrowLeft className="w-5 h-5" />
               </Button>
               <img 
                 src="/proton-logo.png" 
                 alt="Proton Diagnostics" 
-                className="h-12 sm:h-14 w-auto"
+                className="h-12 sm:h-14 w-auto brightness-0 invert"
                 data-testid="proton-logo"
               />
             </div>
