@@ -18,9 +18,22 @@ const API = process.env.REACT_APP_BACKEND_URL;
 const AdvanceBookingTab = ({
   staffInfo,
   activeClinic,
+  availableClinics = [],
   onBookingComplete
 }) => {
-  const currentClinic = activeClinic || staffInfo?.clinic;
+  // For multi-clinic staff, allow choosing clinic. Otherwise use the active clinic
+  const [selectedClinic, setSelectedClinic] = useState(activeClinic || staffInfo?.clinic || '');
+  const hasMultipleClinics = availableClinics.length > 1 || (staffInfo?.clinics?.length > 1);
+  const clinicOptions = availableClinics.length > 1 ? availableClinics : (staffInfo?.clinics || [staffInfo?.clinic]);
+  
+  // Update selected clinic when activeClinic changes
+  useEffect(() => {
+    if (activeClinic) {
+      setSelectedClinic(activeClinic);
+    }
+  }, [activeClinic]);
+  
+  const currentClinic = selectedClinic || activeClinic || staffInfo?.clinic;
   const clinicDoctors = CLINICS[currentClinic] || [];
   
   // Booking flow steps
