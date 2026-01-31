@@ -496,32 +496,52 @@ const StaffPortal = () => {
         name: res.data.staff?.name || res.data.name,
         doctor_name: res.data.doctor_name,
         clinic: res.data.staff?.clinic || res.data.clinic,
+        clinics: res.data.staff?.clinics || [],  // Multi-clinic access list
         doctor_clinics: res.data.doctor_clinics || [],
         access_modules: res.data.staff?.access_modules || []
       };
       localStorage.setItem('staffInfo', JSON.stringify(staffData));
       setStaffInfo(staffData);
       
-      // Set doctor clinics if available
-      if (res.data.doctor_clinics && res.data.doctor_clinics.length > 0) {
-        setDoctorClinics(res.data.doctor_clinics);
-        setSelectedClinic(res.data.doctor_clinics[0]); // Default to first clinic
-      }
-      
-      // Set forms with clinic
-      const staffClinic = res.data.staff?.clinic || res.data.clinic;
-      if (staffClinic) {
-        const clinicDoctors = CLINICS[staffClinic] || [];
+      // Set multi-clinic access for diagyn_staff or similar roles
+      const staffClinics = res.data.staff?.clinics || [];
+      if (staffClinics.length > 1) {
+        setAvailableClinics(staffClinics);
+        setActiveClinic(staffClinics[0]); // Default to first clinic
+        // Set forms with first clinic
+        const clinicDoctors = CLINICS[staffClinics[0]] || [];
         setWalkInForm(prev => ({
           ...prev,
-          clinic: staffClinic,
+          clinic: staffClinics[0],
           doctor: clinicDoctors[0] || ''
         }));
         setEmergencyForm(prev => ({
           ...prev,
-          clinic: staffClinic,
+          clinic: staffClinics[0],
           doctor: clinicDoctors[0] || ''
         }));
+      } else {
+        // Set doctor clinics if available (for doctor role)
+        if (res.data.doctor_clinics && res.data.doctor_clinics.length > 0) {
+          setDoctorClinics(res.data.doctor_clinics);
+          setSelectedClinic(res.data.doctor_clinics[0]);
+        }
+        
+        // Set forms with single clinic
+        const staffClinic = res.data.staff?.clinic || res.data.clinic;
+        if (staffClinic && staffClinic !== 'Both Clinics') {
+          const clinicDoctors = CLINICS[staffClinic] || [];
+          setWalkInForm(prev => ({
+            ...prev,
+            clinic: staffClinic,
+            doctor: clinicDoctors[0] || ''
+          }));
+          setEmergencyForm(prev => ({
+            ...prev,
+            clinic: staffClinic,
+            doctor: clinicDoctors[0] || ''
+          }));
+        }
       }
       
       setIsAuthenticated(true);
@@ -532,11 +552,32 @@ const StaffPortal = () => {
     setLoading(false);
   };
 
+  // Handle clinic switch for multi-clinic staff
+  const handleClinicSwitch = (clinic) => {
+    setActiveClinic(clinic);
+    const clinicDoctors = CLINICS[clinic] || [];
+    setWalkInForm(prev => ({
+      ...prev,
+      clinic: clinic,
+      doctor: clinicDoctors[0] || ''
+    }));
+    setEmergencyForm(prev => ({
+      ...prev,
+      clinic: clinic,
+      doctor: clinicDoctors[0] || ''
+    }));
+    // Refresh appointments for the new clinic
+    loadData();
+    toast.success(`Switched to ${clinic}`);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('staffToken');
     localStorage.removeItem('staffInfo');
     setIsAuthenticated(false);
     setStaffInfo(null);
+    setAvailableClinics([]);
+    setActiveClinic('Pushpa Clinic');
     toast.success('Logged out successfully');
   };
 
