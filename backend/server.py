@@ -4268,6 +4268,8 @@ async def send_fasting_reminder(
         "message": "Fasting reminder scheduled! You'll receive a WhatsApp reminder before your test.",
         "reminder_id": reminder["id"]
     }
+
+@api_router.post("/pharmacy")
 async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(get_current_user)):
     # ORDER LIMIT: Check if user already has 2 active pharmacy orders
     active_orders = await db.pharmacy_orders.find({
