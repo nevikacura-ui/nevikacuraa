@@ -2748,6 +2748,10 @@ const StaffPortal = () => {
                 <FlaskConical className="w-4 h-4 mr-2" />
                 Orders
               </TabsTrigger>
+              <TabsTrigger value="inventory" data-testid="tab-diag-inventory" className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white data-[state=active]:from-purple-600 data-[state=active]:to-indigo-600">
+                <FlaskConical className="w-4 h-4 mr-2" />
+                Test Inventory
+              </TabsTrigger>
               <TabsTrigger value="create" data-testid="tab-diag-create">
                 <UserPlus className="w-4 h-4 mr-2" />
                 Create Order
@@ -2772,6 +2776,11 @@ const StaffPortal = () => {
                 loadData={loadData}
                 handleDiagnosticStatusUpdate={handleDiagnosticStatusUpdate}
               />
+            </TabsContent>
+            
+            {/* Test Inventory Tab */}
+            <TabsContent value="inventory">
+              <TestInventoryTab />
             </TabsContent>
             
             {/* Create Order Tab */}
