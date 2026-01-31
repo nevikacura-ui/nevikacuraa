@@ -1456,6 +1456,46 @@ def generate_otp():
     """Generate a 6-digit OTP"""
     return str(random.randint(100000, 999999))
 
+def normalize_date_format(date_str: str) -> str:
+    """Normalize date to YYYY-MM-DD format for consistent storage"""
+    from datetime import datetime
+    
+    if not date_str:
+        return date_str
+    
+    # Try different date formats
+    formats = ['%Y-%m-%d', '%d/%m/%Y', '%d-%m-%Y', '%m/%d/%Y']
+    
+    for fmt in formats:
+        try:
+            parsed = datetime.strptime(date_str, fmt)
+            return parsed.strftime('%Y-%m-%d')  # Always return ISO format
+        except ValueError:
+            continue
+    
+    # If no format matches, return as-is
+    return date_str
+
+def get_date_patterns(date_str: str) -> list:
+    """Generate multiple date format patterns for database querying
+    This handles legacy data with inconsistent date formats"""
+    from datetime import datetime
+    
+    patterns = [date_str]  # Always include original
+    
+    try:
+        # Parse the incoming date (expected: YYYY-MM-DD)
+        if '-' in date_str and len(date_str.split('-')[0]) == 4:
+            parsed = datetime.strptime(date_str, '%Y-%m-%d')
+            patterns.append(parsed.strftime('%d/%m/%Y'))  # DD/MM/YYYY
+        elif '/' in date_str:
+            parsed = datetime.strptime(date_str, '%d/%m/%Y')
+            patterns.append(parsed.strftime('%Y-%m-%d'))  # ISO format
+    except ValueError:
+        pass
+    
+    return list(set(patterns))  # Remove duplicates
+
 async def get_current_user(authorization: str = Header(None)):
     if not authorization or not authorization.startswith('Bearer '):
         return None
