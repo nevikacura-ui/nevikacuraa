@@ -150,35 +150,6 @@ async def get_public_medicines(
     except Exception as e:
         logger.error(f"Failed to get medicines catalog: {e}")
         raise HTTPException(status_code=500, detail="Failed to load medicines")
-        
-        for med in staff_medicines:
-            medicines.append({
-                'id': med.get('id') or str(med.get('_id', '')),
-                'name': med.get('name', ''),
-                'image_url': med.get('image_url', ''),
-                'mrp': med.get('mrp', 0),
-                'discount_percent': med.get('discount_percent', 0),
-                'sale_price': med.get('sale_price') or med.get('mrp', 0),
-                'category': med.get('category', ''),
-                'unit': med.get('unit', 'strip'),
-                'stock': med.get('stock', 0)
-            })
-        
-        # Get categories
-        categories = await db.medicines_catalog.distinct('category')
-        staff_cats = await db.pharmacy_inventory.distinct('category')
-        all_categories = list(set(categories + staff_cats))
-        
-        return {
-            "medicines": medicines,
-            "total": total_catalog + total_staff,
-            "page": page,
-            "limit": limit,
-            "categories": all_categories
-        }
-    except Exception as e:
-        logger.error(f"Failed to get medicines catalog: {e}")
-        raise HTTPException(status_code=500, detail="Failed to load medicines")
 
 # ============ Staff Pharmacy Inventory Endpoints ============
 
