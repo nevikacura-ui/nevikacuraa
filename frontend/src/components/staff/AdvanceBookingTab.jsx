@@ -176,7 +176,14 @@ const AdvanceBookingTab = ({
       setPatientPhone('');
       
       if (onBookingComplete) {
-        onBookingComplete(response.data);
+        // Include the booked date in the callback data for tab switching
+        onBookingComplete({
+          ...response.data,
+          date: selectedDate,
+          time: selectedSlot,
+          doctor: selectedDoctor,
+          clinic: currentClinic
+        });
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to book appointment');
