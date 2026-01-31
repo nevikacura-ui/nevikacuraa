@@ -936,8 +936,12 @@ _Nevika Cura Healthcare_"""
     
     return await send_whatsapp_notification(doctor_number, message)
 
-async def send_email_notification(subject: str, html_content: str, patient_email: str = None, patient_subject: str = None, patient_html: str = None):
-    """Send email notification using Resend - to admin and optionally to patient"""
+async def send_email_notification(subject: str, html_content: str, patient_email: str = None, patient_subject: str = None, patient_html: str = None, attachments: list = None):
+    """Send email notification using Resend - to admin and optionally to patient.
+    
+    Args:
+        attachments: List of dicts with 'filename', 'content' (base64), 'content_type', and optional 'content_id' for CID
+    """
     if not RESEND_API_KEY:
         logger.warning("Resend API key not configured, skipping email notification")
         return None
@@ -969,6 +973,10 @@ async def send_email_notification(subject: str, html_content: str, patient_email
                 "subject": patient_subject or subject,
                 "html": patient_html or html_content
             }
+            # Add attachments if provided (for QR codes with CID)
+            if attachments:
+                patient_params["attachments"] = attachments
+            
             patient_result = await asyncio.to_thread(resend.Emails.send, patient_params)
             logger.info(f"Patient email sent successfully to {patient_email}: {patient_result.get('id')}")
             results.append({"patient": patient_result})
