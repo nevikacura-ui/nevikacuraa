@@ -545,11 +545,9 @@ const Home = () => {
                 className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full flex items-center gap-2 hover:border-teal-300 hover:shadow-md transition-all"
                 data-testid="nav-diagyn"
               >
-                <img 
-                  src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/qww1khpq_2_20260107_021040_0001.jpg"
-                  alt="DiaGyn"
-                  className="w-7 h-7 rounded-full object-cover bg-white"
-                />
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center">
+                  <Stethoscope className="w-4 h-4 text-white" />
+                </div>
                 <span className="font-semibold text-slate-700 text-sm whitespace-nowrap">DiaGyn</span>
               </button>
               
@@ -559,11 +557,9 @@ const Home = () => {
                 className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full flex items-center gap-2 hover:border-purple-300 hover:shadow-md transition-all"
                 data-testid="nav-proton"
               >
-                <img 
-                  src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/xbiwlhv7_4_20260107_021040_0003.jpg"
-                  alt="Proton"
-                  className="w-7 h-7 rounded-full object-cover bg-white"
-                />
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center">
+                  <FlaskConical className="w-4 h-4 text-white" />
+                </div>
                 <span className="font-semibold text-slate-700 text-sm whitespace-nowrap">Proton</span>
               </button>
               
@@ -573,11 +569,9 @@ const Home = () => {
                 className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full flex items-center gap-2 hover:border-orange-300 hover:shadow-md transition-all"
                 data-testid="nav-orange"
               >
-                <img 
-                  src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg"
-                  alt="Orange Pharmacy"
-                  className="w-7 h-7 rounded-full object-cover bg-white"
-                />
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center">
+                  <Package className="w-4 h-4 text-white" />
+                </div>
                 <span className="font-semibold text-slate-700 text-sm whitespace-nowrap">Orange</span>
               </button>
             </div>
