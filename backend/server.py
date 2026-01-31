@@ -3779,6 +3779,8 @@ async def patient_check_in(appointment_id: str):
         "message": "Check-in successful!",
         **position_data
     }
+
+@api_router.post("/diagnostics")
 async def create_diagnostic_order(input: DiagnosticOrderCreate, user = Depends(get_current_user)):
     # ORDER LIMIT: Check if user already has 2 active diagnostic orders
     active_orders = await db.diagnostic_orders.find({
