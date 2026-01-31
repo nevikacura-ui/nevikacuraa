@@ -942,10 +942,8 @@ const Pharmacy = () => {
       toast.error('Please enter a valid email address');
       return;
     }
-    // Estimate total (pharmacist will confirm final bill)
-    const itemCount = medicines.reduce((sum, m) => sum + m.quantity, 0);
-    const estimated = itemCount * 100; // Rough estimate ₹100 per item
-    setEstimatedTotal(estimated);
+    // No automatic amount - pharmacist will confirm final bill
+    setEstimatedTotal(0);
     setShowPaymentDialog(true);
   };
 
