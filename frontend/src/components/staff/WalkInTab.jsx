@@ -35,7 +35,8 @@ const WalkInTab = ({
 
   return (
     <Card className="p-6 max-w-lg" data-testid="walkin-tab-content">
-      <h2 className="font-semibold text-lg mb-4">Book Walk-in Appointment - {currentClinic}</h2>
+      <h2 className="font-semibold text-lg mb-1">Walk-in Appointment - {currentClinic}</h2>
+      <p className="text-sm text-gray-500 mb-4">Book same-day appointments only (Today: {formatIndianDate(getIndianDate())})</p>
       <div className="space-y-4">
         {/* Patient Lookup Section */}
         <div className="p-4 bg-teal-50 border border-teal-200 rounded-xl">
