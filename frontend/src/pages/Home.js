@@ -511,13 +511,6 @@ const Home = () => {
                     Login
                   </Button>
                 )}
-                <button
-                  className="p-2 rounded-full hover:bg-slate-100 transition-colors sm:hidden"
-                  onClick={() => setShowMenu(!showMenu)}
-                  data-testid="mobile-menu-button"
-                >
-                  {showMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                </button>
               </div>
             </div>
           </div>
