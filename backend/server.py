@@ -3148,27 +3148,9 @@ async def get_booked_slots(doctor: str, clinic: str, date: str):
     This endpoint is used by both DiaGyn (patient) and StaffPortal for slot synchronization
     Includes 'pending' and 'blocked' status to block slots from patient bookings
     
-    Handles multiple date formats in database:
-    - YYYY-MM-DD (ISO format)
-    - DD/MM/YYYY (legacy format)
+    Handles multiple date formats in database (legacy data compatibility)
     """
-    from datetime import datetime
-    
-    # Generate multiple date format patterns for matching
-    date_patterns = [date]  # Original format
-    
-    try:
-        # Parse the incoming date (expected: YYYY-MM-DD)
-        if '-' in date and len(date.split('-')[0]) == 4:
-            parsed = datetime.strptime(date, '%Y-%m-%d')
-            # Add DD/MM/YYYY format
-            date_patterns.append(parsed.strftime('%d/%m/%Y'))
-        elif '/' in date:
-            # If incoming is DD/MM/YYYY, also add ISO format
-            parsed = datetime.strptime(date, '%d/%m/%Y')
-            date_patterns.append(parsed.strftime('%Y-%m-%d'))
-    except ValueError:
-        pass  # Keep original date only if parsing fails
+    date_patterns = get_date_patterns(date)
     
     booked = await db.appointments.find(
         {
