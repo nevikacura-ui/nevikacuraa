@@ -1289,8 +1289,6 @@ const DiaGyn = () => {
                 {loadingAvailability ? <Loader2 className="w-4 h-4 animate-spin" /> : <CalendarDays className="w-4 h-4" />}
                 <span className="hidden sm:inline">Schedule</span>
               </Button>
-              {/* View Mode Switcher */}
-              <ViewModeSwitcher compact />
             </div>
           </div>
         </div>
