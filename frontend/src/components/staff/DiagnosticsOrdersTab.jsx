@@ -324,7 +324,7 @@ const DiagnosticsOrdersTab = ({
                   </div>
                 )}
                 
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-2 flex-wrap items-center">
                   {['Test Booked', 'Sample Collected', 'In Process', 'Reports Generated'].map(status => (
                     <Button
                       key={status}
@@ -333,6 +333,7 @@ const DiagnosticsOrdersTab = ({
                       onClick={() => handleDiagnosticStatusUpdate(order.id, status)}
                       disabled={
                         order.status === status ||
+                        order.status === 'cancelled' ||
                         (status === 'Reports Generated' && !order.report_url)
                       }
                       className={order.status === status ? 'bg-purple-500' : ''}
@@ -342,6 +343,48 @@ const DiagnosticsOrdersTab = ({
                       {status}
                     </Button>
                   ))}
+                  
+                  {/* Admin Cancel Button */}
+                  {isAdmin && order.status !== 'cancelled' && order.status !== 'Reports Generated' && (
+                    <>
+                      {showCancelConfirm === order.id ? (
+                        <div className="flex items-center gap-2 ml-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+                          <AlertTriangle className="w-4 h-4 text-red-600" />
+                          <span className="text-sm text-red-700">Cancel order?</span>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleCancelOrder(order.id)}
+                            disabled={cancellingOrder === order.id}
+                            data-testid={`confirm-cancel-diagnostic-${order.id}`}
+                          >
+                            {cancellingOrder === order.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : 'Yes'}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setShowCancelConfirm(null)}
+                            data-testid={`abort-cancel-diagnostic-${order.id}`}
+                          >
+                            No
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setShowCancelConfirm(order.id)}
+                          className="ml-2 text-red-600 border-red-200 hover:bg-red-50"
+                          data-testid={`cancel-diagnostic-${order.id}`}
+                        >
+                          <XCircle className="w-4 h-4 mr-1" />
+                          Cancel
+                        </Button>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             ))
