@@ -2665,6 +2665,7 @@ const StaffPortal = () => {
                 pharmacyDateCounts={pharmacyDateCounts}
                 loadData={loadData}
                 handlePharmacyStatusUpdate={handlePharmacyStatusUpdate}
+                staffRole={staffInfo?.role}
               />
             </TabsContent>
 
@@ -2773,6 +2774,7 @@ const StaffPortal = () => {
                 diagnosticDateCounts={diagnosticDateCounts}
                 loadData={loadData}
                 handleDiagnosticStatusUpdate={handleDiagnosticStatusUpdate}
+                staffRole={staffInfo?.role}
               />
             </TabsContent>
             
