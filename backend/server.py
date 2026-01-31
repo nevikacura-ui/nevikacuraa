@@ -3987,7 +3987,7 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
     </div>
     """
     
-    # Patient confirmation email for diagnostics with QR code
+    # Patient confirmation email for diagnostics with QR code using CID
     tests_list_patient = "".join([f"<li>{test}</li>" for test in order.tests])
     patient_diag_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -3998,13 +3998,18 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
             <p style="font-size: 18px;">Hello <strong>{order.patient_name}</strong>,</p>
             <p>Your diagnostic tests have been successfully booked at <strong>Proton Diagnostics</strong>.</p>
             
-            <!-- QR Code Section -->
-            <div style="text-align: center; margin: 25px 0; padding: 20px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 12px;">
-                <p style="color: white; margin: 0 0 10px 0; font-size: 14px;">Show this QR code at the collection center</p>
-                <div style="background: white; display: inline-block; padding: 15px; border-radius: 10px;">
-                    <img src="data:image/png;base64,{qr_code_base64}" alt="Booking QR Code" style="width: 150px; height: 150px;">
-                </div>
-                <p style="margin: 10px 0 0 0; color: white; font-size: 24px; font-weight: bold; letter-spacing: 3px;">{booking_id}</p>
+            <!-- Booking ID Section - Primary Focus -->
+            <div style="text-align: center; margin: 25px 0; padding: 25px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 12px;">
+                <p style="margin: 0 0 5px 0; color: white; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Your Booking ID</p>
+                <p style="margin: 0; color: white; font-size: 32px; font-weight: bold; letter-spacing: 4px; font-family: monospace;">{booking_id}</p>
+                <p style="margin: 15px 0 0 0; color: rgba(255,255,255,0.8); font-size: 11px;">Show this ID at the collection center</p>
+            </div>
+            
+            <!-- QR Code Section - Using CID attachment -->
+            <div style="text-align: center; margin: 20px 0; padding: 15px; background: white; border-radius: 12px; border: 1px dashed #e2e8f0;">
+                <p style="margin: 0 0 10px 0; color: #94a3b8; font-size: 11px; text-transform: uppercase;">Scan for Quick Check-in</p>
+                <img src="cid:qrcode_{booking_id}" alt="QR Code" style="width: 140px; height: 140px; border-radius: 8px;" />
+                <p style="margin: 10px 0 0 0; color: #cbd5e1; font-size: 10px;">If QR not visible, use Booking ID above</p>
             </div>
             
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8b5cf6;">
@@ -4026,12 +4031,21 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
     </div>
     """
     
+    # Create QR code attachment for CID embedding
+    diag_qr_attachments = [{
+        "filename": f"qrcode_{booking_id}.png",
+        "content": qr_code_base64,
+        "content_type": "image/png",
+        "content_id": f"qrcode_{booking_id}"
+    }]
+    
     await send_email_notification(
         f"New Diagnostic Order - {order.patient_name}", 
         email_html,
         patient_email=order.patient_email,
         patient_subject=f"Test Booking Confirmed - Proton Diagnostics",
-        patient_html=patient_diag_html
+        patient_html=patient_diag_html,
+        attachments=diag_qr_attachments
     )
     
     # Send push notification if user is logged in
