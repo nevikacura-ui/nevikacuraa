@@ -184,7 +184,7 @@ const testPreparations = {
 const StepProgress = ({ currentStep }) => {
   const steps = [
     { num: 1, label: 'Select Tests', icon: FlaskConical },
-    { num: 2, label: 'Verify', icon: Shield },
+    { num: 2, label: 'Details', icon: Shield },
     { num: 3, label: 'Book', icon: CheckCircle2 }
   ];
   
@@ -1217,7 +1217,7 @@ const Proton = () => {
               className="w-full bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#4A90B8] hover:to-[#5FA8D3] text-white py-6 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
               data-testid="continue-to-otp"
             >
-              Continue to Verify
+              Continue
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
