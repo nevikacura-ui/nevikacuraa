@@ -287,10 +287,28 @@ const LoginPage = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
                     className="mt-1.5"
-                    disabled={otpSent}
+                    disabled={otpSent || isNewUser}
                     data-testid="email-input"
                   />
                 </div>
+                
+                {/* New User Registration - Name Input */}
+                {isNewUser && !otpSent && (
+                  <div>
+                    <Label className="text-slate-700">Your Name</Label>
+                    <Input
+                      type="text"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      placeholder="Enter your name"
+                      className="mt-1.5"
+                      data-testid="name-input"
+                    />
+                    <p className="text-xs text-slate-500 mt-1">
+                      New account will be created for {email}
+                    </p>
+                  </div>
+                )}
                 
                 {otpSent && (
                   <div>
@@ -305,13 +323,13 @@ const LoginPage = () => {
                       data-testid="otp-input"
                     />
                     <p className="text-xs text-slate-500 mt-1">
-                      OTP sent to {email}. <button onClick={() => setOtpSent(false)} className="text-teal-600 hover:underline">Change email</button>
+                      OTP sent to {email}. <button onClick={() => { setOtpSent(false); setIsNewUser(false); }} className="text-teal-600 hover:underline">Change email</button>
                     </p>
                   </div>
                 )}
                 
                 <Button
-                  onClick={otpSent ? handleVerifyEmailOTP : handleSendEmailOTP}
+                  onClick={otpSent ? handleVerifyEmailOTP : (isNewUser ? handleSignUpNewUser : handleSendEmailOTP)}
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600"
                   data-testid="submit-btn"
