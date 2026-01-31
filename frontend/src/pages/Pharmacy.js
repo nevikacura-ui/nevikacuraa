@@ -292,7 +292,7 @@ const CategoryCard = ({ category, isActive, onClick }) => {
 const StepProgress = ({ currentStep }) => {
   const steps = [
     { num: 1, label: 'Cart', icon: ShoppingCart },
-    { num: 2, label: 'Verify', icon: Shield },
+    { num: 2, label: 'Details', icon: Shield },
     { num: 3, label: 'Pay', icon: CreditCard }
   ];
   
