@@ -153,5 +153,5 @@ async def upload_report(
     return {
         "success": True,
         "message": f"Report uploaded for {booking_id}",
-        "download_link": f"https://healthcare-app-32.preview.emergentagent.com/report/{booking_id.upper()}"
+        "download_link": f"https://nevika-health-9.preview.emergentagent.com/report/{booking_id.upper()}"
     }
