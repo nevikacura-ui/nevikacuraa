@@ -36,7 +36,6 @@ const LoginPage = () => {
     try {
       // Try login first (for existing users)
       const url = `${API}/api/auth/v2/login/send-otp`;
-      console.log('Sending OTP request to:', url);
       
       const res = await fetch(url, {
         method: 'POST',
@@ -44,16 +43,7 @@ const LoginPage = () => {
         body: JSON.stringify({ email })
       });
       
-      console.log('Response status:', res.status);
-      
-      if (res.status === 404) {
-        // Route not found - could be a deployment issue
-        toast.error('Service temporarily unavailable. Please try again.');
-        return;
-      }
-      
       const data = await res.json();
-      console.log('Response data:', data);
       
       if (data.success) {
         toast.success('OTP sent to your email');
@@ -63,7 +53,8 @@ const LoginPage = () => {
         if (data.mock_otp) {
           toast.info(`Dev OTP: ${data.mock_otp}`, { duration: 10000 });
         }
-      } else if (data.detail?.toLowerCase().includes('not found') || 
+      } else if (res.status === 404 || 
+                 data.detail?.toLowerCase().includes('not found') || 
                  data.detail?.toLowerCase().includes('not registered') ||
                  data.detail?.toLowerCase().includes('sign up')) {
         // User doesn't exist - need to sign up
