@@ -587,7 +587,15 @@ const Home = () => {
 
       {/* Mobile Menu - Glassmorphism */}
       {showMenu && (
-        <div className="md:hidden fixed top-24 left-4 right-4 bg-white/90 backdrop-blur-xl border border-white/50 shadow-xl rounded-2xl z-40 p-4 space-y-2" data-testid="mobile-menu">
+        <div className="fixed top-[120px] left-4 right-4 bg-white/95 backdrop-blur-xl border border-slate-200 shadow-xl rounded-2xl z-40 p-4 space-y-2" data-testid="mobile-menu">
+          <Button 
+            variant="ghost" 
+            onClick={() => { navigate('/staff'); setShowMenu(false); }}
+            className="w-full justify-start text-teal-600 hover:bg-teal-50 rounded-xl"
+          >
+            <Shield className="w-4 h-4 mr-2" />
+            Staff Portal
+          </Button>
           <Button 
             variant="ghost" 
             onClick={() => { navigate('/track'); setShowMenu(false); }}
@@ -595,6 +603,14 @@ const Home = () => {
           >
             <Search className="w-4 h-4 mr-2" />
             Track Orders
+          </Button>
+          <Button 
+            variant="ghost" 
+            onClick={() => { navigate('/patient-portal'); setShowMenu(false); }}
+            className="w-full justify-start rounded-xl"
+          >
+            <FileText className="w-4 h-4 mr-2" />
+            My Records
           </Button>
           <Button 
             variant="ghost" 
