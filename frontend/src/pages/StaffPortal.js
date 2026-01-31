@@ -28,6 +28,7 @@ import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRe
 
 // Import refactored staff tab components
 import WalkInTab from '@/components/staff/WalkInTab';
+import AdvanceBookingTab from '@/components/staff/AdvanceBookingTab';
 import EmergencyTab from '@/components/staff/EmergencyTab';
 import FeesTab from '@/components/staff/FeesTab';
 import FeedbackTab from '@/components/staff/FeedbackTab';
