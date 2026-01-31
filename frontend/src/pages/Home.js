@@ -54,6 +54,43 @@ const Home = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   
+  // Active Service Tab for Zepto-style theming
+  const [activeService, setActiveService] = useState('home');
+  
+  // Service theme configurations
+  const serviceThemes = {
+    home: {
+      name: 'Nevika Cura',
+      bgGradient: 'from-teal-50 via-cyan-50 to-white',
+      headerBg: 'bg-gradient-to-r from-teal-500 to-cyan-500',
+      accentColor: 'teal',
+      iconBg: 'from-teal-500 to-cyan-500'
+    },
+    diagyn: {
+      name: 'DiaGyn',
+      bgGradient: 'from-teal-100 via-cyan-100 to-teal-50',
+      headerBg: 'bg-gradient-to-r from-teal-600 to-cyan-600',
+      accentColor: 'teal',
+      iconBg: 'from-teal-600 to-cyan-600'
+    },
+    proton: {
+      name: 'Proton',
+      bgGradient: 'from-blue-100 via-indigo-100 to-blue-50',
+      headerBg: 'bg-gradient-to-r from-blue-600 to-indigo-600',
+      accentColor: 'blue',
+      iconBg: 'from-blue-600 to-indigo-600'
+    },
+    pharmacy: {
+      name: 'Orange Pharmacy',
+      bgGradient: 'from-orange-100 via-amber-100 to-orange-50',
+      headerBg: 'bg-gradient-to-r from-orange-500 to-amber-500',
+      accentColor: 'orange',
+      iconBg: 'from-orange-500 to-amber-500'
+    }
+  };
+  
+  const currentTheme = serviceThemes[activeService];
+  
   // Health Tip of the Day - Changes daily based on date
   const [currentTip, setCurrentTip] = useState(healthTips[0]);
   const [tipVisible, setTipVisible] = useState(true);
