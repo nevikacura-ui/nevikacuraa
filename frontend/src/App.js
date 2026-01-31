@@ -71,6 +71,8 @@ import ProtonReportDownload from '@/pages/ProtonReportDownload';
 import PharmacyProductPage from '@/pages/PharmacyProductPage';
 import HowToInstall from '@/pages/HowToInstall';
 import NevikaCuraOne from '@/pages/NevikaCuraOne';
+// Login Page
+import LoginPage from '@/pages/LoginPage';
 // Intro Screen (Loading + Splash combined)
 import IntroScreen from '@/components/IntroScreen';
 // Page Transitions
