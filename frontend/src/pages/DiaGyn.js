@@ -1257,12 +1257,12 @@ const DiaGyn = () => {
   const stepTitles = ['Doctor', 'Clinic', 'Schedule', 'Verify', 'Confirm'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-teal-50 via-cyan-50/50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-teal-100 via-cyan-100 to-teal-50">
       {/* Teal Theme Accent Bar */}
-      <div className="h-1 bg-gradient-to-r from-teal-400 via-cyan-500 to-teal-600" />
+      <div className="h-2 bg-gradient-to-r from-teal-500 via-cyan-500 to-teal-600" />
       
       {/* Header */}
-      <header className="bg-white/95 backdrop-blur-xl border-b border-teal-100 sticky top-0 z-50 shadow-sm">
+      <header className="bg-gradient-to-r from-teal-600 to-cyan-600 sticky top-0 z-50 shadow-lg">
         <div className="max-w-5xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
