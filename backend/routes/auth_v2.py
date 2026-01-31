@@ -82,7 +82,12 @@ def generate_order_id(prefix: str = "ORD") -> str:
     return f"NC-{prefix}-{date_str}-{random_num}"
 
 async def send_email_otp(email: str, otp: str, purpose: str = "verify") -> bool:
-    """Send OTP via email using Resend"""
+    """Send OTP via email using Resend
+    
+    NOTE: Resend requires domain verification to send to external emails.
+    In test mode, only the account owner's email can receive emails.
+    To enable for all users, verify a domain at https://resend.com/domains
+    """
     if not RESEND_API_KEY:
         logger.warning("Resend not configured, cannot send email OTP")
         return False
@@ -113,18 +118,24 @@ async def send_email_otp(email: str, otp: str, purpose: str = "verify") -> bool:
         </div>
         """
         
-        resend.Emails.send({
+        result = resend.Emails.send({
             "from": SENDER_EMAIL,
             "to": [email],
             "subject": subject,
             "html": html_content
         })
         
-        logger.info(f"Email OTP sent to {email}")
+        logger.info(f"Email OTP sent to {email}, result: {result}")
         return True
     
     except Exception as e:
-        logger.error(f"Failed to send email OTP: {str(e)}")
+        error_msg = str(e)
+        logger.error(f"Failed to send email OTP to {email}: {error_msg}")
+        
+        # Check if it's a domain verification issue
+        if "verify a domain" in error_msg.lower() or "testing emails" in error_msg.lower():
+            logger.warning("Resend domain not verified. To send emails to all users, verify domain at resend.com/domains")
+        
         return False
 
 # ============ GUEST MODE (SMS OTP - One-time Orders) ============
