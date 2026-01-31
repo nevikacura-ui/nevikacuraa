@@ -2283,22 +2283,6 @@ const StaffPortal = () => {
               />
             </TabsContent>
             
-            {/* Billing Tab Content */}
-            <TabsContent value="billing">
-              <Card className="p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-semibold text-lg flex items-center gap-2">
-                    <IndianRupee className="w-5 h-5 text-teal-600" />
-                    {staffInfo?.clinic || 'Clinic'} - Staff Billing
-                  </h2>
-                </div>
-                <StaffBillingModule 
-                  staffInfo={staffInfo} 
-                  getAuthHeaders={getAuthHeaders}
-                />
-              </Card>
-            </TabsContent>
-
             {/* ANC Registration Tab Content */}
             {staffInfo?.access_modules?.includes('anc') && (
               <TabsContent value="anc">
