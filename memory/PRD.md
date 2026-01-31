@@ -1385,5 +1385,36 @@ January 30, 2026 - 14:35
 ---
 
 ## Last Updated
-January 31, 2026 - 12:30
+January 31, 2026 - 13:55
+
+## Session Update - January 31, 2026 (13:55)
+
+### Fixes Completed
+
+#### 1. Email OTP Login Fixed ✅
+- Fixed 404 response handling in LoginPage.jsx
+- Added proper new user detection flow
+- Flow: Enter email → If new user, prompt for name → Send OTP → Verify & Login
+- Dev OTP shown in toast for testing
+
+#### 2. Automatic Amount Removed from Checkout ✅
+- **Pharmacy.js**: Removed Rs 100/item estimation
+- **Proton.js**: Removed Rs 800/test estimation
+- **CashfreeCheckout.jsx**: Shows "Amount to be confirmed by pharmacist/lab" when amount is 0
+- Orders now proceed without pre-charging
+
+#### 3. All 4266 Medicines Loading in Staff Portal ✅
+- Fixed duplicate endpoint in server.py (was overriding inventory.py)
+- Changed default limit from 50 to 5000 in inventory.py
+- Fixed MongoDB truth value test error (`if db:` → `if db is not None:`)
+- Staff portal now shows complete medicine inventory
+
+### Files Modified
+- `/app/frontend/src/pages/LoginPage.jsx` - OTP flow fixes
+- `/app/frontend/src/pages/Pharmacy.js` - Amount estimation removed
+- `/app/frontend/src/pages/Proton.js` - Amount estimation removed
+- `/app/frontend/src/components/CashfreeCheckout.jsx` - Zero amount handling
+- `/app/backend/routes/inventory.py` - Increased limit, fixed DB check
+- `/app/backend/server.py` - Renamed duplicate endpoint
+
 
