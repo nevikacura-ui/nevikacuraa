@@ -2113,6 +2113,17 @@ const StaffPortal = () => {
                 </TabsTrigger>
                 
                 <TabsTrigger 
+                  value="advance-booking" 
+                  data-testid="tab-advance-booking"
+                  className={`flex flex-col items-center gap-1 rounded-lg font-medium transition-all data-[state=active]:bg-teal-500 data-[state=active]:text-white data-[state=active]:shadow-lg ${
+                    isTablet ? 'p-4 text-sm min-h-[80px]' : 'p-3 text-xs min-h-[60px]'
+                  }`}
+                >
+                  <Calendar className="w-5 h-5 sm:w-5 sm:h-5" />
+                  <span>Advance</span>
+                </TabsTrigger>
+                
+                <TabsTrigger 
                   value="emergency" 
                   data-testid="tab-emergency"
                   className="flex flex-col items-center gap-1 p-3 sm:p-3 rounded-lg text-xs sm:text-xs font-medium transition-all data-[state=active]:bg-red-500 data-[state=active]:text-white data-[state=active]:shadow-lg min-h-[60px]"
