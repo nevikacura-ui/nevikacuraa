@@ -1092,16 +1092,25 @@ const DiaGyn = () => {
     if (!selectedDoctor || !selectedClinic || !selectedDate) return [];
     const dayName = getDayName(selectedDate);
     const doctor = doctors.find(d => d.id === selectedDoctor);
+    
+    // Safety check - if doctor not found or no schedule for clinic
+    if (!doctor || !doctor.schedule || !doctor.schedule[selectedClinic]) return [];
+    
     const clinicSchedule = doctor.schedule[selectedClinic];
     const slots = [];
     
+    // Ensure clinicSchedule is an array
+    if (!Array.isArray(clinicSchedule)) return [];
+    
     clinicSchedule.forEach(schedule => {
-      if (schedule.days.includes(dayName)) {
-        const [startTime, endTime] = schedule.time.split('-');
+      if (schedule.days && schedule.days.includes(dayName)) {
+        const [startTime, endTime] = (schedule.time || '').split('-');
+        if (!startTime || !endTime) return;
+        
         const [startHour, startMin] = startTime.split(':').map(Number);
         const [endHour, endMin] = endTime.split(':').map(Number);
         let currentHour = startHour;
-        let currentMin = startMin;
+        let currentMin = startMin || 0;
         
         while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
           slots.push(`${String(currentHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}`);
@@ -1116,6 +1125,7 @@ const DiaGyn = () => {
   const getAvailableClinics = () => {
     if (!selectedDoctor) return [];
     const doctor = doctors.find(d => d.id === selectedDoctor);
+    if (!doctor || !doctor.schedule) return [];
     return clinics.filter(clinic => doctor.schedule[clinic.id]);
   };
 
