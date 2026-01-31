@@ -120,18 +120,18 @@ const WalkInTab = ({
         {isFormReady && walkInForm.date && !isDoctorAvailable && (
           <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm">
             <AlertTriangle className="w-4 h-4 inline mr-2" />
-            <strong>{walkInForm.doctor}</strong> is not available at {staffInfo?.clinic} on {formatIndianDate(walkInForm.date)} ({getDayName(walkInForm.date)}). 
+            <strong>{walkInForm.doctor}</strong> is not available at {currentClinic} on {formatIndianDate(walkInForm.date)} ({getDayName(walkInForm.date)}). 
             Please select a different date or doctor.
           </div>
         )}
         
         {/* Show schedule info */}
-        {walkInForm.doctor && DOCTOR_SCHEDULES[walkInForm.doctor]?.[staffInfo?.clinic] && (
+        {walkInForm.doctor && DOCTOR_SCHEDULES[walkInForm.doctor]?.[currentClinic] && (
           <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-sm">
             <Clock className="w-4 h-4 inline mr-2" />
-            <strong>{walkInForm.doctor}</strong> schedule at {staffInfo?.clinic}:
+            <strong>{walkInForm.doctor}</strong> schedule at {currentClinic}:
             <ul className="mt-1 ml-6 list-disc">
-              {DOCTOR_SCHEDULES[walkInForm.doctor][staffInfo?.clinic].map((slot, idx) => (
+              {DOCTOR_SCHEDULES[walkInForm.doctor][currentClinic].map((slot, idx) => (
                 <li key={idx}>{slot.days.join(', ')}: {slot.time}</li>
               ))}
             </ul>
