@@ -648,7 +648,7 @@ const Home = () => {
             </>
           ) : (
             <Button 
-              onClick={() => { setShowAuth(true); setShowMenu(false); }}
+              onClick={() => { navigate('/login'); setShowMenu(false); }}
               className="w-full rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500"
             >
               Login / Sign Up
