@@ -1205,3 +1205,92 @@ January 30, 2026 - 14:10
 ## Last Updated
 January 30, 2026 - 14:35
 
+---
+
+## Major Updates - January 31, 2026
+
+### 1. Bug Fixes ✅
+
+#### Fixed: Missing Route Decorators for Pharmacy & Diagnostics Orders
+- **Issue:** `/api/pharmacy` and `/api/diagnostics` endpoints were missing their `@api_router.post()` decorators
+- **Resolution:** Added the decorators back in `/app/backend/server.py`
+- **Impact:** Orders for pharmacy and lab tests are now properly created
+
+#### Fixed: Staff Login for staff_pharmacy & staff_proton
+- **Issue:** Staff accounts could not log in
+- **Resolution:** Reset passwords via MongoDB script
+- **Credentials:**
+  - staff_pharmacy / pharmacy123
+  - staff_proton / proton123
+
+### 2. New Header Design (Zepto/Blinkit Style) ✅
+- **Top Row:** Logo + "Staff Portal" link + "Login" button
+- **Service Tabs Row:** Nevika Cura | DiaGyn | Proton | Orange (rounded pill buttons)
+- **Scrollable Portal Icons:** All health portals + PSVN Foundation + Report Insight + Health Records
+- **Mobile Menu:** Updated with Staff Portal link
+
+### 3. Staff Portal - Medicine Inventory Tab ✅
+- New tab for pharmacy staff to manage medicine inventory
+- Features:
+  - Add/Edit/Delete medicines
+  - Image upload option
+  - MRP, Discount %, Sale Price (auto-calculated)
+  - Category, Stock, Unit fields
+- **Backend:** `/api/pharmacy/inventory` CRUD endpoints
+- **Frontend:** `/app/frontend/src/components/staff/MedicineInventoryTab.jsx`
+
+### 4. Staff Portal - Test Inventory Tab ✅
+- New tab for diagnostics staff to manage test inventory
+- Features:
+  - Add/Edit/Delete tests
+  - Image upload, Cost, Discount %, Sale Price
+  - Report Time, Sample Type, Preparation instructions
+- **Backend:** `/api/diagnostics/inventory` CRUD endpoints
+- **Frontend:** `/app/frontend/src/components/staff/TestInventoryTab.jsx`
+
+### 5. Admin Order Cancellation ✅
+- **Backend:** `/api/admin/orders/cancel/{order_type}/{order_id}` endpoint
+- Admin can cancel pharmacy or diagnostic orders
+- Records who cancelled and when
+
+### 6. Discount Coupon System ✅
+- **Backend:** `/api/coupons/validate` endpoint
+- **Frontend:** Coupon input in `CashfreeCheckout.jsx`
+- Default coupons: WELCOME10, FIRST50, HEALTH20, NEVIKA100
+- Shows discount applied, final amount
+
+### 7. Content Updates ✅
+- **Footer:** Changed from "Made with love in India" to "Doctor-Led. Patient-Focused. Designed, Managed & Owned by Nevika Cura Doctors."
+- **Senova:** Old age homes changed from Nagpur to Mumbai-Vasai region
+- **Proton:** Collection centre address updated to "Shop no 3, Sai Darshan, Near Don Bosco School, Naigaon East 401208"
+
+### 8. OTP System ✅
+- Twilio SMS OTP is already integrated and working
+- Demo OTP only shows when Twilio fails (fallback mode)
+- Real SMS sent via Twilio Verify Service
+
+---
+
+## Files Created/Modified
+
+### New Files
+- `/app/backend/routes/inventory.py` - Inventory management APIs
+- `/app/frontend/src/components/staff/MedicineInventoryTab.jsx`
+- `/app/frontend/src/components/staff/TestInventoryTab.jsx`
+
+### Modified Files
+- `/app/backend/server.py` - Route decorators, coupon validation, image upload
+- `/app/frontend/src/pages/Home.js` - New Zepto-style header
+- `/app/frontend/src/pages/StaffPortal.js` - Inventory tabs
+- `/app/frontend/src/components/CashfreeCheckout.jsx` - Coupon support
+- `/app/frontend/src/components/Footer.jsx` - New tagline
+- `/app/frontend/src/pages/Senova.js` - Mumbai-Vasai addresses
+- `/app/frontend/src/pages/Proton.js` - Naigaon address
+- `/app/frontend/src/components/PortalScrollBar.jsx` - Sticky position fix
+
+---
+
+## Last Updated
+January 31, 2026 - 09:00
+
+
