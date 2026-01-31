@@ -455,113 +455,132 @@ const Home = () => {
         <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-orange-100/20 to-amber-100/20 rounded-full blur-3xl" style={{animationDuration: '12s'}}></div>
       </div>
 
-      {/* Header - Clean & Modern - GPU Accelerated */}
+      {/* Header - Zepto/Blinkit Style with Service Tabs */}
       <header 
-        className="border-b border-slate-200/50 bg-white/90 backdrop-blur-xl sticky top-0 z-50 shadow-sm"
+        className="bg-white sticky top-0 z-50 shadow-sm"
         style={{
           transform: 'translateZ(0)',
           backfaceVisibility: 'hidden',
           WebkitBackfaceVisibility: 'hidden'
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center justify-between">
-            {/* Logo on left */}
-            <div className="flex items-center gap-3">
+        {/* Top Row - Logo + Actions */}
+        <div className="border-b border-slate-100">
+          <div className="max-w-7xl mx-auto px-4 py-2.5">
+            <div className="flex items-center justify-between">
+              {/* Logo */}
               <img 
                 src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
                 alt="Nevika Cura" 
-                className="h-14 sm:h-16 w-auto object-contain"
+                className="h-10 sm:h-12 w-auto object-contain cursor-pointer"
+                onClick={() => navigate('/')}
                 data-testid="main-logo"
                 loading="eager"
                 fetchPriority="high"
               />
-            </div>
-            
-            {/* Navigation on right */}
-            <div className="hidden md:flex items-center gap-3">
               
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/track')}
-                data-testid="track-orders-button"
-                className="font-medium rounded-full hover:bg-slate-100"
-              >
-                <Search className="w-4 h-4 mr-2" />
-                Track Orders
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/patient-portal')}
-                data-testid="patient-portal-button"
-                className="font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-full"
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                My Records
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/senior-care')}
-                data-testid="give-back-button"
-                className="font-medium text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-full"
-              >
-                <HandHeart className="w-4 h-4 mr-2" />
-                Give Back
-              </Button>
-              {user ? (
-                <>
+              {/* Right Actions */}
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => navigate('/staff')}
+                  data-testid="staff-portal-btn"
+                  className="hidden sm:flex text-xs font-medium text-slate-600 hover:text-teal-600 hover:bg-teal-50 rounded-full"
+                >
+                  <Shield className="w-3.5 h-3.5 mr-1.5" />
+                  Staff Portal
+                </Button>
+                {user ? (
                   <Button 
                     variant="ghost" 
                     size="sm"
                     onClick={() => navigate('/profile')}
                     data-testid="profile-button"
-                    className="font-medium rounded-full hover:bg-slate-100"
-                  >
-                    <User className="w-4 h-4 mr-2" />
-                    {user.name}
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setShowSettings(true)}
-                    data-testid="settings-button"
                     className="rounded-full hover:bg-slate-100"
                   >
-                    <Settings className="w-4 h-4" />
+                    <User className="w-4 h-4" />
                   </Button>
+                ) : (
                   <Button 
-                    variant="outline" 
                     size="sm"
-                    onClick={logout}
-                    data-testid="logout-button"
-                    className="rounded-full border-slate-200"
+                    onClick={() => setShowAuth(true)} 
+                    data-testid="login-button"
+                    className="rounded-full bg-teal-500 hover:bg-teal-600 text-white text-xs px-4"
                   >
-                    Logout
+                    Login
                   </Button>
-                </>
-              ) : (
-                <Button 
-                  size="sm"
-                  onClick={() => setShowAuth(true)} 
-                  data-testid="login-button"
-                  className="rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 shadow-lg shadow-teal-500/25 transition-all duration-300"
+                )}
+                <button
+                  className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+                  onClick={() => setShowMenu(!showMenu)}
+                  data-testid="mobile-menu-button"
                 >
-                  Login / Sign Up
-                </Button>
-              )}
+                  {showMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                </button>
+              </div>
             </div>
+          </div>
+        </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2 rounded-xl bg-white/50 hover:bg-white/80 transition-colors"
-              onClick={() => setShowMenu(!showMenu)}
-              data-testid="mobile-menu-button"
-            >
-              {showMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+        {/* Row 2 - Main Service Tabs (Zepto style) */}
+        <div className="border-b border-slate-100 bg-gradient-to-b from-white to-slate-50/50">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide">
+              {/* Nevika Cura */}
+              <button
+                onClick={() => navigate('/')}
+                className="flex-shrink-0 px-4 py-2 bg-white border-2 border-teal-500 rounded-full flex items-center gap-2 hover:shadow-md transition-all"
+                data-testid="nav-nevikacura"
+              >
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center">
+                  <Heart className="w-4 h-4 text-white" />
+                </div>
+                <span className="font-bold text-teal-600 text-sm whitespace-nowrap">Nevika Cura</span>
+              </button>
+              
+              {/* DiaGyn - Large Zepto style */}
+              <button
+                onClick={() => navigate('/diagyn')}
+                className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full flex items-center gap-2 hover:border-teal-300 hover:shadow-md transition-all"
+                data-testid="nav-diagyn"
+              >
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/qww1khpq_2_20260107_021040_0001.jpg"
+                  alt="DiaGyn"
+                  className="w-7 h-7 rounded-full object-cover bg-white"
+                />
+                <span className="font-semibold text-slate-700 text-sm whitespace-nowrap">DiaGyn</span>
+              </button>
+              
+              {/* Proton - Large Zepto style */}
+              <button
+                onClick={() => navigate('/proton')}
+                className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full flex items-center gap-2 hover:border-purple-300 hover:shadow-md transition-all"
+                data-testid="nav-proton"
+              >
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/xbiwlhv7_4_20260107_021040_0003.jpg"
+                  alt="Proton"
+                  className="w-7 h-7 rounded-full object-cover bg-white"
+                />
+                <span className="font-semibold text-slate-700 text-sm whitespace-nowrap">Proton</span>
+              </button>
+              
+              {/* Orange - Large Zepto style */}
+              <button
+                onClick={() => navigate('/pharmacy')}
+                className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full flex items-center gap-2 hover:border-orange-300 hover:shadow-md transition-all"
+                data-testid="nav-orange"
+              >
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg"
+                  alt="Orange Pharmacy"
+                  className="w-7 h-7 rounded-full object-cover bg-white"
+                />
+                <span className="font-semibold text-slate-700 text-sm whitespace-nowrap">Orange</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
