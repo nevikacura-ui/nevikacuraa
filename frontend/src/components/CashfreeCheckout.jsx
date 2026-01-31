@@ -187,20 +187,29 @@ const CashfreeCheckout = ({
               <span className="text-slate-600">Order Type</span>
               <span className="font-medium capitalize">{orderDetails.type.replace('_', ' ')}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-600">Subtotal</span>
-              <span className="font-medium">₹{orderDetails.amount?.toLocaleString()}</span>
-            </div>
-            {discountAmount > 0 && (
-              <div className="flex justify-between items-center text-green-600">
-                <span>Discount ({appliedCoupon?.code})</span>
-                <span>-₹{discountAmount?.toLocaleString()}</span>
+            {orderDetails.amount > 0 ? (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-600">Subtotal</span>
+                  <span className="font-medium">₹{orderDetails.amount?.toLocaleString()}</span>
+                </div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between items-center text-green-600">
+                    <span>Discount ({appliedCoupon?.code})</span>
+                    <span>-₹{discountAmount?.toLocaleString()}</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-center text-lg font-bold mt-2 pt-2 border-t">
+                  <span className="text-slate-800">Total Amount</span>
+                  <span className="text-green-600">₹{finalAmount?.toLocaleString()}</span>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-4 bg-amber-50 rounded-lg border border-amber-200">
+                <p className="text-amber-700 font-medium">Amount to be confirmed by pharmacist</p>
+                <p className="text-sm text-amber-600 mt-1">You'll receive a call with the final bill</p>
               </div>
             )}
-            <div className="flex justify-between items-center text-lg font-bold mt-2 pt-2 border-t">
-              <span className="text-slate-800">Total Amount</span>
-              <span className="text-green-600">₹{finalAmount?.toLocaleString()}</span>
-            </div>
           </div>
 
           {/* Coupon Code Section */}
