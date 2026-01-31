@@ -12,7 +12,7 @@ import os
 import jwt
 from datetime import datetime, timezone, timedelta
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://nevika-health-9.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://healthcare-app-33.preview.emergentagent.com')
 ADMIN_PASSWORD = "nevikacura2026"
 
 class TestAdminLogin:
