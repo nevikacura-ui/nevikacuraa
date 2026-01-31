@@ -1548,7 +1548,7 @@ const DiaGyn = () => {
                   )}
                   
                   <div className={foundPatient ? 'sm:col-span-3' : ''}>
-                    <Label className="text-[#64748B] text-sm">Email (Optional)</Label>
+                    <Label className="text-[#64748B] text-sm">Email <span className="text-red-500">*</span></Label>
                     <Input
                       type="email"
                       value={patientInfo.email}
@@ -1556,7 +1556,9 @@ const DiaGyn = () => {
                       placeholder="your@email.com"
                       className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3] focus:ring-[#CAE9FF]"
                       data-testid="patient-email"
+                      required
                     />
+                    <p className="text-xs text-slate-400 mt-1">Required for appointment confirmation</p>
                   </div>
                 </div>
                 
