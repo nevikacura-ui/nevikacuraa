@@ -2236,6 +2236,7 @@ const StaffPortal = () => {
             <TabsContent value="walkin">
               <WalkInTab
                 staffInfo={staffInfo}
+                activeClinic={availableClinics.length > 1 ? activeClinic : staffInfo?.clinic}
                 walkInForm={walkInForm}
                 setWalkInForm={setWalkInForm}
                 foundWalkInPatient={foundWalkInPatient}
