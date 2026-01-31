@@ -1389,7 +1389,28 @@ January 31, 2026 - 14:30
 
 ## Session Update - January 31, 2026 (14:48)
 
-### Color Theme System (Zepto-Style) ✅
+### Bug Fixes - January 31, 2026 (17:27)
+
+1. **Hamburger Menu Removed from Home Header** ✅
+   - Removed mobile menu button and dropdown panel
+   - Cleaner header design, navigation via service tabs
+
+2. **Email OTP Login Error Handling Fixed** ✅
+   - Improved response parsing in LoginPage.jsx
+   - Better error messages: "New user! Please provide your name..."
+   - Fixed 404 response handling for unregistered users
+
+3. **DiaGyn Appointment Booking Crash Fixed** ✅
+   - Added safety checks for undefined arrays in `getAvailableSlots()`
+   - Added null checks for `doctor.schedule` and `clinicSchedule`
+   - Added `Array.isArray()` checks in `TimeSlotPicker` component
+   - Added safe handling for `bookedSlots` array
+
+**Files Modified:**
+- `/app/frontend/src/pages/Home.js` - Removed hamburger menu
+- `/app/frontend/src/pages/LoginPage.jsx` - Better error handling
+- `/app/frontend/src/pages/DiaGyn.js` - Safety checks for crash fix
+
 
 **Implemented distinct color themes for each service page:**
 
