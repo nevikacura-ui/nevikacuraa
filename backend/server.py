@@ -4299,6 +4299,96 @@ async def send_fasting_reminder(
         "reminder_id": reminder["id"]
     }
 
+# ============ COUPON VALIDATION ============
+
+class CouponValidateRequest(BaseModel):
+    code: str
+    amount: float
+    type: str  # 'pharmacy', 'lab_test', 'appointment'
+
+@api_router.post("/coupons/validate")
+async def validate_coupon(request: CouponValidateRequest):
+    """Validate a discount coupon code"""
+    code = request.code.strip().upper()
+    
+    # Check coupon in database
+    coupon = await db.coupons.find_one({
+        "code": code,
+        "active": True,
+        "$or": [
+            {"valid_for": {"$in": [request.type, "all"]}},
+            {"valid_for": {"$exists": False}}
+        ]
+    })
+    
+    if not coupon:
+        # Check for some default coupons
+        default_coupons = {
+            "WELCOME10": {"discount_percent": 10, "max_discount": 100},
+            "FIRST50": {"discount_percent": 5, "max_discount": 50},
+            "HEALTH20": {"discount_percent": 20, "max_discount": 200, "min_amount": 500},
+            "NEVIKA100": {"discount_flat": 100, "min_amount": 500},
+        }
+        
+        if code in default_coupons:
+            coupon_data = default_coupons[code]
+            
+            # Check minimum amount
+            if coupon_data.get("min_amount", 0) > request.amount:
+                return {
+                    "valid": False,
+                    "message": f"Minimum order amount ₹{coupon_data['min_amount']} required for this coupon"
+                }
+            
+            # Calculate discount
+            if "discount_flat" in coupon_data:
+                discount = coupon_data["discount_flat"]
+                discount_type = "flat"
+            else:
+                discount = (request.amount * coupon_data["discount_percent"]) / 100
+                if coupon_data.get("max_discount"):
+                    discount = min(discount, coupon_data["max_discount"])
+                discount_type = "percent"
+            
+            return {
+                "valid": True,
+                "discount": round(discount, 2),
+                "discount_type": discount_type,
+                "code": code
+            }
+        
+        return {"valid": False, "message": "Invalid or expired coupon code"}
+    
+    # Check minimum amount
+    if coupon.get("min_amount", 0) > request.amount:
+        return {
+            "valid": False,
+            "message": f"Minimum order amount ₹{coupon['min_amount']} required for this coupon"
+        }
+    
+    # Check usage limit
+    if coupon.get("usage_limit"):
+        usage_count = await db.coupon_usage.count_documents({"coupon_code": code})
+        if usage_count >= coupon["usage_limit"]:
+            return {"valid": False, "message": "Coupon usage limit reached"}
+    
+    # Calculate discount
+    if coupon.get("discount_flat"):
+        discount = coupon["discount_flat"]
+        discount_type = "flat"
+    else:
+        discount = (request.amount * coupon.get("discount_percent", 0)) / 100
+        if coupon.get("max_discount"):
+            discount = min(discount, coupon["max_discount"])
+        discount_type = "percent"
+    
+    return {
+        "valid": True,
+        "discount": round(discount, 2),
+        "discount_type": discount_type,
+        "code": code
+    }
+
 @api_router.post("/pharmacy")
 async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(get_current_user)):
     # ORDER LIMIT: Check if user already has 2 active pharmacy orders
