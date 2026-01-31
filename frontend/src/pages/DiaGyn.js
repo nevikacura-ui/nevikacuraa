@@ -1259,59 +1259,8 @@ const DiaGyn = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-100 via-cyan-100 to-teal-50">
-      {/* Teal Theme Accent Bar */}
-      <div className="h-2 bg-gradient-to-r from-teal-500 via-cyan-500 to-teal-600" />
-      
-      {/* Header */}
-      <header className="bg-gradient-to-r from-teal-600 to-cyan-600 sticky top-0 z-50 shadow-lg">
-        <div className="max-w-5xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={() => step === 1 ? navigate('/') : setStep(step - 1)}
-                data-testid="back-button"
-                className="rounded-full bg-white/20 hover:bg-white/30 text-white"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <img 
-                src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/e4jrn2os_6_20260107_021040_0003.jpg" 
-                alt="DiaGyn" 
-                className="h-10 w-auto rounded-lg bg-white p-1"
-                data-testid="diagyn-logo"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              {/* Doctor Block Slots Button - Only shown when respective doctor is logged in */}
-              {canBlockSlotsForDoctor() && step === 3 && selectedDoctor && selectedClinic && selectedDate && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowBlockSlotsDialog(true)}
-                  className="flex items-center gap-2 rounded-full bg-white/20 border-white/50 text-white hover:bg-white/30"
-                  data-testid="block-slots-btn"
-                >
-                  <Lock className="w-4 h-4" />
-                  <span className="hidden sm:inline">Block Slots</span>
-                </Button>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={fetchWeeklyAvailability}
-                disabled={loadingAvailability}
-                className="flex items-center gap-2 rounded-full bg-white/20 border-white/50 text-white hover:bg-white/30"
-                data-testid="view-availability-btn"
-              >
-                {loadingAvailability ? <Loader2 className="w-4 h-4 animate-spin" /> : <CalendarDays className="w-4 h-4" />}
-                <span className="hidden sm:inline">Schedule</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Shared Service Header with Zepto-style tabs */}
+      <ServiceHeader />
 
       <main className="max-w-5xl mx-auto px-4 py-8">
         {/* Step Progress */}
