@@ -73,7 +73,12 @@ const LoginPage = () => {
     
     setLoading(true);
     try {
-      const res = await fetch(`${API}/api/auth/v2/signup/verify-otp`, {
+      // Use login/verify for existing users, signup/verify for new users
+      const endpoint = isNewUser 
+        ? `${API}/api/auth/v2/signup/verify-otp`
+        : `${API}/api/auth/v2/login/verify-otp`;
+      
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp })
@@ -92,6 +97,40 @@ const LoginPage = () => {
       }
     } catch (error) {
       toast.error('Verification failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Sign up new user (when isNewUser is true)
+  const handleSignUpNewUser = async () => {
+    if (!userName.trim()) {
+      toast.error('Please enter your name');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const res = await fetch(`${API}/api/auth/v2/signup/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name: userName })
+      });
+      
+      const data = await res.json();
+      
+      if (data.success) {
+        toast.success('OTP sent to your email');
+        setOtpSent(true);
+        // Show mock OTP if provided (dev mode)
+        if (data.mock_otp) {
+          toast.info(`Dev OTP: ${data.mock_otp}`, { duration: 10000 });
+        }
+      } else {
+        toast.error(data.detail || 'Failed to send OTP');
+      }
+    } catch (error) {
+      toast.error('Failed to send OTP');
     } finally {
       setLoading(false);
     }
