@@ -499,9 +499,14 @@ const Proton = () => {
       toast.error('Please enter a valid mobile number');
       return;
     }
-    setCurrentStep(2);
+    if (!patientInfo.email || !patientInfo.email.includes('@')) {
+      toast.error('Please enter a valid email address for report delivery');
+      return;
+    }
+    // Skip OTP step - directly go to booking step
+    // OTP verification disabled to reduce costs. Email is used for report delivery.
+    setCurrentStep(3);
     window.scrollTo(0, 0);
-    sendOtp();
   };
 
   const goToStep1 = () => {

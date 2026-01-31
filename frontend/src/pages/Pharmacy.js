@@ -916,9 +916,14 @@ const Pharmacy = () => {
       toast.error('Please enter a valid mobile number');
       return;
     }
-    setCurrentStep(2);
+    if (!patientInfo.email || !patientInfo.email.includes('@')) {
+      toast.error('Please enter a valid email address for order updates');
+      return;
+    }
+    // Skip OTP step - directly go to address/delivery step
+    // OTP verification disabled to reduce costs. Email is used for order tracking.
+    setCurrentStep(3);
     window.scrollTo(0, 0);
-    sendOtp();
   };
 
   const goToStep1 = () => {
