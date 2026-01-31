@@ -160,10 +160,15 @@ const AdvanceBookingTab = ({
         booked_by: `Staff (${staffInfo?.name || 'Advance Booking'})`
       });
       
-      toast.success(`Appointment booked! ID: ${response.data.booking_id}`);
+      const bookingId = response.data.booking_id;
+      const formattedDate = formatIndianDate(selectedDate);
+      toast.success(`Appointment booked for ${formattedDate}! ID: ${bookingId}`, {
+        description: `View in Appts tab by selecting date: ${formattedDate}`,
+        duration: 5000
+      });
       
-      // Reset form
-      setStep(1);
+      // Reset form - go back to start
+      setStep(hasMultipleClinics ? 0 : 1);
       setSelectedDoctor('');
       setSelectedDate('');
       setSelectedSlot('');
