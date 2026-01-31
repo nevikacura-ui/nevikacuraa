@@ -12,6 +12,7 @@ import {
 
 const EmergencyTab = ({
   staffInfo,
+  activeClinic,
   emergencyForm,
   setEmergencyForm,
   foundEmergencyPatient,
@@ -23,13 +24,15 @@ const EmergencyTab = ({
   loading,
   handleEmergencyBooking
 }) => {
-  const clinicDoctors = CLINICS[staffInfo?.clinic] || [];
+  // Use activeClinic for multi-clinic staff, otherwise use staffInfo.clinic
+  const currentClinic = activeClinic || staffInfo?.clinic;
+  const clinicDoctors = CLINICS[currentClinic] || [];
 
   return (
     <Card className="p-6 max-w-lg" data-testid="emergency-tab-content">
       <div className="flex items-center gap-2 mb-4">
         <AlertTriangle className="w-6 h-6 text-red-500" />
-        <h2 className="font-semibold text-lg">Book Emergency Appointment</h2>
+        <h2 className="font-semibold text-lg">Book Emergency Appointment - {currentClinic}</h2>
       </div>
       <p className="text-sm text-gray-500 mb-4">
         Emergency appointments do NOT require a time slot. Maximum 10 per doctor per day.
