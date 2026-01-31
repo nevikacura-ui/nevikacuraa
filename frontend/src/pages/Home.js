@@ -504,7 +504,7 @@ const Home = () => {
                 ) : (
                   <Button 
                     size="sm"
-                    onClick={() => setShowAuth(true)} 
+                    onClick={() => navigate('/login')} 
                     data-testid="login-button"
                     className="rounded-full bg-teal-500 hover:bg-teal-600 text-white text-xs px-4"
                   >
@@ -512,7 +512,7 @@ const Home = () => {
                   </Button>
                 )}
                 <button
-                  className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+                  className="p-2 rounded-full hover:bg-slate-100 transition-colors sm:hidden"
                   onClick={() => setShowMenu(!showMenu)}
                   data-testid="mobile-menu-button"
                 >
