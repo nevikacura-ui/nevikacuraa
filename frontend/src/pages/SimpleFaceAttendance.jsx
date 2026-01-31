@@ -52,16 +52,29 @@ export default function SimpleFaceAttendance() {
     
     try {
       addLog('Requesting camera access...');
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'user' }, 
-        audio: false 
-      });
+      
+      // Mobile-optimized constraints
+      const constraints = {
+        video: {
+          facingMode: { ideal: 'user' },
+          width: { ideal: 640, max: 1280 },
+          height: { ideal: 480, max: 720 }
+        },
+        audio: false
+      };
+      
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       
       addLog('Camera stream obtained!', 'success');
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
+        
+        // Mobile fix: set attributes before playing
+        videoRef.current.setAttribute('autoplay', '');
+        videoRef.current.setAttribute('playsinline', '');
+        videoRef.current.setAttribute('muted', '');
         
         videoRef.current.onloadedmetadata = () => {
           addLog('Video metadata loaded');
