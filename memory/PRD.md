@@ -1389,27 +1389,26 @@ January 31, 2026 - 14:30
 
 ## Session Update - January 31, 2026 (14:48)
 
-### Bug Fixes - January 31, 2026 (17:27)
+### Bug Fixes - January 31, 2026 (17:55)
 
-1. **Hamburger Menu Removed from Home Header** ✅
-   - Removed mobile menu button and dropdown panel
-   - Cleaner header design, navigation via service tabs
+1. **DiaGyn Crash Fixed** ✅
+   - Fixed `patientPhone is not defined` error
+   - Changed `patientPhone` to `patientInfo.phone` in TimeSlotPicker props
+   - Added safety checks for undefined arrays
 
-2. **Email OTP Login Error Handling Fixed** ✅
-   - Improved response parsing in LoginPage.jsx
-   - Better error messages: "New user! Please provide your name..."
-   - Fixed 404 response handling for unregistered users
+2. **Email OTP Now Sends Real Emails** ✅
+   - Fixed Resend SDK API call: `resend.emails.send` → `resend.Emails.send`
+   - Emails are now delivered (no more mock OTP showing)
+   - Backend logs confirm: "Email OTP sent to testuser@gmail.com"
 
-3. **DiaGyn Appointment Booking Crash Fixed** ✅
-   - Added safety checks for undefined arrays in `getAvailableSlots()`
-   - Added null checks for `doctor.schedule` and `clinicSchedule`
-   - Added `Array.isArray()` checks in `TimeSlotPicker` component
-   - Added safe handling for `bookedSlots` array
+3. **Staff Portal Doctor Dropdown Fixed** ✅
+   - Added `activeClinic` prop to WalkInTab and EmergencyTab
+   - For multi-clinic staff, uses `activeClinic` instead of "Both Clinics"
+   - Doctor dropdown now correctly shows doctors for selected clinic
 
-**Files Modified:**
-- `/app/frontend/src/pages/Home.js` - Removed hamburger menu
-- `/app/frontend/src/pages/LoginPage.jsx` - Better error handling
-- `/app/frontend/src/pages/DiaGyn.js` - Safety checks for crash fix
+4. **Hamburger Menu Removed** ✅
+   - Removed mobile dropdown menu from home header
+   - Navigation via service tabs only
 
 
 **Implemented distinct color themes for each service page:**
