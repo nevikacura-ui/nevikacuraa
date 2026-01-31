@@ -95,8 +95,9 @@ function AppContent() {
     const patientToken = localStorage.getItem('patientToken');
     const staffToken = localStorage.getItem('staffToken');
     const isStaffPage = window.location.pathname.includes('/admin') || window.location.pathname.includes('/staff');
+    const isLoginPage = window.location.pathname === '/login';
     
-    if (hasSeenSplash || user || patientToken || (staffToken && isStaffPage)) {
+    if (hasSeenSplash || user || patientToken || (staffToken && isStaffPage) || isLoginPage) {
       setShowIntro(false);
     }
   }, [user]);
