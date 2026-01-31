@@ -237,10 +237,9 @@ const Footer = () => {
             <p className="text-sm text-gray-500">
               © {new Date().getFullYear()} Nevika Cura Healthcare. All rights reserved.
             </p>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span>Made with</span>
-              <Heart className="w-4 h-4 text-red-500 fill-red-500" />
-              <span>in India</span>
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <Stethoscope className="w-4 h-4 text-teal-500" />
+              <span>Doctor-Led. Patient-Focused. Designed, Managed & Owned by Nevika Cura Doctors.</span>
             </div>
           </div>
         </div>
