@@ -531,12 +531,8 @@ const Proton = () => {
       return;
     }
     
-    // Calculate total
-    const total = selectedTests.reduce((sum, test) => {
-      // Estimate ₹500-1500 per test, will be confirmed by lab
-      return sum + 800;
-    }, 0);
-    setOrderTotal(total);
+    // No automatic amount - lab will confirm final bill
+    setOrderTotal(0);
     setShowPaymentDialog(true);
   };
 
