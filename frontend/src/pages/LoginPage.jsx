@@ -367,6 +367,22 @@ const LoginPage = () => {
                 <p className="text-xs text-center text-slate-500">
                   Email OTP is free and doesn't require SMS charges
                 </p>
+                
+                {/* Sign Up Link */}
+                {!otpSent && !isNewUser && (
+                  <div className="text-center pt-2 border-t border-slate-100">
+                    <p className="text-sm text-slate-600">
+                      New to Nevika Cura?{' '}
+                      <button 
+                        onClick={() => setIsNewUser(true)}
+                        className="text-teal-600 font-semibold hover:underline"
+                        data-testid="signup-link"
+                      >
+                        Sign Up
+                      </button>
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
