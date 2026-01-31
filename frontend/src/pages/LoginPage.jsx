@@ -43,9 +43,16 @@ const LoginPage = () => {
         body: JSON.stringify({ email })
       });
       
-      const data = await res.json();
+      // Clone response before reading body (to check status separately)
+      const statusCode = res.status;
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = {};
+      }
       
-      if (data.success) {
+      if (statusCode === 200 && data.success) {
         toast.success('OTP sent to your email');
         setOtpSent(true);
         setIsNewUser(false);
@@ -53,10 +60,10 @@ const LoginPage = () => {
         if (data.mock_otp) {
           toast.info(`Dev OTP: ${data.mock_otp}`, { duration: 10000 });
         }
-      } else if (res.status === 404 || 
-                 data.detail?.toLowerCase().includes('not found') || 
-                 data.detail?.toLowerCase().includes('not registered') ||
-                 data.detail?.toLowerCase().includes('sign up')) {
+      } else if (statusCode === 404 || 
+                 data.detail?.toLowerCase()?.includes('not found') || 
+                 data.detail?.toLowerCase()?.includes('not registered') ||
+                 data.detail?.toLowerCase()?.includes('sign up')) {
         // User doesn't exist - need to sign up
         toast.info('New user detected! Please provide your name to create an account.');
         setIsNewUser(true);
