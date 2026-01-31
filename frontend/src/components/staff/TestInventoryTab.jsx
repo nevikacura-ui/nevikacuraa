@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import { 
   Plus, Edit2, Trash2, FlaskConical, IndianRupee, Percent, 
-  Image, Save, Search, Loader2, Upload, Clock 
+  Image, Save, Search, Loader2, Upload, Clock, Download, FileSpreadsheet, FileText
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -27,6 +27,7 @@ const TestInventoryTab = () => {
   const [editingTest, setEditingTest] = useState(null);
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [exporting, setExporting] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -40,6 +41,132 @@ const TestInventoryTab = () => {
     sample_type: '',
     preparation: ''
   });
+
+  // Export functions
+  const exportToCSV = () => {
+    const headers = ['Name', 'Category', 'Cost', 'Discount %', 'Sale Price', 'Report Time', 'Sample Type'];
+    const rows = tests.map(t => [
+      t.name || '',
+      t.category || '',
+      t.cost || 0,
+      t.discount_percent || 0,
+      t.sale_price || t.cost || 0,
+      t.report_time || '',
+      t.sample_type || ''
+    ]);
+    
+    const csvContent = [headers.join(','), ...rows.map(r => r.map(c => `"${c}"`).join(','))].join('\n');
+    downloadFile(csvContent, 'test_inventory.csv', 'text/csv');
+    toast.success('CSV exported successfully');
+  };
+
+  const exportToExcel = async () => {
+    setExporting(true);
+    try {
+      const xmlContent = `<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet">
+  <Worksheet ss:Name="Test Inventory">
+    <Table>
+      <Row>
+        <Cell><Data ss:Type="String">Name</Data></Cell>
+        <Cell><Data ss:Type="String">Category</Data></Cell>
+        <Cell><Data ss:Type="String">Cost</Data></Cell>
+        <Cell><Data ss:Type="String">Discount %</Data></Cell>
+        <Cell><Data ss:Type="String">Sale Price</Data></Cell>
+        <Cell><Data ss:Type="String">Report Time</Data></Cell>
+        <Cell><Data ss:Type="String">Sample Type</Data></Cell>
+      </Row>
+      ${tests.map(t => `
+      <Row>
+        <Cell><Data ss:Type="String">${t.name || ''}</Data></Cell>
+        <Cell><Data ss:Type="String">${t.category || ''}</Data></Cell>
+        <Cell><Data ss:Type="Number">${t.cost || 0}</Data></Cell>
+        <Cell><Data ss:Type="Number">${t.discount_percent || 0}</Data></Cell>
+        <Cell><Data ss:Type="Number">${t.sale_price || t.cost || 0}</Data></Cell>
+        <Cell><Data ss:Type="String">${t.report_time || ''}</Data></Cell>
+        <Cell><Data ss:Type="String">${t.sample_type || ''}</Data></Cell>
+      </Row>`).join('')}
+    </Table>
+  </Worksheet>
+</Workbook>`;
+      
+      downloadFile(xmlContent, 'test_inventory.xls', 'application/vnd.ms-excel');
+      toast.success('Excel exported successfully');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const exportToPDF = () => {
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Test Inventory - Nevika Cura</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          h1 { color: #7c3aed; text-align: center; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          th { background-color: #7c3aed; color: white; }
+          tr:nth-child(even) { background-color: #f9f9f9; }
+          .footer { margin-top: 20px; text-align: center; color: #666; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <h1>🔬 Test Inventory</h1>
+        <p style="text-align: center; color: #666;">Proton Diagnostics - Nevika Cura Healthcare</p>
+        <p style="text-align: center; color: #666;">Generated on: ${new Date().toLocaleDateString('en-IN')}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Test Name</th>
+              <th>Category</th>
+              <th>Cost (₹)</th>
+              <th>Discount</th>
+              <th>Sale Price (₹)</th>
+              <th>Report Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tests.map((t, i) => `
+              <tr>
+                <td>${i + 1}</td>
+                <td>${t.name || '-'}</td>
+                <td>${t.category || '-'}</td>
+                <td>₹${t.cost || 0}</td>
+                <td>${t.discount_percent || 0}%</td>
+                <td>₹${t.sale_price || t.cost || 0}</td>
+                <td>${t.report_time || '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <p class="footer">Total Tests: ${tests.length} | Doctor-Led. Patient-Focused.</p>
+      </body>
+      </html>
+    `;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.print();
+    toast.success('PDF ready for download');
+  };
+
+  const downloadFile = (content, filename, type) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   // Calculate sale price when cost or discount changes
   useEffect(() => {
