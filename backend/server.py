@@ -6396,6 +6396,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Staff router: {e}")
 
+# Inventory Management Routes (Medicine & Test Inventory for Staff)
+try:
+    from routes.inventory import router as inventory_router, set_db as set_inventory_db
+    set_inventory_db(db)
+    app.include_router(inventory_router, prefix="/api")
+    logger.info("Inventory Management router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Inventory router: {e}")
+
 # Clinic Management Routes
 try:
     from routes.clinic_management import router as clinic_mgmt_router, set_db as set_clinic_db, set_jwt_config as set_clinic_jwt, set_llm_key as set_clinic_llm, set_notification_functions as set_clinic_notif
