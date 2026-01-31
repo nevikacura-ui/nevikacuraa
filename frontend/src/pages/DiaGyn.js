@@ -1289,7 +1289,7 @@ const DiaGyn = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => setShowBlockSlotsDialog(true)}
-                  className="flex items-center gap-2 rounded-full border-[#EF476F] text-[#EF476F] hover:bg-[#EF476F]/10"
+                  className="flex items-center gap-2 rounded-full bg-white/20 border-white/50 text-white hover:bg-white/30"
                   data-testid="block-slots-btn"
                 >
                   <Lock className="w-4 h-4" />
@@ -1301,7 +1301,7 @@ const DiaGyn = () => {
                 size="sm"
                 onClick={fetchWeeklyAvailability}
                 disabled={loadingAvailability}
-                className="flex items-center gap-2 rounded-full border-[#5FA8D3] text-[#5FA8D3] hover:bg-[#CAE9FF]/30"
+                className="flex items-center gap-2 rounded-full bg-white/20 border-white/50 text-white hover:bg-white/30"
                 data-testid="view-availability-btn"
               >
                 {loadingAvailability ? <Loader2 className="w-4 h-4 animate-spin" /> : <CalendarDays className="w-4 h-4" />}
