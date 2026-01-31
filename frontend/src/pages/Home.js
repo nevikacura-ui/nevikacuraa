@@ -612,17 +612,13 @@ const Home = () => {
                 <span className="font-semibold text-sm whitespace-nowrap">Proton</span>
               </button>
               
-              {/* Orange Pharmacy */}
+              {/* Orange Pharmacy - Navigate directly to /pharmacy */}
               <button
-                onClick={() => setActiveService('pharmacy')}
-                className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
-                  activeService === 'pharmacy' 
-                    ? (currentTheme.isLight ? 'bg-orange-500 text-white shadow-lg' : 'bg-white text-orange-600 shadow-lg')
-                    : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-orange-300' : 'bg-white/20 text-white hover:bg-white/30')
-                }`}
+                onClick={() => navigate('/pharmacy')}
+                className="flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all bg-white border border-slate-200 text-slate-700 hover:border-orange-300 hover:shadow-md"
                 data-testid="nav-orange"
               >
-                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'pharmacy' ? 'from-orange-500 to-amber-500' : (currentTheme.isLight ? 'from-orange-400 to-amber-500' : 'from-white/30 to-white/10')} flex items-center justify-center`}>
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center">
                   <Package className="w-4 h-4 text-white" />
                 </div>
                 <span className="font-semibold text-sm whitespace-nowrap">Orange</span>
@@ -632,11 +628,11 @@ const Home = () => {
         </div>
       </header>
 
-      {/* Portal Scroll Bar - Blinkit/Zepto style horizontal toggle - Only for Home */}
-      {activeService === 'home' && <PortalScrollBar />}
+      {/* Portal Scroll Bar - Blinkit/Zepto style horizontal toggle */}
+      <PortalScrollBar />
 
-      {/* Trust Badges - Blinkit/Practo style - Only for Home */}
-      {activeService === 'home' && <TrustBadges />}
+      {/* Trust Badges - Blinkit/Practo style */}
+      <TrustBadges />
 
       {/* Service-Specific Content Areas */}
       {activeService !== 'home' && (
