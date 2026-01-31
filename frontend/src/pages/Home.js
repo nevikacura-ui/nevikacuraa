@@ -501,7 +501,7 @@ const Home = () => {
 
       {/* Header - Zepto/Blinkit Style with Service Tabs */}
       <header 
-        className={`${currentTheme.headerBg} sticky top-0 z-50 shadow-lg transition-all duration-500`}
+        className={`${currentTheme.headerBg} sticky top-0 z-50 ${currentTheme.isLight ? 'shadow-sm' : 'shadow-lg'} transition-all duration-500`}
         style={{
           transform: 'translateZ(0)',
           backfaceVisibility: 'hidden',
@@ -509,14 +509,14 @@ const Home = () => {
         }}
       >
         {/* Top Row - Logo + Actions */}
-        <div className="border-b border-white/20">
+        <div className={`border-b ${currentTheme.isLight ? 'border-slate-100' : 'border-white/20'}`}>
           <div className="max-w-7xl mx-auto px-4 py-2.5">
             <div className="flex items-center justify-between">
               {/* Logo */}
               <img 
                 src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
                 alt="Nevika Cura" 
-                className="h-10 sm:h-12 w-auto object-contain cursor-pointer bg-white rounded-lg p-1"
+                className={`h-10 sm:h-12 w-auto object-contain cursor-pointer ${currentTheme.isLight ? '' : 'bg-white rounded-lg p-1'}`}
                 onClick={() => setActiveService('home')}
                 data-testid="main-logo"
                 loading="eager"
@@ -530,7 +530,11 @@ const Home = () => {
                   size="sm"
                   onClick={() => navigate('/staff')}
                   data-testid="staff-portal-btn"
-                  className="hidden sm:flex text-xs font-medium text-white/90 hover:text-white hover:bg-white/20 rounded-full"
+                  className={`hidden sm:flex text-xs font-medium rounded-full ${
+                    currentTheme.isLight 
+                      ? 'text-slate-600 hover:text-teal-600 hover:bg-teal-50' 
+                      : 'text-white/90 hover:text-white hover:bg-white/20'
+                  }`}
                 >
                   <Shield className="w-3.5 h-3.5 mr-1.5" />
                   Staff Portal
@@ -541,7 +545,7 @@ const Home = () => {
                     size="sm"
                     onClick={() => navigate('/profile')}
                     data-testid="profile-button"
-                    className="rounded-full hover:bg-white/20 text-white"
+                    className={`rounded-full ${currentTheme.isLight ? 'hover:bg-slate-100 text-slate-800' : 'hover:bg-white/20 text-white'}`}
                   >
                     <User className="w-4 h-4" />
                   </Button>
@@ -550,7 +554,11 @@ const Home = () => {
                     size="sm"
                     onClick={() => navigate('/login')} 
                     data-testid="login-button"
-                    className="rounded-full bg-white hover:bg-white/90 text-slate-800 text-xs px-4"
+                    className={`rounded-full text-xs px-4 ${
+                      currentTheme.isLight 
+                        ? 'bg-teal-500 hover:bg-teal-600 text-white' 
+                        : 'bg-white hover:bg-white/90 text-slate-800'
+                    }`}
                   >
                     Login
                   </Button>
@@ -561,7 +569,7 @@ const Home = () => {
         </div>
 
         {/* Row 2 - Main Service Tabs (Zepto style) */}
-        <div className="bg-white/10 backdrop-blur-sm">
+        <div className={`${currentTheme.isLight ? 'bg-slate-50/50' : 'bg-white/10 backdrop-blur-sm'}`}>
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide">
               {/* Nevika Cura / Home */}
@@ -569,12 +577,12 @@ const Home = () => {
                 onClick={() => setActiveService('home')}
                 className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                   activeService === 'home' 
-                    ? 'bg-white text-teal-600 shadow-lg' 
-                    : 'bg-white/20 text-white hover:bg-white/30'
+                    ? (currentTheme.isLight ? 'bg-teal-500 text-white shadow-lg' : 'bg-white text-teal-600 shadow-lg')
+                    : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-teal-300' : 'bg-white/20 text-white hover:bg-white/30')
                 }`}
                 data-testid="nav-nevikacura"
               >
-                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'home' ? 'from-teal-500 to-cyan-500' : 'from-white/30 to-white/10'} flex items-center justify-center`}>
+                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'home' ? 'from-white/30 to-white/10' : 'from-teal-500 to-cyan-500'} flex items-center justify-center`}>
                   <Heart className={`w-4 h-4 ${activeService === 'home' ? 'text-white' : 'text-white'}`} />
                 </div>
                 <span className="font-bold text-sm whitespace-nowrap">Nevika Cura</span>
@@ -585,12 +593,12 @@ const Home = () => {
                 onClick={() => setActiveService('diagyn')}
                 className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                   activeService === 'diagyn' 
-                    ? 'bg-white text-teal-600 shadow-lg' 
-                    : 'bg-white/20 text-white hover:bg-white/30'
+                    ? (currentTheme.isLight ? 'bg-teal-500 text-white shadow-lg' : 'bg-white text-teal-600 shadow-lg')
+                    : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-teal-300' : 'bg-white/20 text-white hover:bg-white/30')
                 }`}
                 data-testid="nav-diagyn"
               >
-                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'diagyn' ? 'from-teal-500 to-cyan-500' : 'from-white/30 to-white/10'} flex items-center justify-center`}>
+                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'diagyn' ? 'from-teal-500 to-cyan-500' : (currentTheme.isLight ? 'from-teal-400 to-cyan-500' : 'from-white/30 to-white/10')} flex items-center justify-center`}>
                   <Stethoscope className="w-4 h-4 text-white" />
                 </div>
                 <span className="font-semibold text-sm whitespace-nowrap">DiaGyn</span>
@@ -601,12 +609,12 @@ const Home = () => {
                 onClick={() => setActiveService('proton')}
                 className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                   activeService === 'proton' 
-                    ? 'bg-white text-blue-600 shadow-lg' 
-                    : 'bg-white/20 text-white hover:bg-white/30'
+                    ? (currentTheme.isLight ? 'bg-blue-500 text-white shadow-lg' : 'bg-white text-blue-600 shadow-lg')
+                    : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-blue-300' : 'bg-white/20 text-white hover:bg-white/30')
                 }`}
                 data-testid="nav-proton"
               >
-                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'proton' ? 'from-blue-500 to-indigo-500' : 'from-white/30 to-white/10'} flex items-center justify-center`}>
+                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'proton' ? 'from-blue-500 to-indigo-500' : (currentTheme.isLight ? 'from-blue-400 to-indigo-500' : 'from-white/30 to-white/10')} flex items-center justify-center`}>
                   <FlaskConical className="w-4 h-4 text-white" />
                 </div>
                 <span className="font-semibold text-sm whitespace-nowrap">Proton</span>
@@ -617,12 +625,12 @@ const Home = () => {
                 onClick={() => setActiveService('pharmacy')}
                 className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                   activeService === 'pharmacy' 
-                    ? 'bg-white text-orange-600 shadow-lg' 
-                    : 'bg-white/20 text-white hover:bg-white/30'
+                    ? (currentTheme.isLight ? 'bg-orange-500 text-white shadow-lg' : 'bg-white text-orange-600 shadow-lg')
+                    : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-orange-300' : 'bg-white/20 text-white hover:bg-white/30')
                 }`}
                 data-testid="nav-orange"
               >
-                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'pharmacy' ? 'from-orange-500 to-amber-500' : 'from-white/30 to-white/10'} flex items-center justify-center`}>
+                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'pharmacy' ? 'from-orange-500 to-amber-500' : (currentTheme.isLight ? 'from-orange-400 to-amber-500' : 'from-white/30 to-white/10')} flex items-center justify-center`}>
                   <Package className="w-4 h-4 text-white" />
                 </div>
                 <span className="font-semibold text-sm whitespace-nowrap">Orange</span>
