@@ -43,14 +43,19 @@ const LoginPage = () => {
         body: JSON.stringify({ email })
       });
       
-      // Clone response before reading body (to check status separately)
       const statusCode = res.status;
-      let data;
+      let data = {};
+      
       try {
-        data = await res.json();
-      } catch (e) {
-        data = {};
+        const text = await res.text();
+        if (text) {
+          data = JSON.parse(text);
+        }
+      } catch (parseError) {
+        console.error('Failed to parse response:', parseError);
       }
+      
+      console.log('OTP Response:', statusCode, data);
       
       if (statusCode === 200 && data.success) {
         toast.success('OTP sent to your email');
@@ -61,18 +66,20 @@ const LoginPage = () => {
           toast.info(`Dev OTP: ${data.mock_otp}`, { duration: 10000 });
         }
       } else if (statusCode === 404 || 
-                 data.detail?.toLowerCase()?.includes('not found') || 
-                 data.detail?.toLowerCase()?.includes('not registered') ||
-                 data.detail?.toLowerCase()?.includes('sign up')) {
+                 (data.detail && (
+                   data.detail.toLowerCase().includes('not found') || 
+                   data.detail.toLowerCase().includes('not registered') ||
+                   data.detail.toLowerCase().includes('sign up')
+                 ))) {
         // User doesn't exist - need to sign up
-        toast.info('New user detected! Please provide your name to create an account.');
+        toast.info('New user! Please provide your name to create an account.');
         setIsNewUser(true);
       } else {
-        toast.error(data.detail || 'Failed to send OTP');
+        toast.error(data.detail || 'Failed to send OTP. Please try again.');
       }
     } catch (error) {
       console.error('OTP request error:', error);
-      toast.error('Failed to send OTP');
+      toast.error('Connection error. Please try again.');
     } finally {
       setLoading(false);
     }
