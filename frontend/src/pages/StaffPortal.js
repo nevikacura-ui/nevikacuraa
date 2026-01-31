@@ -2008,6 +2008,43 @@ const StaffPortal = () => {
         </div>
       </header>
 
+      {/* Clinic Toggle for Multi-Clinic Staff (e.g., staff_diagyn) */}
+      {availableClinics.length > 1 && (
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg">
+          <div className="max-w-7xl mx-auto px-4 py-3">
+            <div className="flex items-center justify-center gap-4">
+              <span className="text-white text-sm font-medium hidden sm:inline">Select Clinic:</span>
+              <div className="flex rounded-full bg-white/20 p-1 backdrop-blur-sm">
+                {availableClinics.map((clinic) => (
+                  <button
+                    key={clinic}
+                    onClick={() => handleClinicSwitch(clinic)}
+                    className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${
+                      activeClinic === clinic
+                        ? clinic === 'Pushpa Clinic'
+                          ? 'bg-orange-500 text-white shadow-lg scale-105'
+                          : 'bg-teal-500 text-white shadow-lg scale-105'
+                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                    }`}
+                    data-testid={`clinic-toggle-${clinic.toLowerCase().replace(' ', '-')}`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      {clinic}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="text-center mt-2">
+              <p className={`text-sm font-semibold ${activeClinic === 'Pushpa Clinic' ? 'text-orange-200' : 'text-teal-200'}`}>
+                Currently Managing: <span className="text-white">{activeClinic}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* QR Scanner Modal */}
       <QRScanner 
         isOpen={showQRScanner}
