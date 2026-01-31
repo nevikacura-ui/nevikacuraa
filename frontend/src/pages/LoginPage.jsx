@@ -341,7 +341,7 @@ const LoginPage = () => {
                   ) : (
                     <Mail className="w-4 h-4 mr-2" />
                   )}
-                  {otpSent ? 'Verify & Login' : 'Send OTP'}
+                  {otpSent ? 'Verify & Login' : (isNewUser ? 'Create Account & Send OTP' : 'Send OTP')}
                 </Button>
                 
                 <p className="text-xs text-center text-slate-500">
