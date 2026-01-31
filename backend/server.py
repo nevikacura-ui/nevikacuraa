@@ -2771,6 +2771,34 @@ async def upload_file(file: UploadFile = File(...), user_id: Optional[str] = Non
         logger.error(f"File upload failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
 
+@api_router.post("/upload/image")
+async def upload_image(file: UploadFile = File(...), type: Optional[str] = "general"):
+    """Upload an image and return a data URL"""
+    try:
+        # Validate file type
+        allowed_types = ["image/jpeg", "image/png", "image/webp", "image/gif"]
+        if file.content_type not in allowed_types:
+            raise HTTPException(status_code=400, detail="Only JPEG, PNG, WebP, and GIF images are allowed")
+        
+        # Validate file size (max 5MB)
+        file_content = await file.read()
+        if len(file_content) > 5 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="Image size must be less than 5MB")
+        
+        # Convert to base64 data URL
+        import base64
+        encoded = base64.b64encode(file_content).decode('utf-8')
+        data_url = f"data:{file.content_type};base64,{encoded}"
+        
+        logger.info(f"Image uploaded: type={type}, size={len(file_content)} bytes")
+        return {"url": data_url, "size": len(file_content), "type": type}
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Image upload failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Image upload failed: {str(e)}")
+
 @api_router.post("/appointments", response_model=Appointment)
 async def create_appointment(input: AppointmentCreate, user = Depends(get_current_user)):
     # REAL-TIME DATE/TIME VALIDATION: Block past dates and times
