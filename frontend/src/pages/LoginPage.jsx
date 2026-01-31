@@ -17,6 +17,8 @@ const LoginPage = () => {
   const [activeTab, setActiveTab] = useState('email-otp');
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
+  const [isNewUser, setIsNewUser] = useState(false);
+  const [userName, setUserName] = useState('');
   
   // Form states
   const [email, setEmail] = useState('');
