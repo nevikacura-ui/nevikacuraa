@@ -99,7 +99,7 @@ class TestUpdate(BaseModel):
 @router.get("/medicines/catalog")
 async def get_public_medicines(
     page: int = 1,
-    limit: int = 50,
+    limit: int = 5000,
     search: str = None,
     form: str = None
 ):
