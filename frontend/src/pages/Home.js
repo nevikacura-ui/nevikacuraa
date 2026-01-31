@@ -574,7 +574,7 @@ const Home = () => {
             <div className="flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide">
               {/* Nevika Cura / Home */}
               <button
-                onClick={() => setActiveService('home')}
+                onClick={() => { setActiveService('home'); navigate('/'); }}
                 className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                   activeService === 'home' 
                     ? (currentTheme.isLight ? 'bg-teal-500 text-white shadow-lg' : 'bg-white text-teal-600 shadow-lg')
@@ -588,9 +588,9 @@ const Home = () => {
                 <span className="font-bold text-sm whitespace-nowrap">Nevika Cura</span>
               </button>
               
-              {/* DiaGyn - Theme switch */}
+              {/* DiaGyn - Navigate to /diagyn */}
               <button
-                onClick={() => setActiveService('diagyn')}
+                onClick={() => navigate('/diagyn')}
                 className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                   activeService === 'diagyn' 
                     ? 'bg-white text-teal-600 shadow-lg'
@@ -604,9 +604,9 @@ const Home = () => {
                 <span className="font-semibold text-sm whitespace-nowrap">DiaGyn</span>
               </button>
               
-              {/* Proton - Theme switch */}
+              {/* Proton - Navigate to /proton */}
               <button
-                onClick={() => setActiveService('proton')}
+                onClick={() => navigate('/proton')}
                 className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                   activeService === 'proton' 
                     ? 'bg-white text-blue-600 shadow-lg'
@@ -620,9 +620,9 @@ const Home = () => {
                 <span className="font-semibold text-sm whitespace-nowrap">Proton</span>
               </button>
               
-              {/* Orange Pharmacy - Theme switch */}
+              {/* Orange Pharmacy - Navigate to /pharmacy */}
               <button
-                onClick={() => setActiveService('pharmacy')}
+                onClick={() => navigate('/pharmacy')}
                 className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                   activeService === 'pharmacy' 
                     ? 'bg-white text-orange-600 shadow-lg'
