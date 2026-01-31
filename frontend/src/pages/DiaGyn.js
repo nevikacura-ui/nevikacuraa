@@ -1202,7 +1202,7 @@ const DiaGyn = () => {
   const handleBooking = async () => {
     // Get fee for selected doctor
     const doctor = doctors.find(d => d.id === selectedDoctor);
-    setAppointmentFee(doctor?.consultationFee || 500);
+    setAppointmentFee(0); // No consultation fee
     setShowPaymentDialog(true);
   };
 
