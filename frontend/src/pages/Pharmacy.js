@@ -978,34 +978,8 @@ const Pharmacy = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-100 via-amber-100 to-orange-50">
-      {/* Orange Theme Accent Bar */}
-      <div className="h-2 bg-gradient-to-r from-orange-400 via-amber-500 to-orange-600" />
-      
-      {/* Header */}
-      <header className="bg-gradient-to-r from-orange-600 to-amber-500 sticky top-0 z-50 shadow-lg">
-        <div className="max-w-5xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={() => currentStep > 1 ? goToStep1() : navigate('/')}
-                className="rounded-full bg-white/20 hover:bg-white/30 text-white"
-                data-testid="back-button"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <img 
-                src="https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/n45xwyrx_3_20260107_021040_0000.jpg" 
-                alt="Orange Pharmacy" 
-                className="h-12 sm:h-14 w-auto rounded-lg bg-white p-1"
-                data-testid="pharmacy-logo"
-              />
-            </div>
-            <StepProgress currentStep={currentStep} />
-          </div>
-        </div>
-      </header>
+      {/* Shared Service Header with Zepto-style tabs */}
+      <ServiceHeader />
 
       {/* How It Works Banner */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-orange-100">
