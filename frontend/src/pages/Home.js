@@ -61,31 +61,39 @@ const Home = () => {
   const serviceThemes = {
     home: {
       name: 'Nevika Cura',
-      bgGradient: 'from-teal-50 via-cyan-50 to-white',
-      headerBg: 'bg-gradient-to-r from-teal-500 to-cyan-500',
+      bgGradient: 'from-white via-slate-50 to-white',
+      headerBg: 'bg-white border-b border-slate-200',
+      headerTextColor: 'text-slate-800',
       accentColor: 'teal',
-      iconBg: 'from-teal-500 to-cyan-500'
+      iconBg: 'from-teal-500 to-cyan-500',
+      isLight: true
     },
     diagyn: {
       name: 'DiaGyn',
       bgGradient: 'from-teal-100 via-cyan-100 to-teal-50',
       headerBg: 'bg-gradient-to-r from-teal-600 to-cyan-600',
+      headerTextColor: 'text-white',
       accentColor: 'teal',
-      iconBg: 'from-teal-600 to-cyan-600'
+      iconBg: 'from-teal-600 to-cyan-600',
+      isLight: false
     },
     proton: {
       name: 'Proton',
       bgGradient: 'from-blue-100 via-indigo-100 to-blue-50',
       headerBg: 'bg-gradient-to-r from-blue-600 to-indigo-600',
+      headerTextColor: 'text-white',
       accentColor: 'blue',
-      iconBg: 'from-blue-600 to-indigo-600'
+      iconBg: 'from-blue-600 to-indigo-600',
+      isLight: false
     },
     pharmacy: {
       name: 'Orange Pharmacy',
       bgGradient: 'from-orange-100 via-amber-100 to-orange-50',
       headerBg: 'bg-gradient-to-r from-orange-500 to-amber-500',
+      headerTextColor: 'text-white',
       accentColor: 'orange',
-      iconBg: 'from-orange-500 to-amber-500'
+      iconBg: 'from-orange-500 to-amber-500',
+      isLight: false
     }
   };
   
