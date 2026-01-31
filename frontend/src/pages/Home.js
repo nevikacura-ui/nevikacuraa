@@ -447,12 +447,12 @@ const Home = () => {
   const secondaryServices = services.filter(s => !s.featured);
 
   return (
-    <div className="min-h-screen bg-[#F5F5F4] relative font-body" style={{ contentVisibility: 'auto' }}>
-      {/* Subtle Background Pattern */}
+    <div className="min-h-screen bg-white relative font-body" style={{ contentVisibility: 'auto' }}>
+      {/* Subtle Background Pattern - White theme */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-20 -left-32 w-96 h-96 bg-gradient-to-br from-teal-100/30 to-cyan-100/30 rounded-full blur-3xl" style={{animationDuration: '8s'}}></div>
-        <div className="absolute top-1/3 -right-32 w-80 h-80 bg-gradient-to-br from-teal-100/20 to-emerald-100/20 rounded-full blur-3xl" style={{animationDuration: '10s'}}></div>
-        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-orange-100/20 to-amber-100/20 rounded-full blur-3xl" style={{animationDuration: '12s'}}></div>
+        <div className="absolute top-20 -left-32 w-96 h-96 bg-gradient-to-br from-slate-50/50 to-slate-100/30 rounded-full blur-3xl" style={{animationDuration: '8s'}}></div>
+        <div className="absolute top-1/3 -right-32 w-80 h-80 bg-gradient-to-br from-teal-50/30 to-cyan-50/30 rounded-full blur-3xl" style={{animationDuration: '10s'}}></div>
+        <div className="absolute bottom-20 left-1/4 w-72 h-72 bg-gradient-to-br from-slate-50/30 to-gray-50/30 rounded-full blur-3xl" style={{animationDuration: '12s'}}></div>
       </div>
 
       {/* Header - Zepto/Blinkit Style with Service Tabs */}
