@@ -2266,6 +2266,14 @@ const StaffPortal = () => {
               />
             </TabsContent>
             
+            <TabsContent value="advance-booking">
+              <AdvanceBookingTab
+                staffInfo={staffInfo}
+                activeClinic={availableClinics.length > 1 ? activeClinic : staffInfo?.clinic}
+                onBookingComplete={() => fetchTodayAppointments()}
+              />
+            </TabsContent>
+            
             <TabsContent value="emergency">
               <EmergencyTab
                 staffInfo={staffInfo}
