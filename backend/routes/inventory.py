@@ -1,0 +1,327 @@
+"""
+Inventory Management Routes for Pharmacy and Diagnostics Staff
+"""
+
+import uuid
+import logging
+from datetime import datetime, timezone
+from typing import Optional, List
+from fastapi import APIRouter, HTTPException, Depends, Header
+from pydantic import BaseModel
+import jwt
+import os
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(tags=["Inventory"])
+
+# JWT Configuration
+JWT_SECRET = os.environ.get("JWT_SECRET", "nevika-cura-jwt-secret-key-2025")
+JWT_ALGORITHM = "HS256"
+
+# Database reference
+db = None
+
+def set_db(database):
+    global db
+    db = database
+
+# Auth dependency
+async def get_staff_user(authorization: str = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    token = authorization.replace("Bearer ", "")
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+# ============ Pydantic Models ============
+
+class MedicineCreate(BaseModel):
+    name: str
+    image_url: Optional[str] = None
+    mrp: float
+    discount_percent: Optional[float] = 0
+    sale_price: Optional[float] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    stock: Optional[int] = 0
+    unit: Optional[str] = "strip"
+
+class MedicineUpdate(BaseModel):
+    name: Optional[str] = None
+    image_url: Optional[str] = None
+    mrp: Optional[float] = None
+    discount_percent: Optional[float] = None
+    sale_price: Optional[float] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    stock: Optional[int] = None
+    unit: Optional[str] = None
+
+class TestCreate(BaseModel):
+    name: str
+    image_url: Optional[str] = None
+    cost: float
+    discount_percent: Optional[float] = 0
+    sale_price: Optional[float] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    report_time: Optional[str] = None
+    sample_type: Optional[str] = None
+    preparation: Optional[str] = None
+
+class TestUpdate(BaseModel):
+    name: Optional[str] = None
+    image_url: Optional[str] = None
+    cost: Optional[float] = None
+    discount_percent: Optional[float] = None
+    sale_price: Optional[float] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    report_time: Optional[str] = None
+    sample_type: Optional[str] = None
+    preparation: Optional[str] = None
+
+# ============ Pharmacy Inventory Endpoints ============
+
+@router.get("/pharmacy/inventory")
+async def get_pharmacy_inventory(staff = Depends(get_staff_user)):
+    """Get all medicines in pharmacy inventory"""
+    try:
+        medicines = await db.pharmacy_inventory.find({}).to_list(1000)
+        for med in medicines:
+            med['id'] = str(med.pop('_id'))
+        return {"medicines": medicines}
+    except Exception as e:
+        logger.error(f"Failed to get pharmacy inventory: {e}")
+        raise HTTPException(status_code=500, detail="Failed to load inventory")
+
+@router.post("/pharmacy/inventory")
+async def create_medicine(medicine: MedicineCreate, staff = Depends(get_staff_user)):
+    """Add a new medicine to inventory"""
+    try:
+        # Calculate sale price if not provided
+        sale_price = medicine.sale_price
+        if sale_price is None:
+            sale_price = medicine.mrp - (medicine.mrp * (medicine.discount_percent or 0) / 100)
+        
+        doc = {
+            "id": str(uuid.uuid4()),
+            "name": medicine.name,
+            "image_url": medicine.image_url,
+            "mrp": medicine.mrp,
+            "discount_percent": medicine.discount_percent or 0,
+            "sale_price": round(sale_price, 2),
+            "category": medicine.category,
+            "description": medicine.description,
+            "stock": medicine.stock or 0,
+            "unit": medicine.unit or "strip",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_by": staff.get("username", "staff")
+        }
+        
+        await db.pharmacy_inventory.insert_one(doc)
+        doc.pop('_id', None)
+        
+        logger.info(f"Medicine added: {medicine.name}")
+        return doc
+    except Exception as e:
+        logger.error(f"Failed to add medicine: {e}")
+        raise HTTPException(status_code=500, detail="Failed to add medicine")
+
+@router.put("/pharmacy/inventory/{medicine_id}")
+async def update_medicine(medicine_id: str, medicine: MedicineUpdate, staff = Depends(get_staff_user)):
+    """Update a medicine in inventory"""
+    try:
+        update_data = {k: v for k, v in medicine.dict().items() if v is not None}
+        
+        # Recalculate sale price if mrp or discount changed
+        if 'mrp' in update_data or 'discount_percent' in update_data:
+            existing = await db.pharmacy_inventory.find_one({"id": medicine_id})
+            if existing:
+                mrp = update_data.get('mrp', existing.get('mrp', 0))
+                discount = update_data.get('discount_percent', existing.get('discount_percent', 0))
+                update_data['sale_price'] = round(mrp - (mrp * discount / 100), 2)
+        
+        update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+        
+        result = await db.pharmacy_inventory.update_one(
+            {"id": medicine_id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Medicine not found")
+        
+        logger.info(f"Medicine updated: {medicine_id}")
+        return {"success": True, "message": "Medicine updated"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to update medicine: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update medicine")
+
+@router.delete("/pharmacy/inventory/{medicine_id}")
+async def delete_medicine(medicine_id: str, staff = Depends(get_staff_user)):
+    """Delete a medicine from inventory"""
+    try:
+        result = await db.pharmacy_inventory.delete_one({"id": medicine_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Medicine not found")
+        
+        logger.info(f"Medicine deleted: {medicine_id}")
+        return {"success": True, "message": "Medicine deleted"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to delete medicine: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete medicine")
+
+# ============ Diagnostics Inventory Endpoints ============
+
+@router.get("/diagnostics/inventory")
+async def get_diagnostics_inventory(staff = Depends(get_staff_user)):
+    """Get all tests in diagnostics inventory"""
+    try:
+        tests = await db.diagnostics_inventory.find({}).to_list(1000)
+        for test in tests:
+            test['id'] = str(test.pop('_id'))
+        return {"tests": tests}
+    except Exception as e:
+        logger.error(f"Failed to get diagnostics inventory: {e}")
+        raise HTTPException(status_code=500, detail="Failed to load inventory")
+
+@router.post("/diagnostics/inventory")
+async def create_test(test: TestCreate, staff = Depends(get_staff_user)):
+    """Add a new test to inventory"""
+    try:
+        # Calculate sale price if not provided
+        sale_price = test.sale_price
+        if sale_price is None:
+            sale_price = test.cost - (test.cost * (test.discount_percent or 0) / 100)
+        
+        doc = {
+            "id": str(uuid.uuid4()),
+            "name": test.name,
+            "image_url": test.image_url,
+            "cost": test.cost,
+            "discount_percent": test.discount_percent or 0,
+            "sale_price": round(sale_price, 2),
+            "category": test.category,
+            "description": test.description,
+            "report_time": test.report_time,
+            "sample_type": test.sample_type,
+            "preparation": test.preparation,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_by": staff.get("username", "staff")
+        }
+        
+        await db.diagnostics_inventory.insert_one(doc)
+        doc.pop('_id', None)
+        
+        logger.info(f"Test added: {test.name}")
+        return doc
+    except Exception as e:
+        logger.error(f"Failed to add test: {e}")
+        raise HTTPException(status_code=500, detail="Failed to add test")
+
+@router.put("/diagnostics/inventory/{test_id}")
+async def update_test(test_id: str, test: TestUpdate, staff = Depends(get_staff_user)):
+    """Update a test in inventory"""
+    try:
+        update_data = {k: v for k, v in test.dict().items() if v is not None}
+        
+        # Recalculate sale price if cost or discount changed
+        if 'cost' in update_data or 'discount_percent' in update_data:
+            existing = await db.diagnostics_inventory.find_one({"id": test_id})
+            if existing:
+                cost = update_data.get('cost', existing.get('cost', 0))
+                discount = update_data.get('discount_percent', existing.get('discount_percent', 0))
+                update_data['sale_price'] = round(cost - (cost * discount / 100), 2)
+        
+        update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+        
+        result = await db.diagnostics_inventory.update_one(
+            {"id": test_id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Test not found")
+        
+        logger.info(f"Test updated: {test_id}")
+        return {"success": True, "message": "Test updated"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to update test: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update test")
+
+@router.delete("/diagnostics/inventory/{test_id}")
+async def delete_test(test_id: str, staff = Depends(get_staff_user)):
+    """Delete a test from inventory"""
+    try:
+        result = await db.diagnostics_inventory.delete_one({"id": test_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Test not found")
+        
+        logger.info(f"Test deleted: {test_id}")
+        return {"success": True, "message": "Test deleted"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to delete test: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete test")
+
+# ============ Admin Order Cancellation ============
+
+@router.post("/admin/orders/cancel/{order_type}/{order_id}")
+async def cancel_order(order_type: str, order_id: str, staff = Depends(get_staff_user)):
+    """Cancel a pharmacy or diagnostic order (admin only)"""
+    role = staff.get("role", "")
+    
+    if role not in ["super_admin", "admin"]:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    try:
+        if order_type == "pharmacy":
+            result = await db.pharmacy_orders.update_one(
+                {"id": order_id},
+                {"$set": {
+                    "status": "cancelled",
+                    "cancelled_at": datetime.now(timezone.utc).isoformat(),
+                    "cancelled_by": staff.get("username", "admin")
+                }}
+            )
+            collection_name = "Pharmacy"
+        elif order_type == "diagnostics":
+            result = await db.diagnostic_orders.update_one(
+                {"id": order_id},
+                {"$set": {
+                    "status": "cancelled",
+                    "cancelled_at": datetime.now(timezone.utc).isoformat(),
+                    "cancelled_by": staff.get("username", "admin")
+                }}
+            )
+            collection_name = "Diagnostic"
+        else:
+            raise HTTPException(status_code=400, detail="Invalid order type. Use 'pharmacy' or 'diagnostics'")
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Order not found")
+        
+        logger.info(f"{collection_name} order cancelled by admin: {order_id}")
+        return {"success": True, "message": f"{collection_name} order cancelled successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to cancel order: {e}")
+        raise HTTPException(status_code=500, detail="Failed to cancel order")
