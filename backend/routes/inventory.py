@@ -101,46 +101,55 @@ async def get_public_medicines(
     page: int = 1,
     limit: int = 50,
     search: str = None,
-    category: str = None
+    form: str = None
 ):
-    """Get medicines catalog for patients - public endpoint"""
+    """Get medicines catalog for patients - public endpoint with 4266+ medicines"""
     try:
-        skip = (page - 1) * limit
-        medicines = []
+        # Start with static inventory (4266 medicines)
+        all_medicines = MEDICINE_INVENTORY.copy()
         
-        # Build filter
-        filter_query = {'active': {'$ne': False}}
+        # Filter by search
         if search:
-            filter_query['name'] = {'$regex': search, '$options': 'i'}
-        if category and category != 'all':
-            filter_query['category'] = category
+            search_lower = search.lower()
+            all_medicines = [m for m in all_medicines if search_lower in m.get('name', '').lower()]
         
-        # Get from medicines_catalog
-        catalog_medicines = await db.medicines_catalog.find(filter_query).skip(skip).limit(limit).to_list(limit)
-        total_catalog = await db.medicines_catalog.count_documents(filter_query)
+        # Filter by form/category
+        if form and form.lower() != 'all':
+            form_lower = form.lower()
+            all_medicines = [m for m in all_medicines if form_lower in m.get('form', '').lower()]
         
-        for med in catalog_medicines:
+        # Get unique forms for filter
+        forms = list(set(m.get('form', 'Other') for m in MEDICINE_INVENTORY))
+        
+        # Paginate
+        total = len(all_medicines)
+        skip = (page - 1) * limit
+        paginated = all_medicines[skip:skip + limit]
+        
+        # Format medicines
+        medicines = []
+        for med in paginated:
             medicines.append({
-                'id': med.get('id') or str(med.get('_id', '')),
+                'id': med.get('name', '').replace(' ', '_'),
                 'name': med.get('name', ''),
-                'image_url': med.get('image') or med.get('image_url', ''),
-                'mrp': med.get('price') or med.get('mrp', 0),
-                'discount_percent': med.get('discount_percent', 0),
-                'sale_price': med.get('sale_price') or med.get('price') or med.get('mrp', 0),
-                'category': med.get('category', ''),
-                'unit': med.get('unit') or med.get('form', 'strip'),
-                'stock': med.get('stock', 0)
+                'form': med.get('form', 'Other'),
+                'category': med.get('form', 'Other'),  # Use form as category
+                'mrp': 0,  # Price not in static data
+                'sale_price': 0,
+                'stock': 100  # Default stock
             })
         
-        # Also get from pharmacy_inventory (staff-added)
-        staff_filter = {}
-        if search:
-            staff_filter['name'] = {'$regex': search, '$options': 'i'}
-        if category and category != 'all':
-            staff_filter['category'] = category
-            
-        staff_medicines = await db.pharmacy_inventory.find(staff_filter).skip(skip).limit(limit).to_list(limit)
-        total_staff = await db.pharmacy_inventory.count_documents(staff_filter)
+        return {
+            "medicines": medicines,
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "total_pages": (total + limit - 1) // limit,
+            "categories": sorted(forms)
+        }
+    except Exception as e:
+        logger.error(f"Failed to get medicines catalog: {e}")
+        raise HTTPException(status_code=500, detail="Failed to load medicines")
         
         for med in staff_medicines:
             medicines.append({
