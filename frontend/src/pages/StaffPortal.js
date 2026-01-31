@@ -40,6 +40,8 @@ import PharmacyLoyaltyTab from '@/components/staff/PharmacyLoyaltyTab';
 import DiagnosticsOrdersTab from '@/components/staff/DiagnosticsOrdersTab';
 import DiagnosticsCreateTab from '@/components/staff/DiagnosticsCreateTab';
 import DiagnosticsLoyaltyTab from '@/components/staff/DiagnosticsLoyaltyTab';
+import MedicineInventoryTab from '@/components/staff/MedicineInventoryTab';
+import TestInventoryTab from '@/components/staff/TestInventoryTab';
 
 // Import analytics components
 import { ClinicAnalytics, PharmacyAnalytics, DiagnosticsAnalytics } from '@/components/staff/analytics';
