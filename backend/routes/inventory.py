@@ -322,11 +322,6 @@ async def get_diagnostics_inventory(staff = Depends(get_staff_user)):
     except Exception as e:
         logger.error(f"Failed to get diagnostics inventory: {e}")
         raise HTTPException(status_code=500, detail="Failed to load inventory")
-            test['id'] = str(test.pop('_id'))
-        return {"tests": tests}
-    except Exception as e:
-        logger.error(f"Failed to get diagnostics inventory: {e}")
-        raise HTTPException(status_code=500, detail="Failed to load inventory")
 
 @router.post("/diagnostics/inventory")
 async def create_test(test: TestCreate, staff = Depends(get_staff_user)):
