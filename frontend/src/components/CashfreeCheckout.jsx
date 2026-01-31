@@ -87,7 +87,10 @@ const CashfreeCheckout = ({
           customer_name: orderDetails.customerName,
           customer_email: orderDetails.customerEmail || 'guest@nevikacura.com',
           customer_phone: orderDetails.customerPhone.replace(/\D/g, ''),
-          amount: orderDetails.amount,
+          amount: finalAmount,
+          original_amount: orderDetails.amount,
+          discount_amount: discountAmount,
+          coupon_code: appliedCoupon?.code || null,
           product_type: orderDetails.type,
           product_id: orderDetails.productId || `${orderDetails.type.toUpperCase()}_${Date.now()}`,
           return_url: `${PRODUCTION_DOMAIN}${returnPath}?payment=success&order_id=`
