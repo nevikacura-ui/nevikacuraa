@@ -331,11 +331,15 @@ const StaffPortal = () => {
   const loadAppointmentsData = async () => {
     const role = staffInfo?.role;
     const staffClinic = staffInfo?.clinic;
+    
+    // For multi-clinic staff, use activeClinic
+    const clinicToUse = availableClinics.length > 1 ? activeClinic : staffClinic;
+    
     try {
       if (isClinicStaff(role)) {
         let url = `${API}/staff/clinic/appointments?date=${selectedDate}`;
-        if (staffClinic) {
-          url += `&clinic=${encodeURIComponent(staffClinic)}`;
+        if (clinicToUse && clinicToUse !== 'Both Clinics') {
+          url += `&clinic=${encodeURIComponent(clinicToUse)}`;
         }
         const res = await axios.get(url, getAuthHeaders());
         console.log('Appointments received:', res.data.appointments);
