@@ -782,131 +782,54 @@ async def notify_staff_new_order(order_details: dict, department: str):
     return {"success": True, "method": "email"}
 
 async def send_appointment_sms(patient_phone: str, appointment_details: dict):
-    """Send short appointment confirmation SMS to patient (only for online bookings)"""
-    date = appointment_details.get('date', '')
-    time = appointment_details.get('time', '')
-    booking_type = appointment_details.get('booking_type', 'online')
-    booking_id = appointment_details.get('booking_id', '')
-    clinic = appointment_details.get('clinic', '').lower()
-    
-    # No SMS for walk-in or emergency appointments (staff handles these)
-    if booking_type in ['walk_in', 'emergency']:
-        logger.info(f"Skipping SMS for {booking_type} appointment")
-        return None
-    
-    # Brand name based on clinic
-    if 'proton' in clinic:
-        brand = "Proton Diagnostics"
-    elif 'pharmacy' in clinic or 'orange' in clinic:
-        brand = "Orange Pharmacy"
-    else:
-        brand = "DiaGyn Healthcare"
-    
-    # Short SMS format with brand name
-    message = f"Appointment confirmed. {date} {time}. Booking ID {booking_id}. {brand}"
-    
-    return await send_sms_notification(patient_phone, message)
+    """DISABLED: Use WhatsApp notifications instead to save Twilio costs"""
+    logger.info(f"SMS DISABLED - Appointment confirmation sent via WhatsApp only")
+    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
 
 async def send_appointment_reminder_sms(patient_phone: str, appointment_details: dict):
-    """Send short appointment reminder SMS"""
-    time = appointment_details.get('time', '')
-    booking_id = appointment_details.get('booking_id', '')
-    clinic = appointment_details.get('clinic', '').lower()
-    
-    # Brand name based on clinic
-    if 'proton' in clinic:
-        brand = "Proton Diagnostics"
-    elif 'pharmacy' in clinic or 'orange' in clinic:
-        brand = "Orange Pharmacy"
-    else:
-        brand = "DiaGyn Healthcare"
-    
-    message = f"Reminder: Appointment tomorrow {time}. ID {booking_id}. {brand}"
-    
-    return await send_sms_notification(patient_phone, message)
+    """DISABLED: Use WhatsApp notifications instead to save Twilio costs"""
+    logger.info(f"SMS DISABLED - Appointment reminder sent via WhatsApp only")
+    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
 
 async def send_test_booking_sms(patient_phone: str, test_details: dict):
-    """Send short lab test booking SMS"""
-    date = test_details.get('date', '')
-    time = test_details.get('time', '')
-    booking_id = test_details.get('booking_id', '')
-    
-    # Lab tests are always Proton Diagnostics
-    message = f"Lab test booked for {date} {time}. Booking ID {booking_id}. Proton Diagnostics"
-    
-    return await send_sms_notification(patient_phone, message)
+    """DISABLED: Use WhatsApp notifications instead to save Twilio costs"""
+    logger.info(f"SMS DISABLED - Lab test booking sent via WhatsApp only")
+    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
 
 async def send_report_ready_sms(patient_phone: str, report_details: dict):
-    """Send short report ready SMS"""
-    report_type = report_details.get('type', 'Report')
-    
-    # Reports are from Proton Diagnostics
-    message = f"{report_type} generated. View in app. Proton Diagnostics"
-    
-    return await send_sms_notification(patient_phone, message)
+    """DISABLED: Use WhatsApp notifications instead to save Twilio costs"""
+    logger.info(f"SMS DISABLED - Report ready sent via WhatsApp only")
+    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
 
 async def send_medicine_order_sms(patient_phone: str, order_details: dict):
-    """Send short medicine order confirmation SMS"""
-    order_id = order_details.get('order_id', order_details.get('id', ''))[:8]
-    
-    # Medicine orders are Orange Pharmacy
-    message = f"Medicine order confirmed. Order ID {order_id}. Orange Pharmacy"
-    
-    return await send_sms_notification(patient_phone, message)
+    """DISABLED: Use WhatsApp notifications instead to save Twilio costs"""
+    logger.info(f"SMS DISABLED - Medicine order sent via WhatsApp only")
+    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
 
 async def send_medicine_delivered_sms(patient_phone: str, order_details: dict):
-    """Send short medicine delivered SMS"""
-    order_id = order_details.get('order_id', order_details.get('id', ''))[:8]
-    
-    # Medicine delivery is Orange Pharmacy
-    message = f"Medicine delivered. Order ID {order_id}. Orange Pharmacy"
-    
-    return await send_sms_notification(patient_phone, message)
+    """DISABLED: Use WhatsApp notifications instead to save Twilio costs"""
+    logger.info(f"SMS DISABLED - Medicine delivered sent via WhatsApp only")
+    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
 
 async def send_pharmacy_order_sms(patient_phone: str, order_details: dict):
-    """Send short pharmacy order confirmation SMS"""
-    order_id = order_details.get('order_id', order_details.get('id', ''))[:8]
-    
-    # Orange Pharmacy branding
-    message = f"Medicine order confirmed. Order ID {order_id}. Orange Pharmacy"
-    
-    return await send_sms_notification(patient_phone, message)
+    """DISABLED: Use WhatsApp notifications instead to save Twilio costs"""
+    logger.info(f"SMS DISABLED - Pharmacy order sent via WhatsApp only")
+    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
 
 async def send_pharmacy_status_sms(patient_phone: str, order_id: str, status: str):
-    """Send short pharmacy order status SMS"""
-    # Short SMS format with Orange Pharmacy brand
-    if status == "Delivered":
-        message = f"Medicine delivered. Order ID {order_id[:8]}. Orange Pharmacy"
-    elif status == "Out for Delivery":
-        message = f"Order out for delivery. ID {order_id[:8]}. Orange Pharmacy"
-    else:
-        message = f"Order update: {status}. ID {order_id[:8]}. Orange Pharmacy"
-    
-    return await send_sms_notification(patient_phone, message)
+    """DISABLED: Use WhatsApp notifications instead to save Twilio costs"""
+    logger.info(f"SMS DISABLED - Pharmacy status sent via WhatsApp only")
+    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
 
 async def send_diagnostic_order_sms(patient_phone: str, order_details: dict):
-    """Send short diagnostic test booking SMS"""
-    order_id = order_details.get('id', order_details.get('booking_id', ''))[:8]
-    date = order_details.get('date', '')
-    time = order_details.get('time', '8:00 AM')
-    
-    # Proton Diagnostics branding
-    message = f"Lab test booked for {date} {time}. Booking ID {order_id}. Proton Diagnostics"
-    
-    return await send_sms_notification(patient_phone, message)
+    """DISABLED: Use WhatsApp notifications instead to save Twilio costs"""
+    logger.info(f"SMS DISABLED - Diagnostic order sent via WhatsApp only")
+    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
 
 async def send_diagnostic_status_sms(patient_phone: str, order_id: str, status: str, report_url: str = None):
-    """Send short diagnostic test status SMS"""
-    
-    # Proton Diagnostics branding
-    if status == "Reports Generated":
-        message = f"Report generated. View in app. Proton Diagnostics"
-    elif status == "Sample Collected":
-        message = f"Sample collected. ID {order_id[:8]}. Proton Diagnostics"
-    else:
-        message = f"Test update: {status}. ID {order_id[:8]}. Proton Diagnostics"
-    
-    return await send_sms_notification(patient_phone, message)
+    """DISABLED: Use WhatsApp notifications instead to save Twilio costs"""
+    logger.info(f"SMS DISABLED - Diagnostic status sent via WhatsApp only")
+    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
 
 async def notify_doctor_whatsapp(doctor_name: str, appointment_details: dict, booking_type: str = "walk_in"):
     """Send WhatsApp notification to doctor about new appointment"""
