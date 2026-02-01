@@ -1239,11 +1239,6 @@ const DiaGyn = () => {
     }
   };
 
-  // Removed - payment not needed for DiaGyn appointments
-  const handlePaymentSuccess = async (paymentInfo) => {
-    // Kept for backwards compatibility but not used
-  };
-
   const availableClinics = getAvailableClinics();
   const availableSlots = getAvailableSlots();
   const safeBookedSlots = Array.isArray(bookedSlots) ? bookedSlots : [];
