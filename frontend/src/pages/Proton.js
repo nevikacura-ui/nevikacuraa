@@ -918,12 +918,12 @@ const Proton = () => {
           {/* Most Booked Tests - Cards with varied gradient colors */}
           <div className="max-w-6xl mx-auto px-4 mt-8 mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Most Booked Tests
               </h2>
               <button 
                 onClick={() => setCurrentStep(1)}
-                className="text-yellow-300 font-semibold text-sm flex items-center gap-1 hover:text-yellow-200"
+                className="text-blue-600 font-semibold text-sm flex items-center gap-1 hover:text-blue-700"
               >
                 View All <ChevronRight className="w-4 h-4" />
               </button>
