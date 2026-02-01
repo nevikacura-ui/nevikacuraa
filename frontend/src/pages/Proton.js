@@ -828,7 +828,7 @@ const Proton = () => {
               </h2>
               <button 
                 onClick={() => setCurrentStep(1)}
-                className="text-orange-500 font-semibold text-sm flex items-center gap-1"
+                className="text-purple-500 font-semibold text-sm flex items-center gap-1"
               >
                 View All <ChevronRight className="w-4 h-4" />
               </button>
@@ -842,7 +842,7 @@ const Proton = () => {
                   data-testid={`package-${pkg.id}`}
                 >
                   {/* Discount Badge */}
-                  <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-3 py-1 text-sm font-bold">
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 text-sm font-bold">
                     {pkg.discount}% OFF
                   </div>
                   
@@ -856,11 +856,11 @@ const Proton = () => {
                     
                     <div className="flex items-center gap-4 text-sm text-slate-600 mb-4">
                       <div className="flex items-center gap-1">
-                        <FlaskConical className="w-4 h-4 text-blue-500" />
+                        <FlaskConical className="w-4 h-4 text-purple-500" />
                         <span>{pkg.parameters} parameters</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4 text-orange-500" />
+                        <Clock className="w-4 h-4 text-pink-500" />
                         <span>{pkg.reportTime}</span>
                       </div>
                     </div>
@@ -869,7 +869,7 @@ const Proton = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 rounded-full border-orange-300 text-orange-600 hover:bg-orange-50"
+                        className="flex-1 rounded-full border-purple-300 text-purple-600 hover:bg-purple-50"
                         onClick={() => {
                           toast.info(`${pkg.name}: ${pkg.tests.join(', ')}`);
                         }}
@@ -878,7 +878,7 @@ const Proton = () => {
                       </Button>
                       <Button
                         size="sm"
-                        className="flex-1 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
+                        className="flex-1 rounded-full bg-purple-500 hover:bg-purple-600 text-white"
                         onClick={() => handlePackageSelect(pkg)}
                       >
                         <ShoppingCart className="w-4 h-4 mr-1" />
@@ -899,7 +899,7 @@ const Proton = () => {
               </h2>
               <button 
                 onClick={() => setCurrentStep(1)}
-                className="text-orange-500 font-semibold text-sm flex items-center gap-1"
+                className="text-purple-500 font-semibold text-sm flex items-center gap-1"
               >
                 View All <ChevronRight className="w-4 h-4" />
               </button>
@@ -913,7 +913,7 @@ const Proton = () => {
                   data-testid={`test-${test.id}`}
                 >
                   {/* Discount Badge */}
-                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 text-sm font-bold">
+                  <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-3 py-1 text-sm font-bold">
                     {test.discount}% OFF
                   </div>
                   
@@ -929,13 +929,13 @@ const Proton = () => {
                     </div>
                     
                     <div className="flex items-center gap-1 text-sm text-slate-600 mb-4">
-                      <Clock className="w-4 h-4 text-orange-500" />
+                      <Clock className="w-4 h-4 text-pink-500" />
                       <span>Reports in {test.reportTime}</span>
                     </div>
                     
                     <Button
                       size="sm"
-                      className="w-full rounded-full bg-orange-500 hover:bg-orange-600 text-white"
+                      className="w-full rounded-full bg-purple-500 hover:bg-purple-600 text-white"
                       onClick={() => handleTestSelect(test)}
                     >
                       <ShoppingCart className="w-4 h-4 mr-1" />
@@ -951,7 +951,7 @@ const Proton = () => {
           <div className="max-w-6xl mx-auto px-4 pb-24">
             <Button
               onClick={() => setCurrentStep(1)}
-              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
               data-testid="browse-all-tests-btn"
             >
               <FlaskConical className="w-5 h-5 mr-2" />
