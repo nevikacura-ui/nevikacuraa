@@ -36,14 +36,14 @@ const getWsUrl = () => {
 const WS_URL = getWsUrl();
 
 // ============================================
-// DESIGN SYSTEM - Dark Teal Theme with Orange Accents for DiaGyn
+// DESIGN SYSTEM - Dark Teal/Grey Theme with Orange Accents for DiaGyn
 // ============================================
 const theme = {
-  primary: { main: '#1F4B3A', light: '#CCFBF1', dark: '#134E4A' },  // Dark teal
-  secondary: { main: '#0D9488', light: '#99F6E4', dark: '#115E59' },
-  accent: { main: '#FF8A00', light: '#FFEDD5' },  // Orange accent
-  neutral: { background: '#0F2A23', surface: '#FFFFFF', textPrimary: '#134E4A', textSecondary: '#6B7280', border: '#E2E8F0' },
-  status: { success: '#14B8A6', error: '#EF476F', warning: '#FFD166' }
+  primary: { main: '#1E3A3A', light: '#2D5050', dark: '#0F2020' },  // Dark teal/grey
+  secondary: { main: '#2D5050', light: '#3D6060', dark: '#1E3A3A' },
+  accent: { main: '#FF6B00', light: '#FF8A00' },  // Orange accent for buttons
+  neutral: { background: '#1E3A3A', surface: '#FFFFFF', textPrimary: '#FFFFFF', textSecondary: '#CBD5E1', border: '#3D6060' },
+  status: { success: '#10B981', error: '#EF476F', warning: '#FFD166' }
 };
 
 // ============================================
