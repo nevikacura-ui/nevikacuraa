@@ -908,7 +908,7 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Most Booked Tests - Zepto Blue Theme Cards */}
+          {/* Most Booked Tests - Cards with varied gradient colors */}
           <div className="max-w-6xl mx-auto px-4 mt-8 mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
@@ -923,14 +923,25 @@ const Proton = () => {
             </div>
             
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-              {popularTests.map((test) => (
+              {popularTests.map((test, index) => {
+                // Varied gradient colors for visual distinction
+                const cardGradients = [
+                  'from-teal-500 to-emerald-600',
+                  'from-rose-500 to-pink-600',
+                  'from-amber-500 to-orange-600',
+                  'from-indigo-500 to-violet-600',
+                  'from-cyan-500 to-blue-600'
+                ];
+                const gradient = cardGradients[index % cardGradients.length];
+                
+                return (
                 <div 
                   key={test.id}
                   className="min-w-[240px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
                   data-testid={`test-${test.id}`}
                 >
-                  {/* Blue/Indigo Header */}
-                  <div className="bg-gradient-to-r from-indigo-600 to-blue-600 p-4 text-white relative">
+                  {/* Varied Color Header */}
+                  <div className={`bg-gradient-to-r ${gradient} p-4 text-white relative`}>
                     <div className="absolute top-2 right-2">
                       <span className="bg-white/20 text-white text-xs font-medium px-2 py-1 rounded">
                         Test
@@ -941,7 +952,7 @@ const Proton = () => {
                       <span className="text-white/70 line-through text-sm">₹{test.originalPrice}</span>
                       <span className="text-xl font-bold">₹{test.price}</span>
                     </div>
-                    <span className="inline-block mt-2 bg-purple-500 text-white text-xs font-bold px-2.5 py-1 rounded">
+                    <span className="inline-block mt-2 bg-yellow-400 text-slate-800 text-xs font-bold px-2.5 py-1 rounded">
                       {test.discount}% Off
                     </span>
                   </div>
@@ -974,7 +985,7 @@ const Proton = () => {
                     </div>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
 
