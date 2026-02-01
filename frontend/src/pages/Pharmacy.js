@@ -1042,7 +1042,7 @@ const Pharmacy = () => {
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
       </div>
 
-      {/* Discount Tiers - Supersaver Zone */}
+      {/* Discount Tiers - Supersaver Zone with Progress Animation */}
       <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-orange-200">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center gap-2 mb-3">
@@ -1052,36 +1052,135 @@ const Pharmacy = () => {
             </h3>
           </div>
           
+          {/* Progress Level Animation */}
+          {(() => {
+            const cartTotal = medicines.reduce((sum, m) => sum + (m.price || 50) * m.quantity, 0);
+            const tiers = [
+              { min: 0, max: 500, off: 0, label: '₹0' },
+              { min: 500, max: 1000, off: 50, label: '₹500' },
+              { min: 1000, max: 1500, off: 100, label: '₹1000' },
+              { min: 1500, max: 2000, off: 150, label: '₹1500' },
+              { min: 2000, max: Infinity, off: 200, label: '₹2000+' }
+            ];
+            const currentTierIndex = tiers.findIndex(t => cartTotal >= t.min && cartTotal < t.max);
+            const currentTier = tiers[currentTierIndex] || tiers[tiers.length - 1];
+            const nextTier = tiers[Math.min(currentTierIndex + 1, tiers.length - 1)];
+            const progress = currentTier.max === Infinity ? 100 : Math.min(((cartTotal - currentTier.min) / (currentTier.max - currentTier.min)) * 100, 100);
+            const amountToNext = nextTier.min - cartTotal;
+            
+            return (
+              <div className="mb-4">
+                {/* Cart Total Display */}
+                {medicines.length > 0 && (
+                  <div className="mb-3 p-3 bg-white rounded-xl border border-orange-200 flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-600">Your Cart Total</p>
+                      <p className="text-2xl font-bold text-orange-600">₹{cartTotal}</p>
+                    </div>
+                    <div className="text-right">
+                      {cartTotal >= 2000 ? (
+                        <div className="flex items-center gap-2 text-green-600">
+                          <CheckCircle2 className="w-5 h-5" />
+                          <span className="font-bold">Max Savings Unlocked!</span>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="text-xs text-slate-500">Add ₹{amountToNext} more for</p>
+                          <p className="text-lg font-bold text-orange-600">₹{nextTier.off} OFF</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Progress Bar */}
+                <div className="relative">
+                  {/* Track */}
+                  <div className="h-3 bg-orange-100 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500 rounded-full transition-all duration-500 ease-out"
+                      style={{ width: `${Math.min((cartTotal / 2000) * 100, 100)}%` }}
+                    />
+                  </div>
+                  
+                  {/* Milestone Markers */}
+                  <div className="flex justify-between mt-2">
+                    {[
+                      { value: 0, off: 0 },
+                      { value: 500, off: 50 },
+                      { value: 1000, off: 100 },
+                      { value: 1500, off: 150 },
+                      { value: 2000, off: 200 }
+                    ].map((milestone, idx) => {
+                      const isReached = cartTotal >= milestone.value;
+                      const isCurrent = cartTotal >= milestone.value && (idx === 4 || cartTotal < [0, 500, 1000, 1500, 2000, Infinity][idx + 1]);
+                      return (
+                        <div key={milestone.value} className="flex flex-col items-center" style={{ width: '20%' }}>
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                            isReached 
+                              ? 'bg-orange-500 text-white scale-110 shadow-lg' 
+                              : 'bg-orange-100 text-orange-400'
+                          } ${isCurrent ? 'ring-2 ring-orange-300 ring-offset-2' : ''}`}>
+                            {isReached ? '✓' : idx + 1}
+                          </div>
+                          <span className={`text-[10px] mt-1 ${isReached ? 'text-orange-600 font-bold' : 'text-slate-400'}`}>
+                            ₹{milestone.value}
+                          </span>
+                          {milestone.off > 0 && (
+                            <span className={`text-[10px] ${isReached ? 'text-green-600 font-bold' : 'text-slate-400'}`}>
+                              {isReached ? `₹${milestone.off} saved!` : `₹${milestone.off} off`}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { min: 500, off: 50, desc: 'Above ₹500', tag: null },
               { min: 1000, off: 100, desc: 'Above ₹1000', tag: null },
               { min: 1500, off: 150, desc: 'Above ₹1500', tag: '+ Free Delivery' },
               { min: 2000, off: 200, desc: 'Above ₹2000', tag: 'Best Value' }
-            ].map((tier, idx) => (
-              <div 
-                key={tier.min}
-                className={`relative p-3 rounded-xl border-2 transition-all ${
-                  idx === 3 
-                    ? 'bg-gradient-to-br from-orange-500 to-amber-500 border-orange-400 text-white' 
-                    : 'bg-white border-orange-200 hover:border-orange-400'
-                }`}
-              >
-                {tier.tag && (
-                  <span className={`absolute -top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    idx === 3 ? 'bg-white text-orange-600' : 'bg-green-500 text-white'
-                  }`}>
-                    {tier.tag}
-                  </span>
-                )}
-                <p className={`text-2xl font-bold ${idx === 3 ? 'text-white' : 'text-orange-600'}`}>
-                  ₹{tier.off} OFF
-                </p>
-                <p className={`text-xs ${idx === 3 ? 'text-white/90' : 'text-slate-500'}`}>
-                  {tier.desc}
-                </p>
-              </div>
-            ))}
+            ].map((tier, idx) => {
+              const cartTotal = medicines.reduce((sum, m) => sum + (m.price || 50) * m.quantity, 0);
+              const isUnlocked = cartTotal >= tier.min;
+              return (
+                <div 
+                  key={tier.min}
+                  className={`relative p-3 rounded-xl border-2 transition-all ${
+                    isUnlocked 
+                      ? 'bg-gradient-to-br from-green-500 to-emerald-500 border-green-400 text-white scale-105 shadow-lg' 
+                      : idx === 3 
+                        ? 'bg-gradient-to-br from-orange-500 to-amber-500 border-orange-400 text-white' 
+                        : 'bg-white border-orange-200 hover:border-orange-400'
+                  }`}
+                >
+                  {isUnlocked && (
+                    <span className="absolute -top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-green-600">
+                      ✓ UNLOCKED
+                    </span>
+                  )}
+                  {tier.tag && !isUnlocked && (
+                    <span className={`absolute -top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      idx === 3 ? 'bg-white text-orange-600' : 'bg-green-500 text-white'
+                    }`}>
+                      {tier.tag}
+                    </span>
+                  )}
+                  <p className={`text-2xl font-bold ${isUnlocked ? 'text-white' : idx === 3 ? 'text-white' : 'text-orange-600'}`}>
+                    ₹{tier.off} OFF
+                  </p>
+                  <p className={`text-xs ${isUnlocked ? 'text-white/90' : idx === 3 ? 'text-white/90' : 'text-slate-500'}`}>
+                    {tier.desc}
+                  </p>
+                </div>
+              );
+            })}
           </div>
           
           <p className="text-xs text-slate-400 mt-2">
