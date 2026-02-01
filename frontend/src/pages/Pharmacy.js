@@ -2272,6 +2272,11 @@ const Pharmacy = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Proton Diagnostics Ad Banner */}
+      <div className="max-w-5xl mx-auto mb-20">
+        <ProtonAdBanner />
+      </div>
       
       {/* Bottom Navigation */}
       <BottomNav />
