@@ -11,6 +11,8 @@ const serviceThemes = {
     path: '/',
     bgGradient: 'from-white via-slate-50 to-white',
     headerBg: 'bg-white border-b border-slate-200',
+    tabBg: 'bg-slate-100',
+    activeTabBg: 'bg-white',
     isLight: true
   },
   diagyn: {
@@ -18,13 +20,17 @@ const serviceThemes = {
     path: '/diagyn',
     bgGradient: 'from-[#102926] via-[#14332E] to-[#1A3E38]',
     headerBg: 'bg-gradient-to-r from-[#1B3A35] to-[#162F2B]',
+    tabBg: 'bg-[#1B3A35]',
+    activeTabBg: 'bg-white',
     isLight: false
   },
   proton: {
     name: 'Proton',
     path: '/proton',
     bgGradient: 'from-blue-600 via-blue-700 to-blue-800',
-    headerBg: 'bg-gradient-to-r from-blue-600 to-blue-700',
+    headerBg: 'bg-gradient-to-r from-blue-500 to-blue-600',
+    tabBg: 'bg-blue-500',
+    activeTabBg: 'bg-white',
     isLight: false
   },
   pharmacy: {
@@ -32,6 +38,8 @@ const serviceThemes = {
     path: '/pharmacy',
     bgGradient: 'from-orange-100 via-amber-100 to-orange-50',
     headerBg: 'bg-gradient-to-r from-orange-500 to-amber-500',
+    tabBg: 'bg-orange-500',
+    activeTabBg: 'bg-white',
     isLight: false
   }
 };
@@ -52,9 +60,17 @@ export const ServiceHeader = () => {
   const activeService = getActiveService(location.pathname);
   const currentTheme = serviceThemes[activeService];
 
+  // Tab configuration
+  const tabs = [
+    { id: 'home', name: 'Nevika Cura', icon: Heart, path: '/', color: 'teal' },
+    { id: 'diagyn', name: 'DiaGyn', icon: Stethoscope, path: '/diagyn', color: 'teal' },
+    { id: 'proton', name: 'Proton', icon: FlaskConical, path: '/proton', color: 'blue' },
+    { id: 'pharmacy', name: 'Orange', icon: Package, path: '/pharmacy', color: 'orange' }
+  ];
+
   return (
     <header 
-      className={`${currentTheme.headerBg} sticky top-0 z-50 ${currentTheme.isLight ? 'shadow-sm' : 'shadow-lg'} transition-all duration-300`}
+      className={`${currentTheme.headerBg} sticky top-0 z-50 transition-all duration-300`}
       style={{
         transform: 'translateZ(0)',
         backfaceVisibility: 'hidden',
@@ -124,73 +140,79 @@ export const ServiceHeader = () => {
         </div>
       </div>
 
-      {/* Row 2 - Service Tabs */}
-      <div className={`${currentTheme.isLight ? 'bg-slate-50/50' : 'bg-white/10 backdrop-blur-sm'}`}>
+      {/* Row 2 - Service Tabs (Zepto-style with page attachment) */}
+      <div className="relative">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide">
-            {/* Nevika Cura / Home */}
-            <button
-              onClick={() => navigate('/')}
-              className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
-                activeService === 'home' 
-                  ? (currentTheme.isLight ? 'bg-teal-500 text-white shadow-lg' : 'bg-white text-teal-600 shadow-lg')
-                  : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-teal-300' : 'bg-white/20 text-white hover:bg-white/30')
-              }`}
-              data-testid="nav-nevikacura"
-            >
-              <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'home' ? 'from-white/30 to-white/10' : 'from-teal-500 to-cyan-500'} flex items-center justify-center`}>
-                <Heart className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-sm whitespace-nowrap">Nevika Cura</span>
-            </button>
-            
-            {/* DiaGyn */}
-            <button
-              onClick={() => navigate('/diagyn')}
-              className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
-                activeService === 'diagyn' 
-                  ? 'bg-white text-teal-700 shadow-lg'
-                  : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-teal-300' : 'bg-white/20 text-white hover:bg-white/30')
-              }`}
-              data-testid="nav-diagyn"
-            >
-              <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'diagyn' ? 'from-teal-600 to-teal-500' : 'from-teal-500 to-cyan-500'} flex items-center justify-center`}>
-                <Stethoscope className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-semibold text-sm whitespace-nowrap">DiaGyn</span>
-            </button>
-            
-            {/* Proton */}
-            <button
-              onClick={() => navigate('/proton')}
-              className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
-                activeService === 'proton' 
-                  ? 'bg-white text-blue-600 shadow-lg'
-                  : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-blue-300' : 'bg-white/20 text-white hover:bg-white/30')
-              }`}
-              data-testid="nav-proton"
-            >
-              <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'proton' ? 'from-blue-500 to-blue-600' : 'from-blue-400 to-blue-500'} flex items-center justify-center`}>
-                <FlaskConical className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-semibold text-sm whitespace-nowrap">Proton</span>
-            </button>
-            
-            {/* Orange Pharmacy */}
-            <button
-              onClick={() => navigate('/pharmacy')}
-              className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
-                activeService === 'pharmacy' 
-                  ? 'bg-white text-orange-600 shadow-lg'
-                  : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-orange-300' : 'bg-white/20 text-white hover:bg-white/30')
-              }`}
-              data-testid="nav-orange"
-            >
-              <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'pharmacy' ? 'from-orange-500 to-amber-500' : 'from-orange-400 to-amber-500'} flex items-center justify-center`}>
-                <Package className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-semibold text-sm whitespace-nowrap">Orange</span>
-            </button>
+          <div className="flex items-end gap-1.5 pt-2 overflow-x-auto scrollbar-hide">
+            {tabs.map((tab) => {
+              const isActive = activeService === tab.id;
+              const Icon = tab.icon;
+              
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => navigate(tab.path)}
+                  className={`
+                    relative flex-shrink-0 px-4 py-2.5 flex items-center gap-2 transition-all
+                    ${isActive 
+                      ? 'bg-white text-slate-800 rounded-t-2xl shadow-sm z-10' 
+                      : `${currentTheme.isLight ? 'bg-slate-200/70 text-slate-600' : 'bg-white/20 text-white'} rounded-xl hover:bg-white/30`
+                    }
+                  `}
+                  data-testid={`nav-${tab.id}`}
+                  style={isActive ? {
+                    borderBottomLeftRadius: 0,
+                    borderBottomRightRadius: 0,
+                  } : {}}
+                >
+                  {/* Tab icon */}
+                  <div className={`
+                    w-7 h-7 rounded-lg flex items-center justify-center
+                    ${isActive 
+                      ? `bg-${tab.color}-500` 
+                      : `bg-gradient-to-br from-${tab.color}-400 to-${tab.color}-500`
+                    }
+                  `}
+                  style={isActive ? {
+                    backgroundColor: tab.color === 'teal' ? '#14B8A6' : tab.color === 'blue' ? '#3B82F6' : '#F97316'
+                  } : {}}
+                  >
+                    <Icon className="w-4 h-4 text-white" />
+                  </div>
+                  <span className={`font-semibold text-sm whitespace-nowrap ${isActive ? 'font-bold' : ''}`}>
+                    {tab.name}
+                  </span>
+                  
+                  {/* Active tab connector - creates the "page attached" effect */}
+                  {isActive && (
+                    <>
+                      {/* Left curve connector */}
+                      <div 
+                        className="absolute -bottom-0 -left-3 w-3 h-3 bg-white"
+                        style={{
+                          borderBottomRightRadius: '12px',
+                          boxShadow: '6px 0 0 0 white'
+                        }}
+                      />
+                      <div 
+                        className={`absolute -bottom-0 -left-3 w-3 h-3 ${currentTheme.isLight ? 'bg-slate-100' : currentTheme.tabBg}`}
+                      />
+                      {/* Right curve connector */}
+                      <div 
+                        className="absolute -bottom-0 -right-3 w-3 h-3 bg-white"
+                        style={{
+                          borderBottomLeftRadius: '12px',
+                          boxShadow: '-6px 0 0 0 white'
+                        }}
+                      />
+                      <div 
+                        className={`absolute -bottom-0 -right-3 w-3 h-3 ${currentTheme.isLight ? 'bg-slate-100' : currentTheme.tabBg}`}
+                      />
+                    </>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
