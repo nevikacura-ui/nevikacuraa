@@ -1042,36 +1042,31 @@ const Pharmacy = () => {
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
       </div>
 
-      {/* Orange Health Labs Style Banner - All-in-one health solution */}
+      {/* Orange Category Banner - Medicine Categories */}
       <div className="bg-gradient-to-r from-orange-600 to-amber-600 py-3">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide">
-              {[
-                { icon: FlaskConical, label: 'Lab Tests', link: '/proton' },
-                { icon: Stethoscope, label: 'Doctor Consult', link: '/diagyn' },
-                { icon: Pill, label: 'Medicines', link: '/pharmacy', active: true },
-                { icon: Heart, label: 'Women Care', link: '/evara' },
-                { icon: Activity, label: 'Diabetes', link: '/glydex' }
-              ].map((item, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => item.link && navigate(item.link)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all ${
-                    item.active 
-                      ? 'bg-white text-orange-600 font-bold shadow-md' 
-                      : 'bg-white/20 text-white hover:bg-white/30'
-                  }`}
-                >
-                  <item.icon className="w-4 h-4" />
-                  <span className="text-sm font-medium">{item.label}</span>
-                </button>
-              ))}
-            </div>
-            <div className="hidden md:flex items-center gap-2 text-white">
-              <Phone className="w-4 h-4" />
-              <span className="text-sm font-medium">Support: 9876543210</span>
-            </div>
+          <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
+            {[
+              { icon: Heart, label: 'Heart & BP' },
+              { icon: Activity, label: 'Diabetes Care' },
+              { icon: Sparkles, label: 'Kids Health' },
+              { icon: Droplets, label: 'Gut Health' },
+              { icon: Shield, label: 'Relief & Comfort' },
+              { icon: Pill, label: 'Essential Medicines' },
+              { icon: Star, label: 'Wellness' }
+            ].map((item, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  // Scroll to relevant category
+                  toast.info(`Browsing ${item.label}`);
+                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all bg-white/20 text-white hover:bg-white hover:text-orange-600"
+              >
+                <item.icon className="w-4 h-4" />
+                <span className="text-sm font-medium">{item.label}</span>
+              </button>
+            ))}
           </div>
         </div>
       </div>
