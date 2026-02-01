@@ -703,80 +703,53 @@ const Proton = () => {
               <div className="flex items-center justify-between">
                 {/* Left Content */}
                 <div className="flex-1 text-white z-10">
-                  <h1 className="text-xl md:text-2xl font-bold mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <h1 className="text-xl md:text-2xl font-bold mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
                     Blood Test At Home
                   </h1>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4 text-yellow-400" />
-                      <span className="font-semibold text-yellow-400 text-sm">in 60 MINS</span>
-                    </div>
-                    <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-                      <CheckCircle2 className="w-3 h-3" />
-                      <span className="text-xs font-medium">Reports in 06 HRS</span>
-                    </div>
+                  <div className="flex items-center gap-1 mb-2">
+                    <Clock className="w-4 h-4 text-yellow-400" />
+                    <span className="font-semibold text-yellow-400 text-sm">in 60 MINS</span>
                   </div>
                 </div>
                 
-                {/* Right - Rotating Circular Carousel Icons */}
-                <div className="relative w-24 h-24 flex-shrink-0">
-                  {/* Rotating container */}
+                {/* Right - Earth-Rotation Style Icons (spin on own axis) */}
+                <div className="flex items-center gap-2">
+                  {/* Lab Flask Icon */}
                   <div 
-                    className="absolute inset-0 animate-spin-slow"
-                    style={{ 
-                      animation: 'spin 8s linear infinite',
-                    }}
+                    className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm shadow-lg"
+                    style={{ animation: 'earth-spin 4s linear infinite' }}
                   >
-                    {/* Lab Flask Icon - Top */}
-                    <div 
-                      className="absolute w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm shadow-lg"
-                      style={{ 
-                        top: '0%', 
-                        left: '50%', 
-                        transform: 'translateX(-50%)',
-                        animation: 'counter-spin 8s linear infinite'
-                      }}
-                    >
-                      <FlaskConical className="w-6 h-6 text-white" />
-                    </div>
-                    {/* Test Tube Icon - Bottom Left */}
-                    <div 
-                      className="absolute w-11 h-11 bg-yellow-400/90 rounded-xl flex items-center justify-center shadow-lg"
-                      style={{ 
-                        bottom: '5%', 
-                        left: '5%',
-                        animation: 'counter-spin 8s linear infinite'
-                      }}
-                    >
-                      <Droplet className="w-5 h-5 text-blue-800" />
-                    </div>
-                    {/* Heart Icon - Bottom Right */}
-                    <div 
-                      className="absolute w-10 h-10 bg-pink-500/90 rounded-lg flex items-center justify-center shadow-lg"
-                      style={{ 
-                        bottom: '5%', 
-                        right: '5%',
-                        animation: 'counter-spin 8s linear infinite'
-                      }}
-                    >
-                      <Heart className="w-5 h-5 text-white" />
-                    </div>
+                    <FlaskConical className="w-6 h-6 text-white" />
                   </div>
-                  {/* Center dot */}
-                  <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-white/40 rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+                  {/* Test Tube Icon */}
+                  <div 
+                    className="w-11 h-11 bg-yellow-400/90 rounded-xl flex items-center justify-center shadow-lg"
+                    style={{ animation: 'earth-spin 5s linear infinite reverse' }}
+                  >
+                    <Droplet className="w-5 h-5 text-blue-800" />
+                  </div>
+                  {/* Heart Icon */}
+                  <div 
+                    className="w-10 h-10 bg-pink-500/90 rounded-lg flex items-center justify-center shadow-lg"
+                    style={{ animation: 'earth-spin 6s linear infinite' }}
+                  >
+                    <Heart className="w-5 h-5 text-white" />
+                  </div>
                   
-                  {/* CSS for animations */}
+                  {/* CSS for Earth-like rotation (Y-axis spin) */}
                   <style>{`
-                    @keyframes spin {
-                      from { transform: rotate(0deg); }
-                      to { transform: rotate(360deg); }
-                    }
-                    @keyframes counter-spin {
-                      from { transform: rotate(0deg); }
-                      to { transform: rotate(-360deg); }
+                    @keyframes earth-spin {
+                      0% { transform: rotateY(0deg); }
+                      100% { transform: rotateY(360deg); }
                     }
                   `}</style>
                 </div>
+              </div>
+              
+              {/* Reports badge - moved below to avoid congestion */}
+              <div className="flex items-center gap-1 bg-white/15 backdrop-blur-sm rounded-full px-2.5 py-0.5 w-fit mt-1">
+                <CheckCircle2 className="w-2.5 h-2.5 text-white/80" />
+                <span className="text-[10px] font-medium text-white/80">Reports in 06 HRS</span>
               </div>
             </div>
             
