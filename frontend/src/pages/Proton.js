@@ -897,7 +897,7 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Most Booked Tests - Dark Pink Theme Cards */}
+          {/* Most Booked Tests - Vibrant Pink/Purple Theme Cards */}
           <div className="max-w-6xl mx-auto px-4 mt-8 mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
@@ -905,7 +905,7 @@ const Proton = () => {
               </h2>
               <button 
                 onClick={() => setCurrentStep(1)}
-                className="text-pink-300 font-semibold text-sm flex items-center gap-1 hover:text-white"
+                className="text-white/80 font-semibold text-sm flex items-center gap-1 hover:text-white"
               >
                 View All <ChevronRight className="w-4 h-4" />
               </button>
@@ -918,8 +918,8 @@ const Proton = () => {
                   className="min-w-[240px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
                   data-testid={`test-${test.id}`}
                 >
-                  {/* Dark Pink Header */}
-                  <div className="bg-gradient-to-r from-pink-700 to-rose-700 p-4 text-white relative">
+                  {/* Vibrant Pink/Purple Header */}
+                  <div className="bg-gradient-to-r from-purple-600 to-fuchsia-600 p-4 text-white relative">
                     <div className="absolute top-2 right-2">
                       <span className="bg-white/20 text-white text-xs font-medium px-2 py-1 rounded">
                         Test
@@ -930,7 +930,7 @@ const Proton = () => {
                       <span className="text-white/70 line-through text-sm">₹{test.originalPrice}</span>
                       <span className="text-xl font-bold">₹{test.price}</span>
                     </div>
-                    <span className="inline-block mt-2 bg-rose-600 text-white text-xs font-bold px-2.5 py-1 rounded">
+                    <span className="inline-block mt-2 bg-pink-500 text-white text-xs font-bold px-2.5 py-1 rounded">
                       {test.discount}% Off
                     </span>
                   </div>
@@ -938,7 +938,7 @@ const Proton = () => {
                   {/* Info Section */}
                   <div className="p-4 bg-slate-50">
                     <div className="flex items-center gap-2 text-sm text-slate-600 mb-4">
-                      <FileText className="w-4 h-4 text-pink-600" />
+                      <FileText className="w-4 h-4 text-purple-500" />
                       <span>Reports within <strong>{test.reportTime}</strong></span>
                     </div>
                     
@@ -946,7 +946,7 @@ const Proton = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 rounded-lg border-pink-300 text-pink-700 hover:bg-pink-50 font-semibold text-xs"
+                        className="flex-1 rounded-lg border-purple-300 text-purple-600 hover:bg-purple-50 font-semibold text-xs"
                         onClick={() => {
                           toast.info(`${test.name} - Single test`);
                         }}
@@ -955,7 +955,7 @@ const Proton = () => {
                       </Button>
                       <Button
                         size="sm"
-                        className="flex-1 rounded-lg bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-semibold text-xs"
+                        className="flex-1 rounded-lg bg-gradient-to-r from-fuchsia-500 to-purple-500 hover:from-fuchsia-600 hover:to-purple-600 text-white font-semibold text-xs"
                         onClick={() => handleTestSelect(test)}
                       >
                         Add to Cart
