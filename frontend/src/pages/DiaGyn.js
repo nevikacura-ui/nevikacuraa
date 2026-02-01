@@ -105,8 +105,8 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect, isTablet = false }) =
         relative overflow-hidden cursor-pointer transition-all duration-300 ease-out
         rounded-3xl p-1 group active:scale-[0.98]
         ${isSelected 
-          ? 'bg-gradient-to-br from-[#5FA8D3] via-[#62B6CB] to-[#FFB4A2] shadow-[0_20px_50px_rgb(0,0,0,0.1)] scale-[1.01]' 
-          : 'bg-gradient-to-br from-slate-100 to-slate-50 hover:from-[#CAE9FF] hover:to-[#BEE9E8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.1)] hover:scale-[1.01] hover:-translate-y-1'
+          ? 'bg-gradient-to-br from-[#0D6A4E] via-[#10B981] to-[#059669] shadow-[0_20px_50px_rgb(0,0,0,0.1)] scale-[1.01]' 
+          : 'bg-gradient-to-br from-slate-100 to-slate-50 hover:from-[#D1FAE5] hover:to-[#A7F3D0] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.1)] hover:scale-[1.01] hover:-translate-y-1'
         }
       `}
     >
@@ -119,7 +119,7 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect, isTablet = false }) =
         {/* Selection Badge */}
         {isSelected && (
           <div className="absolute top-4 right-4 z-10">
-            <Badge className={`bg-[#5FA8D3] text-white rounded-full flex items-center gap-1.5 shadow-lg animate-bounce ${isTablet ? 'px-4 py-1.5 text-sm' : 'px-3 py-1'}`}>
+            <Badge className={`bg-[#0D6A4E] text-white rounded-full flex items-center gap-1.5 shadow-lg animate-bounce ${isTablet ? 'px-4 py-1.5 text-sm' : 'px-3 py-1'}`}>
               <CheckCircle2 className={isTablet ? 'w-4 h-4' : 'w-3.5 h-3.5'} />
               Selected
             </Badge>
@@ -130,7 +130,7 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect, isTablet = false }) =
         <div className={`flex ${isTablet ? 'gap-6' : 'gap-5'}`}>
           {/* Doctor Image */}
           <div className="relative flex-shrink-0">
-            <div className={`rounded-2xl overflow-hidden ring-4 transition-all duration-300 group-hover:ring-[#5FA8D3]/40 ${isTablet ? 'w-28 h-28' : 'w-24 h-24'} ${isSelected ? 'ring-[#5FA8D3]/30' : 'ring-[#BEE9E8]/50 group-hover:ring-[#5FA8D3]/20'}`}>
+            <div className={`rounded-2xl overflow-hidden ring-4 transition-all duration-300 group-hover:ring-[#0D6A4E]/40 ${isTablet ? 'w-28 h-28' : 'w-24 h-24'} ${isSelected ? 'ring-[#0D6A4E]/30' : 'ring-[#A7F3D0]/50 group-hover:ring-[#0D6A4E]/20'}`}>
               <img 
                 src={doctor.image} 
                 alt={doctor.name}
@@ -146,10 +146,10 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect, isTablet = false }) =
 
           {/* Name & Specialty */}
           <div className="flex-1 min-w-0">
-            <h3 className={`font-bold text-[#1B4965] mb-1 truncate ${isTablet ? 'text-2xl' : 'text-xl'}`} style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h3 className={`font-bold text-[#064E3B] mb-1 truncate ${isTablet ? 'text-2xl' : 'text-xl'}`} style={{ fontFamily: 'Outfit, sans-serif' }}>
               {doctor.name}
             </h3>
-            <Badge className={`bg-[#BEE9E8] text-[#1B4965] rounded-full font-medium border-0 mb-3 ${isTablet ? 'px-4 py-1.5 text-sm' : 'px-3 py-1 text-xs'}`}>
+            <Badge className={`bg-[#A7F3D0] text-[#064E3B] rounded-full font-medium border-0 mb-3 ${isTablet ? 'px-4 py-1.5 text-sm' : 'px-3 py-1 text-xs'}`}>
               <Stethoscope className={isTablet ? 'w-4 h-4 mr-2' : 'w-3 h-3 mr-1.5'} />
               {doctor.specialty}
             </Badge>
@@ -157,7 +157,7 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect, isTablet = false }) =
             {/* Quick Stats */}
             <div className={`flex items-center gap-3 text-[#64748B] ${isTablet ? 'text-sm' : 'text-xs'}`}>
               <span className="flex items-center gap-1">
-                <Heart className={isTablet ? 'w-4 h-4 text-[#FFB4A2]' : 'w-3.5 h-3.5 text-[#FFB4A2]'} />
+                <Heart className={isTablet ? 'w-4 h-4 text-[#059669]' : 'w-3.5 h-3.5 text-[#059669]'} />
                 {doctor.patients} patients
               </span>
               <span>•</span>
@@ -167,13 +167,13 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect, isTablet = false }) =
         </div>
 
         {/* Degree & Qualifications - HIGHLIGHTED */}
-        <div className={`bg-gradient-to-r from-[#CAE9FF]/40 to-[#BEE9E8]/40 rounded-2xl border border-[#CAE9FF]/60 ${isTablet ? 'mt-6 p-5' : 'mt-5 p-4'}`}>
+        <div className={`bg-gradient-to-r from-[#D1FAE5]/40 to-[#A7F3D0]/40 rounded-2xl border border-[#D1FAE5]/60 ${isTablet ? 'mt-6 p-5' : 'mt-5 p-4'}`}>
           <div className="flex items-start gap-3">
-            <div className={`rounded-xl bg-[#5FA8D3]/20 flex items-center justify-center flex-shrink-0 ${isTablet ? 'w-10 h-10' : 'w-8 h-8'}`}>
-              <GraduationCap className={isTablet ? 'w-5 h-5 text-[#5FA8D3]' : 'w-4 h-4 text-[#5FA8D3]'} />
+            <div className={`rounded-xl bg-[#0D6A4E]/20 flex items-center justify-center flex-shrink-0 ${isTablet ? 'w-10 h-10' : 'w-8 h-8'}`}>
+              <GraduationCap className={isTablet ? 'w-5 h-5 text-[#0D6A4E]' : 'w-4 h-4 text-[#0D6A4E]'} />
             </div>
             <div>
-              <p className={`font-semibold text-[#1B4965] uppercase tracking-wide mb-1 ${isTablet ? 'text-sm' : 'text-xs'}`}>
+              <p className={`font-semibold text-[#064E3B] uppercase tracking-wide mb-1 ${isTablet ? 'text-sm' : 'text-xs'}`}>
                 Qualifications
               </p>
               <p className={`text-[#64748B] leading-relaxed ${isTablet ? 'text-base' : 'text-sm'}`} style={{ fontFamily: 'DM Sans, sans-serif' }}>
@@ -189,7 +189,7 @@ const DoctorProfileCard = ({ doctor, isSelected, onSelect, isTablet = false }) =
             <Badge 
               key={i} 
               variant="outline" 
-              className="text-xs bg-white border-[#E2E8F0] text-[#64748B] px-2.5 py-1 rounded-full hover:bg-[#FDFBF7] hover:border-[#5FA8D3] transition-colors"
+              className="text-xs bg-white border-[#E2E8F0] text-[#64748B] px-2.5 py-1 rounded-full hover:bg-[#ECFDF5] hover:border-[#0D6A4E] transition-colors"
             >
               {spec}
             </Badge>
@@ -212,8 +212,8 @@ const ClinicCard = ({ clinic, isSelected, onSelect }) => {
         relative overflow-hidden cursor-pointer transition-all duration-300 ease-out
         rounded-3xl group active:scale-[0.98]
         ${isSelected 
-          ? 'ring-2 ring-[#5FA8D3] shadow-[0_20px_50px_rgb(0,0,0,0.1)] scale-[1.02]' 
-          : 'ring-1 ring-[#E2E8F0] hover:ring-[#5FA8D3]/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.1)] hover:scale-[1.02] hover:-translate-y-1'
+          ? 'ring-2 ring-[#0D6A4E] shadow-[0_20px_50px_rgb(0,0,0,0.1)] scale-[1.02]' 
+          : 'ring-1 ring-[#E2E8F0] hover:ring-[#0D6A4E]/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.1)] hover:scale-[1.02] hover:-translate-y-1'
         }
       `}
     >
@@ -228,7 +228,7 @@ const ClinicCard = ({ clinic, isSelected, onSelect }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent transition-opacity group-hover:from-black/50" />
         {isSelected && (
           <div className="absolute top-3 right-3">
-            <Badge className="bg-[#5FA8D3] text-white px-3 py-1 rounded-full flex items-center gap-1.5 shadow-lg animate-bounce">
+            <Badge className="bg-[#0D6A4E] text-white px-3 py-1 rounded-full flex items-center gap-1.5 shadow-lg animate-bounce">
               <CheckCircle2 className="w-3.5 h-3.5" />
               Selected
             </Badge>
@@ -239,11 +239,11 @@ const ClinicCard = ({ clinic, isSelected, onSelect }) => {
       {/* Clinic Info */}
       <div className="p-5 bg-white">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#BEE9E8] flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-            <Building2 className="w-5 h-5 text-[#1B4965]" />
+          <div className="w-10 h-10 rounded-xl bg-[#A7F3D0] flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+            <Building2 className="w-5 h-5 text-[#064E3B]" />
           </div>
           <div>
-            <h3 className="font-bold text-lg text-[#1B4965] transition-colors group-hover:text-[#5FA8D3]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h3 className="font-bold text-lg text-[#064E3B] transition-colors group-hover:text-[#0D6A4E]" style={{ fontFamily: 'Outfit, sans-serif' }}>
               {clinic.name}
             </h3>
             <p className="text-sm text-[#64748B] mt-1 leading-relaxed" style={{ fontFamily: 'DM Sans, sans-serif' }}>
@@ -289,7 +289,7 @@ const RichCalendar = ({ selectedDate, onSelect, doctorSchedule, clinicId }) => {
   return (
     <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-[#E2E8F0]">
       {/* Month Header - Pastel Gradient */}
-      <div className="bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] px-5 py-4">
+      <div className="bg-gradient-to-r from-[#0D6A4E] to-[#10B981] px-5 py-4">
         <div className="flex items-center justify-between">
           <button 
             onClick={() => setCurrentMonth(prev => addDays(startOfMonth(prev), -1))}
@@ -312,7 +312,7 @@ const RichCalendar = ({ selectedDate, onSelect, doctorSchedule, clinicId }) => {
       </div>
       
       {/* Day Names */}
-      <div className="grid grid-cols-7 bg-[#FDFBF7] border-b border-[#E2E8F0]">
+      <div className="grid grid-cols-7 bg-[#ECFDF5] border-b border-[#E2E8F0]">
         {dayNames.map(day => (
           <div 
             key={day} 
@@ -346,11 +346,11 @@ const RichCalendar = ({ selectedDate, onSelect, doctorSchedule, clinicId }) => {
                 ${disabled 
                   ? 'text-[#CBD5E1] cursor-not-allowed' 
                   : isSelected 
-                    ? 'bg-[#5FA8D3] text-white shadow-lg scale-105' 
+                    ? 'bg-[#0D6A4E] text-white shadow-lg scale-105' 
                     : isTodayDate
-                      ? 'bg-[#CAE9FF] text-[#1B4965] hover:bg-[#5FA8D3] hover:text-white font-bold'
+                      ? 'bg-[#D1FAE5] text-[#064E3B] hover:bg-[#0D6A4E] hover:text-white font-bold'
                       : isAvailable
-                        ? 'hover:bg-[#BEE9E8] text-[#1B4965]'
+                        ? 'hover:bg-[#A7F3D0] text-[#064E3B]'
                         : 'text-[#CBD5E1]'
                 }
               `}
@@ -366,13 +366,13 @@ const RichCalendar = ({ selectedDate, onSelect, doctorSchedule, clinicId }) => {
       </div>
       
       {/* Legend */}
-      <div className="px-4 py-3 bg-[#FDFBF7] border-t border-[#E2E8F0] flex items-center gap-5 text-xs" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+      <div className="px-4 py-3 bg-[#ECFDF5] border-t border-[#E2E8F0] flex items-center gap-5 text-xs" style={{ fontFamily: 'DM Sans, sans-serif' }}>
         <span className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 bg-[#A7C957] rounded-full" />
           Available
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 bg-[#5FA8D3] rounded-full" />
+          <span className="w-2.5 h-2.5 bg-[#0D6A4E] rounded-full" />
           Selected
         </span>
         <span className="flex items-center gap-1.5">
@@ -392,7 +392,7 @@ const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDa
     return (
       <div className="flex items-center justify-center py-16">
         <div className="text-center">
-          <Loader2 className="w-10 h-10 animate-spin text-[#5FA8D3] mx-auto mb-3" />
+          <Loader2 className="w-10 h-10 animate-spin text-[#0D6A4E] mx-auto mb-3" />
           <p className="text-[#64748B] text-sm">Loading available slots...</p>
         </div>
       </div>
@@ -410,7 +410,7 @@ const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDa
       <div className="space-y-4">
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-[#FFD6BA]/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Clock className="w-8 h-8 text-[#FFB4A2]" />
+            <Clock className="w-8 h-8 text-[#059669]" />
           </div>
           <p className="text-[#64748B] text-sm">No slots available for this day</p>
           <p className="text-[#94A3B8] text-xs mt-1">Try selecting another date or join the waitlist below</p>
@@ -439,7 +439,7 @@ const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDa
             Morning
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#5FA8D3]" />
+            <span className="w-3 h-3 rounded-full bg-[#0D6A4E]" />
             Evening
           </span>
         </div>
@@ -476,12 +476,12 @@ const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDa
                 ${isPastSlot || isBooked
                   ? 'bg-[#F8FAFC] text-[#CBD5E1] border-[#E2E8F0] cursor-not-allowed line-through'
                   : selectedSlot === slot 
-                    ? 'bg-[#5FA8D3] text-white border-[#5FA8D3] shadow-lg scale-105' 
+                    ? 'bg-[#0D6A4E] text-white border-[#0D6A4E] shadow-lg scale-105' 
                     : isMorning
-                      ? 'bg-[#FFD166]/10 border-[#FFD166]/30 text-[#1B4965] hover:bg-[#FFD166]/20 hover:border-[#FFD166]'
+                      ? 'bg-[#FFD166]/10 border-[#FFD166]/30 text-[#064E3B] hover:bg-[#FFD166]/20 hover:border-[#FFD166]'
                       : isEvening
-                        ? 'bg-[#5FA8D3]/10 border-[#5FA8D3]/30 text-[#1B4965] hover:bg-[#5FA8D3]/20 hover:border-[#5FA8D3]'
-                        : 'bg-white border-[#E2E8F0] hover:border-[#5FA8D3] text-[#1B4965]'
+                        ? 'bg-[#0D6A4E]/10 border-[#0D6A4E]/30 text-[#064E3B] hover:bg-[#0D6A4E]/20 hover:border-[#0D6A4E]'
+                        : 'bg-white border-[#E2E8F0] hover:border-[#0D6A4E] text-[#064E3B]'
                 }
               `}
               style={{ fontFamily: 'DM Sans, sans-serif' }}
@@ -613,7 +613,7 @@ const BlockSlotsDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg rounded-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+          <DialogTitle className="flex items-center gap-2 text-[#064E3B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
             <Lock className="w-5 h-5 text-[#EF476F]" />
             Manage Slot Blocking
           </DialogTitle>
@@ -621,10 +621,10 @@ const BlockSlotsDialog = ({
         
         <div className="space-y-4">
           {/* Info Banner */}
-          <div className="p-3 bg-[#5FA8D3]/10 border border-[#5FA8D3]/30 rounded-xl">
+          <div className="p-3 bg-[#0D6A4E]/10 border border-[#0D6A4E]/30 rounded-xl">
             <div className="flex items-start gap-2">
-              <Stethoscope className="w-4 h-4 text-[#5FA8D3] mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-[#1B4965]">
+              <Stethoscope className="w-4 h-4 text-[#0D6A4E] mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-[#064E3B]">
                 <span className="font-semibold">Doctor Access:</span> Block your appointment slots when running late or unavailable.
                 Patients will not be able to book blocked slots.
               </p>
@@ -632,19 +632,19 @@ const BlockSlotsDialog = ({
           </div>
 
           {/* Selected Context */}
-          <div className="p-4 bg-[#FDFBF7] rounded-xl border border-[#E2E8F0]">
+          <div className="p-4 bg-[#ECFDF5] rounded-xl border border-[#E2E8F0]">
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
                 <p className="text-[#64748B] text-xs">Doctor</p>
-                <p className="font-semibold text-[#1B4965]">{doctor}</p>
+                <p className="font-semibold text-[#064E3B]">{doctor}</p>
               </div>
               <div>
                 <p className="text-[#64748B] text-xs">Clinic</p>
-                <p className="font-semibold text-[#1B4965]">{clinic}</p>
+                <p className="font-semibold text-[#064E3B]">{clinic}</p>
               </div>
               <div className="col-span-2">
                 <p className="text-[#64748B] text-xs">Date</p>
-                <p className="font-semibold text-[#1B4965]">
+                <p className="font-semibold text-[#064E3B]">
                   {selectedDate && format(selectedDate, 'EEEE, MMMM d, yyyy')}
                 </p>
               </div>
@@ -654,7 +654,7 @@ const BlockSlotsDialog = ({
           {/* Currently Blocked Slots */}
           {blockedSlots.length > 0 && (
             <div className="space-y-2">
-              <h4 className="font-semibold text-sm text-[#1B4965] flex items-center gap-2">
+              <h4 className="font-semibold text-sm text-[#064E3B] flex items-center gap-2">
                 <Lock className="w-4 h-4 text-[#EF476F]" />
                 Currently Blocked ({blockedSlots.length})
               </h4>
@@ -683,7 +683,7 @@ const BlockSlotsDialog = ({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="e.g., Doctor running late"
-              className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3]"
+              className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#0D6A4E]"
               data-testid="block-reason-input"
             />
           </div>
@@ -691,8 +691,8 @@ const BlockSlotsDialog = ({
           {/* Available Slots to Block */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h4 className="font-semibold text-sm text-[#1B4965] flex items-center gap-2">
-                <Clock className="w-4 h-4 text-[#5FA8D3]" />
+              <h4 className="font-semibold text-sm text-[#064E3B] flex items-center gap-2">
+                <Clock className="w-4 h-4 text-[#0D6A4E]" />
                 Select Slots to Block
               </h4>
               {/* Block All Remaining Slots Button */}
@@ -714,7 +714,7 @@ const BlockSlotsDialog = ({
             </div>
             {loadingBlockedSlots ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-[#5FA8D3]" />
+                <Loader2 className="w-6 h-6 animate-spin text-[#0D6A4E]" />
               </div>
             ) : (
               <div className="grid grid-cols-4 gap-2 max-h-48 overflow-y-auto">
@@ -734,7 +734,7 @@ const BlockSlotsDialog = ({
                           ? 'bg-[#EF476F]/10 text-[#EF476F] border-[#EF476F]/30 cursor-not-allowed'
                           : isSelected
                             ? 'bg-[#EF476F] text-white border-[#EF476F] shadow-md'
-                            : 'bg-white border-[#E2E8F0] text-[#1B4965] hover:border-[#EF476F] hover:bg-[#EF476F]/5'
+                            : 'bg-white border-[#E2E8F0] text-[#064E3B] hover:border-[#EF476F] hover:bg-[#EF476F]/5'
                         }
                       `}
                     >
@@ -788,7 +788,7 @@ const StepProgress = ({ currentStep, steps }) => {
         <div className="absolute top-4 left-0 right-0 h-0.5 bg-[#E2E8F0]" />
         {/* Progress Line Active */}
         <div 
-          className="absolute top-4 left-0 h-0.5 bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] transition-all duration-500"
+          className="absolute top-4 left-0 h-0.5 bg-gradient-to-r from-[#0D6A4E] to-[#10B981] transition-all duration-500"
           style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
         />
         
@@ -799,14 +799,14 @@ const StepProgress = ({ currentStep, steps }) => {
               ${i + 1 < currentStep 
                 ? 'bg-[#A7C957] border-[#A7C957] text-white' 
                 : i + 1 === currentStep 
-                  ? 'bg-[#5FA8D3] border-[#5FA8D3] text-white shadow-lg scale-110' 
+                  ? 'bg-[#0D6A4E] border-[#0D6A4E] text-white shadow-lg scale-110' 
                   : 'bg-white border-[#E2E8F0] text-[#64748B]'
               }
             `}>
               {i + 1 < currentStep ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
             </div>
             <span 
-              className={`mt-2 text-xs text-center max-w-[60px] leading-tight ${i + 1 === currentStep ? 'text-[#5FA8D3] font-semibold' : 'text-[#64748B]'}`}
+              className={`mt-2 text-xs text-center max-w-[60px] leading-tight ${i + 1 === currentStep ? 'text-[#0D6A4E] font-semibold' : 'text-[#64748B]'}`}
               style={{ fontFamily: 'DM Sans, sans-serif' }}
             >
               {step}
@@ -1266,7 +1266,7 @@ const DiaGyn = () => {
         {step === 1 && (
           <div className="animate-in fade-in duration-500">
             <div className="text-center mb-10">
-              <h1 className="text-3xl md:text-4xl font-bold text-[#1B4965] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <h1 className="text-3xl md:text-4xl font-bold text-[#064E3B] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Choose Your Doctor
               </h1>
               <p className="text-[#64748B] max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
@@ -1299,7 +1299,7 @@ const DiaGyn = () => {
               <div className="mt-10 flex justify-center">
                 <Button 
                   size="lg"
-                  className="bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#1B4965] hover:to-[#5FA8D3] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
+                  className="bg-gradient-to-r from-[#0D6A4E] to-[#10B981] hover:from-[#064E3B] hover:to-[#0D6A4E] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
                   onClick={() => setStep(2)}
                   data-testid="continue-to-clinic"
                 >
@@ -1315,7 +1315,7 @@ const DiaGyn = () => {
         {step === 2 && (
           <div className="animate-in fade-in duration-500">
             <div className="text-center mb-10">
-              <h1 className="text-3xl md:text-4xl font-bold text-[#1B4965] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <h1 className="text-3xl md:text-4xl font-bold text-[#064E3B] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Select Clinic Location
               </h1>
               <p className="text-[#64748B] max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
@@ -1346,7 +1346,7 @@ const DiaGyn = () => {
               <div className="mt-10 flex justify-center">
                 <Button 
                   size="lg"
-                  className="bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#1B4965] hover:to-[#5FA8D3] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
+                  className="bg-gradient-to-r from-[#0D6A4E] to-[#10B981] hover:from-[#064E3B] hover:to-[#0D6A4E] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
                   onClick={() => setStep(3)}
                   data-testid="continue-to-datetime"
                 >
@@ -1362,7 +1362,7 @@ const DiaGyn = () => {
         {step === 3 && (
           <div className="animate-in fade-in duration-500">
             <div className="text-center mb-10">
-              <h1 className="text-3xl md:text-4xl font-bold text-[#1B4965] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <h1 className="text-3xl md:text-4xl font-bold text-[#064E3B] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Pick Your Slot
               </h1>
               <p className="text-[#64748B] max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
@@ -1382,16 +1382,16 @@ const DiaGyn = () => {
                 
                 {/* Selected Date Info */}
                 {selectedDate && (
-                  <div className="mt-4 p-4 bg-gradient-to-r from-[#CAE9FF]/50 to-[#BEE9E8]/50 rounded-2xl border border-[#CAE9FF]">
+                  <div className="mt-4 p-4 bg-gradient-to-r from-[#D1FAE5]/50 to-[#A7F3D0]/50 rounded-2xl border border-[#D1FAE5]">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#5FA8D3] flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-xl bg-[#0D6A4E] flex items-center justify-center">
                         <Calendar className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <p className="font-semibold text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                        <p className="font-semibold text-[#064E3B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
                           {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                         </p>
-                        <p className="text-sm text-[#5FA8D3]">
+                        <p className="text-sm text-[#0D6A4E]">
                           {unbookedSlots.length} slots available
                         </p>
                       </div>
@@ -1402,8 +1402,8 @@ const DiaGyn = () => {
               
               {/* Time Slots */}
               <Card className="p-6 rounded-3xl border-[#E2E8F0] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-                <h3 className="font-bold text-lg mb-5 flex items-center gap-2 text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  <Clock className="w-5 h-5 text-[#5FA8D3]" />
+                <h3 className="font-bold text-lg mb-5 flex items-center gap-2 text-[#064E3B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <Clock className="w-5 h-5 text-[#0D6A4E]" />
                   Available Time Slots
                 </h3>
                 
@@ -1423,8 +1423,8 @@ const DiaGyn = () => {
                   />
                 ) : (
                   <div className="text-center py-16">
-                    <div className="w-16 h-16 bg-[#CAE9FF]/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <CalendarDays className="w-8 h-8 text-[#5FA8D3]" />
+                    <div className="w-16 h-16 bg-[#D1FAE5]/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <CalendarDays className="w-8 h-8 text-[#0D6A4E]" />
                     </div>
                     <p className="text-[#64748B] text-sm">Select a date to see available slots</p>
                   </div>
@@ -1435,8 +1435,8 @@ const DiaGyn = () => {
             {/* Patient Info */}
             {selectedSlot && (
               <Card className="mt-6 p-6 rounded-3xl border-[#E2E8F0] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-                <h3 className="font-bold text-lg mb-5 flex items-center gap-2 text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  <User className="w-5 h-5 text-[#5FA8D3]" />
+                <h3 className="font-bold text-lg mb-5 flex items-center gap-2 text-[#064E3B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <User className="w-5 h-5 text-[#0D6A4E]" />
                   Your Details
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -1452,15 +1452,15 @@ const DiaGyn = () => {
                   
                   {/* Show patient details if found */}
                   {foundPatient && (
-                    <div className="sm:col-span-3 p-4 bg-[#BEE9E8]/30 border border-[#BEE9E8] rounded-xl">
+                    <div className="sm:col-span-3 p-4 bg-[#A7F3D0]/30 border border-[#A7F3D0] rounded-xl">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-[#5FA8D3]/20 rounded-full flex items-center justify-center">
-                          <User className="w-6 h-6 text-[#5FA8D3]" />
+                        <div className="w-12 h-12 bg-[#0D6A4E]/20 rounded-full flex items-center justify-center">
+                          <User className="w-6 h-6 text-[#0D6A4E]" />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <h4 className="font-semibold text-[#1B4965]">{foundPatient.name}</h4>
-                            <Badge className="bg-[#5FA8D3] text-white text-xs">{foundPatient.patient_id}</Badge>
+                            <h4 className="font-semibold text-[#064E3B]">{foundPatient.name}</h4>
+                            <Badge className="bg-[#0D6A4E] text-white text-xs">{foundPatient.patient_id}</Badge>
                           </div>
                           <p className="text-sm text-[#64748B]">
                             {foundPatient.age && `${foundPatient.age} yrs • `}
@@ -1486,7 +1486,7 @@ const DiaGyn = () => {
                           value={patientInfo.name}
                           onChange={(e) => setPatientInfo({ ...patientInfo, name: e.target.value })}
                           placeholder="Enter your name"
-                          className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3] focus:ring-[#CAE9FF]"
+                          className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#0D6A4E] focus:ring-[#D1FAE5]"
                           data-testid="patient-name"
                         />
                       </div>
@@ -1496,11 +1496,11 @@ const DiaGyn = () => {
                           value={patientInfo.phone}
                           onChange={(e) => setPatientInfo({ ...patientInfo, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
                           placeholder="10-digit number"
-                          className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3] focus:ring-[#CAE9FF]"
+                          className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#0D6A4E] focus:ring-[#D1FAE5]"
                           data-testid="patient-phone"
                         />
                         {!bookingLimits.loading && !bookingLimits.canBook && bookingLimits.activeAppointment && (
-                          <div className="mt-2 p-3 bg-[#FFD166]/20 border border-[#FFD166] rounded-xl text-xs text-[#1B4965]">
+                          <div className="mt-2 p-3 bg-[#FFD166]/20 border border-[#FFD166] rounded-xl text-xs text-[#064E3B]">
                             <p className="font-semibold">Active Appointment Found</p>
                             <p>You have an appointment on {bookingLimits.activeAppointment.date} at {bookingLimits.activeAppointment.time}</p>
                           </div>
@@ -1516,7 +1516,7 @@ const DiaGyn = () => {
                       value={patientInfo.email}
                       onChange={(e) => setPatientInfo({ ...patientInfo, email: e.target.value })}
                       placeholder="your@email.com"
-                      className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#5FA8D3] focus:ring-[#CAE9FF]"
+                      className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#0D6A4E] focus:ring-[#D1FAE5]"
                       data-testid="patient-email"
                       required
                     />
@@ -1525,16 +1525,16 @@ const DiaGyn = () => {
                 </div>
                 
                 {patientInfo.email && (
-                  <div className="mt-4 p-4 bg-[#CAE9FF]/30 rounded-xl border border-[#CAE9FF]">
+                  <div className="mt-4 p-4 bg-[#D1FAE5]/30 rounded-xl border border-[#D1FAE5]">
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={emailReminder}
                         onChange={(e) => setEmailReminder(e.target.checked)}
-                        className="w-4 h-4 rounded border-[#5FA8D3] text-[#5FA8D3] focus:ring-[#CAE9FF]"
+                        className="w-4 h-4 rounded border-[#0D6A4E] text-[#0D6A4E] focus:ring-[#D1FAE5]"
                         data-testid="email-reminder-checkbox"
                       />
-                      <span className="font-medium text-[#1B4965] text-sm">
+                      <span className="font-medium text-[#064E3B] text-sm">
                         Send me an email reminder 1 hour before appointment
                       </span>
                     </label>
@@ -1544,7 +1544,7 @@ const DiaGyn = () => {
                 <div className="mt-6 flex justify-center">
                   <Button 
                     size="lg"
-                    className="bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#1B4965] hover:to-[#5FA8D3] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
+                    className="bg-gradient-to-r from-[#0D6A4E] to-[#10B981] hover:from-[#064E3B] hover:to-[#0D6A4E] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
                     onClick={goToOtpStep}
                     data-testid="continue-to-otp"
                   >
@@ -1562,10 +1562,10 @@ const DiaGyn = () => {
           <div className="animate-in fade-in duration-500">
             <Card className="max-w-md mx-auto p-8 rounded-3xl border-[#E2E8F0] shadow-[0_20px_50px_rgb(0,0,0,0.1)]">
               <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#CAE9FF] to-[#BEE9E8] rounded-2xl flex items-center justify-center mx-auto mb-5">
-                  <Shield className="w-10 h-10 text-[#5FA8D3]" />
+                <div className="w-20 h-20 bg-gradient-to-br from-[#D1FAE5] to-[#A7F3D0] rounded-2xl flex items-center justify-center mx-auto mb-5">
+                  <Shield className="w-10 h-10 text-[#0D6A4E]" />
                 </div>
-                <h2 className="text-2xl font-bold text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <h2 className="text-2xl font-bold text-[#064E3B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
                   Verify Your Phone
                 </h2>
                 <p className="text-[#64748B] mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
@@ -1575,7 +1575,7 @@ const DiaGyn = () => {
               
               {mockOtp && (
                 <div className="mb-6 p-4 bg-[#FFD166]/20 border border-[#FFD166] rounded-xl text-center">
-                  <p className="text-xs text-[#1B4965]">Demo OTP: <span className="font-mono font-bold text-lg">{mockOtp}</span></p>
+                  <p className="text-xs text-[#064E3B]">Demo OTP: <span className="font-mono font-bold text-lg">{mockOtp}</span></p>
                 </div>
               )}
               
@@ -1590,7 +1590,7 @@ const DiaGyn = () => {
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    className="w-12 h-14 text-center text-xl font-bold border-2 border-[#E2E8F0] rounded-xl focus:border-[#5FA8D3] focus:ring-2 focus:ring-[#CAE9FF] outline-none transition-all text-[#1B4965]"
+                    className="w-12 h-14 text-center text-xl font-bold border-2 border-[#E2E8F0] rounded-xl focus:border-[#0D6A4E] focus:ring-2 focus:ring-[#D1FAE5] outline-none transition-all text-[#064E3B]"
                     data-testid={`otp-input-${index}`}
                   />
                 ))}
@@ -1599,7 +1599,7 @@ const DiaGyn = () => {
               <Button
                 onClick={verifyOtp}
                 disabled={otpLoading || otp.join('').length !== 6}
-                className="w-full bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#1B4965] hover:to-[#5FA8D3] text-white py-6 rounded-full text-base font-semibold"
+                className="w-full bg-gradient-to-r from-[#0D6A4E] to-[#10B981] hover:from-[#064E3B] hover:to-[#0D6A4E] text-white py-6 rounded-full text-base font-semibold"
                 data-testid="verify-otp-btn"
               >
                 {otpLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify OTP'}
@@ -1609,7 +1609,7 @@ const DiaGyn = () => {
                 {resendTimer > 0 ? (
                   <p className="text-sm text-[#64748B]">Resend OTP in {resendTimer}s</p>
                 ) : (
-                  <button onClick={sendOtp} disabled={otpLoading} className="text-sm text-[#5FA8D3] hover:text-[#1B4965] font-medium transition-colors">
+                  <button onClick={sendOtp} disabled={otpLoading} className="text-sm text-[#0D6A4E] hover:text-[#064E3B] font-medium transition-colors">
                     Resend OTP
                   </button>
                 )}
@@ -1626,7 +1626,7 @@ const DiaGyn = () => {
                 <div className="w-20 h-20 bg-gradient-to-br from-[#A7C957]/30 to-[#A7C957]/10 rounded-2xl flex items-center justify-center mx-auto mb-5">
                   <Sparkles className="w-10 h-10 text-[#A7C957]" />
                 </div>
-                <h2 className="text-2xl font-bold text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <h2 className="text-2xl font-bold text-[#064E3B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
                   Confirm Your Booking
                 </h2>
                 <p className="text-[#64748B] mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
@@ -1635,19 +1635,19 @@ const DiaGyn = () => {
               </div>
               
               {/* Booking Summary */}
-              <div className="space-y-4 bg-[#FDFBF7] rounded-2xl p-5 border border-[#E2E8F0]">
+              <div className="space-y-4 bg-[#ECFDF5] rounded-2xl p-5 border border-[#E2E8F0]">
                 {/* Doctor Info */}
                 <div className="flex items-center gap-4 pb-4 border-b border-[#E2E8F0]">
                   <img 
                     src={selectedDoctorData?.image} 
                     alt="" 
-                    className="w-14 h-14 rounded-xl object-cover ring-2 ring-[#BEE9E8]" 
+                    className="w-14 h-14 rounded-xl object-cover ring-2 ring-[#A7F3D0]" 
                   />
                   <div>
-                    <p className="font-bold text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    <p className="font-bold text-[#064E3B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
                       {selectedDoctorData?.name}
                     </p>
-                    <Badge className="bg-[#BEE9E8] text-[#1B4965] text-xs mt-1">
+                    <Badge className="bg-[#A7F3D0] text-[#064E3B] text-xs mt-1">
                       {selectedDoctorData?.specialty}
                     </Badge>
                   </div>
@@ -1657,21 +1657,21 @@ const DiaGyn = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 bg-white rounded-xl">
                     <p className="text-xs text-[#64748B] mb-1">Clinic</p>
-                    <p className="font-semibold text-[#1B4965] text-sm">{selectedClinicData?.name}</p>
+                    <p className="font-semibold text-[#064E3B] text-sm">{selectedClinicData?.name}</p>
                   </div>
                   <div className="p-3 bg-white rounded-xl">
                     <p className="text-xs text-[#64748B] mb-1">Date</p>
-                    <p className="font-semibold text-[#1B4965] text-sm">
+                    <p className="font-semibold text-[#064E3B] text-sm">
                       {selectedDate && format(selectedDate, 'EEE, MMM d')}
                     </p>
                   </div>
                   <div className="p-3 bg-white rounded-xl">
                     <p className="text-xs text-[#64748B] mb-1">Time</p>
-                    <p className="font-semibold text-[#1B4965] text-sm">{selectedSlot}</p>
+                    <p className="font-semibold text-[#064E3B] text-sm">{selectedSlot}</p>
                   </div>
                   <div className="p-3 bg-white rounded-xl">
                     <p className="text-xs text-[#64748B] mb-1">Patient</p>
-                    <p className="font-semibold text-[#1B4965] text-sm">{patientInfo.name}</p>
+                    <p className="font-semibold text-[#064E3B] text-sm">{patientInfo.name}</p>
                   </div>
                 </div>
               </div>
@@ -1680,7 +1680,7 @@ const DiaGyn = () => {
               <Button
                 onClick={handleBooking}
                 disabled={loading}
-                className="w-full mt-6 bg-gradient-to-r from-[#A7C957] to-[#62B6CB] hover:from-[#62B6CB] hover:to-[#A7C957] text-white py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="w-full mt-6 bg-gradient-to-r from-[#A7C957] to-[#10B981] hover:from-[#10B981] hover:to-[#A7C957] text-white py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-xl transition-all"
                 data-testid="confirm-booking-btn"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirm Appointment'}
@@ -1694,19 +1694,19 @@ const DiaGyn = () => {
       <Dialog open={showAvailability} onOpenChange={setShowAvailability}>
         <DialogContent className="max-w-2xl rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#1B4965]" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              <CalendarDays className="w-5 h-5 text-[#5FA8D3]" />
+            <DialogTitle className="flex items-center gap-2 text-[#064E3B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <CalendarDays className="w-5 h-5 text-[#0D6A4E]" />
               Weekly Doctor Availability
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3 max-h-[60vh] overflow-y-auto">
             {weeklyAvailability.map((day, i) => (
-              <div key={i} className="p-4 bg-[#FDFBF7] rounded-xl border border-[#E2E8F0]">
-                <p className="font-semibold mb-2 text-[#1B4965]">{day.date} ({day.day})</p>
+              <div key={i} className="p-4 bg-[#ECFDF5] rounded-xl border border-[#E2E8F0]">
+                <p className="font-semibold mb-2 text-[#064E3B]">{day.date} ({day.day})</p>
                 <div className="space-y-2 text-sm">
                   {day.doctors?.map((doc, j) => (
                     <div key={j} className="text-[#64748B]">
-                      <span className="font-medium text-[#1B4965]">{doc.name}</span>
+                      <span className="font-medium text-[#064E3B]">{doc.name}</span>
                       <div className="ml-4 mt-1 space-y-1">
                         {doc.clinics?.map((clinic, k) => (
                           <p key={k}>
