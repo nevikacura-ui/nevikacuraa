@@ -254,7 +254,7 @@ async def save_notification_prefs(prefs: NotificationPrefs, patient = Depends(ge
 async def create_payment_link(amount: float, description: str, patient = Depends(get_patient_from_token)):
     """Create a shareable payment link"""
     link_id = str(uuid.uuid4())[:8]
-    payment_link = f"https://health-ux.preview.emergentagent.com/pay/{link_id}"
+    payment_link = f"https://care-interface-3.preview.emergentagent.com/pay/{link_id}"
     
     if db is not None:
         await db.payment_links.insert_one({
