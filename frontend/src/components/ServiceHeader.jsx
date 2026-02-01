@@ -56,12 +56,12 @@ export const ServiceHeader = () => {
   const activeService = getActiveService(location.pathname);
   const currentTheme = serviceThemes[activeService];
 
-  // Tab configuration
+  // Tab configuration - distinct colors for each service
   const tabs = [
-    { id: 'home', name: 'Nevika Cura', icon: Heart, path: '/', color: '#14B8A6' },
-    { id: 'diagyn', name: 'DiaGyn', icon: Stethoscope, path: '/diagyn', color: '#14B8A6' },
-    { id: 'proton', name: 'Proton', icon: FlaskConical, path: '/proton', color: '#3B82F6' },
-    { id: 'pharmacy', name: 'Orange', icon: Package, path: '/pharmacy', color: '#F97316' }
+    { id: 'home', name: 'Nevika Cura', icon: Heart, path: '/', color: '#14B8A6' },      // Teal
+    { id: 'diagyn', name: 'DiaGyn', icon: Stethoscope, path: '/diagyn', color: '#EC4899' }, // Pink
+    { id: 'proton', name: 'Proton', icon: FlaskConical, path: '/proton', color: '#3B82F6' }, // Blue
+    { id: 'pharmacy', name: 'Orange', icon: Package, path: '/pharmacy', color: '#F97316' }  // Orange
   ];
 
   return (
