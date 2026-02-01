@@ -612,13 +612,358 @@ const Proton = () => {
 
   const filteredTests = getFilteredTests();
 
+  // Popular packages for the landing page
+  const popularPackages = [
+    { 
+      id: 'diabetes-basic', 
+      name: 'Diabetes Screening', 
+      tests: ['FBS', 'PPBS', 'HbA1c'], 
+      originalPrice: 999, 
+      price: 599, 
+      discount: 40,
+      parameters: 3,
+      reportTime: '6 hours'
+    },
+    { 
+      id: 'thyroid-profile', 
+      name: 'Thyroid Profile', 
+      tests: ['TSH', 'T3', 'T4', 'FT3', 'FT4'], 
+      originalPrice: 1499, 
+      price: 799, 
+      discount: 47,
+      parameters: 5,
+      reportTime: '12 hours'
+    },
+    { 
+      id: 'lipid-profile', 
+      name: 'Lipid Profile', 
+      tests: ['Total Cholesterol', 'Triglycerides', 'HDL', 'LDL', 'VLDL'], 
+      originalPrice: 899, 
+      price: 499, 
+      discount: 44,
+      parameters: 5,
+      reportTime: '6 hours'
+    },
+    { 
+      id: 'liver-function', 
+      name: 'Liver Function Test', 
+      tests: ['SGPT', 'SGOT', 'Bilirubin', 'Albumin', 'ALP'], 
+      originalPrice: 1199, 
+      price: 649, 
+      discount: 46,
+      parameters: 10,
+      reportTime: '12 hours'
+    },
+    { 
+      id: 'kidney-function', 
+      name: 'Kidney Function Test', 
+      tests: ['Creatinine', 'Urea', 'Uric Acid', 'Electrolytes'], 
+      originalPrice: 999, 
+      price: 549, 
+      discount: 45,
+      parameters: 8,
+      reportTime: '12 hours'
+    }
+  ];
+
+  const popularTests = [
+    { id: 'cbc', name: 'CBC (Complete Blood Count)', originalPrice: 399, price: 199, discount: 50, reportTime: '6 hours' },
+    { id: 'vitamin-d', name: 'Vitamin D', originalPrice: 1499, price: 699, discount: 53, reportTime: '24 hours' },
+    { id: 'vitamin-b12', name: 'Vitamin B12', originalPrice: 999, price: 499, discount: 50, reportTime: '24 hours' },
+    { id: 'hba1c', name: 'HbA1c (Glycated Hemoglobin)', originalPrice: 699, price: 399, discount: 43, reportTime: '12 hours' },
+    { id: 'tsh', name: 'TSH', originalPrice: 499, price: 249, discount: 50, reportTime: '12 hours' }
+  ];
+
+  // Handle package selection
+  const handlePackageSelect = (pkg) => {
+    setSelectedTests(pkg.tests);
+    setCurrentStep(1);
+    toast.success(`${pkg.name} selected! ${pkg.tests.length} tests added.`);
+  };
+
+  // Handle single test selection
+  const handleTestSelect = (test) => {
+    setSelectedTests([test.name]);
+    setCurrentStep(1);
+    toast.success(`${test.name} added to cart!`);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100">
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
-      {/* How It Works Banner */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-[#5FA8D3]/20">
+      {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
+      {currentStep === 0 || (currentStep === 1 && selectedTests.length === 0) ? (
+        <>
+          {/* Hero Banner */}
+          <div className="bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500 relative overflow-hidden">
+            <div className="max-w-6xl mx-auto px-4 py-6">
+              <div className="flex items-center justify-between">
+                {/* Left Content */}
+                <div className="flex-1 text-white z-10">
+                  <h1 className="text-2xl md:text-4xl font-bold mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    Blood Test At Home
+                  </h1>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-5 h-5" />
+                      <span className="font-semibold">in 60 MINS</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 w-fit">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span className="font-medium">Accurate Reports in 06 HRS</span>
+                  </div>
+                </div>
+                
+                {/* Right Image */}
+                <div className="hidden md:block relative w-48 h-48">
+                  <img 
+                    src="https://images.unsplash.com/photo-1653379670999-f7f03d702125?w=400&h=400&fit=crop" 
+                    alt="Happy patient"
+                    className="w-full h-full object-cover rounded-2xl shadow-2xl"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Decorative circles */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+          </div>
+
+          {/* Search Bar */}
+          <div className="max-w-6xl mx-auto px-4 -mt-6 relative z-20">
+            <div className="bg-white rounded-2xl shadow-xl p-4 border-2 border-orange-200">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                <Input
+                  placeholder="Search for tests or checkups"
+                  value={testSearchTerm}
+                  onChange={(e) => setTestSearchTerm(e.target.value)}
+                  className="pl-12 pr-4 py-4 text-lg rounded-xl border-2 border-orange-300 focus:border-orange-500 focus:ring-orange-200"
+                  data-testid="hero-search"
+                />
+              </div>
+              
+              {/* Search Results Dropdown */}
+              {testSearchTerm && filteredTests.length > 0 && (
+                <div className="mt-3 max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
+                  <div className="p-2 bg-orange-50 border-b border-slate-200 text-xs text-slate-600 font-medium">
+                    Found {filteredTests.length} tests matching "{testSearchTerm}"
+                  </div>
+                  <div className="divide-y divide-slate-100">
+                    {filteredTests.slice(0, 8).map(test => (
+                      <button 
+                        key={test} 
+                        onClick={() => {
+                          setSelectedTests([test]);
+                          setTestSearchTerm('');
+                          setCurrentStep(1);
+                        }}
+                        className="flex items-center gap-3 p-3 hover:bg-orange-50 cursor-pointer transition-colors w-full text-left"
+                      >
+                        <span className="text-lg">{getTestIcon(test)}</span>
+                        <span className="text-sm text-slate-800 font-medium">{test}</span>
+                        <Plus className="w-4 h-4 text-orange-500 ml-auto" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Promo Banner */}
+          <div className="max-w-6xl mx-auto px-4 mt-4">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-white/20 rounded-full p-2">
+                  <span className="text-xl">🎉</span>
+                </div>
+                <div className="text-white">
+                  <p className="font-bold text-lg">Get 15% OFF</p>
+                  <p className="text-sm opacity-90">Use code: PROTON15</p>
+                </div>
+              </div>
+              <Button 
+                variant="secondary" 
+                size="sm"
+                className="bg-white text-green-600 hover:bg-green-50 rounded-full font-bold"
+                onClick={() => {
+                  navigator.clipboard.writeText('PROTON15');
+                  toast.success('Coupon code copied!');
+                }}
+              >
+                Copy Code
+              </Button>
+            </div>
+          </div>
+
+          {/* Trust Badges - Zepto Style */}
+          <div className="max-w-6xl mx-auto px-4 mt-6">
+            <div className="flex justify-between items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
+              {[
+                { icon: Shield, title: 'Certified Lab', color: 'text-blue-600', bg: 'bg-blue-100' },
+                { icon: Clock, title: '6 AM - 10 PM', color: 'text-orange-600', bg: 'bg-orange-100' },
+                { icon: CheckCircle2, title: '4.9/5 on Google', color: 'text-green-600', bg: 'bg-green-100' },
+                { icon: Home, title: 'Home Collection', color: 'text-purple-600', bg: 'bg-purple-100' }
+              ].map((badge, idx) => (
+                <div key={idx} className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm min-w-fit">
+                  <div className={`w-8 h-8 rounded-full ${badge.bg} flex items-center justify-center`}>
+                    <badge.icon className={`w-4 h-4 ${badge.color}`} />
+                  </div>
+                  <span className="text-sm font-medium text-slate-700 whitespace-nowrap">{badge.title}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Most Booked Checkups - Horizontal Scroll */}
+          <div className="max-w-6xl mx-auto px-4 mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                Most Booked Checkups
+              </h2>
+              <button 
+                onClick={() => setCurrentStep(1)}
+                className="text-orange-500 font-semibold text-sm flex items-center gap-1"
+              >
+                View All <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+            
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              {popularPackages.map((pkg) => (
+                <div 
+                  key={pkg.id}
+                  className="min-w-[280px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
+                  data-testid={`package-${pkg.id}`}
+                >
+                  {/* Discount Badge */}
+                  <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-3 py-1 text-sm font-bold">
+                    {pkg.discount}% OFF
+                  </div>
+                  
+                  <div className="p-4">
+                    <h3 className="font-bold text-slate-800 text-lg mb-2">{pkg.name}</h3>
+                    
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-slate-400 line-through text-sm">₹{pkg.originalPrice}</span>
+                      <span className="text-2xl font-bold text-slate-800">₹{pkg.price}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-4 text-sm text-slate-600 mb-4">
+                      <div className="flex items-center gap-1">
+                        <FlaskConical className="w-4 h-4 text-blue-500" />
+                        <span>{pkg.parameters} parameters</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-4 h-4 text-orange-500" />
+                        <span>{pkg.reportTime}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 rounded-full border-orange-300 text-orange-600 hover:bg-orange-50"
+                        onClick={() => {
+                          toast.info(`${pkg.name}: ${pkg.tests.join(', ')}`);
+                        }}
+                      >
+                        View Details
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="flex-1 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
+                        onClick={() => handlePackageSelect(pkg)}
+                      >
+                        <ShoppingCart className="w-4 h-4 mr-1" />
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Most Booked Tests - Horizontal Scroll */}
+          <div className="max-w-6xl mx-auto px-4 mt-8 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                Most Booked Tests
+              </h2>
+              <button 
+                onClick={() => setCurrentStep(1)}
+                className="text-orange-500 font-semibold text-sm flex items-center gap-1"
+              >
+                View All <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+            
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              {popularTests.map((test) => (
+                <div 
+                  key={test.id}
+                  className="min-w-[240px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
+                  data-testid={`test-${test.id}`}
+                >
+                  {/* Discount Badge */}
+                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 text-sm font-bold">
+                    {test.discount}% OFF
+                  </div>
+                  
+                  <div className="p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-2xl">{getTestIcon(test.name)}</span>
+                      <h3 className="font-bold text-slate-800 text-sm leading-tight">{test.name}</h3>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-slate-400 line-through text-sm">₹{test.originalPrice}</span>
+                      <span className="text-xl font-bold text-slate-800">₹{test.price}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-1 text-sm text-slate-600 mb-4">
+                      <Clock className="w-4 h-4 text-orange-500" />
+                      <span>Reports in {test.reportTime}</span>
+                    </div>
+                    
+                    <Button
+                      size="sm"
+                      className="w-full rounded-full bg-orange-500 hover:bg-orange-600 text-white"
+                      onClick={() => handleTestSelect(test)}
+                    >
+                      <ShoppingCart className="w-4 h-4 mr-1" />
+                      Add to Cart
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Browse All Tests Button */}
+          <div className="max-w-6xl mx-auto px-4 pb-24">
+            <Button
+              onClick={() => setCurrentStep(1)}
+              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
+              data-testid="browse-all-tests-btn"
+            >
+              <FlaskConical className="w-5 h-5 mr-2" />
+              Browse All Tests & Packages
+            </Button>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Original Test Selection Flow */}
+          {/* How It Works Banner */}
+          <div className="bg-white/80 backdrop-blur-sm border-b border-[#5FA8D3]/20">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center gap-2 mb-3">
             <FlaskConical className="w-5 h-5 text-[#5FA8D3]" />
