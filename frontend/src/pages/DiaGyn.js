@@ -1544,7 +1544,7 @@ const DiaGyn = () => {
                 <div className="mt-6 flex justify-center">
                   <Button 
                     size="lg"
-                    className="bg-gradient-to-r from-[#0F766E] to-[#14B8A6] hover:from-[#134E4A] hover:to-[#0F766E] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
                     onClick={goToOtpStep}
                     data-testid="continue-to-otp"
                   >
@@ -1560,22 +1560,22 @@ const DiaGyn = () => {
         {/* Step 4: OTP Verification */}
         {step === 4 && (
           <div className="animate-in fade-in duration-500">
-            <Card className="max-w-md mx-auto p-8 rounded-3xl border-[#E2E8F0] shadow-[0_20px_50px_rgb(0,0,0,0.1)]">
+            <Card className="max-w-md mx-auto p-8 rounded-3xl border-slate-700 bg-slate-800/50 shadow-[0_20px_50px_rgb(0,0,0,0.2)]">
               <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#CCFBF1] to-[#99F6E4] rounded-2xl flex items-center justify-center mx-auto mb-5">
-                  <Shield className="w-10 h-10 text-[#0F766E]" />
+                <div className="w-20 h-20 bg-gradient-to-br from-orange-500/30 to-orange-600/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                  <Shield className="w-10 h-10 text-orange-500" />
                 </div>
-                <h2 className="text-2xl font-bold text-[#134E4A]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
                   Verify Your Phone
                 </h2>
-                <p className="text-[#64748B] mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                <p className="text-slate-300 mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                   Enter the 6-digit code sent to +91 {patientInfo.phone}
                 </p>
               </div>
               
               {mockOtp && (
-                <div className="mb-6 p-4 bg-[#FFD166]/20 border border-[#FFD166] rounded-xl text-center">
-                  <p className="text-xs text-[#134E4A]">Demo OTP: <span className="font-mono font-bold text-lg">{mockOtp}</span></p>
+                <div className="mb-6 p-4 bg-orange-500/20 border border-orange-400/50 rounded-xl text-center">
+                  <p className="text-xs text-white">Demo OTP: <span className="font-mono font-bold text-lg text-orange-400">{mockOtp}</span></p>
                 </div>
               )}
               
@@ -1590,7 +1590,7 @@ const DiaGyn = () => {
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    className="w-12 h-14 text-center text-xl font-bold border-2 border-[#E2E8F0] rounded-xl focus:border-[#0F766E] focus:ring-2 focus:ring-[#CCFBF1] outline-none transition-all text-[#134E4A]"
+                    className="w-12 h-14 text-center text-xl font-bold border-2 border-slate-600 bg-slate-700 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 outline-none transition-all text-white"
                     data-testid={`otp-input-${index}`}
                   />
                 ))}
@@ -1599,7 +1599,7 @@ const DiaGyn = () => {
               <Button
                 onClick={verifyOtp}
                 disabled={otpLoading || otp.join('').length !== 6}
-                className="w-full bg-gradient-to-r from-[#0F766E] to-[#14B8A6] hover:from-[#134E4A] hover:to-[#0F766E] text-white py-6 rounded-full text-base font-semibold"
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-6 rounded-full text-base font-semibold"
                 data-testid="verify-otp-btn"
               >
                 {otpLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify OTP'}
@@ -1607,9 +1607,9 @@ const DiaGyn = () => {
               
               <div className="mt-5 text-center">
                 {resendTimer > 0 ? (
-                  <p className="text-sm text-[#64748B]">Resend OTP in {resendTimer}s</p>
+                  <p className="text-sm text-slate-400">Resend OTP in {resendTimer}s</p>
                 ) : (
-                  <button onClick={sendOtp} disabled={otpLoading} className="text-sm text-[#0F766E] hover:text-[#134E4A] font-medium transition-colors">
+                  <button onClick={sendOtp} disabled={otpLoading} className="text-sm text-orange-400 hover:text-orange-300 font-medium transition-colors">
                     Resend OTP
                   </button>
                 )}
