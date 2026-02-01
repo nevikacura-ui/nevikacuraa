@@ -982,6 +982,124 @@ const Pharmacy = () => {
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
+      {/* ========== ZEPTO-STYLE HERO BANNER FOR ORANGE PHARMACY ========== */}
+      <div className="bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 relative overflow-hidden">
+        <div className="max-w-5xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            {/* Left Content */}
+            <div className="flex-1 text-white z-10">
+              {/* Zero Fees Badge */}
+              <div className="flex items-center gap-2 mb-3">
+                <span className="bg-white text-orange-600 font-bold text-xl px-4 py-1 rounded-lg shadow-md">
+                  ₹0 Fees
+                </span>
+                <span className="text-white/90 text-sm">on orders above ₹1500*</span>
+              </div>
+              
+              {/* Everyday Lowest Prices */}
+              <div className="flex items-center gap-2 mb-4">
+                <div className="bg-yellow-400 text-slate-800 text-xs font-bold px-3 py-1 rounded-full">
+                  everyday
+                </div>
+                <span className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  LOWEST PRICES
+                </span>
+              </div>
+              
+              {/* Trust Badges Row */}
+              <div className="flex flex-wrap gap-3">
+                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
+                  <span className="text-white font-bold">₹0</span>
+                  <span className="text-white/90 text-xs">Handling Fee</span>
+                </div>
+                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
+                  <span className="text-white font-bold">₹0</span>
+                  <span className="text-white/90 text-xs">Delivery Fee*</span>
+                </div>
+                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
+                  <span className="text-white font-bold">₹0</span>
+                  <span className="text-white/90 text-xs">Surge Fee</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Right - Delivery Person Image */}
+            <div className="hidden md:block relative">
+              <img 
+                src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=300&h=300&fit=crop" 
+                alt="Fast delivery"
+                className="w-32 h-32 object-cover rounded-2xl shadow-xl"
+              />
+              <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
+                <Truck className="w-5 h-5 text-orange-500" />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Decorative circles */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+      </div>
+
+      {/* Discount Tiers - Supersaver Zone */}
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-orange-200">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Gift className="w-5 h-5 text-orange-500" />
+            <h3 className="font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Supersaver Zone
+            </h3>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { min: 500, off: 50, desc: 'Above ₹500', tag: null },
+              { min: 1000, off: 100, desc: 'Above ₹1000', tag: null },
+              { min: 1500, off: 150, desc: 'Above ₹1500', tag: '+ Free Delivery' },
+              { min: 2000, off: 200, desc: 'Above ₹2000', tag: 'Best Value' }
+            ].map((tier, idx) => (
+              <div 
+                key={tier.min}
+                className={`relative p-3 rounded-xl border-2 transition-all ${
+                  idx === 3 
+                    ? 'bg-gradient-to-br from-orange-500 to-amber-500 border-orange-400 text-white' 
+                    : 'bg-white border-orange-200 hover:border-orange-400'
+                }`}
+              >
+                {tier.tag && (
+                  <span className={`absolute -top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    idx === 3 ? 'bg-white text-orange-600' : 'bg-green-500 text-white'
+                  }`}>
+                    {tier.tag}
+                  </span>
+                )}
+                <p className={`text-2xl font-bold ${idx === 3 ? 'text-white' : 'text-orange-600'}`}>
+                  ₹{tier.off} OFF
+                </p>
+                <p className={`text-xs ${idx === 3 ? 'text-white/90' : 'text-slate-500'}`}>
+                  {tier.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+          
+          <p className="text-xs text-slate-400 mt-2">
+            *Free delivery on orders above ₹1500. Discounts auto-applied at checkout.
+          </p>
+        </div>
+      </div>
+
+      {/* FSSAI License Badge */}
+      <div className="bg-white border-b border-slate-100">
+        <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-center gap-3">
+          <Shield className="w-4 h-4 text-green-600" />
+          <span className="text-xs text-slate-600">
+            <span className="font-semibold">FSSAI Licensed</span> • 100% Genuine Medicines • Secure Packaging
+          </span>
+        </div>
+      </div>
+
       {/* How It Works Banner */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-orange-100">
         <div className="max-w-5xl mx-auto px-4 py-4">
