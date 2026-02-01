@@ -26,18 +26,18 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // ============================================
-// DESIGN SYSTEM - Dark Pink Theme for Proton
+// DESIGN SYSTEM - Vibrant Pink/Purple/Blue Theme (Zepto Style)
 // ============================================
 const theme = {
-  primary: '#DB2777',      // Pink-600
-  primaryDark: '#9D174D',  // Pink-800
-  secondary: '#EC4899',    // Pink-500
-  accent: '#F472B6',       // Pink-400
-  background: '#831843',   // Pink-900
+  primary: '#F24797',      // Vibrant Magenta
+  primaryLight: '#FFB5E6', // Light Pink
+  secondary: '#8A2BE2',    // Blue Violet/Purple
+  accent: '#6A0DAD',       // Dark Purple
+  background: '#F24797',   // Vibrant Magenta
   surface: '#FFFFFF',
-  textPrimary: '#1E293B',
-  textSecondary: '#64748B',
-  border: '#FBCFE8',       // Pink-200
+  textPrimary: '#333333',
+  textSecondary: '#555555',
+  border: '#FF99CC',       // Pink border
   success: '#10B981',
   error: '#EF4444'
 };
@@ -690,7 +690,7 @@ const Proton = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-950 via-pink-900 to-rose-900">
+    <div className="min-h-screen bg-gradient-to-br from-pink-400 via-fuchsia-500 to-pink-500">
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
