@@ -16,7 +16,7 @@ import axios from 'axios';
 import { 
   ArrowLeft, ArrowRight, Upload, Plus, X, Heart, FlaskConical, Scan, Activity, 
   ShoppingCart, CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, 
-  Clock, AlertTriangle, Droplets, TestTube, Stethoscope, ChevronRight, Search,
+  Clock, AlertTriangle, Droplets, Droplet, TestTube, Stethoscope, ChevronRight, Search,
   Home, MapPin, Calendar, User, FileText
 } from 'lucide-react';
 import { format } from 'date-fns';
