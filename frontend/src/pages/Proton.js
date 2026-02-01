@@ -691,15 +691,13 @@ const Proton = () => {
 
   return (
     <div className="min-h-screen bg-slate-100">
-      {/* Blue Header Section */}
-      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800">
-        {/* Shared Service Header with Zepto-style tabs */}
-        <ServiceHeader />
+      {/* Shared Service Header */}
+      <ServiceHeader />
 
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
       {currentStep === 0 ? (
         <>
-          {/* Hero Banner - With Yellow Accent like Zepto */}
+          {/* Blue Hero Banner Section */}
           <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-4 py-6">
               <div className="flex items-center justify-between">
