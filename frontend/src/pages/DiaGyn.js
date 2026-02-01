@@ -1227,12 +1227,15 @@ const DiaGyn = () => {
       }
       navigate('/');
     } catch (error) {
-      if (error.response?.data?.detail?.includes('already booked')) {
+      const errorMsg = error.response?.data?.detail || 'Booking failed';
+      if (errorMsg.includes('already booked')) {
         toast.error('This slot was just booked! Please select another.');
         fetchBookedSlots();
         setStep(3);
+      } else if (errorMsg.includes('already have an active appointment')) {
+        toast.error(errorMsg);  // Show full message about existing appointment
       } else {
-        toast.error(error.response?.data?.detail || 'Booking failed');
+        toast.error(errorMsg);
       }
     } finally {
       setLoading(false);
