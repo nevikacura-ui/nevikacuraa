@@ -165,12 +165,12 @@ export const ServiceHeader = () => {
               onClick={() => navigate('/proton')}
               className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                 activeService === 'proton' 
-                  ? 'bg-white text-blue-600 shadow-lg'
-                  : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-blue-300' : 'bg-white/20 text-white hover:bg-white/30')
+                  ? 'bg-white text-pink-700 shadow-lg'
+                  : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-pink-300' : 'bg-white/20 text-white hover:bg-white/30')
               }`}
               data-testid="nav-proton"
             >
-              <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'proton' ? 'from-blue-500 to-indigo-500' : 'from-blue-400 to-indigo-500'} flex items-center justify-center`}>
+              <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'proton' ? 'from-pink-600 to-rose-600' : 'from-pink-500 to-rose-500'} flex items-center justify-center`}>
                 <FlaskConical className="w-4 h-4 text-white" />
               </div>
               <span className="font-semibold text-sm whitespace-nowrap">Proton</span>
