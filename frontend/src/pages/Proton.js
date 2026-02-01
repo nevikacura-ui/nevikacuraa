@@ -712,33 +712,54 @@ const Proton = () => {
                   </div>
                 </div>
                 
-                {/* Right - Earth-Rotation Style Icons (spin on own axis) */}
-                <div className="flex items-center gap-2">
-                  {/* Lab Flask Icon */}
+                {/* Right - Planetary Orbital Rotation Icons */}
+                <div className="relative w-20 h-20 flex-shrink-0" style={{ perspective: '200px' }}>
+                  {/* Orbital container - 3D rotation */}
                   <div 
-                    className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm shadow-lg"
-                    style={{ animation: 'earth-spin 4s linear infinite' }}
+                    className="absolute inset-0"
+                    style={{ 
+                      transformStyle: 'preserve-3d',
+                      animation: 'orbital-spin 6s linear infinite'
+                    }}
                   >
-                    <FlaskConical className="w-6 h-6 text-white" />
-                  </div>
-                  {/* Test Tube Icon */}
-                  <div 
-                    className="w-11 h-11 bg-yellow-400/90 rounded-xl flex items-center justify-center shadow-lg"
-                    style={{ animation: 'earth-spin 5s linear infinite reverse' }}
-                  >
-                    <Droplet className="w-5 h-5 text-blue-800" />
-                  </div>
-                  {/* Heart Icon */}
-                  <div 
-                    className="w-10 h-10 bg-pink-500/90 rounded-lg flex items-center justify-center shadow-lg"
-                    style={{ animation: 'earth-spin 6s linear infinite' }}
-                  >
-                    <Heart className="w-5 h-5 text-white" />
+                    {/* Flask Icon - Front position */}
+                    <div 
+                      className="absolute w-11 h-11 bg-white/25 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-lg"
+                      style={{ 
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%) translateZ(30px)',
+                      }}
+                    >
+                      <FlaskConical className="w-5 h-5 text-white" />
+                    </div>
+                    {/* Droplet Icon - Back-left position */}
+                    <div 
+                      className="absolute w-10 h-10 bg-yellow-400/90 rounded-lg flex items-center justify-center shadow-lg"
+                      style={{ 
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%) rotateY(120deg) translateZ(30px)',
+                      }}
+                    >
+                      <Droplet className="w-5 h-5 text-blue-800" />
+                    </div>
+                    {/* Heart Icon - Back-right position */}
+                    <div 
+                      className="absolute w-10 h-10 bg-pink-500/90 rounded-lg flex items-center justify-center shadow-lg"
+                      style={{ 
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%) rotateY(240deg) translateZ(30px)',
+                      }}
+                    >
+                      <Heart className="w-5 h-5 text-white" />
+                    </div>
                   </div>
                   
-                  {/* CSS for Earth-like rotation (Y-axis spin) */}
+                  {/* CSS for planetary orbital rotation */}
                   <style>{`
-                    @keyframes earth-spin {
+                    @keyframes orbital-spin {
                       0% { transform: rotateY(0deg); }
                       100% { transform: rotateY(360deg); }
                     }
