@@ -474,14 +474,14 @@ const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDa
               className={`
                 py-3 px-2 text-sm rounded-xl border-2 transition-all font-medium relative
                 ${isPastSlot || isBooked
-                  ? 'bg-[#F8FAFC] text-[#CBD5E1] border-[#E2E8F0] cursor-not-allowed line-through'
+                  ? 'bg-slate-800/50 text-slate-500 border-slate-700 cursor-not-allowed line-through'
                   : selectedSlot === slot 
-                    ? 'bg-[#0F766E] text-white border-[#0F766E] shadow-lg scale-105' 
+                    ? 'bg-orange-500 text-white border-orange-500 shadow-lg scale-105' 
                     : isMorning
-                      ? 'bg-[#FFD166]/10 border-[#FFD166]/30 text-[#134E4A] hover:bg-[#FFD166]/20 hover:border-[#FFD166]'
+                      ? 'bg-amber-100 border-amber-300 text-amber-900 hover:bg-amber-200 hover:border-amber-400'
                       : isEvening
-                        ? 'bg-[#0F766E]/10 border-[#0F766E]/30 text-[#134E4A] hover:bg-[#0F766E]/20 hover:border-[#0F766E]'
-                        : 'bg-white border-[#E2E8F0] hover:border-[#0F766E] text-[#134E4A]'
+                        ? 'bg-white border-white/50 text-slate-800 hover:bg-slate-100 hover:border-white'
+                        : 'bg-white border-slate-200 hover:border-orange-400 text-slate-800'
                 }
               `}
               style={{ fontFamily: 'DM Sans, sans-serif' }}
