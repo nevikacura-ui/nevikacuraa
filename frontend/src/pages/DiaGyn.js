@@ -1315,10 +1315,10 @@ const DiaGyn = () => {
         {step === 2 && (
           <div className="animate-in fade-in duration-500">
             <div className="text-center mb-10">
-              <h1 className="text-3xl md:text-4xl font-bold text-[#134E4A] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Select Clinic Location
               </h1>
-              <p className="text-[#64748B] max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-slate-300 max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                 Choose your preferred clinic for the appointment with {selectedDoctorData?.name}
               </p>
             </div>
