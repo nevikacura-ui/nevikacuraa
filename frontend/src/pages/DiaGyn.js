@@ -13,6 +13,7 @@ import { ViewModeSwitcher } from '@/components/ViewModeSwitcher';
 import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRegistration';
 import BottomNav from '@/components/BottomNav';
 import ServiceHeader from '@/components/ServiceHeader';
+import ProtonAdBanner from '@/components/ProtonAdBanner';
 import { toast } from 'sonner';
 import axios from 'axios';
 import AppointmentWaitlist from '@/components/AppointmentWaitlist';
