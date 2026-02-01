@@ -697,7 +697,7 @@ const Proton = () => {
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
       {currentStep === 0 ? (
         <>
-          {/* Hero Banner - Zepto Blue Theme for Proton */}
+          {/* Hero Banner - With Yellow Accent like Zepto */}
           <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-4 py-6">
               <div className="flex items-center justify-between">
@@ -708,8 +708,8 @@ const Proton = () => {
                   </h1>
                   <div className="flex items-center gap-4 mb-4">
                     <div className="flex items-center gap-2">
-                      <Clock className="w-5 h-5" />
-                      <span className="font-semibold">in 60 MINS</span>
+                      <Clock className="w-5 h-5 text-yellow-400" />
+                      <span className="font-semibold text-yellow-400">in 60 MINS</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 w-fit">
