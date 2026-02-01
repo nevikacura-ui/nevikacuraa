@@ -1360,7 +1360,7 @@ const Pharmacy = () => {
                   </div>
                   <button 
                     onClick={() => addToCart({ name: item.name, quantity: 1 })}
-                    className="w-full mt-2 py-2 border-2 border-pink-400 text-pink-600 rounded-lg font-bold text-sm hover:bg-pink-50 transition-colors"
+                    className="w-full mt-2 py-2 border-2 border-orange-400 text-orange-600 rounded-lg font-bold text-sm hover:bg-orange-50 transition-colors"
                   >
                     ADD
                   </button>
@@ -1426,7 +1426,7 @@ const Pharmacy = () => {
                   </div>
                   <button 
                     onClick={() => addToCart({ name: item.name, quantity: 1 })}
-                    className="w-full mt-2 py-2 border-2 border-pink-400 text-pink-600 rounded-lg font-bold text-sm hover:bg-pink-50 transition-colors"
+                    className="w-full mt-2 py-2 border-2 border-orange-400 text-orange-600 rounded-lg font-bold text-sm hover:bg-orange-50 transition-colors"
                   >
                     ADD
                   </button>
