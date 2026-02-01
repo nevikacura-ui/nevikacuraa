@@ -1318,7 +1318,7 @@ const DiaGyn = () => {
               <h1 className="text-3xl md:text-4xl font-bold text-white mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Select Clinic Location
               </h1>
-              <p className="text-slate-300 max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-emerald-200/80 max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                 Choose your preferred clinic for the appointment with {selectedDoctorData?.name}
               </p>
             </div>
@@ -1365,7 +1365,7 @@ const DiaGyn = () => {
               <h1 className="text-3xl md:text-4xl font-bold text-white mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Pick Your Slot
               </h1>
-              <p className="text-slate-300 max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-emerald-200/80 max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                 Select a convenient date and time for your appointment
               </p>
             </div>
@@ -1401,7 +1401,7 @@ const DiaGyn = () => {
               </div>
               
               {/* Time Slots */}
-              <Card className="p-6 rounded-3xl border-slate-700 bg-slate-800/50 shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+              <Card className="p-6 rounded-3xl border-[#1B3A35] bg-[#162F2B]/80 shadow-[0_8px_30px_rgb(0,0,0,0.3)]">
                 <h3 className="font-bold text-lg mb-5 flex items-center gap-2 text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
                   <Clock className="w-5 h-5 text-orange-500" />
                   Available Time Slots
