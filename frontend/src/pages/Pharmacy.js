@@ -366,6 +366,16 @@ const Pharmacy = () => {
   const [selectedMedicine, setSelectedMedicine] = useState(null);
   const [showProductDetail, setShowProductDetail] = useState(false);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  
+  // Recently Viewed Medicines
+  const [recentlyViewed, setRecentlyViewed] = useState(() => {
+    try {
+      const saved = localStorage.getItem('recentlyViewedMedicines');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
   // OTP State
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
