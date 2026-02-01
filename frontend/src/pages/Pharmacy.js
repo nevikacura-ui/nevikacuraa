@@ -2007,7 +2007,10 @@ const Pharmacy = () => {
                           </div>
                           {/* Details */}
                           <div className="flex-1 min-w-0">
-                            <span className="text-[10px] text-orange-600 font-semibold uppercase">{med.form}</span>
+                            <div className="flex items-center gap-1">
+                              <span className="text-[10px] text-orange-600 font-semibold uppercase">{med.form}</span>
+                              <span className="text-[8px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">FSSAI</span>
+                            </div>
                             <h4 className="font-medium text-sm text-slate-800 truncate">{med.name}</h4>
                             <p className="text-xs text-slate-400 mt-0.5">Tap for more details</p>
                           </div>
