@@ -690,7 +690,7 @@ const Proton = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700">
+    <div className="min-h-screen bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900">
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 

@@ -1254,7 +1254,7 @@ const DiaGyn = () => {
   const stepTitles = ['Doctor', 'Clinic', 'Schedule', 'Verify', 'Confirm'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-b from-[#102926] via-[#14332E] to-[#1A3E38]">
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
@@ -1269,7 +1269,7 @@ const DiaGyn = () => {
               <h1 className="text-3xl md:text-4xl font-bold text-white mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Choose Your Doctor
               </h1>
-              <p className="text-slate-300 max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-emerald-200/80 max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                 Select a specialist for your consultation. View their qualifications and areas of expertise.
               </p>
             </div>

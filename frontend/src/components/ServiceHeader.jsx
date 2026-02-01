@@ -16,15 +16,15 @@ const serviceThemes = {
   diagyn: {
     name: 'DiaGyn',
     path: '/diagyn',
-    bgGradient: 'from-slate-800 via-slate-900 to-slate-800',
-    headerBg: 'bg-gradient-to-r from-slate-800 to-slate-900',
+    bgGradient: 'from-[#102926] via-[#14332E] to-[#1A3E38]',
+    headerBg: 'bg-gradient-to-r from-[#1B3A35] to-[#162F2B]',
     isLight: false
   },
   proton: {
     name: 'Proton',
     path: '/proton',
-    bgGradient: 'from-blue-500 via-blue-600 to-blue-700',
-    headerBg: 'bg-gradient-to-r from-blue-500 to-blue-600',
+    bgGradient: 'from-blue-700 via-blue-800 to-indigo-900',
+    headerBg: 'bg-gradient-to-r from-blue-700 to-blue-800',
     isLight: false
   },
   pharmacy: {
