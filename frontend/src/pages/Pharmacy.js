@@ -1967,7 +1967,10 @@ const Pharmacy = () => {
                           </div>
                           {/* Product Info */}
                           <div className="p-3">
-                            <span className="text-[10px] text-orange-600 font-semibold uppercase tracking-wide">{med.form}</span>
+                            <div className="flex items-center gap-1 mb-1">
+                              <span className="text-[10px] text-orange-600 font-semibold uppercase tracking-wide">{med.form}</span>
+                              <span className="text-[8px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">FSSAI</span>
+                            </div>
                             <h4 className="font-medium text-sm text-slate-800 leading-tight line-clamp-2 mt-1 min-h-[2.5rem]">
                               {med.name}
                             </h4>
