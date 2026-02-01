@@ -821,7 +821,7 @@ const Proton = () => {
             <div className="flex justify-between items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
               {[
                 { icon: Shield, title: 'Certified Lab', color: 'text-blue-600', bg: 'bg-blue-100' },
-                { icon: Clock, title: '6 AM - 10 PM', color: 'text-indigo-600', bg: 'bg-indigo-100' },
+                { icon: Clock, title: '8 AM - 10 PM', color: 'text-indigo-600', bg: 'bg-indigo-100' },
                 { icon: CheckCircle2, title: '4.9/5 on Google', color: 'text-purple-600', bg: 'bg-purple-100' },
                 { icon: Home, title: 'Home Collection', color: 'text-blue-600', bg: 'bg-blue-100' }
               ].map((badge, idx) => (
