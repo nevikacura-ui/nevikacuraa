@@ -1254,7 +1254,7 @@ const DiaGyn = () => {
   const stepTitles = ['Doctor', 'Clinic', 'Schedule', 'Verify', 'Confirm'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-200 via-teal-100 to-emerald-100">
+    <div className="min-h-screen bg-gradient-to-br from-teal-100 via-cyan-50 to-teal-50">
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
