@@ -1270,7 +1270,7 @@ const Pharmacy = () => {
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
               <span className="text-xl">👩</span>
-              Women's Health Essential
+              Women&apos;s Health Essential
             </h3>
             <button className="text-pink-500 text-sm font-semibold flex items-center gap-1">
               See all <ChevronRight className="w-4 h-4" />
@@ -1336,7 +1336,7 @@ const Pharmacy = () => {
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
               <span className="text-xl">👶</span>
-              Kid's Health Essential
+              Kid&apos;s Health Essential
             </h3>
             <button className="text-blue-500 text-sm font-semibold flex items-center gap-1">
               See all <ChevronRight className="w-4 h-4" />
