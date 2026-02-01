@@ -697,16 +697,16 @@ const Proton = () => {
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
       {currentStep === 0 ? (
         <>
-          {/* Blue Hero Banner Section - Compact */}
+          {/* Blue Hero Banner Section - Compact with Icons */}
           <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
-            <div className="max-w-6xl mx-auto px-4 py-4">
+            <div className="max-w-6xl mx-auto px-4 py-5">
               <div className="flex items-center justify-between">
                 {/* Left Content */}
                 <div className="flex-1 text-white z-10">
-                  <h1 className="text-xl md:text-2xl font-bold mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <h1 className="text-xl md:text-2xl font-bold mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
                     Blood Test At Home
                   </h1>
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-3 mb-3">
                     <div className="flex items-center gap-1">
                       <Clock className="w-4 h-4 text-yellow-400" />
                       <span className="font-semibold text-yellow-400 text-sm">in 60 MINS</span>
@@ -718,36 +718,34 @@ const Proton = () => {
                   </div>
                 </div>
                 
-                {/* Right - Medicine/Pill Icons like Zepto */}
-                <div className="hidden md:flex items-center gap-2">
-                  <img 
-                    src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=100&h=100&fit=crop" 
-                    alt="Medicine pills"
-                    className="w-20 h-20 object-cover rounded-xl shadow-lg opacity-90"
-                  />
-                  <img 
-                    src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=80&h=80&fit=crop" 
-                    alt="Lab test"
-                    className="w-16 h-16 object-cover rounded-xl shadow-lg border-2 border-blue-500 -ml-6"
-                  />
+                {/* Right - Floating Medicine Icons */}
+                <div className="flex items-center gap-3">
+                  {/* Lab Flask Icon */}
+                  <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <FlaskConical className="w-7 h-7 text-white" />
+                  </div>
+                  {/* Test Tube Icon */}
+                  <div className="w-12 h-12 bg-yellow-400/90 rounded-xl flex items-center justify-center -ml-4 shadow-lg">
+                    <Droplet className="w-6 h-6 text-blue-800" />
+                  </div>
+                  {/* Heart Icon */}
+                  <div className="w-10 h-10 bg-pink-500/90 rounded-lg flex items-center justify-center -ml-3 shadow-lg">
+                    <Heart className="w-5 h-5 text-white" />
+                  </div>
                 </div>
               </div>
             </div>
             
-            {/* Decorative circles */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
-            
             {/* Search Bar - inside blue section */}
-            <div className="max-w-6xl mx-auto px-4 pt-6 pb-12 relative z-20">
-              <div className="bg-white rounded-2xl shadow-xl p-4 border-2 border-blue-200">
+            <div className="max-w-6xl mx-auto px-4 pb-6 relative z-20">
+              <div className="bg-white rounded-2xl shadow-xl p-3 border-2 border-blue-300">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                   <Input
                     placeholder="Search for tests or checkups"
                     value={testSearchTerm}
                     onChange={(e) => setTestSearchTerm(e.target.value)}
-                    className="pl-12 pr-4 py-4 text-lg rounded-xl border-2 border-blue-200 focus:border-blue-500 focus:ring-blue-200"
+                    className="pl-12 pr-4 py-3 text-base rounded-xl border-0 focus:ring-2 focus:ring-blue-300"
                     data-testid="hero-search"
                   />
                 </div>
@@ -779,6 +777,11 @@ const Proton = () => {
                 )}
               </div>
             </div>
+            
+            {/* Decorative circles */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+            <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-yellow-400/20 rounded-full" />
           </div>
           {/* End of Blue Hero Section */}
 
