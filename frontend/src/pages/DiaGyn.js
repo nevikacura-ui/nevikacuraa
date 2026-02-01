@@ -1201,13 +1201,8 @@ const DiaGyn = () => {
   };
 
   const handleBooking = async () => {
-    // Get fee for selected doctor
-    const doctor = doctors.find(d => d.id === selectedDoctor);
-    setAppointmentFee(0); // No consultation fee
-    setShowPaymentDialog(true);
-  };
-
-  const handlePaymentSuccess = async (paymentInfo) => {
+    // DiaGyn appointments are FREE - no payment required
+    // Directly proceed with booking
     setLoading(true);
     try {
       const doctor = doctors.find(d => d.id === selectedDoctor);
@@ -1223,8 +1218,8 @@ const DiaGyn = () => {
         patient_email: patientInfo.email || null,
         verification_token: verificationToken,
         email_reminder: emailReminder && patientInfo.email ? true : false,
-        payment_method: paymentInfo.method,
-        cashfree_order_id: paymentInfo.orderId || null
+        payment_method: 'free',  // No payment for appointments
+        cashfree_order_id: null
       };
 
       await axios.post(`${API}/appointments`, bookingData);
@@ -1245,6 +1240,11 @@ const DiaGyn = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Removed - payment not needed for DiaGyn appointments
+  const handlePaymentSuccess = async (paymentInfo) => {
+    // Kept for backwards compatibility but not used
   };
 
   const availableClinics = getAvailableClinics();
