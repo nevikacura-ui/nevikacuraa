@@ -1621,33 +1621,33 @@ const DiaGyn = () => {
         {/* Step 5: Final Confirmation */}
         {step === 5 && (
           <div className="animate-in fade-in duration-500">
-            <Card className="max-w-lg mx-auto p-8 rounded-3xl border-[#E2E8F0] shadow-[0_20px_50px_rgb(0,0,0,0.1)]">
+            <Card className="max-w-lg mx-auto p-8 rounded-3xl border-slate-700 bg-slate-800/50 shadow-[0_20px_50px_rgb(0,0,0,0.2)]">
               <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#A7C957]/30 to-[#A7C957]/10 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                  <Sparkles className="w-10 h-10 text-[#A7C957]" />
+                <div className="w-20 h-20 bg-gradient-to-br from-green-500/30 to-green-600/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                  <Sparkles className="w-10 h-10 text-green-500" />
                 </div>
-                <h2 className="text-2xl font-bold text-[#134E4A]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
                   Confirm Your Booking
                 </h2>
-                <p className="text-[#64748B] mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                <p className="text-slate-300 mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                   Review your appointment details before confirming
                 </p>
               </div>
               
               {/* Booking Summary */}
-              <div className="space-y-4 bg-[#F0FDFA] rounded-2xl p-5 border border-[#E2E8F0]">
+              <div className="space-y-4 bg-slate-700/50 rounded-2xl p-5 border border-slate-600">
                 {/* Doctor Info */}
-                <div className="flex items-center gap-4 pb-4 border-b border-[#E2E8F0]">
+                <div className="flex items-center gap-4 pb-4 border-b border-slate-600">
                   <img 
                     src={selectedDoctorData?.image} 
                     alt="" 
-                    className="w-14 h-14 rounded-xl object-cover ring-2 ring-[#99F6E4]" 
+                    className="w-14 h-14 rounded-xl object-cover ring-2 ring-orange-500/50" 
                   />
                   <div>
-                    <p className="font-bold text-[#134E4A]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    <p className="font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
                       {selectedDoctorData?.name}
                     </p>
-                    <Badge className="bg-[#99F6E4] text-[#134E4A] text-xs mt-1">
+                    <Badge className="bg-orange-500/20 text-orange-400 text-xs mt-1">
                       {selectedDoctorData?.specialty}
                     </Badge>
                   </div>
@@ -1655,23 +1655,23 @@ const DiaGyn = () => {
                 
                 {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-white rounded-xl">
-                    <p className="text-xs text-[#64748B] mb-1">Clinic</p>
-                    <p className="font-semibold text-[#134E4A] text-sm">{selectedClinicData?.name}</p>
+                  <div className="p-3 bg-slate-800 rounded-xl">
+                    <p className="text-xs text-slate-400 mb-1">Clinic</p>
+                    <p className="font-semibold text-white text-sm">{selectedClinicData?.name}</p>
                   </div>
-                  <div className="p-3 bg-white rounded-xl">
-                    <p className="text-xs text-[#64748B] mb-1">Date</p>
-                    <p className="font-semibold text-[#134E4A] text-sm">
+                  <div className="p-3 bg-slate-800 rounded-xl">
+                    <p className="text-xs text-slate-400 mb-1">Date</p>
+                    <p className="font-semibold text-white text-sm">
                       {selectedDate && format(selectedDate, 'EEE, MMM d')}
                     </p>
                   </div>
-                  <div className="p-3 bg-white rounded-xl">
-                    <p className="text-xs text-[#64748B] mb-1">Time</p>
-                    <p className="font-semibold text-[#134E4A] text-sm">{selectedSlot}</p>
+                  <div className="p-3 bg-slate-800 rounded-xl">
+                    <p className="text-xs text-slate-400 mb-1">Time</p>
+                    <p className="font-semibold text-white text-sm">{selectedSlot}</p>
                   </div>
-                  <div className="p-3 bg-white rounded-xl">
-                    <p className="text-xs text-[#64748B] mb-1">Patient</p>
-                    <p className="font-semibold text-[#134E4A] text-sm">{patientInfo.name}</p>
+                  <div className="p-3 bg-slate-800 rounded-xl">
+                    <p className="text-xs text-slate-400 mb-1">Patient</p>
+                    <p className="font-semibold text-white text-sm">{patientInfo.name}</p>
                   </div>
                 </div>
               </div>
@@ -1680,7 +1680,7 @@ const DiaGyn = () => {
               <Button
                 onClick={handleBooking}
                 disabled={loading}
-                className="w-full mt-6 bg-gradient-to-r from-[#A7C957] to-[#14B8A6] hover:from-[#14B8A6] hover:to-[#A7C957] text-white py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="w-full mt-6 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-xl transition-all"
                 data-testid="confirm-booking-btn"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirm Appointment'}
@@ -1694,8 +1694,8 @@ const DiaGyn = () => {
       <Dialog open={showAvailability} onOpenChange={setShowAvailability}>
         <DialogContent className="max-w-2xl rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#134E4A]" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              <CalendarDays className="w-5 h-5 text-[#0F766E]" />
+            <DialogTitle className="flex items-center gap-2 text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <CalendarDays className="w-5 h-5 text-orange-500" />
               Weekly Doctor Availability
             </DialogTitle>
           </DialogHeader>
