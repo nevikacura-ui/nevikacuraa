@@ -149,12 +149,12 @@ export const ServiceHeader = () => {
               onClick={() => navigate('/diagyn')}
               className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                 activeService === 'diagyn' 
-                  ? 'bg-white text-teal-600 shadow-lg'
+                  ? 'bg-white text-teal-700 shadow-lg'
                   : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-teal-300' : 'bg-white/20 text-white hover:bg-white/30')
               }`}
               data-testid="nav-diagyn"
             >
-              <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'diagyn' ? 'from-teal-500 to-cyan-500' : 'from-teal-400 to-cyan-500'} flex items-center justify-center`}>
+              <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'diagyn' ? 'from-teal-600 to-teal-500' : 'from-teal-500 to-cyan-500'} flex items-center justify-center`}>
                 <Stethoscope className="w-4 h-4 text-white" />
               </div>
               <span className="font-semibold text-sm whitespace-nowrap">DiaGyn</span>
