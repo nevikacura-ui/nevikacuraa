@@ -690,11 +690,11 @@ const Proton = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-100">
       {/* Blue Header Section */}
       <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800">
-      {/* Shared Service Header with Zepto-style tabs */}
-      <ServiceHeader />
+        {/* Shared Service Header with Zepto-style tabs */}
+        <ServiceHeader />
 
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
       {currentStep === 0 ? (
