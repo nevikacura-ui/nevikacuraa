@@ -737,7 +737,7 @@ const Proton = () => {
           </div>
 
           {/* Search Bar */}
-          <div className="max-w-6xl mx-auto px-4 -mt-6 relative z-20">
+          <div className="max-w-6xl mx-auto px-4 -mt-6 relative z-20 pb-6">
             <div className="bg-white rounded-2xl shadow-xl p-4 border-2 border-blue-200">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
@@ -777,6 +777,11 @@ const Proton = () => {
               )}
             </div>
           </div>
+        </div>
+        {/* End of Blue Section */}
+
+        {/* White/Light Section - Content Area */}
+        <div className="bg-slate-100 pb-24">
 
           {/* Promo Banner - Vibrant Pink/Purple distinct from blue */}
           <div className="max-w-6xl mx-auto px-4 mt-4">
