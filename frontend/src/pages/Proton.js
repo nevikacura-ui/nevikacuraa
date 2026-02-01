@@ -697,8 +697,8 @@ const Proton = () => {
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
       {currentStep === 0 ? (
         <>
-          {/* Hero Banner - Dark Pink Theme for Proton */}
-          <div className="bg-gradient-to-r from-pink-800 via-rose-700 to-pink-600 relative overflow-hidden">
+          {/* Hero Banner - Vibrant Pink/Purple Theme for Proton (Zepto Style) */}
+          <div className="bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-500 relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-4 py-6">
               <div className="flex items-center justify-between">
                 {/* Left Content */}
@@ -776,9 +776,9 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Promo Banner - Dark Pink theme */}
+          {/* Promo Banner - Vibrant Pink/Purple theme */}
           <div className="max-w-6xl mx-auto px-4 mt-4">
-            <div className="bg-gradient-to-r from-pink-700 to-rose-600 rounded-2xl p-4 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-2xl p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="bg-white/20 rounded-full p-2">
                   <span className="text-xl">🎉</span>
@@ -791,7 +791,7 @@ const Proton = () => {
               <Button 
                 variant="secondary" 
                 size="sm"
-                className="bg-white text-pink-700 hover:bg-pink-50 rounded-full font-bold"
+                className="bg-white text-purple-600 hover:bg-purple-50 rounded-full font-bold"
                 onClick={() => {
                   navigator.clipboard.writeText('PROTON15');
                   toast.success('Coupon code copied!');
