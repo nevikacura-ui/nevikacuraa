@@ -821,7 +821,7 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Most Booked Checkups - Vibrant Pink/Purple Theme Cards */}
+          {/* Most Booked Checkups - Zepto Blue Theme Cards */}
           <div className="max-w-6xl mx-auto px-4 mt-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
@@ -829,7 +829,7 @@ const Proton = () => {
               </h2>
               <button 
                 onClick={() => setCurrentStep(1)}
-                className="text-white/80 font-semibold text-sm flex items-center gap-1 hover:text-white"
+                className="text-yellow-300 font-semibold text-sm flex items-center gap-1 hover:text-yellow-200"
               >
                 View All <ChevronRight className="w-4 h-4" />
               </button>
@@ -842,8 +842,8 @@ const Proton = () => {
                   className="min-w-[280px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
                   data-testid={`package-${pkg.id}`}
                 >
-                  {/* Vibrant Pink/Purple Header */}
-                  <div className="bg-gradient-to-r from-fuchsia-600 to-purple-600 p-4 text-white relative">
+                  {/* Blue/Purple Header */}
+                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white relative">
                     <div className="absolute top-2 right-2">
                       <span className="bg-white/20 text-white text-xs font-medium px-2 py-1 rounded">
                         Checkup
@@ -854,7 +854,7 @@ const Proton = () => {
                       <span className="text-white/70 line-through text-sm">₹{pkg.originalPrice}</span>
                       <span className="text-2xl font-bold">₹{pkg.price}</span>
                     </div>
-                    <span className="inline-block mt-2 bg-pink-500 text-white text-xs font-bold px-2.5 py-1 rounded">
+                    <span className="inline-block mt-2 bg-purple-500 text-white text-xs font-bold px-2.5 py-1 rounded">
                       {pkg.discount}% Off
                     </span>
                   </div>
@@ -863,11 +863,11 @@ const Proton = () => {
                   <div className="p-4 bg-slate-50">
                     <div className="flex items-center justify-between text-sm text-slate-600 mb-4">
                       <div className="flex items-center gap-2">
-                        <FlaskConical className="w-4 h-4 text-purple-500" />
+                        <FlaskConical className="w-4 h-4 text-blue-500" />
                         <span><strong>{pkg.parameters}</strong> parameters</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-fuchsia-500" />
+                        <FileText className="w-4 h-4 text-indigo-500" />
                         <span>Reports: <strong>{pkg.reportTime}</strong></span>
                       </div>
                     </div>
@@ -876,7 +876,7 @@ const Proton = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 rounded-lg border-purple-300 text-purple-600 hover:bg-purple-50 font-semibold"
+                        className="flex-1 rounded-lg border-blue-300 text-blue-600 hover:bg-blue-50 font-semibold"
                         onClick={() => {
                           toast.info(`${pkg.name}: ${pkg.tests.join(', ')}`);
                         }}
@@ -885,7 +885,7 @@ const Proton = () => {
                       </Button>
                       <Button
                         size="sm"
-                        className="flex-1 rounded-lg bg-gradient-to-r from-fuchsia-500 to-purple-500 hover:from-fuchsia-600 hover:to-purple-600 text-white font-semibold"
+                        className="flex-1 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-semibold"
                         onClick={() => handlePackageSelect(pkg)}
                       >
                         Add to Cart
