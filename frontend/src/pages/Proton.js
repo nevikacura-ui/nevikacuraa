@@ -718,13 +718,23 @@ const Proton = () => {
                   </div>
                 </div>
                 
-                {/* Right Image */}
-                <div className="hidden md:block relative w-48 h-48">
-                  <img 
-                    src="https://images.unsplash.com/photo-1653379670999-f7f03d702125?w=400&h=400&fit=crop" 
-                    alt="Happy patient"
-                    className="w-full h-full object-cover rounded-2xl shadow-2xl"
-                  />
+                {/* Right - Medicine/Pill Icons like Zepto */}
+                <div className="hidden md:flex items-center gap-4">
+                  {/* Pills/Medicine illustration */}
+                  <div className="relative">
+                    <img 
+                      src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150&h=150&fit=crop" 
+                      alt="Medicine pills"
+                      className="w-32 h-32 object-cover rounded-xl shadow-xl opacity-90"
+                    />
+                  </div>
+                  <div className="relative -ml-8">
+                    <img 
+                      src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=120&h=120&fit=crop" 
+                      alt="Lab test"
+                      className="w-28 h-28 object-cover rounded-xl shadow-xl border-4 border-blue-600"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
