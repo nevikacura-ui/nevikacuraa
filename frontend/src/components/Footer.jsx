@@ -233,14 +233,28 @@ const Footer = () => {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-slate-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-gray-500">
+          <div className="border-t border-slate-800 pt-6 flex flex-col items-center gap-4">
+            {/* Tagline with visual flair */}
+            <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-teal-900/50 via-slate-800/50 to-teal-900/50 rounded-full border border-teal-800/30">
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></span>
+                <span className="w-1.5 h-1.5 bg-teal-500 rounded-full"></span>
+                <span className="w-1 h-1 bg-teal-600 rounded-full"></span>
+              </div>
+              <p className="text-sm font-medium text-teal-100 tracking-wide">
+                Crafted by Doctors · Managed by Doctors · Trusted by Patients
+              </p>
+              <div className="flex items-center gap-1">
+                <span className="w-1 h-1 bg-teal-600 rounded-full"></span>
+                <span className="w-1.5 h-1.5 bg-teal-500 rounded-full"></span>
+                <span className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></span>
+              </div>
+            </div>
+            
+            {/* Copyright */}
+            <p className="text-xs text-gray-500">
               © {new Date().getFullYear()} Nevika Cura Healthcare. All rights reserved.
             </p>
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <Stethoscope className="w-4 h-4 text-teal-500" />
-              <span>Crafted by Doctors. Managed by Doctors. Trusted by Patients. — Nevika Cura</span>
-            </div>
           </div>
         </div>
       </footer>
