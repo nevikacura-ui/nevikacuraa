@@ -45,10 +45,31 @@ except Exception as e:
 # ============ SMS Functions ============
 
 async def send_sms_notification(to_number: str, message: str):
-    """DISABLED: SMS notifications disabled to save Twilio costs. Use WhatsApp instead.
-    Only Twilio OTP (via Verify Service) is kept active."""
-    logger.info(f"SMS DISABLED - Would have sent to {to_number}: {message[:50]}...")
-    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
+    """Send SMS via Twilio - for user bookings only"""
+    if not twilio_client or not TWILIO_PHONE_NUMBER:
+        logger.warning(f"SMS disabled - would send to {to_number}: {message[:50]}...")
+        return {"success": False, "error": "SMS not configured"}
+    
+    try:
+        formatted_number = to_number.strip()
+        if not formatted_number.startswith('+'):
+            if len(formatted_number) == 10:
+                formatted_number = f"+91{formatted_number}"
+            else:
+                formatted_number = f"+{formatted_number}"
+        
+        result = await asyncio.to_thread(
+            twilio_client.messages.create,
+            body=message,
+            from_=TWILIO_PHONE_NUMBER,
+            to=formatted_number
+        )
+        
+        logger.info(f"SMS sent to {formatted_number}: SID={result.sid}")
+        return {"success": True, "sid": result.sid}
+    except Exception as e:
+        logger.error(f"SMS failed to {to_number}: {e}")
+        return {"success": False, "error": str(e)}
 
 async def send_twilio_otp(phone: str) -> dict:
     """Send OTP via Twilio Verify Service - THIS IS KEPT ACTIVE"""
