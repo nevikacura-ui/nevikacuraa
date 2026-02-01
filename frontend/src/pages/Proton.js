@@ -997,7 +997,7 @@ const Proton = () => {
           </div>
 
           {/* Browse All Tests Button */}
-          <div className="max-w-6xl mx-auto px-4 pb-24">
+          <div className="max-w-6xl mx-auto px-4 pb-8">
             <Button
               onClick={() => setCurrentStep(1)}
               className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
@@ -1007,6 +1007,8 @@ const Proton = () => {
               Browse All Tests & Packages
             </Button>
           </div>
+        </div>
+        {/* End of White Section */}
         </>
       ) : (
         <>
