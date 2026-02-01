@@ -694,7 +694,7 @@ const Proton = () => {
       <ServiceHeader />
 
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
-      {currentStep === 0 || (currentStep === 1 && selectedTests.length === 0) ? (
+      {currentStep === 0 ? (
         <>
           {/* Hero Banner - Blue/Purple Theme for Proton */}
           <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative overflow-hidden">
