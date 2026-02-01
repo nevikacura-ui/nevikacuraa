@@ -971,7 +971,7 @@ const Proton = () => {
           <div className="max-w-6xl mx-auto px-4 pb-24">
             <Button
               onClick={() => setCurrentStep(1)}
-              className="w-full bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
               data-testid="browse-all-tests-btn"
             >
               <FlaskConical className="w-5 h-5 mr-2" />
