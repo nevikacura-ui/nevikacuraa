@@ -821,7 +821,7 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Most Booked Checkups - Zepto Blue Theme Cards */}
+          {/* Most Booked Checkups - Cards with varied gradient colors */}
           <div className="max-w-6xl mx-auto px-4 mt-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
@@ -836,14 +836,25 @@ const Proton = () => {
             </div>
             
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-              {popularPackages.map((pkg) => (
+              {popularPackages.map((pkg, index) => {
+                // Varied gradient colors for visual distinction
+                const cardGradients = [
+                  'from-purple-600 to-indigo-600',
+                  'from-pink-500 to-rose-600',
+                  'from-teal-500 to-cyan-600',
+                  'from-orange-500 to-amber-600',
+                  'from-violet-600 to-purple-600'
+                ];
+                const gradient = cardGradients[index % cardGradients.length];
+                
+                return (
                 <div 
                   key={pkg.id}
                   className="min-w-[280px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
                   data-testid={`package-${pkg.id}`}
                 >
-                  {/* Blue/Purple Header */}
-                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white relative">
+                  {/* Varied Color Header */}
+                  <div className={`bg-gradient-to-r ${gradient} p-4 text-white relative`}>
                     <div className="absolute top-2 right-2">
                       <span className="bg-white/20 text-white text-xs font-medium px-2 py-1 rounded">
                         Checkup
@@ -854,7 +865,7 @@ const Proton = () => {
                       <span className="text-white/70 line-through text-sm">₹{pkg.originalPrice}</span>
                       <span className="text-2xl font-bold">₹{pkg.price}</span>
                     </div>
-                    <span className="inline-block mt-2 bg-purple-500 text-white text-xs font-bold px-2.5 py-1 rounded">
+                    <span className="inline-block mt-2 bg-yellow-400 text-slate-800 text-xs font-bold px-2.5 py-1 rounded">
                       {pkg.discount}% Off
                     </span>
                   </div>
@@ -893,7 +904,7 @@ const Proton = () => {
                     </div>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
 
