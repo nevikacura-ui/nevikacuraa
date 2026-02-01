@@ -36,13 +36,13 @@ const getWsUrl = () => {
 const WS_URL = getWsUrl();
 
 // ============================================
-// DESIGN SYSTEM - Zepto-Style Dark Teal Theme for DiaGyn
+// DESIGN SYSTEM - Dark Teal Theme with Orange Accents for DiaGyn
 // ============================================
 const theme = {
-  primary: { main: '#0F766E', light: '#CCFBF1', dark: '#134E4A' },
-  secondary: { main: '#14B8A6', light: '#99F6E4', dark: '#115E59' },
-  accent: { main: '#2DD4BF', light: '#99F6E4' },
-  neutral: { background: '#F0FDFA', surface: '#FFFFFF', textPrimary: '#134E4A', textSecondary: '#6B7280', border: '#E2E8F0' },
+  primary: { main: '#1F4B3A', light: '#CCFBF1', dark: '#134E4A' },  // Dark teal
+  secondary: { main: '#0D9488', light: '#99F6E4', dark: '#115E59' },
+  accent: { main: '#FF8A00', light: '#FFEDD5' },  // Orange accent
+  neutral: { background: '#0F2A23', surface: '#FFFFFF', textPrimary: '#134E4A', textSecondary: '#6B7280', border: '#E2E8F0' },
   status: { success: '#14B8A6', error: '#EF476F', warning: '#FFD166' }
 };
 
