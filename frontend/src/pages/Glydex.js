@@ -2958,6 +2958,11 @@ const Glydex = () => {
           toast.success('Health profile submitted successfully!');
         }}
       />
+
+      {/* Proton Diagnostics Ad Banner */}
+      <div className="max-w-5xl mx-auto mb-6 px-4">
+        <ProtonAdBanner />
+      </div>
     </div>
   );
 };
