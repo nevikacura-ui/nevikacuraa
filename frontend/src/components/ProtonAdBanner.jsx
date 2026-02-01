@@ -5,14 +5,14 @@ import { ChevronRight } from 'lucide-react';
 /**
  * Proton Diagnostics Promotional Banner
  * Displays on DiaGyn, Evara, Glydex, Orange Pharmacy pages
- * Zepto-style design with person image and coupon code
+ * Purple/Pink theme to match Proton branding
  */
 const ProtonAdBanner = () => {
   const navigate = useNavigate();
 
   return (
     <div 
-      className="mx-4 my-4 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-3xl overflow-hidden shadow-lg border border-orange-100 cursor-pointer hover:shadow-xl transition-all"
+      className="mx-4 my-4 bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 rounded-3xl overflow-hidden shadow-lg border border-purple-100 cursor-pointer hover:shadow-xl transition-all"
       onClick={() => navigate('/proton')}
       data-testid="proton-ad-banner"
     >
@@ -21,13 +21,13 @@ const ProtonAdBanner = () => {
         <div className="flex-1">
           {/* NEW Badge + Brand */}
           <div className="flex items-center gap-2 mb-3">
-            <span className="bg-purple-500 text-white text-xs font-bold px-2.5 py-1 rounded-md">
+            <span className="bg-pink-500 text-white text-xs font-bold px-2.5 py-1 rounded-md">
               NEW
             </span>
             <span className="text-purple-600 font-bold text-lg" style={{ fontFamily: 'Outfit, sans-serif' }}>
               proton
             </span>
-            <span className="text-orange-500 font-medium text-lg">
+            <span className="text-pink-500 font-medium text-lg">
               diagnostics
             </span>
           </div>
@@ -43,13 +43,13 @@ const ProtonAdBanner = () => {
               PROTON15
             </span>
             <span className="text-slate-600 text-sm">
-              Get flat <span className="font-bold text-orange-600">15% off</span> on all orders
+              Get flat <span className="font-bold text-pink-600">15% off</span> on all orders
             </span>
           </div>
 
           {/* CTA Button */}
           <button 
-            className="bg-slate-800 text-white font-semibold px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-slate-700 transition-colors shadow-md"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold px-6 py-3 rounded-xl flex items-center gap-2 hover:from-purple-700 hover:to-pink-700 transition-colors shadow-md"
             onClick={(e) => {
               e.stopPropagation();
               navigate('/proton');
@@ -71,9 +71,9 @@ const ProtonAdBanner = () => {
       </div>
 
       {/* Powered By Footer */}
-      <div className="bg-white/60 backdrop-blur-sm px-5 py-2 border-t border-orange-100">
+      <div className="bg-white/60 backdrop-blur-sm px-5 py-2 border-t border-purple-100">
         <p className="text-sm text-slate-500">
-          Powered by <span className="font-bold text-orange-500">Proton</span><span className="font-bold text-slate-700">Diagnostics</span>
+          Powered by <span className="font-bold text-purple-600">Proton</span><span className="font-bold text-pink-500">Diagnostics</span>
         </p>
       </div>
     </div>
