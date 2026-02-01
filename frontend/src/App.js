@@ -80,7 +80,6 @@ import { AnimatedPage } from '@/components/PageTransition';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ViewModeProvider } from '@/context/ViewModeContext';
 import { LanguageProvider } from '@/context/LanguageContext';
-import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { FullScreenNotificationPrompt, SmartNotificationBanner } from '@/components/NotificationPrompt';
 import './App.css';
 
@@ -197,7 +196,6 @@ function AppContent() {
           <Route path="/one" element={<AnimatedPage><NevikaCuraOne /></AnimatedPage>} />
         </Routes>
         <Toaster position="top-center" richColors />
-        <PWAInstallPrompt />
         <SmartNotificationBanner />
       </div>
     </>
