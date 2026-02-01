@@ -1447,7 +1447,7 @@ const Pharmacy = () => {
             ].map((item, idx) => (
               <div 
                 key={idx}
-                onClick={() => { setSelectedMedicine(item); setShowProductDetail(true); }}
+                onClick={() => handleViewMedicine(item)}
                 className="min-w-[160px] bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0 cursor-pointer"
                 data-testid={`medicine-card-women-${idx}`}
               >
