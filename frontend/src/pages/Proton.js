@@ -696,8 +696,8 @@ const Proton = () => {
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
       {currentStep === 0 || (currentStep === 1 && selectedTests.length === 0) ? (
         <>
-          {/* Hero Banner */}
-          <div className="bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500 relative overflow-hidden">
+          {/* Hero Banner - Blue/Purple Theme for Proton */}
+          <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-4 py-6">
               <div className="flex items-center justify-between">
                 {/* Left Content */}
@@ -735,14 +735,14 @@ const Proton = () => {
 
           {/* Search Bar */}
           <div className="max-w-6xl mx-auto px-4 -mt-6 relative z-20">
-            <div className="bg-white rounded-2xl shadow-xl p-4 border-2 border-orange-200">
+            <div className="bg-white rounded-2xl shadow-xl p-4 border-2 border-purple-200">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                 <Input
                   placeholder="Search for tests or checkups"
                   value={testSearchTerm}
                   onChange={(e) => setTestSearchTerm(e.target.value)}
-                  className="pl-12 pr-4 py-4 text-lg rounded-xl border-2 border-orange-300 focus:border-orange-500 focus:ring-orange-200"
+                  className="pl-12 pr-4 py-4 text-lg rounded-xl border-2 border-purple-300 focus:border-purple-500 focus:ring-purple-200"
                   data-testid="hero-search"
                 />
               </div>
