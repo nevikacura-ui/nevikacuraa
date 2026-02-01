@@ -1254,7 +1254,7 @@ const DiaGyn = () => {
   const stepTitles = ['Doctor', 'Clinic', 'Schedule', 'Verify', 'Confirm'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-100 via-cyan-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800">
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
@@ -1266,10 +1266,10 @@ const DiaGyn = () => {
         {step === 1 && (
           <div className="animate-in fade-in duration-500">
             <div className="text-center mb-10">
-              <h1 className="text-3xl md:text-4xl font-bold text-[#134E4A] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Choose Your Doctor
               </h1>
-              <p className="text-[#64748B] max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-slate-300 max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                 Select a specialist for your consultation. View their qualifications and areas of expertise.
               </p>
             </div>
@@ -1299,7 +1299,7 @@ const DiaGyn = () => {
               <div className="mt-10 flex justify-center">
                 <Button 
                   size="lg"
-                  className="bg-gradient-to-r from-[#0F766E] to-[#14B8A6] hover:from-[#134E4A] hover:to-[#0F766E] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
                   onClick={() => setStep(2)}
                   data-testid="continue-to-clinic"
                 >
