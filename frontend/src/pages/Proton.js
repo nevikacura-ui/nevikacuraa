@@ -969,13 +969,7 @@ const Proton = () => {
           {/* Browse All Tests Button */}
           <div className="max-w-6xl mx-auto px-4 pb-24">
             <Button
-              onClick={() => {
-                // Set a placeholder test to bypass the landing page condition
-                setSelectedTests(['Browse All']);
-                setCurrentStep(1);
-                // Clear the placeholder after navigation
-                setTimeout(() => setSelectedTests([]), 100);
-              }}
+              onClick={() => setCurrentStep(1)}
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
               data-testid="browse-all-tests-btn"
             >
