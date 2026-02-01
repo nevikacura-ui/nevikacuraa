@@ -1252,6 +1252,74 @@ const Pharmacy = () => {
         </div>
       </div>
 
+      {/* ========== RECENTLY VIEWED SECTION ========== */}
+      {recentlyViewed.length > 0 && (
+        <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
+          <div className="max-w-5xl mx-auto px-4 py-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-orange-500" />
+                <h3 className="font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  Recently Viewed
+                </h3>
+              </div>
+              <button 
+                onClick={() => {
+                  setRecentlyViewed([]);
+                  localStorage.removeItem('recentlyViewedMedicines');
+                }}
+                className="text-slate-400 text-xs hover:text-slate-600"
+              >
+                Clear All
+              </button>
+            </div>
+            
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              {recentlyViewed.map((item, idx) => (
+                <div 
+                  key={idx}
+                  onClick={() => handleViewMedicine(item)}
+                  className="min-w-[140px] bg-white rounded-xl border border-orange-200 overflow-hidden shadow-sm hover:shadow-md transition-all flex-shrink-0 cursor-pointer"
+                  data-testid={`recently-viewed-${idx}`}
+                >
+                  {/* Product Image Placeholder */}
+                  <div className="h-20 bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center relative">
+                    <Pill className="w-8 h-8 text-orange-400" />
+                    {item.off && (
+                      <span className="absolute top-1 right-1 bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                        {item.off}% OFF
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Product Info */}
+                  <div className="p-2">
+                    <h4 className="text-xs font-semibold text-slate-800 line-clamp-2 leading-tight mb-1">
+                      {item.name}
+                    </h4>
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm font-bold text-slate-800">₹{item.price}</span>
+                      {item.mrp && (
+                        <span className="text-[10px] text-slate-400 line-through">₹{item.mrp}</span>
+                      )}
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToCart({ name: item.name, quantity: 1 });
+                      }}
+                      className="mt-2 w-full py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold rounded-lg transition-colors"
+                    >
+                      ADD
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ========== HEALTH CATEGORIES CAROUSEL WITH IMAGES ========== */}
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-5xl mx-auto px-4 py-4">
