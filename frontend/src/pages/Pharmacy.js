@@ -1483,15 +1483,17 @@ const Pharmacy = () => {
           
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { name: 'Kids Multivitamin Gummy', price: 349, mrp: 599, off: 42, delivery: '15 mins', badge: 'Kids Gummy' },
-              { name: 'Calcium for Kids', price: 249, mrp: 449, off: 44, delivery: '15 mins', badge: null },
-              { name: 'DHA Omega 3 Syrup', price: 399, mrp: 699, off: 43, delivery: '20 mins', badge: 'Brain Health' },
-              { name: 'Iron Tonic for Kids', price: 179, mrp: 299, off: 40, delivery: '15 mins', badge: null },
-              { name: 'Vitamin D Drops', price: 229, mrp: 399, off: 42, delivery: '15 mins', badge: 'Doctor Recommended' }
+              { name: 'Kids Multivitamin Gummy', price: 349, mrp: 599, off: 42, delivery: '15 mins', badge: 'Kids Gummy', category: 'Kids Health' },
+              { name: 'Calcium for Kids', price: 249, mrp: 449, off: 44, delivery: '15 mins', badge: null, category: 'Kids Health' },
+              { name: 'DHA Omega 3 Syrup', price: 399, mrp: 699, off: 43, delivery: '20 mins', badge: 'Brain Health', category: 'Kids Health' },
+              { name: 'Iron Tonic for Kids', price: 179, mrp: 299, off: 40, delivery: '15 mins', badge: null, category: 'Kids Health' },
+              { name: 'Vitamin D Drops', price: 229, mrp: 399, off: 42, delivery: '15 mins', badge: 'Doctor Recommended', category: 'Kids Health' }
             ].map((item, idx) => (
               <div 
                 key={idx}
-                className="min-w-[160px] bg-white rounded-2xl border border-blue-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0"
+                onClick={() => { setSelectedMedicine(item); setShowProductDetail(true); }}
+                className="min-w-[160px] bg-white rounded-2xl border border-blue-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0 cursor-pointer"
+                data-testid={`medicine-card-kids-${idx}`}
               >
                 <div className="relative bg-gradient-to-br from-blue-100 to-cyan-100 h-28 flex items-center justify-center">
                   <span className="text-4xl">🧸</span>
