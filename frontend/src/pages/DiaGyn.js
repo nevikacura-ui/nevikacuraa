@@ -1560,7 +1560,7 @@ const DiaGyn = () => {
         {/* Step 4: OTP Verification */}
         {step === 4 && (
           <div className="animate-in fade-in duration-500">
-            <Card className="max-w-md mx-auto p-8 rounded-3xl border-slate-700 bg-slate-800/50 shadow-[0_20px_50px_rgb(0,0,0,0.2)]">
+            <Card className="max-w-md mx-auto p-8 rounded-3xl border-[#1B3A35] bg-[#162F2B]/90 shadow-[0_20px_50px_rgb(0,0,0,0.3)]">
               <div className="text-center mb-8">
                 <div className="w-20 h-20 bg-gradient-to-br from-orange-500/30 to-orange-600/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
                   <Shield className="w-10 h-10 text-orange-500" />
@@ -1568,7 +1568,7 @@ const DiaGyn = () => {
                 <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
                   Verify Your Phone
                 </h2>
-                <p className="text-slate-300 mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                <p className="text-emerald-200/80 mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                   Enter the 6-digit code sent to +91 {patientInfo.phone}
                 </p>
               </div>
@@ -1590,7 +1590,7 @@ const DiaGyn = () => {
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    className="w-12 h-14 text-center text-xl font-bold border-2 border-slate-600 bg-slate-700 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 outline-none transition-all text-white"
+                    className="w-12 h-14 text-center text-xl font-bold border-2 border-[#1B3A35] bg-[#14332E] rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 outline-none transition-all text-white"
                     data-testid={`otp-input-${index}`}
                   />
                 ))}
@@ -1607,7 +1607,7 @@ const DiaGyn = () => {
               
               <div className="mt-5 text-center">
                 {resendTimer > 0 ? (
-                  <p className="text-sm text-slate-400">Resend OTP in {resendTimer}s</p>
+                  <p className="text-sm text-emerald-200/60">Resend OTP in {resendTimer}s</p>
                 ) : (
                   <button onClick={sendOtp} disabled={otpLoading} className="text-sm text-orange-400 hover:text-orange-300 font-medium transition-colors">
                     Resend OTP
