@@ -2829,6 +2829,89 @@ const Pharmacy = () => {
       <div className="max-w-5xl mx-auto mb-20">
         <ProtonAdBanner />
       </div>
+
+      {/* Product Detail Dialog - Blinkit Style */}
+      <Dialog open={showProductDetail} onOpenChange={setShowProductDetail}>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto rounded-3xl p-0">
+          {selectedMedicine && (
+            <>
+              {/* Product Image */}
+              <div className="relative bg-gradient-to-br from-orange-100 to-amber-100 h-56 flex items-center justify-center">
+                <Pill className="w-24 h-24 text-orange-400" />
+                <button 
+                  onClick={() => setShowProductDetail(false)}
+                  className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg"
+                >
+                  <X className="w-5 h-5 text-slate-600" />
+                </button>
+                <div className="absolute bottom-4 left-4 bg-green-500 text-white text-sm font-bold px-3 py-1 rounded-lg">
+                  {selectedMedicine.off || 30}% OFF
+                </div>
+              </div>
+              
+              {/* Product Info */}
+              <div className="p-6">
+                <h2 className="text-xl font-bold text-slate-800 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  {selectedMedicine.name}
+                </h2>
+                
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl font-bold text-slate-800">₹{selectedMedicine.price}</span>
+                  <span className="text-lg text-slate-400 line-through">₹{selectedMedicine.mrp || Math.round(selectedMedicine.price * 1.4)}</span>
+                </div>
+                
+                {/* Delivery Info */}
+                <div className="flex items-center gap-2 p-3 bg-green-50 rounded-xl mb-4">
+                  <Truck className="w-5 h-5 text-green-600" />
+                  <span className="text-sm text-green-700 font-medium">Delivery in {selectedMedicine.delivery || '15 mins'}</span>
+                </div>
+                
+                {/* Product Details */}
+                <div className="space-y-3 mb-6">
+                  <h3 className="font-semibold text-slate-700">Product Details</h3>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="p-3 bg-slate-50 rounded-lg">
+                      <p className="text-slate-500 text-xs">Category</p>
+                      <p className="font-medium text-slate-700">{selectedMedicine.category || 'General Medicines'}</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-lg">
+                      <p className="text-slate-500 text-xs">Composition</p>
+                      <p className="font-medium text-slate-700">{selectedMedicine.composition || 'Standard Formula'}</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-lg">
+                      <p className="text-slate-500 text-xs">Manufacturer</p>
+                      <p className="font-medium text-slate-700">{selectedMedicine.manufacturer || 'Trusted Pharma'}</p>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-lg">
+                      <p className="text-slate-500 text-xs">Pack Size</p>
+                      <p className="font-medium text-slate-700">{selectedMedicine.packSize || '10 tablets'}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* FSSAI Badge */}
+                <div className="flex items-center gap-2 p-3 bg-slate-100 rounded-xl mb-4">
+                  <Shield className="w-5 h-5 text-green-600" />
+                  <span className="text-xs text-slate-600">FSSAI Licensed | 100% Authentic Products</span>
+                </div>
+                
+                {/* Add to Cart Button */}
+                <Button
+                  onClick={() => {
+                    addToCart({ name: selectedMedicine.name, quantity: 1 });
+                    setShowProductDetail(false);
+                  }}
+                  className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 rounded-2xl font-bold text-lg"
+                  data-testid="add-to-cart-detail-btn"
+                >
+                  <ShoppingCart className="w-5 h-5 mr-2" />
+                  Add to Cart - ₹{selectedMedicine.price}
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
       
       {/* Bottom Navigation */}
       <BottomNav />
