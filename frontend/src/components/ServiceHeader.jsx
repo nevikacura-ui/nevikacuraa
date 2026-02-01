@@ -16,8 +16,8 @@ const serviceThemes = {
   diagyn: {
     name: 'DiaGyn',
     path: '/diagyn',
-    bgGradient: 'from-teal-100 via-cyan-100 to-teal-50',
-    headerBg: 'bg-gradient-to-r from-teal-600 to-cyan-600',
+    bgGradient: 'from-teal-950 via-teal-900 to-emerald-900',
+    headerBg: 'bg-gradient-to-r from-teal-800 to-emerald-800',
     isLight: false
   },
   proton: {
