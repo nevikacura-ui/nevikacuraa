@@ -16,15 +16,15 @@ const serviceThemes = {
   diagyn: {
     name: 'DiaGyn',
     path: '/diagyn',
-    bgGradient: 'from-teal-950 via-teal-900 to-emerald-900',
-    headerBg: 'bg-gradient-to-r from-teal-800 to-emerald-800',
+    bgGradient: 'from-slate-800 via-slate-900 to-slate-800',
+    headerBg: 'bg-gradient-to-r from-slate-800 to-slate-900',
     isLight: false
   },
   proton: {
     name: 'Proton',
     path: '/proton',
-    bgGradient: 'from-pink-400 via-fuchsia-500 to-pink-500',
-    headerBg: 'bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-500',
+    bgGradient: 'from-blue-500 via-blue-600 to-blue-700',
+    headerBg: 'bg-gradient-to-r from-blue-500 to-blue-600',
     isLight: false
   },
   pharmacy: {
@@ -165,12 +165,12 @@ export const ServiceHeader = () => {
               onClick={() => navigate('/proton')}
               className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                 activeService === 'proton' 
-                  ? 'bg-white text-pink-700 shadow-lg'
-                  : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-pink-300' : 'bg-white/20 text-white hover:bg-white/30')
+                  ? 'bg-white text-blue-600 shadow-lg'
+                  : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-blue-300' : 'bg-white/20 text-white hover:bg-white/30')
               }`}
               data-testid="nav-proton"
             >
-              <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'proton' ? 'from-pink-600 to-rose-600' : 'from-pink-500 to-rose-500'} flex items-center justify-center`}>
+              <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'proton' ? 'from-blue-500 to-blue-600' : 'from-blue-400 to-blue-500'} flex items-center justify-center`}>
                 <FlaskConical className="w-4 h-4 text-white" />
               </div>
               <span className="font-semibold text-sm whitespace-nowrap">Proton</span>
