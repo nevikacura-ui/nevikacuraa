@@ -1546,3 +1546,32 @@ January 31, 2026 - 14:30
 - `/app/backend/server.py` - Renamed duplicate endpoint
 
 
+
+
+---
+
+## Updates - February 1, 2026
+
+### Proton Hero Section - Rotating Circular Carousel ✅
+**File:** `/app/frontend/src/pages/Proton.js` (Lines 721-770)
+
+**Feature:** Implemented a Zepto-style rotating circular carousel for the 3 icons in the Proton blue hero section.
+
+**Icons Included:**
+1. **FlaskConical** (Lab Flask) - White/Blue background
+2. **Droplet** (Test Tube) - Yellow background
+3. **Heart** - Pink background
+
+**Animation Details:**
+- 8-second full rotation cycle
+- Icons rotate around a central point (like a ferris wheel)
+- Counter-rotation applied to each icon so they remain upright
+- Smooth CSS animation using `@keyframes`
+- Center dot indicator added
+
+### Tab Switcher Confirmation ✅
+The Zepto-style tab switcher was confirmed working on all service pages via `ServiceHeader.jsx`. The tabs (Nevika Cura, DiaGyn, Proton, Orange) navigate between pages while maintaining visual continuity.
+
+### Last Updated
+February 1, 2026 - 18:55
+
