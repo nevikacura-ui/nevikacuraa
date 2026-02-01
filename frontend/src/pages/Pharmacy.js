@@ -11,6 +11,7 @@ import { useAuth } from '@/context/AuthContext';
 import BottomNav from '@/components/BottomNav';
 import CashfreeCheckout from '@/components/CashfreeCheckout';
 import ServiceHeader from '@/components/ServiceHeader';
+import ProtonAdBanner from '@/components/ProtonAdBanner';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
