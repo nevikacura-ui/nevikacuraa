@@ -26,17 +26,18 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // ============================================
-// DESIGN SYSTEM - Serene Care Pastel Theme
+// DESIGN SYSTEM - Dark Pink Theme for Proton
 // ============================================
 const theme = {
-  primary: '#5FA8D3',
-  secondary: '#62B6CB',
-  accent: '#FFB4A2',
-  background: '#F8FAFC',
+  primary: '#DB2777',      // Pink-600
+  primaryDark: '#9D174D',  // Pink-800
+  secondary: '#EC4899',    // Pink-500
+  accent: '#F472B6',       // Pink-400
+  background: '#831843',   // Pink-900
   surface: '#FFFFFF',
   textPrimary: '#1E293B',
   textSecondary: '#64748B',
-  border: '#E2E8F0',
+  border: '#FBCFE8',       // Pink-200
   success: '#10B981',
   error: '#EF4444'
 };
@@ -689,7 +690,7 @@ const Proton = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100">
+    <div className="min-h-screen bg-gradient-to-br from-pink-950 via-pink-900 to-rose-900">
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
