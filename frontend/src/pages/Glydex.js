@@ -12,6 +12,7 @@ import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import SubscriptionGate from '@/components/SubscriptionGate';
 import PortalMembershipForm from '@/components/PortalMembershipForm';
+import ProtonAdBanner from '@/components/ProtonAdBanner';
 import { 
   ArrowLeft, Heart, Activity, AlertTriangle, Droplets, Apple, 
   Calendar, TrendingUp, TrendingDown, Pill, Phone,
