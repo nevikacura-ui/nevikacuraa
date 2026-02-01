@@ -732,54 +732,53 @@ const Proton = () => {
             {/* Decorative circles */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
-          </div>
-
-          {/* Search Bar */}
-          <div className="max-w-6xl mx-auto px-4 -mt-6 relative z-20 pb-6">
-            <div className="bg-white rounded-2xl shadow-xl p-4 border-2 border-blue-200">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                <Input
-                  placeholder="Search for tests or checkups"
-                  value={testSearchTerm}
-                  onChange={(e) => setTestSearchTerm(e.target.value)}
-                  className="pl-12 pr-4 py-4 text-lg rounded-xl border-2 border-blue-200 focus:border-blue-500 focus:ring-blue-200"
-                  data-testid="hero-search"
-                />
-              </div>
-              
-              {/* Search Results Dropdown */}
-              {testSearchTerm && filteredTests.length > 0 && (
-                <div className="mt-3 max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
-                  <div className="p-2 bg-blue-50 border-b border-slate-200 text-xs text-slate-600 font-medium">
-                    Found {filteredTests.length} tests matching &quot;{testSearchTerm}&quot;
-                  </div>
-                  <div className="divide-y divide-slate-100">
-                    {filteredTests.slice(0, 8).map(test => (
-                      <button 
-                        key={test} 
-                        onClick={() => {
-                          setSelectedTests([test]);
-                          setTestSearchTerm('');
-                          setCurrentStep(1);
-                        }}
-                        className="flex items-center gap-3 p-3 hover:bg-blue-50 cursor-pointer transition-colors w-full text-left"
-                      >
-                        <span className="text-lg">{getTestIcon(test)}</span>
-                        <span className="text-sm text-slate-800 font-medium">{test}</span>
-                        <Plus className="w-4 h-4 text-blue-500 ml-auto" />
-                      </button>
-                    ))}
-                  </div>
+            
+            {/* Search Bar - inside blue section */}
+            <div className="max-w-6xl mx-auto px-4 pt-6 pb-12 relative z-20">
+              <div className="bg-white rounded-2xl shadow-xl p-4 border-2 border-blue-200">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                  <Input
+                    placeholder="Search for tests or checkups"
+                    value={testSearchTerm}
+                    onChange={(e) => setTestSearchTerm(e.target.value)}
+                    className="pl-12 pr-4 py-4 text-lg rounded-xl border-2 border-blue-200 focus:border-blue-500 focus:ring-blue-200"
+                    data-testid="hero-search"
+                  />
                 </div>
-              )}
+                
+                {/* Search Results Dropdown */}
+                {testSearchTerm && filteredTests.length > 0 && (
+                  <div className="mt-3 max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
+                    <div className="p-2 bg-blue-50 border-b border-slate-200 text-xs text-slate-600 font-medium">
+                      Found {filteredTests.length} tests matching &quot;{testSearchTerm}&quot;
+                    </div>
+                    <div className="divide-y divide-slate-100">
+                      {filteredTests.slice(0, 8).map(test => (
+                        <button 
+                          key={test} 
+                          onClick={() => {
+                            setSelectedTests([test]);
+                            setTestSearchTerm('');
+                            setCurrentStep(1);
+                          }}
+                          className="flex items-center gap-3 p-3 hover:bg-blue-50 cursor-pointer transition-colors w-full text-left"
+                        >
+                          <span className="text-lg">{getTestIcon(test)}</span>
+                          <span className="text-sm text-slate-800 font-medium">{test}</span>
+                          <Plus className="w-4 h-4 text-blue-500 ml-auto" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        {/* End of Blue Section */}
+          {/* End of Blue Hero Section */}
 
-        {/* White/Light Section - Content Area */}
-        <div className="bg-slate-100 pb-24">
+          {/* White/Light Section - Content Area */}
+          <div className="bg-slate-100 py-6">
 
           {/* Promo Banner - Vibrant Pink/Purple distinct from blue */}
           <div className="max-w-6xl mx-auto px-4 mt-4">
