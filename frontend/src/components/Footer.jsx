@@ -236,18 +236,22 @@ const Footer = () => {
           <div className="border-t border-slate-800 pt-6 flex flex-col items-center gap-4">
             {/* Tagline with visual flair */}
             <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-teal-900/50 via-slate-800/50 to-teal-900/50 rounded-full border border-teal-800/30">
-              <div className="flex items-center gap-1">
-                <span className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></span>
-                <span className="w-1.5 h-1.5 bg-teal-500 rounded-full"></span>
-                <span className="w-1 h-1 bg-teal-600 rounded-full"></span>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 bg-teal-400 rounded-full animate-pulse"></span>
+                <span className="w-2 h-2 bg-teal-500 rounded-full"></span>
+                <span className="w-1.5 h-1.5 bg-teal-600 rounded-full"></span>
               </div>
-              <p className="text-sm font-medium text-teal-100 tracking-wide">
-                Crafted by Doctors · Managed by Doctors · Trusted by Patients
+              <p className="text-sm font-medium text-teal-100 tracking-wide flex items-center gap-3">
+                <span>Crafted by Doctors</span>
+                <span className="w-2 h-2 bg-teal-400/60 rounded-full"></span>
+                <span>Trusted by Patients</span>
+                <span className="w-2 h-2 bg-teal-400/60 rounded-full"></span>
+                <span>Managed by Doctors</span>
               </p>
-              <div className="flex items-center gap-1">
-                <span className="w-1 h-1 bg-teal-600 rounded-full"></span>
-                <span className="w-1.5 h-1.5 bg-teal-500 rounded-full"></span>
-                <span className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></span>
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-teal-600 rounded-full"></span>
+                <span className="w-2 h-2 bg-teal-500 rounded-full"></span>
+                <span className="w-2.5 h-2.5 bg-teal-400 rounded-full animate-pulse"></span>
               </div>
             </div>
             
