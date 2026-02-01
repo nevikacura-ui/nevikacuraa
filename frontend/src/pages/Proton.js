@@ -776,9 +776,9 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Promo Banner - Zepto Blue/Purple theme */}
+          {/* Promo Banner - Vibrant Pink/Purple distinct from blue */}
           <div className="max-w-6xl mx-auto px-4 mt-4">
-            <div className="bg-gradient-to-r from-purple-600 to-violet-600 rounded-2xl p-4 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 rounded-2xl p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="bg-white/20 rounded-full p-2">
                   <span className="text-xl">🎉</span>
@@ -791,7 +791,7 @@ const Proton = () => {
               <Button 
                 variant="secondary" 
                 size="sm"
-                className="bg-white text-purple-600 hover:bg-purple-50 rounded-full font-bold"
+                className="bg-white text-fuchsia-600 hover:bg-fuchsia-50 rounded-full font-bold"
                 onClick={() => {
                   navigator.clipboard.writeText('PROTON15');
                   toast.success('Coupon code copied!');
