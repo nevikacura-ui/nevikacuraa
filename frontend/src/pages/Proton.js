@@ -285,7 +285,7 @@ const Proton = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [selectedTests, setSelectedTests] = useState([]);
   const [customTest, setCustomTest] = useState('');
   const [testSearchTerm, setTestSearchTerm] = useState('');
