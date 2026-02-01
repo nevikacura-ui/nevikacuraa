@@ -750,7 +750,7 @@ const Proton = () => {
               {/* Search Results Dropdown */}
               {testSearchTerm && filteredTests.length > 0 && (
                 <div className="mt-3 max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
-                  <div className="p-2 bg-orange-50 border-b border-slate-200 text-xs text-slate-600 font-medium">
+                  <div className="p-2 bg-purple-50 border-b border-slate-200 text-xs text-slate-600 font-medium">
                     Found {filteredTests.length} tests matching &quot;{testSearchTerm}&quot;
                   </div>
                   <div className="divide-y divide-slate-100">
@@ -762,11 +762,11 @@ const Proton = () => {
                           setTestSearchTerm('');
                           setCurrentStep(1);
                         }}
-                        className="flex items-center gap-3 p-3 hover:bg-orange-50 cursor-pointer transition-colors w-full text-left"
+                        className="flex items-center gap-3 p-3 hover:bg-purple-50 cursor-pointer transition-colors w-full text-left"
                       >
                         <span className="text-lg">{getTestIcon(test)}</span>
                         <span className="text-sm text-slate-800 font-medium">{test}</span>
-                        <Plus className="w-4 h-4 text-orange-500 ml-auto" />
+                        <Plus className="w-4 h-4 text-purple-500 ml-auto" />
                       </button>
                     ))}
                   </div>
@@ -775,9 +775,9 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Promo Banner */}
+          {/* Promo Banner - Purple theme */}
           <div className="max-w-6xl mx-auto px-4 mt-4">
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="bg-white/20 rounded-full p-2">
                   <span className="text-xl">🎉</span>
@@ -790,7 +790,7 @@ const Proton = () => {
               <Button 
                 variant="secondary" 
                 size="sm"
-                className="bg-white text-green-600 hover:bg-green-50 rounded-full font-bold"
+                className="bg-white text-purple-600 hover:bg-purple-50 rounded-full font-bold"
                 onClick={() => {
                   navigator.clipboard.writeText('PROTON15');
                   toast.success('Coupon code copied!');
@@ -801,14 +801,14 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Trust Badges - Zepto Style */}
+          {/* Trust Badges - Purple Style */}
           <div className="max-w-6xl mx-auto px-4 mt-6">
             <div className="flex justify-between items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
               {[
-                { icon: Shield, title: 'Certified Lab', color: 'text-blue-600', bg: 'bg-blue-100' },
-                { icon: Clock, title: '6 AM - 10 PM', color: 'text-orange-600', bg: 'bg-orange-100' },
-                { icon: CheckCircle2, title: '4.9/5 on Google', color: 'text-green-600', bg: 'bg-green-100' },
-                { icon: Home, title: 'Home Collection', color: 'text-purple-600', bg: 'bg-purple-100' }
+                { icon: Shield, title: 'Certified Lab', color: 'text-purple-600', bg: 'bg-purple-100' },
+                { icon: Clock, title: '6 AM - 10 PM', color: 'text-pink-600', bg: 'bg-pink-100' },
+                { icon: CheckCircle2, title: '4.9/5 on Google', color: 'text-indigo-600', bg: 'bg-indigo-100' },
+                { icon: Home, title: 'Home Collection', color: 'text-violet-600', bg: 'bg-violet-100' }
               ].map((badge, idx) => (
                 <div key={idx} className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm min-w-fit">
                   <div className={`w-8 h-8 rounded-full ${badge.bg} flex items-center justify-center`}>
