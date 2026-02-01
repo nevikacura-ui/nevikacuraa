@@ -697,51 +697,46 @@ const Proton = () => {
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
       {currentStep === 0 ? (
         <>
-          {/* Blue Hero Banner Section */}
+          {/* Blue Hero Banner Section - Compact */}
           <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
-            <div className="max-w-6xl mx-auto px-4 py-6">
+            <div className="max-w-6xl mx-auto px-4 py-4">
               <div className="flex items-center justify-between">
                 {/* Left Content */}
                 <div className="flex-1 text-white z-10">
-                  <h1 className="text-2xl md:text-4xl font-bold mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <h1 className="text-xl md:text-2xl font-bold mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
                     Blood Test At Home
                   </h1>
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-5 h-5 text-yellow-400" />
-                      <span className="font-semibold text-yellow-400">in 60 MINS</span>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4 text-yellow-400" />
+                      <span className="font-semibold text-yellow-400 text-sm">in 60 MINS</span>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 w-fit">
-                    <CheckCircle2 className="w-5 h-5" />
-                    <span className="font-medium">Accurate Reports in 06 HRS</span>
+                    <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span className="text-xs font-medium">Reports in 06 HRS</span>
+                    </div>
                   </div>
                 </div>
                 
                 {/* Right - Medicine/Pill Icons like Zepto */}
-                <div className="hidden md:flex items-center gap-4">
-                  {/* Pills/Medicine illustration */}
-                  <div className="relative">
-                    <img 
-                      src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150&h=150&fit=crop" 
-                      alt="Medicine pills"
-                      className="w-32 h-32 object-cover rounded-xl shadow-xl opacity-90"
-                    />
-                  </div>
-                  <div className="relative -ml-8">
-                    <img 
-                      src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=120&h=120&fit=crop" 
-                      alt="Lab test"
-                      className="w-28 h-28 object-cover rounded-xl shadow-xl border-4 border-blue-600"
-                    />
-                  </div>
+                <div className="hidden md:flex items-center gap-2">
+                  <img 
+                    src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=100&h=100&fit=crop" 
+                    alt="Medicine pills"
+                    className="w-20 h-20 object-cover rounded-xl shadow-lg opacity-90"
+                  />
+                  <img 
+                    src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=80&h=80&fit=crop" 
+                    alt="Lab test"
+                    className="w-16 h-16 object-cover rounded-xl shadow-lg border-2 border-blue-500 -ml-6"
+                  />
                 </div>
               </div>
             </div>
             
             {/* Decorative circles */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
             
             {/* Search Bar - inside blue section */}
             <div className="max-w-6xl mx-auto px-4 pt-6 pb-12 relative z-20">
