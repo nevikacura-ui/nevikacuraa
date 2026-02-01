@@ -1100,6 +1100,298 @@ const Pharmacy = () => {
         </div>
       </div>
 
+      {/* ========== HEALTH CATEGORIES CAROUSEL ========== */}
+      <div className="bg-white border-b border-slate-100">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Shop by Health Concern
+            </h3>
+            <button 
+              onClick={() => setSelectedCategory('')}
+              className="text-orange-500 text-sm font-semibold"
+            >
+              View All
+            </button>
+          </div>
+          
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {[
+              { id: 'heart', name: 'Heart & BP Care', icon: '❤️', color: 'from-red-500 to-pink-500', filter: 'cardiac' },
+              { id: 'diabetes', name: 'Diabetes Care', icon: '🩸', color: 'from-blue-500 to-cyan-500', filter: 'diabetes' },
+              { id: 'respiratory', name: 'Asthma & Respiratory', icon: '🫁', color: 'from-teal-500 to-green-500', filter: 'respiratory' },
+              { id: 'bone', name: 'Bone & Joint', icon: '🦴', color: 'from-amber-500 to-orange-500', filter: 'bone' },
+              { id: 'stomach', name: 'Stomach Care', icon: '🫃', color: 'from-yellow-500 to-lime-500', filter: 'digestive' },
+              { id: 'kidney', name: 'Kidney Care', icon: '🫘', color: 'from-purple-500 to-violet-500', filter: 'kidney' },
+              { id: 'liver', name: 'Liver Care', icon: '🫀', color: 'from-emerald-500 to-teal-500', filter: 'liver' },
+              { id: 'thyroid', name: 'Thyroid Care', icon: '🦋', color: 'from-indigo-500 to-purple-500', filter: 'thyroid' },
+              { id: 'neuro', name: 'Neuro & Brain', icon: '🧠', color: 'from-pink-500 to-rose-500', filter: 'neuro' },
+              { id: 'eye', name: 'Eye Care', icon: '👁️', color: 'from-sky-500 to-blue-500', filter: 'eye' }
+            ].map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(selectedCategory === cat.filter ? '' : cat.filter)}
+                className={`flex flex-col items-center gap-2 min-w-[80px] transition-all ${
+                  selectedCategory === cat.filter ? 'scale-105' : 'hover:scale-105'
+                }`}
+                data-testid={`carousel-cat-${cat.id}`}
+              >
+                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${cat.color} flex items-center justify-center text-2xl shadow-lg ${
+                  selectedCategory === cat.filter ? 'ring-2 ring-orange-400 ring-offset-2' : ''
+                }`}>
+                  {cat.icon}
+                </div>
+                <span className={`text-xs font-medium text-center leading-tight max-w-[70px] ${
+                  selectedCategory === cat.filter ? 'text-orange-600' : 'text-slate-600'
+                }`}>
+                  {cat.name}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ========== FAMILY CARE SECTION ========== */}
+      <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <h3 className="font-bold text-slate-800 mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            Family Care
+          </h3>
+          
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { 
+                id: 'kids', 
+                name: 'Kids Care', 
+                image: 'https://images.unsplash.com/photo-1491013516836-7db643ee125a?w=200&h=200&fit=crop',
+                color: 'from-pink-400 to-rose-400',
+                filter: 'kids'
+              },
+              { 
+                id: 'adults', 
+                name: 'Adult Wellness', 
+                image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&h=200&fit=crop',
+                color: 'from-blue-400 to-indigo-400',
+                filter: 'vitamin'
+              },
+              { 
+                id: 'elderly', 
+                name: 'Elderly Care', 
+                image: 'https://images.unsplash.com/photo-1525599428495-0441bd5c67de?w=200&h=200&fit=crop',
+                color: 'from-purple-400 to-violet-400',
+                filter: 'elderly'
+              }
+            ].map((fam) => (
+              <button
+                key={fam.id}
+                onClick={() => setSelectedCategory(selectedCategory === fam.filter ? '' : fam.filter)}
+                className={`relative overflow-hidden rounded-2xl aspect-square group ${
+                  selectedCategory === fam.filter ? 'ring-2 ring-orange-400' : ''
+                }`}
+                data-testid={`family-${fam.id}`}
+              >
+                <img 
+                  src={fam.image} 
+                  alt={fam.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className={`absolute inset-0 bg-gradient-to-t ${fam.color} opacity-60`} />
+                <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                  <p className="font-bold text-sm drop-shadow-lg">{fam.name}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ========== PRODUCT SECTIONS ========== */}
+      {/* Medical Devices Section */}
+      <div className="bg-white">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <span className="text-xl">🩺</span>
+              Medical Devices
+            </h3>
+            <button className="text-orange-500 text-sm font-semibold flex items-center gap-1">
+              See all <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {[
+              { name: 'Blood Pressure Monitor', price: 1499, mrp: 2499, off: 40, delivery: '26 mins', image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=150&h=150&fit=crop' },
+              { name: 'Digital Thermometer', price: 199, mrp: 399, off: 50, delivery: '15 mins', image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150&h=150&fit=crop' },
+              { name: 'Glucometer Kit', price: 899, mrp: 1599, off: 44, delivery: '26 mins', image: 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=150&h=150&fit=crop' },
+              { name: 'Pulse Oximeter', price: 599, mrp: 999, off: 40, delivery: '20 mins', image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150&h=150&fit=crop' },
+              { name: 'Nebulizer', price: 1299, mrp: 2199, off: 41, delivery: '45 mins', image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=150&h=150&fit=crop' }
+            ].map((item, idx) => (
+              <div 
+                key={idx}
+                className="min-w-[160px] bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0"
+              >
+                <div className="relative">
+                  <img src={item.image} alt={item.name} className="w-full h-28 object-cover" />
+                  <button className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md">
+                    <Heart className="w-4 h-4 text-slate-400" />
+                  </button>
+                  <div className="absolute bottom-2 left-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                    {item.off}% OFF
+                  </div>
+                </div>
+                <div className="p-3">
+                  <div className="flex items-center gap-1 text-[10px] text-slate-500 mb-1">
+                    <Clock className="w-3 h-3" />
+                    {item.delivery}
+                  </div>
+                  <h4 className="text-sm font-medium text-slate-800 line-clamp-2 min-h-[2.5rem]">{item.name}</h4>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="font-bold text-slate-800">₹{item.price}</span>
+                    <span className="text-xs text-slate-400 line-through">₹{item.mrp}</span>
+                  </div>
+                  <button 
+                    onClick={() => addToCart({ name: item.name, quantity: 1 })}
+                    className="w-full mt-2 py-2 border-2 border-pink-400 text-pink-600 rounded-lg font-bold text-sm hover:bg-pink-50 transition-colors"
+                  >
+                    ADD
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Women's Health Section */}
+      <div className="bg-gradient-to-r from-pink-50 to-rose-50">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <span className="text-xl">👩</span>
+              Women's Health Essential
+            </h3>
+            <button className="text-pink-500 text-sm font-semibold flex items-center gap-1">
+              See all <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {[
+              { name: 'Prenatal Vitamins', price: 449, mrp: 699, off: 36, delivery: '15 mins', badge: 'Evara Pick' },
+              { name: 'Iron + Folic Acid', price: 199, mrp: 349, off: 43, delivery: '15 mins', badge: 'Best Seller' },
+              { name: 'Calcium + D3', price: 299, mrp: 499, off: 40, delivery: '20 mins', badge: null },
+              { name: 'Evening Primrose Oil', price: 549, mrp: 899, off: 39, delivery: '26 mins', badge: 'New' },
+              { name: 'Cranberry Extract', price: 399, mrp: 649, off: 38, delivery: '20 mins', badge: null }
+            ].map((item, idx) => (
+              <div 
+                key={idx}
+                className="min-w-[160px] bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0"
+              >
+                <div className="relative bg-gradient-to-br from-pink-100 to-rose-100 h-28 flex items-center justify-center">
+                  <Pill className="w-12 h-12 text-pink-400" />
+                  <button className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md">
+                    <Heart className="w-4 h-4 text-slate-400" />
+                  </button>
+                  {item.badge && (
+                    <div className={`absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded ${
+                      item.badge === 'Evara Pick' ? 'bg-pink-500 text-white' :
+                      item.badge === 'Best Seller' ? 'bg-amber-500 text-white' :
+                      'bg-green-500 text-white'
+                    }`}>
+                      {item.badge}
+                    </div>
+                  )}
+                  <div className="absolute bottom-2 left-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                    {item.off}% OFF
+                  </div>
+                </div>
+                <div className="p-3">
+                  <div className="flex items-center gap-1 text-[10px] text-slate-500 mb-1">
+                    <Clock className="w-3 h-3" />
+                    {item.delivery}
+                  </div>
+                  <h4 className="text-sm font-medium text-slate-800 line-clamp-2 min-h-[2.5rem]">{item.name}</h4>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="font-bold text-slate-800">₹{item.price}</span>
+                    <span className="text-xs text-slate-400 line-through">₹{item.mrp}</span>
+                  </div>
+                  <button 
+                    onClick={() => addToCart({ name: item.name, quantity: 1 })}
+                    className="w-full mt-2 py-2 border-2 border-pink-400 text-pink-600 rounded-lg font-bold text-sm hover:bg-pink-50 transition-colors"
+                  >
+                    ADD
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Kid's Health Section */}
+      <div className="bg-gradient-to-r from-blue-50 to-cyan-50">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <span className="text-xl">👶</span>
+              Kid's Health Essential
+            </h3>
+            <button className="text-blue-500 text-sm font-semibold flex items-center gap-1">
+              See all <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {[
+              { name: 'Kids Multivitamin Gummy', price: 349, mrp: 599, off: 42, delivery: '15 mins', badge: 'Kids Gummy' },
+              { name: 'Calcium for Kids', price: 249, mrp: 449, off: 44, delivery: '15 mins', badge: null },
+              { name: 'DHA Omega 3 Syrup', price: 399, mrp: 699, off: 43, delivery: '20 mins', badge: 'Brain Health' },
+              { name: 'Iron Tonic for Kids', price: 179, mrp: 299, off: 40, delivery: '15 mins', badge: null },
+              { name: 'Vitamin D Drops', price: 229, mrp: 399, off: 42, delivery: '15 mins', badge: 'Doctor Recommended' }
+            ].map((item, idx) => (
+              <div 
+                key={idx}
+                className="min-w-[160px] bg-white rounded-2xl border border-blue-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0"
+              >
+                <div className="relative bg-gradient-to-br from-blue-100 to-cyan-100 h-28 flex items-center justify-center">
+                  <span className="text-4xl">🧸</span>
+                  <button className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md">
+                    <Heart className="w-4 h-4 text-slate-400" />
+                  </button>
+                  {item.badge && (
+                    <div className="absolute top-2 left-2 bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                      {item.badge}
+                    </div>
+                  )}
+                  <div className="absolute bottom-2 left-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                    {item.off}% OFF
+                  </div>
+                </div>
+                <div className="p-3">
+                  <div className="flex items-center gap-1 text-[10px] text-slate-500 mb-1">
+                    <Clock className="w-3 h-3" />
+                    {item.delivery}
+                  </div>
+                  <h4 className="text-sm font-medium text-slate-800 line-clamp-2 min-h-[2.5rem]">{item.name}</h4>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="font-bold text-slate-800">₹{item.price}</span>
+                    <span className="text-xs text-slate-400 line-through">₹{item.mrp}</span>
+                  </div>
+                  <button 
+                    onClick={() => addToCart({ name: item.name, quantity: 1 })}
+                    className="w-full mt-2 py-2 border-2 border-blue-400 text-blue-600 rounded-lg font-bold text-sm hover:bg-blue-50 transition-colors"
+                  >
+                    ADD
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* How It Works Banner */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-orange-100">
         <div className="max-w-5xl mx-auto px-4 py-4">
