@@ -1415,15 +1415,17 @@ const Pharmacy = () => {
           
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { name: 'Prenatal Vitamins', price: 449, mrp: 699, off: 36, delivery: '15 mins', badge: 'Evara Pick' },
-              { name: 'Iron + Folic Acid', price: 199, mrp: 349, off: 43, delivery: '15 mins', badge: 'Best Seller' },
-              { name: 'Calcium + D3', price: 299, mrp: 499, off: 40, delivery: '20 mins', badge: null },
-              { name: 'Evening Primrose Oil', price: 549, mrp: 899, off: 39, delivery: '26 mins', badge: 'New' },
-              { name: 'Cranberry Extract', price: 399, mrp: 649, off: 38, delivery: '20 mins', badge: null }
+              { name: 'Prenatal Vitamins', price: 449, mrp: 699, off: 36, delivery: '15 mins', badge: 'Evara Pick', category: 'Women Health' },
+              { name: 'Iron + Folic Acid', price: 199, mrp: 349, off: 43, delivery: '15 mins', badge: 'Best Seller', category: 'Women Health' },
+              { name: 'Calcium + D3', price: 299, mrp: 499, off: 40, delivery: '20 mins', badge: null, category: 'Women Health' },
+              { name: 'Evening Primrose Oil', price: 549, mrp: 899, off: 39, delivery: '26 mins', badge: 'New', category: 'Women Health' },
+              { name: 'Cranberry Extract', price: 399, mrp: 649, off: 38, delivery: '20 mins', badge: null, category: 'Women Health' }
             ].map((item, idx) => (
               <div 
                 key={idx}
-                className="min-w-[160px] bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0"
+                onClick={() => { setSelectedMedicine(item); setShowProductDetail(true); }}
+                className="min-w-[160px] bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0 cursor-pointer"
+                data-testid={`medicine-card-women-${idx}`}
               >
                 <div className="relative bg-gradient-to-br from-pink-100 to-rose-100 h-28 flex items-center justify-center">
                   <Pill className="w-12 h-12 text-pink-400" />
