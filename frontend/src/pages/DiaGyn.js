@@ -36,14 +36,14 @@ const getWsUrl = () => {
 const WS_URL = getWsUrl();
 
 // ============================================
-// DESIGN SYSTEM - Zepto-Style Green Theme for DiaGyn
+// DESIGN SYSTEM - Zepto-Style Dark Teal Theme for DiaGyn
 // ============================================
 const theme = {
-  primary: { main: '#0D6A4E', light: '#D1FAE5', dark: '#064E3B' },
-  secondary: { main: '#10B981', light: '#A7F3D0', dark: '#064E3B' },
-  accent: { main: '#059669', light: '#A7F3D0' },
-  neutral: { background: '#ECFDF5', surface: '#FFFFFF', textPrimary: '#064E3B', textSecondary: '#6B7280', border: '#E2E8F0' },
-  status: { success: '#10B981', error: '#EF476F', warning: '#FFD166' }
+  primary: { main: '#0F766E', light: '#CCFBF1', dark: '#134E4A' },
+  secondary: { main: '#14B8A6', light: '#99F6E4', dark: '#115E59' },
+  accent: { main: '#2DD4BF', light: '#99F6E4' },
+  neutral: { background: '#F0FDFA', surface: '#FFFFFF', textPrimary: '#134E4A', textSecondary: '#6B7280', border: '#E2E8F0' },
+  status: { success: '#14B8A6', error: '#EF476F', warning: '#FFD166' }
 };
 
 // ============================================
