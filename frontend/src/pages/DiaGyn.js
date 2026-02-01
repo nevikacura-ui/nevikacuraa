@@ -1621,7 +1621,7 @@ const DiaGyn = () => {
         {/* Step 5: Final Confirmation */}
         {step === 5 && (
           <div className="animate-in fade-in duration-500">
-            <Card className="max-w-lg mx-auto p-8 rounded-3xl border-slate-700 bg-slate-800/50 shadow-[0_20px_50px_rgb(0,0,0,0.2)]">
+            <Card className="max-w-lg mx-auto p-8 rounded-3xl border-[#1B3A35] bg-[#162F2B]/90 shadow-[0_20px_50px_rgb(0,0,0,0.3)]">
               <div className="text-center mb-8">
                 <div className="w-20 h-20 bg-gradient-to-br from-green-500/30 to-green-600/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
                   <Sparkles className="w-10 h-10 text-green-500" />
@@ -1629,15 +1629,15 @@ const DiaGyn = () => {
                 <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
                   Confirm Your Booking
                 </h2>
-                <p className="text-slate-300 mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                <p className="text-emerald-200/80 mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                   Review your appointment details before confirming
                 </p>
               </div>
               
               {/* Booking Summary */}
-              <div className="space-y-4 bg-slate-700/50 rounded-2xl p-5 border border-slate-600">
+              <div className="space-y-4 bg-[#14332E]/80 rounded-2xl p-5 border border-[#1B3A35]">
                 {/* Doctor Info */}
-                <div className="flex items-center gap-4 pb-4 border-b border-slate-600">
+                <div className="flex items-center gap-4 pb-4 border-b border-[#1B3A35]">
                   <img 
                     src={selectedDoctorData?.image} 
                     alt="" 
@@ -1655,22 +1655,22 @@ const DiaGyn = () => {
                 
                 {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-slate-800 rounded-xl">
-                    <p className="text-xs text-slate-400 mb-1">Clinic</p>
+                  <div className="p-3 bg-[#1B3A35] rounded-xl">
+                    <p className="text-xs text-emerald-200/60 mb-1">Clinic</p>
                     <p className="font-semibold text-white text-sm">{selectedClinicData?.name}</p>
                   </div>
-                  <div className="p-3 bg-slate-800 rounded-xl">
-                    <p className="text-xs text-slate-400 mb-1">Date</p>
+                  <div className="p-3 bg-[#1B3A35] rounded-xl">
+                    <p className="text-xs text-emerald-200/60 mb-1">Date</p>
                     <p className="font-semibold text-white text-sm">
                       {selectedDate && format(selectedDate, 'EEE, MMM d')}
                     </p>
                   </div>
-                  <div className="p-3 bg-slate-800 rounded-xl">
-                    <p className="text-xs text-slate-400 mb-1">Time</p>
+                  <div className="p-3 bg-[#1B3A35] rounded-xl">
+                    <p className="text-xs text-emerald-200/60 mb-1">Time</p>
                     <p className="font-semibold text-white text-sm">{selectedSlot}</p>
                   </div>
-                  <div className="p-3 bg-slate-800 rounded-xl">
-                    <p className="text-xs text-slate-400 mb-1">Patient</p>
+                  <div className="p-3 bg-[#1B3A35] rounded-xl">
+                    <p className="text-xs text-emerald-200/60 mb-1">Patient</p>
                     <p className="font-semibold text-white text-sm">{patientInfo.name}</p>
                   </div>
                 </div>
