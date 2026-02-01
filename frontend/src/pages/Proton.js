@@ -26,19 +26,19 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // ============================================
-// DESIGN SYSTEM - Vibrant Pink/Purple/Blue Theme (Zepto Style)
+// DESIGN SYSTEM - Zepto Blue Theme for Proton
 // ============================================
 const theme = {
-  primary: '#F24797',      // Vibrant Magenta
-  primaryLight: '#FFB5E6', // Light Pink
-  secondary: '#8A2BE2',    // Blue Violet/Purple
-  accent: '#6A0DAD',       // Dark Purple
-  background: '#F24797',   // Vibrant Magenta
+  primary: '#3292FF',      // Zepto Blue
+  primaryDark: '#1E70D8',  // Darker Blue
+  secondary: '#6E0AD6',    // Purple accent
+  accent: '#FFD700',       // Yellow for highlights
+  background: '#3292FF',   // Blue background
   surface: '#FFFFFF',
   textPrimary: '#333333',
   textSecondary: '#555555',
-  border: '#FF99CC',       // Pink border
-  success: '#10B981',
+  border: '#E0E0E0',
+  success: '#00A14F',
   error: '#EF4444'
 };
 
@@ -690,15 +690,15 @@ const Proton = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-400 via-fuchsia-500 to-pink-500">
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700">
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
       {currentStep === 0 ? (
         <>
-          {/* Hero Banner - Vibrant Pink/Purple Theme for Proton (Zepto Style) */}
-          <div className="bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-500 relative overflow-hidden">
+          {/* Hero Banner - Zepto Blue Theme for Proton */}
+          <div className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-4 py-6">
               <div className="flex items-center justify-between">
                 {/* Left Content */}
