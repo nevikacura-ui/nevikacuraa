@@ -433,17 +433,17 @@ const TimeSlotPicker = ({ slots, bookedSlots, selectedSlot, onSelect, selectedDa
     <div>
       {/* Connection Status & Time Period Legend */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex gap-4 text-xs" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+        <div className="flex gap-4 text-xs text-white/90" style={{ fontFamily: 'DM Sans, sans-serif' }}>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#FFD166]" />
+            <span className="w-3 h-3 rounded-full bg-amber-400" />
             Morning
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#0F766E]" />
+            <span className="w-3 h-3 rounded-full bg-white" />
             Evening
           </span>
         </div>
-        <span className={`flex items-center gap-1.5 text-xs font-medium ${wsConnected ? 'text-[#A7C957]' : 'text-[#64748B]'}`}>
+        <span className={`flex items-center gap-1.5 text-xs font-medium ${wsConnected ? 'text-green-400' : 'text-slate-400'}`}>
           {wsConnected ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
           {wsConnected ? 'Live Updates' : 'Offline'}
         </span>
