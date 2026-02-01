@@ -718,20 +718,64 @@ const Proton = () => {
                   </div>
                 </div>
                 
-                {/* Right - Floating Medicine Icons */}
-                <div className="flex items-center gap-3">
-                  {/* Lab Flask Icon */}
-                  <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                    <FlaskConical className="w-7 h-7 text-white" />
+                {/* Right - Rotating Circular Carousel Icons */}
+                <div className="relative w-24 h-24 flex-shrink-0">
+                  {/* Rotating container */}
+                  <div 
+                    className="absolute inset-0 animate-spin-slow"
+                    style={{ 
+                      animation: 'spin 8s linear infinite',
+                    }}
+                  >
+                    {/* Lab Flask Icon - Top */}
+                    <div 
+                      className="absolute w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm shadow-lg"
+                      style={{ 
+                        top: '0%', 
+                        left: '50%', 
+                        transform: 'translateX(-50%)',
+                        animation: 'counter-spin 8s linear infinite'
+                      }}
+                    >
+                      <FlaskConical className="w-6 h-6 text-white" />
+                    </div>
+                    {/* Test Tube Icon - Bottom Left */}
+                    <div 
+                      className="absolute w-11 h-11 bg-yellow-400/90 rounded-xl flex items-center justify-center shadow-lg"
+                      style={{ 
+                        bottom: '5%', 
+                        left: '5%',
+                        animation: 'counter-spin 8s linear infinite'
+                      }}
+                    >
+                      <Droplet className="w-5 h-5 text-blue-800" />
+                    </div>
+                    {/* Heart Icon - Bottom Right */}
+                    <div 
+                      className="absolute w-10 h-10 bg-pink-500/90 rounded-lg flex items-center justify-center shadow-lg"
+                      style={{ 
+                        bottom: '5%', 
+                        right: '5%',
+                        animation: 'counter-spin 8s linear infinite'
+                      }}
+                    >
+                      <Heart className="w-5 h-5 text-white" />
+                    </div>
                   </div>
-                  {/* Test Tube Icon */}
-                  <div className="w-12 h-12 bg-yellow-400/90 rounded-xl flex items-center justify-center -ml-4 shadow-lg">
-                    <Droplet className="w-6 h-6 text-blue-800" />
-                  </div>
-                  {/* Heart Icon */}
-                  <div className="w-10 h-10 bg-pink-500/90 rounded-lg flex items-center justify-center -ml-3 shadow-lg">
-                    <Heart className="w-5 h-5 text-white" />
-                  </div>
+                  {/* Center dot */}
+                  <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-white/40 rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+                  
+                  {/* CSS for animations */}
+                  <style>{`
+                    @keyframes spin {
+                      from { transform: rotate(0deg); }
+                      to { transform: rotate(360deg); }
+                    }
+                    @keyframes counter-spin {
+                      from { transform: rotate(0deg); }
+                      to { transform: rotate(-360deg); }
+                    }
+                  `}</style>
                 </div>
               </div>
             </div>
