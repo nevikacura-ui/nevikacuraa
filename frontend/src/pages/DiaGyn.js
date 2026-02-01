@@ -1346,7 +1346,7 @@ const DiaGyn = () => {
               <div className="mt-10 flex justify-center">
                 <Button 
                   size="lg"
-                  className="bg-gradient-to-r from-[#0F766E] to-[#14B8A6] hover:from-[#134E4A] hover:to-[#0F766E] text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-10 py-6 rounded-full shadow-lg hover:shadow-xl transition-all text-base font-semibold"
                   onClick={() => setStep(3)}
                   data-testid="continue-to-datetime"
                 >
@@ -1362,10 +1362,10 @@ const DiaGyn = () => {
         {step === 3 && (
           <div className="animate-in fade-in duration-500">
             <div className="text-center mb-10">
-              <h1 className="text-3xl md:text-4xl font-bold text-[#134E4A] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Pick Your Slot
               </h1>
-              <p className="text-[#64748B] max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-slate-300 max-w-md mx-auto" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                 Select a convenient date and time for your appointment
               </p>
             </div>
@@ -1382,16 +1382,16 @@ const DiaGyn = () => {
                 
                 {/* Selected Date Info */}
                 {selectedDate && (
-                  <div className="mt-4 p-4 bg-gradient-to-r from-[#CCFBF1]/50 to-[#99F6E4]/50 rounded-2xl border border-[#CCFBF1]">
+                  <div className="mt-4 p-4 bg-gradient-to-r from-orange-500/20 to-orange-600/20 rounded-2xl border border-orange-400/30">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#0F766E] flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center">
                         <Calendar className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <p className="font-semibold text-[#134E4A]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                        <p className="font-semibold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
                           {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                         </p>
-                        <p className="text-sm text-[#0F766E]">
+                        <p className="text-sm text-orange-300">
                           {unbookedSlots.length} slots available
                         </p>
                       </div>
@@ -1401,9 +1401,9 @@ const DiaGyn = () => {
               </div>
               
               {/* Time Slots */}
-              <Card className="p-6 rounded-3xl border-[#E2E8F0] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-                <h3 className="font-bold text-lg mb-5 flex items-center gap-2 text-[#134E4A]" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  <Clock className="w-5 h-5 text-[#0F766E]" />
+              <Card className="p-6 rounded-3xl border-slate-700 bg-slate-800/50 shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+                <h3 className="font-bold text-lg mb-5 flex items-center gap-2 text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  <Clock className="w-5 h-5 text-orange-500" />
                   Available Time Slots
                 </h3>
                 
