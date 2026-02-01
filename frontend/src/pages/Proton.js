@@ -820,7 +820,7 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Most Booked Checkups - Dark Green Zepto Style Cards */}
+          {/* Most Booked Checkups - Purple/Pink Theme Cards */}
           <div className="max-w-6xl mx-auto px-4 mt-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
@@ -841,8 +841,8 @@ const Proton = () => {
                   className="min-w-[280px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
                   data-testid={`package-${pkg.id}`}
                 >
-                  {/* Dark Green Header */}
-                  <div className="bg-gradient-to-r from-emerald-700 to-teal-700 p-4 text-white relative">
+                  {/* Purple/Pink Header */}
+                  <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 text-white relative">
                     <div className="absolute top-2 right-2">
                       <span className="bg-white/20 text-white text-xs font-medium px-2 py-1 rounded">
                         Checkup
@@ -853,7 +853,7 @@ const Proton = () => {
                       <span className="text-white/70 line-through text-sm">₹{pkg.originalPrice}</span>
                       <span className="text-2xl font-bold">₹{pkg.price}</span>
                     </div>
-                    <span className="inline-block mt-2 bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded">
+                    <span className="inline-block mt-2 bg-pink-500 text-white text-xs font-bold px-2.5 py-1 rounded">
                       {pkg.discount}% Off
                     </span>
                   </div>
@@ -862,12 +862,12 @@ const Proton = () => {
                   <div className="p-4 bg-slate-50">
                     <div className="flex items-center justify-between text-sm text-slate-600 mb-4">
                       <div className="flex items-center gap-2">
-                        <FlaskConical className="w-4 h-4 text-slate-400" />
-                        <span><strong>{pkg.parameters}</strong> parameters included</span>
+                        <FlaskConical className="w-4 h-4 text-purple-500" />
+                        <span><strong>{pkg.parameters}</strong> parameters</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-slate-400" />
-                        <span>Reports within<br/><strong>{pkg.reportTime}</strong></span>
+                        <FileText className="w-4 h-4 text-pink-500" />
+                        <span>Reports: <strong>{pkg.reportTime}</strong></span>
                       </div>
                     </div>
                     
@@ -875,7 +875,7 @@ const Proton = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 rounded-lg border-emerald-300 text-emerald-700 hover:bg-emerald-50 font-semibold"
+                        className="flex-1 rounded-lg border-purple-300 text-purple-600 hover:bg-purple-50 font-semibold"
                         onClick={() => {
                           toast.info(`${pkg.name}: ${pkg.tests.join(', ')}`);
                         }}
@@ -884,7 +884,7 @@ const Proton = () => {
                       </Button>
                       <Button
                         size="sm"
-                        className="flex-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold"
+                        className="flex-1 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold"
                         onClick={() => handlePackageSelect(pkg)}
                       >
                         Add to Cart
@@ -896,7 +896,7 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Most Booked Tests - Dark Green Zepto Style Cards */}
+          {/* Most Booked Tests - Purple/Pink Theme Cards */}
           <div className="max-w-6xl mx-auto px-4 mt-8 mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
@@ -917,8 +917,8 @@ const Proton = () => {
                   className="min-w-[240px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
                   data-testid={`test-${test.id}`}
                 >
-                  {/* Dark Green Header */}
-                  <div className="bg-gradient-to-r from-emerald-700 to-teal-700 p-4 text-white relative">
+                  {/* Purple/Pink Header */}
+                  <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 text-white relative">
                     <div className="absolute top-2 right-2">
                       <span className="bg-white/20 text-white text-xs font-medium px-2 py-1 rounded">
                         Test
@@ -929,7 +929,7 @@ const Proton = () => {
                       <span className="text-white/70 line-through text-sm">₹{test.originalPrice}</span>
                       <span className="text-xl font-bold">₹{test.price}</span>
                     </div>
-                    <span className="inline-block mt-2 bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded">
+                    <span className="inline-block mt-2 bg-purple-500 text-white text-xs font-bold px-2.5 py-1 rounded">
                       {test.discount}% Off
                     </span>
                   </div>
@@ -937,7 +937,7 @@ const Proton = () => {
                   {/* Info Section */}
                   <div className="p-4 bg-slate-50">
                     <div className="flex items-center gap-2 text-sm text-slate-600 mb-4">
-                      <FileText className="w-4 h-4 text-slate-400" />
+                      <FileText className="w-4 h-4 text-purple-500" />
                       <span>Reports within <strong>{test.reportTime}</strong></span>
                     </div>
                     
@@ -945,16 +945,16 @@ const Proton = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 rounded-lg border-emerald-300 text-emerald-700 hover:bg-emerald-50 font-semibold text-xs"
+                        className="flex-1 rounded-lg border-purple-300 text-purple-600 hover:bg-purple-50 font-semibold text-xs"
                         onClick={() => {
                           toast.info(`${test.name} - Single test`);
                         }}
                       >
-                        View Details
+                        Details
                       </Button>
                       <Button
                         size="sm"
-                        className="flex-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs"
+                        className="flex-1 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold text-xs"
                         onClick={() => handleTestSelect(test)}
                       >
                         Add to Cart
