@@ -15,7 +15,7 @@ import requests
 import os
 from datetime import datetime, timedelta
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://patient-nexus.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://health-ux.preview.emergentagent.com')
 
 # Test credentials for doctors
 DOCTOR_CREDENTIALS = {

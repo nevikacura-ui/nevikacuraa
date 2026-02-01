@@ -9,7 +9,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://patient-nexus.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://health-ux.preview.emergentagent.com').rstrip('/')
 
 # Test user ID for ALYNE module
 TEST_USER_ID = f"test_user_{uuid.uuid4().hex[:8]}"
