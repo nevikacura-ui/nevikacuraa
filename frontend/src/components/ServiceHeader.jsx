@@ -23,8 +23,8 @@ const serviceThemes = {
   proton: {
     name: 'Proton',
     path: '/proton',
-    bgGradient: 'from-blue-700 via-blue-800 to-indigo-900',
-    headerBg: 'bg-gradient-to-r from-blue-700 to-blue-800',
+    bgGradient: 'from-blue-600 via-blue-700 to-blue-800',
+    headerBg: 'bg-gradient-to-r from-blue-600 to-blue-700',
     isLight: false
   },
   pharmacy: {

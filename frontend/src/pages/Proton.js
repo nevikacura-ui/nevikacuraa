@@ -690,15 +690,15 @@ const Proton = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800">
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
       {currentStep === 0 ? (
         <>
-          {/* Hero Banner - Darker Zepto Blue Theme for Proton */}
-          <div className="bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-800 relative overflow-hidden">
+          {/* Hero Banner - Zepto Blue Theme for Proton */}
+          <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-4 py-6">
               <div className="flex items-center justify-between">
                 {/* Left Content */}
