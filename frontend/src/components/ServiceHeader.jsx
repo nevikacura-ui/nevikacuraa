@@ -59,7 +59,7 @@ export const ServiceHeader = () => {
   // Tab configuration - distinct colors for each service
   const tabs = [
     { id: 'home', name: 'Nevika Cura', icon: Heart, path: '/', color: '#14B8A6' },      // Teal
-    { id: 'diagyn', name: 'DiaGyn', icon: Stethoscope, path: '/diagyn', color: '#EC4899' }, // Pink
+    { id: 'diagyn', name: 'DiaGyn', icon: Stethoscope, path: '/diagyn', color: '#134E4A' }, // Dark Teal/Emerald
     { id: 'proton', name: 'Proton', icon: FlaskConical, path: '/proton', color: '#3B82F6' }, // Blue
     { id: 'pharmacy', name: 'Orange', icon: Package, path: '/pharmacy', color: '#F97316' }  // Orange
   ];
