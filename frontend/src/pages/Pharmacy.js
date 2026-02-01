@@ -585,6 +585,20 @@ const Pharmacy = () => {
     }
   };
 
+  // Handle viewing a medicine - adds to recently viewed
+  const handleViewMedicine = (medicine) => {
+    setSelectedMedicine(medicine);
+    setShowProductDetail(true);
+    
+    // Add to recently viewed (max 10 items, no duplicates)
+    setRecentlyViewed(prev => {
+      const filtered = prev.filter(m => m.name !== medicine.name);
+      const updated = [medicine, ...filtered].slice(0, 10);
+      localStorage.setItem('recentlyViewedMedicines', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   const fetchLoyaltyPoints = async () => {
     if (!user) return;
     setLoadingPoints(true);
