@@ -36,14 +36,14 @@ const getWsUrl = () => {
 const WS_URL = getWsUrl();
 
 // ============================================
-// DESIGN SYSTEM - Serene Care Pastel Theme
+// DESIGN SYSTEM - Zepto-Style Green Theme for DiaGyn
 // ============================================
 const theme = {
-  primary: { main: '#5FA8D3', light: '#CAE9FF', dark: '#1B4965' },
-  secondary: { main: '#62B6CB', light: '#BEE9E8', dark: '#1B4965' },
-  accent: { main: '#FFB4A2', light: '#FFD6BA' },
-  neutral: { background: '#FDFBF7', surface: '#FFFFFF', textPrimary: '#1E293B', textSecondary: '#64748B', border: '#E2E8F0' },
-  status: { success: '#A7C957', error: '#EF476F', warning: '#FFD166' }
+  primary: { main: '#0D6A4E', light: '#D1FAE5', dark: '#064E3B' },
+  secondary: { main: '#10B981', light: '#A7F3D0', dark: '#064E3B' },
+  accent: { main: '#059669', light: '#A7F3D0' },
+  neutral: { background: '#ECFDF5', surface: '#FFFFFF', textPrimary: '#064E3B', textSecondary: '#6B7280', border: '#E2E8F0' },
+  status: { success: '#10B981', error: '#EF476F', warning: '#FFD166' }
 };
 
 // ============================================
