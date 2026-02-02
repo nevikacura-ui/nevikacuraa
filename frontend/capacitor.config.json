@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://care-interface-3.preview.emergentagent.com",
+    "url": "https://healthapp-facelift.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {
