@@ -1170,10 +1170,10 @@ const Proton = () => {
         {currentStep === 1 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <h1 className="text-3xl font-bold text-[#0c1e3c] mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Select Your Tests
               </h1>
-              <p className="text-slate-500" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-slate-600" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                 Choose from imaging, pathology tests, or upload your prescription
               </p>
             </div>
@@ -1186,7 +1186,7 @@ const Proton = () => {
                   placeholder="Search tests... (e.g., CBC, Thyroid, HbA1c)"
                   value={testSearchTerm}
                   onChange={(e) => setTestSearchTerm(e.target.value)}
-                  className="pl-10 rounded-xl border-slate-200 focus:border-[#5FA8D3] focus:ring-[#5FA8D3]/20"
+                  className="pl-10 rounded-xl border-slate-200 focus:border-[#0c1e3c] focus:ring-[#0c1e3c]/20"
                   data-testid="test-search"
                 />
                 {testSearchTerm && (
