@@ -1484,6 +1484,113 @@ const Proton = () => {
               </p>
             </div>
 
+            {/* Professional Features Carousel - Orange Health Labs Style */}
+            <div className="relative -mx-4 px-4 overflow-hidden">
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+                {/* Slide 1: Professional eMedics */}
+                <div className="min-w-[320px] md:min-w-[400px] flex-shrink-0 snap-center">
+                  <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg">
+                    <img 
+                      src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=400&fit=crop"
+                      alt="Professional Phlebotomist"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/90 via-emerald-500/70 to-transparent"></div>
+                    <div className="absolute inset-0 p-6 flex flex-col justify-center">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
+                        <span className="text-white text-xs font-bold">100+ Hours Training</span>
+                      </div>
+                      <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Hygienic & Professional</h3>
+                      <p className="text-white/90 text-sm md:text-base">Certified eMedics for safe sample collection</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Slide 2: State-of-the-Art Labs */}
+                <div className="min-w-[320px] md:min-w-[400px] flex-shrink-0 snap-center">
+                  <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg">
+                    <img 
+                      src="https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=800&h=400&fit=crop"
+                      alt="Modern Laboratory"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-blue-500/70 to-transparent"></div>
+                    <div className="absolute inset-0 p-6 flex flex-col justify-center">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
+                        <span className="text-white text-xs font-bold">NABL Certified</span>
+                      </div>
+                      <h3 className="text-white text-xl md:text-2xl font-bold mb-1">State-of-the-Art Labs</h3>
+                      <p className="text-white/90 text-sm md:text-base">Advanced equipment for accurate results</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Slide 3: Fast & Accurate */}
+                <div className="min-w-[320px] md:min-w-[400px] flex-shrink-0 snap-center">
+                  <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg">
+                    <img 
+                      src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&h=400&fit=crop"
+                      alt="Fast Delivery"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-600/90 via-orange-500/70 to-transparent"></div>
+                    <div className="absolute inset-0 p-6 flex flex-col justify-center">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
+                        <span className="text-white text-xs font-bold">100% On Time</span>
+                      </div>
+                      <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Fast, Safe & Accurate</h3>
+                      <p className="text-white/90 text-sm md:text-base">Reports delivered within promised time</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Slide 4: Home Collection */}
+                <div className="min-w-[320px] md:min-w-[400px] flex-shrink-0 snap-center">
+                  <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg">
+                    <img 
+                      src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=400&fit=crop"
+                      alt="Home Sample Collection"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600/90 via-purple-500/70 to-transparent"></div>
+                    <div className="absolute inset-0 p-6 flex flex-col justify-center">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
+                        <span className="text-white text-xs font-bold">FREE Above ₹2000</span>
+                      </div>
+                      <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Home Sample Collection</h3>
+                      <p className="text-white/90 text-sm md:text-base">Convenient testing at your doorstep</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Slide 5: Expert Consultation */}
+                <div className="min-w-[320px] md:min-w-[400px] flex-shrink-0 snap-center">
+                  <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-lg">
+                    <img 
+                      src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=400&fit=crop"
+                      alt="Doctor Consultation"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-teal-600/90 via-teal-500/70 to-transparent"></div>
+                    <div className="absolute inset-0 p-6 flex flex-col justify-center">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
+                        <span className="text-white text-xs font-bold">Free Consultation</span>
+                      </div>
+                      <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Expert Doctor Review</h3>
+                      <p className="text-white/90 text-sm md:text-base">Get your reports explained by specialists</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Scroll Indicator Dots */}
+              <div className="flex justify-center gap-2 mt-2">
+                {[1, 2, 3, 4, 5].map((dot) => (
+                  <div key={dot} className="w-2 h-2 rounded-full bg-slate-300"></div>
+                ))}
+              </div>
+            </div>
+
             {/* Search Tests */}
             <Card className="p-4 rounded-2xl border-slate-200 shadow-sm">
               <div className="relative">
