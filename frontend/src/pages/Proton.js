@@ -1041,11 +1041,11 @@ const Proton = () => {
               </div>
             </div>
             
-            {/* Search Bar - inside blue section */}
+            {/* Search Bar - inside orange section */}
             <div className="max-w-6xl mx-auto px-4 pb-6 relative z-20">
-              <div className="bg-white rounded-2xl shadow-xl p-3 border-2 border-[#0c1e3c]/20">
+              <div className="bg-white rounded-2xl shadow-xl p-3 border-2 border-orange-200">
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-400 w-5 h-5" />
                   <Input
                     placeholder="Search for tests or checkups"
                     value={testSearchTerm}
