@@ -1084,15 +1084,15 @@ const Proton = () => {
         </div>
       </div>
 
-      {/* Trust Badges Section - Zepto Blue Theme */}
-      <div className="py-4 border-b border-blue-300/30 bg-blue-600/30 backdrop-blur-sm" data-testid="proton-trust-badges">
+      {/* Trust Badges Section - Navy Blue Theme */}
+      <div className="py-4 border-b border-[#0c1e3c]/30 bg-[#0c1e3c]/30 backdrop-blur-sm" data-testid="proton-trust-badges">
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex justify-between items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { id: 'trusted-labs', icon: Shield, title: 'Trusted &', subtitle: 'Accredited Labs', gradient: 'from-blue-500 to-indigo-500', bg: 'bg-blue-100' },
-              { id: 'doctor-curated', icon: Stethoscope, title: 'Doctor', subtitle: 'Curated Packages', gradient: 'from-indigo-500 to-purple-500', bg: 'bg-indigo-100' },
-              { id: 'home-sample', icon: Clock, title: 'Home Sample', subtitle: 'Collection', gradient: 'from-purple-500 to-violet-500', bg: 'bg-purple-100' },
-              { id: 'fast-reports', icon: CheckCircle2, title: 'Accurate &', subtitle: 'Fast Reports', gradient: 'from-blue-500 to-blue-600', bg: 'bg-blue-100' }
+              { id: 'trusted-labs', icon: Shield, title: 'Trusted &', subtitle: 'Accredited Labs', gradient: 'from-[#0c1e3c] to-[#1a365d]', bg: 'bg-[#0c1e3c]/10' },
+              { id: 'doctor-curated', icon: Stethoscope, title: 'Doctor', subtitle: 'Curated Packages', gradient: 'from-[#1a365d] to-[#2d4a6f]', bg: 'bg-[#1a365d]/10' },
+              { id: 'home-sample', icon: Clock, title: 'Home Sample', subtitle: 'Collection', gradient: 'from-[#0c1e3c] to-[#1a365d]', bg: 'bg-[#0c1e3c]/10' },
+              { id: 'fast-reports', icon: CheckCircle2, title: 'Accurate &', subtitle: 'Fast Reports', gradient: 'from-[#1a365d] to-[#2d4a6f]', bg: 'bg-[#1a365d]/10' }
             ].map((badge) => (
               <div key={badge.id} className="flex flex-col items-center text-center min-w-[80px] flex-1" data-testid={`proton-trust-${badge.id}`}>
                 <div className={`w-14 h-14 rounded-2xl ${badge.bg} flex items-center justify-center mb-2 shadow-sm`}>
@@ -1108,8 +1108,8 @@ const Proton = () => {
         </div>
       </div>
 
-      {/* Consultation Help Banner - Blue/Purple Theme */}
-      <div className="bg-gradient-to-r from-purple-600 to-violet-600 text-white" data-testid="consultation-help-banner">
+      {/* Consultation Help Banner - Navy Blue Theme */}
+      <div className="bg-gradient-to-r from-[#0c1e3c] to-[#1a365d] text-white" data-testid="consultation-help-banner">
         <div className="max-w-5xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -1125,7 +1125,7 @@ const Proton = () => {
               onClick={() => navigate('/diagyn')}
               variant="secondary"
               size="sm"
-              className="bg-white text-purple-600 hover:bg-purple-50 rounded-full font-semibold flex-shrink-0"
+              className="bg-white text-[#0c1e3c] hover:bg-slate-100 rounded-full font-semibold flex-shrink-0"
               data-testid="book-doctor-btn"
             >
               Consult Doctor
@@ -1140,19 +1140,19 @@ const Proton = () => {
           <div className="mb-6">
             <button
               onClick={() => setShowTrends(!showTrends)}
-              className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl border border-blue-200 hover:shadow-md transition-all"
+              className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-[#0c1e3c]/10 to-[#1a365d]/10 rounded-2xl border border-[#0c1e3c]/20 hover:shadow-md transition-all"
               data-testid="show-trends-btn"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#0c1e3c] flex items-center justify-center">
                   <Activity className="w-5 h-5 text-white" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-blue-800">Your Health Trends</h3>
-                  <p className="text-xs text-blue-600">View your previous test results & trends</p>
+                  <h3 className="font-semibold text-[#0c1e3c]">Your Health Trends</h3>
+                  <p className="text-xs text-[#1a365d]">View your previous test results & trends</p>
                 </div>
               </div>
-              <ChevronRight className={`w-5 h-5 text-blue-600 transition-transform ${showTrends ? 'rotate-90' : ''}`} />
+              <ChevronRight className={`w-5 h-5 text-[#0c1e3c] transition-transform ${showTrends ? 'rotate-90' : ''}`} />
             </button>
             
             {showTrends && (
