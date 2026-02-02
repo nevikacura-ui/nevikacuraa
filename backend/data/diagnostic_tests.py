@@ -15,45 +15,59 @@ DIAGNOSTIC_TESTS = {
     "pathology": {
         "blood": [
             # Basic Blood Tests
-            "CBC (Complete Blood Count)", "Blood Group", "Hemoglobin (Hb)", "ESR",
-            # Sugar Tests
+            "CBC (Complete Blood Count)", "CBC ESR", "BT CT", "Blood Group", "Hemoglobin (Hb)", "ESR",
+            # Sugar/Diabetes Tests
             "FBS (Fasting Blood Sugar)", "PPBS", "RBS", "HbA1c", "OGTT - 3 Sample",
+            "Diabetes Basic", "Diabetes Screening",
+            "Insulin - Post Prandial", "Insulin Random", "C-Peptide",
             # Kidney Function
-            "Creatinine", "Blood Urea", "RFT (Renal Function Test)", "Uric Acid",
-            "Serum Electrolytes", "UPCR",
+            "Creatinine", "BUN", "Blood Urea", "RFT (Renal Function Test)", "Uric Acid",
+            "Serum Electrolytes", "UPCR", "Urine Protein Creatinine Ratio", "Cystatin C",
             # Liver Function
-            "LFT (Liver Function Test)", "SGPT (ALT)", "SGOT (AST)", "Bilirubin Total",
+            "LFT (Liver Function Test)", "SGPT (ALT)", "SGOT (AST)", "Total Bilirubin",
+            "Direct Bilirubin", "Bile Acid", "Serum Albumin",
             "Serum Amylase", "Lipase", "LDH",
             # Lipid Profile
-            "Lipid Profile", "Total Cholesterol", "Triglycerides", "HDL", "LDL",
+            "Lipid Profile", "Serum Cholesterol", "Total Cholesterol", 
+            "Serum Triglyceride", "Triglycerides", "HDL", "LDL",
+            # Cardiac Markers
+            "CPKMB", "Troponin I",
             # Thyroid Tests
-            "TSH", "Thyroid Profile - Free", "Thyroid Profile - Total", "T3", "T4",
+            "TSH", "Thyroid Profile - Free", "Free T3 T4 TSH", "Thyroid Profile - Total", "T3", "T4",
             # Vitamins & Minerals
-            "Vitamin D", "Vitamin B12", "Iron Studies", "Calcium", "G6PD",
+            "Vitamin D", "Vitamin B12", "Iron Studies", "Calcium", "Serum Calcium",
+            "Serum Magnesium", "Serum Phosphorus", "Sodium", "Potassium", "G6PD",
             # Inflammatory Markers
-            "CRP (C-Reactive Protein)", "ESR",
+            "CRP (C-Reactive Protein)", "ASO Titre",
             # Hormonal Tests
-            "AMH (Anti-Mullerian Hormone)", "Serum Testosterone", "Serum PSA",
-            "Beta HCG", "Hormonal Basic", "Hormonal Advance",
+            "FSH", "LH", "Prolactin", "AMH (Anti-Mullerian Hormone)", "Estradiol", "DHEAS",
+            "Cortisol (Morning)", "Parathyroid Hormone (PTH)",
+            "Serum Testosterone", "Serum PSA", "Beta HCG", "Hormonal Basic", "Hormonal Advance",
             # Tumor Markers
-            "Alpha Fetoprotein", "CA 19.9",
+            "Alpha Fetoprotein", "CA 19.9", "CA 125", "CA 15.3", "CEA",
             # Pregnancy Markers
             "Dual / Double Marker", "Quadruple Marker", "ANC (Ante Natal Profile)",
             # Arthritis & Autoimmune
             "Arthritis Basic Panel", "Anti CCP", "RA Factor",
+            "ANA IFA", "ANA Blot", "C ANCA", "P ANCA", "Anti dsDNA",
             # Infectious Disease
-            "HIV - Rapid", "HCV - Rapid", "VDRL / RPR", "H3 Viral Marker",
+            "HIV - Rapid", "HCV - Rapid", "HBsAg", "VDRL / RPR", "H3 Viral Marker",
             "MP Antigen (Malaria)", "Blood Culture & Sensitivity",
+            "Dengue NS1 Rapid", "Dengue Profile (IgM+IgG+NS1)", "Widal Test", "Filaria Antigen",
             # Coagulation
             "PT INR",
-            # Health Packages
-            "Diabetes Basic", "Diabetes Screening", "Diabetes Advance"
+            # Genetic/Specialized
+            "Karyotyping", "NIPT", "Histopathology", "Biopsy Growth", "Coombs Test, Indirect"
         ],
         "urine": [
             "Urine Routine & Microscopy", "Urine Culture & Sensitivity", "Urine Albumin"
         ],
         "stool": [
             "Stool Routine & Microscopy", "Stool Occult Blood"
+        ],
+        "culture": [
+            "Blood Culture & Sensitivity", "Urine Culture & Sensitivity", 
+            "Sputum Routine", "Pus C/S"
         ]
     }
 }
