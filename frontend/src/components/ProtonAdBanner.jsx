@@ -71,9 +71,9 @@ const ProtonAdBanner = () => {
       </div>
 
       {/* Powered By Footer */}
-      <div className="bg-white/60 backdrop-blur-sm px-5 py-2 border-t border-purple-100">
+      <div className="bg-white/60 backdrop-blur-sm px-5 py-2 border-t border-orange-100">
         <p className="text-sm text-slate-500">
-          Powered by <span className="font-bold text-purple-600">Proton</span><span className="font-bold text-pink-500">Diagnostics</span>
+          Powered by <span className="font-bold text-orange-600">Mango</span><span className="font-bold text-amber-600">HealthLabs</span>
         </p>
       </div>
     </div>
