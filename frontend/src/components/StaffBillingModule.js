@@ -274,7 +274,7 @@ const StaffBillingModule = ({ staffInfo, getAuthHeaders }) => {
   const getSourceIcon = (source) => {
     switch (source) {
       case 'DiaGyn': return <Stethoscope className="w-4 h-4 text-blue-500" />;
-      case 'Proton': return <TestTube className="w-4 h-4 text-purple-500" />;
+      case 'Mango': return <TestTube className="w-4 h-4 text-orange-500" />;
       case 'Orange Pharmacy': return <Pill className="w-4 h-4 text-orange-500" />;
       default: return <Receipt className="w-4 h-4 text-gray-500" />;
     }

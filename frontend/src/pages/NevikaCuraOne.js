@@ -83,7 +83,7 @@ const NevikaCuraOne = () => {
     { name: 'Senova', desc: 'Fertility', color: 'bg-rose-100 text-rose-700' },
     { name: 'Reneu', desc: 'Senior Care', color: 'bg-teal-100 text-teal-700' },
     { name: 'DiaGyn', desc: 'Clinic', color: 'bg-cyan-100 text-cyan-700' },
-    { name: 'Proton', desc: 'Lab Tests', color: 'bg-sky-100 text-sky-700' },
+    { name: 'Mango', desc: 'Lab Tests', color: 'bg-orange-100 text-orange-700' },
     { name: 'Orange', desc: 'Pharmacy', color: 'bg-orange-100 text-orange-700' },
   ];
 

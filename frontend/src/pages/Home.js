@@ -78,7 +78,7 @@ const Home = () => {
       isLight: false
     },
     proton: {
-      name: 'Proton',
+      name: 'Mango',
       bgGradient: 'from-blue-100 via-indigo-100 to-blue-50',
       headerBg: 'bg-gradient-to-r from-blue-600 to-indigo-600',
       headerTextColor: 'text-white',
@@ -122,7 +122,7 @@ const Home = () => {
   // Live Queue Status
   const [queueStatus, setQueueStatus] = useState([
     { clinic: 'DiaGyn', waitTime: '~0 min', patients: 0, status: 'low' },
-    { clinic: 'Proton', waitTime: '~0 min', patients: 0, status: 'low' }
+    { clinic: 'Mango', waitTime: '~0 min', patients: 0, status: 'low' }
   ]);
   
   // PWA Install Prompt
@@ -215,7 +215,7 @@ const Home = () => {
             if (response.ok) {
               const data = await response.json();
               results.push({
-                clinic: clinic === 'diagyn' ? 'DiaGyn' : 'Proton',
+                clinic: clinic === 'diagyn' ? 'DiaGyn' : 'Mango',
                 waitTime: `~${data.estimated_wait || 0} min`,
                 patients: data.waiting || 0,
                 status: (data.waiting || 0) > 5 ? 'high' : (data.waiting || 0) > 2 ? 'moderate' : 'low'
@@ -224,7 +224,7 @@ const Home = () => {
           } catch (e) {
             // Use default for this clinic
             results.push({
-              clinic: clinic === 'diagyn' ? 'DiaGyn' : 'Proton',
+              clinic: clinic === 'diagyn' ? 'DiaGyn' : 'Mango',
               waitTime: '~0 min',
               patients: 0,
               status: 'low'

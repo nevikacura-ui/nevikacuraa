@@ -48,7 +48,7 @@ const NevikaCuraOneBanner = ({ variant = 'hero' }) => {
 
   const portals = [
     'Evara', 'Glydex', 'Corvia', 'Serena', 'Thrive360', 'Alyne',
-    'Aanya', 'Senova', 'Reneu', 'DiaGyn', 'Proton', 'Orange Pharmacy'
+    'Aanya', 'Senova', 'Reneu', 'DiaGyn', 'Mango', 'Orange Pharmacy'
   ];
 
   // Hero Banner (Option A) - Large prominent banner at top
