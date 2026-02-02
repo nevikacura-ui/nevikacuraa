@@ -609,25 +609,25 @@ const Proton = () => {
 
   const filteredTests = getFilteredTests();
 
-  // Popular packages for the landing page
+  // Popular packages for the landing page (Prices from Master Lab Inventory)
   const popularPackages = [
     { 
-      id: 'diabetes-basic', 
+      id: 'diabetes-screening', 
       name: 'Diabetes Screening', 
       tests: ['FBS', 'PPBS', 'HbA1c'], 
-      originalPrice: 999, 
-      price: 599, 
-      discount: 40,
+      originalPrice: 800, 
+      price: 600, 
+      discount: 25,
       parameters: 3,
       reportTime: '6 hours'
     },
     { 
       id: 'thyroid-profile', 
-      name: 'Thyroid Profile', 
-      tests: ['TSH', 'T3', 'T4', 'FT3', 'FT4'], 
-      originalPrice: 1499, 
-      price: 799, 
-      discount: 47,
+      name: 'Thyroid Profile (Free)', 
+      tests: ['TSH', 'T3', 'T4', 'Free T3', 'Free T4'], 
+      originalPrice: 750, 
+      price: 550, 
+      discount: 27,
       parameters: 5,
       reportTime: '12 hours'
     },
@@ -635,9 +635,9 @@ const Proton = () => {
       id: 'lipid-profile', 
       name: 'Lipid Profile', 
       tests: ['Total Cholesterol', 'Triglycerides', 'HDL', 'LDL', 'VLDL'], 
-      originalPrice: 899, 
-      price: 499, 
-      discount: 44,
+      originalPrice: 700, 
+      price: 500, 
+      discount: 29,
       parameters: 5,
       reportTime: '6 hours'
     },
@@ -645,9 +645,9 @@ const Proton = () => {
       id: 'liver-function', 
       name: 'Liver Function Test', 
       tests: ['SGPT', 'SGOT', 'Bilirubin', 'Albumin', 'ALP'], 
-      originalPrice: 1199, 
-      price: 649, 
-      discount: 46,
+      originalPrice: 600, 
+      price: 450, 
+      discount: 25,
       parameters: 10,
       reportTime: '12 hours'
     },
@@ -655,20 +655,20 @@ const Proton = () => {
       id: 'kidney-function', 
       name: 'Kidney Function Test', 
       tests: ['Creatinine', 'Urea', 'Uric Acid', 'Electrolytes'], 
-      originalPrice: 999, 
-      price: 549, 
-      discount: 45,
+      originalPrice: 800, 
+      price: 600, 
+      discount: 25,
       parameters: 8,
       reportTime: '12 hours'
     }
   ];
 
   const popularTests = [
-    { id: 'cbc', name: 'CBC (Complete Blood Count)', originalPrice: 399, price: 199, discount: 50, reportTime: '6 hours' },
-    { id: 'vitamin-d', name: 'Vitamin D', originalPrice: 1499, price: 699, discount: 53, reportTime: '24 hours' },
-    { id: 'vitamin-b12', name: 'Vitamin B12', originalPrice: 999, price: 499, discount: 50, reportTime: '24 hours' },
-    { id: 'hba1c', name: 'HbA1c (Glycated Hemoglobin)', originalPrice: 699, price: 399, discount: 43, reportTime: '12 hours' },
-    { id: 'tsh', name: 'TSH', originalPrice: 499, price: 249, discount: 50, reportTime: '12 hours' }
+    { id: 'cbc', name: 'CBC (Complete Blood Count)', originalPrice: 650, price: 500, discount: 23, reportTime: '6 hours' },
+    { id: 'vitamin-d', name: 'Vitamin D', originalPrice: 1100, price: 850, discount: 23, reportTime: '24 hours' },
+    { id: 'vitamin-b12', name: 'Vitamin B12', originalPrice: 650, price: 500, discount: 23, reportTime: '24 hours' },
+    { id: 'hba1c', name: 'HbA1c (Glycated Hemoglobin)', originalPrice: 600, price: 450, discount: 25, reportTime: '12 hours' },
+    { id: 'tsh', name: 'TSH', originalPrice: 280, price: 200, discount: 29, reportTime: '12 hours' }
   ];
 
   // Handle package selection
