@@ -570,13 +570,299 @@ const Proton = () => {
     return selectedTests.filter(test => testPreparations[test]).map(test => ({ test, ...testPreparations[test] }));
   };
 
-  // Test categories for quick navigation
+  // Test categories for quick navigation - Comprehensive with color coding and icons
   const testCategories = [
-    { id: 'pregnancy', title: 'Pregnancy & OBGYN', icon: Heart, color: '#EC4899', tests: ['Dual / Double Marker', 'Quadruple Marker', 'ANC (Ante Natal Profile)', 'Beta-hCG', 'AMH (Anti-Mullerian Hormone)', 'Hormonal Basic', 'Hormonal Advance', 'LH (Luteinizing Hormone)', 'FSH (Follicle Stimulating Hormone)', 'Prolactin', 'Estradiol (E2)', 'Progesterone', 'Serum Testosterone'] },
-    { id: 'diabetes', title: 'Diabetes Tests', icon: Activity, color: '#3B82F6', tests: ['Diabetes Basic', 'Diabetes Screening', 'Diabetes Advance', 'FBS (Fasting Blood Sugar)', 'PPBS (Post Prandial Blood Sugar)', 'Random Blood Sugar (RBS)', 'HbA1c (Glycated Hemoglobin)', 'OGTT - 3 Sample', 'Fasting Insulin', 'C-Peptide'] },
-    { id: 'common', title: 'Common Blood Tests', icon: Droplets, color: '#EF4444', tests: ['CBC (Complete Blood Count)', 'Blood Group & Rh Factor', 'Hemoglobin (Hb)', 'ESR (Erythrocyte Sedimentation Rate)', 'LFT (Liver Function Test)', 'RFT (Renal Function Test)', 'Lipid Profile', 'Creatinine', 'Uric Acid', 'SGPT (ALT)', 'SGOT (AST)', 'Serum Amylase', 'Lipase', 'LDH', 'Serum Electrolytes', 'UPCR'] },
-    { id: 'thyroid', title: 'Thyroid Profile', icon: TestTube, color: '#8B5CF6', tests: ['TSH', 'Thyroid Profile - Free', 'Thyroid Profile - Total', 'T3 (Total)', 'T4 (Total)'] },
-    { id: 'vitamins', title: 'Vitamins & Minerals', icon: Stethoscope, color: '#10B981', tests: ['Vitamin D', 'Vitamin B12', 'G6PD', 'Serum PSA', 'Iron Studies (Serum Iron, TIBC, Ferritin)', 'Calcium (Total & Ionized)'] },
+    { 
+      id: 'pregnancy', 
+      title: 'Pregnancy & OBGYN', 
+      icon: Heart, 
+      color: '#EC4899',
+      bgColor: 'bg-pink-50',
+      borderColor: 'border-pink-200',
+      iconBg: 'bg-pink-100',
+      tests: [
+        { name: 'Dual / Double Marker', price: 2000 },
+        { name: 'Quadruple Marker', price: 2600 },
+        { name: 'ANC (Ante Natal Profile)', price: 1950 },
+        { name: 'Beta HCG', price: 680 },
+        { name: 'AMH (Anti-Mullerian Hormone)', price: 1550 },
+        { name: 'Hormonal Basic', price: 800 },
+        { name: 'Hormonal Advance', price: 1200 },
+        { name: 'LH (Luteinizing Hormone)', price: 400 },
+        { name: 'FSH (Follicle Stimulating Hormone)', price: 400 },
+        { name: 'Prolactin', price: 350 },
+        { name: 'Estradiol (E2)', price: 650 },
+        { name: 'Progesterone', price: 500 },
+        { name: 'Serum Testosterone', price: 500 }
+      ]
+    },
+    { 
+      id: 'diabetes', 
+      title: 'Diabetes & Sugar', 
+      icon: Activity, 
+      color: '#3B82F6',
+      bgColor: 'bg-blue-50',
+      borderColor: 'border-blue-200',
+      iconBg: 'bg-blue-100',
+      tests: [
+        { name: 'FBS (Fasting Blood Sugar)', price: 75 },
+        { name: 'PPBS (Post Prandial Blood Sugar)', price: 75 },
+        { name: 'Random Blood Sugar (RBS)', price: 75 },
+        { name: 'HbA1c (Glycated Hemoglobin)', price: 450 },
+        { name: 'Diabetes Basic', price: 250 },
+        { name: 'Diabetes Screening', price: 600 },
+        { name: 'OGTT - 3 Sample', price: 450 },
+        { name: 'Insulin - Post Prandial', price: 650 },
+        { name: 'Insulin Random', price: 1100 },
+        { name: 'C-Peptide', price: 1050 }
+      ]
+    },
+    { 
+      id: 'blood', 
+      title: 'Blood Tests', 
+      icon: Droplets, 
+      color: '#EF4444',
+      bgColor: 'bg-red-50',
+      borderColor: 'border-red-200',
+      iconBg: 'bg-red-100',
+      tests: [
+        { name: 'CBC (Complete Blood Count)', price: 500 },
+        { name: 'CBC ESR', price: 380 },
+        { name: 'Blood Group', price: 150 },
+        { name: 'Hemoglobin (Hb)', price: 100 },
+        { name: 'ESR', price: 100 },
+        { name: 'BT CT', price: 250 },
+        { name: 'PT INR', price: 450 }
+      ]
+    },
+    { 
+      id: 'thyroid', 
+      title: 'Thyroid Profile', 
+      icon: TestTube, 
+      color: '#8B5CF6',
+      bgColor: 'bg-purple-50',
+      borderColor: 'border-purple-200',
+      iconBg: 'bg-purple-100',
+      tests: [
+        { name: 'TSH', price: 200 },
+        { name: 'Thyroid Profile - Free', price: 550 },
+        { name: 'Thyroid Profile - Total', price: 350 },
+        { name: 'T3', price: 200 },
+        { name: 'T4', price: 200 },
+        { name: 'Free T3 T4 TSH', price: 550 }
+      ]
+    },
+    { 
+      id: 'vitamins', 
+      title: 'Vitamins & Minerals', 
+      icon: Stethoscope, 
+      color: '#10B981',
+      bgColor: 'bg-emerald-50',
+      borderColor: 'border-emerald-200',
+      iconBg: 'bg-emerald-100',
+      tests: [
+        { name: 'Vitamin D', price: 850 },
+        { name: 'Vitamin B12', price: 500 },
+        { name: 'Iron Studies', price: 600 },
+        { name: 'Calcium', price: 200 },
+        { name: 'Serum Magnesium', price: 200 },
+        { name: 'Serum Phosphorus', price: 200 },
+        { name: 'Sodium', price: 150 },
+        { name: 'Potassium', price: 150 },
+        { name: 'G6PD', price: 470 }
+      ]
+    },
+    { 
+      id: 'liver', 
+      title: 'Liver Function', 
+      icon: FlaskConical, 
+      color: '#F59E0B',
+      bgColor: 'bg-amber-50',
+      borderColor: 'border-amber-200',
+      iconBg: 'bg-amber-100',
+      tests: [
+        { name: 'LFT (Liver Function Test)', price: 450 },
+        { name: 'SGPT (ALT)', price: 180 },
+        { name: 'SGOT (AST)', price: 180 },
+        { name: 'Total Bilirubin', price: 150 },
+        { name: 'Direct Bilirubin', price: 150 },
+        { name: 'Serum Albumin', price: 300 },
+        { name: 'Bile Acid', price: 2000 },
+        { name: 'Serum Amylase', price: 500 },
+        { name: 'Lipase', price: 600 },
+        { name: 'LDH', price: 550 }
+      ]
+    },
+    { 
+      id: 'kidney', 
+      title: 'Kidney Function', 
+      icon: Droplet, 
+      color: '#06B6D4',
+      bgColor: 'bg-cyan-50',
+      borderColor: 'border-cyan-200',
+      iconBg: 'bg-cyan-100',
+      tests: [
+        { name: 'RFT (Renal Function Test)', price: 600 },
+        { name: 'Creatinine', price: 180 },
+        { name: 'BUN', price: 240 },
+        { name: 'Blood Urea', price: 240 },
+        { name: 'Uric Acid', price: 200 },
+        { name: 'Serum Electrolytes', price: 400 },
+        { name: 'UPCR', price: 660 },
+        { name: 'Cystatin C', price: 1100 }
+      ]
+    },
+    { 
+      id: 'lipid', 
+      title: 'Lipid Profile', 
+      icon: Heart, 
+      color: '#F97316',
+      bgColor: 'bg-orange-50',
+      borderColor: 'border-orange-200',
+      iconBg: 'bg-orange-100',
+      tests: [
+        { name: 'Lipid Profile', price: 500 },
+        { name: 'Serum Cholesterol', price: 220 },
+        { name: 'Triglycerides', price: 250 },
+        { name: 'HDL', price: 150 },
+        { name: 'LDL', price: 150 }
+      ]
+    },
+    { 
+      id: 'cardiac', 
+      title: 'Cardiac Markers', 
+      icon: Activity, 
+      color: '#DC2626',
+      bgColor: 'bg-red-50',
+      borderColor: 'border-red-200',
+      iconBg: 'bg-red-100',
+      tests: [
+        { name: 'CPKMB', price: 450 },
+        { name: 'Troponin I', price: 1050 },
+        { name: 'ECG (Electrocardiogram)', price: 300 }
+      ]
+    },
+    { 
+      id: 'infection', 
+      title: 'Infection & Viral', 
+      icon: Shield, 
+      color: '#7C3AED',
+      bgColor: 'bg-violet-50',
+      borderColor: 'border-violet-200',
+      iconBg: 'bg-violet-100',
+      tests: [
+        { name: 'HIV - Rapid', price: 550 },
+        { name: 'HCV - Rapid', price: 600 },
+        { name: 'HBsAg', price: 400 },
+        { name: 'VDRL / RPR', price: 200 },
+        { name: 'Dengue NS1 Rapid', price: 800 },
+        { name: 'Dengue Profile (IgM+IgG+NS1)', price: 1450 },
+        { name: 'Widal Test', price: 330 },
+        { name: 'Filaria Antigen', price: 360 },
+        { name: 'MP Antigen (Malaria)', price: 650 },
+        { name: 'H3 Viral Marker', price: 1200 }
+      ]
+    },
+    { 
+      id: 'culture', 
+      title: 'Culture Tests', 
+      icon: FlaskConical, 
+      color: '#0891B2',
+      bgColor: 'bg-teal-50',
+      borderColor: 'border-teal-200',
+      iconBg: 'bg-teal-100',
+      tests: [
+        { name: 'Blood Culture & Sensitivity', price: 1000 },
+        { name: 'Urine Culture & Sensitivity', price: 1000 },
+        { name: 'Sputum Routine', price: 150 },
+        { name: 'Pus C/S', price: 1000 }
+      ]
+    },
+    { 
+      id: 'arthritis', 
+      title: 'Arthritis & Autoimmune', 
+      icon: Activity, 
+      color: '#DB2777',
+      bgColor: 'bg-pink-50',
+      borderColor: 'border-pink-200',
+      iconBg: 'bg-pink-100',
+      tests: [
+        { name: 'RA Factor', price: 600 },
+        { name: 'CRP (C-Reactive Protein)', price: 450 },
+        { name: 'ASO Titre', price: 550 },
+        { name: 'Anti CCP', price: 1250 },
+        { name: 'ANA IFA', price: 1000 },
+        { name: 'ANA Blot', price: 3300 },
+        { name: 'C ANCA', price: 1300 },
+        { name: 'P ANCA', price: 1300 },
+        { name: 'Anti dsDNA', price: 1200 },
+        { name: 'Arthritis Basic Panel', price: 1650 }
+      ]
+    },
+    { 
+      id: 'tumor', 
+      title: 'Tumor Markers', 
+      icon: Scan, 
+      color: '#9333EA',
+      bgColor: 'bg-purple-50',
+      borderColor: 'border-purple-200',
+      iconBg: 'bg-purple-100',
+      tests: [
+        { name: 'CA 19.9', price: 1000 },
+        { name: 'CA 125', price: 1100 },
+        { name: 'CA 15.3', price: 1100 },
+        { name: 'CEA', price: 800 },
+        { name: 'Alpha Fetoprotein', price: 800 },
+        { name: 'Serum PSA', price: 1050 }
+      ]
+    },
+    { 
+      id: 'urine', 
+      title: 'Urine Tests', 
+      icon: Droplet, 
+      color: '#0EA5E9',
+      bgColor: 'bg-sky-50',
+      borderColor: 'border-sky-200',
+      iconBg: 'bg-sky-100',
+      tests: [
+        { name: 'Urine Routine & Microscopy', price: 150 },
+        { name: 'Urine Culture & Sensitivity', price: 1000 },
+        { name: 'UPCR', price: 660 }
+      ]
+    },
+    { 
+      id: 'imaging', 
+      title: 'Imaging & Scans', 
+      icon: Scan, 
+      color: '#64748B',
+      bgColor: 'bg-slate-50',
+      borderColor: 'border-slate-200',
+      iconBg: 'bg-slate-100',
+      tests: [
+        { name: 'ECG (Electrocardiogram)', price: 300 },
+        { name: 'Early Scan', price: 800 },
+        { name: 'NT Scan (Nuchal Translucency)', price: 1500 },
+        { name: 'Growth Scan', price: 1000 },
+        { name: 'USG Pelvis', price: 700 },
+        { name: 'Follicular Monitoring', price: 500 }
+      ]
+    },
+    { 
+      id: 'genetic', 
+      title: 'Genetic & Special', 
+      icon: Activity, 
+      color: '#059669',
+      bgColor: 'bg-emerald-50',
+      borderColor: 'border-emerald-200',
+      iconBg: 'bg-emerald-100',
+      tests: [
+        { name: 'Karyotyping', price: 5500 },
+        { name: 'NIPT', price: 12000 },
+        { name: 'Histopathology', price: 2500 },
+        { name: 'Biopsy Growth', price: 2000 },
+        { name: 'Coombs Test, Indirect', price: 500 }
+      ]
+    }
   ];
 
   const getCurrentCategoryTests = () => {
