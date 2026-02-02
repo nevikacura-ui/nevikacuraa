@@ -1189,11 +1189,12 @@ const DiaGyn = () => {
       toast.error('Please enter a valid 10-digit mobile number');
       return;
     }
-    if (!patientInfo.email || !patientInfo.email.includes('@')) {
+    // Email is optional - only validate if provided
+    if (patientInfo.email && !patientInfo.email.includes('@')) {
       toast.error('Please enter a valid email address');
       return;
     }
-    // Skip OTP step temporarily - directly go to booking
+    // Skip OTP step - directly go to booking
     setStep(5);
     setVerificationToken('temp_verified_' + Date.now());
   };
