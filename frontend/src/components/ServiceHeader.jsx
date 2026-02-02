@@ -25,9 +25,9 @@ const serviceThemes = {
   proton: {
     name: 'Proton',
     path: '/proton',
-    bgGradient: 'from-blue-600 via-blue-700 to-blue-800',
-    headerBg: 'bg-blue-500',
-    tabBg: 'bg-blue-600/50',
+    bgGradient: 'from-[#0c1e3c] to-[#1a365d]',
+    headerBg: 'bg-[#0c1e3c]',
+    tabBg: 'bg-[#1a365d]/50',
     isLight: false
   },
   pharmacy: {
