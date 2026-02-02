@@ -1254,19 +1254,19 @@ const Proton = () => {
             </div>
 
             {/* Holistic Women Care Section - Evara */}
-            <div className="py-4 bg-gradient-to-br from-blue-100/50 via-indigo-50/30 to-white rounded-2xl px-4 -mx-4" data-testid="womens-care-proton-section">
+            <div className="py-4 bg-gradient-to-br from-[#0c1e3c]/10 via-[#1a365d]/5 to-white rounded-2xl px-4 -mx-4" data-testid="womens-care-proton-section">
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">👩‍⚕️</span>
                   <h2 className="text-lg font-bold text-slate-800">Holistic Women Care</h2>
-                  <span className="px-2 py-0.5 bg-purple-600 text-white text-[10px] font-bold rounded-full flex items-center gap-1">
+                  <span className="px-2 py-0.5 bg-[#0c1e3c] text-white text-[10px] font-bold rounded-full flex items-center gap-1">
                     ✨ Evara
                   </span>
                 </div>
                 <button 
                   onClick={() => navigate('/evara')}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                  className="text-sm text-[#0c1e3c] hover:text-[#1a365d] font-medium flex items-center gap-1"
                 >
                   View All <ChevronRight className="w-4 h-4" />
                 </button>
@@ -1308,7 +1308,7 @@ const Proton = () => {
                     data-testid={`womens-care-${item.id}`}
                   >
                     {/* Image Container */}
-                    <div className="w-24 h-24 rounded-2xl overflow-hidden mb-2 border-2 border-blue-200 shadow-sm group-hover:border-blue-400 group-hover:shadow-md transition-all duration-300">
+                    <div className="w-24 h-24 rounded-2xl overflow-hidden mb-2 border-2 border-[#0c1e3c]/20 shadow-sm group-hover:border-[#0c1e3c]/40 group-hover:shadow-md transition-all duration-300">
                       <img 
                         src={item.image} 
                         alt={item.name}
