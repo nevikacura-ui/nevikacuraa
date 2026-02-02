@@ -85,7 +85,7 @@ const QuickReorder = () => {
       const testNames = lastTests.map(t => t.name || t.test_name || t);
       sessionStorage.setItem('reorder_tests', JSON.stringify(testNames));
       toast.success('Tests added! Redirecting to checkout...');
-      navigate('/proton?reorder=true');
+      navigate('/mango?reorder=true');
     } catch (error) {
       toast.error('Failed to reorder tests');
     } finally {
@@ -148,7 +148,7 @@ const QuickReorder = () => {
               <Button onClick={() => navigate('/diagyn')} variant="outline">
                 <Stethoscope className="w-4 h-4 mr-2" /> Book Doctor
               </Button>
-              <Button onClick={() => navigate('/proton')} variant="outline">
+              <Button onClick={() => navigate('/mango')} variant="outline">
                 <TestTube className="w-4 h-4 mr-2" /> Book Tests
               </Button>
               <Button onClick={() => navigate('/pharmacy')} variant="outline">
@@ -255,7 +255,7 @@ const QuickReorder = () => {
               ) : (
                 <div className="p-4 text-center text-gray-500">
                   <p>No previous test orders</p>
-                  <Button variant="link" onClick={() => navigate('/proton')}>
+                  <Button variant="link" onClick={() => navigate('/mango')}>
                     Book your first test →
                   </Button>
                 </div>
@@ -330,7 +330,7 @@ const QuickReorder = () => {
               <Button 
                 variant="outline" 
                 className="flex flex-col h-auto py-4 hover:bg-purple-50 hover:border-purple-300"
-                onClick={() => navigate('/proton')}
+                onClick={() => navigate('/mango')}
               >
                 <TestTube className="w-5 h-5 mb-1 text-purple-600" />
                 <span className="text-xs">Book Tests</span>

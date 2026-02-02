@@ -248,7 +248,7 @@ const MyHealth = () => {
                     <Calendar className="w-6 h-6 text-blue-500" />
                     <span>Book Appointment</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex flex-col gap-2" onClick={() => navigate('/proton')}>
+                  <Button variant="outline" className="h-auto py-4 flex flex-col gap-2" onClick={() => navigate('/mango')}>
                     <FlaskConical className="w-6 h-6 text-purple-500" />
                     <span>Book Lab Test</span>
                   </Button>

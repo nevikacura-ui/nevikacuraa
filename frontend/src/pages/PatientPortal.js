@@ -587,7 +587,7 @@ const PatientPortal = () => {
                     <div className="text-center py-8 text-gray-500">
                       <FlaskConical className="w-12 h-12 mx-auto mb-3 opacity-30" />
                       <p>No lab tests booked</p>
-                      <Button className="mt-4" onClick={() => navigate('/proton')}>Book Lab Test</Button>
+                      <Button className="mt-4" onClick={() => navigate('/mango')}>Book Lab Test</Button>
                     </div>
                   ) : (
                     <div className="space-y-3">
