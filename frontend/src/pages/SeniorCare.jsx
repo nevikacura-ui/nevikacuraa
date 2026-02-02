@@ -49,7 +49,7 @@ const SeniorCare = () => {
       id: 'proton',
       icon: FlaskConical,
       title: 'Senior Screening Drive',
-      subtitle: 'Proton Diagnostics Program',
+      subtitle: 'Mango Health Labs Program',
       color: 'bg-indigo-500',
       lightColor: 'bg-indigo-50',
       offerings: [

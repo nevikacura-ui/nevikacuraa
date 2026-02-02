@@ -19,7 +19,7 @@ const AboutUs = () => {
       color: "bg-pink-500"
     },
     {
-      name: "Proton Diagnostics",
+      name: "Mango Health Labs",
       description: "Comprehensive diagnostic tests with home sample collection and quick reports",
       icon: TestTube,
       color: "bg-blue-500"
