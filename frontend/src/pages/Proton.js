@@ -664,11 +664,24 @@ const Proton = () => {
   ];
 
   const popularTests = [
-    { id: 'cbc', name: 'CBC (Complete Blood Count)', originalPrice: 650, price: 500, discount: 23, reportTime: '6 hours' },
-    { id: 'vitamin-d', name: 'Vitamin D', originalPrice: 1100, price: 850, discount: 23, reportTime: '24 hours' },
-    { id: 'vitamin-b12', name: 'Vitamin B12', originalPrice: 650, price: 500, discount: 23, reportTime: '24 hours' },
-    { id: 'hba1c', name: 'HbA1c (Glycated Hemoglobin)', originalPrice: 600, price: 450, discount: 25, reportTime: '12 hours' },
-    { id: 'tsh', name: 'TSH', originalPrice: 280, price: 200, discount: 29, reportTime: '12 hours' }
+    { id: 'cbc', name: 'CBC (Complete Blood Count)', originalPrice: 650, price: 500, discount: 23, reportTime: '6 hours', testsIncluded: 24 },
+    { id: 'vitamin-d', name: 'Vitamin D (25-Hydroxy)', originalPrice: 1100, price: 850, discount: 23, reportTime: '24 hours', testsIncluded: 1 },
+    { id: 'vitamin-b12', name: 'Vitamin B12', originalPrice: 650, price: 500, discount: 23, reportTime: '24 hours', testsIncluded: 1 },
+    { id: 'hba1c', name: 'HbA1c (Glycated Hemoglobin)', originalPrice: 600, price: 450, discount: 25, reportTime: '12 hours', testsIncluded: 1 },
+    { id: 'tsh', name: 'TSH (Thyroid Stimulating Hormone)', originalPrice: 280, price: 200, discount: 29, reportTime: '12 hours', testsIncluded: 1 },
+    { id: 'fbs', name: 'Fasting Blood Sugar (FBS)', originalPrice: 100, price: 75, discount: 25, reportTime: '6 hours', testsIncluded: 1 },
+    { id: 'ppbs', name: 'Post Prandial Blood Sugar (PPBS)', originalPrice: 100, price: 75, discount: 25, reportTime: '6 hours', testsIncluded: 1 },
+    { id: 'lipid', name: 'Lipid Profile (Complete)', originalPrice: 700, price: 500, discount: 29, reportTime: '12 hours', testsIncluded: 8 },
+    { id: 'lft', name: 'Liver Function Test (LFT)', originalPrice: 600, price: 450, discount: 25, reportTime: '12 hours', testsIncluded: 12 },
+    { id: 'rft', name: 'Kidney Function Test (RFT)', originalPrice: 800, price: 600, discount: 25, reportTime: '12 hours', testsIncluded: 8 },
+    { id: 'uric', name: 'Uric Acid', originalPrice: 280, price: 200, discount: 29, reportTime: '6 hours', testsIncluded: 1 },
+    { id: 'creatinine', name: 'Creatinine', originalPrice: 250, price: 180, discount: 28, reportTime: '6 hours', testsIncluded: 1 },
+    { id: 'urine', name: 'Urine Routine & Microscopy', originalPrice: 200, price: 150, discount: 25, reportTime: '6 hours', testsIncluded: 15 },
+    { id: 'thyroid-free', name: 'Thyroid Profile (Free T3, T4, TSH)', originalPrice: 750, price: 550, discount: 27, reportTime: '12 hours', testsIncluded: 3 },
+    { id: 'iron', name: 'Iron Studies (Iron, TIBC, Ferritin)', originalPrice: 800, price: 600, discount: 25, reportTime: '24 hours', testsIncluded: 4 },
+    { id: 'amh', name: 'AMH (Anti-Mullerian Hormone)', originalPrice: 2000, price: 1550, discount: 23, reportTime: '48 hours', testsIncluded: 1 },
+    { id: 'sgpt', name: 'SGPT (ALT)', originalPrice: 250, price: 180, discount: 28, reportTime: '6 hours', testsIncluded: 1 },
+    { id: 'sgot', name: 'SGOT (AST)', originalPrice: 250, price: 180, discount: 28, reportTime: '6 hours', testsIncluded: 1 },
   ];
 
   // Handle package selection
