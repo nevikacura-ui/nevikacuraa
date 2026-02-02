@@ -1063,12 +1063,6 @@ const Pharmacy = () => {
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
       </div>
 
-      {/* Orange Category Banner - Medicine Categories */}
-      <div className="bg-gradient-to-r from-orange-600 to-amber-600 py-3">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
-            {[
-
       {/* Professional Features Carousel - Orange Pharmacy */}
       <div className="bg-white py-6">
         <div className="max-w-5xl mx-auto px-4">
