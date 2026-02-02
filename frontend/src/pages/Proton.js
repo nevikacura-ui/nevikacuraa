@@ -26,7 +26,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // ============================================
-// DESIGN SYSTEM - Zepto Blue Theme for Proton
+// DESIGN SYSTEM - Zepto Blue Theme for Mango Health Labs
 // ============================================
 const theme = {
   primary: '#3292FF',      // Zepto Blue
@@ -157,7 +157,7 @@ const pathologyTests = {
   ],
   packages: [
     'Diabetes Screening Package', 'Diabetes Basic Package', 'Diabetes Advance Package',
-    'Proton Basic Package', 'Proton Total Package', 'Proton Xclusive Package',
+    'Mango Basic Package', 'Mango Total Package', 'Mango Xclusive Package',
     'Cardiac Risk Profile', 'Anemia Profile', 'Arthritis Panel', 'Fever Panel',
     'Pre-Operative Profile', 'Master Health Checkup', 'Home Visit (0-5 km)',
     'Home Visit (5-10 km)', 'Home Visit (10-15 km)'
@@ -282,6 +282,7 @@ const TestCheckbox = ({ test, checked, onToggle }) => (
 // MAIN PROTON COMPONENT
 // ============================================
 const Proton = () => {
+  // Mango Health Labs - Diagnostic Center
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
@@ -2039,7 +2040,7 @@ const Proton = () => {
                   <h4 className="font-medium text-[#1E293B] mb-3">Collection Centers</h4>
                   <div className="space-y-3">
                     <div className="bg-white rounded-lg p-3 border border-slate-100">
-                      <p className="font-semibold text-sm text-[#1E293B]">Proton Diagnostics - Naigaon</p>
+                      <p className="font-semibold text-sm text-[#1E293B]">Mango Health Labs - Naigaon</p>
                       <p className="text-xs text-slate-500 mt-1">Shop no 3, Sai Darshan, Near Don Bosco School, Naigaon East 401208</p>
                       <p className="text-xs text-slate-400">Mon-Sat: 7:00 AM - 7:00 PM</p>
                     </div>
