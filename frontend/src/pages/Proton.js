@@ -867,7 +867,7 @@ const Proton = () => {
 
   const getCurrentCategoryTests = () => {
     const category = testCategories.find(c => c.id === activeCategory);
-    return category ? category.tests : [];
+    return category ? category.tests.map(t => t.name) : [];
   };
 
   // Get all tests from all categories for search
