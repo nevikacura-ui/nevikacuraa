@@ -44,7 +44,7 @@ export const spotlightServices = [
   {
     id: 'proton-spotlight',
     title: 'Full Body Checkup',
-    subtitle: 'Proton Diagnostics',
+    subtitle: 'Mango Health Labs',
     description: 'Complete health screening with 50+ tests at special rates',
     cta: 'View Packages',
     path: '/proton',
@@ -107,7 +107,7 @@ export const testimonials = [
     location: "Bhayandar",
     rating: 5,
     text: "Got my full body checkup done at Proton. Professional staff, quick results, and the health dashboard helps me track everything.",
-    service: "Proton Diagnostics",
+    service: "Mango Health Labs",
     avatar: "SK"
   }
 ];

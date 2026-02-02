@@ -70,7 +70,7 @@ const SmartReminders = () => {
       type: 'labtest',
       title: 'HbA1c Test',
       datetime: '2026-01-30 07:30 AM',
-      location: 'Proton Diagnostics',
+      location: 'Mango Health Labs',
       status: 'upcoming',
       instructions: 'Fasting required - 8 hours'
     }

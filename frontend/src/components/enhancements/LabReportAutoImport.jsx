@@ -17,8 +17,8 @@ const LabReportAutoImport = () => {
 
   const fetchReports = () => {
     setReports([
-      { id: '1', name: 'Complete Blood Count', lab: 'Proton Diagnostics', date: '2026-01-25', status: 'imported', category: 'Hematology' },
-      { id: '2', name: 'HbA1c Test', lab: 'Proton Diagnostics', date: '2026-01-20', status: 'imported', category: 'Diabetes' },
+      { id: '1', name: 'Complete Blood Count', lab: 'Mango Health Labs', date: '2026-01-25', status: 'imported', category: 'Hematology' },
+      { id: '2', name: 'HbA1c Test', lab: 'Mango Health Labs', date: '2026-01-20', status: 'imported', category: 'Diabetes' },
       { id: '3', name: 'Lipid Profile', lab: 'External Lab', date: '2026-01-15', status: 'imported', category: 'Cardiac' }
     ]);
   };
