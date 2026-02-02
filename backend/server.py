@@ -665,17 +665,9 @@ VAPID_CLAIMS_EMAIL = os.environ.get('VAPID_CLAIMS_EMAIL', 'nevikacura@gmail.com'
 if RESEND_API_KEY:
     resend.api_key = RESEND_API_KEY
 
-# Initialize Twilio client
+# Twilio client - DISABLED (OTP/SMS not required)
 twilio_client = None
-if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
-    try:
-        from twilio.rest import Client as TwilioClient
-        twilio_client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-        logger.info("Twilio client initialized successfully")
-        if TWILIO_VERIFY_SERVICE_SID:
-            logger.info(f"Twilio Verify Service configured: {TWILIO_VERIFY_SERVICE_SID[:10]}...")
-    except Exception as e:
-        logger.warning(f"Failed to initialize Twilio client: {e}")
+logger.info("Twilio SMS/OTP disabled - bookings work without OTP verification")
 
 async def send_whatsapp_notification(to_number: str, message: str):
     """Send WhatsApp notification using Twilio WhatsApp API"""
