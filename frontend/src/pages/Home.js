@@ -384,7 +384,7 @@ const Home = () => {
     },
     {
       id: 'proton',
-      name: 'Proton Diagnostics',
+      name: 'Mango Health Labs',
       description: 'Book lab tests & health checkups',
       logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
       path: '/proton',

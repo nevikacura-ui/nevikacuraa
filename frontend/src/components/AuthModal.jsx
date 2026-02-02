@@ -33,7 +33,7 @@ const AuthModal = ({ open, onClose }) => {
     { id: 'evara', name: 'Evara', description: "Women's Wellness & Care", icon: '🌸', color: 'pink' },
     { id: 'glydex', name: 'Glydex', description: 'Diabetes Care Portal', icon: '💚', color: 'teal' },
     { id: 'diagyn', name: 'DiaGyn Healthcare', description: 'Doctor Appointments', icon: '👨‍⚕️', color: 'blue' },
-    { id: 'proton', name: 'Proton Diagnostics', description: 'Lab Tests & Checkups', icon: '🔬', color: 'indigo' },
+    { id: 'proton', name: 'Mango Health Labs', description: 'Lab Tests & Checkups', icon: '🥭', color: 'orange' },
     { id: 'pharmacy', name: 'Orange Pharmacy', description: 'Medicine Orders', icon: '💊', color: 'orange' },
   ];
 
