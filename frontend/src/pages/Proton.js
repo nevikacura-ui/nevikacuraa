@@ -1920,6 +1920,124 @@ const Proton = () => {
         allowCOD={true}
         returnPath="/proton"
       />
+
+      {/* Test Details Modal */}
+      {selectedTestDetails && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setSelectedTestDetails(null)}>
+          <div 
+            className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Green Gradient Header */}
+            <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 p-6 text-white relative">
+              {/* Close Button */}
+              <button 
+                onClick={() => setSelectedTestDetails(null)}
+                className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              {/* Test Badge */}
+              <span className="inline-block bg-emerald-800/60 text-white text-xs font-bold px-3 py-1.5 rounded-md mb-3">
+                Test Details
+              </span>
+              
+              {/* Test Name */}
+              <h2 className="text-2xl font-bold mb-4 pr-10">{selectedTestDetails.name}</h2>
+              
+              {/* Price Section */}
+              <div className="flex items-center gap-4">
+                <div>
+                  <p className="text-white/60 text-sm mb-1">MRP</p>
+                  <span className="text-white/60 line-through text-lg">₹{selectedTestDetails.originalPrice}</span>
+                </div>
+                <div>
+                  <p className="text-white/60 text-sm mb-1">Our Price</p>
+                  <span className="text-4xl font-bold">₹{selectedTestDetails.price}</span>
+                </div>
+                <span className="bg-yellow-400 text-slate-800 text-sm font-bold px-3 py-1.5 rounded-lg">
+                  {selectedTestDetails.discount}% OFF
+                </span>
+              </div>
+            </div>
+            
+            {/* Content Section */}
+            <div className="p-6">
+              {/* Description */}
+              <div className="mb-6">
+                <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-2">About This Test</h3>
+                <p className="text-slate-700 leading-relaxed">{selectedTestDetails.description}</p>
+              </div>
+              
+              {/* Info Grid */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-slate-50 rounded-xl p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                      <FileText className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500">Reports Within</p>
+                      <p className="text-lg font-bold text-slate-800">{selectedTestDetails.reportTime}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-slate-50 rounded-xl p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <FlaskConical className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500">Tests Included</p>
+                      <p className="text-lg font-bold text-slate-800">{selectedTestDetails.testsIncluded} Parameter{selectedTestDetails.testsIncluded > 1 ? 's' : ''}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Features */}
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 mb-6">
+                <div className="flex flex-wrap gap-3">
+                  <div className="flex items-center gap-2 text-sm text-slate-700">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    <span>Home Sample Collection</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-700">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    <span>NABL Certified Labs</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-700">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    <span>Free Report Consultation</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  className="flex-1 rounded-xl border-2 border-slate-300 text-slate-600 hover:bg-slate-50 font-bold py-4"
+                  onClick={() => setSelectedTestDetails(null)}
+                >
+                  Close
+                </Button>
+                <Button
+                  className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-4 shadow-lg"
+                  onClick={() => {
+                    handleTestSelect(selectedTestDetails);
+                    setSelectedTestDetails(null);
+                  }}
+                >
+                  Add to Cart - ₹{selectedTestDetails.price}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
