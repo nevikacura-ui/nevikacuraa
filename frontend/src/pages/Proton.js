@@ -852,14 +852,14 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Trust Badges - Zepto Blue Style */}
+          {/* Trust Badges - Navy Blue Style */}
           <div className="max-w-6xl mx-auto px-4 mt-6">
             <div className="flex justify-between items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
               {[
-                { icon: Shield, title: 'Certified Lab', color: 'text-blue-600', bg: 'bg-blue-100' },
-                { icon: Clock, title: '8 AM - 10 PM', color: 'text-indigo-600', bg: 'bg-indigo-100' },
-                { icon: CheckCircle2, title: '4.9/5 on Google', color: 'text-purple-600', bg: 'bg-purple-100' },
-                { icon: Home, title: 'Home Collection', color: 'text-blue-600', bg: 'bg-blue-100' }
+                { icon: Shield, title: 'Certified Lab', color: 'text-[#0c1e3c]', bg: 'bg-[#0c1e3c]/10' },
+                { icon: Clock, title: '8 AM - 10 PM', color: 'text-[#1a365d]', bg: 'bg-[#1a365d]/10' },
+                { icon: CheckCircle2, title: '4.9/5 on Google', color: 'text-[#0c1e3c]', bg: 'bg-[#0c1e3c]/10' },
+                { icon: Home, title: 'Home Collection', color: 'text-[#1a365d]', bg: 'bg-[#1a365d]/10' }
               ].map((badge, idx) => (
                 <div key={idx} className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm min-w-fit">
                   <div className={`w-8 h-8 rounded-full ${badge.bg} flex items-center justify-center`}>
@@ -879,7 +879,7 @@ const Proton = () => {
               </h2>
               <button 
                 onClick={() => setCurrentStep(1)}
-                className="text-blue-600 font-semibold text-sm flex items-center gap-1 hover:text-blue-700"
+                className="text-[#0c1e3c] font-semibold text-sm flex items-center gap-1 hover:text-[#1a365d]"
               >
                 View All <ChevronRight className="w-4 h-4" />
               </button>
@@ -889,11 +889,11 @@ const Proton = () => {
               {popularPackages.map((pkg, index) => {
                 // Varied gradient colors for visual distinction
                 const cardGradients = [
-                  'from-purple-600 to-indigo-600',
+                  'from-[#0c1e3c] to-[#1a365d]',
                   'from-pink-500 to-rose-600',
                   'from-teal-500 to-cyan-600',
                   'from-orange-500 to-amber-600',
-                  'from-violet-600 to-purple-600'
+                  'from-[#1a365d] to-[#2d4a6f]'
                 ];
                 const gradient = cardGradients[index % cardGradients.length];
                 
@@ -924,11 +924,11 @@ const Proton = () => {
                   <div className="p-4 bg-slate-50">
                     <div className="flex items-center justify-between text-sm text-slate-600 mb-4">
                       <div className="flex items-center gap-2">
-                        <FlaskConical className="w-4 h-4 text-blue-500" />
+                        <FlaskConical className="w-4 h-4 text-[#0c1e3c]" />
                         <span><strong>{pkg.parameters}</strong> parameters</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-indigo-500" />
+                        <FileText className="w-4 h-4 text-[#1a365d]" />
                         <span>Reports: <strong>{pkg.reportTime}</strong></span>
                       </div>
                     </div>
@@ -937,7 +937,7 @@ const Proton = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 rounded-lg border-blue-300 text-blue-600 hover:bg-blue-50 font-semibold"
+                        className="flex-1 rounded-lg border-[#0c1e3c]/30 text-[#0c1e3c] hover:bg-[#0c1e3c]/5 font-semibold"
                         onClick={() => {
                           toast.info(`${pkg.name}: ${pkg.tests.join(', ')}`);
                         }}
@@ -946,7 +946,7 @@ const Proton = () => {
                       </Button>
                       <Button
                         size="sm"
-                        className="flex-1 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-semibold"
+                        className="flex-1 rounded-lg bg-gradient-to-r from-[#0c1e3c] to-[#1a365d] hover:from-[#1a365d] hover:to-[#2d4a6f] text-white font-semibold"
                         onClick={() => handlePackageSelect(pkg)}
                       >
                         Add to Cart
