@@ -1139,6 +1139,12 @@ const Pharmacy = () => {
           </div>
         </div>
       </div>
+
+      {/* Orange Category Banner - Medicine Categories */}
+      <div className="bg-gradient-to-r from-orange-600 to-amber-600 py-3">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
+            {[
               { icon: Heart, label: 'Heart & BP' },
               { icon: Activity, label: 'Diabetes Care' },
               { icon: Sparkles, label: 'Kids Health' },
