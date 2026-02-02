@@ -1068,6 +1068,77 @@ const Pharmacy = () => {
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
             {[
+
+      {/* Professional Features Carousel - Orange Pharmacy */}
+      <div className="bg-white py-6">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
+            {/* Slide 1: Genuine Medicines */}
+            <div className="min-w-[300px] md:min-w-[380px] flex-shrink-0 snap-center">
+              <div className="relative h-44 md:h-52 rounded-2xl overflow-hidden shadow-lg">
+                <img 
+                  src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&h=400&fit=crop"
+                  alt="Genuine Medicines"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-600/90 via-orange-500/70 to-transparent"></div>
+                <div className="absolute inset-0 p-5 flex flex-col justify-center">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
+                    <span className="text-white text-xs font-bold">100% Authentic</span>
+                  </div>
+                  <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Genuine Medicines</h3>
+                  <p className="text-white/90 text-sm">Sourced directly from licensed manufacturers</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Slide 2: Fast Delivery */}
+            <div className="min-w-[300px] md:min-w-[380px] flex-shrink-0 snap-center">
+              <div className="relative h-44 md:h-52 rounded-2xl overflow-hidden shadow-lg">
+                <img 
+                  src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=400&fit=crop"
+                  alt="Fast Delivery"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/90 via-emerald-500/70 to-transparent"></div>
+                <div className="absolute inset-0 p-5 flex flex-col justify-center">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
+                    <span className="text-white text-xs font-bold">Same Day Delivery</span>
+                  </div>
+                  <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Fast & Accurate Delivery</h3>
+                  <p className="text-white/90 text-sm">Medicines delivered safely to your doorstep</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Slide 3: Medicine Refill Reminder */}
+            <div className="min-w-[300px] md:min-w-[380px] flex-shrink-0 snap-center">
+              <div className="relative h-44 md:h-52 rounded-2xl overflow-hidden shadow-lg">
+                <img 
+                  src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=400&fit=crop"
+                  alt="Medicine Reminder"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-blue-500/70 to-transparent"></div>
+                <div className="absolute inset-0 p-5 flex flex-col justify-center">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
+                    <span className="text-white text-xs font-bold">Never Miss a Dose</span>
+                  </div>
+                  <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Medicine Refill Reminder</h3>
+                  <p className="text-white/90 text-sm">Get notified when it's time to reorder</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Scroll Indicator Dots */}
+          <div className="flex justify-center gap-2 mt-3">
+            {[1, 2, 3].map((dot) => (
+              <div key={dot} className="w-2 h-2 rounded-full bg-orange-300"></div>
+            ))}
+          </div>
+        </div>
+      </div>
               { icon: Heart, label: 'Heart & BP' },
               { icon: Activity, label: 'Diabetes Care' },
               { icon: Sparkles, label: 'Kids Health' },
