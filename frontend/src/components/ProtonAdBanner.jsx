@@ -13,7 +13,7 @@ const ProtonAdBanner = () => {
   return (
     <div 
       className="mx-4 my-4 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-3xl overflow-hidden shadow-lg border border-orange-100 cursor-pointer hover:shadow-xl transition-all"
-      onClick={() => navigate('/proton')}
+      onClick={() => navigate('/mango')}}
       data-testid="mango-ad-banner"
     >
       <div className="flex items-center justify-between p-5">

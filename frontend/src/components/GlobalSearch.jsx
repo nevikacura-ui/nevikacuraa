@@ -20,7 +20,7 @@ const GlobalSearch = ({ className = '' }) => {
     // Services
     { type: 'service', name: 'Book Appointment', subtitle: 'Schedule a doctor visit', icon: Calendar, path: '/diagyn', keywords: ['appointment', 'book', 'doctor', 'visit', 'schedule'] },
     { type: 'service', name: 'Order Medicines', subtitle: 'Pharmacy & prescriptions', icon: Pill, path: '/pharmacy', keywords: ['medicine', 'pharmacy', 'order', 'prescription', 'drug'] },
-    { type: 'service', name: 'Lab Tests', subtitle: 'Book diagnostic tests', icon: TestTube, path: '/proton', keywords: ['lab', 'test', 'diagnostic', 'blood', 'report'] },
+    { type: 'service', name: 'Lab Tests', subtitle: 'Book diagnostic tests', icon: TestTube, path: '/mango', keywords: ['lab', 'test', 'diagnostic', 'blood', 'report'] },
     { type: 'service', name: 'Teleconsultation', subtitle: 'Video call with doctor', icon: User, path: '/teleconsultation', keywords: ['video', 'call', 'online', 'teleconsult', 'virtual'] },
     
     // Specialty Services
@@ -29,10 +29,10 @@ const GlobalSearch = ({ className = '' }) => {
     { type: 'specialty', name: "Kids Health", subtitle: 'Alyne - Pediatric care', icon: Baby, path: '/alyne', keywords: ['kids', 'child', 'pediatric', 'alyne', 'baby'] },
     
     // Tests
-    { type: 'test', name: 'Full Body Checkup', subtitle: 'Complete health screening', icon: TestTube, path: '/proton', keywords: ['full body', 'checkup', 'complete', 'health'] },
-    { type: 'test', name: 'Thyroid Profile', subtitle: 'T3, T4, TSH tests', icon: TestTube, path: '/proton', keywords: ['thyroid', 't3', 't4', 'tsh'] },
-    { type: 'test', name: 'Pregnancy Test', subtitle: 'Beta HCG & more', icon: TestTube, path: '/proton', keywords: ['pregnancy', 'hcg', 'beta'] },
-    { type: 'test', name: 'Diabetes Panel', subtitle: 'HbA1c, Fasting glucose', icon: TestTube, path: '/proton', keywords: ['diabetes', 'hba1c', 'glucose', 'sugar'] },
+    { type: 'test', name: 'Full Body Checkup', subtitle: 'Complete health screening', icon: TestTube, path: '/mango', keywords: ['full body', 'checkup', 'complete', 'health'] },
+    { type: 'test', name: 'Thyroid Profile', subtitle: 'T3, T4, TSH tests', icon: TestTube, path: '/mango', keywords: ['thyroid', 't3', 't4', 'tsh'] },
+    { type: 'test', name: 'Pregnancy Test', subtitle: 'Beta HCG & more', icon: TestTube, path: '/mango', keywords: ['pregnancy', 'hcg', 'beta'] },
+    { type: 'test', name: 'Diabetes Panel', subtitle: 'HbA1c, Fasting glucose', icon: TestTube, path: '/mango', keywords: ['diabetes', 'hba1c', 'glucose', 'sugar'] },
   ];
 
   // Filter results based on query

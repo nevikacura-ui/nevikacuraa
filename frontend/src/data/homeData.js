@@ -47,7 +47,7 @@ export const spotlightServices = [
     subtitle: 'Mango Health Labs',
     description: 'Complete health screening with 50+ tests at special rates',
     cta: 'View Packages',
-    path: '/proton',
+    path: '/mango',
     gradient: 'from-blue-500 to-cyan-500',
     bgImage: 'from-blue-50 to-cyan-100'
   },

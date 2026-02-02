@@ -19,7 +19,7 @@ const BottomNav = () => {
     if (path === '/' || path === '/home') return 'home';
     if (path.includes('/pharmacy')) return 'pharmacy';
     if (path.includes('/diagyn')) return 'diagyn';
-    if (path.includes('/proton')) return 'lab';
+    if (path.includes('/mango')) return 'lab';
     if (path.includes('/patient-portal') || path.includes('/profile')) return 'profile';
     return 'home';
   };
@@ -105,7 +105,7 @@ const BottomNav = () => {
       id: 'lab', 
       label: 'Lab Tests', 
       icon: TestTube, 
-      path: '/proton',
+      path: '/mango',
       color: 'blue'
     },
     { 

@@ -26,7 +26,7 @@ const QuickActions = ({ className = '' }) => {
       id: 'lab-test',
       label: 'Lab Test',
       icon: TestTube,
-      path: '/proton',
+      path: '/mango',
       gradient: 'from-blue-500 to-indigo-500',
       shadowColor: 'shadow-blue-500/30'
     },
