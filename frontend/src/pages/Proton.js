@@ -1496,12 +1496,11 @@ const Proton = () => {
                     type="email"
                     value={patientInfo.email || ''}
                     onChange={(e) => setPatientInfo({ ...patientInfo, email: e.target.value })}
-                    placeholder="your@email.com"
-                    className="mt-1.5 rounded-xl border-slate-200 focus:border-[#5FA8D3]"
+                    placeholder="your@email.com (Optional)"
+                    className="mt-1.5 rounded-xl border-slate-200 focus:border-[#0c1e3c]"
                     data-testid="patient-email"
-                    required
                   />
-                  <p className="text-xs text-slate-400 mt-1">Required - We&apos;ll send confirmations and test reports to this email.</p>
+                  <p className="text-xs text-slate-400 mt-1">Optional - We&apos;ll send confirmations and test reports to this email.</p>
                 </div>
               </div>
             </Card>
@@ -1509,7 +1508,7 @@ const Proton = () => {
             {/* Sample Collection Type */}
             <Card className="p-5 rounded-2xl border-slate-200" data-testid="sample-collection-card">
               <h3 className="font-medium text-[#1E293B] mb-4 flex items-center gap-2">
-                <Home className="w-4 h-4 text-[#5FA8D3]" />
+                <Home className="w-4 h-4 text-[#0c1e3c]" />
                 Sample Collection
               </h3>
               <div className="grid grid-cols-2 gap-4">
