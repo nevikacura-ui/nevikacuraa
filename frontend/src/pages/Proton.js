@@ -664,25 +664,28 @@ const Proton = () => {
   ];
 
   const popularTests = [
-    { id: 'cbc', name: 'CBC (Complete Blood Count)', originalPrice: 650, price: 500, discount: 23, reportTime: '6 hours', testsIncluded: 24 },
-    { id: 'vitamin-d', name: 'Vitamin D (25-Hydroxy)', originalPrice: 1100, price: 850, discount: 23, reportTime: '24 hours', testsIncluded: 1 },
-    { id: 'vitamin-b12', name: 'Vitamin B12', originalPrice: 650, price: 500, discount: 23, reportTime: '24 hours', testsIncluded: 1 },
-    { id: 'hba1c', name: 'HbA1c (Glycated Hemoglobin)', originalPrice: 600, price: 450, discount: 25, reportTime: '12 hours', testsIncluded: 1 },
-    { id: 'tsh', name: 'TSH (Thyroid Stimulating Hormone)', originalPrice: 280, price: 200, discount: 29, reportTime: '12 hours', testsIncluded: 1 },
-    { id: 'fbs', name: 'Fasting Blood Sugar (FBS)', originalPrice: 100, price: 75, discount: 25, reportTime: '6 hours', testsIncluded: 1 },
-    { id: 'ppbs', name: 'Post Prandial Blood Sugar (PPBS)', originalPrice: 100, price: 75, discount: 25, reportTime: '6 hours', testsIncluded: 1 },
-    { id: 'lipid', name: 'Lipid Profile (Complete)', originalPrice: 700, price: 500, discount: 29, reportTime: '12 hours', testsIncluded: 8 },
-    { id: 'lft', name: 'Liver Function Test (LFT)', originalPrice: 600, price: 450, discount: 25, reportTime: '12 hours', testsIncluded: 12 },
-    { id: 'rft', name: 'Kidney Function Test (RFT)', originalPrice: 800, price: 600, discount: 25, reportTime: '12 hours', testsIncluded: 8 },
-    { id: 'uric', name: 'Uric Acid', originalPrice: 280, price: 200, discount: 29, reportTime: '6 hours', testsIncluded: 1 },
-    { id: 'creatinine', name: 'Creatinine', originalPrice: 250, price: 180, discount: 28, reportTime: '6 hours', testsIncluded: 1 },
-    { id: 'urine', name: 'Urine Routine & Microscopy', originalPrice: 200, price: 150, discount: 25, reportTime: '6 hours', testsIncluded: 15 },
-    { id: 'thyroid-free', name: 'Thyroid Profile (Free T3, T4, TSH)', originalPrice: 750, price: 550, discount: 27, reportTime: '12 hours', testsIncluded: 3 },
-    { id: 'iron', name: 'Iron Studies (Iron, TIBC, Ferritin)', originalPrice: 800, price: 600, discount: 25, reportTime: '24 hours', testsIncluded: 4 },
-    { id: 'amh', name: 'AMH (Anti-Mullerian Hormone)', originalPrice: 2000, price: 1550, discount: 23, reportTime: '48 hours', testsIncluded: 1 },
-    { id: 'sgpt', name: 'SGPT (ALT)', originalPrice: 250, price: 180, discount: 28, reportTime: '6 hours', testsIncluded: 1 },
-    { id: 'sgot', name: 'SGOT (AST)', originalPrice: 250, price: 180, discount: 28, reportTime: '6 hours', testsIncluded: 1 },
+    { id: 'cbc', name: 'CBC (Complete Blood Count)', originalPrice: 650, price: 500, discount: 23, reportTime: '6 hours', testsIncluded: 24, description: 'A comprehensive blood test that evaluates your overall health by measuring red blood cells, white blood cells, hemoglobin, hematocrit, and platelets. Helps detect infections, anemia, blood disorders, and immune system conditions.' },
+    { id: 'vitamin-d', name: 'Vitamin D (25-Hydroxy)', originalPrice: 1100, price: 850, discount: 23, reportTime: '24 hours', testsIncluded: 1, description: 'Measures the level of Vitamin D in your blood, essential for bone health, calcium absorption, and immune function. Low levels can lead to fatigue, bone pain, muscle weakness, and increased risk of osteoporosis.' },
+    { id: 'vitamin-b12', name: 'Vitamin B12', originalPrice: 650, price: 500, discount: 23, reportTime: '24 hours', testsIncluded: 1, description: 'Checks Vitamin B12 levels crucial for nerve function, red blood cell formation, and DNA synthesis. Deficiency can cause fatigue, weakness, memory problems, and numbness in hands and feet.' },
+    { id: 'hba1c', name: 'HbA1c (Glycated Hemoglobin)', originalPrice: 600, price: 450, discount: 25, reportTime: '12 hours', testsIncluded: 1, description: 'Measures your average blood sugar levels over the past 2-3 months. Essential for diabetes diagnosis, monitoring, and management. A key indicator of long-term glucose control.' },
+    { id: 'tsh', name: 'TSH (Thyroid Stimulating Hormone)', originalPrice: 280, price: 200, discount: 29, reportTime: '12 hours', testsIncluded: 1, description: 'Evaluates thyroid gland function by measuring TSH levels. Helps detect hypothyroidism (underactive thyroid) or hyperthyroidism (overactive thyroid), which affect metabolism, energy, and weight.' },
+    { id: 'fbs', name: 'Fasting Blood Sugar (FBS)', originalPrice: 100, price: 75, discount: 25, reportTime: '6 hours', testsIncluded: 1, description: 'Measures blood glucose levels after an overnight fast (8-12 hours). Used to screen for diabetes and prediabetes. Normal fasting glucose is below 100 mg/dL.' },
+    { id: 'ppbs', name: 'Post Prandial Blood Sugar (PPBS)', originalPrice: 100, price: 75, discount: 25, reportTime: '6 hours', testsIncluded: 1, description: 'Measures blood sugar levels 2 hours after eating a meal. Helps assess how well your body processes glucose after food intake. Important for diabetes management.' },
+    { id: 'lipid', name: 'Lipid Profile (Complete)', originalPrice: 700, price: 500, discount: 29, reportTime: '12 hours', testsIncluded: 8, description: 'Comprehensive cholesterol test measuring Total Cholesterol, LDL (bad cholesterol), HDL (good cholesterol), Triglycerides, and VLDL. Essential for assessing heart disease risk.' },
+    { id: 'lft', name: 'Liver Function Test (LFT)', originalPrice: 600, price: 450, discount: 25, reportTime: '12 hours', testsIncluded: 12, description: 'Evaluates liver health by measuring enzymes (SGPT, SGOT, ALP), proteins (Albumin, Globulin), and bilirubin levels. Helps detect liver damage, hepatitis, fatty liver, and other liver conditions.' },
+    { id: 'rft', name: 'Kidney Function Test (RFT)', originalPrice: 800, price: 600, discount: 25, reportTime: '12 hours', testsIncluded: 8, description: 'Assesses kidney health by measuring Creatinine, Blood Urea, Uric Acid, and electrolytes. Detects kidney disease, monitors kidney function, and evaluates dehydration or electrolyte imbalances.' },
+    { id: 'uric', name: 'Uric Acid', originalPrice: 280, price: 200, discount: 29, reportTime: '6 hours', testsIncluded: 1, description: 'Measures uric acid levels in blood. High levels can indicate gout, kidney stones, or kidney disease. Also used to monitor chemotherapy patients and those on certain medications.' },
+    { id: 'creatinine', name: 'Creatinine', originalPrice: 250, price: 180, discount: 28, reportTime: '6 hours', testsIncluded: 1, description: 'A key marker of kidney function. Creatinine is a waste product from muscle metabolism filtered by kidneys. Elevated levels may indicate impaired kidney function or dehydration.' },
+    { id: 'urine', name: 'Urine Routine & Microscopy', originalPrice: 200, price: 150, discount: 25, reportTime: '6 hours', testsIncluded: 15, description: 'Complete urine analysis examining color, clarity, pH, protein, glucose, blood, and microscopic elements. Helps detect urinary tract infections, kidney disease, diabetes, and other conditions.' },
+    { id: 'thyroid-free', name: 'Thyroid Profile (Free T3, T4, TSH)', originalPrice: 750, price: 550, discount: 27, reportTime: '12 hours', testsIncluded: 3, description: 'Complete thyroid panel measuring Free T3, Free T4, and TSH hormones. Provides comprehensive assessment of thyroid function for diagnosing and monitoring thyroid disorders.' },
+    { id: 'iron', name: 'Iron Studies (Iron, TIBC, Ferritin)', originalPrice: 800, price: 600, discount: 25, reportTime: '24 hours', testsIncluded: 4, description: 'Comprehensive iron panel measuring Serum Iron, TIBC (Total Iron Binding Capacity), Transferrin Saturation, and Ferritin. Diagnoses iron deficiency anemia, hemochromatosis, and monitors iron therapy.' },
+    { id: 'amh', name: 'AMH (Anti-Mullerian Hormone)', originalPrice: 2000, price: 1550, discount: 23, reportTime: '48 hours', testsIncluded: 1, description: 'Measures ovarian reserve and fertility potential in women. Important for family planning, IVF assessment, and diagnosing conditions like PCOS. Also used in evaluating testicular function in men.' },
+    { id: 'sgpt', name: 'SGPT (ALT)', originalPrice: 250, price: 180, discount: 28, reportTime: '6 hours', testsIncluded: 1, description: 'Liver enzyme test that detects liver cell damage. Elevated SGPT/ALT levels may indicate hepatitis, fatty liver disease, alcohol-related liver damage, or medication side effects.' },
+    { id: 'sgot', name: 'SGOT (AST)', originalPrice: 250, price: 180, discount: 28, reportTime: '6 hours', testsIncluded: 1, description: 'Enzyme found in liver, heart, and muscles. Elevated levels may indicate liver disease, heart attack, or muscle injury. Often tested alongside SGPT for comprehensive liver assessment.' },
   ];
+
+  // State for test details modal
+  const [selectedTestDetails, setSelectedTestDetails] = useState(null);
 
   // Handle package selection
   const handlePackageSelect = (pkg) => {
