@@ -160,7 +160,7 @@ const TestInventoryTab = () => {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Test Inventory - Proton Diagnostics</title>
+        <title>Test Inventory - Mango Health Labs</title>
         <style>
           body { font-family: Arial, sans-serif; padding: 20px; }
           h1 { color: #7c3aed; text-align: center; }
@@ -173,7 +173,7 @@ const TestInventoryTab = () => {
       </head>
       <body>
         <h1>Test Inventory</h1>
-        <p style="text-align: center; color: #666;">Proton Diagnostics - Nevika Cura</p>
+        <p style="text-align: center; color: #666;">Mango Health Labs - Nevika Cura</p>
         <p style="text-align: center; color: #666;">Generated: ${new Date().toLocaleDateString('en-IN')}</p>
         <table>
           <thead>

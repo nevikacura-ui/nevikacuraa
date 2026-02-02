@@ -115,7 +115,7 @@ const ProtonReportDownload = () => {
               <TestTube className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-slate-800">Proton Diagnostics</h1>
+              <h1 className="font-bold text-slate-800">Mango Health Labs</h1>
               <p className="text-xs text-slate-500">Report Download</p>
             </div>
           </div>
@@ -315,7 +315,7 @@ const ProtonReportDownload = () => {
         {/* Help Section */}
         <div className="mt-6 p-4 bg-white rounded-xl shadow-sm text-center">
           <p className="text-sm text-slate-600">
-            Need help? Contact Proton Diagnostics
+            Need help? Contact Mango Health Labs
           </p>
           <a href="tel:+919876543210" className="text-blue-600 font-semibold text-sm hover:underline">
             📞 Call Support

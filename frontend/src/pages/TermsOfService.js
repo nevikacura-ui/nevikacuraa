@@ -67,7 +67,7 @@ const TermsOfService = () => {
               <p>Nevika Cura provides a healthcare platform that includes:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li><strong>DiaGyn Healthcare:</strong> Doctor appointment booking and teleconsultation services</li>
-                <li><strong>Proton Diagnostics:</strong> Diagnostic test booking with home sample collection</li>
+                <li><strong>Mango Health Labs:</strong> Diagnostic test booking with home sample collection</li>
                 <li><strong>Orange Pharmacy:</strong> Online medicine ordering and delivery</li>
                 <li><strong>Evara:</strong> Women's wellness and pregnancy care program</li>
                 <li><strong>Glydex:</strong> Diabetes management and tracking tools</li>
