@@ -1630,72 +1630,67 @@ const Proton = () => {
               </div>
             </div>
 
-            {/* Pathology Tab */}
+            {/* Pathology Tab - New 3-Column Category Grid Layout */}
             {activeTab === 'pathology' && (
               <div className="space-y-6">
-                {/* Category Quick Select */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                  {testCategories.map((cat) => (
-                    <TestCategoryCard
-                      key={cat.id}
-                      icon={cat.icon}
-                      title={cat.title}
-                      count={cat.tests.length}
-                      color={cat.color}
-                      isActive={activeCategory === cat.id}
-                      onClick={() => setActiveCategory(cat.id)}
-                    />
+                {/* 3-Column Grid of All Test Categories */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {testCategories.filter(cat => cat.id !== 'imaging').map((category) => (
+                    <Card 
+                      key={category.id}
+                      className={`rounded-2xl border-2 ${category.borderColor} overflow-hidden shadow-sm hover:shadow-md transition-all`}
+                      data-testid={`category-${category.id}`}
+                    >
+                      {/* Category Header */}
+                      <div 
+                        className={`${category.bgColor} px-4 py-3 border-b ${category.borderColor}`}
+                        style={{ borderLeftWidth: '4px', borderLeftColor: category.color }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div 
+                            className={`w-10 h-10 rounded-xl ${category.iconBg} flex items-center justify-center`}
+                          >
+                            <category.icon className="w-5 h-5" style={{ color: category.color }} />
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-slate-800 text-sm">{category.title}</h3>
+                            <p className="text-xs text-slate-500">{category.tests.length} tests</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Tests List */}
+                      <div className="p-3 max-h-72 overflow-y-auto bg-white">
+                        <div className="space-y-1">
+                          {category.tests.map((test) => (
+                            <label 
+                              key={test.name}
+                              className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all ${
+                                selectedTests.includes(test.name) 
+                                  ? `${category.bgColor} border border-${category.color}/30` 
+                                  : 'hover:bg-slate-50'
+                              }`}
+                            >
+                              <Checkbox
+                                checked={selectedTests.includes(test.name)}
+                                onCheckedChange={() => toggleTest(test.name)}
+                                className="border-2 border-slate-300 data-[state=checked]:border-emerald-500 data-[state=checked]:bg-emerald-500"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-base">{getTestIcon(test.name)}</span>
+                                  <span className="text-sm text-slate-700 truncate">{test.name}</span>
+                                </div>
+                              </div>
+                              <span className="text-sm font-bold" style={{ color: category.color }}>
+                                ₹{test.price}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    </Card>
                   ))}
-                </div>
-
-                {/* Tests Grid */}
-                <Card className="p-5 rounded-2xl border-slate-200 shadow-sm">
-                  <h3 className="font-semibold text-[#1E293B] mb-4 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                    {testCategories.find(c => c.id === activeCategory)?.icon && (
-                      React.createElement(testCategories.find(c => c.id === activeCategory).icon, { 
-                        className: "w-5 h-5", 
-                        style: { color: testCategories.find(c => c.id === activeCategory)?.color } 
-                      })
-                    )}
-                    {testCategories.find(c => c.id === activeCategory)?.title}
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                    {getCurrentCategoryTests().map(test => (
-                      <TestCheckbox 
-                        key={test} 
-                        test={test} 
-                        checked={selectedTests.includes(test)}
-                        onToggle={() => toggleTest(test)}
-                      />
-                    ))}
-                  </div>
-                </Card>
-
-                {/* More Test Categories */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className="p-5 rounded-2xl border-slate-200">
-                    <h4 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
-                      <Droplets className="w-4 h-4 text-amber-500" />
-                      Urine Tests
-                    </h4>
-                    <div className="max-h-48 overflow-y-auto space-y-1">
-                      {pathologyTests.urine.map(test => (
-                        <TestCheckbox key={test} test={test} checked={selectedTests.includes(test)} onToggle={() => toggleTest(test)} />
-                      ))}
-                    </div>
-                  </Card>
-                  
-                  <Card className="p-5 rounded-2xl border-slate-200">
-                    <h4 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
-                      <TestTube className="w-4 h-4 text-teal-500" />
-                      Health Packages
-                    </h4>
-                    <div className="max-h-48 overflow-y-auto space-y-1">
-                      {pathologyTests.packages.map(test => (
-                        <TestCheckbox key={test} test={test} checked={selectedTests.includes(test)} onToggle={() => toggleTest(test)} />
-                      ))}
-                    </div>
-                  </Card>
                 </div>
               </div>
             )}
