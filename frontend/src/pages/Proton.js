@@ -697,8 +697,8 @@ const Proton = () => {
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
       {currentStep === 0 ? (
         <>
-          {/* Blue Hero Banner Section - Compact with Icons */}
-          <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
+          {/* Blue Hero Banner Section - Blinkit Style Navy Blue */}
+          <div className="bg-[#0c1e3c] relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-4 py-5">
               <div className="flex items-center justify-between">
                 {/* Left Content */}
@@ -724,7 +724,7 @@ const Proton = () => {
                   >
                     {/* Flask Icon - Front position */}
                     <div 
-                      className="absolute w-11 h-11 bg-white/25 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-lg"
+                      className="absolute w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-lg"
                       style={{ 
                         top: '50%',
                         left: '50%',
@@ -742,7 +742,7 @@ const Proton = () => {
                         transform: 'translate(-50%, -50%) rotateY(120deg) translateZ(30px)',
                       }}
                     >
-                      <Droplet className="w-5 h-5 text-blue-800" />
+                      <Droplet className="w-5 h-5 text-[#0c1e3c]" />
                     </div>
                     {/* Heart Icon - Back-right position */}
                     <div 
