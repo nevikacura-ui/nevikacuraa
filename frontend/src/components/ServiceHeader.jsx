@@ -23,7 +23,7 @@ const serviceThemes = {
     isLight: false
   },
   proton: {
-    name: 'Proton',
+    name: 'Mango',
     path: '/proton',
     bgGradient: 'from-[#0c1e3c] to-[#1a365d]',
     headerBg: 'bg-[#0c1e3c]',
@@ -60,7 +60,7 @@ export const ServiceHeader = () => {
   const tabs = [
     { id: 'home', name: 'Nevika Cura', icon: Heart, path: '/', color: '#14B8A6' },      // Teal
     { id: 'diagyn', name: 'DiaGyn', icon: Stethoscope, path: '/diagyn', color: '#134E4A' }, // Dark Teal/Emerald
-    { id: 'proton', name: 'Proton', icon: FlaskConical, path: '/proton', color: '#3B82F6' }, // Blue
+    { id: 'proton', name: 'Mango', icon: FlaskConical, path: '/proton', color: '#F97316' }, // Orange for Mango
     { id: 'pharmacy', name: 'Orange', icon: Package, path: '/pharmacy', color: '#F97316' }  // Orange
   ];
 
