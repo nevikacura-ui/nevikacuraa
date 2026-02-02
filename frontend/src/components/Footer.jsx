@@ -18,7 +18,7 @@ const Footer = () => {
   // My Services - Core clinical services
   const myServices = [
     { name: 'DiaGyn Healthcare', href: '/diagyn', icon: Stethoscope, color: 'text-rose-500' },
-    { name: 'Mango Health Labs', href: '/proton', icon: TestTube, color: 'text-orange-500' },
+    { name: 'Mango Health Labs', href: '/mango', icon: TestTube, color: 'text-orange-500' },
     { name: 'Orange Pharmacy', href: '/pharmacy', icon: Pill, color: 'text-orange-500' },
   ];
 

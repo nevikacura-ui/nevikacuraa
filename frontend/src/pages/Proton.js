@@ -2456,7 +2456,7 @@ const Proton = () => {
         }}
         onPaymentSuccess={handlePaymentSuccess}
         allowCOD={true}
-        returnPath="/proton"
+        returnPath="/mango"
       />
 
       {/* Test Details Modal */}

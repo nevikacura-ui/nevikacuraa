@@ -52,7 +52,7 @@ const ProtonAdBanner = () => {
             className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold px-6 py-3 rounded-xl flex items-center gap-2 hover:from-orange-600 hover:to-amber-600 transition-colors shadow-md"
             onClick={(e) => {
               e.stopPropagation();
-              navigate('/proton');
+              navigate('/mango');
             }}
           >
             Book now
