@@ -1134,7 +1134,7 @@ const Proton = () => {
                 </div>
                 <div className="text-white">
                   <p className="font-bold text-lg">Get 15% OFF</p>
-                  <p className="text-sm opacity-90">Use code: PROTON15</p>
+                  <p className="text-sm opacity-90">Use code: MANGO15</p>
                 </div>
               </div>
               <Button 
