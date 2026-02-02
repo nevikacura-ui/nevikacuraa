@@ -15,11 +15,11 @@ import {
 
 const API = process.env.REACT_APP_BACKEND_URL + '/api';
 
-// Proton Health Packages (Featured)
+// Mango Health Labs Packages (Featured)
 const PROTON_PACKAGES = [
   {
-    id: 'proton-basic',
-    name: 'Proton Basic',
+    id: 'mango-basic',
+    name: 'Mango Basic',
     description: 'Essential health screening for routine checkup',
     tests: ['Complete Blood Count', 'Blood Sugar Fasting', 'Lipid Profile', 'Liver Function Test', 'Kidney Function Test', 'Thyroid Profile', 'Urine Routine'],
     testsCount: '40+ Tests',
@@ -28,7 +28,7 @@ const PROTON_PACKAGES = [
   },
   {
     id: 'proton-total',
-    name: 'Proton Total',
+    name: 'Mango Total',
     description: 'Comprehensive full body health checkup',
     tests: ['Complete Blood Count', 'HbA1c', 'Lipid Profile', 'Liver Function', 'Kidney Function', 'Thyroid Profile', 'Vitamin D', 'Vitamin B12', 'Iron Studies', 'Uric Acid'],
     testsCount: '70+ Tests',
@@ -37,7 +37,7 @@ const PROTON_PACKAGES = [
   },
   {
     id: 'proton-xclusive',
-    name: 'Proton Xclusive',
+    name: 'Mango Xclusive',
     description: 'Premium comprehensive health assessment',
     tests: ['Complete Blood Count', 'HbA1c', 'Lipid Profile', 'Liver Function', 'Kidney Function', 'Thyroid Complete', 'Vitamin Panel', 'Tumor Markers', 'Cardiac Risk Markers', 'Hormone Panel'],
     testsCount: '90+ Tests',
