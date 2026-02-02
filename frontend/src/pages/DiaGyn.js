@@ -1259,6 +1259,77 @@ const DiaGyn = () => {
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
+      {/* Professional Features Carousel - DiaGyn Women's Health */}
+      <div className="py-6">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
+            {/* Slide 1: Expert Specialists */}
+            <div className="min-w-[300px] md:min-w-[380px] flex-shrink-0 snap-center">
+              <div className="relative h-44 md:h-52 rounded-2xl overflow-hidden shadow-lg">
+                <img 
+                  src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=400&fit=crop"
+                  alt="Expert Doctor"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-700/90 via-teal-600/70 to-transparent"></div>
+                <div className="absolute inset-0 p-5 flex flex-col justify-center">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
+                    <span className="text-white text-xs font-bold">20+ Years Experience</span>
+                  </div>
+                  <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Expert Women's Care</h3>
+                  <p className="text-white/90 text-sm">Board-certified gynecologists & specialists</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Slide 2: Private & Comfortable */}
+            <div className="min-w-[300px] md:min-w-[380px] flex-shrink-0 snap-center">
+              <div className="relative h-44 md:h-52 rounded-2xl overflow-hidden shadow-lg">
+                <img 
+                  src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&h=400&fit=crop"
+                  alt="Comfortable Environment"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-pink-600/90 via-pink-500/70 to-transparent"></div>
+                <div className="absolute inset-0 p-5 flex flex-col justify-center">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
+                    <span className="text-white text-xs font-bold">Women-Centric Care</span>
+                  </div>
+                  <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Private & Comfortable</h3>
+                  <p className="text-white/90 text-sm">Safe, supportive environment for every visit</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Slide 3: Comprehensive Care */}
+            <div className="min-w-[300px] md:min-w-[380px] flex-shrink-0 snap-center">
+              <div className="relative h-44 md:h-52 rounded-2xl overflow-hidden shadow-lg">
+                <img 
+                  src="https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&h=400&fit=crop"
+                  alt="Prenatal Care"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600/90 via-purple-500/70 to-transparent"></div>
+                <div className="absolute inset-0 p-5 flex flex-col justify-center">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
+                    <span className="text-white text-xs font-bold">Complete Care</span>
+                  </div>
+                  <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Comprehensive Services</h3>
+                  <p className="text-white/90 text-sm">Prenatal, postnatal & all women's health needs</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Scroll Indicator Dots */}
+          <div className="flex justify-center gap-2 mt-3">
+            {[1, 2, 3].map((dot) => (
+              <div key={dot} className="w-2 h-2 rounded-full bg-emerald-400/50"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <main className="max-w-5xl mx-auto px-4 py-8">
         {/* Step Progress */}
         <StepProgress currentStep={step} steps={stepTitles} />
