@@ -1511,17 +1511,16 @@ const DiaGyn = () => {
                   )}
                   
                   <div className={foundPatient ? 'sm:col-span-3' : ''}>
-                    <Label className="text-[#64748B] text-sm">Email <span className="text-red-500">*</span></Label>
+                    <Label className="text-[#64748B] text-sm">Email <span className="text-slate-400 text-xs">(Optional)</span></Label>
                     <Input
                       type="email"
                       value={patientInfo.email}
                       onChange={(e) => setPatientInfo({ ...patientInfo, email: e.target.value })}
-                      placeholder="your@email.com"
+                      placeholder="your@email.com (Optional)"
                       className="mt-1.5 rounded-xl border-[#E2E8F0] focus:border-[#0F766E] focus:ring-[#CCFBF1]"
                       data-testid="patient-email"
-                      required
                     />
-                    <p className="text-xs text-slate-400 mt-1">Required for appointment confirmation</p>
+                    <p className="text-xs text-slate-400 mt-1">Optional - for appointment confirmation</p>
                   </div>
                 </div>
                 
