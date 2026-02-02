@@ -1042,9 +1042,7 @@ const Proton = () => {
                       <Button
                         variant="outline"
                         className="flex-1 rounded-xl border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 font-bold py-3"
-                        onClick={() => {
-                          toast.info(`${test.name} - ${test.testsIncluded} parameter${test.testsIncluded > 1 ? 's' : ''}`);
-                        }}
+                        onClick={() => setSelectedTestDetails(test)}
                       >
                         View Details
                       </Button>
