@@ -674,36 +674,12 @@ async def send_whatsapp_notification(to_number: str, message: str):
     logger.info(f"WhatsApp notification skipped (disabled): to={to_number}")
     return {"type": "skipped", "note": "Twilio WhatsApp disabled - use MSG91"}
 
-# ============ SMS Notification Functions ============
+# ============ SMS Notification Functions - DISABLED ============
 
 async def send_sms_notification(to_number: str, message: str):
-    """Send SMS notification via Twilio - ONLY for user bookings (not staff)"""
-    if not twilio_client or not TWILIO_PHONE_NUMBER:
-        logger.warning("Twilio SMS not configured, skipping SMS notification")
-        return {"success": False, "error": "SMS not configured"}
-    
-    try:
-        # Format phone number for India
-        formatted_to = to_number.strip()
-        if not formatted_to.startswith('+'):
-            if len(formatted_to) == 10:
-                formatted_to = f"+91{formatted_to}"
-            else:
-                formatted_to = f"+{formatted_to}"
-        
-        result = await asyncio.to_thread(
-            twilio_client.messages.create,
-            body=message,
-            from_=TWILIO_PHONE_NUMBER,
-            to=formatted_to
-        )
-        
-        logger.info(f"SMS sent to {formatted_to}: sid={result.sid}")
-        return {"success": True, "sid": result.sid}
-    
-    except Exception as e:
-        logger.error(f"SMS send failed to {to_number}: {str(e)}")
-        return {"success": False, "error": str(e)}
+    """SMS notification - DISABLED (OTP not required for bookings)"""
+    logger.info(f"SMS notification skipped (disabled): to={to_number}")
+    return {"success": True, "note": "SMS disabled - email notifications used instead"}
 
 async def send_staff_sms_notification(department: str, message: str):
     """DISABLED: Staff SMS notifications are now sent via email only to save costs"""
