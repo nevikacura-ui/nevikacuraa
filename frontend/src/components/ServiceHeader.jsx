@@ -24,7 +24,7 @@ const serviceThemes = {
   },
   proton: {
     name: 'Mango',
-    path: '/proton',
+    path: '/mango',
     bgGradient: 'from-[#0c1e3c] to-[#1a365d]',
     headerBg: 'bg-[#0c1e3c]',
     tabBg: 'bg-[#1a365d]/50',
@@ -43,7 +43,7 @@ const serviceThemes = {
 // Get active service from path
 const getActiveService = (pathname) => {
   if (pathname.startsWith('/diagyn')) return 'diagyn';
-  if (pathname.startsWith('/proton')) return 'proton';
+  if (pathname.startsWith('/mango')) return 'proton';
   if (pathname.startsWith('/pharmacy')) return 'pharmacy';
   return 'home';
 };
@@ -60,7 +60,7 @@ export const ServiceHeader = () => {
   const tabs = [
     { id: 'home', name: 'Nevika Cura', icon: Heart, path: '/', color: '#14B8A6' },      // Teal
     { id: 'diagyn', name: 'DiaGyn', icon: Stethoscope, path: '/diagyn', color: '#134E4A' }, // Dark Teal/Emerald
-    { id: 'proton', name: 'Mango', icon: FlaskConical, path: '/proton', color: '#F97316' }, // Orange for Mango
+    { id: 'proton', name: 'Mango', icon: FlaskConical, path: '/mango', color: '#F97316' }, // Orange for Mango
     { id: 'pharmacy', name: 'Orange', icon: Package, path: '/pharmacy', color: '#F97316' }  // Orange
   ];
 

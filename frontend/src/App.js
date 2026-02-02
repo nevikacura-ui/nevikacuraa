@@ -116,7 +116,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<AnimatedPage><Home /></AnimatedPage>} />
           <Route path="/diagyn" element={<AnimatedPage><DiaGyn /></AnimatedPage>} />
-          <Route path="/proton" element={<AnimatedPage><Proton /></AnimatedPage>} />
+          <Route path="/mango" element={<AnimatedPage><Proton /></AnimatedPage>} />
           <Route path="/pharmacy" element={<AnimatedPage><Pharmacy /></AnimatedPage>} />
           <Route path="/evara" element={<AnimatedPage><Evara /></AnimatedPage>} />
           <Route path="/glydex" element={<AnimatedPage><Glydex /></AnimatedPage>} />
