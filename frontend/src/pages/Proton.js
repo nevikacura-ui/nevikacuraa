@@ -1630,68 +1630,115 @@ const Proton = () => {
               </div>
             </div>
 
-            {/* Pathology Tab - New 3-Column Category Grid Layout */}
+            {/* Pathology Tab - Orange Health Labs Style: Categories with Horizontal Card Carousels */}
             {activeTab === 'pathology' && (
-              <div className="space-y-6">
-                {/* 3-Column Grid of All Test Categories */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {testCategories.filter(cat => cat.id !== 'imaging').map((category) => (
-                    <Card 
-                      key={category.id}
-                      className={`rounded-2xl border-2 ${category.borderColor} overflow-hidden shadow-sm hover:shadow-md transition-all`}
-                      data-testid={`category-${category.id}`}
-                    >
-                      {/* Category Header */}
-                      <div 
-                        className={`${category.bgColor} px-4 py-3 border-b ${category.borderColor}`}
-                        style={{ borderLeftWidth: '4px', borderLeftColor: category.color }}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div 
-                            className={`w-10 h-10 rounded-xl ${category.iconBg} flex items-center justify-center`}
-                          >
-                            <category.icon className="w-5 h-5" style={{ color: category.color }} />
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-slate-800 text-sm">{category.title}</h3>
-                            <p className="text-xs text-slate-500">{category.tests.length} tests</p>
-                          </div>
+              <div className="space-y-8">
+                {testCategories.filter(cat => cat.id !== 'imaging').map((category) => (
+                  <div key={category.id} className="space-y-3" data-testid={`category-section-${category.id}`}>
+                    {/* Category Header */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className={`w-10 h-10 rounded-xl ${category.iconBg} flex items-center justify-center`}
+                        >
+                          <category.icon className="w-5 h-5" style={{ color: category.color }} />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-slate-800">{category.title}</h3>
+                          <p className="text-xs text-slate-500">{category.tests.length} tests available</p>
                         </div>
                       </div>
-                      
-                      {/* Tests List */}
-                      <div className="p-3 max-h-72 overflow-y-auto bg-white">
-                        <div className="space-y-1">
-                          {category.tests.map((test) => (
-                            <label 
-                              key={test.name}
-                              className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all ${
-                                selectedTests.includes(test.name) 
-                                  ? `${category.bgColor} border border-${category.color}/30` 
-                                  : 'hover:bg-slate-50'
-                              }`}
-                            >
-                              <Checkbox
-                                checked={selectedTests.includes(test.name)}
-                                onCheckedChange={() => toggleTest(test.name)}
-                                className="border-2 border-slate-300 data-[state=checked]:border-emerald-500 data-[state=checked]:bg-emerald-500"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-base">{getTestIcon(test.name)}</span>
-                                  <span className="text-sm text-slate-700 truncate">{test.name}</span>
+                      <button className="text-sm font-medium flex items-center gap-1" style={{ color: category.color }}>
+                        View All <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                    
+                    {/* Horizontal Scrollable Test Cards - Orange Health Labs Style */}
+                    <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+                      {category.tests.map((test) => (
+                        <div 
+                          key={test.name}
+                          className="min-w-[300px] max-w-[300px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
+                        >
+                          {/* Green Gradient Header */}
+                          <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 p-4 text-white relative">
+                            {/* Test Badge */}
+                            <div className="absolute top-3 right-3">
+                              <span className="bg-emerald-800/60 text-white text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">
+                                Test
+                              </span>
+                            </div>
+                            
+                            {/* Test Name */}
+                            <h4 className="font-bold text-base mb-2 pr-14 leading-tight">{test.name}</h4>
+                            
+                            {/* Price Display */}
+                            <div className="flex items-center gap-2">
+                              <span className="text-white/50 line-through text-sm">₹{Math.round(test.price * 1.3)}</span>
+                              <span className="text-2xl font-bold">₹{test.price}</span>
+                            </div>
+                          </div>
+                          
+                          {/* Info Section */}
+                          <div className="p-4 bg-white">
+                            <div className="flex items-center justify-between mb-4">
+                              {/* Reports Time */}
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+                                  <FileText className="w-4 h-4 text-slate-500" />
+                                </div>
+                                <div>
+                                  <p className="text-[10px] text-slate-500">Reports within</p>
+                                  <p className="text-xs font-bold text-slate-800">6-24 hours</p>
                                 </div>
                               </div>
-                              <span className="text-sm font-bold" style={{ color: category.color }}>
-                                ₹{test.price}
-                              </span>
-                            </label>
-                          ))}
+                              
+                              {/* Tests Included */}
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+                                  <FlaskConical className="w-4 h-4 text-slate-500" />
+                                </div>
+                                <div>
+                                  <p className="text-[10px] text-slate-500">Tests included</p>
+                                  <p className="text-xs font-bold text-slate-800">1 test</p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Action Buttons */}
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex-1 rounded-xl border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 font-semibold text-xs py-2.5"
+                                onClick={() => setSelectedTestDetails({
+                                  ...test,
+                                  originalPrice: Math.round(test.price * 1.3),
+                                  discount: 23,
+                                  reportTime: '6-24 hours',
+                                  testsIncluded: 1,
+                                  description: `This test measures ${test.name.toLowerCase()} levels in your body. It helps diagnose and monitor various health conditions. Consult your doctor for proper interpretation of results.`
+                                })}
+                              >
+                                View Details
+                              </Button>
+                              <Button
+                                size="sm"
+                                className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs py-2.5 shadow-md"
+                                onClick={() => {
+                                  toggleTest(test.name);
+                                  toast.success(`${test.name} added!`);
+                                }}
+                              >
+                                {selectedTests.includes(test.name) ? '✓ Added' : 'Add to Cart'}
+                              </Button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
