@@ -2238,17 +2238,16 @@ const Pharmacy = () => {
                   )}
                 </div>
                 <div className="sm:col-span-2">
-                  <Label className="text-slate-600 text-sm">Email <span className="text-red-500">*</span></Label>
+                  <Label className="text-slate-600 text-sm">Email <span className="text-slate-400 text-xs">(Optional)</span></Label>
                   <Input
                     type="email"
                     value={patientInfo.email || ''}
                     onChange={(e) => setPatientInfo({ ...patientInfo, email: e.target.value })}
-                    placeholder="your@email.com"
+                    placeholder="your@email.com (Optional)"
                     className="mt-1.5 rounded-xl border-orange-200 focus:border-orange-400"
                     data-testid="patient-email"
-                    required
                   />
-                  <p className="text-xs text-slate-500 mt-1">Required for order updates and invoice</p>
+                  <p className="text-xs text-slate-500 mt-1">Optional - for order updates and invoice</p>
                 </div>
               </div>
             </Card>
