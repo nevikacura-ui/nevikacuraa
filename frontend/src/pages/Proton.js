@@ -1565,13 +1565,13 @@ const Proton = () => {
                       onChange={(e) => setPatientInfo({ ...patientInfo, address: e.target.value })}
                       placeholder="Enter full address with landmark for home sample collection"
                       rows={2}
-                      className="mt-1.5 rounded-xl border-slate-200 focus:border-[#5FA8D3]"
+                      className="mt-1.5 rounded-xl border-slate-200 focus:border-[#0c1e3c]"
                       data-testid="home-address"
                     />
                   </div>
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-700">
+                  <div className="bg-[#0c1e3c]/5 border border-[#0c1e3c]/20 rounded-xl p-3 text-xs text-[#0c1e3c]">
                     <p className="font-medium">Home Collection Process:</p>
-                    <ul className="mt-1 space-y-0.5 text-blue-600">
+                    <ul className="mt-1 space-y-0.5 text-[#1a365d]">
                       <li>• Our phlebotomist will call 30 mins before arrival</li>
                       <li>• Sample collected at your doorstep</li>
                       <li>• Reports sent via email within 24 hours</li>
