@@ -195,15 +195,15 @@ const HealthPackages = () => {
           </div>
         ) : (
           <div className="space-y-8">
-            {/* Proton Health Packages - Featured */}
+            {/* Mango Health Labs Packages - Featured */}
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
                   <FlaskConical className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold">Proton Health Packages</h2>
-                  <p className="text-xs text-gray-500">Premium diagnostic packages by Proton Diagnostics</p>
+                  <h2 className="text-lg font-semibold">Mango Health Labs Packages</h2>
+                  <p className="text-xs text-gray-500">Premium diagnostic packages by Mango Health Labs</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
