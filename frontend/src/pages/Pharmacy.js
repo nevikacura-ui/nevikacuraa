@@ -942,12 +942,8 @@ const Pharmacy = () => {
       toast.error('Please enter a valid mobile number');
       return;
     }
-    if (!patientInfo.email || !patientInfo.email.includes('@')) {
-      toast.error('Please enter a valid email address for order updates');
-      return;
-    }
+    // Email is optional - skip validation if not provided
     // Skip OTP step - directly go to address/delivery step
-    // OTP verification disabled to reduce costs. Email is used for order tracking.
     setCurrentStep(3);
     window.scrollTo(0, 0);
   };
@@ -964,7 +960,8 @@ const Pharmacy = () => {
       toast.error('Please enter delivery address');
       return;
     }
-    if (!patientInfo.email || !patientInfo.email.includes('@')) {
+    // Email is optional - only validate if provided
+    if (patientInfo.email && !patientInfo.email.includes('@')) {
       toast.error('Please enter a valid email address');
       return;
     }
