@@ -1142,7 +1142,7 @@ const Proton = () => {
                 size="sm"
                 className="bg-white text-fuchsia-600 hover:bg-fuchsia-50 rounded-full font-bold"
                 onClick={() => {
-                  navigator.clipboard.writeText('PROTON15');
+                  navigator.clipboard.writeText('MANGO15');
                   toast.success('Coupon code copied!');
                 }}
               >
