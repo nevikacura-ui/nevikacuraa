@@ -547,7 +547,7 @@ Nevika Cura Healthcare
                     <FlaskConical className="w-16 h-16 mx-auto mb-4 opacity-50" />
                     <p className="text-lg font-medium">No lab tests yet</p>
                     <p className="text-sm">Book diagnostic tests to track your health</p>
-                    <Button className="mt-4" onClick={() => navigate('/proton')}>
+                    <Button className="mt-4" onClick={() => navigate('/mango')}>
                       Book Lab Tests
                     </Button>
                   </div>

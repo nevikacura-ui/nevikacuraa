@@ -569,7 +569,7 @@ const Teleconsultation = () => {
 
             {/* Quick Actions */}
             <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" onClick={() => navigate('/proton')}>
+              <Button variant="outline" onClick={() => navigate('/mango')}>
                 <FlaskConical className="w-4 h-4 mr-2" /> Book Tests
               </Button>
               <Button variant="outline" onClick={() => navigate('/pharmacy')}>

@@ -234,7 +234,7 @@ const HealthPackages = () => {
                         </div>
                       </div>
                       
-                      <Button className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700" onClick={() => navigate('/proton')}>
+                      <Button className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700" onClick={() => navigate('/mango')}>
                         View Details
                       </Button>
                     </CardContent>

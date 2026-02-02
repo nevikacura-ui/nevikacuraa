@@ -606,7 +606,7 @@ const Home = () => {
               
               {/* Proton - Navigate to /proton */}
               <button
-                onClick={() => navigate('/proton')}
+                onClick={() => navigate('/mango')}
                 className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                   activeService === 'proton' 
                     ? 'bg-white text-blue-600 shadow-lg'

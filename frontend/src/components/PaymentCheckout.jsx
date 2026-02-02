@@ -374,7 +374,7 @@ export const PaymentCancel = () => {
               } else if (paymentType === 'pharmacy') {
                 window.location.href = '/pharmacy';
               } else if (paymentType === 'lab_test') {
-                window.location.href = '/proton';
+                window.location.href = '/mango';
               } else {
                 window.location.href = '/';
               }

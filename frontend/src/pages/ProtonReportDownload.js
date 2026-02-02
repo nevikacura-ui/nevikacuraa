@@ -107,7 +107,7 @@ const ProtonReportDownload = () => {
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/proton')} className="rounded-full">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/mango')} className="rounded-full">
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex items-center gap-3">

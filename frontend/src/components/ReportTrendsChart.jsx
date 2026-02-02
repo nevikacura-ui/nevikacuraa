@@ -113,7 +113,7 @@ const ReportTrendsChart = ({ patientId, patientPhone }) => {
           </p>
           <Button 
             variant="outline" 
-            onClick={() => window.location.href = '/proton'}
+            onClick={() => window.location.href = '/mango'}
             className="rounded-xl"
           >
             Book Your First Test
