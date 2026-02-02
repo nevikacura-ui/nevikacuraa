@@ -1869,7 +1869,7 @@ const Glydex = () => {
               Book Diabetic Tests
             </DialogTitle>
             <DialogDescription className="text-purple-100">
-              Select tests and book via Proton Diagnostics
+              Select tests and book via Mango Health Labs
             </DialogDescription>
           </DialogHeader>
           
@@ -1916,7 +1916,7 @@ const Glydex = () => {
             >
               {selectedDiabeticTests.length === 0 
                 ? 'Select tests to continue' 
-                : `Book ${selectedDiabeticTests.length} Test${selectedDiabeticTests.length > 1 ? 's' : ''} at Proton`}
+                : `Book ${selectedDiabeticTests.length} Test${selectedDiabeticTests.length > 1 ? 's' : ''} at Mango`}
             </Button>
             <p className="text-xs text-gray-500 text-center mt-2">
               Sample collection available at home
@@ -2650,7 +2650,7 @@ const Glydex = () => {
                   <div>
                     <Label>Lab Name (Optional)</Label>
                     <Input 
-                      placeholder="e.g., Proton Diagnostics"
+                      placeholder="e.g., Mango Health Labs"
                       value={newHba1c.lab_name}
                       onChange={(e) => setNewHba1c({...newHba1c, lab_name: e.target.value})}
                     />
