@@ -966,7 +966,7 @@ const Proton = () => {
               </h2>
               <button 
                 onClick={() => setCurrentStep(1)}
-                className="text-blue-600 font-semibold text-sm flex items-center gap-1 hover:text-blue-700"
+                className="text-[#0c1e3c] font-semibold text-sm flex items-center gap-1 hover:text-[#1a365d]"
               >
                 View All <ChevronRight className="w-4 h-4" />
               </button>
@@ -979,8 +979,8 @@ const Proton = () => {
                   'from-teal-500 to-emerald-600',
                   'from-rose-500 to-pink-600',
                   'from-amber-500 to-orange-600',
-                  'from-indigo-500 to-violet-600',
-                  'from-cyan-500 to-blue-600'
+                  'from-[#0c1e3c] to-[#1a365d]',
+                  'from-[#1a365d] to-[#2d4a6f]'
                 ];
                 const gradient = cardGradients[index % cardGradients.length];
                 
@@ -1010,7 +1010,7 @@ const Proton = () => {
                   {/* Info Section */}
                   <div className="p-4 bg-slate-50">
                     <div className="flex items-center gap-2 text-sm text-slate-600 mb-4">
-                      <FileText className="w-4 h-4 text-blue-500" />
+                      <FileText className="w-4 h-4 text-[#0c1e3c]" />
                       <span>Reports within <strong>{test.reportTime}</strong></span>
                     </div>
                     
@@ -1018,7 +1018,7 @@ const Proton = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 rounded-lg border-blue-300 text-blue-600 hover:bg-blue-50 font-semibold text-xs"
+                        className="flex-1 rounded-lg border-[#0c1e3c]/30 text-[#0c1e3c] hover:bg-[#0c1e3c]/5 font-semibold text-xs"
                         onClick={() => {
                           toast.info(`${test.name} - Single test`);
                         }}
@@ -1027,7 +1027,7 @@ const Proton = () => {
                       </Button>
                       <Button
                         size="sm"
-                        className="flex-1 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-semibold text-xs"
+                        className="flex-1 rounded-lg bg-gradient-to-r from-[#0c1e3c] to-[#1a365d] hover:from-[#1a365d] hover:to-[#2d4a6f] text-white font-semibold text-xs"
                         onClick={() => handleTestSelect(test)}
                       >
                         Add to Cart
@@ -1043,7 +1043,7 @@ const Proton = () => {
           <div className="max-w-6xl mx-auto px-4 pb-8">
             <Button
               onClick={() => setCurrentStep(1)}
-              className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
+              className="w-full bg-gradient-to-r from-[#0c1e3c] to-[#1a365d] hover:from-[#1a365d] hover:to-[#2d4a6f] text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
               data-testid="browse-all-tests-btn"
             >
               <FlaskConical className="w-5 h-5 mr-2" />
@@ -1057,7 +1057,7 @@ const Proton = () => {
         <>
           {/* Original Test Selection Flow */}
           {/* How It Works Banner */}
-          <div className="bg-white/80 backdrop-blur-sm border-b border-[#5FA8D3]/20">
+          <div className="bg-white/80 backdrop-blur-sm border-b border-[#0c1e3c]/20">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center gap-2 mb-3">
             <FlaskConical className="w-5 h-5 text-[#5FA8D3]" />
