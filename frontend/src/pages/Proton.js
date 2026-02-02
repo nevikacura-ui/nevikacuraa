@@ -501,12 +501,8 @@ const Proton = () => {
       toast.error('Please enter a valid mobile number');
       return;
     }
-    if (!patientInfo.email || !patientInfo.email.includes('@')) {
-      toast.error('Please enter a valid email address for report delivery');
-      return;
-    }
+    // Email is optional - skip validation if not provided
     // Skip OTP step - directly go to booking step
-    // OTP verification disabled to reduce costs. Email is used for report delivery.
     setCurrentStep(3);
     window.scrollTo(0, 0);
   };
@@ -522,8 +518,8 @@ const Proton = () => {
       toast.error('Please select a preferred date');
       return;
     }
-    // Validate email
-    if (!patientInfo.email || !patientInfo.email.includes('@')) {
+    // Email is optional - only validate if provided
+    if (patientInfo.email && !patientInfo.email.includes('@')) {
       toast.error('Please enter a valid email address');
       return;
     }
