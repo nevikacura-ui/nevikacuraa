@@ -996,73 +996,41 @@ const Proton = () => {
       {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
       {currentStep === 0 ? (
         <>
-          {/* Blue Hero Banner Section - Blinkit Style Navy Blue */}
-          <div className="bg-[#0c1e3c] relative overflow-hidden">
+          {/* Blue Hero Banner Section with Mango Health Labs Branding */}
+          <div className="bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-4 py-5">
               <div className="flex items-center justify-between">
                 {/* Left Content */}
                 <div className="flex-1 text-white z-10">
+                  {/* Mango Health Labs Logo */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <img 
+                      src="/mango-logo.png" 
+                      alt="Mango Health Labs" 
+                      className="w-12 h-12 rounded-xl shadow-lg bg-white p-1"
+                    />
+                    <div>
+                      <h2 className="text-lg font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>Mango Health Labs</h2>
+                      <p className="text-xs text-white/80">Your Trusted Diagnostic Partner</p>
+                    </div>
+                  </div>
                   <h1 className="text-xl md:text-2xl font-bold mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
                     Blood Test At Home
                   </h1>
                   <div className="flex items-center gap-1 mb-2">
-                    <Clock className="w-4 h-4 text-yellow-400" />
-                    <span className="font-semibold text-yellow-400 text-sm">in 60 MINS</span>
+                    <Clock className="w-4 h-4 text-yellow-300" />
+                    <span className="font-semibold text-yellow-300 text-sm">in 60 MINS</span>
                   </div>
                 </div>
                 
-                {/* Right - Planetary Orbital Rotation Icons */}
-                <div className="relative w-20 h-20 flex-shrink-0" style={{ perspective: '200px' }}>
-                  {/* Orbital container - 3D rotation */}
-                  <div 
-                    className="absolute inset-0"
-                    style={{ 
-                      transformStyle: 'preserve-3d',
-                      animation: 'orbital-spin 6s linear infinite'
-                    }}
-                  >
-                    {/* Flask Icon - Front position */}
-                    <div 
-                      className="absolute w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-lg"
-                      style={{ 
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%) translateZ(30px)',
-                      }}
-                    >
-                      <FlaskConical className="w-5 h-5 text-white" />
-                    </div>
-                    {/* Droplet Icon - Back-left position */}
-                    <div 
-                      className="absolute w-10 h-10 bg-yellow-400/90 rounded-lg flex items-center justify-center shadow-lg"
-                      style={{ 
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%) rotateY(120deg) translateZ(30px)',
-                      }}
-                    >
-                      <Droplet className="w-5 h-5 text-[#0c1e3c]" />
-                    </div>
-                    {/* Heart Icon - Back-right position */}
-                    <div 
-                      className="absolute w-10 h-10 bg-pink-500/90 rounded-lg flex items-center justify-center shadow-lg"
-                      style={{ 
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%) rotateY(240deg) translateZ(30px)',
-                      }}
-                    >
-                      <Heart className="w-5 h-5 text-white" />
-                    </div>
-                  </div>
-                  
-                  {/* CSS for planetary orbital rotation */}
-                  <style>{`
-                    @keyframes orbital-spin {
-                      0% { transform: rotateY(0deg); }
-                      100% { transform: rotateY(360deg); }
-                    }
-                  `}</style>
+                {/* Right - Mango Logo Large */}
+                <div className="relative w-24 h-24 flex-shrink-0">
+                  <img 
+                    src="/mango-logo.png" 
+                    alt="Mango Health Labs" 
+                    className="w-full h-full object-contain drop-shadow-2xl"
+                    style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))' }}
+                  />
                 </div>
               </div>
               
