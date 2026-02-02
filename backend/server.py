@@ -670,55 +670,9 @@ twilio_client = None
 logger.info("Twilio SMS/OTP disabled - bookings work without OTP verification")
 
 async def send_whatsapp_notification(to_number: str, message: str):
-    """Send WhatsApp notification using Twilio WhatsApp API"""
-    if not twilio_client or not TWILIO_WHATSAPP_FROM:
-        logger.warning("Twilio WhatsApp not configured")
-        return {"type": "error", "error": "Twilio WhatsApp not configured"}
-    
-    try:
-        # Clean and format phone number
-        clean_number = str(to_number).replace("+", "").replace(" ", "").replace("-", "")
-        
-        # Add India country code if not present
-        if len(clean_number) == 10:
-            clean_number = "91" + clean_number
-        elif not clean_number.startswith("91") and len(clean_number) == 10:
-            clean_number = "91" + clean_number
-        
-        # Format numbers for WhatsApp
-        whatsapp_to = f"whatsapp:+{clean_number}"
-        whatsapp_from = TWILIO_WHATSAPP_FROM if TWILIO_WHATSAPP_FROM.startswith("whatsapp:") else f"whatsapp:{TWILIO_WHATSAPP_FROM}"
-        
-        # Remove WhatsApp formatting characters for Twilio (bold asterisks)
-        # Twilio WhatsApp supports *bold* text
-        clean_message = message
-        
-        result = await asyncio.to_thread(
-            twilio_client.messages.create,
-            body=clean_message,
-            from_=whatsapp_from,
-            to=whatsapp_to
-        )
-        logger.info(f"WhatsApp message sent to {whatsapp_to}: SID={result.sid}")
-        return {"type": "sent", "sid": result.sid, "to": whatsapp_to}
-        
-    except Exception as e:
-        error_msg = str(e)
-        logger.error(f"Failed to send WhatsApp to {to_number}: {error_msg}")
-        
-        # Store the failed notification for retry
-        try:
-            await db.pending_whatsapp.insert_one({
-                "to_number": to_number,
-                "message": message,
-                "error": error_msg,
-                "created_at": datetime.now(timezone.utc).isoformat(),
-                "status": "failed"
-            })
-        except:
-            pass
-        
-        return {"type": "error", "error": error_msg}
+    """WhatsApp notification - DISABLED (using MSG91 instead)"""
+    logger.info(f"WhatsApp notification skipped (disabled): to={to_number}")
+    return {"type": "skipped", "note": "Twilio WhatsApp disabled - use MSG91"}
 
 # ============ SMS Notification Functions ============
 
