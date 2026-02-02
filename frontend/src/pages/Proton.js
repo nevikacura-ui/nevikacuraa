@@ -967,7 +967,7 @@ const Proton = () => {
             </div>
           </div>
 
-          {/* Most Booked Tests - Cards with varied gradient colors */}
+          {/* Most Booked Tests - Large Cards like Orange Health Labs */}
           <div className="max-w-6xl mx-auto px-4 mt-8 mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
@@ -981,62 +981,72 @@ const Proton = () => {
               </button>
             </div>
             
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-              {popularTests.map((test, index) => {
-                // Varied gradient colors for visual distinction
-                const cardGradients = [
-                  'from-teal-500 to-emerald-600',
-                  'from-rose-500 to-pink-600',
-                  'from-amber-500 to-orange-600',
-                  'from-[#0c1e3c] to-[#1a365d]',
-                  'from-[#1a365d] to-[#2d4a6f]'
-                ];
-                const gradient = cardGradients[index % cardGradients.length];
-                
-                return (
+            {/* Large Test Cards Grid - Orange Health Labs Style */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {popularTests.map((test) => (
                 <div 
                   key={test.id}
-                  className="min-w-[240px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
-                  data-testid={`test-${test.id}`}
+                  className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden hover:shadow-xl transition-all"
+                  data-testid={`test-card-${test.id}`}
                 >
-                  {/* Varied Color Header */}
-                  <div className={`bg-gradient-to-r ${gradient} p-4 text-white relative`}>
-                    <div className="absolute top-2 right-2">
-                      <span className="bg-white/20 text-white text-xs font-medium px-2 py-1 rounded">
+                  {/* Green Gradient Header - Orange Health Labs Style */}
+                  <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 p-5 text-white relative">
+                    {/* Test Badge */}
+                    <div className="absolute top-3 right-3">
+                      <span className="bg-emerald-800/60 text-white text-xs font-bold px-3 py-1.5 rounded-md backdrop-blur-sm">
                         Test
                       </span>
                     </div>
-                    <h3 className="font-bold text-base mb-2 pr-12 leading-tight">{test.name}</h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-white/70 line-through text-sm">₹{test.originalPrice}</span>
-                      <span className="text-xl font-bold">₹{test.price}</span>
+                    
+                    {/* Test Name */}
+                    <h3 className="font-bold text-lg mb-3 pr-16 leading-tight">{test.name}</h3>
+                    
+                    {/* Price Display */}
+                    <div className="flex items-center gap-3">
+                      <span className="text-white/60 line-through text-base">₹{test.originalPrice}</span>
+                      <span className="text-3xl font-bold">₹{test.price}</span>
                     </div>
-                    <span className="inline-block mt-2 bg-yellow-400 text-slate-800 text-xs font-bold px-2.5 py-1 rounded">
-                      {test.discount}% Off
-                    </span>
                   </div>
                   
-                  {/* Info Section */}
-                  <div className="p-4 bg-slate-50">
-                    <div className="flex items-center gap-2 text-sm text-slate-600 mb-4">
-                      <FileText className="w-4 h-4 text-[#0c1e3c]" />
-                      <span>Reports within <strong>{test.reportTime}</strong></span>
+                  {/* Info Section - White Background */}
+                  <div className="p-5 bg-white">
+                    <div className="flex items-center justify-between mb-5">
+                      {/* Reports Time */}
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center">
+                          <FileText className="w-5 h-5 text-slate-500" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Reports within</p>
+                          <p className="text-sm font-bold text-slate-800">{test.reportTime}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Tests Included */}
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center">
+                          <FlaskConical className="w-5 h-5 text-slate-500" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Tests included</p>
+                          <p className="text-sm font-bold text-slate-800">{test.testsIncluded} test{test.testsIncluded > 1 ? 's' : ''}</p>
+                        </div>
+                      </div>
                     </div>
                     
-                    <div className="flex gap-2">
+                    {/* Action Buttons */}
+                    <div className="flex gap-3">
                       <Button
                         variant="outline"
-                        size="sm"
-                        className="flex-1 rounded-lg border-[#0c1e3c]/30 text-[#0c1e3c] hover:bg-[#0c1e3c]/5 font-semibold text-xs"
+                        className="flex-1 rounded-xl border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 font-bold py-3"
                         onClick={() => {
-                          toast.info(`${test.name} - Single test`);
+                          toast.info(`${test.name} - ${test.testsIncluded} parameter${test.testsIncluded > 1 ? 's' : ''}`);
                         }}
                       >
-                        Details
+                        View Details
                       </Button>
                       <Button
-                        size="sm"
-                        className="flex-1 rounded-lg bg-gradient-to-r from-[#0c1e3c] to-[#1a365d] hover:from-[#1a365d] hover:to-[#2d4a6f] text-white font-semibold text-xs"
+                        className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-3 shadow-md"
                         onClick={() => handleTestSelect(test)}
                       >
                         Add to Cart
@@ -1044,7 +1054,7 @@ const Proton = () => {
                     </div>
                   </div>
                 </div>
-              )})}
+              ))}
             </div>
           </div>
 
