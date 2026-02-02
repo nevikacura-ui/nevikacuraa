@@ -1818,29 +1818,163 @@ const Proton = () => {
               </div>
             )}
 
-            {/* Imaging Tab */}
+            {/* Imaging Tab - Beautiful Card Design with Prices */}
             {activeTab === 'imaging' && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card id="ecg-section" className="p-5 rounded-2xl border-slate-200">
-                    <h4 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
-                      <Activity className="w-4 h-4 text-red-500" />
-                      ECG
-                    </h4>
-                    {imagingTests.ecg.map(test => (
-                      <TestCheckbox key={test} test={test} checked={selectedTests.includes(test)} onToggle={() => toggleTest(test)} />
-                    ))}
-                  </Card>
+              <div className="space-y-8">
+                {/* ECG Section */}
+                <div className="space-y-3" data-testid="ecg-section">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+                        <Activity className="w-5 h-5 text-red-500" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-800">ECG Tests</h3>
+                        <p className="text-xs text-slate-500">Electrocardiogram & Heart Monitoring</p>
+                      </div>
+                    </div>
+                  </div>
                   
-                  <Card id="sonography-section" className="p-5 rounded-2xl border-slate-200">
-                    <h4 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
-                      <Heart className="w-4 h-4 text-pink-500" />
-                      Sonography
-                    </h4>
-                    {imagingTests.sonography.map(test => (
-                      <TestCheckbox key={test} test={test} checked={selectedTests.includes(test)} onToggle={() => toggleTest(test)} />
+                  <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
+                    {[
+                      { name: 'ECG (Electrocardiogram)', price: 300, reportTime: '30 mins', description: 'Records electrical activity of heart to detect abnormalities, arrhythmias, and heart conditions' }
+                    ].map((test) => (
+                      <div 
+                        key={test.name}
+                        className="min-w-[300px] max-w-[300px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all snap-center"
+                      >
+                        <div className="bg-gradient-to-br from-red-500 via-rose-500 to-pink-600 p-4 text-white relative">
+                          <div className="absolute top-3 right-3">
+                            <span className="bg-red-800/60 text-white text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">ECG</span>
+                          </div>
+                          <h4 className="font-bold text-base mb-2 pr-14 leading-tight">{test.name}</h4>
+                          <div className="flex items-center gap-2">
+                            <span className="text-white/50 line-through text-sm">₹{Math.round(test.price * 1.3)}</span>
+                            <span className="text-2xl font-bold">₹{test.price}</span>
+                          </div>
+                        </div>
+                        <div className="p-4 bg-white">
+                          <p className="text-xs text-slate-600 mb-3 line-clamp-2">{test.description}</p>
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+                                <FileText className="w-4 h-4 text-slate-500" />
+                              </div>
+                              <div>
+                                <p className="text-[10px] text-slate-500">Reports within</p>
+                                <p className="text-xs font-bold text-slate-800">{test.reportTime}</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1 rounded-xl border-2 border-red-500 text-red-600 hover:bg-red-50 font-semibold text-xs py-2.5"
+                              onClick={() => setSelectedTestDetails({
+                                ...test,
+                                originalPrice: Math.round(test.price * 1.3),
+                                discount: 23,
+                                testsIncluded: 1
+                              })}
+                            >
+                              View Details
+                            </Button>
+                            <Button
+                              size="sm"
+                              className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs py-2.5 shadow-md"
+                              onClick={() => {
+                                toggleTest(test.name);
+                                toast.success(`${test.name} added!`);
+                              }}
+                            >
+                              {selectedTests.includes(test.name) ? '✓ Added' : 'Add to Cart'}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
                     ))}
-                  </Card>
+                  </div>
+                </div>
+
+                {/* Sonography Section */}
+                <div className="space-y-3" data-testid="sonography-section">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-pink-100 flex items-center justify-center">
+                        <Scan className="w-5 h-5 text-pink-500" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-800">Sonography & Scans</h3>
+                        <p className="text-xs text-slate-500">Ultrasound & Imaging Services</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
+                    {[
+                      { name: 'Early Scan', price: 800, reportTime: '1 hour', description: 'First trimester ultrasound to confirm pregnancy, check heartbeat and estimate due date' },
+                      { name: 'NT Scan (Nuchal Translucency)', price: 1500, reportTime: '1 hour', description: 'Measures fluid at back of baby\'s neck to assess risk of chromosomal abnormalities' },
+                      { name: 'Growth Scan', price: 1000, reportTime: '1 hour', description: 'Monitors fetal growth, position, amniotic fluid levels and placenta health' },
+                      { name: 'USG Pelvis', price: 700, reportTime: '1 hour', description: 'Examines uterus, ovaries and bladder to detect cysts, fibroids and other conditions' },
+                      { name: 'Follicular Monitoring', price: 500, reportTime: '30 mins', description: 'Tracks ovarian follicle development for fertility treatment and ovulation timing' }
+                    ].map((test) => (
+                      <div 
+                        key={test.name}
+                        className="min-w-[300px] max-w-[300px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all snap-center"
+                      >
+                        <div className="bg-gradient-to-br from-pink-500 via-fuchsia-500 to-purple-600 p-4 text-white relative">
+                          <div className="absolute top-3 right-3">
+                            <span className="bg-pink-800/60 text-white text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">Scan</span>
+                          </div>
+                          <h4 className="font-bold text-base mb-2 pr-14 leading-tight">{test.name}</h4>
+                          <div className="flex items-center gap-2">
+                            <span className="text-white/50 line-through text-sm">₹{Math.round(test.price * 1.3)}</span>
+                            <span className="text-2xl font-bold">₹{test.price}</span>
+                          </div>
+                        </div>
+                        <div className="p-4 bg-white">
+                          <p className="text-xs text-slate-600 mb-3 line-clamp-2">{test.description}</p>
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+                                <FileText className="w-4 h-4 text-slate-500" />
+                              </div>
+                              <div>
+                                <p className="text-[10px] text-slate-500">Reports within</p>
+                                <p className="text-xs font-bold text-slate-800">{test.reportTime}</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1 rounded-xl border-2 border-pink-500 text-pink-600 hover:bg-pink-50 font-semibold text-xs py-2.5"
+                              onClick={() => setSelectedTestDetails({
+                                ...test,
+                                originalPrice: Math.round(test.price * 1.3),
+                                discount: 23,
+                                testsIncluded: 1
+                              })}
+                            >
+                              View Details
+                            </Button>
+                            <Button
+                              size="sm"
+                              className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs py-2.5 shadow-md"
+                              onClick={() => {
+                                toggleTest(test.name);
+                                toast.success(`${test.name} added!`);
+                              }}
+                            >
+                              {selectedTests.includes(test.name) ? '✓ Added' : 'Add to Cart'}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
