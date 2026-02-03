@@ -993,7 +993,7 @@ const DiaGynStaffPortal = () => {
 
 // ============ Appointment Card ============
 // Staff can only CHECK IN and move to WITH DR - CANNOT Complete (doctor does that)
-const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor }) => {
+const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, printerConnected }) => {
   const status = STATUS_STYLES[apt.status] || STATUS_STYLES['Booked'];
   const type = TYPE_STYLES[apt.appointment_type] || TYPE_STYLES['SCHEDULED'];
   
