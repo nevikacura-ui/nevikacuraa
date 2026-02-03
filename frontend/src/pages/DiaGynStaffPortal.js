@@ -15,18 +15,15 @@ import { lightTap, mediumTap, heavyTap, successPattern, errorPattern, selectionT
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// Fresh Healthcare Color Palette - Teal & Lime Green
+// Colors
 const COLORS = {
   primary: '#1a4d3f',
   primaryDark: '#0f3129',
   primaryLight: '#e0f2ed',
   accent: '#7ed957',
-  accentDark: '#5cb840',
   accentLight: '#e8f9e0',
-  success: '#16a34a',
   warning: '#f59e0b',
   danger: '#dc2626',
-  white: '#ffffff',
 };
 
 const STATUS_STYLES = {
@@ -47,21 +44,34 @@ const getAuthHeaders = () => {
   return { headers: { Authorization: `Bearer ${token}` } };
 };
 
-const getIndianDate = () => {
-  const now = new Date();
-  const istOffset = 5.5 * 60 * 60 * 1000;
-  return new Date(now.getTime() + istOffset).toISOString().split('T')[0];
-};
-
-const getIndianTime = () => {
+// IST Time helpers
+const getISTNow = () => {
   const now = new Date();
   const istOffset = 5.5 * 60 * 60 * 1000;
   return new Date(now.getTime() + istOffset);
 };
 
+const getISTDate = () => getISTNow().toISOString().split('T')[0];
+
+const getISTHour = () => getISTNow().getUTCHours();
+
 const getDayName = (dateStr) => {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   return days[new Date(dateStr).getDay()];
+};
+
+// Session logic (IST)
+const getCurrentSession = () => {
+  const hour = getISTHour();
+  if (hour >= 11 && hour < 14) return 'morning'; // 11am-2pm
+  if (hour >= 18 && hour < 22) return 'evening'; // 6pm-10pm
+  return null; // No active session
+};
+
+const getSessionLabel = (session) => {
+  if (session === 'morning') return '11:00 AM - 2:00 PM';
+  if (session === 'evening') return '6:00 PM - 10:00 PM';
+  return 'No Active Session';
 };
 
 // ============ Main Component ============
@@ -75,10 +85,12 @@ const DiaGynStaffPortal = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   
+  // Clinic selection (Pushpa or Amnion only)
+  const [selectedClinic, setSelectedClinic] = useState('Pushpa Clinic');
+  
   // Views: appointments, walkin, book, summary
   const [activeView, setActiveView] = useState('appointments');
-  const [activeClinic, setActiveClinic] = useState('all');
-  const [selectedDate, setSelectedDate] = useState(getIndianDate());
+  const [selectedDate, setSelectedDate] = useState(getISTDate());
   
   const [config, setConfig] = useState(null);
   const [appointments, setAppointments] = useState([]);
@@ -86,28 +98,38 @@ const DiaGynStaffPortal = () => {
   const [dailySummary, setDailySummary] = useState(null);
   const [weeklySummary, setWeeklySummary] = useState(null);
   
+  // Current session state
+  const [currentSession, setCurrentSession] = useState(getCurrentSession());
+  
   // Booking state
   const [selectedDoctor, setSelectedDoctor] = useState('');
-  const [selectedBookClinic, setSelectedBookClinic] = useState('');
-  const [bookingDate, setBookingDate] = useState(getIndianDate());
+  const [bookingDate, setBookingDate] = useState('');
   const [selectedSlot, setSelectedSlot] = useState('');
   const [patientName, setPatientName] = useState('');
   const [patientMobile, setPatientMobile] = useState('');
   const [patientId, setPatientId] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
-  const [currentSession, setCurrentSession] = useState(null);
+  
+  // Emergency mode (for booking without slot)
+  const [isEmergency, setIsEmergency] = useState(false);
   
   // Patient lookup
   const [foundPatient, setFoundPatient] = useState(null);
   const [searchingPatient, setSearchingPatient] = useState(false);
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [registerForm, setRegisterForm] = useState({ name: '', mobile: '', age: '', gender: '' });
   
   // Completion modal
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [completingAppointment, setCompletingAppointment] = useState(null);
   const [completionForm, setCompletionForm] = useState({ fee_code: '', scan_codes: [], notes: '' });
+
+  // Update current session every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSession(getCurrentSession());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   // ============ Auth ============
   useEffect(() => {
@@ -170,7 +192,7 @@ const DiaGynStaffPortal = () => {
     setRefreshing(true);
     try {
       const res = await axios.get(`${API}/api/diagyn-staff/appointments/by-date`, {
-        params: { date: selectedDate, clinic: activeClinic === 'all' ? undefined : activeClinic },
+        params: { date: selectedDate, clinic: selectedClinic },
         ...getAuthHeaders()
       });
       setAppointments(res.data.appointments || []);
@@ -182,17 +204,17 @@ const DiaGynStaffPortal = () => {
       }
     }
     setRefreshing(false);
-  }, [selectedDate, activeClinic]);
+  }, [selectedDate, selectedClinic]);
 
   const loadSummaries = useCallback(async () => {
     try {
       const [daily, weekly] = await Promise.all([
         axios.get(`${API}/api/diagyn-staff/summary/daily`, {
-          params: { date: selectedDate, clinic: activeClinic === 'all' ? undefined : activeClinic },
+          params: { date: selectedDate, clinic: selectedClinic },
           ...getAuthHeaders()
         }),
         axios.get(`${API}/api/diagyn-staff/summary/weekly`, {
-          params: { clinic: activeClinic === 'all' ? undefined : activeClinic },
+          params: { clinic: selectedClinic },
           ...getAuthHeaders()
         })
       ]);
@@ -201,37 +223,59 @@ const DiaGynStaffPortal = () => {
     } catch (error) {
       console.error('Summary error:', error);
     }
-  }, [selectedDate, activeClinic]);
+  }, [selectedDate, selectedClinic]);
 
-  // Load slots based on mode (walkin vs book)
-  const loadSlots = useCallback(async (mode) => {
-    if (!selectedDoctor || !selectedBookClinic) return;
-    
-    const dateToUse = mode === 'walkin' ? getIndianDate() : bookingDate;
+  // Load slots for walk-in (current session only)
+  const loadWalkinSlots = useCallback(async () => {
+    if (!selectedDoctor || !currentSession) {
+      setAvailableSlots([]);
+      return;
+    }
     
     setLoadingSlots(true);
     try {
       const res = await axios.get(`${API}/api/diagyn-staff/slots/available`, {
         params: {
-          clinic: selectedBookClinic,
+          clinic: selectedClinic,
           doctor: selectedDoctor,
-          date: dateToUse,
-          mode: mode
+          date: getISTDate(),
+          mode: 'walkin'
         },
         ...getAuthHeaders()
       });
       setAvailableSlots(res.data.available_slots || []);
-      setCurrentSession(res.data.current_session);
-      
-      if (res.data.available_slots?.length === 0) {
-        toast.info(res.data.message || 'No slots available');
-      }
     } catch (error) {
       console.error('Slots error:', error);
       setAvailableSlots([]);
     }
     setLoadingSlots(false);
-  }, [selectedDoctor, selectedBookClinic, bookingDate]);
+  }, [selectedDoctor, selectedClinic, currentSession]);
+
+  // Load slots for booking (future)
+  const loadBookingSlots = useCallback(async () => {
+    if (!selectedDoctor || !bookingDate) {
+      setAvailableSlots([]);
+      return;
+    }
+    
+    setLoadingSlots(true);
+    try {
+      const res = await axios.get(`${API}/api/diagyn-staff/slots/available`, {
+        params: {
+          clinic: selectedClinic,
+          doctor: selectedDoctor,
+          date: bookingDate,
+          mode: 'book'
+        },
+        ...getAuthHeaders()
+      });
+      setAvailableSlots(res.data.available_slots || []);
+    } catch (error) {
+      console.error('Slots error:', error);
+      setAvailableSlots([]);
+    }
+    setLoadingSlots(false);
+  }, [selectedDoctor, selectedClinic, bookingDate]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -244,31 +288,29 @@ const DiaGynStaffPortal = () => {
     if (isAuthenticated && activeView === 'summary') loadSummaries();
   }, [isAuthenticated, activeView, loadSummaries]);
 
-  // Load slots when doctor/clinic changes for walkin
   useEffect(() => {
-    if (isAuthenticated && activeView === 'walkin' && selectedDoctor && selectedBookClinic) {
-      loadSlots('walkin');
+    if (isAuthenticated && activeView === 'walkin' && selectedDoctor) {
+      loadWalkinSlots();
     }
-  }, [isAuthenticated, activeView, selectedDoctor, selectedBookClinic, loadSlots]);
+  }, [isAuthenticated, activeView, selectedDoctor, loadWalkinSlots]);
 
-  // Load slots when doctor/clinic/date changes for book
   useEffect(() => {
-    if (isAuthenticated && activeView === 'book' && selectedDoctor && selectedBookClinic && bookingDate) {
-      loadSlots('book');
+    if (isAuthenticated && activeView === 'book' && selectedDoctor && bookingDate) {
+      loadBookingSlots();
     }
-  }, [isAuthenticated, activeView, selectedDoctor, selectedBookClinic, bookingDate, loadSlots]);
+  }, [isAuthenticated, activeView, selectedDoctor, bookingDate, loadBookingSlots]);
 
   // Auto-refresh every 8 seconds
   useEffect(() => {
     if (!isAuthenticated) return;
     const interval = setInterval(() => {
       if (activeView === 'appointments') loadAppointments();
-      if ((activeView === 'walkin' || activeView === 'book') && selectedDoctor && selectedBookClinic) {
-        loadSlots(activeView === 'walkin' ? 'walkin' : 'book');
-      }
+      if (activeView === 'walkin' && selectedDoctor) loadWalkinSlots();
+      if (activeView === 'book' && selectedDoctor && bookingDate) loadBookingSlots();
+      setCurrentSession(getCurrentSession());
     }, 8000);
     return () => clearInterval(interval);
-  }, [isAuthenticated, activeView, loadAppointments, loadSlots, selectedDoctor, selectedBookClinic]);
+  }, [isAuthenticated, activeView, loadAppointments, loadWalkinSlots, loadBookingSlots, selectedDoctor, bookingDate]);
 
   // ============ Patient Lookup ============
   const lookupPatient = async () => {
@@ -291,38 +333,13 @@ const DiaGynStaffPortal = () => {
       } else {
         setFoundPatient(null);
         setPatientId(null);
-        toast.info('Not found. Enter name to register.');
+        toast.info('New patient - enter name');
       }
     } catch (error) {
       errorPattern();
       toast.error('Search failed');
     }
     setSearchingPatient(false);
-  };
-
-  const registerPatient = async () => {
-    if (!registerForm.name || !registerForm.mobile) {
-      errorPattern();
-      toast.error('Name & mobile required');
-      return;
-    }
-    setLoading(true);
-    heavyTap();
-    try {
-      const res = await axios.post(`${API}/api/diagyn-staff/patient/register`, registerForm, getAuthHeaders());
-      if (res.data.success) {
-        successPattern();
-        toast.success('Registered!');
-        setShowRegisterModal(false);
-        setFoundPatient({ id: res.data.patient_id, name: registerForm.name, mobile: registerForm.mobile });
-        setPatientName(registerForm.name);
-        setPatientId(res.data.patient_id);
-      }
-    } catch (error) {
-      errorPattern();
-      toast.error('Registration failed');
-    }
-    setLoading(false);
   };
 
   // ============ Booking ============
@@ -332,27 +349,27 @@ const DiaGynStaffPortal = () => {
       toast.error('Enter patient name & mobile');
       return;
     }
-    if (!selectedSlot && type !== 'EMERGENCY') {
+    if (!selectedDoctor) {
+      errorPattern();
+      toast.error('Select doctor');
+      return;
+    }
+    if (type !== 'EMERGENCY' && !selectedSlot) {
       errorPattern();
       toast.error('Select a time slot');
       return;
     }
-    if (!selectedDoctor || !selectedBookClinic) {
-      errorPattern();
-      toast.error('Select doctor & clinic');
-      return;
-    }
     
-    const dateToUse = type === 'SCHEDULED' ? bookingDate : getIndianDate();
+    const dateToUse = type === 'SCHEDULED' ? bookingDate : getISTDate();
     
     setLoading(true);
     heavyTap();
     try {
       const res = await axios.post(`${API}/api/diagyn-staff/appointments/book`, {
-        clinic: selectedBookClinic,
+        clinic: selectedClinic,
         doctor: selectedDoctor,
         date: dateToUse,
-        time: selectedSlot,
+        time: type === 'EMERGENCY' ? null : selectedSlot,
         patient_name: patientName,
         patient_mobile: patientMobile,
         patient_id: patientId,
@@ -362,12 +379,7 @@ const DiaGynStaffPortal = () => {
       if (res.data.success) {
         successPattern();
         toast.success(`Booked: ${res.data.booking_id}`);
-        // Reset form
-        setPatientName('');
-        setPatientMobile('');
-        setPatientId(null);
-        setFoundPatient(null);
-        setSelectedSlot('');
+        resetBookingForm();
         setActiveView('appointments');
         loadAppointments();
       }
@@ -376,6 +388,39 @@ const DiaGynStaffPortal = () => {
       toast.error(error.response?.data?.detail || 'Booking failed');
     }
     setLoading(false);
+  };
+
+  const resetBookingForm = () => {
+    setSelectedDoctor('');
+    setBookingDate('');
+    setSelectedSlot('');
+    setPatientName('');
+    setPatientMobile('');
+    setPatientId(null);
+    setFoundPatient(null);
+    setAvailableSlots([]);
+    setIsEmergency(false);
+  };
+
+  // Switch view and reset
+  const switchToView = (view) => {
+    selectionTap();
+    setActiveView(view);
+    resetBookingForm();
+    if (view === 'book') {
+      // Default to tomorrow for booking
+      const tomorrow = new Date(getISTNow());
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      setBookingDate(tomorrow.toISOString().split('T')[0]);
+    }
+  };
+
+  // Get doctors available at current clinic
+  const getDoctorsForClinic = () => {
+    if (!config?.doctor_schedule) return [];
+    return Object.keys(config.doctor_schedule).filter(doctor => 
+      config.doctor_schedule[doctor][selectedClinic]
+    );
   };
 
   // ============ Status Updates ============
@@ -431,30 +476,6 @@ const DiaGynStaffPortal = () => {
       toast.error('Failed');
     }
     setLoading(false);
-  };
-
-  // Reset booking form when switching views
-  const switchToView = (view) => {
-    selectionTap();
-    setActiveView(view);
-    setSelectedSlot('');
-    setPatientName('');
-    setPatientMobile('');
-    setPatientId(null);
-    setFoundPatient(null);
-    setAvailableSlots([]);
-    if (view === 'book') {
-      // Set tomorrow as default for book appointment
-      const tomorrow = new Date(getIndianTime());
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      setBookingDate(tomorrow.toISOString().split('T')[0]);
-    }
-  };
-
-  // Get available clinics for selected doctor
-  const getClinicsForDoctor = (doctor) => {
-    if (!config?.doctor_schedule?.[doctor]) return [];
-    return Object.keys(config.doctor_schedule[doctor]);
   };
 
   // ============ Login Screen ============
@@ -521,15 +542,22 @@ const DiaGynStaffPortal = () => {
             </Button>
           </div>
         </div>
-        {/* Clinic Filter */}
-        <div className="grid grid-cols-3 gap-1.5 mt-3 pb-1">
-          {['all', 'Pushpa Clinic', 'Amnion Clinic'].map(clinic => (
-            <button key={clinic} onClick={() => { selectionTap(); setActiveClinic(clinic); }}
-              className={`py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                activeClinic === clinic ? 'bg-white shadow-md' : 'bg-white/20 text-white'
+        
+        {/* Clinic Toggle - Only Pushpa & Amnion */}
+        <div className="grid grid-cols-2 gap-2 mt-3 pb-1">
+          {['Pushpa Clinic', 'Amnion Clinic'].map(clinic => (
+            <button key={clinic} 
+              onClick={() => { 
+                selectionTap(); 
+                setSelectedClinic(clinic); 
+                resetBookingForm();
+              }}
+              className={`py-3 rounded-xl text-sm font-bold transition-all ${
+                selectedClinic === clinic ? 'bg-white shadow-md' : 'bg-white/20 text-white'
               }`}
-              style={activeClinic === clinic ? { color: COLORS.primary } : {}}>
-              {clinic === 'all' ? 'All' : clinic.replace(' Clinic', '')}
+              style={selectedClinic === clinic ? { color: COLORS.primary } : {}}>
+              <Building2 className="w-4 h-4 inline mr-2" />
+              {clinic.replace(' Clinic', '')}
             </button>
           ))}
         </div>
@@ -592,7 +620,7 @@ const DiaGynStaffPortal = () => {
             {appointments.length === 0 ? (
               <div className="text-center py-8 bg-white rounded-lg">
                 <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-                <p className="text-gray-500 text-sm">No appointments</p>
+                <p className="text-gray-500 text-sm">No appointments at {selectedClinic.replace(' Clinic', '')}</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -607,23 +635,56 @@ const DiaGynStaffPortal = () => {
           </div>
         )}
 
-        {/* ============ WALK-IN VIEW (Current Session Only) ============ */}
+        {/* ============ WALK-IN / EMERGENCY VIEW ============ */}
         {activeView === 'walkin' && (
           <div className="space-y-3">
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-              <p className="text-sm text-amber-800 font-medium">
-                <AlertTriangle className="w-4 h-4 inline mr-1" />
-                Walk-in: Current session slots only (Today)
-              </p>
+            {/* Current Session Status */}
+            <div className={`rounded-lg p-3 border ${currentSession ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className={`text-sm font-bold ${currentSession ? 'text-green-800' : 'text-amber-800'}`}>
+                    <Clock className="w-4 h-4 inline mr-1" />
+                    {currentSession ? `Active: ${getSessionLabel(currentSession)}` : 'No Active Session'}
+                  </p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {currentSession ? 'Walk-in & Emergency available' : 'Only Emergency available (24x7)'}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            {/* Step 1: Select Doctor */}
+            {/* Emergency Toggle */}
             <div className="bg-white rounded-lg p-3 shadow-sm">
-              <label className="text-xs font-bold text-gray-600 mb-2 block">1. SELECT DOCTOR</label>
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => { mediumTap(); setIsEmergency(false); setSelectedSlot(''); }}
+                  className={`flex-1 py-3 rounded-lg font-bold transition-all ${
+                    !isEmergency ? 'text-white' : 'bg-gray-100 text-gray-600'
+                  }`}
+                  style={!isEmergency ? { background: COLORS.accent } : {}}
+                  disabled={!currentSession}>
+                  <Users className="w-4 h-4 inline mr-2" />
+                  Walk-in
+                </button>
+                <button 
+                  onClick={() => { mediumTap(); setIsEmergency(true); setSelectedSlot(''); }}
+                  className={`flex-1 py-3 rounded-lg font-bold transition-all ${
+                    isEmergency ? 'text-white' : 'bg-gray-100 text-gray-600'
+                  }`}
+                  style={isEmergency ? { background: COLORS.danger } : {}}>
+                  <AlertTriangle className="w-4 h-4 inline mr-2" />
+                  Emergency
+                </button>
+              </div>
+            </div>
+
+            {/* Select Doctor */}
+            <div className="bg-white rounded-lg p-3 shadow-sm">
+              <label className="text-xs font-bold text-gray-600 mb-2 block">SELECT DOCTOR</label>
               <div className="grid grid-cols-2 gap-2">
-                {Object.keys(config?.doctor_schedule || {}).map(doctor => (
+                {getDoctorsForClinic().map(doctor => (
                   <button key={doctor}
-                    onClick={() => { mediumTap(); setSelectedDoctor(doctor); setSelectedBookClinic(''); setSelectedSlot(''); }}
+                    onClick={() => { mediumTap(); setSelectedDoctor(doctor); setSelectedSlot(''); }}
                     className={`p-3 rounded-lg border-2 text-left transition-all ${
                       selectedDoctor === doctor ? 'shadow-md' : 'border-gray-200'
                     }`}
@@ -633,37 +694,20 @@ const DiaGynStaffPortal = () => {
                   </button>
                 ))}
               </div>
+              {getDoctorsForClinic().length === 0 && (
+                <p className="text-center text-gray-500 text-sm py-4">No doctors at this clinic today</p>
+              )}
             </div>
 
-            {/* Step 2: Select Clinic */}
-            {selectedDoctor && (
-              <div className="bg-white rounded-lg p-3 shadow-sm">
-                <label className="text-xs font-bold text-gray-600 mb-2 block">2. SELECT CLINIC</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {getClinicsForDoctor(selectedDoctor).map(clinic => (
-                    <button key={clinic}
-                      onClick={() => { mediumTap(); setSelectedBookClinic(clinic); setSelectedSlot(''); }}
-                      className={`p-3 rounded-lg border-2 text-left transition-all ${
-                        selectedBookClinic === clinic ? 'shadow-md' : 'border-gray-200'
-                      }`}
-                      style={selectedBookClinic === clinic ? { borderColor: COLORS.accent, background: COLORS.accentLight } : {}}>
-                      <Building2 className="w-5 h-5 mb-1" style={{ color: COLORS.accent }} />
-                      <p className="font-bold text-sm">{clinic.replace(' Clinic', '')}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Available Slots */}
-            {selectedDoctor && selectedBookClinic && (
+            {/* Slots (only for walk-in with active session) */}
+            {selectedDoctor && !isEmergency && currentSession && (
               <div className="bg-white rounded-lg p-3 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-gray-600">
-                    3. CURRENT SESSION SLOTS
-                    {currentSession && <span className="ml-2 text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-700">
-                      {currentSession === 'morning' ? '11AM-2PM' : '6PM-10PM'}
-                    </span>}
+                    CURRENT SESSION SLOTS
+                    <span className="ml-2 text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
+                      {getSessionLabel(currentSession)}
+                    </span>
                   </label>
                   {loadingSlots && <Loader2 className="w-4 h-4 animate-spin" style={{ color: COLORS.accent }} />}
                 </div>
@@ -681,15 +725,25 @@ const DiaGynStaffPortal = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center text-gray-500 text-sm py-4">No slots available for current session</p>
+                  <p className="text-center text-gray-500 text-sm py-4">No slots available</p>
                 )}
               </div>
             )}
 
-            {/* Step 4: Patient Details */}
-            {selectedSlot && (
+            {/* No session message for walk-in */}
+            {selectedDoctor && !isEmergency && !currentSession && (
+              <div className="bg-amber-50 rounded-lg p-4 text-center">
+                <AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" />
+                <p className="text-amber-800 font-medium">No active session right now</p>
+                <p className="text-amber-600 text-sm mt-1">Morning: 11am-2pm | Evening: 6pm-10pm</p>
+                <p className="text-amber-600 text-sm">Use Emergency for urgent cases</p>
+              </div>
+            )}
+
+            {/* Patient Details */}
+            {selectedDoctor && (isEmergency || selectedSlot) && (
               <div className="bg-white rounded-lg p-3 shadow-sm space-y-3">
-                <label className="text-xs font-bold text-gray-600 block">4. PATIENT DETAILS</label>
+                <label className="text-xs font-bold text-gray-600 block">PATIENT DETAILS</label>
                 <div className="flex gap-2">
                   <Input value={patientMobile} maxLength={10}
                     onChange={(e) => setPatientMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
@@ -710,63 +764,38 @@ const DiaGynStaffPortal = () => {
               </div>
             )}
 
-            {/* Book Buttons */}
-            {selectedSlot && patientName && patientMobile && (
-              <div className="grid grid-cols-2 gap-2">
-                <Button onClick={() => handleBooking('WALK_IN')} disabled={loading}
-                  className="h-12 font-bold" style={{ background: COLORS.accent }}>
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Users className="w-5 h-5 mr-2" />}
-                  WALK-IN
-                </Button>
-                <Button onClick={() => handleBooking('EMERGENCY')} disabled={loading}
-                  className="h-12 font-bold" style={{ background: COLORS.danger }}>
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <AlertTriangle className="w-5 h-5 mr-2" />}
-                  EMERGENCY
-                </Button>
-              </div>
+            {/* Book Button */}
+            {selectedDoctor && patientName && patientMobile && (isEmergency || selectedSlot) && (
+              <Button 
+                onClick={() => handleBooking(isEmergency ? 'EMERGENCY' : 'WALK_IN')} 
+                disabled={loading}
+                className="w-full h-14 text-lg font-bold"
+                style={{ background: isEmergency ? COLORS.danger : COLORS.accent }}>
+                {loading ? <Loader2 className="w-6 h-6 animate-spin mr-2" /> : 
+                  isEmergency ? <AlertTriangle className="w-6 h-6 mr-2" /> : <Users className="w-6 h-6 mr-2" />}
+                {isEmergency ? 'BOOK EMERGENCY' : 'BOOK WALK-IN'}
+              </Button>
             )}
           </div>
         )}
 
-        {/* ============ BOOK APPOINTMENT VIEW (Future Sessions) ============ */}
+        {/* ============ BOOK APPOINTMENT VIEW ============ */}
         {activeView === 'book' && (
           <div className="space-y-3">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <p className="text-sm text-blue-800 font-medium">
                 <CalendarPlus className="w-4 h-4 inline mr-1" />
-                Book Appointment: Next session onwards
+                Book future appointment at {selectedClinic.replace(' Clinic', '')}
               </p>
-            </div>
-
-            {/* Patient Details First */}
-            <div className="bg-white rounded-lg p-3 shadow-sm space-y-3">
-              <label className="text-xs font-bold text-gray-600 block">1. PATIENT DETAILS</label>
-              <div className="flex gap-2">
-                <Input value={patientMobile} maxLength={10}
-                  onChange={(e) => setPatientMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  placeholder="Mobile (10 digits)" className="h-10" />
-                <Button onClick={lookupPatient} disabled={searchingPatient || patientMobile.length < 10}
-                  className="h-10 px-4" style={{ background: COLORS.primary }}>
-                  {searchingPatient ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                </Button>
-              </div>
-              {foundPatient && (
-                <div className="p-2 rounded-lg flex items-center gap-2" style={{ background: COLORS.primaryLight }}>
-                  <CheckCircle2 className="w-5 h-5" style={{ color: COLORS.primary }} />
-                  <span className="font-medium text-sm" style={{ color: COLORS.primary }}>{foundPatient.name} ({foundPatient.id})</span>
-                </div>
-              )}
-              <Input value={patientName} onChange={(e) => setPatientName(e.target.value)}
-                placeholder="Patient Name" className="h-10" />
             </div>
 
             {/* Select Doctor */}
             <div className="bg-white rounded-lg p-3 shadow-sm">
-              <label className="text-xs font-bold text-gray-600 mb-2 block">2. SELECT DOCTOR</label>
+              <label className="text-xs font-bold text-gray-600 mb-2 block">1. SELECT DOCTOR</label>
               <div className="grid grid-cols-2 gap-2">
-                {Object.keys(config?.doctor_schedule || {}).map(doctor => (
+                {getDoctorsForClinic().map(doctor => (
                   <button key={doctor}
-                    onClick={() => { mediumTap(); setSelectedDoctor(doctor); setSelectedBookClinic(''); setSelectedSlot(''); }}
+                    onClick={() => { mediumTap(); setSelectedDoctor(doctor); setSelectedSlot(''); }}
                     className={`p-3 rounded-lg border-2 text-left transition-all ${
                       selectedDoctor === doctor ? 'shadow-md' : 'border-gray-200'
                     }`}
@@ -778,42 +807,22 @@ const DiaGynStaffPortal = () => {
               </div>
             </div>
 
-            {/* Select Clinic */}
+            {/* Select Date */}
             {selectedDoctor && (
               <div className="bg-white rounded-lg p-3 shadow-sm">
-                <label className="text-xs font-bold text-gray-600 mb-2 block">3. SELECT CLINIC</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {getClinicsForDoctor(selectedDoctor).map(clinic => (
-                    <button key={clinic}
-                      onClick={() => { mediumTap(); setSelectedBookClinic(clinic); setSelectedSlot(''); }}
-                      className={`p-3 rounded-lg border-2 text-left transition-all ${
-                        selectedBookClinic === clinic ? 'shadow-md' : 'border-gray-200'
-                      }`}
-                      style={selectedBookClinic === clinic ? { borderColor: COLORS.accent, background: COLORS.accentLight } : {}}>
-                      <Building2 className="w-5 h-5 mb-1" style={{ color: COLORS.accent }} />
-                      <p className="font-bold text-sm">{clinic.replace(' Clinic', '')}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Select Date */}
-            {selectedDoctor && selectedBookClinic && (
-              <div className="bg-white rounded-lg p-3 shadow-sm">
-                <label className="text-xs font-bold text-gray-600 mb-2 block">4. SELECT DATE</label>
-                <input type="date" value={bookingDate} min={getIndianDate()}
+                <label className="text-xs font-bold text-gray-600 mb-2 block">2. SELECT DATE</label>
+                <input type="date" value={bookingDate} min={getISTDate()}
                   onChange={(e) => { lightTap(); setBookingDate(e.target.value); setSelectedSlot(''); }}
                   className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm" />
-                <p className="text-xs text-gray-500 mt-1">{getDayName(bookingDate)}</p>
+                {bookingDate && <p className="text-xs text-gray-500 mt-1">{getDayName(bookingDate)}</p>}
               </div>
             )}
 
             {/* Available Slots */}
-            {selectedDoctor && selectedBookClinic && bookingDate && (
+            {selectedDoctor && bookingDate && (
               <div className="bg-white rounded-lg p-3 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-gray-600">5. SELECT SLOT</label>
+                  <label className="text-xs font-bold text-gray-600">3. SELECT SLOT</label>
                   {loadingSlots && <Loader2 className="w-4 h-4 animate-spin" style={{ color: COLORS.accent }} />}
                 </div>
                 {availableSlots.length > 0 ? (
@@ -837,6 +846,30 @@ const DiaGynStaffPortal = () => {
               </div>
             )}
 
+            {/* Patient Details */}
+            {selectedSlot && (
+              <div className="bg-white rounded-lg p-3 shadow-sm space-y-3">
+                <label className="text-xs font-bold text-gray-600 block">4. PATIENT DETAILS</label>
+                <div className="flex gap-2">
+                  <Input value={patientMobile} maxLength={10}
+                    onChange={(e) => setPatientMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    placeholder="Mobile (10 digits)" className="h-10" />
+                  <Button onClick={lookupPatient} disabled={searchingPatient || patientMobile.length < 10}
+                    className="h-10 px-4" style={{ background: COLORS.primary }}>
+                    {searchingPatient ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                  </Button>
+                </div>
+                {foundPatient && (
+                  <div className="p-2 rounded-lg flex items-center gap-2" style={{ background: COLORS.primaryLight }}>
+                    <CheckCircle2 className="w-5 h-5" style={{ color: COLORS.primary }} />
+                    <span className="font-medium text-sm" style={{ color: COLORS.primary }}>{foundPatient.name} ({foundPatient.id})</span>
+                  </div>
+                )}
+                <Input value={patientName} onChange={(e) => setPatientName(e.target.value)}
+                  placeholder="Patient Name" className="h-10" />
+              </div>
+            )}
+
             {/* Book Button */}
             {selectedSlot && patientName && patientMobile && (
               <Button onClick={() => handleBooking('SCHEDULED')} disabled={loading}
@@ -852,7 +885,7 @@ const DiaGynStaffPortal = () => {
         {activeView === 'summary' && (
           <div className="space-y-3">
             <div className="rounded-xl p-4 text-white shadow-lg" style={{ background: COLORS.primary }}>
-              <h3 className="text-sm font-medium opacity-80">Today's Collection</h3>
+              <h3 className="text-sm font-medium opacity-80">Today at {selectedClinic.replace(' Clinic', '')}</h3>
               <div className="text-3xl font-bold mt-1">₹{(dailySummary?.total_collection || 0).toLocaleString('en-IN')}</div>
               <p className="text-sm opacity-70 mt-1">{dailySummary?.total_patients || 0} patients</p>
             </div>
@@ -876,42 +909,6 @@ const DiaGynStaffPortal = () => {
           </div>
         )}
       </main>
-
-      {/* Register Patient Modal */}
-      {showRegisterModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-sm p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold">Register Patient</h3>
-              <button onClick={() => setShowRegisterModal(false)} className="p-1.5 hover:bg-gray-100 rounded-full">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="space-y-3">
-              <Input value={registerForm.name} onChange={(e) => setRegisterForm(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Patient name" className="h-10" />
-              <Input value={registerForm.mobile} disabled className="h-10 bg-gray-50" />
-              <div className="grid grid-cols-2 gap-2">
-                <Input type="number" value={registerForm.age}
-                  onChange={(e) => setRegisterForm(prev => ({ ...prev, age: e.target.value }))}
-                  placeholder="Age" className="h-10" />
-                <select value={registerForm.gender}
-                  onChange={(e) => setRegisterForm(prev => ({ ...prev, gender: e.target.value }))}
-                  className="h-10 px-3 rounded-lg border border-gray-200 text-sm">
-                  <option value="">Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-              <Button onClick={registerPatient} disabled={loading || !registerForm.name}
-                className="w-full h-10" style={{ background: COLORS.accent }}>
-                {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <UserPlus className="w-4 h-4 mr-2" />}
-                Register
-              </Button>
-            </div>
-          </Card>
-        </div>
-      )}
 
       {/* Completion Modal */}
       {showCompletionModal && completingAppointment && (
@@ -1030,9 +1027,8 @@ const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onComplete }) =
           </span>
         </div>
         <div className="flex items-center gap-3 text-xs text-gray-600 mt-2">
-          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {apt.time || '-'}</span>
+          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {apt.time || 'Emergency'}</span>
           <span className="flex items-center gap-1"><Stethoscope className="w-3 h-3" /> {apt.doctor?.replace('Dr. ', '')}</span>
-          <span className="flex items-center gap-1"><Building2 className="w-3 h-3" /> {apt.clinic?.replace(' Clinic', '')}</span>
         </div>
         <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
           <div className="flex items-center gap-2">
