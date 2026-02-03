@@ -383,10 +383,10 @@ const Home = () => {
       featured: true
     },
     {
-      id: 'proton',
+      id: 'mango',
       name: 'Mango Health Labs',
       description: 'Book lab tests & health checkups',
-      logo: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
+      logo: 'https://customer-assets.emergentagent.com/job_orange-mango/artifacts/3n17yxpx_mango-logo.png',
       path: '/mango',
       bgColor: '#ffffff',
       isDark: false,
@@ -604,20 +604,20 @@ const Home = () => {
                 <span className="font-semibold text-sm whitespace-nowrap">DiaGyn</span>
               </button>
               
-              {/* Proton - Navigate to /proton */}
+              {/* Mango - Navigate to /mango */}
               <button
                 onClick={() => navigate('/mango')}
                 className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
                   activeService === 'proton' 
-                    ? 'bg-white text-blue-600 shadow-lg'
-                    : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-blue-300' : 'bg-white/20 text-white hover:bg-white/30')
+                    ? 'bg-white text-orange-600 shadow-lg'
+                    : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-orange-300' : 'bg-white/20 text-white hover:bg-white/30')
                 }`}
-                data-testid="nav-proton"
+                data-testid="nav-mango"
               >
-                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'proton' ? 'from-blue-500 to-indigo-500' : 'from-blue-400 to-indigo-500'} flex items-center justify-center`}>
+                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'proton' ? 'from-orange-500 to-amber-500' : 'from-orange-400 to-amber-500'} flex items-center justify-center`}>
                   <FlaskConical className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-semibold text-sm whitespace-nowrap">Proton</span>
+                <span className="font-semibold text-sm whitespace-nowrap">Mango</span>
               </button>
               
               {/* Orange Pharmacy - Navigate to /pharmacy */}

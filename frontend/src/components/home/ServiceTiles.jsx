@@ -20,13 +20,13 @@ const ServiceTiles = () => {
       borderColor: 'border-orange-200'
     },
     {
-      id: 'proton',
+      id: 'mango',
       name: 'Mango Health Labs',
       subtitle: 'Lab Tests & Packages',
       path: '/mango',
-      image: 'https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg',
-      gradient: 'from-blue-100 to-cyan-50',
-      borderColor: 'border-blue-200'
+      image: 'https://customer-assets.emergentagent.com/job_orange-mango/artifacts/3n17yxpx_mango-logo.png',
+      gradient: 'from-orange-100 to-amber-50',
+      borderColor: 'border-orange-200'
     },
     {
       id: 'diagyn',
