@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://mangobrand.preview.emergentagent.com",
+    "url": "https://medbooker-37.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {

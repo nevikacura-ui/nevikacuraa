@@ -1,151 +1,143 @@
 <analysis>**original_problem_statement:**
-The user's initial request for a UI/UX overhaul evolved into a full rebranding of Proton Diagnostics to Mango Health Labs. This involved changing the logo, color scheme, all text references, and URLs. The session included numerous iterative UI/UX changes, an urgent fix for staff portals going blank, implementation of a three-tier payment system, adding Wishlist and Save for Later features, and a complete overhaul of the staff-facing medicine image upload system.
-
-Most recently, the user reported two critical issues:
-1.  A recurring problem where staff and doctor portals go blank, preventing them from seeing appointments. This is severely hampering daily operations.
-2.  Issues with the Progressive Web App (PWA) being slow to install and locally built Android APKs being outdated.
+The user's initial request was to fix a critical bug where staff and doctor portals were showing no appointments. However, this quickly evolved into a request for a complete rebuild of the staff and doctor portals for DiaGyn with a new, simplified, and senior-friendly design.
 
 **PRODUCT REQUIREMENTS:**
-1.  **Rebrand Proton Diagnostics to Mango Health Labs**: Complete sitewide rebrand.
-2.  **Iterative UI/Theme Changes**: Implement distinct themes for DiaGyn, Mango, and Orange Pharmacy.
-3.  **Fix Staff Portal Glitch (URGENT)**: Resolve the issue where portals go blank.
-4.  **Modernize UI Components**: Update fonts, layouts, and add features like Wishlist and back buttons.
-5.  **Implement Flexible Payment Options**: A three-tier system (COD, Card/QR, Cashfree online).
-6.  **Improve Staff Tooling**: Overhaul the medicine image upload portal for efficiency.
-7.  **Create Modern Profile Page**: Implement a new user profile page based on a Blinkit-style design.
-8.  **Enhance UX with Haptic Feedback**: Add haptic feedback to all interactive elements.
+1.  **Rebuild Staff Portal:** Create a new, single portal for staff to book appointments for two clinics (Pushpa and Amnion).
+2.  **Simplified Booking Flow:** Implement distinct workflows for Walk-in/Emergency (current session only) and Book Appointment (future dates). Emergency booking must be available 24/7.
+3.  **Senior-Friendly UI:** Use large buttons, clear text, intuitive layouts, and haptic feedback. The UI must be mobile and tablet-friendly.
+4.  **Doctor Schedule & Slot Sync:** Implement doctor-specific schedules for different clinics and days. Ensure real-time slot availability to prevent double-booking from different sources (staff portal vs. patient website).
+5.  **Rebuild Doctor Portal:** Create a new portal for doctors to view their patient queue, manage consultation status (Waiting, In Consult, Done), and complete consultations by selecting from a list of fees and charges.
+6.  **Iterative UI/UX Design:** Implement user-provided color schemes and layout adjustments. The final themes are Teal/Lime Green for the Staff Portal and Navy Blue/Teal on a white background for the Doctor Portal.
+7.  **Data Management:** Enable patient lookup via mobile number, save new patients, and display booking/patient IDs clearly.
+8.  **Backend Logic:** All time-based logic (e.g., sessions) must be based on India Standard Time (IST).
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack React/FastAPI project. The rebranding and theming work is complete. Key features like the three-tier payment system, wishlist/save-for-later, and back buttons have been implemented and verified. The medicine image upload portal for staff has been significantly upgraded with real-time search, direct file upload, and a Quick Add workflow. A new Blinkit-style user profile page UI has been created. Haptic feedback has been added globally to all major UI components.
-
-The most recent work focused on a critical regression where staff portals appear blank. The investigation found that all appointment data (73 records) exists in a database named , but the application seems to be inconsistently connecting to it, with some parts potentially reading from an empty  database.
+A new full-stack feature has been built, comprising a new Staff Portal and a new Doctor Portal.
+-   **Staff Portal ():** A new component  has been created with a Teal/Lime Green theme. It includes functionality for patient lookup, booking, and viewing daily appointments. The booking logic was being rebuilt to meet the user's latest, very specific requirements.
+-   **Doctor Portal ():** A new component  with a Navy Blue/Teal theme allows doctors to log in, see their patient queue, and complete consultations by adding fees.
+-   **Backend ():** New API endpoints have been created to support all the functionalities of the new portals, including schedule-based slot generation, appointment management, and user authentication.
+-   The old staff portal component has been deleted, and all relevant staff credentials have been updated to work with the new system.
 
 **Last working item**:
--   **Last item agent was working:** Investigating why Doctor and Staff portals are showing no appointments. The agent discovered the application's  file points to , but a direct database check showed the default  database was empty while  contained all the appointment data. The agent was in the process of tracing the database connection object from  to the  router to find the source of the misconfiguration.
+-   **Last item agent was working:** Implementing the final, user-confirmed, simplified booking flow for the DiaGyn Staff Portal. The user provided a very specific set of rules for how Walk-in, Emergency, and Book Appointment tabs should function, based on the current time (IST) and selected clinic.
 -   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** Backend testing agent. The agent needs to create a test that books a new appointment and then immediately calls the  endpoint to verify that the new data is retrieved from the correct database ().
+-   **Which testing method agent to use?** Both. The backend agent needs to verify the new IST-based session logic and slot filtering. The frontend agent needs to test the complete, simplified UI and booking workflows.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Blank Doctor/Staff Portals (P0)**
-    -   **Description:** A critical bug where staff and doctor portals show no appointments, despite data existing in the . This is a major operational blocker. The root cause is suspected to be an incorrect database connection being used by the staff API router.
-    -   **Attempted fixes:** The agent confirmed  in . The investigation to trace the  connection object through the FastAPI router initialisation in  was started but not completed.
-    -   **Next debug checklist:**
-        1.  View  to see how the database connection  is initialized and passed to the various API routers (e.g., ).
-        2.  Confirm that the staff router () receives the correct  object.
-        3.  Inspect the  endpoint logic in  to ensure it uses the correct database connection.
-        4.  If the code seems correct, create a new test appointment via the UI and check which database ( or ) the new record is written to.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a critical business-halting bug. Fixing it will restore the primary functionality for clinic staff.
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** Both
-    -   **Blocked on other issue:** None. This is the main blocker.
--   **Issue 2: PWA Install Time / Old APK Version (P2)**
-    -   **Description:** The user reported that the PWA is slow to install (install app on home screen) and that building an APK from their local repo results in an old version of the app.
-    -   **Attempted fixes:** The agent updated  to use correct caching paths and be more aggressive about clearing old caches.
-    -   **Next debug checklist:**
-        1.  **Slow Install:** Review the  array in . It may be too large. Suggest reducing the number of pre-cached assets.
-        2.  **Old APK:** This is an external process issue. The agent needs to clearly explain to the user that they must run  to get the latest code before building the APK.
-    -   **Why fix this issue and what will be achieved with the fix?** To improve the user experience for PWA installation and to unblock the user from building the correct mobile app version.
-    -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Frontend
+-   There are no outstanding bugs. The work is focused on completing a new feature build.
 
 **In progress Task List**:
--   None.
+-   **Task 1: Implement Final Staff Portal Booking Logic (P0)**
+    -   **Where to resume:** The agent has a clear, user-approved plan and has just cleared the  file to start the fresh implementation.
+        1.  **Backend ():** Refactor the slot generation logic to be strictly based on India Standard Time (IST). Create distinct endpoints or logic to serve slots for the current session (Walk-in) versus future dates/sessions (Book).
+        2.  **Frontend ():**
+            -   Modify the header to have only two clinic toggles:  | .
+            -   **Walk-in/Emergency Tab:** Based on the selected clinic, fetch and display doctors. On doctor selection, show *only* the current session's available slots (e.g., 11am-2pm if before 2pm, or 6pm-10pm if after 6pm). Show a No active session message between 2pm-6pm, but ensure the Emergency booking option remains available 24/7.
+            -   **Book Appointment Tab:** For the selected clinic, the flow should be: Select Doctor -> Select Future Date -> Show Available Slots -> Enter Patient Details -> Book.
+    -   **What will be achieved with this?** The staff portal will match the user's exact workflow, providing a simplified and intuitive booking experience.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on something:** None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P1: Refactor Large Frontend Components:** Break down the monolithic  and  into smaller, reusable components.
-    -   **P2: Verify Recently Viewed Feature (Pharmacy):** This feature is pending user verification from a previous session.
-    -   **P2: Test and Finalize Profile Page:** The new Blinkit-style UI is built but could not be tested due to auth issues. The agent needs to use a stable login flow (e.g., patient portal) to test all tabs and functionality.
+    -   **P1: Refactor Large Frontend Components:** Break down  into smaller components after the feature is stable. Also, refactor the existing  and .
+    -   **P2: Verify Recently Viewed Feature (Pharmacy):** This is pending user verification from a previous session.
+    -   **P2: Test and Finalize Profile Page:** The new Blinkit-style UI is built but needs testing.
 -   **Future Tasks:**
-    -   **P2: Manual Pharmacy Inventory Update:** On hold.
-    -   **P2: Implement WhatsApp Chatbot.**
-    -   **P2: Migrate Test Inventory to DB:** Move static test data to MongoDB.
+    -   **P2: Fix PWA Install Time / Old APK Version:** Address user reports of slow PWA installation and outdated local APK builds.
+    -   **P2: Implement WhatsApp Chatbot** using the existing MSG91 integration.
+    -   **P2: Manual Pharmacy Inventory Update Feature.**
     -   **P3: Refactor Backend Routes:** Decompose the monolithic .
 
 **Completed work in this session**
--   **Payment System Verified:** Confirmed the three-tier payment system works on both Mango and Orange Pharmacy pages using the testing agent.
--   **Navigation and UI Text:** Added back buttons to the DiaGyn/Pharmacy flows and the Formerly Proton Diagnostics label to the Mango page.
--   **Wishlist & Save for Later:** Successfully implemented and tested these features on both Mango and Pharmacy pages.
--   **Staff Medicine Image Uploader Overhaul:** Massively improved the tool with real-time search, direct file uploads, Google Image Search integration, and a Quick Add mode for rapid data entry.
--   **Blinkit-Style Profile Page:** Created the complete UI for a new, modern profile page.
--   **Global Haptic Feedback:** Enhanced UX by adding haptic feedback to all core interactive components (, , , etc.).
--   **Staff Portal Stability (Attempt 1):** Addressed the blank screen issue by implementing a token validation endpoint, a manual refresh button, and a Last Refreshed timestamp.
--   **PWA Cache Fix:** Updated the  to fix caching issues.
+-   **DiaGyn Staff Portal Rebuild:** Built a new staff portal from scratch, accessible at .
+    -   Implemented a full appointment workflow: Booking, Check-in, With Doctor, and Completion with Fees.
+    -   Added schedule-based, real-time slot availability for doctors.
+    -   Iterated through multiple UI themes based on user feedback, settling on a Teal/Lime Green design.
+-   **Doctor Portal Creation:** Built a new doctor portal from scratch at .
+    -   Allows doctors to manage their patient queue and consultation flow.
+    -   Includes a fee and scan selection modal for completing consultations.
+    -   Finalized a Navy Blue/Teal on white UI theme.
+-   **Authentication & Data Fixes:**
+    -   Created new accounts for doctors (, ).
+    -   Updated password hashes for all old staff accounts (, etc.) to ensure they can log into the new portals.
+    -   Added new fee codes as requested.
+-   **Code Cleanup:** Deleted the old, problematic staff portal component and updated all routes to point to the new portals.
 
 **Earlier issues found/mentioned but not fixed**
--   **Face ID Camera Fails to Start on Mobile:** A low-priority issue from the initial handoff.
+-   **Initial P0 Bug (Blank Portals):** The original bug was not debugged. Instead, the user opted to replace the faulty portals with entirely new ones. This original issue is now considered obsolete.
+-   **PWA Install Time / Old APK Version:** From the initial handoff, not addressed.
+-   **Face ID Camera Fails to Start on Mobile:** A low-priority issue from the initial handoff, not addressed.
 
 **Known issue recurrence from previous fork**
--   **Staff Portal Blank Screen:** The issue has recurred. Previous fixes focused on auto-refresh and auth state. The current root cause is believed to be a database connection error.
--   **Recurrence count:** 3+
--   **Status:** IN PROGRESS
+-   None. The primary issue from the last fork was superseded by a new feature request.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Database Debugging:** Tracing database connection objects through a FastAPI application to diagnose why an incorrect database is being queried.
--   **Global Component Modification:** Injecting global functionality (haptic feedback) by wrapping base UI library components.
--   **Service Worker Management:** Updating caching strategies in a PWA to fix stale content and improve performance.
--   **Debounced Real-time Search:** Using a  and  pattern to implement efficient search-as-you-type functionality.
+-   **Full-stack Feature Development:** Building a complex feature from the database schema and backend API up to the interactive frontend UI.
+-   **Iterative UI/UX Prototyping:** Rapidly modifying frontend code based on continuous user feedback on colors, layout, and functionality.
+-   **Role-Based Portals:** Creating distinct interfaces and logic for 'staff' and 'doctor' user roles.
+-   **Time-Sensitive Logic:** Implementing business rules based on the time of day (IST), such as differentiating between morning and evening work sessions for slot availability.
 
 **key DB schema**
--   ****: This is the correct database.
-    -   ****: Contains 73 documents.
-    -   ****: Contains medicine inventory.
--   ****: This is the incorrect, empty database.
+-   **:** Stores user accounts for both staff and doctors with fields like , , , and .
+-   **:** Contains all appointment details, including , , , , and .
+-   **:** A registry of patients, searchable by  number.
 
 **changes in tech stack**
 -   None.
 
 **All files of reference**
--   : The core file for the P0 bug's investigation.
--   : Where the database connection is configured and passed to routers.
--   : The frontend page that is failing to display data.
--   : Related to the PWA performance/install issue.
--   : Defines the correct database name.
+-   : The primary frontend file for the task.
+-   : The primary backend file for the task.
+-   : The completed doctor portal, for reference.
+-   : For routing.
 
 **Areas that need refactoring**:
--   **CRITICAL:**  and  are large god components and need to be broken down.
--   The backend  is monolithic and should be modularized.
+-   The  component is a single large file. Once the functionality is stable, it should be broken down into smaller, manageable components (e.g., , , ).
+-   The backend  is monolithic and a candidate for future modularization.
 
 **key api endpoints**
--   : The critical endpoint that is returning an empty list, causing the blank staff portal.
--   : A new endpoint added to improve session stability.
+-   
+-   
+-   
+-    (and new session-based variants)
+-   
+-   
+-   
 
 **Critical Info for New Agent**
--   **Your immediate and only priority is fixing the blank staff portals (P0).** The user's business operations are impacted. The problem is almost certainly that the  endpoint is querying the wrong database ( instead of ). You must trace the DB connection from  into  to fix it.
--   Do not work on any other tasks until the staff portal is displaying appointments correctly.
--   The old APK issue is a user process problem. Once the P0 bug is fixed, instruct the user to  the latest code before building.
--   The new Profile page UI is done. Testing it can wait until after the critical fix.
+-   **Ignore the original P0 bug from the handoff summary.** The user's priority has completely shifted to building and finalizing the new Staff and Doctor portals. The old code is gone.
+-   **Your sole focus is to implement the user's latest, detailed plan for the Staff Portal's booking flow.** This was confirmed in the final messages. Re-read the  and  sections carefully.
+-   The core logic to implement is the strict separation of  (current session only, based on IST) and  (future sessions), with a 24/7  option.
+-   The user is highly engaged and provides specific feedback. Be prepared for further iterative changes after implementing the current plan.
 
 **documents and test reports created in this job**
--   
--   
+-    (Note: This report is for a previous iteration of the portal and is now outdated).
+-    (Updated with new portal features).
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Approved Google Image search for the medicine portal. (Status: **Completed**)
-2.  **User:** Approved Quick Add mode for medicine images. (Status: **Completed**)
-3.  **User:** Requested a new Profile page design and haptic feedback. (Status: **Completed**)
-4.  **User:** Requested haptic feedback on *all* buttons. (Status: **Completed**)
-5.  **User:** **CRITICAL:** Reported that the staff portal is going blank again, PWA is slow to install, and APK builds are outdated. (Status: **IN PROGRESS**)
-6.  **User:** **CRITICAL:** Provided a screenshot showing the 'pushpa' doctor portal is empty. (Status: **IN PROGRESS**)
-7.  **User:** Hi (Status: **Responded**)
-8.  **User:** Proceed (Status: **Responded**)
-9.  **User:** Approved Save for Later feature. (Status: **Completed**)
-10. **User:** Requested back buttons and Formerly Proton text. (Status: **Completed**)
+1.  **User:** Provided new fee codes (S1, S2, etc.), requested the Doctor Portal be darkest green, and asked for the Staff Portal clinic toggles to be larger and full-width on mobile.
+2.  **User:** Provided a screenshot of a blue Add button and requested that color for the Doctor Portal to distinguish it.
+3.  **User:** Requested a new color scheme for the Doctor Portal: navy blue header, white page, and teal buttons.
+4.  **User:** Sent screenshots of the OLD portal, confused if the new portals were live.
+5.  **User:** Delete old portal then. I am ok if data get deleted.
+6.  **User:** When I login in staff portal, and enter id and password, kindly lead to me to new portal.
+7.  **User:** Reported that the  vs  logic was incorrect and needed to be more distinct.
+8.  **User:** Clarified the booking logic again, emphasizing the need for real-time slot sync and proper day-wise scheduling.
+9.  **User:** Asked the agent to confirm the final, simplified flow (2 clinic toggles, distinct walk-in/book logic).
+10. **User:** Clarified that the  option should be available 24/7, even when walk-in sessions are not active. Confirmed the plan by saying, Now integrated both of the understanding you mentioned, and implement.
 
 **Project Health Check:**
--   **Broken:**
-    -   The core functionality of the Staff/Doctor portals is broken, as they cannot display appointments.
--   **Mocked:**
-    -    functions in the backend.
+-   **Broken:** The primary booking flow in the new  does not yet meet the user's final specifications.
+-   **Mocked:**  functions.
 
 **3rd Party Integrations**
 -   Cashfree (Payments)
@@ -153,14 +145,14 @@ The most recent work focused on a critical regression where staff portals appear
 -   Resend (Email)
 
 **Testing status**
--   **Testing agent used after significant changes:** YES
+-   **Testing agent used after significant changes:** YES, but on a previous, now-outdated version of the portals.
 -   **Troubleshoot agent used after agent stuck in loop:** NO
 -   **Test files created:** No
--   **Known regressions:** The staff portal blank screen issue has regressed with a new root cause (database connection).
+-   **Known regressions:** None.
 
 **Credentials to test flow:**
--   **Staff Login:**  /  (for )
--   **Patient Portal Login:** Use mobile  and mock OTP  (for )
+-   **Staff Portal ():**  / 
+-   **Doctor Portal ():**  /  or  / 
 
 **What agent forgot to execute**
--   The agent did not complete the debugging sequence to find the database connection misconfiguration. The investigation of  to see how the  object is passed to the  router was interrupted and needs to be resumed immediately.</analysis>
+-   The agent was about to start the implementation of the user's final confirmed plan for the staff portal booking flow. This work needs to be resumed immediately.</analysis>

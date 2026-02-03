@@ -8,7 +8,7 @@ import requests
 import os
 from datetime import datetime, timedelta
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://mangobrand.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://medbooker-37.preview.emergentagent.com')
 ADMIN_PASSWORD = "nevikacura2026"
 
 class TestClinicManagement:
