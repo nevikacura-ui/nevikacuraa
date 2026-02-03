@@ -61,12 +61,12 @@ const Home = () => {
   const serviceThemes = {
     home: {
       name: 'Nevika Cura',
-      bgGradient: 'from-white via-slate-50 to-white',
-      headerBg: 'bg-white border-b border-slate-200',
-      headerTextColor: 'text-slate-800',
+      bgGradient: 'from-teal-100 via-cyan-50 to-teal-50',
+      headerBg: 'bg-gradient-to-r from-teal-500 to-teal-600',
+      headerTextColor: 'text-white',
       accentColor: 'teal',
-      iconBg: 'from-teal-500 to-cyan-500',
-      isLight: true
+      iconBg: 'from-teal-600 to-cyan-600',
+      isLight: false
     },
     diagyn: {
       name: 'DiaGyn',
