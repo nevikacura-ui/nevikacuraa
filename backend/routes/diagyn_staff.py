@@ -147,7 +147,7 @@ FEE_CODES = {
         "O1": {"label": "OBGY - New", "amount": 500},
         "O2": {"label": "OBGY - Review", "amount": 400},
         "O3": {"label": "OBGY - Follow-up", "amount": 300},
-        "S1": {"label": "Sonography - Basic", "amount": 300},
+        "S1": {"label": "Sonography", "amount": 300},
         "S2": {"label": "Sonography - Follow-up", "amount": 200},
     }
 }
