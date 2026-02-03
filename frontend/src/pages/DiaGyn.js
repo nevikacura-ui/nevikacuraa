@@ -1473,7 +1473,7 @@ const DiaGyn = () => {
               </div>
               
               {/* Time Slots */}
-              <Card className="p-6 rounded-3xl border-[#1B3A35] bg-[#162F2B]/80 shadow-[0_8px_30px_rgb(0,0,0,0.3)]">
+              <Card className="p-6 rounded-3xl border-[#0c1e3c] bg-[#152d4d]/80 shadow-[0_8px_30px_rgb(0,0,0,0.3)]">
                 <h3 className="font-bold text-lg mb-5 flex items-center gap-2 text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
                   <Clock className="w-5 h-5 text-orange-500" />
                   Available Time Slots
@@ -1631,7 +1631,7 @@ const DiaGyn = () => {
         {/* Step 4: OTP Verification */}
         {step === 4 && (
           <div className="animate-in fade-in duration-500">
-            <Card className="max-w-md mx-auto p-8 rounded-3xl border-[#1B3A35] bg-[#162F2B]/90 shadow-[0_20px_50px_rgb(0,0,0,0.3)]">
+            <Card className="max-w-md mx-auto p-8 rounded-3xl border-[#0c1e3c] bg-[#152d4d]/90 shadow-[0_20px_50px_rgb(0,0,0,0.3)]">
               <div className="text-center mb-8">
                 <div className="w-20 h-20 bg-gradient-to-br from-orange-500/30 to-orange-600/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
                   <Shield className="w-10 h-10 text-orange-500" />
@@ -1661,7 +1661,7 @@ const DiaGyn = () => {
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    className="w-12 h-14 text-center text-xl font-bold border-2 border-[#1B3A35] bg-[#14332E] rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 outline-none transition-all text-white"
+                    className="w-12 h-14 text-center text-xl font-bold border-2 border-[#0c1e3c] bg-[#1a365d] rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 outline-none transition-all text-white"
                     data-testid={`otp-input-${index}`}
                   />
                 ))}
@@ -1692,7 +1692,7 @@ const DiaGyn = () => {
         {/* Step 5: Final Confirmation */}
         {step === 5 && (
           <div className="animate-in fade-in duration-500">
-            <Card className="max-w-lg mx-auto p-8 rounded-3xl border-[#1B3A35] bg-[#162F2B]/90 shadow-[0_20px_50px_rgb(0,0,0,0.3)]">
+            <Card className="max-w-lg mx-auto p-8 rounded-3xl border-[#0c1e3c] bg-[#152d4d]/90 shadow-[0_20px_50px_rgb(0,0,0,0.3)]">
               <div className="text-center mb-8">
                 <div className="w-20 h-20 bg-gradient-to-br from-green-500/30 to-green-600/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
                   <Sparkles className="w-10 h-10 text-green-500" />
@@ -1706,9 +1706,9 @@ const DiaGyn = () => {
               </div>
               
               {/* Booking Summary */}
-              <div className="space-y-4 bg-[#14332E]/80 rounded-2xl p-5 border border-[#1B3A35]">
+              <div className="space-y-4 bg-[#1a365d]/80 rounded-2xl p-5 border border-[#0c1e3c]">
                 {/* Doctor Info */}
-                <div className="flex items-center gap-4 pb-4 border-b border-[#1B3A35]">
+                <div className="flex items-center gap-4 pb-4 border-b border-[#0c1e3c]">
                   <img 
                     src={selectedDoctorData?.image} 
                     alt="" 
@@ -1726,21 +1726,21 @@ const DiaGyn = () => {
                 
                 {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-[#1B3A35] rounded-xl">
+                  <div className="p-3 bg-[#0c1e3c] rounded-xl">
                     <p className="text-xs text-emerald-200/60 mb-1">Clinic</p>
                     <p className="font-semibold text-white text-sm">{selectedClinicData?.name}</p>
                   </div>
-                  <div className="p-3 bg-[#1B3A35] rounded-xl">
+                  <div className="p-3 bg-[#0c1e3c] rounded-xl">
                     <p className="text-xs text-emerald-200/60 mb-1">Date</p>
                     <p className="font-semibold text-white text-sm">
                       {selectedDate && format(selectedDate, 'EEE, MMM d')}
                     </p>
                   </div>
-                  <div className="p-3 bg-[#1B3A35] rounded-xl">
+                  <div className="p-3 bg-[#0c1e3c] rounded-xl">
                     <p className="text-xs text-emerald-200/60 mb-1">Time</p>
                     <p className="font-semibold text-white text-sm">{selectedSlot}</p>
                   </div>
-                  <div className="p-3 bg-[#1B3A35] rounded-xl">
+                  <div className="p-3 bg-[#0c1e3c] rounded-xl">
                     <p className="text-xs text-emerald-200/60 mb-1">Patient</p>
                     <p className="font-semibold text-white text-sm">{patientInfo.name}</p>
                   </div>
