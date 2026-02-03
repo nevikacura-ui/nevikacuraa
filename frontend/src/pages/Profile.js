@@ -1,217 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { 
-  ArrowLeft, Calendar, FileText, Pill, User, Settings, Star, 
-  FolderOpen, Upload, Trash2, RefreshCw, Eye, Download, Plus,
-  Fingerprint, Smartphone, Shield, Monitor, Crown
+  ArrowLeft, ChevronRight, ShoppingBag, Wallet, HelpCircle, 
+  Sun, Moon, Eye, EyeOff, MapPin, Bookmark, Heart, Receipt, 
+  CreditCard, Gift, Trophy, Share2, Info, Bell, LogOut, 
+  User, Settings, Cake, Star, Crown, Shield, FileText,
+  Pill, Calendar, FlaskConical, Smartphone, Fingerprint, Monitor
 } from 'lucide-react';
-import PushNotificationSettings from '@/components/PushNotificationSettings';
-import MembershipDashboard from '@/components/MembershipDashboard';
+import { lightTap, mediumTap, selectionTap } from '@/utils/haptics';
+import BottomNav from '@/components/BottomNav';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// Security Settings Component
-const SecuritySettings = ({ token }) => {
-  const { biometricAvailable, biometricEnabled, registerBiometric, removeBiometric, getTrustedDevices, removeTrustedDevice } = useAuth();
-  const [trustedDevices, setTrustedDevices] = useState([]);
-  const [biometricCredentials, setBiometricCredentials] = useState([]);
-  const [loading, setLoading] = useState(false);
-  
-  useEffect(() => {
-    fetchSecurityData();
-  }, []);
-  
-  const fetchSecurityData = async () => {
-    try {
-      // Fetch trusted devices
-      const devices = await getTrustedDevices();
-      setTrustedDevices(devices || []);
-      
-      // Fetch biometric credentials
-      const response = await axios.get(`${API}/auth/biometric/status`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setBiometricCredentials(response.data.credentials || []);
-    } catch (e) {
-      console.error('Failed to fetch security data:', e);
-    }
-  };
-  
-  const handleEnableBiometric = async () => {
-    setLoading(true);
-    try {
-      await registerBiometric();
-      toast.success('Biometric authentication enabled!');
-      fetchSecurityData();
-    } catch (error) {
-      toast.error('Failed to enable biometric. Make sure your device supports it.');
-    }
-    setLoading(false);
-  };
-  
-  const handleRemoveBiometric = async (credentialId) => {
-    if (!window.confirm('Remove this biometric credential?')) return;
-    try {
-      await removeBiometric(credentialId);
-      toast.success('Biometric removed');
-      fetchSecurityData();
-    } catch (error) {
-      toast.error('Failed to remove biometric');
-    }
-  };
-  
-  const handleRemoveDevice = async (deviceId) => {
-    if (!window.confirm('Remove this trusted device? You will need to login again on that device.')) return;
-    try {
-      await removeTrustedDevice(deviceId);
-      toast.success('Device removed');
-      fetchSecurityData();
-    } catch (error) {
-      toast.error('Failed to remove device');
-    }
-  };
-  
-  return (
-    <div className="space-y-6">
-      {/* Biometric Authentication */}
-      <Card className="p-5">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-purple-100 rounded-lg">
-            <Fingerprint className="w-5 h-5 text-purple-600" />
-          </div>
-          <div>
-            <h3 className="font-semibold">Biometric Authentication</h3>
-            <p className="text-sm text-gray-500">Use fingerprint or face recognition to login</p>
-          </div>
-        </div>
-        
-        {biometricAvailable ? (
-          <div className="space-y-3">
-            {biometricCredentials.length > 0 ? (
-              <>
-                <div className="flex items-center gap-2 text-green-600 mb-3">
-                  <Shield className="w-4 h-4" />
-                  <span className="text-sm font-medium">Biometric enabled</span>
-                </div>
-                {biometricCredentials.map(cred => (
-                  <div key={cred.credential_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Smartphone className="w-4 h-4 text-gray-500" />
-                      <div>
-                        <p className="font-medium text-sm">{cred.device_name || 'Unknown Device'}</p>
-                        <p className="text-xs text-gray-500">
-                          Added: {new Date(cred.created_at).toLocaleDateString()}
-                          {cred.last_used && ` • Last used: ${new Date(cred.last_used).toLocaleDateString()}`}
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoveBiometric(cred.credential_id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-              </>
-            ) : (
-              <Button
-                onClick={handleEnableBiometric}
-                disabled={loading}
-                className="w-full"
-              >
-                {loading ? 'Setting up...' : 'Enable Biometric Login'}
-              </Button>
-            )}
-          </div>
-        ) : (
-          <p className="text-sm text-gray-500">
-            Biometric authentication is not available on this device.
-          </p>
-        )}
-      </Card>
-      
-      {/* Trusted Devices */}
-      <Card className="p-5">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <Monitor className="w-5 h-5 text-blue-600" />
-          </div>
-          <div>
-            <h3 className="font-semibold">Trusted Devices</h3>
-            <p className="text-sm text-gray-500">Devices where you've chosen "Remember Me"</p>
-          </div>
-        </div>
-        
-        {trustedDevices.length > 0 ? (
-          <div className="space-y-2">
-            {trustedDevices.map(device => (
-              <div key={device.device_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Smartphone className="w-4 h-4 text-gray-500" />
-                  <div>
-                    <p className="font-medium text-sm">{device.device_name}</p>
-                    <p className="text-xs text-gray-500">
-                      Last login: {new Date(device.last_login).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleRemoveDevice(device.device_id)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-gray-500">
-            No trusted devices yet. Enable "Remember Me" when logging in.
-          </p>
-        )}
-      </Card>
-    </div>
-  );
-};
-
 const Profile = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('profile');
+  const [darkMode, setDarkMode] = useState(false);
+  const [hideSexy, setHideSexy] = useState(false);
+  
+  // User data states
   const [appointments, setAppointments] = useState([]);
   const [diagnostics, setDiagnostics] = useState([]);
   const [pharmacyOrders, setPharmacyOrders] = useState([]);
-  const [healthRecords, setHealthRecords] = useState([]);
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
-  const [loading, setLoading] = useState(true);
-  
-  // Health record upload state
-  const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [showMembershipDashboard, setShowMembershipDashboard] = useState(false);
-  const [uploadData, setUploadData] = useState({
-    record_type: 'prescription',
-    title: '',
-    notes: '',
-    date: new Date().toISOString().split('T')[0]
-  });
-  const [uploading, setUploading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [healthRecords, setHealthRecords] = useState([]);
 
   useEffect(() => {
     if (!user) {
@@ -227,16 +48,16 @@ const Profile = () => {
       const headers = { Authorization: `Bearer ${token}` };
 
       const [appointmentsRes, diagnosticsRes, pharmacyRes, loyaltyRes, recordsRes] = await Promise.all([
-        axios.get(`${API}/appointments`, { headers }),
-        axios.get(`${API}/diagnostics`, { headers }),
-        axios.get(`${API}/pharmacy`, { headers }),
+        axios.get(`${API}/appointments`, { headers }).catch(() => ({ data: [] })),
+        axios.get(`${API}/diagnostics`, { headers }).catch(() => ({ data: [] })),
+        axios.get(`${API}/pharmacy`, { headers }).catch(() => ({ data: [] })),
         axios.get(`${API}/user/loyalty-points`, { headers }).catch(() => ({ data: { loyalty_points: 0 } })),
         axios.get(`${API}/health-records`, { headers }).catch(() => ({ data: { records: [] } }))
       ]);
 
-      setAppointments(appointmentsRes.data);
-      setDiagnostics(diagnosticsRes.data);
-      setPharmacyOrders(pharmacyRes.data);
+      setAppointments(appointmentsRes.data || []);
+      setDiagnostics(diagnosticsRes.data || []);
+      setPharmacyOrders(pharmacyRes.data || []);
       setLoyaltyPoints(loyaltyRes.data.loyalty_points || 0);
       setHealthRecords(recordsRes.data.records || []);
     } catch (error) {
@@ -246,570 +67,637 @@ const Profile = () => {
     }
   };
 
-  const handleReorder = async (orderId) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${API}/pharmacy/reorder/${orderId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      // Store reorder data and navigate to pharmacy
-      localStorage.setItem('reorder_data', JSON.stringify(response.data));
-      navigate('/pharmacy?reorder=true');
-      toast.success('Medicines loaded for reorder!');
-    } catch (error) {
-      toast.error('Failed to load order for reorder');
-    }
+  const handleLogout = () => {
+    mediumTap();
+    logout();
+    toast.success('Logged out successfully');
+    navigate('/');
   };
 
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error('File size must be less than 10MB');
-        return;
-      }
-      setSelectedFile(file);
-    }
-  };
+  // Menu item component
+  const MenuItem = ({ icon: Icon, label, sublabel, onClick, rightElement, showArrow = true, color = "text-slate-600" }) => (
+    <button 
+      onClick={() => {
+        lightTap();
+        onClick?.();
+      }}
+      className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors"
+    >
+      <div className="flex items-center gap-3">
+        <div className={`w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center ${color}`}>
+          <Icon className="w-5 h-5" />
+        </div>
+        <div className="text-left">
+          <p className="font-medium text-slate-800">{label}</p>
+          {sublabel && <p className="text-xs text-slate-500">{sublabel}</p>}
+        </div>
+      </div>
+      {rightElement ? rightElement : (showArrow && <ChevronRight className="w-5 h-5 text-slate-400" />)}
+    </button>
+  );
 
-  const uploadHealthRecord = async () => {
-    if (!uploadData.title) {
-      toast.error('Please enter a title');
-      return;
-    }
-    if (!selectedFile) {
-      toast.error('Please select a file');
-      return;
-    }
+  // Section header
+  const SectionHeader = ({ title }) => (
+    <div className="px-4 py-2 bg-slate-100">
+      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{title}</p>
+    </div>
+  );
 
-    setUploading(true);
-    try {
-      const token = localStorage.getItem('token');
-      
-      // Upload file first
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      
-      const uploadRes = await axios.post(`${API}/upload/file`, formData, {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      
-      // Save health record
-      await axios.post(`${API}/health-records`, {
-        ...uploadData,
-        file_url: uploadRes.data.url
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  // Orders tab content
+  const OrdersTab = () => (
+    <div className="space-y-4 pb-6">
+      {/* Appointments */}
+      <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-teal-500" />
+            <span className="font-semibold text-slate-800">Appointments</span>
+          </div>
+          <span className="text-xs text-slate-500">{appointments.length} total</span>
+        </div>
+        {appointments.length === 0 ? (
+          <div className="p-6 text-center text-slate-500">
+            <Calendar className="w-10 h-10 mx-auto mb-2 opacity-40" />
+            <p className="text-sm">No appointments yet</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-slate-100">
+            {appointments.slice(0, 3).map((apt, idx) => (
+              <div key={idx} className="px-4 py-3 flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-slate-800">{apt.doctor_name || 'Doctor Visit'}</p>
+                  <p className="text-xs text-slate-500">{new Date(apt.date).toLocaleDateString()}</p>
+                </div>
+                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                  apt.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                }`}>
+                  {apt.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-      toast.success('Health record uploaded successfully!');
-      setShowUploadDialog(false);
-      setUploadData({ record_type: 'prescription', title: '', notes: '', date: new Date().toISOString().split('T')[0] });
-      setSelectedFile(null);
-      fetchData();
-    } catch (error) {
-      // If file upload fails, try with placeholder URL for demo
-      try {
-        const token = localStorage.getItem('token');
-        await axios.post(`${API}/health-records`, {
-          ...uploadData,
-          file_url: `https://placeholder.nevikacura.com/records/${Date.now()}_${selectedFile.name}`
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        toast.success('Health record saved!');
-        setShowUploadDialog(false);
-        setUploadData({ record_type: 'prescription', title: '', notes: '', date: new Date().toISOString().split('T')[0] });
-        setSelectedFile(null);
-        fetchData();
-      } catch (err) {
-        toast.error('Failed to upload record');
-      }
-    } finally {
-      setUploading(false);
-    }
-  };
+      {/* Lab Tests */}
+      <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <FlaskConical className="w-5 h-5 text-emerald-500" />
+            <span className="font-semibold text-slate-800">Lab Tests</span>
+          </div>
+          <span className="text-xs text-slate-500">{diagnostics.length} total</span>
+        </div>
+        {diagnostics.length === 0 ? (
+          <div className="p-6 text-center text-slate-500">
+            <FlaskConical className="w-10 h-10 mx-auto mb-2 opacity-40" />
+            <p className="text-sm">No lab tests booked</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-slate-100">
+            {diagnostics.slice(0, 3).map((test, idx) => (
+              <div key={idx} className="px-4 py-3 flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-slate-800">{test.tests?.join(', ') || 'Lab Test'}</p>
+                  <p className="text-xs text-slate-500">{new Date(test.created_at).toLocaleDateString()}</p>
+                </div>
+                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                  test.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                }`}>
+                  {test.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-  const deleteHealthRecord = async (recordId) => {
-    if (!confirm('Are you sure you want to delete this record?')) return;
-    
-    try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`${API}/health-records/${recordId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      toast.success('Record deleted');
-      fetchData();
-    } catch (error) {
-      toast.error('Failed to delete record');
-    }
-  };
+      {/* Pharmacy Orders */}
+      <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Pill className="w-5 h-5 text-orange-500" />
+            <span className="font-semibold text-slate-800">Pharmacy Orders</span>
+          </div>
+          <span className="text-xs text-slate-500">{pharmacyOrders.length} total</span>
+        </div>
+        {pharmacyOrders.length === 0 ? (
+          <div className="p-6 text-center text-slate-500">
+            <Pill className="w-10 h-10 mx-auto mb-2 opacity-40" />
+            <p className="text-sm">No pharmacy orders</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-slate-100">
+            {pharmacyOrders.slice(0, 3).map((order, idx) => (
+              <div key={idx} className="px-4 py-3 flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-slate-800">Order #{order._id?.slice(-6) || idx + 1}</p>
+                  <p className="text-xs text-slate-500">{order.medicines?.length || 0} items • ₹{order.total || 0}</p>
+                </div>
+                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                  order.status === 'delivered' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                }`}>
+                  {order.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
-  if (!user) return null;
+  // Main profile tab content
+  const ProfileTab = () => (
+    <div className="pb-24">
+      {/* Profile Header */}
+      <div className="bg-white px-4 py-5 flex items-center gap-4 border-b border-slate-100">
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+          {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+        </div>
+        <div className="flex-1">
+          <h2 className="text-xl font-bold text-slate-800">{user?.name || 'User'}</h2>
+          <p className="text-sm text-slate-500">{user?.phone || user?.email}</p>
+          <button 
+            onClick={() => {
+              lightTap();
+              toast.info('Edit profile coming soon!');
+            }}
+            className="text-xs text-teal-600 font-semibold mt-1"
+          >
+            Edit profile →
+          </button>
+        </div>
+      </div>
 
-  return (
-    <div className="min-h-screen bg-[#F5F5F4]">
-      <header className="border-b border-slate-200/50 bg-white/90 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/')}
-                data-testid="back-button"
-                className="rounded-full hover:bg-slate-100"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <h1 className="font-heading text-2xl font-semibold text-slate-800">My Profile</h1>
+      {/* Birthday Banner */}
+      <div className="mx-4 mt-4 bg-gradient-to-r from-pink-100 via-rose-50 to-amber-50 rounded-2xl p-4 flex items-center gap-4 border border-pink-200">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center">
+          <Cake className="w-7 h-7 text-white" />
+        </div>
+        <div className="flex-1">
+          <p className="font-semibold text-slate-800">Add your birthday</p>
+          <p className="text-xs text-slate-600">We'll send you a special gift!</p>
+        </div>
+        <ChevronRight className="w-5 h-5 text-slate-400" />
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-3 gap-3 mx-4 mt-4">
+        <button 
+          onClick={() => {
+            lightTap();
+            setActiveTab('orders');
+          }}
+          className="bg-white rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="w-12 h-12 mx-auto rounded-xl bg-teal-100 flex items-center justify-center mb-2">
+            <ShoppingBag className="w-6 h-6 text-teal-600" />
+          </div>
+          <p className="text-sm font-semibold text-slate-800">Your orders</p>
+        </button>
+        
+        <button 
+          onClick={() => {
+            lightTap();
+            toast.info('Wallet feature coming soon!');
+          }}
+          className="bg-white rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="w-12 h-12 mx-auto rounded-xl bg-amber-100 flex items-center justify-center mb-2">
+            <Wallet className="w-6 h-6 text-amber-600" />
+          </div>
+          <p className="text-sm font-semibold text-slate-800">Wallet</p>
+          <p className="text-xs text-slate-500">₹{loyaltyPoints}</p>
+        </button>
+        
+        <button 
+          onClick={() => {
+            lightTap();
+            toast.info('Help center coming soon!');
+          }}
+          className="bg-white rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="w-12 h-12 mx-auto rounded-xl bg-blue-100 flex items-center justify-center mb-2">
+            <HelpCircle className="w-6 h-6 text-blue-600" />
+          </div>
+          <p className="text-sm font-semibold text-slate-800">Need help?</p>
+        </button>
+      </div>
+
+      {/* Membership Card */}
+      <div className="mx-4 mt-4 bg-gradient-to-r from-purple-600 to-violet-600 rounded-2xl p-4 text-white shadow-lg">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Crown className="w-8 h-8" />
+            <div>
+              <p className="font-bold text-lg">Loyalty Points</p>
+              <p className="text-white/80 text-sm">You have {loyaltyPoints} points</p>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={logout}
-              data-testid="logout-button"
-              className="rounded-full"
-            >
-              Logout
-            </Button>
+          </div>
+          <div className="text-right">
+            <p className="text-2xl font-bold">₹{(loyaltyPoints / 10).toFixed(0)}</p>
+            <p className="text-xs text-white/70">Redeemable value</p>
           </div>
         </div>
-      </header>
+      </div>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* User Info Card with Loyalty Points */}
-        <Card className="p-6 mb-8 bg-white shadow-sm border-slate-100 rounded-2xl">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                <User className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h2 className="font-heading text-2xl font-semibold text-slate-800" data-testid="user-name">{user.name}</h2>
-                <p className="font-body text-slate-500" data-testid="user-email">{user.email}</p>
-                <p className="font-body text-slate-500" data-testid="user-phone">{user.phone}</p>
-              </div>
+      {/* App Settings */}
+      <div className="bg-white rounded-2xl mx-4 mt-4 overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">App Settings</p>
+        </div>
+        
+        <div className="flex items-center justify-between px-4 py-3.5 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+              {darkMode ? <Moon className="w-5 h-5 text-indigo-600" /> : <Sun className="w-5 h-5 text-amber-500" />}
             </div>
-            
-            {/* Loyalty Points Display */}
-            <div className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl px-5 py-3 shadow-sm" data-testid="loyalty-points-card">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
-                <Star className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-xs text-amber-700 font-medium uppercase tracking-wide">Loyalty Points</p>
-                <p className="text-2xl font-bold text-amber-900" data-testid="loyalty-points-value">{loyaltyPoints}</p>
-              </div>
+            <div>
+              <p className="font-medium text-slate-800">Appearance</p>
+              <p className="text-xs text-slate-500">{darkMode ? 'Dark mode' : 'Light mode'}</p>
             </div>
           </div>
-          
-          {/* Nevika Cura ONE Membership Card */}
-          <div className="mt-4 pt-4 border-t border-slate-100">
-            <button
-              onClick={() => setShowMembershipDashboard(true)}
-              className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 via-orange-50 to-rose-50 rounded-2xl border border-amber-200 hover:shadow-md transition-all group"
-              data-testid="membership-dashboard-btn"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <Crown className="w-6 h-6 text-white" />
-                </div>
-                <div className="text-left">
-                  <p className="font-semibold text-amber-900">Nevika Cura ONE</p>
-                  <p className="text-sm text-amber-700">View benefits, discounts & usage stats</p>
-                </div>
-              </div>
-              <ArrowLeft className="w-5 h-5 text-amber-500 rotate-180 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-          
-          {/* Health Dashboard Quick Link */}
-          <div className="mt-4 pt-4 border-t border-slate-100">
-            <Button 
-              onClick={() => navigate('/health-dashboard')}
-              className="w-full sm:w-auto bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 rounded-xl shadow-lg shadow-teal-500/20"
-              data-testid="health-dashboard-btn"
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              View Complete Health Dashboard
-            </Button>
-          </div>
-        </Card>
-
-        <Tabs defaultValue="appointments" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-white rounded-xl p-1 shadow-sm">
-            <TabsTrigger value="appointments" data-testid="appointments-tab" className="rounded-lg">
-              <Calendar className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Appointments</span>
-            </TabsTrigger>
-            <TabsTrigger value="diagnostics" data-testid="diagnostics-tab">
-              <FileText className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Diagnostics</span>
-            </TabsTrigger>
-            <TabsTrigger value="pharmacy" data-testid="pharmacy-tab">
-              <Pill className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Pharmacy</span>
-            </TabsTrigger>
-            <TabsTrigger value="records" data-testid="records-tab">
-              <FolderOpen className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Records</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" data-testid="settings-tab">
-              <Settings className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Settings</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="appointments" className="mt-6">
-            {loading ? (
-              <p className="text-center py-8 font-body text-muted-foreground">Loading...</p>
-            ) : appointments.length > 0 ? (
-              <div className="space-y-4" data-testid="appointments-list">
-                {appointments.map((appointment) => (
-                  <Card key={appointment.id} className="p-6" data-testid={`appointment-${appointment.id}`}>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-heading text-lg font-semibold mb-2">{appointment.doctor}</h3>
-                        <p className="font-body text-sm text-muted-foreground mb-1">
-                          <strong>Clinic:</strong> {appointment.clinic}
-                        </p>
-                        <p className="font-body text-sm text-muted-foreground mb-1">
-                          <strong>Date:</strong> {appointment.date}
-                        </p>
-                        <p className="font-body text-sm text-muted-foreground">
-                          <strong>Time:</strong> {appointment.time}
-                        </p>
-                      </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${appointment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
-                        {appointment.status}
-                      </span>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <p className="text-center py-8 font-body text-muted-foreground" data-testid="no-appointments-message">
-                No appointments found
-              </p>
-            )}
-          </TabsContent>
-
-          <TabsContent value="diagnostics" className="mt-6">
-            {loading ? (
-              <p className="text-center py-8 font-body text-muted-foreground">Loading...</p>
-            ) : diagnostics.length > 0 ? (
-              <div className="space-y-4" data-testid="diagnostics-list">
-                {diagnostics.map((order) => (
-                  <Card key={order.id} className="p-6" data-testid={`diagnostic-${order.id}`}>
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h3 className="font-heading text-lg font-semibold mb-2">Diagnostic Tests</h3>
-                        <p className="font-body text-sm text-muted-foreground mb-2">
-                          <strong>Preferred Date:</strong> {order.preferred_date}
-                        </p>
-                        <div className="font-body text-sm text-muted-foreground">
-                          <strong>Tests:</strong>
-                          <ul className="list-disc list-inside mt-1">
-                            {order.tests.map((test, idx) => (
-                              <li key={idx}>{test}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : order.status === 'Report Generated' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
-                          {order.status}
-                        </span>
-                        {/* Download Invoice */}
-                        {order.invoice_url && (
-                          <a
-                            href={order.invoice_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100"
-                            data-testid={`download-invoice-${order.id}`}
-                          >
-                            <Download className="w-3 h-3" />
-                            Invoice
-                          </a>
-                        )}
-                        {/* Download Report */}
-                        {order.report_url && (
-                          <a
-                            href={order.report_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-xs font-medium hover:bg-green-100"
-                            data-testid={`download-report-${order.id}`}
-                          >
-                            <FileText className="w-3 h-3" />
-                            Report
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <p className="text-center py-8 font-body text-muted-foreground" data-testid="no-diagnostics-message">
-                No diagnostic orders found
-              </p>
-            )}
-          </TabsContent>
-
-          <TabsContent value="pharmacy" className="mt-6">
-            {loading ? (
-              <p className="text-center py-8 font-body text-muted-foreground">Loading...</p>
-            ) : pharmacyOrders.length > 0 ? (
-              <div className="space-y-4" data-testid="pharmacy-orders-list">
-                {pharmacyOrders.map((order) => (
-                  <Card key={order.id} className="p-6" data-testid={`pharmacy-order-${order.id}`}>
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h3 className="font-heading text-lg font-semibold mb-2">Medicine Order</h3>
-                        <div className="font-body text-sm text-muted-foreground">
-                          <strong>Medicines:</strong>
-                          <ul className="list-disc list-inside mt-1">
-                            {order.medicines.map((med, idx) => (
-                              <li key={idx}>{med.name} - Qty: {med.quantity}</li>
-                            ))}
-                          </ul>
-                        </div>
-                        {order.delivery_address && (
-                          <p className="font-body text-sm text-muted-foreground mt-2">
-                            <strong>Delivery:</strong> {order.delivery_address}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : order.status === 'Delivered' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
-                          {order.status}
-                        </span>
-                        {/* Download Invoice */}
-                        {order.invoice_url && (
-                          <a
-                            href={order.invoice_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100"
-                            data-testid={`download-pharmacy-invoice-${order.id}`}
-                          >
-                            <Download className="w-3 h-3" />
-                            Invoice
-                          </a>
-                        )}
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleReorder(order.id)}
-                          className="text-brand-teal border-brand-teal hover:bg-brand-teal/10"
-                          data-testid={`reorder-btn-${order.id}`}
-                        >
-                          <RefreshCw className="w-3 h-3 mr-1" />
-                          Reorder
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <p className="text-center py-8 font-body text-muted-foreground" data-testid="no-pharmacy-orders-message">
-                No pharmacy orders found
-              </p>
-            )}
-          </TabsContent>
-
-          <TabsContent value="records" className="mt-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-heading text-lg font-semibold">Health Records</h3>
-              <Button
-                onClick={() => setShowUploadDialog(true)}
-                className="bg-brand-teal hover:bg-brand-teal/90"
-                data-testid="upload-record-btn"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Upload Record
-              </Button>
-            </div>
-            
-            {healthRecords.length > 0 ? (
-              <div className="grid gap-4 md:grid-cols-2" data-testid="health-records-list">
-                {healthRecords.map((record) => (
-                  <Card key={record.id} className="p-4" data-testid={`record-${record.id}`}>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                          record.record_type === 'prescription' ? 'bg-blue-100' :
-                          record.record_type === 'lab_report' ? 'bg-purple-100' : 'bg-gray-100'
-                        }`}>
-                          <FileText className={`w-5 h-5 ${
-                            record.record_type === 'prescription' ? 'text-blue-600' :
-                            record.record_type === 'lab_report' ? 'text-purple-600' : 'text-gray-600'
-                          }`} />
-                        </div>
-                        <div>
-                          <p className="font-medium">{record.title}</p>
-                          <p className="text-xs text-muted-foreground capitalize">{record.record_type.replace('_', ' ')}</p>
-                          <p className="text-xs text-muted-foreground">{record.date}</p>
-                          {record.notes && (
-                            <p className="text-xs text-muted-foreground mt-1">{record.notes}</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex gap-1">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => window.open(record.file_url, '_blank')}
-                          className="h-8 w-8"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => deleteHealthRecord(record.id)}
-                          className="h-8 w-8 text-red-500 hover:text-red-600"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card className="p-8 text-center">
-                <FolderOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-4">No health records uploaded yet</p>
-                <p className="text-sm text-muted-foreground">
-                  Store your prescriptions, lab reports, and other medical documents securely.
-                </p>
-              </Card>
-            )}
-          </TabsContent>
-
-          <TabsContent value="settings" className="mt-6">
-            <div className="space-y-6">
-              <SecuritySettings token={localStorage.getItem('token')} />
-              <PushNotificationSettings token={localStorage.getItem('token')} />
-            </div>
-          </TabsContent>
-        </Tabs>
-      </main>
-
-      {/* Upload Health Record Dialog */}
-      <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Upload Health Record</DialogTitle>
-            <DialogDescription>
-              Store prescriptions, lab reports, and medical documents securely.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div>
-              <Label>Record Type</Label>
-              <Select 
-                value={uploadData.record_type}
-                onValueChange={(v) => setUploadData({...uploadData, record_type: v})}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="prescription">Prescription</SelectItem>
-                  <SelectItem value="lab_report">Lab Report</SelectItem>
-                  <SelectItem value="other">Other Document</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <Label>Title *</Label>
-              <Input 
-                placeholder="e.g., Blood Test Report - Jan 2026"
-                value={uploadData.title}
-                onChange={(e) => setUploadData({...uploadData, title: e.target.value})}
-              />
-            </div>
-            
-            <div>
-              <Label>Date</Label>
-              <Input 
-                type="date"
-                value={uploadData.date}
-                onChange={(e) => setUploadData({...uploadData, date: e.target.value})}
-              />
-            </div>
-            
-            <div>
-              <Label>Notes (Optional)</Label>
-              <Textarea 
-                placeholder="Any additional notes..."
-                value={uploadData.notes}
-                onChange={(e) => setUploadData({...uploadData, notes: e.target.value})}
-                rows={2}
-              />
-            </div>
-            
-            <div>
-              <Label>File *</Label>
-              <div className="border-2 border-dashed rounded-lg p-4 text-center">
-                <input
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                  id="file-upload"
-                />
-                <label htmlFor="file-upload" className="cursor-pointer">
-                  <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-                  {selectedFile ? (
-                    <p className="text-sm font-medium text-brand-teal">{selectedFile.name}</p>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">Click to upload (PDF, Image, Doc)</p>
-                  )}
-                </label>
-              </div>
-            </div>
-            
-            <Button 
-              onClick={uploadHealthRecord}
-              disabled={uploading}
-              className="w-full bg-brand-teal hover:bg-brand-teal/90"
-            >
-              {uploading ? 'Uploading...' : 'Upload Record'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Membership Dashboard Dialog */}
-      <Dialog open={showMembershipDashboard} onOpenChange={setShowMembershipDashboard}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                <Crown className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h2 className="font-semibold">Membership Benefits</h2>
-                <p className="text-xs text-slate-500 font-normal">Your Nevika Cura ONE Dashboard</p>
-              </div>
-            </DialogTitle>
-          </DialogHeader>
-          <MembershipDashboard 
-            email={user?.email} 
-            onClose={() => setShowMembershipDashboard(false)}
+          <Switch 
+            checked={darkMode} 
+            onCheckedChange={(checked) => {
+              selectionTap();
+              setDarkMode(checked);
+              toast.info(`${checked ? 'Dark' : 'Light'} mode ${checked ? 'enabled' : 'disabled'}`);
+            }}
           />
-        </DialogContent>
-      </Dialog>
+        </div>
+        
+        <div className="flex items-center justify-between px-4 py-3.5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+              {hideSexy ? <EyeOff className="w-5 h-5 text-slate-600" /> : <Eye className="w-5 h-5 text-slate-600" />}
+            </div>
+            <div>
+              <p className="font-medium text-slate-800">Hide sensitive items</p>
+              <p className="text-xs text-slate-500">Hide adult products</p>
+            </div>
+          </div>
+          <Switch 
+            checked={hideSexy} 
+            onCheckedChange={(checked) => {
+              selectionTap();
+              setHideSexy(checked);
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Your Information */}
+      <div className="bg-white rounded-2xl mx-4 mt-4 overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Your Information</p>
+        </div>
+        
+        <MenuItem 
+          icon={MapPin} 
+          label="Address book" 
+          sublabel="Save your addresses" 
+          onClick={() => toast.info('Address book coming soon!')}
+          color="text-red-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={Heart} 
+          label="Your wishlist" 
+          sublabel={`${(JSON.parse(localStorage.getItem('mango_wishlist') || '[]')).length} items saved`}
+          onClick={() => navigate('/mango')}
+          color="text-pink-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={FileText} 
+          label="Health records" 
+          sublabel={`${healthRecords.length} documents`}
+          onClick={() => setActiveTab('records')}
+          color="text-blue-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={Receipt} 
+          label="Your prescriptions" 
+          onClick={() => toast.info('Prescriptions coming soon!')}
+          color="text-emerald-500"
+        />
+      </div>
+
+      {/* Payment & Rewards */}
+      <div className="bg-white rounded-2xl mx-4 mt-4 overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Payment & Rewards</p>
+        </div>
+        
+        <MenuItem 
+          icon={Wallet} 
+          label="Wallet" 
+          sublabel={`Balance: ₹${loyaltyPoints}`}
+          onClick={() => toast.info('Wallet coming soon!')}
+          color="text-amber-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={CreditCard} 
+          label="Payment settings" 
+          onClick={() => toast.info('Payment settings coming soon!')}
+          color="text-indigo-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={Gift} 
+          label="Claim Gift card" 
+          onClick={() => toast.info('Gift cards coming soon!')}
+          color="text-purple-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={Trophy} 
+          label="Your rewards" 
+          sublabel={`${loyaltyPoints} points earned`}
+          onClick={() => toast.info('Rewards coming soon!')}
+          color="text-orange-500"
+        />
+      </div>
+
+      {/* Security */}
+      <div className="bg-white rounded-2xl mx-4 mt-4 overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Security</p>
+        </div>
+        
+        <MenuItem 
+          icon={Fingerprint} 
+          label="Biometric login" 
+          sublabel="Face ID / Fingerprint" 
+          onClick={() => setActiveTab('security')}
+          color="text-violet-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={Monitor} 
+          label="Trusted devices" 
+          onClick={() => setActiveTab('security')}
+          color="text-slate-600"
+        />
+      </div>
+
+      {/* Other Information */}
+      <div className="bg-white rounded-2xl mx-4 mt-4 overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Other Information</p>
+        </div>
+        
+        <MenuItem 
+          icon={Share2} 
+          label="Share the app" 
+          onClick={() => {
+            if (navigator.share) {
+              navigator.share({ title: 'Nevika Cura', text: 'Check out Nevika Cura!', url: window.location.origin });
+            } else {
+              toast.info('Share feature not available');
+            }
+          }}
+          color="text-blue-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={Info} 
+          label="About us" 
+          onClick={() => toast.info('About page coming soon!')}
+          color="text-slate-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={Shield} 
+          label="Account privacy" 
+          onClick={() => toast.info('Privacy settings coming soon!')}
+          color="text-emerald-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={Bell} 
+          label="Notification preferences" 
+          onClick={() => setActiveTab('notifications')}
+          color="text-rose-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={LogOut} 
+          label="Log out" 
+          onClick={handleLogout}
+          showArrow={false}
+          color="text-red-500"
+        />
+      </div>
+
+      {/* App Version */}
+      <div className="text-center mt-6 mb-24">
+        <p className="text-xs text-slate-400">Version 2.1.0</p>
+        <p className="text-xs text-slate-400 mt-1">Made with ❤️ by Nevika Cura</p>
+      </div>
+    </div>
+  );
+
+  // Health Records Tab
+  const RecordsTab = () => (
+    <div className="pb-24">
+      <div className="bg-white rounded-2xl mx-4 mt-4 overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+          <p className="font-semibold text-slate-800">Health Records</p>
+          <Button size="sm" variant="outline" onClick={() => toast.info('Upload coming soon!')}>
+            Upload
+          </Button>
+        </div>
+        {healthRecords.length === 0 ? (
+          <div className="p-8 text-center">
+            <FileText className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+            <p className="text-slate-500">No health records yet</p>
+            <p className="text-xs text-slate-400 mt-1">Upload prescriptions, reports & more</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-slate-100">
+            {healthRecords.map((record, idx) => (
+              <div key={idx} className="px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <FileText className="w-8 h-8 text-blue-500" />
+                  <div>
+                    <p className="font-medium text-slate-800">{record.title}</p>
+                    <p className="text-xs text-slate-500">{record.record_type} • {new Date(record.date).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-slate-400" />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  // Security Tab
+  const SecurityTab = () => (
+    <div className="pb-24">
+      <div className="bg-white rounded-2xl mx-4 mt-4 overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-slate-100">
+          <p className="font-semibold text-slate-800">Security Settings</p>
+        </div>
+        
+        <MenuItem 
+          icon={Fingerprint} 
+          label="Biometric authentication" 
+          sublabel="Use Face ID or fingerprint to login"
+          onClick={() => toast.info('Biometric setup coming soon!')}
+          color="text-violet-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={Smartphone} 
+          label="Two-factor authentication" 
+          sublabel="Add extra security to your account"
+          onClick={() => toast.info('2FA coming soon!')}
+          color="text-blue-500"
+        />
+        <div className="h-px bg-slate-100" />
+        <MenuItem 
+          icon={Monitor} 
+          label="Manage devices" 
+          sublabel="View and manage trusted devices"
+          onClick={() => toast.info('Device management coming soon!')}
+          color="text-slate-600"
+        />
+      </div>
+    </div>
+  );
+
+  // Notifications Tab
+  const NotificationsTab = () => (
+    <div className="pb-24">
+      <div className="bg-white rounded-2xl mx-4 mt-4 overflow-hidden shadow-sm">
+        <div className="px-4 py-3 border-b border-slate-100">
+          <p className="font-semibold text-slate-800">Notification Preferences</p>
+        </div>
+        
+        <div className="px-4 py-4">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-slate-800">Push notifications</p>
+                <p className="text-xs text-slate-500">Get alerts on your device</p>
+              </div>
+              <Switch defaultChecked onCheckedChange={() => selectionTap()} />
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-slate-800">Order updates</p>
+                <p className="text-xs text-slate-500">Track your orders in real-time</p>
+              </div>
+              <Switch defaultChecked onCheckedChange={() => selectionTap()} />
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-slate-800">Promotional offers</p>
+                <p className="text-xs text-slate-500">Get discounts and deals</p>
+              </div>
+              <Switch onCheckedChange={() => selectionTap()} />
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-slate-800">Appointment reminders</p>
+                <p className="text-xs text-slate-500">Never miss an appointment</p>
+              </div>
+              <Switch defaultChecked onCheckedChange={() => selectionTap()} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-3 border-teal-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-100">
+      {/* Header */}
+      <div className="bg-white sticky top-0 z-50 shadow-sm">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            {activeTab !== 'profile' && (
+              <button 
+                onClick={() => {
+                  lightTap();
+                  setActiveTab('profile');
+                }}
+                className="p-2 -ml-2 rounded-full hover:bg-slate-100"
+              >
+                <ArrowLeft className="w-5 h-5 text-slate-600" />
+              </button>
+            )}
+            <h1 className="text-lg font-bold text-slate-800">
+              {activeTab === 'profile' && 'Your account'}
+              {activeTab === 'orders' && 'Your orders'}
+              {activeTab === 'records' && 'Health records'}
+              {activeTab === 'security' && 'Security'}
+              {activeTab === 'notifications' && 'Notifications'}
+            </h1>
+          </div>
+          <button 
+            onClick={() => {
+              lightTap();
+              toast.info('Settings coming soon!');
+            }}
+            className="p-2 rounded-full hover:bg-slate-100"
+          >
+            <Settings className="w-5 h-5 text-slate-600" />
+          </button>
+        </div>
+
+        {/* Tab Bar */}
+        {activeTab === 'profile' && (
+          <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide">
+            {[
+              { id: 'profile', label: 'Profile' },
+              { id: 'orders', label: 'Orders' },
+              { id: 'records', label: 'Records' },
+              { id: 'security', label: 'Security' },
+              { id: 'notifications', label: 'Notifications' }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  selectionTap();
+                  setActiveTab(tab.id);
+                }}
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                  activeTab === tab.id 
+                    ? 'bg-teal-500 text-white' 
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      {activeTab === 'profile' && <ProfileTab />}
+      {activeTab === 'orders' && <OrdersTab />}
+      {activeTab === 'records' && <RecordsTab />}
+      {activeTab === 'security' && <SecurityTab />}
+      {activeTab === 'notifications' && <NotificationsTab />}
+
+      <BottomNav />
     </div>
   );
 };
