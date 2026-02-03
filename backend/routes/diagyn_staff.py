@@ -707,7 +707,8 @@ async def update_appointment_status(
             "slot_time": appointment.get("time") or "Emergency",
             "date": appointment.get("date"),
             "checked_in_at": update_data.get("checked_in_at"),
-            "booking_id": appointment.get("booking_id")
+            "booking_id": appointment.get("booking_id"),
+            "appointment_type": appointment.get("appointment_type", "SCHEDULED")
         }
     
     return response
