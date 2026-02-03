@@ -2959,7 +2959,7 @@ const Glydex = () => {
         }}
       />
 
-      {/* Proton Diagnostics Ad Banner */}
+      {/* Mango Health Labs Ad Banner */}
       <div className="max-w-5xl mx-auto mb-6 px-4">
         <ProtonAdBanner />
       </div>

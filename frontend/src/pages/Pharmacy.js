@@ -2988,7 +2988,7 @@ const Pharmacy = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Proton Diagnostics Ad Banner */}
+      {/* Mango Health Labs Ad Banner */}
       <div className="max-w-5xl mx-auto mb-20">
         <ProtonAdBanner />
       </div>
