@@ -200,6 +200,7 @@ const DoctorPortal = () => {
     setScanCodes([]);
     setNotes('');
     setFollowUpDate('');
+    setCustomTotal(''); // Reset custom total
     setShowModal(true);
     mediumTap();
   };
