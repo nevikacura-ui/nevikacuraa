@@ -250,13 +250,56 @@ const MedicineImageUpload = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label>Medicine Name</Label>
+                <Label>Medicine Name *</Label>
                 <Input 
-                  placeholder="e.g., PARACETAMOL 500MG"
+                  placeholder="e.g., PARACETAMOL 500MG or search below"
                   value={singleMedicine.name}
                   onChange={(e) => setSingleMedicine({...singleMedicine, name: e.target.value.toUpperCase()})}
+                  className="font-medium"
                 />
+                {singleMedicine.name && (
+                  <p className="text-xs text-green-600 mt-1">✓ Medicine selected: {singleMedicine.name}</p>
+                )}
               </div>
+              
+              {/* File Upload Option */}
+              <div className="border-2 border-dashed border-blue-200 rounded-xl p-4 bg-blue-50/50">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <div className="text-center">
+                  <p className="text-sm font-medium text-slate-700 mb-2">Upload Image File</p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading || !singleMedicine.name}
+                    className="bg-white"
+                  >
+                    {uploading ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Uploading...</>
+                    ) : (
+                      <><Upload className="w-4 h-4 mr-2" /> Choose Image File</>
+                    )}
+                  </Button>
+                  {!singleMedicine.name && (
+                    <p className="text-xs text-orange-600 mt-2">Select a medicine name first</p>
+                  )}
+                </div>
+              </div>
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-2 text-slate-500">Or paste URL</span>
+                </div>
+              </div>
+              
               <div>
                 <Label>Image URL</Label>
                 <Input 
@@ -265,14 +308,33 @@ const MedicineImageUpload = () => {
                   onChange={(e) => setSingleMedicine({...singleMedicine, image_url: e.target.value})}
                 />
               </div>
-              {singleMedicine.image_url && (
-                <div className="border rounded-lg p-2">
-                  <p className="text-xs text-gray-500 mb-2">Preview:</p>
-                  <img src={singleMedicine.image_url} alt="Preview" className="w-24 h-24 object-contain mx-auto" onError={(e) => e.target.style.display='none'} />
+              
+              {/* Preview */}
+              {(singleMedicine.image_url || previewFile) && (
+                <div className="border rounded-lg p-3 bg-slate-50">
+                  <p className="text-xs text-gray-500 mb-2 font-medium">Preview:</p>
+                  <img 
+                    src={singleMedicine.image_url || previewFile} 
+                    alt="Preview" 
+                    className="w-32 h-32 object-contain mx-auto rounded-lg border bg-white" 
+                    onError={(e) => e.target.style.display='none'} 
+                  />
                 </div>
               )}
-              <Button onClick={updateSingleImage} disabled={loading} className="w-full">
-                <Upload className="w-4 h-4 mr-2" />
+              
+              <Button 
+                onClick={updateSingleImage} 
+                disabled={loading || !singleMedicine.name || !singleMedicine.image_url} 
+                className="w-full bg-blue-600 hover:bg-blue-700"
+              >
+                {loading ? (
+                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
+                ) : (
+                  <><Check className="w-4 h-4 mr-2" /> Save Image</>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
                 {loading ? 'Uploading...' : 'Upload Image'}
               </Button>
             </CardContent>
