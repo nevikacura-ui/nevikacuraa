@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Upload, Search, Image, Check, X, Download, FileText, ArrowLeft } from 'lucide-react';
+import { Upload, Search, Image, Check, X, Download, FileText, ArrowLeft, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const API = process.env.REACT_APP_BACKEND_URL;
