@@ -269,15 +269,16 @@ class TestAppointmentBooking:
     
     def test_book_scheduled_appointment(self):
         """Test booking a scheduled appointment"""
-        # Book for tomorrow
+        # Book for tomorrow with unique time
         tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+        unique_time = f"11:{datetime.now().strftime('%M')}"
         
         response = requests.post(f"{BASE_URL}/api/diagyn-staff/appointments/book",
             json={
                 "clinic": "Pushpa Clinic",
                 "doctor": "Dr. Vikas Jha",
                 "date": tomorrow,
-                "time": "11:00",
+                "time": unique_time,
                 "patient_name": "TEST Scheduled Patient",
                 "patient_mobile": "9876543212",
                 "appointment_type": "SCHEDULED",
