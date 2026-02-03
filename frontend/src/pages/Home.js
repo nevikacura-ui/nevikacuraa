@@ -512,16 +512,25 @@ const Home = () => {
         <div className={`border-b ${currentTheme.isLight ? 'border-slate-100' : 'border-white/20'}`}>
           <div className="max-w-7xl mx-auto px-4 py-2.5">
             <div className="flex items-center justify-between">
-              {/* Logo */}
-              <img 
-                src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
-                alt="Nevika Cura" 
-                className={`h-10 sm:h-12 w-auto object-contain cursor-pointer ${currentTheme.isLight ? '' : 'bg-white rounded-lg p-1'}`}
+              {/* Logo - Nevika Cura App Icon */}
+              <div 
+                className={`flex items-center gap-2 cursor-pointer`}
                 onClick={() => setActiveService('home')}
                 data-testid="main-logo"
-                loading="eager"
-                fetchPriority="high"
-              />
+              >
+                <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl overflow-hidden shadow-lg border-2 ${currentTheme.isLight ? 'border-teal-200 bg-white' : 'border-white/30 bg-white'}`}>
+                  <img 
+                    src="https://customer-assets.emergentagent.com/job_orange-mango/artifacts/sl6alq8e_2_20260130_045225_0001%20%281%29.png" 
+                    alt="Nevika Cura" 
+                    className="w-full h-full object-cover"
+                    loading="eager"
+                    fetchPriority="high"
+                  />
+                </div>
+                <span className={`hidden sm:block text-lg font-bold ${currentTheme.isLight ? 'text-teal-700' : 'text-white'}`} style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  Nevika Cura
+                </span>
+              </div>
               
               {/* Right Actions */}
               <div className="flex items-center gap-2">
