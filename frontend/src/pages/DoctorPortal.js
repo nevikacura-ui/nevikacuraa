@@ -186,6 +186,7 @@ const DoctorPortal = () => {
     setFeeCode('');
     setScanCodes([]);
     setNotes('');
+    setFollowUpDate('');
     setShowModal(true);
     mediumTap();
   };
