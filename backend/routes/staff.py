@@ -260,6 +260,17 @@ async def staff_login(input: StaffLogin):
     }
 
 
+@router.get("/validate-token")
+async def validate_staff_token(staff = Depends(verify_staff)):
+    """Validate staff token - returns 200 if valid, 401 if invalid"""
+    return {
+        "valid": True,
+        "staff_id": staff.get('sub'),
+        "name": staff.get('name'),
+        "role": staff.get('role')
+    }
+
+
 # ============ Walk-in Appointments ============
 
 @router.post("/appointments/walk-in")
