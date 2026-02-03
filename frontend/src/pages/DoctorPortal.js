@@ -66,6 +66,7 @@ const DoctorPortal = () => {
   const [feeCode, setFeeCode] = useState('');
   const [scanCodes, setScanCodes] = useState([]);
   const [notes, setNotes] = useState('');
+  const [followUpDate, setFollowUpDate] = useState('');
 
   // ============ Auth ============
   useEffect(() => {
