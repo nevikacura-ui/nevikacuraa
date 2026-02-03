@@ -518,7 +518,8 @@ const DiaGynStaffPortal = () => {
       clinic_address: config?.clinics?.[apt.clinic]?.address || '',
       slot_time: apt.time || 'Emergency',
       date: apt.date,
-      booking_id: apt.booking_id
+      booking_id: apt.booking_id,
+      appointment_type: apt.appointment_type || 'SCHEDULED'
     };
     await printToken(tokenData);
   };
