@@ -213,7 +213,8 @@ const DoctorPortal = () => {
         fee_code: feeCode,
         scan_codes: scanCodes,
         total_amount: total,
-        notes: notes
+        notes: notes,
+        follow_up_date: followUpDate || null
       }, getAuthHeaders());
       successPattern();
       toast.success(`Completed! ₹${total}`);
