@@ -631,8 +631,7 @@ const DiaGynStaffPortal = () => {
                 {appointments.map(apt => (
                   <AppointmentCard key={apt.id} apt={apt} config={config}
                     onCheckIn={() => updateStatus(apt.id, 'CheckedIn')}
-                    onWithDoctor={() => updateStatus(apt.id, 'WithDoctor')}
-                    onComplete={() => openCompletionModal(apt)} />
+                    onWithDoctor={() => updateStatus(apt.id, 'WithDoctor')} />
                 ))}
               </div>
             )}
