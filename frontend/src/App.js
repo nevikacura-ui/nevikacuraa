@@ -94,10 +94,13 @@ function AppContent() {
     const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
     const patientToken = localStorage.getItem('patientToken');
     const staffToken = localStorage.getItem('staffToken');
-    const isStaffPage = window.location.pathname.includes('/admin') || window.location.pathname.includes('/staff');
+    const isStaffPage = window.location.pathname.includes('/admin') || 
+                        window.location.pathname.includes('/staff') || 
+                        window.location.pathname.includes('/doctor-portal');
     const isLoginPage = window.location.pathname === '/login';
     
-    if (hasSeenSplash || user || patientToken || (staffToken && isStaffPage) || isLoginPage) {
+    // Always skip intro for staff/admin pages - they have their own login screen
+    if (hasSeenSplash || user || patientToken || isStaffPage || isLoginPage) {
       setShowIntro(false);
     }
   }, [user]);
