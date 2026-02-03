@@ -26,8 +26,8 @@ const serviceThemes = {
     name: 'Mango',
     path: '/mango',
     bgGradient: 'from-orange-100 via-amber-50 to-orange-50',
-    headerBg: 'bg-[#0c1e3c]',
-    tabBg: 'bg-[#1a365d]/50',
+    headerBg: 'bg-gradient-to-r from-orange-500 to-amber-500',
+    tabBg: 'bg-orange-600/50',
     isLight: false
   },
   pharmacy: {
