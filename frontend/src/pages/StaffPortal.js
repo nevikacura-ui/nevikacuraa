@@ -297,29 +297,48 @@ const StaffPortal = () => {
     const token = localStorage.getItem('staffToken');
     const info = localStorage.getItem('staffInfo');
     if (token && info) {
-      setIsAuthenticated(true);
-      const parsedInfo = JSON.parse(info);
-      setStaffInfo(parsedInfo);
-      
-      // Set doctor clinics if available (for doctors working at multiple clinics)
-      if (parsedInfo.doctor_clinics && parsedInfo.doctor_clinics.length > 0) {
-        setDoctorClinics(parsedInfo.doctor_clinics);
-        setSelectedClinic(parsedInfo.doctor_clinics[0]); // Default to first clinic
-      }
-      
-      // Set default clinic for forms based on staff's clinic
-      if (parsedInfo.clinic) {
-        const clinicDoctors = CLINICS[parsedInfo.clinic] || [];
-        setWalkInForm(prev => ({
-          ...prev,
-          clinic: parsedInfo.clinic,
-          doctor: clinicDoctors[0] || ''
-        }));
-        setEmergencyForm(prev => ({
-          ...prev,
-          clinic: parsedInfo.clinic,
-          doctor: clinicDoctors[0] || ''
-        }));
+      try {
+        const parsedInfo = JSON.parse(info);
+        
+        // Validate token by making a simple API call
+        axios.get(`${API}/staff/validate-token`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).then(() => {
+          setIsAuthenticated(true);
+          setStaffInfo(parsedInfo);
+          
+          // Set doctor clinics if available (for doctors working at multiple clinics)
+          if (parsedInfo.doctor_clinics && parsedInfo.doctor_clinics.length > 0) {
+            setDoctorClinics(parsedInfo.doctor_clinics);
+            setSelectedClinic(parsedInfo.doctor_clinics[0]); // Default to first clinic
+          }
+          
+          // Set default clinic for forms based on staff's clinic
+          if (parsedInfo.clinic) {
+            const clinicDoctors = CLINICS[parsedInfo.clinic] || [];
+            setWalkInForm(prev => ({
+              ...prev,
+              clinic: parsedInfo.clinic,
+              doctor: clinicDoctors[0] || ''
+            }));
+            setEmergencyForm(prev => ({
+              ...prev,
+              clinic: parsedInfo.clinic,
+              doctor: clinicDoctors[0] || ''
+            }));
+          }
+        }).catch((err) => {
+          // Token is invalid or expired - clear and show login
+          console.error('Token validation failed:', err);
+          localStorage.removeItem('staffToken');
+          localStorage.removeItem('staffInfo');
+          setIsAuthenticated(false);
+          setStaffInfo(null);
+        });
+      } catch (e) {
+        console.error('Error parsing staffInfo:', e);
+        localStorage.removeItem('staffToken');
+        localStorage.removeItem('staffInfo');
       }
     }
   }, []);
