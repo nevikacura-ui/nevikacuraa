@@ -14,10 +14,10 @@ import { lightTap, mediumTap, heavyTap, successPattern, errorPattern, selectionT
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// Fresh Healthcare Color Palette - Teal & Lime Green
+// Doctor Portal - Darkest Teal Theme
 const COLORS = {
-  primary: '#1a4d3f',      // Deep Teal
-  primaryLight: '#e0f2ed', // Light Teal
+  primary: '#0f3129',      // Darkest Teal
+  primaryLight: '#1a4d3f', // Deep Teal
   accent: '#7ed957',       // Vibrant Lime Green
   accentLight: '#e8f9e0',  // Light Lime
 };
