@@ -446,23 +446,46 @@ DOLO 650,https://example.com/dolo.jpg"
                           <p className="font-medium text-sm truncate" title={med.name}>{med.name}</p>
                           <p className="text-xs text-gray-500">{med.form}</p>
                         </div>
+                        {/* Quick Google Search Button */}
+                        {!med.has_image && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openGoogleImageSearch(med.name);
+                            }}
+                            className="p-1.5 rounded-lg hover:bg-blue-100 text-blue-600"
+                            title="Search on Google Images"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                       {med.image && (
                         <img src={med.image} alt={med.name} className="w-20 h-20 object-contain mx-auto mt-2 rounded border bg-white" />
                       )}
                       {!med.has_image && (
-                        <Button 
-                          size="sm" 
-                          variant={singleMedicine.name === med.name ? "default" : "outline"}
-                          className={`w-full mt-2 ${singleMedicine.name === med.name ? 'bg-blue-600' : ''}`}
-                          onClick={() => {
-                            setSingleMedicine({...singleMedicine, name: med.name});
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                            toast.success(`Selected: ${med.name}. Now upload or paste an image URL.`);
-                          }}
-                        >
-                          {singleMedicine.name === med.name ? '✓ Selected' : 'Select to Add Image'}
-                        </Button>
+                        <div className="flex gap-2 mt-2">
+                          <Button 
+                            size="sm" 
+                            variant={singleMedicine.name === med.name ? "default" : "outline"}
+                            className={`flex-1 ${singleMedicine.name === med.name ? 'bg-blue-600' : ''}`}
+                            onClick={() => {
+                              setSingleMedicine({...singleMedicine, name: med.name});
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                              toast.success(`Selected: ${med.name}. Now upload or paste an image URL.`);
+                            }}
+                          >
+                            {singleMedicine.name === med.name ? '✓ Selected' : 'Select'}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+                            onClick={() => openGoogleImageSearch(med.name)}
+                          >
+                            <Search className="w-3 h-3" />
+                          </Button>
+                        </div>
                       )}
                     </div>
                   ))}
