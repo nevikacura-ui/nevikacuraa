@@ -1081,62 +1081,62 @@ const Proton = () => {
           {/* End of Dark Green Hero Section */}
 
           {/* Dark Green Content Area */}
-          <div className="bg-gradient-to-b from-[#14332E] to-[#1A3E38] py-6">
+          <div className="bg-gradient-to-b from-[#14332E] to-[#1A3E38] py-3">
 
           {/* Promo Banner - Orange/Mango themed */}
-          <div className="max-w-6xl mx-auto px-4 mt-4">
-            <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 rounded-2xl p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="bg-white/20 rounded-full p-2">
-                  <span className="text-xl">🎉</span>
+          <div className="max-w-6xl mx-auto px-4 mt-2">
+            <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 rounded-xl p-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="bg-white/20 rounded-full p-1.5">
+                  <span className="text-lg">🎉</span>
                 </div>
                 <div className="text-white">
-                  <p className="font-bold text-lg">Get 15% OFF</p>
-                  <p className="text-sm opacity-90">Use code: MANGO15</p>
+                  <p className="font-bold text-base">Get 15% OFF</p>
+                  <p className="text-xs opacity-90">Use code: MANGO15</p>
                 </div>
               </div>
               <Button 
                 variant="secondary" 
                 size="sm"
-                className="bg-white text-fuchsia-600 hover:bg-fuchsia-50 rounded-full font-bold"
+                className="bg-white text-fuchsia-600 hover:bg-fuchsia-50 rounded-full font-bold text-xs px-3 py-1"
                 onClick={() => {
                   navigator.clipboard.writeText('MANGO15');
                   toast.success('Coupon code copied!');
                 }}
               >
-                Copy Code
+                Copy
               </Button>
             </div>
           </div>
 
-          {/* Trust Badges - Navy Blue Style */}
-          <div className="max-w-6xl mx-auto px-4 mt-6">
-            <div className="flex justify-between items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          {/* Trust Badges - Compact */}
+          <div className="max-w-6xl mx-auto px-4 mt-3">
+            <div className="flex justify-between items-center gap-3 overflow-x-auto pb-1 scrollbar-hide">
               {[
                 { icon: Shield, title: 'Certified Lab', color: 'text-orange-600', bg: 'bg-orange-500/10' },
                 { icon: Clock, title: '8 AM - 10 PM', color: 'text-amber-600', bg: 'bg-amber-500/10' },
                 { icon: CheckCircle2, title: '4.9/5 on Google', color: 'text-orange-600', bg: 'bg-orange-500/10' },
                 { icon: Home, title: 'Home Collection', color: 'text-amber-600', bg: 'bg-amber-500/10' }
               ].map((badge, idx) => (
-                <div key={idx} className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm min-w-fit">
-                  <div className={`w-8 h-8 rounded-full ${badge.bg} flex items-center justify-center`}>
-                    <badge.icon className={`w-4 h-4 ${badge.color}`} />
+                <div key={idx} className="flex items-center gap-1.5 bg-white rounded-full px-3 py-1.5 shadow-sm min-w-fit">
+                  <div className={`w-6 h-6 rounded-full ${badge.bg} flex items-center justify-center`}>
+                    <badge.icon className={`w-3 h-3 ${badge.color}`} />
                   </div>
-                  <span className="text-sm font-medium text-slate-700 whitespace-nowrap">{badge.title}</span>
+                  <span className="text-xs font-medium text-slate-700 whitespace-nowrap">{badge.title}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Most Booked Checkups - Cards with varied gradient colors */}
-          <div className="max-w-6xl mx-auto px-4 mt-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+          <div className="max-w-6xl mx-auto px-4 mt-4">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Most Booked Checkups
               </h2>
               <button 
                 onClick={() => setCurrentStep(1)}
-                className="text-orange-600 font-semibold text-sm flex items-center gap-1 hover:text-amber-600"
+                className="text-orange-400 font-semibold text-xs flex items-center gap-1 hover:text-amber-400"
               >
                 View All <ChevronRight className="w-4 h-4" />
               </button>
