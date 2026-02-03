@@ -1116,6 +1116,28 @@ const Pharmacy = () => {
                   <span className="text-white font-bold">₹0</span>
                   <span className="text-white/90 text-xs">Surge Fee</span>
                 </div>
+                
+                {/* Wishlist Button */}
+                <button
+                  onClick={() => setShowWishlist(true)}
+                  className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 hover:bg-white/30 transition-all"
+                  data-testid="open-wishlist-btn"
+                >
+                  <Heart className={`w-4 h-4 ${wishlist.length > 0 ? 'fill-red-400 text-red-400' : 'text-white'}`} />
+                  <span className="text-white/90 text-xs">Wishlist {wishlist.length > 0 && `(${wishlist.length})`}</span>
+                </button>
+                
+                {/* Saved Cart Indicator */}
+                {hasSavedCart && (
+                  <button
+                    onClick={restoreSavedCart}
+                    className="flex items-center gap-2 bg-amber-500/80 backdrop-blur-sm rounded-full px-3 py-1.5 hover:bg-amber-500 transition-all animate-pulse"
+                    data-testid="restore-cart-btn"
+                  >
+                    <Bookmark className="w-4 h-4 text-white" />
+                    <span className="text-white text-xs font-medium">Continue Cart</span>
+                  </button>
+                )}
               </div>
             </div>
             
