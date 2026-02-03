@@ -1584,11 +1584,11 @@ const Proton = () => {
                         </button>
                       </div>
                       
-                      {/* Right Side - Lab Related Image */}
+                      {/* Right Side - Person Booking Online Image */}
                       <div className="w-1/2 relative overflow-hidden">
                         <img 
-                          src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400&h=500&fit=crop"
-                          alt="Lab Test Collection"
+                          src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=500&fit=crop"
+                          alt="Booking Tests Online"
                           className="absolute inset-0 h-full w-full object-cover object-center"
                         />
                       </div>
