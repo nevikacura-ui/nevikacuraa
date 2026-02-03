@@ -18,7 +18,7 @@ import {
   ArrowLeft, ArrowRight, Upload, Plus, Minus, X, ShoppingCart, Pill, Search, Package, 
   CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, Trash2, Info, FileText,
   Crown, Star, Gift, Trophy, TrendingUp, Medal, ChevronRight, Sparkles, Droplets, Syringe,
-  Stethoscope, Grid3X3, List, Heart, Share2, Clock, Truck, FlaskConical, Activity
+  Stethoscope, Grid3X3, List, Heart, Share2, Clock, Truck, FlaskConical, Activity, Smartphone
 } from 'lucide-react';
 
 // Custom Tablet Icon (round pill with score line - NOT capsule)
