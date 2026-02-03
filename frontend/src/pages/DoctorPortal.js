@@ -245,16 +245,6 @@ const DoctorPortal = () => {
     );
   };
 
-  const calculateTotal = () => {
-    if (!selectedApt || !feeCode) return 0;
-    const doctor = selectedApt.doctor;
-    let total = config?.fee_codes?.[doctor]?.[feeCode]?.amount || 0;
-    scanCodes.forEach(code => {
-      total += config?.scan_fees?.[code]?.amount || 0;
-    });
-    return total;
-  };
-
   // ============ Login Screen ============
   if (!isAuthenticated) {
     return (
