@@ -14,12 +14,13 @@ import { lightTap, mediumTap, heavyTap, successPattern, errorPattern, selectionT
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// Doctor Portal - Darkest Teal Theme
+// Doctor Portal - Dark Teal + Navy Blue Buttons
 const COLORS = {
-  primary: '#0f3129',      // Darkest Teal
+  primary: '#0f3129',      // Darkest Teal (header/background)
   primaryLight: '#1a4d3f', // Deep Teal
-  accent: '#7ed957',       // Vibrant Lime Green
-  accentLight: '#e8f9e0',  // Light Lime
+  accent: '#1e3a5f',       // Navy Blue (buttons - distinct from staff)
+  accentLight: '#e0f2ed',  // Light Teal
+  lime: '#7ed957',         // Lime for success states
 };
 
 const STATUS_STYLES = {
