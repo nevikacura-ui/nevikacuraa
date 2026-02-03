@@ -1542,54 +1542,54 @@ const Proton = () => {
                   </div>
                 </div>
 
-                {/* Slide 3: Easy Ordering - Light Green/Teal */}
+                {/* Slide 3: Easy Ordering - White Card with Green Border */}
                 <div className="min-w-[320px] md:min-w-[420px] flex-shrink-0 snap-center">
-                  <div className="relative h-56 md:h-64 rounded-2xl overflow-hidden shadow-xl border-2 border-[#0D6651]">
-                    {/* Light Background */}
-                    <div className="absolute inset-0 bg-white" />
-                    
-                    {/* Content Layout */}
+                  <div className="relative h-56 md:h-64 rounded-2xl overflow-hidden shadow-xl bg-white border-2 border-[#0D6651]">
+                    {/* Content Layout - Side by Side */}
                     <div className="relative h-full flex">
                       {/* Left Side - Text Content */}
-                      <div className="w-[55%] p-5 md:p-6 flex flex-col justify-center z-10">
-                        <p className="text-slate-600 text-sm mb-1">Easy ordering in</p>
-                        <h3 className="text-[#0D6651] text-4xl md:text-5xl font-black mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                          3 STEPS
+                      <div className="w-1/2 p-4 md:p-5 flex flex-col justify-center">
+                        <p className="text-slate-500 text-xs mb-0.5">Easy ordering in</p>
+                        <h3 className="text-[#0D6651] text-3xl md:text-4xl font-black leading-none" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                          3
                         </h3>
-                        <div className="space-y-2">
+                        <h3 className="text-[#0D6651] text-2xl md:text-3xl font-black mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                          STEPS
+                        </h3>
+                        <div className="space-y-1.5">
                           <div className="flex items-center gap-2">
-                            <div className="w-5 h-5 rounded-full bg-[#0D6651] flex items-center justify-center">
-                              <CheckCircle2 className="w-3 h-3 text-white" />
+                            <div className="w-4 h-4 rounded-full bg-[#0D6651] flex items-center justify-center flex-shrink-0">
+                              <CheckCircle2 className="w-2.5 h-2.5 text-white" />
                             </div>
-                            <span className="text-slate-700 text-sm font-medium">Select tests</span>
+                            <span className="text-slate-700 text-xs font-medium">Select tests</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <div className="w-5 h-5 rounded-full bg-[#0D6651] flex items-center justify-center">
-                              <CheckCircle2 className="w-3 h-3 text-white" />
+                            <div className="w-4 h-4 rounded-full bg-[#0D6651] flex items-center justify-center flex-shrink-0">
+                              <CheckCircle2 className="w-2.5 h-2.5 text-white" />
                             </div>
-                            <span className="text-slate-700 text-sm font-medium">Add your details</span>
+                            <span className="text-slate-700 text-xs font-medium">Add your details</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <div className="w-5 h-5 rounded-full bg-[#0D6651] flex items-center justify-center">
-                              <CheckCircle2 className="w-3 h-3 text-white" />
+                            <div className="w-4 h-4 rounded-full bg-[#0D6651] flex items-center justify-center flex-shrink-0">
+                              <CheckCircle2 className="w-2.5 h-2.5 text-white" />
                             </div>
-                            <span className="text-slate-700 text-sm font-medium">Book your slot</span>
+                            <span className="text-slate-700 text-xs font-medium">Book your slot</span>
                           </div>
                         </div>
                         <button 
                           onClick={() => setCurrentStep(1)}
-                          className="mt-4 bg-[#F5A623] hover:bg-[#e09515] text-white font-semibold py-2.5 px-5 rounded-lg text-sm transition-colors shadow-md"
+                          className="mt-3 bg-[#F5A623] hover:bg-[#e09515] text-white font-semibold py-2 px-4 rounded-lg text-xs transition-colors shadow-md w-fit"
                         >
                           Order Now
                         </button>
                       </div>
                       
                       {/* Right Side - Person Image */}
-                      <div className="w-[45%] relative">
+                      <div className="w-1/2 relative overflow-hidden">
                         <img 
                           src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face"
                           alt="Happy Customer"
-                          className="absolute bottom-0 right-0 h-full w-full object-cover object-top"
+                          className="absolute inset-0 h-full w-full object-cover object-center"
                         />
                       </div>
                     </div>
