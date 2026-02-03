@@ -1041,16 +1041,16 @@ const Proton = () => {
               </div>
             </div>
             
-            {/* Search Bar - inside orange section */}
+            {/* Search Bar - inside dark green section */}
             <div className="max-w-6xl mx-auto px-4 pb-6 relative z-20">
-              <div className="bg-white rounded-2xl shadow-xl p-3 border-2 border-orange-200">
+              <div className="bg-white rounded-2xl shadow-xl p-3 border-2 border-orange-300">
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-400 w-5 h-5" />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-500 w-5 h-5" />
                   <Input
                     placeholder="Search for tests or checkups"
                     value={testSearchTerm}
                     onChange={(e) => setTestSearchTerm(e.target.value)}
-                    className="pl-12 pr-4 py-3 text-base rounded-xl border-0 focus:ring-2 focus:ring-[#0c1e3c]/30"
+                    className="pl-12 pr-4 py-3 text-base rounded-xl border-0 focus:ring-2 focus:ring-orange-400/30"
                     data-testid="hero-search"
                   />
                 </div>
@@ -1058,7 +1058,7 @@ const Proton = () => {
                 {/* Search Results Dropdown */}
                 {testSearchTerm && filteredTests.length > 0 && (
                   <div className="mt-3 max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
-                    <div className="p-2 bg-[#0c1e3c]/5 border-b border-slate-200 text-xs text-slate-600 font-medium">
+                    <div className="p-2 bg-orange-50 border-b border-slate-200 text-xs text-slate-600 font-medium">
                       Found {filteredTests.length} tests matching &quot;{testSearchTerm}&quot;
                     </div>
                     <div className="divide-y divide-slate-100">
@@ -1070,11 +1070,11 @@ const Proton = () => {
                             setTestSearchTerm('');
                             setCurrentStep(1);
                           }}
-                          className="flex items-center gap-3 p-3 hover:bg-[#0c1e3c]/5 cursor-pointer transition-colors w-full text-left"
+                          className="flex items-center gap-3 p-3 hover:bg-orange-50 cursor-pointer transition-colors w-full text-left"
                         >
                           <span className="text-lg">{getTestIcon(test)}</span>
                           <span className="text-sm text-slate-800 font-medium">{test}</span>
-                          <Plus className="w-4 h-4 text-[#0c1e3c] ml-auto" />
+                          <Plus className="w-4 h-4 text-orange-500 ml-auto" />
                         </button>
                       ))}
                     </div>
@@ -1084,18 +1084,18 @@ const Proton = () => {
             </div>
             
             {/* Decorative circles */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
-            <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-yellow-400/20 rounded-full" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-20 h-20 bg-orange-500/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+            <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-orange-400/20 rounded-full" />
           </div>
-          {/* End of Blue Hero Section */}
+          {/* End of Dark Green Hero Section */}
 
-          {/* White/Light Section - Content Area */}
-          <div className="bg-slate-100 py-6">
+          {/* Dark Green Content Area */}
+          <div className="bg-gradient-to-b from-[#14332E] to-[#1A3E38] py-6">
 
-          {/* Promo Banner - Vibrant Pink/Purple distinct from blue */}
+          {/* Promo Banner - Orange/Mango themed */}
           <div className="max-w-6xl mx-auto px-4 mt-4">
-            <div className="bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 rounded-2xl p-4 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 rounded-2xl p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="bg-white/20 rounded-full p-2">
                   <span className="text-xl">🎉</span>
