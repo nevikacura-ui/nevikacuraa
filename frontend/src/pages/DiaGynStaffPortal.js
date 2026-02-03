@@ -653,15 +653,25 @@ const DiaGynStaffPortal = () => {
               </div>
             </div>
 
-            {/* Emergency Toggle */}
+            {/* Walk-in / Emergency Toggle */}
             <div className="bg-white rounded-lg p-3 shadow-sm">
               <div className="flex items-center gap-3">
                 <button 
-                  onClick={() => { mediumTap(); setIsEmergency(false); setSelectedSlot(''); }}
+                  onClick={() => { 
+                    if (currentSession) {
+                      mediumTap(); 
+                      setIsEmergency(false); 
+                      setSelectedSlot(''); 
+                    }
+                  }}
                   className={`flex-1 py-3 rounded-lg font-bold transition-all ${
-                    !isEmergency ? 'text-white' : 'bg-gray-100 text-gray-600'
+                    !currentSession 
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                      : !isEmergency 
+                        ? 'text-white' 
+                        : 'bg-gray-100 text-gray-600'
                   }`}
-                  style={!isEmergency ? { background: COLORS.accent } : {}}
+                  style={currentSession && !isEmergency ? { background: COLORS.accent } : {}}
                   disabled={!currentSession}>
                   <Users className="w-4 h-4 inline mr-2" />
                   Walk-in
@@ -673,7 +683,7 @@ const DiaGynStaffPortal = () => {
                   }`}
                   style={isEmergency ? { background: COLORS.danger } : {}}>
                   <AlertTriangle className="w-4 h-4 inline mr-2" />
-                  Emergency
+                  Emergency (24x7)
                 </button>
               </div>
             </div>
