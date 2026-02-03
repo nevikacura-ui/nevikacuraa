@@ -710,9 +710,10 @@ async def get_monthly_summary(
 
 @router.get("/config")
 async def get_portal_config(staff = Depends(verify_staff)):
-    """Get portal configuration (clinics, doctors, time slots, fee codes)"""
+    """Get portal configuration (clinics, doctors, time slots, fee codes, schedules)"""
     return {
         "clinics": CLINICS,
+        "doctor_schedule": DOCTOR_SCHEDULE,
         "time_slots": TIME_SLOTS,
         "fee_codes": FEE_CODES,
         "scan_fees": SCAN_FEES,
