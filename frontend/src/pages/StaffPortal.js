@@ -2053,6 +2053,14 @@ const StaffPortal = () => {
           <div className="flex items-center gap-1 sm:gap-2">
             {/* Real-time Notifications */}
             <StaffNotificationBell />
+            
+            {/* Last refreshed indicator */}
+            {lastRefresh && (
+              <span className="text-xs text-slate-500 hidden sm:inline mr-2">
+                Updated: {lastRefresh.toLocaleTimeString()}
+              </span>
+            )}
+            
             <Button 
               variant="outline" 
               size="sm" 
