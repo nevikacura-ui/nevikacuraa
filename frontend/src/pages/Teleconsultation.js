@@ -682,7 +682,7 @@ const Teleconsultation = () => {
                     className="w-full mt-2"
                     onClick={() => {
                       sessionStorage.setItem('prescription_tests', JSON.stringify(showPrescription.prescription.tests));
-                      navigate('/proton?prescription=true');
+                      navigate('/mango?prescription=true');
                     }}
                   >
                     <FlaskConical className="w-4 h-4 mr-2" /> Book These Tests
