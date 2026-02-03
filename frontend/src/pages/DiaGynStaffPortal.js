@@ -736,34 +736,34 @@ const DiaGynStaffPortal = () => {
                 </Button>
               </div>
               
-              {/* Found Patient Card */}
+              {/* Found Patient Card - Prominent Display */}
               {foundPatient && (
-                <div className="mt-3 p-3 bg-emerald-50 rounded-xl border border-emerald-200">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-white" />
+                <div className="mt-4 p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-300">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-md">
+                      <User className="w-7 h-7 text-white" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-semibold text-emerald-800">{foundPatient.name}</p>
-                      <p className="text-sm text-emerald-600">
+                      <p className="font-bold text-xl text-emerald-800">{foundPatient.name}</p>
+                      <p className="text-base text-emerald-600 font-medium">
                         ID: {foundPatient.id} • Visits: {foundPatient.visit_count || 0}
                       </p>
                     </div>
-                    <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                    <CheckCircle2 className="w-8 h-8 text-emerald-500" />
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Patient Details */}
-            <div className="bg-white rounded-xl p-4 shadow-sm space-y-4">
+            {/* Patient Details - Large Input */}
+            <div className="bg-white rounded-2xl p-5 shadow-md space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">Patient Name *</label>
+                <label className="text-base font-bold text-gray-800 mb-3 block">PATIENT NAME *</label>
                 <Input
                   value={bookingForm.patient_name}
                   onChange={(e) => setBookingForm(prev => ({ ...prev, patient_name: e.target.value }))}
                   placeholder="Enter patient name"
-                  className="h-12 text-lg"
+                  className="h-14 text-xl font-medium rounded-xl border-2"
                 />
               </div>
             </div>
