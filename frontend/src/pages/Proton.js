@@ -1435,10 +1435,10 @@ const Proton = () => {
         {currentStep === 1 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-orange-600 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <h1 className="text-3xl font-bold text-orange-400 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Select Your Tests
               </h1>
-              <p className="text-slate-600" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-white/80" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                 Choose from imaging, pathology tests, or upload your prescription
               </p>
             </div>
