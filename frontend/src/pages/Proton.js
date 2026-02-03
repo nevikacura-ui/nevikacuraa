@@ -2552,6 +2552,7 @@ const Proton = () => {
             </Button>
           </div>
         )}
+        </div> {/* Close white container */}
       </main>
         </>
       )}
