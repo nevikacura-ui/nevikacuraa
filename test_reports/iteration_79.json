@@ -1,0 +1,113 @@
+{
+  "summary": "DiaGyn Staff Portal testing complete. Fixed critical bug where Emergency booking failed due to Pydantic model requiring 'time' field. All features verified: staff login, clinic toggle (Pushpa/Amnion), Walk-in tab with session logic (No Active Session at ~3am IST), Emergency 24x7 booking, Book Appointment tab with slot filtering, appointment status workflow (Booked→CheckedIn→WithDoctor→Completed), fee code selection, and collection summaries.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "bugs_fixed": [
+    {
+      "file": "/app/backend/routes/diagyn_staff.py",
+      "issue": "Emergency booking failed with Pydantic validation error - 'time' field was required but Emergency bookings send null",
+      "fix": "Changed 'time: str' to 'time: Optional[str] = None' in AppointmentBook model (line 283)",
+      "severity": "CRITICAL"
+    }
+  ],
+  "test_results": {
+    "backend_tests": {
+      "status": "PASS",
+      "tests": [
+        "Staff login with staff_diagyn/diagyn123 - PASS",
+        "Config endpoint (clinics, doctors, fee codes) - PASS",
+        "Patient lookup by mobile - PASS",
+        "Slots available (walkin mode) - returns empty at 3am IST - PASS",
+        "Slots available (book mode) - returns 28 slots - PASS",
+        "Emergency booking API - PASS (after fix)",
+        "Appointments by date - PASS",
+        "Daily summary - PASS",
+        "Weekly summary - PASS"
+      ]
+    },
+    "frontend_tests": {
+      "status": "PASS",
+      "tests": [
+        "Login page with data-testid attributes - PASS",
+        "Staff login flow - PASS",
+        "Dashboard loads with appointments - PASS",
+        "Clinic toggle (Pushpa/Amnion) - PASS",
+        "Navigation tabs (Today/Walk-in/Book/Summary) - PASS",
+        "Walk-in tab shows 'No Active Session' at 3am IST - PASS",
+        "Walk-in button disabled when no session - PASS",
+        "Emergency (24x7) button always enabled - PASS",
+        "Emergency booking flow - PASS (after backend fix)",
+        "Book Appointment tab with step flow - PASS",
+        "Slot selection based on doctor schedule - PASS",
+        "Status workflow (CHECK IN → WITH DR → COMPLETE) - PASS",
+        "Completion modal with fee codes and scans - PASS",
+        "Summary view with daily/weekly collection - PASS"
+      ]
+    }
+  },
+  "features_verified": {
+    "staff_login": "staff_diagyn / diagyn123 credentials working",
+    "clinic_toggle": "Pushpa Clinic and Amnion Clinic toggles work correctly",
+    "walk_in_tab": {
+      "session_logic": "Shows 'No Active Session' when outside 11am-2pm or 6pm-10pm IST",
+      "walk_in_button": "Disabled when no active session",
+      "emergency_button": "Always enabled (24x7)"
+    },
+    "book_appointment_tab": {
+      "step_flow": "1.Select Doctor → 2.Select Date → 3.Select Slot → 4.Patient Details → Book",
+      "slot_filtering": "Slots correctly filtered based on doctor schedule and day of week"
+    },
+    "status_workflow": {
+      "booked_to_checkedin": "CHECK IN button changes status to WAITING",
+      "checkedin_to_withdr": "WITH DR button changes status to WITH DR",
+      "withdr_to_completed": "COMPLETE button opens modal with fee codes"
+    },
+    "completion_modal": {
+      "fee_codes": "NF, G1, G2, D1, D2, D3 for Dr. Vikas; NF, O1, O2, O3, S1, S2 for Dr. Neha",
+      "scan_fees": "ES, NT, GS, FL, UP, UT with amounts",
+      "total_calculation": "Correctly calculates total from fee + scans"
+    },
+    "summary_view": {
+      "daily": "Shows today's collection and patient count",
+      "weekly": "Shows this week's collection and patient count"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/routes/diagyn_staff.py"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Fixed: AppointmentBook model now accepts Optional[str] for time field to support Emergency bookings",
+    "Session logic correctly implemented: Morning 11am-2pm, Evening 6pm-10pm IST",
+    "Walk-in button correctly disabled outside session hours",
+    "Emergency booking available 24x7 as expected"
+  ],
+  "updated_files": [
+    "/app/backend/routes/diagyn_staff.py"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "staff_login": {
+      "username": "staff_diagyn",
+      "password": "diagyn123"
+    }
+  },
+  "seed_data_creation": "Test Emergency appointments created during UI testing",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "DiaGyn Staff Portal fully tested. Critical bug fixed: Emergency booking now works (time field made optional). All features working: login, clinic toggle, Walk-in tab with session logic, Emergency 24x7 booking, Book Appointment tab, status workflow, fee codes, and summaries. Portal URL: /staff. Current IST time ~3am shows 'No Active Session' correctly.",
+  "mocked_apis": {
+    "WhatsApp notifications": "send_whatsapp_notification via MSG91 is MOCKED",
+    "SMS notifications": "send_sms is MOCKED"
+  }
+}
