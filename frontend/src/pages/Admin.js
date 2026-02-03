@@ -183,7 +183,21 @@ const Admin = () => {
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Also handle window focus
+    const handleFocus = () => {
+      if (isAuthenticated) {
+        console.log('[Admin] Window focused, refreshing data...');
+        fetchStats();
+        fetchRecentOrders();
+      }
+    };
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, [isAuthenticated, activeTab]);
 
   // Fetch data when authenticated - with auto-refresh every 10 seconds for real-time updates
