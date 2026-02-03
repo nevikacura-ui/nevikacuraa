@@ -100,6 +100,8 @@ Complete healthcare platform with three main services:
 
 ### P1 - High Priority
 - [x] ~~Fix "Browse All Tests" button state persistence~~ ✅ COMPLETED
+- [x] ~~Implement Wishlist & Save for Later~~ ✅ COMPLETED (Mango & Pharmacy)
+- [x] ~~Fix Medicine Image Upload Portal~~ ✅ COMPLETED (real-time search, file upload)
 - [ ] Verify "Recently Viewed" feature on Pharmacy
 
 ### P2 - Medium Priority
