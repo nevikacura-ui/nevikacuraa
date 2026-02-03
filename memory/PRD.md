@@ -48,6 +48,36 @@ Complete healthcare platform with three main services:
 - ✅ **Patient Journey Tracking**: Booked → CheckedIn → WithDoctor → Completed
 - ✅ **Fee Collection**: Fee codes (NF, G1, G2, D1, D2, D3, O1, O2, O3, S1, S2) + Scan fees
 - ✅ **Collection Summary**: Daily/Weekly/Monthly totals
+
+#### Token Printing System (NEW - Feb 4, 2026)
+- ✅ **Auto Token on Check-in**: Token number generated when staff clicks CHECK IN
+- ✅ **Daily Sequential Numbering**: Tokens reset daily (continuous for whole day)
+- ✅ **Bluetooth Thermal Printer**: Everycom EC58 support (58mm)
+- ✅ **Token Receipt Format**:
+  - Clinic name & address
+  - TOKEN # (large font)
+  - Booking ID
+  - Appointment type (WALK-IN / EMERGENCY / SCHEDULED)
+  - Patient name, slot time, date
+  - Generation timestamp
+  - "Thank you for choosing NEVIKA CURA" + QR code
+- ✅ **Reprint Token**: Button on appointment cards
+- ✅ **Print Bill**: Dark yellow button for completed appointments
+  - Shows fees breakdown (code + scans)
+  - Patient name & mobile
+  - Total amount
+  - "Thank you" footer
+
+#### Role-Based Permissions (NEW - Feb 4, 2026)
+- ✅ **Staff Portal**:
+  - CAN: Check-in patients, move to "With Doctor"
+  - CAN: Print Token (on check-in) and Print Bill (for completed)
+  - CANNOT: Complete appointments, edit fees
+- ✅ **Doctor Portal**:
+  - CAN: Start consultation, Complete with fees/scans
+  - CAN: Edit total amount before completing
+  - CAN: Set follow-up date
+  - CANNOT: Check-in patients
 - ✅ **Haptic Feedback** on all buttons
 - ✅ **Real-time Sync** - Auto-refresh every 8 seconds
 - ✅ **Intro Screen Skip** - Staff pages bypass main app intro
