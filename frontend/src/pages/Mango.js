@@ -1339,6 +1339,20 @@ const Proton = () => {
                 >
                   {/* Green Gradient Header - Orange Health Labs Style */}
                   <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 p-5 text-white relative">
+                    {/* Wishlist Heart Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(test);
+                      }}
+                      className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-all"
+                      data-testid={`wishlist-btn-${test.name.replace(/\s+/g, '-').toLowerCase()}`}
+                    >
+                      <Heart 
+                        className={`w-4 h-4 ${isInWishlist(test.name) ? 'fill-red-500 text-red-500' : 'text-white'}`}
+                      />
+                    </button>
+                    
                     {/* Test Badge */}
                     <div className="absolute top-3 right-3">
                       <span className="bg-emerald-800/60 text-white text-xs font-bold px-3 py-1.5 rounded-md backdrop-blur-sm">
