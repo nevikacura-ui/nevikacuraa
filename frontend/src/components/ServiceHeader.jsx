@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Heart, Stethoscope, FlaskConical, Package, Shield, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
+import { selectionTap, lightTap } from '@/utils/haptics';
 
 // Service theme configurations
 const serviceThemes = {
