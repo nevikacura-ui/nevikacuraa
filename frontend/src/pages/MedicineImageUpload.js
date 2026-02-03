@@ -270,6 +270,26 @@ const MedicineImageUpload = () => {
                 )}
               </div>
               
+              {/* Google Image Search - Quick Find */}
+              {singleMedicine.name && (
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-blue-800">🔍 Find Image on Google</p>
+                      <p className="text-xs text-blue-600 mt-1">Search, right-click image → "Copy image address"</p>
+                    </div>
+                    <Button 
+                      onClick={() => openGoogleImageSearch(singleMedicine.name)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      size="sm"
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Search Google Images
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
               {/* File Upload Option */}
               <div className="border-2 border-dashed border-blue-200 rounded-xl p-4 bg-blue-50/50">
                 <input
@@ -311,7 +331,7 @@ const MedicineImageUpload = () => {
               <div>
                 <Label>Image URL</Label>
                 <Input 
-                  placeholder="https://example.com/medicine.jpg"
+                  placeholder="Paste image URL here (right-click image → Copy image address)"
                   value={singleMedicine.image_url}
                   onChange={(e) => setSingleMedicine({...singleMedicine, image_url: e.target.value})}
                 />
