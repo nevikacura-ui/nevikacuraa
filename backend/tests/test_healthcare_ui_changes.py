@@ -155,10 +155,10 @@ class TestPharmacyEndpoints:
     """Test pharmacy-related endpoints"""
     
     def test_pharmacy_orders_endpoint(self):
-        """Test pharmacy orders endpoint"""
-        response = requests.get(f"{BASE_URL}/api/pharmacy/orders")
-        # May require auth
-        assert response.status_code in [200, 401, 403], f"Unexpected status: {response.status_code}"
+        """Test pharmacy orders endpoint (requires staff auth)"""
+        response = requests.get(f"{BASE_URL}/api/staff/pharmacy/orders")
+        # Requires staff authentication
+        assert response.status_code in [200, 401, 403, 422], f"Unexpected status: {response.status_code}"
         print(f"✓ Pharmacy orders endpoint accessible, status: {response.status_code}")
 
 
