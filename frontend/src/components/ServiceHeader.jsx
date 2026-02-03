@@ -43,7 +43,7 @@ const serviceThemes = {
 // Get active service from path
 const getActiveService = (pathname) => {
   if (pathname.startsWith('/diagyn')) return 'diagyn';
-  if (pathname.startsWith('/mango')) return 'proton';
+  if (pathname.startsWith('/mango')) return 'mango';
   if (pathname.startsWith('/pharmacy')) return 'pharmacy';
   return 'home';
 };
