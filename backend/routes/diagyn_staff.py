@@ -293,6 +293,7 @@ class AppointmentStatusUpdate(BaseModel):
     scan_codes: Optional[List[str]] = []
     total_amount: Optional[float] = None
     notes: Optional[str] = None
+    follow_up_date: Optional[str] = None  # For scheduling follow-up appointments
 
 
 # ============ Patient Database ============
