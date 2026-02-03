@@ -2451,6 +2451,16 @@ const Pharmacy = () => {
         {/* STEP 3: Delivery & Payment */}
         {currentStep === 3 && (
           <div className="space-y-6">
+            {/* Back Button */}
+            <button
+              onClick={goToStep1}
+              className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition-colors"
+              data-testid="back-to-cart-step3"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="text-sm font-medium">Back to Cart</span>
+            </button>
+            
             <div className="text-center mb-6">
               <div className="flex items-center justify-center gap-2 text-emerald-600 mb-2">
                 <CheckCircle2 className="w-5 h-5" />
