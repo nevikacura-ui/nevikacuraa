@@ -2538,10 +2538,21 @@ const Pharmacy = () => {
               </div>
             </Card>
 
-            <Button variant="outline" onClick={goToStep1} className="w-full rounded-full border-orange-200" data-testid="back-to-cart">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Cart
-            </Button>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={goToStep1} className="flex-1 rounded-full border-orange-200" data-testid="back-to-cart">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Cart
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={saveCartForLater} 
+                className="flex-1 rounded-full border-amber-300 text-amber-600 hover:bg-amber-50" 
+                data-testid="save-for-later-btn"
+              >
+                <Bookmark className="w-4 h-4 mr-2" />
+                Save for Later
+              </Button>
+            </div>
           </div>
         )}
 
