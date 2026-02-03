@@ -1013,12 +1013,22 @@ const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, prin
     <div className="bg-white rounded-lg shadow-sm overflow-hidden border-l-4" style={{ borderLeftColor: status.text }}>
       <div className="p-3">
         <div className="flex items-start justify-between mb-1">
-          <div>
-            <h4 className="font-bold text-base">{apt.patient_name}</h4>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-xs font-mono px-1.5 py-0.5 rounded" 
-                    style={{ background: COLORS.primaryLight, color: COLORS.primary }}>{apt.booking_id}</span>
-              {apt.patient_id && <span className="text-xs font-mono text-gray-500">{apt.patient_id}</span>}
+          <div className="flex items-start gap-3">
+            {/* Token Number Badge (for checked-in patients) */}
+            {apt.token_number && (
+              <div className="flex flex-col items-center justify-center min-w-[44px] h-11 rounded-lg"
+                   style={{ background: '#fef3c7' }}>
+                <span className="text-[10px] text-amber-700 font-medium leading-none">TOKEN</span>
+                <span className="text-lg font-bold text-amber-600 leading-tight">{apt.token_number}</span>
+              </div>
+            )}
+            <div>
+              <h4 className="font-bold text-base">{apt.patient_name}</h4>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="text-xs font-mono px-1.5 py-0.5 rounded" 
+                      style={{ background: COLORS.primaryLight, color: COLORS.primary }}>{apt.booking_id}</span>
+                {apt.patient_id && <span className="text-xs font-mono text-gray-500">{apt.patient_id}</span>}
+              </div>
             </div>
           </div>
           <span className="text-xs font-bold px-2 py-1 rounded" style={{ background: status.bg, color: status.text }}>
@@ -1036,13 +1046,23 @@ const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, prin
             </span>
             {apt.total_amount > 0 && <span className="font-bold text-sm" style={{ color: COLORS.accent }}>₹{apt.total_amount}</span>}
           </div>
-          {action && (
-            <button onClick={() => { heavyTap(); action.action(); }}
-              className="px-4 py-2 rounded-lg text-white text-xs font-bold shadow transition-all active:scale-95"
-              style={{ background: action.color }}>
-              {action.label} <ChevronRight className="w-3 h-3 inline ml-1" />
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {/* Reprint Token Button (only for checked-in patients with token) */}
+            {apt.token_number && printerConnected && (
+              <button onClick={() => { lightTap(); onReprint(apt); }}
+                className="p-2 rounded-lg text-amber-600 bg-amber-50 hover:bg-amber-100 transition-all"
+                title="Reprint Token">
+                <Printer className="w-4 h-4" />
+              </button>
+            )}
+            {action && (
+              <button onClick={() => { heavyTap(); action.action(); }}
+                className="px-4 py-2 rounded-lg text-white text-xs font-bold shadow transition-all active:scale-95"
+                style={{ background: action.color }}>
+                {action.label} <ChevronRight className="w-3 h-3 inline ml-1" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
