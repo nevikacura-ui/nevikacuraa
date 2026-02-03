@@ -53,17 +53,78 @@ const MedicineImageUpload = () => {
     }
   };
 
+  // Real-time search with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery.trim().length >= 2) {
+        searchMedicines();
+      } else if (searchQuery.trim().length === 0) {
+        setSearchResults([]);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   const searchMedicines = async () => {
     if (!searchQuery.trim()) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API}/api/medicine-images/search?q=${encodeURIComponent(searchQuery)}&limit=20`);
+      const res = await fetch(`${API}/api/medicine-images/search?q=${encodeURIComponent(searchQuery)}&limit=30`);
       const data = await res.json();
       setSearchResults(data.medicines || []);
     } catch (error) {
       toast.error('Search failed');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle file upload
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (!singleMedicine.name) {
+      toast.error('Please select or enter a medicine name first');
+      return;
+    }
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+    
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = (e) => setPreviewFile(e.target.result);
+    reader.readAsDataURL(file);
+    
+    // Upload to server
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'medicine');
+      
+      const uploadRes = await fetch(`${API}/api/upload/image`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      const uploadData = await uploadRes.json();
+      
+      if (uploadData.url) {
+        // Update medicine with uploaded image URL
+        setSingleMedicine(prev => ({ ...prev, image_url: uploadData.url }));
+        toast.success('Image uploaded! Click "Save Image" to complete.');
+      } else {
+        toast.error('Upload failed: ' + (uploadData.detail || 'Unknown error'));
+      }
+    } catch (error) {
+      toast.error('Upload failed: ' + error.message);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -83,8 +144,9 @@ const MedicineImageUpload = () => {
       if (data.success) {
         toast.success(data.message);
         setSingleMedicine({ name: '', image_url: '' });
+        setPreviewFile(null);
         fetchStats();
-        searchMedicines();
+        if (searchQuery) searchMedicines();
       } else {
         toast.error(data.message);
       }
