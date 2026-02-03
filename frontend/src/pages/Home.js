@@ -1135,7 +1135,7 @@ const Home = () => {
                           : 'bg-teal-500 hover:bg-teal-600 text-white'
                       }`}
                     >
-                      {service.id === 'diagyn' ? 'Book Now' : service.id === 'proton' ? 'Book Test' : 'Order Now'}
+                      {service.id === 'diagyn' ? 'Book Now' : service.id === 'mango' ? 'Book Test' : 'Order Now'}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
