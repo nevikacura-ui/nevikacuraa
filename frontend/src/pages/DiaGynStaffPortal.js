@@ -490,12 +490,12 @@ const DiaGynStaffPortal = () => {
             </Button>
           </div>
         </div>
-        {/* Clinic Filter - Compact Pills */}
-        <div className="flex gap-1.5 mt-2 overflow-x-auto pb-1">
+        {/* Clinic Filter - Full Width Toggles */}
+        <div className="grid grid-cols-3 gap-1.5 mt-3 pb-1">
           {['all', 'Pushpa Clinic', 'Amnion Clinic'].map(clinic => (
             <button key={clinic} onClick={() => { selectionTap(); setActiveClinic(clinic); }}
-              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-                activeClinic === clinic ? 'bg-white shadow' : 'bg-white/20 text-white'
+              className={`py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                activeClinic === clinic ? 'bg-white shadow-md' : 'bg-white/20 text-white'
               }`}
               style={activeClinic === clinic ? { color: COLORS.primary } : {}}>
               {clinic === 'all' ? 'All' : clinic.replace(' Clinic', '')}
