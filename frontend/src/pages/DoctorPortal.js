@@ -212,12 +212,9 @@ const DoctorPortal = () => {
       return;
     }
     
-    const doctor = selectedApt?.doctor;
-    const feeConfig = config?.fee_codes?.[doctor]?.[feeCode];
-    let total = feeConfig?.amount || 0;
-    scanCodes.forEach(code => {
-      total += config?.scan_fees?.[code]?.amount || 0;
-    });
+    // Use custom total if doctor edited it, otherwise use calculated total
+    const calculatedTotal = calculateTotal();
+    const finalTotal = customTotal !== '' ? parseFloat(customTotal) : calculatedTotal;
     
     setLoading(true);
     heavyTap();
@@ -226,12 +223,12 @@ const DoctorPortal = () => {
         status: 'Completed',
         fee_code: feeCode,
         scan_codes: scanCodes,
-        total_amount: total,
+        total_amount: finalTotal,
         notes: notes,
         follow_up_date: followUpDate || null
       }, getAuthHeaders());
       successPattern();
-      toast.success(`Completed! ₹${total}`);
+      toast.success(`Completed! ₹${finalTotal}`);
       setShowModal(false);
       loadAppointments();
     } catch (error) {
