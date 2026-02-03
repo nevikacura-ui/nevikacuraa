@@ -117,11 +117,6 @@ const DiaGynStaffPortal = () => {
   // Patient lookup
   const [foundPatient, setFoundPatient] = useState(null);
   const [searchingPatient, setSearchingPatient] = useState(false);
-  
-  // Completion modal
-  const [showCompletionModal, setShowCompletionModal] = useState(false);
-  const [completingAppointment, setCompletingAppointment] = useState(null);
-  const [completionForm, setCompletionForm] = useState({ fee_code: '', scan_codes: [], notes: '' });
 
   // Update current session every minute
   useEffect(() => {
