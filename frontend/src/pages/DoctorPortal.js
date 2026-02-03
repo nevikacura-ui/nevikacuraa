@@ -463,6 +463,33 @@ const DoctorPortal = () => {
                   placeholder="Add notes..." className="h-10" />
               </div>
 
+              {/* Follow-up Date */}
+              <div>
+                <label className="text-sm font-bold text-gray-700 mb-2 block">FOLLOW-UP DATE (Optional)</label>
+                <div className="flex items-center gap-2">
+                  <input 
+                    type="date" 
+                    value={followUpDate}
+                    min={getIndianDate()}
+                    onChange={(e) => { lightTap(); setFollowUpDate(e.target.value); }}
+                    className="flex-1 h-10 px-3 rounded-lg border border-gray-300 text-sm"
+                  />
+                  {followUpDate && (
+                    <button 
+                      onClick={() => setFollowUpDate('')}
+                      className="h-10 w-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100">
+                      <X className="w-4 h-4 text-gray-500" />
+                    </button>
+                  )}
+                </div>
+                {followUpDate && (
+                  <p className="text-xs text-teal-600 mt-1">
+                    <Calendar className="w-3 h-3 inline mr-1" />
+                    Follow-up scheduled for {new Date(followUpDate).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })}
+                  </p>
+                )}
+              </div>
+
               {/* Total */}
               {feeCode && (
                 <div className="p-4 rounded-xl" style={{ background: COLORS.primaryLight }}>
