@@ -245,7 +245,7 @@ const DoctorPortal = () => {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" 
-           style={{ background: `linear-gradient(135deg, ${COLORS.primary} 0%, #14532d 100%)` }}>
+           style={{ background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%)` }}>
         <Card className="w-full max-w-sm p-6 shadow-2xl">
           <div className="text-center mb-6">
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3"
