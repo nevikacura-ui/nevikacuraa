@@ -382,22 +382,72 @@ async def get_available_slots(
     clinic: str,
     doctor: str,
     date: str,
+    mode: str = Query(None, description="'walkin' for current session, 'book' for future sessions"),
     staff = Depends(verify_staff)
 ):
-    """Get available slots for a doctor on a date based on their schedule"""
+    """Get available slots for a doctor on a date based on their schedule
+    mode='walkin': Current session only (for walk-in/emergency)
+    mode='book': Future sessions only (for booking appointments)
+    mode=None: All slots
+    """
+    
+    # Map mode to session filter
+    session_filter = None
+    if mode == "walkin":
+        session_filter = "current"
+    elif mode == "book":
+        session_filter = "future"
     
     # Get slots based on doctor's schedule for this clinic and day
-    all_slots = get_slots_for_doctor_clinic_date(doctor, clinic, date)
+    slot_data = get_slots_for_doctor_clinic_date(doctor, clinic, date, session_filter)
     
-    if not all_slots:
-        # Doctor not available at this clinic on this day
+    if not slot_data or not slot_data.get("all"):
+        # Doctor not available at this clinic on this day/session
         return {
             "clinic": clinic,
             "doctor": doctor,
             "date": date,
             "available_slots": [],
+            "morning_slots": [],
+            "evening_slots": [],
             "booked_count": 0,
             "total_slots": 0,
+            "current_session": slot_data.get("current_session") if slot_data else None,
+            "message": f"{doctor} is not available at {clinic} for this session"
+        }
+    
+    all_slots = slot_data.get("all", [])
+    
+    # Get all booked appointments for this doctor/clinic/date
+    booked = await db.appointments.find(
+        {
+            "clinic": clinic,
+            "doctor": doctor,
+            "date": date,
+            "status": {"$nin": ["Cancelled", "No Show"]}
+        },
+        {"_id": 0, "time": 1}
+    ).to_list(100)
+    
+    booked_times = set(apt.get("time") for apt in booked if apt.get("time"))
+    
+    # Filter available slots (exclude booked)
+    available = [slot for slot in all_slots if slot["value"] not in booked_times]
+    morning_available = [slot for slot in slot_data.get("morning", []) if slot["value"] not in booked_times]
+    evening_available = [slot for slot in slot_data.get("evening", []) if slot["value"] not in booked_times]
+    
+    return {
+        "clinic": clinic,
+        "doctor": doctor,
+        "date": date,
+        "available_slots": available,
+        "morning_slots": morning_available,
+        "evening_slots": evening_available,
+        "booked_count": len(booked_times),
+        "total_slots": len(all_slots),
+        "current_session": slot_data.get("current_session"),
+        "mode": mode
+    }
             "message": f"{doctor} is not available at {clinic} on this day"
         }
     
