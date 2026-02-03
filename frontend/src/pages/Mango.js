@@ -1055,7 +1055,7 @@ const Proton = () => {
             </div>
             
             {/* Search Bar - inside dark green section */}
-            <div className="max-w-6xl mx-auto px-4 pb-6 relative z-20">
+            <div className="max-w-6xl mx-auto px-4 pb-3 relative z-20">
               <div className="bg-white rounded-2xl shadow-xl p-3 border-2 border-orange-300">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-500 w-5 h-5" />
