@@ -448,12 +448,22 @@ const MedicineImageUpload = () => {
               </div>
               
               <div>
-                <Label>Image URL</Label>
+                <Label>Image URL {quickAddMode && <span className="text-amber-600">(Paste & Save!)</span>}</Label>
                 <Input 
+                  ref={urlInputRef}
                   placeholder="Paste image URL here (right-click image → Copy image address)"
                   value={singleMedicine.image_url}
                   onChange={(e) => setSingleMedicine({...singleMedicine, image_url: e.target.value})}
+                  className={quickAddMode ? 'ring-2 ring-amber-400 bg-amber-50' : ''}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && singleMedicine.image_url) {
+                      updateSingleImage();
+                    }
+                  }}
                 />
+                {quickAddMode && (
+                  <p className="text-xs text-amber-600 mt-1">💡 Press Enter to save & auto-advance to next medicine</p>
+                )}
               </div>
               
               {/* Preview */}
@@ -472,7 +482,7 @@ const MedicineImageUpload = () => {
               <Button 
                 onClick={updateSingleImage} 
                 disabled={loading || !singleMedicine.name || !singleMedicine.image_url} 
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className={`w-full ${quickAddMode ? 'bg-amber-500 hover:bg-amber-600' : 'bg-blue-600 hover:bg-blue-700'}`}
               >
                 {loading ? (
                   <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
