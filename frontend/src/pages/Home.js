@@ -1120,10 +1120,16 @@ const Home = () => {
                     />
                   </div>
                   <div className="flex-1">
-                    <h3 className={`text-lg sm:text-xl font-bold mb-1 ${service.isDark ? 'text-white' : 'text-slate-800'}`}>
+                    <h3 
+                      className={`text-lg sm:text-xl font-bold mb-1 tracking-tight ${service.isDark ? 'text-white' : 'text-slate-800'}`}
+                      style={{ fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.02em' }}
+                    >
                       {service.name}
                     </h3>
-                    <p className={`text-sm mb-3 ${service.isDark ? 'text-white/70' : 'text-slate-500'}`}>
+                    <p 
+                      className={`text-sm mb-3 ${service.isDark ? 'text-white/70' : 'text-slate-500'}`}
+                      style={{ fontFamily: 'DM Sans, sans-serif' }}
+                    >
                       {service.description}
                     </p>
                     <Button
@@ -1134,6 +1140,7 @@ const Home = () => {
                           ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
                           : 'bg-teal-500 hover:bg-teal-600 text-white'
                       }`}
+                      style={{ fontFamily: 'DM Sans, sans-serif' }}
                     >
                       {service.id === 'diagyn' ? 'Book Now' : service.id === 'mango' ? 'Book Test' : 'Order Now'}
                       <ArrowRight className="w-4 h-4 ml-2" />
