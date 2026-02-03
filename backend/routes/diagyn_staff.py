@@ -37,19 +37,30 @@ CLINICS = {
 
 # Doctor Schedule - which days at which clinic with timings
 # Days: 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri, 5=Sat, 6=Sun
+# Based on clinic timings image:
+# Dr Vikas Jha: Pushpa Mon/Wed/Fri 6pm-10pm | Amnion Mon-Sat 11am-2pm + Tue/Thu/Sat 6pm-10pm
+# Dr Neha Patel: Pushpa Mon-Sat 11am-2pm + Tue/Thu/Sat 6pm-10pm | Amnion Mon/Wed/Fri 6pm-10pm
 DOCTOR_SCHEDULE = {
     "Dr. Vikas Jha": {
         "Pushpa Clinic": {
+            "days": [0, 2, 4],  # Mon, Wed, Fri
+            "evening": {"start": "18:00", "end": "22:00"}
+        },
+        "Amnion Clinic": {
             "days": [0, 1, 2, 3, 4, 5],  # Mon-Sat
-            "morning": {"start": "09:00", "end": "13:00"},
-            "evening": {"start": "17:00", "end": "21:00"}
+            "morning": {"start": "11:00", "end": "14:00"},
+            "evening": {"start": "18:00", "end": "22:00", "days": [1, 3, 5]}  # Tue/Thu/Sat only
         }
     },
     "Dr. Neha Patel": {
-        "Amnion Clinic": {
+        "Pushpa Clinic": {
             "days": [0, 1, 2, 3, 4, 5],  # Mon-Sat
-            "morning": {"start": "10:00", "end": "14:00"},
-            "evening": {"start": "18:00", "end": "21:00"}
+            "morning": {"start": "11:00", "end": "14:00"},
+            "evening": {"start": "18:00", "end": "22:00", "days": [1, 3, 5]}  # Tue/Thu/Sat only
+        },
+        "Amnion Clinic": {
+            "days": [0, 2, 4],  # Mon, Wed, Fri
+            "evening": {"start": "18:00", "end": "22:00"}
         }
     }
 }
