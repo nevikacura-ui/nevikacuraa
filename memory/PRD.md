@@ -29,23 +29,42 @@ Complete healthcare platform with three main services:
 #### New Staff Portal Features
 - ✅ **Dark Green/Orange Mango Labs Theme** - Compact, senior-friendly UI
 - ✅ **Unified Booking Portal** - Book for both Pushpa & Amnion clinics
+- ✅ **15-Minute Slot Intervals**
 - ✅ **Doctor Schedule-Based Slots**:
-  - Dr. Vikas Jha (Pushpa): Mon-Sat, 9AM-1PM & 5PM-9PM
-  - Dr. Neha Patel (Amnion): Mon-Sat, 10AM-2PM & 6PM-9PM
+  - Dr. Vikas Jha: Pushpa (Mon/Wed/Fri 6pm-10pm), Amnion (Mon-Sat 11am-2pm + Tue/Thu/Sat 6pm-10pm)
+  - Dr. Neha Patel: Pushpa (Mon-Sat 11am-2pm + Tue/Thu/Sat 6pm-10pm), Amnion (Mon/Wed/Fri 6pm-10pm)
   - Sundays: No appointments
 - ✅ **Slot Blocking** - Patient-booked slots unavailable for staff
 - ✅ **Patient Database** - Mobile lookup for faster rebooking
 - ✅ **Appointment Types**: Walk-In, Scheduled, Emergency
 - ✅ **Patient Journey Tracking**: Booked → CheckedIn → WithDoctor → Completed
-- ✅ **Fee Collection**: Fee codes (G1, D1, O1, etc.) + Scan fees
+- ✅ **Fee Collection**: Fee codes (NF, G1, G2, D1, D2, D3, O1, O2, O3) + Scan fees
 - ✅ **Collection Summary**: Daily/Weekly/Monthly totals
 - ✅ **Haptic Feedback** on all buttons
 - ✅ **Real-time Sync** - Auto-refresh every 8 seconds
 
+#### New Doctor Portal Features
+- ✅ **Doctor Portal** at `/doctor-portal`
+- ✅ **Patient Queue View** - Waiting, In Consultation, Completed sections
+- ✅ **Start Consultation** - Move patient from waiting to in-consult
+- ✅ **Complete Consultation Modal**:
+  - Fee Code Selection (NF, G1, G2, D1, D2, D3 for Dr. Vikas)
+  - Sonography/Scan Selection (ES, NT, GS, FL, UP, UT)
+  - Notes field
+  - Total calculation with breakdown
+- ✅ **Same Green/Orange Theme** as Staff Portal
+
+#### Portal Credentials
+| Portal | URL | Username | Password |
+|--------|-----|----------|----------|
+| Staff Portal | `/diagyn-staff` | `staff_diagyn` | `diagyn123` |
+| Doctor Portal | `/doctor-portal` | `dr_vikas` | `vikas123` |
+| Doctor Portal | `/doctor-portal` | `dr_neha` | `neha123` |
+
 #### Files Created/Modified
-- `/app/backend/routes/diagyn_staff.py` - New backend API routes
-- `/app/frontend/src/pages/DiaGynStaffPortal.js` - New compact UI
-- Route: `/diagyn-staff`
+- `/app/backend/routes/diagyn_staff.py` - Backend API routes with schedule
+- `/app/frontend/src/pages/DiaGynStaffPortal.js` - Staff portal UI
+- `/app/frontend/src/pages/DoctorPortal.js` - Doctor portal UI
 
 ### Earlier Updates (Dec 2025 - Feb 2026)
 - ✅ Unified header with service tabs (Nevika Cura, DiaGyn, Mango, Orange)
