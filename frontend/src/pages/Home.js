@@ -206,7 +206,7 @@ const Home = () => {
     const fetchQueueStatus = async () => {
       try {
         // Fetch queue status for each clinic
-        const clinics = ['diagyn', 'proton'];
+        const clinics = ['diagyn', 'mango'];
         const results = [];
         
         for (const clinic of clinics) {
