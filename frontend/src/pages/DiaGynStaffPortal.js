@@ -579,6 +579,19 @@ const DiaGynStaffPortal = () => {
             </div>
           </div>
           <div className="flex items-center gap-1">
+            {/* Printer Connection Button */}
+            <Button variant="ghost" size="sm" onClick={connectPrinter}
+              className={`hover:bg-white/20 h-8 px-2 ${printerConnected ? 'text-green-300' : 'text-white/70'}`}
+              disabled={isPrinting}>
+              {isPrinting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  <Bluetooth className={`w-4 h-4 ${printerConnected ? 'text-green-300' : ''}`} />
+                  {printerConnected && <span className="text-xs ml-1">●</span>}
+                </>
+              )}
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => { lightTap(); loadAppointments(); }}
               className="text-white hover:bg-white/20 h-8 w-8 p-0" disabled={refreshing}>
               <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
@@ -590,8 +603,16 @@ const DiaGynStaffPortal = () => {
           </div>
         </div>
         
+        {/* Printer Status Bar */}
+        {printerConnected && (
+          <div className="px-3 py-1 bg-green-600 flex items-center justify-center gap-2">
+            <Printer className="w-3 h-3 text-white" />
+            <span className="text-xs text-white font-medium">{printerName} connected</span>
+          </div>
+        )}
+        
         {/* Clinic Toggle - Only Pushpa & Amnion */}
-        <div className="grid grid-cols-2 gap-2 mt-3 pb-1">
+        <div className="grid grid-cols-2 gap-2 mt-3 pb-1 px-3">
           {['Pushpa Clinic', 'Amnion Clinic'].map(clinic => (
             <button key={clinic} 
               onClick={() => { 
