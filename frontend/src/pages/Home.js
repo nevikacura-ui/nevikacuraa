@@ -1110,11 +1110,11 @@ const Home = () => {
                 }`}></div>
                 
                 <div className="relative flex items-center p-5 sm:p-6 min-h-[140px]">
-                  <div className="flex-shrink-0 mr-5 sm:mr-6">
+                  <div className="flex-shrink-0 mr-5 sm:mr-6 flex items-center justify-center" style={{ minWidth: '120px' }}>
                     <img 
                       src={service.logo} 
                       alt={service.name} 
-                      className={`w-auto object-contain transition-transform duration-300 group-hover:scale-110 ${service.id === 'mango' ? 'h-28 sm:h-36' : 'h-20 sm:h-24'}`}
+                      className={`w-auto object-contain transition-transform duration-300 group-hover:scale-110 ${service.id === 'mango' ? 'h-32 sm:h-40' : 'h-20 sm:h-24'}`}
                       data-testid={`service-logo-featured-${service.id}`}
                       loading="eager"
                     />
