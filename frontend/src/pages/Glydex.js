@@ -742,7 +742,7 @@ const Glydex = () => {
     // Pass selected tests via URL params
     const testsParam = encodeURIComponent(selectedDiabeticTests.join(','));
     setShowTests(false);
-    navigate(`/proton?tests=${testsParam}&from=glydex`);
+    navigate(`/mango?tests=${testsParam}&from=glydex`);
   };
 
   // Share blood sugar report via WhatsApp
