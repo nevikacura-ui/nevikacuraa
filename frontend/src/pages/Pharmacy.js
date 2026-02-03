@@ -367,6 +367,81 @@ const Pharmacy = () => {
   const [showProductDetail, setShowProductDetail] = useState(false);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   
+  // Wishlist & Save for Later
+  const [wishlist, setWishlist] = useState(() => {
+    try {
+      const saved = localStorage.getItem('pharmacy_wishlist');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [showWishlist, setShowWishlist] = useState(false);
+  const [hasSavedCart, setHasSavedCart] = useState(false);
+  
+  // Check for saved cart on mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem('pharmacy_saved_cart');
+    if (savedCart) setHasSavedCart(true);
+  }, []);
+  
+  // Save wishlist to localStorage
+  useEffect(() => {
+    localStorage.setItem('pharmacy_wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
+  
+  // Wishlist functions
+  const toggleWishlist = (medicine) => {
+    const isInWishlist = wishlist.some(w => w.name === medicine.name);
+    if (isInWishlist) {
+      setWishlist(wishlist.filter(w => w.name !== medicine.name));
+      toast.success(`Removed ${medicine.name} from wishlist`);
+    } else {
+      setWishlist([...wishlist, { name: medicine.name, price: medicine.price || 50, form: medicine.form || 'Tablet' }]);
+      toast.success(`Added ${medicine.name} to wishlist`);
+    }
+  };
+  
+  const isInWishlist = (medicineName) => wishlist.some(w => w.name === medicineName);
+  
+  // Save cart for later
+  const saveCartForLater = () => {
+    if (medicines.length === 0) {
+      toast.error('No medicines in cart to save');
+      return;
+    }
+    const cartData = {
+      medicines,
+      patientInfo,
+      deliveryAddress,
+      prescriptionUrl,
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem('pharmacy_saved_cart', JSON.stringify(cartData));
+    toast.success('Cart saved! You can continue later.');
+    setHasSavedCart(true);
+  };
+  
+  // Restore saved cart
+  const restoreSavedCart = () => {
+    const savedCart = localStorage.getItem('pharmacy_saved_cart');
+    if (savedCart) {
+      const cartData = JSON.parse(savedCart);
+      setMedicines(cartData.medicines || []);
+      setPatientInfo(prev => ({ ...prev, ...cartData.patientInfo }));
+      setDeliveryAddress(cartData.deliveryAddress || '');
+      setPrescriptionUrl(cartData.prescriptionUrl || '');
+      toast.success('Cart restored successfully!');
+    }
+  };
+  
+  // Clear saved cart
+  const clearSavedCart = () => {
+    localStorage.removeItem('pharmacy_saved_cart');
+    setHasSavedCart(false);
+    toast.success('Saved cart cleared');
+  };
+  
   // Recently Viewed Medicines
   const [recentlyViewed, setRecentlyViewed] = useState(() => {
     try {
