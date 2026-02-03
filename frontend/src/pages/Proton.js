@@ -1400,12 +1400,14 @@ const Proton = () => {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 py-6">
+        {/* White content container for better readability */}
+        <div className="bg-white rounded-3xl shadow-xl p-6">
         {/* Your Health Trends - Toggle Section */}
         {patientInfo.phone && patientInfo.phone.length === 10 && (
           <div className="mb-6">
             <button
               onClick={() => setShowTrends(!showTrends)}
-              className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-[#0c1e3c]/10 to-[#1a365d]/10 rounded-2xl border border-orange-500/20 hover:shadow-md transition-all"
+              className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl border border-orange-200 hover:shadow-md transition-all"
               data-testid="show-trends-btn"
             >
               <div className="flex items-center gap-3">
@@ -1435,10 +1437,10 @@ const Proton = () => {
         {currentStep === 1 && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-orange-400 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <h1 className="text-3xl font-bold text-orange-600 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Select Your Tests
               </h1>
-              <p className="text-white/80" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-slate-600" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                 Choose from imaging, pathology tests, or upload your prescription
               </p>
             </div>
