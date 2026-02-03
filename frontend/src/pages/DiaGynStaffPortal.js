@@ -9,9 +9,11 @@ import {
   ArrowLeft, User, Lock, LogOut, Phone, Calendar, Clock, 
   Search, Plus, CheckCircle2, UserPlus, AlertTriangle,
   Building2, Stethoscope, IndianRupee, RefreshCw,
-  ChevronRight, Loader2, Users, TrendingUp, X, CalendarPlus
+  ChevronRight, Loader2, Users, TrendingUp, X, CalendarPlus,
+  Printer, Bluetooth
 } from 'lucide-react';
 import { lightTap, mediumTap, heavyTap, successPattern, errorPattern, selectionTap } from '@/utils/haptics';
+import thermalPrinter from '@/utils/thermalPrinter';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
