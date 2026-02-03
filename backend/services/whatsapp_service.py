@@ -141,7 +141,7 @@ Tip: Share your report with your doctor through the app for a quick review.
 
 For queries, contact us at 9403890429.
 
-- Proton Diagnostics"""
+- Mango Health Labs"""
 
 
 def get_emergency_alert_message(patient_name: str, emergency_type: str,
