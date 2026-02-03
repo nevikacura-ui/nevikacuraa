@@ -165,6 +165,28 @@ const Admin = () => {
     }
   }, []);
 
+  // Refresh data when user returns to the tab (prevents blank screen issue)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isAuthenticated) {
+        console.log('Tab became visible - refreshing data...');
+        fetchStats();
+        fetchRecentOrders();
+        if (activeTab === 'tracking') {
+          fetchPharmacyOrders();
+          fetchDiagnosticOrders();
+        } else if (activeTab === 'leave') {
+          fetchScheduleAppointments();
+        } else if (activeTab === 'analytics') {
+          fetchAnalytics();
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isAuthenticated, activeTab]);
+
   // Fetch data when authenticated - with auto-refresh every 30 seconds
   useEffect(() => {
     if (isAuthenticated) {
