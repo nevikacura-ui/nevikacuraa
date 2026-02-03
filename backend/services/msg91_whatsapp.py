@@ -52,7 +52,7 @@ CLINIC_ADDRESSES = {
 CLINIC_MAP_URLS = {
     "pushpa clinic": "https://maps.google.com/?q=Pushpa+Clinic+Naigaon",
     "amnion clinic": "https://maps.google.com/?q=Amnion+Clinic+Naigaon",
-    "proton diagnostics": "https://maps.google.com/?q=Proton+Diagnostics+Naigaon",
+    "mango health labs": "https://maps.google.com/?q=Mango+Health+Labs+Naigaon",
     "default": "https://maps.google.com/?q=Naigaon+East"
 }
 

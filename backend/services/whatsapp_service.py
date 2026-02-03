@@ -122,7 +122,7 @@ For queries, contact us at 9403890429.
 def get_lab_report_ready_message(patient_name: str, test_name: str, 
                                   order_id: str) -> str:
     """Generate lab report ready notification"""
-    return f"""*Proton Diagnostics - Report Ready*
+    return f"""*Mango Health Labs - Report Ready*
 
 Dear {patient_name},
 

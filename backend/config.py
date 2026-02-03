@@ -99,7 +99,7 @@ STAFF_ROLES = {
     "clinic_staff_pushpa": "Clinic Staff - Pushpa Clinic",
     "clinic_staff_amnion": "Clinic Staff - Amnion Clinic",
     "pharmacy_staff": "Pharmacy Staff - Orange Pharmacy",
-    "diagnostics_staff": "Diagnostics Staff - Proton Diagnostics"
+    "diagnostics_staff": "Diagnostics Staff - Mango Health Labs"
 }
 
 
