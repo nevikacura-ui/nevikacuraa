@@ -1399,31 +1399,31 @@ const Proton = () => {
         </div>
       </div>
 
-      <main className="max-w-5xl mx-auto px-4 py-6">
+      <main className="max-w-5xl mx-auto px-4 py-4">
         {/* White content container for better readability */}
-        <div className="bg-white rounded-3xl shadow-xl p-6">
+        <div className="bg-white rounded-3xl shadow-xl p-4">
         {/* Your Health Trends - Toggle Section */}
         {patientInfo.phone && patientInfo.phone.length === 10 && (
-          <div className="mb-6">
+          <div className="mb-4">
             <button
               onClick={() => setShowTrends(!showTrends)}
-              className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl border border-orange-200 hover:shadow-md transition-all"
+              className="w-full flex items-center justify-between p-3 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-200 hover:shadow-md transition-all"
               data-testid="show-trends-btn"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-white" />
+                <div className="w-9 h-9 rounded-lg bg-orange-500 flex items-center justify-center">
+                  <Activity className="w-4 h-4 text-white" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-orange-600">Your Health Trends</h3>
-                  <p className="text-xs text-amber-600">View your previous test results & trends</p>
+                  <h3 className="font-semibold text-orange-600 text-sm">Your Health Trends</h3>
+                  <p className="text-xs text-amber-600">View your previous test results</p>
                 </div>
               </div>
               <ChevronRight className={`w-5 h-5 text-orange-600 transition-transform ${showTrends ? 'rotate-90' : ''}`} />
             </button>
             
             {showTrends && (
-              <div className="mt-4">
+              <div className="mt-3">
                 <ReportTrendsChart 
                   patientId={patientInfo.phone}
                   patientPhone={patientInfo.phone}
@@ -1435,13 +1435,13 @@ const Proton = () => {
 
         {/* STEP 1: Select Tests */}
         {currentStep === 1 && (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-orange-600 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+          <div className="space-y-4">
+            <div className="text-center mb-4">
+              <h1 className="text-2xl font-bold text-orange-600 mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Select Your Tests
               </h1>
-              <p className="text-slate-600" style={{ fontFamily: 'DM Sans, sans-serif' }}>
-                Choose from imaging, pathology tests, or upload your prescription
+              <p className="text-slate-600 text-sm" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                Choose from imaging, pathology tests, or upload prescription
               </p>
             </div>
 
