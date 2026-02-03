@@ -10,7 +10,7 @@ Complete healthcare platform with three main services:
 - Patients seeking lab tests and health checkups
 - Patients booking gynecology/diabetes consultations
 - Customers ordering medicines online
-- Staff managing appointments and orders
+- Staff managing appointments and orders (NEW: Senior-friendly interface)
 
 ## Core Requirements
 - Multi-service healthcare platform with unified navigation
@@ -18,36 +18,36 @@ Complete healthcare platform with three main services:
 - Doctor appointment scheduling
 - Online pharmacy with prescription management
 - Payment integration (COD + Cashfree online payment)
+- **NEW: Unified Staff Portal for clinic appointment management**
 
 ---
 
 ## What's Been Implemented
 
-### Dec 2025 - Feb 2026
+### Feb 3, 2026 - DiaGyn Staff Portal Rebuild
 
-#### File Renaming (Feb 3, 2026)
-- ✅ Renamed `/app/frontend/src/pages/Proton.js` → `Mango.js`
-- ✅ Updated imports in App.js
+#### New Staff Portal Features
+- ✅ **Dark Green/Orange Mango Labs Theme** - Compact, senior-friendly UI
+- ✅ **Unified Booking Portal** - Book for both Pushpa & Amnion clinics
+- ✅ **Doctor Schedule-Based Slots**:
+  - Dr. Vikas Jha (Pushpa): Mon-Sat, 9AM-1PM & 5PM-9PM
+  - Dr. Neha Patel (Amnion): Mon-Sat, 10AM-2PM & 6PM-9PM
+  - Sundays: No appointments
+- ✅ **Slot Blocking** - Patient-booked slots unavailable for staff
+- ✅ **Patient Database** - Mobile lookup for faster rebooking
+- ✅ **Appointment Types**: Walk-In, Scheduled, Emergency
+- ✅ **Patient Journey Tracking**: Booked → CheckedIn → WithDoctor → Completed
+- ✅ **Fee Collection**: Fee codes (G1, D1, O1, etc.) + Scan fees
+- ✅ **Collection Summary**: Daily/Weekly/Monthly totals
+- ✅ **Haptic Feedback** on all buttons
+- ✅ **Real-time Sync** - Auto-refresh every 8 seconds
 
-#### "Browse All Tests" State Persistence (Feb 3, 2026)
-- ✅ URL-based state management using `?step=` parameter
-- ✅ Direct link support: `/mango?step=1` opens test selection
-- ✅ Page reload preserves current view
-- ✅ Browser navigation (back/forward) works correctly
+#### Files Created/Modified
+- `/app/backend/routes/diagyn_staff.py` - New backend API routes
+- `/app/frontend/src/pages/DiaGynStaffPortal.js` - New compact UI
+- Route: `/diagyn-staff`
 
-#### WhatsApp Notifications via MSG91 (Feb 3, 2026)
-- ✅ Enabled WhatsApp for all booking confirmations
-- ✅ Lab test booking → `proton_lab_confirm` template
-- ✅ Appointment booking → `diagyn_appointment_confirm` template
-- ✅ Report ready → `proton_report_ready` template
-- ✅ Pharmacy orders → `orange_pharmacy_confirm` template
-- ❌ SMS DISABLED (all via WhatsApp)
-- ❌ OTP remains disabled (bookings work without verification)
-
-#### Service Pages
-- ✅ DiaGyn page at `/diagyn` - Dark Blinkit blue theme (#0c1e3c)
-- ✅ Mango Health Labs at `/mango` - Dark green theme (#102926) with orange accents
-- ✅ Orange Pharmacy at `/pharmacy` - Orange theme
+### Earlier Updates (Dec 2025 - Feb 2026)
 - ✅ Unified header with service tabs (Nevika Cura, DiaGyn, Mango, Orange)
 
 #### Mango Health Labs (Lab Tests)
