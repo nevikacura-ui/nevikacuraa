@@ -1110,11 +1110,11 @@ const Home = () => {
                 }`}></div>
                 
                 <div className="relative flex items-center p-5 sm:p-6 min-h-[140px]">
-                  <div className="flex-shrink-0 mr-4 sm:mr-5 w-24 sm:w-28 flex items-center justify-center">
+                  <div className="flex-shrink-0 mr-4 sm:mr-5 w-28 sm:w-36 flex items-center justify-center">
                     <img 
                       src={service.logo} 
                       alt={service.name} 
-                      className="max-h-20 sm:max-h-24 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                      className="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-110"
                       data-testid={`service-logo-featured-${service.id}`}
                       loading="eager"
                     />
