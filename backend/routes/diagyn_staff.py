@@ -654,6 +654,19 @@ async def update_appointment_status(
     
     if data.status == "CheckedIn":
         update_data["checked_in_at"] = datetime.now(timezone.utc).isoformat()
+        
+        # Generate daily token number (continuous for whole day, resets next day)
+        today_ist = (datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)).strftime("%Y-%m-%d")
+        clinic = appointment.get("clinic", "")
+        
+        # Count existing check-ins for today at this clinic
+        existing_tokens = await db.appointments.count_documents({
+            "clinic": clinic,
+            "date": today_ist,
+            "token_number": {"$exists": True}
+        })
+        token_number = existing_tokens + 1
+        update_data["token_number"] = token_number
     
     if data.status == "WithDoctor":
         update_data["with_doctor_at"] = datetime.now(timezone.utc).isoformat()
