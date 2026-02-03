@@ -680,57 +680,59 @@ const DiaGynStaffPortal = () => {
         {/* ============ BOOKING VIEW ============ */}
         {activeView === 'book' && (
           <div className="space-y-4">
-            {/* Booking Type Selector */}
-            <div className="bg-white rounded-xl p-4 shadow-sm">
-              <label className="text-sm font-semibold text-gray-700 mb-3 block">Appointment Type</label>
-              <div className="grid grid-cols-3 gap-2">
+            {/* Booking Type Selector - Large Touch Targets */}
+            <div className="bg-white rounded-2xl p-5 shadow-md">
+              <label className="text-base font-bold text-gray-800 mb-4 block">SELECT TYPE</label>
+              <div className="grid grid-cols-3 gap-3">
                 {[
-                  { id: 'WALK_IN', icon: Users, label: 'Walk-In', color: 'teal' },
-                  { id: 'SCHEDULED', icon: Calendar, label: 'Scheduled', color: 'indigo' },
-                  { id: 'EMERGENCY', icon: AlertTriangle, label: 'Emergency', color: 'red' },
+                  { id: 'WALK_IN', icon: Users, label: 'Walk-In', color: '#14B8A6' },
+                  { id: 'SCHEDULED', icon: Calendar, label: 'Scheduled', color: '#4F46E5' },
+                  { id: 'EMERGENCY', icon: AlertTriangle, label: 'Emergency', color: '#EF4444' },
                 ].map(type => (
                   <button
                     key={type.id}
-                    onClick={() => { selectionTap(); setBookingType(type.id); }}
-                    className={`p-4 rounded-xl border-2 transition-all ${
+                    onClick={() => { heavyTap(); setBookingType(type.id); }}
+                    className={`py-5 px-3 rounded-2xl border-3 transition-all flex flex-col items-center gap-2 ${
                       bookingType === type.id 
-                        ? `border-${type.color}-500 bg-${type.color}-50` 
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'shadow-lg scale-[1.02]' 
+                        : 'border-gray-200 hover:border-gray-300 bg-white'
                     }`}
                     style={bookingType === type.id ? {
-                      borderColor: type.color === 'teal' ? '#14B8A6' : type.color === 'indigo' ? '#4F46E5' : '#EF4444',
-                      background: type.color === 'teal' ? '#F0FDFA' : type.color === 'indigo' ? '#EEF2FF' : '#FEF2F2'
-                    } : {}}
+                      borderColor: type.color,
+                      borderWidth: '3px',
+                      background: type.id === 'EMERGENCY' ? '#FEF2F2' : type.id === 'WALK_IN' ? '#F0FDFA' : '#EEF2FF'
+                    } : { borderWidth: '2px', borderColor: '#E5E7EB' }}
                   >
-                    <type.icon className={`w-6 h-6 mx-auto mb-2`} 
-                              style={{ color: type.color === 'teal' ? '#14B8A6' : type.color === 'indigo' ? '#4F46E5' : '#EF4444' }} />
-                    <span className="text-sm font-medium block">{type.label}</span>
+                    <type.icon className="w-8 h-8" style={{ color: type.color }} />
+                    <span className="text-sm font-bold" style={{ color: bookingType === type.id ? type.color : '#374151' }}>
+                      {type.label}
+                    </span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Patient Lookup */}
-            <div className="bg-white rounded-xl p-4 shadow-sm">
-              <label className="text-sm font-semibold text-gray-700 mb-3 block">Patient Mobile Number</label>
-              <div className="flex gap-2">
+            {/* Patient Lookup - Bigger Input */}
+            <div className="bg-white rounded-2xl p-5 shadow-md">
+              <label className="text-base font-bold text-gray-800 mb-3 block">PATIENT MOBILE</label>
+              <div className="flex gap-3">
                 <div className="relative flex-1">
-                  <Phone className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                  <Phone className="absolute left-4 top-4 w-6 h-6 text-gray-400" />
                   <Input
                     value={patientMobile}
                     onChange={(e) => setPatientMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
                     placeholder="Enter 10-digit mobile"
-                    className="pl-11 h-12 text-lg"
+                    className="pl-14 h-14 text-xl font-medium rounded-xl border-2"
                     maxLength={10}
                   />
                 </div>
                 <Button 
                   onClick={lookupPatient}
                   disabled={searchingPatient || patientMobile.length < 10}
-                  className="h-12 px-6"
+                  className="h-14 px-6 rounded-xl"
                   style={{ background: COLORS.primary }}
                 >
-                  {searchingPatient ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+                  {searchingPatient ? <Loader2 className="w-6 h-6 animate-spin" /> : <Search className="w-6 h-6" />}
                 </Button>
               </div>
               
