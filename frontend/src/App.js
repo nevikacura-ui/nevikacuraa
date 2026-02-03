@@ -12,6 +12,7 @@ import Admin from '@/pages/Admin';
 import AdminPanel from '@/pages/AdminPanel';
 import StaffPortal from '@/pages/StaffPortal';
 import DiaGynStaffPortal from '@/pages/DiaGynStaffPortal';
+import DoctorPortal from '@/pages/DoctorPortal';
 import TrackOrder from '@/pages/TrackOrder';
 import Feedback from '@/pages/Feedback';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
