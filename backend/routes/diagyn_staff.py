@@ -35,7 +35,76 @@ CLINICS = {
     }
 }
 
-# Time slots configuration (9 AM to 9 PM, 15-minute intervals)
+# Doctor Schedule - which days at which clinic with timings
+# Days: 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri, 5=Sat, 6=Sun
+DOCTOR_SCHEDULE = {
+    "Dr. Vikas Jha": {
+        "Pushpa Clinic": {
+            "days": [0, 1, 2, 3, 4, 5],  # Mon-Sat
+            "morning": {"start": "09:00", "end": "13:00"},
+            "evening": {"start": "17:00", "end": "21:00"}
+        }
+    },
+    "Dr. Neha Patel": {
+        "Amnion Clinic": {
+            "days": [0, 1, 2, 3, 4, 5],  # Mon-Sat
+            "morning": {"start": "10:00", "end": "14:00"},
+            "evening": {"start": "18:00", "end": "21:00"}
+        }
+    }
+}
+
+def generate_time_slots_for_session(start_time: str, end_time: str, interval: int = 15):
+    """Generate time slots for a session with given interval"""
+    slots = []
+    start_hour, start_min = map(int, start_time.split(':'))
+    end_hour, end_min = map(int, end_time.split(':'))
+    
+    current_minutes = start_hour * 60 + start_min
+    end_minutes = end_hour * 60 + end_min
+    
+    while current_minutes < end_minutes:
+        hour = current_minutes // 60
+        minute = current_minutes % 60
+        time_str = f"{hour:02d}:{minute:02d}"
+        display = datetime.strptime(time_str, "%H:%M").strftime("%I:%M %p")
+        slots.append({"value": time_str, "display": display})
+        current_minutes += interval
+    
+    return slots
+
+def get_slots_for_doctor_clinic_date(doctor: str, clinic: str, date_str: str):
+    """Get available time slots based on doctor's schedule for that day"""
+    # Get day of week (0=Monday, 6=Sunday)
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+    day_of_week = date_obj.weekday()
+    
+    schedule = DOCTOR_SCHEDULE.get(doctor, {}).get(clinic, {})
+    
+    if not schedule or day_of_week not in schedule.get("days", []):
+        return []  # Doctor not available at this clinic on this day
+    
+    slots = []
+    
+    # Morning session
+    if schedule.get("morning"):
+        morning_slots = generate_time_slots_for_session(
+            schedule["morning"]["start"],
+            schedule["morning"]["end"]
+        )
+        slots.extend(morning_slots)
+    
+    # Evening session
+    if schedule.get("evening"):
+        evening_slots = generate_time_slots_for_session(
+            schedule["evening"]["start"],
+            schedule["evening"]["end"]
+        )
+        slots.extend(evening_slots)
+    
+    return slots
+
+# Default time slots (fallback)
 def generate_time_slots():
     slots = []
     for hour in range(9, 21):  # 9 AM to 9 PM
