@@ -1114,7 +1114,7 @@ const Home = () => {
                     <img 
                       src={service.logo} 
                       alt={service.name} 
-                      className={`w-auto object-contain transition-transform duration-300 group-hover:scale-110 ${service.id === 'mango' ? 'h-28 sm:h-32' : 'h-20 sm:h-24'}`}
+                      className={`w-auto object-contain transition-transform duration-300 group-hover:scale-110 ${service.id === 'mango' ? 'h-32 sm:h-40' : 'h-20 sm:h-24'}`}
                       data-testid={`service-logo-featured-${service.id}`}
                       loading="eager"
                     />
