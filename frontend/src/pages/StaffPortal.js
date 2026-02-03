@@ -457,8 +457,20 @@ const StaffPortal = () => {
           await loadDiagnosticsData();
         }
       }
+      
+      // Update last refresh time
+      setLastRefresh(new Date());
     } catch (error) {
       console.error('Load data error:', error);
+      // If we get a 401 error, the token might be invalid
+      if (error.response?.status === 401) {
+        console.log('[StaffPortal] Token expired, logging out...');
+        localStorage.removeItem('staffToken');
+        localStorage.removeItem('staffInfo');
+        setIsAuthenticated(false);
+        setStaffInfo(null);
+        toast.error('Session expired. Please login again.');
+      }
     } finally {
       setIsRefreshing(false);
     }
