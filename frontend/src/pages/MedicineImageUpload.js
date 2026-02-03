@@ -530,10 +530,21 @@ DOLO 650,https://example.com/dolo.jpg"
         {/* Search Section */}
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Search className="w-5 h-5 text-orange-500" />
-              Search Medicines
-              {loading && <Loader2 className="w-4 h-4 animate-spin text-orange-500" />}
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Search className="w-5 h-5 text-orange-500" />
+                Search Medicines
+                {loading && <Loader2 className="w-4 h-4 animate-spin text-orange-500" />}
+              </span>
+              {searchResults.filter(m => !m.has_image).length > 1 && !quickAddMode && (
+                <Button 
+                  onClick={startQuickAddMode}
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600"
+                  size="sm"
+                >
+                  ⚡ Quick Add Mode ({searchResults.filter(m => !m.has_image).length} medicines)
+                </Button>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
