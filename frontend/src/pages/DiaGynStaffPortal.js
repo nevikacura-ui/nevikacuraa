@@ -524,6 +524,56 @@ const DiaGynStaffPortal = () => {
     await printToken(tokenData);
   };
 
+  // Print Bill for completed appointments (staff can print but not edit)
+  const printBill = async (apt) => {
+    if (!printerConnected) {
+      toast.error('Connect printer first');
+      return;
+    }
+    
+    // Get fee details from config
+    const doctor = apt.doctor;
+    const feeCode = apt.fee_code;
+    const feeDetails = config?.fee_codes?.[doctor]?.[feeCode] || { label: feeCode, amount: 0 };
+    
+    // Get scan details
+    const scanDetails = (apt.scan_codes || []).map(code => ({
+      code,
+      label: config?.scan_fees?.[code]?.label || code,
+      amount: config?.scan_fees?.[code]?.amount || 0
+    }));
+    
+    const billData = {
+      clinic: apt.clinic,
+      clinic_address: config?.clinics?.[apt.clinic]?.address || '',
+      booking_id: apt.booking_id,
+      patient_name: apt.patient_name,
+      patient_mobile: apt.patient_phone || apt.patient_mobile,
+      doctor: apt.doctor,
+      fee_code: feeCode,
+      fee_details: feeDetails,
+      scan_codes: scanDetails,
+      total_amount: apt.total_amount || 0
+    };
+    
+    setIsPrinting(true);
+    try {
+      const result = await thermalPrinter.printBill(billData);
+      if (result.success) {
+        toast.success('Bill printed!');
+        successPattern();
+      } else {
+        toast.error(`Print failed: ${result.error}`);
+        errorPattern();
+      }
+    } catch (error) {
+      toast.error('Print error');
+      errorPattern();
+    } finally {
+      setIsPrinting(false);
+    }
+  };
+
   // Staff cannot complete appointments - only doctors can (removed completion modal)
 
   // ============ Login Screen ============
