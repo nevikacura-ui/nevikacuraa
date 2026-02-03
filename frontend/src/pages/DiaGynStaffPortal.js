@@ -442,45 +442,7 @@ const DiaGynStaffPortal = () => {
     }
   };
 
-  const openCompletionModal = (apt) => {
-    setCompletingAppointment(apt);
-    setCompletionForm({ fee_code: '', scan_codes: [], notes: '' });
-    setShowCompletionModal(true);
-    mediumTap();
-  };
-
-  const completeWithFee = async () => {
-    if (!completionForm.fee_code) {
-      errorPattern();
-      toast.error('Select fee code');
-      return;
-    }
-    const doctor = completingAppointment?.doctor;
-    const feeConfig = config?.fee_codes?.[doctor]?.[completionForm.fee_code];
-    let total = feeConfig?.amount || 0;
-    completionForm.scan_codes.forEach(code => {
-      total += config?.scan_fees?.[code]?.amount || 0;
-    });
-    setLoading(true);
-    heavyTap();
-    try {
-      await axios.put(`${API}/api/diagyn-staff/appointments/${completingAppointment.id}/status`, {
-        status: 'Completed',
-        fee_code: completionForm.fee_code,
-        scan_codes: completionForm.scan_codes,
-        total_amount: total,
-        notes: completionForm.notes
-      }, getAuthHeaders());
-      successPattern();
-      toast.success(`Done! ₹${total}`);
-      setShowCompletionModal(false);
-      loadAppointments();
-    } catch (error) {
-      errorPattern();
-      toast.error('Failed');
-    }
-    setLoading(false);
-  };
+  // Staff cannot complete appointments - only doctors can (removed completion modal)
 
   // ============ Login Screen ============
   if (!isAuthenticated) {
