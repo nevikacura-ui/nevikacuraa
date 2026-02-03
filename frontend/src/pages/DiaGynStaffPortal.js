@@ -1184,24 +1184,6 @@ const AppointmentCard = ({ appointment, onCheckIn, onWithDoctor, onComplete, con
           <ChevronRight className="w-6 h-6" />
         </button>
       )}
-        
-        <div className="flex items-center gap-2">
-          {apt.total_amount > 0 && (
-            <span className="font-bold text-emerald-600">₹{apt.total_amount}</span>
-          )}
-          
-          {nextAction && (
-            <Button
-              onClick={() => { mediumTap(); nextAction.action(); }}
-              className="h-10 px-4 font-semibold"
-              style={{ background: nextAction.color }}
-            >
-              {nextAction.label}
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
-          )}
-        </div>
-      </div>
     </div>
   );
 };
