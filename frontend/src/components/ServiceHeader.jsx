@@ -148,7 +148,10 @@ export const ServiceHeader = () => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => navigate(tab.path)}
+                  onClick={() => {
+                    selectionTap(); // Haptic feedback on service switch
+                    navigate(tab.path);
+                  }}
                   className={`
                     relative flex-shrink-0 px-5 py-3 flex items-center gap-2.5 transition-all duration-200
                     ${isActive 
