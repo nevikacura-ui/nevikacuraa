@@ -10,7 +10,6 @@ import Glydex from '@/pages/Glydex';
 import Profile from '@/pages/Profile';
 import Admin from '@/pages/Admin';
 import AdminPanel from '@/pages/AdminPanel';
-import StaffPortal from '@/pages/StaffPortal';
 import DiaGynStaffPortal from '@/pages/DiaGynStaffPortal';
 import DoctorPortal from '@/pages/DoctorPortal';
 import TrackOrder from '@/pages/TrackOrder';
