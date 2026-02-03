@@ -448,33 +448,6 @@ async def get_available_slots(
         "current_session": slot_data.get("current_session"),
         "mode": mode
     }
-            "message": f"{doctor} is not available at {clinic} on this day"
-        }
-    
-    # Get all booked appointments for this doctor/clinic/date
-    booked = await db.appointments.find(
-        {
-            "clinic": clinic,
-            "doctor": doctor,
-            "date": date,
-            "status": {"$nin": ["Cancelled", "No Show"]}
-        },
-        {"_id": 0, "time": 1, "booking_type": 1}
-    ).to_list(100)
-    
-    booked_times = set(apt.get("time") for apt in booked if apt.get("time"))
-    
-    # Filter available slots
-    available = [slot for slot in all_slots if slot["value"] not in booked_times]
-    
-    return {
-        "clinic": clinic,
-        "doctor": doctor,
-        "date": date,
-        "available_slots": available,
-        "booked_count": len(booked_times),
-        "total_slots": len(all_slots)
-    }
 
 
 @router.get("/slots/booked")
