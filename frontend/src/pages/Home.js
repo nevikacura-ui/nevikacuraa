@@ -582,8 +582,8 @@ const Home = () => {
                 }`}
                 data-testid="nav-nevikacura"
               >
-                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'home' ? 'from-white/30 to-white/10' : 'from-teal-500 to-cyan-500'} flex items-center justify-center`}>
-                  <Heart className={`w-4 h-4 ${activeService === 'home' ? 'text-white' : 'text-white'}`} />
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center ${activeService === 'home' ? 'bg-red-500' : 'bg-gradient-to-br from-red-500 to-pink-500'}`}>
+                  <Heart className="w-4 h-4 text-white" fill="white" />
                 </div>
                 <span className="font-bold text-sm whitespace-nowrap">Nevika Cura</span>
               </button>
