@@ -14,7 +14,7 @@ const urlsToCache = [
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('Nevika Cura SW: Installing v3...');
+  console.log('Nevika Cura SW: Installing v4...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -31,10 +31,10 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches and claim clients
 self.addEventListener('activate', (event) => {
-  console.log('Nevika Cura SW: Activating...');
+  console.log('Nevika Cura SW: Activating v4...');
   event.waitUntil(
     Promise.all([
-      // Clean old caches
+      // Clean ALL old caches aggressively
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
