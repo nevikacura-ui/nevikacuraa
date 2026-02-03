@@ -5,6 +5,7 @@ import { Home as HomeIcon, Pill, Calendar, TestTube, User } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { selectionTap, mediumTap } from '@/utils/haptics';
 
 const BottomNav = () => {
   const navigate = useNavigate();
