@@ -980,7 +980,7 @@ const Admin = () => {
             <Card className="p-6">
               <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
                 <div>
-                  <h2 className="font-heading text-xl font-semibold">Proton Diagnostic Tests</h2>
+                  <h2 className="font-heading text-xl font-semibold">Mango Health Labs Diagnostic Tests</h2>
                   <p className="text-sm text-muted-foreground">Manage available diagnostic tests</p>
                 </div>
                 <Button onClick={() => setShowAddTestModal(true)} className="rounded-full" data-testid="add-test-button">

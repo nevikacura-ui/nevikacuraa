@@ -106,7 +106,7 @@ export const testimonials = [
     name: "Suresh Kumar",
     location: "Bhayandar",
     rating: 5,
-    text: "Got my full body checkup done at Proton. Professional staff, quick results, and the health dashboard helps me track everything.",
+    text: "Got my full body checkup done at Mango Health Labs. Professional staff, quick results, and the health dashboard helps me track everything.",
     service: "Mango Health Labs",
     avatar: "SK"
   }
