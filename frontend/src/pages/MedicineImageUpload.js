@@ -11,14 +11,17 @@ const API = process.env.REACT_APP_BACKEND_URL;
 
 const MedicineImageUpload = () => {
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const [stats, setStats] = useState({ total: 0, with_images: 0, without_images: 0, percentage: 0 });
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [csvData, setCsvData] = useState('');
   const [singleMedicine, setSingleMedicine] = useState({ name: '', image_url: '' });
   const [medicinesWithoutImages, setMedicinesWithoutImages] = useState([]);
   const [page, setPage] = useState(1);
+  const [previewFile, setPreviewFile] = useState(null);
 
   useEffect(() => {
     fetchStats();
