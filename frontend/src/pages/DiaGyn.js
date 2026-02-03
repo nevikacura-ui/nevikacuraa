@@ -1386,6 +1386,16 @@ const DiaGyn = () => {
         {/* Step 2: Select Clinic */}
         {step === 2 && (
           <div className="animate-in fade-in duration-500">
+            {/* Back Button */}
+            <button
+              onClick={() => setStep(1)}
+              className="flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors"
+              data-testid="back-to-doctor"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="text-sm font-medium">Back to Doctor Selection</span>
+            </button>
+            
             <div className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold text-white mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Select Clinic Location
@@ -1433,6 +1443,16 @@ const DiaGyn = () => {
         {/* Step 3: Date & Time */}
         {step === 3 && (
           <div className="animate-in fade-in duration-500">
+            {/* Back Button */}
+            <button
+              onClick={() => setStep(2)}
+              className="flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors"
+              data-testid="back-to-clinic"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="text-sm font-medium">Back to Clinic Selection</span>
+            </button>
+            
             <div className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-bold text-white mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Pick Your Slot
