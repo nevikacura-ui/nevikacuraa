@@ -16,16 +16,17 @@ import { lightTap, mediumTap, heavyTap, successPattern, errorPattern, selectionT
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// Mango Labs Color Palette - Dark Green & Orange
+// Fresh Healthcare Color Palette - Teal & Lime Green
 const COLORS = {
-  primary: '#166534',      // Dark Green
-  primaryDark: '#14532d',  // Darker Green
-  primaryLight: '#dcfce7', // Light Green
-  accent: '#F97316',       // Orange (buttons)
-  accentLight: '#fed7aa',  // Light Orange
-  success: '#16a34a',      // Green
-  warning: '#ea580c',      // Dark Orange
-  danger: '#dc2626',       // Red
+  primary: '#1a4d3f',      // Deep Teal
+  primaryDark: '#0f3129',  // Darker Teal
+  primaryLight: '#e0f2ed', // Light Teal
+  accent: '#7ed957',       // Vibrant Lime Green
+  accentDark: '#5cb840',   // Darker Lime
+  accentLight: '#e8f9e0',  // Light Lime
+  success: '#16a34a',
+  warning: '#f59e0b',
+  danger: '#dc2626',
   dark: '#1e293b',
   muted: '#64748b',
   light: '#f8fafc',
