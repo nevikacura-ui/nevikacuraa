@@ -1447,7 +1447,7 @@ const Proton = () => {
 
             {/* Professional Features Carousel - Solid Bold Colors with Images on Top */}
             <div className="relative -mx-4 px-4 overflow-hidden">
-              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+              <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-hide snap-x snap-mandatory">
                 
                 {/* Slide 1: Why Mango? - Solid Green with Professional Image */}
                 <div className="min-w-[320px] md:min-w-[420px] flex-shrink-0 snap-center">
