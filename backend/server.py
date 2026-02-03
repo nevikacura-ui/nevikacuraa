@@ -3845,12 +3845,12 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
     # Send email notification for new diagnostic order
     tests_list = "<br>".join([f"• {test}" for test in order.tests])
     email_html = f"""
-    <h2>🔬 New Proton Diagnostics Order</h2>
+    <h2>🔬 New Mango Health Labs Order</h2>
     <h3>Booking ID: {booking_id}</h3>
     <h3>Tests Ordered:</h3>
     <p>{tests_list}</p>
     <table style="border-collapse: collapse; width: 100%;">
-        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Booking ID:</strong></td><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: #8b5cf6;">{booking_id}</td></tr>
+        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Booking ID:</strong></td><td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: #f97316;">{booking_id}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Preferred Date:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{order.preferred_date}</td></tr>
         <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Prescription:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">{prescription_display}</td></tr>
     </table>
@@ -3869,15 +3869,15 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
     tests_list_patient = "".join([f"<li>{test}</li>" for test in order.tests])
     patient_diag_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 10px 10px 0 0;">
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border-radius: 10px 10px 0 0;">
             <h1 style="color: white; margin: 0;">Test Booking Confirmed! 🔬</h1>
         </div>
         <div style="padding: 30px; background: #f8fafc; border-radius: 0 0 10px 10px;">
             <p style="font-size: 18px;">Hello <strong>{order.patient_name}</strong>,</p>
-            <p>Your diagnostic tests have been successfully booked at <strong>Proton Diagnostics</strong>.</p>
+            <p>Your diagnostic tests have been successfully booked at <strong>Mango Health Labs</strong>.</p>
             
             <!-- Booking ID Section - Primary Focus -->
-            <div style="text-align: center; margin: 25px 0; padding: 25px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 12px;">
+            <div style="text-align: center; margin: 25px 0; padding: 25px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border-radius: 12px;">
                 <p style="margin: 0 0 5px 0; color: white; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Your Booking ID</p>
                 <p style="margin: 0; color: white; font-size: 32px; font-weight: bold; letter-spacing: 4px; font-family: monospace;">{booking_id}</p>
                 <p style="margin: 15px 0 0 0; color: rgba(255,255,255,0.8); font-size: 11px;">Show this ID at the collection center</p>
@@ -3890,20 +3890,20 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
                 <p style="margin: 10px 0 0 0; color: #cbd5e1; font-size: 10px;">If QR not visible, use Booking ID above</p>
             </div>
             
-            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8b5cf6;">
-                <h3 style="color: #8b5cf6; margin-top: 0;">Tests Booked</h3>
+            <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f97316;">
+                <h3 style="color: #f97316; margin-top: 0;">Tests Booked</h3>
                 <ul style="line-height: 1.8;">{tests_list_patient}</ul>
                 <p><strong>Preferred Date:</strong> {order.preferred_date}</p>
-                <p><strong>Booking ID:</strong> <span style="font-size: 18px; color: #8b5cf6; font-weight: bold;">{booking_id}</span></p>
+                <p><strong>Booking ID:</strong> <span style="font-size: 18px; color: #f97316; font-weight: bold;">{booking_id}</span></p>
             </div>
             
             <p style="color: #64748b; font-size: 14px;">
                 Our team will contact you shortly to confirm the sample collection time. Please keep your prescription handy.
             </p>
             
-            <div style="text-align: center; margin-top: 30px; padding: 15px; background: #ede9fe; border-radius: 8px;">
-                <p style="margin: 0; color: #5b21b6;"><strong>Questions about your tests?</strong></p>
-                <p style="margin: 5px 0 0 0; color: #7c3aed;">Contact us: 7039040040</p>
+            <div style="text-align: center; margin-top: 30px; padding: 15px; background: #fff7ed; border-radius: 8px;">
+                <p style="margin: 0; color: #c2410c;"><strong>Questions about your tests?</strong></p>
+                <p style="margin: 5px 0 0 0; color: #ea580c;">Contact us: 7039040040</p>
             </div>
         </div>
     </div>
@@ -3921,7 +3921,7 @@ Prescription: {order.prescription_url or 'Not uploaded'}"""
         f"New Diagnostic Order - {order.patient_name}", 
         email_html,
         patient_email=order.patient_email,
-        patient_subject=f"Test Booking Confirmed - Proton Diagnostics",
+        patient_subject=f"Test Booking Confirmed - Mango Health Labs",
         patient_html=patient_diag_html,
         attachments=diag_qr_attachments
     )
