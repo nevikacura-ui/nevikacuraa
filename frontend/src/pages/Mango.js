@@ -1034,6 +1034,7 @@ const Proton = () => {
                     />
                     <div>
                       <h2 className="text-lg font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>Mango Health Labs</h2>
+                      <p className="text-[10px] text-white/60 italic">Formerly Proton Diagnostics</p>
                       <p className="text-xs text-white/80">Your Trusted Diagnostic Partner</p>
                     </div>
                   </div>
