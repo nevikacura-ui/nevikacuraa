@@ -20,6 +20,7 @@ const openGoogleImageSearch = (medicineName) => {
 const MedicineImageUpload = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const urlInputRef = useRef(null);
   const [stats, setStats] = useState({ total: 0, with_images: 0, without_images: 0, percentage: 0 });
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -30,6 +31,45 @@ const MedicineImageUpload = () => {
   const [medicinesWithoutImages, setMedicinesWithoutImages] = useState([]);
   const [page, setPage] = useState(1);
   const [previewFile, setPreviewFile] = useState(null);
+  
+  // Quick Add Mode
+  const [quickAddMode, setQuickAddMode] = useState(false);
+  const [quickAddIndex, setQuickAddIndex] = useState(0);
+  const [quickAddCount, setQuickAddCount] = useState(0);
+  const [quickAddQueue, setQuickAddQueue] = useState([]);
+
+  // Initialize Quick Add Queue when search results change
+  useEffect(() => {
+    if (quickAddMode && searchResults.length > 0) {
+      const medicinesNeedingImages = searchResults.filter(m => !m.has_image);
+      setQuickAddQueue(medicinesNeedingImages);
+      if (medicinesNeedingImages.length > 0 && !singleMedicine.name) {
+        setQuickAddIndex(0);
+        setSingleMedicine({ name: medicinesNeedingImages[0].name, image_url: '' });
+      }
+    }
+  }, [searchResults, quickAddMode]);
+
+  // Auto-advance to next medicine in Quick Add Mode
+  const advanceToNextMedicine = () => {
+    const nextIndex = quickAddIndex + 1;
+    const medicinesNeedingImages = searchResults.filter(m => !m.has_image);
+    
+    if (nextIndex < medicinesNeedingImages.length) {
+      setQuickAddIndex(nextIndex);
+      setSingleMedicine({ name: medicinesNeedingImages[nextIndex].name, image_url: '' });
+      setPreviewFile(null);
+      setQuickAddCount(prev => prev + 1);
+      // Focus on URL input for fast pasting
+      setTimeout(() => urlInputRef.current?.focus(), 100);
+      toast.success(`✓ Saved! Next: ${medicinesNeedingImages[nextIndex].name}`);
+    } else {
+      toast.success(`🎉 All ${quickAddCount + 1} medicines in this batch completed!`);
+      setQuickAddMode(false);
+      setQuickAddIndex(0);
+      setQuickAddCount(0);
+    }
+  };
 
   useEffect(() => {
     fetchStats();
