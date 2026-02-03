@@ -215,6 +215,7 @@ const BottomNav = () => {
           <div className="grid grid-cols-2 gap-4 pt-4">
             <Button
               onClick={() => {
+                mediumTap();
                 setShowBookingModal(false);
                 navigate('/diagyn');
               }}
@@ -226,6 +227,7 @@ const BottomNav = () => {
             </Button>
             <Button
               onClick={() => {
+                mediumTap();
                 setShowBookingModal(false);
                 navigate('/diagyn?type=sonography');
               }}
