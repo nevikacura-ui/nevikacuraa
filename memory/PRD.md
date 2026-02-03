@@ -64,8 +64,10 @@ Complete healthcare platform with three main services:
 - ✅ Cashfree payment gateway integrated
 - ✅ Backend routes at `/api/payments/`
 - ✅ CashfreeCheckout component for online payments
-- ✅ Payment options: "Cash on Visit" and "Pay Online" (5% extra off)
-- ❌ Removed: QR/Card at home option
+- ✅ **Three-Tier Payment System (Feb 3, 2026):**
+  - Mango Health Labs: Cash on Visit, QR/Card on Visit, Pay Online (5% OFF)
+  - Orange Pharmacy: Cash on Delivery, QR/Card on Delivery, Pay Online (2% OFF)
+- ✅ Smartphone icon import fixed in Pharmacy.js
 
 #### UI/UX
 - ✅ Professional carousel with solid bold colors
@@ -76,8 +78,8 @@ Complete healthcare platform with three main services:
 ---
 
 ## Known Issues
-1. **"Browse All Tests" Button** - State resets on page reload (needs URL-based state management)
-2. **File Naming** - `/app/frontend/src/pages/Proton.js` should be renamed to `Mango.js`
+1. ~~**"Browse All Tests" Button** - State resets on page reload~~ ✅ FIXED (URL-based state management)
+2. ~~**File Naming** - Proton.js should be renamed to Mango.js~~ ✅ FIXED (renamed to Mango.js)
 
 ## Mocked APIs
 - `send_whatsapp_message` - Stubbed
@@ -88,11 +90,12 @@ Complete healthcare platform with three main services:
 ## Prioritized Backlog
 
 ### P0 - Critical
-- [ ] Rename Proton.js → Mango.js (technical debt)
-- [ ] Refactor Mango page into smaller components (TestCard, CategoryCarousel, etc.)
+- [x] ~~Rename Proton.js → Mango.js~~ ✅ COMPLETED
+- [x] ~~Three-Tier Payment System~~ ✅ COMPLETED for both Mango & Pharmacy
+- [ ] Refactor Mango.js into smaller components (TestCard, CategoryCarousel, etc.) - File is very large
 
 ### P1 - High Priority
-- [ ] Fix "Browse All Tests" button state persistence
+- [x] ~~Fix "Browse All Tests" button state persistence~~ ✅ COMPLETED
 - [ ] Verify "Recently Viewed" feature on Pharmacy
 
 ### P2 - Medium Priority
@@ -127,7 +130,7 @@ Complete healthcare platform with three main services:
         │   └── ProtonAdBanner.jsx   # Mango ad banner
         └── pages/
             ├── Home.js            # Main landing page
-            ├── Proton.js          # Mango Health Labs (rename pending)
+            ├── Mango.js           # Mango Health Labs ✅ RENAMED
             ├── DiaGyn.js          # DiaGyn clinic
             └── Pharmacy.js        # Orange Pharmacy
 ```
