@@ -67,6 +67,19 @@ const DoctorPortal = () => {
   const [scanCodes, setScanCodes] = useState([]);
   const [notes, setNotes] = useState('');
   const [followUpDate, setFollowUpDate] = useState('');
+  const [customTotal, setCustomTotal] = useState(''); // Doctor can edit total
+
+  // Calculate total from selected fees
+  const calculateTotal = () => {
+    if (!selectedApt || !config) return 0;
+    const doctor = selectedApt.doctor;
+    const feeConfig = config?.fee_codes?.[doctor]?.[feeCode];
+    let total = feeConfig?.amount || 0;
+    scanCodes.forEach(code => {
+      total += config?.scan_fees?.[code]?.amount || 0;
+    });
+    return total;
+  };
 
   // ============ Auth ============
   useEffect(() => {
