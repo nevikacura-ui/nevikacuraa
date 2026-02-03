@@ -77,13 +77,13 @@ const Home = () => {
       iconBg: 'from-teal-600 to-cyan-600',
       isLight: false
     },
-    proton: {
+    mango: {
       name: 'Mango',
-      bgGradient: 'from-blue-100 via-indigo-100 to-blue-50',
-      headerBg: 'bg-gradient-to-r from-blue-600 to-indigo-600',
+      bgGradient: 'from-orange-100 via-amber-100 to-orange-50',
+      headerBg: 'bg-gradient-to-r from-orange-500 to-amber-500',
       headerTextColor: 'text-white',
-      accentColor: 'blue',
-      iconBg: 'from-blue-600 to-indigo-600',
+      accentColor: 'orange',
+      iconBg: 'from-orange-500 to-amber-500',
       isLight: false
     },
     pharmacy: {
