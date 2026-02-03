@@ -105,13 +105,18 @@ def get_slots_for_doctor_clinic_date(doctor: str, clinic: str, date_str: str):
         )
         slots.extend(morning_slots)
     
-    # Evening session
+    # Evening session - check if it has specific days restriction
     if schedule.get("evening"):
-        evening_slots = generate_time_slots_for_session(
-            schedule["evening"]["start"],
-            schedule["evening"]["end"]
-        )
-        slots.extend(evening_slots)
+        evening_config = schedule["evening"]
+        evening_days = evening_config.get("days", schedule.get("days", []))
+        if day_of_week in evening_days:
+            evening_slots = generate_time_slots_for_session(
+                evening_config["start"],
+                evening_config["end"]
+            )
+            slots.extend(evening_slots)
+    
+    return slots
     
     return slots
 
