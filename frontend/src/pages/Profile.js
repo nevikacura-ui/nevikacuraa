@@ -36,15 +36,20 @@ const Profile = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/');
-      return;
+      // Check if there's a patientToken - patient portal users
+      const patientToken = localStorage.getItem('patientToken');
+      if (!patientToken) {
+        navigate('/');
+        return;
+      }
     }
     fetchData();
   }, [user, navigate]);
 
   const fetchData = async () => {
     try {
-      const token = localStorage.getItem('token');
+      // Try token first (staff/admin), then patientToken (patient portal)
+      const token = localStorage.getItem('token') || localStorage.getItem('patientToken');
       const headers = { Authorization: `Bearer ${token}` };
 
       const [appointmentsRes, diagnosticsRes, pharmacyRes, loyaltyRes, recordsRes] = await Promise.all([
