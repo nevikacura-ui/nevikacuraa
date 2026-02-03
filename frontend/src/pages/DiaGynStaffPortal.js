@@ -848,15 +848,15 @@ const DiaGynStaffPortal = () => {
               </div>
             )}
 
-            {/* Book Button */}
+            {/* Book Button - EXTRA LARGE for easy tapping */}
             <Button
               onClick={handleBook}
               disabled={loading || !bookingForm.patient_name || !bookingForm.patient_mobile || (bookingType !== 'EMERGENCY' && !bookingForm.time)}
-              className="w-full h-16 text-lg font-bold rounded-xl shadow-lg"
+              className="w-full h-20 text-2xl font-bold rounded-2xl shadow-xl active:scale-[0.98] transition-transform"
               style={{ background: bookingType === 'EMERGENCY' ? '#EF4444' : 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)' }}
             >
-              {loading ? <Loader2 className="w-6 h-6 animate-spin mr-2" /> : <Plus className="w-6 h-6 mr-2" />}
-              {bookingType === 'EMERGENCY' ? 'Book Emergency' : bookingType === 'WALK_IN' ? 'Book Walk-In' : 'Book Appointment'}
+              {loading ? <Loader2 className="w-8 h-8 animate-spin mr-3" /> : <Plus className="w-8 h-8 mr-3" />}
+              {bookingType === 'EMERGENCY' ? '🚨 BOOK EMERGENCY' : bookingType === 'WALK_IN' ? '🚶 BOOK WALK-IN' : '📅 BOOK APPOINTMENT'}
             </Button>
           </div>
         )}
