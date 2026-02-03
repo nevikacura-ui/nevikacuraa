@@ -287,8 +287,8 @@ const DoctorPortal = () => {
   const completedPatients = appointments.filter(a => a.status === 'Completed');
 
   return (
-    <div className="min-h-screen" style={{ background: '#f1f5f9' }}>
-      {/* Header */}
+    <div className="min-h-screen" style={{ background: COLORS.white }}>
+      {/* Header - Navy Blue */}
       <header className="sticky top-0 z-50 px-3 py-3" style={{ background: COLORS.primary }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
