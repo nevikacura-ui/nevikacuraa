@@ -501,19 +501,32 @@ const DoctorPortal = () => {
                 )}
               </div>
 
-              {/* Total */}
+              {/* Total - Editable by Doctor */}
               {feeCode && (
                 <div className="p-4 rounded-xl" style={{ background: COLORS.primaryLight }}>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center mb-2">
                     <span className="font-bold text-lg" style={{ color: COLORS.primary }}>TOTAL</span>
-                    <span className="text-3xl font-bold" style={{ color: COLORS.accent }}>
-                      ₹{calculateTotal().toLocaleString('en-IN')}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500">₹</span>
+                      <input
+                        type="number"
+                        value={customTotal !== '' ? customTotal : calculateTotal()}
+                        onChange={(e) => { lightTap(); setCustomTotal(e.target.value); }}
+                        className="w-28 text-2xl font-bold text-right border-b-2 border-teal-400 bg-transparent focus:outline-none"
+                        style={{ color: COLORS.accent }}
+                      />
+                    </div>
                   </div>
                   {scanCodes.length > 0 && (
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="text-xs text-gray-600">
                       Fee: ₹{config?.fee_codes?.[selectedApt.doctor]?.[feeCode]?.amount || 0} + 
                       Scans: ₹{scanCodes.reduce((sum, c) => sum + (config?.scan_fees?.[c]?.amount || 0), 0)}
+                    </p>
+                  )}
+                  {customTotal !== '' && parseFloat(customTotal) !== calculateTotal() && (
+                    <p className="text-xs text-amber-600 mt-1 flex items-center gap-1">
+                      <span>⚠️</span> Custom amount (calculated: ₹{calculateTotal()})
+                      <button onClick={() => setCustomTotal('')} className="underline ml-2">Reset</button>
                     </p>
                   )}
                 </div>
