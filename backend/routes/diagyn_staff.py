@@ -328,7 +328,22 @@ async def get_available_slots(
     date: str,
     staff = Depends(verify_staff)
 ):
-    """Get available slots for a doctor on a date (excludes patient-booked slots)"""
+    """Get available slots for a doctor on a date based on their schedule"""
+    
+    # Get slots based on doctor's schedule for this clinic and day
+    all_slots = get_slots_for_doctor_clinic_date(doctor, clinic, date)
+    
+    if not all_slots:
+        # Doctor not available at this clinic on this day
+        return {
+            "clinic": clinic,
+            "doctor": doctor,
+            "date": date,
+            "available_slots": [],
+            "booked_count": 0,
+            "total_slots": 0,
+            "message": f"{doctor} is not available at {clinic} on this day"
+        }
     
     # Get all booked appointments for this doctor/clinic/date
     booked = await db.appointments.find(
@@ -344,10 +359,7 @@ async def get_available_slots(
     booked_times = set(apt.get("time") for apt in booked if apt.get("time"))
     
     # Filter available slots
-    available = []
-    for slot in TIME_SLOTS:
-        if slot["value"] not in booked_times:
-            available.append(slot)
+    available = [slot for slot in all_slots if slot["value"] not in booked_times]
     
     return {
         "clinic": clinic,
@@ -355,7 +367,7 @@ async def get_available_slots(
         "date": date,
         "available_slots": available,
         "booked_count": len(booked_times),
-        "total_slots": len(TIME_SLOTS)
+        "total_slots": len(all_slots)
     }
 
 
