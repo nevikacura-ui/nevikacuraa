@@ -84,8 +84,10 @@ def generate_time_slots_for_session(start_time: str, end_time: str, interval: in
     
     return slots
 
-def get_slots_for_doctor_clinic_date(doctor: str, clinic: str, date_str: str):
-    """Get available time slots based on doctor's schedule for that day"""
+def get_slots_for_doctor_clinic_date(doctor: str, clinic: str, date_str: str, session_filter: str = None):
+    """Get available time slots based on doctor's schedule for that day
+    session_filter: None (all), 'current' (walk-in), 'future' (book appointment)
+    """
     # Get day of week (0=Monday, 6=Sunday)
     date_obj = datetime.strptime(date_str, "%Y-%m-%d")
     day_of_week = date_obj.weekday()
@@ -93,17 +95,27 @@ def get_slots_for_doctor_clinic_date(doctor: str, clinic: str, date_str: str):
     schedule = DOCTOR_SCHEDULE.get(doctor, {}).get(clinic, {})
     
     if not schedule or day_of_week not in schedule.get("days", []):
-        return []  # Doctor not available at this clinic on this day
+        return {"morning": [], "evening": [], "all": []}
     
-    slots = []
+    # Get current IST time
+    now_utc = datetime.now(timezone.utc)
+    ist_offset = timedelta(hours=5, minutes=30)
+    now_ist = now_utc + ist_offset
+    current_hour = now_ist.hour
+    current_date = now_ist.strftime("%Y-%m-%d")
     
-    # Morning session
+    morning_slots = []
+    evening_slots = []
+    
+    # Morning session (11am-2pm typically)
     if schedule.get("morning"):
         morning_slots = generate_time_slots_for_session(
             schedule["morning"]["start"],
             schedule["morning"]["end"]
         )
-        slots.extend(morning_slots)
+        # Tag each slot with session
+        for slot in morning_slots:
+            slot["session"] = "morning"
     
     # Evening session - check if it has specific days restriction
     if schedule.get("evening"):
@@ -114,11 +126,39 @@ def get_slots_for_doctor_clinic_date(doctor: str, clinic: str, date_str: str):
                 evening_config["start"],
                 evening_config["end"]
             )
-            slots.extend(evening_slots)
+            for slot in evening_slots:
+                slot["session"] = "evening"
     
-    return slots
+    # Determine current session based on time
+    # Morning: before 2pm (14:00), Evening: 2pm onwards
+    is_today = date_str == current_date
     
-    return slots
+    if session_filter == "current" and is_today:
+        # Walk-in: Show only current session
+        if current_hour < 14:
+            # Morning session active - show morning slots only
+            return {"morning": morning_slots, "evening": [], "all": morning_slots, "current_session": "morning"}
+        else:
+            # Evening session active - show evening slots only
+            return {"morning": [], "evening": evening_slots, "all": evening_slots, "current_session": "evening"}
+    
+    elif session_filter == "future":
+        # Book appointment: Show next session onwards
+        if is_today:
+            if current_hour < 14:
+                # Morning active - show evening of today onwards
+                return {"morning": [], "evening": evening_slots, "all": evening_slots, "current_session": "morning"}
+            else:
+                # Evening active - no slots for today (book for tomorrow)
+                return {"morning": [], "evening": [], "all": [], "current_session": "evening"}
+        else:
+            # Future date - show all slots
+            all_slots = morning_slots + evening_slots
+            return {"morning": morning_slots, "evening": evening_slots, "all": all_slots}
+    
+    # Default: return all slots
+    all_slots = morning_slots + evening_slots
+    return {"morning": morning_slots, "evening": evening_slots, "all": all_slots}
 
 # Default time slots (fallback)
 def generate_time_slots():
