@@ -4,10 +4,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Upload, Search, Image, Check, X, Download, FileText, ArrowLeft, Loader2 } from 'lucide-react';
+import { Upload, Search, Image, Check, X, Download, FileText, ArrowLeft, Loader2, ExternalLink, Copy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const API = process.env.REACT_APP_BACKEND_URL;
+
+// Helper function to open Google Image Search
+const openGoogleImageSearch = (medicineName) => {
+  const searchQuery = encodeURIComponent(`${medicineName} medicine tablet strip packaging india`);
+  const googleUrl = `https://www.google.com/search?q=${searchQuery}&tbm=isch`;
+  window.open(googleUrl, '_blank');
+  toast.success('Google Images opened! Right-click an image → Copy image address → Paste here');
+};
 
 const MedicineImageUpload = () => {
   const navigate = useNavigate();
