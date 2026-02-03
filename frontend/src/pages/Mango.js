@@ -333,6 +333,82 @@ const Proton = () => {
   const [showTrends, setShowTrends] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [orderTotal, setOrderTotal] = useState(0);
+  
+  // Wishlist & Save for Later
+  const [wishlist, setWishlist] = useState(() => {
+    const saved = localStorage.getItem('mango_wishlist');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [showWishlist, setShowWishlist] = useState(false);
+  const [hasSavedCart, setHasSavedCart] = useState(false);
+  
+  // Check for saved cart on mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem('mango_saved_cart');
+    if (savedCart) {
+      setHasSavedCart(true);
+    }
+  }, []);
+  
+  // Save wishlist to localStorage
+  useEffect(() => {
+    localStorage.setItem('mango_wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
+  
+  // Wishlist functions
+  const toggleWishlist = (test) => {
+    const isInWishlist = wishlist.some(w => w.name === test.name);
+    if (isInWishlist) {
+      setWishlist(wishlist.filter(w => w.name !== test.name));
+      toast.success(`Removed ${test.name} from wishlist`);
+    } else {
+      setWishlist([...wishlist, { name: test.name, price: test.price, category: test.category || 'General' }]);
+      toast.success(`Added ${test.name} to wishlist`);
+    }
+  };
+  
+  const isInWishlist = (testName) => wishlist.some(w => w.name === testName);
+  
+  // Save cart for later
+  const saveCartForLater = () => {
+    if (selectedTests.length === 0) {
+      toast.error('No tests selected to save');
+      return;
+    }
+    const cartData = {
+      tests: selectedTests,
+      patientInfo,
+      collectionType,
+      preferredDate: preferredDate.toISOString(),
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem('mango_saved_cart', JSON.stringify(cartData));
+    toast.success('Cart saved! You can continue later.');
+    setHasSavedCart(true);
+  };
+  
+  // Restore saved cart
+  const restoreSavedCart = () => {
+    const savedCart = localStorage.getItem('mango_saved_cart');
+    if (savedCart) {
+      const cartData = JSON.parse(savedCart);
+      setSelectedTests(cartData.tests || []);
+      setPatientInfo(prev => ({ ...prev, ...cartData.patientInfo }));
+      setCollectionType(cartData.collectionType || 'home');
+      if (cartData.preferredDate) {
+        setPreferredDate(new Date(cartData.preferredDate));
+      }
+      toast.success('Cart restored successfully!');
+      setCurrentStep(1); // Go to cart step
+    }
+  };
+  
+  // Clear saved cart
+  const clearSavedCart = () => {
+    localStorage.removeItem('mango_saved_cart');
+    setHasSavedCart(false);
+    toast.success('Saved cart cleared');
+  };
 
   const timeSlots = [
     { value: '08:00-10:00', label: '8:00 AM - 10:00 AM' },
