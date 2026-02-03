@@ -120,6 +120,57 @@ const DiaGynStaffPortal = () => {
   const [foundPatient, setFoundPatient] = useState(null);
   const [searchingPatient, setSearchingPatient] = useState(false);
 
+  // Bluetooth Printer state
+  const [printerConnected, setPrinterConnected] = useState(false);
+  const [printerName, setPrinterName] = useState('');
+  const [isPrinting, setIsPrinting] = useState(false);
+
+  // Connect to Bluetooth printer
+  const connectPrinter = async () => {
+    mediumTap();
+    toast.loading('Searching for printer...', { id: 'printer' });
+    try {
+      const result = await thermalPrinter.connect();
+      if (result.success) {
+        setPrinterConnected(true);
+        setPrinterName(result.deviceName);
+        toast.success(`Connected to ${result.deviceName}`, { id: 'printer' });
+        successPattern();
+      } else {
+        toast.error(`Failed: ${result.error}`, { id: 'printer' });
+        errorPattern();
+      }
+    } catch (error) {
+      toast.error('Bluetooth not available', { id: 'printer' });
+      errorPattern();
+    }
+  };
+
+  // Print token receipt
+  const printToken = async (tokenData) => {
+    if (!printerConnected) {
+      toast.error('Connect printer first');
+      return false;
+    }
+    setIsPrinting(true);
+    try {
+      const result = await thermalPrinter.printToken(tokenData);
+      if (result.success) {
+        toast.success(`Token #${tokenData.token_number} printed!`);
+        successPattern();
+        return true;
+      } else {
+        toast.error(`Print failed: ${result.error}`);
+        return false;
+      }
+    } catch (error) {
+      toast.error('Print error');
+      return false;
+    } finally {
+      setIsPrinting(false);
+    }
+  };
+
   // Update current session every minute
   useEffect(() => {
     const interval = setInterval(() => {
