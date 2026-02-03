@@ -30,38 +30,93 @@ class ThermalPrinter {
     this.device = null;
     this.characteristic = null;
     this.isConnected = false;
-    this.SERVICE_UUID = '000018f0-0000-1000-8000-00805f9b34fb';
-    this.CHARACTERISTIC_UUID = '00002af1-0000-1000-8000-00805f9b34fb';
+    // Common Bluetooth printer service UUIDs
+    this.SERVICE_UUIDS = [
+      '000018f0-0000-1000-8000-00805f9b34fb',
+      '49535343-fe7d-4ae5-8fa9-9fafd205e455',
+      'e7810a71-73ae-499d-8c15-faa9aef0c3f2'
+    ];
+    this.CHAR_UUIDS = [
+      '00002af1-0000-1000-8000-00805f9b34fb',
+      '49535343-8841-43f4-a8d4-ecbe34729bb3',
+      'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f'
+    ];
   }
 
-  // Connect to Bluetooth printer
+  // Connect to Bluetooth printer (handles already paired devices)
   async connect() {
     try {
-      // Request Bluetooth device
+      // Request Bluetooth device with multiple filter options
       this.device = await navigator.bluetooth.requestDevice({
         filters: [
           { namePrefix: 'EC58' },
           { namePrefix: 'Everycom' },
           { namePrefix: 'Printer' },
-          { namePrefix: 'BlueTooth' }
+          { namePrefix: 'BlueTooth' },
+          { namePrefix: 'BT' },
+          { namePrefix: 'MPT' },
+          { services: this.SERVICE_UUIDS }
         ],
-        optionalServices: [this.SERVICE_UUID, '000018f0-0000-1000-8000-00805f9b34fb']
+        optionalServices: this.SERVICE_UUIDS
       });
 
       console.log('Device found:', this.device.name);
+
+      // Handle disconnection
+      this.device.addEventListener('gattserverdisconnected', () => {
+        console.log('Printer disconnected');
+        this.isConnected = false;
+        this.characteristic = null;
+      });
 
       // Connect to GATT server
       const server = await this.device.gatt.connect();
       console.log('Connected to GATT server');
 
-      // Get primary service
-      const service = await server.getPrimaryService(this.SERVICE_UUID);
-      console.log('Got service');
+      // Try to find a working service and characteristic
+      let service = null;
+      let characteristic = null;
 
-      // Get characteristic for writing
-      this.characteristic = await service.getCharacteristic(this.CHARACTERISTIC_UUID);
-      console.log('Got characteristic');
+      for (const serviceUuid of this.SERVICE_UUIDS) {
+        try {
+          service = await server.getPrimaryService(serviceUuid);
+          console.log('Found service:', serviceUuid);
+          
+          for (const charUuid of this.CHAR_UUIDS) {
+            try {
+              characteristic = await service.getCharacteristic(charUuid);
+              console.log('Found characteristic:', charUuid);
+              break;
+            } catch (e) {
+              continue;
+            }
+          }
+          
+          if (characteristic) break;
+          
+          // If no known characteristic found, try to get all characteristics
+          if (!characteristic) {
+            const characteristics = await service.getCharacteristics();
+            for (const char of characteristics) {
+              if (char.properties.write || char.properties.writeWithoutResponse) {
+                characteristic = char;
+                console.log('Found writable characteristic:', char.uuid);
+                break;
+              }
+            }
+          }
+          
+          if (characteristic) break;
+        } catch (e) {
+          continue;
+        }
+      }
 
+      if (!characteristic) {
+        throw new Error('No writable characteristic found');
+      }
+
+      this.characteristic = characteristic;
       this.isConnected = true;
       return { success: true, deviceName: this.device.name };
     } catch (error) {
@@ -69,6 +124,35 @@ class ThermalPrinter {
       this.isConnected = false;
       return { success: false, error: error.message };
     }
+  }
+
+  // Reconnect to previously paired device
+  async reconnect() {
+    if (this.device && !this.device.gatt.connected) {
+      try {
+        const server = await this.device.gatt.connect();
+        // Re-establish characteristic
+        for (const serviceUuid of this.SERVICE_UUIDS) {
+          try {
+            const service = await server.getPrimaryService(serviceUuid);
+            for (const charUuid of this.CHAR_UUIDS) {
+              try {
+                this.characteristic = await service.getCharacteristic(charUuid);
+                this.isConnected = true;
+                return { success: true };
+              } catch (e) {
+                continue;
+              }
+            }
+          } catch (e) {
+            continue;
+          }
+        }
+      } catch (error) {
+        return { success: false, error: error.message };
+      }
+    }
+    return { success: this.isConnected };
   }
 
   // Disconnect from printer
