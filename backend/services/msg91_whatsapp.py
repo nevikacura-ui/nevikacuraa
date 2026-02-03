@@ -31,7 +31,7 @@ TEMPLATES = {
     "diagyn_one_hour_reminder": "diagyn_one_hour_reminder",
     "diagyn_walkin_emergency": "diagyn_walkin_emergency",
     "diagyn_appointment_completed": "diagyn_appointment_completed",
-    # Proton Templates
+    # Mango Templates
     "proton_lab_confirm": "proton_lab_confirm",
     "proton_report_ready": "proton_report_ready",
     "proton_report_delivered": "proton_report_delivered",  # NEW: Report delivered notification
@@ -340,7 +340,7 @@ async def send_diagyn_appointment_completed(
 
 
 # =============================================
-# Proton Diagnostics Templates
+# Mango Health Labs Templates
 # =============================================
 
 async def send_proton_lab_confirmation(
@@ -353,7 +353,7 @@ async def send_proton_lab_confirmation(
     address: str,
     db=None
 ) -> dict:
-    """Send Proton Diagnostics lab test confirmation via WhatsApp"""
+    """Send Mango Health Labs lab test confirmation via WhatsApp"""
     variables = [
         patient_name,      # {{1}}
         tests,             # {{2}}
@@ -382,7 +382,7 @@ async def send_proton_report_ready(
     download_url: str,
     db=None
 ) -> dict:
-    """Send Proton Diagnostics report ready via WhatsApp"""
+    """Send Mango Health Labs report ready via WhatsApp"""
     variables = [
         patient_name,      # {{1}}
         tests,             # {{2}}
@@ -412,7 +412,7 @@ async def send_proton_report_delivered(
     db=None
 ) -> dict:
     """
-    Send Proton Diagnostics report delivered notification via WhatsApp
+    Send Mango Health Labs report delivered notification via WhatsApp
     
     Template variables:
     {{1}} - Patient Name
