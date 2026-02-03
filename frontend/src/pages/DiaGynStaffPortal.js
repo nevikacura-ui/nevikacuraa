@@ -807,33 +807,34 @@ const DiaGynStaffPortal = () => {
               </div>
             </div>
 
-            {/* Date & Time Selection */}
+            {/* Date & Time Selection - Senior Friendly */}
             {bookingType !== 'EMERGENCY' && (
-              <div className="bg-white rounded-xl p-4 shadow-sm space-y-4">
+              <div className="bg-white rounded-2xl p-5 shadow-md space-y-5">
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">Date</label>
+                  <label className="text-base font-bold text-gray-800 mb-3 block">SELECT DATE</label>
                   <input
                     type="date"
                     value={bookingForm.date}
-                    onChange={(e) => setBookingForm(prev => ({ ...prev, date: e.target.value, time: '' }))}
+                    onChange={(e) => { lightTap(); setBookingForm(prev => ({ ...prev, date: e.target.value, time: '' })); }}
                     min={getIndianDate()}
-                    className="w-full h-12 px-4 rounded-xl border border-gray-200 text-lg"
+                    className="w-full h-14 px-5 rounded-xl border-2 border-gray-200 text-xl font-medium focus:border-indigo-500 focus:outline-none"
                   />
                 </div>
                 
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                    Select Time Slot {loadingSlots && <Loader2 className="w-4 h-4 animate-spin inline ml-2" />}
+                  <label className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                    SELECT TIME
+                    {loadingSlots && <Loader2 className="w-5 h-5 animate-spin text-indigo-500" />}
                   </label>
-                  <div className="grid grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+                  <div className="grid grid-cols-3 gap-3 max-h-80 overflow-y-auto p-1">
                     {availableSlots.map(slot => (
                       <button
                         key={slot.value}
-                        onClick={() => { lightTap(); setBookingForm(prev => ({ ...prev, time: slot.value })); }}
-                        className={`py-3 px-2 rounded-lg text-sm font-medium transition-all ${
+                        onClick={() => { mediumTap(); setBookingForm(prev => ({ ...prev, time: slot.value })); }}
+                        className={`py-4 px-3 rounded-xl text-base font-bold transition-all ${
                           bookingForm.time === slot.value
-                            ? 'bg-indigo-600 text-white shadow-md'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-indigo-600 text-white shadow-lg scale-[1.02]'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent'
                         }`}
                       >
                         {slot.display}
