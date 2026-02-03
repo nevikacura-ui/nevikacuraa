@@ -14,13 +14,14 @@ import { lightTap, mediumTap, heavyTap, successPattern, errorPattern, selectionT
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// Doctor Portal - Dark Teal + Navy Blue Buttons
+// Doctor Portal - Navy Header + White Page + Teal Buttons
 const COLORS = {
-  primary: '#0f3129',      // Darkest Teal (header/background)
-  primaryLight: '#1a4d3f', // Deep Teal
-  accent: '#1e3a5f',       // Navy Blue (buttons - distinct from staff)
-  accentLight: '#e0f2ed',  // Light Teal
-  lime: '#7ed957',         // Lime for success states
+  primary: '#1e3a5f',      // Navy Blue (header)
+  primaryDark: '#152a45',  // Darker Navy
+  accent: '#0d9488',       // Teal (buttons)
+  accentLight: '#ccfbf1',  // Light Teal
+  white: '#ffffff',
+  light: '#f8fafc',
 };
 
 const STATUS_STYLES = {
