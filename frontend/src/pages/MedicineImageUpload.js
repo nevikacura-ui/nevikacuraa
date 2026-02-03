@@ -335,10 +335,6 @@ const MedicineImageUpload = () => {
               </Button>
             </CardContent>
           </Card>
-                {loading ? 'Uploading...' : 'Upload Image'}
-              </Button>
-            </CardContent>
-          </Card>
 
           {/* CSV Bulk Upload */}
           <Card>
