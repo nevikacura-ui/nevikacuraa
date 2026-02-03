@@ -134,6 +134,7 @@ function AppContent() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-panel" element={<AdminPanel />} />
           <Route path="/staff" element={<StaffPortal />} />
+          <Route path="/diagyn-staff" element={<DiaGynStaffPortal />} />
           <Route path="/track" element={<AnimatedPage><TrackOrder /></AnimatedPage>} />
           <Route path="/feedback/:token" element={<Feedback />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
