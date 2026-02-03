@@ -690,11 +690,27 @@ async def update_appointment_status(
         {"$set": update_data}
     )
     
-    return {
+    # Prepare response with token data for printing
+    response = {
         "success": True,
         "status": data.status,
         "message": f"Appointment status updated to {data.status}"
     }
+    
+    # Include token print data on check-in
+    if data.status == "CheckedIn":
+        response["token_data"] = {
+            "token_number": update_data.get("token_number"),
+            "patient_name": appointment.get("patient_name"),
+            "clinic": appointment.get("clinic"),
+            "clinic_address": CLINICS.get(appointment.get("clinic"), {}).get("address", ""),
+            "slot_time": appointment.get("time") or "Emergency",
+            "date": appointment.get("date"),
+            "checked_in_at": update_data.get("checked_in_at"),
+            "booking_id": appointment.get("booking_id")
+        }
+    
+    return response
 
 
 # ============ Collection Summary ============
