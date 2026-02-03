@@ -6503,6 +6503,17 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Staff router: {e}")
 
+# DiaGyn Staff Portal Routes (New Simplified Portal)
+try:
+    from routes.diagyn_staff import router as diagyn_staff_router, set_db as set_diagyn_staff_db, set_jwt_config as set_diagyn_staff_jwt, set_whatsapp_func as set_diagyn_staff_whatsapp
+    set_diagyn_staff_db(db)
+    set_diagyn_staff_jwt(JWT_SECRET, JWT_ALGORITHM)
+    set_diagyn_staff_whatsapp(send_whatsapp_notification)
+    app.include_router(diagyn_staff_router, prefix="/api")
+    logger.info("DiaGyn Staff Portal router loaded")
+except Exception as e:
+    logger.warning(f"Could not load DiaGyn Staff Portal router: {e}")
+
 # Inventory Management Routes (Medicine & Test Inventory for Staff)
 try:
     from routes.inventory import router as inventory_router, set_db as set_inventory_db
