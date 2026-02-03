@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -9,41 +9,43 @@ import axios from 'axios';
 import { 
   ArrowLeft, User, Lock, LogOut, Phone, Calendar, Clock, 
   Search, Plus, CheckCircle2, UserPlus, AlertTriangle,
-  Building2, Stethoscope, Activity, IndianRupee, RefreshCw,
+  Building2, Stethoscope, IndianRupee, RefreshCw,
   ChevronRight, Loader2, Users, TrendingUp, X
 } from 'lucide-react';
 import { lightTap, mediumTap, heavyTap, successPattern, errorPattern, selectionTap } from '@/utils/haptics';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// Fresh color palette - Soft indigo with warm accents
+// Mango Labs Color Palette - Dark Green & Orange
 const COLORS = {
-  primary: '#4F46E5',      // Indigo
-  primaryLight: '#EEF2FF', // Indigo 50
-  secondary: '#F59E0B',    // Amber
-  success: '#10B981',      // Emerald
-  warning: '#F97316',      // Orange
-  danger: '#EF4444',       // Red
-  dark: '#1E293B',         // Slate 800
-  muted: '#64748B',        // Slate 500
-  light: '#F8FAFC',        // Slate 50
-  border: '#E2E8F0',       // Slate 200
+  primary: '#166534',      // Dark Green
+  primaryDark: '#14532d',  // Darker Green
+  primaryLight: '#dcfce7', // Light Green
+  accent: '#F97316',       // Orange (buttons)
+  accentLight: '#fed7aa',  // Light Orange
+  success: '#16a34a',      // Green
+  warning: '#ea580c',      // Dark Orange
+  danger: '#dc2626',       // Red
+  dark: '#1e293b',
+  muted: '#64748b',
+  light: '#f8fafc',
+  white: '#ffffff',
 };
 
-// Status colors
-const STATUS_COLORS = {
-  'Booked': 'bg-blue-100 text-blue-700 border-blue-200',
-  'CheckedIn': 'bg-amber-100 text-amber-700 border-amber-200',
-  'WithDoctor': 'bg-purple-100 text-purple-700 border-purple-200',
-  'Completed': 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  'Cancelled': 'bg-gray-100 text-gray-500 border-gray-200',
+// Status colors - compact badges
+const STATUS_STYLES = {
+  'Booked': { bg: '#dbeafe', text: '#1d4ed8', label: 'BOOKED' },
+  'CheckedIn': { bg: '#fef3c7', text: '#d97706', label: 'WAITING' },
+  'WithDoctor': { bg: '#e9d5ff', text: '#7c3aed', label: 'WITH DR' },
+  'Completed': { bg: '#dcfce7', text: '#16a34a', label: 'DONE' },
+  'Cancelled': { bg: '#f3f4f6', text: '#6b7280', label: 'CANCEL' },
 };
 
-// Appointment type badges
-const TYPE_BADGES = {
-  'SCHEDULED': 'bg-indigo-100 text-indigo-700',
-  'WALK_IN': 'bg-teal-100 text-teal-700',
-  'EMERGENCY': 'bg-red-100 text-red-700',
+// Type badges
+const TYPE_STYLES = {
+  'SCHEDULED': { bg: '#dcfce7', text: '#166534' },
+  'WALK_IN': { bg: '#dbeafe', text: '#1d4ed8' },
+  'EMERGENCY': { bg: '#fee2e2', text: '#dc2626' },
 };
 
 const getAuthHeaders = () => {
@@ -58,10 +60,9 @@ const getIndianDate = () => {
   return istDate.toISOString().split('T')[0];
 };
 
-const formatDate = (dateStr) => {
-  if (!dateStr) return '';
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+const getDayName = (dateStr) => {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return days[new Date(dateStr).getDay()];
 };
 
 // ============ Main Component ============
@@ -77,7 +78,7 @@ const DiaGynStaffPortal = () => {
   const [password, setPassword] = useState('');
   
   // Active view
-  const [activeView, setActiveView] = useState('appointments'); // appointments, book, summary
+  const [activeView, setActiveView] = useState('appointments');
   const [activeClinic, setActiveClinic] = useState('all');
   const [selectedDate, setSelectedDate] = useState(getIndianDate());
   
@@ -89,7 +90,7 @@ const DiaGynStaffPortal = () => {
   const [weeklySummary, setWeeklySummary] = useState(null);
   
   // Booking form
-  const [bookingType, setBookingType] = useState('WALK_IN'); // WALK_IN, SCHEDULED, EMERGENCY
+  const [bookingType, setBookingType] = useState('WALK_IN');
   const [bookingForm, setBookingForm] = useState({
     clinic: 'Pushpa Clinic',
     doctor: 'Dr. Vikas Jha',
@@ -125,8 +126,7 @@ const DiaGynStaffPortal = () => {
     const info = localStorage.getItem('staffInfo');
     if (token && info) {
       try {
-        const parsed = JSON.parse(info);
-        setStaffInfo(parsed);
+        setStaffInfo(JSON.parse(info));
         setIsAuthenticated(true);
       } catch (e) {
         localStorage.removeItem('staffToken');
@@ -138,29 +138,26 @@ const DiaGynStaffPortal = () => {
   const handleLogin = async () => {
     if (!username || !password) {
       errorPattern();
-      toast.error('Please enter username and password');
+      toast.error('Enter username & password');
       return;
     }
-    
     setLoading(true);
-    mediumTap();
+    heavyTap();
     try {
       const res = await axios.post(`${API}/api/staff/login`, { username, password });
       localStorage.setItem('staffToken', res.data.token);
       const staffData = {
         name: res.data.staff?.name || res.data.name,
         role: res.data.staff?.role || res.data.role,
-        clinic: res.data.staff?.clinic,
-        clinics: res.data.staff?.clinics || []
       };
       localStorage.setItem('staffInfo', JSON.stringify(staffData));
       setStaffInfo(staffData);
       setIsAuthenticated(true);
       successPattern();
-      toast.success(`Welcome, ${staffData.name}!`);
+      toast.success(`Welcome!`);
     } catch (error) {
       errorPattern();
-      toast.error(error.response?.data?.detail || 'Login failed');
+      toast.error('Login failed');
     }
     setLoading(false);
   };
@@ -170,7 +167,6 @@ const DiaGynStaffPortal = () => {
     localStorage.removeItem('staffToken');
     localStorage.removeItem('staffInfo');
     setIsAuthenticated(false);
-    setStaffInfo(null);
     toast.success('Logged out');
   };
 
@@ -180,7 +176,7 @@ const DiaGynStaffPortal = () => {
       const res = await axios.get(`${API}/api/diagyn-staff/config`, getAuthHeaders());
       setConfig(res.data);
     } catch (error) {
-      console.error('Failed to load config:', error);
+      console.error('Config error:', error);
     }
   }, []);
 
@@ -194,7 +190,6 @@ const DiaGynStaffPortal = () => {
       setAppointments(res.data.appointments || []);
       setSummary(res.data.summary || {});
     } catch (error) {
-      console.error('Failed to load appointments:', error);
       if (error.response?.status === 401) {
         handleLogout();
         toast.error('Session expired');
@@ -218,13 +213,12 @@ const DiaGynStaffPortal = () => {
       setDailySummary(daily.data);
       setWeeklySummary(weekly.data);
     } catch (error) {
-      console.error('Failed to load summaries:', error);
+      console.error('Summary error:', error);
     }
   }, [selectedDate, activeClinic]);
 
   const loadAvailableSlots = useCallback(async () => {
     if (!bookingForm.clinic || !bookingForm.doctor || !bookingForm.date) return;
-    
     setLoadingSlots(true);
     try {
       const res = await axios.get(`${API}/api/diagyn-staff/slots/available`, {
@@ -237,7 +231,7 @@ const DiaGynStaffPortal = () => {
       });
       setAvailableSlots(res.data.available_slots || []);
     } catch (error) {
-      console.error('Failed to load slots:', error);
+      console.error('Slots error:', error);
     }
     setLoadingSlots(false);
   }, [bookingForm.clinic, bookingForm.doctor, bookingForm.date]);
@@ -250,25 +244,19 @@ const DiaGynStaffPortal = () => {
   }, [isAuthenticated, loadConfig, loadAppointments]);
 
   useEffect(() => {
-    if (isAuthenticated && activeView === 'summary') {
-      loadSummaries();
-    }
+    if (isAuthenticated && activeView === 'summary') loadSummaries();
   }, [isAuthenticated, activeView, loadSummaries]);
 
   useEffect(() => {
-    if (isAuthenticated && activeView === 'book') {
-      loadAvailableSlots();
-    }
+    if (isAuthenticated && activeView === 'book') loadAvailableSlots();
   }, [isAuthenticated, activeView, loadAvailableSlots]);
 
-  // Auto-refresh every 10 seconds
+  // Auto-refresh every 8 seconds
   useEffect(() => {
     if (!isAuthenticated) return;
     const interval = setInterval(() => {
-      if (activeView === 'appointments') {
-        loadAppointments();
-      }
-    }, 10000);
+      if (activeView === 'appointments') loadAppointments();
+    }, 8000);
     return () => clearInterval(interval);
   }, [isAuthenticated, activeView, loadAppointments]);
 
@@ -276,18 +264,14 @@ const DiaGynStaffPortal = () => {
   const lookupPatient = async () => {
     if (!patientMobile || patientMobile.length < 10) {
       errorPattern();
-      toast.error('Enter a valid 10-digit mobile number');
+      toast.error('Enter 10-digit mobile');
       return;
     }
-    
     setSearchingPatient(true);
-    lightTap();
+    mediumTap();
     try {
       const res = await axios.post(`${API}/api/diagyn-staff/patient/lookup`, 
-        { mobile: patientMobile },
-        getAuthHeaders()
-      );
-      
+        { mobile: patientMobile }, getAuthHeaders());
       if (res.data.found) {
         setFoundPatient(res.data.patient);
         setBookingForm(prev => ({
@@ -300,13 +284,8 @@ const DiaGynStaffPortal = () => {
         toast.success(`Found: ${res.data.patient.name}`);
       } else {
         setFoundPatient(null);
-        setBookingForm(prev => ({
-          ...prev,
-          patient_name: '',
-          patient_mobile: patientMobile,
-          patient_id: null
-        }));
-        toast.info('Patient not found. Please register.');
+        setBookingForm(prev => ({ ...prev, patient_name: '', patient_mobile: patientMobile, patient_id: null }));
+        toast.info('Not found. Register new patient.');
         setShowRegisterModal(true);
         setRegisterForm({ name: '', mobile: patientMobile, age: '', gender: '' });
       }
@@ -320,27 +299,18 @@ const DiaGynStaffPortal = () => {
   const registerPatient = async () => {
     if (!registerForm.name || !registerForm.mobile) {
       errorPattern();
-      toast.error('Name and mobile are required');
+      toast.error('Name & mobile required');
       return;
     }
-    
     setLoading(true);
-    mediumTap();
+    heavyTap();
     try {
-      const res = await axios.post(`${API}/api/diagyn-staff/patient/register`,
-        registerForm,
-        getAuthHeaders()
-      );
-      
+      const res = await axios.post(`${API}/api/diagyn-staff/patient/register`, registerForm, getAuthHeaders());
       if (res.data.success) {
         successPattern();
-        toast.success('Patient registered!');
+        toast.success('Registered!');
         setShowRegisterModal(false);
-        setFoundPatient({
-          id: res.data.patient_id,
-          name: registerForm.name,
-          mobile: registerForm.mobile
-        });
+        setFoundPatient({ id: res.data.patient_id, name: registerForm.name, mobile: registerForm.mobile });
         setBookingForm(prev => ({
           ...prev,
           patient_name: registerForm.name,
@@ -359,16 +329,14 @@ const DiaGynStaffPortal = () => {
   const handleBook = async () => {
     if (!bookingForm.patient_name || !bookingForm.patient_mobile) {
       errorPattern();
-      toast.error('Patient name and mobile are required');
+      toast.error('Patient name & mobile required');
       return;
     }
-    
     if (bookingType !== 'EMERGENCY' && !bookingForm.time) {
       errorPattern();
-      toast.error('Please select a time slot');
+      toast.error('Select time slot');
       return;
     }
-    
     setLoading(true);
     heavyTap();
     try {
@@ -376,11 +344,9 @@ const DiaGynStaffPortal = () => {
         ...bookingForm,
         appointment_type: bookingType
       }, getAuthHeaders());
-      
       if (res.data.success) {
         successPattern();
-        toast.success(`Booking ID: ${res.data.booking_id}`);
-        // Reset form
+        toast.success(`Booked: ${res.data.booking_id}`);
         setBookingForm({
           clinic: bookingForm.clinic,
           doctor: bookingForm.doctor,
@@ -393,7 +359,6 @@ const DiaGynStaffPortal = () => {
         });
         setPatientMobile('');
         setFoundPatient(null);
-        // Switch to appointments view
         setActiveView('appointments');
         loadAppointments();
       }
@@ -406,14 +371,12 @@ const DiaGynStaffPortal = () => {
 
   // ============ Status Updates ============
   const updateStatus = async (appointmentId, newStatus) => {
-    mediumTap();
+    heavyTap();
     try {
       await axios.put(`${API}/api/diagyn-staff/appointments/${appointmentId}/status`,
-        { status: newStatus },
-        getAuthHeaders()
-      );
+        { status: newStatus }, getAuthHeaders());
       successPattern();
-      toast.success(`Status: ${newStatus}`);
+      toast.success(newStatus);
       loadAppointments();
     } catch (error) {
       errorPattern();
@@ -431,20 +394,16 @@ const DiaGynStaffPortal = () => {
   const completeWithFee = async () => {
     if (!completionForm.fee_code) {
       errorPattern();
-      toast.error('Please select a fee code');
+      toast.error('Select fee code');
       return;
     }
-    
-    // Calculate total
     const doctor = completingAppointment?.doctor;
     const feeConfig = config?.fee_codes?.[doctor]?.[completionForm.fee_code];
     let total = feeConfig?.amount || 0;
-    
     completionForm.scan_codes.forEach(code => {
       const scan = config?.scan_fees?.[code];
       if (scan) total += scan.amount;
     });
-    
     setLoading(true);
     heavyTap();
     try {
@@ -455,14 +414,13 @@ const DiaGynStaffPortal = () => {
         total_amount: total,
         notes: completionForm.notes
       }, getAuthHeaders());
-      
       successPattern();
-      toast.success(`Completed! ₹${total}`);
+      toast.success(`Done! ₹${total}`);
       setShowCompletionModal(false);
       loadAppointments();
     } catch (error) {
       errorPattern();
-      toast.error('Failed to complete');
+      toast.error('Failed');
     }
     setLoading(false);
   };
@@ -471,66 +429,37 @@ const DiaGynStaffPortal = () => {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" 
-           style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)' }}>
-        <Card className="w-full max-w-md p-8 shadow-2xl">
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
-                 style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)' }}>
-              <Stethoscope className="w-10 h-10 text-white" />
+           style={{ background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%)` }}>
+        <Card className="w-full max-w-sm p-6 shadow-2xl">
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3"
+                 style={{ background: COLORS.primary }}>
+              <Stethoscope className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">DiaGyn Staff Portal</h1>
-            <p className="text-gray-500 mt-1">Mango Health Labs</p>
+            <h1 className="text-xl font-bold" style={{ color: COLORS.primary }}>DiaGyn Staff</h1>
+            <p className="text-sm text-gray-500">Mango Health Labs</p>
           </div>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">Username</label>
-              <div className="relative">
-                <User className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
-                <Input
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter username"
-                  className="pl-11 h-12 text-lg"
-                  data-testid="login-username"
-                />
-              </div>
+          <div className="space-y-3">
+            <div className="relative">
+              <User className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+              <Input value={username} onChange={(e) => setUsername(e.target.value)}
+                placeholder="Username" className="pl-10 h-11" data-testid="login-username" />
             </div>
-            
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter password"
-                  className="pl-11 h-12 text-lg"
-                  onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-                  data-testid="login-password"
-                />
-              </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password" className="pl-10 h-11" data-testid="login-password"
+                onKeyPress={(e) => e.key === 'Enter' && handleLogin()} />
             </div>
-            
-            <Button 
-              onClick={handleLogin}
-              disabled={loading}
-              className="w-full h-14 text-lg font-semibold"
-              style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)' }}
-              data-testid="login-button"
-            >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
-              Login
+            <Button onClick={handleLogin} disabled={loading}
+              className="w-full h-12 text-base font-bold" data-testid="login-button"
+              style={{ background: COLORS.accent }}>
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'LOGIN'}
             </Button>
           </div>
-          
-          <div className="mt-6 text-center">
-            <Button variant="ghost" onClick={() => navigate('/')} className="text-gray-500">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
-            </Button>
-          </div>
+          <Button variant="ghost" onClick={() => navigate('/')} className="w-full mt-4 text-gray-500">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back
+          </Button>
         </Card>
       </div>
     );
@@ -538,100 +467,74 @@ const DiaGynStaffPortal = () => {
 
   // ============ Main Portal ============
   return (
-    <div className="min-h-screen" style={{ background: COLORS.light }}>
-      {/* Header */}
-      <header className="sticky top-0 z-50 px-4 py-3 shadow-sm" 
-              style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)' }}>
+    <div className="min-h-screen" style={{ background: '#f1f5f9' }}>
+      {/* Header - Compact */}
+      <header className="sticky top-0 z-50 px-3 py-2" style={{ background: COLORS.primary }}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-              <Stethoscope className="w-5 h-5 text-white" />
-            </div>
+          <div className="flex items-center gap-2">
+            <Stethoscope className="w-6 h-6 text-white" />
             <div>
-              <h1 className="text-white font-bold text-lg">DiaGyn Staff</h1>
+              <h1 className="text-white font-bold text-base">DiaGyn Staff</h1>
               <p className="text-white/70 text-xs">{staffInfo?.name}</p>
             </div>
           </div>
-          
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => { lightTap(); loadAppointments(); }}
-              className="text-white hover:bg-white/20"
-              disabled={refreshing}
-            >
-              <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={() => { lightTap(); loadAppointments(); }}
+              className="text-white hover:bg-white/20 h-8 w-8 p-0" disabled={refreshing}>
+              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
             </Button>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={handleLogout}
-              className="text-white hover:bg-white/20"
-            >
-              <LogOut className="w-5 h-5" />
+            <Button variant="ghost" size="sm" onClick={handleLogout}
+              className="text-white hover:bg-white/20 h-8 w-8 p-0">
+              <LogOut className="w-4 h-4" />
             </Button>
           </div>
         </div>
-        
-        {/* Clinic Selector */}
-        <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+        {/* Clinic Filter - Compact Pills */}
+        <div className="flex gap-1.5 mt-2 overflow-x-auto pb-1">
           {['all', 'Pushpa Clinic', 'Amnion Clinic'].map(clinic => (
-            <button
-              key={clinic}
-              onClick={() => { selectionTap(); setActiveClinic(clinic); }}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                activeClinic === clinic 
-                  ? 'bg-white text-indigo-600 shadow-md' 
-                  : 'bg-white/20 text-white hover:bg-white/30'
+            <button key={clinic} onClick={() => { selectionTap(); setActiveClinic(clinic); }}
+              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                activeClinic === clinic ? 'bg-white shadow' : 'bg-white/20 text-white'
               }`}
-            >
-              {clinic === 'all' ? 'All Clinics' : clinic}
+              style={activeClinic === clinic ? { color: COLORS.primary } : {}}>
+              {clinic === 'all' ? 'All' : clinic.replace(' Clinic', '')}
             </button>
           ))}
         </div>
       </header>
 
-      {/* Quick Stats Bar */}
+      {/* Stats Bar - Compact */}
       {summary && activeView === 'appointments' && (
-        <div className="px-4 py-3 bg-white border-b flex gap-3 overflow-x-auto">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-full">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <span className="text-sm font-medium text-blue-700">Booked: {summary.booked || 0}</span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 rounded-full">
-            <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-            <span className="text-sm font-medium text-amber-700">Waiting: {summary.checked_in || 0}</span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 rounded-full">
-            <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-            <span className="text-sm font-medium text-purple-700">With Dr: {summary.with_doctor || 0}</span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-            <span className="text-sm font-medium text-emerald-700">Done: {summary.completed || 0}</span>
-          </div>
+        <div className="px-3 py-2 bg-white border-b flex gap-2 overflow-x-auto">
+          {[
+            { label: 'Booked', count: summary.booked || 0, color: '#3b82f6' },
+            { label: 'Wait', count: summary.checked_in || 0, color: '#f59e0b' },
+            { label: 'Dr', count: summary.with_doctor || 0, color: '#8b5cf6' },
+            { label: 'Done', count: summary.completed || 0, color: '#16a34a' },
+          ].map(stat => (
+            <div key={stat.label} className="flex items-center gap-1.5 px-2 py-1 rounded-full"
+                 style={{ background: `${stat.color}15` }}>
+              <div className="w-1.5 h-1.5 rounded-full" style={{ background: stat.color }}></div>
+              <span className="text-xs font-medium" style={{ color: stat.color }}>{stat.label}: {stat.count}</span>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Navigation Tabs */}
-      <div className="px-4 py-3 bg-white border-b">
-        <div className="flex gap-2">
+      {/* Navigation Tabs - Compact */}
+      <div className="px-3 py-2 bg-white border-b">
+        <div className="flex gap-1.5">
           {[
-            { id: 'appointments', icon: Calendar, label: 'Appointments' },
-            { id: 'book', icon: Plus, label: 'Book New' },
+            { id: 'appointments', icon: Calendar, label: 'Today' },
+            { id: 'book', icon: Plus, label: 'Book' },
             { id: 'summary', icon: TrendingUp, label: 'Summary' },
           ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => { selectionTap(); setActiveView(tab.id); }}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all ${
-                activeView === tab.id 
-                  ? 'bg-indigo-600 text-white shadow-lg' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            <button key={tab.id} onClick={() => { selectionTap(); setActiveView(tab.id); }}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg font-medium transition-all ${
+                activeView === tab.id ? 'text-white shadow-md' : 'bg-gray-100 text-gray-600'
               }`}
-            >
-              <tab.icon className="w-5 h-5" />
+              style={activeView === tab.id ? { background: COLORS.accent } : {}}>
+              <tab.icon className="w-4 h-4" />
               <span className="text-sm">{tab.label}</span>
             </button>
           ))}
@@ -639,38 +542,34 @@ const DiaGynStaffPortal = () => {
       </div>
 
       {/* Content */}
-      <main className="p-4 pb-24">
+      <main className="p-3 pb-20">
         {/* ============ APPOINTMENTS VIEW ============ */}
         {activeView === 'appointments' && (
-          <div className="space-y-4">
-            {/* Date Selector */}
-            <div className="flex items-center gap-3 bg-white rounded-xl p-3 shadow-sm">
-              <Calendar className="w-5 h-5 text-indigo-600" />
-              <input
-                type="date"
-                value={selectedDate}
+          <div className="space-y-2">
+            {/* Date Selector - Compact */}
+            <div className="flex items-center gap-2 bg-white rounded-lg p-2 shadow-sm">
+              <Calendar className="w-4 h-4" style={{ color: COLORS.primary }} />
+              <input type="date" value={selectedDate}
                 onChange={(e) => { lightTap(); setSelectedDate(e.target.value); }}
-                className="flex-1 text-lg font-medium bg-transparent outline-none"
-              />
+                className="flex-1 text-sm font-medium bg-transparent outline-none" />
+              <span className="text-xs px-2 py-0.5 rounded" style={{ background: COLORS.primaryLight, color: COLORS.primary }}>
+                {getDayName(selectedDate)}
+              </span>
             </div>
 
             {/* Appointment List */}
             {appointments.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-xl">
-                <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">No appointments for this date</p>
+              <div className="text-center py-8 bg-white rounded-lg">
+                <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                <p className="text-gray-500 text-sm">No appointments</p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {appointments.map(apt => (
-                  <AppointmentCard 
-                    key={apt.id}
-                    appointment={apt}
+                  <AppointmentCard key={apt.id} appointment={apt} config={config}
                     onCheckIn={() => updateStatus(apt.id, 'CheckedIn')}
                     onWithDoctor={() => updateStatus(apt.id, 'WithDoctor')}
-                    onComplete={() => openCompletionModal(apt)}
-                    config={config}
-                  />
+                    onComplete={() => openCompletionModal(apt)} />
                 ))}
               </div>
             )}
@@ -679,232 +578,151 @@ const DiaGynStaffPortal = () => {
 
         {/* ============ BOOKING VIEW ============ */}
         {activeView === 'book' && (
-          <div className="space-y-4">
-            {/* Booking Type Selector - Large Touch Targets */}
-            <div className="bg-white rounded-2xl p-5 shadow-md">
-              <label className="text-base font-bold text-gray-800 mb-4 block">SELECT TYPE</label>
-              <div className="grid grid-cols-3 gap-3">
+          <div className="space-y-3">
+            {/* Booking Type - Compact */}
+            <div className="bg-white rounded-lg p-3 shadow-sm">
+              <label className="text-xs font-bold text-gray-600 mb-2 block">TYPE</label>
+              <div className="flex gap-2">
                 {[
-                  { id: 'WALK_IN', icon: Users, label: 'Walk-In', color: '#14B8A6' },
-                  { id: 'SCHEDULED', icon: Calendar, label: 'Scheduled', color: '#4F46E5' },
-                  { id: 'EMERGENCY', icon: AlertTriangle, label: 'Emergency', color: '#EF4444' },
+                  { id: 'WALK_IN', label: 'Walk-In', color: '#3b82f6' },
+                  { id: 'SCHEDULED', label: 'Schedule', color: COLORS.primary },
+                  { id: 'EMERGENCY', label: 'Emergency', color: '#dc2626' },
                 ].map(type => (
-                  <button
-                    key={type.id}
-                    onClick={() => { heavyTap(); setBookingType(type.id); }}
-                    className={`py-5 px-3 rounded-2xl border-3 transition-all flex flex-col items-center gap-2 ${
-                      bookingType === type.id 
-                        ? 'shadow-lg scale-[1.02]' 
-                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                  <button key={type.id} onClick={() => { mediumTap(); setBookingType(type.id); }}
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
+                      bookingType === type.id ? 'text-white shadow-md' : 'bg-gray-100 text-gray-600'
                     }`}
-                    style={bookingType === type.id ? {
-                      borderColor: type.color,
-                      borderWidth: '3px',
-                      background: type.id === 'EMERGENCY' ? '#FEF2F2' : type.id === 'WALK_IN' ? '#F0FDFA' : '#EEF2FF'
-                    } : { borderWidth: '2px', borderColor: '#E5E7EB' }}
-                  >
-                    <type.icon className="w-8 h-8" style={{ color: type.color }} />
-                    <span className="text-sm font-bold" style={{ color: bookingType === type.id ? type.color : '#374151' }}>
-                      {type.label}
-                    </span>
+                    style={bookingType === type.id ? { background: type.color } : {}}>
+                    {type.label}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Patient Lookup - Bigger Input */}
-            <div className="bg-white rounded-2xl p-5 shadow-md">
-              <label className="text-base font-bold text-gray-800 mb-3 block">PATIENT MOBILE</label>
-              <div className="flex gap-3">
+            {/* Patient Mobile - Compact */}
+            <div className="bg-white rounded-lg p-3 shadow-sm">
+              <label className="text-xs font-bold text-gray-600 mb-2 block">MOBILE</label>
+              <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <Phone className="absolute left-4 top-4 w-6 h-6 text-gray-400" />
-                  <Input
-                    value={patientMobile}
+                  <Phone className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                  <Input value={patientMobile} maxLength={10}
                     onChange={(e) => setPatientMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    placeholder="Enter 10-digit mobile"
-                    className="pl-14 h-14 text-xl font-medium rounded-xl border-2"
-                    maxLength={10}
-                  />
+                    placeholder="10-digit mobile" className="pl-9 h-10 text-base" />
                 </div>
-                <Button 
-                  onClick={lookupPatient}
-                  disabled={searchingPatient || patientMobile.length < 10}
-                  className="h-14 px-6 rounded-xl"
-                  style={{ background: COLORS.primary }}
-                >
-                  {searchingPatient ? <Loader2 className="w-6 h-6 animate-spin" /> : <Search className="w-6 h-6" />}
+                <Button onClick={lookupPatient} disabled={searchingPatient || patientMobile.length < 10}
+                  className="h-10 px-4" style={{ background: COLORS.accent }}>
+                  {searchingPatient ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
                 </Button>
               </div>
-              
-              {/* Found Patient Card - Prominent Display */}
+              {/* Found Patient */}
               {foundPatient && (
-                <div className="mt-4 p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-300">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-md">
-                      <User className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-bold text-xl text-emerald-800">{foundPatient.name}</p>
-                      <p className="text-base text-emerald-600 font-medium">
-                        ID: {foundPatient.id} • Visits: {foundPatient.visit_count || 0}
-                      </p>
-                    </div>
-                    <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+                <div className="mt-2 p-2 rounded-lg flex items-center gap-2"
+                     style={{ background: COLORS.primaryLight }}>
+                  <CheckCircle2 className="w-5 h-5" style={{ color: COLORS.primary }} />
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm" style={{ color: COLORS.primary }}>{foundPatient.name}</p>
+                    <p className="text-xs text-gray-600">{foundPatient.id} • {foundPatient.visit_count || 0} visits</p>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Patient Details - Large Input */}
-            <div className="bg-white rounded-2xl p-5 shadow-md space-y-4">
-              <div>
-                <label className="text-base font-bold text-gray-800 mb-3 block">PATIENT NAME *</label>
-                <Input
-                  value={bookingForm.patient_name}
-                  onChange={(e) => setBookingForm(prev => ({ ...prev, patient_name: e.target.value }))}
-                  placeholder="Enter patient name"
-                  className="h-14 text-xl font-medium rounded-xl border-2"
-                />
-              </div>
+            {/* Patient Name */}
+            <div className="bg-white rounded-lg p-3 shadow-sm">
+              <label className="text-xs font-bold text-gray-600 mb-2 block">PATIENT NAME</label>
+              <Input value={bookingForm.patient_name}
+                onChange={(e) => setBookingForm(prev => ({ ...prev, patient_name: e.target.value }))}
+                placeholder="Enter name" className="h-10" />
             </div>
 
-            {/* Clinic & Doctor Selection - Large Cards */}
-            <div className="bg-white rounded-2xl p-5 shadow-md space-y-4">
-              <label className="text-base font-bold text-gray-800 mb-2 block">SELECT CLINIC</label>
-              <div className="grid grid-cols-1 gap-4">
+            {/* Clinic Selection - Compact */}
+            <div className="bg-white rounded-lg p-3 shadow-sm">
+              <label className="text-xs font-bold text-gray-600 mb-2 block">CLINIC</label>
+              <div className="flex gap-2">
                 {Object.keys(config?.clinics || {}).map(clinic => (
-                  <button
-                    key={clinic}
+                  <button key={clinic}
                     onClick={() => {
-                      heavyTap();
+                      mediumTap();
                       const doctors = config.clinics[clinic].doctors;
-                      setBookingForm(prev => ({
-                        ...prev,
-                        clinic,
-                        doctor: doctors[0] || ''
-                      }));
+                      setBookingForm(prev => ({ ...prev, clinic, doctor: doctors[0] || '' }));
                     }}
-                    className={`p-5 rounded-2xl border-3 text-left transition-all ${
-                      bookingForm.clinic === clinic 
-                        ? 'border-indigo-500 bg-indigo-50 shadow-lg' 
-                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                    className={`flex-1 py-3 px-3 rounded-lg text-left transition-all border-2 ${
+                      bookingForm.clinic === clinic ? 'shadow-md' : 'border-gray-200'
                     }`}
-                    style={{ borderWidth: bookingForm.clinic === clinic ? '3px' : '2px' }}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
-                        bookingForm.clinic === clinic ? 'bg-indigo-500' : 'bg-gray-100'
-                      }`}>
-                        <Building2 className={`w-7 h-7 ${bookingForm.clinic === clinic ? 'text-white' : 'text-gray-500'}`} />
-                      </div>
-                      <div>
-                        <p className="font-bold text-xl">{clinic}</p>
-                        <p className="text-base text-gray-600 font-medium">{config.clinics[clinic].doctors.join(', ')}</p>
-                      </div>
-                    </div>
+                    style={bookingForm.clinic === clinic ? { 
+                      borderColor: COLORS.primary, background: COLORS.primaryLight 
+                    } : {}}>
+                    <Building2 className="w-5 h-5 mb-1" style={{ color: COLORS.primary }} />
+                    <p className="font-bold text-sm">{clinic.replace(' Clinic', '')}</p>
+                    <p className="text-xs text-gray-500">{config?.clinics[clinic]?.doctors?.join(', ')}</p>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Date & Time Selection - Senior Friendly */}
+            {/* Time Slots - Compact Grid */}
             {bookingType !== 'EMERGENCY' && (
-              <div className="bg-white rounded-2xl p-5 shadow-md space-y-5">
-                <div>
-                  <label className="text-base font-bold text-gray-800 mb-3 block">SELECT DATE</label>
-                  <input
-                    type="date"
-                    value={bookingForm.date}
-                    onChange={(e) => { lightTap(); setBookingForm(prev => ({ ...prev, date: e.target.value, time: '' })); }}
-                    min={getIndianDate()}
-                    className="w-full h-14 px-5 rounded-xl border-2 border-gray-200 text-xl font-medium focus:border-indigo-500 focus:outline-none"
-                  />
+              <div className="bg-white rounded-lg p-3 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-bold text-gray-600">TIME SLOT</label>
+                  {loadingSlots && <Loader2 className="w-4 h-4 animate-spin" style={{ color: COLORS.accent }} />}
                 </div>
-                
-                <div>
-                  <label className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    SELECT TIME
-                    {loadingSlots && <Loader2 className="w-5 h-5 animate-spin text-indigo-500" />}
-                  </label>
-                  <div className="grid grid-cols-3 gap-3 max-h-80 overflow-y-auto p-1">
-                    {availableSlots.map(slot => (
-                      <button
-                        key={slot.value}
-                        onClick={() => { mediumTap(); setBookingForm(prev => ({ ...prev, time: slot.value })); }}
-                        className={`py-4 px-3 rounded-xl text-base font-bold transition-all ${
-                          bookingForm.time === slot.value
-                            ? 'bg-indigo-600 text-white shadow-lg scale-[1.02]'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent'
-                        }`}
-                      >
-                        {slot.display}
-                      </button>
-                    ))}
-                  </div>
-                  {availableSlots.length === 0 && !loadingSlots && (
-                    <p className="text-center text-gray-500 py-4">No slots available</p>
-                  )}
+                <input type="date" value={bookingForm.date} min={getIndianDate()}
+                  onChange={(e) => { lightTap(); setBookingForm(prev => ({ ...prev, date: e.target.value, time: '' })); }}
+                  className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm mb-2" />
+                <div className="grid grid-cols-4 gap-1.5 max-h-48 overflow-y-auto">
+                  {availableSlots.map(slot => (
+                    <button key={slot.value}
+                      onClick={() => { lightTap(); setBookingForm(prev => ({ ...prev, time: slot.value })); }}
+                      className={`py-2 rounded-lg text-xs font-medium transition-all ${
+                        bookingForm.time === slot.value ? 'text-white shadow' : 'bg-gray-100 text-gray-700'
+                      }`}
+                      style={bookingForm.time === slot.value ? { background: COLORS.accent } : {}}>
+                      {slot.display}
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
 
-            {/* Book Button - EXTRA LARGE for easy tapping */}
-            <Button
-              onClick={handleBook}
+            {/* Book Button - Orange */}
+            <Button onClick={handleBook}
               disabled={loading || !bookingForm.patient_name || !bookingForm.patient_mobile || (bookingType !== 'EMERGENCY' && !bookingForm.time)}
-              className="w-full h-20 text-2xl font-bold rounded-2xl shadow-xl active:scale-[0.98] transition-transform"
-              style={{ background: bookingType === 'EMERGENCY' ? '#EF4444' : 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)' }}
-            >
-              {loading ? <Loader2 className="w-8 h-8 animate-spin mr-3" /> : <Plus className="w-8 h-8 mr-3" />}
-              {bookingType === 'EMERGENCY' ? '🚨 BOOK EMERGENCY' : bookingType === 'WALK_IN' ? '🚶 BOOK WALK-IN' : '📅 BOOK APPOINTMENT'}
+              className="w-full h-14 text-lg font-bold rounded-xl shadow-lg"
+              style={{ background: bookingType === 'EMERGENCY' ? '#dc2626' : COLORS.accent }}>
+              {loading ? <Loader2 className="w-6 h-6 animate-spin mr-2" /> : <Plus className="w-6 h-6 mr-2" />}
+              {bookingType === 'EMERGENCY' ? 'BOOK EMERGENCY' : bookingType === 'WALK_IN' ? 'BOOK WALK-IN' : 'BOOK'}
             </Button>
           </div>
         )}
 
         {/* ============ SUMMARY VIEW ============ */}
         {activeView === 'summary' && (
-          <div className="space-y-4">
-            {/* Today's Summary */}
-            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
-              <h3 className="text-lg font-semibold mb-4 opacity-90">Today's Collection</h3>
-              <div className="text-4xl font-bold mb-2">
-                ₹{(dailySummary?.total_collection || 0).toLocaleString('en-IN')}
-              </div>
-              <p className="opacity-80">{dailySummary?.total_patients || 0} patients completed</p>
+          <div className="space-y-3">
+            {/* Today's Collection */}
+            <div className="rounded-xl p-4 text-white shadow-lg" style={{ background: COLORS.primary }}>
+              <h3 className="text-sm font-medium opacity-80">Today's Collection</h3>
+              <div className="text-3xl font-bold mt-1">₹{(dailySummary?.total_collection || 0).toLocaleString('en-IN')}</div>
+              <p className="text-sm opacity-70 mt-1">{dailySummary?.total_patients || 0} patients</p>
             </div>
 
             {/* Weekly Summary */}
             <div className="bg-white rounded-xl p-4 shadow-sm">
-              <h3 className="font-semibold text-gray-800 mb-4">This Week</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-emerald-50 rounded-xl p-4">
-                  <IndianRupee className="w-6 h-6 text-emerald-600 mb-2" />
-                  <p className="text-2xl font-bold text-emerald-700">
+              <h3 className="font-bold text-gray-800 mb-3">This Week</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-xl p-3" style={{ background: COLORS.primaryLight }}>
+                  <IndianRupee className="w-5 h-5 mb-1" style={{ color: COLORS.primary }} />
+                  <p className="text-xl font-bold" style={{ color: COLORS.primary }}>
                     ₹{(weeklySummary?.total_collection || 0).toLocaleString('en-IN')}
                   </p>
-                  <p className="text-sm text-emerald-600">Total Collection</p>
+                  <p className="text-xs text-gray-600">Collection</p>
                 </div>
-                <div className="bg-blue-50 rounded-xl p-4">
-                  <Users className="w-6 h-6 text-blue-600 mb-2" />
-                  <p className="text-2xl font-bold text-blue-700">{weeklySummary?.total_patients || 0}</p>
-                  <p className="text-sm text-blue-600">Patients</p>
+                <div className="rounded-xl p-3" style={{ background: COLORS.accentLight }}>
+                  <Users className="w-5 h-5 mb-1" style={{ color: COLORS.accent }} />
+                  <p className="text-xl font-bold" style={{ color: COLORS.accent }}>{weeklySummary?.total_patients || 0}</p>
+                  <p className="text-xs text-gray-600">Patients</p>
                 </div>
               </div>
-              
-              {/* Daily Breakdown */}
-              {weeklySummary?.by_date && (
-                <div className="mt-4 space-y-2">
-                  {Object.entries(weeklySummary.by_date).slice(0, 7).map(([date, data]) => (
-                    <div key={date} className="flex items-center justify-between py-2 border-b border-gray-100">
-                      <span className="text-sm text-gray-600">{formatDate(date)}</span>
-                      <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-500">{data.count} patients</span>
-                        <span className="font-semibold text-emerald-600">₹{data.amount.toLocaleString('en-IN')}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -913,66 +731,33 @@ const DiaGynStaffPortal = () => {
       {/* Register Patient Modal */}
       {showRegisterModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Register New Patient</h3>
-              <button onClick={() => setShowRegisterModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
+          <Card className="w-full max-w-sm p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold">Register Patient</h3>
+              <button onClick={() => setShowRegisterModal(false)} className="p-1.5 hover:bg-gray-100 rounded-full">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">Name *</label>
-                <Input
-                  value={registerForm.name}
-                  onChange={(e) => setRegisterForm(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="Patient name"
-                  className="h-12"
-                />
+            <div className="space-y-3">
+              <Input value={registerForm.name} onChange={(e) => setRegisterForm(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="Patient name" className="h-10" />
+              <Input value={registerForm.mobile} disabled className="h-10 bg-gray-50" />
+              <div className="grid grid-cols-2 gap-2">
+                <Input type="number" value={registerForm.age}
+                  onChange={(e) => setRegisterForm(prev => ({ ...prev, age: e.target.value }))}
+                  placeholder="Age" className="h-10" />
+                <select value={registerForm.gender}
+                  onChange={(e) => setRegisterForm(prev => ({ ...prev, gender: e.target.value }))}
+                  className="h-10 px-3 rounded-lg border border-gray-200 text-sm">
+                  <option value="">Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">Mobile *</label>
-                <Input
-                  value={registerForm.mobile}
-                  disabled
-                  className="h-12 bg-gray-50"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">Age</label>
-                  <Input
-                    type="number"
-                    value={registerForm.age}
-                    onChange={(e) => setRegisterForm(prev => ({ ...prev, age: e.target.value }))}
-                    placeholder="Age"
-                    className="h-12"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">Gender</label>
-                  <select
-                    value={registerForm.gender}
-                    onChange={(e) => setRegisterForm(prev => ({ ...prev, gender: e.target.value }))}
-                    className="w-full h-12 px-3 rounded-lg border border-gray-200"
-                  >
-                    <option value="">Select</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-              </div>
-              
-              <Button
-                onClick={registerPatient}
-                disabled={loading || !registerForm.name}
-                className="w-full h-12"
-                style={{ background: COLORS.primary }}
-              >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <UserPlus className="w-5 h-5 mr-2" />}
-                Register Patient
+              <Button onClick={registerPatient} disabled={loading || !registerForm.name}
+                className="w-full h-10" style={{ background: COLORS.accent }}>
+                {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <UserPlus className="w-4 h-4 mr-2" />}
+                Register
               </Button>
             </div>
           </Card>
@@ -982,45 +767,39 @@ const DiaGynStaffPortal = () => {
       {/* Completion Modal */}
       {showCompletionModal && completingAppointment && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="p-4 border-b bg-gradient-to-r from-emerald-500 to-teal-600 rounded-t-lg">
-              <h3 className="text-lg font-semibold text-white">Complete Appointment</h3>
-              <p className="text-sm text-emerald-100">{completingAppointment.patient_name} • {completingAppointment.booking_id}</p>
+          <Card className="w-full max-w-md max-h-[85vh] overflow-hidden flex flex-col">
+            <div className="p-3 border-b" style={{ background: COLORS.primary }}>
+              <h3 className="font-bold text-white">Complete</h3>
+              <p className="text-xs text-white/80">{completingAppointment.patient_name} • {completingAppointment.booking_id}</p>
             </div>
-            
-            <div className="p-4 overflow-y-auto flex-1 space-y-4">
-              {/* Fee Code Selection */}
+            <div className="p-3 overflow-y-auto flex-1 space-y-3">
+              {/* Fee Codes */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 mb-3 block">Select Fee Code *</label>
-                <div className="grid grid-cols-2 gap-2">
+                <label className="text-xs font-bold text-gray-600 mb-2 block">FEE CODE</label>
+                <div className="grid grid-cols-2 gap-1.5">
                   {Object.entries(config?.fee_codes?.[completingAppointment.doctor] || {}).map(([code, info]) => (
-                    <button
-                      key={code}
+                    <button key={code}
                       onClick={() => { lightTap(); setCompletionForm(prev => ({ ...prev, fee_code: code })); }}
-                      className={`p-3 rounded-xl border-2 text-left transition-all ${
-                        completionForm.fee_code === code 
-                          ? 'border-emerald-500 bg-emerald-50' 
-                          : 'border-gray-200 hover:border-gray-300'
+                      className={`p-2 rounded-lg border-2 text-left transition-all ${
+                        completionForm.fee_code === code ? '' : 'border-gray-200'
                       }`}
-                    >
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-bold text-emerald-700">{code}</span>
-                        <span className="font-bold text-emerald-600">₹{info.amount}</span>
+                      style={completionForm.fee_code === code ? { borderColor: COLORS.primary, background: COLORS.primaryLight } : {}}>
+                      <div className="flex justify-between">
+                        <span className="font-bold text-sm" style={{ color: COLORS.primary }}>{code}</span>
+                        <span className="font-bold text-sm" style={{ color: COLORS.accent }}>₹{info.amount}</span>
                       </div>
-                      <p className="text-xs text-gray-600">{info.label}</p>
+                      <p className="text-xs text-gray-500 truncate">{info.label}</p>
                     </button>
                   ))}
                 </div>
               </div>
-
-              {/* Scan Codes (for Dr. Neha) */}
+              {/* Scans for Amnion */}
               {completingAppointment.doctor?.includes('Neha') && config?.scan_fees && (
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-3 block">Additional Scans</label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <label className="text-xs font-bold text-gray-600 mb-2 block">SCANS</label>
+                  <div className="grid grid-cols-3 gap-1.5">
                     {Object.entries(config.scan_fees).map(([code, info]) => (
-                      <button
-                        key={code}
+                      <button key={code}
                         onClick={() => {
                           lightTap();
                           setCompletionForm(prev => ({
@@ -1030,36 +809,26 @@ const DiaGynStaffPortal = () => {
                               : [...prev.scan_codes, code]
                           }));
                         }}
-                        className={`p-3 rounded-xl border-2 text-left transition-all ${
-                          completionForm.scan_codes.includes(code)
-                            ? 'border-cyan-500 bg-cyan-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                        className={`p-2 rounded-lg border-2 text-center transition-all ${
+                          completionForm.scan_codes.includes(code) ? '' : 'border-gray-200'
                         }`}
-                      >
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="font-bold text-cyan-700">{code}</span>
-                          <span className="font-bold text-cyan-600">₹{info.amount}</span>
-                        </div>
-                        <p className="text-xs text-gray-600">{info.label}</p>
+                        style={completionForm.scan_codes.includes(code) ? { borderColor: COLORS.accent, background: COLORS.accentLight } : {}}>
+                        <span className="font-bold text-xs" style={{ color: COLORS.accent }}>{code}</span>
+                        <p className="text-xs text-gray-600">₹{info.amount}</p>
                       </button>
                     ))}
                   </div>
                 </div>
               )}
-
-              {/* Total Display */}
+              {/* Total */}
               {completionForm.fee_code && (
-                <div className="bg-emerald-50 rounded-xl p-4">
+                <div className="p-3 rounded-lg" style={{ background: COLORS.primaryLight }}>
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold text-emerald-800">Total Amount</span>
-                    <span className="text-2xl font-bold text-emerald-600">
+                    <span className="font-bold" style={{ color: COLORS.primary }}>Total</span>
+                    <span className="text-2xl font-bold" style={{ color: COLORS.accent }}>
                       ₹{(() => {
-                        const feeConfig = config?.fee_codes?.[completingAppointment.doctor]?.[completionForm.fee_code];
-                        let total = feeConfig?.amount || 0;
-                        completionForm.scan_codes.forEach(code => {
-                          const scan = config?.scan_fees?.[code];
-                          if (scan) total += scan.amount;
-                        });
+                        let total = config?.fee_codes?.[completingAppointment.doctor]?.[completionForm.fee_code]?.amount || 0;
+                        completionForm.scan_codes.forEach(code => { total += config?.scan_fees?.[code]?.amount || 0; });
                         return total.toLocaleString('en-IN');
                       })()}
                     </span>
@@ -1067,22 +836,11 @@ const DiaGynStaffPortal = () => {
                 </div>
               )}
             </div>
-            
-            <div className="p-4 border-t bg-gray-50 flex gap-2">
-              <Button 
-                variant="outline" 
-                className="flex-1 h-12"
-                onClick={() => setShowCompletionModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={completeWithFee}
-                disabled={loading || !completionForm.fee_code}
-                className="flex-1 h-12"
-                style={{ background: 'linear-gradient(135deg, #10B981 0%, #14B8A6 100%)' }}
-              >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <CheckCircle2 className="w-5 h-5 mr-2" />}
+            <div className="p-3 border-t bg-gray-50 flex gap-2">
+              <Button variant="outline" className="flex-1 h-10" onClick={() => setShowCompletionModal(false)}>Cancel</Button>
+              <Button onClick={completeWithFee} disabled={loading || !completionForm.fee_code}
+                className="flex-1 h-10" style={{ background: COLORS.accent }}>
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-1" />}
                 Complete
               </Button>
             </div>
@@ -1093,107 +851,74 @@ const DiaGynStaffPortal = () => {
   );
 };
 
-// ============ Appointment Card Component ============
+// ============ Appointment Card - Compact ============
 const AppointmentCard = ({ appointment, onCheckIn, onWithDoctor, onComplete, config }) => {
   const apt = appointment;
+  const status = STATUS_STYLES[apt.status] || STATUS_STYLES['Booked'];
+  const type = TYPE_STYLES[apt.appointment_type] || TYPE_STYLES['SCHEDULED'];
   
-  const getNextAction = () => {
+  const getAction = () => {
     switch (apt.status) {
-      case 'Booked':
-        return { label: 'CHECK IN', action: onCheckIn, color: '#F59E0B', icon: '→' };
-      case 'CheckedIn':
-        return { label: 'SEND TO DR', action: onWithDoctor, color: '#8B5CF6', icon: '→' };
-      case 'WithDoctor':
-        return { label: 'COMPLETE', action: onComplete, color: '#10B981', icon: '✓' };
-      default:
-        return null;
+      case 'Booked': return { label: 'CHECK IN', action: onCheckIn, color: '#f59e0b' };
+      case 'CheckedIn': return { label: 'WITH DR', action: onWithDoctor, color: '#8b5cf6' };
+      case 'WithDoctor': return { label: 'COMPLETE', action: onComplete, color: '#16a34a' };
+      default: return null;
     }
   };
   
-  const nextAction = getNextAction();
-  
-  // Get status display text and color for large status indicator
-  const getStatusDisplay = () => {
-    switch (apt.status) {
-      case 'Booked':
-        return { text: 'BOOKED', bg: 'bg-blue-500', textColor: 'text-white' };
-      case 'CheckedIn':
-        return { text: 'WAITING', bg: 'bg-amber-500', textColor: 'text-white' };
-      case 'WithDoctor':
-        return { text: 'WITH DR', bg: 'bg-purple-500', textColor: 'text-white' };
-      case 'Completed':
-        return { text: 'DONE', bg: 'bg-emerald-500', textColor: 'text-white' };
-      default:
-        return { text: apt.status, bg: 'bg-gray-400', textColor: 'text-white' };
-    }
-  };
-  
-  const statusDisplay = getStatusDisplay();
+  const action = getAction();
   
   return (
-    <div className="bg-white rounded-2xl shadow-md overflow-hidden border-l-[6px]"
-         style={{ borderLeftColor: apt.status === 'Completed' ? '#10B981' : apt.status === 'WithDoctor' ? '#8B5CF6' : apt.status === 'CheckedIn' ? '#F59E0B' : '#4F46E5' }}>
-      
-      {/* Top Section - Patient Info */}
-      <div className="p-4 pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center shadow-inner">
-              <User className="w-7 h-7 text-indigo-600" />
-            </div>
-            <div>
-              <h4 className="font-bold text-xl text-gray-900">{apt.patient_name}</h4>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-sm font-mono font-bold bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg">{apt.booking_id}</span>
-                {apt.patient_id && (
-                  <span className="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-1 rounded">{apt.patient_id}</span>
-                )}
-              </div>
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden border-l-4"
+         style={{ borderLeftColor: status.text }}>
+      <div className="p-3">
+        {/* Row 1: Name + Status */}
+        <div className="flex items-start justify-between mb-1">
+          <div>
+            <h4 className="font-bold text-base">{apt.patient_name}</h4>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-xs font-mono px-1.5 py-0.5 rounded" 
+                    style={{ background: COLORS.primaryLight, color: COLORS.primary }}>{apt.booking_id}</span>
+              {apt.patient_id && (
+                <span className="text-xs font-mono text-gray-500">{apt.patient_id}</span>
+              )}
             </div>
           </div>
-          <div className={`${statusDisplay.bg} ${statusDisplay.textColor} px-4 py-2 rounded-xl font-bold text-sm shadow-md`}>
-            {statusDisplay.text}
+          <span className="text-xs font-bold px-2 py-1 rounded" style={{ background: status.bg, color: status.text }}>
+            {status.label}
+          </span>
+        </div>
+        {/* Row 2: Info */}
+        <div className="flex items-center gap-3 text-xs text-gray-600 mt-2">
+          <span className="flex items-center gap-1">
+            <Clock className="w-3 h-3" /> {apt.time || '-'}
+          </span>
+          <span className="flex items-center gap-1">
+            <Stethoscope className="w-3 h-3" /> {apt.doctor?.replace('Dr. ', '')}
+          </span>
+          <span className="flex items-center gap-1">
+            <Building2 className="w-3 h-3" /> {apt.clinic?.replace(' Clinic', '')}
+          </span>
+        </div>
+        {/* Row 3: Type + Fee + Action */}
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium px-2 py-0.5 rounded" style={{ background: type.bg, color: type.text }}>
+              {apt.appointment_type === 'WALK_IN' ? 'Walk-In' : apt.appointment_type === 'EMERGENCY' ? 'Emergency' : 'Scheduled'}
+            </span>
+            {apt.total_amount > 0 && (
+              <span className="font-bold text-sm" style={{ color: COLORS.accent }}>₹{apt.total_amount}</span>
+            )}
           </div>
+          {action && (
+            <button onClick={() => { heavyTap(); action.action(); }}
+              className="px-4 py-2 rounded-lg text-white text-xs font-bold shadow transition-all active:scale-95"
+              style={{ background: action.color }}>
+              {action.label} <ChevronRight className="w-3 h-3 inline ml-1" />
+            </button>
+          )}
         </div>
       </div>
-      
-      {/* Info Row - Clear and Large */}
-      <div className="px-4 py-2 bg-gray-50 flex items-center gap-6 text-base">
-        <div className="flex items-center gap-2">
-          <Clock className="w-5 h-5 text-indigo-500" />
-          <span className="font-semibold">{apt.time || 'No time'}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Stethoscope className="w-5 h-5 text-purple-500" />
-          <span className="font-medium text-gray-700">{apt.doctor?.replace('Dr. ', '')}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-teal-500" />
-          <span className="font-medium text-gray-700">{apt.clinic?.replace(' Clinic', '')}</span>
-        </div>
-      </div>
-      
-      {/* Type Badge + Fee Display */}
-      <div className="px-4 py-2 flex items-center justify-between bg-gray-50 border-t border-gray-100">
-        <Badge className={`${TYPE_BADGES[apt.appointment_type] || 'bg-gray-100'} text-sm px-3 py-1`}>
-          {apt.appointment_type === 'WALK_IN' ? '🚶 Walk-In' : apt.appointment_type === 'EMERGENCY' ? '🚨 Emergency' : '📅 Scheduled'}
-        </Badge>
-        {apt.total_amount > 0 && (
-          <span className="font-bold text-lg text-emerald-600">₹{apt.total_amount}</span>
-        )}
-      </div>
-      
-      {/* Large Action Button - Easy to Tap */}
-      {nextAction && (
-        <button
-          onClick={() => { heavyTap(); nextAction.action(); }}
-          className="w-full py-5 px-6 text-white font-bold text-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
-          style={{ background: nextAction.color }}
-        >
-          {nextAction.label}
-          <ChevronRight className="w-6 h-6" />
-        </button>
-      )}
     </div>
   );
 };
