@@ -24,7 +24,7 @@ const HealthServicesCards = () => {
       name: 'Adult Vaccines',
       description: 'Stay protected',
       icon: Shield,
-      path: '/proton?category=vaccines',
+      path: '/mango?category=vaccines',
       gradient: 'from-purple-500 to-violet-500',
       bgGradient: 'from-purple-50 to-violet-50'
     },

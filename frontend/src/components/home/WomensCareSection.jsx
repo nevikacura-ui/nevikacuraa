@@ -26,7 +26,7 @@ const WomensCareSection = () => {
       id: 'pregnancy-tests',
       name: 'Pregnancy Tests',
       image: 'https://images.unsplash.com/photo-1493894473891-10fc1e5dbd22?w=200&h=200&fit=crop',
-      path: '/proton?category=pregnancy'
+      path: '/mango?category=pregnancy'
     },
     {
       id: 'pregnancy-packages',
@@ -38,7 +38,7 @@ const WomensCareSection = () => {
       id: 'ultrasound',
       name: 'Pregnancy Ultrasound',
       image: 'https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?w=200&h=200&fit=crop',
-      path: '/proton?category=sonography'
+      path: '/mango?category=sonography'
     },
     {
       id: 'postpartum',

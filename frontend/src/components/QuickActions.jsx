@@ -34,7 +34,7 @@ const QuickActions = ({ className = '' }) => {
       id: 'sonography',
       label: 'Sonography',
       icon: ScanLine,
-      path: '/proton?section=sonography',
+      path: '/mango?section=sonography',
       gradient: 'from-purple-500 to-violet-500',
       shadowColor: 'shadow-purple-500/30'
     },
@@ -42,7 +42,7 @@ const QuickActions = ({ className = '' }) => {
       id: 'ecg',
       label: 'Book ECG',
       icon: HeartPulse,
-      path: '/proton?section=ecg',
+      path: '/mango?section=ecg',
       gradient: 'from-pink-500 to-rose-500',
       shadowColor: 'shadow-pink-500/30'
     },

@@ -22,7 +22,7 @@ const HealthConcernsGrid = () => {
       id: 'heart-care',
       name: 'Heart Care',
       icon: '❤️',
-      path: '/proton?category=cardiac',
+      path: '/mango?category=cardiac',
       color: 'from-red-500 to-rose-600',
       bgColor: 'bg-red-50'
     },
@@ -38,7 +38,7 @@ const HealthConcernsGrid = () => {
       id: 'liver-care',
       name: 'Liver Care',
       icon: '🫀',
-      path: '/proton?category=liver',
+      path: '/mango?category=liver',
       color: 'from-emerald-500 to-green-600',
       bgColor: 'bg-emerald-50'
     },
@@ -54,7 +54,7 @@ const HealthConcernsGrid = () => {
       id: 'kidney-care',
       name: 'Kidney Care',
       icon: '🫘',
-      path: '/proton?category=kidney',
+      path: '/mango?category=kidney',
       color: 'from-purple-500 to-violet-600',
       bgColor: 'bg-purple-50'
     },
