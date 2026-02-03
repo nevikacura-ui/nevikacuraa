@@ -3219,6 +3219,87 @@ const Pharmacy = () => {
         </DialogContent>
       </Dialog>
       
+      {/* Wishlist Dialog */}
+      {showWishlist && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowWishlist(false)}>
+          <div 
+            className="bg-white rounded-3xl max-w-md w-full max-h-[80vh] overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-rose-500 to-pink-500 p-5 text-white relative">
+              <button 
+                onClick={() => setShowWishlist(false)}
+                className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <div className="flex items-center gap-3">
+                <Heart className="w-6 h-6 fill-white" />
+                <h2 className="text-xl font-bold">My Wishlist</h2>
+              </div>
+              <p className="text-white/80 text-sm mt-1">{wishlist.length} saved medicines</p>
+            </div>
+            
+            {/* Wishlist Items */}
+            <div className="max-h-[50vh] overflow-y-auto p-4">
+              {wishlist.length === 0 ? (
+                <div className="text-center py-10">
+                  <Heart className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <p className="text-slate-500">No medicines saved yet</p>
+                  <p className="text-xs text-slate-400 mt-1">Tap the heart icon on any medicine to save it</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {wishlist.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                      <div className="flex-1">
+                        <p className="font-medium text-slate-800 text-sm">{item.name}</p>
+                        <p className="text-xs text-slate-500">{item.form}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-orange-600 font-bold">₹{item.price}</span>
+                        <button
+                          onClick={() => {
+                            addMedicine({ name: item.name, form: item.form, price: item.price });
+                            setShowWishlist(false);
+                          }}
+                          className="px-3 py-1.5 bg-orange-500 text-white text-xs font-bold rounded-lg hover:bg-orange-600"
+                        >
+                          Add
+                        </button>
+                        <button
+                          onClick={() => toggleWishlist(item)}
+                          className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            {/* Footer */}
+            {wishlist.length > 0 && (
+              <div className="p-4 border-t border-slate-200">
+                <Button
+                  onClick={() => {
+                    wishlist.forEach(item => addMedicine({ name: item.name, form: item.form, price: item.price }));
+                    setShowWishlist(false);
+                    toast.success('All wishlist items added to cart!');
+                  }}
+                  className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold py-3 rounded-xl"
+                >
+                  Add All to Cart ({wishlist.length} items)
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      
       {/* Bottom Navigation */}
       <BottomNav />
 
