@@ -2483,29 +2483,31 @@ const Proton = () => {
             {/* Payment Method */}
             <Card className="p-5 rounded-2xl border-slate-200">
               <Label className="flex items-center gap-2 mb-3 font-medium text-[#1E293B]">
-                <CreditCard className="w-4 h-4 text-[#5FA8D3]" />
+                <CreditCard className="w-4 h-4 text-orange-500" />
                 Payment Method
               </Label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setPaymentMethod('cod')}
                   className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
-                    paymentMethod === 'cod' ? 'border-[#5FA8D3] bg-[#5FA8D3]/10' : 'border-slate-200 hover:border-[#5FA8D3]/30'
+                    paymentMethod === 'cod' ? 'border-orange-500 bg-orange-50' : 'border-slate-200 hover:border-orange-300'
                   }`}
                   data-testid="payment-cod"
                 >
-                  <Banknote className="w-6 h-6 text-[#5FA8D3]" />
+                  <Banknote className="w-6 h-6 text-orange-500" />
                   <span className="text-sm font-medium text-[#1E293B]">Cash on Visit</span>
+                  <span className="text-xs text-slate-500">Pay when we collect</span>
                 </button>
                 <button
-                  onClick={() => setPaymentMethod('card')}
+                  onClick={() => setPaymentMethod('cashfree')}
                   className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
-                    paymentMethod === 'card' ? 'border-[#5FA8D3] bg-[#5FA8D3]/10' : 'border-slate-200 hover:border-[#5FA8D3]/30'
+                    paymentMethod === 'cashfree' ? 'border-orange-500 bg-orange-50' : 'border-slate-200 hover:border-orange-300'
                   }`}
-                  data-testid="payment-card"
+                  data-testid="payment-cashfree"
                 >
-                  <CreditCard className="w-6 h-6 text-[#5FA8D3]" />
-                  <span className="text-sm font-medium text-[#1E293B]">QR / Card on Visit</span>
+                  <CreditCard className="w-6 h-6 text-orange-500" />
+                  <span className="text-sm font-medium text-[#1E293B]">Pay Online</span>
+                  <span className="text-xs text-green-600 font-medium">5% Extra Off</span>
                 </button>
               </div>
             </Card>
