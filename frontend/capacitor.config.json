@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://healthrefresh.preview.emergentagent.com",
+    "url": "https://mangobrand.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {
