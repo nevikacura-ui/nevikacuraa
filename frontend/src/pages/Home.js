@@ -608,13 +608,13 @@ const Home = () => {
               <button
                 onClick={() => navigate('/mango')}
                 className={`flex-shrink-0 px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
-                  activeService === 'proton' 
+                  activeService === 'mango' 
                     ? 'bg-white text-orange-600 shadow-lg'
                     : (currentTheme.isLight ? 'bg-white border border-slate-200 text-slate-700 hover:border-orange-300' : 'bg-white/20 text-white hover:bg-white/30')
                 }`}
                 data-testid="nav-mango"
               >
-                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'proton' ? 'from-orange-500 to-amber-500' : 'from-orange-400 to-amber-500'} flex items-center justify-center`}>
+                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'mango' ? 'from-orange-500 to-amber-500' : 'from-orange-400 to-amber-500'} flex items-center justify-center`}>
                   <FlaskConical className="w-4 h-4 text-white" />
                 </div>
                 <span className="font-semibold text-sm whitespace-nowrap">Mango</span>
