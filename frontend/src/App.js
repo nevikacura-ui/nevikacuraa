@@ -133,7 +133,7 @@ function AppContent() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-panel" element={<AdminPanel />} />
-          <Route path="/staff" element={<StaffPortal />} />
+          <Route path="/staff" element={<DiaGynStaffPortal />} />
           <Route path="/diagyn-staff" element={<DiaGynStaffPortal />} />
           <Route path="/doctor-portal" element={<DoctorPortal />} />
           <Route path="/track" element={<AnimatedPage><TrackOrder /></AnimatedPage>} />
