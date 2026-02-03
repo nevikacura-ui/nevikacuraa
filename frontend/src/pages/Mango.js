@@ -284,10 +284,33 @@ const TestCheckbox = ({ test, checked, onToggle }) => (
 const Proton = () => {
   // Mango Health Labs - Diagnostic Center
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   
-  const [currentStep, setCurrentStep] = useState(0);
+  // Get initial step from URL or default to 0
+  const getInitialStep = () => {
+    const stepParam = searchParams.get('step');
+    if (stepParam) {
+      const parsed = parseInt(stepParam, 10);
+      if (!isNaN(parsed) && parsed >= 0 && parsed <= 3) return parsed;
+    }
+    return 0;
+  };
+  
+  const [currentStep, setCurrentStepInternal] = useState(getInitialStep);
+  
+  // Custom setCurrentStep that also updates URL
+  const setCurrentStep = (step) => {
+    setCurrentStepInternal(step);
+    const newParams = new URLSearchParams(searchParams);
+    if (step === 0) {
+      newParams.delete('step');
+    } else {
+      newParams.set('step', step.toString());
+    }
+    setSearchParams(newParams, { replace: true });
+  };
+  
   const [selectedTests, setSelectedTests] = useState([]);
   const [customTest, setCustomTest] = useState('');
   const [testSearchTerm, setTestSearchTerm] = useState('');
