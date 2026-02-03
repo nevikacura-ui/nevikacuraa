@@ -748,6 +748,7 @@ const DiaGynStaffPortal = () => {
                     onCheckIn={() => updateStatus(apt.id, 'CheckedIn')}
                     onWithDoctor={() => updateStatus(apt.id, 'WithDoctor')}
                     onReprint={reprintToken}
+                    onPrintBill={printBill}
                     printerConnected={printerConnected} />
                 ))}
               </div>
