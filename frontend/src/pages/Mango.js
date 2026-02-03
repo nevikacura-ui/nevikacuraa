@@ -2507,10 +2507,21 @@ const Proton = () => {
               </div>
             </Card>
 
-            <Button variant="outline" onClick={goToStep1} className="w-full rounded-full border-slate-200" data-testid="back-to-tests">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Tests
-            </Button>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={goToStep1} className="flex-1 rounded-full border-slate-200" data-testid="back-to-tests">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Tests
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={saveCartForLater} 
+                className="flex-1 rounded-full border-amber-300 text-amber-600 hover:bg-amber-50" 
+                data-testid="save-for-later-btn"
+              >
+                <Bookmark className="w-4 h-4 mr-2" />
+                Save for Later
+              </Button>
+            </div>
           </div>
         )}
 
