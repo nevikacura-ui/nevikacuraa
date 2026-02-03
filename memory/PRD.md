@@ -25,6 +25,25 @@ Complete healthcare platform with three main services:
 
 ### Dec 2025 - Feb 2026
 
+#### File Renaming (Feb 3, 2026)
+- ✅ Renamed `/app/frontend/src/pages/Proton.js` → `Mango.js`
+- ✅ Updated imports in App.js
+
+#### "Browse All Tests" State Persistence (Feb 3, 2026)
+- ✅ URL-based state management using `?step=` parameter
+- ✅ Direct link support: `/mango?step=1` opens test selection
+- ✅ Page reload preserves current view
+- ✅ Browser navigation (back/forward) works correctly
+
+#### WhatsApp Notifications via MSG91 (Feb 3, 2026)
+- ✅ Enabled WhatsApp for all booking confirmations
+- ✅ Lab test booking → `proton_lab_confirm` template
+- ✅ Appointment booking → `diagyn_appointment_confirm` template
+- ✅ Report ready → `proton_report_ready` template
+- ✅ Pharmacy orders → `orange_pharmacy_confirm` template
+- ❌ SMS DISABLED (all via WhatsApp)
+- ❌ OTP remains disabled (bookings work without verification)
+
 #### Service Pages
 - ✅ DiaGyn page at `/diagyn` - Dark Blinkit blue theme (#0c1e3c)
 - ✅ Mango Health Labs at `/mango` - Dark green theme (#102926) with orange accents
