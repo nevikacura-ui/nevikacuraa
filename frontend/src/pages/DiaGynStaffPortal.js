@@ -413,6 +413,10 @@ const DiaGynStaffPortal = () => {
       tomorrow.setDate(tomorrow.getDate() + 1);
       setBookingDate(tomorrow.toISOString().split('T')[0]);
     }
+    if (view === 'walkin' && !currentSession) {
+      // Auto-select Emergency if no active session
+      setIsEmergency(true);
+    }
   };
 
   // Get doctors available at current clinic
