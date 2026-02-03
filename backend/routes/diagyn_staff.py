@@ -660,6 +660,7 @@ async def update_appointment_status(
     
     if data.status == "Completed":
         update_data["completed_at"] = datetime.now(timezone.utc).isoformat()
+        update_data["completed_by"] = staff.get("name", "Doctor")
         if data.fee_code:
             update_data["fee_code"] = data.fee_code
         if data.scan_codes:
@@ -668,6 +669,8 @@ async def update_appointment_status(
             update_data["total_amount"] = data.total_amount
         if data.notes:
             update_data["completion_notes"] = data.notes
+        if data.follow_up_date:
+            update_data["follow_up_date"] = data.follow_up_date
     
     await db.appointments.update_one(
         {"id": appointment_id},
