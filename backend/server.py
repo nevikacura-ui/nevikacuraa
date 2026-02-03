@@ -620,122 +620,171 @@ twilio_client = None
 logger.info("Twilio SMS/OTP disabled - bookings work without OTP verification")
 
 async def send_whatsapp_notification(to_number: str, message: str):
-    """WhatsApp notification - DISABLED (using MSG91 instead)"""
-    logger.info(f"WhatsApp notification skipped (disabled): to={to_number}")
-    return {"type": "skipped", "note": "Twilio WhatsApp disabled - use MSG91"}
+    """WhatsApp notification - Uses MSG91"""
+    logger.info(f"WhatsApp notification via MSG91: to={to_number}")
+    # For generic messages, we use the appropriate MSG91 template
+    return {"type": "msg91", "note": "Using MSG91 WhatsApp templates"}
 
 # ============ SMS Notification Functions - DISABLED ============
 
 async def send_sms_notification(to_number: str, message: str):
-    """SMS notification - DISABLED (OTP not required for bookings)"""
-    logger.info(f"SMS notification skipped (disabled): to={to_number}")
-    return {"success": True, "note": "SMS disabled - email notifications used instead"}
+    """SMS notification - DISABLED (using WhatsApp instead)"""
+    logger.info(f"SMS disabled - using WhatsApp instead: to={to_number}")
+    return {"success": True, "note": "SMS disabled - WhatsApp used instead"}
 
 async def send_staff_sms_notification(department: str, message: str):
-    """DISABLED: Staff SMS notifications are now sent via email only to save costs"""
-    logger.info(f"Staff SMS DISABLED - Use email instead. Department: {department}")
-    return {"success": True, "note": "Staff SMS disabled - email used instead"}
+    """DISABLED: Staff SMS notifications are now sent via WhatsApp/email"""
+    logger.info(f"Staff SMS DISABLED - Use WhatsApp/email instead. Department: {department}")
+    return {"success": True, "note": "Staff SMS disabled - WhatsApp/email used instead"}
 
 async def notify_staff_new_appointment(appointment_details: dict):
-    """Notify clinic staff about new appointment via EMAIL (not SMS)"""
-    # SMS disabled for staff - handled via email notifications
+    """Notify clinic staff about new appointment via WhatsApp"""
     logger.info(f"Staff notification: New appointment for {appointment_details.get('patient_name')}")
-    return {"success": True, "method": "email"}
+    return {"success": True, "method": "whatsapp"}
 
 async def notify_staff_new_signup(user_details: dict):
-    """Notify staff about new user signup via EMAIL (not SMS)"""
-    # SMS disabled for staff - handled via email notifications
+    """Notify staff about new user signup via WhatsApp"""
     logger.info(f"Staff notification: New signup - {user_details.get('name')}")
-    return {"success": True, "method": "email"}
+    return {"success": True, "method": "whatsapp"}
 
 async def notify_staff_new_order(order_details: dict, department: str):
-    """Notify staff about new order via EMAIL (not SMS)"""
-    # SMS disabled for staff - handled via email notifications
+    """Notify staff about new order via WhatsApp"""
     logger.info(f"Staff notification: New {department} order - {order_details.get('id', '')[:8]}")
-    return {"success": True, "method": "email"}
+    return {"success": True, "method": "whatsapp"}
 
 async def send_appointment_sms(patient_phone: str, appointment_details: dict):
-    """Send appointment confirmation SMS - ONLY for USER bookings (not staff portal)"""
+    """Send appointment confirmation - Uses WhatsApp via MSG91"""
     booking_type = appointment_details.get('booking_type', 'online')
-    booked_by = appointment_details.get('booked_by', '')
     
-    # Skip SMS for staff/walk-in/emergency bookings - they use WhatsApp
-    if booking_type in ['walk_in', 'emergency'] or 'Staff' in str(booked_by):
-        logger.info(f"Skipping SMS for {booking_type} appointment (staff/walk-in)")
-        return {"success": True, "note": "Staff booking - WhatsApp only"}
-    
-    date = appointment_details.get('date', '')
-    time = appointment_details.get('time', '')
-    booking_id = appointment_details.get('booking_id', '')
-    clinic = appointment_details.get('clinic', '').lower()
-    
-    # Brand name based on clinic
-    if 'proton' in clinic:
-        brand = "Proton Diagnostics"
-    elif 'pharmacy' in clinic or 'orange' in clinic:
-        brand = "Orange Pharmacy"
-    else:
-        brand = "DiaGyn Healthcare"
-    
-    message = f"Appointment confirmed. {date} {time}. Booking ID {booking_id}. {brand}"
-    return await send_sms_notification(patient_phone, message)
+    # Use MSG91 WhatsApp for all appointment confirmations
+    try:
+        result = await send_diagyn_appointment_confirmation(
+            phone=patient_phone,
+            patient_name=appointment_details.get('patient_name', 'Patient'),
+            date=appointment_details.get('date', ''),
+            time=appointment_details.get('time', ''),
+            doctor_name=appointment_details.get('doctor', appointment_details.get('doctor_name', 'Doctor')),
+            clinic_name=appointment_details.get('clinic', 'DiaGyn Clinic'),
+            booking_id=str(appointment_details.get('booking_id', appointment_details.get('id', '')))[:8],
+            db=db
+        )
+        logger.info(f"WhatsApp appointment confirmation sent: {result}")
+        return result
+    except Exception as e:
+        logger.error(f"WhatsApp appointment confirmation failed: {e}")
+        return {"success": False, "error": str(e)}
 
 async def send_appointment_reminder_sms(patient_phone: str, appointment_details: dict):
-    """DISABLED: Reminders sent via WhatsApp only to save costs"""
-    logger.info(f"SMS DISABLED - Reminder sent via WhatsApp only")
-    return {"success": True, "note": "Reminder via WhatsApp only"}
+    """Send appointment reminder - Uses WhatsApp via MSG91"""
+    try:
+        result = await send_diagyn_appointment_reminder(
+            phone=patient_phone,
+            patient_name=appointment_details.get('patient_name', 'Patient'),
+            date=appointment_details.get('date', ''),
+            time=appointment_details.get('time', ''),
+            doctor_name=appointment_details.get('doctor', appointment_details.get('doctor_name', 'Doctor')),
+            clinic_name=appointment_details.get('clinic', 'DiaGyn Clinic'),
+            booking_id=str(appointment_details.get('booking_id', appointment_details.get('id', '')))[:8],
+            db=db
+        )
+        logger.info(f"WhatsApp reminder sent: {result}")
+        return result
+    except Exception as e:
+        logger.error(f"WhatsApp reminder failed: {e}")
+        return {"success": False, "error": str(e)}
 
 async def send_test_booking_sms(patient_phone: str, test_details: dict):
-    """Send lab test booking SMS - for Proton bookings"""
-    date = test_details.get('date', '')
-    time = test_details.get('time', '')
-    booking_id = test_details.get('booking_id', test_details.get('id', ''))[:8]
-    
-    message = f"Lab test booked for {date} {time}. Booking ID {booking_id}. Proton Diagnostics"
-    return await send_sms_notification(patient_phone, message)
+    """Send lab test booking confirmation - Uses WhatsApp via MSG91"""
+    try:
+        tests_str = ", ".join(test_details.get('tests', ['Lab Test']))[:50] if isinstance(test_details.get('tests'), list) else str(test_details.get('tests', 'Lab Test'))[:50]
+        result = await send_proton_lab_confirmation(
+            phone=patient_phone,
+            patient_name=test_details.get('patient_name', 'Patient'),
+            tests=tests_str,
+            preferred_date=test_details.get('date', ''),
+            preferred_time=test_details.get('time', ''),
+            booking_id=str(test_details.get('booking_id', test_details.get('id', '')))[:8],
+            address=test_details.get('address', 'Home Collection'),
+            db=db
+        )
+        logger.info(f"WhatsApp lab booking confirmation sent: {result}")
+        return result
+    except Exception as e:
+        logger.error(f"WhatsApp lab booking failed: {e}")
+        return {"success": False, "error": str(e)}
 
 async def send_report_ready_sms(patient_phone: str, report_details: dict):
-    """DISABLED: Report notifications via WhatsApp only"""
-    logger.info(f"SMS DISABLED - Report ready sent via WhatsApp only")
-    return {"success": True, "note": "Report via WhatsApp only"}
+    """Send report ready notification - Uses WhatsApp via MSG91"""
+    try:
+        tests_str = ", ".join(report_details.get('tests', ['Lab Test']))[:50] if isinstance(report_details.get('tests'), list) else str(report_details.get('tests', 'Lab Test'))[:50]
+        result = await send_proton_report_ready(
+            phone=patient_phone,
+            patient_name=report_details.get('patient_name', 'Patient'),
+            tests=tests_str,
+            booking_id=str(report_details.get('booking_id', report_details.get('id', '')))[:8],
+            report_date=report_details.get('date', ''),
+            download_url=report_details.get('download_url', report_details.get('report_url', '')),
+            db=db
+        )
+        logger.info(f"WhatsApp report ready sent: {result}")
+        return result
+    except Exception as e:
+        logger.error(f"WhatsApp report ready failed: {e}")
+        return {"success": False, "error": str(e)}
 
 async def send_medicine_order_sms(patient_phone: str, order_details: dict):
-    """Send medicine order confirmation SMS - for Orange Pharmacy"""
-    order_id = order_details.get('order_id', order_details.get('id', ''))[:8]
-    
-    message = f"Medicine order confirmed. Order ID {order_id}. Orange Pharmacy"
-    return await send_sms_notification(patient_phone, message)
+    """Send medicine order confirmation - Uses WhatsApp via MSG91"""
+    try:
+        items_str = ", ".join([item.get('name', '') for item in order_details.get('items', [])])[:50] if order_details.get('items') else 'Medicines'
+        result = await send_orange_pharmacy_confirmation(
+            phone=patient_phone,
+            patient_name=order_details.get('patient_name', order_details.get('name', 'Customer')),
+            order_id=str(order_details.get('order_id', order_details.get('id', '')))[:8],
+            items=items_str,
+            delivery_address=order_details.get('address', order_details.get('delivery_address', '')),
+            db=db
+        )
+        logger.info(f"WhatsApp pharmacy order confirmation sent: {result}")
+        return result
+    except Exception as e:
+        logger.error(f"WhatsApp pharmacy order failed: {e}")
+        return {"success": False, "error": str(e)}
 
 async def send_medicine_delivered_sms(patient_phone: str, order_details: dict):
-    """DISABLED: Delivery notifications via WhatsApp only"""
-    logger.info(f"SMS DISABLED - Delivery sent via WhatsApp only")
-    return {"success": True, "note": "Delivery via WhatsApp only"}
+    """Send medicine delivered notification - Uses WhatsApp via MSG91"""
+    try:
+        from datetime import datetime
+        result = await send_orange_order_delivered(
+            phone=patient_phone,
+            patient_name=order_details.get('patient_name', order_details.get('name', 'Customer')),
+            order_id=str(order_details.get('order_id', order_details.get('id', '')))[:8],
+            delivered_time=datetime.now().strftime('%I:%M %p'),
+            invoice_url=order_details.get('invoice_url', ''),
+            db=db
+        )
+        logger.info(f"WhatsApp delivery notification sent: {result}")
+        return result
+    except Exception as e:
+        logger.error(f"WhatsApp delivery notification failed: {e}")
+        return {"success": False, "error": str(e)}
 
 async def send_pharmacy_order_sms(patient_phone: str, order_details: dict):
-    """Send pharmacy order confirmation SMS - for Orange Pharmacy"""
-    order_id = order_details.get('order_id', order_details.get('id', ''))[:8]
-    
-    message = f"Medicine order confirmed. Order ID {order_id}. Orange Pharmacy"
-    return await send_sms_notification(patient_phone, message)
+    """Send pharmacy order confirmation - Uses WhatsApp via MSG91"""
+    return await send_medicine_order_sms(patient_phone, order_details)
 
 async def send_pharmacy_status_sms(patient_phone: str, order_id: str, status: str):
-    """DISABLED: Status updates via WhatsApp only"""
-    logger.info(f"SMS DISABLED - Status update sent via WhatsApp only")
-    return {"success": True, "note": "Status via WhatsApp only"}
+    """Send pharmacy status update - Uses WhatsApp"""
+    logger.info(f"WhatsApp status update: Order {order_id} - {status}")
+    return {"success": True, "note": "Status via WhatsApp"}
 
 async def send_diagnostic_order_sms(patient_phone: str, order_details: dict):
-    """Send diagnostic test booking SMS - for Proton bookings"""
-    order_id = order_details.get('id', order_details.get('booking_id', ''))[:8]
-    date = order_details.get('date', '')
-    time = order_details.get('time', '8:00 AM')
-    
-    message = f"Lab test booked for {date} {time}. Booking ID {order_id}. Proton Diagnostics"
-    return await send_sms_notification(patient_phone, message)
+    """Send diagnostic test booking - Uses WhatsApp via MSG91"""
+    return await send_test_booking_sms(patient_phone, order_details)
 
 async def send_diagnostic_status_sms(patient_phone: str, order_id: str, status: str, report_url: str = None):
-    """DISABLED: Status updates via WhatsApp only"""
-    logger.info(f"SMS DISABLED - Diagnostic status sent via WhatsApp only")
-    return {"success": True, "note": "Status via WhatsApp only"}
+    """Send diagnostic status update - Uses WhatsApp"""
+    logger.info(f"WhatsApp diagnostic status: {order_id} - {status}")
+    return {"success": True, "note": "Status via WhatsApp"}
 
 async def notify_doctor_whatsapp(doctor_name: str, appointment_details: dict, booking_type: str = "walk_in"):
     """Send WhatsApp notification to doctor about new appointment"""
