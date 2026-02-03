@@ -183,11 +183,28 @@ class ThermalPrinter {
       await this.printText('================================', { center: true });
       await this.feed(1);
       
-      // Token number (LARGE)
-      await this.printText('Token #', { center: true });
+      // Token number (LARGEST - double size)
+      await this.printText('TOKEN', { center: true, bold: true });
       await this.printText(String(tokenData.token_number || '0'), { center: true, bold: true, doubleSize: true });
       
+      // Booking ID (smaller, below token)
+      if (tokenData.booking_id) {
+        await this.printText(tokenData.booking_id, { center: true });
+      }
+      
       await this.feed(1);
+      
+      // Appointment Type (Walk-in / Emergency / Scheduled)
+      let appointmentType = 'SCHEDULED';
+      if (tokenData.appointment_type === 'WALK_IN') {
+        appointmentType = 'WALK-IN';
+      } else if (tokenData.appointment_type === 'EMERGENCY') {
+        appointmentType = 'EMERGENCY';
+      } else if (tokenData.slot_time === 'Emergency' || !tokenData.slot_time) {
+        appointmentType = 'EMERGENCY';
+      }
+      await this.printText('[ ' + appointmentType + ' ]', { center: true, bold: true });
+      
       await this.printLine('-');
       
       // Patient name
@@ -204,11 +221,6 @@ class ThermalPrinter {
         year: 'numeric'
       }) : new Date().toLocaleDateString('en-IN');
       await this.printText('Date: ' + dateStr);
-      
-      // Booking ID
-      if (tokenData.booking_id) {
-        await this.printText('Ref: ' + tokenData.booking_id);
-      }
       
       await this.printLine('-');
       
