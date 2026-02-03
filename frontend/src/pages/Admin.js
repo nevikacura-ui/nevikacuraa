@@ -187,7 +187,7 @@ const Admin = () => {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [isAuthenticated, activeTab]);
 
-  // Fetch data when authenticated - with auto-refresh every 30 seconds
+  // Fetch data when authenticated - with auto-refresh every 10 seconds for real-time updates
   useEffect(() => {
     if (isAuthenticated) {
       // Initial fetch
@@ -196,9 +196,8 @@ const Admin = () => {
       fetchDiagnosticTests();
       fetchRecentOrders();
       
-      // Auto-refresh every 30 seconds to prevent stale data
+      // Auto-refresh every 10 seconds for real-time updates (industry standard)
       const refreshInterval = setInterval(() => {
-        console.log('Auto-refreshing admin data...');
         fetchStats();
         fetchRecentOrders();
         // Refresh tab-specific data
@@ -210,7 +209,7 @@ const Admin = () => {
         } else if (activeTab === 'analytics') {
           fetchAnalytics();
         }
-      }, 30000); // 30 seconds
+      }, 10000); // 10 seconds
       
       return () => clearInterval(refreshInterval);
     }

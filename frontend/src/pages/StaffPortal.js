@@ -459,11 +459,10 @@ const StaffPortal = () => {
     if (isAuthenticated && staffInfo) {
       loadData();
       
-      // Auto-refresh every 30 seconds to prevent stale/blank data
+      // Auto-refresh every 10 seconds for real-time updates (industry standard)
       const refreshInterval = setInterval(() => {
-        console.log('Auto-refreshing staff portal data...');
         loadData();
-      }, 30000); // 30 seconds
+      }, 10000); // 10 seconds
       
       return () => clearInterval(refreshInterval);
     }
