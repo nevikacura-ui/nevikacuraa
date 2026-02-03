@@ -313,13 +313,65 @@ const MedicineImageUpload = () => {
           </Card>
         </div>
 
+        {/* Quick Add Mode Banner */}
+        {quickAddMode && (
+          <Card className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 shadow-lg">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold">{quickAddIndex + 1}</span>
+                  </div>
+                  <div>
+                    <p className="font-bold text-lg">⚡ Quick Add Mode Active</p>
+                    <p className="text-white/90 text-sm">
+                      Medicine {quickAddIndex + 1} of {quickAddQueue.length} • 
+                      <span className="font-semibold ml-1">{quickAddCount} saved this session</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => openGoogleImageSearch(singleMedicine.name)}
+                    className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-1" />
+                    Search Google
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      setQuickAddMode(false);
+                      toast.info(`Quick Add stopped. ${quickAddCount} medicines saved.`);
+                    }}
+                    className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                  >
+                    <X className="w-4 h-4 mr-1" />
+                    Stop
+                  </Button>
+                </div>
+              </div>
+              {/* Progress Bar */}
+              <div className="mt-3 bg-white/20 rounded-full h-2 overflow-hidden">
+                <div 
+                  className="h-full bg-white transition-all duration-300"
+                  style={{ width: `${((quickAddIndex) / quickAddQueue.length) * 100}%` }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="grid md:grid-cols-2 gap-6">
           {/* Single Upload */}
-          <Card>
+          <Card className={quickAddMode ? 'ring-2 ring-amber-500 shadow-lg' : ''}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Image className="w-5 h-5 text-blue-500" />
-                Single Medicine Upload
+                {quickAddMode ? `Quick Add: ${singleMedicine.name}` : 'Single Medicine Upload'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -328,6 +380,7 @@ const MedicineImageUpload = () => {
                 <Input 
                   placeholder="e.g., PARACETAMOL 500MG or search below"
                   value={singleMedicine.name}
+                  disabled={quickAddMode}
                   onChange={(e) => setSingleMedicine({...singleMedicine, name: e.target.value.toUpperCase()})}
                   className="font-medium"
                 />
