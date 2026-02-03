@@ -64,6 +64,7 @@ const StaffPortal = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState(null);
   
   // Active clinic for multi-clinic staff (staff_diagyn)
   const [activeClinic, setActiveClinic] = useState('Pushpa Clinic');
