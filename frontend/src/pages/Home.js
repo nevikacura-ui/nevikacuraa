@@ -386,7 +386,7 @@ const Home = () => {
       id: 'mango',
       name: 'Mango Health Labs',
       description: 'Book lab tests & health checkups',
-      logo: 'https://customer-assets.emergentagent.com/job_orange-mango/artifacts/3n17yxpx_mango-logo.png',
+      logo: '/mango-logo.png',
       path: '/mango',
       bgColor: '#ffffff',
       isDark: false,

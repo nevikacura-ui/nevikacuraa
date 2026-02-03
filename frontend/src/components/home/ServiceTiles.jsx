@@ -24,7 +24,7 @@ const ServiceTiles = () => {
       name: 'Mango Health Labs',
       subtitle: 'Lab Tests & Packages',
       path: '/mango',
-      image: 'https://customer-assets.emergentagent.com/job_orange-mango/artifacts/3n17yxpx_mango-logo.png',
+      image: '/mango-logo.png',
       gradient: 'from-orange-100 to-amber-50',
       borderColor: 'border-orange-200'
     },
