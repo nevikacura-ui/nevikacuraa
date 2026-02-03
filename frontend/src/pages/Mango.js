@@ -1030,7 +1030,7 @@ const Proton = () => {
                     <img 
                       src="/mango-logo.png" 
                       alt="Mango Health Labs" 
-                      className="w-12 h-12 rounded-xl shadow-lg bg-white p-1"
+                      className="w-20 h-10 rounded-xl shadow-lg bg-white p-1 object-contain"
                     />
                     <div>
                       <h2 className="text-lg font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>Mango Health Labs</h2>
