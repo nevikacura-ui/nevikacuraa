@@ -280,7 +280,7 @@ class AppointmentBook(BaseModel):
     clinic: str
     doctor: str
     date: str
-    time: str
+    time: Optional[str] = None  # Optional for Emergency bookings
     patient_name: str
     patient_mobile: str
     patient_id: Optional[str] = None
