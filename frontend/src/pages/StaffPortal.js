@@ -458,8 +458,29 @@ const StaffPortal = () => {
   useEffect(() => {
     if (isAuthenticated && staffInfo) {
       loadData();
+      
+      // Auto-refresh every 30 seconds to prevent stale/blank data
+      const refreshInterval = setInterval(() => {
+        console.log('Auto-refreshing staff portal data...');
+        loadData();
+      }, 30000); // 30 seconds
+      
+      return () => clearInterval(refreshInterval);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, staffInfo]);
+
+  // Refresh data when user returns to the tab (prevents blank screen issue)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isAuthenticated && staffInfo) {
+        console.log('Staff portal tab became visible - refreshing data...');
+        loadData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [isAuthenticated, staffInfo]);
 
   // Reload appointments when date, clinic, or activeClinic changes
