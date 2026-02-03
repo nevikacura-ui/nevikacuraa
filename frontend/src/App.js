@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import Home from '@/pages/Home';
 import DiaGyn from '@/pages/DiaGyn';
-import Proton from '@/pages/Proton';
+import Mango from '@/pages/Mango';
 import Pharmacy from '@/pages/Pharmacy';
 import Evara from '@/pages/Evara';
 import Glydex from '@/pages/Glydex';
