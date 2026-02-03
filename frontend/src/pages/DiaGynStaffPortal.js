@@ -1090,11 +1090,11 @@ const AppointmentCard = ({ appointment, onCheckIn, onWithDoctor, onComplete, con
   const getNextAction = () => {
     switch (apt.status) {
       case 'Booked':
-        return { label: 'Check In', action: onCheckIn, color: '#F59E0B' };
+        return { label: 'CHECK IN', action: onCheckIn, color: '#F59E0B', icon: '→' };
       case 'CheckedIn':
-        return { label: 'With Doctor', action: onWithDoctor, color: '#8B5CF6' };
+        return { label: 'SEND TO DR', action: onWithDoctor, color: '#8B5CF6', icon: '→' };
       case 'WithDoctor':
-        return { label: 'Complete', action: onComplete, color: '#10B981' };
+        return { label: 'COMPLETE', action: onComplete, color: '#10B981', icon: '✓' };
       default:
         return null;
     }
@@ -1102,51 +1102,88 @@ const AppointmentCard = ({ appointment, onCheckIn, onWithDoctor, onComplete, con
   
   const nextAction = getNextAction();
   
+  // Get status display text and color for large status indicator
+  const getStatusDisplay = () => {
+    switch (apt.status) {
+      case 'Booked':
+        return { text: 'BOOKED', bg: 'bg-blue-500', textColor: 'text-white' };
+      case 'CheckedIn':
+        return { text: 'WAITING', bg: 'bg-amber-500', textColor: 'text-white' };
+      case 'WithDoctor':
+        return { text: 'WITH DR', bg: 'bg-purple-500', textColor: 'text-white' };
+      case 'Completed':
+        return { text: 'DONE', bg: 'bg-emerald-500', textColor: 'text-white' };
+      default:
+        return { text: apt.status, bg: 'bg-gray-400', textColor: 'text-white' };
+    }
+  };
+  
+  const statusDisplay = getStatusDisplay();
+  
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm border-l-4"
+    <div className="bg-white rounded-2xl shadow-md overflow-hidden border-l-[6px]"
          style={{ borderLeftColor: apt.status === 'Completed' ? '#10B981' : apt.status === 'WithDoctor' ? '#8B5CF6' : apt.status === 'CheckedIn' ? '#F59E0B' : '#4F46E5' }}>
-      {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-            <User className="w-6 h-6 text-indigo-600" />
-          </div>
-          <div>
-            <h4 className="font-bold text-gray-900">{apt.patient_name}</h4>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-xs font-mono bg-gray-100 px-2 py-0.5 rounded">{apt.booking_id}</span>
-              {apt.patient_id && (
-                <span className="text-xs font-mono bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded">{apt.patient_id}</span>
-              )}
+      
+      {/* Top Section - Patient Info */}
+      <div className="p-4 pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center shadow-inner">
+              <User className="w-7 h-7 text-indigo-600" />
+            </div>
+            <div>
+              <h4 className="font-bold text-xl text-gray-900">{apt.patient_name}</h4>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-sm font-mono font-bold bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg">{apt.booking_id}</span>
+                {apt.patient_id && (
+                  <span className="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-1 rounded">{apt.patient_id}</span>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        <Badge className={TYPE_BADGES[apt.appointment_type] || 'bg-gray-100'}>
-          {apt.appointment_type === 'WALK_IN' ? 'Walk-In' : apt.appointment_type === 'EMERGENCY' ? 'Emergency' : 'Scheduled'}
-        </Badge>
-      </div>
-      
-      {/* Info Row */}
-      <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-        <div className="flex items-center gap-1">
-          <Clock className="w-4 h-4" />
-          <span>{apt.time || 'No time'}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Stethoscope className="w-4 h-4" />
-          <span>{apt.doctor}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Building2 className="w-4 h-4" />
-          <span>{apt.clinic?.replace(' Clinic', '')}</span>
+          <div className={`${statusDisplay.bg} ${statusDisplay.textColor} px-4 py-2 rounded-xl font-bold text-sm shadow-md`}>
+            {statusDisplay.text}
+          </div>
         </div>
       </div>
       
-      {/* Status & Amount */}
-      <div className="flex items-center justify-between">
-        <Badge className={`${STATUS_COLORS[apt.status]} border`}>
-          {apt.status === 'CheckedIn' ? 'Waiting' : apt.status === 'WithDoctor' ? 'With Doctor' : apt.status}
+      {/* Info Row - Clear and Large */}
+      <div className="px-4 py-2 bg-gray-50 flex items-center gap-6 text-base">
+        <div className="flex items-center gap-2">
+          <Clock className="w-5 h-5 text-indigo-500" />
+          <span className="font-semibold">{apt.time || 'No time'}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Stethoscope className="w-5 h-5 text-purple-500" />
+          <span className="font-medium text-gray-700">{apt.doctor?.replace('Dr. ', '')}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Building2 className="w-5 h-5 text-teal-500" />
+          <span className="font-medium text-gray-700">{apt.clinic?.replace(' Clinic', '')}</span>
+        </div>
+      </div>
+      
+      {/* Type Badge + Fee Display */}
+      <div className="px-4 py-2 flex items-center justify-between bg-gray-50 border-t border-gray-100">
+        <Badge className={`${TYPE_BADGES[apt.appointment_type] || 'bg-gray-100'} text-sm px-3 py-1`}>
+          {apt.appointment_type === 'WALK_IN' ? '🚶 Walk-In' : apt.appointment_type === 'EMERGENCY' ? '🚨 Emergency' : '📅 Scheduled'}
         </Badge>
+        {apt.total_amount > 0 && (
+          <span className="font-bold text-lg text-emerald-600">₹{apt.total_amount}</span>
+        )}
+      </div>
+      
+      {/* Large Action Button - Easy to Tap */}
+      {nextAction && (
+        <button
+          onClick={() => { heavyTap(); nextAction.action(); }}
+          className="w-full py-5 px-6 text-white font-bold text-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+          style={{ background: nextAction.color }}
+        >
+          {nextAction.label}
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      )}
         
         <div className="flex items-center gap-2">
           {apt.total_amount > 0 && (
