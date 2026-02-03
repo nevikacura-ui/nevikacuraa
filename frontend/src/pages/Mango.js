@@ -2509,28 +2509,62 @@ const Proton = () => {
                 <CreditCard className="w-4 h-4 text-orange-500" />
                 Payment Method
               </Label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3">
+                {/* Option 1: Cash on Collection */}
                 <button
                   onClick={() => setPaymentMethod('cod')}
-                  className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
+                  className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
                     paymentMethod === 'cod' ? 'border-orange-500 bg-orange-50' : 'border-slate-200 hover:border-orange-300'
                   }`}
                   data-testid="payment-cod"
                 >
-                  <Banknote className="w-6 h-6 text-orange-500" />
-                  <span className="text-sm font-medium text-[#1E293B]">Cash on Visit</span>
-                  <span className="text-xs text-slate-500">Pay when we collect</span>
+                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <Banknote className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <span className="text-sm font-semibold text-[#1E293B] block">Pay Cash</span>
+                    <span className="text-xs text-slate-500">Pay at time of sample collection</span>
+                  </div>
+                  {paymentMethod === 'cod' && <CheckCircle2 className="w-5 h-5 text-orange-500" />}
                 </button>
+
+                {/* Option 2: QR/Card on Collection */}
+                <button
+                  onClick={() => setPaymentMethod('card')}
+                  className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
+                    paymentMethod === 'card' ? 'border-orange-500 bg-orange-50' : 'border-slate-200 hover:border-orange-300'
+                  }`}
+                  data-testid="payment-card"
+                >
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                    <CreditCard className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <span className="text-sm font-semibold text-[#1E293B] block">QR / Card Payment</span>
+                    <span className="text-xs text-slate-500">Pay via UPI/Card at time of collection</span>
+                  </div>
+                  {paymentMethod === 'card' && <CheckCircle2 className="w-5 h-5 text-orange-500" />}
+                </button>
+
+                {/* Option 3: Cashfree Online Payment */}
                 <button
                   onClick={() => setPaymentMethod('cashfree')}
-                  className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
+                  className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
                     paymentMethod === 'cashfree' ? 'border-orange-500 bg-orange-50' : 'border-slate-200 hover:border-orange-300'
                   }`}
                   data-testid="payment-cashfree"
                 >
-                  <CreditCard className="w-6 h-6 text-orange-500" />
-                  <span className="text-sm font-medium text-[#1E293B]">Pay Online</span>
-                  <span className="text-xs text-green-600 font-medium">5% Extra Off</span>
+                  <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                    <Smartphone className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <span className="text-sm font-semibold text-[#1E293B] block">Pay Online Now</span>
+                    <span className="text-xs text-slate-500">UPI, Cards, Net Banking</span>
+                  </div>
+                  <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                    5% OFF
+                  </div>
+                  {paymentMethod === 'cashfree' && <CheckCircle2 className="w-5 h-5 text-orange-500" />}
                 </button>
               </div>
             </Card>
