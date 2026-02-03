@@ -479,15 +479,48 @@ const DiaGynStaffPortal = () => {
   const updateStatus = async (appointmentId, newStatus) => {
     heavyTap();
     try {
-      await axios.put(`${API}/api/diagyn-staff/appointments/${appointmentId}/status`,
+      const res = await axios.put(`${API}/api/diagyn-staff/appointments/${appointmentId}/status`,
         { status: newStatus }, getAuthHeaders());
+      
+      // If check-in and printer connected, auto-print token
+      if (newStatus === 'CheckedIn' && res.data.token_data) {
+        const tokenData = res.data.token_data;
+        toast.success(`Token #${tokenData.token_number} assigned!`);
+        
+        if (printerConnected) {
+          await printToken(tokenData);
+        } else {
+          // Show token number prominently if printer not connected
+          toast.info(`Token #${tokenData.token_number} - Connect printer to print`, { duration: 5000 });
+        }
+      } else {
+        toast.success(newStatus);
+      }
+      
       successPattern();
-      toast.success(newStatus);
       loadAppointments();
     } catch (error) {
       errorPattern();
       toast.error('Update failed');
     }
+  };
+
+  // Manual reprint token for an appointment
+  const reprintToken = async (apt) => {
+    if (!printerConnected) {
+      toast.error('Connect printer first');
+      return;
+    }
+    const tokenData = {
+      token_number: apt.token_number,
+      patient_name: apt.patient_name,
+      clinic: apt.clinic,
+      clinic_address: config?.clinics?.[apt.clinic]?.address || '',
+      slot_time: apt.time || 'Emergency',
+      date: apt.date,
+      booking_id: apt.booking_id
+    };
+    await printToken(tokenData);
   };
 
   // Staff cannot complete appointments - only doctors can (removed completion modal)
