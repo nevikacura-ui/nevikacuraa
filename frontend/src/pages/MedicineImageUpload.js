@@ -190,11 +190,18 @@ const MedicineImageUpload = () => {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(data.message);
-        setSingleMedicine({ name: '', image_url: '' });
-        setPreviewFile(null);
-        fetchStats();
-        if (searchQuery) searchMedicines();
+        // In Quick Add Mode, auto-advance to next medicine
+        if (quickAddMode) {
+          fetchStats();
+          if (searchQuery) searchMedicines();
+          advanceToNextMedicine();
+        } else {
+          toast.success(data.message);
+          setSingleMedicine({ name: '', image_url: '' });
+          setPreviewFile(null);
+          fetchStats();
+          if (searchQuery) searchMedicines();
+        }
       } else {
         toast.error(data.message);
       }
@@ -203,6 +210,25 @@ const MedicineImageUpload = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Start Quick Add Mode with current search results
+  const startQuickAddMode = () => {
+    const medicinesNeedingImages = searchResults.filter(m => !m.has_image);
+    if (medicinesNeedingImages.length === 0) {
+      toast.error('No medicines need images in current search results');
+      return;
+    }
+    setQuickAddMode(true);
+    setQuickAddIndex(0);
+    setQuickAddCount(0);
+    setQuickAddQueue(medicinesNeedingImages);
+    setSingleMedicine({ name: medicinesNeedingImages[0].name, image_url: '' });
+    setPreviewFile(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast.success(`Quick Add Mode: ${medicinesNeedingImages.length} medicines to process`);
+    // Open Google search for first medicine
+    setTimeout(() => openGoogleImageSearch(medicinesNeedingImages[0].name), 500);
   };
 
   const uploadCSV = async () => {
