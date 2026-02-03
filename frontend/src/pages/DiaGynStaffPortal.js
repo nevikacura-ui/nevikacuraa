@@ -696,7 +696,9 @@ const DiaGynStaffPortal = () => {
                 {appointments.map(apt => (
                   <AppointmentCard key={apt.id} apt={apt} config={config}
                     onCheckIn={() => updateStatus(apt.id, 'CheckedIn')}
-                    onWithDoctor={() => updateStatus(apt.id, 'WithDoctor')} />
+                    onWithDoctor={() => updateStatus(apt.id, 'WithDoctor')}
+                    onReprint={reprintToken}
+                    printerConnected={printerConnected} />
                 ))}
               </div>
             )}
