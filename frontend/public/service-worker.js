@@ -1,14 +1,15 @@
-const CACHE_NAME = 'nevika-cura-v3';
+const CACHE_NAME = 'nevika-cura-v4';
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
   '/diagyn',
-  '/proton',
+  '/mango',
   '/pharmacy',
   '/profile',
   '/admin',
-  '/smart-reminders'
+  '/smart-reminders',
+  '/staff-portal'
 ];
 
 // Install event - cache static assets
