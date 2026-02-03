@@ -1018,26 +1018,16 @@ const Proton = () => {
                     Blood Test At Home
                   </h1>
                   <div className="flex items-center gap-1 mb-2">
-                    <Clock className="w-4 h-4 text-yellow-300" />
-                    <span className="font-semibold text-yellow-300 text-sm">in 60 MINS</span>
+                    <Clock className="w-4 h-4 text-orange-300" />
+                    <span className="font-semibold text-orange-300 text-sm">in 60 MINS</span>
                   </div>
-                </div>
-                
-                {/* Right - Mango Logo Large */}
-                <div className="relative w-24 h-24 flex-shrink-0">
-                  <img 
-                    src="/mango-logo.png" 
-                    alt="Mango Health Labs" 
-                    className="w-full h-full object-contain drop-shadow-2xl"
-                    style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))' }}
-                  />
                 </div>
               </div>
               
               {/* Reports badge - moved below to avoid congestion */}
-              <div className="flex items-center gap-1 bg-white/15 backdrop-blur-sm rounded-full px-2.5 py-0.5 w-fit mt-1">
-                <CheckCircle2 className="w-2.5 h-2.5 text-white/80" />
-                <span className="text-[10px] font-medium text-white/80">Reports in 06 HRS</span>
+              <div className="flex items-center gap-1 bg-orange-500/30 backdrop-blur-sm rounded-full px-2.5 py-0.5 w-fit mt-1">
+                <CheckCircle2 className="w-2.5 h-2.5 text-orange-200" />
+                <span className="text-[10px] font-medium text-orange-200">Reports in 06 HRS</span>
               </div>
             </div>
             
