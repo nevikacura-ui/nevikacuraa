@@ -24,24 +24,33 @@ Complete healthcare platform with three main services:
 
 ## What's Been Implemented
 
-### Feb 3, 2026 - DiaGyn Staff Portal Rebuild
+### Feb 4, 2026 - DiaGyn Staff Portal Rebuild COMPLETE
 
 #### New Staff Portal Features
-- ✅ **Dark Green/Orange Mango Labs Theme** - Compact, senior-friendly UI
-- ✅ **Unified Booking Portal** - Book for both Pushpa & Amnion clinics
+- ✅ **Teal/Lime Green Theme** - Compact, senior-friendly UI
+- ✅ **Unified Booking Portal** - Book for both Pushpa & Amnion clinics (two clinic toggles)
 - ✅ **15-Minute Slot Intervals**
+- ✅ **IST-Based Session Logic**:
+  - Morning Session: 11:00 AM - 2:00 PM IST
+  - Evening Session: 6:00 PM - 10:00 PM IST
+  - No Session: 2pm-6pm (only Emergency available)
 - ✅ **Doctor Schedule-Based Slots**:
   - Dr. Vikas Jha: Pushpa (Mon/Wed/Fri 6pm-10pm), Amnion (Mon-Sat 11am-2pm + Tue/Thu/Sat 6pm-10pm)
   - Dr. Neha Patel: Pushpa (Mon-Sat 11am-2pm + Tue/Thu/Sat 6pm-10pm), Amnion (Mon/Wed/Fri 6pm-10pm)
   - Sundays: No appointments
+- ✅ **Simplified Booking Flow**:
+  - **Walk-in Tab**: Current session slots only (disabled when no session active)
+  - **Emergency (24x7)**: Always available, no slot required
+  - **Book Appointment Tab**: Future dates with step-by-step flow
 - ✅ **Slot Blocking** - Patient-booked slots unavailable for staff
 - ✅ **Patient Database** - Mobile lookup for faster rebooking
 - ✅ **Appointment Types**: Walk-In, Scheduled, Emergency
 - ✅ **Patient Journey Tracking**: Booked → CheckedIn → WithDoctor → Completed
-- ✅ **Fee Collection**: Fee codes (NF, G1, G2, D1, D2, D3, O1, O2, O3) + Scan fees
+- ✅ **Fee Collection**: Fee codes (NF, G1, G2, D1, D2, D3, O1, O2, O3, S1, S2) + Scan fees
 - ✅ **Collection Summary**: Daily/Weekly/Monthly totals
 - ✅ **Haptic Feedback** on all buttons
 - ✅ **Real-time Sync** - Auto-refresh every 8 seconds
+- ✅ **Intro Screen Skip** - Staff pages bypass main app intro
 
 #### New Doctor Portal Features
 - ✅ **Doctor Portal** at `/doctor-portal`
