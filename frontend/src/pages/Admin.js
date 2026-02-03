@@ -165,15 +165,34 @@ const Admin = () => {
     }
   }, []);
 
-  // Fetch data when authenticated
+  // Fetch data when authenticated - with auto-refresh every 30 seconds
   useEffect(() => {
     if (isAuthenticated) {
+      // Initial fetch
       fetchStats();
       fetchInventory(1, true);
       fetchDiagnosticTests();
       fetchRecentOrders();
+      
+      // Auto-refresh every 30 seconds to prevent stale data
+      const refreshInterval = setInterval(() => {
+        console.log('Auto-refreshing admin data...');
+        fetchStats();
+        fetchRecentOrders();
+        // Refresh tab-specific data
+        if (activeTab === 'tracking') {
+          fetchPharmacyOrders();
+          fetchDiagnosticOrders();
+        } else if (activeTab === 'leave') {
+          fetchScheduleAppointments();
+        } else if (activeTab === 'analytics') {
+          fetchAnalytics();
+        }
+      }, 30000); // 30 seconds
+      
+      return () => clearInterval(refreshInterval);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, activeTab]);
 
   // Fetch orders when tracking tab is active
   useEffect(() => {
