@@ -119,6 +119,9 @@ const BottomNav = () => {
   ];
 
   const handleNavClick = (item) => {
+    // Haptic feedback on navigation
+    selectionTap();
+    
     if (item.id === 'book') {
       setShowBookingModal(true);
     } else if (item.path) {
