@@ -1,6 +1,6 @@
 """
 Nevika Cura - Diagnostic Tests Data
-Proton Diagnostics test catalog and pricing
+Mango Health Labs test catalog and pricing
 """
 
 # Default diagnostic tests organized by category

@@ -27,7 +27,7 @@ const PROTON_PACKAGES = [
     icon: Activity
   },
   {
-    id: 'proton-total',
+    id: 'mango-total',
     name: 'Mango Total',
     description: 'Comprehensive full body health checkup',
     tests: ['Complete Blood Count', 'HbA1c', 'Lipid Profile', 'Liver Function', 'Kidney Function', 'Thyroid Profile', 'Vitamin D', 'Vitamin B12', 'Iron Studies', 'Uric Acid'],
@@ -36,7 +36,7 @@ const PROTON_PACKAGES = [
     icon: Heart
   },
   {
-    id: 'proton-xclusive',
+    id: 'mango-xclusive',
     name: 'Mango Xclusive',
     description: 'Premium comprehensive health assessment',
     tests: ['Complete Blood Count', 'HbA1c', 'Lipid Profile', 'Liver Function', 'Kidney Function', 'Thyroid Complete', 'Vitamin Panel', 'Tumor Markers', 'Cardiac Risk Markers', 'Hormone Panel'],
