@@ -110,7 +110,7 @@ SERVICES_DATA = {
         },
         {
             "id": "proton",
-            "name": "Proton Diagnostics",
+            "name": "Mango Health Labs",
             "description": "Lab tests and diagnostic services",
             "logo": "https://customer-assets.emergentagent.com/job_f5403b1d-d7a8-45c0-83cb-7e33d189f13d/artifacts/saez5270_5_20260107_021040_0002.jpg",
             "path": "/proton",
@@ -209,7 +209,7 @@ TESTIMONIALS_DATA = {
             "location": "Bhayandar",
             "rating": 5,
             "text": "Got my full body checkup done at Proton. Professional staff, quick results, and the health dashboard helps me track everything.",
-            "service": "Proton Diagnostics",
+            "service": "Mango Health Labs",
             "avatar": "SK",
             "active": True
         }
