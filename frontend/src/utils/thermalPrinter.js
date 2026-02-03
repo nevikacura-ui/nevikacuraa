@@ -347,6 +347,120 @@ class ThermalPrinter {
       return { success: false, error: error.message };
     }
   }
+
+  // Print bill receipt for completed appointments
+  async printBill(billData) {
+    try {
+      // Try to reconnect if disconnected
+      if (!this.isConnected && this.device) {
+        await this.reconnect();
+      }
+      
+      await this.init();
+      
+      // Header separator
+      await this.printText('================================', { center: true });
+      
+      // Clinic name (large, bold, centered)
+      const clinicName = billData.clinic?.replace(' Clinic', '').toUpperCase() || 'CLINIC';
+      await this.printText(clinicName + ' CLINIC', { center: true, bold: true, doubleWidth: true });
+      
+      // Clinic address
+      if (billData.clinic_address) {
+        const shortAddress = billData.clinic_address.split(',')[0];
+        await this.printText(shortAddress, { center: true });
+      }
+      
+      await this.printText('================================', { center: true });
+      await this.printText('BILL / RECEIPT', { center: true, bold: true });
+      await this.printLine('-');
+      
+      // Date and Bill ID
+      const now = new Date();
+      const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
+      const dateStr = istTime.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
+      const timeStr = istTime.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      
+      await this.printText('Date: ' + dateStr + ' ' + timeStr);
+      if (billData.booking_id) {
+        await this.printText('Ref: ' + billData.booking_id);
+      }
+      
+      await this.printLine('-');
+      
+      // Patient details
+      await this.printText('Patient:', { bold: true });
+      await this.printText(billData.patient_name || 'N/A', { doubleHeight: true });
+      await this.printText('Mobile: ' + (billData.patient_mobile || 'N/A'));
+      
+      await this.printLine('-');
+      await this.feed(1);
+      
+      // Fees and charges header
+      await this.printText('FEES & CHARGES', { bold: true });
+      await this.printLine('-');
+      
+      // Fee code breakdown
+      if (billData.fee_code && billData.fee_details) {
+        const feeLabel = billData.fee_details.label || billData.fee_code;
+        const feeAmount = billData.fee_details.amount || 0;
+        // Format: Code - Label ... Amount
+        await this.printText(billData.fee_code + ' - ' + feeLabel);
+        await this.printText('                       Rs.' + feeAmount.toFixed(0));
+      }
+      
+      // Scan codes breakdown
+      if (billData.scan_codes && billData.scan_codes.length > 0) {
+        for (const scan of billData.scan_codes) {
+          const scanLabel = scan.label || scan.code;
+          const scanAmount = scan.amount || 0;
+          await this.printText(scan.code + ' - ' + scanLabel);
+          await this.printText('                       Rs.' + scanAmount.toFixed(0));
+        }
+      }
+      
+      await this.printLine('-');
+      await this.feed(1);
+      
+      // Total (LARGE)
+      await this.printText('TOTAL', { bold: true });
+      await this.printText('Rs. ' + (billData.total_amount || 0).toFixed(0), { bold: true, doubleSize: true });
+      
+      await this.printLine('=');
+      await this.feed(1);
+      
+      // Doctor name
+      if (billData.doctor) {
+        await this.printText('Treated by: ' + billData.doctor, { center: true });
+      }
+      
+      await this.printLine('-');
+      await this.feed(1);
+      
+      // Thank you message
+      await this.printText('Thank you for choosing', { center: true });
+      await this.printText('NEVIKA CURA', { center: true, bold: true });
+      await this.printText('Get well soon!', { center: true });
+      
+      await this.printText('================================', { center: true });
+      
+      // Feed for tear-off
+      await this.feed(4);
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Print bill error:', error);
+      return { success: false, error: error.message };
+    }
+  }
 }
 
 // Singleton instance
