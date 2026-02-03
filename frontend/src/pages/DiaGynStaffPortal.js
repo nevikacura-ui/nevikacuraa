@@ -1009,7 +1009,8 @@ const DiaGynStaffPortal = () => {
 };
 
 // ============ Appointment Card ============
-const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onComplete }) => {
+// Staff can only CHECK IN and move to WITH DR - CANNOT Complete (doctor does that)
+const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor }) => {
   const status = STATUS_STYLES[apt.status] || STATUS_STYLES['Booked'];
   const type = TYPE_STYLES[apt.appointment_type] || TYPE_STYLES['SCHEDULED'];
   
@@ -1017,7 +1018,8 @@ const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onComplete }) =
     switch (apt.status) {
       case 'Booked': return { label: 'CHECK IN', action: onCheckIn, color: '#f59e0b' };
       case 'CheckedIn': return { label: 'WITH DR', action: onWithDoctor, color: '#8b5cf6' };
-      case 'WithDoctor': return { label: 'COMPLETE', action: onComplete, color: '#16a34a' };
+      // Staff cannot complete - only doctors can
+      case 'WithDoctor': return null;
       default: return null;
     }
   };
