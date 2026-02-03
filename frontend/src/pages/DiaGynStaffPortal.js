@@ -1045,7 +1045,8 @@ const DiaGynStaffPortal = () => {
 
 // ============ Appointment Card ============
 // Staff can only CHECK IN and move to WITH DR - CANNOT Complete (doctor does that)
-const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, printerConnected }) => {
+// Staff can print BILL for completed appointments
+const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, onPrintBill, printerConnected }) => {
   const status = STATUS_STYLES[apt.status] || STATUS_STYLES['Booked'];
   const type = TYPE_STYLES[apt.appointment_type] || TYPE_STYLES['SCHEDULED'];
   
@@ -1068,14 +1069,24 @@ const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, prin
           <div className="flex items-start gap-3">
             {/* Token Number Badge (for checked-in patients) */}
             {apt.token_number && (
-              <div className="flex flex-col items-center justify-center min-w-[44px] h-11 rounded-lg"
-                   style={{ background: '#fef3c7' }}>
-                <span className="text-[10px] text-amber-700 font-medium leading-none">TOKEN</span>
-                <span className="text-lg font-bold text-amber-600 leading-tight">{apt.token_number}</span>
+              <div className="flex flex-col items-center justify-center min-w-[44px] h-11 rounded-lg bg-gray-100">
+                <span className="text-[10px] text-gray-500 font-medium leading-none">TOKEN</span>
+                <span className="text-lg font-bold text-gray-700 leading-tight">{apt.token_number}</span>
               </div>
             )}
             <div>
-              <h4 className="font-bold text-base">{apt.patient_name}</h4>
+              <div className="flex items-center gap-2">
+                <h4 className="font-bold text-base">{apt.patient_name}</h4>
+                {/* Print Bill Button (dark yellow) for completed appointments */}
+                {apt.status === 'Completed' && apt.total_amount > 0 && printerConnected && (
+                  <button onClick={() => { mediumTap(); onPrintBill(apt); }}
+                    className="px-2 py-1 rounded-md text-xs font-bold text-white flex items-center gap-1"
+                    style={{ background: '#d97706' }}
+                    title="Print Bill">
+                    <Printer className="w-3 h-3" /> BILL
+                  </button>
+                )}
+              </div>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className="text-xs font-mono px-1.5 py-0.5 rounded" 
                       style={{ background: COLORS.primaryLight, color: COLORS.primary }}>{apt.booking_id}</span>
@@ -1099,10 +1110,10 @@ const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, prin
             {apt.total_amount > 0 && <span className="font-bold text-sm" style={{ color: COLORS.accent }}>₹{apt.total_amount}</span>}
           </div>
           <div className="flex items-center gap-2">
-            {/* Reprint Token Button (only for checked-in patients with token) */}
-            {apt.token_number && printerConnected && (
+            {/* Reprint Token Button (for checked-in patients with token) */}
+            {apt.token_number && apt.status !== 'Completed' && printerConnected && (
               <button onClick={() => { lightTap(); onReprint(apt); }}
-                className="p-2 rounded-lg text-amber-600 bg-amber-50 hover:bg-amber-100 transition-all"
+                className="p-2 rounded-lg text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all"
                 title="Reprint Token">
                 <Printer className="w-4 h-4" />
               </button>
