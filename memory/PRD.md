@@ -74,6 +74,10 @@ Complete healthcare platform with three main services:
 - ✅ Red heart icon for Nevika Cura tab (visible on all pages)
 - ✅ Compact spacing on Mango home page
 - ✅ White container for test selection readability
+- ✅ **Back Navigation Buttons (Feb 3, 2026):**
+  - DiaGyn: "Back to Doctor Selection" (Step 2), "Back to Clinic Selection" (Step 3)
+  - Pharmacy: "Back to Cart" (Step 3)
+- ✅ **"Formerly Proton Diagnostics" text** - Added to Mango Health Labs header
 
 ---
 
