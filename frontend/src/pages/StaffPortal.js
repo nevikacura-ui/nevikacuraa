@@ -473,7 +473,6 @@ const StaffPortal = () => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && isAuthenticated && staffInfo) {
-        console.log('Staff portal tab became visible - refreshing data...');
         loadData();
       }
     };

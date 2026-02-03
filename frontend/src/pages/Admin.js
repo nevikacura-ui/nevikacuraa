@@ -169,7 +169,6 @@ const Admin = () => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && isAuthenticated) {
-        console.log('Tab became visible - refreshing data...');
         fetchStats();
         fetchRecentOrders();
         if (activeTab === 'tracking') {
