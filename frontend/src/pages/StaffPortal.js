@@ -492,12 +492,26 @@ const StaffPortal = () => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && isAuthenticated && staffInfo) {
+        console.log('[StaffPortal] Tab became visible, refreshing data...');
+        loadData();
+      }
+    };
+    
+    // Also handle window focus (for when switching between windows)
+    const handleFocus = () => {
+      if (isAuthenticated && staffInfo) {
+        console.log('[StaffPortal] Window focused, refreshing data...');
         loadData();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, [isAuthenticated, staffInfo]);
 
   // Reload appointments when date, clinic, or activeClinic changes
