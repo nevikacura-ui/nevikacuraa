@@ -580,9 +580,17 @@ const PatientCard = ({ apt, type, onAction }) => {
           )}
           
           {type === 'done' && apt.fee_code && (
-            <span className="text-xs px-2 py-1 rounded-lg" style={{ background: '#dcfce7', color: '#166534' }}>
-              {apt.fee_code} {apt.scan_codes?.length > 0 && `+ ${apt.scan_codes.join(', ')}`}
-            </span>
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-xs px-2 py-1 rounded-lg" style={{ background: '#dcfce7', color: '#166534' }}>
+                {apt.fee_code} {apt.scan_codes?.length > 0 && `+ ${apt.scan_codes.join(', ')}`}
+              </span>
+              {apt.follow_up_date && (
+                <span className="text-xs text-teal-600 flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  F/U: {new Date(apt.follow_up_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                </span>
+              )}
+            </div>
           )}
         </div>
       </div>
