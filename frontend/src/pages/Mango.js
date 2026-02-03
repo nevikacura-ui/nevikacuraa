@@ -17,7 +17,7 @@ import {
   ArrowLeft, ArrowRight, Upload, Plus, X, Heart, FlaskConical, Scan, Activity, 
   ShoppingCart, CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, 
   Clock, AlertTriangle, Droplets, Droplet, TestTube, Stethoscope, ChevronRight, Search,
-  Home, MapPin, Calendar, User, FileText, Smartphone
+  Home, MapPin, Calendar, User, FileText, Smartphone, Bookmark, Trash2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
