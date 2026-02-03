@@ -768,35 +768,42 @@ const DiaGynStaffPortal = () => {
               </div>
             </div>
 
-            {/* Clinic & Doctor Selection */}
-            <div className="bg-white rounded-xl p-4 shadow-sm space-y-4">
-              <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">Select Clinic</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {Object.keys(config?.clinics || {}).map(clinic => (
-                    <button
-                      key={clinic}
-                      onClick={() => {
-                        selectionTap();
-                        const doctors = config.clinics[clinic].doctors;
-                        setBookingForm(prev => ({
-                          ...prev,
-                          clinic,
-                          doctor: doctors[0] || ''
-                        }));
-                      }}
-                      className={`p-4 rounded-xl border-2 text-left transition-all ${
-                        bookingForm.clinic === clinic 
-                          ? 'border-indigo-500 bg-indigo-50' 
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <Building2 className="w-5 h-5 text-indigo-600 mb-2" />
-                      <p className="font-semibold">{clinic}</p>
-                      <p className="text-sm text-gray-500">{config.clinics[clinic].doctors.join(', ')}</p>
-                    </button>
-                  ))}
-                </div>
+            {/* Clinic & Doctor Selection - Large Cards */}
+            <div className="bg-white rounded-2xl p-5 shadow-md space-y-4">
+              <label className="text-base font-bold text-gray-800 mb-2 block">SELECT CLINIC</label>
+              <div className="grid grid-cols-1 gap-4">
+                {Object.keys(config?.clinics || {}).map(clinic => (
+                  <button
+                    key={clinic}
+                    onClick={() => {
+                      heavyTap();
+                      const doctors = config.clinics[clinic].doctors;
+                      setBookingForm(prev => ({
+                        ...prev,
+                        clinic,
+                        doctor: doctors[0] || ''
+                      }));
+                    }}
+                    className={`p-5 rounded-2xl border-3 text-left transition-all ${
+                      bookingForm.clinic === clinic 
+                        ? 'border-indigo-500 bg-indigo-50 shadow-lg' 
+                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                    }`}
+                    style={{ borderWidth: bookingForm.clinic === clinic ? '3px' : '2px' }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
+                        bookingForm.clinic === clinic ? 'bg-indigo-500' : 'bg-gray-100'
+                      }`}>
+                        <Building2 className={`w-7 h-7 ${bookingForm.clinic === clinic ? 'text-white' : 'text-gray-500'}`} />
+                      </div>
+                      <div>
+                        <p className="font-bold text-xl">{clinic}</p>
+                        <p className="text-base text-gray-600 font-medium">{config.clinics[clinic].doctors.join(', ')}</p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
 
