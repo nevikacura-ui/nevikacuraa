@@ -376,51 +376,69 @@ DOLO 650,https://example.com/dolo.jpg"
             <CardTitle className="flex items-center gap-2">
               <Search className="w-5 h-5 text-orange-500" />
               Search Medicines
+              {loading && <Loader2 className="w-4 h-4 animate-spin text-orange-500" />}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex gap-2 mb-4">
-              <Input 
-                placeholder="Search medicine name..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && searchMedicines()}
-              />
-              <Button onClick={searchMedicines} disabled={loading}>
-                <Search className="w-4 h-4" />
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Input 
+                  placeholder="Type to search... (starts searching after 2 characters)"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Button onClick={searchMedicines} disabled={loading} variant="outline">
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
               </Button>
             </div>
             
+            {searchQuery.length >= 2 && searchResults.length === 0 && !loading && (
+              <div className="text-center py-8 text-slate-500">
+                <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>No medicines found for "{searchQuery}"</p>
+              </div>
+            )}
+            
             {searchResults.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {searchResults.map((med, idx) => (
-                  <div key={idx} className={`p-3 rounded-lg border ${med.has_image ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200'}`}>
-                    <div className="flex items-center gap-2">
-                      {med.has_image ? (
-                        <Check className="w-4 h-4 text-green-600" />
-                      ) : (
-                        <X className="w-4 h-4 text-orange-600" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{med.name}</p>
-                        <p className="text-xs text-gray-500">{med.form}</p>
+              <div>
+                <p className="text-sm text-slate-600 mb-3">Found {searchResults.length} medicines</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {searchResults.map((med, idx) => (
+                    <div key={idx} className={`p-3 rounded-lg border ${med.has_image ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200'} ${singleMedicine.name === med.name ? 'ring-2 ring-blue-500' : ''}`}>
+                      <div className="flex items-center gap-2">
+                        {med.has_image ? (
+                          <Check className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        ) : (
+                          <X className="w-4 h-4 text-orange-600 flex-shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm truncate" title={med.name}>{med.name}</p>
+                          <p className="text-xs text-gray-500">{med.form}</p>
+                        </div>
                       </div>
+                      {med.image && (
+                        <img src={med.image} alt={med.name} className="w-20 h-20 object-contain mx-auto mt-2 rounded border bg-white" />
+                      )}
+                      {!med.has_image && (
+                        <Button 
+                          size="sm" 
+                          variant={singleMedicine.name === med.name ? "default" : "outline"}
+                          className={`w-full mt-2 ${singleMedicine.name === med.name ? 'bg-blue-600' : ''}`}
+                          onClick={() => {
+                            setSingleMedicine({...singleMedicine, name: med.name});
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            toast.success(`Selected: ${med.name}. Now upload or paste an image URL.`);
+                          }}
+                        >
+                          {singleMedicine.name === med.name ? '✓ Selected' : 'Select to Add Image'}
+                        </Button>
+                      )}
                     </div>
-                    {med.image && (
-                      <img src={med.image} alt={med.name} className="w-16 h-16 object-contain mx-auto mt-2" />
-                    )}
-                    {!med.has_image && (
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="w-full mt-2"
-                        onClick={() => setSingleMedicine({...singleMedicine, name: med.name})}
-                      >
-                        Add Image
-                      </Button>
-                    )}
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
           </CardContent>
