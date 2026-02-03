@@ -536,7 +536,7 @@ const PatientCard = ({ apt, type, onAction }) => {
           {type === 'waiting' && (
             <button onClick={() => { heavyTap(); onAction(); }}
               className="px-4 py-2 rounded-lg text-white text-sm font-bold shadow transition-all active:scale-95"
-              style={{ background: '#1e3a5f' }}>
+              style={{ background: '#0d9488' }}>
               START CONSULT <ChevronRight className="w-4 h-4 inline ml-1" />
             </button>
           )}
@@ -544,7 +544,7 @@ const PatientCard = ({ apt, type, onAction }) => {
           {type === 'consult' && (
             <button onClick={() => { heavyTap(); onAction(); }}
               className="px-4 py-2 rounded-lg text-white text-sm font-bold shadow transition-all active:scale-95"
-              style={{ background: '#1e3a5f' }}>
+              style={{ background: '#0d9488' }}>
               COMPLETE <CheckCircle2 className="w-4 h-4 inline ml-1" />
             </button>
           )}
