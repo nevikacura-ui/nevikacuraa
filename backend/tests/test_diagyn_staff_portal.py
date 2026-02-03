@@ -241,13 +241,15 @@ class TestAppointmentBooking:
     def test_book_walkin_appointment(self):
         """Test booking a walk-in appointment"""
         today = datetime.now().strftime("%Y-%m-%d")
+        # Use unique time slot based on current time to avoid conflicts
+        unique_time = f"09:{datetime.now().strftime('%M')}"
         
         response = requests.post(f"{BASE_URL}/api/diagyn-staff/appointments/book",
             json={
                 "clinic": "Pushpa Clinic",
                 "doctor": "Dr. Vikas Jha",
                 "date": today,
-                "time": "10:00",
+                "time": unique_time,
                 "patient_name": "TEST Walk-In Patient",
                 "patient_mobile": "9876543211",
                 "appointment_type": "WALK_IN",
@@ -290,7 +292,7 @@ class TestAppointmentBooking:
         print(f"✓ Scheduled appointment booked: {data['booking_id']}")
     
     def test_book_emergency_appointment(self):
-        """Test booking an emergency appointment (no time slot required)"""
+        """Test booking an emergency appointment (time is optional for emergency)"""
         today = datetime.now().strftime("%Y-%m-%d")
         
         response = requests.post(f"{BASE_URL}/api/diagyn-staff/appointments/book",
@@ -298,7 +300,7 @@ class TestAppointmentBooking:
                 "clinic": "Pushpa Clinic",
                 "doctor": "Dr. Vikas Jha",
                 "date": today,
-                "time": None,  # Emergency doesn't need time
+                "time": "",  # Empty string for emergency (backend handles this)
                 "patient_name": "TEST Emergency Patient",
                 "patient_mobile": "9876543213",
                 "appointment_type": "EMERGENCY",
