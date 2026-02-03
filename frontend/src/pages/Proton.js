@@ -1203,7 +1203,7 @@ const Proton = () => {
                       </Button>
                       <Button
                         size="sm"
-                        className="flex-1 rounded-lg bg-gradient-to-r from-[#0c1e3c] to-[#1a365d] hover:from-[#1a365d] hover:to-[#2d4a6f] text-white font-semibold"
+                        className="flex-1 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold"
                         onClick={() => handlePackageSelect(pkg)}
                       >
                         Add to Cart
