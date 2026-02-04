@@ -70,14 +70,15 @@ const IntroScreen = ({ onComplete, user }) => {
   
   // Auth state
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState('email'); // 'email' | 'otp' | 'password' | 'setPassword'
+  const [authMode, setAuthMode] = useState('email'); // 'email' | 'guest'
   const [email, setEmail] = useState('');
+  const [mobile, setMobile] = useState('');
   const [otp, setOtp] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [authStep, setAuthStep] = useState('email'); // 'email' | 'otp' | 'password' | 'setPassword'
+  const [authStep, setAuthStep] = useState('email'); // 'email' | 'otp' | 'password' | 'setPassword' | 'guestMobile' | 'guestOtp'
   const [verificationToken, setVerificationToken] = useState('');
   const [hasPassword, setHasPassword] = useState(false);
   
