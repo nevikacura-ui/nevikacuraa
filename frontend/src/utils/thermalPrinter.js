@@ -46,20 +46,41 @@ class ThermalPrinter {
   // Connect to Bluetooth printer (handles already paired devices)
   async connect() {
     try {
-      // Request Bluetooth device with multiple filter options
-      this.device = await navigator.bluetooth.requestDevice({
-        filters: [
-          { namePrefix: 'EC58' },
-          { namePrefix: 'Everycom' },
-          { namePrefix: 'Printer' },
-          { namePrefix: 'BlueTooth' },
-          { namePrefix: 'BT' },
-          { namePrefix: 'MPT' },
-          { services: this.SERVICE_UUIDS }
-        ],
-        optionalServices: this.SERVICE_UUIDS
-      });
+      // First try with specific printer filters
+      let device = null;
+      
+      try {
+        // Try specific filters first
+        device = await navigator.bluetooth.requestDevice({
+          filters: [
+            { namePrefix: 'EC' },
+            { namePrefix: 'Everycom' },
+            { namePrefix: 'Printer' },
+            { namePrefix: 'BlueTooth' },
+            { namePrefix: 'BT' },
+            { namePrefix: 'MPT' },
+            { namePrefix: 'POS' },
+            { namePrefix: 'RP' },
+            { namePrefix: 'PT' },
+            { namePrefix: '58' },
+            { namePrefix: 'Thermal' },
+            { namePrefix: 'Mini' },
+            { namePrefix: 'ZJ' },
+            { namePrefix: 'XP' },
+            { namePrefix: 'MTP' }
+          ],
+          optionalServices: this.SERVICE_UUIDS
+        });
+      } catch (filterError) {
+        console.log('Specific filters failed, trying acceptAllDevices...');
+        // If specific filters fail, try accepting all devices
+        device = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true,
+          optionalServices: this.SERVICE_UUIDS
+        });
+      }
 
+      this.device = device;
       console.log('Device found:', this.device.name);
 
       // Handle disconnection
@@ -77,6 +98,7 @@ class ThermalPrinter {
       let service = null;
       let characteristic = null;
 
+      // First try known service UUIDs
       for (const serviceUuid of this.SERVICE_UUIDS) {
         try {
           service = await server.getPrimaryService(serviceUuid);
@@ -112,8 +134,35 @@ class ThermalPrinter {
         }
       }
 
+      // If still no service, try to get all services
       if (!characteristic) {
-        throw new Error('No writable characteristic found');
+        try {
+          const services = await server.getPrimaryServices();
+          console.log('Found services:', services.length);
+          
+          for (const svc of services) {
+            console.log('Checking service:', svc.uuid);
+            try {
+              const chars = await svc.getCharacteristics();
+              for (const char of chars) {
+                if (char.properties.write || char.properties.writeWithoutResponse) {
+                  characteristic = char;
+                  console.log('Found writable char in service:', svc.uuid, char.uuid);
+                  break;
+                }
+              }
+              if (characteristic) break;
+            } catch (e) {
+              continue;
+            }
+          }
+        } catch (e) {
+          console.log('Could not enumerate services:', e.message);
+        }
+      }
+
+      if (!characteristic) {
+        throw new Error('No writable characteristic found. Printer may not be compatible.');
       }
 
       this.characteristic = characteristic;
