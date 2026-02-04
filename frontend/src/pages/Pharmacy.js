@@ -1316,7 +1316,7 @@ const Pharmacy = () => {
                   {/* Track */}
                   <div className="h-3 bg-orange-100 rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500 rounded-full transition-all duration-500 ease-out"
+                      className="h-full bg-orange-500 rounded-full transition-all duration-500 ease-out"
                       style={{ width: `${Math.min((cartTotal / 2000) * 100, 100)}%` }}
                     />
                   </div>
