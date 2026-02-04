@@ -14,6 +14,7 @@ import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRe
 import BottomNav from '@/components/BottomNav';
 import ServiceHeader from '@/components/ServiceHeader';
 import ProtonAdBanner from '@/components/ProtonAdBanner';
+import NumericCaptcha from '@/components/NumericCaptcha';
 import { toast } from 'sonner';
 import axios from 'axios';
 import AppointmentWaitlist from '@/components/AppointmentWaitlist';
