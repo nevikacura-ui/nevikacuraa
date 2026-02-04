@@ -1102,7 +1102,7 @@ const Pharmacy = () => {
               
               {/* Subtitle with curved arrow */}
               <div className="flex items-center justify-center gap-2 mb-4">
-                <span className="text-white text-lg">Delivered in minutes</span>
+                <span className="text-white text-lg">Same Day Delivery</span>
                 <span className="text-white text-xl">↝</span>
               </div>
               
