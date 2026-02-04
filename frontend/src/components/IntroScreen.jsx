@@ -423,20 +423,22 @@ const IntroScreen = ({ onComplete, user }) => {
         {/* 2x1 Toggle Buttons */}
         <div className="flex gap-3 mb-3">
           <Button 
-            onClick={() => { setAuthMode('email'); setShowAuthModal(true); }}
+            onClick={() => { setAuthMode('email'); setAuthStep('email'); setShowAuthModal(true); }}
             className="flex-1 h-12 rounded-xl font-semibold text-sm"
-            style={{ background: THEME.accent, color: 'white' }}>
+            style={{ background: THEME.accent, color: 'white' }}
+            data-testid="login-register-btn">
             <Mail className="w-4 h-4 mr-2" />
             Login / Register
           </Button>
           
           <Button 
-            onClick={skipToApp}
+            onClick={() => { setAuthMode('guest'); setAuthStep('guestMobile'); setShowAuthModal(true); }}
             variant="outline"
             className="flex-1 h-12 rounded-xl font-semibold text-sm border-2"
-            style={{ borderColor: THEME.primary, color: THEME.primary }}>
-            <ArrowRight className="w-4 h-4 mr-2" />
-            Skip
+            style={{ borderColor: THEME.primary, color: THEME.primary }}
+            data-testid="guest-btn">
+            <User className="w-4 h-4 mr-2" />
+            Guest
           </Button>
         </div>
         
