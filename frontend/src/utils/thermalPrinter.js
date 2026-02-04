@@ -48,6 +48,74 @@ class ThermalPrinter {
       '0000ffe1-0000-1000-8000-00805f9b34fb',  // HM-10 Write
       '0000fff2-0000-1000-8000-00805f9b34fb',  // Common Write
     ];
+    this.autoReconnectInterval = null;
+  }
+
+  // Save printer info to localStorage for auto-reconnect
+  savePrinterInfo() {
+    if (this.device) {
+      localStorage.setItem('savedPrinter', JSON.stringify({
+        name: this.device.name,
+        id: this.device.id,
+        savedAt: new Date().toISOString()
+      }));
+    }
+  }
+
+  // Get saved printer info
+  getSavedPrinter() {
+    try {
+      const saved = localStorage.getItem('savedPrinter');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  // Clear saved printer
+  clearSavedPrinter() {
+    localStorage.removeItem('savedPrinter');
+  }
+
+  // Start auto-reconnect monitoring
+  startAutoReconnect(onConnect, onDisconnect) {
+    // Clear any existing interval
+    this.stopAutoReconnect();
+    
+    // Check connection every 3 seconds
+    this.autoReconnectInterval = setInterval(async () => {
+      if (!this.isConnected && this.device) {
+        console.log('Attempting auto-reconnect...');
+        try {
+          if (!this.device.gatt.connected) {
+            const result = await this.reconnect();
+            if (result.success && onConnect) {
+              onConnect(this.device.name);
+            }
+          }
+        } catch (e) {
+          console.log('Auto-reconnect failed:', e.message);
+        }
+      }
+    }, 3000);
+    
+    // Also listen for disconnection
+    if (this.device) {
+      this.device.addEventListener('gattserverdisconnected', () => {
+        console.log('Printer disconnected - will attempt auto-reconnect');
+        this.isConnected = false;
+        this.characteristic = null;
+        if (onDisconnect) onDisconnect();
+      });
+    }
+  }
+
+  // Stop auto-reconnect monitoring
+  stopAutoReconnect() {
+    if (this.autoReconnectInterval) {
+      clearInterval(this.autoReconnectInterval);
+      this.autoReconnectInterval = null;
+    }
   }
 
   // Connect to Bluetooth printer (handles already paired devices)
