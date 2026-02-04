@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { Mail, Phone, ArrowRight, Loader2, User, X, Calendar, FlaskConical, Package, Heart, Check } from 'lucide-react';
+import { Mail, Phone, ArrowRight, Loader2, User, X, Calendar, FlaskConical, Package } from 'lucide-react';
 import axios from 'axios';
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
@@ -24,47 +24,31 @@ const THEME = {
 const CAROUSEL_SLIDES = [
   {
     id: 1,
-    heading: 'Book Appointments in Seconds',
-    subtext: 'Choose your doctor. Pick your time. Confirm instantly.',
-    points: ['Live availability', 'Nearby clinics', 'Zero waiting'],
-    button: 'Book Now',
+    tagline: 'Skip the Queue. See the Doctor.',
     icon: Calendar,
     image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&h=400&fit=crop',
-    gradient: 'from-[#1F4F46] to-[#2E6B5F]',
-    bgLight: '#E8F5F2'
+    gradient: 'from-[#1F4F46] to-[#2E6B5F]'
   },
   {
     id: 2,
-    heading: 'Blood Tests in Just Few Clicks',
-    subtext: 'Free home collection. Accurate testing. Reports on your phone.',
-    points: ['Certified labs', 'Safe sample pickup', 'Fast results'],
-    button: 'Book Test',
+    tagline: 'Lab Tests at Your Doorstep.',
     icon: FlaskConical,
     image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&h=400&fit=crop',
-    gradient: 'from-[#F4A43A] to-[#E48C1C]',
-    bgLight: '#FFF5E6'
+    gradient: 'from-[#F4A43A] to-[#E48C1C]'
   },
   {
     id: 3,
-    heading: 'Order Medicines. Get Home Delivery.',
-    subtext: '100% genuine medicines. Best prices. Delivered to your doorstep.',
-    points: ['Trusted pharmacy', 'Quick delivery', 'Easy reorders'],
-    button: 'Order Now',
+    tagline: 'Genuine Medicines. Delivered Fast.',
     icon: Package,
     image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&h=400&fit=crop',
-    gradient: 'from-[#FF5733] to-[#E84118]',
-    bgLight: '#FFEBE6'
+    gradient: 'from-[#FF5733] to-[#E84118]'
   },
   {
     id: 4,
-    heading: 'All Your Health. One Smart App.',
-    subtext: 'Appointments. Tests. Medicines. Reports. Everything in one place.',
-    points: ['Family profiles', 'Digital records', 'Track anytime'],
-    button: 'Get Started',
-    icon: Heart,
+    tagline: 'All Your Health. One Place.',
+    icon: Calendar,
     image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&h=400&fit=crop',
-    gradient: 'from-[#2E6B5F] to-[#3E8A7A]',
-    bgLight: '#E6F5F0'
+    gradient: 'from-[#2E6B5F] to-[#3E8A7A]'
   }
 ];
 
