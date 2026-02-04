@@ -355,9 +355,9 @@ class ThermalPrinter {
       // Header separator
       await this.printText('================================', { center: true });
       
-      // Clinic name (large, bold, centered)
-      const clinicName = tokenData.clinic?.replace(' Clinic', '').toUpperCase() || 'CLINIC';
-      await this.printText(clinicName + ' CLINIC', { center: true, bold: true, doubleWidth: true });
+      // Clinic name (centered, not bold)
+      const clinicName = tokenData.clinic || 'Clinic';
+      await this.printText(clinicName, { center: true });
       
       // Clinic address
       if (tokenData.clinic_address) {
