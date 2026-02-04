@@ -277,7 +277,7 @@ const IntroScreen = ({ onComplete, user }) => {
           <img 
             src="https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/hoal6fvj_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260204_171806_0000%20%282%29.png" 
             alt="NevikaCura" 
-            className="h-12 mx-auto object-contain mt-1"
+            className="h-[72px] mx-auto object-contain mt-2"
           />
         </div>
         
