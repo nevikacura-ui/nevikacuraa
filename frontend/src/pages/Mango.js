@@ -1367,29 +1367,27 @@ const Proton = () => {
                 >
                   {/* Green Gradient Header - Orange Health Labs Style */}
                   <div className="bg-gradient-to-br from-[#1F4F46] via-[#2E6B5F] to-[#3E8A7A] p-5 text-white relative">
-                    {/* Wishlist Heart Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleWishlist(test);
-                      }}
-                      className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-all z-10"
-                      data-testid={`wishlist-btn-${test.name.replace(/\s+/g, '-').toLowerCase()}`}
-                    >
-                      <Heart 
-                        className={`w-4 h-4 ${isInWishlist(test.name) ? 'fill-red-500 text-red-500' : 'text-white'}`}
-                      />
-                    </button>
-                    
-                    {/* Test Badge */}
-                    <div className="absolute top-3 right-3">
+                    {/* Right side: Test Badge + Heart */}
+                    <div className="absolute top-3 right-3 flex flex-col items-end gap-2">
                       <span className="bg-emerald-800/60 text-white text-xs font-bold px-3 py-1.5 rounded-md backdrop-blur-sm">
                         Test
                       </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleWishlist(test);
+                        }}
+                        className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-all"
+                        data-testid={`wishlist-btn-${test.name.replace(/\s+/g, '-').toLowerCase()}`}
+                      >
+                        <Heart 
+                          className={`w-4 h-4 ${isInWishlist(test.name) ? 'fill-red-500 text-red-500' : 'text-white'}`}
+                        />
+                      </button>
                     </div>
                     
-                    {/* Test Name - with left padding to avoid heart overlap */}
-                    <h3 className="font-bold text-lg mb-3 pl-10 pr-16 leading-tight">{test.name}</h3>
+                    {/* Test Name */}
+                    <h3 className="font-bold text-lg mb-3 pr-20 leading-tight">{test.name}</h3>
                     
                     {/* Price Display */}
                     <div className="flex items-center gap-3">
