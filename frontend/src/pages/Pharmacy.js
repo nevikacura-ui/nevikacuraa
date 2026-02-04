@@ -1374,7 +1374,7 @@ const Pharmacy = () => {
                     isUnlocked 
                       ? 'bg-gradient-to-br from-green-500 to-emerald-500 border-green-400 text-white scale-105 shadow-lg' 
                       : idx === 3 
-                        ? 'bg-gradient-to-br from-orange-500 to-amber-500 border-orange-400 text-white' 
+                        ? 'bg-orange-500 border-orange-400 text-white' 
                         : 'bg-white border-orange-200 hover:border-orange-400'
                   }`}
                 >
