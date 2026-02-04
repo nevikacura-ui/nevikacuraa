@@ -18,9 +18,9 @@ const serviceThemes = {
   diagyn: {
     name: 'DiaGyn',
     path: '/diagyn',
-    bgGradient: 'from-[#1F4F46] via-[#2E6B5F] to-[#1F4F46]',
-    headerBg: 'bg-[#1F4F46]',
-    tabBg: 'bg-[#2E6B5F]/50',
+    bgGradient: 'from-[#1e3a5f] via-[#1e3a5f] to-[#1e3a5f]',
+    headerBg: 'bg-[#1e3a5f]',
+    tabBg: 'bg-[#2c5282]/50',
     isLight: false
   },
   mango: {
