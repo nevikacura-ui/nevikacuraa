@@ -24,31 +24,39 @@ const THEME = {
 const CAROUSEL_SLIDES = [
   {
     id: 1,
-    tagline: 'Skip the Queue. See the Doctor.',
+    taglinePart1: 'Skip the Queue.',
+    taglineHighlight: 'See the Doctor.',
     icon: Calendar,
     image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&h=400&fit=crop',
-    gradient: 'from-[#1F4F46] to-[#2E6B5F]'
+    gradient: 'from-[#1F4F46] to-[#2E6B5F]',
+    highlightColor: '#4ADE80'
   },
   {
     id: 2,
-    tagline: 'Lab Tests at Your Doorstep.',
+    taglinePart1: 'Lab Tests',
+    taglineHighlight: 'at Your Doorstep.',
     icon: FlaskConical,
     image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&h=400&fit=crop',
-    gradient: 'from-[#F4A43A] to-[#E48C1C]'
+    gradient: 'from-[#F4A43A] to-[#E48C1C]',
+    highlightColor: '#FEF08A'
   },
   {
     id: 3,
-    tagline: 'Genuine Medicines. Delivered Fast.',
+    taglinePart1: 'Genuine Medicines.',
+    taglineHighlight: 'Delivered Fast.',
     icon: Package,
     image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&h=400&fit=crop',
-    gradient: 'from-[#f97316] to-[#ea580c]'
+    gradient: 'from-[#f97316] to-[#ea580c]',
+    highlightColor: '#FEF08A'
   },
   {
     id: 4,
-    tagline: 'All Your Health. One Place.',
+    taglinePart1: 'All Your Health.',
+    taglineHighlight: 'One Place.',
     icon: Calendar,
     image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&h=400&fit=crop',
-    gradient: 'from-[#1e3a5f] to-[#2c5282]'
+    gradient: 'from-[#1e3a5f] to-[#2c5282]',
+    highlightColor: '#93C5FD'
   }
 ];
 
