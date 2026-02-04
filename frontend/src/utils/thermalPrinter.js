@@ -428,15 +428,6 @@ class ThermalPrinter {
       await this.printText('Thank you for choosing', { center: true });
       await this.printText('NEVIKA CURA', { center: true, bold: true });
       
-      await this.feed(1);
-      
-      // QR Code for website
-      await this.write(COMMANDS.ALIGN_CENTER);
-      await this.printQRCode('https://nevikacura.com', 3);
-      await this.write(COMMANDS.ALIGN_LEFT);
-      
-      await this.printText('nevikacura.com', { center: true });
-      
       await this.printText('================================', { center: true });
       
       // Feed and cut
