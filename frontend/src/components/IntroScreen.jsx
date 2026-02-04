@@ -242,9 +242,9 @@ const IntroScreen = ({ onComplete, user }) => {
             {slide.tagline}
           </h1>
           
-          {/* Image - Circular Frame */}
+          {/* Image - Circular Frame (Large) */}
           <div className="flex-1 flex items-center justify-center">
-            <div className="w-48 h-48 rounded-full overflow-hidden shadow-2xl border-4 border-white/30">
+            <div className="w-72 h-72 rounded-full overflow-hidden shadow-2xl border-4 border-white/30">
               <img 
                 src={slide.image} 
                 alt={slide.tagline}
