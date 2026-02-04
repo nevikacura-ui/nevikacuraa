@@ -8,76 +8,71 @@ The user's initial request was to fix a critical bug where staff and doctor port
 4.  **Token Printing System:** Upon patient check-in, generate a daily sequential token and print it via a Bluetooth thermal printer. Also, allow printing of bills for completed appointments.
 5.  **UI/UX Overhaul:** Iteratively redesign the Mango (health labs) page and the main splash/auth screen based on user-provided color palettes and design examples (e.g., Orange Health Labs).
 6.  **Role-Based Permissions:** Staff can check patients in; doctors can complete consultations with fees, notes, and an optional follow-up date.
+7.  **Authentication:** Patient authentication should use Email + OTP.
 
 **User's preferred language**: English
 
 **what currently exists?**
--   A new full-stack DiaGyn feature with a Staff Portal () and a Doctor Portal ().
--   The Staff Portal supports patient lookup, booking, check-in, and status updates.
--   The Doctor Portal allows doctors to manage their queue and complete consultations, including adding fees, notes, and an editable total bill amount.
--   A Bluetooth thermal printer integration is in place, allowing staff to connect to a printer, print appointment tokens upon check-in, and print bills for completed appointments. An auto-reconnect feature for the last used printer has also been implemented.
--   The Mango health labs page () has been completely restyled with a new, user-provided color palette and a full-width layout.
--   The application has a new introductory flow, inspired by the Orange Health Labs app, featuring an animated splash screen leading to a carousel and a compact authentication section (Email/Guest).
+-   A full-stack application with a React frontend, FastAPI backend, and MongoDB.
+-   Functional DiaGyn Staff and Doctor portals. The Doctor Portal now correctly displays appointments for the logged-in doctor, including a Complete button that opens a modal for adding fees (including newly added speciality/OBGYN codes), scans, and notes. The Staff portal shows the final bill amount for completed appointments.
+-   A Bluetooth thermal printer utility () for printing formatted appointment tokens and bills.
+-   A redesigned Mango health labs page and a Pharmacy page with a new banner inspired by PharmEasy.
+-   A redesigned introductory flow on  with a splash animation, a redesigned carousel (circular images, dual-color taglines), and authentication modals that now use Email + OTP for both login and guest access.
+-   All staff and doctor accounts (e.g., , ) have been created in the correct database () and verified to be working. Credentials have been sent to the user via email.
 
 **Last working item**:
--   **Last item agent was working:** The agent was about to start another simplification of the splash screen. The user requested to remove the Book.Order.Test.Care animated text and fix a UI bug where a wishlist heart icon was overlapping text on the carousel.
--   **Status:** IN PROGRESS
+-   **Last item agent was working:** The user requested to update the Medical Devices section on the Orange Pharmacy page. They asked to use icons for most items but provided specific product images for Glucometer, Oximeter, Nebuliser, and Thermometer to be used in that section. The agent was about to implement this change.
+-   **Status:** NOT STARTED
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** Frontend testing agent or screenshot tool to verify the splash screen UI changes.
+-   **Which testing method agent to use?** screenshot tool to verify the UI changes on the  page.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Wishlist heart icon overlaps text on the carousel (P0)**
-    -   The user pointed this out in their last message. It's a visual bug on the main splash screen carousel.
+-   **Issue 1: Update Medical Devices with Product Images on Pharmacy Page (P0)**
+    -   **Description:** The user wants to replace the generic icons in the Medical Devices section of the pharmacy page with specific product images they have provided.
+    -   **Attempted fixes:** None.
     -   **Next debug checklist:**
-        -   View .
-        -   Inspect the CSS for the heart icon and the text container.
-        -   Adjust , , or  to prevent the overlap.
-    -   **Why fix this issue and what will be achieved with the fix?** To resolve a UI bug reported by the user and improve the visual quality of the splash screen.
+        -   View the file .
+        -   Locate the section rendering the medical device category.
+        -   Replace the existing icons for Glucometer, Oximeter, Nebuliser, and Thermometer with the provided image URLs.
+    -   **Why fix this issue and what will be achieved with the fix?** To align the e-commerce section with the user's specific visual requirements for products.
     -   **Status:** NOT STARTED
     -   **Is recurring issue?** N
     -   **Should Test frontend/backend/both after fix?** Frontend
 
 **In progress Task List**:
--   **Task 1: Simplify Splash Screen (P0)**
-    -   **Where to resume:** Modify the file .
-    -   **Details:** The user wants to remove the animated Book. Order. Test. Care. text from the initial splash phase. The application should load directly into the main screen containing the carousel and authentication options.
-    -   **What will be achieved with this?** A simpler, faster application entry experience, matching the user's latest request.
-    -   **Status:** NOT STARTED
-    -   **Should Test frontend/backend/both after fix?** Frontend
+-   None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P1: Finalize Pharmacy Header Color:** Verify with the user that the new dark orange color on the pharmacy header is correct.
-    -   **P1: Implement Email + OTP Authentication Backend:** The guest login flow is frontend-only. The email OTP flow requires backend endpoints for sending and verifying codes.
-    -   **P2: Bluetooth Printer Final Confirmation:** The user reported issues finding the printer. While several fixes were implemented, final confirmation that the connection works is still needed.
+    -   **P1: Cashfree Integration Stability:** The user reported that the Cashfree payment integration crashes or some time invalid. The agent has improved frontend error handling, but the feature requires thorough testing to ensure stability.
+    -   **P1: Bluetooth Printer Final Confirmation:** The user previously had trouble discovering the printer. While the feature has been implemented and tested via API, it needs end-to-end confirmation from the user with a physical device.
 -   **Future Tasks:**
-    -   **P2: Refactor Large Frontend Components:** Break down  and .
+    -   **P2: Refactor Large Frontend Components:** , , , and  have become large and complex and should be broken down into smaller components.
     -   **P2: Fix PWA Install Time / Old APK Version.**
     -   **P2: Implement WhatsApp Chatbot** (MSG91).
     -   **P2: Manual Pharmacy Inventory Update Feature.**
-    -   **P3: Refactor Backend Routes:** Decompose the monolithic .
+    -   **P3: Refactor Backend Routes:** Decompose the monolithic  into a structured route system.
 
 **Completed work in this session**
--   **DiaGyn Role Permissions Implemented:**
-    -   Staff can  patients; the  button was removed from the staff portal.
-    -   Doctors can  appointments; a  picker and an **editable total bill amount** were added to the doctor's completion modal.
--   **Bluetooth Thermal Printer Integration (Token & Bill Printing):**
-    -   Implemented a backend system to generate a unique, sequential token number for each patient upon check-in.
-    -   Added a frontend utility () using the Web Bluetooth API to connect to a printer.
-    -   Enabled printing of formatted appointment tokens from the staff portal.
-    -   Added a Print Bill button for completed appointments to print a formatted bill.
-    -   Implemented an auto-reconnect feature for the last-used printer.
--   **Mango Page () UI/UX Overhaul:**
-    -   Recolored the entire page using a new user-provided color palette (Dark Green, Mango Orange).
-    -   Changed the layout to be full-width, removing previous container constraints (thick edges).
-    -   Updated the  component with the new colors.
--   **Splash Screen & Auth Flow Redesign:**
-    -   Iteratively redesigned the splash screen to match the look and feel of the Orange Health Labs app.
-    -   Created a flow: Animated Text -> Carousel with Auth Buttons -> Slide-up Auth Modals.
+-   **Doctor Portal Flow Fixed:**
+    -   Resolved the critical bug where the Complete button was not showing for doctors. Fixed by correcting doctor name filtering logic ( field) and accounting for timezone differences (IST vs. UTC).
+    -   Added new fee codes (Speciality: S1/S2, OBGYN: O1/O2/O3) to the doctor's completion modal in .
+    -   Verified the end-to-end flow: Doctor completes appointment with fees -> Staff sees the final bill amount in the Staff Portal.
+-   **Authentication System Overhaul:**
+    -   Replaced Mobile+OTP with Email+OTP for both login and guest flows in .
+    -   Verified the backend Email+OTP endpoints () are functional.
+-   **Major UI/UX Iterations:**
+    -   **Splash Screen & Carousel:** Multiple redesigns of the carousel layout, content, colors, and image shapes (now circular). The logo size and spacing were also adjusted per user feedback.
+    -   **Pharmacy Page:** Redesigned the header banner to a PharmEasy style, updated it with a new logo, and changed text to Same Day Delivery. Standardized the orange color theme.
+    -   **Home Page:** Updated the Orange Pharmacy service card to use the new logo while keeping its background white. Reverted the header toggle to a medicine icon.
+    -   **DiaGyn:** Changed the service header to a uniform navy blue.
+    -   **Print Token:** Updated the thermal printer format to remove the bold clinic name and trailing URL.
+-   **Staff Credentials & Database Fix:**
+    -   Diagnosed and fixed an issue where staff accounts were not found by creating them in the correct .
+    -   Verified credentials for all staff/doctor roles and emailed them to the user.
 
 **Earlier issues found/mentioned but not fixed**
--   **PWA Install Time / Old APK Version:** From the initial handoff, not addressed.
 -   **Face ID Camera Fails to Start on Mobile:** A low-priority issue from the initial handoff, not addressed.
 
 **Known issue recurrence from previous fork**
@@ -87,64 +82,95 @@ The user's initial request was to fix a critical bug where staff and doctor port
 
 
 **Key Technical Concepts**
--   **Web Bluetooth API:** Core technology used for connecting to and controlling the thermal printer directly from the browser, enabling a hardware integration without a native app.
--   **Iterative UI/UX Prototyping:** Rapidly modifying frontend code based on continuous user feedback, including screenshots, videos, and color palettes.
--   **Role-Based Access Control (RBAC):** Differentiating UI and actions based on user roles (Staff vs. Doctor).
--   **Backend Tokenization:** Implemented a counter on the backend to generate sequential daily token numbers for appointments.
+-   **Iterative UI/UX Development:** Rapidly modifying frontend code (React, Tailwind CSS) based on continuous user feedback and visual examples.
+-   **Role-Based UI:** The Doctor Portal and Staff Portal show different buttons and information based on the logged-in user's role.
+-   **Backend Configuration:** Doctor-specific  are defined in the backend and fetched by the frontend to dynamically populate the completion modal.
+-   **Timezone Handling:** Addressed a critical bug in the Doctor Portal caused by the server running in UTC while the frontend assumes IST for date calculations.
+-   **Payment Gateway Integration:** Implemented and improved error handling for Cashfree payments.
 
 **key DB schema**
--   **:** Updated to store  (Number),  (String),  (String), and  (Number).
+-   ** (in ):** Stores user credentials and roles. Includes , , , , and  for doctors.
+-   ** (in ):** Stores appointment details, including  ('CheckedIn', 'WithDoctor', 'Completed'),  (String, e.g., Dr. Vikas Jha), , , .
 
 **changes in tech stack**
 -   None.
 
 **All files of reference**
--    (Primary file for the next task)
--   
+-    (Primary file for next task)
 -   
 -   
 -   
 -   
 
 **Areas that need refactoring**:
--    and  are large single-file components that would benefit from being broken down into smaller, more focused sub-components to improve maintainability.
+-   The primary frontend page components (, , , ) have grown significantly due to iterative changes and would benefit from being broken down into smaller, reusable sub-components.
 
 **key api endpoints**
--   : This endpoint is now multi-purpose. When the status is , it generates a token. When , it saves the final fees, notes, and follow-up date.
+-   : Central login endpoint for doctors and staff.
+-   : Fetches appointments, filtered by date on the backend.
+-   : Updates appointment status (e.g., to  or ). Crucially saves fees, notes, and bill amount.
+-   : Provides frontend configuration, including doctor-specific fee codes.
+-   : Sends an OTP to the user's email.
+-   : Logs in a patient using a verified OTP.
 
 **Critical Info for New Agent**
--   The user's immediate priority is fixing the UI of the splash screen. Address the overlapping heart icon and remove the initial animated text phase as requested.
--   The user is highly visual and provides feedback through screenshots and videos. Pay close attention to these artifacts.
--   The Bluetooth printer feature is new and critical. While auto-reconnect is implemented, be aware that browser limitations require a user action for the very first pairing. The user previously had trouble discovering the printer, so this feature may require further troubleshooting.
+-   The immediate priority is to update the Medical Devices section on the  page, replacing icons with the specific product images the user provided.
+-   The Doctor Portal completion flow is now working correctly. The key was fixing the doctor name filter and creating test appointments with the correct IST date, as the portal defaults to the Indian timezone.
+-   The user is highly visual and directs development with screenshots and direct UI feedback. Always verify changes with a screenshot.
+-   The Cashfree payment gateway was reported as unstable by the user. While frontend error handling has been improved, treat this as a potential area for bugs until fully tested.
 
 **documents and test reports created in this job**
 -   
 -   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Provided new carousel content and asked to update the Orange Pharmacy header color. (Completed)
-2.  **User:** Wishlist heart icon is overlapping text... Sorry on carousel on tagline and image . No much text . Sorry again for wrong instructions remove tagline book.order.test care page **(This is the current P0 task).**
+1.  **User:** Redesign the pharmacy banner to look like a provided PharmEasy screenshot. (Completed)
+2.  **User:** Use a different (non-white) version of the logo for the pharmacy banner. Also change the Orange Pharmacy logo on the Nevika Cura (Home) page. (Completed)
+3.  **User:** Use an enlarged version of the new logo. On Home page, keep the medicine icon in the header toggle but change the Orange Pharmacy *card* image. (Completed)
+4.  **User:** On the Pharmacy banner, change Delivery in minutes to Same Day Delivery. Revert the Home page card for Orange Pharmacy to a white background. (Completed)
+5.  **User:** Change the patient portal login from mobile number and OTP to email and OTP. (Completed)
+6.  **User:** Use icons instead of images on the pharmacy page, but provided product images for Glucometer, Oximeter, Nebuliser, and Thermometer. **(This is the current P0 task).**
+7.  **User:** In orange pharmacy,- Remove everyday lower prices . Wishlist From orange pharmacy banner. Add this logo in left and match with the background with theme colour. (Completed)
+8.  **User:** For patient portal - remove mobile number and otp, instead email and otp (Completed)
+9.  **User:** Use this enlarge logo. On home page - don't charge header toggle image , keep as medicine icon . Instead change card image of orange pharmacy in Nevika cura ( home ( page. (Completed)
+10. **User:** On orange pharmacy - banner Change from Delivery in minutes To Same Day Delivery. Keep orange pharmacy card in home page as white background it's is before. (Completed)
 
 **Project Health Check:**
--   **Broken:** The splash screen has a UI bug (overlapping icon) and does not meet the user's latest simplified requirement.
--   **Mocked:**  and  functions remain mocked.
+-   **Broken:** None. The application is functional but undergoing heavy, iterative UI changes.
+-   **Mocked:**  and  functions in the backend are still placeholder mocks.
 
 **3rd Party Integrations**
--   Cashfree (Payments)
--   MSG91 (WhatsApp)
--   Resend (Email)
--   **Web Bluetooth API** for thermal printers (e.g., Everycom EC58).
+-   **Cashfree (Payments):** Integrated for orders. User reported instability, though backend tests pass.
+-   **MSG91 (WhatsApp):** Planned, but not implemented.
+-   **Resend (Email):** Integrated and used for sending credentials.
+-   **Web Bluetooth API:** Used for thermal printer integration.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES, on the DiaGyn portal features.
+-   **Testing agent used after significant changes:** YES, successfully verified the entire doctor-to-staff portal flow after fixing the completion bug.
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** No
+-   **Test files created:** No new ============================= test session starts ==============================
+platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0
+rootdir: /app
+plugins: anyio-4.12.0
+collected 1163 items / 1 error
+
+==================================== ERRORS ====================================
+__________ ERROR collecting backend/tests/test_enhancements_v2_v3.py ___________
+backend/tests/test_enhancements_v2_v3.py:16: in <module>
+    raise ValueError("REACT_APP_BACKEND_URL environment variable not set")
+E   ValueError: REACT_APP_BACKEND_URL environment variable not set
+=========================== short test summary info ============================
+ERROR backend/tests/test_enhancements_v2_v3.py - ValueError: REACT_APP_BACKEN...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 3.88s =============================== files, but the agent created a one-off test script () to validate the portal flow.
 -   **Known regressions:** None.
 
 **Credentials to test flow:**
 -   **Staff Portal ():**  / 
--   **Doctor Portal ():**  /  or  / 
--   **Guest Access:** Use any 10-digit mobile number on the auth screen.
+-   **Doctor Portal ():**  / 
+-   **Mango Labs Staff:**  / 
+-   **Orange Pharmacy Staff:**  / 
+-   **Patient Authentication:** Use any valid email address on the intro screen to receive an OTP (OTP is logged in backend supervisor logs).
 
 **What agent forgot to execute**
--   The agent has not yet implemented the very last user request: to simplify the splash screen by removing the animated Book.Order.Test.Care text and to fix the overlapping wishlist heart icon on the carousel.</analysis>
+-   The agent has not yet implemented the user's latest request to update the medical device images on the pharmacy page.</analysis>

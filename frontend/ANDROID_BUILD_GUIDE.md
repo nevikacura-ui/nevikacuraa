@@ -92,6 +92,6 @@ Then rebuild the APK in Android Studio.
 ---
 
 ## Questions?
-The app is configured to load from: `https://healthportal-48.preview.emergentagent.com`
+The app is configured to load from: `https://orange-health-ui.preview.emergentagent.com`
 
 This means you just need to build the APK once, and all future updates to your website will automatically appear in the app!

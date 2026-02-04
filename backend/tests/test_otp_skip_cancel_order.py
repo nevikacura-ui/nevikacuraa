@@ -11,7 +11,7 @@ import requests
 import os
 import uuid
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://healthportal-48.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://orange-health-ui.preview.emergentagent.com')
 
 class TestStaffLogin:
     """Test staff login and role verification"""
