@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="13" time="1.940" timestamp="2026-02-04T21:30:13.028403+00:00" hostname="agent-env-d1429ca3-6208-4000-8fa6-39cfff6c387e"><testcase classname="backend.tests.test_guest_auth_flows.TestHealthEndpoint" name="test_health_check" time="0.073"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+backend/tests/test_guest_auth_flows.py:20: in test_health_check
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="backend.tests.test_guest_auth_flows.TestGuestMobileOTPFlow" name="test_send_otp_valid_mobile" time="0.039" /><testcase classname="backend.tests.test_guest_auth_flows.TestGuestMobileOTPFlow" name="test_send_otp_invalid_mobile_too_short" time="0.040" /><testcase classname="backend.tests.test_guest_auth_flows.TestGuestMobileOTPFlow" name="test_send_otp_invalid_mobile_non_digits" time="0.037" /><testcase classname="backend.tests.test_guest_auth_flows.TestGuestMobileOTPFlow" name="test_verify_otp_wrong_code" time="0.068" /><testcase classname="backend.tests.test_guest_auth_flows.TestGuestMobileOTPFlow" name="test_verify_otp_no_otp_sent" time="0.037" /><testcase classname="backend.tests.test_guest_auth_flows.TestGuestMobileOTPFlow" name="test_full_guest_otp_flow" time="0.068" /><testcase classname="backend.tests.test_guest_auth_flows.TestPatientPortalEmailFlow" name="test_check_email_new_user" time="0.034" /><testcase classname="backend.tests.test_guest_auth_flows.TestPatientPortalEmailFlow" name="test_email_otp_send" time="0.301" /><testcase classname="backend.tests.test_guest_auth_flows.TestPatientPortalEmailFlow" name="test_email_otp_verify_invalid" time="0.248" /><testcase classname="backend.tests.test_guest_auth_flows.TestPatientPortalEmailFlow" name="test_password_login_nonexistent" time="0.034" /><testcase classname="backend.tests.test_guest_auth_flows.TestPatientPortalEmailFlow" name="test_set_password_without_verification" time="0.034" /><testcase classname="backend.tests.test_guest_auth_flows.TestEmailOTPFullFlow" name="test_full_new_user_registration" time="0.829" /></testsuite></testsuites>
