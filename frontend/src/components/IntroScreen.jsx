@@ -317,7 +317,7 @@ const IntroScreen = ({ onComplete, user }) => {
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold" style={{ color: THEME.text }}>
-                {authMode === 'email' ? 'Login with Email' : 'Continue as Guest'}
+                Login / Register
               </h3>
               <button 
                 onClick={() => { setShowAuthModal(false); setOtpSent(false); setEmail(''); setOtp(''); }}
@@ -327,7 +327,7 @@ const IntroScreen = ({ onComplete, user }) => {
             </div>
             
             {/* Email Form */}
-            {authMode === 'email' && !otpSent && (
+            {!otpSent && (
               <div className="space-y-4">
                 <p className="text-sm" style={{ color: THEME.textMuted }}>
                   Enter your email to receive OTP
@@ -340,20 +340,22 @@ const IntroScreen = ({ onComplete, user }) => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     className="h-14 pl-12 rounded-2xl text-base border-2"
+                    data-testid="email-input"
                   />
                 </div>
                 <Button 
                   onClick={sendOtp}
                   disabled={loading || !email}
                   className="w-full h-14 rounded-2xl font-bold"
-                  style={{ background: THEME.accent }}>
+                  style={{ background: THEME.accent }}
+                  data-testid="send-otp-btn">
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send OTP'}
                 </Button>
               </div>
             )}
             
             {/* OTP Form */}
-            {authMode === 'email' && otpSent && (
+            {otpSent && (
               <div className="space-y-4">
                 <p className="text-sm" style={{ color: THEME.textMuted }}>
                   OTP sent to <span className="font-medium">{email}</span>
@@ -365,66 +367,15 @@ const IntroScreen = ({ onComplete, user }) => {
                   placeholder="Enter OTP"
                   className="h-14 rounded-2xl text-center text-2xl font-bold tracking-widest border-2"
                   maxLength={6}
+                  data-testid="otp-input"
                 />
                 <Button 
                   onClick={verifyOtp}
                   disabled={loading || otp.length < 4}
                   className="w-full h-14 rounded-2xl font-bold"
-                  style={{ background: THEME.accent }}>
+                  style={{ background: THEME.accent }}
+                  data-testid="verify-otp-btn">
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Login'}
-                </Button>
-                <button onClick={() => setOtpSent(false)} className="w-full text-center text-sm" style={{ color: THEME.secondary }}>
-                  Change Email
-                </button>
-              </div>
-            )}
-            
-            {/* Guest Form - Now uses Email + OTP */}
-            {authMode === 'guest' && !otpSent && (
-              <div className="space-y-4">
-                <p className="text-sm" style={{ color: THEME.textMuted }}>
-                  Enter your email to receive OTP
-                </p>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: THEME.textMuted }} />
-                  <Input 
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    className="h-14 pl-12 rounded-2xl text-base border-2"
-                  />
-                </div>
-                <Button 
-                  onClick={sendOtp}
-                  disabled={loading || !email || !email.includes('@')}
-                  className="w-full h-14 rounded-2xl font-bold"
-                  style={{ background: THEME.primary }}>
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send OTP'}
-                </Button>
-              </div>
-            )}
-            
-            {/* Guest OTP Verification */}
-            {authMode === 'guest' && otpSent && (
-              <div className="space-y-4">
-                <p className="text-sm" style={{ color: THEME.textMuted }}>
-                  OTP sent to <span className="font-medium">{email}</span>
-                </p>
-                <Input 
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  placeholder="Enter OTP"
-                  className="h-14 rounded-2xl text-center text-2xl font-bold tracking-widest border-2"
-                  maxLength={6}
-                />
-                <Button 
-                  onClick={verifyOtp}
-                  disabled={loading || otp.length < 4}
-                  className="w-full h-14 rounded-2xl font-bold"
-                  style={{ background: THEME.primary }}>
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Continue'}
                 </Button>
                 <button onClick={() => setOtpSent(false)} className="w-full text-center text-sm" style={{ color: THEME.secondary }}>
                   Change Email
