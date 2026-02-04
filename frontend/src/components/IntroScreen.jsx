@@ -93,8 +93,9 @@ const IntroScreen = ({ onComplete, user }) => {
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
     const patientToken = localStorage.getItem('patientToken');
-    const guestMobile = localStorage.getItem('guestMobile');
-    if (authToken || patientToken || guestMobile || user) {
+    const guestMode = localStorage.getItem('guestMode');
+    const skippedLogin = localStorage.getItem('skippedLogin');
+    if (authToken || patientToken || guestMode || skippedLogin || user) {
       onComplete();
     }
   }, [user, onComplete]);
