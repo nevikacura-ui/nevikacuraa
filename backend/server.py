@@ -2030,6 +2030,155 @@ async def email_otp_login(request: EmailOTPLoginRequest):
         }
     }
 
+# ============ PATIENT AUTH WITH PASSWORD ============
+
+class PatientCheckEmailRequest(BaseModel):
+    email: str
+
+@api_router.post("/auth/patient/check-email")
+async def check_patient_email(request: PatientCheckEmailRequest):
+    """Check if email exists and has a password set"""
+    email = request.email.strip().lower()
+    
+    user = await db.users.find_one({"email": email}, {"_id": 0, "password_hash": 1})
+    
+    if user:
+        has_password = bool(user.get("password_hash"))
+        return {
+            "exists": True,
+            "has_password": has_password
+        }
+    return {
+        "exists": False,
+        "has_password": False
+    }
+
+class PatientSetPasswordRequest(BaseModel):
+    email: str
+    verification_token: str
+    password: str
+
+@api_router.post("/auth/patient/set-password")
+async def set_patient_password(request: PatientSetPasswordRequest):
+    """Set password after email OTP verification (for new users or existing users without password)"""
+    email = request.email.strip().lower()
+    verification_token = request.verification_token
+    password = request.password
+    
+    if len(password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+    
+    # Verify the token is valid
+    otp_key = f"email_{email}"
+    stored = email_otp_storage.get(otp_key)
+    
+    if not stored or stored.get("verification_token") != verification_token:
+        raise HTTPException(status_code=400, detail="Invalid or expired verification token")
+    
+    if stored.get("expires_at") and stored["expires_at"] < datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="Verification token expired")
+    
+    # Hash the password
+    password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    # Check if user exists
+    existing_user = await db.users.find_one({"email": email}, {"_id": 0})
+    
+    if existing_user:
+        # Update existing user with password
+        await db.users.update_one(
+            {"email": email},
+            {"$set": {"password_hash": password_hash, "updated_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        user_id = existing_user["id"]
+        name = existing_user["name"]
+        logger.info(f"Password set for existing user: {email}")
+    else:
+        # Create new user with password
+        user_id = f"user_{str(uuid.uuid4())[:12]}"
+        name = email.split("@")[0].title()  # Use email prefix as name
+        user_doc = {
+            "id": user_id,
+            "email": email,
+            "name": name,
+            "phone": "",
+            "password_hash": password_hash,
+            "is_subscribed": False,
+            "preferences": {},
+            "auth_method": "email",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.users.insert_one(user_doc)
+        logger.info(f"New user registered with password: {email}")
+    
+    # Clean up OTP storage
+    if otp_key in email_otp_storage:
+        del email_otp_storage[otp_key]
+    
+    # Generate JWT token
+    token_data = {
+        "user_id": user_id,
+        "email": email,
+        "name": name,
+        "exp": datetime.now(timezone.utc) + timedelta(days=30)
+    }
+    token = jwt.encode(token_data, JWT_SECRET, algorithm="HS256")
+    
+    return {
+        "token": token,
+        "user": {
+            "id": user_id,
+            "name": name,
+            "email": email
+        }
+    }
+
+class PatientLoginRequest(BaseModel):
+    email: str
+    password: str
+
+@api_router.post("/auth/patient/login")
+async def patient_login(request: PatientLoginRequest):
+    """Login patient with email and password"""
+    email = request.email.strip().lower()
+    password = request.password
+    
+    # Find user
+    user = await db.users.find_one({"email": email})
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="Email not registered")
+    
+    # Check password
+    if not user.get("password_hash"):
+        raise HTTPException(status_code=400, detail="Password not set. Please login with OTP and set a password.")
+    
+    if not bcrypt.checkpw(password.encode('utf-8'), user["password_hash"].encode('utf-8')):
+        raise HTTPException(status_code=401, detail="Incorrect password")
+    
+    # Generate JWT token
+    token_data = {
+        "user_id": user["id"],
+        "email": user["email"],
+        "name": user["name"],
+        "exp": datetime.now(timezone.utc) + timedelta(days=30)
+    }
+    token = jwt.encode(token_data, JWT_SECRET, algorithm="HS256")
+    
+    logger.info(f"Patient login successful: {email}")
+    
+    return {
+        "token": token,
+        "user": {
+            "id": user["id"],
+            "name": user["name"],
+            "email": user["email"],
+            "phone": user.get("phone"),
+            "is_subscribed": user.get("is_subscribed", False),
+            "preferences": user.get("preferences", {})
+        }
+    }
+
 # ============ GOOGLE OAUTH LOGIN ============
 
 class GoogleAuthRequest(BaseModel):
