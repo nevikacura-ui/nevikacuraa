@@ -1261,7 +1261,7 @@ const Pharmacy = () => {
       </div>
 
       {/* Discount Tiers - Supersaver Zone with Progress Animation */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-orange-200">
+      <div className="bg-orange-50 border-b border-orange-200">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center gap-2 mb-3">
             <Gift className="w-5 h-5 text-orange-500" />
