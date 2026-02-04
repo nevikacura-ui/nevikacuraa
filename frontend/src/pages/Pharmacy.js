@@ -1172,7 +1172,7 @@ const Pharmacy = () => {
                   alt="Genuine Medicines"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-600/90 via-orange-500/70 to-transparent"></div>
+                <div className="absolute inset-0 bg-orange-500/80"></div>
                 <div className="absolute inset-0 p-5 flex flex-col justify-center">
                   <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
                     <span className="text-white text-xs font-bold">100% Authentic</span>
