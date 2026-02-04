@@ -1208,8 +1208,8 @@ const Proton = () => {
           </div>
           {/* End of Dark Green Hero Section */}
 
-          {/* Dark Green Content Area */}
-          <div className="bg-gradient-to-b from-[#2E6B5F] to-[#3E8A7A] py-3">
+          {/* Content Area - White background */}
+          <div className="bg-white py-3">
 
           {/* Promo Banner - Mango Orange themed */}
           <div className="w-full px-4 mt-2">
@@ -1241,8 +1241,8 @@ const Proton = () => {
           <div className="w-full px-4 mt-3">
             <div className="flex justify-between items-center gap-3 overflow-x-auto pb-1 scrollbar-hide">
               {[
-                { icon: Shield, title: 'Certified Lab', color: 'text-orange-600', bg: 'bg-orange-500/10' },
-                { icon: Clock, title: '8 AM - 10 PM', color: 'text-amber-600', bg: 'bg-amber-500/10' },
+                { icon: Shield, title: 'Certified Lab', color: 'text-[#1F4F46]', bg: 'bg-[#1F4F46]/10' },
+                { icon: Clock, title: '8 AM - 10 PM', color: 'text-[#F4A43A]', bg: 'bg-[#F4A43A]/10' },
                 { icon: CheckCircle2, title: '4.9/5 on Google', color: 'text-orange-600', bg: 'bg-orange-500/10' },
                 { icon: Home, title: 'Home Collection', color: 'text-amber-600', bg: 'bg-amber-500/10' }
               ].map((badge, idx) => (
