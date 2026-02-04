@@ -321,10 +321,10 @@ const IntroScreen = ({ onComplete, user }) => {
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold" style={{ color: THEME.text }}>
-                {authMode === 'email' ? 'Login with Email' : 'Guest Access'}
+                {authMode === 'email' ? 'Login with Email' : 'Continue as Guest'}
               </h3>
               <button 
-                onClick={() => { setShowAuthModal(false); setOtpSent(false); setEmail(''); setOtp(''); setMobile(''); }}
+                onClick={() => { setShowAuthModal(false); setOtpSent(false); setEmail(''); setOtp(''); }}
                 className="p-2 rounded-full hover:bg-gray-100">
                 <X className="w-5 h-5" style={{ color: THEME.textMuted }} />
               </button>
