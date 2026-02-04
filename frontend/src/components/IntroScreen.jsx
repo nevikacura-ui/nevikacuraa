@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { Mail, Phone, ArrowRight, Loader2, User, Sparkles } from 'lucide-react';
+import { Mail, Phone, ArrowRight, Loader2, User, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
@@ -15,28 +15,66 @@ const THEME = {
   accent: '#F4A43A',
   accentDark: '#E48C1C',
   light: '#3E8A7A',
-  background: '#F7F9F8',
+  background: '#FFFFFF',
   text: '#2B2B2B',
   textMuted: '#6F7B77'
 };
 
+// Carousel slides - service highlights
+const CAROUSEL_SLIDES = [
+  {
+    id: 1,
+    title: 'Lab Tests at Home',
+    subtitle: 'Get tested in 60 mins',
+    icon: '🧪',
+    gradient: 'from-[#1F4F46] to-[#2E6B5F]',
+    image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=400&h=300&fit=crop'
+  },
+  {
+    id: 2,
+    title: 'Order Medicines',
+    subtitle: 'Delivered to your door',
+    icon: '💊',
+    gradient: 'from-[#F4A43A] to-[#E48C1C]',
+    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop'
+  },
+  {
+    id: 3,
+    title: 'Consult Doctors',
+    subtitle: 'Expert care online',
+    icon: '👨‍⚕️',
+    gradient: 'from-[#2E6B5F] to-[#3E8A7A]',
+    image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=300&fit=crop'
+  },
+  {
+    id: 4,
+    title: 'Health Packages',
+    subtitle: 'Complete checkups',
+    icon: '❤️',
+    gradient: 'from-[#E48C1C] to-[#F4A43A]',
+    image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop'
+  }
+];
+
 const IntroScreen = ({ onComplete, user }) => {
   const { setPatientAuth } = useAuth();
   
-  // Phases: 'splash' -> 'auth'
+  // Phases: 'splash' -> 'carousel' -> 'auth'
   const [phase, setPhase] = useState('splash');
   const [textIndex, setTextIndex] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
   
   // Auth state
-  const [authMode, setAuthMode] = useState('select'); // 'select', 'email', 'guest'
+  const [authMode, setAuthMode] = useState('select');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [mobile, setMobile] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  const splashTexts = ['Book Tests...', 'Order Medicines...', 'Consult Doctors...', 'Health at Home...'];
+  const carouselRef = useRef(null);
+  const splashTexts = ['Book Tests...', 'Order Medicines...', 'Consult Doctors...', 'Care at Home...'];
   
   // Lock scroll
   useEffect(() => {
@@ -62,12 +100,12 @@ const IntroScreen = ({ onComplete, user }) => {
       setTextIndex(prev => {
         if (prev >= splashTexts.length - 1) {
           clearInterval(textTimer);
-          setTimeout(() => setPhase('auth'), 500);
+          setTimeout(() => setPhase('carousel'), 400);
           return prev;
         }
         return prev + 1;
       });
-    }, 800);
+    }, 700);
     
     return () => clearInterval(textTimer);
   }, [phase]);
@@ -79,6 +117,17 @@ const IntroScreen = ({ onComplete, user }) => {
     }, 500);
     return () => clearInterval(cursorTimer);
   }, []);
+  
+  // Auto-slide carousel
+  useEffect(() => {
+    if (phase !== 'carousel') return;
+    
+    const slideTimer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % CAROUSEL_SLIDES.length);
+    }, 3000);
+    
+    return () => clearInterval(slideTimer);
+  }, [phase]);
   
   // Send OTP to email
   const sendOtp = async () => {
@@ -125,57 +174,57 @@ const IntroScreen = ({ onComplete, user }) => {
       return;
     }
     setLoading(true);
-    try {
-      // Store guest mobile locally
-      localStorage.setItem('guestMobile', mobile);
-      localStorage.setItem('guestMode', 'true');
-      toast.success('Guest session started!');
-      onComplete();
-    } catch (error) {
-      toast.error('Something went wrong');
-    }
+    localStorage.setItem('guestMobile', mobile);
+    localStorage.setItem('guestMode', 'true');
+    toast.success('Guest session started!');
     setLoading(false);
+    onComplete();
   };
 
-  // ========== SPLASH SCREEN ==========
+  // ========== SPLASH SCREEN - White Background ==========
   if (phase === 'splash') {
     return (
-      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center"
-        style={{ background: `linear-gradient(135deg, ${THEME.primary} 0%, ${THEME.secondary} 50%, ${THEME.light} 100%)` }}>
+      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-white">
         
-        {/* Logo */}
-        <div className="mb-10 animate-pulse">
-          <div className="bg-white rounded-3xl px-6 py-4 shadow-2xl">
-            <img src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
-              alt="Nevika Cura" className="h-20 w-auto" />
-          </div>
+        {/* Logo - Centered with clean look */}
+        <div className="mb-10">
+          <img 
+            src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
+            alt="Nevika Cura" 
+            className="h-24 w-auto"
+            style={{ filter: 'drop-shadow(0 4px 12px rgba(31, 79, 70, 0.15))' }}
+          />
         </div>
         
         {/* Animated Text */}
-        <div className="h-12 flex items-center justify-center">
-          <span className="text-2xl sm:text-3xl font-bold text-white tracking-wide"
+        <div className="h-10 flex items-center justify-center">
+          <span className="text-2xl font-bold tracking-wide"
             style={{ 
-              textShadow: '0 4px 16px rgba(0,0,0,0.3)',
-              animation: 'fadeInUp 0.5s ease-out'
+              color: THEME.primary,
+              animation: 'fadeInUp 0.4s ease-out'
             }}>
             {splashTexts[textIndex]}
-            <span className={`ml-1 ${showCursor ? 'opacity-100' : 'opacity-0'}`}>|</span>
+            <span className={`ml-1 ${showCursor ? 'opacity-100' : 'opacity-0'}`} 
+              style={{ color: THEME.accent }}>|</span>
           </span>
         </div>
         
-        {/* Loading dots at bottom */}
-        <div className="absolute bottom-20 flex gap-2">
+        {/* Progress dots */}
+        <div className="absolute bottom-24 flex gap-2">
           {splashTexts.map((_, i) => (
             <div key={i} 
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                i <= textIndex ? 'bg-white scale-100' : 'bg-white/30 scale-75'
-              }`} />
+                i <= textIndex ? 'scale-100' : 'scale-75'
+              }`}
+              style={{ 
+                backgroundColor: i <= textIndex ? THEME.primary : '#E6ECEA'
+              }} />
           ))}
         </div>
         
         <style>{`
           @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
           }
         `}</style>
@@ -183,58 +232,90 @@ const IntroScreen = ({ onComplete, user }) => {
     );
   }
 
-  // ========== AUTH SCREEN ==========
+  // ========== CAROUSEL + AUTH SCREEN ==========
   return (
-    <div className="fixed inset-0 z-[99999] flex flex-col"
-      style={{ background: `linear-gradient(135deg, ${THEME.primary} 0%, ${THEME.secondary} 100%)` }}>
+    <div className="fixed inset-0 z-[99999] flex flex-col bg-white">
       
-      {/* Top Section - Logo & Welcome */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 pt-10">
-        {/* Logo */}
-        <div className="mb-6">
-          <div className="bg-white rounded-3xl px-5 py-3 shadow-xl">
-            <img src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
-              alt="Nevika Cura" className="h-14 w-auto" />
+      {/* Top Section - Logo */}
+      <div className="flex justify-center pt-8 pb-4">
+        <img 
+          src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
+          alt="Nevika Cura" 
+          className="h-12 w-auto"
+        />
+      </div>
+      
+      {/* Carousel Section */}
+      <div className="px-4 mb-4">
+        <div className="relative overflow-hidden rounded-3xl" style={{ height: '200px' }}>
+          {/* Slides */}
+          <div 
+            ref={carouselRef}
+            className="flex transition-transform duration-500 ease-out h-full"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
+            {CAROUSEL_SLIDES.map((slide) => (
+              <div key={slide.id} className="min-w-full h-full relative">
+                <div className={`absolute inset-0 bg-gradient-to-br ${slide.gradient} rounded-3xl overflow-hidden`}>
+                  {/* Background pattern */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-4 right-4 text-8xl">{slide.icon}</div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="absolute inset-0 flex flex-col justify-center p-6 text-white">
+                    <span className="text-4xl mb-3">{slide.icon}</span>
+                    <h3 className="text-2xl font-bold mb-1">{slide.title}</h3>
+                    <p className="text-white/80 text-sm">{slide.subtitle}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-        
-        <h1 className="text-2xl font-bold text-white mb-2">Welcome to Nevika Cura</h1>
-        <p className="text-white/70 text-sm mb-8">Your complete healthcare companion</p>
-        
-        {/* Feature pills */}
-        <div className="flex flex-wrap justify-center gap-2 mb-6">
-          {['Lab Tests', 'Medicines', 'Doctors', 'Clinics'].map((item) => (
-            <span key={item} className="px-3 py-1 bg-white/10 rounded-full text-white text-xs font-medium">
-              {item}
-            </span>
-          ))}
+          
+          {/* Dots */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+            {CAROUSEL_SLIDES.map((_, i) => (
+              <button 
+                key={i}
+                onClick={() => setCurrentSlide(i)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  i === currentSlide ? 'w-6 bg-white' : 'bg-white/50'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
       
-      {/* Bottom Section - Auth Form */}
-      <div className="bg-white rounded-t-[32px] px-6 py-8 shadow-2xl" style={{ minHeight: '50vh' }}>
+      {/* Auth Section */}
+      <div className="flex-1 px-6 pb-8 overflow-y-auto">
         
         {/* Selection Mode */}
         {authMode === 'select' && (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-center mb-6" style={{ color: THEME.text }}>
-              Get Started
-            </h2>
+            <div className="text-center mb-6">
+              <h2 className="text-xl font-bold" style={{ color: THEME.text }}>
+                Get Started
+              </h2>
+              <p className="text-sm mt-1" style={{ color: THEME.textMuted }}>
+                Your complete healthcare companion
+              </p>
+            </div>
             
             {/* Email Login */}
             <Button 
               onClick={() => setAuthMode('email')}
               className="w-full h-14 rounded-2xl text-white font-bold text-base flex items-center justify-center gap-3"
-              style={{ background: `linear-gradient(135deg, ${THEME.primary} 0%, ${THEME.secondary} 100%)` }}>
+              style={{ background: THEME.primary }}>
               <Mail className="w-5 h-5" />
               Continue with Email
               <ArrowRight className="w-5 h-5 ml-auto" />
             </Button>
             
             {/* Divider */}
-            <div className="flex items-center gap-4 my-6">
+            <div className="flex items-center gap-4 my-4">
               <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-sm text-gray-400">or</span>
+              <span className="text-sm" style={{ color: THEME.textMuted }}>or</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
             
@@ -249,8 +330,8 @@ const IntroScreen = ({ onComplete, user }) => {
               <ArrowRight className="w-5 h-5 ml-auto" />
             </Button>
             
-            <p className="text-center text-xs text-gray-400 mt-6">
-              By continuing, you agree to our Terms of Service & Privacy Policy
+            <p className="text-center text-xs mt-6" style={{ color: THEME.textMuted }}>
+              By continuing, you agree to our Terms & Privacy Policy
             </p>
           </div>
         )}
@@ -270,7 +351,7 @@ const IntroScreen = ({ onComplete, user }) => {
             {!otpSent ? (
               <>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: THEME.textMuted }} />
                   <Input 
                     type="email"
                     value={email}
@@ -290,8 +371,8 @@ const IntroScreen = ({ onComplete, user }) => {
               </>
             ) : (
               <>
-                <p className="text-sm text-gray-500 mb-4">
-                  OTP sent to <span className="font-medium">{email}</span>
+                <p className="text-sm mb-4" style={{ color: THEME.textMuted }}>
+                  OTP sent to <span className="font-medium" style={{ color: THEME.text }}>{email}</span>
                 </p>
                 
                 <Input 
@@ -335,13 +416,13 @@ const IntroScreen = ({ onComplete, user }) => {
               </h2>
             </div>
             
-            <p className="text-sm text-gray-500 mb-4">
-              Enter your mobile number to continue as guest. No OTP required!
+            <p className="text-sm mb-4" style={{ color: THEME.textMuted }}>
+              Enter your mobile number to continue. No OTP required!
             </p>
             
             <div className="relative">
-              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <span className="absolute left-12 top-1/2 -translate-y-1/2 text-gray-400 font-medium">+91</span>
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: THEME.textMuted }} />
+              <span className="absolute left-12 top-1/2 -translate-y-1/2 font-medium" style={{ color: THEME.textMuted }}>+91</span>
               <Input 
                 type="tel"
                 value={mobile}
@@ -356,7 +437,7 @@ const IntroScreen = ({ onComplete, user }) => {
               onClick={guestLogin}
               disabled={loading || mobile.length !== 10}
               className="w-full h-14 rounded-2xl text-white font-bold text-base"
-              style={{ background: `linear-gradient(135deg, ${THEME.accent} 0%, ${THEME.accentDark} 100%)` }}>
+              style={{ background: THEME.accent }}>
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                 <>
                   <User className="w-5 h-5 mr-2" />
@@ -365,8 +446,8 @@ const IntroScreen = ({ onComplete, user }) => {
               )}
             </Button>
             
-            <p className="text-center text-xs text-gray-400 mt-4">
-              Guest users can browse and place orders. Sign up for full features.
+            <p className="text-center text-xs mt-4" style={{ color: THEME.textMuted }}>
+              Guest users can browse and place orders
             </p>
           </div>
         )}
