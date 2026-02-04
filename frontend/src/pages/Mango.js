@@ -1274,11 +1274,11 @@ const Proton = () => {
               {popularPackages.map((pkg, index) => {
                 // Varied gradient colors for visual distinction
                 const cardGradients = [
-                  'from-orange-500 to-amber-500',
+                  'from-[#F4A43A] to-[#E48C1C]',
                   'from-pink-500 to-rose-600',
                   'from-teal-500 to-cyan-600',
                   'from-orange-500 to-amber-600',
-                  'from-orange-600 to-amber-600'
+                  'from-[#E48C1C] to-[#F4A43A]'
                 ];
                 const gradient = cardGradients[index % cardGradients.length];
                 
@@ -1331,7 +1331,7 @@ const Proton = () => {
                       </Button>
                       <Button
                         size="sm"
-                        className="flex-1 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold"
+                        className="flex-1 rounded-lg bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] hover:from-[#E48C1C] hover:to-[#F4A43A] text-white font-semibold"
                         onClick={() => handlePackageSelect(pkg)}
                       >
                         Add to Cart
@@ -1434,7 +1434,7 @@ const Proton = () => {
                         View Details
                       </Button>
                       <Button
-                        className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-3 shadow-md"
+                        className="flex-1 rounded-xl bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] hover:from-[#E48C1C] hover:to-[#F4A43A] text-white font-bold py-3 shadow-md"
                         onClick={() => handleTestSelect(test)}
                       >
                         Add to Cart
@@ -1450,7 +1450,7 @@ const Proton = () => {
           <div className="max-w-6xl mx-auto px-4 pb-8">
             <Button
               onClick={() => setCurrentStep(1)}
-              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
+              className="w-full bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] hover:from-[#E48C1C] hover:to-[#F4A43A] text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
               data-testid="browse-all-tests-btn"
             >
               <FlaskConical className="w-5 h-5 mr-2" />
@@ -1496,10 +1496,10 @@ const Proton = () => {
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex justify-between items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { id: 'trusted-labs', icon: Shield, title: 'Trusted &', subtitle: 'Accredited Labs', gradient: 'from-orange-500 to-amber-500', bg: 'bg-orange-500/10' },
-              { id: 'doctor-curated', icon: Stethoscope, title: 'Doctor', subtitle: 'Curated Packages', gradient: 'from-orange-600 to-amber-600', bg: 'bg-amber-500/10' },
-              { id: 'home-sample', icon: Clock, title: 'Home Sample', subtitle: 'Collection', gradient: 'from-orange-500 to-amber-500', bg: 'bg-orange-500/10' },
-              { id: 'fast-reports', icon: CheckCircle2, title: 'Accurate &', subtitle: 'Fast Reports', gradient: 'from-orange-600 to-amber-600', bg: 'bg-amber-500/10' }
+              { id: 'trusted-labs', icon: Shield, title: 'Trusted &', subtitle: 'Accredited Labs', gradient: 'from-[#F4A43A] to-[#E48C1C]', bg: 'bg-orange-500/10' },
+              { id: 'doctor-curated', icon: Stethoscope, title: 'Doctor', subtitle: 'Curated Packages', gradient: 'from-[#E48C1C] to-[#F4A43A]', bg: 'bg-amber-500/10' },
+              { id: 'home-sample', icon: Clock, title: 'Home Sample', subtitle: 'Collection', gradient: 'from-[#F4A43A] to-[#E48C1C]', bg: 'bg-orange-500/10' },
+              { id: 'fast-reports', icon: CheckCircle2, title: 'Accurate &', subtitle: 'Fast Reports', gradient: 'from-[#E48C1C] to-[#F4A43A]', bg: 'bg-amber-500/10' }
             ].map((badge) => (
               <div key={badge.id} className="flex flex-col items-center text-center min-w-[80px] flex-1" data-testid={`proton-trust-${badge.id}`}>
                 <div className={`w-14 h-14 rounded-2xl ${badge.bg} flex items-center justify-center mb-2 shadow-sm`}>
@@ -1516,7 +1516,7 @@ const Proton = () => {
       </div>
 
       {/* Consultation Help Banner - Navy Blue Theme */}
-      <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white" data-testid="consultation-help-banner">
+      <div className="bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] text-white" data-testid="consultation-help-banner">
         <div className="max-w-5xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -2059,7 +2059,7 @@ const Proton = () => {
                               </Button>
                               <Button
                                 size="sm"
-                                className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs py-2.5 shadow-md"
+                                className="flex-1 rounded-xl bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] hover:from-[#E48C1C] hover:to-[#F4A43A] text-white font-semibold text-xs py-2.5 shadow-md"
                                 onClick={() => {
                                   toggleTest(test.name);
                                   toast.success(`${test.name} added!`);
@@ -2141,7 +2141,7 @@ const Proton = () => {
                             </Button>
                             <Button
                               size="sm"
-                              className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs py-2.5 shadow-md"
+                              className="flex-1 rounded-xl bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] hover:from-[#E48C1C] hover:to-[#F4A43A] text-white font-semibold text-xs py-2.5 shadow-md"
                               onClick={() => {
                                 toggleTest(test.name);
                                 toast.success(`${test.name} added!`);
@@ -2221,7 +2221,7 @@ const Proton = () => {
                             </Button>
                             <Button
                               size="sm"
-                              className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs py-2.5 shadow-md"
+                              className="flex-1 rounded-xl bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] hover:from-[#E48C1C] hover:to-[#F4A43A] text-white font-semibold text-xs py-2.5 shadow-md"
                               onClick={() => {
                                 toggleTest(test.name);
                                 toast.success(`${test.name} added!`);
@@ -2823,7 +2823,7 @@ const Proton = () => {
                     setShowWishlist(false);
                     toast.success('All wishlist items added to cart!');
                   }}
-                  className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold py-3 rounded-xl"
+                  className="w-full bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] text-white font-bold py-3 rounded-xl"
                 >
                   Add All to Cart ({wishlist.length} items)
                 </Button>
@@ -2954,7 +2954,7 @@ const Proton = () => {
                   Close
                 </Button>
                 <Button
-                  className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-4 shadow-lg"
+                  className="flex-1 rounded-xl bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] hover:from-[#E48C1C] hover:to-[#F4A43A] text-white font-bold py-4 shadow-lg"
                   onClick={() => {
                     handleTestSelect(selectedTestDetails);
                     setSelectedTestDetails(null);
