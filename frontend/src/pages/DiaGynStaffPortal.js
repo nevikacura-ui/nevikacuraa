@@ -144,6 +144,20 @@ const DiaGynStaffPortal = () => {
         setPrinterName(result.deviceName);
         toast.success(`Connected: ${result.deviceName}`, { id: 'printer' });
         successPattern();
+        
+        // Start auto-reconnect monitoring
+        thermalPrinter.startAutoReconnect(
+          (deviceName) => {
+            setPrinterConnected(true);
+            setPrinterName(deviceName);
+            toast.success(`Printer reconnected: ${deviceName}`);
+            successPattern();
+          },
+          () => {
+            setPrinterConnected(false);
+            toast.info('Printer disconnected - will reconnect automatically');
+          }
+        );
       } else {
         // More helpful error messages
         let errorMsg = result.error;
