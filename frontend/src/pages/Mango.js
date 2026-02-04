@@ -1272,20 +1272,20 @@ const Proton = () => {
             
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {popularPackages.map((pkg, index) => {
-                // Varied gradient colors for visual distinction
+                // Varied gradient colors using Mango theme palette
                 const cardGradients = [
-                  'from-[#F4A43A] to-[#E48C1C]',
-                  'from-pink-500 to-rose-600',
-                  'from-teal-500 to-cyan-600',
-                  'from-orange-500 to-amber-600',
-                  'from-[#E48C1C] to-[#F4A43A]'
+                  'from-[#1F4F46] to-[#2E6B5F]',   // Primary Dark Green
+                  'from-[#F4A43A] to-[#E48C1C]',   // Mango Orange
+                  'from-[#2E6B5F] to-[#3E8A7A]',   // Secondary to Light Green
+                  'from-[#E48C1C] to-[#F4A43A]',   // Dark to Mango Orange
+                  'from-[#3E8A7A] to-[#1F4F46]'    // Light to Primary Green
                 ];
                 const gradient = cardGradients[index % cardGradients.length];
                 
                 return (
                 <div 
                   key={pkg.id}
-                  className="min-w-[280px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
+                  className="min-w-[280px] bg-white rounded-2xl shadow-lg border border-[#D2DAD7] overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
                   data-testid={`package-${pkg.id}`}
                 >
                   {/* Varied Color Header */}
@@ -1300,14 +1300,14 @@ const Proton = () => {
                       <span className="text-white/70 line-through text-sm">₹{pkg.originalPrice}</span>
                       <span className="text-2xl font-bold">₹{pkg.price}</span>
                     </div>
-                    <span className="inline-block mt-2 bg-yellow-400 text-slate-800 text-xs font-bold px-2.5 py-1 rounded">
+                    <span className="inline-block mt-2 bg-[#F7C27B] text-[#1F4F46] text-xs font-bold px-2.5 py-1 rounded">
                       {pkg.discount}% Off
                     </span>
                   </div>
                   
                   {/* Info Section */}
-                  <div className="p-4 bg-slate-50">
-                    <div className="flex items-center justify-between text-sm text-slate-600 mb-4">
+                  <div className="p-4 bg-[#F7F9F8]">
+                    <div className="flex items-center justify-between text-sm text-[#6F7B77] mb-4">
                       <div className="flex items-center gap-2">
                         <FlaskConical className="w-4 h-4 text-orange-600" />
                         <span><strong>{pkg.parameters}</strong> parameters</span>
