@@ -1492,14 +1492,14 @@ const Proton = () => {
       </div>
 
       {/* Trust Badges Section - Navy Blue Theme */}
-      <div className="py-4 border-b border-orange-500/30 bg-orange-500/30 backdrop-blur-sm" data-testid="proton-trust-badges">
+      <div className="py-4 border-b border-[#F4A43A]/30 bg-[#F4A43A]/20 backdrop-blur-sm" data-testid="proton-trust-badges">
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex justify-between items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { id: 'trusted-labs', icon: Shield, title: 'Trusted &', subtitle: 'Accredited Labs', gradient: 'from-[#F4A43A] to-[#E48C1C]', bg: 'bg-orange-500/10' },
-              { id: 'doctor-curated', icon: Stethoscope, title: 'Doctor', subtitle: 'Curated Packages', gradient: 'from-[#E48C1C] to-[#F4A43A]', bg: 'bg-amber-500/10' },
-              { id: 'home-sample', icon: Clock, title: 'Home Sample', subtitle: 'Collection', gradient: 'from-[#F4A43A] to-[#E48C1C]', bg: 'bg-orange-500/10' },
-              { id: 'fast-reports', icon: CheckCircle2, title: 'Accurate &', subtitle: 'Fast Reports', gradient: 'from-[#E48C1C] to-[#F4A43A]', bg: 'bg-amber-500/10' }
+              { id: 'trusted-labs', icon: Shield, title: 'Trusted &', subtitle: 'Accredited Labs', gradient: 'from-[#F4A43A] to-[#E48C1C]', bg: 'bg-[#F4A43A]/10' },
+              { id: 'doctor-curated', icon: Stethoscope, title: 'Doctor', subtitle: 'Curated Packages', gradient: 'from-[#E48C1C] to-[#F4A43A]', bg: 'bg-[#F7C27B]/20' },
+              { id: 'home-sample', icon: Clock, title: 'Home Sample', subtitle: 'Collection', gradient: 'from-[#F4A43A] to-[#E48C1C]', bg: 'bg-[#F4A43A]/10' },
+              { id: 'fast-reports', icon: CheckCircle2, title: 'Accurate &', subtitle: 'Fast Reports', gradient: 'from-[#E48C1C] to-[#F4A43A]', bg: 'bg-[#F7C27B]/20' }
             ].map((badge) => (
               <div key={badge.id} className="flex flex-col items-center text-center min-w-[80px] flex-1" data-testid={`proton-trust-${badge.id}`}>
                 <div className={`w-14 h-14 rounded-2xl ${badge.bg} flex items-center justify-center mb-2 shadow-sm`}>
@@ -1515,7 +1515,7 @@ const Proton = () => {
         </div>
       </div>
 
-      {/* Consultation Help Banner - Navy Blue Theme */}
+      {/* Consultation Help Banner - Mango Orange Theme */}
       <div className="bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] text-white" data-testid="consultation-help-banner">
         <div className="max-w-5xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4">
