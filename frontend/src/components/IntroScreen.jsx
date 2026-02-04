@@ -41,14 +41,14 @@ const CAROUSEL_SLIDES = [
     tagline: 'Genuine Medicines. Delivered Fast.',
     icon: Package,
     image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&h=400&fit=crop',
-    gradient: 'from-[#FF5733] to-[#E84118]'
+    gradient: 'from-[#f97316] to-[#ea580c]'
   },
   {
     id: 4,
     tagline: 'All Your Health. One Place.',
     icon: Calendar,
     image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&h=400&fit=crop',
-    gradient: 'from-[#2E6B5F] to-[#3E8A7A]'
+    gradient: 'from-[#1e3a5f] to-[#2c5282]'
   }
 ];
 
