@@ -861,6 +861,7 @@ const DiaGyn = () => {
   const [weeklyAvailability, setWeeklyAvailability] = useState([]);
   const [loadingAvailability, setLoadingAvailability] = useState(false);
   const [emailReminder, setEmailReminder] = useState(true);
+  const [captchaVerified, setCaptchaVerified] = useState(false);
   const [bookingLimits, setBookingLimits] = useState({
     canBook: true,
     activeAppointment: null,
