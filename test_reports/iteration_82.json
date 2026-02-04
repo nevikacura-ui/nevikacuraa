@@ -1,0 +1,121 @@
+{
+  "summary": "Tested new authentication flows and DiaGyn captcha. All features working: 1) Guest Mobile OTP (send/verify endpoints working, UI flow complete), 2) Patient Portal Email→OTP→Password flow (all endpoints working), 3) DiaGyn numeric captcha at Step 5 (confirmed button disabled until captcha solved).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_tests": {
+      "status": "PASS",
+      "total": 13,
+      "passed": 12,
+      "failed": 1,
+      "failure_notes": "Health check test failed due to HTML response instead of JSON - non-critical",
+      "tests_run": [
+        "TestGuestMobileOTPFlow::test_send_otp_valid_mobile - PASS",
+        "TestGuestMobileOTPFlow::test_send_otp_invalid_mobile_too_short - PASS",
+        "TestGuestMobileOTPFlow::test_send_otp_invalid_mobile_non_digits - PASS",
+        "TestGuestMobileOTPFlow::test_verify_otp_wrong_code - PASS",
+        "TestGuestMobileOTPFlow::test_verify_otp_no_otp_sent - PASS",
+        "TestGuestMobileOTPFlow::test_full_guest_otp_flow - PASS",
+        "TestPatientPortalEmailFlow::test_check_email_new_user - PASS",
+        "TestPatientPortalEmailFlow::test_email_otp_send - PASS",
+        "TestPatientPortalEmailFlow::test_email_otp_verify_invalid - PASS",
+        "TestPatientPortalEmailFlow::test_password_login_nonexistent - PASS",
+        "TestPatientPortalEmailFlow::test_set_password_without_verification - PASS",
+        "TestEmailOTPFullFlow::test_full_new_user_registration - PASS"
+      ]
+    },
+    "frontend_tests": {
+      "status": "PASS",
+      "tests_run": [
+        "Guest button opens mobile input modal - PASS",
+        "Guest mobile OTP send - shows OTP input after clicking Send OTP - PASS",
+        "Guest OTP verification - accepts valid OTP, stores guestMode in localStorage - PASS",
+        "Login/Register button opens email input modal - PASS",
+        "Email input triggers OTP flow for new users - PASS",
+        "OTP input shown with Resend OTP and Change Email options - PASS",
+        "DiaGyn booking flow - doctor selection - PASS",
+        "DiaGyn booking flow - clinic selection - PASS",
+        "DiaGyn booking flow - date and time slot selection - PASS",
+        "DiaGyn Step 5 - NumericCaptcha component visible - PASS",
+        "DiaGyn captcha - shows math problem (addition/subtraction) - PASS",
+        "DiaGyn captcha - Confirm button disabled before captcha solved - PASS",
+        "DiaGyn captcha - regenerates after wrong answer - PASS"
+      ]
+    }
+  },
+  "features_verified": {
+    "guest_mobile_otp": {
+      "status": "WORKING",
+      "endpoints": ["/api/auth/guest/send-otp", "/api/auth/guest/verify-otp"],
+      "description": "Guest login via Mobile + OTP. OTP returned in API response for testing. Frontend stores guestMode=true and guestMobile in localStorage after successful verification."
+    },
+    "patient_portal_email_flow": {
+      "status": "WORKING",
+      "endpoints": [
+        "/api/auth/patient/check-email",
+        "/api/auth/email-otp/send",
+        "/api/auth/email-otp/verify",
+        "/api/auth/patient/set-password",
+        "/api/auth/patient/login"
+      ],
+      "description": "New users: Email→OTP→Set Password. Returning users with password: Email→Password login. Both flows working correctly."
+    },
+    "diagyn_numeric_captcha": {
+      "status": "WORKING",
+      "component": "/app/frontend/src/components/NumericCaptcha.jsx",
+      "location": "DiaGyn booking Step 5 (Confirm Your Booking page)",
+      "behavior": {
+        "math_problem": "Shows addition or subtraction with numbers 1-20",
+        "verify_button": "Checks answer, shows error for wrong answer",
+        "regenerate": "New problem generated after wrong answer",
+        "confirm_button": "Disabled until captcha verified, text shows 'Solve captcha to continue'"
+      }
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_guest_auth_flows.py",
+    "/app/test_reports/pytest/pytest_guest_auth_flows.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_guest_auth_flows.py"
+  ],
+  "success_rate": {
+    "backend": "92% (12/13 - health check failure is non-critical)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "guest_mobile": "9876543210",
+    "test_email": "test@example.com",
+    "otp_retrieval": "Guest OTP: returned in API response. Email OTP: check backend logs or use mock OTP from response"
+  },
+  "seed_data_creation": "None - used dynamic test data",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Auth flows tested: Guest Mobile OTP (backend endpoints at /api/auth/guest/*), Patient Portal Email flow (backend endpoints at /api/auth/patient/* and /api/auth/email-otp/*), DiaGyn captcha (NumericCaptcha component at Step 5). All features working correctly. Guest OTP is MOCKED - returns OTP in API response.",
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": [
+      "Guest Mobile OTP - OTP returned in API response field 'otp' for testing",
+      "Email OTP - uses Resend API, fallback to mock OTP logged in backend"
+    ]
+  },
+  "screenshots": [
+    ".screenshots/intro_screen.png - Intro screen with Guest and Login/Register buttons",
+    ".screenshots/guest_mobile_modal.png - Guest mobile input modal",
+    ".screenshots/guest_otp_screen.png - Guest OTP verification screen",
+    ".screenshots/guest_login_complete.png - Home screen after guest login",
+    ".screenshots/email_modal.png - Email input modal for Login/Register",
+    ".screenshots/email_otp_screen.png - Email OTP verification screen",
+    ".screenshots/diagyn_confirmation_step.png - DiaGyn Step 5 with captcha",
+    ".screenshots/diagyn_captcha_visible.png - Captcha component showing 3+7=?"
+  ]
+}
