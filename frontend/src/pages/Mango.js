@@ -234,7 +234,7 @@ const TestCategoryCard = ({ icon: Icon, title, count, color, isActive, onClick }
       active:scale-95 active:shadow-inner
       ${isActive 
         ? `border-[${color}] bg-[${color}]/5 shadow-lg scale-[1.02]` 
-        : 'border-slate-200 hover:border-[#5FA8D3]/30 bg-white hover:shadow-lg hover:scale-[1.02] hover:-translate-y-0.5'
+        : 'border-[#D2DAD7] hover:border-[#5FA8D3]/30 bg-white hover:shadow-lg hover:scale-[1.02] hover:-translate-y-0.5'
       }
     `}
     style={isActive ? { borderColor: color, backgroundColor: `${color}10` } : {}}
@@ -253,7 +253,7 @@ const TestCategoryCard = ({ icon: Icon, title, count, color, isActive, onClick }
       </div>
       <div>
         <h3 className="font-semibold text-[#1E293B] transition-colors group-hover:text-[#5FA8D3]" style={{ fontFamily: 'Outfit, sans-serif' }}>{title}</h3>
-        <p className="text-xs text-slate-500 transition-all group-hover:tracking-wide">{count} tests</p>
+        <p className="text-xs text-[#6F7B77] transition-all group-hover:tracking-wide">{count} tests</p>
       </div>
       {isActive && (
         <div className="ml-auto">
@@ -939,8 +939,8 @@ const Proton = () => {
       title: 'Imaging & Scans', 
       icon: Scan, 
       color: '#64748B',
-      bgColor: 'bg-slate-50',
-      borderColor: 'border-slate-200',
+      bgColor: 'bg-[#F7F9F8]',
+      borderColor: 'border-[#D2DAD7]',
       iconBg: 'bg-slate-100',
       tests: [
         { name: 'ECG (Electrocardiogram)', price: 300 },
@@ -1175,8 +1175,8 @@ const Proton = () => {
                 
                 {/* Search Results Dropdown */}
                 {testSearchTerm && filteredTests.length > 0 && (
-                  <div className="mt-3 max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
-                    <div className="p-2 bg-orange-50 border-b border-slate-200 text-xs text-slate-600 font-medium">
+                  <div className="mt-3 max-h-64 overflow-y-auto border border-[#D2DAD7] rounded-xl">
+                    <div className="p-2 bg-orange-50 border-b border-[#D2DAD7] text-xs text-[#6F7B77] font-medium">
                       Found {filteredTests.length} tests matching &quot;{testSearchTerm}&quot;
                     </div>
                     <div className="divide-y divide-slate-100">
@@ -1191,7 +1191,7 @@ const Proton = () => {
                           className="flex items-center gap-3 p-3 hover:bg-orange-50 cursor-pointer transition-colors w-full text-left"
                         >
                           <span className="text-lg">{getTestIcon(test)}</span>
-                          <span className="text-sm text-slate-800 font-medium">{test}</span>
+                          <span className="text-sm text-[#2B2B2B] font-medium">{test}</span>
                           <Plus className="w-4 h-4 text-orange-500 ml-auto" />
                         </button>
                       ))}
@@ -1346,7 +1346,7 @@ const Proton = () => {
           {/* Most Booked Tests - Large Cards like Orange Health Labs */}
           <div className="max-w-6xl mx-auto px-4 mt-8 mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              <h2 className="text-xl font-bold text-[#2B2B2B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Most Booked Tests
               </h2>
               <button 
@@ -1362,11 +1362,11 @@ const Proton = () => {
               {popularTests.map((test) => (
                 <div 
                   key={test.id}
-                  className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden hover:shadow-xl transition-all"
+                  className="bg-white rounded-2xl shadow-lg border border-[#E6ECEA] overflow-hidden hover:shadow-xl transition-all"
                   data-testid={`test-card-${test.id}`}
                 >
                   {/* Green Gradient Header - Orange Health Labs Style */}
-                  <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 p-5 text-white relative">
+                  <div className="bg-gradient-to-br from-[#1F4F46] via-[#2E6B5F] to-[#3E8A7A] p-5 text-white relative">
                     {/* Wishlist Heart Button */}
                     <button
                       onClick={(e) => {
@@ -1404,22 +1404,22 @@ const Proton = () => {
                       {/* Reports Time */}
                       <div className="flex items-center gap-2.5">
                         <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center">
-                          <FileText className="w-5 h-5 text-slate-500" />
+                          <FileText className="w-5 h-5 text-[#6F7B77]" />
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Reports within</p>
-                          <p className="text-sm font-bold text-slate-800">{test.reportTime}</p>
+                          <p className="text-xs text-[#6F7B77]">Reports within</p>
+                          <p className="text-sm font-bold text-[#2B2B2B]">{test.reportTime}</p>
                         </div>
                       </div>
                       
                       {/* Tests Included */}
                       <div className="flex items-center gap-2.5">
                         <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center">
-                          <FlaskConical className="w-5 h-5 text-slate-500" />
+                          <FlaskConical className="w-5 h-5 text-[#6F7B77]" />
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Tests included</p>
-                          <p className="text-sm font-bold text-slate-800">{test.testsIncluded} test{test.testsIncluded > 1 ? 's' : ''}</p>
+                          <p className="text-xs text-[#6F7B77]">Tests included</p>
+                          <p className="text-sm font-bold text-[#2B2B2B]">{test.testsIncluded} test{test.testsIncluded > 1 ? 's' : ''}</p>
                         </div>
                       </div>
                     </div>
@@ -1477,13 +1477,13 @@ const Proton = () => {
               { num: 3, title: 'Phlebotomist Call', desc: 'We confirm timing & location' },
               { num: 4, title: 'Reports Ready', desc: 'Download from My Orders', success: true }
             ].map((step) => (
-              <div key={step.num} className="flex items-start gap-2 p-3 bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+              <div key={step.num} className="flex items-start gap-2 p-3 bg-white rounded-xl shadow-sm border border-[#E6ECEA] hover:shadow-md transition-all">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${step.success ? 'bg-[#10B981] text-white' : 'bg-[#5FA8D3] text-white'}`}>
                   {step.num}
                 </div>
                 <div>
                   <p className="text-sm font-medium text-[#1E293B]">{step.title}</p>
-                  <p className="text-xs text-slate-500">{step.desc}</p>
+                  <p className="text-xs text-[#6F7B77]">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -1582,7 +1582,7 @@ const Proton = () => {
               <h1 className="text-2xl font-bold text-orange-600 mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Select Your Tests
               </h1>
-              <p className="text-slate-600 text-sm" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-[#6F7B77] text-sm" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                 Choose from imaging, pathology tests, or upload prescription
               </p>
             </div>
@@ -1683,7 +1683,7 @@ const Proton = () => {
                     <div className="relative h-full flex">
                       {/* Left Side - Text Content */}
                       <div className="w-1/2 p-4 md:p-5 flex flex-col justify-center">
-                        <p className="text-slate-500 text-xs mb-0.5">Easy ordering in</p>
+                        <p className="text-[#6F7B77] text-xs mb-0.5">Easy ordering in</p>
                         <h3 className="text-[#0D6651] text-3xl md:text-4xl font-black leading-none" style={{ fontFamily: 'Outfit, sans-serif' }}>
                           3
                         </h3>
@@ -1820,20 +1820,20 @@ const Proton = () => {
             </div>
 
             {/* Search Tests */}
-            <Card className="p-4 rounded-2xl border-slate-200 shadow-sm">
+            <Card className="p-4 rounded-2xl border-[#D2DAD7] shadow-sm">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
                 <Input
                   placeholder="Search tests... (e.g., CBC, Thyroid, HbA1c)"
                   value={testSearchTerm}
                   onChange={(e) => setTestSearchTerm(e.target.value)}
-                  className="pl-10 rounded-xl border-slate-200 focus:border-orange-500 focus:ring-[#0c1e3c]/20"
+                  className="pl-10 rounded-xl border-[#D2DAD7] focus:border-orange-500 focus:ring-[#0c1e3c]/20"
                   data-testid="test-search"
                 />
                 {testSearchTerm && (
                   <button 
                     onClick={() => setTestSearchTerm('')}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-[#6F7B77]"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -1842,8 +1842,8 @@ const Proton = () => {
               
               {/* Search Results */}
               {testSearchTerm && filteredTests.length > 0 && (
-                <div className="mt-3 max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
-                  <div className="p-2 bg-slate-50 border-b border-slate-200 text-xs text-slate-500 font-medium">
+                <div className="mt-3 max-h-64 overflow-y-auto border border-[#D2DAD7] rounded-xl">
+                  <div className="p-2 bg-[#F7F9F8] border-b border-[#D2DAD7] text-xs text-[#6F7B77] font-medium">
                     Found {filteredTests.length} tests matching &quot;{testSearchTerm}&quot;
                   </div>
                   <div className="divide-y divide-slate-100">
@@ -1866,7 +1866,7 @@ const Proton = () => {
               )}
               
               {testSearchTerm && filteredTests.length === 0 && (
-                <div className="mt-3 p-4 text-center text-slate-500 text-sm bg-slate-50 rounded-xl">
+                <div className="mt-3 p-4 text-center text-[#6F7B77] text-sm bg-[#F7F9F8] rounded-xl">
                   No tests found matching &quot;{testSearchTerm}&quot;. Try a different search term or add as custom test below.
                 </div>
               )}
@@ -1884,7 +1884,7 @@ const Proton = () => {
                   className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-medium transition-all ${
                     activeTab === tab.id 
                       ? 'bg-white text-[#5FA8D3] shadow-md' 
-                      : 'text-slate-500 hover:text-[#5FA8D3]'
+                      : 'text-[#6F7B77] hover:text-[#5FA8D3]'
                   }`}
                   data-testid={`tab-${tab.id}`}
                 >
@@ -1900,7 +1900,7 @@ const Proton = () => {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">👩‍⚕️</span>
-                  <h2 className="text-lg font-bold text-slate-800">Holistic Women Care</h2>
+                  <h2 className="text-lg font-bold text-[#2B2B2B]">Holistic Women Care</h2>
                   <span className="px-2 py-0.5 bg-orange-500 text-white text-[10px] font-bold rounded-full flex items-center gap-1">
                     ✨ Evara
                   </span>
@@ -1979,8 +1979,8 @@ const Proton = () => {
                           <category.icon className="w-5 h-5" style={{ color: category.color }} />
                         </div>
                         <div>
-                          <h3 className="font-bold text-slate-800">{category.title}</h3>
-                          <p className="text-xs text-slate-500">{category.tests.length} tests available</p>
+                          <h3 className="font-bold text-[#2B2B2B]">{category.title}</h3>
+                          <p className="text-xs text-[#6F7B77]">{category.tests.length} tests available</p>
                         </div>
                       </div>
                       <button className="text-sm font-medium flex items-center gap-1" style={{ color: category.color }}>
@@ -1993,10 +1993,10 @@ const Proton = () => {
                       {category.tests.map((test) => (
                         <div 
                           key={test.name}
-                          className="min-w-[300px] max-w-[300px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
+                          className="min-w-[300px] max-w-[300px] bg-white rounded-2xl shadow-lg border border-[#E6ECEA] overflow-hidden flex-shrink-0 hover:shadow-xl transition-all"
                         >
                           {/* Green Gradient Header */}
-                          <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 p-4 text-white relative">
+                          <div className="bg-gradient-to-br from-[#1F4F46] via-[#2E6B5F] to-[#3E8A7A] p-4 text-white relative">
                             {/* Test Badge */}
                             <div className="absolute top-3 right-3">
                               <span className="bg-emerald-800/60 text-white text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">
@@ -2020,22 +2020,22 @@ const Proton = () => {
                               {/* Reports Time */}
                               <div className="flex items-center gap-2">
                                 <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                                  <FileText className="w-4 h-4 text-slate-500" />
+                                  <FileText className="w-4 h-4 text-[#6F7B77]" />
                                 </div>
                                 <div>
-                                  <p className="text-[10px] text-slate-500">Reports within</p>
-                                  <p className="text-xs font-bold text-slate-800">6-24 hours</p>
+                                  <p className="text-[10px] text-[#6F7B77]">Reports within</p>
+                                  <p className="text-xs font-bold text-[#2B2B2B]">6-24 hours</p>
                                 </div>
                               </div>
                               
                               {/* Tests Included */}
                               <div className="flex items-center gap-2">
                                 <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                                  <FlaskConical className="w-4 h-4 text-slate-500" />
+                                  <FlaskConical className="w-4 h-4 text-[#6F7B77]" />
                                 </div>
                                 <div>
-                                  <p className="text-[10px] text-slate-500">Tests included</p>
-                                  <p className="text-xs font-bold text-slate-800">1 test</p>
+                                  <p className="text-[10px] text-[#6F7B77]">Tests included</p>
+                                  <p className="text-xs font-bold text-[#2B2B2B]">1 test</p>
                                 </div>
                               </div>
                             </div>
@@ -2088,8 +2088,8 @@ const Proton = () => {
                         <Activity className="w-5 h-5 text-red-500" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-slate-800">ECG Tests</h3>
-                        <p className="text-xs text-slate-500">Electrocardiogram & Heart Monitoring</p>
+                        <h3 className="font-bold text-[#2B2B2B]">ECG Tests</h3>
+                        <p className="text-xs text-[#6F7B77]">Electrocardiogram & Heart Monitoring</p>
                       </div>
                     </div>
                   </div>
@@ -2100,7 +2100,7 @@ const Proton = () => {
                     ].map((test) => (
                       <div 
                         key={test.name}
-                        className="min-w-[300px] max-w-[300px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all snap-center"
+                        className="min-w-[300px] max-w-[300px] bg-white rounded-2xl shadow-lg border border-[#E6ECEA] overflow-hidden flex-shrink-0 hover:shadow-xl transition-all snap-center"
                       >
                         <div className="bg-gradient-to-br from-red-500 via-rose-500 to-pink-600 p-4 text-white relative">
                           <div className="absolute top-3 right-3">
@@ -2113,15 +2113,15 @@ const Proton = () => {
                           </div>
                         </div>
                         <div className="p-4 bg-white">
-                          <p className="text-xs text-slate-600 mb-3 line-clamp-2">{test.description}</p>
+                          <p className="text-xs text-[#6F7B77] mb-3 line-clamp-2">{test.description}</p>
                           <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-2">
                               <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                                <FileText className="w-4 h-4 text-slate-500" />
+                                <FileText className="w-4 h-4 text-[#6F7B77]" />
                               </div>
                               <div>
-                                <p className="text-[10px] text-slate-500">Reports within</p>
-                                <p className="text-xs font-bold text-slate-800">{test.reportTime}</p>
+                                <p className="text-[10px] text-[#6F7B77]">Reports within</p>
+                                <p className="text-xs font-bold text-[#2B2B2B]">{test.reportTime}</p>
                               </div>
                             </div>
                           </div>
@@ -2164,8 +2164,8 @@ const Proton = () => {
                         <Scan className="w-5 h-5 text-pink-500" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-slate-800">Sonography & Scans</h3>
-                        <p className="text-xs text-slate-500">Ultrasound & Imaging Services</p>
+                        <h3 className="font-bold text-[#2B2B2B]">Sonography & Scans</h3>
+                        <p className="text-xs text-[#6F7B77]">Ultrasound & Imaging Services</p>
                       </div>
                     </div>
                   </div>
@@ -2180,7 +2180,7 @@ const Proton = () => {
                     ].map((test) => (
                       <div 
                         key={test.name}
-                        className="min-w-[300px] max-w-[300px] bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex-shrink-0 hover:shadow-xl transition-all snap-center"
+                        className="min-w-[300px] max-w-[300px] bg-white rounded-2xl shadow-lg border border-[#E6ECEA] overflow-hidden flex-shrink-0 hover:shadow-xl transition-all snap-center"
                       >
                         <div className="bg-gradient-to-br from-pink-500 via-fuchsia-500 to-purple-600 p-4 text-white relative">
                           <div className="absolute top-3 right-3">
@@ -2193,15 +2193,15 @@ const Proton = () => {
                           </div>
                         </div>
                         <div className="p-4 bg-white">
-                          <p className="text-xs text-slate-600 mb-3 line-clamp-2">{test.description}</p>
+                          <p className="text-xs text-[#6F7B77] mb-3 line-clamp-2">{test.description}</p>
                           <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-2">
                               <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                                <FileText className="w-4 h-4 text-slate-500" />
+                                <FileText className="w-4 h-4 text-[#6F7B77]" />
                               </div>
                               <div>
-                                <p className="text-[10px] text-slate-500">Reports within</p>
-                                <p className="text-xs font-bold text-slate-800">{test.reportTime}</p>
+                                <p className="text-[10px] text-[#6F7B77]">Reports within</p>
+                                <p className="text-xs font-bold text-[#2B2B2B]">{test.reportTime}</p>
                               </div>
                             </div>
                           </div>
@@ -2239,7 +2239,7 @@ const Proton = () => {
             )}
 
             {/* Custom Test Entry */}
-            <Card className="p-5 rounded-2xl border-slate-200">
+            <Card className="p-5 rounded-2xl border-[#D2DAD7]">
               <h3 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
                 <Plus className="w-4 h-4 text-[#5FA8D3]" />
                 Add Custom Test
@@ -2249,7 +2249,7 @@ const Proton = () => {
                   placeholder="Enter test name not in the list"
                   value={customTest}
                   onChange={(e) => setCustomTest(e.target.value)}
-                  className="flex-1 rounded-xl border-slate-200 focus:border-[#5FA8D3] focus:ring-[#5FA8D3]/20"
+                  className="flex-1 rounded-xl border-[#D2DAD7] focus:border-[#5FA8D3] focus:ring-[#5FA8D3]/20"
                   data-testid="custom-test-input"
                 />
                 <Button onClick={addCustomTest} className="bg-[#5FA8D3] hover:bg-[#4A90B8] rounded-xl" data-testid="add-custom-test">
@@ -2279,29 +2279,29 @@ const Proton = () => {
             )}
 
             {/* Patient Info */}
-            <Card className="p-5 rounded-2xl border-slate-200">
+            <Card className="p-5 rounded-2xl border-[#D2DAD7]">
               <h3 className="font-medium text-[#1E293B] mb-4 flex items-center gap-2">
                 <Phone className="w-4 h-4 text-[#5FA8D3]" />
                 Your Details
               </h3>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <Label className="text-slate-600 text-sm">Full Name *</Label>
+                  <Label className="text-[#6F7B77] text-sm">Full Name *</Label>
                   <Input
                     value={patientInfo.name}
                     onChange={(e) => setPatientInfo({ ...patientInfo, name: e.target.value })}
                     placeholder="Enter your name"
-                    className="mt-1.5 rounded-xl border-slate-200 focus:border-[#5FA8D3]"
+                    className="mt-1.5 rounded-xl border-[#D2DAD7] focus:border-[#5FA8D3]"
                     data-testid="patient-name"
                   />
                 </div>
                 <div>
-                  <Label className="text-slate-600 text-sm">Mobile Number *</Label>
+                  <Label className="text-[#6F7B77] text-sm">Mobile Number *</Label>
                   <Input
                     value={patientInfo.phone}
                     onChange={(e) => setPatientInfo({ ...patientInfo, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
                     placeholder="10-digit mobile number"
-                    className="mt-1.5 rounded-xl border-slate-200 focus:border-[#5FA8D3]"
+                    className="mt-1.5 rounded-xl border-[#D2DAD7] focus:border-[#5FA8D3]"
                     data-testid="patient-phone"
                   />
                   {!bookingLimits.loading && !bookingLimits.canBook && (
@@ -2312,13 +2312,13 @@ const Proton = () => {
                   )}
                 </div>
                 <div className="sm:col-span-2">
-                  <Label className="text-slate-600 text-sm">Email <span className="text-red-500">*</span></Label>
+                  <Label className="text-[#6F7B77] text-sm">Email <span className="text-red-500">*</span></Label>
                   <Input
                     type="email"
                     value={patientInfo.email || ''}
                     onChange={(e) => setPatientInfo({ ...patientInfo, email: e.target.value })}
                     placeholder="your@email.com (Optional)"
-                    className="mt-1.5 rounded-xl border-slate-200 focus:border-orange-500"
+                    className="mt-1.5 rounded-xl border-[#D2DAD7] focus:border-orange-500"
                     data-testid="patient-email"
                   />
                   <p className="text-xs text-slate-400 mt-1">Optional - We&apos;ll send confirmations and test reports to this email.</p>
@@ -2327,7 +2327,7 @@ const Proton = () => {
             </Card>
 
             {/* Sample Collection Type */}
-            <Card className="p-5 rounded-2xl border-slate-200" data-testid="sample-collection-card">
+            <Card className="p-5 rounded-2xl border-[#D2DAD7]" data-testid="sample-collection-card">
               <h3 className="font-medium text-[#1E293B] mb-4 flex items-center gap-2">
                 <Home className="w-4 h-4 text-orange-600" />
                 Sample Collection
@@ -2339,16 +2339,16 @@ const Proton = () => {
                   className={`p-4 rounded-2xl border-2 text-left transition-all ${
                     collectionType === 'home'
                       ? 'border-[#5FA8D3] bg-[#5FA8D3]/5'
-                      : 'border-slate-200 hover:border-[#5FA8D3]/50'
+                      : 'border-[#D2DAD7] hover:border-[#5FA8D3]/50'
                   }`}
                 >
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
                     collectionType === 'home' ? 'bg-[#5FA8D3]/20' : 'bg-slate-100'
                   }`}>
-                    <Home className={`w-6 h-6 ${collectionType === 'home' ? 'text-[#5FA8D3]' : 'text-slate-500'}`} />
+                    <Home className={`w-6 h-6 ${collectionType === 'home' ? 'text-[#5FA8D3]' : 'text-[#6F7B77]'}`} />
                   </div>
                   <h4 className="font-semibold text-[#1E293B]">Home Collection</h4>
-                  <p className="text-xs text-slate-500 mt-1">Phlebotomist visits your home</p>
+                  <p className="text-xs text-[#6F7B77] mt-1">Phlebotomist visits your home</p>
                   <p className="text-xs text-[#10B981] font-medium mt-2">₹50/visit (FREE for orders above ₹2000)</p>
                 </button>
                 
@@ -2358,16 +2358,16 @@ const Proton = () => {
                   className={`p-4 rounded-2xl border-2 text-left transition-all ${
                     collectionType === 'center'
                       ? 'border-[#5FA8D3] bg-[#5FA8D3]/5'
-                      : 'border-slate-200 hover:border-[#5FA8D3]/50'
+                      : 'border-[#D2DAD7] hover:border-[#5FA8D3]/50'
                   }`}
                 >
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
                     collectionType === 'center' ? 'bg-[#5FA8D3]/20' : 'bg-slate-100'
                   }`}>
-                    <MapPin className={`w-6 h-6 ${collectionType === 'center' ? 'text-[#5FA8D3]' : 'text-slate-500'}`} />
+                    <MapPin className={`w-6 h-6 ${collectionType === 'center' ? 'text-[#5FA8D3]' : 'text-[#6F7B77]'}`} />
                   </div>
                   <h4 className="font-semibold text-[#1E293B]">Visit Center</h4>
-                  <p className="text-xs text-slate-500 mt-1">Walk-in to our collection center</p>
+                  <p className="text-xs text-[#6F7B77] mt-1">Walk-in to our collection center</p>
                   <p className="text-xs text-slate-400 mt-2">Naigaon East Collection Center</p>
                 </button>
               </div>
@@ -2375,13 +2375,13 @@ const Proton = () => {
               {collectionType === 'home' && (
                 <div className="mt-4 space-y-3">
                   <div>
-                    <Label className="text-slate-600 text-sm">Complete Address *</Label>
+                    <Label className="text-[#6F7B77] text-sm">Complete Address *</Label>
                     <Textarea
                       value={patientInfo.address}
                       onChange={(e) => setPatientInfo({ ...patientInfo, address: e.target.value })}
                       placeholder="Enter full address with landmark for home sample collection"
                       rows={2}
-                      className="mt-1.5 rounded-xl border-slate-200 focus:border-orange-500"
+                      className="mt-1.5 rounded-xl border-[#D2DAD7] focus:border-orange-500"
                       data-testid="home-address"
                     />
                   </div>
@@ -2397,12 +2397,12 @@ const Proton = () => {
               )}
               
               {collectionType === 'center' && (
-                <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                <div className="mt-4 bg-[#F7F9F8] border border-[#D2DAD7] rounded-xl p-4">
                   <h4 className="font-medium text-[#1E293B] mb-3">Collection Centers</h4>
                   <div className="space-y-3">
-                    <div className="bg-white rounded-lg p-3 border border-slate-100">
+                    <div className="bg-white rounded-lg p-3 border border-[#E6ECEA]">
                       <p className="font-semibold text-sm text-[#1E293B]">Mango Health Labs - Naigaon</p>
-                      <p className="text-xs text-slate-500 mt-1">Shop no 3, Sai Darshan, Near Don Bosco School, Naigaon East 401208</p>
+                      <p className="text-xs text-[#6F7B77] mt-1">Shop no 3, Sai Darshan, Near Don Bosco School, Naigaon East 401208</p>
                       <p className="text-xs text-slate-400">Mon-Sat: 7:00 AM - 7:00 PM</p>
                     </div>
                   </div>
@@ -2411,7 +2411,7 @@ const Proton = () => {
             </Card>
 
             {/* Prescription Upload */}
-            <Card className="p-5 rounded-2xl border-slate-200">
+            <Card className="p-5 rounded-2xl border-[#D2DAD7]">
               <h3 className="font-medium text-[#1E293B] mb-3 flex items-center gap-2">
                 <Upload className="w-4 h-4 text-[#5FA8D3]" />
                 Upload Prescription (Optional)
@@ -2419,7 +2419,7 @@ const Proton = () => {
               <label className="cursor-pointer block">
                 <div className={`px-4 py-6 border-2 border-dashed rounded-xl transition-colors text-center ${prescriptionUrl ? 'border-[#10B981] bg-[#10B981]/5' : 'border-slate-300 hover:border-[#5FA8D3]'}`}>
                   {uploading ? (
-                    <div className="flex items-center justify-center gap-2 text-slate-500">
+                    <div className="flex items-center justify-center gap-2 text-[#6F7B77]">
                       <Loader2 className="w-5 h-5 animate-spin" />
                       Uploading...
                     </div>
@@ -2429,7 +2429,7 @@ const Proton = () => {
                       {prescriptionFile?.name || 'Prescription uploaded'}
                     </div>
                   ) : (
-                    <div className="text-slate-500">
+                    <div className="text-[#6F7B77]">
                       <Upload className="w-8 h-8 mx-auto mb-2 text-slate-400" />
                       <p>Click to upload prescription image or PDF</p>
                     </div>
@@ -2455,7 +2455,7 @@ const Proton = () => {
         {/* STEP 2: OTP Verification */}
         {currentStep === 2 && (
           <div className="space-y-6 max-w-md mx-auto">
-            <Card className="p-8 rounded-3xl border-slate-200 shadow-lg">
+            <Card className="p-8 rounded-3xl border-[#D2DAD7] shadow-lg">
               <div className="text-center mb-8">
                 <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#5FA8D3]/20 to-[#62B6CB]/20 rounded-2xl flex items-center justify-center mb-5">
                   <Shield className="w-10 h-10 text-[#5FA8D3]" />
@@ -2463,7 +2463,7 @@ const Proton = () => {
                 <h2 className="text-2xl font-bold text-[#1E293B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
                   Verify Your Phone
                 </h2>
-                <p className="text-slate-500 mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                <p className="text-[#6F7B77] mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                   Enter the 6-digit code sent to +91 {patientInfo.phone}
                 </p>
               </div>
@@ -2485,7 +2485,7 @@ const Proton = () => {
                     value={digit}
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                    className="w-12 h-14 text-center text-xl font-bold rounded-xl border-2 border-slate-200 focus:border-[#5FA8D3] focus:ring-2 focus:ring-[#5FA8D3]/20"
+                    className="w-12 h-14 text-center text-xl font-bold rounded-xl border-2 border-[#D2DAD7] focus:border-[#5FA8D3] focus:ring-2 focus:ring-[#5FA8D3]/20"
                     data-testid={`otp-input-${idx}`}
                   />
                 ))}
@@ -2502,7 +2502,7 @@ const Proton = () => {
 
               <div className="text-center mt-5">
                 {resendTimer > 0 ? (
-                  <p className="text-sm text-slate-500">Resend OTP in {resendTimer}s</p>
+                  <p className="text-sm text-[#6F7B77]">Resend OTP in {resendTimer}s</p>
                 ) : (
                   <button onClick={sendOtp} disabled={otpLoading} className="text-sm text-[#5FA8D3] font-medium hover:underline">
                     Resend OTP
@@ -2512,7 +2512,7 @@ const Proton = () => {
             </Card>
 
             <div className="flex gap-3">
-              <Button variant="outline" onClick={goToStep1} className="flex-1 rounded-full border-slate-200" data-testid="back-to-tests">
+              <Button variant="outline" onClick={goToStep1} className="flex-1 rounded-full border-[#D2DAD7]" data-testid="back-to-tests">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Tests
               </Button>
@@ -2558,7 +2558,7 @@ const Proton = () => {
             </Card>
 
             {/* Preferred Date */}
-            <Card className="p-5 rounded-2xl border-slate-200">
+            <Card className="p-5 rounded-2xl border-[#D2DAD7]">
               <Label className="flex items-center gap-2 mb-3 font-medium text-[#1E293B]">
                 <Clock className="w-4 h-4 text-[#5FA8D3]" />
                 Preferred Date *
@@ -2568,12 +2568,12 @@ const Proton = () => {
                 selected={preferredDate}
                 onSelect={setPreferredDate}
                 disabled={(date) => date < new Date()}
-                className="rounded-xl border border-slate-200"
+                className="rounded-xl border border-[#D2DAD7]"
               />
             </Card>
 
             {/* Time Slot Selection */}
-            <Card className="p-5 rounded-2xl border-slate-200">
+            <Card className="p-5 rounded-2xl border-[#D2DAD7]">
               <Label className="flex items-center gap-2 mb-3 font-medium text-[#1E293B]">
                 <Clock className="w-4 h-4 text-[#5FA8D3]" />
                 Preferred Time Slot
@@ -2586,7 +2586,7 @@ const Proton = () => {
                     className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
                       preferredTimeSlot === slot.value 
                         ? 'border-[#5FA8D3] bg-[#5FA8D3]/10 text-[#5FA8D3]' 
-                        : 'border-slate-200 hover:border-[#5FA8D3]/30 text-slate-600'
+                        : 'border-[#D2DAD7] hover:border-[#5FA8D3]/30 text-[#6F7B77]'
                     }`}
                     data-testid={`time-slot-${slot.value}`}
                   >
@@ -2610,8 +2610,8 @@ const Proton = () => {
                         {prep.fasting ? `${prep.hours}hr Fasting` : 'No Fasting'}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-800">{prep.test}</p>
-                        <p className="text-xs text-slate-600">{prep.instruction}</p>
+                        <p className="text-sm font-medium text-[#2B2B2B]">{prep.test}</p>
+                        <p className="text-xs text-[#6F7B77]">{prep.instruction}</p>
                       </div>
                     </div>
                   ))}
@@ -2620,21 +2620,21 @@ const Proton = () => {
             )}
 
             {/* Address */}
-            <Card className="p-5 rounded-2xl border-slate-200">
-              <Label className="flex items-center gap-2 mb-2 text-slate-600">
+            <Card className="p-5 rounded-2xl border-[#D2DAD7]">
+              <Label className="flex items-center gap-2 mb-2 text-[#6F7B77]">
                 Address (for Home Visit)
               </Label>
               <Textarea
                 value={patientInfo.address}
                 onChange={(e) => setPatientInfo({ ...patientInfo, address: e.target.value })}
                 placeholder="Enter your address for home sample collection"
-                className="min-h-20 rounded-xl border-slate-200 focus:border-[#5FA8D3]"
+                className="min-h-20 rounded-xl border-[#D2DAD7] focus:border-[#5FA8D3]"
                 data-testid="patient-address"
               />
             </Card>
 
             {/* Payment Method */}
-            <Card className="p-5 rounded-2xl border-slate-200">
+            <Card className="p-5 rounded-2xl border-[#D2DAD7]">
               <Label className="flex items-center gap-2 mb-3 font-medium text-[#1E293B]">
                 <CreditCard className="w-4 h-4 text-orange-500" />
                 Payment Method
@@ -2644,7 +2644,7 @@ const Proton = () => {
                 <button
                   onClick={() => setPaymentMethod('cod')}
                   className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
-                    paymentMethod === 'cod' ? 'border-orange-500 bg-orange-50' : 'border-slate-200 hover:border-orange-300'
+                    paymentMethod === 'cod' ? 'border-orange-500 bg-orange-50' : 'border-[#D2DAD7] hover:border-orange-300'
                   }`}
                   data-testid="payment-cod"
                 >
@@ -2653,7 +2653,7 @@ const Proton = () => {
                   </div>
                   <div className="text-left flex-1">
                     <span className="text-sm font-semibold text-[#1E293B] block">Pay Cash</span>
-                    <span className="text-xs text-slate-500">Pay at time of sample collection</span>
+                    <span className="text-xs text-[#6F7B77]">Pay at time of sample collection</span>
                   </div>
                   {paymentMethod === 'cod' && <CheckCircle2 className="w-5 h-5 text-orange-500" />}
                 </button>
@@ -2662,7 +2662,7 @@ const Proton = () => {
                 <button
                   onClick={() => setPaymentMethod('card')}
                   className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
-                    paymentMethod === 'card' ? 'border-orange-500 bg-orange-50' : 'border-slate-200 hover:border-orange-300'
+                    paymentMethod === 'card' ? 'border-orange-500 bg-orange-50' : 'border-[#D2DAD7] hover:border-orange-300'
                   }`}
                   data-testid="payment-card"
                 >
@@ -2671,7 +2671,7 @@ const Proton = () => {
                   </div>
                   <div className="text-left flex-1">
                     <span className="text-sm font-semibold text-[#1E293B] block">QR / Card Payment</span>
-                    <span className="text-xs text-slate-500">Pay via UPI/Card at time of collection</span>
+                    <span className="text-xs text-[#6F7B77]">Pay via UPI/Card at time of collection</span>
                   </div>
                   {paymentMethod === 'card' && <CheckCircle2 className="w-5 h-5 text-orange-500" />}
                 </button>
@@ -2680,7 +2680,7 @@ const Proton = () => {
                 <button
                   onClick={() => setPaymentMethod('cashfree')}
                   className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
-                    paymentMethod === 'cashfree' ? 'border-orange-500 bg-orange-50' : 'border-slate-200 hover:border-orange-300'
+                    paymentMethod === 'cashfree' ? 'border-orange-500 bg-orange-50' : 'border-[#D2DAD7] hover:border-orange-300'
                   }`}
                   data-testid="payment-cashfree"
                 >
@@ -2689,7 +2689,7 @@ const Proton = () => {
                   </div>
                   <div className="text-left flex-1">
                     <span className="text-sm font-semibold text-[#1E293B] block">Pay Online Now</span>
-                    <span className="text-xs text-slate-500">UPI, Cards, Net Banking</span>
+                    <span className="text-xs text-[#6F7B77]">UPI, Cards, Net Banking</span>
                   </div>
                   <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                     5% OFF
@@ -2701,25 +2701,25 @@ const Proton = () => {
 
             {/* Pricing Summary Card */}
             {collectionType === 'home' && (
-              <Card className="p-5 rounded-2xl border-slate-200 bg-gradient-to-br from-slate-50 to-teal-50/30" data-testid="pricing-summary-card">
+              <Card className="p-5 rounded-2xl border-[#D2DAD7] bg-gradient-to-br from-slate-50 to-teal-50/30" data-testid="pricing-summary-card">
                 <h3 className="font-medium text-[#1E293B] mb-4 flex items-center gap-2">
                   <Banknote className="w-4 h-4 text-[#5FA8D3]" />
                   Home Collection Charges
                 </h3>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center py-2 border-b border-slate-200">
-                    <span className="text-sm text-slate-600">Home Visit Fee</span>
+                  <div className="flex justify-between items-center py-2 border-b border-[#D2DAD7]">
+                    <span className="text-sm text-[#6F7B77]">Home Visit Fee</span>
                     <span className="text-sm font-medium text-slate-700">₹50</span>
                   </div>
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-sm text-slate-600">Discount (Orders above ₹2000)</span>
+                    <span className="text-sm text-[#6F7B77]">Discount (Orders above ₹2000)</span>
                     <span className="text-sm font-medium text-[#10B981]">-₹50</span>
                   </div>
                   <div className="flex justify-between items-center py-3 border-t-2 border-[#5FA8D3]/20 mt-2">
                     <span className="font-semibold text-[#1E293B]">Home Visit Total</span>
                     <span className="font-bold text-lg text-[#5FA8D3]">₹0*</span>
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">*Home collection is FREE for test orders above ₹2000. A ₹50 fee applies for orders below ₹2000.</p>
+                  <p className="text-xs text-[#6F7B77] mt-1">*Home collection is FREE for test orders above ₹2000. A ₹50 fee applies for orders below ₹2000.</p>
                 </div>
               </Card>
             )}
@@ -2776,16 +2776,16 @@ const Proton = () => {
               {wishlist.length === 0 ? (
                 <div className="text-center py-10">
                   <Heart className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500">No tests saved yet</p>
+                  <p className="text-[#6F7B77]">No tests saved yet</p>
                   <p className="text-xs text-slate-400 mt-1">Tap the heart icon on any test to save it</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {wishlist.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                    <div key={idx} className="flex items-center justify-between p-3 bg-[#F7F9F8] rounded-xl">
                       <div className="flex-1">
-                        <p className="font-medium text-slate-800 text-sm">{item.name}</p>
-                        <p className="text-xs text-slate-500">{item.category}</p>
+                        <p className="font-medium text-[#2B2B2B] text-sm">{item.name}</p>
+                        <p className="text-xs text-[#6F7B77]">{item.category}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-emerald-600 font-bold">₹{item.price}</span>
@@ -2815,7 +2815,7 @@ const Proton = () => {
             
             {/* Footer */}
             {wishlist.length > 0 && (
-              <div className="p-4 border-t border-slate-200">
+              <div className="p-4 border-t border-[#D2DAD7]">
                 <Button
                   onClick={() => {
                     setSelectedTests(wishlist.map(w => w.name));
@@ -2858,7 +2858,7 @@ const Proton = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Green Gradient Header */}
-            <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 p-6 text-white relative">
+            <div className="bg-gradient-to-br from-[#1F4F46] via-[#2E6B5F] to-[#3E8A7A] p-6 text-white relative">
               {/* Close Button */}
               <button 
                 onClick={() => setSelectedTestDetails(null)}
@@ -2885,7 +2885,7 @@ const Proton = () => {
                   <p className="text-white/60 text-sm mb-1">Our Price</p>
                   <span className="text-4xl font-bold">₹{selectedTestDetails.price}</span>
                 </div>
-                <span className="bg-yellow-400 text-slate-800 text-sm font-bold px-3 py-1.5 rounded-lg">
+                <span className="bg-yellow-400 text-[#2B2B2B] text-sm font-bold px-3 py-1.5 rounded-lg">
                   {selectedTestDetails.discount}% OFF
                 </span>
               </div>
@@ -2895,39 +2895,39 @@ const Proton = () => {
             <div className="p-6">
               {/* Description */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-2">About This Test</h3>
+                <h3 className="text-sm font-bold text-[#6F7B77] uppercase tracking-wide mb-2">About This Test</h3>
                 <p className="text-slate-700 leading-relaxed">{selectedTestDetails.description}</p>
               </div>
               
               {/* Info Grid */}
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-slate-50 rounded-xl p-4">
+                <div className="bg-[#F7F9F8] rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
                       <FileText className="w-5 h-5 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500">Reports Within</p>
-                      <p className="text-lg font-bold text-slate-800">{selectedTestDetails.reportTime}</p>
+                      <p className="text-xs text-[#6F7B77]">Reports Within</p>
+                      <p className="text-lg font-bold text-[#2B2B2B]">{selectedTestDetails.reportTime}</p>
                     </div>
                   </div>
                 </div>
                 
-                <div className="bg-slate-50 rounded-xl p-4">
+                <div className="bg-[#F7F9F8] rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
                       <FlaskConical className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500">Tests Included</p>
-                      <p className="text-lg font-bold text-slate-800">{selectedTestDetails.testsIncluded} Parameter{selectedTestDetails.testsIncluded > 1 ? 's' : ''}</p>
+                      <p className="text-xs text-[#6F7B77]">Tests Included</p>
+                      <p className="text-lg font-bold text-[#2B2B2B]">{selectedTestDetails.testsIncluded} Parameter{selectedTestDetails.testsIncluded > 1 ? 's' : ''}</p>
                     </div>
                   </div>
                 </div>
               </div>
               
               {/* Features */}
-              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 mb-6">
+              <div className="bg-gradient-to-r from-[#F7F9F8] to-[#E6ECEA] rounded-xl p-4 mb-6">
                 <div className="flex flex-wrap gap-3">
                   <div className="flex items-center gap-2 text-sm text-slate-700">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
@@ -2948,7 +2948,7 @@ const Proton = () => {
               <div className="flex gap-3">
                 <Button
                   variant="outline"
-                  className="flex-1 rounded-xl border-2 border-slate-300 text-slate-600 hover:bg-slate-50 font-bold py-4"
+                  className="flex-1 rounded-xl border-2 border-slate-300 text-[#6F7B77] hover:bg-[#F7F9F8] font-bold py-4"
                   onClick={() => setSelectedTestDetails(null)}
                 >
                   Close
