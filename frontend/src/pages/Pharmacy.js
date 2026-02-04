@@ -1082,7 +1082,17 @@ const Pharmacy = () => {
       <div className="bg-orange-500 relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            {/* Left Content */}
+            {/* Left - Logo */}
+            <div className="flex-shrink-0 mr-4">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/kubsd2ev_Black%20%26%20White%20Lizard%20Lab%20Logo_20260205_013244_0000.png" 
+                alt="Orange Pharmacy" 
+                className="h-20 w-20 object-contain rounded-xl"
+                style={{ filter: 'brightness(0) invert(1)' }}
+              />
+            </div>
+            
+            {/* Center Content */}
             <div className="flex-1 text-white z-10">
               {/* Zero Fees Badge */}
               <div className="flex items-center gap-2 mb-3">
@@ -1090,16 +1100,6 @@ const Pharmacy = () => {
                   ₹0 Fees
                 </span>
                 <span className="text-white/90 text-sm">on orders above ₹1500*</span>
-              </div>
-              
-              {/* Everyday Lowest Prices */}
-              <div className="flex items-center gap-2 mb-4">
-                <div className="bg-yellow-400 text-slate-800 text-xs font-bold px-3 py-1 rounded-full">
-                  everyday
-                </div>
-                <span className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  LOWEST PRICES
-                </span>
               </div>
               
               {/* Trust Badges Row */}
@@ -1116,16 +1116,6 @@ const Pharmacy = () => {
                   <span className="text-white font-bold">₹0</span>
                   <span className="text-white/90 text-xs">Surge Fee</span>
                 </div>
-                
-                {/* Wishlist Button */}
-                <button
-                  onClick={() => setShowWishlist(true)}
-                  className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 hover:bg-white/30 transition-all"
-                  data-testid="open-wishlist-btn"
-                >
-                  <Heart className={`w-4 h-4 ${wishlist.length > 0 ? 'fill-red-400 text-red-400' : 'text-white'}`} />
-                  <span className="text-white/90 text-xs">Wishlist {wishlist.length > 0 && `(${wishlist.length})`}</span>
-                </button>
                 
                 {/* Saved Cart Indicator */}
                 {hasSavedCart && (
