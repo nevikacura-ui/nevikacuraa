@@ -2102,7 +2102,7 @@ const Proton = () => {
                         key={test.name}
                         className="min-w-[300px] max-w-[300px] bg-white rounded-2xl shadow-lg border border-[#E6ECEA] overflow-hidden flex-shrink-0 hover:shadow-xl transition-all snap-center"
                       >
-                        <div className="bg-gradient-to-br from-red-500 via-rose-500 to-pink-600 p-4 text-white relative">
+                        <div className="bg-gradient-to-br from-[#E48C1C] via-[#F4A43A] to-[#F7C27B] p-4 text-white relative">
                           <div className="absolute top-3 right-3">
                             <span className="bg-red-800/60 text-white text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">ECG</span>
                           </div>
@@ -2182,7 +2182,7 @@ const Proton = () => {
                         key={test.name}
                         className="min-w-[300px] max-w-[300px] bg-white rounded-2xl shadow-lg border border-[#E6ECEA] overflow-hidden flex-shrink-0 hover:shadow-xl transition-all snap-center"
                       >
-                        <div className="bg-gradient-to-br from-pink-500 via-fuchsia-500 to-purple-600 p-4 text-white relative">
+                        <div className="bg-gradient-to-br from-[#2E6B5F] via-[#3E8A7A] to-[#1F4F46] p-4 text-white relative">
                           <div className="absolute top-3 right-3">
                             <span className="bg-pink-800/60 text-white text-xs font-bold px-2.5 py-1 rounded-md backdrop-blur-sm">Scan</span>
                           </div>
@@ -2757,7 +2757,7 @@ const Proton = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-rose-500 to-pink-500 p-5 text-white relative">
+            <div className="bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] p-5 text-white relative">
               <button 
                 onClick={() => setShowWishlist(false)}
                 className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
