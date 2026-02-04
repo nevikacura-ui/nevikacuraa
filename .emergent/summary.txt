@@ -1,151 +1,142 @@
 <analysis>**original_problem_statement:**
-The user's initial request was to fix a critical bug where staff and doctor portals were showing no appointments. However, this quickly evolved into a request for a complete rebuild of the staff and doctor portals for DiaGyn with a new, simplified, and senior-friendly design.
+The user's initial request was to fix a critical bug where staff and doctor portals were showing no appointments. This quickly evolved into a request for a complete rebuild of the staff and doctor portals for DiaGyn with a new, simplified, and senior-friendly design. Subsequent work involved adding a Bluetooth thermal printer integration for appointment tokens and bills. Most recently, the focus has shifted to a complete UI/UX overhaul of the Mango health labs page and the application's introductory splash/authentication screen, based on iterative user feedback and design examples.
 
 **PRODUCT REQUIREMENTS:**
-1.  **Rebuild Staff Portal:** Create a new, single portal for staff to book appointments for two clinics (Pushpa and Amnion).
-2.  **Simplified Booking Flow:** Implement distinct workflows for Walk-in/Emergency (current session only) and Book Appointment (future dates). Emergency booking must be available 24/7.
-3.  **Senior-Friendly UI:** Use large buttons, clear text, intuitive layouts, and haptic feedback. The UI must be mobile and tablet-friendly.
-4.  **Doctor Schedule & Slot Sync:** Implement doctor-specific schedules for different clinics and days. Ensure real-time slot availability to prevent double-booking from different sources (staff portal vs. patient website).
-5.  **Rebuild Doctor Portal:** Create a new portal for doctors to view their patient queue, manage consultation status (Waiting, In Consult, Done), and complete consultations by selecting from a list of fees and charges.
-6.  **Iterative UI/UX Design:** Implement user-provided color schemes and layout adjustments. The final themes are Teal/Lime Green for the Staff Portal and Navy Blue/Teal on a white background for the Doctor Portal.
-7.  **Data Management:** Enable patient lookup via mobile number, save new patients, and display booking/patient IDs clearly.
-8.  **Backend Logic:** All time-based logic (e.g., sessions) must be based on India Standard Time (IST).
+1.  **Rebuild Staff/Doctor Portals:** Create separate, functional portals for staff (appointment booking/management) and doctors (consultation management).
+2.  **Simplified Booking Flow:** Implement distinct workflows for Walk-in/Emergency and Book Appointment with IST-based session logic.
+3.  **Senior-Friendly UI:** Use large buttons, clear text, and intuitive layouts.
+4.  **Token Printing System:** Upon patient check-in, generate a daily sequential token and print it via a Bluetooth thermal printer. Also, allow printing of bills for completed appointments.
+5.  **UI/UX Overhaul:** Iteratively redesign the Mango (health labs) page and the main splash/auth screen based on user-provided color palettes and design examples (e.g., Orange Health Labs).
+6.  **Role-Based Permissions:** Staff can check patients in; doctors can complete consultations with fees, notes, and an optional follow-up date.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A new full-stack feature has been built, comprising a new Staff Portal and a new Doctor Portal.
--   **Staff Portal ():** A new component  has been created with a Teal/Lime Green theme. It includes functionality for patient lookup, booking, and viewing daily appointments. The booking logic was being rebuilt to meet the user's latest, very specific requirements.
--   **Doctor Portal ():** A new component  with a Navy Blue/Teal theme allows doctors to log in, see their patient queue, and complete consultations by adding fees.
--   **Backend ():** New API endpoints have been created to support all the functionalities of the new portals, including schedule-based slot generation, appointment management, and user authentication.
--   The old staff portal component has been deleted, and all relevant staff credentials have been updated to work with the new system.
+-   A new full-stack DiaGyn feature with a Staff Portal () and a Doctor Portal ().
+-   The Staff Portal supports patient lookup, booking, check-in, and status updates.
+-   The Doctor Portal allows doctors to manage their queue and complete consultations, including adding fees, notes, and an editable total bill amount.
+-   A Bluetooth thermal printer integration is in place, allowing staff to connect to a printer, print appointment tokens upon check-in, and print bills for completed appointments. An auto-reconnect feature for the last used printer has also been implemented.
+-   The Mango health labs page () has been completely restyled with a new, user-provided color palette and a full-width layout.
+-   The application has a new introductory flow, inspired by the Orange Health Labs app, featuring an animated splash screen leading to a carousel and a compact authentication section (Email/Guest).
 
 **Last working item**:
--   **Last item agent was working:** Implementing the final, user-confirmed, simplified booking flow for the DiaGyn Staff Portal. The user provided a very specific set of rules for how Walk-in, Emergency, and Book Appointment tabs should function, based on the current time (IST) and selected clinic.
+-   **Last item agent was working:** The agent was about to start another simplification of the splash screen. The user requested to remove the Book.Order.Test.Care animated text and fix a UI bug where a wishlist heart icon was overlapping text on the carousel.
 -   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** Both. The backend agent needs to verify the new IST-based session logic and slot filtering. The frontend agent needs to test the complete, simplified UI and booking workflows.
+-   **Which testing method agent to use?** Frontend testing agent or screenshot tool to verify the splash screen UI changes.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   There are no outstanding bugs. The work is focused on completing a new feature build.
+-   **Issue 1: Wishlist heart icon overlaps text on the carousel (P0)**
+    -   The user pointed this out in their last message. It's a visual bug on the main splash screen carousel.
+    -   **Next debug checklist:**
+        -   View .
+        -   Inspect the CSS for the heart icon and the text container.
+        -   Adjust , , or  to prevent the overlap.
+    -   **Why fix this issue and what will be achieved with the fix?** To resolve a UI bug reported by the user and improve the visual quality of the splash screen.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Frontend
 
 **In progress Task List**:
--   **Task 1: Implement Final Staff Portal Booking Logic (P0)**
-    -   **Where to resume:** The agent has a clear, user-approved plan and has just cleared the  file to start the fresh implementation.
-        1.  **Backend ():** Refactor the slot generation logic to be strictly based on India Standard Time (IST). Create distinct endpoints or logic to serve slots for the current session (Walk-in) versus future dates/sessions (Book).
-        2.  **Frontend ():**
-            -   Modify the header to have only two clinic toggles:  | .
-            -   **Walk-in/Emergency Tab:** Based on the selected clinic, fetch and display doctors. On doctor selection, show *only* the current session's available slots (e.g., 11am-2pm if before 2pm, or 6pm-10pm if after 6pm). Show a No active session message between 2pm-6pm, but ensure the Emergency booking option remains available 24/7.
-            -   **Book Appointment Tab:** For the selected clinic, the flow should be: Select Doctor -> Select Future Date -> Show Available Slots -> Enter Patient Details -> Book.
-    -   **What will be achieved with this?** The staff portal will match the user's exact workflow, providing a simplified and intuitive booking experience.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** Both
-    -   **Blocked on something:** None.
+-   **Task 1: Simplify Splash Screen (P0)**
+    -   **Where to resume:** Modify the file .
+    -   **Details:** The user wants to remove the animated Book. Order. Test. Care. text from the initial splash phase. The application should load directly into the main screen containing the carousel and authentication options.
+    -   **What will be achieved with this?** A simpler, faster application entry experience, matching the user's latest request.
+    -   **Status:** NOT STARTED
+    -   **Should Test frontend/backend/both after fix?** Frontend
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P1: Refactor Large Frontend Components:** Break down  into smaller components after the feature is stable. Also, refactor the existing  and .
-    -   **P2: Verify Recently Viewed Feature (Pharmacy):** This is pending user verification from a previous session.
-    -   **P2: Test and Finalize Profile Page:** The new Blinkit-style UI is built but needs testing.
+    -   **P1: Finalize Pharmacy Header Color:** Verify with the user that the new dark orange color on the pharmacy header is correct.
+    -   **P1: Implement Email + OTP Authentication Backend:** The guest login flow is frontend-only. The email OTP flow requires backend endpoints for sending and verifying codes.
+    -   **P2: Bluetooth Printer Final Confirmation:** The user reported issues finding the printer. While several fixes were implemented, final confirmation that the connection works is still needed.
 -   **Future Tasks:**
-    -   **P2: Fix PWA Install Time / Old APK Version:** Address user reports of slow PWA installation and outdated local APK builds.
-    -   **P2: Implement WhatsApp Chatbot** using the existing MSG91 integration.
+    -   **P2: Refactor Large Frontend Components:** Break down  and .
+    -   **P2: Fix PWA Install Time / Old APK Version.**
+    -   **P2: Implement WhatsApp Chatbot** (MSG91).
     -   **P2: Manual Pharmacy Inventory Update Feature.**
     -   **P3: Refactor Backend Routes:** Decompose the monolithic .
 
 **Completed work in this session**
--   **DiaGyn Staff Portal Rebuild:** Built a new staff portal from scratch, accessible at .
-    -   Implemented a full appointment workflow: Booking, Check-in, With Doctor, and Completion with Fees.
-    -   Added schedule-based, real-time slot availability for doctors.
-    -   Iterated through multiple UI themes based on user feedback, settling on a Teal/Lime Green design.
--   **Doctor Portal Creation:** Built a new doctor portal from scratch at .
-    -   Allows doctors to manage their patient queue and consultation flow.
-    -   Includes a fee and scan selection modal for completing consultations.
-    -   Finalized a Navy Blue/Teal on white UI theme.
--   **Authentication & Data Fixes:**
-    -   Created new accounts for doctors (, ).
-    -   Updated password hashes for all old staff accounts (, etc.) to ensure they can log into the new portals.
-    -   Added new fee codes as requested.
--   **Code Cleanup:** Deleted the old, problematic staff portal component and updated all routes to point to the new portals.
+-   **DiaGyn Role Permissions Implemented:**
+    -   Staff can  patients; the  button was removed from the staff portal.
+    -   Doctors can  appointments; a  picker and an **editable total bill amount** were added to the doctor's completion modal.
+-   **Bluetooth Thermal Printer Integration (Token & Bill Printing):**
+    -   Implemented a backend system to generate a unique, sequential token number for each patient upon check-in.
+    -   Added a frontend utility () using the Web Bluetooth API to connect to a printer.
+    -   Enabled printing of formatted appointment tokens from the staff portal.
+    -   Added a Print Bill button for completed appointments to print a formatted bill.
+    -   Implemented an auto-reconnect feature for the last-used printer.
+-   **Mango Page () UI/UX Overhaul:**
+    -   Recolored the entire page using a new user-provided color palette (Dark Green, Mango Orange).
+    -   Changed the layout to be full-width, removing previous container constraints (thick edges).
+    -   Updated the  component with the new colors.
+-   **Splash Screen & Auth Flow Redesign:**
+    -   Iteratively redesigned the splash screen to match the look and feel of the Orange Health Labs app.
+    -   Created a flow: Animated Text -> Carousel with Auth Buttons -> Slide-up Auth Modals.
 
 **Earlier issues found/mentioned but not fixed**
--   **Initial P0 Bug (Blank Portals):** The original bug was not debugged. Instead, the user opted to replace the faulty portals with entirely new ones. This original issue is now considered obsolete.
 -   **PWA Install Time / Old APK Version:** From the initial handoff, not addressed.
 -   **Face ID Camera Fails to Start on Mobile:** A low-priority issue from the initial handoff, not addressed.
 
 **Known issue recurrence from previous fork**
--   None. The primary issue from the last fork was superseded by a new feature request.
+-   None.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Full-stack Feature Development:** Building a complex feature from the database schema and backend API up to the interactive frontend UI.
--   **Iterative UI/UX Prototyping:** Rapidly modifying frontend code based on continuous user feedback on colors, layout, and functionality.
--   **Role-Based Portals:** Creating distinct interfaces and logic for 'staff' and 'doctor' user roles.
--   **Time-Sensitive Logic:** Implementing business rules based on the time of day (IST), such as differentiating between morning and evening work sessions for slot availability.
+-   **Web Bluetooth API:** Core technology used for connecting to and controlling the thermal printer directly from the browser, enabling a hardware integration without a native app.
+-   **Iterative UI/UX Prototyping:** Rapidly modifying frontend code based on continuous user feedback, including screenshots, videos, and color palettes.
+-   **Role-Based Access Control (RBAC):** Differentiating UI and actions based on user roles (Staff vs. Doctor).
+-   **Backend Tokenization:** Implemented a counter on the backend to generate sequential daily token numbers for appointments.
 
 **key DB schema**
--   **:** Stores user accounts for both staff and doctors with fields like , , , and .
--   **:** Contains all appointment details, including , , , , and .
--   **:** A registry of patients, searchable by  number.
+-   **:** Updated to store  (Number),  (String),  (String), and  (Number).
 
 **changes in tech stack**
 -   None.
 
 **All files of reference**
--   : The primary frontend file for the task.
--   : The primary backend file for the task.
--   : The completed doctor portal, for reference.
--   : For routing.
+-    (Primary file for the next task)
+-   
+-   
+-   
+-   
+-   
 
 **Areas that need refactoring**:
--   The  component is a single large file. Once the functionality is stable, it should be broken down into smaller, manageable components (e.g., , , ).
--   The backend  is monolithic and a candidate for future modularization.
+-    and  are large single-file components that would benefit from being broken down into smaller, more focused sub-components to improve maintainability.
 
 **key api endpoints**
--   
--   
--   
--    (and new session-based variants)
--   
--   
--   
+-   : This endpoint is now multi-purpose. When the status is , it generates a token. When , it saves the final fees, notes, and follow-up date.
 
 **Critical Info for New Agent**
--   **Ignore the original P0 bug from the handoff summary.** The user's priority has completely shifted to building and finalizing the new Staff and Doctor portals. The old code is gone.
--   **Your sole focus is to implement the user's latest, detailed plan for the Staff Portal's booking flow.** This was confirmed in the final messages. Re-read the  and  sections carefully.
--   The core logic to implement is the strict separation of  (current session only, based on IST) and  (future sessions), with a 24/7  option.
--   The user is highly engaged and provides specific feedback. Be prepared for further iterative changes after implementing the current plan.
+-   The user's immediate priority is fixing the UI of the splash screen. Address the overlapping heart icon and remove the initial animated text phase as requested.
+-   The user is highly visual and provides feedback through screenshots and videos. Pay close attention to these artifacts.
+-   The Bluetooth printer feature is new and critical. While auto-reconnect is implemented, be aware that browser limitations require a user action for the very first pairing. The user previously had trouble discovering the printer, so this feature may require further troubleshooting.
 
 **documents and test reports created in this job**
--    (Note: This report is for a previous iteration of the portal and is now outdated).
--    (Updated with new portal features).
+-   
+-   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Provided new fee codes (S1, S2, etc.), requested the Doctor Portal be darkest green, and asked for the Staff Portal clinic toggles to be larger and full-width on mobile.
-2.  **User:** Provided a screenshot of a blue Add button and requested that color for the Doctor Portal to distinguish it.
-3.  **User:** Requested a new color scheme for the Doctor Portal: navy blue header, white page, and teal buttons.
-4.  **User:** Sent screenshots of the OLD portal, confused if the new portals were live.
-5.  **User:** Delete old portal then. I am ok if data get deleted.
-6.  **User:** When I login in staff portal, and enter id and password, kindly lead to me to new portal.
-7.  **User:** Reported that the  vs  logic was incorrect and needed to be more distinct.
-8.  **User:** Clarified the booking logic again, emphasizing the need for real-time slot sync and proper day-wise scheduling.
-9.  **User:** Asked the agent to confirm the final, simplified flow (2 clinic toggles, distinct walk-in/book logic).
-10. **User:** Clarified that the  option should be available 24/7, even when walk-in sessions are not active. Confirmed the plan by saying, Now integrated both of the understanding you mentioned, and implement.
+1.  **User:** Provided new carousel content and asked to update the Orange Pharmacy header color. (Completed)
+2.  **User:** Wishlist heart icon is overlapping text... Sorry on carousel on tagline and image . No much text . Sorry again for wrong instructions remove tagline book.order.test care page **(This is the current P0 task).**
 
 **Project Health Check:**
--   **Broken:** The primary booking flow in the new  does not yet meet the user's final specifications.
--   **Mocked:**  functions.
+-   **Broken:** The splash screen has a UI bug (overlapping icon) and does not meet the user's latest simplified requirement.
+-   **Mocked:**  and  functions remain mocked.
 
 **3rd Party Integrations**
 -   Cashfree (Payments)
 -   MSG91 (WhatsApp)
 -   Resend (Email)
+-   **Web Bluetooth API** for thermal printers (e.g., Everycom EC58).
 
 **Testing status**
--   **Testing agent used after significant changes:** YES, but on a previous, now-outdated version of the portals.
+-   **Testing agent used after significant changes:** YES, on the DiaGyn portal features.
 -   **Troubleshoot agent used after agent stuck in loop:** NO
 -   **Test files created:** No
 -   **Known regressions:** None.
@@ -153,6 +144,7 @@ A new full-stack feature has been built, comprising a new Staff Portal and a new
 **Credentials to test flow:**
 -   **Staff Portal ():**  / 
 -   **Doctor Portal ():**  /  or  / 
+-   **Guest Access:** Use any 10-digit mobile number on the auth screen.
 
 **What agent forgot to execute**
--   The agent was about to start the implementation of the user's final confirmed plan for the staff portal booking flow. This work needs to be resumed immediately.</analysis>
+-   The agent has not yet implemented the very last user request: to simplify the splash screen by removing the animated Book.Order.Test.Care text and to fix the overlapping wishlist heart icon on the carousel.</analysis>
