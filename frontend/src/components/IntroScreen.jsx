@@ -55,7 +55,9 @@ const CAROUSEL_SLIDES = [
 const IntroScreen = ({ onComplete, user }) => {
   const { setPatientAuth } = useAuth();
   
-  // Skip splash - go directly to main
+  // Phases: 'splash' -> 'main'
+  const [phase, setPhase] = useState('splash');
+  const [wordIndex, setWordIndex] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   
   // Auth state
@@ -66,6 +68,8 @@ const IntroScreen = ({ onComplete, user }) => {
   const [mobile, setMobile] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  const splashWords = ['Book.', 'Order.', 'Test.', 'Care.'];
   
   // Lock scroll
   useEffect(() => {
@@ -83,14 +87,34 @@ const IntroScreen = ({ onComplete, user }) => {
     }
   }, [user, onComplete]);
   
+  // Splash word animation
+  useEffect(() => {
+    if (phase !== 'splash') return;
+    
+    const wordTimer = setInterval(() => {
+      setWordIndex(prev => {
+        if (prev >= splashWords.length - 1) {
+          clearInterval(wordTimer);
+          setTimeout(() => setPhase('main'), 400);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 550);
+    
+    return () => clearInterval(wordTimer);
+  }, [phase]);
+  
   // Auto-slide carousel
   useEffect(() => {
+    if (phase !== 'main') return;
+    
     const slideTimer = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % CAROUSEL_SLIDES.length);
     }, 4000);
     
     return () => clearInterval(slideTimer);
-  }, []);
+  }, [phase]);
   
   // Auth functions
   const sendOtp = async () => {
