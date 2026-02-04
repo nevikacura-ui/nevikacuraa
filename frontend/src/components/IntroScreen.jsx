@@ -140,44 +140,15 @@ const IntroScreen = ({ onComplete, user }) => {
     onComplete();
   };
 
-  // ========== SPLASH SCREEN ==========
-  if (phase === 'splash') {
-    return (
-      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-white">
-        {/* Animated Words */}
-        <div className="flex flex-col items-center gap-1">
-          {splashWords.map((word, i) => (
-            <span
-              key={word}
-              className={`text-4xl font-bold transition-all duration-500 ${
-                i <= wordIndex ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-              }`}
-              style={{ 
-                color: i === wordIndex ? THEME.accent : THEME.primary,
-                transitionDelay: `${i * 80}ms`
-              }}>
-              {word}
-            </span>
-          ))}
-        </div>
-        
-        {/* Tagline */}
-        <p className="mt-6 text-sm font-medium" style={{ color: THEME.textMuted }}>
-          Healthcare. Faster. Smarter.
-        </p>
-      </div>
-    );
-  }
-
   // Current slide data
   const slide = CAROUSEL_SLIDES[currentSlide];
   const SlideIcon = slide.icon;
 
-  // ========== MAIN SCREEN ==========
+  // ========== MAIN SCREEN (No splash phase) ==========
   return (
     <div className="fixed inset-0 z-[99999] flex flex-col bg-white">
       
-      {/* ===== CAROUSEL SECTION (70% screen) ===== */}
+      {/* ===== CAROUSEL SECTION (65% screen) ===== */}
       <div className="flex-1 relative overflow-hidden" style={{ minHeight: '65vh' }}>
         
         {/* Background gradient */}
@@ -187,43 +158,26 @@ const IntroScreen = ({ onComplete, user }) => {
         />
         
         {/* Content */}
-        <div className="relative z-10 h-full flex flex-col px-6 pt-8 pb-4">
+        <div className="relative z-10 h-full flex flex-col px-6 pt-10 pb-4">
           
           {/* Icon */}
-          <div className="mb-4">
+          <div className="mb-6">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
               <SlideIcon className="w-7 h-7 text-white" />
             </div>
           </div>
           
-          {/* Heading */}
-          <h1 className="text-3xl font-bold text-white leading-tight mb-3">
-            {slide.heading}
+          {/* Tagline - Simple & Bold */}
+          <h1 className="text-3xl font-bold text-white leading-tight mb-8">
+            {slide.tagline}
           </h1>
           
-          {/* Subtext */}
-          <p className="text-white/80 text-base mb-4">
-            {slide.subtext}
-          </p>
-          
-          {/* Points */}
-          <div className="space-y-2 mb-6">
-            {slide.points.map((point, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-                  <Check className="w-3 h-3 text-white" />
-                </div>
-                <span className="text-white/90 text-sm">{point}</span>
-              </div>
-            ))}
-          </div>
-          
-          {/* Image */}
-          <div className="flex-1 flex items-end justify-center">
-            <div className="w-full max-w-[280px] h-40 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20">
+          {/* Image - Centered & Prominent */}
+          <div className="flex-1 flex items-center justify-center">
+            <div className="w-full max-w-[300px] h-48 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20">
               <img 
                 src={slide.image} 
-                alt={slide.heading}
+                alt={slide.tagline}
                 className="w-full h-full object-cover"
               />
             </div>
