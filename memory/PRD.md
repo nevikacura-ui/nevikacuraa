@@ -105,6 +105,25 @@ Complete healthcare platform with three main services:
 - `/app/frontend/src/pages/DiaGynStaffPortal.js` - Staff portal UI
 - `/app/frontend/src/pages/DoctorPortal.js` - Doctor portal UI
 
+### Feb 4, 2026 - Patient Auth System Overhaul COMPLETE
+**Task:** Simplify guest login + implement Email+Password for returning users
+**Status:** COMPLETED (Feb 4, 2026)
+**Changes:**
+- ✅ **Guest button → Skip button** - No phone number required, instant access
+- ✅ **New Auth Flow:** Email → Check if user exists with password
+  - **New users:** Email → OTP → Set Password → Account created
+  - **Returning users:** Email → Password login (with OTP fallback option)
+- ✅ **Backend Endpoints Added:**
+  - `POST /api/auth/patient/check-email` - Check if email exists + has password
+  - `POST /api/auth/patient/set-password` - Set password after OTP verification
+  - `POST /api/auth/patient/login` - Email + Password login
+- ✅ **Email OTP verify** returns `has_password` flag
+- ✅ **Cashfree Payment Integration** - Verified working in production mode
+**Files Modified:** 
+- `/app/frontend/src/components/IntroScreen.jsx` (Auth UI flow)
+- `/app/backend/server.py` (New patient auth endpoints)
+**Testing:** All 17 backend tests passed, all UI tests passed
+
 ### Feb 4, 2026 - Medical Devices Product Images Update
 **Last working item**:
 -   **Task:** Update Medical Devices section on Orange Pharmacy page with user-provided product images
