@@ -2443,7 +2443,7 @@ const Proton = () => {
             <Button 
               onClick={goToStep2} 
               disabled={selectedTests.length === 0 && !prescriptionUrl}
-              className="w-full bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#4A90B8] hover:to-[#5FA8D3] text-white py-6 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+              className="w-full bg-gradient-to-r from-[#1F4F46] to-[#2E6B5F] hover:from-[#2E6B5F] hover:to-[#3E8A7A] text-white py-6 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
               data-testid="continue-to-otp"
             >
               Continue
@@ -2457,7 +2457,7 @@ const Proton = () => {
           <div className="space-y-6 max-w-md mx-auto">
             <Card className="p-8 rounded-3xl border-[#D2DAD7] shadow-lg">
               <div className="text-center mb-8">
-                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#5FA8D3]/20 to-[#62B6CB]/20 rounded-2xl flex items-center justify-center mb-5">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#1F4F46]/20 to-[#2E6B5F]/20 rounded-2xl flex items-center justify-center mb-5">
                   <Shield className="w-10 h-10 text-[#5FA8D3]" />
                 </div>
                 <h2 className="text-2xl font-bold text-[#1E293B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
@@ -2494,7 +2494,7 @@ const Proton = () => {
               <Button
                 onClick={verifyOtp}
                 disabled={otp.join('').length !== 6 || otpLoading}
-                className="w-full bg-gradient-to-r from-[#5FA8D3] to-[#62B6CB] hover:from-[#4A90B8] hover:to-[#5FA8D3] text-white py-6 rounded-full font-semibold"
+                className="w-full bg-gradient-to-r from-[#1F4F46] to-[#2E6B5F] hover:from-[#2E6B5F] hover:to-[#3E8A7A] text-white py-6 rounded-full font-semibold"
                 data-testid="verify-otp-btn"
               >
                 {otpLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify OTP'}
@@ -2728,7 +2728,7 @@ const Proton = () => {
             <Button 
               onClick={handleSubmit} 
               disabled={loading || !preferredDate || !bookingLimits.canBook}
-              className="w-full bg-gradient-to-r from-[#10B981] to-[#62B6CB] hover:from-[#0D9668] hover:to-[#5FA8D3] text-white py-6 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+              className="w-full bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] hover:from-[#E48C1C] hover:to-[#F4A43A] text-white py-6 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
               data-testid="book-now-btn"
             >
               {loading ? (
