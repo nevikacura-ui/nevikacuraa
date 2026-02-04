@@ -89,24 +89,34 @@ function AppContent() {
   const { user } = useAuth();
   const [showIntro, setShowIntro] = useState(true);
   
-  // Check if intro should be shown
+  // Check if intro should be shown - NOW MANDATORY for user login
   useEffect(() => {
-    const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+    const authToken = localStorage.getItem('authToken');
     const patientToken = localStorage.getItem('patientToken');
+    const guestMobile = localStorage.getItem('guestMobile');
     const staffToken = localStorage.getItem('staffToken');
+    
     const isStaffPage = window.location.pathname.includes('/admin') || 
                         window.location.pathname.includes('/staff') || 
                         window.location.pathname.includes('/doctor-portal');
-    const isLoginPage = window.location.pathname === '/login';
+    const isPublicPage = window.location.pathname.includes('/anc-form') ||
+                         window.location.pathname.includes('/diabetes-form') ||
+                         window.location.pathname.includes('/queue') ||
+                         window.location.pathname.includes('/report') ||
+                         window.location.pathname.includes('/medicine-images');
     
-    // Always skip intro for staff/admin pages - they have their own login screen
-    if (hasSeenSplash || user || patientToken || isStaffPage || isLoginPage) {
+    // Skip intro for:
+    // 1. Staff/admin pages (have own login)
+    // 2. Public pages (forms, queue display)
+    // 3. Already logged in users (authToken, patientToken, guestMobile)
+    if (isStaffPage || isPublicPage || authToken || patientToken || guestMobile || user) {
       setShowIntro(false);
+    } else {
+      setShowIntro(true);
     }
   }, [user]);
   
   const handleIntroComplete = () => {
-    sessionStorage.setItem('hasSeenSplash', 'true');
     setShowIntro(false);
   };
   
