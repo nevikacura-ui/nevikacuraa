@@ -160,31 +160,141 @@ const IntroScreen = ({ onComplete, user }) => {
       const verifyRes = await axios.post(`${API}/auth/email-otp/verify`, { email, otp });
       
       if (verifyRes.data.user_exists) {
-        // Existing user - login
-        const loginRes = await axios.post(`${API}/auth/email-otp/login`, { 
-          email, 
-          verification_token: verifyRes.data.verification_token 
-        });
-        const { token, user: userData } = loginRes.data;
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('patientToken', token);
-        if (userData) {
-          localStorage.setItem('userData', JSON.stringify(userData));
-          setPatientAuth(userData);
+        // Existing user - check if they have a password set
+        if (verifyRes.data.has_password) {
+          // User has password - prompt for password login next time
+          // For now, complete OTP login
+          const loginRes = await axios.post(`${API}/auth/email-otp/login`, { 
+            email, 
+            verification_token: verifyRes.data.verification_token 
+          });
+          const { token, user: userData } = loginRes.data;
+          localStorage.setItem('authToken', token);
+          localStorage.setItem('patientToken', token);
+          if (userData) {
+            localStorage.setItem('userData', JSON.stringify(userData));
+            setPatientAuth(userData);
+          }
+          toast.success('Login successful!');
+          onComplete();
+        } else {
+          // Existing user without password - prompt to set password
+          setVerificationToken(verifyRes.data.verification_token);
+          setAuthStep('setPassword');
+          toast.info('Set a password for easier future logins');
         }
-        toast.success('Login successful!');
-        onComplete();
       } else {
-        // New user - show they need to register or continue as guest
-        toast.info('Email verified! You can now continue as guest.');
-        localStorage.setItem('verifiedEmail', email);
-        localStorage.setItem('guestMode', 'true');
-        onComplete();
+        // New user - prompt to set password (registration)
+        setVerificationToken(verifyRes.data.verification_token);
+        setAuthStep('setPassword');
+        toast.info('Create a password to complete registration');
       }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Verification failed');
     }
     setLoading(false);
+  };
+  
+  // Set password after OTP verification (for new users or users without password)
+  const setNewPassword = async () => {
+    if (!password || password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/auth/patient/set-password`, {
+        email,
+        verification_token: verificationToken,
+        password
+      });
+      const { token, user: userData } = res.data;
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('patientToken', token);
+      if (userData) {
+        localStorage.setItem('userData', JSON.stringify(userData));
+        setPatientAuth(userData);
+      }
+      toast.success('Account created! Welcome!');
+      onComplete();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to set password');
+    }
+    setLoading(false);
+  };
+  
+  // Password login for returning users
+  const loginWithPassword = async () => {
+    if (!password) {
+      toast.error('Enter your password');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/auth/patient/login`, { email, password });
+      const { token, user: userData } = res.data;
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('patientToken', token);
+      if (userData) {
+        localStorage.setItem('userData', JSON.stringify(userData));
+        setPatientAuth(userData);
+      }
+      toast.success('Login successful!');
+      onComplete();
+    } catch (error) {
+      if (error.response?.status === 404) {
+        // User doesn't exist - go back to email step
+        toast.error('Email not registered. Please sign up first.');
+        setAuthStep('email');
+      } else if (error.response?.status === 401) {
+        toast.error('Incorrect password');
+      } else {
+        toast.error(error.response?.data?.detail || 'Login failed');
+      }
+    }
+    setLoading(false);
+  };
+  
+  // Check if email exists and has password
+  const checkEmailAndProceed = async () => {
+    if (!email || !email.includes('@')) {
+      toast.error('Enter valid email');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/auth/patient/check-email`, { email });
+      if (res.data.exists && res.data.has_password) {
+        // User exists with password - show password login
+        setHasPassword(true);
+        setAuthStep('password');
+      } else {
+        // New user or user without password - send OTP
+        await sendOtpInternal();
+      }
+    } catch (error) {
+      // If check fails, fall back to OTP flow
+      await sendOtpInternal();
+    }
+    setLoading(false);
+  };
+  
+  const sendOtpInternal = async () => {
+    try {
+      const res = await axios.post(`${API}/auth/email-otp/send`, { email });
+      setOtpSent(true);
+      setAuthStep('otp');
+      toast.success('OTP sent to your email!');
+      if (res.data.mock_otp) {
+        console.log('Test OTP:', res.data.mock_otp);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to send OTP');
+    }
   };
   
   const skipToApp = () => {
