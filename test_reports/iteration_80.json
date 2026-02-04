@@ -1,0 +1,105 @@
+{
+  "summary": "Doctor Portal and Staff Portal appointment flow testing complete. All features verified: Doctor login (dr_vikas/vikas123), WAITING patients with START CONSULT button, IN CONSULTATION status with COMPLETE button, completion modal with fee codes (NF, G1, G2, D1, D2, D3), scan fees (ES, NT, GS, FL, UP, UT), notes, follow-up date, and total calculation. Staff Portal shows completed appointments with bill amounts. Print Bill button requires Bluetooth printer connection.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_tests": {
+      "status": "PASS",
+      "tests": [
+        "Doctor login with dr_vikas/vikas123 - PASS",
+        "Staff login with staff_diagyn/diagyn123 - PASS",
+        "Get config (fee codes, scan fees) - PASS",
+        "Update status to WithDoctor (Start Consultation) - PASS",
+        "Complete appointment with fee code G1 - PASS",
+        "Verify completed appointment has total_amount - PASS",
+        "Staff sees completed appointments with bill - PASS"
+      ]
+    },
+    "frontend_tests": {
+      "status": "PASS",
+      "tests": [
+        "Doctor Portal login page with data-testid - PASS",
+        "Doctor Portal dashboard loads - PASS",
+        "WAITING section shows CheckedIn patients - PASS",
+        "IN CONSULTATION section shows WithDoctor patients - PASS",
+        "COMPLETED section shows completed patients with amounts - PASS",
+        "START CONSULT button visible and clickable - PASS",
+        "COMPLETE button opens completion modal - PASS",
+        "Completion modal shows fee codes (NF, G1, G2, D1, D2, D3) - PASS",
+        "Completion modal shows scan fees (ES, NT, GS, FL, UP, UT) - PASS",
+        "Completion modal shows NOTES field - PASS",
+        "Completion modal shows FOLLOW-UP DATE field - PASS",
+        "Completion modal shows TOTAL calculation - PASS",
+        "Staff Portal login page with data-testid - PASS",
+        "Staff Portal dashboard loads - PASS",
+        "Staff sees completed appointments with DONE status - PASS",
+        "Staff sees bill amounts (₹150) for completed appointments - PASS",
+        "Staff sees fee code (G1) for completed appointments - PASS"
+      ]
+    }
+  },
+  "features_verified": {
+    "doctor_portal": {
+      "login": "dr_vikas / vikas123 credentials working",
+      "dashboard": "Shows WAITING, IN CONSULTATION, COMPLETED sections with counts",
+      "start_consult": "START CONSULT button moves patient from CheckedIn to WithDoctor",
+      "complete_modal": {
+        "fee_codes": "NF (₹0), G1 (₹150), G2 (₹100), D1 (₹500), D2 (₹400), D3 (₹300)",
+        "scan_fees": "ES (₹1000), NT (₹1200), GS (₹1500), FL (₹200), UP (₹1000), UT (₹100)",
+        "notes": "Optional notes field available",
+        "follow_up": "Optional follow-up date picker available",
+        "total": "Editable total field with auto-calculation"
+      }
+    },
+    "staff_portal": {
+      "login": "staff_diagyn / diagyn123 credentials working",
+      "dashboard": "Shows appointments with status badges (BOOKED, WAITING, WITH DR, DONE)",
+      "completed_view": "Completed appointments show bill amount and fee code",
+      "print_bill": "Print Bill button available when Bluetooth printer connected"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/routes/diagyn_staff.py",
+    "/app/frontend/src/pages/DoctorPortal.js",
+    "/app/frontend/src/pages/DiaGynStaffPortal.js"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Doctor Portal correctly filters appointments by doctor name",
+    "Completion modal properly calculates total from fee code + scan codes",
+    "Staff Portal correctly shows completed appointments with bill amounts",
+    "Print Bill button correctly requires Bluetooth printer connection"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "doctor_portal": {
+      "url": "/doctor-portal",
+      "username": "dr_vikas",
+      "password": "vikas123"
+    },
+    "staff_portal": {
+      "url": "/staff",
+      "username": "staff_diagyn",
+      "password": "diagyn123"
+    }
+  },
+  "seed_data_creation": "Flow Test Patient appointment completed via API with fee code G1, total ₹150, follow-up 2026-02-15",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Doctor Portal and Staff Portal appointment flow fully tested. Doctor can: login, see WAITING patients, START CONSULT (moves to IN CONSULTATION), COMPLETE with fee modal (fee codes, scans, notes, follow-up, total). Staff can: login, see all appointments with status, view completed appointments with bill amounts. Print Bill requires Bluetooth printer. Test patient 'Flow Test Patient' completed with G1 fee code (₹150).",
+  "mocked_apis": {
+    "WhatsApp notifications": "send_whatsapp_notification via MSG91 is MOCKED",
+    "Bluetooth printing": "Requires physical Bluetooth thermal printer connection"
+  }
+}
