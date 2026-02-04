@@ -128,17 +128,19 @@ class ThermalPrinter {
         // Try specific filters first
         device = await navigator.bluetooth.requestDevice({
           filters: [
+            { name: 'Thermal Printer' },  // Exact match for user's printer
+            { namePrefix: 'Thermal' },
             { namePrefix: 'EC' },
             { namePrefix: 'Everycom' },
             { namePrefix: 'Printer' },
             { namePrefix: 'BlueTooth' },
+            { namePrefix: 'BLUAC' },
             { namePrefix: 'BT' },
             { namePrefix: 'MPT' },
             { namePrefix: 'POS' },
             { namePrefix: 'RP' },
             { namePrefix: 'PT' },
             { namePrefix: '58' },
-            { namePrefix: 'Thermal' },
             { namePrefix: 'Mini' },
             { namePrefix: 'ZJ' },
             { namePrefix: 'XP' },
