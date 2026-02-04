@@ -287,16 +287,16 @@ const IntroScreen = ({ onComplete, user }) => {
             className="flex-1 h-12 rounded-xl font-semibold text-sm"
             style={{ background: THEME.accent, color: 'white' }}>
             <Mail className="w-4 h-4 mr-2" />
-            Email
+            Login / Register
           </Button>
           
           <Button 
-            onClick={() => { setAuthMode('guest'); setShowAuthModal(true); }}
+            onClick={skipToApp}
             variant="outline"
             className="flex-1 h-12 rounded-xl font-semibold text-sm border-2"
             style={{ borderColor: THEME.primary, color: THEME.primary }}>
-            <User className="w-4 h-4 mr-2" />
-            Guest
+            <ArrowRight className="w-4 h-4 mr-2" />
+            Skip
           </Button>
         </div>
         
