@@ -270,34 +270,17 @@ const IntroScreen = ({ onComplete, user }) => {
           ))}
         </div>
       </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Carousel Dots */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-          {CAROUSEL_SLIDES.map((_, i) => (
-            <button 
-              key={i}
-              onClick={() => setCurrentSlide(i)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                i === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/40'
-              }`}
-            />
-          ))}
-        </div>
-      </div>
       
       {/* ===== AUTH SECTION (30% screen) ===== */}
       <div className="bg-white px-6 py-5 shadow-[0_-8px_30px_rgba(0,0,0,0.1)]" style={{ minHeight: '30vh' }}>
         
-        {/* Logo */}
+        {/* Logo - Reduced gap */}
         <div className="text-center mb-4">
           <p className="text-sm" style={{ color: THEME.textMuted }}>Welcome to</p>
           <img 
             src="https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/hoal6fvj_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260204_171806_0000%20%282%29.png" 
             alt="NevikaCura" 
-            className="h-[72px] mx-auto object-contain mt-2"
+            className="h-[72px] mx-auto object-contain mt-1"
           />
         </div>
         
