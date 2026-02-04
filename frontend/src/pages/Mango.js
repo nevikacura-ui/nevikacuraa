@@ -1092,15 +1092,15 @@ const Proton = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#102926] via-[#14332E] to-[#1A3E38]">
+    <div className="min-h-screen bg-gradient-to-b from-[#1F4F46] via-[#2E6B5F] to-[#3E8A7A]">
       {/* Shared Service Header */}
       <ServiceHeader />
 
-      {/* ========== ZEPTO-STYLE HERO SECTION ========== */}
+      {/* ========== MANGO HEALTH LABS HERO SECTION ========== */}
       {currentStep === 0 ? (
         <>
           {/* Dark Green Hero Banner Section with Mango Health Labs Branding */}
-          <div className="bg-gradient-to-br from-[#1B3A35] via-[#14332E] to-[#102926] relative overflow-hidden">
+          <div className="bg-gradient-to-br from-[#1F4F46] via-[#2E6B5F] to-[#1F4F46] relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-4 py-5">
               <div className="flex items-center justify-between">
                 {/* Left Content */}
@@ -1122,8 +1122,8 @@ const Proton = () => {
                     Blood Test At Home
                   </h1>
                   <div className="flex items-center gap-1 mb-2">
-                    <Clock className="w-4 h-4 text-orange-300" />
-                    <span className="font-semibold text-orange-300 text-sm">in 60 MINS</span>
+                    <Clock className="w-4 h-4 text-[#F4A43A]" />
+                    <span className="font-semibold text-[#F4A43A] text-sm">in 60 MINS</span>
                   </div>
                 </div>
               </div>
