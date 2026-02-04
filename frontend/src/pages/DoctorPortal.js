@@ -152,7 +152,13 @@ const DoctorPortal = () => {
       // Filter to show only appointments for this doctor or all if admin
       let apts = res.data.appointments || [];
       if (doctorInfo?.doctor && !doctorInfo.role?.includes('admin')) {
-        apts = apts.filter(a => a.doctor?.includes(doctorInfo.doctor?.split(' ').pop()));
+        // Match by full doctor name or partial (last name)
+        const doctorName = doctorInfo.doctor.toLowerCase();
+        const lastName = doctorInfo.doctor.split(' ').pop()?.toLowerCase();
+        apts = apts.filter(a => {
+          const aptDoctor = (a.doctor || '').toLowerCase();
+          return aptDoctor.includes(doctorName) || aptDoctor.includes(lastName);
+        });
       }
       setAppointments(apts);
       setSummary(res.data.summary || {});
