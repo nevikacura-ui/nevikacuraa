@@ -1599,18 +1599,24 @@ const Pharmacy = () => {
           
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { name: 'Blood Pressure Monitor', price: 1499, mrp: 2499, off: 40, delivery: '26 mins', image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=150&h=150&fit=crop' },
-              { name: 'Digital Thermometer', price: 199, mrp: 399, off: 50, delivery: '15 mins', image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150&h=150&fit=crop' },
-              { name: 'Glucometer Kit', price: 899, mrp: 1599, off: 44, delivery: '26 mins', image: 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=150&h=150&fit=crop' },
-              { name: 'Pulse Oximeter', price: 599, mrp: 999, off: 40, delivery: '20 mins', image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150&h=150&fit=crop' },
-              { name: 'Nebulizer', price: 1299, mrp: 2199, off: 41, delivery: '45 mins', image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=150&h=150&fit=crop' }
+              { name: 'Blood Pressure Monitor', price: 1499, mrp: 2499, off: 40, delivery: '26 mins', image: null, icon: 'bp' },
+              { name: 'Digital Thermometer', price: 199, mrp: 399, off: 50, delivery: '15 mins', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/7abaqhvk_digital-clinical-thermometer-1-year-warranty-ft09-1-blue-beurer-original-imahcq9ync3rygue.jpeg', icon: null },
+              { name: 'Glucometer Kit', price: 899, mrp: 1599, off: 44, delivery: '26 mins', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/ffclpiec_HCIyO9POGo-dr_morepen_glucoone_blood_glucose_monitor_bg03_with_test_strips_pack_of_25s_50131_0_2.jpg', icon: null },
+              { name: 'Pulse Oximeter', price: 599, mrp: 999, off: 40, delivery: '20 mins', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/2u4igyl2_bpl-smart-oxy-finger-tip-pulse-black-oximeter-black-2-1746441443.jpg', icon: null },
+              { name: 'Nebulizer', price: 1299, mrp: 2199, off: 41, delivery: '45 mins', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/10x7bxc9_14335813a.webp', icon: null }
             ].map((item, idx) => (
               <div 
                 key={idx}
                 className="min-w-[160px] bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0"
               >
                 <div className="relative">
-                  <img src={item.image} alt={item.name} className="w-full h-28 object-cover" />
+                  {item.image ? (
+                    <img src={item.image} alt={item.name} className="w-full h-28 object-contain bg-slate-50 p-2" />
+                  ) : (
+                    <div className="w-full h-28 bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center">
+                      <Activity className="w-12 h-12 text-orange-400" />
+                    </div>
+                  )}
                   <button className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md">
                     <Heart className="w-4 h-4 text-slate-400" />
                   </button>
