@@ -630,11 +630,9 @@ const Home = () => {
                 }`}
                 data-testid="nav-orange"
               >
-                <img 
-                  src="https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/alb23w29_Black%20%26%20White%20Lizard%20Lab%20Logo_20260205_012714_0000.png" 
-                  alt="Orange Pharmacy" 
-                  className="w-7 h-7 rounded-full object-contain"
-                />
+                <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${activeService === 'pharmacy' ? 'from-orange-500 to-amber-500' : 'from-orange-400 to-amber-500'} flex items-center justify-center`}>
+                  <Package className="w-4 h-4 text-white" />
+                </div>
                 <span className="font-semibold text-sm whitespace-nowrap">Orange</span>
               </button>
             </div>
