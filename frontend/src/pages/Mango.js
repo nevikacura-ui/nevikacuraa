@@ -1895,7 +1895,7 @@ const Proton = () => {
             </div>
 
             {/* Holistic Women Care Section - Evara */}
-            <div className="py-4 bg-gradient-to-br from-[#0c1e3c]/10 via-[#1a365d]/5 to-white rounded-2xl px-4 -mx-4" data-testid="womens-care-proton-section">
+            <div className="py-4 bg-gradient-to-br from-[#1F4F46]/10 via-[#2E6B5F]/5 to-white rounded-2xl px-4 -mx-4" data-testid="womens-care-proton-section">
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
