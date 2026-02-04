@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { Mail, Phone, ArrowRight, Loader2, User, Sparkles, X } from 'lucide-react';
+import { Mail, Phone, ArrowRight, Loader2, User, X, Calendar, FlaskConical, Package, Heart, Check } from 'lucide-react';
 import axios from 'axios';
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
@@ -14,40 +14,57 @@ const THEME = {
   secondary: '#2E6B5F',
   accent: '#F4A43A',
   accentDark: '#E48C1C',
+  orange: '#FF5733',
   light: '#3E8A7A',
   text: '#2B2B2B',
   textMuted: '#6F7B77'
 };
 
-// Carousel slides with real images
+// Enhanced Carousel slides with detailed content
 const CAROUSEL_SLIDES = [
   {
     id: 1,
-    title: 'Get tested at home in 60 mins,',
-    highlight: 'Reports in 6 hrs',
-    image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&h=400&fit=crop',
-    bgColor: '#FFF5E6'
+    heading: 'Book Appointments in Seconds',
+    subtext: 'Choose your doctor. Pick your time. Confirm instantly.',
+    points: ['Live availability', 'Nearby clinics', 'Zero waiting'],
+    button: 'Book Now',
+    icon: Calendar,
+    image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&h=400&fit=crop',
+    gradient: 'from-[#1F4F46] to-[#2E6B5F]',
+    bgLight: '#E8F5F2'
   },
   {
     id: 2,
-    title: 'Book appointments with',
-    highlight: 'Top Doctors',
-    image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&h=400&fit=crop',
-    bgColor: '#E6F5F0'
+    heading: 'Blood Tests in Just Few Clicks',
+    subtext: 'Free home collection. Accurate testing. Reports on your phone.',
+    points: ['Certified labs', 'Safe sample pickup', 'Fast results'],
+    button: 'Book Test',
+    icon: FlaskConical,
+    image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&h=400&fit=crop',
+    gradient: 'from-[#F4A43A] to-[#E48C1C]',
+    bgLight: '#FFF5E6'
   },
   {
     id: 3,
-    title: 'Order medicines,',
-    highlight: 'Delivered fast',
+    heading: 'Order Medicines. Get Home Delivery.',
+    subtext: '100% genuine medicines. Best prices. Delivered to your doorstep.',
+    points: ['Trusted pharmacy', 'Quick delivery', 'Easy reorders'],
+    button: 'Order Now',
+    icon: Package,
     image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&h=400&fit=crop',
-    bgColor: '#FFF0E6'
+    gradient: 'from-[#FF5733] to-[#E84118]',
+    bgLight: '#FFEBE6'
   },
   {
     id: 4,
-    title: 'Access your health',
-    highlight: 'Reports anytime',
+    heading: 'All Your Health. One Smart App.',
+    subtext: 'Appointments. Tests. Medicines. Reports. Everything in one place.',
+    points: ['Family profiles', 'Digital records', 'Track anytime'],
+    button: 'Get Started',
+    icon: Heart,
     image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&h=400&fit=crop',
-    bgColor: '#E6F0F5'
+    gradient: 'from-[#2E6B5F] to-[#3E8A7A]',
+    bgLight: '#E6F5F0'
   }
 ];
 
@@ -61,7 +78,7 @@ const IntroScreen = ({ onComplete, user }) => {
   
   // Auth state
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState('email'); // 'email' or 'guest'
+  const [authMode, setAuthMode] = useState('email');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [mobile, setMobile] = useState('');
@@ -86,7 +103,7 @@ const IntroScreen = ({ onComplete, user }) => {
     }
   }, [user, onComplete]);
   
-  // Splash word animation - one word at a time
+  // Splash word animation
   useEffect(() => {
     if (phase !== 'splash') return;
     
@@ -94,12 +111,12 @@ const IntroScreen = ({ onComplete, user }) => {
       setWordIndex(prev => {
         if (prev >= splashWords.length - 1) {
           clearInterval(wordTimer);
-          setTimeout(() => setPhase('main'), 500);
+          setTimeout(() => setPhase('main'), 400);
           return prev;
         }
         return prev + 1;
       });
-    }, 600);
+    }, 550);
     
     return () => clearInterval(wordTimer);
   }, [phase]);
@@ -110,7 +127,7 @@ const IntroScreen = ({ onComplete, user }) => {
     
     const slideTimer = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % CAROUSEL_SLIDES.length);
-    }, 3500);
+    }, 4000);
     
     return () => clearInterval(slideTimer);
   }, [phase]);
@@ -163,7 +180,7 @@ const IntroScreen = ({ onComplete, user }) => {
     onComplete();
   };
 
-  // ========== SPLASH SCREEN - White with animated words ==========
+  // ========== SPLASH SCREEN ==========
   if (phase === 'splash') {
     return (
       <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-white">
@@ -177,94 +194,115 @@ const IntroScreen = ({ onComplete, user }) => {
               }`}
               style={{ 
                 color: i === wordIndex ? THEME.accent : THEME.primary,
-                transitionDelay: `${i * 100}ms`
+                transitionDelay: `${i * 80}ms`
               }}>
               {word}
             </span>
           ))}
         </div>
+        
+        {/* Tagline */}
+        <p className="mt-6 text-sm font-medium" style={{ color: THEME.textMuted }}>
+          Healthcare. Faster. Smarter.
+        </p>
       </div>
     );
   }
 
-  // ========== MAIN SCREEN - Carousel + Auth ==========
+  // Current slide data
+  const slide = CAROUSEL_SLIDES[currentSlide];
+  const SlideIcon = slide.icon;
+
+  // ========== MAIN SCREEN ==========
   return (
-    <div className="fixed inset-0 z-[99999] flex flex-col bg-gradient-to-b from-[#FFF8F0] to-white">
+    <div className="fixed inset-0 z-[99999] flex flex-col bg-white">
       
-      {/* ===== CAROUSEL SECTION (3/4 screen) ===== */}
-      <div className="flex-1 flex flex-col justify-center px-4 pt-8" style={{ minHeight: '70vh' }}>
+      {/* ===== CAROUSEL SECTION (70% screen) ===== */}
+      <div className="flex-1 relative overflow-hidden" style={{ minHeight: '65vh' }}>
         
-        {/* Carousel Container */}
-        <div className="relative overflow-hidden rounded-[40px] mx-2" style={{ height: '55vh' }}>
-          {/* Slides */}
-          {CAROUSEL_SLIDES.map((slide, i) => (
-            <div 
-              key={slide.id}
-              className={`absolute inset-0 transition-opacity duration-700 ${
-                i === currentSlide ? 'opacity-100' : 'opacity-0'
-              }`}
-              style={{ backgroundColor: slide.bgColor }}>
-              
-              {/* Image */}
-              <div className="flex justify-center pt-8">
-                <div className="w-64 h-64 rounded-full overflow-hidden shadow-2xl border-4 border-white">
-                  <img 
-                    src={slide.image} 
-                    alt={slide.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-              
-              {/* Text */}
-              <div className="text-center px-6 mt-6">
-                <h2 className="text-2xl font-bold" style={{ color: THEME.text }}>
-                  {slide.title}{' '}
-                  <span style={{ color: THEME.accent }}>{slide.highlight}</span>
-                </h2>
-              </div>
+        {/* Background gradient */}
+        <div 
+          className={`absolute inset-0 bg-gradient-to-br ${slide.gradient} transition-all duration-700`}
+          style={{ opacity: 0.95 }}
+        />
+        
+        {/* Content */}
+        <div className="relative z-10 h-full flex flex-col px-6 pt-8 pb-4">
+          
+          {/* Icon */}
+          <div className="mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
+              <SlideIcon className="w-7 h-7 text-white" />
             </div>
-          ))}
+          </div>
+          
+          {/* Heading */}
+          <h1 className="text-3xl font-bold text-white leading-tight mb-3">
+            {slide.heading}
+          </h1>
+          
+          {/* Subtext */}
+          <p className="text-white/80 text-base mb-4">
+            {slide.subtext}
+          </p>
+          
+          {/* Points */}
+          <div className="space-y-2 mb-6">
+            {slide.points.map((point, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
+                  <Check className="w-3 h-3 text-white" />
+                </div>
+                <span className="text-white/90 text-sm">{point}</span>
+              </div>
+            ))}
+          </div>
+          
+          {/* Image */}
+          <div className="flex-1 flex items-end justify-center">
+            <div className="w-full max-w-[280px] h-40 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20">
+              <img 
+                src={slide.image} 
+                alt={slide.heading}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
         </div>
         
         {/* Carousel Dots */}
-        <div className="flex justify-center gap-2 mt-6">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
           {CAROUSEL_SLIDES.map((_, i) => (
             <button 
               key={i}
               onClick={() => setCurrentSlide(i)}
               className={`h-2 rounded-full transition-all duration-300 ${
-                i === currentSlide ? 'w-8' : 'w-2'
+                i === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/40'
               }`}
-              style={{ 
-                backgroundColor: i === currentSlide ? THEME.accent : '#D2DAD7'
-              }}
             />
           ))}
         </div>
       </div>
       
-      {/* ===== AUTH SECTION (1/4 screen) ===== */}
-      <div className="bg-white rounded-t-[32px] shadow-2xl px-6 py-6" style={{ minHeight: '30vh' }}>
+      {/* ===== AUTH SECTION (30% screen) ===== */}
+      <div className="bg-white px-6 py-5 shadow-[0_-8px_30px_rgba(0,0,0,0.1)]" style={{ minHeight: '30vh' }}>
         
         {/* Welcome Text */}
         <div className="text-center mb-4">
-          <p className="text-lg text-gray-600">Welcome to</p>
-          <h1 className="text-2xl font-bold">
+          <p className="text-base" style={{ color: THEME.textMuted }}>Welcome to</p>
+          <h2 className="text-2xl font-bold">
             <span style={{ color: THEME.accent }}>Nevika</span>
             <span style={{ color: THEME.primary }}>Cura</span>
-          </h1>
+          </h2>
+          <p className="text-xs mt-1" style={{ color: THEME.textMuted }}>Your Health, On Demand</p>
         </div>
         
         {/* 2x1 Toggle Buttons */}
-        <div className="flex gap-3 mb-4">
+        <div className="flex gap-3 mb-3">
           <Button 
             onClick={() => { setAuthMode('email'); setShowAuthModal(true); }}
             className="flex-1 h-12 rounded-xl font-semibold text-sm"
-            style={{ 
-              background: THEME.accent,
-              color: 'white'
-            }}>
+            style={{ background: THEME.accent, color: 'white' }}>
             <Mail className="w-4 h-4 mr-2" />
             Email
           </Button>
@@ -273,10 +311,7 @@ const IntroScreen = ({ onComplete, user }) => {
             onClick={() => { setAuthMode('guest'); setShowAuthModal(true); }}
             variant="outline"
             className="flex-1 h-12 rounded-xl font-semibold text-sm border-2"
-            style={{ 
-              borderColor: THEME.primary,
-              color: THEME.primary
-            }}>
+            style={{ borderColor: THEME.primary, color: THEME.primary }}>
             <User className="w-4 h-4 mr-2" />
             Guest
           </Button>
@@ -296,7 +331,7 @@ const IntroScreen = ({ onComplete, user }) => {
         <div className="fixed inset-0 z-[100000] bg-black/50 flex items-end justify-center">
           <div className="bg-white w-full rounded-t-3xl p-6 animate-slide-up" style={{ maxHeight: '70vh' }}>
             
-            {/* Close Button */}
+            {/* Header */}
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold" style={{ color: THEME.text }}>
                 {authMode === 'email' ? 'Login with Email' : 'Guest Access'}
