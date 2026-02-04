@@ -205,14 +205,21 @@ FEE_CODES = {
         "D1": {"label": "Diabetes - New", "amount": 500},
         "D2": {"label": "Diabetes - Review", "amount": 400},
         "D3": {"label": "Diabetes - Follow-up", "amount": 300},
+        "S1": {"label": "Speciality - New", "amount": 300},
+        "S2": {"label": "Speciality - Follow-up", "amount": 200},
+        "O1": {"label": "OBGYN - New", "amount": 500},
+        "O2": {"label": "OBGYN - Review", "amount": 400},
+        "O3": {"label": "OBGYN - Follow-up", "amount": 300},
     },
     "Dr. Neha Patel": {
         "NF": {"label": "No Fee", "amount": 0},
-        "O1": {"label": "OBGY - New", "amount": 500},
-        "O2": {"label": "OBGY - Review", "amount": 400},
-        "O3": {"label": "OBGY - Follow-up", "amount": 300},
-        "S1": {"label": "Sonography", "amount": 300},
-        "S2": {"label": "Sonography - Follow-up", "amount": 200},
+        "G1": {"label": "General - New", "amount": 150},
+        "G2": {"label": "General - Follow-up", "amount": 100},
+        "S1": {"label": "Speciality - New", "amount": 300},
+        "S2": {"label": "Speciality - Follow-up", "amount": 200},
+        "O1": {"label": "OBGYN - New", "amount": 500},
+        "O2": {"label": "OBGYN - Review", "amount": 400},
+        "O3": {"label": "OBGYN - Follow-up", "amount": 300},
     }
 }
 
