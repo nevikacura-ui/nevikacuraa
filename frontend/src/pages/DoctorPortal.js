@@ -110,7 +110,7 @@ const DoctorPortal = () => {
       const info = {
         name: res.data.staff?.name || res.data.name,
         role: res.data.staff?.role || res.data.role,
-        doctor: res.data.staff?.doctor || res.data.staff?.name
+        doctor: res.data.staff?.doctor_name || res.data.staff?.name
       };
       localStorage.setItem('doctorInfo', JSON.stringify(info));
       setDoctorInfo(info);
