@@ -249,14 +249,13 @@ const IntroScreen = ({ onComplete, user }) => {
       {/* ===== AUTH SECTION (30% screen) ===== */}
       <div className="bg-white px-6 py-5 shadow-[0_-8px_30px_rgba(0,0,0,0.1)]" style={{ minHeight: '30vh' }}>
         
-        {/* Welcome Text */}
+        {/* Logo */}
         <div className="text-center mb-4">
-          <p className="text-base" style={{ color: THEME.textMuted }}>Welcome to</p>
-          <h2 className="text-2xl font-bold">
-            <span style={{ color: THEME.accent }}>Nevika</span>
-            <span style={{ color: THEME.primary }}>Cura</span>
-          </h2>
-          <p className="text-xs mt-1" style={{ color: THEME.textMuted }}>Your Health, On Demand</p>
+          <img 
+            src="https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/hoal6fvj_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260204_171806_0000%20%282%29.png" 
+            alt="NevikaCura" 
+            className="h-16 mx-auto object-contain"
+          />
         </div>
         
         {/* 2x1 Toggle Buttons */}
