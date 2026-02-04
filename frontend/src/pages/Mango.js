@@ -1373,7 +1373,7 @@ const Proton = () => {
                         e.stopPropagation();
                         toggleWishlist(test);
                       }}
-                      className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-all"
+                      className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/40 transition-all z-10"
                       data-testid={`wishlist-btn-${test.name.replace(/\s+/g, '-').toLowerCase()}`}
                     >
                       <Heart 
@@ -1388,8 +1388,8 @@ const Proton = () => {
                       </span>
                     </div>
                     
-                    {/* Test Name */}
-                    <h3 className="font-bold text-lg mb-3 pr-16 leading-tight">{test.name}</h3>
+                    {/* Test Name - with left padding to avoid heart overlap */}
+                    <h3 className="font-bold text-lg mb-3 pl-10 pr-16 leading-tight">{test.name}</h3>
                     
                     {/* Price Display */}
                     <div className="flex items-center gap-3">
