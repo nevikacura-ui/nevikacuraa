@@ -2182,6 +2182,73 @@ async def patient_login(request: PatientLoginRequest):
         }
     }
 
+# ============ GUEST MOBILE OTP ============
+
+# Storage for guest OTPs (in-memory, for simplicity)
+guest_otp_storage = {}
+
+class GuestSendOTPRequest(BaseModel):
+    mobile: str
+
+@api_router.post("/auth/guest/send-otp")
+async def send_guest_otp(request: GuestSendOTPRequest):
+    """Send OTP for guest login (mobile-based)"""
+    mobile = request.mobile.strip()
+    
+    if not mobile or len(mobile) != 10 or not mobile.isdigit():
+        raise HTTPException(status_code=400, detail="Invalid mobile number")
+    
+    # Generate 4-digit OTP
+    otp = str(random.randint(1000, 9999))
+    
+    # Store OTP with expiry
+    guest_otp_storage[mobile] = {
+        "otp": otp,
+        "expires_at": datetime.now(timezone.utc) + timedelta(minutes=10)
+    }
+    
+    logger.info(f"Guest OTP for {mobile}: {otp}")
+    
+    # Return OTP in response for now (in production, send via SMS)
+    return {
+        "success": True,
+        "message": "OTP sent to mobile",
+        "otp": otp  # For testing - remove in production
+    }
+
+class GuestVerifyOTPRequest(BaseModel):
+    mobile: str
+    otp: str
+
+@api_router.post("/auth/guest/verify-otp")
+async def verify_guest_otp(request: GuestVerifyOTPRequest):
+    """Verify OTP for guest login"""
+    mobile = request.mobile.strip()
+    otp = request.otp.strip()
+    
+    stored = guest_otp_storage.get(mobile)
+    
+    if not stored:
+        raise HTTPException(status_code=400, detail="OTP not found. Please request a new one.")
+    
+    if stored.get("expires_at") and stored["expires_at"] < datetime.now(timezone.utc):
+        del guest_otp_storage[mobile]
+        raise HTTPException(status_code=400, detail="OTP expired. Please request a new one.")
+    
+    if stored["otp"] != otp:
+        raise HTTPException(status_code=400, detail="Invalid OTP")
+    
+    # OTP verified - clean up
+    del guest_otp_storage[mobile]
+    
+    logger.info(f"Guest OTP verified for {mobile}")
+    
+    return {
+        "success": True,
+        "message": "OTP verified successfully",
+        "mobile": mobile
+    }
+
 # ============ GOOGLE OAUTH LOGIN ============
 
 class GoogleAuthRequest(BaseModel):
