@@ -114,23 +114,44 @@ const CashfreeCheckout = ({
 
   const loadCashfreeCheckout = useCallback(async (sessionId, orderId) => {
     try {
+      // Check if script already exists
+      const existingScript = document.querySelector('script[src*="cashfree"]');
+      
+      const initCheckout = () => {
+        if (!window.Cashfree) {
+          toast.error('Payment gateway not loaded');
+          return;
+        }
+        
+        try {
+          const cashfree = window.Cashfree({
+            mode: 'production'
+          });
+
+          cashfree.checkout({
+            paymentSessionId: sessionId,
+            redirectTarget: '_self'
+          }).catch((error) => {
+            console.error('Checkout error:', error);
+            toast.error(error?.message || 'Could not open payment page');
+          });
+        } catch (err) {
+          console.error('Cashfree init error:', err);
+          toast.error('Payment gateway error');
+        }
+      };
+      
+      if (existingScript && window.Cashfree) {
+        // Script already loaded, just init
+        initCheckout();
+        return;
+      }
+      
       const script = document.createElement('script');
       script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
       script.async = true;
 
-      script.onload = () => {
-        const cashfree = window.Cashfree({
-          mode: 'production'
-        });
-
-        cashfree.checkout({
-          paymentSessionId: sessionId,
-          redirectTarget: '_self'
-        }).catch((error) => {
-          console.error('Checkout error:', error);
-          toast.error('Could not open payment page');
-        });
-      };
+      script.onload = initCheckout;
 
       script.onerror = () => {
         toast.error('Failed to load payment gateway');
