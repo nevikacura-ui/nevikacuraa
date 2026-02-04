@@ -398,8 +398,8 @@ const Home = () => {
       description: 'Order medicines with fast delivery',
       logo: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/mtdgm1zn_Black%20%26%20White%20Lizard%20Lab%20Logo_20260205_012714_0000%20%281%29.png',
       path: '/pharmacy',
-      bgColor: '#f97316',
-      isDark: true,
+      bgColor: '#ffffff',
+      isDark: false,
       featured: true
     },
     // Secondary - Bottom grid (8 portals) - Using full branded logos
