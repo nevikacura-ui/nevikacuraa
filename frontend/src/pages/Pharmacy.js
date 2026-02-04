@@ -1419,7 +1419,7 @@ const Pharmacy = () => {
 
       {/* ========== RECENTLY VIEWED SECTION ========== */}
       {recentlyViewed.length > 0 && (
-        <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
+        <div className="bg-orange-50 border-b border-orange-100">
           <div className="max-w-5xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -1448,8 +1448,8 @@ const Pharmacy = () => {
                   data-testid={`recently-viewed-${idx}`}
                 >
                   {/* Product Image Placeholder */}
-                  <div className="h-20 bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center relative">
-                    <Pill className="w-8 h-8 text-orange-400" />
+                  <div className="h-20 bg-orange-100 flex items-center justify-center relative">
+                    <Pill className="w-8 h-8 text-orange-500" />
                     {item.off && (
                       <span className="absolute top-1 right-1 bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
                         {item.off}% OFF
