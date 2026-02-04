@@ -1087,7 +1087,7 @@ const Pharmacy = () => {
             {/* Left - Logo */}
             <div className="flex-shrink-0">
               <img 
-                src="https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/alb23w29_Black%20%26%20White%20Lizard%20Lab%20Logo_20260205_012714_0000.png" 
+                src="https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/mtdgm1zn_Black%20%26%20White%20Lizard%20Lab%20Logo_20260205_012714_0000%20%281%29.png" 
                 alt="Orange Pharmacy" 
                 className="h-24 w-24 object-contain rounded-xl"
               />
