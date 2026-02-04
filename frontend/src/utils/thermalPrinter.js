@@ -30,16 +30,23 @@ class ThermalPrinter {
     this.device = null;
     this.characteristic = null;
     this.isConnected = false;
-    // Common Bluetooth printer service UUIDs
+    // Common Bluetooth printer service UUIDs (expanded list)
     this.SERVICE_UUIDS = [
-      '000018f0-0000-1000-8000-00805f9b34fb',
-      '49535343-fe7d-4ae5-8fa9-9fafd205e455',
-      'e7810a71-73ae-499d-8c15-faa9aef0c3f2'
+      '000018f0-0000-1000-8000-00805f9b34fb',  // Generic printer
+      '49535343-fe7d-4ae5-8fa9-9fafd205e455',  // Serial Port Profile
+      'e7810a71-73ae-499d-8c15-faa9aef0c3f2',  // Nordic UART
+      '0000ff00-0000-1000-8000-00805f9b34fb',  // Custom FF00
+      '0000ffe0-0000-1000-8000-00805f9b34fb',  // HM-10 BLE
+      '00001101-0000-1000-8000-00805f9b34fb',  // SPP UUID
+      '0000fff0-0000-1000-8000-00805f9b34fb',  // Common Chinese printers
     ];
     this.CHAR_UUIDS = [
-      '00002af1-0000-1000-8000-00805f9b34fb',
-      '49535343-8841-43f4-a8d4-ecbe34729bb3',
-      'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f'
+      '00002af1-0000-1000-8000-00805f9b34fb',  // Write
+      '49535343-8841-43f4-a8d4-ecbe34729bb3',  // SPP Write
+      'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f',  // Nordic TX
+      '0000ff02-0000-1000-8000-00805f9b34fb',  // Custom Write
+      '0000ffe1-0000-1000-8000-00805f9b34fb',  // HM-10 Write
+      '0000fff2-0000-1000-8000-00805f9b34fb',  // Common Write
     ];
   }
 
