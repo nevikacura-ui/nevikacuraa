@@ -194,6 +194,35 @@ const DiaGynStaffPortal = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Auto-reconnect to saved printer on mount
+  useEffect(() => {
+    const savedPrinter = thermalPrinter.getSavedPrinter();
+    if (savedPrinter && navigator.bluetooth) {
+      // Start auto-reconnect monitoring
+      thermalPrinter.startAutoReconnect(
+        (deviceName) => {
+          setPrinterConnected(true);
+          setPrinterName(deviceName);
+          toast.success(`Printer reconnected: ${deviceName}`);
+          successPattern();
+        },
+        () => {
+          setPrinterConnected(false);
+          toast.info('Printer disconnected - will reconnect when available');
+        }
+      );
+      
+      // Show saved printer indicator
+      if (!printerConnected) {
+        setPrinterName(savedPrinter.name + ' (saved)');
+      }
+    }
+    
+    return () => {
+      thermalPrinter.stopAutoReconnect();
+    };
+  }, [printerConnected]);
+
   // ============ Auth ============
   useEffect(() => {
     const token = localStorage.getItem('staffToken');
