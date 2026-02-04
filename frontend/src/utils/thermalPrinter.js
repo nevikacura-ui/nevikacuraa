@@ -242,6 +242,10 @@ class ThermalPrinter {
 
       this.characteristic = characteristic;
       this.isConnected = true;
+      
+      // Save printer info for auto-reconnect
+      this.savePrinterInfo();
+      
       return { success: true, deviceName: this.device.name };
     } catch (error) {
       console.error('Bluetooth connection error:', error);
