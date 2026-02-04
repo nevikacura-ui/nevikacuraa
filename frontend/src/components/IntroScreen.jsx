@@ -463,12 +463,15 @@ const IntroScreen = ({ onComplete, user }) => {
                 {authStep === 'password' && 'Welcome Back'}
                 {authStep === 'otp' && 'Verify OTP'}
                 {authStep === 'setPassword' && 'Create Password'}
+                {authStep === 'guestMobile' && 'Continue as Guest'}
+                {authStep === 'guestOtp' && 'Verify OTP'}
               </h3>
               <button 
                 onClick={() => { 
                   setShowAuthModal(false); 
                   setOtpSent(false); 
                   setEmail(''); 
+                  setMobile('');
                   setOtp(''); 
                   setPassword(''); 
                   setConfirmPassword('');
