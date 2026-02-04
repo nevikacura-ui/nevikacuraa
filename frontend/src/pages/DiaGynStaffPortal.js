@@ -128,20 +128,35 @@ const DiaGynStaffPortal = () => {
   // Connect to Bluetooth printer
   const connectPrinter = async () => {
     mediumTap();
-    toast.loading('Searching for printer...', { id: 'printer' });
+    
+    // Check if Bluetooth is available
+    if (!navigator.bluetooth) {
+      toast.error('Bluetooth not supported. Use Chrome/Edge on mobile or enable Web Bluetooth.');
+      errorPattern();
+      return;
+    }
+    
+    toast.loading('Select your printer from the list...', { id: 'printer', duration: 30000 });
     try {
       const result = await thermalPrinter.connect();
       if (result.success) {
         setPrinterConnected(true);
         setPrinterName(result.deviceName);
-        toast.success(`Connected to ${result.deviceName}`, { id: 'printer' });
+        toast.success(`Connected: ${result.deviceName}`, { id: 'printer' });
         successPattern();
       } else {
-        toast.error(`Failed: ${result.error}`, { id: 'printer' });
+        // More helpful error messages
+        let errorMsg = result.error;
+        if (result.error?.includes('User cancelled')) {
+          errorMsg = 'Cancelled. Tap Bluetooth icon to try again.';
+        } else if (result.error?.includes('characteristic')) {
+          errorMsg = 'Printer not compatible. Try a different printer.';
+        }
+        toast.error(errorMsg, { id: 'printer' });
         errorPattern();
       }
     } catch (error) {
-      toast.error('Bluetooth not available', { id: 'printer' });
+      toast.error('Bluetooth error: ' + error.message, { id: 'printer' });
       errorPattern();
     }
   };
