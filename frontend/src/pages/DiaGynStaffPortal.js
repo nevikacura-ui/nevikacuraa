@@ -719,6 +719,12 @@ const DiaGynStaffPortal = () => {
             <span className="text-xs text-white font-medium">{printerName} connected</span>
           </div>
         )}
+        {!printerConnected && printerName && (
+          <div className="px-3 py-1 bg-amber-500 flex items-center justify-center gap-2">
+            <Bluetooth className="w-3 h-3 text-white animate-pulse" />
+            <span className="text-xs text-white font-medium">{printerName} - Reconnecting...</span>
+          </div>
+        )}
         
         {/* Clinic Toggle - Only Pushpa & Amnion */}
         <div className="grid grid-cols-2 gap-2 mt-3 pb-1 px-3">
