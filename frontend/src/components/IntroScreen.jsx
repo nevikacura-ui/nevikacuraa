@@ -24,8 +24,8 @@ const THEME = {
 const CAROUSEL_SLIDES = [
   {
     id: 1,
-    taglinePart1: 'Skip the Queue.',
-    taglineHighlight: 'See the Doctor.',
+    taglinePart1: '35,000+ Patients.',
+    taglineHighlight: 'Trusted Beyond Measure.',
     icon: Calendar,
     image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&h=400&fit=crop',
     gradient: 'from-[#1F4F46] to-[#2E6B5F]',
@@ -33,26 +33,26 @@ const CAROUSEL_SLIDES = [
   },
   {
     id: 2,
-    taglinePart1: 'Lab Tests',
-    taglineHighlight: 'at Your Doorstep.',
-    icon: FlaskConical,
-    image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&h=400&fit=crop',
-    gradient: 'from-[#F4A43A] to-[#E48C1C]',
-    highlightColor: '#FEF08A'
-  },
-  {
-    id: 3,
-    taglinePart1: 'Genuine Medicines.',
-    taglineHighlight: 'Delivered Fast.',
+    taglinePart1: '4,000+ Genuine Medicines.',
+    taglineHighlight: '100% Assured Authenticity.',
     icon: Package,
     image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&h=400&fit=crop',
     gradient: 'from-[#f97316] to-[#ea580c]',
     highlightColor: '#FEF08A'
   },
   {
+    id: 3,
+    taglinePart1: 'NABL • CAP • ISO Certified.',
+    taglineHighlight: 'Precision Without Compromise.',
+    icon: FlaskConical,
+    image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&h=400&fit=crop',
+    gradient: 'from-[#F4A43A] to-[#E48C1C]',
+    highlightColor: '#FEF08A'
+  },
+  {
     id: 4,
-    taglinePart1: 'All Your Health.',
-    taglineHighlight: 'One Place.',
+    taglinePart1: 'Nine Personalised Portals.',
+    taglineHighlight: 'Care, Effortlessly Yours.',
     icon: Calendar,
     image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&h=400&fit=crop',
     gradient: 'from-[#1e3a5f] to-[#2c5282]',
