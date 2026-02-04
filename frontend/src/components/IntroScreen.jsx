@@ -124,9 +124,13 @@ const IntroScreen = ({ onComplete, user }) => {
     }
     setLoading(true);
     try {
-      await axios.post(`${API}/auth/send-otp`, { email });
+      const res = await axios.post(`${API}/auth/email-otp/send`, { email });
       setOtpSent(true);
       toast.success('OTP sent to your email!');
+      // Store mock OTP for testing if returned
+      if (res.data.mock_otp) {
+        console.log('Test OTP:', res.data.mock_otp);
+      }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to send OTP');
     }
@@ -140,9 +144,36 @@ const IntroScreen = ({ onComplete, user }) => {
     }
     setLoading(true);
     try {
-      const res = await axios.post(`${API}/auth/verify-otp`, { email, otp });
-      const { token, user: userData } = res.data;
-      localStorage.setItem('authToken', token);
+      // First verify the OTP
+      const verifyRes = await axios.post(`${API}/auth/email-otp/verify`, { email, otp });
+      
+      if (verifyRes.data.user_exists) {
+        // Existing user - login
+        const loginRes = await axios.post(`${API}/auth/email-otp/login`, { 
+          email, 
+          verification_token: verifyRes.data.verification_token 
+        });
+        const { token, user: userData } = loginRes.data;
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('patientToken', token);
+        if (userData) {
+          localStorage.setItem('userData', JSON.stringify(userData));
+          setPatientAuth(userData);
+        }
+        toast.success('Login successful!');
+        onComplete();
+      } else {
+        // New user - show they need to register or continue as guest
+        toast.info('Email verified! You can now continue as guest.');
+        localStorage.setItem('verifiedEmail', email);
+        localStorage.setItem('guestMode', 'true');
+        onComplete();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Verification failed');
+    }
+    setLoading(false);
+  };
       localStorage.setItem('authUser', email);
       if (setPatientAuth) setPatientAuth(token, userData);
       toast.success('Welcome!');
