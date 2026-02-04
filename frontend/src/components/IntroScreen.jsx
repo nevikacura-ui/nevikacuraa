@@ -235,29 +235,41 @@ const IntroScreen = ({ onComplete, user }) => {
           style={{ opacity: 0.95 }}
         />
         
-        {/* Content */}
-        <div className="relative z-10 h-full flex flex-col px-6 pt-10 pb-4">
+        {/* Content - Centered Layout */}
+        <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 py-8">
           
-          {/* Icon */}
-          <div className="mb-6">
-            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
-              <SlideIcon className="w-7 h-7 text-white" />
-            </div>
+          {/* Circular Image - Center */}
+          <div className="w-56 h-56 rounded-full overflow-hidden shadow-2xl border-4 border-white/30 mb-8">
+            <img 
+              src={slide.image} 
+              alt={slide.taglinePart1}
+              className="w-full h-full object-cover"
+            />
           </div>
           
-          {/* Tagline - Simple & Bold */}
-          <h1 className="text-3xl font-bold text-white leading-tight mb-8">
-            {slide.tagline}
-          </h1>
-          
-          {/* Image - Circular Frame (Large) */}
-          <div className="flex-1 flex items-center justify-center">
-            <div className="w-72 h-72 rounded-full overflow-hidden shadow-2xl border-4 border-white/30">
-              <img 
-                src={slide.image} 
-                alt={slide.tagline}
-                className="w-full h-full object-cover"
-              />
+          {/* Tagline - Below Circle with Dual Color */}
+          <div className="text-center">
+            <h1 className="text-2xl font-bold leading-tight">
+              <span className="text-white">{slide.taglinePart1}</span>
+              <br />
+              <span style={{ color: slide.highlightColor }}>{slide.taglineHighlight}</span>
+            </h1>
+          </div>
+        </div>
+        
+        {/* Carousel Dots */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+          {CAROUSEL_SLIDES.map((_, i) => (
+            <button 
+              key={i}
+              onClick={() => setCurrentSlide(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/40'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
             </div>
           </div>
         </div>
