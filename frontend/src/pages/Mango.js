@@ -1092,7 +1092,7 @@ const Proton = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1F4F46] via-[#2E6B5F] to-[#3E8A7A]">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#1F4F46] via-[#2E6B5F] to-[#3E8A7A]">
       {/* Shared Service Header */}
       <ServiceHeader />
 
@@ -1100,8 +1100,8 @@ const Proton = () => {
       {currentStep === 0 ? (
         <>
           {/* Dark Green Hero Banner Section with Mango Health Labs Branding */}
-          <div className="bg-gradient-to-br from-[#1F4F46] via-[#2E6B5F] to-[#1F4F46] relative overflow-hidden">
-            <div className="max-w-6xl mx-auto px-4 py-5">
+          <div className="bg-gradient-to-br from-[#1F4F46] via-[#2E6B5F] to-[#1F4F46] relative overflow-hidden w-full">
+            <div className="w-full px-4 py-5">
               <div className="flex items-center justify-between">
                 {/* Left Content */}
                 <div className="flex-1 text-white z-10">
