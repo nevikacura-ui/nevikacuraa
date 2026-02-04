@@ -164,11 +164,35 @@ const IntroScreen = ({ onComplete, user }) => {
     onComplete();
   };
 
+  // ========== SPLASH SCREEN (No tagline) ==========
+  if (phase === 'splash') {
+    return (
+      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-white">
+        {/* Animated Words */}
+        <div className="flex flex-col items-center gap-1">
+          {splashWords.map((word, i) => (
+            <span
+              key={word}
+              className={`text-4xl font-bold transition-all duration-500 ${
+                i <= wordIndex ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}
+              style={{ 
+                color: i === wordIndex ? THEME.accent : THEME.primary,
+                transitionDelay: `${i * 80}ms`
+              }}>
+              {word}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   // Current slide data
   const slide = CAROUSEL_SLIDES[currentSlide];
   const SlideIcon = slide.icon;
 
-  // ========== MAIN SCREEN (No splash phase) ==========
+  // ========== MAIN SCREEN ==========
   return (
     <div className="fixed inset-0 z-[99999] flex flex-col bg-white">
       
