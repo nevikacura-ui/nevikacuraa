@@ -121,41 +121,12 @@ class ThermalPrinter {
   // Connect to Bluetooth printer (handles already paired devices)
   async connect() {
     try {
-      // First try with specific printer filters
-      let device = null;
-      
-      try {
-        // Try specific filters first
-        device = await navigator.bluetooth.requestDevice({
-          filters: [
-            { name: 'Thermal Printer' },  // Exact match for user's printer
-            { namePrefix: 'Thermal' },
-            { namePrefix: 'EC' },
-            { namePrefix: 'Everycom' },
-            { namePrefix: 'Printer' },
-            { namePrefix: 'BlueTooth' },
-            { namePrefix: 'BLUAC' },
-            { namePrefix: 'BT' },
-            { namePrefix: 'MPT' },
-            { namePrefix: 'POS' },
-            { namePrefix: 'RP' },
-            { namePrefix: 'PT' },
-            { namePrefix: '58' },
-            { namePrefix: 'Mini' },
-            { namePrefix: 'ZJ' },
-            { namePrefix: 'XP' },
-            { namePrefix: 'MTP' }
-          ],
-          optionalServices: this.SERVICE_UUIDS
-        });
-      } catch (filterError) {
-        console.log('Specific filters failed, trying acceptAllDevices...');
-        // If specific filters fail, try accepting all devices
-        device = await navigator.bluetooth.requestDevice({
-          acceptAllDevices: true,
-          optionalServices: this.SERVICE_UUIDS
-        });
-      }
+      // Use acceptAllDevices to show ALL nearby Bluetooth devices
+      // This is more reliable than filtering by name
+      const device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: this.SERVICE_UUIDS
+      });
 
       this.device = device;
       console.log('Device found:', this.device.name);
