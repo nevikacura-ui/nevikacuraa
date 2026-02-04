@@ -1078,61 +1078,71 @@ const Pharmacy = () => {
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
-      {/* ========== ZEPTO-STYLE HERO BANNER FOR ORANGE PHARMACY ========== */}
+      {/* ========== PHARMEASY-STYLE HERO BANNER FOR ORANGE PHARMACY ========== */}
       <div className="bg-orange-500 relative overflow-hidden">
+        {/* Main Banner Content */}
         <div className="max-w-5xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-6">
             {/* Left - Logo */}
-            <div className="flex-shrink-0 mr-4">
+            <div className="flex-shrink-0">
               <img 
                 src="https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/kubsd2ev_Black%20%26%20White%20Lizard%20Lab%20Logo_20260205_013244_0000.png" 
                 alt="Orange Pharmacy" 
-                className="h-20 w-20 object-contain rounded-xl"
+                className="h-24 w-24 object-contain rounded-xl"
                 style={{ filter: 'brightness(0) invert(1)' }}
               />
             </div>
             
             {/* Center Content */}
-            <div className="flex-1 text-white z-10">
-              {/* Zero Fees Badge */}
-              <div className="flex items-center gap-2 mb-3">
-                <span className="bg-white text-orange-600 font-bold text-xl px-4 py-1 rounded-lg shadow-md">
-                  ₹0 Fees
-                </span>
-                <span className="text-white/90 text-sm">on orders above ₹1500*</span>
+            <div className="flex-1 text-center">
+              {/* Main Heading */}
+              <h1 className="text-2xl md:text-3xl font-bold text-yellow-300 mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                Prescription medicines
+              </h1>
+              
+              {/* Subtitle with curved arrow */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="text-white text-lg">Delivered in minutes</span>
+                <span className="text-white text-xl">↝</span>
               </div>
               
               {/* Trust Badges Row */}
-              <div className="flex flex-wrap gap-3">
-                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
-                  <span className="text-white font-bold">₹0</span>
-                  <span className="text-white/90 text-xs">Handling Fee</span>
+              <div className="flex justify-center gap-6">
+                <div className="flex flex-col items-center">
+                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mb-1">
+                    <ShieldCheck className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-white text-xs font-medium">Licensed</span>
+                  <span className="text-white/80 text-xs">Pharmacy</span>
                 </div>
-                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
-                  <span className="text-white font-bold">₹0</span>
-                  <span className="text-white/90 text-xs">Delivery Fee*</span>
+                <div className="flex flex-col items-center">
+                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mb-1">
+                    <BadgeCheck className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-white text-xs font-medium">Authentic</span>
+                  <span className="text-white/80 text-xs">Medicines</span>
                 </div>
-                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
-                  <span className="text-white font-bold">₹0</span>
-                  <span className="text-white/90 text-xs">Surge Fee</span>
+                <div className="flex flex-col items-center">
+                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mb-1">
+                    <Truck className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-white text-xs font-medium">Priority</span>
+                  <span className="text-white/80 text-xs">Delivery</span>
                 </div>
-                
-                {/* Saved Cart Indicator */}
-                {hasSavedCart && (
-                  <button
-                    onClick={restoreSavedCart}
-                    className="flex items-center gap-2 bg-amber-500/80 backdrop-blur-sm rounded-full px-3 py-1.5 hover:bg-amber-500 transition-all animate-pulse"
-                    data-testid="restore-cart-btn"
-                  >
-                    <Bookmark className="w-4 h-4 text-white" />
-                    <span className="text-white text-xs font-medium">Continue Cart</span>
-                  </button>
-                )}
               </div>
             </div>
-            
-            {/* Right - Delivery Person Image */}
-            <div className="hidden md:block relative">
+          </div>
+        </div>
+        
+        {/* Bottom Strip - FREE consultation */}
+        <div className="bg-orange-600 py-2">
+          <div className="max-w-5xl mx-auto px-4 flex items-center justify-center gap-2">
+            <span className="text-yellow-300 font-bold">FREE</span>
+            <span className="text-white">doctor consultation after you order</span>
+            <span className="text-white">»</span>
+          </div>
+        </div>
+      </div>
               <img 
                 src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=300&h=300&fit=crop" 
                 alt="Fast delivery"
