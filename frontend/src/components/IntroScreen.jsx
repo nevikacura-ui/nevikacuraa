@@ -183,13 +183,9 @@ const IntroScreen = ({ onComplete, user }) => {
     setLoading(false);
   };
   
-  const guestLogin = () => {
-    if (!mobile || mobile.length !== 10) {
-      toast.error('Enter valid 10-digit mobile');
-      return;
-    }
-    localStorage.setItem('guestMobile', mobile);
+  const skipToApp = () => {
     localStorage.setItem('guestMode', 'true');
+    localStorage.setItem('skippedLogin', 'true');
     toast.success('Welcome!');
     onComplete();
   };
