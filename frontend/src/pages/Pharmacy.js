@@ -1845,7 +1845,7 @@ const Pharmacy = () => {
 
       {/* Loyalty Program Banner */}
       <div 
-        className="bg-gradient-to-r from-orange-500 to-amber-500 text-white cursor-pointer hover:from-orange-600 hover:to-amber-600 transition-colors"
+        className="bg-orange-500 text-white cursor-pointer hover:bg-orange-600 transition-colors"
         onClick={() => { setShowLoyaltyInfo(true); fetchLoyaltyProgramInfo(); }}
         data-testid="loyalty-banner"
       >
