@@ -5,38 +5,38 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { selectionTap, lightTap } from '@/utils/haptics';
 
-// Service theme configurations
+// Service theme configurations - Updated with Mango palette
 const serviceThemes = {
   home: {
     name: 'Nevika Cura',
     path: '/',
     bgGradient: 'from-white via-slate-50 to-white',
-    headerBg: 'bg-slate-100',
-    tabBg: 'bg-slate-200/80',
+    headerBg: 'bg-white',
+    tabBg: 'bg-gray-100',
     isLight: true
   },
   diagyn: {
     name: 'DiaGyn',
     path: '/diagyn',
-    bgGradient: 'from-[#0c1e3c] via-[#1a365d] to-[#0c1e3c]',
-    headerBg: 'bg-[#0c1e3c]',
-    tabBg: 'bg-[#1a365d]/50',
+    bgGradient: 'from-[#1F4F46] via-[#2E6B5F] to-[#1F4F46]',
+    headerBg: 'bg-[#1F4F46]',
+    tabBg: 'bg-[#2E6B5F]/50',
     isLight: false
   },
   mango: {
     name: 'Mango',
     path: '/mango',
-    bgGradient: 'from-[#102926] via-[#14332E] to-[#1A3E38]',
-    headerBg: 'bg-[#1B3A35]',
-    tabBg: 'bg-[#14332E]',
+    bgGradient: 'from-[#1F4F46] via-[#2E6B5F] to-[#3E8A7A]',
+    headerBg: 'bg-[#1F4F46]',
+    tabBg: 'bg-[#2E6B5F]/50',
     isLight: false
   },
   pharmacy: {
     name: 'Orange',
     path: '/pharmacy',
-    bgGradient: 'from-orange-100 via-amber-100 to-orange-50',
-    headerBg: 'bg-orange-500',
-    tabBg: 'bg-orange-600/50',
+    bgGradient: 'from-[#F4A43A] via-[#E48C1C] to-[#F4A43A]',
+    headerBg: 'bg-[#F4A43A]',
+    tabBg: 'bg-[#E48C1C]/50',
     isLight: false
   }
 };
