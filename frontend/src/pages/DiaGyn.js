@@ -1769,14 +1769,27 @@ const DiaGyn = () => {
                 </div>
               </div>
               
+              {/* Captcha Verification */}
+              <div className="mt-6">
+                <NumericCaptcha 
+                  onVerified={(verified) => setCaptchaVerified(verified)}
+                  onReset={() => setCaptchaVerified(false)}
+                  theme="dark"
+                />
+              </div>
+              
               {/* Confirm Booking Button */}
               <Button
                 onClick={handleBooking}
-                disabled={loading}
-                className="w-full mt-6 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-xl transition-all"
+                disabled={loading || !captchaVerified}
+                className={`w-full mt-6 ${
+                  captchaVerified 
+                    ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' 
+                    : 'bg-slate-600 cursor-not-allowed'
+                } text-white py-6 rounded-full text-base font-semibold shadow-lg hover:shadow-xl transition-all`}
                 data-testid="confirm-booking-btn"
               >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirm Appointment'}
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (captchaVerified ? 'Confirm Appointment' : 'Solve captcha to continue')}
               </Button>
             </Card>
           </div>
