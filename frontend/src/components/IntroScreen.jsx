@@ -283,6 +283,46 @@ const IntroScreen = ({ onComplete, user }) => {
     }
   };
   
+  // Guest Mobile OTP functions
+  const sendGuestOtp = async () => {
+    if (!mobile || mobile.length !== 10) {
+      toast.error('Enter valid 10-digit mobile number');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/auth/guest/send-otp`, { mobile });
+      setAuthStep('guestOtp');
+      toast.success('OTP sent to your mobile!');
+      if (res.data.otp) {
+        console.log('OTP:', res.data.otp);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to send OTP');
+    }
+    setLoading(false);
+  };
+  
+  const verifyGuestOtp = async () => {
+    if (!otp || otp.length < 4) {
+      toast.error('Enter valid OTP');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/auth/guest/verify-otp`, { mobile, otp });
+      if (res.data.success) {
+        localStorage.setItem('guestMobile', mobile);
+        localStorage.setItem('guestMode', 'true');
+        toast.success('Welcome!');
+        onComplete();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Invalid OTP');
+    }
+    setLoading(false);
+  };
+  
   const skipToApp = () => {
     localStorage.setItem('guestMode', 'true');
     localStorage.setItem('skippedLogin', 'true');
