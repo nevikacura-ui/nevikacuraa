@@ -1546,7 +1546,7 @@ const Pharmacy = () => {
       </div>
 
       {/* ========== FAMILY CARE SECTION ========== */}
-      <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
+      <div className="bg-orange-50 border-b border-orange-100">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <h3 className="font-bold text-slate-800 mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
             Family Care
