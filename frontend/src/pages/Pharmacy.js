@@ -1074,7 +1074,7 @@ const Pharmacy = () => {
   const totalItems = medicines.reduce((sum, m) => sum + m.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-100 via-amber-100 to-orange-50">
+    <div className="min-h-screen bg-orange-50">
       {/* Shared Service Header with Zepto-style tabs */}
       <ServiceHeader />
 
