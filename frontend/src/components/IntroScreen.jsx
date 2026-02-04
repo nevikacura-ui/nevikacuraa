@@ -627,6 +627,73 @@ const IntroScreen = ({ onComplete, user }) => {
                 </Button>
               </div>
             )}
+            
+            {/* Guest Step 1: Mobile Input */}
+            {authStep === 'guestMobile' && (
+              <div className="space-y-4">
+                <p className="text-sm" style={{ color: THEME.textMuted }}>
+                  Enter your mobile number to receive OTP
+                </p>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: THEME.textMuted }} />
+                  <Input 
+                    type="tel"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    placeholder="10-digit mobile number"
+                    className="h-14 pl-12 rounded-2xl text-base border-2"
+                    maxLength={10}
+                    data-testid="guest-mobile-input"
+                  />
+                </div>
+                <Button 
+                  onClick={sendGuestOtp}
+                  disabled={loading || mobile.length !== 10}
+                  className="w-full h-14 rounded-2xl font-bold"
+                  style={{ background: THEME.primary }}
+                  data-testid="guest-send-otp-btn">
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send OTP'}
+                </Button>
+              </div>
+            )}
+            
+            {/* Guest Step 2: OTP Verification */}
+            {authStep === 'guestOtp' && (
+              <div className="space-y-4">
+                <p className="text-sm" style={{ color: THEME.textMuted }}>
+                  OTP sent to <span className="font-medium">+91 {mobile}</span>
+                </p>
+                <Input 
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="Enter OTP"
+                  className="h-14 rounded-2xl text-center text-2xl font-bold tracking-widest border-2"
+                  maxLength={6}
+                  data-testid="guest-otp-input"
+                />
+                <Button 
+                  onClick={verifyGuestOtp}
+                  disabled={loading || otp.length < 4}
+                  className="w-full h-14 rounded-2xl font-bold"
+                  style={{ background: THEME.primary }}
+                  data-testid="guest-verify-otp-btn">
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Continue'}
+                </Button>
+                <button 
+                  onClick={sendGuestOtp} 
+                  className="w-full text-center text-sm" 
+                  style={{ color: THEME.secondary }}>
+                  Resend OTP
+                </button>
+                <button 
+                  onClick={() => { setAuthStep('guestMobile'); setOtp(''); }} 
+                  className="w-full text-center text-sm" 
+                  style={{ color: THEME.textMuted }}>
+                  Change Mobile
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
