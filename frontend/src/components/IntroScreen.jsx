@@ -251,11 +251,11 @@ const IntroScreen = ({ onComplete, user }) => {
         
         {/* Logo */}
         <div className="text-center mb-4">
-          <p className="text-base mb-2" style={{ color: THEME.textMuted }}>Welcome to</p>
+          <p className="text-sm" style={{ color: THEME.textMuted }}>Welcome to</p>
           <img 
             src="https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/hoal6fvj_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260204_171806_0000%20%282%29.png" 
             alt="NevikaCura" 
-            className="h-14 mx-auto object-contain"
+            className="h-12 mx-auto object-contain mt-1"
           />
         </div>
         
