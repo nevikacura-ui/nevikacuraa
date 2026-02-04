@@ -174,15 +174,6 @@ const IntroScreen = ({ onComplete, user }) => {
     }
     setLoading(false);
   };
-      localStorage.setItem('authUser', email);
-      if (setPatientAuth) setPatientAuth(token, userData);
-      toast.success('Welcome!');
-      onComplete();
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Invalid OTP');
-    }
-    setLoading(false);
-  };
   
   const guestLogin = () => {
     if (!mobile || mobile.length !== 10) {
