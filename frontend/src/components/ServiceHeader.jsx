@@ -34,9 +34,9 @@ const serviceThemes = {
   pharmacy: {
     name: 'Orange',
     path: '/pharmacy',
-    bgGradient: 'from-[#FF5733] via-[#E84118] to-[#FF5733]',
-    headerBg: 'bg-[#FF5733]',
-    tabBg: 'bg-[#E84118]/50',
+    bgGradient: 'from-orange-500 via-orange-500 to-orange-500',
+    headerBg: 'bg-orange-500',
+    tabBg: 'bg-orange-600/50',
     isLight: false
   }
 };
