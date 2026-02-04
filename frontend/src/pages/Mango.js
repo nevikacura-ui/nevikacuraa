@@ -26,19 +26,23 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // ============================================
-// DESIGN SYSTEM - Zepto Blue Theme for Mango Health Labs
+// DESIGN SYSTEM - Mango Health Labs Theme
 // ============================================
 const theme = {
-  primary: '#3292FF',      // Zepto Blue
-  primaryDark: '#1E70D8',  // Darker Blue
-  secondary: '#6E0AD6',    // Purple accent
-  accent: '#FFD700',       // Yellow for highlights
-  background: '#3292FF',   // Blue background
-  surface: '#FFFFFF',
-  textPrimary: '#333333',
-  textSecondary: '#555555',
-  border: '#E0E0E0',
-  success: '#00A14F',
+  primary: '#1F4F46',      // Primary Dark Green
+  primaryDark: '#1F4F46',  // Primary Dark Green
+  secondary: '#2E6B5F',    // Secondary Green
+  accent: '#F4A43A',       // Mango Orange
+  accentDark: '#E48C1C',   // Dark Orange
+  accentLight: '#F7C27B',  // Soft Peach
+  lightGreen: '#3E8A7A',   // Light Green
+  background: '#F7F9F8',   // Card Background
+  surface: '#FFFFFF',      // Pure White
+  textPrimary: '#2B2B2B',  // Text Dark
+  textSecondary: '#6F7B77', // Text Muted
+  border: '#D2DAD7',       // Border Grey
+  lightGrey: '#E6ECEA',    // Light Grey
+  success: '#3E8A7A',      // Light Green
   error: '#EF4444'
 };
 
