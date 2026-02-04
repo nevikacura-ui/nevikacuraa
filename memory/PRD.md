@@ -105,6 +105,11 @@ Complete healthcare platform with three main services:
 - `/app/frontend/src/pages/DiaGynStaffPortal.js` - Staff portal UI
 - `/app/frontend/src/pages/DoctorPortal.js` - Doctor portal UI
 
+### Feb 4, 2026 - UI Simplification COMPLETE
+**Last working item**:
+-   **Last item agent was working:** Simplified the splash screen - removed animated "Book.Order.Test.Care" text and fixed heart icon overlap. Updated carousel taglines.
+-   **Status:** COMPLETED (Feb 4, 2026)
+
 ### Earlier Updates (Dec 2025 - Feb 2026)
 - ✅ Unified header with service tabs (Nevika Cura, DiaGyn, Mango, Orange)
 
