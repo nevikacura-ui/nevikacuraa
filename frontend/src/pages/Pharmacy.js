@@ -1079,7 +1079,7 @@ const Pharmacy = () => {
       <ServiceHeader />
 
       {/* ========== ZEPTO-STYLE HERO BANNER FOR ORANGE PHARMACY ========== */}
-      <div className="bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 relative overflow-hidden">
+      <div className="bg-orange-500 relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             {/* Left Content */}
