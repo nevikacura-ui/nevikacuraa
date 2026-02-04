@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { Mail, Phone, ArrowRight, Loader2, User, X, Calendar, FlaskConical, Package } from 'lucide-react';
+import { Mail, Phone, ArrowRight, Loader2, User, X, Calendar, FlaskConical, Package, Lock } from 'lucide-react';
 import axios from 'axios';
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
