@@ -1144,22 +1144,6 @@ const Pharmacy = () => {
           </div>
         </div>
       </div>
-              <img 
-                src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=300&h=300&fit=crop" 
-                alt="Fast delivery"
-                className="w-32 h-32 object-cover rounded-2xl shadow-xl"
-              />
-              <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
-                <Truck className="w-5 h-5 text-orange-500" />
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Decorative circles */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
-      </div>
 
       {/* Professional Features Carousel - Orange Pharmacy */}
       <div className="bg-white py-6">
