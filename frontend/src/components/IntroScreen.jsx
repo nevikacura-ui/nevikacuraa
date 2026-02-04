@@ -128,25 +128,9 @@ const IntroScreen = ({ onComplete, user }) => {
     return () => clearInterval(slideTimer);
   }, [phase]);
   
-  // Auth functions
+  // Auth functions - sendOtp now checks for password first
   const sendOtp = async () => {
-    if (!email || !email.includes('@')) {
-      toast.error('Enter valid email');
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API}/auth/email-otp/send`, { email });
-      setOtpSent(true);
-      toast.success('OTP sent to your email!');
-      // Store mock OTP for testing if returned
-      if (res.data.mock_otp) {
-        console.log('Test OTP:', res.data.mock_otp);
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to send OTP');
-    }
-    setLoading(false);
+    await checkEmailAndProceed();
   };
   
   const verifyOtp = async () => {
