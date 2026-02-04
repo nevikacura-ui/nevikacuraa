@@ -1967,14 +1967,17 @@ async def verify_email_otp_endpoint(request: EmailOTPVerify):
     if not result["success"]:
         raise HTTPException(status_code=400, detail=result.get("error", "Verification failed"))
     
-    # Check if user exists with this email
-    existing_user = await db.users.find_one({"email": email}, {"_id": 0})
+    # Check if user exists with this email and has password
+    existing_user = await db.users.find_one({"email": email}, {"_id": 0, "password_hash": 1})
+    user_exists = existing_user is not None
+    has_password = bool(existing_user.get("password_hash")) if existing_user else False
     
     return {
         "success": True,
         "verified": True,
         "verification_token": result["verification_token"],
-        "user_exists": existing_user is not None,
+        "user_exists": user_exists,
+        "has_password": has_password,
         "email": email,
         "method": "email"
     }
