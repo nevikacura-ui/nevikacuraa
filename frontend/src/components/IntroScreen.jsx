@@ -415,20 +415,32 @@ const IntroScreen = ({ onComplete, user }) => {
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold" style={{ color: THEME.text }}>
-                Login / Register
+                {authStep === 'email' && 'Login / Register'}
+                {authStep === 'password' && 'Welcome Back'}
+                {authStep === 'otp' && 'Verify OTP'}
+                {authStep === 'setPassword' && 'Create Password'}
               </h3>
               <button 
-                onClick={() => { setShowAuthModal(false); setOtpSent(false); setEmail(''); setOtp(''); }}
+                onClick={() => { 
+                  setShowAuthModal(false); 
+                  setOtpSent(false); 
+                  setEmail(''); 
+                  setOtp(''); 
+                  setPassword(''); 
+                  setConfirmPassword('');
+                  setAuthStep('email');
+                  setHasPassword(false);
+                }}
                 className="p-2 rounded-full hover:bg-gray-100">
                 <X className="w-5 h-5" style={{ color: THEME.textMuted }} />
               </button>
             </div>
             
-            {/* Email Form */}
-            {!otpSent && (
+            {/* Step 1: Email Input */}
+            {authStep === 'email' && (
               <div className="space-y-4">
                 <p className="text-sm" style={{ color: THEME.textMuted }}>
-                  Enter your email to receive OTP
+                  Enter your email to continue
                 </p>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: THEME.textMuted }} />
@@ -443,17 +455,57 @@ const IntroScreen = ({ onComplete, user }) => {
                 </div>
                 <Button 
                   onClick={sendOtp}
-                  disabled={loading || !email}
+                  disabled={loading || !email || !email.includes('@')}
                   className="w-full h-14 rounded-2xl font-bold"
                   style={{ background: THEME.accent }}
-                  data-testid="send-otp-btn">
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send OTP'}
+                  data-testid="continue-btn">
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Continue'}
                 </Button>
               </div>
             )}
             
-            {/* OTP Form */}
-            {otpSent && (
+            {/* Step 2a: Password Login (for returning users) */}
+            {authStep === 'password' && (
+              <div className="space-y-4">
+                <p className="text-sm" style={{ color: THEME.textMuted }}>
+                  Enter your password for <span className="font-medium">{email}</span>
+                </p>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: THEME.textMuted }} />
+                  <Input 
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter password"
+                    className="h-14 pl-12 rounded-2xl text-base border-2"
+                    data-testid="password-input"
+                  />
+                </div>
+                <Button 
+                  onClick={loginWithPassword}
+                  disabled={loading || !password}
+                  className="w-full h-14 rounded-2xl font-bold"
+                  style={{ background: THEME.accent }}
+                  data-testid="login-btn">
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Login'}
+                </Button>
+                <button 
+                  onClick={() => sendOtpInternal()} 
+                  className="w-full text-center text-sm" 
+                  style={{ color: THEME.secondary }}>
+                  Login with OTP instead
+                </button>
+                <button 
+                  onClick={() => { setAuthStep('email'); setEmail(''); setPassword(''); }} 
+                  className="w-full text-center text-sm" 
+                  style={{ color: THEME.textMuted }}>
+                  Change Email
+                </button>
+              </div>
+            )}
+            
+            {/* Step 2b: OTP Verification (for new users or OTP flow) */}
+            {authStep === 'otp' && (
               <div className="space-y-4">
                 <p className="text-sm" style={{ color: THEME.textMuted }}>
                   OTP sent to <span className="font-medium">{email}</span>
@@ -473,11 +525,59 @@ const IntroScreen = ({ onComplete, user }) => {
                   className="w-full h-14 rounded-2xl font-bold"
                   style={{ background: THEME.accent }}
                   data-testid="verify-otp-btn">
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Login'}
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify OTP'}
                 </Button>
-                <button onClick={() => setOtpSent(false)} className="w-full text-center text-sm" style={{ color: THEME.secondary }}>
+                <button 
+                  onClick={() => sendOtpInternal()} 
+                  className="w-full text-center text-sm" 
+                  style={{ color: THEME.secondary }}>
+                  Resend OTP
+                </button>
+                <button 
+                  onClick={() => { setAuthStep('email'); setOtp(''); setOtpSent(false); }} 
+                  className="w-full text-center text-sm" 
+                  style={{ color: THEME.textMuted }}>
                   Change Email
                 </button>
+              </div>
+            )}
+            
+            {/* Step 3: Set Password (for new users after OTP) */}
+            {authStep === 'setPassword' && (
+              <div className="space-y-4">
+                <p className="text-sm" style={{ color: THEME.textMuted }}>
+                  Set a password for future logins
+                </p>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: THEME.textMuted }} />
+                  <Input 
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Create password (min 6 chars)"
+                    className="h-14 pl-12 rounded-2xl text-base border-2"
+                    data-testid="new-password-input"
+                  />
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: THEME.textMuted }} />
+                  <Input 
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm password"
+                    className="h-14 pl-12 rounded-2xl text-base border-2"
+                    data-testid="confirm-password-input"
+                  />
+                </div>
+                <Button 
+                  onClick={setNewPassword}
+                  disabled={loading || password.length < 6 || password !== confirmPassword}
+                  className="w-full h-14 rounded-2xl font-bold"
+                  style={{ background: THEME.accent }}
+                  data-testid="set-password-btn">
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Create Account'}
+                </Button>
               </div>
             )}
           </div>
