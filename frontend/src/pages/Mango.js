@@ -1209,11 +1209,11 @@ const Proton = () => {
           {/* End of Dark Green Hero Section */}
 
           {/* Dark Green Content Area */}
-          <div className="bg-gradient-to-b from-[#14332E] to-[#1A3E38] py-3">
+          <div className="bg-gradient-to-b from-[#2E6B5F] to-[#3E8A7A] py-3">
 
-          {/* Promo Banner - Orange/Mango themed */}
+          {/* Promo Banner - Mango Orange themed */}
           <div className="max-w-6xl mx-auto px-4 mt-2">
-            <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 rounded-xl p-3 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-[#F4A43A] via-[#E48C1C] to-[#F4A43A] rounded-xl p-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="bg-white/20 rounded-full p-1.5">
                   <span className="text-lg">🎉</span>
@@ -1226,7 +1226,7 @@ const Proton = () => {
               <Button 
                 variant="secondary" 
                 size="sm"
-                className="bg-white text-fuchsia-600 hover:bg-fuchsia-50 rounded-full font-bold text-xs px-3 py-1"
+                className="bg-white text-[#1F4F46] hover:bg-[#F7F9F8] rounded-full font-bold text-xs px-3 py-1"
                 onClick={() => {
                   navigator.clipboard.writeText('MANGO15');
                   toast.success('Coupon code copied!');
