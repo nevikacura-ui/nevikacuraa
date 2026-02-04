@@ -1160,7 +1160,7 @@ const Proton = () => {
             </div>
             
             {/* Search Bar - inside dark green section */}
-            <div className="max-w-6xl mx-auto px-4 pb-3 relative z-20">
+            <div className="w-full px-4 pb-3 relative z-20">
               <div className="bg-white rounded-2xl shadow-xl p-3 border-2 border-orange-300">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-500 w-5 h-5" />
@@ -1212,7 +1212,7 @@ const Proton = () => {
           <div className="bg-gradient-to-b from-[#2E6B5F] to-[#3E8A7A] py-3">
 
           {/* Promo Banner - Mango Orange themed */}
-          <div className="max-w-6xl mx-auto px-4 mt-2">
+          <div className="w-full px-4 mt-2">
             <div className="bg-gradient-to-r from-[#F4A43A] via-[#E48C1C] to-[#F4A43A] rounded-xl p-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="bg-white/20 rounded-full p-1.5">
@@ -1238,7 +1238,7 @@ const Proton = () => {
           </div>
 
           {/* Trust Badges - Compact */}
-          <div className="max-w-6xl mx-auto px-4 mt-3">
+          <div className="w-full px-4 mt-3">
             <div className="flex justify-between items-center gap-3 overflow-x-auto pb-1 scrollbar-hide">
               {[
                 { icon: Shield, title: 'Certified Lab', color: 'text-orange-600', bg: 'bg-orange-500/10' },
@@ -1257,7 +1257,7 @@ const Proton = () => {
           </div>
 
           {/* Most Booked Checkups - Cards with varied gradient colors */}
-          <div className="max-w-6xl mx-auto px-4 mt-4">
+          <div className="w-full px-4 mt-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Most Booked Checkups
@@ -1344,7 +1344,7 @@ const Proton = () => {
           </div>
 
           {/* Most Booked Tests - Large Cards like Orange Health Labs */}
-          <div className="max-w-6xl mx-auto px-4 mt-8 mb-8">
+          <div className="w-full px-4 mt-8 mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-[#2B2B2B]" style={{ fontFamily: 'Outfit, sans-serif' }}>
                 Most Booked Tests
@@ -1447,7 +1447,7 @@ const Proton = () => {
           </div>
 
           {/* Browse All Tests Button */}
-          <div className="max-w-6xl mx-auto px-4 pb-8">
+          <div className="w-full px-4 pb-8">
             <Button
               onClick={() => setCurrentStep(1)}
               className="w-full bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] hover:from-[#E48C1C] hover:to-[#F4A43A] text-white py-6 rounded-2xl text-lg font-bold shadow-xl"
@@ -1465,7 +1465,7 @@ const Proton = () => {
           {/* Original Test Selection Flow */}
           {/* How It Works Banner */}
           <div className="bg-white/80 backdrop-blur-sm border-b border-orange-500/20">
-        <div className="max-w-5xl mx-auto px-4 py-4">
+        <div className="w-full px-4 py-4">
           <div className="flex items-center gap-2 mb-3">
             <FlaskConical className="w-5 h-5 text-[#5FA8D3]" />
             <h3 className="font-semibold text-[#1E293B] font-heading">How to Book Diagnostic Tests</h3>
@@ -1493,7 +1493,7 @@ const Proton = () => {
 
       {/* Trust Badges Section - Navy Blue Theme */}
       <div className="py-4 border-b border-[#F4A43A]/30 bg-[#F4A43A]/20 backdrop-blur-sm" data-testid="proton-trust-badges">
-        <div className="max-w-5xl mx-auto px-4">
+        <div className="w-full px-4">
           <div className="flex justify-between items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
               { id: 'trusted-labs', icon: Shield, title: 'Trusted &', subtitle: 'Accredited Labs', gradient: 'from-[#F4A43A] to-[#E48C1C]', bg: 'bg-[#F4A43A]/10' },
@@ -1517,7 +1517,7 @@ const Proton = () => {
 
       {/* Consultation Help Banner - Mango Orange Theme */}
       <div className="bg-gradient-to-r from-[#F4A43A] to-[#E48C1C] text-white" data-testid="consultation-help-banner">
-        <div className="max-w-5xl mx-auto px-4 py-3">
+        <div className="w-full px-4 py-3">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="bg-white/20 rounded-full p-2 flex-shrink-0">
@@ -1541,7 +1541,7 @@ const Proton = () => {
         </div>
       </div>
 
-      <main className="max-w-5xl mx-auto px-4 py-4">
+      <main className="w-full px-4 py-4">
         {/* White content container for better readability */}
         <div className="bg-white rounded-3xl shadow-xl p-4">
         {/* Your Health Trends - Toggle Section */}
