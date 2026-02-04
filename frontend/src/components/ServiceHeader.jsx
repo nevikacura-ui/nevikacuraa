@@ -57,12 +57,12 @@ export const ServiceHeader = () => {
   const activeService = getActiveService(location.pathname);
   const currentTheme = serviceThemes[activeService];
 
-  // Tab configuration - distinct colors for each service
+  // Tab configuration - using new Mango color palette
   const tabs = [
-    { id: 'home', name: 'Nevika Cura', icon: Heart, path: '/', color: '#EF4444' },      // Red for Heart - more visible
-    { id: 'diagyn', name: 'DiaGyn', icon: Stethoscope, path: '/diagyn', color: '#14B8A6' }, // Teal
-    { id: 'mango', name: 'Mango', icon: FlaskConical, path: '/mango', color: '#F97316' }, // Orange for Mango
-    { id: 'pharmacy', name: 'Orange', icon: Package, path: '/pharmacy', color: '#F97316' }  // Orange
+    { id: 'home', name: 'Nevika Cura', icon: Heart, path: '/', color: '#1F4F46' },      // Primary Dark Green
+    { id: 'diagyn', name: 'DiaGyn', icon: Stethoscope, path: '/diagyn', color: '#2E6B5F' }, // Secondary Green
+    { id: 'mango', name: 'Mango', icon: FlaskConical, path: '/mango', color: '#F4A43A' }, // Mango Orange
+    { id: 'pharmacy', name: 'Orange', icon: Package, path: '/pharmacy', color: '#E48C1C' }  // Dark Orange
   ];
 
   return (
