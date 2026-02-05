@@ -47,12 +47,24 @@ const MangoLabsStaffPortal = () => {
     const storedStaff = localStorage.getItem('staffInfo');
     if (token && storedStaff) {
       const staff = JSON.parse(storedStaff);
-      if (staff.role === 'lab_staff' || staff.role === 'diagnostics_staff' || staff.department?.toLowerCase().includes('mango') || staff.department?.toLowerCase().includes('lab') || staff.role === 'admin' || staff.role === 'super_admin') {
+      const dept = staff.department?.toLowerCase() || '';
+      const isLabStaff = staff.role === 'lab_staff' || 
+                         staff.role === 'diagnostics_staff' || 
+                         dept.includes('mango') || 
+                         dept.includes('lab') || 
+                         dept.includes('proton') ||
+                         staff.role === 'admin' || 
+                         staff.role === 'super_admin';
+      
+      if (isLabStaff) {
         setStaffInfo(staff);
         setIsAuthenticated(true);
+      } else {
+        // Wrong portal - redirect to unified login
+        navigate('/staff');
       }
     }
-  }, []);
+  }, [navigate]);
 
   const fetchBookings = useCallback(async () => {
     if (!isAuthenticated) return;
