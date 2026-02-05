@@ -15,6 +15,7 @@ import OrangePharmacyStaffPortal from '@/pages/OrangePharmacyStaffPortal';
 import MangoLabsStaffPortal from '@/pages/MangoLabsStaffPortal';
 import DoctorPortal from '@/pages/DoctorPortal';
 import TrackOrder from '@/pages/TrackOrder';
+import OrderTracking from '@/pages/OrderTracking';
 import Feedback from '@/pages/Feedback';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import TermsOfService from '@/pages/TermsOfService';
