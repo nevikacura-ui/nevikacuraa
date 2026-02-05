@@ -447,19 +447,42 @@ const Glydex = () => {
     }
     setEmailOtpLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/auth/email-otp/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: signupData.email.toLowerCase() })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setEmailOtpSent(true);
-        setMockEmailOtp(data.mock_otp || '');
-        setOtpResendTimer(60);
-        toast.success('Verification code sent to your email!');
+      // If phone is provided, use WhatsApp OTP
+      if (signupData.phone && signupData.phone.length >= 10) {
+        const res = await fetch(`${API_URL}/api/otp/whatsapp/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: signupData.phone, purpose: 'glydex' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setEmailOtpSent(true);
+          if (data.mock && data.otp) {
+            setMockEmailOtp(data.otp);
+          }
+          setOtpResendTimer(60);
+          toast.success('OTP sent via WhatsApp!', {
+            description: data.mock ? `Use code: ${data.otp}` : 'Check your WhatsApp'
+          });
+        } else {
+          toast.error(data.detail || 'Failed to send OTP');
+        }
       } else {
-        toast.error(data.detail || 'Failed to send verification code');
+        // Fallback to email OTP
+        const res = await fetch(`${API_URL}/api/auth/email-otp/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: signupData.email.toLowerCase() })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setEmailOtpSent(true);
+          setMockEmailOtp(data.mock_otp || '');
+          setOtpResendTimer(60);
+          toast.success('Verification code sent to your email!');
+        } else {
+          toast.error(data.detail || 'Failed to send verification code');
+        }
       }
     } catch (error) {
       toast.error('Failed to send verification code');
@@ -476,38 +499,54 @@ const Glydex = () => {
     }
     setEmailOtpLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/auth/email-otp/verify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: signupData.email.toLowerCase(), otp: otpValue })
-      });
-      const data = await res.json();
-      if (data.success && data.verified) {
-        setEmailVerificationToken(data.verification_token);
-        if (data.user_exists) {
-          // Login existing user
-          const loginRes = await fetch(`${API_URL}/api/auth/email-otp/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: signupData.email.toLowerCase(), verification_token: data.verification_token })
-          });
-          const loginData = await loginRes.json();
-          if (loginData.token) {
-            localStorage.setItem('token', loginData.token);
-            // Save patientId for subscription flow
-            if (loginData.user?.id) {
-              localStorage.setItem('patientId', loginData.user.id);
-            }
-            window.location.reload();
-          } else {
-            toast.error(loginData.detail || 'Login failed');
-          }
+      // If phone was used, verify via WhatsApp OTP
+      if (signupData.phone && signupData.phone.length >= 10) {
+        const res = await fetch(`${API_URL}/api/otp/whatsapp/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: signupData.phone, otp: otpValue })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setEmailVerificationToken('whatsapp_verified_' + signupData.phone);
+          toast.success('Phone verified! Complete your profile.');
         } else {
-          toast.success('Email verified! Complete your profile.');
+          toast.error(data.detail || data.error || 'Invalid OTP');
+          setEmailOtp(['', '', '', '', '', '']);
         }
       } else {
-        toast.error(data.detail || 'Invalid verification code');
-        setEmailOtp(['', '', '', '', '', '']);
+        // Email OTP verification
+        const res = await fetch(`${API_URL}/api/auth/email-otp/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: signupData.email.toLowerCase(), otp: otpValue })
+        });
+        const data = await res.json();
+        if (data.success && data.verified) {
+          setEmailVerificationToken(data.verification_token);
+          if (data.user_exists) {
+            // Login existing user
+            const loginRes = await fetch(`${API_URL}/api/auth/email-otp/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: signupData.email.toLowerCase(), verification_token: data.verification_token })
+            });
+            const loginData = await loginRes.json();
+            if (loginData.token) {
+              localStorage.setItem('token', loginData.token);
+              if (loginData.user?.id) {
+                localStorage.setItem('patientId', loginData.user.id);
+              }
+              window.location.reload();
+            } else {
+              toast.error(loginData.detail || 'Login failed');
+            }
+          } else {
+            toast.success('Email verified! Complete your profile.');
+          }
+        } else {
+          toast.error(data.detail || 'Invalid verification code');
+          setEmailOtp(['', '', '', '', '', '']);
       }
     } catch (error) {
       toast.error('Verification failed');
