@@ -39,11 +39,12 @@ from services.msg91_whatsapp import (
     send_proton_sonography_confirmation,
     send_orange_pharmacy_confirmation,
     send_orange_order_delivered,
-    test_msg91_connection
+    test_msg91_connection,
+    send_msg91_whatsapp
 )
 
 # Import WhatsApp OTP service
-from services.whatsapp_otp import set_db as set_otp_db
+from services.whatsapp_otp import set_db as set_otp_db, set_send_function as set_otp_send_func
 
 # Import data from modular files
 from data.medicine_inventory import MEDICINE_INVENTORY
