@@ -77,6 +77,8 @@ import HowToInstall from '@/pages/HowToInstall';
 import NevikaCuraOne from '@/pages/NevikaCuraOne';
 // Login Page
 import LoginPage from '@/pages/LoginPage';
+// Unified Staff Login
+import UnifiedStaffLogin from '@/pages/UnifiedStaffLogin';
 // Intro Screen (Loading + Splash combined)
 import IntroScreen from '@/components/IntroScreen';
 // Page Transitions
