@@ -283,26 +283,6 @@ const IntroScreen = ({ onComplete, user }) => {
     }
   };
   
-  // Guest Mobile OTP functions
-  const sendGuestOtp = async () => {
-    if (!mobile || mobile.length !== 10) {
-      toast.error('Enter valid 10-digit mobile number');
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API}/auth/guest/send-otp`, { mobile });
-      setAuthStep('guestOtp');
-      toast.success('OTP sent to your mobile!');
-      if (res.data.otp) {
-        console.log('OTP:', res.data.otp);
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to send OTP');
-    }
-    setLoading(false);
-  };
-  
   // Guest login - just mobile number, no OTP
   const continueAsGuest = () => {
     if (!mobile || mobile.length !== 10) {
