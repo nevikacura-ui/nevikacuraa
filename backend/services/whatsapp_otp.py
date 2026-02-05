@@ -23,7 +23,8 @@ MSG91_BASE_URL = "https://control.msg91.com/api/v5"
 MSG91_WHATSAPP_NUMBER = os.environ.get("MSG91_WHATSAPP_NUMBER", "918108888330")
 
 # OTP Template name (as registered in MSG91)
-OTP_TEMPLATE_NAME = "nevika_otp_verify"
+# Try nevika_booking_pin (UTILITY) as alternative to nevika_otp_verify (AUTHENTICATION)
+OTP_TEMPLATE_NAME = "nevika_booking_pin"
 
 # In-memory OTP storage with expiry (5 minutes default)
 otp_storage: Dict[str, dict] = {}
