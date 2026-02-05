@@ -2277,19 +2277,7 @@ async def send_password_reset_otp(request: AuthOTPRequest):
     if not user:
         raise HTTPException(status_code=404, detail="No account found with this phone number")
     
-    # Send SMS OTP
-    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
-        result = await send_twilio_otp(phone)
-        if result["success"]:
-            return {
-                "success": True,
-                "message": "OTP sent to your phone for password reset",
-                "expires_in": 300,
-                "phone": phone,
-                "method": "sms"
-            }
-    
-    # Fallback
+    # Use mock OTP (Twilio removed)
     otp = generate_otp()
     otp_key = f"reset_{phone}"
     auth_otp_storage[otp_key] = {
@@ -2309,29 +2297,19 @@ async def send_password_reset_otp(request: AuthOTPRequest):
 
 @api_router.post("/auth/forgot-password/reset")
 async def reset_password_with_otp(phone: str = Body(...), otp: str = Body(...), new_password: str = Body(...)):
-    """Reset password after verifying SMS OTP"""
+    """Reset password after verifying OTP"""
     phone = phone.strip()
     otp = otp.strip()
     
-    # Verify OTP
+    # Verify OTP using mock storage
     otp_key = f"reset_{phone}"
-    
-    # Try Twilio first
-    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
-        result = await verify_twilio_otp(phone, otp)
-        if result["success"] and result["valid"]:
-            pass  # Continue to reset password
-        elif result["success"] and not result["valid"]:
-            raise HTTPException(status_code=400, detail="Invalid OTP")
-    else:
-        # Mock verification
-        stored = auth_otp_storage.get(otp_key)
-        if not stored:
-            raise HTTPException(status_code=400, detail="No OTP found. Please request again.")
-        if datetime.now(timezone.utc) > stored["expires_at"]:
-            raise HTTPException(status_code=400, detail="OTP expired")
-        if stored["otp"] != otp:
-            raise HTTPException(status_code=400, detail="Invalid OTP")
+    stored = auth_otp_storage.get(otp_key)
+    if not stored:
+        raise HTTPException(status_code=400, detail="No OTP found. Please request again.")
+    if datetime.now(timezone.utc) > stored["expires_at"]:
+        raise HTTPException(status_code=400, detail="OTP expired")
+    if stored["otp"] != otp:
+        raise HTTPException(status_code=400, detail="Invalid OTP")
     
     # Update password
     hashed = hashlib.sha256(new_password.encode()).hexdigest()
