@@ -162,6 +162,9 @@ function AppContent() {
           {/* Unified Staff Login - Single entry point */}
           <Route path="/staff" element={<UnifiedStaffLogin />} />
           <Route path="/staff-login" element={<UnifiedStaffLogin />} />
+          {/* Super Admin Dashboard */}
+          <Route path="/super-admin" element={<SuperAdminDashboard />} />
+          <Route path="/admin-dashboard" element={<SuperAdminDashboard />} />
           {/* Individual Staff Portals */}
           <Route path="/diagyn-staff" element={<DiaGynStaffPortal />} />
           <Route path="/pharmacy-staff" element={<OrangePharmacyStaffPortal />} />
