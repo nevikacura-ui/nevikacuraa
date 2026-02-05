@@ -25,6 +25,31 @@ Complete healthcare platform with three main services:
 
 ## What's Been Implemented
 
+### Feb 5, 2026 - Image Search & Send Notifications COMPLETE
+
+#### Google Image Search for Medicines
+- ✅ **API Endpoint**: `GET /api/pharmacy/image-search?query={query}`
+- ✅ **Image Sources**: Unsplash (primary), Pixabay (fallback), Placeholders (final fallback)
+- ✅ **Auth Required**: Staff login token
+- ✅ **Response Fields**: `success`, `images[]`, `total`
+- ✅ **UI**: "Add Medicine" modal with Search Images input
+
+#### Send Invoice/Report via MSG91 & Resend
+| Feature | Endpoint | MSG91 Template | Email |
+|---------|----------|---------------|-------|
+| Send Invoice | `POST /api/pharmacy/orders/{id}/send-invoice` | `orange_pharmacy_confirm` | ✅ Resend |
+| Send Report | `POST /api/mango/bookings/{id}/send-report` | `proton_report_ready` | ✅ Resend |
+
+**Preconditions:**
+- Send Invoice requires `invoice_uploaded = true`
+- Send Report requires `report_uploaded = true`
+
+#### Testing Results
+- **22/22 Backend Tests Passed** (100%)
+- WhatsApp OTP tested with real phone: 9833188288
+
+---
+
 ### Feb 5, 2026 - WhatsApp OTP Notification System COMPLETE
 
 #### Implementation Details
