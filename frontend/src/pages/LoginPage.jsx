@@ -204,15 +204,6 @@ const LoginPage = () => {
       subtitle: 'Traditional login',
       icon: Lock,
       color: 'slate'
-    },
-    {
-      id: 'whatsapp-otp',
-      title: 'WhatsApp + OTP',
-      subtitle: 'Coming Soon',
-      icon: MessageCircle,
-      color: 'green',
-      disabled: true,
-      badge: 'Soon'
     }
   ];
 
