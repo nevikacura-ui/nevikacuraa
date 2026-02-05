@@ -275,6 +275,44 @@ async def guest_verify_otp(request: GuestOTPVerify):
         "message": "Phone verified! You can now complete your order."
     }
 
+
+# New endpoint for creating session after WhatsApp OTP verification
+class CreateSessionRequest(BaseModel):
+    phone: str
+
+@router.post("/guest/create-session")
+async def guest_create_session(request: CreateSessionRequest):
+    """
+    Create guest session after WhatsApp OTP verification.
+    Called after successful /api/otp/whatsapp/verify
+    """
+    phone = request.phone.strip().replace("+91", "").replace(" ", "").replace("-", "")[-10:]
+    
+    if len(phone) != 10 or not phone.isdigit():
+        raise HTTPException(status_code=400, detail="Invalid phone number")
+    
+    # Create guest session token
+    session_token = jwt.encode(
+        {
+            "sub": f"guest_{phone}",
+            "phone": phone,
+            "type": "guest",
+            "exp": datetime.now(timezone.utc) + timedelta(hours=2)  # 2-hour session
+        },
+        JWT_SECRET,
+        algorithm=JWT_ALGORITHM
+    )
+    
+    return {
+        "success": True,
+        "session_token": session_token,
+        "phone": phone,
+        "mode": "guest",
+        "expires_in": 7200,
+        "message": "Session created successfully"
+    }
+
+
 # ============ SIGN-UP MODE (Email OTP - Persistent Account) ============
 
 @router.post("/signup/send-otp")
