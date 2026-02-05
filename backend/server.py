@@ -6930,6 +6930,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Order Tracking router: {e}")
 
+# WhatsApp OTP Routes
+try:
+    from routes.whatsapp_otp import router as whatsapp_otp_router
+    set_otp_db(db)
+    app.include_router(whatsapp_otp_router, prefix="/api")
+    logger.info("WhatsApp OTP router loaded")
+except Exception as e:
+    logger.warning(f"Could not load WhatsApp OTP router: {e}")
+
 
 app.add_middleware(
     CORSMiddleware,
