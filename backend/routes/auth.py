@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, EmailStr
 
 from database import get_db
-from services import send_twilio_otp, verify_twilio_otp, send_email_notification
+from services import send_email_notification
 
 logger = logging.getLogger(__name__)
 
