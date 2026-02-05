@@ -160,7 +160,7 @@ async def send_whatsapp_otp(
         otp_storage[otp_key]["method"] = "msg91_sms"
         
         # Log to database
-        if db:
+        if db is not None:
             try:
                 await db.otp_logs.insert_one({
                     "phone": clean_phone,
