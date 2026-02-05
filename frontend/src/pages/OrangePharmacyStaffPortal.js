@@ -80,13 +80,22 @@ const OrangePharmacyStaffPortal = () => {
     const storedStaff = localStorage.getItem('staffInfo');
     if (token && storedStaff) {
       const staff = JSON.parse(storedStaff);
-      if (staff.role === 'pharmacy_staff' || staff.department?.toLowerCase().includes('pharmacy') || 
-          staff.role === 'admin' || staff.role === 'super_admin') {
+      const dept = staff.department?.toLowerCase() || '';
+      const isPharmacyStaff = staff.role === 'pharmacy_staff' || 
+                              dept.includes('pharmacy') || 
+                              dept.includes('orange') ||
+                              staff.role === 'admin' || 
+                              staff.role === 'super_admin';
+      
+      if (isPharmacyStaff) {
         setStaffInfo(staff);
         setIsAuthenticated(true);
+      } else {
+        // Wrong portal - redirect to unified login
+        navigate('/staff');
       }
     }
-  }, []);
+  }, [navigate]);
 
   // Fetch orders
   const fetchOrders = useCallback(async () => {
