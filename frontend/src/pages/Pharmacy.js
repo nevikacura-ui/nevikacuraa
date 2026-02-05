@@ -1811,11 +1811,11 @@ const Pharmacy = () => {
           
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { name: 'Kids Multivitamin Gummy', price: 349, mrp: 599, off: 42, delivery: '15 mins', badge: 'Kids Gummy', category: 'Kids Health' },
-              { name: 'Calcium for Kids', price: 249, mrp: 449, off: 44, delivery: '15 mins', badge: null, category: 'Kids Health' },
-              { name: 'DHA Omega 3 Syrup', price: 399, mrp: 699, off: 43, delivery: '20 mins', badge: 'Brain Health', category: 'Kids Health' },
-              { name: 'Iron Tonic for Kids', price: 179, mrp: 299, off: 40, delivery: '15 mins', badge: null, category: 'Kids Health' },
-              { name: 'Vitamin D Drops', price: 229, mrp: 399, off: 42, delivery: '15 mins', badge: 'Doctor Recommended', category: 'Kids Health' }
+              { name: 'Kids Multivitamin Gummy', price: 349, mrp: 599, off: 42, delivery: 'Same Day', badge: 'Kids Gummy', category: 'Kids Health' },
+              { name: 'Calcium for Kids', price: 249, mrp: 449, off: 44, delivery: 'Same Day', badge: null, category: 'Kids Health' },
+              { name: 'DHA Omega 3 Syrup', price: 399, mrp: 699, off: 43, delivery: 'Same Day', badge: 'Brain Health', category: 'Kids Health' },
+              { name: 'Iron Tonic for Kids', price: 179, mrp: 299, off: 40, delivery: 'Same Day', badge: null, category: 'Kids Health' },
+              { name: 'Vitamin D Drops', price: 229, mrp: 399, off: 42, delivery: 'Same Day', badge: 'Doctor Recommended', category: 'Kids Health' }
             ].map((item, idx) => (
               <div 
                 key={idx}
