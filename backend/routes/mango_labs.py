@@ -22,6 +22,7 @@ JWT_SECRET = None
 JWT_ALGORITHM = "HS256"
 send_email_notification = None
 send_whatsapp_notification = None
+send_proton_report_ready = None
 
 # Test Order Status Workflow
 TEST_STATUSES = [
