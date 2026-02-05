@@ -57,10 +57,11 @@ def set_jwt_config(secret, algorithm="HS256"):
     JWT_ALGORITHM = algorithm
 
 
-def set_notification_functions(email_func, whatsapp_func=None):
-    global send_email_notification, send_whatsapp_notification
+def set_notification_functions(email_func, whatsapp_func=None, pharmacy_confirm_func=None):
+    global send_email_notification, send_whatsapp_notification, send_orange_pharmacy_confirmation
     send_email_notification = email_func
     send_whatsapp_notification = whatsapp_func
+    send_orange_pharmacy_confirmation = pharmacy_confirm_func
 
 
 # ============ Auth ============
