@@ -1,6 +1,6 @@
 """
 Nevika Cura - Two-Tiered Authentication System V2
-- Guest Mode: SMS OTP (Twilio) for one-time orders → Order ID only
+- Guest Mode: Mock OTP (SMS service disabled) for one-time orders → Order ID only
 - Sign-up Mode: Email OTP (Resend) for persistent accounts → Registration ID + Order ID
 """
 
@@ -14,8 +14,6 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel, EmailStr
-
-from services.sms import send_twilio_otp, verify_twilio_otp
 
 logger = logging.getLogger(__name__)
 
