@@ -11,6 +11,8 @@ import Profile from '@/pages/Profile';
 import Admin from '@/pages/Admin';
 import AdminPanel from '@/pages/AdminPanel';
 import DiaGynStaffPortal from '@/pages/DiaGynStaffPortal';
+import OrangePharmacyStaffPortal from '@/pages/OrangePharmacyStaffPortal';
+import MangoLabsStaffPortal from '@/pages/MangoLabsStaffPortal';
 import DoctorPortal from '@/pages/DoctorPortal';
 import TrackOrder from '@/pages/TrackOrder';
 import Feedback from '@/pages/Feedback';
