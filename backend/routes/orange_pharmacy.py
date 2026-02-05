@@ -24,6 +24,7 @@ JWT_SECRET = None
 JWT_ALGORITHM = "HS256"
 send_email_notification = None
 send_whatsapp_notification = None
+send_orange_pharmacy_confirmation = None
 
 # Order Status Workflow
 ORDER_STATUSES = [
