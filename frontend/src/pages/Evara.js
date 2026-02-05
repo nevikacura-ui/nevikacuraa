@@ -1083,16 +1083,17 @@ const Evara = () => {
               resetSignupForm();
               toast.success('Welcome back!');
               fetchProfile();
+            } else {
+              toast.error(loginData.detail || 'Login failed');
+            }
           } else {
-            toast.error(loginData.detail || 'Login failed');
+            // New user - proceed to complete registration
+            toast.success('Email verified! Complete your profile.');
           }
         } else {
-          // New user - proceed to complete registration
-          toast.success('Email verified! Complete your profile.');
+          toast.error(data.detail || 'Invalid verification code');
+          setEmailOtp(['', '', '', '', '', '']);
         }
-      } else {
-        toast.error(data.detail || 'Invalid verification code');
-        setEmailOtp(['', '', '', '', '', '']);
       }
     } catch (error) {
       toast.error('Verification failed');
