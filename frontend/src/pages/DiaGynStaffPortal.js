@@ -275,12 +275,26 @@ const DiaGynStaffPortal = () => {
     try {
       const res = await axios.post(`${API}/api/staff/login`, { username, password });
       localStorage.setItem('staffToken', res.data.token);
-      const staffData = { name: res.data.staff?.name || res.data.name, role: res.data.staff?.role || res.data.role };
+      // Store full staff object including department
+      const staffData = res.data.staff || { name: res.data.name, role: res.data.role };
       localStorage.setItem('staffInfo', JSON.stringify(staffData));
-      setStaffInfo(staffData);
-      setIsAuthenticated(true);
-      successPattern();
-      toast.success(`Welcome!`);
+      
+      // Check if this staff belongs to this portal
+      const allowedRoles = ['diagyn_staff', 'clinic_staff_pushpa', 'clinic_staff_amnion', 'doctor', 'admin', 'super_admin'];
+      const dept = staffData.department?.toLowerCase() || '';
+      const isAllowed = allowedRoles.includes(staffData.role) || 
+                        dept.includes('diagyn') || dept.includes('clinic');
+      
+      if (isAllowed) {
+        setStaffInfo(staffData);
+        setIsAuthenticated(true);
+        successPattern();
+        toast.success(`Welcome!`);
+      } else {
+        // Redirect to correct portal via unified login
+        toast.info('Redirecting to your portal...');
+        navigate('/staff');
+      }
     } catch (error) {
       errorPattern();
       toast.error('Login failed');
