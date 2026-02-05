@@ -1621,45 +1621,86 @@ const Pharmacy = () => {
           </h3>
           
           <div className="grid grid-cols-3 gap-3">
-            {[
-              { 
-                id: 'kids', 
-                name: 'Kids Care', 
-                icon: '👶🏻',
-                color: 'from-pink-400 to-rose-400',
-                filter: 'kids'
-              },
-              { 
-                id: 'adults', 
-                name: 'Adult Wellness', 
-                icon: '🧑🏻‍⚕️',
-                color: 'from-blue-400 to-indigo-400',
-                filter: 'vitamin'
-              },
-              { 
-                id: 'elderly', 
-                name: 'Elderly Care', 
-                icon: '👴🏻',
-                color: 'from-purple-400 to-violet-400',
-                filter: 'elderly'
-              }
-            ].map((fam) => (
-              <button
-                key={fam.id}
-                onClick={() => setSelectedCategory(selectedCategory === fam.filter ? '' : fam.filter)}
-                className={`relative overflow-hidden rounded-2xl aspect-square group ${
-                  selectedCategory === fam.filter ? 'ring-2 ring-orange-400' : ''
-                }`}
-                data-testid={`family-${fam.id}`}
-              >
-                <div className={`w-full h-full bg-gradient-to-br ${fam.color} flex items-center justify-center`}>
-                  <span className="text-5xl drop-shadow-lg group-hover:scale-110 transition-transform duration-300">{fam.icon}</span>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-3 text-white bg-gradient-to-t from-black/40 to-transparent">
-                  <p className="font-bold text-sm drop-shadow-lg">{fam.name}</p>
-                </div>
-              </button>
-            ))}
+            {/* Kids Care - Children with hands up */}
+            <button
+              onClick={() => setSelectedCategory(selectedCategory === 'kids' ? '' : 'kids')}
+              className={`relative overflow-hidden rounded-2xl aspect-square group ${
+                selectedCategory === 'kids' ? 'ring-2 ring-orange-400' : ''
+              }`}
+              data-testid="family-kids"
+            >
+              <div className="w-full h-full bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center">
+                <svg viewBox="0 0 100 80" className="w-20 h-20 text-pink-600 group-hover:scale-110 transition-transform duration-300" fill="currentColor">
+                  {/* Boy with hands up */}
+                  <circle cx="30" cy="15" r="10"/>
+                  <path d="M30 25 L30 50 M30 35 L15 20 M30 35 L45 20 M30 50 L20 70 M30 50 L40 70" stroke="currentColor" strokeWidth="6" strokeLinecap="round" fill="none"/>
+                  {/* Girl with hands up and pigtails */}
+                  <circle cx="70" cy="15" r="10"/>
+                  <circle cx="58" cy="10" r="5"/>
+                  <circle cx="82" cy="10" r="5"/>
+                  <path d="M70 25 L70 45 M70 35 L55 20 M70 35 L85 20 M70 45 L60 70 M70 45 L80 70" stroke="currentColor" strokeWidth="6" strokeLinecap="round" fill="none"/>
+                  <path d="M60 45 L70 55 L80 45" stroke="currentColor" strokeWidth="6" strokeLinecap="round" fill="none"/>
+                </svg>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-pink-300/90 to-transparent">
+                <p className="font-bold text-sm text-pink-800">Kids Care</p>
+              </div>
+            </button>
+
+            {/* Adult Wellness - Man and Woman standing */}
+            <button
+              onClick={() => setSelectedCategory(selectedCategory === 'vitamin' ? '' : 'vitamin')}
+              className={`relative overflow-hidden rounded-2xl aspect-square group ${
+                selectedCategory === 'vitamin' ? 'ring-2 ring-orange-400' : ''
+              }`}
+              data-testid="family-adults"
+            >
+              <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                <svg viewBox="0 0 100 90" className="w-20 h-20 text-blue-600 group-hover:scale-110 transition-transform duration-300" fill="currentColor">
+                  {/* Man */}
+                  <circle cx="30" cy="12" r="10"/>
+                  <path d="M30 22 L30 55 M30 30 L18 45 M30 30 L42 45 M30 55 L22 85 M30 55 L38 85" stroke="currentColor" strokeWidth="6" strokeLinecap="round" fill="none"/>
+                  {/* Woman */}
+                  <circle cx="70" cy="12" r="10"/>
+                  <path d="M70 22 L70 45 M70 30 L58 42 M70 30 L82 42" stroke="currentColor" strokeWidth="6" strokeLinecap="round" fill="none"/>
+                  <path d="M58 45 L70 65 L82 45 Z" fill="currentColor"/>
+                  <path d="M62 65 L62 85 M78 65 L78 85" stroke="currentColor" strokeWidth="6" strokeLinecap="round" fill="none"/>
+                </svg>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-blue-300/90 to-transparent">
+                <p className="font-bold text-sm text-blue-800">Adult Wellness</p>
+              </div>
+            </button>
+
+            {/* Elderly Care - Couple with walking sticks */}
+            <button
+              onClick={() => setSelectedCategory(selectedCategory === 'elderly' ? '' : 'elderly')}
+              className={`relative overflow-hidden rounded-2xl aspect-square group ${
+                selectedCategory === 'elderly' ? 'ring-2 ring-orange-400' : ''
+              }`}
+              data-testid="family-elderly"
+            >
+              <div className="w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+                <svg viewBox="0 0 100 90" className="w-20 h-20 text-purple-600 group-hover:scale-110 transition-transform duration-300" fill="currentColor">
+                  {/* Elderly Man with cane */}
+                  <circle cx="30" cy="15" r="9"/>
+                  <path d="M30 24 L30 50 M30 32 L20 45 M30 32 L38 28 M30 50 L22 80 M30 50 L38 80" stroke="currentColor" strokeWidth="5" strokeLinecap="round" fill="none"/>
+                  <path d="M15 45 L15 85" stroke="currentColor" strokeWidth="4" strokeLinecap="round"/>
+                  {/* Elderly Woman with cane and hair bun */}
+                  <circle cx="70" cy="15" r="9"/>
+                  <ellipse cx="70" cy="8" rx="4" ry="3"/>
+                  <path d="M70 24 L70 45 M70 32 L62 28 M70 32 L80 45" stroke="currentColor" strokeWidth="5" strokeLinecap="round" fill="none"/>
+                  <path d="M60 45 L70 60 L80 45 Z" fill="currentColor"/>
+                  <path d="M64 60 L64 80 M76 60 L76 80" stroke="currentColor" strokeWidth="5" strokeLinecap="round" fill="none"/>
+                  <path d="M85 45 L85 85" stroke="currentColor" strokeWidth="4" strokeLinecap="round"/>
+                  {/* Holding hands */}
+                  <path d="M38 28 L62 28" stroke="currentColor" strokeWidth="5" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-purple-300/90 to-transparent">
+                <p className="font-bold text-sm text-purple-800">Elderly Care</p>
+              </div>
+            </button>
           </div>
         </div>
       </div>
