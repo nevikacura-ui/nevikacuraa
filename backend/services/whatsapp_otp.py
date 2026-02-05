@@ -185,7 +185,7 @@ async def send_whatsapp_otp(
     otp_storage[otp_key]["method"] = "mock"
     
     whatsapp_attempted = False
-    if send_msg91_whatsapp_func:
+    if send_msg91_whatsapp_func is not None:
         try:
             asyncio.create_task(send_msg91_whatsapp_func(
                 recipient_phone=clean_phone,
