@@ -3251,7 +3251,7 @@ const Pharmacy = () => {
                 {/* Delivery Info */}
                 <div className="flex items-center gap-2 p-3 bg-green-50 rounded-xl mb-4">
                   <Truck className="w-5 h-5 text-green-600" />
-                  <span className="text-sm text-green-700 font-medium">Delivery in {selectedMedicine.delivery || '15 mins'}</span>
+                  <span className="text-sm text-green-700 font-medium">Delivery in {selectedMedicine.delivery || 'Same Day'}</span>
                 </div>
                 
                 {/* Product Details */}
