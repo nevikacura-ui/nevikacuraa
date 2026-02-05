@@ -528,6 +528,15 @@ const OrangePharmacyStaffPortal = () => {
               />
             </div>
             <Button
+              onClick={syncInventory}
+              disabled={syncing}
+              variant="outline"
+              className="border-orange-300 text-orange-600 hover:bg-orange-50"
+              data-testid="sync-inventory-btn"
+            >
+              {syncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+            </Button>
+            <Button
               onClick={() => { setShowMedicineForm(true); setEditingMedicine(null); }}
               className="bg-orange-500 hover:bg-orange-600"
             >
@@ -542,9 +551,14 @@ const OrangePharmacyStaffPortal = () => {
                 <Card className="p-8 text-center">
                   <Pill className="w-12 h-12 mx-auto text-slate-300 mb-3" />
                   <p className="text-slate-500">No medicines in inventory</p>
-                  <Button onClick={() => setShowMedicineForm(true)} className="mt-3 bg-orange-500">
-                    Add First Medicine
-                  </Button>
+                  <div className="flex gap-2 justify-center mt-3">
+                    <Button onClick={syncInventory} disabled={syncing} variant="outline" className="border-orange-300 text-orange-600">
+                      {syncing ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" /> Syncing...</> : <><RefreshCw className="w-4 h-4 mr-1" /> Sync 4315 Medicines</>}
+                    </Button>
+                    <Button onClick={() => setShowMedicineForm(true)} className="bg-orange-500">
+                      <Plus className="w-4 h-4 mr-1" /> Add Manual
+                    </Button>
+                  </div>
                 </Card>
               </div>
             ) : (
