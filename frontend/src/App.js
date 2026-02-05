@@ -157,7 +157,10 @@ function AppContent() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-panel" element={<AdminPanel />} />
-          <Route path="/staff" element={<DiaGynStaffPortal />} />
+          {/* Unified Staff Login - Single entry point */}
+          <Route path="/staff" element={<UnifiedStaffLogin />} />
+          <Route path="/staff-login" element={<UnifiedStaffLogin />} />
+          {/* Individual Staff Portals */}
           <Route path="/diagyn-staff" element={<DiaGynStaffPortal />} />
           <Route path="/pharmacy-staff" element={<OrangePharmacyStaffPortal />} />
           <Route path="/orange-staff" element={<OrangePharmacyStaffPortal />} />
