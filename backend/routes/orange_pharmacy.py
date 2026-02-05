@@ -641,3 +641,92 @@ async def get_dashboard_stats(staff=Depends(verify_pharmacy_staff)):
         "low_stock_count": low_stock,
         "total_medicines": total_medicines
     }
+
+
+# ============ Medicine Sync ============
+
+@router.post("/sync-inventory")
+async def sync_medicine_inventory(staff=Depends(verify_pharmacy_staff)):
+    """Sync all 4315 medicines from inventory file to database"""
+    try:
+        from data.medicine_inventory import MEDICINE_INVENTORY
+        
+        # Get existing medicine names to avoid duplicates
+        existing_names = set()
+        existing = await db.medicines.find({}, {"name": 1}).to_list(10000)
+        for med in existing:
+            existing_names.add(med.get("name", "").lower())
+        
+        new_count = 0
+        updated_count = 0
+        
+        for med in MEDICINE_INVENTORY:
+            name = med.get("name", "")
+            if not name:
+                continue
+            
+            # Check if already exists
+            if name.lower() in existing_names:
+                # Update if we have more info (like mrp, image)
+                if med.get("mrp") or med.get("image"):
+                    update_data = {}
+                    if med.get("mrp"):
+                        update_data["mrp"] = med["mrp"]
+                        update_data["sale_price"] = med["mrp"]  # Default no discount
+                    if med.get("image"):
+                        update_data["image_url"] = med["image"]
+                    if med.get("composition"):
+                        update_data["generic_name"] = med["composition"]
+                    if med.get("company"):
+                        update_data["manufacturer"] = med["company"]
+                    if med.get("category"):
+                        update_data["category"] = med["category"]
+                    if med.get("form"):
+                        update_data["unit"] = med["form"]
+                    
+                    if update_data:
+                        await db.medicines.update_one(
+                            {"name": {"$regex": f"^{name}$", "$options": "i"}},
+                            {"$set": update_data}
+                        )
+                        updated_count += 1
+                continue
+            
+            # Create new medicine entry
+            medicine = {
+                "id": str(uuid.uuid4()),
+                "name": name,
+                "generic_name": med.get("composition", ""),
+                "manufacturer": med.get("company", "Keep Mankind"),
+                "category": med.get("category", "general"),
+                "mrp": med.get("mrp", 0),
+                "discount_percent": 0,
+                "sale_price": med.get("mrp", 0),
+                "stock_quantity": 100,  # Default stock
+                "unit": med.get("form", "Tablet"),
+                "pack": med.get("pack", ""),
+                "description": "",
+                "image_url": med.get("image", ""),
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+            
+            await db.medicines.insert_one(medicine)
+            existing_names.add(name.lower())
+            new_count += 1
+        
+        total = await db.medicines.count_documents({})
+        
+        return {
+            "success": True,
+            "message": f"Inventory synced successfully",
+            "new_medicines_added": new_count,
+            "medicines_updated": updated_count,
+            "total_in_database": total
+        }
+        
+    except ImportError as e:
+        raise HTTPException(status_code=500, detail=f"Failed to import inventory: {str(e)}")
+    except Exception as e:
+        logger.error(f"Inventory sync failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Sync failed: {str(e)}")
