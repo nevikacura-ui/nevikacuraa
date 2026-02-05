@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://orange-health-ui.preview.emergentagent.com",
+    "url": "https://portal-recovery.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {

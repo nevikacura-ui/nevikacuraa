@@ -7,7 +7,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://orange-health-ui.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://portal-recovery.preview.emergentagent.com')
 
 class TestStaffAnalytics:
     """Test staff analytics endpoints"""
