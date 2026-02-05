@@ -1624,60 +1624,54 @@ const Pharmacy = () => {
             {/* Kids Care */}
             <button
               onClick={() => setSelectedCategory(selectedCategory === 'kids' ? '' : 'kids')}
-              className={`relative overflow-hidden rounded-2xl aspect-square group ${
+              className={`relative overflow-hidden rounded-2xl group ${
                 selectedCategory === 'kids' ? 'ring-2 ring-orange-400' : ''
               }`}
               data-testid="family-kids"
             >
-              <div className="w-full h-full bg-[#FFE5E0] flex items-center justify-center">
-                <img 
-                  src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/xcrhiz3u_Screenshot_20260205-102838.png" 
-                  alt="Kids Care"
-                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-[#FFE5E0]">
-                <p className="font-bold text-sm text-[#E85A4F]">Kids Care</p>
+              <img 
+                src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/xcrhiz3u_Screenshot_20260205-102838.png" 
+                alt="Kids Care"
+                className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-2 bg-white/90">
+                <p className="font-bold text-sm text-slate-700 text-center">Kids Care</p>
               </div>
             </button>
 
             {/* Adult Wellness */}
             <button
               onClick={() => setSelectedCategory(selectedCategory === 'vitamin' ? '' : 'vitamin')}
-              className={`relative overflow-hidden rounded-2xl aspect-square group ${
+              className={`relative overflow-hidden rounded-2xl group ${
                 selectedCategory === 'vitamin' ? 'ring-2 ring-orange-400' : ''
               }`}
               data-testid="family-adults"
             >
-              <div className="w-full h-full bg-[#E0F4F4] flex items-center justify-center">
-                <img 
-                  src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/tq8xbtbd_Screenshot_20260205-102951.png" 
-                  alt="Adult Wellness"
-                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-[#E0F4F4]">
-                <p className="font-bold text-sm text-[#2B9E9E]">Adult Wellness</p>
+              <img 
+                src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/tq8xbtbd_Screenshot_20260205-102951.png" 
+                alt="Adult Wellness"
+                className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-2 bg-white/90">
+                <p className="font-bold text-sm text-slate-700 text-center">Adult Wellness</p>
               </div>
             </button>
 
             {/* Elderly Care */}
             <button
               onClick={() => setSelectedCategory(selectedCategory === 'elderly' ? '' : 'elderly')}
-              className={`relative overflow-hidden rounded-2xl aspect-square group ${
+              className={`relative overflow-hidden rounded-2xl group ${
                 selectedCategory === 'elderly' ? 'ring-2 ring-orange-400' : ''
               }`}
               data-testid="family-elderly"
             >
-              <div className="w-full h-full bg-[#FCE4EC] flex items-center justify-center">
-                <img 
-                  src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/ee62v180_Screenshot_20260205-103010.png" 
-                  alt="Elderly Care"
-                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-[#FCE4EC]">
-                <p className="font-bold text-sm text-[#C2185B]">Elderly Care</p>
+              <img 
+                src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/ee62v180_Screenshot_20260205-103010.png" 
+                alt="Elderly Care"
+                className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-2 bg-white/90">
+                <p className="font-bold text-sm text-slate-700 text-center">Elderly Care</p>
               </div>
             </button>
           </div>
