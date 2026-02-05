@@ -564,7 +564,7 @@ async def get_invoice(order_id: str, staff=Depends(verify_pharmacy_staff)):
 
 @router.post("/orders/{order_id}/send-invoice")
 async def send_invoice_to_customer(order_id: str, staff=Depends(verify_pharmacy_staff)):
-    """Send invoice to customer via email and WhatsApp"""
+    """Send invoice to customer via email and WhatsApp using MSG91 template"""
     order = await db.pharmacy_orders.find_one({"order_id": order_id}, {"_id": 0})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -575,6 +575,7 @@ async def send_invoice_to_customer(order_id: str, staff=Depends(verify_pharmacy_
     customer_email = order.get("customer_email")
     customer_phone = order.get("customer_phone")
     customer_name = order.get("customer_name", "Customer")
+    total_amount = order.get("total_amount", 0)
     
     email_sent = False
     whatsapp_sent = False
@@ -590,12 +591,13 @@ async def send_invoice_to_customer(order_id: str, staff=Depends(verify_pharmacy_
                 </div>
                 <div style="padding: 20px;">
                     <p>Dear {customer_name},</p>
-                    <p>Please find attached the invoice for your order <strong>#{order_id}</strong>.</p>
+                    <p>Your invoice for order <strong>#{order_id}</strong> is ready.</p>
+                    <p><strong>Amount:</strong> ₹{total_amount}</p>
+                    <p>Please download your invoice from the Nevika Cura app.</p>
                     <p>Thank you for shopping with Orange Pharmacy!</p>
                 </div>
             </div>
             """
-            # Note: Actual attachment handling depends on email service implementation
             await send_email_notification(
                 subject=subject,
                 html_content=html,
@@ -604,17 +606,34 @@ async def send_invoice_to_customer(order_id: str, staff=Depends(verify_pharmacy_
                 patient_html=html
             )
             email_sent = True
+            logger.info(f"Invoice email sent for order {order_id}")
         except Exception as e:
             logger.error(f"Failed to send invoice email: {e}")
     
-    # Send WhatsApp notification
-    if send_whatsapp_notification and customer_phone:
+    # Send WhatsApp notification using MSG91 orange_pharmacy_confirm template
+    if send_orange_pharmacy_confirmation and customer_phone:
         try:
-            message = f"Orange Pharmacy - Invoice\n\nDear {customer_name},\nYour invoice for order #{order_id} has been sent to your email.\n\nThank you!"
-            await send_whatsapp_notification(customer_phone, message)
-            whatsapp_sent = True
+            result = await send_orange_pharmacy_confirmation(
+                phone=customer_phone,
+                customer_name=customer_name,
+                order_id=order_id,
+                total_amount=f"₹{total_amount}"
+            )
+            whatsapp_sent = result.get("success", False)
+            logger.info(f"WhatsApp invoice notification result: {result}")
         except Exception as e:
             logger.error(f"Failed to send WhatsApp: {e}")
+    
+    # Mark as sent
+    await db.pharmacy_orders.update_one(
+        {"order_id": order_id},
+        {"$set": {
+            "invoice_sent": True,
+            "invoice_sent_at": datetime.now(timezone.utc).isoformat(),
+            "invoice_sent_email": email_sent,
+            "invoice_sent_whatsapp": whatsapp_sent
+        }}
+    )
     
     return {
         "success": True,
