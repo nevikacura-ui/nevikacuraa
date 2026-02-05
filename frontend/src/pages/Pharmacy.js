@@ -1487,15 +1487,15 @@ const Pharmacy = () => {
           <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
               { id: 'heart', name: 'Heart & BP Care', icon: '❤️', color: 'from-red-500 to-pink-500', filter: 'cardiac', image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=120&h=120&fit=crop' },
-              { id: 'diabetes', name: 'Diabetes Care', icon: '🩸', color: 'from-blue-500 to-cyan-500', filter: 'diabetes', image: 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=120&h=120&fit=crop' },
-              { id: 'respiratory', name: 'Asthma & Respiratory', icon: '🫁', color: 'from-teal-500 to-green-500', filter: 'respiratory', image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=120&h=120&fit=crop' },
-              { id: 'bone', name: 'Bone & Joint', icon: '🦴', color: 'from-amber-500 to-orange-500', filter: 'bone', image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=120&h=120&fit=crop' },
-              { id: 'stomach', name: 'Stomach Care', icon: '🫃', color: 'from-yellow-500 to-lime-500', filter: 'digestive', image: 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=120&h=120&fit=crop' },
-              { id: 'vitamins', name: 'Vitamins & Nutrition', icon: '💊', color: 'from-purple-500 to-violet-500', filter: 'vitamin', image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=120&h=120&fit=crop' },
-              { id: 'skincare', name: 'Skin Care', icon: '✨', color: 'from-pink-500 to-rose-500', filter: 'skin', image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=120&h=120&fit=crop' },
-              { id: 'eye', name: 'Eye Care', icon: '👁️', color: 'from-sky-500 to-blue-500', filter: 'eye', image: 'https://images.unsplash.com/photo-1494869042583-f6c911f04b4c?w=120&h=120&fit=crop' },
-              { id: 'pain', name: 'Pain Relief', icon: '💪', color: 'from-orange-500 to-red-500', filter: 'pain', image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=120&h=120&fit=crop' },
-              { id: 'immunity', name: 'Immunity Boosters', icon: '🛡️', color: 'from-green-500 to-emerald-500', filter: 'immunity', image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=120&h=120&fit=crop' }
+              { id: 'diabetes', name: 'Diabetes Care', icon: '🩸', color: 'from-blue-500 to-cyan-500', filter: 'diabetes' },
+              { id: 'respiratory', name: 'Asthma & Respiratory', icon: '🫁', color: 'from-teal-500 to-green-500', filter: 'respiratory' },
+              { id: 'bone', name: 'Bone & Joint', icon: '🦴', color: 'from-amber-500 to-orange-500', filter: 'bone' },
+              { id: 'stomach', name: 'Stomach Care', icon: '🫃', color: 'from-yellow-500 to-lime-500', filter: 'digestive' },
+              { id: 'vitamins', name: 'Vitamins & Nutrition', icon: '💊', color: 'from-purple-500 to-violet-500', filter: 'vitamin' },
+              { id: 'skincare', name: 'Skin Care', icon: '✨', color: 'from-pink-500 to-rose-500', filter: 'skin' },
+              { id: 'eye', name: 'Eye Care', icon: '👁️', color: 'from-sky-500 to-blue-500', filter: 'eye' },
+              { id: 'pain', name: 'Pain Relief', icon: '💪', color: 'from-orange-500 to-red-500', filter: 'pain' },
+              { id: 'immunity', name: 'Immunity Boosters', icon: '🛡️', color: 'from-green-500 to-emerald-500', filter: 'immunity' }
             ].map((cat) => (
               <button
                 key={cat.id}
@@ -1505,17 +1505,11 @@ const Pharmacy = () => {
                 }`}
                 data-testid={`carousel-cat-${cat.id}`}
               >
-                <div className={`relative w-20 h-20 rounded-2xl overflow-hidden shadow-lg ${
+                <div className={`relative w-20 h-20 rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br ${cat.color} ${
                   selectedCategory === cat.filter ? 'ring-2 ring-orange-400 ring-offset-2' : ''
                 }`}>
-                  <img 
-                    src={cat.image} 
-                    alt={cat.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${cat.color} opacity-60`} />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-2xl drop-shadow-lg">{cat.icon}</span>
+                    <span className="text-3xl drop-shadow-lg">{cat.icon}</span>
                   </div>
                 </div>
                 <span className={`text-xs font-medium text-center leading-tight max-w-[80px] ${
