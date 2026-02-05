@@ -19,8 +19,98 @@ import {
   CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, Trash2, Info, FileText,
   Crown, Star, Gift, Trophy, TrendingUp, Medal, ChevronRight, Sparkles, Droplets, Syringe,
   Stethoscope, Grid3X3, List, Heart, Share2, Clock, Truck, FlaskConical, Activity, Smartphone, Bookmark,
-  ShieldCheck, BadgeCheck
+  ShieldCheck, BadgeCheck, Eye, Bone, Baby, User, Users, HeartPulse, Brain, Leaf, Dumbbell
 } from 'lucide-react';
+
+// Custom Medical Icons (single color, minimalist style)
+const DiabetesIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <path d="M12 2C8 2 6 6 6 10c0 4 2 8 6 10 4-2 6-6 6-10 0-4-2-8-6-8z" />
+    <path d="M12 6v8M9 10h6" strokeLinecap="round" />
+  </svg>
+);
+
+const LungsIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <path d="M12 4v6M12 10c-3 0-5 2-6 5-1 3 0 5 2 5h4M12 10c3 0 5 2 6 5 1 3 0 5-2 5h-4" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const BoneIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <path d="M5 5c1-1 3-1 4 0s1 3 0 4l6 6c1-1 3-1 4 0s1 3 0 4-3 1-4 0-1-3 0-4l-6-6c-1 1-3 1-4 0S4 6 5 5z" strokeLinecap="round"/>
+  </svg>
+);
+
+const StomachIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <path d="M8 6c-2 0-4 2-4 5 0 4 3 7 7 7 3 0 5-2 6-4 1-3 1-6-1-8-1-1-3-1-4 0" strokeLinecap="round"/>
+    <path d="M12 6V4M10 4h4" strokeLinecap="round"/>
+  </svg>
+);
+
+const VitaminIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <ellipse cx="12" cy="12" rx="4" ry="8" />
+    <line x1="8" y1="12" x2="16" y2="12" strokeLinecap="round"/>
+  </svg>
+);
+
+const SkinIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <circle cx="12" cy="12" r="8"/>
+    <path d="M12 4v2M12 18v2M4 12h2M18 12h2" strokeLinecap="round"/>
+  </svg>
+);
+
+const EyeIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>
+);
+
+const PainIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <path d="M12 2l2 7h7l-6 4 2 7-5-4-5 4 2-7-6-4h7z" strokeLinejoin="round"/>
+  </svg>
+);
+
+const ImmunityIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <path d="M12 3l8 4v5c0 5-3 8-8 10-5-2-8-5-8-10V7l8-4z" strokeLinejoin="round"/>
+    <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const KidsIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <circle cx="12" cy="8" r="4"/>
+    <path d="M6 20v-2a4 4 0 014-4h4a4 4 0 014 4v2" strokeLinecap="round"/>
+    <path d="M8 6c0-2 2-3 4-3s4 1 4 3" strokeLinecap="round"/>
+  </svg>
+);
+
+const AdultIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <circle cx="12" cy="7" r="4"/>
+    <path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" strokeLinecap="round"/>
+  </svg>
+);
+
+const ElderlyIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <circle cx="12" cy="6" r="3"/>
+    <path d="M12 9v4M8 21l4-8 4 8M10 13h4" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const HeartCareIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <path d="M12 21C12 21 4 14 4 9c0-3 2-5 5-5 2 0 3 1 3 1s1-1 3-1c3 0 5 2 5 5 0 5-8 12-8 12z"/>
+    <path d="M8 11h8M12 8v6" strokeLinecap="round"/>
+  </svg>
+);
 
 // Custom Tablet Icon (round pill with score line - NOT capsule)
 const TabletIcon = ({ className }) => (
