@@ -399,33 +399,43 @@ const AuthDialogV2 = ({
                   />
                 </div>
                 <div>
-                  <Label className="font-semibold">Mobile (Optional)</Label>
+                  <Label className="font-semibold flex items-center gap-2">
+                    <MessageCircle className="w-4 h-4 text-green-600" />
+                    WhatsApp Number (Required)
+                  </Label>
                   <div className="flex mt-1.5">
                     <div className="flex items-center px-3 bg-gray-100 rounded-l-xl border border-r-0 font-bold text-gray-600">+91</div>
                     <Input 
                       type="tel" 
-                      placeholder="For SMS updates" 
+                      placeholder="For WhatsApp OTP verification" 
                       value={signupPhone}
                       onChange={(e) => setSignupPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                       className="rounded-l-none rounded-r-xl h-11"
                       data-testid="signup-phone-input"
                     />
                   </div>
+                  <p className="text-xs text-green-600 mt-1">OTP will be sent via WhatsApp for verification</p>
                 </div>
                 <Button 
                   onClick={handleSignupSendOtp} 
-                  disabled={loading || !signupEmail || !signupName}
+                  disabled={loading || !signupEmail || !signupName || signupPhone.length !== 10}
                   className="w-full h-12 rounded-full font-bold"
-                  style={{ backgroundColor: THEME.gradientBottom }}
+                  style={{ backgroundColor: '#25D366' }}
                   data-testid="signup-send-otp-btn"
                 >
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Create Account <ArrowRight className="w-4 h-4 ml-2" /></>}
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Send WhatsApp OTP
+                  </>}
                 </Button>
               </>
             ) : (
               <>
                 <div className="text-center mb-2">
-                  <p className="text-sm text-gray-600">Verification code sent to <strong>{signupEmail}</strong></p>
+                  <div className="flex items-center justify-center gap-2 text-sm text-green-600 mb-1">
+                    <MessageCircle className="w-4 h-4" />
+                    OTP sent to WhatsApp: ******{signupPhone.slice(-4)}
+                  </div>
                   <button onClick={() => setStep('input')} className="text-sm underline font-semibold" style={{ color: THEME.accent }}>Change</button>
                 </div>
                 {signupMockOtp && (
