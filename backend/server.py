@@ -6918,6 +6918,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Mango Labs router: {e}")
 
+# Public Order Tracking Routes
+try:
+    from routes.tracking import router as tracking_router, set_db as set_tracking_db
+    set_tracking_db(db)
+    app.include_router(tracking_router, prefix="/api")
+    logger.info("Order Tracking router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Order Tracking router: {e}")
+
 
 app.add_middleware(
     CORSMiddleware,
