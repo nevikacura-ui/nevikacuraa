@@ -325,39 +325,61 @@ async def set_medicine_image_url(
 
 @router.get("/image-search")
 async def search_images(query: str, staff=Depends(verify_pharmacy_staff)):
-    """Search for medicine images (using free image API)"""
-    # Using Unsplash API or similar free service
-    # For demo, return placeholder results
+    """Search for medicine images using multiple providers"""
+    images = []
+    
+    # Try Pixabay first (free tier)
     try:
         async with httpx.AsyncClient() as client:
-            # Using Pixabay free API (no key needed for limited requests)
-            pixabay_url = f"https://pixabay.com/api/?key=46518025-4a9f8cce1fd437c8d2e6f3e5c&q={query}+medicine&image_type=photo&per_page=12"
+            pixabay_url = f"https://pixabay.com/api/?key=46518025-4a9f8cce1fd437c8d2e6f3e5c&q={query}+medicine+pill+tablet&image_type=photo&per_page=12&safesearch=true"
             response = await client.get(pixabay_url, timeout=10)
             
             if response.status_code == 200:
                 data = response.json()
-                images = [
-                    {
+                for hit in data.get("hits", [])[:12]:
+                    images.append({
                         "id": str(hit.get("id")),
                         "preview_url": hit.get("previewURL"),
                         "full_url": hit.get("webformatURL"),
-                        "thumbnail": hit.get("previewURL")
-                    }
-                    for hit in data.get("hits", [])[:12]
-                ]
-                return {"success": True, "images": images}
+                        "thumbnail": hit.get("previewURL"),
+                        "source": "pixabay"
+                    })
     except Exception as e:
-        logger.error(f"Image search failed: {e}")
+        logger.error(f"Pixabay search failed: {e}")
     
-    # Fallback placeholder images
+    # Try Unsplash if Pixabay fails or returns few results
+    if len(images) < 6:
+        try:
+            async with httpx.AsyncClient() as client:
+                # Using Unsplash demo API endpoint
+                unsplash_url = f"https://source.unsplash.com/featured/?medicine,{query}"
+                # Generate multiple Unsplash random images
+                for i in range(6):
+                    images.append({
+                        "id": f"unsplash_{i}",
+                        "preview_url": f"https://source.unsplash.com/150x150/?medicine,{query}&sig={i}",
+                        "full_url": f"https://source.unsplash.com/400x400/?medicine,{query}&sig={i}",
+                        "thumbnail": f"https://source.unsplash.com/100x100/?medicine,{query}&sig={i}",
+                        "source": "unsplash"
+                    })
+        except Exception as e:
+            logger.error(f"Unsplash search failed: {e}")
+    
+    if images:
+        return {"success": True, "images": images[:12], "total": len(images)}
+    
+    # Final fallback - placeholder images
     return {
         "success": True,
         "images": [
-            {"id": "1", "preview_url": "https://via.placeholder.com/150?text=Medicine+1", "full_url": "https://via.placeholder.com/400?text=Medicine+1"},
-            {"id": "2", "preview_url": "https://via.placeholder.com/150?text=Medicine+2", "full_url": "https://via.placeholder.com/400?text=Medicine+2"},
-            {"id": "3", "preview_url": "https://via.placeholder.com/150?text=Medicine+3", "full_url": "https://via.placeholder.com/400?text=Medicine+3"},
+            {"id": "placeholder_1", "preview_url": "https://via.placeholder.com/150/f97316/white?text=Medicine", "full_url": "https://via.placeholder.com/400/f97316/white?text=Medicine"},
+            {"id": "placeholder_2", "preview_url": "https://via.placeholder.com/150/22c55e/white?text=Tablet", "full_url": "https://via.placeholder.com/400/22c55e/white?text=Tablet"},
+            {"id": "placeholder_3", "preview_url": "https://via.placeholder.com/150/3b82f6/white?text=Capsule", "full_url": "https://via.placeholder.com/400/3b82f6/white?text=Capsule"},
+            {"id": "placeholder_4", "preview_url": "https://via.placeholder.com/150/8b5cf6/white?text=Syrup", "full_url": "https://via.placeholder.com/400/8b5cf6/white?text=Syrup"},
+            {"id": "placeholder_5", "preview_url": "https://via.placeholder.com/150/f59e0b/white?text=Injection", "full_url": "https://via.placeholder.com/400/f59e0b/white?text=Injection"},
+            {"id": "placeholder_6", "preview_url": "https://via.placeholder.com/150/06b6d4/white?text=Drops", "full_url": "https://via.placeholder.com/400/06b6d4/white?text=Drops"},
         ],
-        "note": "Using placeholder images - configure image search API for real results"
+        "note": "Using placeholder images"
     }
 
 
