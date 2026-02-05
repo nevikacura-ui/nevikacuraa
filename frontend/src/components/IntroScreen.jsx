@@ -599,19 +599,23 @@ const IntroScreen = ({ onComplete, user }) => {
               </div>
             )}
             
-            {/* Guest: Just Mobile Input, No OTP */}
+            {/* Guest: WhatsApp OTP Flow */}
             {authStep === 'guestMobile' && (
               <div className="space-y-4">
                 <p className="text-sm" style={{ color: THEME.textMuted }}>
-                  Enter your mobile number to continue
+                  Enter your WhatsApp number to receive OTP
                 </p>
+                <div className="flex items-center gap-2 p-3 rounded-xl mb-2" style={{ background: '#dcfce7' }}>
+                  <MessageCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-xs text-green-700">OTP will be sent via WhatsApp</span>
+                </div>
                 <div className="relative">
                   <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: THEME.textMuted }} />
                   <Input 
                     type="tel"
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    placeholder="10-digit mobile number"
+                    placeholder="WhatsApp number (10 digits)"
                     className="h-14 pl-12 rounded-2xl text-base border-2"
                     maxLength={10}
                     data-testid="guest-mobile-input"
@@ -619,12 +623,69 @@ const IntroScreen = ({ onComplete, user }) => {
                 </div>
                 <Button 
                   onClick={continueAsGuest}
-                  disabled={mobile.length !== 10}
+                  disabled={mobile.length !== 10 || loading}
                   className="w-full h-14 rounded-2xl font-bold"
-                  style={{ background: THEME.primary }}
+                  style={{ background: '#25D366' }}
                   data-testid="guest-continue-btn">
-                  Continue
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>
+                    <MessageCircle className="w-5 h-5 mr-2" />
+                    Send OTP on WhatsApp
+                  </>}
                 </Button>
+              </div>
+            )}
+            
+            {/* Guest: OTP Verification */}
+            {authStep === 'guestOtp' && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: '#dcfce7' }}>
+                  <MessageCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-xs text-green-700">OTP sent to WhatsApp: ******{mobile.slice(-4)}</span>
+                </div>
+                
+                {mockOtpGuest && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 text-center">
+                    <p className="text-xs text-yellow-600 mb-1">Test Mode OTP:</p>
+                    <p className="text-2xl font-mono font-bold text-yellow-700 tracking-widest">{mockOtpGuest}</p>
+                  </div>
+                )}
+                
+                <div className="flex gap-2 justify-center">
+                  {[0,1,2,3,4,5].map((i) => (
+                    <Input
+                      key={i}
+                      ref={(el) => { if (guestOtpRefs.current) guestOtpRefs.current[i] = el; }}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={guestOtp[i] || ''}
+                      onChange={(e) => handleGuestOtpChange(i, e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Backspace' && !guestOtp[i] && i > 0) {
+                          guestOtpRefs.current[i-1]?.focus();
+                        }
+                      }}
+                      className="w-12 h-14 text-center text-2xl font-bold border-2"
+                      data-testid={`guest-otp-input-${i}`}
+                    />
+                  ))}
+                </div>
+                
+                <Button 
+                  onClick={verifyGuestOtp}
+                  disabled={loading || guestOtp.join('').length !== 6}
+                  className="w-full h-14 rounded-2xl font-bold"
+                  style={{ background: '#25D366' }}
+                  data-testid="verify-guest-otp-btn">
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Continue'}
+                </Button>
+                
+                <button 
+                  onClick={() => { setAuthStep('guestMobile'); setGuestOtp(['','','','','','']); setMockOtpGuest(''); }} 
+                  className="w-full text-center text-sm" 
+                  style={{ color: THEME.textMuted }}>
+                  Change Number
+                </button>
               </div>
             )}
           </div>
