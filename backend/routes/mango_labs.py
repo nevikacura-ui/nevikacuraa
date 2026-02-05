@@ -417,7 +417,7 @@ async def get_report(booking_id: str, staff=Depends(verify_lab_staff)):
 
 @router.post("/bookings/{booking_id}/send-report")
 async def send_report_to_patient(booking_id: str, staff=Depends(verify_lab_staff)):
-    """Send report to patient via email and WhatsApp"""
+    """Send report to patient via email and WhatsApp using MSG91 template"""
     booking = await db.lab_bookings.find_one({"booking_id": booking_id}, {"_id": 0})
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
@@ -428,6 +428,8 @@ async def send_report_to_patient(booking_id: str, staff=Depends(verify_lab_staff
     patient_email = booking.get("patient_email")
     patient_phone = booking.get("patient_phone")
     patient_name = booking.get("patient_name", "Patient")
+    tests = booking.get("tests", [])
+    test_names = ", ".join([t.get("name", "") for t in tests[:3]]) or "Lab Tests"
     
     email_sent = False
     whatsapp_sent = False
@@ -443,7 +445,9 @@ async def send_report_to_patient(booking_id: str, staff=Depends(verify_lab_staff
                 </div>
                 <div style="padding: 20px;">
                     <p>Dear {patient_name},</p>
-                    <p>Please find your lab report attached for booking <strong>#{booking_id}</strong>.</p>
+                    <p>Your lab report is ready for booking <strong>#{booking_id}</strong>.</p>
+                    <p><strong>Tests:</strong> {test_names}</p>
+                    <p>Please download your report from the Nevika Cura app or contact us for assistance.</p>
                     <p>If you have any questions about your results, please consult your doctor.</p>
                     <p>Thank you for choosing Mango Health Labs!</p>
                 </div>
@@ -457,15 +461,20 @@ async def send_report_to_patient(booking_id: str, staff=Depends(verify_lab_staff
                 patient_html=html
             )
             email_sent = True
+            logger.info(f"Report email sent for booking {booking_id}")
         except Exception as e:
             logger.error(f"Failed to send report email: {e}")
     
-    # Send WhatsApp notification
-    if send_whatsapp_notification and patient_phone:
+    # Send WhatsApp notification using MSG91 proton_report_ready template
+    if send_proton_report_ready and patient_phone:
         try:
-            message = f"Mango Health Labs - Report Ready\n\nDear {patient_name},\nYour lab report for booking #{booking_id} has been sent to your email.\n\nYou can also download it from the Nevika Cura app.\n\nThank you!"
-            await send_whatsapp_notification(patient_phone, message)
-            whatsapp_sent = True
+            result = await send_proton_report_ready(
+                phone=patient_phone,
+                patient_name=patient_name,
+                booking_id=booking_id
+            )
+            whatsapp_sent = result.get("success", False)
+            logger.info(f"WhatsApp report notification result: {result}")
         except Exception as e:
             logger.error(f"Failed to send WhatsApp: {e}")
     
