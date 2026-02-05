@@ -149,45 +149,32 @@ async def guest_send_otp(request: GuestOTPRequest):
     if len(phone) != 10 or not phone.isdigit():
         raise HTTPException(status_code=400, detail="Invalid phone number. Enter 10-digit mobile number.")
     
-    # Send OTP via Twilio
-    result = await send_twilio_otp(phone)
+    # Generate mock OTP (SMS service disabled)
+    otp = generate_otp()
+    global db
+    await db.guest_otps.update_one(
+        {"phone": phone},
+        {
+            "$set": {
+                "phone": phone,
+                "otp": otp,
+                "expires_at": (datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat(),
+                "attempts": 0
+            }
+        },
+        upsert=True
+    )
     
-    if result.get("success"):
-        logger.info(f"Guest OTP sent to {phone}")
-        return {
-            "success": True,
-            "message": "OTP sent to your mobile number",
-            "phone": phone,
-            "expires_in": 300,
-            "mode": "guest"
-        }
-    else:
-        # Fallback: Generate mock OTP for development
-        otp = generate_otp()
-        global db
-        await db.guest_otps.update_one(
-            {"phone": phone},
-            {
-                "$set": {
-                    "phone": phone,
-                    "otp": otp,
-                    "expires_at": (datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat(),
-                    "attempts": 0
-                }
-            },
-            upsert=True
-        )
-        
-        logger.warning(f"Twilio failed, using mock OTP for {phone}: {otp}")
-        return {
-            "success": True,
-            "message": "OTP generated (Demo mode)",
-            "phone": phone,
-            "mock_otp": otp,  # Only in development
-            "expires_in": 300,
-            "mode": "guest",
-            "note": "Twilio unavailable, using test OTP"
-        }
+    logger.info(f"Guest mock OTP generated for {phone}")
+    return {
+        "success": True,
+        "message": "OTP generated (Demo mode)",
+        "phone": phone,
+        "mock_otp": otp,
+        "expires_in": 300,
+        "mode": "guest",
+        "note": "SMS service disabled - using test OTP"
+    }
 
 @router.post("/guest/verify-otp")
 async def guest_verify_otp(request: GuestOTPVerify):
@@ -201,33 +188,7 @@ async def guest_verify_otp(request: GuestOTPVerify):
     if len(otp) != 6:
         raise HTTPException(status_code=400, detail="Invalid OTP format")
     
-    # Try Twilio verification first
-    result = await verify_twilio_otp(phone, otp)
-    
-    if result.get("valid"):
-        # Create guest session token (short-lived)
-        session_token = jwt.encode(
-            {
-                "sub": f"guest_{phone}",
-                "phone": phone,
-                "type": "guest",
-                "exp": datetime.now(timezone.utc) + timedelta(hours=2)  # 2-hour session
-            },
-            JWT_SECRET,
-            algorithm=JWT_ALGORITHM
-        )
-        
-        return {
-            "success": True,
-            "verified": True,
-            "session_token": session_token,
-            "phone": phone,
-            "mode": "guest",
-            "expires_in": 7200,  # 2 hours
-            "message": "Phone verified! You can now complete your order."
-        }
-    
-    # Fallback: Check mock OTP
+    # Check mock OTP from database
     global db
     otp_record = await db.guest_otps.find_one({"phone": phone})
     
