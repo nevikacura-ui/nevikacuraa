@@ -88,10 +88,19 @@ const AuthDialogV2 = ({
     
     setLoading(true);
     try {
-      const res = await axios.post(`${API}/auth/v2/guest/send-otp`, { phone: guestPhone });
+      // Use WhatsApp OTP via MSG91
+      const res = await axios.post(`${API}/otp/whatsapp/send`, { 
+        phone: guestPhone,
+        purpose: 'guest_login'
+      });
       setStep('otp');
-      if (res.data.mock_otp) setGuestMockOtp(res.data.mock_otp);
-      toast.success('OTP sent to your mobile!');
+      // Show mock OTP if in test mode
+      if (res.data.mock && res.data.otp) {
+        setGuestMockOtp(res.data.otp);
+      }
+      toast.success('OTP sent via WhatsApp!', {
+        description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your WhatsApp'
+      });
     } catch (e) {
       toast.error(e.response?.data?.detail || 'Failed to send OTP');
     }
@@ -106,18 +115,26 @@ const AuthDialogV2 = ({
     
     setLoading(true);
     try {
-      const res = await axios.post(`${API}/auth/v2/guest/verify-otp`, { 
+      // Verify WhatsApp OTP
+      const otpRes = await axios.post(`${API}/otp/whatsapp/verify`, { 
         phone: guestPhone, 
         otp: guestOtp 
       });
       
-      // Store guest token temporarily
-      localStorage.setItem('guestToken', res.data.session_token);
-      localStorage.setItem('guestPhone', guestPhone);
-      
-      toast.success('Phone verified! You can now complete your order.');
-      onAuthSuccess({ phone: guestPhone, type: 'guest' }, res.data.session_token, true);
-      handleOpenChange(false);
+      if (otpRes.data.success) {
+        // Create guest session after OTP verification
+        const sessionRes = await axios.post(`${API}/auth/v2/guest/create-session`, { 
+          phone: guestPhone
+        });
+        
+        // Store guest token
+        localStorage.setItem('guestToken', sessionRes.data.session_token);
+        localStorage.setItem('guestPhone', guestPhone);
+        
+        toast.success('Phone verified! You can now complete your order.');
+        onAuthSuccess({ phone: guestPhone, type: 'guest' }, sessionRes.data.session_token, true);
+        handleOpenChange(false);
+      }
     } catch (e) {
       toast.error(e.response?.data?.detail || 'Invalid OTP');
     }
