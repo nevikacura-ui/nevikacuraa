@@ -5,406 +5,263 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { 
-  ArrowLeft, User, Lock, LogOut, Phone, Calendar, Clock, 
-  Search, Plus, CheckCircle2, FileText, AlertTriangle,
-  Building2, IndianRupee, RefreshCw, Download, FlaskConical,
-  ChevronRight, Loader2, TrendingUp, X, TestTube, ClipboardList, Printer
-} from 'lucide-react';
+import { ArrowLeft, User, Lock, LogOut, Search, Plus, CheckCircle2, FileText, RefreshCw, FlaskConical, ChevronRight, Loader2, X, TestTube, ClipboardList, Send, Edit2, Save, Upload } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
-// Mango Labs Colors
-const COLORS = {
-  primary: '#14b8a6',
-  primaryDark: '#0d9488',
-  primaryLight: '#f0fdfa',
-  accent: '#f97316',
-  accentLight: '#fff7ed',
-  warning: '#f59e0b',
-  danger: '#dc2626',
-};
-
-const TEST_STATUS = {
-  'booked': { bg: '#dbeafe', text: '#1d4ed8', label: 'BOOKED' },
-  'sample_collected': { bg: '#fef3c7', text: '#d97706', label: 'COLLECTED' },
-  'processing': { bg: '#e9d5ff', text: '#7c3aed', label: 'PROCESSING' },
-  'completed': { bg: '#dcfce7', text: '#16a34a', label: 'COMPLETED' },
-  'report_ready': { bg: '#d1fae5', text: '#059669', label: 'REPORT READY' },
-};
+const TEST_STATUSES = [
+  { key: 'test_booked', label: 'Test Booked', color: '#3b82f6', bgColor: '#dbeafe' },
+  { key: 'sample_collected', label: 'Sample Collected', color: '#f59e0b', bgColor: '#fef3c7' },
+  { key: 'in_process', label: 'In Process', color: '#8b5cf6', bgColor: '#e9d5ff' },
+  { key: 'report_generated', label: 'Report Generated', color: '#22c55e', bgColor: '#dcfce7' },
+  { key: 'completed', label: 'Completed', color: '#10b981', bgColor: '#d1fae5' },
+  { key: 'cancelled', label: 'Cancelled', color: '#ef4444', bgColor: '#fee2e2' }
+];
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('staffToken');
   return { headers: { Authorization: `Bearer ${token}` } };
 };
 
-// ============ Main Component ============
 const MangoLabsStaffPortal = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [staffInfo, setStaffInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  
-  // Views: tests, collection, reports, summary
-  const [activeView, setActiveView] = useState('tests');
+  const [activeView, setActiveView] = useState('bookings');
+  const [bookings, setBookings] = useState([]);
   const [tests, setTests] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [stats, setStats] = useState(null);
+  const [showTestForm, setShowTestForm] = useState(false);
+  const [editingTest, setEditingTest] = useState(null);
+  const [testForm, setTestForm] = useState({ name: '', code: '', category: '', description: '', price: '', home_collection_price: '', sample_type: '', turnaround_time: '', fasting_required: false, preparation_instructions: '' });
+  const [uploadingReport, setUploadingReport] = useState(null);
 
-  // Check existing auth
   useEffect(() => {
     const token = localStorage.getItem('staffToken');
     const storedStaff = localStorage.getItem('staffInfo');
     if (token && storedStaff) {
       const staff = JSON.parse(storedStaff);
-      if (staff.role === 'lab_staff' || staff.department === 'mango' || staff.department === 'lab') {
+      if (staff.role === 'lab_staff' || staff.role === 'diagnostics_staff' || staff.department?.toLowerCase().includes('mango') || staff.department?.toLowerCase().includes('lab') || staff.role === 'admin' || staff.role === 'super_admin') {
         setStaffInfo(staff);
         setIsAuthenticated(true);
       }
     }
   }, []);
 
-  // Fetch test bookings
-  const fetchTests = useCallback(async () => {
+  const fetchBookings = useCallback(async () => {
     if (!isAuthenticated) return;
     setRefreshing(true);
     try {
-      const res = await axios.get(`${API}/api/mango/bookings`, getAuthHeaders());
-      setTests(res.data.bookings || []);
+      const params = {};
+      if (selectedStatus !== 'all') params.status = selectedStatus;
+      if (searchQuery) params.search = searchQuery;
+      const res = await axios.get(`${API}/api/mango/bookings`, { params, ...getAuthHeaders() });
+      setBookings(res.data.bookings || []);
     } catch (error) {
-      console.error('Error fetching tests:', error);
-      // Mock data for now
-      setTests([
-        { id: 'LAB001', patient: 'Amit Kumar', phone: '9876543210', test: 'Complete Blood Count', status: 'booked', date: new Date().toISOString(), amount: 450 },
-        { id: 'LAB002', patient: 'Sneha Gupta', phone: '8765432109', test: 'Thyroid Profile', status: 'sample_collected', date: new Date().toISOString(), amount: 890 },
-        { id: 'LAB003', patient: 'Raj Malhotra', phone: '7654321098', test: 'Lipid Profile', status: 'processing', date: new Date().toISOString(), amount: 650 },
-        { id: 'LAB004', patient: 'Meera Joshi', phone: '6543210987', test: 'HbA1c', status: 'report_ready', date: new Date().toISOString(), amount: 550 },
+      setBookings([
+        { booking_id: 'LAB001', patient_name: 'Amit Kumar', patient_phone: '9876543210', tests: ['Complete Blood Count'], status: 'test_booked', booking_date: new Date().toISOString().split('T')[0], total_amount: 450 },
+        { booking_id: 'LAB002', patient_name: 'Sneha Gupta', patient_phone: '8765432109', tests: ['Thyroid Profile'], status: 'sample_collected', booking_date: new Date().toISOString().split('T')[0], total_amount: 890 },
       ]);
     }
     setRefreshing(false);
+  }, [isAuthenticated, selectedStatus, searchQuery]);
+
+  const fetchTests = useCallback(async () => {
+    if (!isAuthenticated) return;
+    try {
+      const params = {};
+      if (searchQuery) params.search = searchQuery;
+      const res = await axios.get(`${API}/api/mango/tests`, { params, ...getAuthHeaders() });
+      setTests(res.data.tests || []);
+    } catch (error) {
+      setTests([{ id: '1', code: 'CBC', name: 'Complete Blood Count', price: 450, category: 'Hematology' }, { id: '2', code: 'TFT', name: 'Thyroid Function Test', price: 890, category: 'Endocrine' }]);
+    }
+  }, [isAuthenticated, searchQuery]);
+
+  const fetchStats = useCallback(async () => {
+    if (!isAuthenticated) return;
+    try {
+      const res = await axios.get(`${API}/api/mango/dashboard/stats`, getAuthHeaders());
+      setStats(res.data);
+    } catch (error) {}
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchTests();
-      const interval = setInterval(fetchTests, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [isAuthenticated, fetchTests]);
+    if (isAuthenticated) { fetchBookings(); fetchTests(); fetchStats(); const interval = setInterval(() => { fetchBookings(); fetchStats(); }, 30000); return () => clearInterval(interval); }
+  }, [isAuthenticated, fetchBookings, fetchTests, fetchStats]);
 
-  // Login
   const handleLogin = async () => {
-    if (!username || !password) {
-      toast.error('Enter username and password');
-      return;
-    }
+    if (!username || !password) { toast.error('Enter username and password'); return; }
     setLoading(true);
     try {
       const res = await axios.post(`${API}/api/staff/login`, { username, password });
       const { token, staff } = res.data;
-      
-      if (staff.role !== 'lab_staff' && staff.department !== 'mango' && staff.department !== 'lab') {
-        toast.error('Access denied. Lab staff only.');
-        setLoading(false);
-        return;
-      }
-      
       localStorage.setItem('staffToken', token);
       localStorage.setItem('staffInfo', JSON.stringify(staff));
       setStaffInfo(staff);
       setIsAuthenticated(true);
       toast.success(`Welcome, ${staff.name || username}!`);
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Login failed');
-    }
+    } catch (error) { toast.error(error.response?.data?.detail || 'Login failed'); }
     setLoading(false);
   };
 
-  // Logout
-  const handleLogout = () => {
-    localStorage.removeItem('staffToken');
-    localStorage.removeItem('staffInfo');
-    setIsAuthenticated(false);
-    setStaffInfo(null);
-    toast.success('Logged out');
-  };
+  const handleLogout = () => { localStorage.removeItem('staffToken'); localStorage.removeItem('staffInfo'); setIsAuthenticated(false); setStaffInfo(null); toast.success('Logged out'); };
 
-  // Update test status
-  const updateTestStatus = async (testId, newStatus) => {
+  const updateBookingStatus = async (bookingId, newStatus) => {
+    const booking = bookings.find(b => b.booking_id === bookingId);
+    if (newStatus === 'report_generated' && !booking?.report_uploaded) { toast.error('Please upload report before marking as Report Generated'); setUploadingReport(bookingId); return; }
     try {
-      await axios.put(`${API}/api/mango/bookings/${testId}/status`, 
-        { status: newStatus }, 
-        getAuthHeaders()
-      );
-      toast.success(`Test ${testId} updated to ${newStatus}`);
-      fetchTests();
-    } catch (error) {
-      toast.error('Failed to update test');
-      // Update locally for demo
-      setTests(prev => prev.map(t => t.id === testId ? {...t, status: newStatus} : t));
-    }
+      await axios.put(`${API}/api/mango/bookings/${bookingId}/status`, { status: newStatus }, getAuthHeaders());
+      toast.success(`Status updated to ${newStatus.replace('_', ' ')}`);
+      fetchBookings();
+    } catch (error) { toast.error(error.response?.data?.detail || 'Failed to update status'); }
   };
 
-  // Filter tests
-  const filteredTests = tests.filter(test => {
-    const matchesSearch = test.patient?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         test.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         test.test?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         test.phone?.includes(searchQuery);
-    const matchesStatus = selectedStatus === 'all' || test.status === selectedStatus;
-    return matchesSearch && matchesStatus;
-  });
+  const handleReportUpload = async (bookingId, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      await axios.post(`${API}/api/mango/bookings/${bookingId}/report`, formData, { ...getAuthHeaders(), headers: { ...getAuthHeaders().headers, 'Content-Type': 'multipart/form-data' } });
+      toast.success('Report uploaded');
+      setUploadingReport(null);
+      fetchBookings();
+    } catch (error) { toast.error('Failed to upload report'); }
+  };
 
-  // ============ LOGIN SCREEN ============
+  const sendReportToPatient = async (bookingId) => {
+    try {
+      const res = await axios.post(`${API}/api/mango/bookings/${bookingId}/send-report`, {}, getAuthHeaders());
+      if (res.data.email_sent || res.data.whatsapp_sent) { toast.success('Report sent to patient'); } else { toast.info('Report saved'); }
+    } catch (error) { toast.error('Failed to send report'); }
+  };
+
+  const saveTest = async () => {
+    if (!testForm.name || !testForm.price) { toast.error('Name and Price are required'); return; }
+    setLoading(true);
+    try {
+      const payload = { ...testForm, price: parseFloat(testForm.price), home_collection_price: testForm.home_collection_price ? parseFloat(testForm.home_collection_price) : null };
+      if (editingTest) { await axios.put(`${API}/api/mango/tests/${editingTest.id}`, payload, getAuthHeaders()); toast.success('Test updated'); }
+      else { await axios.post(`${API}/api/mango/tests`, payload, getAuthHeaders()); toast.success('Test added'); }
+      setShowTestForm(false); setEditingTest(null);
+      setTestForm({ name: '', code: '', category: '', description: '', price: '', home_collection_price: '', sample_type: '', turnaround_time: '', fasting_required: false, preparation_instructions: '' });
+      fetchTests();
+    } catch (error) { toast.error('Failed to save test'); }
+    setLoading(false);
+  };
+
+  const filteredBookings = bookings.filter(booking => { const matchesSearch = !searchQuery || booking.patient_name?.toLowerCase().includes(searchQuery.toLowerCase()) || booking.booking_id?.toLowerCase().includes(searchQuery.toLowerCase()) || booking.patient_phone?.includes(searchQuery); return matchesSearch; });
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center p-4">
         <Card className="w-full max-w-md p-8 shadow-2xl">
           <div className="text-center mb-8">
-            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-teal-100 flex items-center justify-center">
-              <FlaskConical className="w-10 h-10 text-teal-600" />
-            </div>
+            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-teal-100 flex items-center justify-center"><FlaskConical className="w-10 h-10 text-teal-600" /></div>
             <h1 className="text-2xl font-bold text-slate-800">Mango Health Labs</h1>
             <p className="text-slate-500">Staff Portal</p>
           </div>
-
           <div className="space-y-4">
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <Input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="pl-10 h-12"
-                data-testid="mango-username"
-              />
-            </div>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-                className="pl-10 h-12"
-                data-testid="mango-password"
-              />
-            </div>
-            <Button
-              onClick={handleLogin}
-              disabled={loading}
-              className="w-full h-12 bg-teal-500 hover:bg-teal-600 text-white font-semibold"
-              data-testid="mango-login-btn"
-            >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Login'}
-            </Button>
+            <div className="relative"><User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" /><Input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} className="pl-10 h-12" data-testid="mango-username" /></div>
+            <div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" /><Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleLogin()} className="pl-10 h-12" data-testid="mango-password" /></div>
+            <Button onClick={handleLogin} disabled={loading} className="w-full h-12 bg-teal-500 hover:bg-teal-600 text-white font-semibold" data-testid="mango-login-btn">{loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Login'}</Button>
           </div>
-
-          <p className="text-center text-sm text-slate-400 mt-6">
-            Use lab staff credentials
-          </p>
         </Card>
       </div>
     );
   }
 
-  // ============ MAIN PORTAL ============
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
       <div className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-4 py-4 sticky top-0 z-50">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button onClick={() => navigate('/')} className="p-2 hover:bg-white/10 rounded-lg">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="font-bold text-lg">Mango Health Labs</h1>
-              <p className="text-xs text-teal-100">{staffInfo?.name || 'Staff'}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button onClick={fetchTests} className="p-2 hover:bg-white/10 rounded-lg">
-              <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
-            </button>
-            <button onClick={handleLogout} className="p-2 hover:bg-white/10 rounded-lg">
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
+          <div className="flex items-center gap-3"><button onClick={() => navigate('/')} className="p-2 hover:bg-white/10 rounded-lg"><ArrowLeft className="w-5 h-5" /></button><div><h1 className="font-bold text-lg">Mango Health Labs</h1><p className="text-xs text-teal-100">{staffInfo?.name || 'Staff'}</p></div></div>
+          <div className="flex items-center gap-2"><button onClick={() => { fetchBookings(); fetchTests(); fetchStats(); }} className="p-2 hover:bg-white/10 rounded-lg"><RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} /></button><button onClick={handleLogout} className="p-2 hover:bg-white/10 rounded-lg"><LogOut className="w-5 h-5" /></button></div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="p-4 grid grid-cols-4 gap-2">
-        <Card className="p-2 text-center bg-blue-50 border-blue-200">
-          <p className="text-xl font-bold text-blue-600">{tests.filter(t => t.status === 'booked').length}</p>
-          <p className="text-xs text-blue-700">Booked</p>
-        </Card>
-        <Card className="p-2 text-center bg-yellow-50 border-yellow-200">
-          <p className="text-xl font-bold text-yellow-600">{tests.filter(t => t.status === 'sample_collected').length}</p>
-          <p className="text-xs text-yellow-700">Collected</p>
-        </Card>
-        <Card className="p-2 text-center bg-purple-50 border-purple-200">
-          <p className="text-xl font-bold text-purple-600">{tests.filter(t => t.status === 'processing').length}</p>
-          <p className="text-xs text-purple-700">Processing</p>
-        </Card>
-        <Card className="p-2 text-center bg-green-50 border-green-200">
-          <p className="text-xl font-bold text-green-600">{tests.filter(t => t.status === 'report_ready').length}</p>
-          <p className="text-xs text-green-700">Ready</p>
-        </Card>
-      </div>
+      {stats && (<div className="p-4 grid grid-cols-4 gap-2"><Card className="p-2 text-center bg-blue-50 border-blue-200"><p className="text-xl font-bold text-blue-600">{stats.today_bookings || 0}</p><p className="text-xs text-blue-700">Today</p></Card><Card className="p-2 text-center bg-yellow-50 border-yellow-200"><p className="text-xl font-bold text-yellow-600">{stats.pending_collection || 0}</p><p className="text-xs text-yellow-700">Pending</p></Card><Card className="p-2 text-center bg-purple-50 border-purple-200"><p className="text-xl font-bold text-purple-600">{stats.in_process || 0}</p><p className="text-xs text-purple-700">Processing</p></Card><Card className="p-2 text-center bg-green-50 border-green-200"><p className="text-xl font-bold text-green-600">{stats.reports_ready || 0}</p><p className="text-xs text-green-700">Ready</p></Card></div>)}
 
-      {/* Search and Filter */}
-      <div className="px-4 pb-4">
-        <div className="flex gap-2">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <Input
-              placeholder="Search tests..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
+      <div className="px-4 pb-3"><div className="flex gap-2 bg-white rounded-lg p-1 shadow-sm">{[{ key: 'bookings', label: 'Bookings', icon: ClipboardList }, { key: 'tests', label: 'Test Catalog', icon: TestTube }].map(tab => (<button key={tab.key} onClick={() => setActiveView(tab.key)} className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg font-medium transition-all ${activeView === tab.key ? 'bg-teal-500 text-white' : 'text-slate-600'}`}><tab.icon className="w-4 h-4" />{tab.label}</button>))}</div></div>
+
+      {activeView === 'bookings' && (
+        <div className="px-4 pb-24">
+          <div className="flex gap-2 mb-4"><div className="flex-1 relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" /><Input placeholder="Search bookings..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" /></div><select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)} className="px-3 py-2 border rounded-lg bg-white text-sm"><option value="all">All Status</option>{TEST_STATUSES.map(s => (<option key={s.key} value={s.key}>{s.label}</option>))}</select></div>
+          <div className="space-y-3">
+            {filteredBookings.length === 0 ? (<Card className="p-8 text-center"><TestTube className="w-12 h-12 mx-auto text-slate-300 mb-3" /><p className="text-slate-500">No bookings found</p></Card>) : (
+              filteredBookings.map(booking => {
+                const currentStatus = TEST_STATUSES.find(s => s.key === booking.status) || TEST_STATUSES[0];
+                const currentIndex = TEST_STATUSES.findIndex(s => s.key === booking.status);
+                const nextStatus = currentIndex < TEST_STATUSES.length - 2 ? TEST_STATUSES[currentIndex + 1] : null;
+                return (
+                  <Card key={booking.booking_id} className="p-4 shadow-sm">
+                    <div className="flex justify-between items-start mb-3"><div><p className="font-bold text-slate-800">#{booking.booking_id}</p><p className="text-sm text-slate-600">{booking.patient_name}</p><p className="text-xs text-slate-400">{booking.patient_phone}</p></div><span className="px-2 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: currentStatus.bgColor, color: currentStatus.color }}>{currentStatus.label}</span></div>
+                    <div className="bg-slate-50 rounded-lg p-2 mb-3"><p className="text-xs text-slate-500">Tests:</p><p className="text-sm font-medium">{booking.tests?.join(', ') || 'N/A'}</p><p className="text-xs text-teal-600 font-semibold mt-1">₹{booking.total_amount || 0}</p></div>
+                    {booking.report_uploaded && (<div className="flex items-center gap-2 text-xs text-green-600 mb-3"><FileText className="w-3 h-3" /><span>Report uploaded</span><button onClick={() => sendReportToPatient(booking.booking_id)} className="ml-auto text-blue-600 hover:underline flex items-center gap-1"><Send className="w-3 h-3" /> Send</button></div>)}
+                    {uploadingReport === booking.booking_id && (<div className="mb-3 p-3 bg-teal-50 rounded-lg"><p className="text-xs text-teal-700 mb-2">Upload report PDF</p><input type="file" accept=".pdf" onChange={(e) => { if (e.target.files[0]) handleReportUpload(booking.booking_id, e.target.files[0]); }} className="text-xs" /></div>)}
+                    <div className="flex gap-1 mb-3">{TEST_STATUSES.slice(0, -1).map((status, idx) => (<div key={status.key} className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: idx <= currentIndex ? status.color : '#e2e8f0' }} />))}</div>
+                    <div className="flex gap-2">
+                      {booking.status === 'in_process' && !booking.report_uploaded && (<Button size="sm" variant="outline" onClick={() => setUploadingReport(booking.booking_id)}><Upload className="w-3 h-3 mr-1" /> Upload Report</Button>)}
+                      {nextStatus && booking.status !== 'completed' && booking.status !== 'cancelled' && (<Button size="sm" className="flex-1" style={{ backgroundColor: nextStatus.color }} onClick={() => updateBookingStatus(booking.booking_id, nextStatus.key)}>{nextStatus.label} <ChevronRight className="w-3 h-3 ml-1" /></Button>)}
+                      {booking.status === 'report_generated' && (<Button size="sm" className="flex-1 bg-emerald-500 hover:bg-emerald-600" onClick={() => updateBookingStatus(booking.booking_id, 'completed')}><CheckCircle2 className="w-3 h-3 mr-1" /> Complete</Button>)}
+                    </div>
+                  </Card>
+                );
+              })
+            )}
           </div>
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3 py-2 border rounded-lg bg-white text-sm"
-          >
-            <option value="all">All Status</option>
-            <option value="booked">Booked</option>
-            <option value="sample_collected">Collected</option>
-            <option value="processing">Processing</option>
-            <option value="report_ready">Report Ready</option>
-          </select>
         </div>
-      </div>
+      )}
 
-      {/* Tests List */}
-      <div className="px-4 pb-24 space-y-3">
-        {filteredTests.length === 0 ? (
-          <Card className="p-8 text-center">
-            <TestTube className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-            <p className="text-slate-500">No tests found</p>
-          </Card>
-        ) : (
-          filteredTests.map(test => (
-            <Card key={test.id} className="p-4 shadow-sm">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <p className="font-bold text-slate-800">{test.id}</p>
-                  <p className="text-sm text-slate-600">{test.patient}</p>
-                  <p className="text-xs text-slate-400">{test.phone}</p>
+      {activeView === 'tests' && (
+        <div className="px-4 pb-24">
+          <div className="flex gap-2 mb-4"><div className="flex-1 relative"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" /><Input placeholder="Search tests..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" /></div><Button onClick={() => { setShowTestForm(true); setEditingTest(null); }} className="bg-teal-500 hover:bg-teal-600"><Plus className="w-4 h-4 mr-1" /> Add Test</Button></div>
+          <div className="space-y-3">
+            {tests.length === 0 ? (<Card className="p-8 text-center"><TestTube className="w-12 h-12 mx-auto text-slate-300 mb-3" /><p className="text-slate-500">No tests in catalog</p></Card>) : (
+              tests.map(test => (
+                <Card key={test.id} className="p-4">
+                  <div className="flex justify-between items-start"><div><div className="flex items-center gap-2"><span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded font-mono">{test.code}</span><h3 className="font-semibold text-slate-800">{test.name}</h3></div><p className="text-xs text-slate-500 mt-1">{test.category}</p></div><div className="text-right"><p className="font-bold text-teal-600">₹{test.price}</p>{test.home_collection_price && (<p className="text-xs text-slate-500">Home: ₹{test.home_collection_price}</p>)}</div></div>
+                  <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => { setEditingTest(test); setTestForm({ name: test.name || '', code: test.code || '', category: test.category || '', description: test.description || '', price: String(test.price || ''), home_collection_price: String(test.home_collection_price || ''), sample_type: test.sample_type || '', turnaround_time: test.turnaround_time || '', fasting_required: test.fasting_required || false, preparation_instructions: test.preparation_instructions || '' }); setShowTestForm(true); }}><Edit2 className="w-3 h-3 mr-1" /> Edit</Button>
+                </Card>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {showTestForm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
+          <div className="bg-white w-full max-h-[90vh] rounded-t-2xl overflow-hidden">
+            <div className="bg-teal-500 text-white p-4 flex items-center justify-between"><h2 className="font-bold">{editingTest ? 'Edit Test' : 'Add Test'}</h2><button onClick={() => { setShowTestForm(false); setEditingTest(null); }}><X className="w-5 h-5" /></button></div>
+            <div className="p-4 overflow-y-auto max-h-[calc(90vh-120px)] space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2"><label className="text-xs font-medium text-slate-600">Test Name *</label><Input value={testForm.name} onChange={(e) => setTestForm({ ...testForm, name: e.target.value })} placeholder="e.g., Complete Blood Count" /></div>
+                <div><label className="text-xs font-medium text-slate-600">Test Code</label><Input value={testForm.code} onChange={(e) => setTestForm({ ...testForm, code: e.target.value.toUpperCase() })} placeholder="e.g., CBC" /></div>
+                <div><label className="text-xs font-medium text-slate-600">Category</label><select value={testForm.category} onChange={(e) => setTestForm({ ...testForm, category: e.target.value })} className="w-full h-10 px-3 border rounded-lg"><option value="">Select</option><option value="Hematology">Hematology</option><option value="Biochemistry">Biochemistry</option><option value="Endocrine">Endocrine</option><option value="Immunology">Immunology</option><option value="Microbiology">Microbiology</option><option value="Pathology">Pathology</option><option value="Radiology">Radiology</option><option value="Other">Other</option></select></div>
+              </div>
+              <div className="bg-teal-50 p-3 rounded-lg space-y-3">
+                <h3 className="font-semibold text-teal-700">Pricing</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div><label className="text-xs font-medium text-slate-600">Price *</label><Input type="number" value={testForm.price} onChange={(e) => setTestForm({ ...testForm, price: e.target.value })} placeholder="0" /></div>
+                  <div><label className="text-xs font-medium text-slate-600">Home Collection</label><Input type="number" value={testForm.home_collection_price} onChange={(e) => setTestForm({ ...testForm, home_collection_price: e.target.value })} placeholder="0" /></div>
                 </div>
-                <span 
-                  className="px-2 py-1 rounded-full text-xs font-semibold"
-                  style={{ 
-                    backgroundColor: TEST_STATUS[test.status]?.bg || '#f3f4f6',
-                    color: TEST_STATUS[test.status]?.text || '#374151'
-                  }}
-                >
-                  {TEST_STATUS[test.status]?.label || test.status}
-                </span>
               </div>
-              
-              <div className="bg-slate-50 rounded-lg p-2 mb-3">
-                <p className="text-sm font-medium text-slate-700">{test.test}</p>
-                <p className="text-xs text-teal-600 font-semibold">₹{test.amount}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="text-xs font-medium text-slate-600">Sample Type</label><select value={testForm.sample_type} onChange={(e) => setTestForm({ ...testForm, sample_type: e.target.value })} className="w-full h-10 px-3 border rounded-lg"><option value="">Select</option><option value="Blood">Blood</option><option value="Urine">Urine</option><option value="Stool">Stool</option><option value="Swab">Swab</option><option value="Serum">Serum</option><option value="Other">Other</option></select></div>
+                <div><label className="text-xs font-medium text-slate-600">Turnaround Time</label><select value={testForm.turnaround_time} onChange={(e) => setTestForm({ ...testForm, turnaround_time: e.target.value })} className="w-full h-10 px-3 border rounded-lg"><option value="">Select</option><option value="Same Day">Same Day</option><option value="24 Hours">24 Hours</option><option value="48 Hours">48 Hours</option><option value="3-5 Days">3-5 Days</option><option value="1 Week">1 Week</option></select></div>
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-2">
-                {test.status === 'booked' && (
-                  <Button 
-                    size="sm" 
-                    className="flex-1 bg-yellow-500 hover:bg-yellow-600"
-                    onClick={() => updateTestStatus(test.id, 'sample_collected')}
-                  >
-                    Collect Sample
-                  </Button>
-                )}
-                {test.status === 'sample_collected' && (
-                  <Button 
-                    size="sm" 
-                    className="flex-1 bg-purple-500 hover:bg-purple-600"
-                    onClick={() => updateTestStatus(test.id, 'processing')}
-                  >
-                    Start Processing
-                  </Button>
-                )}
-                {test.status === 'processing' && (
-                  <Button 
-                    size="sm" 
-                    className="flex-1 bg-green-500 hover:bg-green-600"
-                    onClick={() => updateTestStatus(test.id, 'report_ready')}
-                  >
-                    Report Ready
-                  </Button>
-                )}
-                {test.status === 'report_ready' && (
-                  <>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => toast.info('Downloading report...')}
-                    >
-                      <Download className="w-4 h-4 mr-1" /> Report
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      className="flex-1 bg-teal-500 hover:bg-teal-600"
-                      onClick={() => updateTestStatus(test.id, 'completed')}
-                    >
-                      Complete
-                    </Button>
-                  </>
-                )}
-              </div>
-            </Card>
-          ))
-        )}
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
-        <div className="flex justify-around py-2">
-          <button 
-            onClick={() => setActiveView('tests')}
-            className={`flex flex-col items-center p-2 ${activeView === 'tests' ? 'text-teal-600' : 'text-slate-400'}`}
-          >
-            <ClipboardList className="w-5 h-5" />
-            <span className="text-xs mt-1">Tests</span>
-          </button>
-          <button 
-            onClick={() => setActiveView('collection')}
-            className={`flex flex-col items-center p-2 ${activeView === 'collection' ? 'text-teal-600' : 'text-slate-400'}`}
-          >
-            <TestTube className="w-5 h-5" />
-            <span className="text-xs mt-1">Collection</span>
-          </button>
-          <button 
-            onClick={() => setActiveView('reports')}
-            className={`flex flex-col items-center p-2 ${activeView === 'reports' ? 'text-teal-600' : 'text-slate-400'}`}
-          >
-            <FileText className="w-5 h-5" />
-            <span className="text-xs mt-1">Reports</span>
-          </button>
-          <button 
-            onClick={() => setActiveView('summary')}
-            className={`flex flex-col items-center p-2 ${activeView === 'summary' ? 'text-teal-600' : 'text-slate-400'}`}
-          >
-            <TrendingUp className="w-5 h-5" />
-            <span className="text-xs mt-1">Summary</span>
-          </button>
+              <div className="flex items-center gap-2"><input type="checkbox" id="fasting" checked={testForm.fasting_required} onChange={(e) => setTestForm({ ...testForm, fasting_required: e.target.checked })} className="w-4 h-4 accent-teal-500" /><label htmlFor="fasting" className="text-sm text-slate-600">Fasting Required</label></div>
+              <div><label className="text-xs font-medium text-slate-600">Preparation Instructions</label><textarea value={testForm.preparation_instructions} onChange={(e) => setTestForm({ ...testForm, preparation_instructions: e.target.value })} className="w-full h-20 px-3 py-2 border rounded-lg resize-none" placeholder="e.g., 12 hours fasting required..." /></div>
+            </div>
+            <div className="p-4 border-t"><Button onClick={saveTest} disabled={loading} className="w-full bg-teal-500 hover:bg-teal-600">{loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}{editingTest ? 'Update Test' : 'Add Test'}</Button></div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
