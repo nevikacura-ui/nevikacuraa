@@ -42,6 +42,9 @@ from services.msg91_whatsapp import (
     test_msg91_connection
 )
 
+# Import WhatsApp OTP service
+from services.whatsapp_otp import set_db as set_otp_db
+
 # Import data from modular files
 from data.medicine_inventory import MEDICINE_INVENTORY
 from data.diagnostic_tests import DIAGNOSTIC_TESTS, DIAGNOSTIC_TEST_PRICES
