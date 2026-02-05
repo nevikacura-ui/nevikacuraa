@@ -1,7 +1,6 @@
 """
-Nevika Cura - OTP Service
-Primary: MSG91 SendOTP API (SMS)
-Fallback: In-memory OTP with WhatsApp notification attempt
+Nevika Cura - WhatsApp OTP Service
+Uses MSG91 WhatsApp API with nevika_otp_verify template
 """
 
 import httpx
@@ -9,7 +8,6 @@ import logging
 import os
 import random
 import time
-import asyncio
 from datetime import datetime, timezone
 from typing import Dict
 from dotenv import load_dotenv
@@ -23,12 +21,12 @@ MSG91_AUTH_KEY = os.environ.get("MSG91_AUTH_KEY")
 MSG91_BASE_URL = "https://control.msg91.com/api/v5"
 MSG91_WHATSAPP_NUMBER = os.environ.get("MSG91_WHATSAPP_NUMBER", "918108888330")
 
-# MSG91 SendOTP API
-MSG91_OTP_TEMPLATE_ID = os.environ.get("MSG91_OTP_TEMPLATE_ID", "")  # DLT approved template ID
+# OTP Template
+OTP_TEMPLATE_NAME = "nevika_otp_verify"
 
 # In-memory OTP storage
 otp_storage: Dict[str, dict] = {}
-OTP_EXPIRY_SECONDS = 300
+OTP_EXPIRY_SECONDS = 300  # 5 minutes
 
 # Dependencies
 db = None
@@ -56,89 +54,14 @@ def clean_phone_number(phone: str) -> str:
     return clean_phone
 
 
-async def send_msg91_sms_otp(phone: str, otp: str) -> dict:
-    """Send OTP via MSG91 SendOTP API"""
-    if not MSG91_AUTH_KEY:
-        return {"success": False, "error": "MSG91 not configured"}
-    
-    clean_phone = clean_phone_number(phone)
-    
-    # MSG91 SendOTP API endpoint
-    url = "https://api.msg91.com/api/v5/otp"
-    
-    params = {
-        "authkey": MSG91_AUTH_KEY,
-        "mobile": clean_phone,
-        "otp": otp,
-        "sender": "NEVIKA",  # Sender ID (needs DLT approval)
-        "message": f"Your Nevika Cura verification code is {otp}. Valid for 5 minutes. Do not share.",
-        "otp_length": "6",
-        "otp_expiry": "5"  # 5 minutes
-    }
-    
-    # If template ID is configured, use it
-    if MSG91_OTP_TEMPLATE_ID:
-        params["template_id"] = MSG91_OTP_TEMPLATE_ID
-    
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.get(url, params=params)
-            data = response.json()
-        
-        logger.info(f"MSG91 SMS OTP Response: {data}")
-        
-        if data.get("type") == "success" or response.status_code == 200:
-            return {
-                "success": True,
-                "method": "sms",
-                "message": "OTP sent via SMS"
-            }
-        else:
-            return {
-                "success": False,
-                "error": data.get("message", "SMS send failed")
-            }
-    except Exception as e:
-        logger.error(f"MSG91 SMS error: {e}")
-        return {"success": False, "error": str(e)}
-
-
-async def verify_msg91_otp(phone: str, otp: str) -> dict:
-    """Verify OTP via MSG91 (if using their verify API)"""
-    if not MSG91_AUTH_KEY:
-        return {"success": False, "error": "MSG91 not configured"}
-    
-    clean_phone = clean_phone_number(phone)
-    
-    url = "https://api.msg91.com/api/v5/otp/verify"
-    params = {
-        "authkey": MSG91_AUTH_KEY,
-        "mobile": clean_phone,
-        "otp": otp
-    }
-    
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.get(url, params=params)
-            data = response.json()
-        
-        if data.get("type") == "success":
-            return {"success": True, "verified": True}
-        else:
-            return {"success": False, "error": data.get("message", "Invalid OTP")}
-    except Exception as e:
-        logger.error(f"MSG91 verify error: {e}")
-        return {"success": False, "error": str(e)}
-
-
 async def send_whatsapp_otp(
     phone: str,
     purpose: str = "verification",
     reference_id: str = None
 ) -> dict:
     """
-    Send OTP via SMS (MSG91) with WhatsApp notification attempt
-    Falls back to mock OTP if SMS fails
+    Send OTP via WhatsApp using MSG91 nevika_otp_verify template
+    Template has: body with OTP variable + URL button with OTP parameter
     """
     clean_phone = clean_phone_number(phone)
     otp = generate_otp()
@@ -149,67 +72,128 @@ async def send_whatsapp_otp(
         "otp": otp,
         "purpose": purpose,
         "created_at": time.time(),
-        "attempts": 0,
-        "method": "pending"
+        "attempts": 0
     }
     
-    # Try MSG91 SMS OTP
-    sms_result = await send_msg91_sms_otp(phone, otp)
-    
-    if sms_result.get("success"):
-        otp_storage[otp_key]["method"] = "msg91_sms"
-        
-        # Log to database
-        if db is not None:
-            try:
-                await db.otp_logs.insert_one({
-                    "phone": clean_phone,
-                    "purpose": purpose,
-                    "sent_at": datetime.now(timezone.utc).isoformat(),
-                    "channel": "sms",
-                    "provider": "msg91",
-                    "status": "sent"
-                })
-            except:
-                pass
-        
+    if not MSG91_AUTH_KEY:
+        logger.warning("MSG91_AUTH_KEY not configured - using mock OTP")
         return {
             "success": True,
-            "method": "sms",
-            "message": "OTP sent via SMS",
+            "mock": True,
+            "otp": otp,
+            "message": "OTP generated (mock mode)",
             "expires_in": OTP_EXPIRY_SECONDS,
             "phone_masked": f"******{clean_phone[-4:]}"
         }
     
-    # SMS failed - try WhatsApp notification (will fail if no 24hr session)
-    otp_storage[otp_key]["method"] = "mock"
+    # MSG91 WhatsApp API
+    url = f"{MSG91_BASE_URL}/whatsapp/whatsapp-outbound-message/"
     
-    whatsapp_attempted = False
-    if send_msg91_whatsapp_func is not None:
-        try:
-            asyncio.create_task(send_msg91_whatsapp_func(
-                recipient_phone=clean_phone,
-                template_name="nevika_otp_verify",
-                variables=[otp],
-                db=db,
-                reference_id=reference_id or f"otp_{purpose}",
-                message_type="otp_verification"
-            ))
-            whatsapp_attempted = True
-        except:
-            pass
-    
-    # Return mock OTP for testing
-    return {
-        "success": True,
-        "mock": True,
-        "otp": otp,
-        "method": "mock",
-        "message": f"OTP: {otp}" + (" (WhatsApp attempted)" if whatsapp_attempted else ""),
-        "expires_in": OTP_EXPIRY_SECONDS,
-        "phone_masked": f"******{clean_phone[-4:]}",
-        "note": "Use this OTP code to verify"
+    # Template structure for nevika_otp_verify:
+    # - Body: Contains {{1}} for OTP code
+    # - Button (URL type): Contains {{1}} parameter for OTP
+    payload = {
+        "integrated_number": MSG91_WHATSAPP_NUMBER,
+        "content_type": "template",
+        "payload": {
+            "messaging_product": "whatsapp",
+            "to": clean_phone,
+            "type": "template",
+            "template": {
+                "name": OTP_TEMPLATE_NAME,
+                "language": {
+                    "code": "en",
+                    "policy": "deterministic"
+                },
+                "components": [
+                    {
+                        "type": "body",
+                        "parameters": [
+                            {"type": "text", "text": otp}
+                        ]
+                    },
+                    {
+                        "type": "button",
+                        "sub_type": "url",
+                        "index": "0",
+                        "parameters": [
+                            {"type": "text", "text": otp}
+                        ]
+                    }
+                ]
+            }
+        }
     }
+    
+    headers = {
+        "authkey": MSG91_AUTH_KEY,
+        "Content-Type": "application/json"
+    }
+    
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(url, json=payload, headers=headers)
+            data = response.json()
+        
+        logger.info(f"MSG91 WhatsApp OTP Response: {data}")
+        
+        # Check success
+        success = (
+            response.status_code == 200 and
+            data.get("status") == "success"
+        )
+        
+        if success:
+            otp_storage[otp_key]["msg91_id"] = data.get("data", {}).get("message_uuid")
+            
+            # Log to database
+            if db is not None:
+                try:
+                    await db.otp_logs.insert_one({
+                        "phone": clean_phone,
+                        "purpose": purpose,
+                        "sent_at": datetime.now(timezone.utc).isoformat(),
+                        "channel": "whatsapp",
+                        "template": OTP_TEMPLATE_NAME,
+                        "msg91_id": data.get("data", {}).get("message_uuid"),
+                        "status": "sent"
+                    })
+                except:
+                    pass
+            
+            return {
+                "success": True,
+                "message": "OTP sent via WhatsApp",
+                "expires_in": OTP_EXPIRY_SECONDS,
+                "phone_masked": f"******{clean_phone[-4:]}"
+            }
+        else:
+            # Log error details
+            error_msg = data.get("message", str(data))
+            logger.error(f"MSG91 WhatsApp OTP failed: {error_msg}")
+            
+            # Return mock OTP for testing
+            return {
+                "success": True,
+                "mock": True,
+                "otp": otp,
+                "message": f"OTP: {otp} (WhatsApp delivery pending - check MSG91 logs)",
+                "expires_in": OTP_EXPIRY_SECONDS,
+                "phone_masked": f"******{clean_phone[-4:]}",
+                "debug": error_msg
+            }
+            
+    except Exception as e:
+        logger.error(f"MSG91 WhatsApp error: {e}")
+        
+        return {
+            "success": True,
+            "mock": True,
+            "otp": otp,
+            "message": f"OTP: {otp} (connection error)",
+            "expires_in": OTP_EXPIRY_SECONDS,
+            "phone_masked": f"******{clean_phone[-4:]}"
+        }
 
 
 async def verify_whatsapp_otp(phone: str, otp: str) -> dict:
@@ -220,22 +204,34 @@ async def verify_whatsapp_otp(phone: str, otp: str) -> dict:
     stored = otp_storage.get(otp_key)
     
     if not stored:
-        return {"success": False, "error": "OTP expired or not found"}
+        return {"success": False, "error": "OTP expired or not found. Request new OTP."}
     
     # Check expiry
     if time.time() - stored["created_at"] > OTP_EXPIRY_SECONDS:
         del otp_storage[otp_key]
-        return {"success": False, "error": "OTP has expired"}
+        return {"success": False, "error": "OTP has expired. Request new OTP."}
     
     # Check attempts
     if stored["attempts"] >= 3:
         del otp_storage[otp_key]
-        return {"success": False, "error": "Too many attempts"}
+        return {"success": False, "error": "Too many attempts. Request new OTP."}
     
     # Verify
     if stored["otp"] == otp.strip():
         purpose = stored.get("purpose", "verification")
         del otp_storage[otp_key]
+        
+        # Update log
+        if db is not None:
+            try:
+                await db.otp_logs.update_one(
+                    {"phone": clean_phone},
+                    {"$set": {"verified_at": datetime.now(timezone.utc).isoformat(), "status": "verified"}},
+                    upsert=False
+                )
+            except:
+                pass
+        
         return {
             "success": True,
             "message": "OTP verified successfully",
@@ -255,4 +251,3 @@ async def resend_whatsapp_otp(phone: str, purpose: str = "verification") -> dict
     if otp_key in otp_storage:
         del otp_storage[otp_key]
     return await send_whatsapp_otp(phone, purpose)
-
