@@ -6941,6 +6941,26 @@ try:
 except Exception as e:
     logger.warning(f"Could not load WhatsApp OTP router: {e}")
 
+# Super Admin Routes
+try:
+    from routes.super_admin import router as super_admin_router, set_db as set_super_admin_db, set_jwt_config as set_super_admin_jwt
+    set_super_admin_db(db)
+    set_super_admin_jwt(JWT_SECRET, JWT_ALGORITHM)
+    app.include_router(super_admin_router, prefix="/api")
+    logger.info("Super Admin router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Super Admin router: {e}")
+
+# Doctor Schedule Routes
+try:
+    from routes.doctor_schedule import router as doctor_schedule_router, set_db as set_doctor_schedule_db, set_jwt_config as set_doctor_schedule_jwt
+    set_doctor_schedule_db(db)
+    set_doctor_schedule_jwt(JWT_SECRET, JWT_ALGORITHM)
+    app.include_router(doctor_schedule_router, prefix="/api")
+    logger.info("Doctor Schedule router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Doctor Schedule router: {e}")
+
 
 app.add_middleware(
     CORSMiddleware,
