@@ -141,7 +141,7 @@
     "frontend": "100% (12/12 verified)"
   },
   "test_credentials": {
-    "api_base_url": "https://lab-booking-hub.preview.emergentagent.com",
+    "api_base_url": "https://nevika-dashboard.preview.emergentagent.com",
     "test_child_id": "child_6e108638666d",
     "test_user_id": "test_user_123"
   },

@@ -14,7 +14,7 @@ import os
 import uuid
 from datetime import datetime
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://lab-booking-hub.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://nevika-dashboard.preview.emergentagent.com').rstrip('/')
 
 # Test credentials from main agent
 TEST_CHILD_ID = "child_6e108638666d"

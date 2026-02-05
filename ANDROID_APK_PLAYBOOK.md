@@ -76,9 +76,9 @@ android {
         // TWA Configuration
         manifestPlaceholders = [
             hostName: "orange-health-ui.preview.emergentagent.com",
-            defaultUrl: "https://lab-booking-hub.preview.emergentagent.com",
+            defaultUrl: "https://nevika-dashboard.preview.emergentagent.com",
             launcherName: "Nevika Cura",
-            assetStatements: '[{ "relation": ["delegate_permission/common.handle_all_urls"], "target": { "namespace": "web", "site": "https://lab-booking-hub.preview.emergentagent.com" } }]'
+            assetStatements: '[{ "relation": ["delegate_permission/common.handle_all_urls"], "target": { "namespace": "web", "site": "https://nevika-dashboard.preview.emergentagent.com" } }]'
         ]
     }
 
@@ -274,7 +274,7 @@ versionName "2.0.1"  // Update version string
 
 ## App URLs
 
-- **Production URL**: `https://lab-booking-hub.preview.emergentagent.com`
+- **Production URL**: `https://nevika-dashboard.preview.emergentagent.com`
 - **New App Icon**: `https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/fq6yxx1d_file_00000000bc4071fab2fff5b70300c016.png`
 
 ---
