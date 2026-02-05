@@ -645,8 +645,8 @@ const DiaGynStaffPortal = () => {
                  style={{ background: COLORS.primary }}>
               <Stethoscope className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-xl font-bold" style={{ color: COLORS.primary }}>DiaGyn Staff</h1>
-            <p className="text-sm text-gray-500">Mango Health Labs</p>
+            <h1 className="text-xl font-bold" style={{ color: COLORS.primary }}>Nevika Cura Staff</h1>
+            <p className="text-sm text-gray-500">Staff Portal</p>
           </div>
           <div className="space-y-3">
             <div className="relative">
@@ -683,7 +683,7 @@ const DiaGynStaffPortal = () => {
           <div className="flex items-center gap-2">
             <Stethoscope className="w-6 h-6 text-white" />
             <div>
-              <h1 className="text-white font-bold text-base">DiaGyn Staff</h1>
+              <h1 className="text-white font-bold text-base">Nevika Cura Staff</h1>
               <p className="text-white/70 text-xs">{staffInfo?.name}</p>
             </div>
           </div>
