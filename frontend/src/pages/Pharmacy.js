@@ -1535,21 +1535,21 @@ const Pharmacy = () => {
               { 
                 id: 'kids', 
                 name: 'Kids Care', 
-                image: 'https://images.unsplash.com/photo-1491013516836-7db643ee125a?w=200&h=200&fit=crop',
+                icon: '👶',
                 color: 'from-pink-400 to-rose-400',
                 filter: 'kids'
               },
               { 
                 id: 'adults', 
                 name: 'Adult Wellness', 
-                image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&h=200&fit=crop',
+                icon: '🧘',
                 color: 'from-blue-400 to-indigo-400',
                 filter: 'vitamin'
               },
               { 
                 id: 'elderly', 
                 name: 'Elderly Care', 
-                image: 'https://images.unsplash.com/photo-1525599428495-0441bd5c67de?w=200&h=200&fit=crop',
+                icon: '👴',
                 color: 'from-purple-400 to-violet-400',
                 filter: 'elderly'
               }
@@ -1562,13 +1562,10 @@ const Pharmacy = () => {
                 }`}
                 data-testid={`family-${fam.id}`}
               >
-                <img 
-                  src={fam.image} 
-                  alt={fam.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className={`absolute inset-0 bg-gradient-to-t ${fam.color} opacity-60`} />
-                <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                <div className={`w-full h-full bg-gradient-to-br ${fam.color} flex items-center justify-center`}>
+                  <span className="text-5xl drop-shadow-lg group-hover:scale-110 transition-transform duration-300">{fam.icon}</span>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-3 text-white bg-gradient-to-t from-black/40 to-transparent">
                   <p className="font-bold text-sm drop-shadow-lg">{fam.name}</p>
                 </div>
               </button>
