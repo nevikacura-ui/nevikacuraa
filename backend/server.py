@@ -1806,73 +1806,18 @@ class LoginWithOTP(BaseModel):
     phone: str
     otp: str
 
-# Store for auth OTPs (used as fallback when Twilio is not available)
+# Store for auth OTPs (used for mock OTP authentication)
 auth_otp_storage = {}
 
-# Helper function to send OTP via Twilio Verify
+# Helper function - Twilio removed, using mock OTP only
 async def send_twilio_otp(phone: str) -> dict:
-    """Send OTP via Twilio Verify Service"""
-    if not twilio_client or not TWILIO_VERIFY_SERVICE_SID:
-        return {"success": False, "error": "Twilio not configured"}
-    
-    try:
-        # Format phone number for India (add +91 if needed)
-        formatted_phone = phone.strip()
-        if not formatted_phone.startswith('+'):
-            if len(formatted_phone) == 10:
-                formatted_phone = f"+91{formatted_phone}"
-            else:
-                formatted_phone = f"+{formatted_phone}"
-        
-        verification = await asyncio.to_thread(
-            twilio_client.verify.v2.services(TWILIO_VERIFY_SERVICE_SID)
-            .verifications.create,
-            to=formatted_phone,
-            channel="sms"
-        )
-        
-        logger.info(f"Twilio OTP sent to {formatted_phone}: status={verification.status}")
-        return {"success": True, "status": verification.status, "phone": formatted_phone}
-    
-    except Exception as e:
-        logger.error(f"Twilio OTP send failed: {str(e)}")
-        return {"success": False, "error": str(e)}
+    """Twilio removed - returns not configured"""
+    return {"success": False, "error": "SMS OTP service disabled - using mock OTP"}
 
-# Helper function to verify OTP via Twilio Verify
+# Helper function - Twilio removed, using mock OTP only  
 async def verify_twilio_otp(phone: str, code: str) -> dict:
-    """Verify OTP via Twilio Verify Service"""
-    if not twilio_client or not TWILIO_VERIFY_SERVICE_SID:
-        return {"success": False, "error": "Twilio not configured"}
-    
-    try:
-        # Format phone number for India (add +91 if needed)
-        formatted_phone = phone.strip()
-        if not formatted_phone.startswith('+'):
-            if len(formatted_phone) == 10:
-                formatted_phone = f"+91{formatted_phone}"
-            else:
-                formatted_phone = f"+{formatted_phone}"
-        
-        verification_check = await asyncio.to_thread(
-            twilio_client.verify.v2.services(TWILIO_VERIFY_SERVICE_SID)
-            .verification_checks.create,
-            to=formatted_phone,
-            code=code
-        )
-        
-        is_valid = verification_check.status == "approved"
-        logger.info(f"Twilio OTP verify for {formatted_phone}: status={verification_check.status}, valid={is_valid}")
-        return {"success": True, "valid": is_valid, "status": verification_check.status}
-    
-    except Exception as e:
-        error_msg = str(e)
-        logger.error(f"Twilio OTP verify failed: {error_msg}")
-        # Check for specific error codes
-        if "60202" in error_msg or "Max check attempts reached" in error_msg:
-            return {"success": False, "error": "Too many attempts. Please request a new OTP.", "code": "MAX_ATTEMPTS"}
-        if "60200" in error_msg or "Invalid parameter" in error_msg:
-            return {"success": False, "error": "Invalid OTP code.", "code": "INVALID"}
-        return {"success": False, "error": error_msg}
+    """Twilio removed - returns not configured"""
+    return {"success": False, "error": "SMS OTP service disabled - using mock OTP"}
 
 @api_router.post("/auth/otp/send")
 async def send_auth_otp(request: AuthOTPRequest):
