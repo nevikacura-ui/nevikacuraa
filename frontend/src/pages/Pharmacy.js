@@ -1680,11 +1680,11 @@ const Pharmacy = () => {
           
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { name: 'Blood Pressure Monitor', price: 1499, mrp: 2499, off: 40, delivery: '26 mins', image: null, icon: 'bp' },
-              { name: 'Digital Thermometer', price: 199, mrp: 399, off: 50, delivery: '15 mins', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/7abaqhvk_digital-clinical-thermometer-1-year-warranty-ft09-1-blue-beurer-original-imahcq9ync3rygue.jpeg', icon: null },
-              { name: 'Glucometer Kit', price: 899, mrp: 1599, off: 44, delivery: '26 mins', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/ffclpiec_HCIyO9POGo-dr_morepen_glucoone_blood_glucose_monitor_bg03_with_test_strips_pack_of_25s_50131_0_2.jpg', icon: null },
-              { name: 'Pulse Oximeter', price: 599, mrp: 999, off: 40, delivery: '20 mins', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/2u4igyl2_bpl-smart-oxy-finger-tip-pulse-black-oximeter-black-2-1746441443.jpg', icon: null },
-              { name: 'Nebulizer', price: 1299, mrp: 2199, off: 41, delivery: '45 mins', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/10x7bxc9_14335813a.webp', icon: null }
+              { name: 'Blood Pressure Monitor', price: 1499, mrp: 2499, off: 40, delivery: 'Same Day', image: null, icon: 'bp' },
+              { name: 'Digital Thermometer', price: 199, mrp: 399, off: 50, delivery: 'Same Day', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/7abaqhvk_digital-clinical-thermometer-1-year-warranty-ft09-1-blue-beurer-original-imahcq9ync3rygue.jpeg', icon: null },
+              { name: 'Glucometer Kit', price: 899, mrp: 1599, off: 44, delivery: 'Same Day', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/ffclpiec_HCIyO9POGo-dr_morepen_glucoone_blood_glucose_monitor_bg03_with_test_strips_pack_of_25s_50131_0_2.jpg', icon: null },
+              { name: 'Pulse Oximeter', price: 599, mrp: 999, off: 40, delivery: 'Same Day', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/2u4igyl2_bpl-smart-oxy-finger-tip-pulse-black-oximeter-black-2-1746441443.jpg', icon: null },
+              { name: 'Nebulizer', price: 1299, mrp: 2199, off: 41, delivery: 'Same Day', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/10x7bxc9_14335813a.webp', icon: null }
             ].map((item, idx) => (
               <div 
                 key={idx}
@@ -1743,11 +1743,11 @@ const Pharmacy = () => {
           
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              { name: 'Prenatal Vitamins', price: 449, mrp: 699, off: 36, delivery: '15 mins', badge: 'Evara Pick', category: 'Women Health' },
-              { name: 'Iron + Folic Acid', price: 199, mrp: 349, off: 43, delivery: '15 mins', badge: 'Best Seller', category: 'Women Health' },
-              { name: 'Calcium + D3', price: 299, mrp: 499, off: 40, delivery: '20 mins', badge: null, category: 'Women Health' },
-              { name: 'Evening Primrose Oil', price: 549, mrp: 899, off: 39, delivery: '26 mins', badge: 'New', category: 'Women Health' },
-              { name: 'Cranberry Extract', price: 399, mrp: 649, off: 38, delivery: '20 mins', badge: null, category: 'Women Health' }
+              { name: 'Prenatal Vitamins', price: 449, mrp: 699, off: 36, delivery: 'Same Day', badge: 'Evara Pick', category: 'Women Health' },
+              { name: 'Iron + Folic Acid', price: 199, mrp: 349, off: 43, delivery: 'Same Day', badge: 'Best Seller', category: 'Women Health' },
+              { name: 'Calcium + D3', price: 299, mrp: 499, off: 40, delivery: 'Same Day', badge: null, category: 'Women Health' },
+              { name: 'Evening Primrose Oil', price: 549, mrp: 899, off: 39, delivery: 'Same Day', badge: 'New', category: 'Women Health' },
+              { name: 'Cranberry Extract', price: 399, mrp: 649, off: 38, delivery: 'Same Day', badge: null, category: 'Women Health' }
             ].map((item, idx) => (
               <div 
                 key={idx}
