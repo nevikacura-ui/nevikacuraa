@@ -107,6 +107,30 @@ Complete healthcare platform with three main services:
 - `/app/frontend/src/pages/DiaGynStaffPortal.js` - Staff portal UI
 - `/app/frontend/src/pages/DoctorPortal.js` - Doctor portal UI
 
+### Feb 5, 2026 - Customer Order Tracking Page COMPLETE
+**Task:** Add public order tracking page for patients
+**Status:** COMPLETED (Feb 5, 2026)
+**Changes:**
+
+#### Order Tracking Page (`/order-tracking`)
+- ✅ **Public Access** - No login required
+- ✅ **Supports Both Order Types**:
+  - Pharmacy Orders (ORD*, PHM*)
+  - Lab Test Bookings (LAB*, MHL*)
+- ✅ **Visual Timeline** with emoji icons and timestamps
+- ✅ **Status Progress**:
+  - Pharmacy: Order Placed → Pharmacist Confirmed → Packing → Out for Delivery → Delivered
+  - Lab: Test Booked → Sample Collected → Processing → Report Ready → Completed
+- ✅ **Order Details**: Customer name, date, amount, items/tests
+- ✅ **Report Download** for lab bookings when ready
+- ✅ **Refresh Button** to check latest status
+
+**Files Created:**
+- `/app/backend/routes/tracking.py` - Public tracking API
+- `/app/frontend/src/pages/OrderTracking.js` - Tracking UI component
+
+**API Endpoint:** `GET /api/track/{tracking_id}`
+
 ### Feb 5, 2026 - Enhanced Staff Portals COMPLETE
 **Task:** Build comprehensive staff portals for Orange Pharmacy and Mango Health Labs
 **Status:** COMPLETED (Feb 5, 2026)
