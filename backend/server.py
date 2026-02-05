@@ -6915,7 +6915,7 @@ try:
     from routes.mango_labs import router as mango_labs_router, set_db as set_mango_labs_db, set_jwt_config as set_mango_labs_jwt, set_notification_functions as set_mango_labs_notif
     set_mango_labs_db(db)
     set_mango_labs_jwt(JWT_SECRET, JWT_ALGORITHM)
-    set_mango_labs_notif(send_email_notification, send_whatsapp_notification)
+    set_mango_labs_notif(send_email_notification, send_whatsapp_notification, send_proton_report_ready)
     app.include_router(mango_labs_router, prefix="/api")
     logger.info("Mango Health Labs Staff Portal router loaded")
 except Exception as e:
