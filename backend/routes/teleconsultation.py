@@ -143,41 +143,25 @@ async def book_teleconsultation(
     })
     
     if active_booking:
-        # Notify staff about duplicate teleconsult attempt
+        # Log duplicate teleconsult attempt (SMS notification disabled)
         try:
-            from twilio.rest import Client
-            twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID")
-            twilio_token = os.environ.get("TWILIO_AUTH_TOKEN")
-            twilio_from = os.environ.get("TWILIO_PHONE_NUMBER")
-            
-            if twilio_sid and twilio_token and twilio_from:
-                staff_message = f"""⚠️ DUPLICATE TELECONSULT ATTEMPT
-
+            staff_message = f"""⚠️ DUPLICATE TELECONSULT ATTEMPT
 Patient: {data.patient_name}
 Phone: {data.patient_phone}
 Email: {user.get('email', 'N/A')}
 Tried: {data.doctor_name} on {data.date} at {data.time}
-
 ❌ BLOCKED - Already has active booking:
 Doctor: {active_booking.get('doctor_name')}
 Date: {active_booking.get('date')}
 Time: {active_booking.get('time')}
 Status: {active_booking.get('status')}
-
 Please check if patient needs to reschedule."""
-
-                client = Client(twilio_sid, twilio_token)
-                client.messages.create(
-                    body=staff_message,
-                    from_=twilio_from,
-                    to="+919833188288"  # DiaGyn staff number
-                )
-                logger.info(f"Staff notified about duplicate teleconsult by {data.patient_phone}")
+            logger.warning(f"Duplicate teleconsult attempt by {data.patient_phone}: {staff_message}")
         except Exception as e:
-            logger.error(f"Failed to notify staff about duplicate teleconsult: {e}")
+            logger.error(f"Failed to log duplicate teleconsult: {e}")
         
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail=f"You already have an active teleconsultation on {active_booking.get('date')} at {active_booking.get('time')} with {active_booking.get('doctor_name')}. Please complete or cancel it before booking a new one."
         )
     
