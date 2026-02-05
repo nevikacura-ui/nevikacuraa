@@ -440,6 +440,83 @@ async def signup_verify_otp(request: EmailOTPVerify):
         "note": "You can now access all free portals without login!"
     }
 
+
+# New endpoint: Register after WhatsApp OTP verification
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    name: str
+    phone: str
+
+@router.post("/signup/register")
+async def signup_register(request: RegisterRequest):
+    """
+    Register user after WhatsApp OTP verification.
+    Phone is already verified via /api/otp/whatsapp/verify
+    """
+    global db
+    email = request.email.lower().strip()
+    phone = request.phone.strip().replace("+91", "").replace(" ", "").replace("-", "")[-10:]
+    
+    # Check if email already registered
+    existing = await db.registered_users.find_one({"email": email})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered. Please login instead.")
+    
+    # Check if phone already registered
+    existing_phone = await db.registered_users.find_one({"phone": phone})
+    if existing_phone:
+        raise HTTPException(status_code=400, detail="Phone number already registered.")
+    
+    # Create account
+    registration_id = generate_registration_id()
+    user_id = str(uuid.uuid4())
+    
+    user_doc = {
+        "id": user_id,
+        "registration_id": registration_id,
+        "email": email,
+        "name": request.name,
+        "phone": phone,
+        "phone_verified": True,  # Verified via WhatsApp OTP
+        "email_verified": False,  # Not verified yet
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "last_login": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.registered_users.insert_one(user_doc)
+    
+    # Generate long-lived token (30 days)
+    token = jwt.encode(
+        {
+            "sub": user_id,
+            "reg_id": registration_id,
+            "email": email,
+            "phone": phone,
+            "name": request.name,
+            "type": "registered",
+            "exp": datetime.now(timezone.utc) + timedelta(days=30)
+        },
+        JWT_SECRET,
+        algorithm=JWT_ALGORITHM
+    )
+    
+    logger.info(f"New user registered via WhatsApp OTP: {phone} -> {registration_id}")
+    
+    return {
+        "success": True,
+        "message": "Account created successfully!",
+        "token": token,
+        "user": {
+            "id": user_id,
+            "registration_id": registration_id,
+            "email": email,
+            "name": request.name,
+            "phone": phone
+        },
+        "mode": "registered"
+    }
+
+
 # ============ LOGIN MODE (Email OTP - Existing Users) ============
 
 @router.post("/login/send-otp")
