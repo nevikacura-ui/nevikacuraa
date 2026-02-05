@@ -222,7 +222,62 @@ Complete healthcare platform with three main services:
     - Images display with `object-contain` and padding for better presentation
 -   **File Modified:** `/app/frontend/src/pages/Pharmacy.js` (lines 1600-1640)
 
-### Feb 4, 2026 - UI Simplification COMPLETE
+### Feb 5, 2026 - Unified Staff Login System COMPLETE
+**Task:** Create single staff login that redirects to respective portals based on role
+**Status:** COMPLETED (Feb 5, 2026)
+**Changes:**
+
+#### Unified Staff Login (`/staff`)
+- ✅ **Single Entry Point** - All staff use `/staff` to login
+- ✅ **Nevika Cura Branding** - Clean login with stethoscope icon
+- ✅ **Role-Based Redirects**:
+  - `pharmacy_staff` → `/orange-staff` (Orange Pharmacy)
+  - `lab_staff` / `diagnostics_staff` → `/mango-staff` (Mango Labs)
+  - `diagyn_staff` / `clinic_staff_*` → `/diagyn-staff` (DiaGyn Clinic)
+  - `doctor` → `/doctor-portal`
+  - `admin` / `super_admin` → `/admin`
+- ✅ **Portal Icons** - Visual indicators for Pharmacy, Labs, Clinic
+
+#### Updated Staff Credentials
+| Portal | Username | Password | Redirects To |
+|--------|----------|----------|--------------|
+| Orange Pharmacy | `staff_pharmacy` | `12345678` | `/orange-staff` |
+| Mango Labs | `staff_mango` | `12345678` | `/mango-staff` |
+| DiaGyn Clinic | `staff_diagyn` | `12345678` | `/diagyn-staff` |
+
+#### Renamed Portal Titles
+- ✅ **DiaGyn Staff** renamed to **Nevika Cura Staff** on login screen
+- ✅ Changed "Mango Health Labs" subtitle to "Staff Portal"
+
+#### Medicine Inventory Sync
+- ✅ **4,315+ Medicines** synced from Keep Mankind catalog
+- ✅ **Sync Button** in Inventory tab (refresh icon)
+- ✅ API: `POST /api/pharmacy/sync-inventory`
+
+#### Google Image Search for Medicines
+- ✅ **Multi-provider Search** - Pixabay + Unsplash fallback
+- ✅ API: `GET /api/pharmacy/image-search?query=medicine_name`
+- ✅ Returns up to 12 images with preview/full URLs
+
+#### Send Invoice/Report via MSG91 & Resend
+- ✅ **Pharmacy Invoice**: `POST /api/pharmacy/orders/{order_id}/send-invoice`
+  - Sends invoice via Email (Resend) + WhatsApp (MSG91)
+  - Requires invoice PDF to be uploaded first
+- ✅ **Lab Report**: `POST /api/mango/bookings/{booking_id}/send-report`
+  - Sends report via Email (Resend) + WhatsApp (MSG91)
+  - Requires report PDF to be uploaded first
+
+**Files Created:**
+- `/app/frontend/src/pages/UnifiedStaffLogin.js` - New unified login component
+
+**Files Modified:**
+- `/app/frontend/src/App.js` - Added unified login routes
+- `/app/frontend/src/pages/DiaGynStaffPortal.js` - Renamed title to "Nevika Cura Staff"
+- `/app/backend/routes/orange_pharmacy.py` - Enhanced image search, sync inventory
+
+**Testing:** 20/20 backend tests passed, 100% frontend tests passed
+
+### Feb 5, 2026 - UI Fixes & Icon Updates
 **Earlier item**:
 -   **Task:** Simplified the splash screen - removed animated "Book.Order.Test.Care" text and fixed heart icon overlap. Updated carousel taglines.
 -   **Status:** COMPLETED (Feb 4, 2026)
