@@ -1576,16 +1576,16 @@ const Pharmacy = () => {
           
           <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
-              { id: 'heart', name: 'Heart & BP Care', Icon: HeartCareIcon, bgColor: 'bg-rose-100', iconColor: 'text-rose-600', filter: 'cardiac' },
-              { id: 'diabetes', name: 'Diabetes Care', Icon: DiabetesIcon, bgColor: 'bg-blue-100', iconColor: 'text-blue-600', filter: 'diabetes' },
-              { id: 'respiratory', name: 'Asthma & Respiratory', Icon: LungsIcon, bgColor: 'bg-teal-100', iconColor: 'text-teal-600', filter: 'respiratory' },
-              { id: 'bone', name: 'Bone & Joint', Icon: BoneIcon, bgColor: 'bg-amber-100', iconColor: 'text-amber-600', filter: 'bone' },
-              { id: 'stomach', name: 'Stomach Care', Icon: StomachIcon, bgColor: 'bg-lime-100', iconColor: 'text-lime-600', filter: 'digestive' },
-              { id: 'vitamins', name: 'Vitamins & Nutrition', Icon: VitaminIcon, bgColor: 'bg-purple-100', iconColor: 'text-purple-600', filter: 'vitamin' },
-              { id: 'skincare', name: 'Skin Care', Icon: SkinIcon, bgColor: 'bg-pink-100', iconColor: 'text-pink-600', filter: 'skin' },
-              { id: 'eye', name: 'Eye Care', Icon: EyeIcon, bgColor: 'bg-sky-100', iconColor: 'text-sky-600', filter: 'eye' },
-              { id: 'pain', name: 'Pain Relief', Icon: PainIcon, bgColor: 'bg-orange-100', iconColor: 'text-orange-600', filter: 'pain' },
-              { id: 'immunity', name: 'Immunity Boosters', Icon: ImmunityIcon, bgColor: 'bg-emerald-100', iconColor: 'text-emerald-600', filter: 'immunity' }
+              { id: 'heart', name: 'Heart & BP Care', icon: '❤️', color: 'from-red-500 to-pink-500', filter: 'cardiac' },
+              { id: 'diabetes', name: 'Diabetes Care', icon: '🩸', color: 'from-blue-500 to-cyan-500', filter: 'diabetes' },
+              { id: 'respiratory', name: 'Asthma & Respiratory', icon: '🫁', color: 'from-teal-500 to-green-500', filter: 'respiratory' },
+              { id: 'bone', name: 'Bone & Joint', icon: '🦴', color: 'from-amber-500 to-orange-500', filter: 'bone' },
+              { id: 'stomach', name: 'Stomach Care', icon: '🫃', color: 'from-yellow-500 to-lime-500', filter: 'digestive' },
+              { id: 'vitamins', name: 'Vitamins & Nutrition', icon: '💊', color: 'from-purple-500 to-violet-500', filter: 'vitamin' },
+              { id: 'skincare', name: 'Skin Care', icon: '✨', color: 'from-pink-500 to-rose-500', filter: 'skin' },
+              { id: 'eye', name: 'Eye Care', icon: '👁️', color: 'from-sky-500 to-blue-500', filter: 'eye' },
+              { id: 'pain', name: 'Pain Relief', icon: '💪', color: 'from-orange-500 to-red-500', filter: 'pain' },
+              { id: 'immunity', name: 'Immunity Boosters', icon: '🛡️', color: 'from-green-500 to-emerald-500', filter: 'immunity' }
             ].map((cat) => (
               <button
                 key={cat.id}
@@ -1595,11 +1595,11 @@ const Pharmacy = () => {
                 }`}
                 data-testid={`carousel-cat-${cat.id}`}
               >
-                <div className={`relative w-20 h-20 rounded-2xl overflow-hidden shadow-md ${cat.bgColor} ${
+                <div className={`relative w-20 h-20 rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br ${cat.color} ${
                   selectedCategory === cat.filter ? 'ring-2 ring-orange-400 ring-offset-2' : ''
                 }`}>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <cat.Icon className={`w-10 h-10 ${cat.iconColor}`} />
+                    <span className="text-3xl drop-shadow-lg">{cat.icon}</span>
                   </div>
                 </div>
                 <span className={`text-xs font-medium text-center leading-tight max-w-[80px] ${
