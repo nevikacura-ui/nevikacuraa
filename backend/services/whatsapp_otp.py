@@ -1,7 +1,7 @@
 """
 MSG91 WhatsApp OTP Service for Nevika Cura
-Sends OTP via WhatsApp using the nevika_otp_verify template
-Used for: Signup, Guest Login, Appointment Booking, Lab Booking, Pharmacy Orders
+Primary: SMS OTP via Twilio Verify
+Secondary: WhatsApp notification via MSG91 (for users with active session)
 """
 
 import httpx
@@ -9,6 +9,7 @@ import logging
 import os
 import random
 import time
+import asyncio
 from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict
 from dotenv import load_dotenv
@@ -17,34 +18,53 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# MSG91 Configuration
+# MSG91 Configuration (for WhatsApp notification)
 MSG91_AUTH_KEY = os.environ.get("MSG91_AUTH_KEY")
 MSG91_BASE_URL = "https://control.msg91.com/api/v5"
 MSG91_WHATSAPP_NUMBER = os.environ.get("MSG91_WHATSAPP_NUMBER", "918108888330")
 
-# OTP Template name (as registered in MSG91)
-# Try nevika_booking_pin (UTILITY) as alternative to nevika_otp_verify (AUTHENTICATION)
-OTP_TEMPLATE_NAME = "nevika_booking_pin"
+# Twilio Configuration (for SMS OTP)
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
+TWILIO_VERIFY_SERVICE_SID = os.environ.get("TWILIO_VERIFY_SERVICE_SID")
+
+# OTP Template name
+OTP_TEMPLATE_NAME = "nevika_otp_verify"
 
 # In-memory OTP storage with expiry (5 minutes default)
 otp_storage: Dict[str, dict] = {}
 OTP_EXPIRY_SECONDS = 300  # 5 minutes
 
-# Database reference (for logging)
+# Database reference
 db = None
-
-# Import the working send function from msg91_whatsapp
 send_msg91_whatsapp_func = None
+twilio_client = None
 
 def set_db(database):
-    """Set database instance from server.py"""
+    """Set database instance"""
     global db
     db = database
 
 def set_send_function(func):
-    """Set the send_msg91_whatsapp function from msg91_whatsapp module"""
+    """Set the send_msg91_whatsapp function"""
     global send_msg91_whatsapp_func
     send_msg91_whatsapp_func = func
+
+def init_twilio():
+    """Initialize Twilio client"""
+    global twilio_client
+    if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
+        try:
+            from twilio.rest import Client as TwilioClient
+            twilio_client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+            logger.info("Twilio client initialized for OTP service")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to init Twilio: {e}")
+    return False
+
+# Initialize Twilio on import
+init_twilio()
 
 
 def generate_otp() -> str:
@@ -55,14 +75,77 @@ def generate_otp() -> str:
 def clean_phone_number(phone: str) -> str:
     """Clean and format phone number to Indian format"""
     clean_phone = str(phone).replace("+", "").replace(" ", "").replace("-", "")
-    
-    # Add India country code if not present
     if len(clean_phone) == 10:
         clean_phone = "91" + clean_phone
     elif not clean_phone.startswith("91"):
         clean_phone = "91" + clean_phone[-10:]
-    
     return clean_phone
+
+
+def format_phone_e164(phone: str) -> str:
+    """Format to E.164 format for Twilio"""
+    clean = clean_phone_number(phone)
+    return f"+{clean}"
+
+
+async def send_sms_otp_twilio(phone: str) -> dict:
+    """Send OTP via Twilio Verify Service (Primary Method)"""
+    if not twilio_client or not TWILIO_VERIFY_SERVICE_SID:
+        return {"success": False, "error": "Twilio not configured"}
+    
+    try:
+        formatted_phone = format_phone_e164(phone)
+        
+        verification = await asyncio.to_thread(
+            twilio_client.verify.v2.services(TWILIO_VERIFY_SERVICE_SID)
+            .verifications.create,
+            to=formatted_phone,
+            channel="sms"
+        )
+        
+        logger.info(f"Twilio OTP sent to {formatted_phone}: {verification.status}")
+        
+        return {
+            "success": True,
+            "method": "sms",
+            "status": verification.status,
+            "message": "OTP sent via SMS"
+        }
+    except Exception as e:
+        logger.error(f"Twilio OTP error: {e}")
+        return {"success": False, "error": str(e)}
+
+
+async def verify_sms_otp_twilio(phone: str, otp: str) -> dict:
+    """Verify OTP via Twilio Verify Service"""
+    if not twilio_client or not TWILIO_VERIFY_SERVICE_SID:
+        return {"success": False, "error": "Twilio not configured"}
+    
+    try:
+        formatted_phone = format_phone_e164(phone)
+        
+        verification_check = await asyncio.to_thread(
+            twilio_client.verify.v2.services(TWILIO_VERIFY_SERVICE_SID)
+            .verification_checks.create,
+            to=formatted_phone,
+            code=otp
+        )
+        
+        if verification_check.status == "approved":
+            logger.info(f"Twilio OTP verified for {formatted_phone}")
+            return {
+                "success": True,
+                "verified": True,
+                "phone": clean_phone_number(phone)
+            }
+        else:
+            return {
+                "success": False,
+                "error": "Invalid OTP"
+            }
+    except Exception as e:
+        logger.error(f"Twilio verify error: {e}")
+        return {"success": False, "error": str(e)}
 
 
 async def send_whatsapp_otp(
@@ -71,220 +154,132 @@ async def send_whatsapp_otp(
     reference_id: str = None
 ) -> dict:
     """
-    Send OTP via WhatsApp using MSG91 nevika_otp_verify template
-    
-    Args:
-        phone: Phone number (10 digits or with country code)
-        purpose: Purpose of OTP (signup, guest_login, appointment, lab_booking, pharmacy_order)
-        reference_id: Optional reference ID for logging
-    
-    Returns:
-        dict with success status, otp (for testing), and message
+    Send OTP - Primary: SMS via Twilio, Fallback: In-memory OTP
+    Also tries WhatsApp notification (may fail due to 24hr window)
     """
-    # Clean phone number
     clean_phone = clean_phone_number(phone)
-    
-    # Generate OTP
     otp = generate_otp()
     
-    # Store OTP first (before sending, in case send fails we still have it for mock mode)
+    # Store OTP in memory (for fallback verification)
     otp_key = f"otp_{clean_phone}"
     otp_storage[otp_key] = {
         "otp": otp,
         "purpose": purpose,
         "created_at": time.time(),
-        "attempts": 0
+        "attempts": 0,
+        "method": "pending"
     }
     
-    if not MSG91_AUTH_KEY:
-        logger.warning("MSG91_AUTH_KEY not configured - using mock OTP")
-        return {
-            "success": True,
-            "mock": True,
-            "otp": otp,
-            "message": "OTP generated (mock mode)",
-            "expires_in": OTP_EXPIRY_SECONDS
-        }
-    
-    # Try using the existing send_msg91_whatsapp function if available
-    if send_msg91_whatsapp_func:
+    # Try Twilio SMS first (most reliable)
+    if twilio_client and TWILIO_VERIFY_SERVICE_SID:
         try:
-            result = await send_msg91_whatsapp_func(
-                recipient_phone=clean_phone,
-                template_name=OTP_TEMPLATE_NAME,
-                variables=[otp],
-                db=db,
-                reference_id=reference_id or f"otp_{purpose}_{clean_phone}",
-                message_type="otp_verification"
-            )
-            
+            result = await send_sms_otp_twilio(phone)
             if result.get("success"):
-                otp_storage[otp_key]["msg91_id"] = result.get("request_id")
-                logger.info(f"OTP sent via send_msg91_whatsapp to {clean_phone}")
+                otp_storage[otp_key]["method"] = "twilio_verify"
+                otp_storage[otp_key]["twilio"] = True
+                
+                # Log to database
+                if db:
+                    try:
+                        await db.otp_logs.insert_one({
+                            "phone": clean_phone,
+                            "purpose": purpose,
+                            "sent_at": datetime.now(timezone.utc).isoformat(),
+                            "channel": "sms",
+                            "provider": "twilio",
+                            "status": "sent"
+                        })
+                    except Exception as e:
+                        logger.error(f"Failed to log OTP: {e}")
+                
                 return {
                     "success": True,
-                    "message": "OTP sent via WhatsApp",
+                    "method": "sms",
+                    "message": "OTP sent via SMS",
                     "expires_in": OTP_EXPIRY_SECONDS,
                     "phone_masked": f"******{clean_phone[-4:]}"
                 }
         except Exception as e:
-            logger.error(f"send_msg91_whatsapp failed: {e}")
+            logger.error(f"Twilio SMS failed: {e}")
     
-    # Fallback: Direct API call
-    url = f"{MSG91_BASE_URL}/whatsapp/whatsapp-outbound-message/"
+    # Fallback: Return mock OTP for testing (always works)
+    otp_storage[otp_key]["method"] = "mock"
     
-    payload = {
-        "integrated_number": MSG91_WHATSAPP_NUMBER,
-        "content_type": "template",
-        "messaging_product": "whatsapp",
-        "payload": {
-            "messaging_product": "whatsapp",
-            "to": clean_phone,
-            "type": "template",
-            "template": {
-                "name": OTP_TEMPLATE_NAME,
-                "language": {
-                    "code": "en",
-                    "policy": "deterministic"
-                },
-                "components": [
-                    {
-                        "type": "body",
-                        "parameters": [
-                            {"type": "text", "text": otp}
-                        ]
-                    }
-                ]
-            }
-        }
+    # Also try WhatsApp notification (may fail due to 24hr rule)
+    whatsapp_sent = False
+    if send_msg91_whatsapp_func:
+        try:
+            # Try to send WhatsApp (will fail if user hasn't messaged in 24hrs)
+            asyncio.create_task(send_msg91_whatsapp_func(
+                recipient_phone=clean_phone,
+                template_name=OTP_TEMPLATE_NAME,
+                variables=[otp],
+                db=db,
+                reference_id=reference_id or f"otp_{purpose}",
+                message_type="otp_verification"
+            ))
+            whatsapp_sent = True
+        except Exception as e:
+            logger.warning(f"WhatsApp OTP notification failed (24hr rule): {e}")
+    
+    return {
+        "success": True,
+        "mock": True,
+        "otp": otp,  # Return OTP for testing
+        "method": "mock",
+        "message": "OTP generated" + (" (WhatsApp notification attempted)" if whatsapp_sent else ""),
+        "expires_in": OTP_EXPIRY_SECONDS,
+        "phone_masked": f"******{clean_phone[-4:]}",
+        "note": "SMS delivery requires Twilio. Use the provided OTP code."
     }
-    
-    headers = {
-        "authkey": MSG91_AUTH_KEY,
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(url, json=payload, headers=headers)
-            response_data = response.json()
-        
-        logger.info(f"MSG91 OTP Response - Status: {response.status_code}, Data: {response_data}")
-        
-        # Check for success
-        success = (
-            response.status_code == 200 and 
-            response_data.get("status") == "success" and
-            not response_data.get("hasError", True)
-        )
-        
-        if success:
-            otp_storage[otp_key]["msg91_id"] = response_data.get("data", {}).get("message_uuid")
-            
-            # Log to database
-            if db is not None:
-                try:
-                    await db.otp_logs.insert_one({
-                        "phone": clean_phone,
-                        "purpose": purpose,
-                        "reference_id": reference_id,
-                        "sent_at": datetime.now(timezone.utc).isoformat(),
-                        "channel": "whatsapp",
-                        "template": OTP_TEMPLATE_NAME,
-                        "msg91_id": response_data.get("data", {}).get("message_uuid"),
-                        "status": "sent"
-                    })
-                except Exception as e:
-                    logger.error(f"Failed to log OTP: {e}")
-            
-            return {
-                "success": True,
-                "message": "OTP sent via WhatsApp",
-                "expires_in": OTP_EXPIRY_SECONDS,
-                "phone_masked": f"******{clean_phone[-4:]}"
-            }
-        else:
-            error_msg = response_data.get("message", "Failed to send OTP")
-            logger.error(f"MSG91 OTP failed: {error_msg}")
-            
-            # Return mock OTP for testing
-            return {
-                "success": True,
-                "mock": True,
-                "otp": otp,
-                "message": "OTP generated (WhatsApp delivery pending)",
-                "expires_in": OTP_EXPIRY_SECONDS
-            }
-            
-    except Exception as e:
-        logger.error(f"MSG91 OTP error: {e}")
-        
-        # Return mock OTP on error
-        return {
-            "success": True,
-            "mock": True,
-            "otp": otp,
-            "message": "OTP generated (connection error - check WhatsApp)",
-            "expires_in": OTP_EXPIRY_SECONDS
-        }
 
 
 async def verify_whatsapp_otp(phone: str, otp: str) -> dict:
     """
-    Verify OTP sent via WhatsApp
-    
-    Args:
-        phone: Phone number
-        otp: OTP code to verify
-    
-    Returns:
-        dict with success status and message
+    Verify OTP - tries Twilio first, then in-memory storage
     """
     clean_phone = clean_phone_number(phone)
     otp_key = f"otp_{clean_phone}"
     
     stored = otp_storage.get(otp_key)
     
+    # If sent via Twilio Verify, verify through Twilio
+    if stored and stored.get("twilio"):
+        result = await verify_sms_otp_twilio(phone, otp)
+        if result.get("success"):
+            del otp_storage[otp_key]
+            return {
+                "success": True,
+                "message": "OTP verified successfully",
+                "purpose": stored.get("purpose", "verification"),
+                "phone": clean_phone
+            }
+        else:
+            # Increment attempts
+            stored["attempts"] = stored.get("attempts", 0) + 1
+            if stored["attempts"] >= 3:
+                del otp_storage[otp_key]
+                return {"success": False, "error": "Too many attempts. Request new OTP."}
+            return {"success": False, "error": f"Invalid OTP. {3 - stored['attempts']} attempts left."}
+    
+    # Fallback: Verify from in-memory storage
     if not stored:
-        return {
-            "success": False,
-            "error": "OTP expired or not found. Please request a new OTP."
-        }
+        return {"success": False, "error": "OTP expired or not found. Request new OTP."}
     
     # Check expiry
     if time.time() - stored["created_at"] > OTP_EXPIRY_SECONDS:
         del otp_storage[otp_key]
-        return {
-            "success": False,
-            "error": "OTP has expired. Please request a new OTP."
-        }
+        return {"success": False, "error": "OTP has expired. Request new OTP."}
     
     # Check attempts
     if stored["attempts"] >= 3:
         del otp_storage[otp_key]
-        return {
-            "success": False,
-            "error": "Too many failed attempts. Please request a new OTP."
-        }
+        return {"success": False, "error": "Too many attempts. Request new OTP."}
     
     # Verify OTP
     if stored["otp"] == otp.strip():
         purpose = stored.get("purpose", "verification")
         del otp_storage[otp_key]
-        
-        # Log verification
-        if db is not None:
-            try:
-                await db.otp_logs.update_one(
-                    {"phone": clean_phone},
-                    {"$set": {
-                        "verified_at": datetime.now(timezone.utc).isoformat(),
-                        "status": "verified"
-                    }},
-                    upsert=False
-                )
-            except Exception as e:
-                logger.error(f"Failed to log OTP verification: {e}")
         
         return {
             "success": True,
@@ -293,33 +288,22 @@ async def verify_whatsapp_otp(phone: str, otp: str) -> dict:
             "phone": clean_phone
         }
     else:
-        # Increment attempts
-        otp_storage[otp_key]["attempts"] += 1
-        remaining = 3 - otp_storage[otp_key]["attempts"]
-        
-        return {
-            "success": False,
-            "error": f"Invalid OTP. {remaining} attempts remaining."
-        }
+        stored["attempts"] += 1
+        remaining = 3 - stored["attempts"]
+        return {"success": False, "error": f"Invalid OTP. {remaining} attempts left."}
 
 
 async def resend_whatsapp_otp(phone: str, purpose: str = "verification") -> dict:
-    """
-    Resend OTP via WhatsApp
-    Clears existing OTP and sends a new one
-    """
+    """Resend OTP - clears existing and sends new"""
     clean_phone = clean_phone_number(phone)
     otp_key = f"otp_{clean_phone}"
     
-    # Clear existing OTP
     if otp_key in otp_storage:
         del otp_storage[otp_key]
     
-    # Send new OTP
     return await send_whatsapp_otp(phone, purpose)
 
 
-# Cleanup expired OTPs periodically
 def cleanup_expired_otps():
     """Remove expired OTPs from storage"""
     current_time = time.time()
@@ -329,5 +313,3 @@ def cleanup_expired_otps():
     ]
     for key in expired_keys:
         del otp_storage[key]
-    if expired_keys:
-        logger.info(f"Cleaned up {len(expired_keys)} expired OTPs")
