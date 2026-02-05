@@ -16,7 +16,7 @@ import os
 import time
 import uuid
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://portal-recovery.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://lab-booking-hub.preview.emergentagent.com')
 
 # Test credentials
 ADMIN_PASSWORD = "nevikacura2026"

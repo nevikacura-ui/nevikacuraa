@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://portal-recovery.preview.emergentagent.com",
+    "url": "https://lab-booking-hub.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {
