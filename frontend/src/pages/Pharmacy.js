@@ -1621,59 +1621,45 @@ const Pharmacy = () => {
           </h3>
           
           <div className="grid grid-cols-3 gap-3">
-            {/* Kids Care */}
-            <button
-              onClick={() => setSelectedCategory(selectedCategory === 'kids' ? '' : 'kids')}
-              className={`relative overflow-hidden rounded-2xl group ${
-                selectedCategory === 'kids' ? 'ring-2 ring-orange-400' : ''
-              }`}
-              data-testid="family-kids"
-            >
-              <img 
-                src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/ee62v180_Screenshot_20260205-103010.png" 
-                alt="Kids Care"
-                className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-2 bg-white/90">
-                <p className="font-bold text-sm text-slate-700 text-center">Kids Care</p>
-              </div>
-            </button>
-
-            {/* Adult Wellness */}
-            <button
-              onClick={() => setSelectedCategory(selectedCategory === 'vitamin' ? '' : 'vitamin')}
-              className={`relative overflow-hidden rounded-2xl group ${
-                selectedCategory === 'vitamin' ? 'ring-2 ring-orange-400' : ''
-              }`}
-              data-testid="family-adults"
-            >
-              <img 
-                src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/tq8xbtbd_Screenshot_20260205-102951.png" 
-                alt="Adult Wellness"
-                className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-2 bg-white/90">
-                <p className="font-bold text-sm text-slate-700 text-center">Adult Wellness</p>
-              </div>
-            </button>
-
-            {/* Elderly Care */}
-            <button
-              onClick={() => setSelectedCategory(selectedCategory === 'elderly' ? '' : 'elderly')}
-              className={`relative overflow-hidden rounded-2xl group ${
-                selectedCategory === 'elderly' ? 'ring-2 ring-orange-400' : ''
-              }`}
-              data-testid="family-elderly"
-            >
-              <img 
-                src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/xcrhiz3u_Screenshot_20260205-102838.png" 
-                alt="Elderly Care"
-                className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-2 bg-white/90">
-                <p className="font-bold text-sm text-slate-700 text-center">Elderly Care</p>
-              </div>
-            </button>
+            {[
+              { 
+                id: 'kids', 
+                name: 'Kids Care', 
+                icon: '👶🏻',
+                color: 'from-pink-400 to-rose-400',
+                filter: 'kids'
+              },
+              { 
+                id: 'adults', 
+                name: 'Adult Wellness', 
+                icon: '🧑🏻‍⚕️',
+                color: 'from-blue-400 to-indigo-400',
+                filter: 'vitamin'
+              },
+              { 
+                id: 'elderly', 
+                name: 'Elderly Care', 
+                icon: '👴🏻',
+                color: 'from-purple-400 to-violet-400',
+                filter: 'elderly'
+              }
+            ].map((fam) => (
+              <button
+                key={fam.id}
+                onClick={() => setSelectedCategory(selectedCategory === fam.filter ? '' : fam.filter)}
+                className={`relative overflow-hidden rounded-2xl aspect-square group ${
+                  selectedCategory === fam.filter ? 'ring-2 ring-orange-400' : ''
+                }`}
+                data-testid={`family-${fam.id}`}
+              >
+                <div className={`w-full h-full bg-gradient-to-br ${fam.color} flex items-center justify-center`}>
+                  <span className="text-5xl drop-shadow-lg group-hover:scale-110 transition-transform duration-300">{fam.icon}</span>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-3 text-white bg-gradient-to-t from-black/40 to-transparent">
+                  <p className="font-bold text-sm drop-shadow-lg">{fam.name}</p>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       </div>
