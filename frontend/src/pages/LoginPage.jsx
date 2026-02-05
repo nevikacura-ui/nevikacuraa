@@ -439,20 +439,6 @@ const LoginPage = () => {
                 </p>
               </div>
             )}
-
-            {/* WhatsApp OTP - Coming Soon */}
-            {activeTab === 'whatsapp-otp' && (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-4">
-                  <Clock className="w-8 h-8 text-green-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-slate-800 mb-2">Coming Soon!</h3>
-                <p className="text-slate-600 text-sm">
-                  WhatsApp OTP login will be available soon. 
-                  Please use Email + OTP for now.
-                </p>
-              </div>
-            )}
           </CardContent>
         </Card>
 
