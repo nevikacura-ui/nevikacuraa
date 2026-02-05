@@ -1625,25 +1625,22 @@ const Pharmacy = () => {
               { 
                 id: 'kids', 
                 name: 'Kids Care', 
-                Icon: KidsIcon,
-                bgColor: 'bg-pink-100',
-                iconColor: 'text-pink-600',
+                icon: '👶🏻',
+                color: 'from-pink-400 to-rose-400',
                 filter: 'kids'
               },
               { 
                 id: 'adults', 
                 name: 'Adult Wellness', 
-                Icon: AdultIcon,
-                bgColor: 'bg-blue-100',
-                iconColor: 'text-blue-600',
+                icon: '🧑🏻‍⚕️',
+                color: 'from-blue-400 to-indigo-400',
                 filter: 'vitamin'
               },
               { 
                 id: 'elderly', 
                 name: 'Elderly Care', 
-                Icon: ElderlyIcon,
-                bgColor: 'bg-purple-100',
-                iconColor: 'text-purple-600',
+                icon: '👴🏻',
+                color: 'from-purple-400 to-violet-400',
                 filter: 'elderly'
               }
             ].map((fam) => (
@@ -1655,11 +1652,11 @@ const Pharmacy = () => {
                 }`}
                 data-testid={`family-${fam.id}`}
               >
-                <div className={`w-full h-full ${fam.bgColor} flex items-center justify-center`}>
-                  <fam.Icon className={`w-16 h-16 ${fam.iconColor} group-hover:scale-110 transition-transform duration-300`} />
+                <div className={`w-full h-full bg-gradient-to-br ${fam.color} flex items-center justify-center`}>
+                  <span className="text-5xl drop-shadow-lg group-hover:scale-110 transition-transform duration-300">{fam.icon}</span>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-white/90 to-transparent">
-                  <p className="font-bold text-sm text-slate-700">{fam.name}</p>
+                <div className="absolute bottom-0 left-0 right-0 p-3 text-white bg-gradient-to-t from-black/40 to-transparent">
+                  <p className="font-bold text-sm drop-shadow-lg">{fam.name}</p>
                 </div>
               </button>
             ))}
