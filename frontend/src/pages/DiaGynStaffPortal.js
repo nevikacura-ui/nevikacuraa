@@ -243,14 +243,26 @@ const DiaGynStaffPortal = () => {
     const info = localStorage.getItem('staffInfo');
     if (token && info) {
       try {
-        setStaffInfo(JSON.parse(info));
-        setIsAuthenticated(true);
+        const staffData = JSON.parse(info);
+        // Only allow diagyn_staff, clinic_staff, doctors for this portal
+        const allowedRoles = ['diagyn_staff', 'clinic_staff_pushpa', 'clinic_staff_amnion', 'doctor', 'admin', 'super_admin'];
+        const dept = staffData.department?.toLowerCase() || '';
+        const isAllowed = allowedRoles.includes(staffData.role) || 
+                          dept.includes('diagyn') || dept.includes('clinic');
+        
+        if (isAllowed) {
+          setStaffInfo(staffData);
+          setIsAuthenticated(true);
+        } else {
+          // Wrong portal - redirect to unified login
+          navigate('/staff');
+        }
       } catch (e) {
         localStorage.removeItem('staffToken');
         localStorage.removeItem('staffInfo');
       }
     }
-  }, []);
+  }, [navigate]);
 
   const handleLogin = async () => {
     if (!username || !password) {
