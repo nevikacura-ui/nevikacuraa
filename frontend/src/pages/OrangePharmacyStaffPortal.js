@@ -309,6 +309,20 @@ const OrangePharmacyStaffPortal = () => {
     reader.readAsDataURL(file);
   };
 
+  // Sync inventory from database
+  const syncInventory = async () => {
+    setSyncing(true);
+    try {
+      const res = await axios.post(`${API}/api/pharmacy/sync-inventory`, {}, getAuthHeaders());
+      toast.success(`${res.data.new_medicines_added} medicines added, ${res.data.medicines_updated} updated. Total: ${res.data.total_in_database}`);
+      fetchMedicines();
+      fetchStats();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to sync inventory');
+    }
+    setSyncing(false);
+  };
+
   // Filter orders
   const filteredOrders = orders.filter(order => {
     const matchesSearch = !searchQuery || 
