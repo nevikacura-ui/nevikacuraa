@@ -82,6 +82,11 @@ const IntroScreen = ({ onComplete, user }) => {
   const [verificationToken, setVerificationToken] = useState('');
   const [hasPassword, setHasPassword] = useState(false);
   
+  // Guest OTP state
+  const [guestOtp, setGuestOtp] = useState(['', '', '', '', '', '']);
+  const [mockOtpGuest, setMockOtpGuest] = useState('');
+  const guestOtpRefs = useRef([]);
+  
   const splashWords = ['Book.', 'Order.', 'Test.', 'Care.'];
   
   // Lock scroll
