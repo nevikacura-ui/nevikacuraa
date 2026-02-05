@@ -79,6 +79,8 @@ import NevikaCuraOne from '@/pages/NevikaCuraOne';
 import LoginPage from '@/pages/LoginPage';
 // Unified Staff Login
 import UnifiedStaffLogin from '@/pages/UnifiedStaffLogin';
+// Super Admin Dashboard
+import SuperAdminDashboard from '@/pages/SuperAdminDashboard';
 // Intro Screen (Loading + Splash combined)
 import IntroScreen from '@/components/IntroScreen';
 // Page Transitions
