@@ -1137,10 +1137,19 @@ const DiaGyn = () => {
     }
     setOtpLoading(true);
     try {
-      const response = await axios.post(`${API}/otp/send`, { phone: patientInfo.phone, service: 'diagyn' });
-      setMockOtp(response.data.mock_otp || '');
+      // Use WhatsApp OTP via MSG91
+      const response = await axios.post(`${API}/otp/whatsapp/send`, { 
+        phone: patientInfo.phone, 
+        purpose: 'appointment' 
+      });
+      // Show mock OTP if in test mode
+      if (response.data.mock && response.data.otp) {
+        setMockOtp(response.data.otp);
+      }
       setResendTimer(30);
-      toast.success(response.data.method === 'sms' ? 'OTP sent to your phone!' : 'OTP sent successfully!');
+      toast.success('OTP sent via WhatsApp!', {
+        description: response.data.mock ? `Use code: ${response.data.otp}` : 'Check your WhatsApp'
+      });
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to send OTP');
@@ -1157,10 +1166,16 @@ const DiaGyn = () => {
     }
     setOtpLoading(true);
     try {
-      const response = await axios.post(`${API}/otp/verify`, { phone: patientInfo.phone, otp: otpValue, service: 'diagyn' });
-      setVerificationToken(response.data.verification_token);
-      toast.success('Phone verified successfully!');
-      setStep(5);
+      // Verify WhatsApp OTP
+      const response = await axios.post(`${API}/otp/whatsapp/verify`, { 
+        phone: patientInfo.phone, 
+        otp: otpValue 
+      });
+      if (response.data.success) {
+        setVerificationToken('whatsapp_verified_' + patientInfo.phone);
+        toast.success('Phone verified successfully!');
+        setStep(5);
+      }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Invalid OTP');
       setOtp(['', '', '', '', '', '']);
