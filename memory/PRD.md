@@ -105,6 +105,19 @@ Complete healthcare platform with three main services:
 - `/app/frontend/src/pages/DiaGynStaffPortal.js` - Staff portal UI
 - `/app/frontend/src/pages/DoctorPortal.js` - Doctor portal UI
 
+### Feb 5, 2026 - UI Fixes & Icon Updates
+**Task:** Fix splash crash, remove WhatsApp+OTP, replace images with icons
+**Status:** COMPLETED (Feb 5, 2026)
+**Changes:**
+- ✅ **Splash screen** - Verified working in browser (may be mobile-specific issue)
+- ✅ **Removed "WhatsApp + OTP Coming Soon"** from LoginPage.jsx login options
+- ✅ **Health Concern section** - Replaced stock images with minimalist gradient icons
+- ✅ **Family Care section** - Replaced stock images with emoji icons (👶 Kids, 🧘 Adult, 👴 Elderly)
+- ✅ **Medical Devices** - Kept actual product images as requested
+**Files Modified:**
+- `/app/frontend/src/pages/LoginPage.jsx` (removed WhatsApp OTP option)
+- `/app/frontend/src/pages/Pharmacy.js` (replaced images with icons)
+
 ### Feb 4, 2026 - Patient Auth System Overhaul COMPLETE
 **Task:** Simplify guest login + implement Email+Password for returning users
 **Status:** COMPLETED (Feb 4, 2026)
