@@ -101,8 +101,8 @@ async def send_whatsapp_otp(
     # Build MSG91 WhatsApp API request
     url = f"{MSG91_BASE_URL}/whatsapp/whatsapp-outbound-message/"
     
-    # AUTHENTICATION templates require OTP in button component
-    # The nevika_otp_verify template is an AUTHENTICATION type with OTP button
+    # AUTHENTICATION templates require OTP in button component with copy_code type
+    # The nevika_otp_verify template is an AUTHENTICATION type with "Copy Code" button
     payload = {
         "integrated_number": MSG91_WHATSAPP_NUMBER,
         "content_type": "template",
@@ -126,10 +126,10 @@ async def send_whatsapp_otp(
                     },
                     {
                         "type": "button",
-                        "sub_type": "url",
+                        "sub_type": "copy_code",
                         "index": "0",
                         "parameters": [
-                            {"type": "text", "text": otp}
+                            {"type": "coupon_code", "coupon_code": otp}
                         ]
                     }
                 ]
