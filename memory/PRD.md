@@ -99,6 +99,8 @@ Complete healthcare platform with three main services:
 | Staff Portal | `/diagyn-staff` | `staff_diagyn` | `diagyn123` |
 | Doctor Portal | `/doctor-portal` | `dr_vikas` | `vikas123` |
 | Doctor Portal | `/doctor-portal` | `dr_neha` | `neha123` |
+| Orange Pharmacy Staff | `/pharmacy-staff` | `staff_pharmacy` | `staff123` |
+| Mango Labs Staff | `/mango-staff` | `staff_mango` | `staff123` |
 
 #### Files Created/Modified
 - `/app/backend/routes/diagyn_staff.py` - Backend API routes with schedule
