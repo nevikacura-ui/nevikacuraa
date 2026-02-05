@@ -289,15 +289,84 @@ const IntroScreen = ({ onComplete, user }) => {
   };
   
   // Guest login - just mobile number, no OTP
-  const continueAsGuest = () => {
+  const continueAsGuest = async () => {
     if (!mobile || mobile.length !== 10) {
-      toast.error('Enter valid 10-digit mobile number');
+      toast.error('Enter valid 10-digit WhatsApp number');
       return;
     }
-    localStorage.setItem('guestMobile', mobile);
-    localStorage.setItem('guestMode', 'true');
-    toast.success('Welcome!');
-    onComplete();
+    
+    setLoading(true);
+    try {
+      // Send WhatsApp OTP
+      const res = await axios.post(`${API}/otp/whatsapp/send`, { 
+        phone: mobile, 
+        purpose: 'guest_login' 
+      });
+      
+      if (res.data.success) {
+        setAuthStep('guestOtp');
+        if (res.data.mock && res.data.otp) {
+          setMockOtpGuest(res.data.otp);
+        }
+        toast.success('OTP sent via WhatsApp!', {
+          description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your WhatsApp'
+        });
+        setTimeout(() => guestOtpRefs.current[0]?.focus(), 100);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to send OTP');
+    }
+    setLoading(false);
+  };
+  
+  const handleGuestOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+    const newOtp = [...guestOtp];
+    newOtp[index] = value.slice(-1);
+    setGuestOtp(newOtp);
+    
+    if (value && index < 5) {
+      guestOtpRefs.current[index + 1]?.focus();
+    }
+    
+    // Auto-verify when all 6 digits entered
+    if (index === 5 && value && newOtp.join('').length === 6) {
+      setTimeout(() => verifyGuestOtp(newOtp.join('')), 100);
+    }
+  };
+  
+  const verifyGuestOtp = async (otpValue = null) => {
+    const otp = otpValue || guestOtp.join('');
+    if (otp.length !== 6) {
+      toast.error('Enter 6-digit OTP');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/otp/whatsapp/verify`, { 
+        phone: mobile, 
+        otp: otp 
+      });
+      
+      if (res.data.success) {
+        // Create guest session
+        const sessionRes = await axios.post(`${API}/auth/v2/guest/create-session`, { 
+          phone: mobile
+        });
+        
+        localStorage.setItem('guestToken', sessionRes.data.session_token);
+        localStorage.setItem('guestMobile', mobile);
+        localStorage.setItem('guestMode', 'true');
+        toast.success('Phone verified! Welcome to Nevika Cura');
+        onComplete();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Invalid OTP');
+      setGuestOtp(['', '', '', '', '', '']);
+      guestOtpRefs.current[0]?.focus();
+    }
+    setLoading(false);
   };
   
   const skipToApp = () => {
