@@ -1,0 +1,152 @@
+{
+  "summary": "Completed testing of Unified Staff Login at /staff with 'Nevika Cura' branding, role-based redirects, Image Search API, and Send Invoice/Report APIs. All features working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "features_verified": {
+    "unified_staff_login": {
+      "status": "WORKING",
+      "route": "/staff",
+      "branding": "Nevika Cura - Staff Portal Login",
+      "data_testids_present": ["staff-username", "staff-password", "staff-login-btn"],
+      "role_based_redirects": {
+        "staff_pharmacy/12345678": "/orange-staff (Orange Pharmacy)",
+        "staff_mango/12345678": "/mango-staff (Mango Health Labs)",
+        "staff_diagyn/12345678": "/diagyn-staff (DiaGyn Clinic)"
+      }
+    },
+    "image_search_api": {
+      "status": "WORKING",
+      "endpoint": "/api/pharmacy/image-search?query=medicine",
+      "description": "Returns medicine images from Unsplash (Pixabay fallback)",
+      "auth_required": true,
+      "response_fields": ["success", "images[]", "total"]
+    },
+    "send_invoice_api": {
+      "status": "WORKING",
+      "endpoint": "/api/pharmacy/orders/{order_id}/send-invoice",
+      "description": "Sends invoice to customer via email and WhatsApp notification",
+      "auth_required": true,
+      "precondition": "Invoice must be uploaded first",
+      "error_handling": "Returns 400 if no invoice uploaded, 404 if order not found"
+    },
+    "send_report_api": {
+      "status": "WORKING",
+      "endpoint": "/api/mango/bookings/{booking_id}/send-report",
+      "description": "Sends lab report to patient via email and WhatsApp notification",
+      "auth_required": true,
+      "precondition": "Report must be uploaded first",
+      "error_handling": "Returns 400 if no report uploaded, 404 if booking not found"
+    }
+  },
+  "backend_tests": {
+    "total": 20,
+    "passed": 20,
+    "failed": 0,
+    "test_file": "/app/backend/tests/test_unified_staff_login.py",
+    "test_categories": {
+      "TestUnifiedStaffLogin": [
+        "test_pharmacy_staff_login_success - PASS",
+        "test_mango_staff_login_success - PASS",
+        "test_diagyn_staff_login_success - PASS",
+        "test_invalid_credentials_login_fail - PASS",
+        "test_wrong_password_login_fail - PASS"
+      ],
+      "TestImageSearchAPI": [
+        "test_image_search_paracetamol - PASS",
+        "test_image_search_antibiotics - PASS",
+        "test_image_search_unauthorized - PASS"
+      ],
+      "TestSendInvoiceAPI": [
+        "test_send_invoice_no_invoice_uploaded - PASS",
+        "test_send_invoice_order_not_found - PASS",
+        "test_send_invoice_unauthorized - PASS"
+      ],
+      "TestSendReportAPI": [
+        "test_send_report_no_report_uploaded - PASS",
+        "test_send_report_booking_not_found - PASS",
+        "test_send_report_unauthorized - PASS"
+      ],
+      "TestPharmacyPortalAPIs": [
+        "test_get_orders - PASS",
+        "test_get_medicines - PASS",
+        "test_get_dashboard_stats - PASS"
+      ],
+      "TestMangoLabsAPIs": [
+        "test_get_bookings - PASS",
+        "test_get_tests_catalog - PASS",
+        "test_get_dashboard_stats - PASS"
+      ]
+    }
+  },
+  "frontend_tests": {
+    "unified_staff_login_page": [
+      "Page loads at /staff - PASS",
+      "'Nevika Cura' branding visible - PASS",
+      "'Staff Portal Login' subtitle visible - PASS",
+      "Username input with data-testid='staff-username' - PASS",
+      "Password input with data-testid='staff-password' - PASS",
+      "LOGIN button with data-testid='staff-login-btn' - PASS",
+      "Available portals icons (Pharmacy, Labs, Clinic) - PASS"
+    ],
+    "role_based_redirects": [
+      "staff_pharmacy/12345678 → /orange-staff - PASS",
+      "staff_mango/12345678 → /mango-staff - PASS",
+      "staff_diagyn/12345678 → /diagyn-staff - PASS"
+    ],
+    "portal_dashboards": [
+      "Orange Pharmacy dashboard loads with orders - PASS",
+      "Mango Health Labs dashboard loads with bookings - PASS",
+      "DiaGyn Clinic dashboard loads with appointments - PASS"
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_unified_staff_login.py",
+    "/app/test_reports/pytest/pytest_unified_staff_login.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_unified_staff_login.py"
+  ],
+  "success_rate": {
+    "backend": "100% (20/20)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "pharmacy_staff": {
+      "username": "staff_pharmacy",
+      "password": "12345678",
+      "redirects_to": "/orange-staff"
+    },
+    "mango_labs_staff": {
+      "username": "staff_mango",
+      "password": "12345678",
+      "redirects_to": "/mango-staff"
+    },
+    "diagyn_staff": {
+      "username": "staff_diagyn",
+      "password": "12345678",
+      "redirects_to": "/diagyn-staff"
+    }
+  },
+  "seed_data_creation": "No new seed data created - used existing staff accounts",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Unified Staff Login at /staff with Nevika Cura branding is fully working. Three staff accounts tested: staff_pharmacy→Orange Pharmacy, staff_mango→Mango Labs, staff_diagyn→DiaGyn. Password for all is 12345678. Image Search API uses Unsplash with Pixabay fallback. Send Invoice/Report APIs require uploaded files first. All notifications use MSG91 WhatsApp and Resend Email.",
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": [],
+    "real_integrations": [
+      "MSG91 WhatsApp - for sending invoice/report notifications",
+      "Resend Email - for sending invoice/report emails",
+      "Unsplash/Pixabay - for medicine image search"
+    ]
+  }
+}
