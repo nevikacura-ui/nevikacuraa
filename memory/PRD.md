@@ -105,6 +105,51 @@ Complete healthcare platform with three main services:
 - `/app/frontend/src/pages/DiaGynStaffPortal.js` - Staff portal UI
 - `/app/frontend/src/pages/DoctorPortal.js` - Doctor portal UI
 
+### Feb 5, 2026 - Enhanced Staff Portals COMPLETE
+**Task:** Build comprehensive staff portals for Orange Pharmacy and Mango Health Labs
+**Status:** COMPLETED (Feb 5, 2026)
+**Changes:**
+
+#### Orange Pharmacy Staff Portal (`/pharmacy-staff`)
+- ✅ **Login** - Username: `staff_pharmacy`, Password: `staff123`
+- ✅ **Dashboard** - Stats cards (Today, Pending, Delivery, Done)
+- ✅ **Orders View** - Order list with status workflow
+- ✅ **Order Status Workflow**: Booked → Pharmacist Call → Packing → Out for Delivery → Completed
+- ✅ **Invoice Upload** - Required before dispatching orders
+- ✅ **Send Invoice** - WhatsApp (MSG91) + Email (Resend) to customer
+- ✅ **Inventory View** - Medicine list with Add/Edit
+- ✅ **Add Medicine Form**:
+  - Medicine name, generic name, manufacturer, category, unit
+  - Pricing: MRP, Discount %, auto-calculated Sale Price
+  - Stock quantity, description
+- ✅ **Image Upload Modal** (3 options):
+  - Upload from device (file picker)
+  - Paste image URL
+  - Search images (Google/Pixabay search)
+
+#### Mango Health Labs Staff Portal (`/mango-staff`)
+- ✅ **Login** - Username: `staff_mango`, Password: `staff123`
+- ✅ **Dashboard** - Stats cards (Today, Pending, Processing, Ready)
+- ✅ **Bookings View** - Lab test booking list with status workflow
+- ✅ **Booking Status Workflow**: Test Booked → Sample Collected → In Process → Report Generated → Completed
+- ✅ **Report Upload** - Required before marking "Report Generated"
+- ✅ **Send Report** - WhatsApp + Email to patient
+- ✅ **Test Catalog View** - Test list with Add/Edit
+- ✅ **Add Test Form**:
+  - Test name, code, category, description
+  - Pricing: Price, Home Collection Price
+  - Sample type, turnaround time, fasting required
+  - Preparation instructions
+
+**Files Created/Modified:**
+- `/app/backend/routes/orange_pharmacy.py` - Pharmacy API routes (medicines, orders, image search)
+- `/app/backend/routes/mango_labs.py` - Lab API routes (tests, bookings, reports)
+- `/app/frontend/src/pages/OrangePharmacyStaffPortal.js` - Complete pharmacy staff UI
+- `/app/frontend/src/pages/MangoLabsStaffPortal.js` - Complete lab staff UI
+- `/app/frontend/src/App.js` - Fixed intro screen bypass for staff routes
+
+**Testing:** 12/12 backend tests passed, 100% frontend tests passed
+
 ### Feb 5, 2026 - UI Fixes & Icon Updates
 **Task:** Fix splash crash, remove WhatsApp+OTP, replace images with icons
 **Status:** COMPLETED (Feb 5, 2026)
