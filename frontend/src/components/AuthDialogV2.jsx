@@ -144,21 +144,31 @@ const AuthDialogV2 = ({
   // ============ SIGNUP MODE HANDLERS ============
   
   const handleSignupSendOtp = async () => {
-    if (!signupEmail || !signupName) {
-      toast.error('Please fill in your name and email');
+    if (!signupEmail || !signupName || !signupPhone) {
+      toast.error('Please fill in name, email and phone number');
+      return;
+    }
+    
+    if (signupPhone.length < 10) {
+      toast.error('Enter valid 10-digit mobile number');
       return;
     }
     
     setLoading(true);
     try {
-      const res = await axios.post(`${API}/auth/v2/signup/send-otp`, { 
-        email: signupEmail,
-        name: signupName,
-        phone: signupPhone || null
+      // First send WhatsApp OTP to verify phone
+      const res = await axios.post(`${API}/otp/whatsapp/send`, { 
+        phone: signupPhone,
+        purpose: 'signup'
       });
       setStep('otp');
-      if (res.data.mock_otp) setSignupMockOtp(res.data.mock_otp);
-      toast.success('Verification code sent to your email!');
+      // Show mock OTP if in test mode
+      if (res.data.mock && res.data.otp) {
+        setSignupMockOtp(res.data.otp);
+      }
+      toast.success('OTP sent via WhatsApp!', {
+        description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your WhatsApp'
+      });
     } catch (e) {
       if (e.response?.data?.detail?.includes('already registered')) {
         toast.error('Email already registered. Please login instead.');
@@ -166,7 +176,7 @@ const AuthDialogV2 = ({
         setLoginEmail(signupEmail);
         setStep('input');
       } else {
-        toast.error(e.response?.data?.detail || 'Failed to send verification code');
+        toast.error(e.response?.data?.detail || 'Failed to send OTP');
       }
     }
     setLoading(false);
@@ -174,26 +184,36 @@ const AuthDialogV2 = ({
 
   const handleSignupVerifyOtp = async () => {
     if (signupOtp.length < 6) {
-      toast.error('Enter 6-digit verification code');
+      toast.error('Enter 6-digit OTP');
       return;
     }
     
     setLoading(true);
     try {
-      const res = await axios.post(`${API}/auth/v2/signup/verify-otp`, { 
-        email: signupEmail, 
+      // First verify WhatsApp OTP
+      const otpRes = await axios.post(`${API}/otp/whatsapp/verify`, { 
+        phone: signupPhone, 
         otp: signupOtp 
       });
       
-      // Store auth token and user
-      localStorage.setItem('authToken', res.data.token);
-      localStorage.setItem('authUser', JSON.stringify(res.data.user));
-      
-      toast.success(`Welcome, ${res.data.user.name}! Account created successfully.`);
-      onAuthSuccess(res.data.user, res.data.token, false);
-      handleOpenChange(false);
+      if (otpRes.data.success) {
+        // Now register the user
+        const res = await axios.post(`${API}/auth/v2/signup/register`, { 
+          email: signupEmail,
+          name: signupName,
+          phone: signupPhone
+        });
+        
+        // Store auth token and user
+        localStorage.setItem('authToken', res.data.token);
+        localStorage.setItem('authUser', JSON.stringify(res.data.user));
+        
+        toast.success(`Welcome, ${res.data.user.name}! Account created successfully.`);
+        onAuthSuccess(res.data.user, res.data.token, false);
+        handleOpenChange(false);
+      }
     } catch (e) {
-      toast.error(e.response?.data?.detail || 'Invalid verification code');
+      toast.error(e.response?.data?.detail || 'Invalid OTP or registration failed');
     }
     setLoading(false);
   };
