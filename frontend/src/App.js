@@ -150,6 +150,10 @@ function AppContent() {
           <Route path="/admin-panel" element={<AdminPanel />} />
           <Route path="/staff" element={<DiaGynStaffPortal />} />
           <Route path="/diagyn-staff" element={<DiaGynStaffPortal />} />
+          <Route path="/pharmacy-staff" element={<OrangePharmacyStaffPortal />} />
+          <Route path="/orange-staff" element={<OrangePharmacyStaffPortal />} />
+          <Route path="/mango-staff" element={<MangoLabsStaffPortal />} />
+          <Route path="/lab-staff" element={<MangoLabsStaffPortal />} />
           <Route path="/doctor-portal" element={<DoctorPortal />} />
           <Route path="/track" element={<AnimatedPage><TrackOrder /></AnimatedPage>} />
           <Route path="/feedback/:token" element={<Feedback />} />
