@@ -32,10 +32,18 @@ OTP_EXPIRY_SECONDS = 300  # 5 minutes
 # Database reference (for logging)
 db = None
 
+# Import the working send function from msg91_whatsapp
+send_msg91_whatsapp_func = None
+
 def set_db(database):
     """Set database instance from server.py"""
     global db
     db = database
+
+def set_send_function(func):
+    """Set the send_msg91_whatsapp function from msg91_whatsapp module"""
+    global send_msg91_whatsapp_func
+    send_msg91_whatsapp_func = func
 
 
 def generate_otp() -> str:
@@ -72,37 +80,58 @@ async def send_whatsapp_otp(
     Returns:
         dict with success status, otp (for testing), and message
     """
-    if not MSG91_AUTH_KEY:
-        logger.warning("MSG91_AUTH_KEY not configured - using mock OTP")
-        # Fallback to mock OTP for development
-        otp = generate_otp()
-        clean_phone = clean_phone_number(phone)
-        otp_key = f"otp_{clean_phone}"
-        otp_storage[otp_key] = {
-            "otp": otp,
-            "purpose": purpose,
-            "created_at": time.time(),
-            "attempts": 0
-        }
-        return {
-            "success": True,
-            "mock": True,
-            "otp": otp,  # Return for testing
-            "message": "OTP generated (mock mode)",
-            "expires_in": OTP_EXPIRY_SECONDS
-        }
-    
     # Clean phone number
     clean_phone = clean_phone_number(phone)
     
     # Generate OTP
     otp = generate_otp()
     
-    # Build MSG91 WhatsApp API request
+    # Store OTP first (before sending, in case send fails we still have it for mock mode)
+    otp_key = f"otp_{clean_phone}"
+    otp_storage[otp_key] = {
+        "otp": otp,
+        "purpose": purpose,
+        "created_at": time.time(),
+        "attempts": 0
+    }
+    
+    if not MSG91_AUTH_KEY:
+        logger.warning("MSG91_AUTH_KEY not configured - using mock OTP")
+        return {
+            "success": True,
+            "mock": True,
+            "otp": otp,
+            "message": "OTP generated (mock mode)",
+            "expires_in": OTP_EXPIRY_SECONDS
+        }
+    
+    # Try using the existing send_msg91_whatsapp function if available
+    if send_msg91_whatsapp_func:
+        try:
+            result = await send_msg91_whatsapp_func(
+                recipient_phone=clean_phone,
+                template_name=OTP_TEMPLATE_NAME,
+                variables=[otp],
+                db=db,
+                reference_id=reference_id or f"otp_{purpose}_{clean_phone}",
+                message_type="otp_verification"
+            )
+            
+            if result.get("success"):
+                otp_storage[otp_key]["msg91_id"] = result.get("request_id")
+                logger.info(f"OTP sent via send_msg91_whatsapp to {clean_phone}")
+                return {
+                    "success": True,
+                    "message": "OTP sent via WhatsApp",
+                    "expires_in": OTP_EXPIRY_SECONDS,
+                    "phone_masked": f"******{clean_phone[-4:]}"
+                }
+        except Exception as e:
+            logger.error(f"send_msg91_whatsapp failed: {e}")
+    
+    # Fallback: Direct API call
     url = f"{MSG91_BASE_URL}/whatsapp/whatsapp-outbound-message/"
     
-    # AUTHENTICATION templates require OTP in button component with copy_code type
-    # The nevika_otp_verify template is an AUTHENTICATION type with "Copy Code" button
     payload = {
         "integrated_number": MSG91_WHATSAPP_NUMBER,
         "content_type": "template",
@@ -122,14 +151,6 @@ async def send_whatsapp_otp(
                         "type": "body",
                         "parameters": [
                             {"type": "text", "text": otp}
-                        ]
-                    },
-                    {
-                        "type": "button",
-                        "sub_type": "copy_code",
-                        "index": "0",
-                        "parameters": [
-                            {"type": "coupon_code", "coupon_code": otp}
                         ]
                     }
                 ]
@@ -152,20 +173,12 @@ async def send_whatsapp_otp(
         # Check for success
         success = (
             response.status_code == 200 and 
-            response_data.get("type") != "error" and
+            response_data.get("status") == "success" and
             not response_data.get("hasError", True)
         )
         
         if success:
-            # Store OTP for verification
-            otp_key = f"otp_{clean_phone}"
-            otp_storage[otp_key] = {
-                "otp": otp,
-                "purpose": purpose,
-                "created_at": time.time(),
-                "attempts": 0,
-                "msg91_id": response_data.get("data", {}).get("message_uuid")
-            }
+            otp_storage[otp_key]["msg91_id"] = response_data.get("data", {}).get("message_uuid")
             
             # Log to database
             if db is not None:
@@ -193,15 +206,7 @@ async def send_whatsapp_otp(
             error_msg = response_data.get("message", "Failed to send OTP")
             logger.error(f"MSG91 OTP failed: {error_msg}")
             
-            # Fallback to mock OTP
-            otp_key = f"otp_{clean_phone}"
-            otp_storage[otp_key] = {
-                "otp": otp,
-                "purpose": purpose,
-                "created_at": time.time(),
-                "attempts": 0
-            }
-            
+            # Return mock OTP for testing
             return {
                 "success": True,
                 "mock": True,
@@ -213,15 +218,7 @@ async def send_whatsapp_otp(
     except Exception as e:
         logger.error(f"MSG91 OTP error: {e}")
         
-        # Fallback to mock OTP on error
-        otp_key = f"otp_{clean_phone}"
-        otp_storage[otp_key] = {
-            "otp": otp,
-            "purpose": purpose,
-            "created_at": time.time(),
-            "attempts": 0
-        }
-        
+        # Return mock OTP on error
         return {
             "success": True,
             "mock": True,
