@@ -6935,6 +6935,7 @@ except Exception as e:
 try:
     from routes.whatsapp_otp import router as whatsapp_otp_router
     set_otp_db(db)
+    set_otp_send_func(send_msg91_whatsapp)
     app.include_router(whatsapp_otp_router, prefix="/api")
     logger.info("WhatsApp OTP router loaded")
 except Exception as e:
