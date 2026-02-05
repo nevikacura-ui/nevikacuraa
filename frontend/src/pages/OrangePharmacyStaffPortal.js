@@ -70,6 +70,9 @@ const OrangePharmacyStaffPortal = () => {
   
   // Invoice upload
   const [uploadingInvoice, setUploadingInvoice] = useState(null);
+  
+  // Sync inventory
+  const [syncing, setSyncing] = useState(false);
 
   // Check existing auth
   useEffect(() => {
