@@ -578,14 +578,6 @@ NOTIFICATION_EMAIL = os.environ.get('NOTIFICATION_EMAIL', 'nevikacura@gmail.com'
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'Nevika Cura <onboarding@resend.dev>')
 SIGNUP_WHATSAPP_NUMBER = os.environ.get('SIGNUP_WHATSAPP_NUMBER', '9833188288')
 
-# Twilio Configuration - DISABLED (OTP not required for bookings)
-# Keeping variables for backward compatibility but not initializing client
-TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')
-TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', '')
-TWILIO_WHATSAPP_FROM = os.environ.get('TWILIO_WHATSAPP_FROM', '')
-TWILIO_PHONE_NUMBER = os.environ.get('TWILIO_PHONE_NUMBER', '')
-TWILIO_VERIFY_SERVICE_SID = os.environ.get('TWILIO_VERIFY_SERVICE_SID', '')
-
 # Doctor WhatsApp Numbers for appointment notifications
 DOCTOR_WHATSAPP_NUMBERS = {
     "Dr. Neha Patel": "917045266466",
@@ -618,10 +610,6 @@ VAPID_CLAIMS_EMAIL = os.environ.get('VAPID_CLAIMS_EMAIL', 'nevikacura@gmail.com'
 # Initialize Resend
 if RESEND_API_KEY:
     resend.api_key = RESEND_API_KEY
-
-# Twilio client - DISABLED (OTP/SMS not required)
-twilio_client = None
-logger.info("Twilio SMS/OTP disabled - bookings work without OTP verification")
 
 async def send_whatsapp_notification(to_number: str, message: str):
     """WhatsApp notification - Uses MSG91"""
