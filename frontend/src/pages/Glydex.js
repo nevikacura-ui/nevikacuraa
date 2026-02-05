@@ -547,6 +547,7 @@ const Glydex = () => {
         } else {
           toast.error(data.detail || 'Invalid verification code');
           setEmailOtp(['', '', '', '', '', '']);
+        }
       }
     } catch (error) {
       toast.error('Verification failed');
