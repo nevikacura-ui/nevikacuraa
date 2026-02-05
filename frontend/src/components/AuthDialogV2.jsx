@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import { 
   User, Mail, Phone, Loader2, ArrowRight, 
-  CheckCircle2, ShoppingBag, UserPlus, LogIn
+  CheckCircle2, ShoppingBag, UserPlus, LogIn, MessageCircle
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
