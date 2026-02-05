@@ -303,24 +303,16 @@ const IntroScreen = ({ onComplete, user }) => {
     setLoading(false);
   };
   
-  const verifyGuestOtp = async () => {
-    if (!otp || otp.length < 4) {
-      toast.error('Enter valid OTP');
+  // Guest login - just mobile number, no OTP
+  const continueAsGuest = () => {
+    if (!mobile || mobile.length !== 10) {
+      toast.error('Enter valid 10-digit mobile number');
       return;
     }
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API}/auth/guest/verify-otp`, { mobile, otp });
-      if (res.data.success) {
-        localStorage.setItem('guestMobile', mobile);
-        localStorage.setItem('guestMode', 'true');
-        toast.success('Welcome!');
-        onComplete();
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Invalid OTP');
-    }
-    setLoading(false);
+    localStorage.setItem('guestMobile', mobile);
+    localStorage.setItem('guestMode', 'true');
+    toast.success('Welcome!');
+    onComplete();
   };
   
   const skipToApp = () => {
