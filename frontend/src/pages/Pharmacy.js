@@ -1629,16 +1629,15 @@ const Pharmacy = () => {
               }`}
               data-testid="family-kids"
             >
-              <div className="w-full h-full bg-pink-100 flex items-center justify-center p-4">
+              <div className="w-full h-full bg-[#FFE5E0] flex items-center justify-center">
                 <img 
                   src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/xcrhiz3u_Screenshot_20260205-102838.png" 
                   alt="Kids Care"
                   className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                  style={{ filter: 'invert(45%) sepia(80%) saturate(500%) hue-rotate(310deg)' }}
                 />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-pink-200 to-transparent">
-                <p className="font-bold text-sm text-pink-700">Kids Care</p>
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-[#FFE5E0]">
+                <p className="font-bold text-sm text-[#E85A4F]">Kids Care</p>
               </div>
             </button>
 
@@ -1650,16 +1649,15 @@ const Pharmacy = () => {
               }`}
               data-testid="family-adults"
             >
-              <div className="w-full h-full bg-blue-100 flex items-center justify-center p-4">
+              <div className="w-full h-full bg-[#E0F4F4] flex items-center justify-center">
                 <img 
                   src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/tq8xbtbd_Screenshot_20260205-102951.png" 
                   alt="Adult Wellness"
                   className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                  style={{ filter: 'invert(35%) sepia(90%) saturate(600%) hue-rotate(190deg)' }}
                 />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-blue-200 to-transparent">
-                <p className="font-bold text-sm text-blue-700">Adult Wellness</p>
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-[#E0F4F4]">
+                <p className="font-bold text-sm text-[#2B9E9E]">Adult Wellness</p>
               </div>
             </button>
 
@@ -1671,16 +1669,15 @@ const Pharmacy = () => {
               }`}
               data-testid="family-elderly"
             >
-              <div className="w-full h-full bg-purple-100 flex items-center justify-center p-4">
+              <div className="w-full h-full bg-[#FCE4EC] flex items-center justify-center">
                 <img 
                   src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/ee62v180_Screenshot_20260205-103010.png" 
                   alt="Elderly Care"
                   className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                  style={{ filter: 'invert(30%) sepia(70%) saturate(500%) hue-rotate(240deg)' }}
                 />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-purple-200 to-transparent">
-                <p className="font-bold text-sm text-purple-700">Elderly Care</p>
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-[#FCE4EC]">
+                <p className="font-bold text-sm text-[#C2185B]">Elderly Care</p>
               </div>
             </button>
           </div>
