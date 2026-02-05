@@ -160,6 +160,7 @@ function AppContent() {
           <Route path="/lab-staff" element={<MangoLabsStaffPortal />} />
           <Route path="/doctor-portal" element={<DoctorPortal />} />
           <Route path="/track" element={<AnimatedPage><TrackOrder /></AnimatedPage>} />
+          <Route path="/order-tracking" element={<OrderTracking />} />
           <Route path="/feedback/:token" element={<Feedback />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
