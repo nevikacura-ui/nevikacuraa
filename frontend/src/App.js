@@ -99,6 +99,7 @@ function AppContent() {
     
     const isStaffPage = window.location.pathname.includes('/admin') || 
                         window.location.pathname.includes('/staff') || 
+                        window.location.pathname.includes('/diagyn-staff') ||
                         window.location.pathname.includes('/doctor-portal') ||
                         window.location.pathname.includes('/pharmacy-staff') ||
                         window.location.pathname.includes('/mango-staff') ||
