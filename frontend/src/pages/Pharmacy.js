@@ -1630,7 +1630,7 @@ const Pharmacy = () => {
               data-testid="family-kids"
             >
               <img 
-                src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/xcrhiz3u_Screenshot_20260205-102838.png" 
+                src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/ee62v180_Screenshot_20260205-103010.png" 
                 alt="Kids Care"
                 className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
               />
@@ -1666,7 +1666,7 @@ const Pharmacy = () => {
               data-testid="family-elderly"
             >
               <img 
-                src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/ee62v180_Screenshot_20260205-103010.png" 
+                src="https://customer-assets.emergentagent.com/job_orange-health-ui/artifacts/xcrhiz3u_Screenshot_20260205-102838.png" 
                 alt="Elderly Care"
                 className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
               />
