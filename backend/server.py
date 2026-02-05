@@ -6904,7 +6904,7 @@ try:
     from routes.orange_pharmacy import router as orange_pharmacy_router, set_db as set_orange_pharmacy_db, set_jwt_config as set_orange_pharmacy_jwt, set_notification_functions as set_orange_pharmacy_notif
     set_orange_pharmacy_db(db)
     set_orange_pharmacy_jwt(JWT_SECRET, JWT_ALGORITHM)
-    set_orange_pharmacy_notif(send_email_notification, send_whatsapp_notification)
+    set_orange_pharmacy_notif(send_email_notification, send_whatsapp_notification, send_orange_pharmacy_confirmation)
     app.include_router(orange_pharmacy_router, prefix="/api")
     logger.info("Orange Pharmacy Staff Portal router loaded")
 except Exception as e:
