@@ -19,10 +19,70 @@ Complete healthcare platform with three main services:
 - Online pharmacy with prescription management
 - Payment integration (COD + Cashfree online payment)
 - **NEW: Unified Staff Portal for clinic appointment management**
+- **NEW: WhatsApp OTP verification for all bookings (MSG91)**
 
 ---
 
 ## What's Been Implemented
+
+### Feb 5, 2026 - WhatsApp OTP Notification System COMPLETE
+
+#### Implementation Details
+- ✅ **MSG91 Integration** with `nevika_otp_verify` AUTHENTICATION template
+- ✅ **Backend Service**: `/app/backend/services/whatsapp_otp.py`
+- ✅ **API Routes**: `/app/backend/routes/whatsapp_otp.py`
+
+#### API Endpoints
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/otp/whatsapp/send` | POST | Send OTP via WhatsApp |
+| `/api/otp/whatsapp/verify` | POST | Verify OTP code |
+| `/api/otp/whatsapp/resend` | POST | Resend OTP (invalidates old) |
+
+#### OTP Configuration
+- **Template**: `nevika_otp_verify` (MSG91 AUTHENTICATION)
+- **Expiry**: 5 minutes (300 seconds)
+- **Max Attempts**: 3 failed attempts before lockout
+- **Phone Format**: Automatically cleaned and prefixed with India code (91)
+
+#### Flows Using WhatsApp OTP
+| Flow | Purpose Code | Status |
+|------|-------------|--------|
+| Guest Login | `guest_login` | ✅ Working |
+| Signup | `signup` | ✅ Working |
+| DiaGyn Appointment | `appointment` | ✅ Working |
+| Mango Labs Booking | `lab_booking` | ✅ Working |
+| Orange Pharmacy Order | `pharmacy_order` | ✅ Working |
+| Glydex Portal | `glydex` | ✅ Working |
+| Evara Portal | `evara` | ✅ Working |
+
+#### Testing Results
+- **30/30 Backend Tests Passed** (100%)
+- **Production Mode**: Real MSG91 WhatsApp delivery confirmed
+
+#### Files Created/Modified
+- `/app/backend/services/whatsapp_otp.py` - OTP service
+- `/app/backend/routes/whatsapp_otp.py` - API routes
+- `/app/frontend/src/components/WhatsAppOTP.js` - Reusable component
+- `/app/frontend/src/components/AuthDialogV2.jsx` - Updated guest/signup
+- `/app/frontend/src/pages/DiaGyn.js` - Updated OTP handlers
+- `/app/frontend/src/pages/Mango.js` - Updated OTP handlers
+- `/app/frontend/src/pages/Pharmacy.js` - Updated OTP handlers
+- `/app/frontend/src/pages/Glydex.js` - Added WhatsApp OTP support
+- `/app/frontend/src/pages/Evara.js` - Added WhatsApp OTP support
+
+---
+
+### Feb 5, 2026 - Unified Staff Login System COMPLETE
+
+#### Updated Staff Credentials
+| Portal | Username | Password | Redirects To |
+|--------|----------|----------|--------------|
+| Orange Pharmacy | `staff_pharmacy` | `12345678` | `/orange-staff` |
+| Mango Labs | `staff_mango` | `12345678` | `/mango-staff` |
+| DiaGyn Clinic | `staff_diagyn` | `12345678` | `/diagyn-staff` |
+
+---
 
 ### Feb 4, 2026 - DiaGyn Staff Portal Rebuild COMPLETE
 
