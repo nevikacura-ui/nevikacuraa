@@ -89,32 +89,35 @@ import './App.css';
 // Wrapper component to access auth context
 function AppContent() {
   const { user } = useAuth();
-  const [showIntro, setShowIntro] = useState(true);
   
-  // Check if intro should be shown - NOW MANDATORY for user login
-  useEffect(() => {
+  // Check if intro should be shown - computed immediately on render
+  const shouldSkipIntro = () => {
     const authToken = localStorage.getItem('authToken');
     const patientToken = localStorage.getItem('patientToken');
     const guestMobile = localStorage.getItem('guestMobile');
-    const staffToken = localStorage.getItem('staffToken');
     
     const isStaffPage = window.location.pathname.includes('/admin') || 
                         window.location.pathname.includes('/staff') || 
-                        window.location.pathname.includes('/doctor-portal');
+                        window.location.pathname.includes('/doctor-portal') ||
+                        window.location.pathname.includes('/pharmacy-staff') ||
+                        window.location.pathname.includes('/mango-staff') ||
+                        window.location.pathname.includes('/lab-staff') ||
+                        window.location.pathname.includes('/orange-staff');
     const isPublicPage = window.location.pathname.includes('/anc-form') ||
                          window.location.pathname.includes('/diabetes-form') ||
                          window.location.pathname.includes('/queue') ||
                          window.location.pathname.includes('/report') ||
                          window.location.pathname.includes('/medicine-images');
     
-    // Skip intro for:
-    // 1. Staff/admin pages (have own login)
-    // 2. Public pages (forms, queue display)
-    // 3. Already logged in users (authToken, patientToken, guestMobile)
-    if (isStaffPage || isPublicPage || authToken || patientToken || guestMobile || user) {
+    return isStaffPage || isPublicPage || authToken || patientToken || guestMobile || user;
+  };
+  
+  const [showIntro, setShowIntro] = useState(() => !shouldSkipIntro());
+  
+  // Re-check when user changes
+  useEffect(() => {
+    if (shouldSkipIntro()) {
       setShowIntro(false);
-    } else {
-      setShowIntro(true);
     }
   }, [user]);
   
