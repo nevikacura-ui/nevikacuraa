@@ -6748,12 +6748,12 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Phase 3 Features router: {e}")
 
-# WhatsApp Notification Routes (Twilio WhatsApp API)
+# WhatsApp Notification Routes
 try:
     from routes.whatsapp import router as whatsapp_router, set_whatsapp_function
     set_whatsapp_function(send_whatsapp_notification)
     app.include_router(whatsapp_router, prefix="/api")
-    logger.info("WhatsApp router loaded (Twilio)")
+    logger.info("WhatsApp notification router loaded")
 except Exception as e:
     logger.warning(f"Could not load WhatsApp router: {e}")
 
