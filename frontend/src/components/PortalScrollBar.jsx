@@ -215,7 +215,7 @@ const PortalScrollBar = () => {
 
   return (
     <div 
-      className="relative bg-white border-b border-slate-200/50 sticky top-[104px] z-40 overflow-hidden"
+      className="relative bg-gradient-to-b from-white via-slate-50/80 to-slate-100/50 sticky top-[104px] z-40 overflow-hidden"
       style={{ 
         transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
         opacity: isVisible ? 1 : 0,
@@ -224,7 +224,8 @@ const PortalScrollBar = () => {
         backfaceVisibility: 'hidden',
         WebkitBackfaceVisibility: 'hidden',
         perspective: 1000,
-        WebkitPerspective: 1000
+        WebkitPerspective: 1000,
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05)'
       }}
       data-testid="portal-scroll-bar"
     >
