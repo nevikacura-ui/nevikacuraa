@@ -1672,10 +1672,10 @@ const DiaGyn = () => {
                   <Shield className="w-10 h-10 text-orange-500" />
                 </div>
                 <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  Verify Your Phone
+                  Verify Your WhatsApp
                 </h2>
                 <p className="text-emerald-200/80 mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
-                  Enter the 6-digit code sent to +91 {patientInfo.phone}
+                  Enter the 6-digit code sent to your WhatsApp: +91 {patientInfo.phone}
                 </p>
               </div>
               
