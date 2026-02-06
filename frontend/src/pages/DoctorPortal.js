@@ -551,6 +551,14 @@ const DoctorPortal = () => {
           </Card>
         </div>
       )}
+      
+      {/* Schedule Manager Modal */}
+      {showScheduleManager && (
+        <DoctorScheduleManager 
+          doctorToken={localStorage.getItem('doctorToken')}
+          onClose={() => setShowScheduleManager(false)}
+        />
+      )}
     </div>
   );
 };
