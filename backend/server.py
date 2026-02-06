@@ -2276,7 +2276,7 @@ async def send_password_reset_otp(request: AuthOTPRequest):
     if not user:
         raise HTTPException(status_code=404, detail="No account found with this phone number")
     
-    # Use mock OTP (Twilio removed)
+    # Use mock OTP for password reset
     otp = generate_otp()
     otp_key = f"reset_{phone}"
     auth_otp_storage[otp_key] = {
