@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 from database import init_db, close_db, get_db
 
 # Import services
-from services import set_push_db, init_twilio
+from services.push import set_db as set_push_db
 
 # ============ Lifespan Context ============
 
@@ -40,9 +40,6 @@ async def lifespan(app: FastAPI):
     
     # Set database reference for push notifications
     set_push_db(db)
-    
-    # Initialize Twilio
-    init_twilio()
     
     # Create upload directories
     os.makedirs("uploads/bills", exist_ok=True)
