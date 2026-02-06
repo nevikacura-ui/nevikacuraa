@@ -20,12 +20,11 @@ RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 NOTIFICATION_EMAIL = os.environ.get("NOTIFICATION_EMAIL", "nevikacura@gmail.com")
 SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "Nevika Cura <onboarding@resend.dev>")
 
-# Twilio Configuration
-TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "")
-TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "")
-TWILIO_PHONE_NUMBER = os.environ.get("TWILIO_PHONE_NUMBER", "")
-TWILIO_WHATSAPP_FROM = os.environ.get("TWILIO_WHATSAPP_FROM", "")
-TWILIO_VERIFY_SERVICE_SID = os.environ.get("TWILIO_VERIFY_SERVICE_SID", "")
+# SMS Configuration (Deprecated - Use MSG91 WhatsApp instead)
+# These variables are kept for backward compatibility but not used
+SMS_ACCOUNT_SID = os.environ.get("SMS_ACCOUNT_SID", "")
+SMS_AUTH_TOKEN = os.environ.get("SMS_AUTH_TOKEN", "")
+SMS_PHONE_NUMBER = os.environ.get("SMS_PHONE_NUMBER", "")
 
 # VAPID Configuration for Web Push
 VAPID_PUBLIC_KEY = os.environ.get("VAPID_PUBLIC_KEY", "")
