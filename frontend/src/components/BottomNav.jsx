@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home as HomeIcon, Pill, Calendar, TestTube, User } from 'lucide-react';
+import { Home as HomeIcon, Pill, Calendar, TestTube, User, MessageCircle, Loader2, Check, RefreshCw, Phone } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { selectionTap, mediumTap } from '@/utils/haptics';
+import { toast } from 'sonner';
+import axios from 'axios';
+
+const API = process.env.REACT_APP_BACKEND_URL;
 
 const BottomNav = () => {
   const navigate = useNavigate();
