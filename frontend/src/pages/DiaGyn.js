@@ -14,7 +14,6 @@ import { PatientLookup, PatientRegistrationDialog } from '@/components/PatientRe
 import BottomNav from '@/components/BottomNav';
 import ServiceHeader from '@/components/ServiceHeader';
 import ProtonAdBanner from '@/components/ProtonAdBanner';
-import NumericCaptcha from '@/components/NumericCaptcha';
 import { toast } from 'sonner';
 import axios from 'axios';
 import AppointmentWaitlist from '@/components/AppointmentWaitlist';
@@ -861,7 +860,6 @@ const DiaGyn = () => {
   const [weeklyAvailability, setWeeklyAvailability] = useState([]);
   const [loadingAvailability, setLoadingAvailability] = useState(false);
   const [emailReminder, setEmailReminder] = useState(true);
-  const [captchaVerified, setCaptchaVerified] = useState(false);
   const [bookingLimits, setBookingLimits] = useState({
     canBook: true,
     activeAppointment: null,
