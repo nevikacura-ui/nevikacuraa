@@ -1,25 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
 import { 
-  ArrowLeft, User, Phone, Calendar, Loader2, LogOut, Mail, Edit2, Save, X,
+  ArrowLeft, User, Phone, Calendar, Loader2, LogOut, Mail,
   FileText, Pill, FlaskConical, Receipt, History, Clock, Gift, Package,
-  CheckCircle2, XCircle, AlertCircle, Download, Eye, Search, Users, Bell,
-  Stethoscope, Building2, CreditCard, Shield, Star, ChevronRight, Settings, Heart,
-  CalendarPlus
+  ChevronRight, Settings, Heart, Bell, HelpCircle, Share2, Info, Shield,
+  Sun, Moon, Cake, CreditCard, MapPin, Star, Bookmark, MessageCircle,
+  RefreshCw
 } from 'lucide-react';
-import { AddToCalendarButton } from '@/components/AddToCalendar';
-// Enhancement Components
-import { LoyaltyPoints, FamilyHub, PrescriptionWallet, QueueTracker, NotificationPreferences } from '@/components/enhancements';
 
 const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
 
@@ -33,23 +26,29 @@ const PatientPortal = () => {
   const [token, setToken] = useState(null);
   
   // Login states
-  const [mobile, setMobile] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [loginStep, setLoginStep] = useState('phone'); // 'phone' | 'otp'
   const [loading, setLoading] = useState(false);
   const [mockOtp, setMockOtp] = useState('');
+  const [countdown, setCountdown] = useState(0);
+  const otpRefs = useRef([]);
   
   // Data states
   const [history, setHistory] = useState(null);
   const [loadingHistory, setLoadingHistory] = useState(false);
   
-  // Active section
-  const [activeSection, setActiveSection] = useState('profile');
+  // UI states
+  const [theme, setTheme] = useState('light');
+  const [showBirthdayModal, setShowBirthdayModal] = useState(false);
   
-  // Edit profile states
-  const [editingProfile, setEditingProfile] = useState(false);
-  const [editForm, setEditForm] = useState({ email: '', mobile: '' });
-  const [savingProfile, setSavingProfile] = useState(false);
+  // Countdown timer
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
   
   // Check for existing session
   useEffect(() => {
@@ -61,7 +60,6 @@ const PatientPortal = () => {
         setPatientInfo(response.data);
         setToken(savedToken);
         setIsAuthenticated(true);
-        setEditForm({ email: response.data.email || '', mobile: response.data.mobile || '' });
         fetchHistory(response.data.patient_id, savedToken);
       } catch (error) {
         localStorage.removeItem('patientToken');
@@ -74,49 +72,51 @@ const PatientPortal = () => {
     }
   }, []);
   
-  const handleSendOtp = async () => {
-    if (mobile.length < 10) {
-      toast.error('Please enter a valid 10-digit mobile number');
+  const sendOTP = async () => {
+    if (!phone || phone.length < 10) {
+      toast.error('Please enter a valid 10-digit phone number');
       return;
     }
     
     setLoading(true);
     try {
-      // Use WhatsApp OTP via MSG91
-      const response = await axios.post(`${API}/otp/whatsapp/send`, {
-        phone: mobile,
+      const res = await axios.post(`${API}/otp/whatsapp/send`, {
+        phone: phone,
         purpose: 'patient_portal'
       });
-      setOtpSent(true);
-      setMockOtp(response.data.mock ? response.data.otp : '');
+      
+      setLoginStep('otp');
+      setCountdown(30);
+      setMockOtp(res.data.mock ? res.data.otp : '');
       toast.success('OTP sent via WhatsApp!', {
-        description: response.data.mock ? `Use code: ${response.data.otp}` : 'Check your WhatsApp'
+        description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your WhatsApp'
       });
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to send OTP');
+      setTimeout(() => otpRefs.current[0]?.focus(), 100);
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Failed to send OTP');
     } finally {
       setLoading(false);
     }
   };
   
-  const handleVerifyOtp = async () => {
-    if (otp.length < 6) {
-      toast.error('Please enter a valid 6-digit OTP');
+  const verifyOTP = async () => {
+    const otpCode = otp.join('');
+    if (otpCode.length !== 6) {
+      toast.error('Enter 6-digit OTP');
       return;
     }
     
     setLoading(true);
     try {
-      // Verify WhatsApp OTP
       await axios.post(`${API}/otp/whatsapp/verify`, {
-        phone: mobile,
-        otp: otp
+        phone: phone,
+        otp: otpCode
       });
       
-      // OTP verified, now try to get patient profile or create one
+      // OTP verified, try to get patient profile
       try {
         const profileRes = await axios.post(`${API}/patients/portal/login-mobile`, {
-          mobile: mobile
+          mobile: phone
         });
         
         const { token: newToken, patient } = profileRes.data;
@@ -125,7 +125,6 @@ const PatientPortal = () => {
         setToken(newToken);
         setPatientInfo(patient);
         setIsAuthenticated(true);
-        setEditForm({ email: patient.email || '', mobile: patient.mobile || '' });
         
         if (setPatientAuth) {
           setPatientAuth(newToken, patient);
@@ -134,15 +133,48 @@ const PatientPortal = () => {
         toast.success(`Welcome, ${patient.name}!`);
         fetchHistory(patient.patient_id, newToken);
       } catch (profileError) {
-        // Patient not found - show registration message
-        toast.info('No patient record found. Please visit the clinic to register.');
-        setOtpSent(false);
-        setOtp('');
+        // Create guest profile with phone
+        setPatientInfo({ mobile: phone, name: 'Guest User' });
+        setIsAuthenticated(true);
+        toast.info('Welcome! Complete your profile at the clinic.');
       }
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Invalid OTP');
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Invalid OTP');
+      setOtp(['', '', '', '', '', '']);
+      otpRefs.current[0]?.focus();
     } finally {
       setLoading(false);
+    }
+  };
+  
+  const handleOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1);
+    setOtp(newOtp);
+    if (value && index < 5) otpRefs.current[index + 1]?.focus();
+    if (index === 5 && value && newOtp.join('').length === 6) {
+      setTimeout(() => verifyOTP(), 100);
+    }
+  };
+  
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const fetchHistory = async (patientId, authToken) => {
+    setLoadingHistory(true);
+    try {
+      const response = await axios.get(`${API}/patients/portal/${patientId}/history`, {
+        headers: { 'Authorization': `Bearer ${authToken}` }
+      });
+      setHistory(response.data);
+    } catch (error) {
+      console.error('Failed to load history');
+    } finally {
+      setLoadingHistory(false);
     }
   };
   
@@ -152,612 +184,332 @@ const PatientPortal = () => {
     setPatientInfo(null);
     setToken(null);
     setHistory(null);
-    setOtpSent(false);
-    setOtp('');
-    setMobile('');
-    
-    // Also logout from global auth context
-    if (authLogout) {
-      authLogout();
-    }
-    
+    setPhone('');
+    setOtp(['', '', '', '', '', '']);
+    setLoginStep('phone');
+    if (authLogout) authLogout();
     toast.success('Logged out successfully');
   };
-  
-  const fetchHistory = async (patientId, authToken) => {
-    setLoadingHistory(true);
-    try {
-      const response = await axios.get(`${API}/patients/${patientId}/history`, {
-        headers: { 'Authorization': `Bearer ${authToken}` }
-      });
-      setHistory(response.data);
-    } catch (error) {
-      console.error('Failed to fetch history:', error);
-    } finally {
-      setLoadingHistory(false);
-    }
-  };
-  
-  const handleSaveProfile = async () => {
-    setSavingProfile(true);
-    try {
-      await axios.put(`${API}/patients/${patientInfo.patient_id}/update`, {
-        email: editForm.email,
-        mobile: editForm.mobile
-      }, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      setPatientInfo(prev => ({ ...prev, email: editForm.email, mobile: editForm.mobile }));
-      setEditingProfile(false);
-      toast.success('Profile updated successfully');
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to update profile');
-    } finally {
-      setSavingProfile(false);
-    }
-  };
-  
-  // Menu Items - Updated with enhancement features
-  const menuItems = [
-    { id: 'profile', icon: User, label: 'Profile Details', color: 'teal' },
-    { id: 'health', icon: Heart, label: 'My Health', color: 'red', link: '/health-dashboard' },
-    { id: 'family', icon: Users, label: 'Family Members', color: 'cyan', isNew: true },
-    { id: 'appointments', icon: Calendar, label: 'My Appointments', color: 'indigo' },
-    { id: 'prescriptions', icon: FileText, label: 'Prescriptions', color: 'emerald', isNew: true },
-    { id: 'tests', icon: FlaskConical, label: 'My Lab Tests', color: 'purple' },
-    { id: 'orders', icon: Pill, label: 'My Orders', color: 'orange' },
-    { id: 'track', icon: Package, label: 'Track Orders', color: 'blue' },
-    { id: 'payments', icon: CreditCard, label: 'Payment History', color: 'green', link: '/payment/history' },
-    { id: 'loyalty', icon: Gift, label: 'Loyalty Points', color: 'pink' },
-    { id: 'notifications', icon: Bell, label: 'Notifications', color: 'amber', isNew: true },
-    { id: 'features', icon: Star, label: 'All Features', color: 'teal', link: '/features', isNew: true },
-    { id: 'settings', icon: Settings, label: 'Settings', color: 'slate', link: '/settings' },
+
+  // Menu Items for Blinkit-style layout
+  const quickActions = [
+    { icon: Receipt, label: 'Your Orders', count: history?.appointments?.length || 0, onClick: () => navigate('/') },
+    { icon: CreditCard, label: 'Nevika Wallet', balance: '₹0', onClick: () => toast.info('Coming soon!') },
+    { icon: HelpCircle, label: 'Need Help?', onClick: () => toast.info('Contact: +91 98765 43210') },
   ];
   
-  // Login Screen
+  const yourInfo = [
+    { icon: MapPin, label: 'Address Book', onClick: () => toast.info('Coming soon!') },
+    { icon: Bookmark, label: 'Saved Doctors', onClick: () => toast.info('Coming soon!') },
+    { icon: Heart, label: 'Your Wishlist', onClick: () => toast.info('Coming soon!') },
+    { icon: FileText, label: 'Your Prescriptions', onClick: () => navigate('/') },
+    { icon: Gift, label: 'E-gift Cards', onClick: () => toast.info('Coming soon!') },
+  ];
+  
+  const paymentOptions = [
+    { icon: CreditCard, label: 'Wallet', onClick: () => toast.info('Coming soon!') },
+    { icon: Settings, label: 'Payment Settings', onClick: () => toast.info('Coming soon!') },
+    { icon: Gift, label: 'Claim Gift Card', onClick: () => toast.info('Coming soon!') },
+    { icon: Star, label: 'Your Rewards', onClick: () => toast.info('Coming soon!') },
+  ];
+  
+  const otherInfo = [
+    { icon: Share2, label: 'Share the App', onClick: () => {
+      if (navigator.share) {
+        navigator.share({ title: 'Nevika Cura', url: window.location.origin });
+      } else {
+        toast.info('Share link copied!');
+      }
+    }},
+    { icon: Info, label: 'About Us', onClick: () => toast.info('Nevika Cura Healthcare') },
+    { icon: Shield, label: 'Account Privacy', onClick: () => toast.info('Coming soon!') },
+    { icon: Bell, label: 'Notification Preferences', onClick: () => toast.info('Coming soon!') },
+    { icon: LogOut, label: 'Log Out', onClick: handleLogout, danger: true },
+  ];
+
+  // Login Screen (Blinkit style)
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50">
+      <div className="min-h-screen bg-white">
         {/* Header */}
-        <header className="bg-white/80 backdrop-blur-lg border-b sticky top-0 z-40">
-          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="p-2">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <div>
-                <h1 className="font-bold text-lg text-teal-800">Patient Portal</h1>
-                <p className="text-xs text-gray-500">Access your health records</p>
-              </div>
-            </div>
+        <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
+          <div className="flex items-center gap-4 px-4 py-3">
+            <button onClick={() => navigate(-1)} className="p-2 -ml-2" data-testid="back-btn">
+              <ArrowLeft className="w-6 h-6 text-gray-800" />
+            </button>
+            <h1 className="text-lg font-semibold text-gray-800">Profile</h1>
           </div>
         </header>
         
-        <main className="max-w-md mx-auto px-4 py-12">
-          <Card className="shadow-xl border-0 rounded-3xl overflow-hidden">
-            <div className="bg-gradient-to-r from-teal-500 to-cyan-500 p-6 text-white">
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4">
-                <User className="w-8 h-8" />
-              </div>
-              <h2 className="text-2xl font-bold">Welcome Back</h2>
-              <p className="text-teal-100 mt-1">Login to view your health records</p>
+        {/* Login Card */}
+        <div className="p-4">
+          <div className="bg-gradient-to-br from-teal-500 to-cyan-500 rounded-3xl p-6 text-white">
+            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4">
+              <User className="w-8 h-8" />
             </div>
-            
-            <CardContent className="p-6 space-y-4">
-              {!otpSent ? (
-                <>
-                  <div>
-                    <Label className="text-gray-600">WhatsApp Number</Label>
-                    <div className="flex gap-2 mt-1.5">
-                      <div className="flex items-center px-3 bg-gray-100 rounded-l-xl border border-r-0 border-gray-200">
-                        <span className="text-gray-500">+91</span>
-                      </div>
-                      <Input
-                        type="tel"
-                        placeholder="Enter your mobile number"
-                        value={mobile}
-                        onChange={(e) => setMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                        className="rounded-l-none rounded-r-xl h-12 text-lg"
-                        data-testid="portal-mobile"
-                      />
+            <h2 className="text-2xl font-bold mb-1">Welcome Back</h2>
+            <p className="text-white/80 text-sm">Login to view your health records</p>
+          </div>
+          
+          <div className="mt-6 space-y-4">
+            {loginStep === 'phone' ? (
+              <>
+                <div>
+                  <label className="text-sm text-gray-600 mb-1 block">WhatsApp Number</label>
+                  <div className="flex">
+                    <div className="flex items-center px-4 bg-gray-100 rounded-l-xl border border-r-0 border-gray-200">
+                      <span className="text-gray-600 font-medium">+91</span>
                     </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={handleSendOtp}
-                    disabled={loading || mobile.length < 10}
-                    className="w-full h-12 bg-green-500 hover:bg-green-600 rounded-xl text-lg"
-                    data-testid="portal-send-otp"
-                  >
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send OTP via WhatsApp'}
-                  </Button>
-                  
-                  <p className="text-center text-sm text-gray-500">
-                    Not registered? Visit our clinic to create your patient profile.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <div className="text-center mb-4">
-                    <p className="text-gray-600">OTP sent to WhatsApp <strong>+91 {mobile}</strong></p>
-                    <button 
-                      onClick={() => { setOtpSent(false); setOtp(''); }}
-                      className="text-teal-600 text-sm underline mt-1"
-                    >
-                      Change number
-                    </button>
-                  </div>
-                  
-                  {mockOtp && (
-                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-center">
-                      <p className="text-xs text-amber-700">Test OTP: <strong className="text-lg">{mockOtp}</strong></p>
-                    </div>
-                  )}
-                  
-                  <div>
-                    <Label className="text-gray-600">Enter OTP</Label>
                     <Input
-                      type="text"
-                      placeholder="Enter 6-digit OTP"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      className="h-12 text-center text-2xl tracking-widest rounded-xl mt-1.5"
-                      maxLength={6}
-                      data-testid="portal-otp"
+                      type="tel"
+                      placeholder="Enter your mobile number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      className="rounded-l-none rounded-r-xl h-12 text-lg border-gray-200"
+                      data-testid="login-phone-input"
                     />
                   </div>
-                  
-                  <Button 
-                    onClick={handleVerifyOtp}
-                    disabled={loading || otp.length < 6}
-                    className="w-full h-12 bg-teal-600 hover:bg-teal-700 rounded-xl text-lg"
-                    data-testid="portal-verify-otp"
+                </div>
+                
+                <Button
+                  onClick={sendOTP}
+                  disabled={loading || phone.length < 10}
+                  className="w-full h-12 bg-green-500 hover:bg-green-600 rounded-xl text-base font-medium"
+                  data-testid="send-otp-btn"
+                >
+                  {loading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <MessageCircle className="w-5 h-5 mr-2" />
+                      Send OTP via WhatsApp
+                    </>
+                  )}
+                </Button>
+                
+                <p className="text-center text-xs text-gray-500">
+                  Not registered? Visit our clinic to create your patient profile.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-center gap-2 text-gray-600 bg-gray-50 p-3 rounded-xl">
+                  <Phone className="w-4 h-4" />
+                  <span className="text-sm">OTP sent to +91 ******{phone.slice(-4)}</span>
+                </div>
+                
+                {mockOtp && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 text-center">
+                    <p className="text-xs text-yellow-600 mb-1">Test Mode - Use this OTP:</p>
+                    <p className="text-2xl font-mono font-bold text-yellow-700 tracking-widest">{mockOtp}</p>
+                  </div>
+                )}
+                
+                <div className="flex justify-center gap-2">
+                  {otp.map((digit, index) => (
+                    <Input
+                      key={index}
+                      ref={el => otpRefs.current[index] = el}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleOtpChange(index, e.target.value)}
+                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                      className="w-12 h-14 text-center text-2xl font-bold border-2 focus:border-green-500 rounded-lg"
+                      data-testid={`otp-input-${index}`}
+                    />
+                  ))}
+                </div>
+                
+                <Button
+                  onClick={verifyOTP}
+                  disabled={loading || otp.join('').length !== 6}
+                  className="w-full h-12 bg-green-500 hover:bg-green-600 rounded-xl text-base font-medium"
+                  data-testid="verify-otp-btn"
+                >
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Login'}
+                </Button>
+                
+                <div className="flex items-center justify-between text-sm">
+                  <button
+                    onClick={() => { setLoginStep('phone'); setOtp(['', '', '', '', '', '']); }}
+                    className="text-gray-500 hover:text-gray-700"
                   >
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Login'}
-                  </Button>
-                  
-                  <Button 
-                    variant="ghost"
-                    onClick={handleSendOtp}
-                    disabled={loading}
-                    className="w-full text-teal-600"
-                  >
-                    Resend OTP
-                  </Button>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        </main>
+                    Change number
+                  </button>
+                  {countdown > 0 ? (
+                    <span className="text-gray-400">Resend in {countdown}s</span>
+                  ) : (
+                    <button
+                      onClick={sendOTP}
+                      disabled={loading}
+                      className="text-green-600 hover:text-green-700 flex items-center gap-1"
+                    >
+                      <RefreshCw className="w-3 h-3" />
+                      Resend OTP
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
-  
-  // Dashboard Screen
+
+  // Authenticated Profile Screen (Blinkit style)
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 pb-20">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-lg border-b sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="p-2">
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div>
-              <h1 className="font-bold text-lg text-teal-800">My Profile</h1>
-              <p className="text-xs text-gray-500">{patientInfo?.patient_id}</p>
-            </div>
-          </div>
-          <Button variant="outline" size="sm" onClick={handleLogout} className="rounded-full">
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
+        <div className="flex items-center gap-4 px-4 py-3">
+          <button onClick={() => navigate(-1)} className="p-2 -ml-2" data-testid="back-btn">
+            <ArrowLeft className="w-6 h-6 text-gray-800" />
+          </button>
+          <h1 className="text-lg font-semibold text-gray-800">Profile</h1>
         </div>
       </header>
       
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        {/* Patient Info Card */}
-        <Card className="rounded-2xl shadow-lg border-0 overflow-hidden">
-          <div className="bg-gradient-to-r from-teal-500 to-cyan-500 p-6 text-white">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-                <User className="w-8 h-8" />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold">{patientInfo?.name}</h2>
-                <div className="flex items-center gap-3 mt-1 text-teal-100 flex-wrap">
-                  <span className="flex items-center gap-1">
-                    <Phone className="w-4 h-4" />
-                    {patientInfo?.mobile}
-                  </span>
-                  {patientInfo?.age && <span>• {patientInfo?.age} yrs</span>}
-                  {patientInfo?.gender && <span>• {patientInfo?.gender}</span>}
-                </div>
-              </div>
-            </div>
+      {/* Profile Avatar */}
+      <div className="bg-white pt-6 pb-4 text-center">
+        <div className="w-20 h-20 mx-auto bg-gray-100 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
+          <User className="w-10 h-10 text-gray-400" />
+        </div>
+        <h2 className="mt-3 text-xl font-bold text-gray-900">Your Account</h2>
+        <p className="text-gray-500">+91 {patientInfo?.mobile || phone}</p>
+      </div>
+      
+      {/* Birthday Banner */}
+      <div 
+        className="mx-4 mt-4 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl flex items-center justify-between cursor-pointer"
+        onClick={() => setShowBirthdayModal(true)}
+        data-testid="birthday-banner"
+      >
+        <div>
+          <h3 className="font-semibold text-gray-800">Add your birthday</h3>
+          <p className="text-teal-600 text-sm font-medium">Enter details ▸</p>
+        </div>
+        <div className="w-16 h-16">
+          <Cake className="w-full h-full text-orange-300" />
+        </div>
+      </div>
+      
+      {/* Quick Actions */}
+      <div className="mx-4 mt-4 grid grid-cols-3 gap-3">
+        {quickActions.map((item, idx) => (
+          <button
+            key={idx}
+            onClick={item.onClick}
+            className="bg-white p-4 rounded-2xl border border-gray-100 flex flex-col items-center gap-2 hover:shadow-md transition-all"
+            data-testid={`quick-action-${idx}`}
+          >
+            <item.icon className="w-6 h-6 text-gray-600" />
+            <span className="text-xs text-gray-700 font-medium text-center">{item.label}</span>
+            {item.count !== undefined && (
+              <span className="text-xs text-gray-400">{item.count}</span>
+            )}
+          </button>
+        ))}
+      </div>
+      
+      {/* Appearance Toggle */}
+      <div className="mx-4 mt-4 bg-white rounded-2xl border border-gray-100">
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center gap-3">
+            <Sun className="w-5 h-5 text-gray-600" />
+            <span className="font-medium text-gray-700">Appearance</span>
           </div>
-        </Card>
-        
-        {/* Menu Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          {menuItems.map((item) => (
+          <button 
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            className="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-600"
+          >
+            {theme === 'light' ? 'LIGHT' : 'DARK'} ▾
+          </button>
+        </div>
+      </div>
+      
+      {/* Your Information Section */}
+      <div className="mx-4 mt-6">
+        <h3 className="text-base font-bold text-gray-900 mb-3 px-1">Your Information</h3>
+        <div className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-50">
+          {yourInfo.map((item, idx) => (
             <button
-              key={item.id}
-              onClick={() => item.link ? navigate(item.link) : setActiveSection(item.id)}
-              className={`p-4 rounded-2xl border-2 transition-all text-left relative ${
-                activeSection === item.id 
-                  ? `border-${item.color}-500 bg-${item.color}-50` 
-                  : 'border-gray-100 bg-white hover:border-gray-200'
-              }`}
-              data-testid={`menu-${item.id}`}
+              key={idx}
+              onClick={item.onClick}
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+              data-testid={`info-item-${idx}`}
             >
-              {item.isNew && (
-                <span className="absolute top-2 right-2 px-2 py-0.5 bg-teal-500 text-white text-xs rounded-full font-medium">
-                  NEW
-                </span>
-              )}
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${
-                activeSection === item.id ? `bg-${item.color}-500` : 'bg-gray-100'
-              }`}>
-                <item.icon className={`w-5 h-5 ${activeSection === item.id ? 'text-white' : 'text-gray-500'}`} />
+              <div className="flex items-center gap-3">
+                <item.icon className="w-5 h-5 text-gray-500" />
+                <span className="text-gray-700">{item.label}</span>
               </div>
-              <p className={`font-medium text-sm ${activeSection === item.id ? `text-${item.color}-700` : 'text-gray-700'}`}>
-                {item.label}
-              </p>
+              <ChevronRight className="w-5 h-5 text-gray-400" />
             </button>
           ))}
         </div>
-        
-        {/* Content Sections */}
-        {loadingHistory ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+      </div>
+      
+      {/* Payment & Coupons Section */}
+      <div className="mx-4 mt-6">
+        <h3 className="text-base font-bold text-gray-900 mb-3 px-1">Payment and Coupons</h3>
+        <div className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-50">
+          {paymentOptions.map((item, idx) => (
+            <button
+              key={idx}
+              onClick={item.onClick}
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+              data-testid={`payment-item-${idx}`}
+            >
+              <div className="flex items-center gap-3">
+                <item.icon className="w-5 h-5 text-gray-500" />
+                <span className="text-gray-700">{item.label}</span>
+              </div>
+              <ChevronRight className="w-5 h-5 text-gray-400" />
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      {/* Other Information Section */}
+      <div className="mx-4 mt-6 mb-8">
+        <h3 className="text-base font-bold text-gray-900 mb-3 px-1">Other Information</h3>
+        <div className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-50">
+          {otherInfo.map((item, idx) => (
+            <button
+              key={idx}
+              onClick={item.onClick}
+              className={`w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors ${item.danger ? 'text-red-500' : ''}`}
+              data-testid={`other-item-${idx}`}
+            >
+              <div className="flex items-center gap-3">
+                <item.icon className={`w-5 h-5 ${item.danger ? 'text-red-500' : 'text-gray-500'}`} />
+                <span className={item.danger ? 'text-red-500' : 'text-gray-700'}>{item.label}</span>
+              </div>
+              <ChevronRight className={`w-5 h-5 ${item.danger ? 'text-red-400' : 'text-gray-400'}`} />
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      {/* Birthday Modal */}
+      <Dialog open={showBirthdayModal} onOpenChange={setShowBirthdayModal}>
+        <DialogContent className="max-w-sm rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Cake className="w-5 h-5 text-orange-500" />
+              Add Your Birthday
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input type="date" className="h-12 rounded-xl" data-testid="birthday-input" />
+            <Button className="w-full h-12 bg-teal-500 hover:bg-teal-600 rounded-xl" onClick={() => { setShowBirthdayModal(false); toast.success('Birthday saved!'); }}>
+              Save Birthday
+            </Button>
           </div>
-        ) : (
-          <>
-            {/* Profile Details Section */}
-            {activeSection === 'profile' && (
-              <Card className="rounded-2xl shadow-lg border-0">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="flex items-center gap-2 text-teal-700">
-                    <User className="w-5 h-5" />
-                    Profile Details
-                  </CardTitle>
-                  {!editingProfile ? (
-                    <Button variant="outline" size="sm" onClick={() => setEditingProfile(true)}>
-                      <Edit2 className="w-4 h-4 mr-2" />
-                      Edit
-                    </Button>
-                  ) : (
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => setEditingProfile(false)}>
-                        <X className="w-4 h-4" />
-                      </Button>
-                      <Button size="sm" onClick={handleSaveProfile} disabled={savingProfile} className="bg-teal-600 hover:bg-teal-700">
-                        {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                        Save
-                      </Button>
-                    </div>
-                  )}
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-4 bg-gray-50 rounded-xl">
-                      <Label className="text-xs text-gray-500">Full Name</Label>
-                      <p className="font-semibold text-gray-800 mt-1">{patientInfo?.name}</p>
-                      <p className="text-xs text-gray-400 mt-1">Name cannot be edited</p>
-                    </div>
-                    
-                    <div className="p-4 bg-gray-50 rounded-xl">
-                      <Label className="text-xs text-gray-500">Patient ID</Label>
-                      <p className="font-semibold text-gray-800 mt-1">{patientInfo?.patient_id}</p>
-                    </div>
-                    
-                    <div className="p-4 bg-gray-50 rounded-xl">
-                      <Label className="text-xs text-gray-500">Mobile Number</Label>
-                      {editingProfile ? (
-                        <Input 
-                          value={editForm.mobile}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, mobile: e.target.value }))}
-                          className="mt-1"
-                        />
-                      ) : (
-                        <p className="font-semibold text-gray-800 mt-1 flex items-center gap-2">
-                          <Phone className="w-4 h-4 text-gray-400" />
-                          {patientInfo?.mobile}
-                        </p>
-                      )}
-                    </div>
-                    
-                    <div className="p-4 bg-gray-50 rounded-xl">
-                      <Label className="text-xs text-gray-500">Email Address</Label>
-                      {editingProfile ? (
-                        <Input 
-                          value={editForm.email}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
-                          placeholder="Enter email"
-                          className="mt-1"
-                        />
-                      ) : (
-                        <p className="font-semibold text-gray-800 mt-1 flex items-center gap-2">
-                          <Mail className="w-4 h-4 text-gray-400" />
-                          {patientInfo?.email || 'Not provided'}
-                        </p>
-                      )}
-                    </div>
-                    
-                    {patientInfo?.age && (
-                      <div className="p-4 bg-gray-50 rounded-xl">
-                        <Label className="text-xs text-gray-500">Age</Label>
-                        <p className="font-semibold text-gray-800 mt-1">{patientInfo?.age} years</p>
-                      </div>
-                    )}
-                    
-                    {patientInfo?.gender && (
-                      <div className="p-4 bg-gray-50 rounded-xl">
-                        <Label className="text-xs text-gray-500">Gender</Label>
-                        <p className="font-semibold text-gray-800 mt-1 capitalize">{patientInfo?.gender}</p>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* My Appointments Section */}
-            {activeSection === 'appointments' && history && (
-              <Card className="rounded-2xl shadow-lg border-0">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-indigo-700">
-                    <Calendar className="w-5 h-5" />
-                    My Appointments
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {/* Summary Stats */}
-                  <div className="grid grid-cols-3 gap-3 mb-6">
-                    <div className="p-3 bg-indigo-50 rounded-xl text-center">
-                      <p className="text-xl font-bold text-indigo-600">{history.summary.total_appointments || 0}</p>
-                      <p className="text-xs text-gray-500">Total</p>
-                    </div>
-                    <div className="p-3 bg-green-50 rounded-xl text-center">
-                      <p className="text-xl font-bold text-green-600">
-                        {history.appointments.filter(a => a.status === 'Completed').length}
-                      </p>
-                      <p className="text-xs text-gray-500">Completed</p>
-                    </div>
-                    <div className="p-3 bg-blue-50 rounded-xl text-center">
-                      <p className="text-xl font-bold text-blue-600">
-                        {history.appointments.filter(a => a.status !== 'Completed' && a.status !== 'Cancelled').length}
-                      </p>
-                      <p className="text-xs text-gray-500">Upcoming</p>
-                    </div>
-                  </div>
-                  
-                  {history.appointments.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      <Calendar className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                      <p>No appointments yet</p>
-                      <Button className="mt-4" onClick={() => navigate('/diagyn')}>Book Appointment</Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {history.appointments.map((apt, idx) => (
-                        <div key={idx} className={`p-4 rounded-xl border ${
-                          apt.status === 'Completed' ? 'bg-gray-50 border-gray-100' : 'bg-indigo-50 border-indigo-100'
-                        }`}>
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                                apt.status === 'Completed' ? 'bg-green-100' : 'bg-indigo-100'
-                              }`}>
-                                <Stethoscope className={`w-5 h-5 ${
-                                  apt.status === 'Completed' ? 'text-green-600' : 'text-indigo-600'
-                                }`} />
-                              </div>
-                              <div>
-                                <p className="font-semibold text-gray-800">{apt.doctor}</p>
-                                <p className="text-sm text-gray-500">{apt.clinic}</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              {apt.status === 'Confirmed' && apt.id && (
-                                <AddToCalendarButton 
-                                  appointmentId={apt.id} 
-                                  variant="icon-only"
-                                />
-                              )}
-                              <Badge className={
-                                apt.status === 'Completed' ? 'bg-green-100 text-green-700' : 
-                                apt.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
-                                'bg-indigo-100 text-indigo-700'
-                              }>
-                                {apt.status}
-                              </Badge>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
-                            <span className="flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
-                              {apt.date}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              {apt.time}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* My Lab Tests Section */}
-            {activeSection === 'tests' && history && (
-              <Card className="rounded-2xl shadow-lg border-0">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-purple-700">
-                    <FlaskConical className="w-5 h-5" />
-                    My Lab Tests
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {history.diagnostic_orders.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      <FlaskConical className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                      <p>No lab tests booked</p>
-                      <Button className="mt-4" onClick={() => navigate('/mango')}>Book Lab Test</Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {history.diagnostic_orders.map((order, idx) => (
-                        <div key={idx} className="p-4 bg-purple-50 rounded-xl border border-purple-100">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <FlaskConical className="w-5 h-5 text-purple-600" />
-                              </div>
-                              <div>
-                                <p className="font-semibold text-gray-800">Test Order #{idx + 1}</p>
-                                <p className="text-xs text-gray-500">{order.created_at?.split('T')[0]}</p>
-                              </div>
-                            </div>
-                            <Badge className={order.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'}>
-                              {order.status}
-                            </Badge>
-                          </div>
-                          {order.tests && (
-                            <div className="mt-3 text-sm text-gray-600">
-                              {order.tests.slice(0, 3).join(', ')}
-                              {order.tests.length > 3 && ` +${order.tests.length - 3} more`}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* My Orders Section (Pharmacy) */}
-            {activeSection === 'orders' && history && (
-              <Card className="rounded-2xl shadow-lg border-0">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-orange-700">
-                    <Pill className="w-5 h-5" />
-                    My Orders
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {history.pharmacy_orders.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      <Pill className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                      <p>No orders yet</p>
-                      <Button className="mt-4" onClick={() => navigate('/orange')}>Order Medicines</Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {history.pharmacy_orders.map((order, idx) => (
-                        <div key={idx} className="p-4 bg-orange-50 rounded-xl border border-orange-100">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                                <Pill className="w-5 h-5 text-orange-600" />
-                              </div>
-                              <div>
-                                <p className="font-semibold text-gray-800">Order #{order.order_id || idx + 1}</p>
-                                <p className="text-xs text-gray-500">{order.created_at?.split('T')[0]}</p>
-                              </div>
-                            </div>
-                            <Badge className={
-                              order.status === 'delivered' ? 'bg-green-100 text-green-700' : 
-                              order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
-                              'bg-orange-100 text-orange-700'
-                            }>
-                              {order.status}
-                            </Badge>
-                          </div>
-                          {order.items && (
-                            <div className="text-sm text-gray-600">
-                              {order.items.slice(0, 2).map((item, i) => (
-                                <p key={i}>• {item.name} x {item.quantity}</p>
-                              ))}
-                              {order.items.length > 2 && (
-                                <p className="text-gray-400">+{order.items.length - 2} more items</p>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* Track Orders Section */}
-            {activeSection === 'track' && history && (
-              <Card className="rounded-2xl shadow-lg border-0">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-blue-700">
-                    <Package className="w-5 h-5" />
-                    Track Orders
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-6">
-                    <Package className="w-16 h-16 mx-auto mb-4 text-blue-500" />
-                    <h3 className="font-semibold text-gray-800 mb-2">Track Your Orders</h3>
-                    <p className="text-sm text-gray-500 mb-4">Enter your order ID to track delivery status</p>
-                    <Button onClick={() => navigate('/track')} className="bg-blue-600 hover:bg-blue-700">
-                      <Search className="w-4 h-4 mr-2" />
-                      Go to Order Tracking
-                    </Button>
-                  </div>
-                  
-                  {/* Recent trackable orders */}
-                  {history.pharmacy_orders.filter(o => o.status !== 'delivered').length > 0 && (
-                    <div className="mt-6 pt-4 border-t">
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">Active Orders</h4>
-                      <div className="space-y-2">
-                        {history.pharmacy_orders.filter(o => o.status !== 'delivered').slice(0, 3).map((order, idx) => (
-                          <div key={idx} className="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
-                            <span className="text-sm font-medium">Order #{order.order_id || idx + 1}</span>
-                            <Badge className="bg-blue-100 text-blue-700">{order.status}</Badge>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* Loyalty Points Section - Enhanced */}
-            {activeSection === 'loyalty' && (
-              <LoyaltyPoints />
-            )}
-            
-            {/* Family Hub Section - New */}
-            {activeSection === 'family' && (
-              <FamilyHub />
-            )}
-            
-            {/* Prescriptions Section - New */}
-            {activeSection === 'prescriptions' && (
-              <PrescriptionWallet />
-            )}
-            
-            {/* Notification Preferences Section - New */}
-            {activeSection === 'notifications' && (
-              <NotificationPreferences />
-            )}
-          </>
-        )}
-      </main>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
