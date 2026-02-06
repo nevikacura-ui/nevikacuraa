@@ -327,10 +327,10 @@ const PortalScrollBar = () => {
 
       {/* Gradient Fades */}
       {showLeftArrow && (
-        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none z-10"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent pointer-events-none z-10"></div>
       )}
       {showRightArrow && (
-        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-slate-100/80 via-white/60 to-transparent pointer-events-none z-10"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent pointer-events-none z-10"></div>
       )}
 
       {/* Hide scrollbar */}
