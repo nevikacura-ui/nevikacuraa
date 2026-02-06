@@ -145,16 +145,20 @@ const BottomNav = () => {
     // Haptic feedback on navigation
     selectionTap();
     
+    console.log('BottomNav click:', item.id, 'user:', user);
+    
     if (item.id === 'book') {
       setShowBookingModal(true);
     } else if (item.id === 'profile' && !user) {
       // Show WhatsApp OTP login modal for non-logged-in users
+      console.log('Showing login modal');
       setShowLoginModal(true);
       setLoginStep('phone');
       setPhone('');
       setOtp(['', '', '', '', '', '']);
       setMockOtp(null);
     } else if (item.path) {
+      console.log('Navigating to:', item.path);
       navigate(item.path);
     }
   };
