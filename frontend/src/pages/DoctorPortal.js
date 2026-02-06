@@ -8,9 +8,10 @@ import axios from 'axios';
 import { 
   ArrowLeft, User, Lock, LogOut, Phone, Calendar, Clock, 
   CheckCircle2, Stethoscope, IndianRupee, RefreshCw,
-  ChevronRight, Loader2, Users, Building2, X, FileText
+  ChevronRight, Loader2, Users, Building2, X, FileText, Settings
 } from 'lucide-react';
 import { lightTap, mediumTap, heavyTap, successPattern, errorPattern, selectionTap } from '@/utils/haptics';
+import DoctorScheduleManager from '@/components/DoctorScheduleManager';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
