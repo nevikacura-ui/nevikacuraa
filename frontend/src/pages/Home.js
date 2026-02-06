@@ -569,7 +569,7 @@ const Home = () => {
         </div>
 
         {/* Row 2 - Main Service Tabs (Zepto style) */}
-        <div className={`${currentTheme.isLight ? 'bg-slate-50/50' : 'bg-white/10 backdrop-blur-sm'}`}>
+        <div className="bg-white">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide">
               {/* Nevika Cura / Home */}
