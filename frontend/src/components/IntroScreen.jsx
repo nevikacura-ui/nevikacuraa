@@ -27,7 +27,7 @@ const CAROUSEL_SLIDES = [
     taglinePart1: '35,000+ Patients.',
     taglineHighlight: 'Trusted Beyond Measure.',
     icon: Calendar,
-    image: 'https://images.unsplash.com/photo-1691935152546-3a9e05f4010b?w=600&h=400&fit=crop',
+    image: 'https://customer-assets.emergentagent.com/job_nevika-dashboard/artifacts/w5c8iubu_file_00000000ac88720b91ba961ab1478bb7.png',
     gradient: 'from-[#1F4F46] to-[#2E6B5F]',
     highlightColor: '#4ADE80'
   },
