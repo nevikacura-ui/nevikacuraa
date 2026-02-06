@@ -17,6 +17,10 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
   - OTP step is now mandatory before booking confirmation
   - Updated label to "WhatsApp Number" with hint "(OTP will be sent)"
   - OTP verification screen updated to say "Verify Your WhatsApp"
+- ✅ **Guest Login - No OTP Required**:
+  - Removed OTP verification from guest login flow
+  - Button now says "Continue" (not mentioning skip or OTP)
+  - Guest can enter WhatsApp number and proceed directly
 - ✅ **Fresh Staff Credentials Created**: All staff and doctor accounts reset with new passwords
 
 ### Previously Completed (Feb 5, 2026)
