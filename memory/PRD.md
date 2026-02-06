@@ -10,55 +10,79 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 
 ## What's Been Implemented
 
-### Completed (Feb 7, 2026)
-- ✅ **Portal Switcher Redesigned**: 
-  - Removed harsh white border line divider
-  - Added soft shadow (`shadow-sm`) for subtle depth transition
-  - Maintains visual continuity without stark line separation
-- ✅ **Carousel Pharmacy Image Updated**: 
-  - Replaced medicine strips image with beautiful pharmacy shop interior
-  - Shows pharmacist in a well-stocked pharmacy
-- ✅ **WhatsApp OTP for Patient Portal**:
-  - Patient Portal login now uses WhatsApp OTP via MSG91
-  - Updated UI to show "WhatsApp Number" and "Send OTP via WhatsApp"
-  - Green button styling for WhatsApp branding
-- ✅ **Twilio Cleanup Completed**:
-  - Removed Twilio references from config.py
-  - Cleaned server_new.py imports
-  - Updated server.py comments
-- ✅ **Footer Profile - WhatsApp OTP Login**:
-  - BottomNav profile button includes WhatsApp OTP login modal for non-authenticated users
-  - Patient Portal page uses WhatsApp OTP
+### Completed (Feb 7, 2026) - Session 2
+- ✅ **Portal Switcher - White Line Fixed**: 
+  - Removed hard border/line between header tabs and portal icons
+  - Added smooth gradient transition from header teal to content area
+  - Seamless visual flow across DiaGyn, Mango, and Orange portals
+- ✅ **Pharmacy Carousel Image**: 
+  - Updated "4000+ Medicines" slide with bright Indian pharmacy image
+  - Shows Indian pharmacist with turban in well-stocked pharmacy
+- ✅ **Profile Page Completely Rebuilt (Blinkit Style)**:
+  - Single WhatsApp OTP login flow (no double entry)
+  - New login screen with gradient header and WhatsApp number input
+  - 6-digit OTP entry with auto-focus
+  - After-login profile with:
+    - Avatar and account header
+    - Birthday banner
+    - Quick actions (Orders, Wallet, Help)
+    - Appearance toggle
+    - Your Information section
+    - Payment & Coupons section  
+    - Other Information section with Logout
+- ✅ **Twilio Cleanup**: Removed all remaining references
+
+### Completed (Feb 7, 2026) - Session 1
+- ✅ Portal Switcher gradient transition (from teal header)
+- ✅ Carousel pharmacy image (Indian pharmacist)
+- ✅ WhatsApp OTP for Patient Portal
+- ✅ Twilio cleanup from config.py, server_new.py, server.py
 
 ### Completed (Feb 6, 2026)
-- ✅ **New App Icon**: Updated all PWA icons with user-provided image
-- ✅ **Removed Captcha from DiaGyn Booking**: Replaced with mandatory WhatsApp OTP
-- ✅ **Guest Login - No OTP Required**: Button says "Continue" (not skip)
-- ✅ **Fresh Staff Credentials Created**: All accounts reset with new passwords
-- ✅ **Doctor Schedule Management UI**: 
-  - Doctors can manage their own weekly availability
-  - Set working hours for each day (MON-SUN)
-  - Configure slot duration, max patients per slot, buffer time
-  - Block specific dates for holidays/leave
-  - Accessible via Settings icon in Doctor Portal header
-- ✅ **Staff Activity Log**:
-  - Activity logging added to staff login (all portals)
-  - Activity logging added to DiaGyn appointment status changes
-  - Activity logging added to Orange Pharmacy order status updates
-  - Activity logging added to Mango Labs booking status updates
-  - Super Admin can view all activity logs in Activity Logs tab
-
-### Previously Completed (Feb 5, 2026)
-- ✅ Twilio Code Cleanup - removed all SMS code
-- ✅ PWA Optimization - faster "add to home screen"
-- ✅ Unified Staff Login at `/staff`
-- ✅ Super Admin Dashboard at `/super-admin`
-- ✅ Medicine Inventory Sync for pharmacy
-- ✅ WhatsApp notifications via MSG91
+- ✅ New App Icon with sonography machine image
+- ✅ Removed Captcha from DiaGyn Booking (mandatory WhatsApp OTP)
+- ✅ Guest Login without OTP
+- ✅ Staff credentials reset
+- ✅ Doctor Schedule Management UI
+- ✅ Staff Activity Log system
 
 ## Staff Credentials (Feb 6, 2026)
 
 | Role | Username | Password | Portal |
+|------|----------|----------|--------|
+| Super Admin | admin_nevika | Admin@2026 | /super-admin |
+| DiaGyn Staff | staff_diagyn | Staff@2026 | /staff |
+| Mango Labs Staff | staff_mango | Staff@2026 | /staff |
+| Orange Pharmacy Staff | staff_pharmacy | Staff@2026 | /staff |
+| Dr. Vikas | dr_vikas | DrVikas@2026 | /doctor-portal |
+| Dr. Neha | dr_neha | DrNeha@2026 | /doctor-portal |
+
+## Known Issues
+- WhatsApp OTP delivery requires users to first message business number (918108888330) to open 24-hour session window - this is a platform limitation
+- Overlapping modal issue in Orange Pharmacy (P2)
+
+## Code Architecture
+```
+/app
+├── backend/
+│   ├── routes/
+│   │   ├── auth_v2.py
+│   │   ├── whatsapp_otp.py
+│   │   └── ...
+│   └── server.py
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── IntroScreen.jsx (carousel images)
+│   │   │   ├── PortalScrollBar.jsx (gradient transition)
+│   │   │   └── BottomNav.jsx
+│   │   ├── pages/
+│   │   │   ├── Home.js (no border in header)
+│   │   │   ├── PatientPortal.js (Blinkit-style profile)
+│   │   │   └── ...
+└── memory/
+    └── PRD.md
+```
 |------|----------|----------|--------|
 | **Admin** | admin_nevika | Nevika@2026 | /super-admin |
 | **DiaGyn Staff** | staff_diagyn | Diagyn@2026 | /diagyn-staff |
