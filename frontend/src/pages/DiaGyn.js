@@ -1791,7 +1791,6 @@ const DiaGyn = () => {
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirm Appointment'}
               </Button>
-              </Button>
             </Card>
           </div>
         )}
