@@ -313,6 +313,10 @@ const DoctorPortal = () => {
             </div>
           </div>
           <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={() => { lightTap(); setShowScheduleManager(true); }}
+              className="text-white hover:bg-white/20 h-8 w-8 p-0" title="Manage Schedule">
+              <Settings className="w-4 h-4" />
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => { lightTap(); loadAppointments(); }}
               className="text-white hover:bg-white/20 h-8 w-8 p-0" disabled={refreshing}>
               <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
