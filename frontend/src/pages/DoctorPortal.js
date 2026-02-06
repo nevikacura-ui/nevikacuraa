@@ -622,6 +622,14 @@ const PatientCard = ({ apt, type, onAction }) => {
           )}
         </div>
       </div>
+      
+      {/* Schedule Manager Modal */}
+      {showScheduleManager && (
+        <DoctorScheduleManager 
+          doctorToken={localStorage.getItem('doctorToken')}
+          onClose={() => setShowScheduleManager(false)}
+        />
+      )}
     </div>
   );
 };
