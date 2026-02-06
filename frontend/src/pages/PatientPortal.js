@@ -247,7 +247,7 @@ const PatientPortal = () => {
               {!otpSent ? (
                 <>
                   <div>
-                    <Label className="text-gray-600">Mobile Number</Label>
+                    <Label className="text-gray-600">WhatsApp Number</Label>
                     <div className="flex gap-2 mt-1.5">
                       <div className="flex items-center px-3 bg-gray-100 rounded-l-xl border border-r-0 border-gray-200">
                         <span className="text-gray-500">+91</span>
@@ -266,10 +266,10 @@ const PatientPortal = () => {
                   <Button 
                     onClick={handleSendOtp}
                     disabled={loading || mobile.length < 10}
-                    className="w-full h-12 bg-teal-600 hover:bg-teal-700 rounded-xl text-lg"
+                    className="w-full h-12 bg-green-500 hover:bg-green-600 rounded-xl text-lg"
                     data-testid="portal-send-otp"
                   >
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send OTP'}
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send OTP via WhatsApp'}
                   </Button>
                   
                   <p className="text-center text-sm text-gray-500">
@@ -279,7 +279,7 @@ const PatientPortal = () => {
               ) : (
                 <>
                   <div className="text-center mb-4">
-                    <p className="text-gray-600">OTP sent to <strong>+91 {mobile}</strong></p>
+                    <p className="text-gray-600">OTP sent to WhatsApp <strong>+91 {mobile}</strong></p>
                     <button 
                       onClick={() => { setOtpSent(false); setOtp(''); }}
                       className="text-teal-600 text-sm underline mt-1"
