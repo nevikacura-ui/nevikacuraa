@@ -313,8 +313,9 @@ const DoctorPortal = () => {
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => { lightTap(); setShowScheduleManager(true); }}
-              className="text-white hover:bg-white/20 h-8 w-8 p-0" title="Manage Schedule">
+            <Button variant="ghost" size="sm" onClick={() => setShowScheduleManager(true)}
+              className="text-white hover:bg-white/20 h-8 w-8 p-0" title="Manage Schedule"
+              data-testid="manage-schedule-btn">
               <Settings className="w-4 h-4" />
             </Button>
             <Button variant="ghost" size="sm" onClick={() => { lightTap(); loadAppointments(); }}
