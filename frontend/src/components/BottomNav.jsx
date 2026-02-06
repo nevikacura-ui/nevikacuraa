@@ -15,9 +15,27 @@ const API = process.env.REACT_APP_BACKEND_URL;
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, setPatientAuth } = useAuth();
   const [isScrolling, setIsScrolling] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  
+  // WhatsApp OTP Login State
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginStep, setLoginStep] = useState('phone'); // 'phone' | 'otp'
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [mockOtp, setMockOtp] = useState(null);
+  const [countdown, setCountdown] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const otpRefs = useRef([]);
+  
+  // Countdown timer for resend
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
 
   // Determine active tab based on current path
   const getActiveTab = () => {
