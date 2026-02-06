@@ -215,7 +215,7 @@ const PortalScrollBar = () => {
 
   return (
     <div 
-      className="relative bg-white border-b border-slate-200/50 sticky top-[104px] z-40 overflow-hidden"
+      className="relative bg-white shadow-sm sticky top-[104px] z-40 overflow-hidden"
       style={{ 
         transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
         opacity: isVisible ? 1 : 0,
