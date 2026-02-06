@@ -359,6 +359,120 @@ const BottomNav = () => {
           </div>
         </DialogContent>
       </Dialog>
+      
+      {/* WhatsApp OTP Login Modal */}
+      <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
+        <DialogContent className="max-w-sm rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-center gap-2 text-xl font-bold text-slate-800">
+              <MessageCircle className="w-6 h-6 text-green-500" />
+              Login via WhatsApp
+            </DialogTitle>
+          </DialogHeader>
+          
+          {loginStep === 'phone' ? (
+            <div className="space-y-4 pt-2">
+              <p className="text-sm text-gray-500 text-center">
+                Enter your WhatsApp number to receive OTP
+              </p>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Input
+                  type="tel"
+                  placeholder="10-digit WhatsApp number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  className="pl-10 h-12 text-lg rounded-xl"
+                  data-testid="login-phone-input"
+                />
+              </div>
+              <Button
+                onClick={sendOTP}
+                disabled={loading || phone.length < 10}
+                className="w-full h-12 bg-green-500 hover:bg-green-600 rounded-xl text-base"
+                data-testid="send-login-otp-btn"
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <MessageCircle className="w-5 h-5 mr-2" />
+                    Send OTP via WhatsApp
+                  </>
+                )}
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center justify-center gap-2 text-gray-600 bg-gray-50 p-2 rounded-lg">
+                <Phone className="w-4 h-4" />
+                <span className="text-sm">OTP sent to ******{phone.slice(-4)}</span>
+              </div>
+              
+              {mockOtp && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
+                  <p className="text-xs text-yellow-600 mb-1">Test Mode - Use this OTP:</p>
+                  <p className="text-2xl font-mono font-bold text-yellow-700 tracking-widest">{mockOtp}</p>
+                </div>
+              )}
+              
+              <div className="flex justify-center gap-2">
+                {otp.map((digit, index) => (
+                  <Input
+                    key={index}
+                    ref={el => otpRefs.current[index] = el}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                    className="w-11 h-14 text-center text-2xl font-bold border-2 focus:border-green-500 rounded-lg"
+                    data-testid={`login-otp-input-${index}`}
+                  />
+                ))}
+              </div>
+              
+              <Button
+                onClick={verifyOTP}
+                disabled={loading || otp.join('').length !== 6}
+                className="w-full h-12 bg-green-500 hover:bg-green-600 rounded-xl text-base"
+                data-testid="verify-login-otp-btn"
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <Check className="w-5 h-5 mr-2" />
+                    Verify & Login
+                  </>
+                )}
+              </Button>
+              
+              <div className="flex items-center justify-between text-sm">
+                <button
+                  onClick={() => setLoginStep('phone')}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  Change number
+                </button>
+                {countdown > 0 ? (
+                  <span className="text-gray-400">Resend in {countdown}s</span>
+                ) : (
+                  <button
+                    onClick={sendOTP}
+                    disabled={loading}
+                    className="text-green-600 hover:text-green-700 flex items-center gap-1"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    Resend OTP
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Bottom padding spacer */}
       <div className="md:hidden h-20" />
