@@ -215,7 +215,7 @@ const PortalScrollBar = () => {
 
   return (
     <div 
-      className="relative bg-white sticky top-[104px] z-40 overflow-hidden"
+      className="relative bg-white border-b border-slate-200/50 sticky top-[104px] z-40 overflow-hidden"
       style={{ 
         transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
         opacity: isVisible ? 1 : 0,
@@ -327,10 +327,10 @@ const PortalScrollBar = () => {
 
       {/* Gradient Fades */}
       {showLeftArrow && (
-        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent pointer-events-none z-10"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
       )}
       {showRightArrow && (
-        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent pointer-events-none z-10"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
       )}
 
       {/* Hide scrollbar */}

@@ -509,7 +509,7 @@ const Home = () => {
         }}
       >
         {/* Top Row - Logo + Actions */}
-        <div className="border-b-0">
+        <div className={`border-b ${currentTheme.isLight ? 'border-slate-100' : 'border-white/20'}`}>
           <div className="max-w-7xl mx-auto px-4 py-2.5">
             <div className="flex items-center justify-between">
               {/* Logo */}
@@ -569,7 +569,7 @@ const Home = () => {
         </div>
 
         {/* Row 2 - Main Service Tabs (Zepto style) */}
-        <div className="bg-white">
+        <div className={`${currentTheme.isLight ? 'bg-slate-50/50' : 'bg-white/10 backdrop-blur-sm'}`}>
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide">
               {/* Nevika Cura / Home */}
