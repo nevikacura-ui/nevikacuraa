@@ -1636,7 +1636,7 @@ const Proton = () => {
                       {/* Right Side - Professional Image */}
                       <div className="w-[45%] relative">
                         <img 
-                          src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=500&fit=crop&crop=top"
+                          src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&h=500&fit=crop&crop=center"
                           alt="Lab Professional"
                           className="absolute bottom-0 right-0 h-full w-full object-cover object-top"
                         />
@@ -1814,7 +1814,7 @@ const Proton = () => {
                       {/* Right Side - Doctor Image */}
                       <div className="w-[45%] relative">
                         <img 
-                          src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=500&fit=crop"
+                          src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&h=500&fit=crop"
                           alt="Doctor"
                           className="absolute bottom-0 right-0 h-full w-full object-cover"
                         />
