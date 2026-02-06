@@ -92,11 +92,11 @@ class TestSMSRequest(BaseModel):
 
 @api_router.post("/test/send-sms")
 async def send_test_sms(request: TestSMSRequest):
-    """Test SMS endpoint - DISABLED (Twilio removed)"""
+    """Test SMS endpoint - DISABLED (Use WhatsApp OTP instead)"""
     return {
         "success": False, 
-        "error": "SMS service disabled - OTP not required for bookings",
-        "note": "Bookings now work without OTP verification. Email notifications are used instead."
+        "error": "SMS service disabled - Use WhatsApp OTP instead",
+        "note": "Bookings now use WhatsApp OTP verification via MSG91."
     }
 
 
