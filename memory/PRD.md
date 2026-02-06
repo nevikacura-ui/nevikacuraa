@@ -11,12 +11,24 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 ## What's Been Implemented
 
 ### Completed (Feb 7, 2026)
-- ✅ **Carousel Image Updated**: Replaced individual doctor portrait with healthcare consultation scene (doctor with patient) for the first slide
 - ✅ **Portal Switcher Redesigned**: 
   - Removed harsh white border line divider
-  - Added smooth gradient transition (`from-white via-slate-50/80 to-slate-100/50`)
-  - Added subtle shadow for depth
-  - Maintains page visual continuity while keeping section separation
+  - Added soft shadow (`shadow-sm`) for subtle depth transition
+  - Maintains visual continuity without stark line separation
+- ✅ **Carousel Pharmacy Image Updated**: 
+  - Replaced medicine strips image with beautiful pharmacy shop interior
+  - Shows pharmacist in a well-stocked pharmacy
+- ✅ **WhatsApp OTP for Patient Portal**:
+  - Patient Portal login now uses WhatsApp OTP via MSG91
+  - Updated UI to show "WhatsApp Number" and "Send OTP via WhatsApp"
+  - Green button styling for WhatsApp branding
+- ✅ **Twilio Cleanup Completed**:
+  - Removed Twilio references from config.py
+  - Cleaned server_new.py imports
+  - Updated server.py comments
+- ✅ **Footer Profile - WhatsApp OTP Login**:
+  - BottomNav profile button includes WhatsApp OTP login modal for non-authenticated users
+  - Patient Portal page uses WhatsApp OTP
 
 ### Completed (Feb 6, 2026)
 - ✅ **New App Icon**: Updated all PWA icons with user-provided image
