@@ -322,6 +322,24 @@ async def update_booking_status(
     
     await db.lab_bookings.update_one({"booking_id": booking_id}, {"$set": update_data})
     
+    # Log staff activity
+    try:
+        await db.staff_activity.insert_one({
+            "staff_id": staff.get("sub"),
+            "staff_name": staff.get("name"),
+            "action": f"booking_{data.status}",
+            "details": {
+                "booking_id": booking_id,
+                "patient_name": booking.get("patient_name"),
+                "tests": booking.get("test_names", [])
+            },
+            "portal": "mango_labs",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "date": datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        })
+    except Exception as e:
+        logger.error(f"Failed to log activity: {e}")
+    
     # Send notifications
     patient_phone = booking.get("patient_phone")
     patient_email = booking.get("patient_email")
