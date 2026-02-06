@@ -27,7 +27,7 @@ const CAROUSEL_SLIDES = [
     taglinePart1: '35,000+ Patients.',
     taglineHighlight: 'Trusted Beyond Measure.',
     icon: Calendar,
-    image: 'https://images.unsplash.com/photo-1679496124845-ac6957c8bffd?w=600&h=400&fit=crop',
+    image: 'https://images.unsplash.com/photo-1691935152546-3a9e05f4010b?w=600&h=400&fit=crop',
     gradient: 'from-[#1F4F46] to-[#2E6B5F]',
     highlightColor: '#4ADE80'
   },
