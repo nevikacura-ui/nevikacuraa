@@ -147,8 +147,104 @@ const BottomNav = () => {
     
     if (item.id === 'book') {
       setShowBookingModal(true);
+    } else if (item.id === 'profile' && !user) {
+      // Show WhatsApp OTP login modal for non-logged-in users
+      setShowLoginModal(true);
+      setLoginStep('phone');
+      setPhone('');
+      setOtp(['', '', '', '', '', '']);
+      setMockOtp(null);
     } else if (item.path) {
       navigate(item.path);
+    }
+  };
+  
+  // WhatsApp OTP Functions
+  const sendOTP = async () => {
+    if (!phone || phone.length < 10) {
+      toast.error('Please enter a valid 10-digit phone number');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/api/otp/whatsapp/send`, {
+        phone: phone,
+        purpose: 'profile_login'
+      });
+      
+      setLoginStep('otp');
+      setCountdown(30);
+      setMockOtp(res.data.mock ? res.data.otp : null);
+      toast.success('OTP sent via WhatsApp!', {
+        description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your WhatsApp'
+      });
+      setTimeout(() => otpRefs.current[0]?.focus(), 100);
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Failed to send OTP');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const verifyOTP = async () => {
+    const otpCode = otp.join('');
+    if (otpCode.length !== 6) {
+      toast.error('Enter 6-digit OTP');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/api/otp/whatsapp/verify`, {
+        phone: phone,
+        otp: otpCode
+      });
+      
+      // Login successful - try to get/create patient profile
+      try {
+        const profileRes = await axios.post(`${API}/api/patients/portal/login-mobile`, {
+          mobile: phone
+        });
+        
+        if (profileRes.data.token) {
+          localStorage.setItem('patientToken', profileRes.data.token);
+          setPatientAuth({
+            ...profileRes.data.patient,
+            token: profileRes.data.token
+          });
+        }
+      } catch (profileErr) {
+        // Profile doesn't exist - create guest profile
+        localStorage.setItem('guestPhone', phone);
+      }
+      
+      toast.success('Login successful!');
+      setShowLoginModal(false);
+      navigate('/patient-portal');
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Invalid OTP');
+      setOtp(['', '', '', '', '', '']);
+      otpRefs.current[0]?.focus();
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1);
+    setOtp(newOtp);
+    if (value && index < 5) otpRefs.current[index + 1]?.focus();
+    if (index === 5 && value && newOtp.join('').length === 6) {
+      setTimeout(() => verifyOTP(), 100);
+    }
+  };
+  
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
     }
   };
 
