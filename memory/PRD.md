@@ -1,472 +1,77 @@
-# Nevika Cura - Healthcare Application PRD
+# Nevika Cura - Product Requirements Document
 
 ## Original Problem Statement
-Complete healthcare platform with three main services:
-1. **DiaGyn** - Gynecology & Diabetes care clinic with appointment booking
-2. **Mango Health Labs** (formerly Proton Diagnostics) - Lab tests & health checkups
-3. **Orange Pharmacy** - Online pharmacy with medicine ordering
+Multi-portal healthcare application for:
+- DiaGyn (clinic appointments)
+- Mango Labs (diagnostic tests)  
+- Orange Pharmacy (medicine orders)
 
-## User Personas
-- Patients seeking lab tests and health checkups
-- Patients booking gynecology/diabetes consultations
-- Customers ordering medicines online
-- Staff managing appointments and orders (NEW: Senior-friendly interface)
-
-## Core Requirements
-- Multi-service healthcare platform with unified navigation
-- Lab test booking with home sample collection
-- Doctor appointment scheduling
-- Online pharmacy with prescription management
-- Payment integration (COD + Cashfree online payment)
-- **NEW: Unified Staff Portal for clinic appointment management**
-- **NEW: WhatsApp OTP verification for all bookings (MSG91)**
-
----
+With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 
 ## What's Been Implemented
 
-### Feb 5, 2026 - Image Search & Send Notifications COMPLETE
-
-#### Google Image Search for Medicines
-- ✅ **API Endpoint**: `GET /api/pharmacy/image-search?query={query}`
-- ✅ **Image Sources**: Unsplash (primary), Pixabay (fallback), Placeholders (final fallback)
-- ✅ **Auth Required**: Staff login token
-- ✅ **Response Fields**: `success`, `images[]`, `total`
-- ✅ **UI**: "Add Medicine" modal with Search Images input
-
-#### Send Invoice/Report via MSG91 & Resend
-| Feature | Endpoint | MSG91 Template | Email |
-|---------|----------|---------------|-------|
-| Send Invoice | `POST /api/pharmacy/orders/{id}/send-invoice` | `orange_pharmacy_confirm` | ✅ Resend |
-| Send Report | `POST /api/mango/bookings/{id}/send-report` | `proton_report_ready` | ✅ Resend |
-
-**Preconditions:**
-- Send Invoice requires `invoice_uploaded = true`
-- Send Report requires `report_uploaded = true`
-
-#### Testing Results
-- **22/22 Backend Tests Passed** (100%)
-- WhatsApp OTP tested with real phone: 9833188288
-
----
-
-### Feb 5, 2026 - WhatsApp OTP Notification System COMPLETE
-
-#### Implementation Details
-- ✅ **MSG91 Integration** with `nevika_otp_verify` AUTHENTICATION template
-- ✅ **Backend Service**: `/app/backend/services/whatsapp_otp.py`
-- ✅ **API Routes**: `/app/backend/routes/whatsapp_otp.py`
-
-#### API Endpoints
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/otp/whatsapp/send` | POST | Send OTP via WhatsApp |
-| `/api/otp/whatsapp/verify` | POST | Verify OTP code |
-| `/api/otp/whatsapp/resend` | POST | Resend OTP (invalidates old) |
-
-#### OTP Configuration
-- **Template**: `nevika_otp_verify` (MSG91 AUTHENTICATION)
-- **Expiry**: 5 minutes (300 seconds)
-- **Max Attempts**: 3 failed attempts before lockout
-- **Phone Format**: Automatically cleaned and prefixed with India code (91)
-
-#### Flows Using WhatsApp OTP
-| Flow | Purpose Code | Status |
-|------|-------------|--------|
-| Guest Login | `guest_login` | ✅ Working |
-| Signup | `signup` | ✅ Working |
-| DiaGyn Appointment | `appointment` | ✅ Working |
-| Mango Labs Booking | `lab_booking` | ✅ Working |
-| Orange Pharmacy Order | `pharmacy_order` | ✅ Working |
-| Glydex Portal | `glydex` | ✅ Working |
-| Evara Portal | `evara` | ✅ Working |
-
-#### Testing Results
-- **30/30 Backend Tests Passed** (100%)
-- **Production Mode**: Real MSG91 WhatsApp delivery confirmed
-
-#### Files Created/Modified
-- `/app/backend/services/whatsapp_otp.py` - OTP service
-- `/app/backend/routes/whatsapp_otp.py` - API routes
-- `/app/frontend/src/components/WhatsAppOTP.js` - Reusable component
-- `/app/frontend/src/components/AuthDialogV2.jsx` - Updated guest/signup
-- `/app/frontend/src/pages/DiaGyn.js` - Updated OTP handlers
-- `/app/frontend/src/pages/Mango.js` - Updated OTP handlers
-- `/app/frontend/src/pages/Pharmacy.js` - Updated OTP handlers
-- `/app/frontend/src/pages/Glydex.js` - Added WhatsApp OTP support
-- `/app/frontend/src/pages/Evara.js` - Added WhatsApp OTP support
-
----
-
-### Feb 5, 2026 - Unified Staff Login System COMPLETE
-
-#### Updated Staff Credentials
-| Portal | Username | Password | Redirects To |
-|--------|----------|----------|--------------|
-| Orange Pharmacy | `staff_pharmacy` | `12345678` | `/orange-staff` |
-| Mango Labs | `staff_mango` | `12345678` | `/mango-staff` |
-| DiaGyn Clinic | `staff_diagyn` | `12345678` | `/diagyn-staff` |
-
----
-
-### Feb 4, 2026 - DiaGyn Staff Portal Rebuild COMPLETE
-
-#### New Staff Portal Features
-- ✅ **Teal/Lime Green Theme** - Compact, senior-friendly UI
-- ✅ **Unified Booking Portal** - Book for both Pushpa & Amnion clinics (two clinic toggles)
-- ✅ **15-Minute Slot Intervals**
-- ✅ **IST-Based Session Logic**:
-  - Morning Session: 11:00 AM - 2:00 PM IST
-  - Evening Session: 6:00 PM - 10:00 PM IST
-  - No Session: 2pm-6pm (only Emergency available)
-- ✅ **Doctor Schedule-Based Slots**:
-  - Dr. Vikas Jha: Pushpa (Mon/Wed/Fri 6pm-10pm), Amnion (Mon-Sat 11am-2pm + Tue/Thu/Sat 6pm-10pm)
-  - Dr. Neha Patel: Pushpa (Mon-Sat 11am-2pm + Tue/Thu/Sat 6pm-10pm), Amnion (Mon/Wed/Fri 6pm-10pm)
-  - Sundays: No appointments
-- ✅ **Simplified Booking Flow**:
-  - **Walk-in Tab**: Current session slots only (disabled when no session active)
-  - **Emergency (24x7)**: Always available, no slot required
-  - **Book Appointment Tab**: Future dates with step-by-step flow
-- ✅ **Slot Blocking** - Patient-booked slots unavailable for staff
-- ✅ **Patient Database** - Mobile lookup for faster rebooking
-- ✅ **Appointment Types**: Walk-In, Scheduled, Emergency
-- ✅ **Patient Journey Tracking**: Booked → CheckedIn → WithDoctor → Completed
-- ✅ **Fee Collection**: Fee codes (NF, G1, G2, D1, D2, D3, O1, O2, O3, S1, S2) + Scan fees
-- ✅ **Collection Summary**: Daily/Weekly/Monthly totals
-
-#### Token Printing System (NEW - Feb 4, 2026)
-- ✅ **Auto Token on Check-in**: Token number generated when staff clicks CHECK IN
-- ✅ **Daily Sequential Numbering**: Tokens reset daily (continuous for whole day)
-- ✅ **Bluetooth Thermal Printer**: Everycom EC58 support (58mm)
-- ✅ **Token Receipt Format**:
-  - Clinic name & address
-  - TOKEN # (large font)
-  - Booking ID
-  - Appointment type (WALK-IN / EMERGENCY / SCHEDULED)
-  - Patient name, slot time, date
-  - Generation timestamp
-  - "Thank you for choosing NEVIKA CURA" + QR code
-- ✅ **Reprint Token**: Button on appointment cards
-- ✅ **Print Bill**: Dark yellow button for completed appointments
-  - Shows fees breakdown (code + scans)
-  - Patient name & mobile
-  - Total amount
-  - "Thank you" footer
-
-#### Role-Based Permissions (NEW - Feb 4, 2026)
-- ✅ **Staff Portal**:
-  - CAN: Check-in patients, move to "With Doctor"
-  - CAN: Print Token (on check-in) and Print Bill (for completed)
-  - CANNOT: Complete appointments, edit fees
-- ✅ **Doctor Portal**:
-  - CAN: Start consultation, Complete with fees/scans
-  - CAN: Edit total amount before completing
-  - CAN: Set follow-up date
-  - CANNOT: Check-in patients
-- ✅ **Haptic Feedback** on all buttons
-- ✅ **Real-time Sync** - Auto-refresh every 8 seconds
-- ✅ **Intro Screen Skip** - Staff pages bypass main app intro
-
-#### New Doctor Portal Features
-- ✅ **Doctor Portal** at `/doctor-portal`
-- ✅ **Patient Queue View** - Waiting, In Consultation, Completed sections
-- ✅ **Start Consultation** - Move patient from waiting to in-consult
-- ✅ **Complete Consultation Modal**:
-  - Fee Code Selection (NF, G1, G2, D1, D2, D3 for Dr. Vikas)
-  - Sonography/Scan Selection (ES, NT, GS, FL, UP, UT)
-  - Notes field
-  - Total calculation with breakdown
-- ✅ **Same Green/Orange Theme** as Staff Portal
-
-#### Portal Credentials
-| Portal | URL | Username | Password |
-|--------|-----|----------|----------|
-| Staff Portal | `/diagyn-staff` | `staff_diagyn` | `diagyn123` |
-| Doctor Portal | `/doctor-portal` | `dr_vikas` | `vikas123` |
-| Doctor Portal | `/doctor-portal` | `dr_neha` | `neha123` |
-| Orange Pharmacy Staff | `/pharmacy-staff` | `staff_pharmacy` | `staff123` |
-| Mango Labs Staff | `/mango-staff` | `staff_mango` | `staff123` |
-
-#### Files Created/Modified
-- `/app/backend/routes/diagyn_staff.py` - Backend API routes with schedule
-- `/app/frontend/src/pages/DiaGynStaffPortal.js` - Staff portal UI
-- `/app/frontend/src/pages/DoctorPortal.js` - Doctor portal UI
-
-### Feb 5, 2026 - Customer Order Tracking Page COMPLETE
-**Task:** Add public order tracking page for patients
-**Status:** COMPLETED (Feb 5, 2026)
-**Changes:**
-
-#### Order Tracking Page (`/order-tracking`)
-- ✅ **Public Access** - No login required
-- ✅ **Supports Both Order Types**:
-  - Pharmacy Orders (ORD*, PHM*)
-  - Lab Test Bookings (LAB*, MHL*)
-- ✅ **Visual Timeline** with emoji icons and timestamps
-- ✅ **Status Progress**:
-  - Pharmacy: Order Placed → Pharmacist Confirmed → Packing → Out for Delivery → Delivered
-  - Lab: Test Booked → Sample Collected → Processing → Report Ready → Completed
-- ✅ **Order Details**: Customer name, date, amount, items/tests
-- ✅ **Report Download** for lab bookings when ready
-- ✅ **Refresh Button** to check latest status
-
-**Files Created:**
-- `/app/backend/routes/tracking.py` - Public tracking API
-- `/app/frontend/src/pages/OrderTracking.js` - Tracking UI component
-
-**API Endpoint:** `GET /api/track/{tracking_id}`
-
-### Feb 5, 2026 - Enhanced Staff Portals COMPLETE
-**Task:** Build comprehensive staff portals for Orange Pharmacy and Mango Health Labs
-**Status:** COMPLETED (Feb 5, 2026)
-**Changes:**
-
-#### Orange Pharmacy Staff Portal (`/pharmacy-staff`)
-- ✅ **Login** - Username: `staff_pharmacy`, Password: `staff123`
-- ✅ **Dashboard** - Stats cards (Today, Pending, Delivery, Done)
-- ✅ **Orders View** - Order list with status workflow
-- ✅ **Order Status Workflow**: Booked → Pharmacist Call → Packing → Out for Delivery → Completed
-- ✅ **Invoice Upload** - Required before dispatching orders
-- ✅ **Send Invoice** - WhatsApp (MSG91) + Email (Resend) to customer
-- ✅ **Inventory View** - Medicine list with Add/Edit
-- ✅ **Add Medicine Form**:
-  - Medicine name, generic name, manufacturer, category, unit
-  - Pricing: MRP, Discount %, auto-calculated Sale Price
-  - Stock quantity, description
-- ✅ **Image Upload Modal** (3 options):
-  - Upload from device (file picker)
-  - Paste image URL
-  - Search images (Google/Pixabay search)
-
-#### Mango Health Labs Staff Portal (`/mango-staff`)
-- ✅ **Login** - Username: `staff_mango`, Password: `staff123`
-- ✅ **Dashboard** - Stats cards (Today, Pending, Processing, Ready)
-- ✅ **Bookings View** - Lab test booking list with status workflow
-- ✅ **Booking Status Workflow**: Test Booked → Sample Collected → In Process → Report Generated → Completed
-- ✅ **Report Upload** - Required before marking "Report Generated"
-- ✅ **Send Report** - WhatsApp + Email to patient
-- ✅ **Test Catalog View** - Test list with Add/Edit
-- ✅ **Add Test Form**:
-  - Test name, code, category, description
-  - Pricing: Price, Home Collection Price
-  - Sample type, turnaround time, fasting required
-  - Preparation instructions
-
-**Files Created/Modified:**
-- `/app/backend/routes/orange_pharmacy.py` - Pharmacy API routes (medicines, orders, image search)
-- `/app/backend/routes/mango_labs.py` - Lab API routes (tests, bookings, reports)
-- `/app/frontend/src/pages/OrangePharmacyStaffPortal.js` - Complete pharmacy staff UI
-- `/app/frontend/src/pages/MangoLabsStaffPortal.js` - Complete lab staff UI
-- `/app/frontend/src/App.js` - Fixed intro screen bypass for staff routes
-
-**Testing:** 12/12 backend tests passed, 100% frontend tests passed
-
-### Feb 5, 2026 - UI Fixes & Icon Updates
-**Task:** Fix splash crash, remove WhatsApp+OTP, replace images with icons
-**Status:** COMPLETED (Feb 5, 2026)
-**Changes:**
-- ✅ **Splash screen** - Verified working in browser (may be mobile-specific issue)
-- ✅ **Removed "WhatsApp + OTP Coming Soon"** from LoginPage.jsx login options
-- ✅ **Health Concern section** - Replaced stock images with minimalist gradient icons
-- ✅ **Family Care section** - Replaced stock images with emoji icons (👶 Kids, 🧘 Adult, 👴 Elderly)
-- ✅ **Medical Devices** - Kept actual product images as requested
-**Files Modified:**
-- `/app/frontend/src/pages/LoginPage.jsx` (removed WhatsApp OTP option)
-- `/app/frontend/src/pages/Pharmacy.js` (replaced images with icons)
-
-### Feb 4, 2026 - Patient Auth System Overhaul COMPLETE
-**Task:** Simplify guest login + implement Email+Password for returning users
-**Status:** COMPLETED (Feb 4, 2026)
-**Changes:**
-- ✅ **Guest button → Skip button** - No phone number required, instant access
-- ✅ **New Auth Flow:** Email → Check if user exists with password
-  - **New users:** Email → OTP → Set Password → Account created
-  - **Returning users:** Email → Password login (with OTP fallback option)
-- ✅ **Backend Endpoints Added:**
-  - `POST /api/auth/patient/check-email` - Check if email exists + has password
-  - `POST /api/auth/patient/set-password` - Set password after OTP verification
-  - `POST /api/auth/patient/login` - Email + Password login
-- ✅ **Email OTP verify** returns `has_password` flag
-- ✅ **Cashfree Payment Integration** - Verified working in production mode
-**Files Modified:** 
-- `/app/frontend/src/components/IntroScreen.jsx` (Auth UI flow)
-- `/app/backend/server.py` (New patient auth endpoints)
-**Testing:** All 17 backend tests passed, all UI tests passed
-
-### Feb 4, 2026 - Medical Devices Product Images Update
-**Last working item**:
--   **Task:** Update Medical Devices section on Orange Pharmacy page with user-provided product images
--   **Status:** COMPLETED (Feb 4, 2026)
--   **Changes:**
-    - Replaced generic stock images with actual product images for:
-      - Digital Thermometer (Beurer FT09)
-      - Glucometer Kit (Dr. Morepen GlucoOne BG03)
-      - Pulse Oximeter (BPL Smart Oxy)
-      - Nebulizer (actual product image)
-    - Blood Pressure Monitor uses an icon (no specific image provided)
-    - Images display with `object-contain` and padding for better presentation
--   **File Modified:** `/app/frontend/src/pages/Pharmacy.js` (lines 1600-1640)
-
-### Feb 5, 2026 - Unified Staff Login System COMPLETE
-**Task:** Create single staff login that redirects to respective portals based on role
-**Status:** COMPLETED (Feb 5, 2026)
-**Changes:**
-
-#### Unified Staff Login (`/staff`)
-- ✅ **Single Entry Point** - All staff use `/staff` to login
-- ✅ **Nevika Cura Branding** - Clean login with stethoscope icon
-- ✅ **Role-Based Redirects**:
-  - `pharmacy_staff` → `/orange-staff` (Orange Pharmacy)
-  - `lab_staff` / `diagnostics_staff` → `/mango-staff` (Mango Labs)
-  - `diagyn_staff` / `clinic_staff_*` → `/diagyn-staff` (DiaGyn Clinic)
-  - `doctor` → `/doctor-portal`
-  - `admin` / `super_admin` → `/admin`
-- ✅ **Portal Icons** - Visual indicators for Pharmacy, Labs, Clinic
-
-#### Updated Staff Credentials
-| Portal | Username | Password | Redirects To |
-|--------|----------|----------|--------------|
-| Orange Pharmacy | `staff_pharmacy` | `12345678` | `/orange-staff` |
-| Mango Labs | `staff_mango` | `12345678` | `/mango-staff` |
-| DiaGyn Clinic | `staff_diagyn` | `12345678` | `/diagyn-staff` |
-
-#### Renamed Portal Titles
-- ✅ **DiaGyn Staff** renamed to **Nevika Cura Staff** on login screen
-- ✅ Changed "Mango Health Labs" subtitle to "Staff Portal"
-
-#### Medicine Inventory Sync
-- ✅ **4,315+ Medicines** synced from Keep Mankind catalog
-- ✅ **Sync Button** in Inventory tab (refresh icon)
-- ✅ API: `POST /api/pharmacy/sync-inventory`
-
-#### Google Image Search for Medicines
-- ✅ **Multi-provider Search** - Pixabay + Unsplash fallback
-- ✅ API: `GET /api/pharmacy/image-search?query=medicine_name`
-- ✅ Returns up to 12 images with preview/full URLs
-
-#### Send Invoice/Report via MSG91 & Resend
-- ✅ **Pharmacy Invoice**: `POST /api/pharmacy/orders/{order_id}/send-invoice`
-  - Sends invoice via Email (Resend) + WhatsApp (MSG91)
-  - Requires invoice PDF to be uploaded first
-- ✅ **Lab Report**: `POST /api/mango/bookings/{booking_id}/send-report`
-  - Sends report via Email (Resend) + WhatsApp (MSG91)
-  - Requires report PDF to be uploaded first
-
-**Files Created:**
-- `/app/frontend/src/pages/UnifiedStaffLogin.js` - New unified login component
-
-**Files Modified:**
-- `/app/frontend/src/App.js` - Added unified login routes
-- `/app/frontend/src/pages/DiaGynStaffPortal.js` - Renamed title to "Nevika Cura Staff"
-- `/app/backend/routes/orange_pharmacy.py` - Enhanced image search, sync inventory
-
-**Testing:** 20/20 backend tests passed, 100% frontend tests passed
-
-### Feb 5, 2026 - UI Fixes & Icon Updates
-**Earlier item**:
--   **Task:** Simplified the splash screen - removed animated "Book.Order.Test.Care" text and fixed heart icon overlap. Updated carousel taglines.
--   **Status:** COMPLETED (Feb 4, 2026)
-
-### Earlier Updates (Dec 2025 - Feb 2026)
-- ✅ Unified header with service tabs (Nevika Cura, DiaGyn, Mango, Orange)
-
-#### Mango Health Labs (Lab Tests)
-- ✅ Test selection with categorized carousels
-- ✅ Horizontal scrolling test cards with pricing
-- ✅ "View Details" modal with AI-generated descriptions
-- ✅ "Imaging" tab for ECG/Sonography
-- ✅ Compact promo banner with MANGO15 coupon code
-- ✅ Trust badges (Certified Lab, Home Collection, etc.)
-- ✅ Dark green theme with orange buttons
-- ✅ Enlarged Mango logo on home page service card
-
-#### Payment Integration
-- ✅ Cashfree payment gateway integrated
-- ✅ Backend routes at `/api/payments/`
-- ✅ CashfreeCheckout component for online payments
-- ✅ **Three-Tier Payment System (Feb 3, 2026):**
-  - Mango Health Labs: Cash on Visit, QR/Card on Visit, Pay Online (5% OFF)
-  - Orange Pharmacy: Cash on Delivery, QR/Card on Delivery, Pay Online (2% OFF)
-- ✅ Smartphone icon import fixed in Pharmacy.js
-
-#### UI/UX
-- ✅ Professional carousel with solid bold colors
-- ✅ Red heart icon for Nevika Cura tab (visible on all pages)
-- ✅ Compact spacing on Mango home page
-- ✅ White container for test selection readability
-- ✅ **Back Navigation Buttons (Feb 3, 2026):**
-  - DiaGyn: "Back to Doctor Selection" (Step 2), "Back to Clinic Selection" (Step 3)
-  - Pharmacy: "Back to Cart" (Step 3)
-- ✅ **"Formerly Proton Diagnostics" text** - Added to Mango Health Labs header
-
----
-
-## Known Issues
-1. ~~**"Browse All Tests" Button** - State resets on page reload~~ ✅ FIXED (URL-based state management)
-2. ~~**File Naming** - Proton.js should be renamed to Mango.js~~ ✅ FIXED (renamed to Mango.js)
-
-## Mocked APIs
-- `send_whatsapp_message` - Stubbed
-- `send_sms` - Stubbed
-
----
-
-## Prioritized Backlog
-
-### P0 - Critical
-- [x] ~~Rename Proton.js → Mango.js~~ ✅ COMPLETED
-- [x] ~~Three-Tier Payment System~~ ✅ COMPLETED for both Mango & Pharmacy
-- [ ] Refactor Mango.js into smaller components (TestCard, CategoryCarousel, etc.) - File is very large
-
-### P1 - High Priority
-- [x] ~~Fix "Browse All Tests" button state persistence~~ ✅ COMPLETED
-- [x] ~~Implement Wishlist & Save for Later~~ ✅ COMPLETED (Mango & Pharmacy)
-- [x] ~~Fix Medicine Image Upload Portal~~ ✅ COMPLETED (real-time search, file upload)
-- [ ] Verify "Recently Viewed" feature on Pharmacy
-
-### P2 - Medium Priority
-- [ ] WhatsApp Chatbot implementation
-- [ ] Migrate test inventory from static file to MongoDB
-- [ ] Manual Pharmacy Inventory update
-
-### P3 - Low Priority
-- [ ] Refactor backend routes (decompose server.py)
-- [ ] Face ID camera fix for mobile
-
----
-
-## Architecture
-
-```
-/app/
-├── backend/
-│   ├── server.py              # Main FastAPI app
-│   ├── routes/
-│   │   └── cashfree.py        # Cashfree payment routes
-│   └── data/
-│       ├── diagnostic_tests.py # Lab test catalog
-│       └── medicine_inventory.py # Pharmacy inventory
-└── frontend/
-    ├── public/
-    │   └── mango-logo.png     # Mango Health Labs logo
-    └── src/
-        ├── components/
-        │   ├── ServiceHeader.jsx    # Tab navigation
-        │   ├── CashfreeCheckout.jsx # Payment component
-        │   └── ProtonAdBanner.jsx   # Mango ad banner
-        └── pages/
-            ├── Home.js            # Main landing page
-            ├── Mango.js           # Mango Health Labs ✅ RENAMED
-            ├── DiaGyn.js          # DiaGyn clinic
-            └── Pharmacy.js        # Orange Pharmacy
-```
-
-## Key API Endpoints
-- `GET /api/diagnostics/tests` - Get all lab tests
-- `POST /api/diagnostics/booking` - Create lab booking
-- `POST /api/payments/create-order` - Create Cashfree order
-- `POST /api/payments/verify` - Verify payment status
-
-## Test Credentials
-- Staff: `staff_diagyn` / `diagyn123`
-- Guest: Any test name and phone number
+### Completed (Feb 5, 2026)
+- ✅ **Twilio Code Cleanup**: Removed all Twilio SMS code from:
+  - `backend/.env` - removed 5 Twilio env vars
+  - `backend/services/sms.py` - deleted file
+  - `backend/services/notifications.py` - removed Twilio functions
+  - `backend/routes/auth_v2.py` - switched to mock OTP
+  - `backend/routes/teleconsultation.py` - removed Twilio notification
+  
+- ✅ **PWA Optimization**: 
+  - Updated `manifest.json` with minimal icons for faster parsing
+  - Updated `service-worker.js` v5 with minimal precache (only 2 files)
+  - Network-first for HTML, cache-first for static assets
+
+### Previously Completed
+- ✅ Unified Staff Login at `/staff`
+- ✅ Super Admin Dashboard at `/super-admin`
+- ✅ Medicine Inventory Sync for pharmacy
+- ✅ WhatsApp notifications via MSG91
+- ✅ Renamed to "Nevika Cura Staff Portal"
+
+## Active Issues
+
+### P0 - WhatsApp OTP Delivery (BLOCKED)
+- MSG91 API calls succeed but messages not delivered
+- Cause: WhatsApp 24-hour session window policy
+- User must send "Hi" to business number first
+- **Action Required**: Add UI instructions for users
+
+### P2 - Overlapping Modals in Pharmacy
+- Search button on image search modal may be unclickable
+- Needs frontend testing/debugging
+
+## Upcoming Tasks
+
+### P0 - Doctor Schedule Management
+- Backend routes exist at `/api/doctor-schedule/`
+- Frontend component at `DoctorSchedule.js` needs completion
+- Allow doctors to manage their own availability
+
+### P1 - Staff Activity Log
+- Backend model and API at `/api/activity-log`
+- Need logging middleware for critical actions
+- Frontend view in Super Admin dashboard
+
+## Future/Backlog
+
+- Staff Portal Enhancements (Patient History, Prescription Templates, etc.)
+- App Engagement Features (health content, reminders, loyalty programs)
+- Sample Barcode Scanning for Mango Labs
+- Prescription OCR for Pharmacy
+- Low Stock Alerts
+
+## Technical Stack
+- **Backend**: Python FastAPI
+- **Frontend**: React (Vite)
+- **Database**: MongoDB
+- **Messaging**: MSG91 (WhatsApp templates)
+- **Email**: Resend
+- **Auth**: JWT tokens
+
+## Staff Credentials
+- Super Admin: `staff_nevikacura` / `nevika123`
+- DiaGyn: `staff_diagyn` / `12345678`
+- Mango Labs: `staff_mango` / `12345678`
+- Orange Pharmacy: `staff_pharmacy` / `12345678`
