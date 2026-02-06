@@ -473,6 +473,24 @@ async def update_order_status(
     
     await db.pharmacy_orders.update_one({"order_id": order_id}, {"$set": update_data})
     
+    # Log staff activity
+    try:
+        await db.staff_activity.insert_one({
+            "staff_id": staff.get("sub"),
+            "staff_name": staff.get("name"),
+            "action": f"order_{data.status}",
+            "details": {
+                "order_id": order_id,
+                "customer_name": order.get("customer_name"),
+                "total_amount": order.get("total_amount")
+            },
+            "portal": "orange_pharmacy",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "date": datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        })
+    except Exception as e:
+        logger.error(f"Failed to log activity: {e}")
+    
     # Send notifications
     customer_phone = order.get("customer_phone")
     customer_email = order.get("customer_email")
