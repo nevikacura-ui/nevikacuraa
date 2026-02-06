@@ -215,8 +215,9 @@ const PortalScrollBar = () => {
 
   return (
     <div 
-      className="relative bg-white shadow-sm sticky top-[104px] z-40 overflow-hidden"
+      className="relative sticky top-[104px] z-40 overflow-hidden"
       style={{ 
+        background: 'linear-gradient(to bottom, #2d5a4a 0%, #3d6b5a 5%, #f8fafc 15%, #f8fafc 100%)',
         transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
         opacity: isVisible ? 1 : 0,
         transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out',
