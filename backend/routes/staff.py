@@ -244,6 +244,20 @@ async def staff_login(input: StaffLogin):
         'exp': datetime.now(timezone.utc) + timedelta(days=30)  # 30 days session
     }, JWT_SECRET, algorithm=JWT_ALGORITHM)
     
+    # Log staff activity
+    try:
+        await db.staff_activity.insert_one({
+            "staff_id": staff.get('id', str(staff.get('_id', ''))),
+            "staff_name": staff.get('name'),
+            "action": "login",
+            "details": {"method": "username" if input.username else "phone"},
+            "portal": staff.get('department') or staff.get('role'),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "date": datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        })
+    except Exception as e:
+        logger.error(f"Failed to log login activity: {e}")
+    
     return {
         "token": token,
         "staff": {
