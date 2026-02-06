@@ -13,7 +13,6 @@ import {
 const API = process.env.REACT_APP_BACKEND_URL;
 
 const DoctorScheduleManager = ({ doctorToken, onClose }) => {
-  console.log('DoctorScheduleManager mounted, token:', doctorToken ? 'present' : 'missing');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [schedule, setSchedule] = useState(null);
