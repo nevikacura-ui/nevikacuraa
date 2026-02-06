@@ -703,59 +703,6 @@ const IntroScreen = ({ onComplete, user }) => {
               </div>
             )}
             
-            {/* Guest: OTP Verification */}
-            {authStep === 'guestOtp' && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: '#dcfce7' }}>
-                  <MessageCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-xs text-green-700">OTP sent to WhatsApp: ******{mobile.slice(-4)}</span>
-                </div>
-                
-                {mockOtpGuest && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 text-center">
-                    <p className="text-xs text-yellow-600 mb-1">Test Mode OTP:</p>
-                    <p className="text-2xl font-mono font-bold text-yellow-700 tracking-widest">{mockOtpGuest}</p>
-                  </div>
-                )}
-                
-                <div className="flex gap-2 justify-center">
-                  {[0,1,2,3,4,5].map((i) => (
-                    <Input
-                      key={i}
-                      ref={(el) => { if (guestOtpRefs.current) guestOtpRefs.current[i] = el; }}
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={1}
-                      value={guestOtp[i] || ''}
-                      onChange={(e) => handleGuestOtpChange(i, e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Backspace' && !guestOtp[i] && i > 0) {
-                          guestOtpRefs.current[i-1]?.focus();
-                        }
-                      }}
-                      className="w-12 h-14 text-center text-2xl font-bold border-2"
-                      data-testid={`guest-otp-input-${i}`}
-                    />
-                  ))}
-                </div>
-                
-                <Button 
-                  onClick={verifyGuestOtp}
-                  disabled={loading || guestOtp.join('').length !== 6}
-                  className="w-full h-14 rounded-2xl font-bold"
-                  style={{ background: '#25D366' }}
-                  data-testid="verify-guest-otp-btn">
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Continue'}
-                </Button>
-                
-                <button 
-                  onClick={() => { setAuthStep('guestMobile'); setGuestOtp(['','','','','','']); setMockOtpGuest(''); }} 
-                  className="w-full text-center text-sm" 
-                  style={{ color: THEME.textMuted }}>
-                  Change Number
-                </button>
-              </div>
-            )}
           </div>
         </div>
       )}
