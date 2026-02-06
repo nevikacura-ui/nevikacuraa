@@ -8,7 +8,7 @@ import requests
 import os
 import uuid
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://nevika-dashboard.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://nevika-cura-portal.preview.emergentagent.com')
 
 # Test credentials
 PHARMACY_CREDENTIALS = {"username": "staff_pharmacy", "password": "staff123"}
