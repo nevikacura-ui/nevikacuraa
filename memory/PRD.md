@@ -11,17 +11,22 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 ## What's Been Implemented
 
 ### Completed (Feb 6, 2026)
-- ✅ **New App Icon**: Updated all PWA icons with user-provided image (192x192, 512x512, favicon, apple-touch-icon)
-- ✅ **Removed Captcha from DiaGyn Booking**: Captcha verification removed from appointment confirmation
-- ✅ **Mandatory WhatsApp OTP for DiaGyn Booking**: 
-  - OTP step is now mandatory before booking confirmation
-  - Updated label to "WhatsApp Number" with hint "(OTP will be sent)"
-  - OTP verification screen updated to say "Verify Your WhatsApp"
-- ✅ **Guest Login - No OTP Required**:
-  - Removed OTP verification from guest login flow
-  - Button now says "Continue" (not mentioning skip or OTP)
-  - Guest can enter WhatsApp number and proceed directly
-- ✅ **Fresh Staff Credentials Created**: All staff and doctor accounts reset with new passwords
+- ✅ **New App Icon**: Updated all PWA icons with user-provided image
+- ✅ **Removed Captcha from DiaGyn Booking**: Replaced with mandatory WhatsApp OTP
+- ✅ **Guest Login - No OTP Required**: Button says "Continue" (not skip)
+- ✅ **Fresh Staff Credentials Created**: All accounts reset with new passwords
+- ✅ **Doctor Schedule Management UI**: 
+  - Doctors can manage their own weekly availability
+  - Set working hours for each day (MON-SUN)
+  - Configure slot duration, max patients per slot, buffer time
+  - Block specific dates for holidays/leave
+  - Accessible via Settings icon in Doctor Portal header
+- ✅ **Staff Activity Log**:
+  - Activity logging added to staff login (all portals)
+  - Activity logging added to DiaGyn appointment status changes
+  - Activity logging added to Orange Pharmacy order status updates
+  - Activity logging added to Mango Labs booking status updates
+  - Super Admin can view all activity logs in Activity Logs tab
 
 ### Previously Completed (Feb 5, 2026)
 - ✅ Twilio Code Cleanup - removed all SMS code
@@ -31,7 +36,7 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 - ✅ Medicine Inventory Sync for pharmacy
 - ✅ WhatsApp notifications via MSG91
 
-## Staff Credentials (FRESH - Feb 6, 2026)
+## Staff Credentials (Feb 6, 2026)
 
 | Role | Username | Password | Portal |
 |------|----------|----------|--------|
@@ -49,16 +54,6 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 - Cause: WhatsApp 24-hour session window policy
 - User must send "Hi" to business number first
 
-## Upcoming Tasks
-
-### P0 - Doctor Schedule Management
-- Backend routes exist at `/api/doctor-schedule/`
-- Frontend component at `DoctorSchedule.js` needs completion
-
-### P1 - Staff Activity Log
-- Backend model and API at `/api/activity-log`
-- Need logging middleware and frontend view
-
 ## Technical Stack
 - **Backend**: Python FastAPI
 - **Frontend**: React (Vite)
@@ -66,3 +61,28 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 - **Messaging**: MSG91 (WhatsApp templates)
 - **Email**: Resend
 - **Auth**: JWT tokens
+
+## Key Features
+
+### Doctor Schedule Manager
+- Access: Doctor Portal → Settings icon (⚙️)
+- Features:
+  - Weekly schedule (MON-SUN)
+  - Toggle working/off days
+  - Multiple time slots per day
+  - Slot duration configuration
+  - Block dates for holidays
+
+### Staff Activity Log
+- Access: Super Admin Dashboard → Activity Logs tab
+- Tracks:
+  - Staff logins (all portals)
+  - Appointment check-ins, completions
+  - Order status updates
+  - Lab booking status changes
+
+## Future/Backlog
+- Staff Portal Enhancements (Patient History, Prescription Templates)
+- Pharmacy features (Low Stock Alerts, Prescription OCR)
+- Lab features (Sample Barcode Scanning)
+- App Engagement Features (health content, reminders)
