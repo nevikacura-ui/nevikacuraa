@@ -288,7 +288,7 @@ const IntroScreen = ({ onComplete, user }) => {
     }
   };
   
-  // Guest login - just mobile number, no OTP
+  // Guest login - direct access without OTP
   const continueAsGuest = async () => {
     if (!mobile || mobile.length !== 10) {
       toast.error('Enter valid 10-digit WhatsApp number');
@@ -297,24 +297,22 @@ const IntroScreen = ({ onComplete, user }) => {
     
     setLoading(true);
     try {
-      // Send WhatsApp OTP
-      const res = await axios.post(`${API}/otp/whatsapp/send`, { 
-        phone: mobile, 
-        purpose: 'guest_login' 
+      // Create guest session directly without OTP verification
+      const sessionRes = await axios.post(`${API}/auth/v2/guest/create-session`, { 
+        phone: mobile
       });
       
-      if (res.data.success) {
-        setAuthStep('guestOtp');
-        if (res.data.mock && res.data.otp) {
-          setMockOtpGuest(res.data.otp);
-        }
-        toast.success('OTP sent via WhatsApp!', {
-          description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your WhatsApp'
-        });
-        setTimeout(() => guestOtpRefs.current[0]?.focus(), 100);
-      }
+      localStorage.setItem('guestToken', sessionRes.data.session_token);
+      localStorage.setItem('guestMobile', mobile);
+      localStorage.setItem('guestMode', 'true');
+      toast.success('Welcome to Nevika Cura!');
+      onComplete();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to send OTP');
+      // If session creation fails, still allow guest access
+      localStorage.setItem('guestMobile', mobile);
+      localStorage.setItem('guestMode', 'true');
+      toast.success('Welcome to Nevika Cura!');
+      onComplete();
     }
     setLoading(false);
   };
