@@ -36,7 +36,7 @@ const CAROUSEL_SLIDES = [
     taglinePart1: '4,000+ Genuine Medicines.',
     taglineHighlight: '100% Assured Authenticity.',
     icon: Package,
-    image: 'https://images.unsplash.com/photo-1765031092161-a9ebe556117e?w=600&h=400&fit=crop',
+    image: 'https://images.pexels.com/photos/14797859/pexels-photo-14797859.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop',
     gradient: 'from-[#f97316] to-[#ea580c]',
     highlightColor: '#FEF08A'
   },
