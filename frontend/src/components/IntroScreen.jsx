@@ -671,16 +671,12 @@ const IntroScreen = ({ onComplete, user }) => {
               </div>
             )}
             
-            {/* Guest: WhatsApp OTP Flow */}
+            {/* Guest: Quick Entry */}
             {authStep === 'guestMobile' && (
               <div className="space-y-4">
                 <p className="text-sm" style={{ color: THEME.textMuted }}>
-                  Enter your WhatsApp number to receive OTP
+                  Enter your WhatsApp number to continue
                 </p>
-                <div className="flex items-center gap-2 p-3 rounded-xl mb-2" style={{ background: '#dcfce7' }}>
-                  <MessageCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-xs text-green-700">OTP will be sent via WhatsApp</span>
-                </div>
                 <div className="relative">
                   <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: THEME.textMuted }} />
                   <Input 
@@ -701,7 +697,7 @@ const IntroScreen = ({ onComplete, user }) => {
                   data-testid="guest-continue-btn">
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>
                     <MessageCircle className="w-5 h-5 mr-2" />
-                    Send OTP on WhatsApp
+                    Continue
                   </>}
                 </Button>
               </div>
