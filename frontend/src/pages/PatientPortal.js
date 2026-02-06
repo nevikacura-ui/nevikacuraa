@@ -82,12 +82,18 @@ const PatientPortal = () => {
     
     setLoading(true);
     try {
-      const response = await axios.post(`${API}/patients/portal/send-otp?mobile=${mobile}`);
+      // Use WhatsApp OTP via MSG91
+      const response = await axios.post(`${API}/otp/whatsapp/send`, {
+        phone: mobile,
+        purpose: 'patient_portal'
+      });
       setOtpSent(true);
-      setMockOtp(response.data.mock_otp || '');
-      toast.success('OTP sent to your mobile number');
+      setMockOtp(response.data.mock ? response.data.otp : '');
+      toast.success('OTP sent via WhatsApp!', {
+        description: response.data.mock ? `Use code: ${response.data.otp}` : 'Check your WhatsApp'
+      });
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to send OTP. Please register at the clinic first.');
+      toast.error(error.response?.data?.detail || 'Failed to send OTP');
     } finally {
       setLoading(false);
     }
@@ -101,23 +107,38 @@ const PatientPortal = () => {
     
     setLoading(true);
     try {
-      const response = await axios.post(`${API}/patients/portal/verify-otp?mobile=${mobile}&otp=${otp}`);
-      const { token: newToken, patient } = response.data;
+      // Verify WhatsApp OTP
+      await axios.post(`${API}/otp/whatsapp/verify`, {
+        phone: mobile,
+        otp: otp
+      });
       
-      localStorage.setItem('patientToken', newToken);
-      setToken(newToken);
-      setPatientInfo(patient);
-      setIsAuthenticated(true);
-      setEditForm({ email: patient.email || '', mobile: patient.mobile || '' });
-      
-      // Sync with AuthContext for global user state
-      if (setPatientAuth) {
-        setPatientAuth(newToken, patient);
+      // OTP verified, now try to get patient profile or create one
+      try {
+        const profileRes = await axios.post(`${API}/patients/portal/login-mobile`, {
+          mobile: mobile
+        });
+        
+        const { token: newToken, patient } = profileRes.data;
+        
+        localStorage.setItem('patientToken', newToken);
+        setToken(newToken);
+        setPatientInfo(patient);
+        setIsAuthenticated(true);
+        setEditForm({ email: patient.email || '', mobile: patient.mobile || '' });
+        
+        if (setPatientAuth) {
+          setPatientAuth(newToken, patient);
+        }
+        
+        toast.success(`Welcome, ${patient.name}!`);
+        fetchHistory(patient.patient_id, newToken);
+      } catch (profileError) {
+        // Patient not found - show registration message
+        toast.info('No patient record found. Please visit the clinic to register.');
+        setOtpSent(false);
+        setOtp('');
       }
-      
-      toast.success(`Welcome, ${patient.name}!`);
-      
-      fetchHistory(patient.patient_id, newToken);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Invalid OTP');
     } finally {
