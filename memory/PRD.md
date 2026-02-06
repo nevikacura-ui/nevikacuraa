@@ -10,43 +10,44 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 
 ## What's Been Implemented
 
-### Completed (Feb 7, 2026) - Session 2
-- ✅ **Portal Switcher - White Line Fixed**: 
-  - Removed hard border/line between header tabs and portal icons
-  - Added smooth gradient transition from header teal to content area
-  - Seamless visual flow across DiaGyn, Mango, and Orange portals
+### Completed (Feb 7, 2026) - Session 3
 - ✅ **Pharmacy Carousel Image**: 
-  - Updated "4000+ Medicines" slide with bright Indian pharmacy image
-  - Shows Indian pharmacist with turban in well-stocked pharmacy
-- ✅ **Profile Page Completely Rebuilt (Blinkit Style)**:
-  - Single WhatsApp OTP login flow (no double entry)
-  - New login screen with gradient header and WhatsApp number input
-  - 6-digit OTP entry with auto-focus
-  - After-login profile with:
-    - Avatar and account header
-    - Birthday banner
-    - Quick actions (Orders, Wallet, Help)
-    - Appearance toggle
-    - Your Information section
-    - Payment & Coupons section  
-    - Other Information section with Logout
-- ✅ **Twilio Cleanup**: Removed all remaining references
+  - Changed to medicine bottles on shelves (no person)
+  - Image: Colorful medicine bottles on wooden shelves
+- ✅ **Gradient Reversed**: 
+  - PortalScrollBar now transitions from light → teal (bottom)
+  - Content area is clean white, teal at bottom edge
+- ✅ **Profile Page - 30-Day Login Persistence**:
+  - Users stay logged in for 30 days
+  - Token + patient info stored in localStorage with expiry
+  - "Stay logged in for 30 days" message shown on login
+- ✅ **Profile Page - Removed Appearance Toggle**
+- ✅ **Profile Page - Built Real Features** (no more "coming soon"):
+  - Your Orders modal with appointments, pharmacy orders, lab tests
+  - Address Book with add/remove addresses
+  - Saved Doctors list
+  - Your Prescriptions list
+  - Payment & Rewards section
+  - All menu items are functional
+- ✅ **Cashfree Payment Confirmed Working**:
+  - Orange Pharmacy: ✅ Order creation works
+  - Mango Labs: ✅ Order creation works
+  - Both tested via API, orders created successfully
 
-### Completed (Feb 7, 2026) - Session 1
-- ✅ Portal Switcher gradient transition (from teal header)
-- ✅ Carousel pharmacy image (Indian pharmacist)
-- ✅ WhatsApp OTP for Patient Portal
-- ✅ Twilio cleanup from config.py, server_new.py, server.py
+### Completed (Feb 7, 2026) - Session 2
+- ✅ Portal Switcher white line fixed (gradient transition)
+- ✅ Profile rebuilt Blinkit-style with WhatsApp OTP
+- ✅ Twilio cleanup completed
 
 ### Completed (Feb 6, 2026)
 - ✅ New App Icon with sonography machine image
-- ✅ Removed Captcha from DiaGyn Booking (mandatory WhatsApp OTP)
+- ✅ Removed Captcha from DiaGyn Booking
 - ✅ Guest Login without OTP
 - ✅ Staff credentials reset
 - ✅ Doctor Schedule Management UI
 - ✅ Staff Activity Log system
 
-## Staff Credentials (Feb 6, 2026)
+## Staff Credentials
 
 | Role | Username | Password | Portal |
 |------|----------|----------|--------|
@@ -57,8 +58,14 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 | Dr. Vikas | dr_vikas | DrVikas@2026 | /doctor-portal |
 | Dr. Neha | dr_neha | DrNeha@2026 | /doctor-portal |
 
+## Payment Integration - Cashfree
+- Environment: Production
+- Credentials in `/app/backend/.env`
+- Supported: UPI, Cards, Wallets, Net Banking
+- Order types: pharmacy, lab_test, appointment
+
 ## Known Issues
-- WhatsApp OTP delivery requires users to first message business number (918108888330) to open 24-hour session window - this is a platform limitation
+- WhatsApp OTP delivery requires users to first message business number (918108888330)
 - Overlapping modal issue in Orange Pharmacy (P2)
 
 ## Code Architecture
@@ -66,20 +73,20 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 /app
 ├── backend/
 │   ├── routes/
-│   │   ├── auth_v2.py
+│   │   ├── cashfree.py (payment gateway)
 │   │   ├── whatsapp_otp.py
 │   │   └── ...
 │   └── server.py
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── IntroScreen.jsx (carousel images)
-│   │   │   ├── PortalScrollBar.jsx (gradient transition)
-│   │   │   └── BottomNav.jsx
+│   │   │   ├── IntroScreen.jsx (carousel)
+│   │   │   ├── PortalScrollBar.jsx (reversed gradient)
+│   │   │   └── CashfreeCheckout.jsx
 │   │   ├── pages/
-│   │   │   ├── Home.js (no border in header)
-│   │   │   ├── PatientPortal.js (Blinkit-style profile)
-│   │   │   └── ...
+│   │   │   ├── PatientPortal.js (30-day login, full features)
+│   │   │   ├── Pharmacy.js (Cashfree integrated)
+│   │   │   └── Mango.js (Cashfree integrated)
 └── memory/
     └── PRD.md
 ```
