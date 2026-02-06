@@ -697,6 +697,25 @@ async def update_appointment_status(
         {"$set": update_data}
     )
     
+    # Log staff activity
+    try:
+        await db.staff_activity.insert_one({
+            "staff_id": staff.get("sub"),
+            "staff_name": staff.get("name"),
+            "action": f"appointment_{data.status.lower()}",
+            "details": {
+                "appointment_id": appointment_id,
+                "patient_name": appointment.get("patient_name"),
+                "clinic": appointment.get("clinic"),
+                "total_amount": update_data.get("total_amount") if data.status == "Completed" else None
+            },
+            "portal": "diagyn",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "date": datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        })
+    except Exception as e:
+        logger.error(f"Failed to log activity: {e}")
+    
     # Prepare response with token data for printing
     response = {
         "success": True,
