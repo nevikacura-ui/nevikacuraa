@@ -1809,15 +1809,14 @@ class LoginWithOTP(BaseModel):
 # Store for auth OTPs (used for mock OTP authentication)
 auth_otp_storage = {}
 
-# Helper function - Twilio removed, using mock OTP only
-async def send_twilio_otp(phone: str) -> dict:
-    """Twilio removed - returns not configured"""
-    return {"success": False, "error": "SMS OTP service disabled - using mock OTP"}
+# SMS OTP disabled - using WhatsApp OTP via MSG91
+async def send_sms_otp(phone: str) -> dict:
+    """SMS OTP disabled - use WhatsApp OTP instead"""
+    return {"success": False, "error": "SMS OTP disabled - use WhatsApp OTP"}
 
-# Helper function - Twilio removed, using mock OTP only  
-async def verify_twilio_otp(phone: str, code: str) -> dict:
-    """Twilio removed - returns not configured"""
-    return {"success": False, "error": "SMS OTP service disabled - using mock OTP"}
+async def verify_sms_otp(phone: str, code: str) -> dict:
+    """SMS OTP disabled - use WhatsApp OTP instead"""
+    return {"success": False, "error": "SMS OTP disabled - use WhatsApp OTP"}
 
 @api_router.post("/auth/otp/send")
 async def send_auth_otp(request: AuthOTPRequest):
