@@ -69,6 +69,9 @@ const DoctorPortal = () => {
   const [notes, setNotes] = useState('');
   const [followUpDate, setFollowUpDate] = useState('');
   const [customTotal, setCustomTotal] = useState(''); // Doctor can edit total
+  
+  // Schedule Manager
+  const [showScheduleManager, setShowScheduleManager] = useState(false);
 
   // Calculate total from selected fees
   const calculateTotal = () => {
