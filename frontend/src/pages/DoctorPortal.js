@@ -337,7 +337,7 @@ const DoctorPortal = () => {
            style={{ background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%)` }}>
         <Card className="w-full max-w-sm p-6 shadow-2xl">
           <div className="text-center mb-6">
-            <img src="/mango-logo.png" alt="Mango Health Labs" className="w-24 h-auto mx-auto mb-3 bg-white rounded-xl p-2 shadow-md" />
+            <img src="/mango-logo.png" alt="Mango Health Labs" className="w-40 h-auto mx-auto mb-3 bg-white rounded-xl p-3 shadow-md" />
             <h1 className="text-xl font-bold" style={{ color: COLORS.primary }}>Doctor Portal</h1>
             <p className="text-sm text-gray-500">Mango Health Labs</p>
           </div>
@@ -391,7 +391,7 @@ const DoctorPortal = () => {
       <header className="sticky top-0 z-50 px-3 py-3" style={{ background: COLORS.primary }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/mango-logo.png" alt="Mango" className="w-8 h-8 bg-white rounded-lg p-1" />
+            <img src="/mango-logo.png" alt="Mango" className="w-12 h-12 bg-white rounded-lg p-1.5" />
             <div>
               <h1 className="text-white font-bold text-base">Doctor Portal</h1>
               <p className="text-white/70 text-xs">{doctorInfo?.name}</p>
