@@ -206,6 +206,7 @@ const DoctorPortal = () => {
 
   const [showBillingModal, setShowBillingModal] = useState(false);
   const [billingApt, setBillingApt] = useState(null);
+  const [billingFollowUp, setBillingFollowUp] = useState('');
   
   // Open billing modal (to add fees without completing)
   const openBillingModal = (apt) => {
@@ -213,7 +214,8 @@ const DoctorPortal = () => {
     setFeeCode(apt.fee_code || '');
     setScanCodes(apt.scan_codes || []);
     setCustomTotal(apt.total_amount ? apt.total_amount.toString() : '');
-    setNotes(apt.notes || '');
+    setNotes(apt.notes || apt.billing_notes || '');
+    setBillingFollowUp(apt.follow_up_date || '');
     setShowBillingModal(true);
     mediumTap();
   };
@@ -235,10 +237,11 @@ const DoctorPortal = () => {
         fee_code: feeCode,
         scan_codes: scanCodes,
         total_amount: finalTotal,
-        notes: notes
+        notes: notes,
+        follow_up_date: billingFollowUp || null
       }, getAuthHeaders());
       successPattern();
-      toast.success(`Billing saved! ₹${finalTotal}`);
+      toast.success(`Billing saved! ₹${finalTotal}${billingFollowUp ? ' • F/U: ' + billingFollowUp : ''}`);
       setShowBillingModal(false);
       loadAppointments();
     } catch (error) {
