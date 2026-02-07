@@ -411,6 +411,19 @@ const OrangePharmacyStaffPortal = () => {
                 data-testid="pharmacy-password"
               />
             </div>
+            <div className="flex items-center gap-2">
+              <input 
+                type="checkbox" 
+                id="rememberMe" 
+                checked={rememberMe} 
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 rounded accent-orange-500"
+                data-testid="pharmacy-remember-me"
+              />
+              <label htmlFor="rememberMe" className="text-sm text-slate-600 cursor-pointer">
+                Remember me for 30 days
+              </label>
+            </div>
             <Button
               onClick={handleLogin}
               disabled={loading}
