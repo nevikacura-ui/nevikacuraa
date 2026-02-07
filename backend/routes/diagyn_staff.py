@@ -740,6 +740,67 @@ async def update_appointment_status(
     return response
 
 
+# ============ Update Billing (Without Completing) ============
+
+class BillingUpdate(BaseModel):
+    fee_code: str
+    scan_codes: Optional[List[str]] = []
+    total_amount: Optional[float] = None
+    notes: Optional[str] = None
+
+@router.put("/appointments/{appointment_id}/billing")
+async def update_appointment_billing(
+    appointment_id: str,
+    data: BillingUpdate,
+    staff = Depends(verify_staff)
+):
+    """Update appointment billing details without completing the consultation"""
+    
+    appointment = await db.appointments.find_one({"id": appointment_id})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    update_data = {
+        "fee_code": data.fee_code,
+        "scan_codes": data.scan_codes or [],
+        "total_amount": data.total_amount,
+        "billing_notes": data.notes,
+        "billing_updated_at": datetime.now(timezone.utc).isoformat(),
+        "billing_updated_by": staff.get("name", "Doctor")
+    }
+    
+    await db.appointments.update_one(
+        {"id": appointment_id},
+        {"$set": update_data}
+    )
+    
+    # Log billing activity
+    try:
+        await db.staff_activity.insert_one({
+            "staff_id": staff.get("sub"),
+            "staff_name": staff.get("name"),
+            "action": "appointment_billing_updated",
+            "details": {
+                "appointment_id": appointment_id,
+                "patient_name": appointment.get("patient_name"),
+                "fee_code": data.fee_code,
+                "total_amount": data.total_amount
+            },
+            "portal": "diagyn",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "date": datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        })
+    except Exception as e:
+        logger.error(f"Failed to log billing activity: {e}")
+    
+    return {
+        "success": True,
+        "message": f"Billing updated - ₹{data.total_amount}",
+        "fee_code": data.fee_code,
+        "total_amount": data.total_amount
+    }
+
+
 # ============ Collection Summary ============
 
 @router.get("/summary/daily")
