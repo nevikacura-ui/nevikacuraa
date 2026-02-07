@@ -1,0 +1,108 @@
+{
+  "summary": "Completed frontend testing of Patient Portal profile features. All features working correctly: 30-day login persistence, My Orders modal with tabs, My Lab Tests modal, and Wallet modal with add money functionality.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "All modals",
+        "issues": ["Minor: Missing DialogContent aria-describedby warning in console - accessibility improvement needed"]
+      }
+    ]
+  },
+  "features_verified": {
+    "30_day_login_persistence": {
+      "status": "WORKING",
+      "localStorage_keys": ["patientToken", "patientLoginExpiry", "patientInfo"],
+      "ui_elements_verified": [
+        "Login screen shows 'Stay logged in for 30 days' text",
+        "Profile screen shows 'Logged in for 30 days' text",
+        "patientLoginExpiry timestamp correctly set (30 days from login)"
+      ],
+      "session_expiry_behavior": "Expired sessions are correctly detected and cleared on page load",
+      "logout_behavior": "Logout clears all session data (patientToken, patientLoginExpiry, patientInfo)"
+    },
+    "my_orders_modal": {
+      "status": "WORKING",
+      "trigger": "Quick Action button 'My Orders'",
+      "tabs": ["All", "Pharmacy", "Appointments"],
+      "content_displays": [
+        "Appointments: doctor_name, clinic, date, time, status badge",
+        "Pharmacy Orders: order_id, item count, total price, status badge"
+      ],
+      "tab_switching": "Working - clicking tabs filters content correctly"
+    },
+    "my_lab_tests_modal": {
+      "status": "WORKING",
+      "trigger": "Quick Action button 'Lab Tests'",
+      "content_displays": [
+        "test_name",
+        "lab name (Mango Health Labs)",
+        "date",
+        "status badge (Report Ready, Booked, etc.)"
+      ],
+      "empty_state": "Shows 'No lab tests booked' with 'Book Lab Test' CTA"
+    },
+    "wallet_modal": {
+      "status": "WORKING",
+      "trigger": "Quick Action button 'Wallet'",
+      "features_tested": [
+        "Balance display (₹ amount with gradient card)",
+        "Quick add buttons (₹100, ₹200, ₹500, ₹1000)",
+        "Custom amount input",
+        "Add money button (dynamically shows entered amount)",
+        "Balance updates correctly after adding money",
+        "Recent Transactions section (shows 'No transactions yet')"
+      ],
+      "storage": "Balance stored in localStorage under 'walletBalance' key",
+      "mocked": "MOCKED - Wallet transactions stored in localStorage only (no backend API)"
+    }
+  },
+  "login_ui_tests": {
+    "phone_input": {
+      "data_testid": "login-phone-input",
+      "validation": "Filters non-numeric characters, max 10 digits"
+    },
+    "send_otp_button": {
+      "data_testid": "send-otp-btn",
+      "disabled_states": {
+        "empty_input": true,
+        "partial_input_5_digits": true,
+        "full_input_10_digits": false
+      }
+    },
+    "otp_inputs": {
+      "data_testid": "otp-input-{0-5}",
+      "auto_advance": "Working - moves to next input after digit entry"
+    },
+    "whatsapp_otp": "Production mode - sends real OTP via MSG91 WhatsApp"
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_87.json"
+  ],
+  "action_items": [
+    "Add aria-describedby to DialogContent components to fix accessibility warnings"
+  ],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "note": "Testing used API mocking via Playwright route interception since real WhatsApp OTP is required for production login"
+  },
+  "seed_data_creation": "Mock data injected via Playwright for testing: 1 appointment, 1 pharmacy order, 1 lab test",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Patient Portal features are fully working. WhatsApp OTP login is in PRODUCTION mode (real OTP delivery via MSG91). To test authenticated state, use Playwright route interception to mock /api/patients/portal/me and /api/patients/portal/{id}/history endpoints. Wallet add money feature is MOCKED (localStorage only, no backend API).",
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": [
+      "Wallet add money - stores balance in localStorage only (no backend transaction API)"
+    ]
+  }
+}
