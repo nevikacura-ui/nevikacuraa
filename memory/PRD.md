@@ -28,6 +28,9 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
   - Default: Checked (30-day persistence)
   - When unchecked: Session-based login (no expiry stored)
   - Visual: "Remember me for 30 days" label with themed checkbox
+- ✅ **Updated Mango Health Labs Logo**:
+  - New logo saved to `/frontend/public/mango-logo.png`
+  - Updated in: MangoLabsStaffPortal (login + header), DoctorPortal (login + header), UnifiedStaffLogin, HealthPackages, ProtonReportDownload, Mango main page hero
 
 ### Completed (Feb 7, 2026) - Session 4
 - ✅ **Doctor Portal - Add Fees Before Completion**:
