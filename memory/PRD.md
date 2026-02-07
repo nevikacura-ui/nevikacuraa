@@ -10,6 +10,19 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 
 ## What's Been Implemented
 
+### Completed (Feb 7, 2026) - Session 4
+- ✅ **Doctor Portal - Add Fees Before Completion**:
+  - New "ADD FEES" button (orange) for patients in consultation
+  - Opens billing modal to add fee code, scan codes, and total
+  - Saves billing without completing the appointment
+  - "EDIT FEES" shown if billing already added
+- ✅ **DiaGyn Staff Portal - Mobile Number Display**:
+  - Patient mobile number shown in teal badge beside patient name
+  - Clickable to initiate phone call (tap-to-call)
+  - Phone icon with number clearly visible
+- ✅ **Staff Credentials Recreated**:
+  - All staff accounts recreated in correct database (test_database)
+
 ### Completed (Feb 7, 2026) - Session 3
 - ✅ **Pharmacy Carousel Image**: 
   - Changed to medicine bottles on shelves (no person)
