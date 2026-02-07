@@ -45,6 +45,7 @@ const OrangePharmacyStaffPortal = () => {
   
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true); // Default to 30-day login
   
   // Views: orders, inventory, add_medicine
   const [activeView, setActiveView] = useState('orders');
@@ -173,7 +174,7 @@ const OrangePharmacyStaffPortal = () => {
     }
   }, [isAuthenticated, fetchOrders, fetchMedicines, fetchStats]);
 
-  // Login with 30-day persistence
+  // Login with optional 30-day persistence
   const handleLogin = async () => {
     if (!username || !password) {
       toast.error('Enter username and password');
@@ -184,15 +185,21 @@ const OrangePharmacyStaffPortal = () => {
       const res = await axios.post(`${API}/api/staff/login`, { username, password });
       const { token, staff } = res.data;
       
-      // Store with 30-day expiry
-      const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
+      // Store token and info
       localStorage.setItem('staffToken', token);
       localStorage.setItem('staffInfo', JSON.stringify(staff));
-      localStorage.setItem('staffLoginExpiry', expiryTime.toString());
+      
+      // Only store expiry if "Remember Me" is checked
+      if (rememberMe) {
+        const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
+        localStorage.setItem('staffLoginExpiry', expiryTime.toString());
+      } else {
+        localStorage.removeItem('staffLoginExpiry');
+      }
       
       setStaffInfo(staff);
       setIsAuthenticated(true);
-      toast.success(`Welcome, ${staff.name || username}! (Logged in for 30 days)`);
+      toast.success(rememberMe ? `Welcome, ${staff.name || username}! (Logged in for 30 days)` : `Welcome, ${staff.name || username}!`);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Login failed');
     }
