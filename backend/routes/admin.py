@@ -195,6 +195,51 @@ async def toggle_staff_status(staff_id: str, admin = Depends(verify_admin)):
     return {"message": f"Staff {'activated' if new_status else 'deactivated'}", "is_active": new_status}
 
 
+# ============ Password Reset (Emergency) ============
+
+class PasswordReset(BaseModel):
+    username: str
+    new_password: str
+
+@router.post("/reset-password")
+async def reset_staff_password(data: PasswordReset, admin = Depends(verify_admin)):
+    """Reset a staff member's password"""
+    import bcrypt
+    
+    staff = await db.staff.find_one({"username": data.username})
+    if not staff:
+        raise HTTPException(status_code=404, detail="Staff not found")
+    
+    # Hash new password
+    password_hash = bcrypt.hashpw(data.new_password.encode(), bcrypt.gensalt()).decode()
+    
+    await db.staff.update_one(
+        {"username": data.username},
+        {"$set": {"password_hash": password_hash, "is_active": True}}
+    )
+    
+    return {"message": f"Password reset for {data.username}", "success": True}
+
+
+@router.post("/reset-all-passwords")
+async def reset_all_passwords(admin = Depends(verify_admin)):
+    """Reset ALL staff passwords to 'test' - EMERGENCY USE ONLY"""
+    import bcrypt
+    
+    password_hash = bcrypt.hashpw("test".encode(), bcrypt.gensalt()).decode()
+    
+    result = await db.staff.update_many(
+        {},
+        {"$set": {"password_hash": password_hash, "is_active": True}}
+    )
+    
+    return {
+        "message": "All passwords reset to 'test'",
+        "accounts_updated": result.modified_count,
+        "new_password": "test"
+    }
+
+
 # ============ Dashboard Stats ============
 
 @router.get("/stats")
