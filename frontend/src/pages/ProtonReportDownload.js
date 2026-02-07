@@ -111,7 +111,7 @@ const ProtonReportDownload = () => {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex items-center gap-3">
-            <img src="/mango-logo.png" alt="Mango Health Labs" className="w-10 h-10 rounded-xl bg-white p-1 shadow-sm" />
+            <img src="/mango-logo.png" alt="Mango Health Labs" className="w-14 h-14 rounded-xl bg-white p-1.5 shadow-sm" />
             <div>
               <h1 className="font-bold text-slate-800">Mango Health Labs</h1>
               <p className="text-xs text-slate-500">Report Download</p>
