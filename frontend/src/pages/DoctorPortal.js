@@ -337,10 +337,7 @@ const DoctorPortal = () => {
            style={{ background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%)` }}>
         <Card className="w-full max-w-sm p-6 shadow-2xl">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3"
-                 style={{ background: COLORS.primary }}>
-              <Stethoscope className="w-8 h-8 text-white" />
-            </div>
+            <img src="/mango-logo.png" alt="Mango Health Labs" className="w-24 h-auto mx-auto mb-3 bg-white rounded-xl p-2 shadow-md" />
             <h1 className="text-xl font-bold" style={{ color: COLORS.primary }}>Doctor Portal</h1>
             <p className="text-sm text-gray-500">Mango Health Labs</p>
           </div>
