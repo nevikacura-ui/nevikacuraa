@@ -204,6 +204,50 @@ const DoctorPortal = () => {
     }
   };
 
+  const [showBillingModal, setShowBillingModal] = useState(false);
+  const [billingApt, setBillingApt] = useState(null);
+  
+  // Open billing modal (to add fees without completing)
+  const openBillingModal = (apt) => {
+    setBillingApt(apt);
+    setFeeCode(apt.fee_code || '');
+    setScanCodes(apt.scan_codes || []);
+    setCustomTotal(apt.total_amount ? apt.total_amount.toString() : '');
+    setNotes(apt.notes || '');
+    setShowBillingModal(true);
+    mediumTap();
+  };
+  
+  // Save billing without completing
+  const saveBilling = async () => {
+    if (!feeCode) {
+      errorPattern();
+      toast.error('Select fee code');
+      return;
+    }
+    
+    const calculatedTotal = calculateTotal();
+    const finalTotal = customTotal !== '' ? parseFloat(customTotal) : calculatedTotal;
+    
+    setLoading(true);
+    try {
+      await axios.put(`${API}/api/diagyn-staff/appointments/${billingApt.id}/billing`, {
+        fee_code: feeCode,
+        scan_codes: scanCodes,
+        total_amount: finalTotal,
+        notes: notes
+      }, getAuthHeaders());
+      successPattern();
+      toast.success(`Billing saved! ₹${finalTotal}`);
+      setShowBillingModal(false);
+      loadAppointments();
+    } catch (error) {
+      errorPattern();
+      toast.error('Failed to save billing');
+    }
+    setLoading(false);
+  };
+
   const openCompleteModal = (apt) => {
     setSelectedApt(apt);
     setFeeCode('');
