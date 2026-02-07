@@ -326,6 +326,7 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
     heavyTap();
     localStorage.removeItem('staffToken');
     localStorage.removeItem('staffInfo');
+    localStorage.removeItem('staffLoginExpiry');
     setIsAuthenticated(false);
     toast.success('Logged out');
   };
