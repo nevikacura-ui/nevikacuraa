@@ -630,59 +630,244 @@ const PatientPortal = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Orders Modal */}
+      {/* Orders Modal - Enhanced with Tabs */}
       <Dialog open={showOrdersModal} onOpenChange={setShowOrdersModal}>
         <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Your Orders</DialogTitle>
+            <DialogTitle>My Orders</DialogTitle>
           </DialogHeader>
+          
+          {/* Tabs */}
+          <div className="flex gap-2 mb-4">
+            {['all', 'pharmacy', 'appointments'].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setOrdersTab(tab)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  ordersTab === tab 
+                    ? 'bg-teal-500 text-white' 
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {tab === 'all' ? 'All' : tab === 'pharmacy' ? 'Pharmacy' : 'Appointments'}
+              </button>
+            ))}
+          </div>
+          
           <div className="space-y-3">
-            {appointments.length > 0 && (
+            {/* Appointments */}
+            {(ordersTab === 'all' || ordersTab === 'appointments') && appointments.length > 0 && (
               <div>
                 <h4 className="text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
                   <Calendar className="w-4 h-4" /> Appointments ({appointments.length})
                 </h4>
                 {appointments.map((apt, idx) => (
-                  <div key={idx} className="p-3 bg-gray-50 rounded-xl mb-2">
-                    <p className="font-medium">{apt.doctor_name || 'Doctor Visit'}</p>
-                    <p className="text-sm text-gray-500">{apt.date} - {apt.status}</p>
+                  <div key={idx} className="p-4 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl mb-2 border border-teal-100">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-semibold text-gray-800">{apt.doctor_name || 'Doctor Visit'}</p>
+                        <p className="text-sm text-gray-500 mt-1">{apt.clinic || 'DiaGyn Healthcare'}</p>
+                        <p className="text-xs text-gray-400 mt-1">{apt.date} at {apt.time || '10:00 AM'}</p>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        apt.status === 'Completed' ? 'bg-green-100 text-green-700' :
+                        apt.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                        'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {apt.status || 'Scheduled'}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
             )}
-            {orders.length > 0 && (
+            
+            {/* Pharmacy Orders */}
+            {(ordersTab === 'all' || ordersTab === 'pharmacy') && orders.length > 0 && (
               <div>
                 <h4 className="text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
                   <Pill className="w-4 h-4" /> Pharmacy Orders ({orders.length})
                 </h4>
                 {orders.map((order, idx) => (
-                  <div key={idx} className="p-3 bg-gray-50 rounded-xl mb-2">
-                    <p className="font-medium">Order #{order.order_id?.slice(-6) || idx + 1}</p>
-                    <p className="text-sm text-gray-500">₹{order.total} - {order.status}</p>
+                  <div key={idx} className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl mb-2 border border-orange-100">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-semibold text-gray-800">Order #{order.order_id?.slice(-6) || `ORD${idx + 1}`}</p>
+                        <p className="text-sm text-gray-500 mt-1">{order.items?.length || 0} items</p>
+                        <p className="text-lg font-bold text-orange-600 mt-1">₹{order.total || 0}</p>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+                        order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                        'bg-blue-100 text-blue-700'
+                      }`}>
+                        {order.status || 'Processing'}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
             )}
-            {labTests.length > 0 && (
-              <div>
-                <h4 className="text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
-                  <FlaskConical className="w-4 h-4" /> Lab Tests ({labTests.length})
-                </h4>
-                {labTests.map((test, idx) => (
-                  <div key={idx} className="p-3 bg-gray-50 rounded-xl mb-2">
-                    <p className="font-medium">{test.test_name || 'Lab Test'}</p>
-                    <p className="text-sm text-gray-500">{test.date} - {test.status}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-            {appointments.length === 0 && orders.length === 0 && labTests.length === 0 && (
+            
+            {/* Empty State */}
+            {((ordersTab === 'all' && appointments.length === 0 && orders.length === 0) ||
+              (ordersTab === 'pharmacy' && orders.length === 0) ||
+              (ordersTab === 'appointments' && appointments.length === 0)) && (
               <div className="text-center py-8 text-gray-500">
                 <Package className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                <p>No orders yet</p>
-                <p className="text-sm">Book an appointment or order medicines!</p>
+                <p className="font-medium">No {ordersTab === 'all' ? 'orders' : ordersTab} yet</p>
+                <p className="text-sm mt-1">
+                  {ordersTab === 'pharmacy' ? 'Order medicines from Orange Pharmacy!' : 
+                   ordersTab === 'appointments' ? 'Book a doctor appointment!' : 
+                   'Start by booking an appointment or ordering medicines!'}
+                </p>
+                <Button 
+                  className="mt-4 bg-teal-500 hover:bg-teal-600"
+                  onClick={() => { setShowOrdersModal(false); navigate('/'); }}
+                >
+                  Browse Services
+                </Button>
               </div>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Lab Tests Modal */}
+      <Dialog open={showLabTestsModal} onOpenChange={setShowLabTestsModal}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FlaskConical className="w-5 h-5 text-teal-600" />
+              My Lab Tests
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            {labTests.length > 0 ? (
+              labTests.map((test, idx) => (
+                <div key={idx} className="p-4 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl border border-teal-100">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-semibold text-gray-800">{test.test_name || test.tests?.join(', ') || 'Lab Test'}</p>
+                      <p className="text-sm text-gray-500 mt-1">{test.lab || 'Mango Health Labs'}</p>
+                      <p className="text-xs text-gray-400 mt-1">{test.date || test.booking_date}</p>
+                      {test.report_url && (
+                        <button 
+                          onClick={() => window.open(test.report_url, '_blank')}
+                          className="mt-2 text-sm text-teal-600 font-medium flex items-center gap-1"
+                        >
+                          <FileText className="w-4 h-4" /> View Report
+                        </button>
+                      )}
+                    </div>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      test.status === 'Report Ready' || test.status === 'Completed' ? 'bg-green-100 text-green-700' :
+                      test.status === 'Sample Collected' ? 'bg-blue-100 text-blue-700' :
+                      test.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                      'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {test.status || 'Booked'}
+                    </span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <FlaskConical className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                <p className="font-medium">No lab tests booked</p>
+                <p className="text-sm mt-1">Book tests from Mango Health Labs!</p>
+                <Button 
+                  className="mt-4 bg-teal-500 hover:bg-teal-600"
+                  onClick={() => { setShowLabTestsModal(false); navigate('/mango'); }}
+                >
+                  Book Lab Test
+                </Button>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Wallet Modal */}
+      <Dialog open={showWalletModal} onOpenChange={setShowWalletModal}>
+        <DialogContent className="max-w-md rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-teal-600" />
+              Nevika Wallet
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* Balance Card */}
+            <div className="bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl p-6 text-white">
+              <p className="text-sm text-white/80">Available Balance</p>
+              <p className="text-4xl font-bold mt-1">₹{walletBalance}</p>
+              <p className="text-xs text-white/60 mt-2">Use for medicines, tests & appointments</p>
+            </div>
+            
+            {/* Quick Add Options */}
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Quick Add</p>
+              <div className="grid grid-cols-4 gap-2">
+                {[100, 200, 500, 1000].map(amount => (
+                  <button
+                    key={amount}
+                    onClick={() => setAddMoneyAmount(amount.toString())}
+                    className={`p-3 rounded-xl text-sm font-semibold transition-all ${
+                      addMoneyAmount === amount.toString()
+                        ? 'bg-teal-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    ₹{amount}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Custom Amount */}
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Or enter amount</p>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
+                  <Input
+                    type="number"
+                    placeholder="Enter amount"
+                    value={addMoneyAmount}
+                    onChange={(e) => setAddMoneyAmount(e.target.value)}
+                    className="pl-8 h-12 rounded-xl"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Add Money Button */}
+            <Button 
+              className="w-full h-12 bg-teal-500 hover:bg-teal-600 rounded-xl text-base font-semibold"
+              disabled={!addMoneyAmount || parseInt(addMoneyAmount) < 10}
+              onClick={() => {
+                const amount = parseInt(addMoneyAmount);
+                if (amount >= 10) {
+                  setWalletBalance(prev => prev + amount);
+                  localStorage.setItem('walletBalance', (walletBalance + amount).toString());
+                  toast.success(`₹${amount} added to wallet!`);
+                  setAddMoneyAmount('');
+                } else {
+                  toast.error('Minimum ₹10 required');
+                }
+              }}
+            >
+              Add ₹{addMoneyAmount || '0'} to Wallet
+            </Button>
+            
+            {/* Transaction History */}
+            <div className="border-t pt-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">Recent Transactions</p>
+              <div className="text-center py-4 text-gray-400 text-sm">
+                No transactions yet
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
