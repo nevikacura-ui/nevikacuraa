@@ -429,7 +429,8 @@ const DoctorPortal = () => {
             <div className="space-y-2">
               {inConsultPatients.map(apt => (
                 <PatientCard key={apt.id} apt={apt} type="consult" 
-                  onAction={() => openCompleteModal(apt)} />
+                  onAction={() => openCompleteModal(apt)}
+                  onBilling={() => openBillingModal(apt)} />
               ))}
             </div>
           </div>
