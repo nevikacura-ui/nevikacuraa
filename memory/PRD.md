@@ -10,6 +10,20 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 
 ## What's Been Implemented
 
+### Completed (Feb 7, 2026) - Session 5
+- ✅ **30-Day Persistent Login for ALL Staff Portals**:
+  - Mango Labs Staff Portal (`/mango-staff`): Added 30-day login persistence
+  - Orange Pharmacy Staff Portal (`/orange-staff`): Added 30-day login persistence
+  - DiaGyn Staff Portal (`/diagyn-staff`): Already implemented
+  - Doctor Portal (`/doctor-portal`): Already implemented
+  - Implementation details:
+    - `staffToken` stored in localStorage
+    - `staffInfo` stored in localStorage
+    - `staffLoginExpiry` timestamp (30 days from login)
+    - On page load, checks if session expired
+    - Clears all auth data on logout
+    - Shows "Logged in for 30 days" toast on successful login
+
 ### Completed (Feb 7, 2026) - Session 4
 - ✅ **Doctor Portal - Add Fees Before Completion**:
   - New "ADD FEES" button (orange) for patients in consultation
