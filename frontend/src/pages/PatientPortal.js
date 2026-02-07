@@ -300,20 +300,21 @@ const PatientPortal = () => {
   const quickActions = [
     { 
       icon: Receipt, 
-      label: 'Your Orders', 
-      count: orders.length + appointments.length + labTests.length, 
+      label: 'My Orders', 
+      count: orders.length + appointments.length, 
       onClick: () => setShowOrdersModal(true) 
     },
     { 
-      icon: CreditCard, 
-      label: 'Nevika Wallet', 
-      balance: `₹${walletBalance}`, 
-      onClick: () => toast.info('Add money to wallet coming soon!') 
+      icon: FlaskConical, 
+      label: 'Lab Tests', 
+      count: labTests.length, 
+      onClick: () => setShowLabTestsModal(true) 
     },
     { 
-      icon: HelpCircle, 
-      label: 'Need Help?', 
-      onClick: () => window.open('tel:+919833188288', '_self') 
+      icon: CreditCard, 
+      label: 'Wallet', 
+      balance: `₹${walletBalance}`, 
+      onClick: () => setShowWalletModal(true) 
     },
   ];
   
