@@ -198,9 +198,7 @@ const HealthPackages = () => {
             {/* Mango Health Labs Packages - Featured */}
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
-                  <FlaskConical className="w-4 h-4 text-white" />
-                </div>
+                <img src="/mango-logo.png" alt="Mango Health Labs" className="w-10 h-8 object-contain bg-white rounded-lg p-1 shadow-sm" />
                 <div>
                   <h2 className="text-lg font-semibold">Mango Health Labs Packages</h2>
                   <p className="text-xs text-gray-500">Premium diagnostic packages by Mango Health Labs</p>
