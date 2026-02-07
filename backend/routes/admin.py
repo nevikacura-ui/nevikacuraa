@@ -53,6 +53,8 @@ class StaffCreate(BaseModel):
     role: str  # clinic_staff, pharmacy_staff, diagnostic_staff, doctor
     department: Optional[str] = None
     email: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
 
 class StaffUpdate(BaseModel):
     name: Optional[str] = None
