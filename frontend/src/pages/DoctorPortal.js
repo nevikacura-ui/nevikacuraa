@@ -54,6 +54,7 @@ const DoctorPortal = () => {
   
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true); // Default to 30-day login
   
   const [selectedDate, setSelectedDate] = useState(getIndianDate());
   const [selectedClinic, setSelectedClinic] = useState('all');
@@ -126,10 +127,16 @@ const DoctorPortal = () => {
     try {
       const res = await axios.post(`${API}/api/staff/login`, { username, password });
       
-      // Store with 30-day expiry
-      const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
+      // Store token
       localStorage.setItem('doctorToken', res.data.token);
-      localStorage.setItem('doctorLoginExpiry', expiryTime.toString());
+      
+      // Only store expiry if "Remember Me" is checked
+      if (rememberMe) {
+        const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
+        localStorage.setItem('doctorLoginExpiry', expiryTime.toString());
+      } else {
+        localStorage.removeItem('doctorLoginExpiry');
+      }
       
       const info = {
         name: res.data.staff?.name || res.data.name,
@@ -140,7 +147,7 @@ const DoctorPortal = () => {
       setDoctorInfo(info);
       setIsAuthenticated(true);
       successPattern();
-      toast.success(`Welcome, ${info.name}! (Logged in for 30 days)`);
+      toast.success(rememberMe ? `Welcome, ${info.name}! (Logged in for 30 days)` : `Welcome, ${info.name}!`);
     } catch (error) {
       errorPattern();
       toast.error('Login failed');
@@ -348,6 +355,19 @@ const DoctorPortal = () => {
               <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password" className="pl-10 h-11" data-testid="doctor-password"
                 onKeyPress={(e) => e.key === 'Enter' && handleLogin()} />
+            </div>
+            <div className="flex items-center gap-2">
+              <input 
+                type="checkbox" 
+                id="rememberMe" 
+                checked={rememberMe} 
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 rounded accent-teal-500"
+                data-testid="doctor-remember-me"
+              />
+              <label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
+                Remember me for 30 days
+              </label>
             </div>
             <Button onClick={handleLogin} disabled={loading}
               className="w-full h-12 text-base font-bold" data-testid="doctor-login-btn"
