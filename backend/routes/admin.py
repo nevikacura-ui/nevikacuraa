@@ -115,6 +115,7 @@ async def admin_login(input: AdminLogin):
 async def create_staff(staff: StaffCreate, admin = Depends(verify_admin)):
     """Create a new staff member"""
     import uuid
+    import bcrypt
     
     existing = await db.staff.find_one({"phone": staff.phone})
     if existing:
@@ -124,20 +125,29 @@ async def create_staff(staff: StaffCreate, admin = Depends(verify_admin)):
     import random
     access_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
     
+    # Hash password if provided
+    password_hash = None
+    if hasattr(staff, 'password') and staff.password:
+        password_hash = bcrypt.hashpw(staff.password.encode(), bcrypt.gensalt()).decode()
+    
     staff_doc = {
         "id": str(uuid.uuid4()),
+        "username": staff.username if hasattr(staff, 'username') else None,
         "name": staff.name,
         "phone": staff.phone,
         "role": staff.role,
         "department": staff.department,
         "email": staff.email,
         "access_code": access_code,
+        "password_hash": password_hash,
         "is_active": True,
+        "active": True,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
     await db.staff.insert_one(staff_doc)
     staff_doc.pop("_id", None)
+    staff_doc.pop("password_hash", None)
     
     return {"message": "Staff created", "staff": staff_doc}
 
