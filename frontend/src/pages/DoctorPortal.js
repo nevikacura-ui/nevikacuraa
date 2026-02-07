@@ -668,6 +668,27 @@ const DoctorPortal = () => {
                   placeholder="Add notes..." className="h-10" />
               </div>
 
+              {/* Follow-up Date */}
+              <div>
+                <label className="text-sm font-bold text-gray-700 mb-2 block flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-teal-600" />
+                  FOLLOW-UP DATE (Shared with Staff)
+                </label>
+                <Input 
+                  type="date" 
+                  value={billingFollowUp} 
+                  onChange={(e) => { lightTap(); setBillingFollowUp(e.target.value); }}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="h-12 rounded-xl border-2 border-teal-200 focus:border-teal-500"
+                />
+                {billingFollowUp && (
+                  <p className="text-xs text-teal-600 mt-1 flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    Follow-up: {new Date(billingFollowUp).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                  </p>
+                )}
+              </div>
+
               {/* Total - Editable */}
               {feeCode && (
                 <div className="p-4 rounded-xl" style={{ background: '#fff7ed' }}>
