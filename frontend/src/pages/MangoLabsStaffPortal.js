@@ -207,7 +207,7 @@ const MangoLabsStaffPortal = () => {
       <div className="min-h-screen bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center p-4">
         <Card className="w-full max-w-md p-8 shadow-2xl">
           <div className="text-center mb-8">
-            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-teal-100 flex items-center justify-center"><FlaskConical className="w-10 h-10 text-teal-600" /></div>
+            <img src="/mango-logo.png" alt="Mango Health Labs" className="w-32 h-auto mx-auto mb-4 bg-white rounded-xl p-2 shadow-md" />
             <h1 className="text-2xl font-bold text-slate-800">Mango Health Labs</h1>
             <p className="text-slate-500">Staff Portal</p>
           </div>
@@ -229,7 +229,7 @@ const MangoLabsStaffPortal = () => {
     <div className="min-h-screen bg-slate-50">
       <div className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-4 py-4 sticky top-0 z-50">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3"><button onClick={() => navigate('/')} className="p-2 hover:bg-white/10 rounded-lg"><ArrowLeft className="w-5 h-5" /></button><div><h1 className="font-bold text-lg">Mango Health Labs</h1><p className="text-xs text-teal-100">{staffInfo?.name || 'Staff'}</p></div></div>
+          <div className="flex items-center gap-3"><button onClick={() => navigate('/')} className="p-2 hover:bg-white/10 rounded-lg"><ArrowLeft className="w-5 h-5" /></button><img src="/mango-logo.png" alt="Mango Health Labs" className="w-10 h-10 bg-white rounded-lg p-1" /><div><h1 className="font-bold text-lg">Mango Health Labs</h1><p className="text-xs text-teal-100">{staffInfo?.name || 'Staff'}</p></div></div>
           <div className="flex items-center gap-2"><button onClick={() => { fetchBookings(); fetchTests(); fetchStats(); }} className="p-2 hover:bg-white/10 rounded-lg"><RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} /></button><button onClick={handleLogout} className="p-2 hover:bg-white/10 rounded-lg"><LogOut className="w-5 h-5" /></button></div>
         </div>
       </div>
