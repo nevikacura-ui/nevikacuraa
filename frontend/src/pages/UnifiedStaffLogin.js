@@ -182,7 +182,7 @@ const UnifiedStaffLogin = () => {
               <span className="text-xs text-orange-600">Pharmacy</span>
             </div>
             <div className="flex flex-col items-center p-2 rounded-lg bg-yellow-50">
-              <FlaskConical className="w-5 h-5 text-yellow-600 mb-1" />
+              <img src="/mango-logo.png" alt="Mango" className="w-8 h-5 object-contain mb-1" />
               <span className="text-xs text-yellow-700">Labs</span>
             </div>
             <div className="flex flex-col items-center p-2 rounded-lg bg-teal-50">
