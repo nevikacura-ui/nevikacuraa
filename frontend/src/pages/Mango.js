@@ -1636,9 +1636,9 @@ const Proton = () => {
                       {/* Right Side - Professional Image */}
                       <div className="w-[45%] relative">
                         <img 
-                          src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=500&fit=crop&crop=top"
-                          alt="Lab Professional"
-                          className="absolute bottom-0 right-0 h-full w-full object-cover object-top"
+                          src="/blood-vial-hand.png"
+                          alt="Blood Vial Test"
+                          className="absolute bottom-0 right-0 h-full w-full object-cover object-center"
                         />
                       </div>
                     </div>
@@ -1775,8 +1775,8 @@ const Proton = () => {
                       {/* Right Side - Healthcare Worker */}
                       <div className="w-[45%] relative">
                         <img 
-                          src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=500&fit=crop"
-                          alt="Healthcare Professional"
+                          src="/home-blood-collection.jpg"
+                          alt="Phlebotomist Collecting Blood"
                           className="absolute bottom-0 right-0 h-full w-full object-cover"
                         />
                       </div>
