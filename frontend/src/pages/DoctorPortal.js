@@ -85,10 +85,24 @@ const DoctorPortal = () => {
     return total;
   };
 
+  // 30 days login persistence
+  const LOGIN_EXPIRY_DAYS = 30;
+  const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+
   // ============ Auth ============
   useEffect(() => {
     const token = localStorage.getItem('doctorToken');
     const info = localStorage.getItem('doctorInfo');
+    const expiry = localStorage.getItem('doctorLoginExpiry');
+    
+    // Check if session expired
+    if (expiry && new Date().getTime() > parseInt(expiry)) {
+      localStorage.removeItem('doctorToken');
+      localStorage.removeItem('doctorInfo');
+      localStorage.removeItem('doctorLoginExpiry');
+      return;
+    }
+    
     if (token && info) {
       try {
         setDoctorInfo(JSON.parse(info));
@@ -96,6 +110,7 @@ const DoctorPortal = () => {
       } catch (e) {
         localStorage.removeItem('doctorToken');
         localStorage.removeItem('doctorInfo');
+        localStorage.removeItem('doctorLoginExpiry');
       }
     }
   }, []);
@@ -110,7 +125,12 @@ const DoctorPortal = () => {
     heavyTap();
     try {
       const res = await axios.post(`${API}/api/staff/login`, { username, password });
+      
+      // Store with 30-day expiry
+      const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
       localStorage.setItem('doctorToken', res.data.token);
+      localStorage.setItem('doctorLoginExpiry', expiryTime.toString());
+      
       const info = {
         name: res.data.staff?.name || res.data.name,
         role: res.data.staff?.role || res.data.role,
@@ -120,7 +140,7 @@ const DoctorPortal = () => {
       setDoctorInfo(info);
       setIsAuthenticated(true);
       successPattern();
-      toast.success(`Welcome, ${info.name}!`);
+      toast.success(`Welcome, ${info.name}! (Logged in for 30 days)`);
     } catch (error) {
       errorPattern();
       toast.error('Login failed');
@@ -132,6 +152,7 @@ const DoctorPortal = () => {
     heavyTap();
     localStorage.removeItem('doctorToken');
     localStorage.removeItem('doctorInfo');
+    localStorage.removeItem('doctorLoginExpiry');
     setIsAuthenticated(false);
     toast.success('Logged out');
   };
