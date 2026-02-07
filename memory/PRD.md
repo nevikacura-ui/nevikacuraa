@@ -23,6 +23,11 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
     - On page load, checks if session expired
     - Clears all auth data on logout
     - Shows "Logged in for 30 days" toast on successful login
+- ✅ **"Remember Me" Checkbox on All Portals**:
+  - Added to: DiaGyn Staff, Mango Labs, Orange Pharmacy, Doctor Portal
+  - Default: Checked (30-day persistence)
+  - When unchecked: Session-based login (no expiry stored)
+  - Visual: "Remember me for 30 days" label with themed checkbox
 
 ### Completed (Feb 7, 2026) - Session 4
 - ✅ **Doctor Portal - Add Fees Before Completion**:
