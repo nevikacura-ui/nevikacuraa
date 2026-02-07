@@ -242,13 +242,55 @@ async def reset_all_passwords(admin = Depends(verify_admin)):
     
     result = await db.staff.update_many(
         {},
-        {"$set": {"password_hash": password_hash, "is_active": True}}
+        {"$set": {"password_hash": password_hash, "is_active": True, "active": True}}
     )
     
     return {
         "message": "All passwords reset to 'test'",
         "accounts_updated": result.modified_count,
         "new_password": "test"
+    }
+
+
+@router.post("/setup-default-staff")
+async def setup_default_staff(admin = Depends(verify_admin)):
+    """Create default staff accounts with proper usernames and passwords"""
+    import bcrypt
+    import uuid
+    
+    password_hash = bcrypt.hashpw("test".encode(), bcrypt.gensalt()).decode()
+    
+    default_staff = [
+        {"username": "dr_vikas", "name": "Dr. Vikas Jha", "role": "doctor", "department": "diagyn", "phone": "9876543210"},
+        {"username": "staff_diagyn", "name": "DiaGyn Staff", "role": "diagyn_staff", "department": "diagyn", "phone": "9876543211"},
+        {"username": "staff_mango", "name": "Mango Labs Staff", "role": "lab_staff", "department": "mango", "phone": "9876543212"},
+        {"username": "staff_pharmacy", "name": "Orange Pharmacy Staff", "role": "pharmacy_staff", "department": "pharmacy", "phone": "9876543213"},
+    ]
+    
+    created = []
+    for staff in default_staff:
+        # Delete existing with same username
+        await db.staff.delete_many({"username": staff["username"]})
+        
+        staff_doc = {
+            "id": str(uuid.uuid4()),
+            "username": staff["username"],
+            "name": staff["name"],
+            "role": staff["role"],
+            "department": staff["department"],
+            "phone": staff["phone"],
+            "password_hash": password_hash,
+            "is_active": True,
+            "active": True,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.staff.insert_one(staff_doc)
+        created.append(staff["username"])
+    
+    return {
+        "message": "Default staff created",
+        "accounts": created,
+        "password": "test"
     }
 
 
