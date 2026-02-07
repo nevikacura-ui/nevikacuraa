@@ -391,7 +391,7 @@ const DoctorPortal = () => {
       <header className="sticky top-0 z-50 px-3 py-3" style={{ background: COLORS.primary }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Stethoscope className="w-6 h-6 text-white" />
+            <img src="/mango-logo.png" alt="Mango" className="w-8 h-8 bg-white rounded-lg p-1" />
             <div>
               <h1 className="text-white font-bold text-base">Doctor Portal</h1>
               <p className="text-white/70 text-xs">{doctorInfo?.name}</p>
