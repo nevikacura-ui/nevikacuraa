@@ -608,7 +608,7 @@ const DoctorPortal = () => {
 };
 
 // ============ Patient Card ============
-const PatientCard = ({ apt, type, onAction }) => {
+const PatientCard = ({ apt, type, onAction, onBilling }) => {
   const status = STATUS_STYLES[apt.status] || STATUS_STYLES['Booked'];
   
   return (
@@ -632,7 +632,8 @@ const PatientCard = ({ apt, type, onAction }) => {
             </div>
           </div>
           
-          {type === 'done' && apt.total_amount > 0 && (
+          {/* Show amount for done OR if billing was added while in consult */}
+          {(type === 'done' || apt.fee_code) && apt.total_amount > 0 && (
             <span className="font-bold text-lg" style={{ color: '#F97316' }}>₹{apt.total_amount}</span>
           )}
         </div>
@@ -653,11 +654,21 @@ const PatientCard = ({ apt, type, onAction }) => {
           )}
           
           {type === 'consult' && (
-            <button onClick={() => { heavyTap(); onAction(); }}
-              className="px-4 py-2 rounded-lg text-white text-sm font-bold shadow transition-all active:scale-95"
-              style={{ background: '#0d9488' }}>
-              COMPLETE <CheckCircle2 className="w-4 h-4 inline ml-1" />
-            </button>
+            <div className="flex gap-2">
+              {/* Add Billing Button */}
+              <button onClick={() => { mediumTap(); onBilling(); }}
+                className="px-3 py-2 rounded-lg text-sm font-bold shadow transition-all active:scale-95 border-2"
+                style={{ borderColor: '#F97316', color: '#F97316', background: '#fff7ed' }}>
+                <IndianRupee className="w-4 h-4 inline mr-1" />
+                {apt.fee_code ? 'EDIT' : 'ADD'} FEES
+              </button>
+              {/* Complete Button */}
+              <button onClick={() => { heavyTap(); onAction(); }}
+                className="px-4 py-2 rounded-lg text-white text-sm font-bold shadow transition-all active:scale-95"
+                style={{ background: '#0d9488' }}>
+                COMPLETE <CheckCircle2 className="w-4 h-4 inline ml-1" />
+              </button>
+            </div>
           )}
           
           {type === 'done' && apt.fee_code && (
