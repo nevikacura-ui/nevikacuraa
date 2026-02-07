@@ -237,10 +237,24 @@ const DiaGynStaffPortal = () => {
     };
   }, [printerConnected]);
 
-  // ============ Auth ============
+  // 30 days login persistence
+const LOGIN_EXPIRY_DAYS = 30;
+const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+
+// ============ Auth ============
   useEffect(() => {
     const token = localStorage.getItem('staffToken');
     const info = localStorage.getItem('staffInfo');
+    const expiry = localStorage.getItem('staffLoginExpiry');
+    
+    // Check if session expired
+    if (expiry && new Date().getTime() > parseInt(expiry)) {
+      localStorage.removeItem('staffToken');
+      localStorage.removeItem('staffInfo');
+      localStorage.removeItem('staffLoginExpiry');
+      return;
+    }
+    
     if (token && info) {
       try {
         const staffData = JSON.parse(info);
@@ -260,6 +274,7 @@ const DiaGynStaffPortal = () => {
       } catch (e) {
         localStorage.removeItem('staffToken');
         localStorage.removeItem('staffInfo');
+        localStorage.removeItem('staffLoginExpiry');
       }
     }
   }, [navigate]);
@@ -274,7 +289,12 @@ const DiaGynStaffPortal = () => {
     heavyTap();
     try {
       const res = await axios.post(`${API}/api/staff/login`, { username, password });
+      
+      // Store with 30-day expiry
+      const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
       localStorage.setItem('staffToken', res.data.token);
+      localStorage.setItem('staffLoginExpiry', expiryTime.toString());
+      
       // Store full staff object including department
       const staffData = res.data.staff || { name: res.data.name, role: res.data.role };
       localStorage.setItem('staffInfo', JSON.stringify(staffData));
