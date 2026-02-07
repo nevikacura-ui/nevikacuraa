@@ -107,6 +107,12 @@ const PatientPortal = () => {
     };
     
     checkExistingSession();
+    
+    // Load wallet balance from localStorage
+    const savedBalance = localStorage.getItem('walletBalance');
+    if (savedBalance) {
+      setWalletBalance(parseInt(savedBalance) || 0);
+    }
   }, []);
   
   const sendOTP = async () => {
