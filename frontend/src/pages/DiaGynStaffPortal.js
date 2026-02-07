@@ -1203,11 +1203,18 @@ const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, onPr
           <span className="flex items-center gap-1"><Stethoscope className="w-3 h-3" /> {apt.doctor?.replace('Dr. ', '')}</span>
         </div>
         <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-medium px-2 py-0.5 rounded" style={{ background: type.bg, color: type.text }}>
               {apt.appointment_type === 'WALK_IN' ? 'Walk-In' : apt.appointment_type === 'EMERGENCY' ? 'Emergency' : 'Scheduled'}
             </span>
             {apt.total_amount > 0 && <span className="font-bold text-sm" style={{ color: COLORS.accent }}>₹{apt.total_amount}</span>}
+            {/* Follow-up Date Badge */}
+            {apt.follow_up_date && (
+              <span className="flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded bg-teal-50 text-teal-700">
+                <Calendar className="w-3 h-3" />
+                F/U: {new Date(apt.follow_up_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             {/* Reprint Token Button (for checked-in patients with token) */}
