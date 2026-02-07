@@ -54,8 +54,12 @@ const PatientPortal = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showDoctorsModal, setShowDoctorsModal] = useState(false);
   const [showPrescriptionsModal, setShowPrescriptionsModal] = useState(false);
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [showLabTestsModal, setShowLabTestsModal] = useState(false);
   const [birthday, setBirthday] = useState('');
   const [newAddress, setNewAddress] = useState({ label: '', address: '', pincode: '' });
+  const [ordersTab, setOrdersTab] = useState('all'); // all, pharmacy, appointments
+  const [addMoneyAmount, setAddMoneyAmount] = useState('');
   
   // Countdown timer
   useEffect(() => {
