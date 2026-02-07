@@ -1168,6 +1168,15 @@ const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, onPr
             <div>
               <div className="flex items-center gap-2">
                 <h4 className="font-bold text-base">{apt.patient_name}</h4>
+                {/* Mobile Number Badge */}
+                {apt.mobile && (
+                  <a href={`tel:${apt.mobile}`} 
+                     className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 hover:bg-teal-100 transition-colors"
+                     onClick={(e) => e.stopPropagation()}>
+                    <Phone className="w-3 h-3" />
+                    {apt.mobile}
+                  </a>
+                )}
                 {/* Print Bill Button (dark yellow) for completed appointments */}
                 {apt.status === 'Completed' && apt.total_amount > 0 && printerConnected && (
                   <button onClick={() => { mediumTap(); onPrintBill(apt); }}
