@@ -747,6 +747,7 @@ class BillingUpdate(BaseModel):
     scan_codes: Optional[List[str]] = []
     total_amount: Optional[float] = None
     notes: Optional[str] = None
+    follow_up_date: Optional[str] = None
 
 @router.put("/appointments/{appointment_id}/billing")
 async def update_appointment_billing(
@@ -765,6 +766,7 @@ async def update_appointment_billing(
         "scan_codes": data.scan_codes or [],
         "total_amount": data.total_amount,
         "billing_notes": data.notes,
+        "follow_up_date": data.follow_up_date,
         "billing_updated_at": datetime.now(timezone.utc).isoformat(),
         "billing_updated_by": staff.get("name", "Doctor")
     }
