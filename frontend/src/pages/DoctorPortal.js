@@ -597,6 +597,114 @@ const DoctorPortal = () => {
         </div>
       )}
       
+      {/* Billing Modal (Add/Edit Fees WITHOUT Completing) */}
+      {showBillingModal && billingApt && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="p-4 border-b" style={{ background: '#F97316' }}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-white text-lg flex items-center gap-2">
+                    <IndianRupee className="w-5 h-5" /> Add/Edit Billing
+                  </h3>
+                  <p className="text-white/80 text-sm">{billingApt.patient_name}</p>
+                </div>
+                <button onClick={() => setShowBillingModal(false)} className="p-2 hover:bg-white/20 rounded-full">
+                  <X className="w-5 h-5 text-white" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-4 overflow-y-auto flex-1 space-y-4">
+              {/* Fee Code Selection */}
+              <div>
+                <label className="text-sm font-bold text-gray-700 mb-2 block">CONSULTATION FEE</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.entries(config?.fee_codes?.[billingApt.doctor] || {}).map(([code, info]) => (
+                    <button key={code}
+                      onClick={() => { mediumTap(); setFeeCode(code); }}
+                      className={`p-3 rounded-xl border-2 text-left transition-all ${
+                        feeCode === code ? 'shadow-md' : 'border-gray-200'
+                      }`}
+                      style={feeCode === code ? { borderColor: '#F97316', background: '#fff7ed' } : {}}>
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold" style={{ color: '#F97316' }}>{code}</span>
+                        <span className="font-bold" style={{ color: COLORS.accent }}>₹{info.amount}</span>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-1">{info.label}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sonography/Scan Fees */}
+              {config?.scan_fees && (
+                <div>
+                  <label className="text-sm font-bold text-gray-700 mb-2 block">SONOGRAPHY / SCANS</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {Object.entries(config.scan_fees).map(([code, info]) => (
+                      <button key={code}
+                        onClick={() => toggleScanCode(code)}
+                        className={`p-2 rounded-xl border-2 text-center transition-all ${
+                          scanCodes.includes(code) ? 'shadow-md' : 'border-gray-200'
+                        }`}
+                        style={scanCodes.includes(code) ? { borderColor: COLORS.accent, background: COLORS.accentLight } : {}}>
+                        <span className="font-bold text-sm" style={{ color: COLORS.accent }}>{code}</span>
+                        <p className="text-xs text-gray-600">₹{info.amount}</p>
+                        <p className="text-[10px] text-gray-500 truncate">{info.label}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Notes */}
+              <div>
+                <label className="text-sm font-bold text-gray-700 mb-2 block">NOTES (Optional)</label>
+                <Input value={notes} onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Add notes..." className="h-10" />
+              </div>
+
+              {/* Total - Editable */}
+              {feeCode && (
+                <div className="p-4 rounded-xl" style={{ background: '#fff7ed' }}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-lg" style={{ color: '#F97316' }}>TOTAL</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500">₹</span>
+                      <input
+                        type="number"
+                        value={customTotal !== '' ? customTotal : calculateTotal()}
+                        onChange={(e) => { lightTap(); setCustomTotal(e.target.value); }}
+                        className="w-28 text-2xl font-bold text-right border-b-2 border-orange-400 bg-transparent focus:outline-none"
+                        style={{ color: '#F97316' }}
+                      />
+                    </div>
+                  </div>
+                  {scanCodes.length > 0 && (
+                    <p className="text-xs text-gray-600">
+                      Fee: ₹{config?.fee_codes?.[billingApt.doctor]?.[feeCode]?.amount || 0} + 
+                      Scans: ₹{scanCodes.reduce((sum, c) => sum + (config?.scan_fees?.[c]?.amount || 0), 0)}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            <div className="p-4 border-t bg-gray-50 flex gap-2">
+              <Button variant="outline" className="flex-1 h-12" onClick={() => setShowBillingModal(false)}>
+                Cancel
+              </Button>
+              <Button onClick={saveBilling} disabled={loading || !feeCode}
+                className="flex-1 h-12 text-base font-bold" style={{ background: '#F97316' }}>
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <IndianRupee className="w-5 h-5 mr-2" />}
+                SAVE BILLING
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+      
       {/* Schedule Manager Modal */}
       {showScheduleManager && (
         <DoctorScheduleManager 
