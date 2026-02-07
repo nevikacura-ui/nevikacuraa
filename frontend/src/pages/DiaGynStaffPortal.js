@@ -86,6 +86,7 @@ const DiaGynStaffPortal = () => {
   
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true); // Default to 30-day login
   
   // Clinic selection (Pushpa or Amnion only)
   const [selectedClinic, setSelectedClinic] = useState('Pushpa Clinic');
@@ -290,10 +291,16 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
     try {
       const res = await axios.post(`${API}/api/staff/login`, { username, password });
       
-      // Store with 30-day expiry
-      const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
+      // Store token
       localStorage.setItem('staffToken', res.data.token);
-      localStorage.setItem('staffLoginExpiry', expiryTime.toString());
+      
+      // Only store expiry if "Remember Me" is checked
+      if (rememberMe) {
+        const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
+        localStorage.setItem('staffLoginExpiry', expiryTime.toString());
+      } else {
+        localStorage.removeItem('staffLoginExpiry'); // Session-based login
+      }
       
       // Store full staff object including department
       const staffData = res.data.staff || { name: res.data.name, role: res.data.role };
@@ -309,7 +316,7 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
         setStaffInfo(staffData);
         setIsAuthenticated(true);
         successPattern();
-        toast.success(`Welcome!`);
+        toast.success(rememberMe ? `Welcome! (Logged in for 30 days)` : `Welcome!`);
       } else {
         // Redirect to correct portal via unified login
         toast.info('Redirecting to your portal...');
@@ -706,6 +713,19 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
               <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password" className="pl-10 h-11" data-testid="login-password"
                 onKeyPress={(e) => e.key === 'Enter' && handleLogin()} />
+            </div>
+            <div className="flex items-center gap-2">
+              <input 
+                type="checkbox" 
+                id="rememberMe" 
+                checked={rememberMe} 
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 rounded accent-emerald-500"
+                data-testid="remember-me-checkbox"
+              />
+              <label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
+                Remember me for 30 days
+              </label>
             </div>
             <Button onClick={handleLogin} disabled={loading}
               className="w-full h-12 text-base font-bold" data-testid="login-button"
