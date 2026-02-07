@@ -35,6 +35,7 @@ const MangoLabsStaffPortal = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true); // Default to 30-day login
   const [activeView, setActiveView] = useState('bookings');
   const [bookings, setBookings] = useState([]);
   const [tests, setTests] = useState([]);
@@ -129,15 +130,21 @@ const MangoLabsStaffPortal = () => {
       const res = await axios.post(`${API}/api/staff/login`, { username, password });
       const { token, staff } = res.data;
       
-      // Store with 30-day expiry
-      const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
+      // Store token and info
       localStorage.setItem('staffToken', token);
       localStorage.setItem('staffInfo', JSON.stringify(staff));
-      localStorage.setItem('staffLoginExpiry', expiryTime.toString());
+      
+      // Only store expiry if "Remember Me" is checked
+      if (rememberMe) {
+        const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
+        localStorage.setItem('staffLoginExpiry', expiryTime.toString());
+      } else {
+        localStorage.removeItem('staffLoginExpiry');
+      }
       
       setStaffInfo(staff);
       setIsAuthenticated(true);
-      toast.success(`Welcome, ${staff.name || username}! (Logged in for 30 days)`);
+      toast.success(rememberMe ? `Welcome, ${staff.name || username}! (Logged in for 30 days)` : `Welcome, ${staff.name || username}!`);
     } catch (error) { toast.error(error.response?.data?.detail || 'Login failed'); }
     setLoading(false);
   };
@@ -207,6 +214,10 @@ const MangoLabsStaffPortal = () => {
           <div className="space-y-4">
             <div className="relative"><User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" /><Input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} className="pl-10 h-12" data-testid="mango-username" /></div>
             <div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" /><Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleLogin()} className="pl-10 h-12" data-testid="mango-password" /></div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="rememberMe" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-4 h-4 rounded accent-teal-500" data-testid="mango-remember-me" />
+              <label htmlFor="rememberMe" className="text-sm text-slate-600 cursor-pointer">Remember me for 30 days</label>
+            </div>
             <Button onClick={handleLogin} disabled={loading} className="w-full h-12 bg-teal-500 hover:bg-teal-600 text-white font-semibold" data-testid="mango-login-btn">{loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Login'}</Button>
           </div>
         </Card>
