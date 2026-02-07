@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://nevika-cura-portal.preview.emergentagent.com",
+    "url": "https://multi-portal-session.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {
