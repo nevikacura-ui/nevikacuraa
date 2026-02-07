@@ -23,6 +23,10 @@ const getAuthHeaders = () => {
   return { headers: { Authorization: `Bearer ${token}` } };
 };
 
+// 30 days login persistence
+const LOGIN_EXPIRY_DAYS = 30;
+const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+
 const MangoLabsStaffPortal = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -45,6 +49,16 @@ const MangoLabsStaffPortal = () => {
   useEffect(() => {
     const token = localStorage.getItem('staffToken');
     const storedStaff = localStorage.getItem('staffInfo');
+    const expiry = localStorage.getItem('staffLoginExpiry');
+    
+    // Check if session expired
+    if (expiry && new Date().getTime() > parseInt(expiry)) {
+      localStorage.removeItem('staffToken');
+      localStorage.removeItem('staffInfo');
+      localStorage.removeItem('staffLoginExpiry');
+      return;
+    }
+    
     if (token && storedStaff) {
       const staff = JSON.parse(storedStaff);
       const dept = staff.department?.toLowerCase() || '';
@@ -114,16 +128,28 @@ const MangoLabsStaffPortal = () => {
     try {
       const res = await axios.post(`${API}/api/staff/login`, { username, password });
       const { token, staff } = res.data;
+      
+      // Store with 30-day expiry
+      const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
       localStorage.setItem('staffToken', token);
       localStorage.setItem('staffInfo', JSON.stringify(staff));
+      localStorage.setItem('staffLoginExpiry', expiryTime.toString());
+      
       setStaffInfo(staff);
       setIsAuthenticated(true);
-      toast.success(`Welcome, ${staff.name || username}!`);
+      toast.success(`Welcome, ${staff.name || username}! (Logged in for 30 days)`);
     } catch (error) { toast.error(error.response?.data?.detail || 'Login failed'); }
     setLoading(false);
   };
 
-  const handleLogout = () => { localStorage.removeItem('staffToken'); localStorage.removeItem('staffInfo'); setIsAuthenticated(false); setStaffInfo(null); toast.success('Logged out'); };
+  const handleLogout = () => { 
+    localStorage.removeItem('staffToken'); 
+    localStorage.removeItem('staffInfo'); 
+    localStorage.removeItem('staffLoginExpiry');
+    setIsAuthenticated(false); 
+    setStaffInfo(null); 
+    toast.success('Logged out'); 
+  };
 
   const updateBookingStatus = async (bookingId, newStatus) => {
     const booking = bookings.find(b => b.booking_id === bookingId);
