@@ -29,6 +29,12 @@ const PORTAL_CONFIG = {
     icon: FlaskConical,
     color: '#facc15'
   },
+  staff: {
+    path: '/diagyn-staff',
+    name: 'DiaGyn Clinic',
+    icon: Stethoscope,
+    color: '#1a4d3f'
+  },
   diagyn_staff: {
     path: '/diagyn-staff',
     name: 'DiaGyn Clinic',
