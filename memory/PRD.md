@@ -16,10 +16,20 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
   - Opens billing modal to add fee code, scan codes, and total
   - Saves billing without completing the appointment
   - "EDIT FEES" shown if billing already added
+- ✅ **Doctor Portal - Follow-up Date Field**:
+  - Added follow-up date picker in billing modal
+  - Label: "FOLLOW-UP DATE (Shared with Staff)"
+  - Date validation (minimum today's date)
+  - Shows formatted date preview after selection
+  - Saved to database and visible to staff
 - ✅ **DiaGyn Staff Portal - Mobile Number Display**:
   - Patient mobile number shown in teal badge beside patient name
   - Clickable to initiate phone call (tap-to-call)
   - Phone icon with number clearly visible
+- ✅ **DiaGyn Staff Portal - Follow-up Date Display**:
+  - Follow-up date shown as teal badge: "F/U: 14 Feb"
+  - Calendar icon with formatted date
+  - Visible alongside appointment type and amount
 - ✅ **Staff Credentials Recreated**:
   - All staff accounts recreated in correct database (test_database)
 
