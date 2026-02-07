@@ -31,6 +31,16 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 - ✅ **Updated Mango Health Labs Logo**:
   - New logo saved to `/frontend/public/mango-logo.png`
   - Updated in: MangoLabsStaffPortal (login + header), DoctorPortal (login + header), UnifiedStaffLogin, HealthPackages, ProtonReportDownload, Mango main page hero
+  - Logo sizes enlarged for better visibility
+- ✅ **Mango Carousel Images Updated**:
+  - "Why Mango? Fast, Safe and Accurate" slide: Hand holding blood vial
+  - "Home Sample Collection" slide: Phlebotomist drawing blood
+- ✅ **Patient Profile Features Built Out**:
+  - **My Orders Modal** with tabs: All, Pharmacy, Appointments
+  - **My Lab Tests Modal** with test details and report links
+  - **Wallet Modal** with balance card, quick add (₹100-1000), custom amount, add money button
+  - Wallet balance stored in localStorage (MOCKED - no backend API)
+- ✅ **Patient 30-Day Login** - Working with `patientLoginExpiry` timestamp
 
 ### Completed (Feb 7, 2026) - Session 4
 - ✅ **Doctor Portal - Add Fees Before Completion**:
