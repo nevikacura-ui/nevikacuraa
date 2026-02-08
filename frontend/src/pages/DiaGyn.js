@@ -1477,6 +1477,62 @@ const DiaGyn = () => {
               </p>
             </div>
             
+            {/* Quick Action: Earliest Available Slot */}
+            <div className="mb-6">
+              <button
+                onClick={async () => {
+                  // Find earliest available slot
+                  setLoadingSlots(true);
+                  try {
+                    const today = new Date();
+                    for (let i = 0; i < 7; i++) {
+                      const checkDate = addDays(today, i);
+                      if (isSunday(checkDate)) continue;
+                      
+                      const dayOfWeek = format(checkDate, 'EEEE').toLowerCase();
+                      const schedule = selectedDoctorData?.schedule;
+                      const clinicSchedule = schedule?.[selectedClinic]?.[dayOfWeek];
+                      
+                      if (!clinicSchedule || !clinicSchedule.available) continue;
+                      
+                      // Get slots for this day
+                      const response = await axios.get(`${API}/appointments/booked-slots`, {
+                        params: { date: format(checkDate, 'yyyy-MM-dd'), doctor: selectedDoctor, clinic: selectedClinic }
+                      });
+                      const booked = response.data.booked_slots || [];
+                      const allSlots = clinicSchedule.slots || [];
+                      const available = allSlots.filter(s => !booked.includes(s));
+                      
+                      if (available.length > 0) {
+                        setSelectedDate(checkDate);
+                        setBookedSlots(booked);
+                        setSelectedSlot(available[0]);
+                        toast.success(`Found slot: ${available[0]} on ${format(checkDate, 'EEE, MMM d')}`);
+                        break;
+                      }
+                    }
+                  } catch (err) {
+                    toast.error('Failed to find earliest slot');
+                  } finally {
+                    setLoadingSlots(false);
+                  }
+                }}
+                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-400/30 rounded-2xl px-6 py-4 hover:from-emerald-500/30 hover:to-teal-500/30 transition-all group"
+                data-testid="earliest-slot-btn"
+              >
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="font-semibold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    Find Earliest Available Slot
+                  </p>
+                  <p className="text-xs text-emerald-200/80">Get the soonest appointment automatically</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-emerald-300 ml-auto" />
+              </button>
+            </div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Calendar */}
               <div>
