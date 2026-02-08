@@ -112,6 +112,7 @@ function AppContent() {
                         window.location.pathname.includes('/super-admin') ||
                         window.location.pathname.includes('/diagyn-staff') ||
                         window.location.pathname.includes('/doctor-portal') ||
+                        window.location.pathname.includes('/doctor-login') ||
                         window.location.pathname.includes('/pharmacy-staff') ||
                         window.location.pathname.includes('/mango-staff') ||
                         window.location.pathname.includes('/lab-staff') ||
