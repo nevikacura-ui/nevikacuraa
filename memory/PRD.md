@@ -1,259 +1,110 @@
-# Nevika Cura - Product Requirements Document
+# Nevika Cura Healthcare Platform - PRD
 
 ## Original Problem Statement
-Multi-portal healthcare application for:
-- DiaGyn (clinic appointments)
-- Mango Labs (diagnostic tests)  
-- Orange Pharmacy (medicine orders)
+A comprehensive healthcare application for Nevika Cura Healthcare Group with patient and staff management capabilities. The user requested a complete overhaul of the patient login/signup system to use Email/WhatsApp OTP flows, followed by engagement and UI improvements.
 
-With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
+## Latest Request (Resolved)
+**Issue:** Unified staff login page incorrectly redirects all users to doctor portal regardless of their actual role.
+**Solution:** Split the unified login into 3 separate portal login pages (Staff, Doctor, Admin) as requested by the user.
+
+---
 
 ## What's Been Implemented
 
-### Completed (Feb 8, 2026) - Session 6
-- ✅ **Patient Login/Signup Flow Rebuilt**:
-  - NEW unified login page at `/login` with modern UI
-  - **Email + OTP Signup**: Enter email → Receive OTP → Verify → Create password → Account created
-  - **WhatsApp + OTP Signup**: Enter phone → Receive OTP → Verify → Collect email + Create password → Account created
-  - **Login with Password**: Existing users with passwords can login directly
-  - **Login with OTP**: Fallback for users who forgot password
-  - 30-day persistent session with JWT tokens
-  - Staff Portal Login link moved to footer as requested
-  - Mock OTPs provided in API responses for testing (shown in toast)
-  - Backend: `/app/backend/routes/patient_auth.py` (10 API endpoints)
-  - Frontend: `/app/frontend/src/pages/PatientLogin.jsx`
+### Authentication System
+- **Patient Authentication (OTP-based):**
+  - Email OTP login/signup via Resend API
+  - WhatsApp OTP login/signup via MSG91
+  - Password-based login for returning users
+  - Located: `/app/frontend/src/pages/PatientLogin.jsx`, `/app/backend/routes/patient_auth.py`
 
-- ✅ **Profile Login Fix**:
-  - Logged-in patients go directly to `/profile` without re-login prompt
-  - BottomNav shows "Profile" (not "Login") when authenticated
-  - Fixed AuthContext to use `patientInfo` from localStorage as fallback
-  - PatientPortal redirects to `/profile` for new auth users
-  - Session persists for 30 days
+- **Staff Authentication (Separate Portals) - NEW:**
+  - **Staff Portal Login** (`/staff-portal-login`) - Teal themed, for DiaGyn clinic staff
+  - **Doctor Portal Login** (`/doctor-login`) - Blue themed, for physicians
+  - **Admin Portal Login** (`/admin-login`) - Purple themed, for administrators
+  - **Portal Selector** (`/staff`) - Shows all portal options for easy navigation
+  - Located: `/app/frontend/src/pages/StaffPortalLogin.jsx`, `/app/frontend/src/pages/DoctorPortalLogin.jsx`, `/app/frontend/src/pages/AdminPortalLogin.jsx`
 
-- ✅ **Quick Actions - Reorder & Book Again**:
-  - New `PersonalizedActions` component added to homepage
-  - "Reorder Meds" button - reorders previous pharmacy order
-  - "Book Again" button - books with previous doctor
-  - "Repeat Test" button - repeats previous lab tests
-  - Based on patient's order history
+### Homepage & Navigation
+- Admin Portal link added to homepage footer (purple/violet styling)
+- Staff Portal and Doctor Portal links added to Patient Login page
+- Portal selector page with quick links to Pharmacy Staff and Lab Staff portals
 
-- ✅ **DiaGyn Flow Improvement - Earliest Available Slot**:
-  - Added "Find Earliest Available Slot" quick button on date picker
-  - Automatically finds soonest available appointment across next 7 days
-  - Shows toast with found slot details
+### Other Features Implemented
+- Mango Labs Package Builder modal
+- Prescription OCR using Gemini Vision
+- Splash screen image update
+- Gamification widget (UI only)
+- Personalized Actions (UI only)
+- "Usually Bought Together" (UI placeholder)
+- Wait Time Estimates (UI placeholder)
 
-- ✅ **Prescription OCR Backend**:
-  - New route: `/api/prescription/extract`
-  - Uses Gemini Vision (via Emergent LLM key) to extract medicines from prescription images
-  - Returns medicine names, dosage, frequency, duration, quantity
-  - Fallback mock data when API not available
+---
 
-- ✅ **Homepage Branding Updated**:
-  - Evara (Women's Health), Reneu (Preventive Health), Senova (Senior Health) sections
-  - Updated splash screen carousel image (slide 2 - medicines)
+## Current Routes
 
-### All Engagement Features - COMPLETE ✅
+### Patient Routes
+- `/` - Homepage
+- `/login` - Patient Login/Signup (OTP-based)
+- `/profile` - Patient Profile
 
-**Session 6 Features Implemented:**
-1. Patient Login/Signup Flow (Email + WhatsApp OTP, Password)
-2. Profile Login Fix (no re-login for authenticated users)
-3. Quick Actions (Reorder, Book Again, Repeat Test)
-4. DiaGyn Earliest Slot button
-5. Prescription OCR with AI extraction
-6. Package Builder for Mango Labs (50+ tests, volume discounts)
-7. Gamification (Streak, Points, Badges, Referral)
-8. Medicine Subscription for chronic meds (weekly/monthly/quarterly)
-9. "Usually Bought Together" suggestions in Pharmacy
-10. Wait Time Estimates for DiaGyn clinics
+### Staff Routes
+- `/staff` - Portal Selector (shows all options)
+- `/staff-portal-login` - Staff Login (→ /diagyn-staff)
+- `/doctor-login` - Doctor Login (→ /doctor-portal)
+- `/admin-login` - Admin Login (→ /admin)
+- `/diagyn-staff` - DiaGyn Staff Portal
+- `/doctor-portal` - Doctor Portal
+- `/admin` - Admin Panel
+- `/orange-staff` - Pharmacy Staff Portal
+- `/mango-staff` - Lab Staff Portal
 
-### Pending User Verification
-- Doctor Portal redirect from `/staff` login (code is correct, needs production testing)
-- Doctor Portal branding shows "DiaGyn Healthcare" (verify in production)
+---
 
-### In Progress
-- **Doctor Session Blocking Feature**: Backend API done, frontend UI needs completion
-  - Doctors can block specific time slots (e.g., 11am-2pm)
-  - API: `/api/doctor/blocked-sessions`
+## Pending/Backlog Tasks (P1)
 
-### Completed (Feb 7, 2026) - Session 5
-- ✅ **30-Day Persistent Login for ALL Staff Portals**:
-  - Mango Labs Staff Portal (`/mango-staff`): Added 30-day login persistence
-  - Orange Pharmacy Staff Portal (`/orange-staff`): Added 30-day login persistence
-  - DiaGyn Staff Portal (`/diagyn-staff`): Already implemented
-  - Doctor Portal (`/doctor-portal`): Already implemented
-  - Implementation details:
-    - `staffToken` stored in localStorage
-    - `staffInfo` stored in localStorage
-    - `staffLoginExpiry` timestamp (30 days from login)
-    - On page load, checks if session expired
-    - Clears all auth data on logout
-    - Shows "Logged in for 30 days" toast on successful login
-- ✅ **"Remember Me" Checkbox on All Portals**:
-  - Added to: DiaGyn Staff, Mango Labs, Orange Pharmacy, Doctor Portal
-  - Default: Checked (30-day persistence)
-  - When unchecked: Session-based login (no expiry stored)
-  - Visual: "Remember me for 30 days" label with themed checkbox
-- ✅ **Updated Mango Health Labs Logo**:
-  - New logo saved to `/frontend/public/mango-logo.png`
-  - Updated in: MangoLabsStaffPortal (login + header), DoctorPortal (login + header), UnifiedStaffLogin, HealthPackages, ProtonReportDownload, Mango main page hero
-  - Logo sizes enlarged for better visibility
-- ✅ **Mango Carousel Images Updated**:
-  - "Why Mango? Fast, Safe and Accurate" slide: Hand holding blood vial
-  - "Home Sample Collection" slide: Phlebotomist drawing blood
-- ✅ **Patient Profile Features Built Out**:
-  - **My Orders Modal** with tabs: All, Pharmacy, Appointments
-  - **My Lab Tests Modal** with test details and report links
-  - **Wallet Modal** with balance card, quick add (₹100-1000), custom amount, add money button
-  - Wallet balance stored in localStorage (MOCKED - no backend API)
-- ✅ **Patient 30-Day Login** - Working with `patientLoginExpiry` timestamp
+### Backend Implementation Required
+1. **Orange Pharmacy Subscriptions** - Backend flow for chronic medicine subscriptions
+2. **"Usually Bought Together"** - Recommendation engine for products
+3. **DiaGyn Wait Time Estimates** - Real-time queue estimation
+4. **Gamification Engine** - Health streaks, badges, referral tracking
+5. **Complete OCR-to-Cart Flow** - Add extracted medicines from prescription directly to cart
 
-### Completed (Feb 7, 2026) - Session 4
-- ✅ **Doctor Portal - Add Fees Before Completion**:
-  - New "ADD FEES" button (orange) for patients in consultation
-  - Opens billing modal to add fee code, scan codes, and total
-  - Saves billing without completing the appointment
-  - "EDIT FEES" shown if billing already added
-- ✅ **Doctor Portal - Follow-up Date Field**:
-  - Added follow-up date picker in billing modal
-  - Label: "FOLLOW-UP DATE (Shared with Staff)"
-  - Date validation (minimum today's date)
-  - Shows formatted date preview after selection
-  - Saved to database and visible to staff
-- ✅ **DiaGyn Staff Portal - Mobile Number Display**:
-  - Patient mobile number shown in teal badge beside patient name
-  - Clickable to initiate phone call (tap-to-call)
-  - Phone icon with number clearly visible
-- ✅ **DiaGyn Staff Portal - Follow-up Date Display**:
-  - Follow-up date shown as teal badge: "F/U: 14 Feb"
-  - Calendar icon with formatted date
-  - Visible alongside appointment type and amount
-- ✅ **Staff Credentials Recreated**:
-  - All staff accounts recreated in correct database (test_database)
+### Other Pending
+6. Move through DiaGyn staff portal functionality testing
+7. Full integration testing of patient auth system
 
-### Completed (Feb 7, 2026) - Session 3
-- ✅ **Pharmacy Carousel Image**: 
-  - Changed to medicine bottles on shelves (no person)
-  - Image: Colorful medicine bottles on wooden shelves
-- ✅ **Gradient Reversed**: 
-  - PortalScrollBar now transitions from light → teal (bottom)
-  - Content area is clean white, teal at bottom edge
-- ✅ **Profile Page - 30-Day Login Persistence**:
-  - Users stay logged in for 30 days
-  - Token + patient info stored in localStorage with expiry
-  - "Stay logged in for 30 days" message shown on login
-- ✅ **Profile Page - Removed Appearance Toggle**
-- ✅ **Profile Page - Built Real Features** (no more "coming soon"):
-  - Your Orders modal with appointments, pharmacy orders, lab tests
-  - Address Book with add/remove addresses
-  - Saved Doctors list
-  - Your Prescriptions list
-  - Payment & Rewards section
-  - All menu items are functional
-- ✅ **Cashfree Payment Confirmed Working**:
-  - Orange Pharmacy: ✅ Order creation works
-  - Mango Labs: ✅ Order creation works
-  - Both tested via API, orders created successfully
+---
 
-### Completed (Feb 7, 2026) - Session 2
-- ✅ Portal Switcher white line fixed (gradient transition)
-- ✅ Profile rebuilt Blinkit-style with WhatsApp OTP
-- ✅ Twilio cleanup completed
+## Tech Stack
+- **Frontend:** React, React Router, Axios, Tailwind CSS, Shadcn UI
+- **Backend:** Python (FastAPI)
+- **Database:** MongoDB
+- **Authentication:** JWT (separate tokens for staff/patients)
+- **AI Integration:** Google Gemini Vision (prescription OCR)
+- **OTP Services:** Resend (Email), MSG91 (WhatsApp)
 
-### Completed (Feb 6, 2026)
-- ✅ New App Icon with sonography machine image
-- ✅ Removed Captcha from DiaGyn Booking
-- ✅ Guest Login without OTP
-- ✅ Staff credentials reset
-- ✅ Doctor Schedule Management UI
-- ✅ Staff Activity Log system
+---
 
-## Staff Credentials
+## Key Files Reference
 
-| Role | Username | Password | Portal |
-|------|----------|----------|--------|
-| Super Admin | admin_nevika | Admin@2026 | /super-admin |
-| DiaGyn Staff | staff_diagyn | Staff@2026 | /staff |
-| Mango Labs Staff | staff_mango | Staff@2026 | /staff |
-| Orange Pharmacy Staff | staff_pharmacy | Staff@2026 | /staff |
-| Dr. Vikas | dr_vikas | DrVikas@2026 | /doctor-portal |
-| Dr. Neha | dr_neha | DrNeha@2026 | /doctor-portal |
+### Authentication
+- `/app/frontend/src/pages/PatientLogin.jsx`
+- `/app/frontend/src/pages/StaffPortalLogin.jsx`
+- `/app/frontend/src/pages/DoctorPortalLogin.jsx`
+- `/app/frontend/src/pages/AdminPortalLogin.jsx`
+- `/app/frontend/src/pages/UnifiedStaffLogin.js` (Portal Selector)
+- `/app/backend/routes/patient_auth.py`
+- `/app/backend/routes/staff.py`
 
-## Payment Integration - Cashfree
-- Environment: Production
-- Credentials in `/app/backend/.env`
-- Supported: UPI, Cards, Wallets, Net Banking
-- Order types: pharmacy, lab_test, appointment
+### Context
+- `/app/frontend/src/context/AuthContext.jsx`
 
-## Known Issues
-- WhatsApp OTP delivery requires users to first message business number (918108888330)
-- Overlapping modal issue in Orange Pharmacy (P2)
+### Navigation
+- `/app/frontend/src/App.js`
+- `/app/frontend/src/components/Footer.jsx`
 
-## Code Architecture
-```
-/app
-├── backend/
-│   ├── routes/
-│   │   ├── cashfree.py (payment gateway)
-│   │   ├── whatsapp_otp.py
-│   │   └── ...
-│   └── server.py
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── IntroScreen.jsx (carousel)
-│   │   │   ├── PortalScrollBar.jsx (reversed gradient)
-│   │   │   └── CashfreeCheckout.jsx
-│   │   ├── pages/
-│   │   │   ├── PatientPortal.js (30-day login, full features)
-│   │   │   ├── Pharmacy.js (Cashfree integrated)
-│   │   │   └── Mango.js (Cashfree integrated)
-└── memory/
-    └── PRD.md
-```
-|------|----------|----------|--------|
-| **Admin** | admin_nevika | Nevika@2026 | /super-admin |
-| **DiaGyn Staff** | staff_diagyn | Diagyn@2026 | /diagyn-staff |
-| **Mango Labs Staff** | staff_mango | Mango@2026 | /mango-staff |
-| **Orange Pharmacy Staff** | staff_orange | Orange@2026 | /orange-staff |
-| **Dr. Vikas Jha** | dr_vikas | DrVikas@2026 | /doctor-portal |
-| **Dr. Neha Patel** | dr_neha | DrNeha@2026 | /doctor-portal |
+---
 
-## Active Issues
-
-### P0 - WhatsApp OTP Delivery (BLOCKED)
-- MSG91 API calls succeed but messages not delivered
-- Cause: WhatsApp 24-hour session window policy
-- User must send "Hi" to business number first
-
-## Technical Stack
-- **Backend**: Python FastAPI
-- **Frontend**: React (Vite)
-- **Database**: MongoDB
-- **Messaging**: MSG91 (WhatsApp templates)
-- **Email**: Resend
-- **Auth**: JWT tokens
-
-## Key Features
-
-### Doctor Schedule Manager
-- Access: Doctor Portal → Settings icon (⚙️)
-- Features:
-  - Weekly schedule (MON-SUN)
-  - Toggle working/off days
-  - Multiple time slots per day
-  - Slot duration configuration
-  - Block dates for holidays
-
-### Staff Activity Log
-- Access: Super Admin Dashboard → Activity Logs tab
-- Tracks:
-  - Staff logins (all portals)
-  - Appointment check-ins, completions
-  - Order status updates
-  - Lab booking status changes
-
-## Future/Backlog
-- Staff Portal Enhancements (Patient History, Prescription Templates)
-- Pharmacy features (Low Stock Alerts, Prescription OCR)
-- Lab features (Sample Barcode Scanning)
-- App Engagement Features (health content, reminders)
+## Date: February 8, 2026
+Last Updated: Staff login portal split completed
