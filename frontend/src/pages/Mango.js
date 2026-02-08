@@ -1558,6 +1558,32 @@ const Proton = () => {
         </div>
       </div>
 
+      {/* Build Your Own Package Banner */}
+      <div className="bg-gradient-to-r from-purple-600 to-violet-600 text-white" data-testid="package-builder-banner">
+        <div className="w-full px-4 py-3">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 rounded-full p-2 flex-shrink-0">
+                <FlaskConical className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm">Build Your Own Package</p>
+                <p className="text-xs opacity-90">Select tests • Get volume discounts • Save up to 20%</p>
+              </div>
+            </div>
+            <Button
+              onClick={() => setShowPackageBuilder(true)}
+              variant="secondary"
+              size="sm"
+              className="bg-white text-purple-600 hover:bg-slate-100 rounded-full font-semibold flex-shrink-0"
+              data-testid="package-builder-btn"
+            >
+              Build Package
+            </Button>
+          </div>
+        </div>
+      </div>
+
       <main className="w-full px-4 py-4">
         {/* White content container for better readability */}
         <div className="bg-white rounded-3xl shadow-xl p-4">
