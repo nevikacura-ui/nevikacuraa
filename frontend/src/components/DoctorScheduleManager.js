@@ -317,7 +317,7 @@ const DoctorScheduleManager = ({ doctorToken, onClose }) => {
 
           {/* Blocked Dates */}
           <Card className="p-4">
-            <h3 className="font-semibold text-slate-700 mb-3">Blocked Dates (Holidays/Leave)</h3>
+            <h3 className="font-semibold text-slate-700 mb-3">Blocked Dates (Full Day Off)</h3>
             
             <div className="flex gap-2 mb-3">
               <Input
@@ -356,6 +356,68 @@ const DoctorScheduleManager = ({ doctorToken, onClose }) => {
               ))}
               {blockedDates.length === 0 && (
                 <p className="text-center text-slate-400 py-2">No blocked dates</p>
+              )}
+            </div>
+          </Card>
+
+          {/* Blocked Sessions (Time Slots) */}
+          <Card className="p-4">
+            <h3 className="font-semibold text-slate-700 mb-3">Blocked Sessions (Time Slots)</h3>
+            <p className="text-xs text-slate-500 mb-3">Block specific hours on a date (e.g., 11 AM - 2 PM)</p>
+            
+            <div className="flex flex-wrap gap-2 mb-3">
+              <Input
+                type="date"
+                value={newSessionDate}
+                onChange={(e) => setNewSessionDate(e.target.value)}
+                className="w-36"
+              />
+              <Input
+                type="time"
+                value={newSessionStart}
+                onChange={(e) => setNewSessionStart(e.target.value)}
+                className="w-28"
+              />
+              <span className="self-center text-slate-400">to</span>
+              <Input
+                type="time"
+                value={newSessionEnd}
+                onChange={(e) => setNewSessionEnd(e.target.value)}
+                className="w-28"
+              />
+              <Input
+                placeholder="Reason"
+                value={newSessionReason}
+                onChange={(e) => setNewSessionReason(e.target.value)}
+                className="w-24"
+              />
+              <Button onClick={blockSession} className="bg-orange-500 hover:bg-orange-600">
+                Block
+              </Button>
+            </div>
+
+            <div className="space-y-2 max-h-40 overflow-y-auto">
+              {blockedSessions.map((session, idx) => (
+                <div key={idx} className="flex items-center justify-between p-2 bg-orange-50 rounded-lg">
+                  <div>
+                    <span className="font-medium text-orange-700">{session.date}</span>
+                    <span className="text-sm text-orange-600 ml-2">
+                      {session.start_time} - {session.end_time}
+                    </span>
+                    <span className="text-xs text-orange-500 ml-2">({session.reason})</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => unblockSession(session.date, session.start_time)}
+                    className="text-orange-500"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+              {blockedSessions.length === 0 && (
+                <p className="text-center text-slate-400 py-2">No blocked sessions</p>
               )}
             </div>
           </Card>
