@@ -3146,6 +3146,20 @@ const Proton = () => {
           </div>
         </div>
       )}
+
+      {/* Package Builder Modal */}
+      <PackageBuilder
+        isOpen={showPackageBuilder}
+        onClose={() => setShowPackageBuilder(false)}
+        onAddToCart={(tests, total) => {
+          // Add tests to selectedTests state
+          setSelectedTests(prev => [
+            ...prev,
+            ...tests.map(t => t.name)
+          ]);
+          toast.success(`Added ${tests.length} tests to cart!`);
+        }}
+      />
     </div>
   );
 };
