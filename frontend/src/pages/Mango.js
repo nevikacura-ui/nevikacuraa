@@ -1980,6 +1980,142 @@ const Proton = () => {
               </div>
             </div>
 
+            {/* Preventive Health Section - Reneu */}
+            <div className="py-4 bg-gradient-to-br from-[#4A90A4]/10 via-[#6BB3C9]/5 to-white rounded-2xl px-4 -mx-4" data-testid="preventive-health-reneu-section">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🛡️</span>
+                  <h2 className="text-lg font-bold text-[#2B2B2B]">Preventive Health</h2>
+                  <span className="px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold rounded-full flex items-center gap-1">
+                    ✨ Reneu
+                  </span>
+                </div>
+                <button 
+                  onClick={() => navigate('/reneu')}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                >
+                  View All <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Horizontal Scroll Grid */}
+              <div 
+                className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+              >
+                {[
+                  { id: 'full-body', name: 'Full Body Checkup', image: 'https://images.unsplash.com/photo-1631815587646-b85a1bb027e1?w=200&h=200&fit=crop', tests: ['CBC', 'LFT', 'KFT', 'Lipid Profile', 'Thyroid', 'Urine R/M', 'Blood Sugar'] },
+                  { id: 'cardiac', name: 'Cardiac Health', image: 'https://images.unsplash.com/photo-1628348070889-cb656235b4eb?w=200&h=200&fit=crop', tests: ['Lipid Profile', 'hs-CRP', 'Homocysteine', 'Lp(a)', 'ECG', 'Apolipoprotein B'] },
+                  { id: 'diabetes', name: 'Diabetes Screening', image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=200&h=200&fit=crop', tests: ['HbA1c', 'Fasting Glucose', 'PP Glucose', 'Fasting Insulin', 'C-Peptide'] },
+                  { id: 'liver', name: 'Liver Wellness', image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=200&h=200&fit=crop', tests: ['LFT', 'GGT', 'AFP', 'Fibroscan', 'Hepatitis Panel'] },
+                  { id: 'kidney', name: 'Kidney Health', image: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=200&h=200&fit=crop', tests: ['KFT', 'Creatinine', 'eGFR', 'Urine Albumin', 'Microalbumin'] },
+                  { id: 'vitamin', name: 'Vitamin & Mineral', image: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=200&h=200&fit=crop', tests: ['Vitamin D', 'Vitamin B12', 'Iron Studies', 'Calcium', 'Magnesium', 'Zinc'] },
+                  { id: 'immunity', name: 'Immunity Panel', image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=200&h=200&fit=crop', tests: ['CBC', 'Vitamin D', 'Vitamin C', 'Zinc', 'Iron', 'CRP'] },
+                  { id: 'allergy', name: 'Allergy Profile', image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&h=200&fit=crop', tests: ['IgE Total', 'Food Allergy Panel', 'Inhalant Allergens', 'Eosinophil Count'] }
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setSelectedTests(prev => {
+                        const newTests = [...prev];
+                        item.tests.forEach(test => {
+                          if (!newTests.includes(test)) {
+                            newTests.push(test);
+                          }
+                        });
+                        return newTests;
+                      });
+                      toast.success(`Added ${item.tests.length} tests from ${item.name}`);
+                    }}
+                    className="flex-shrink-0 flex flex-col items-center w-28 group"
+                    data-testid={`preventive-${item.id}`}
+                  >
+                    {/* Image Container */}
+                    <div className="w-24 h-24 rounded-2xl overflow-hidden mb-2 border-2 border-blue-500/20 shadow-sm group-hover:border-blue-500/40 group-hover:shadow-md transition-all duration-300">
+                      <img 
+                        src={item.image} 
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                    </div>
+                    
+                    {/* Name */}
+                    <span className="text-xs font-medium text-slate-700 text-center leading-tight line-clamp-2">{item.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Senior Health Section - Senova */}
+            <div className="py-4 bg-gradient-to-br from-[#8B5A2B]/10 via-[#A67C52]/5 to-white rounded-2xl px-4 -mx-4" data-testid="senior-health-senova-section">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">👴</span>
+                  <h2 className="text-lg font-bold text-[#2B2B2B]">Senior Health</h2>
+                  <span className="px-2 py-0.5 bg-amber-600 text-white text-[10px] font-bold rounded-full flex items-center gap-1">
+                    ✨ Senova
+                  </span>
+                </div>
+                <button 
+                  onClick={() => navigate('/senova')}
+                  className="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1"
+                >
+                  View All <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Horizontal Scroll Grid */}
+              <div 
+                className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+              >
+                {[
+                  { id: 'senior-checkup', name: 'Senior Checkup', image: 'https://images.unsplash.com/photo-1577368287217-16ff9373a733?w=200&h=200&fit=crop', tests: ['CBC', 'LFT', 'KFT', 'Lipid Profile', 'Thyroid', 'Vitamin D', 'B12', 'HbA1c'] },
+                  { id: 'bone-health', name: 'Bone Health', image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=200&h=200&fit=crop', tests: ['Calcium', 'Vitamin D', 'PTH', 'DEXA Scan', 'Phosphorus', 'Alkaline Phosphatase'] },
+                  { id: 'joint-care', name: 'Joint & Arthritis', image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=200&h=200&fit=crop', tests: ['RA Factor', 'Anti-CCP', 'Uric Acid', 'CRP', 'ESR', 'ANA'] },
+                  { id: 'cardiac-senior', name: 'Heart Wellness', image: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=200&h=200&fit=crop', tests: ['ECG', 'NT-proBNP', 'Lipid Profile', 'Troponin', 'hs-CRP', 'Homocysteine'] },
+                  { id: 'diabetes-senior', name: 'Diabetes Care', image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=200&h=200&fit=crop', tests: ['HbA1c', 'Fasting Glucose', 'PP Glucose', 'Fructosamine', 'Urine Microalbumin', 'KFT'] },
+                  { id: 'memory', name: 'Memory & Brain', image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=200&h=200&fit=crop', tests: ['Vitamin B12', 'Folate', 'Thyroid', 'Vitamin D', 'Homocysteine', 'CBC'] },
+                  { id: 'prostate', name: 'Prostate Health', image: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=200&h=200&fit=crop', tests: ['PSA Total', 'PSA Free', 'Ultrasound Prostate', 'Uroflowmetry'] },
+                  { id: 'eye-vision', name: 'Eye & Vision', image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=200&h=200&fit=crop', tests: ['Blood Sugar', 'HbA1c', 'Vitamin A', 'Fundus Exam', 'IOL Check'] }
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setSelectedTests(prev => {
+                        const newTests = [...prev];
+                        item.tests.forEach(test => {
+                          if (!newTests.includes(test)) {
+                            newTests.push(test);
+                          }
+                        });
+                        return newTests;
+                      });
+                      toast.success(`Added ${item.tests.length} tests from ${item.name}`);
+                    }}
+                    className="flex-shrink-0 flex flex-col items-center w-28 group"
+                    data-testid={`senior-${item.id}`}
+                  >
+                    {/* Image Container */}
+                    <div className="w-24 h-24 rounded-2xl overflow-hidden mb-2 border-2 border-amber-500/20 shadow-sm group-hover:border-amber-500/40 group-hover:shadow-md transition-all duration-300">
+                      <img 
+                        src={item.image} 
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                    </div>
+                    
+                    {/* Name */}
+                    <span className="text-xs font-medium text-slate-700 text-center leading-tight line-clamp-2">{item.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Pathology Tab - Orange Health Labs Style: Categories with Horizontal Card Carousels */}
             {activeTab === 'pathology' && (
               <div className="space-y-8">
