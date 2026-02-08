@@ -716,19 +716,32 @@ const PatientLogin = () => {
           {step === 'create-password' && renderCreatePassword()}
         </div>
 
-        {/* Staff Login - Footer */}
+        {/* Staff & Doctor Login - Footer */}
         <div className="mt-8 pt-6 border-t border-slate-200">
           <div className="text-center">
             <p className="text-sm text-slate-500 mb-3">Staff or Healthcare Provider?</p>
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/staff')}
-              className="text-slate-600 hover:text-teal-600 hover:bg-teal-50"
-              data-testid="staff-login-footer-btn"
-            >
-              <Shield className="w-4 h-4 mr-2" />
-              Staff Portal Login
-            </Button>
+            <div className="flex gap-2 justify-center">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/staff-portal-login')}
+                className="text-teal-600 border-teal-200 hover:bg-teal-50"
+                data-testid="staff-login-footer-btn"
+              >
+                <Shield className="w-4 h-4 mr-2" />
+                Staff Portal
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/doctor-login')}
+                className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                data-testid="doctor-login-footer-btn"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Doctor Portal
+              </Button>
+            </div>
           </div>
         </div>
 
