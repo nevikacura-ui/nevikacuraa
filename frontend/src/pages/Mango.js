@@ -337,6 +337,7 @@ const Proton = () => {
   const [collectionType, setCollectionType] = useState('home'); // 'home' or 'center'
   const [showTrends, setShowTrends] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [showPackageBuilder, setShowPackageBuilder] = useState(false);
   const [orderTotal, setOrderTotal] = useState(0);
   
   // Wishlist & Save for Later
