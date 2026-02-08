@@ -169,9 +169,13 @@ function AppContent() {
           <Route path="/login-old" element={<LoginPage />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-panel" element={<AdminPanel />} />
-          {/* Unified Staff Login - Single entry point */}
+          {/* Staff Portal Selector - Shows all portal options */}
           <Route path="/staff" element={<UnifiedStaffLogin />} />
           <Route path="/staff-login" element={<UnifiedStaffLogin />} />
+          {/* Separate Portal Logins */}
+          <Route path="/staff-portal-login" element={<StaffPortalLogin />} />
+          <Route path="/doctor-login" element={<DoctorPortalLogin />} />
+          <Route path="/admin-login" element={<AdminPortalLogin />} />
           {/* Super Admin Dashboard */}
           <Route path="/super-admin" element={<SuperAdminDashboard />} />
           <Route path="/admin-dashboard" element={<SuperAdminDashboard />} />
