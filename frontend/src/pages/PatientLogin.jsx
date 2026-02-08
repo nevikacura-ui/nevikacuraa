@@ -257,14 +257,12 @@ const PatientLogin = () => {
       const data = await res.json();
       
       if (res.ok && data.success) {
-        // Save auth data
+        // Save auth data - ONLY use patientToken, not token
         localStorage.setItem('patientToken', data.token);
         localStorage.setItem('patientInfo', JSON.stringify(data.user));
         localStorage.setItem('patientLoginExpiry', (Date.now() + 30 * 24 * 60 * 60 * 1000).toString());
-        
-        // Also set for compatibility
-        localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
+        // Don't set 'token' - that's for staff/admin auth
         
         toast.success(data.message || 'Account created successfully!');
         
