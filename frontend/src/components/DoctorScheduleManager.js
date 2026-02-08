@@ -42,6 +42,7 @@ const DoctorScheduleManager = ({ doctorToken, onClose }) => {
       const res = await axios.get(`${API}/api/doctor-schedule/my-schedule`, getAuthHeaders());
       setSchedule(res.data);
       setBlockedDates(res.data.blocked_dates || []);
+      setBlockedSessions(res.data.blocked_sessions || []);
     } catch (error) {
       toast.error('Failed to load schedule');
     }
