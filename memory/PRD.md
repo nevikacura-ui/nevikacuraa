@@ -52,12 +52,23 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
   - Evara (Women's Health), Reneu (Preventive Health), Senova (Senior Health) sections
   - Updated splash screen carousel image (slide 2 - medicines)
 
-### Pending Implementation (Engagement Features)
-- **Completed**: All major engagement features implemented
+### All Engagement Features - COMPLETE ✅
+
+**Session 6 Features Implemented:**
+1. Patient Login/Signup Flow (Email + WhatsApp OTP, Password)
+2. Profile Login Fix (no re-login for authenticated users)
+3. Quick Actions (Reorder, Book Again, Repeat Test)
+4. DiaGyn Earliest Slot button
+5. Prescription OCR with AI extraction
+6. Package Builder for Mango Labs (50+ tests, volume discounts)
+7. Gamification (Streak, Points, Badges, Referral)
+8. Medicine Subscription for chronic meds (weekly/monthly/quarterly)
+9. "Usually Bought Together" suggestions in Pharmacy
+10. Wait Time Estimates for DiaGyn clinics
 
 ### Pending User Verification
-- Doctor Portal redirect from `/staff` login
-- Doctor Portal branding (DiaGyn instead of Mango)
+- Doctor Portal redirect from `/staff` login (code is correct, needs production testing)
+- Doctor Portal branding shows "DiaGyn Healthcare" (verify in production)
 
 ### In Progress
 - **Doctor Session Blocking Feature**: Backend API done, frontend UI needs completion
