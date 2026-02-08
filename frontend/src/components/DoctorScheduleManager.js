@@ -140,6 +140,41 @@ const DoctorScheduleManager = ({ doctorToken, onClose }) => {
     }
   };
 
+  const blockSession = async () => {
+    if (!newSessionDate || !newSessionStart || !newSessionEnd) {
+      toast.error('Select date and time range');
+      return;
+    }
+    try {
+      await axios.post(`${API}/api/doctor-schedule/block-session`, {
+        date: newSessionDate,
+        start_time: newSessionStart,
+        end_time: newSessionEnd,
+        reason: newSessionReason
+      }, getAuthHeaders());
+      setBlockedSessions([...blockedSessions, { 
+        date: newSessionDate, 
+        start_time: newSessionStart, 
+        end_time: newSessionEnd,
+        reason: newSessionReason 
+      }]);
+      setNewSessionDate('');
+      toast.success('Session blocked');
+    } catch (error) {
+      toast.error('Failed to block session');
+    }
+  };
+
+  const unblockSession = async (date, startTime) => {
+    try {
+      await axios.delete(`${API}/api/doctor-schedule/block-session/${date}/${startTime}`, getAuthHeaders());
+      setBlockedSessions(blockedSessions.filter(s => !(s.date === date && s.start_time === startTime)));
+      toast.success('Session unblocked');
+    } catch (error) {
+      toast.error('Failed to unblock session');
+    }
+  };
+
   if (loading) {
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
