@@ -204,11 +204,12 @@ const Footer = () => {
               </Link>
               <span className="text-slate-700">|</span>
               <Link 
-                to="/admin" 
-                className="text-sm text-gray-400 hover:text-teal-400 transition-colors"
+                to="/admin-login" 
+                className="inline-flex items-center gap-1.5 text-sm text-violet-400 hover:text-violet-300 transition-colors font-medium"
                 data-testid="footer-admin"
               >
-                Admin
+                <Shield className="w-4 h-4" />
+                Admin Portal
               </Link>
             </div>
           </div>
