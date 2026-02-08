@@ -104,9 +104,19 @@ const Profile = () => {
 
   const handleLogout = () => {
     mediumTap();
+    // Clear all auth tokens and user data
+    localStorage.removeItem('patientToken');
+    localStorage.removeItem('patientInfo');
+    localStorage.removeItem('patientLoginExpiry');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('guestMobile');
+    localStorage.removeItem('authToken');
     logout();
     toast.success('Logged out successfully');
     navigate('/');
+    // Force reload to reset all states
+    window.location.reload();
   };
 
   // Menu item component
