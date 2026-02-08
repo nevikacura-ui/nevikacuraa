@@ -16,6 +16,7 @@ import AuthModal from '@/components/AuthModal';
 import GlobalSearch from '@/components/GlobalSearch';
 import QuickActions from '@/components/QuickActions';
 import PersonalizedActions from '@/components/PersonalizedActions';
+import GamificationWidget from '@/components/GamificationWidget';
 import HealthScoreWidget from '@/components/HealthScoreWidget';
 import SmartHomeFeed from '@/components/SmartHomeFeed';
 import PortalScrollBar from '@/components/PortalScrollBar';
