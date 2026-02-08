@@ -9,7 +9,7 @@ import os
 import uuid
 from datetime import datetime
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://multi-portal-session.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://unified-login-fix.preview.emergentagent.com')
 
 # Test credentials from review request
 ADMIN_PASSWORD = "nevikacura2026"

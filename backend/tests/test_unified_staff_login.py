@@ -7,7 +7,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://multi-portal-session.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://unified-login-fix.preview.emergentagent.com')
 
 # Staff credentials with new password (12345678)
 STAFF_CREDENTIALS = {

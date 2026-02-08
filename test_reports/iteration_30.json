@@ -141,7 +141,7 @@
     "frontend": "100% (12/12 verified)"
   },
   "test_credentials": {
-    "api_base_url": "https://multi-portal-session.preview.emergentagent.com",
+    "api_base_url": "https://unified-login-fix.preview.emergentagent.com",
     "test_child_id": "child_6e108638666d",
     "test_user_id": "test_user_123"
   },
