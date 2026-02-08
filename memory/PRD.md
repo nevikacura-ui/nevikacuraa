@@ -10,6 +10,33 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
 
 ## What's Been Implemented
 
+### Completed (Feb 8, 2026) - Session 6
+- ✅ **Patient Login/Signup Flow Rebuilt**:
+  - NEW unified login page at `/login` with modern UI
+  - **Email + OTP Signup**: Enter email → Receive OTP → Verify → Create password → Account created
+  - **WhatsApp + OTP Signup**: Enter phone → Receive OTP → Verify → Collect email + Create password → Account created
+  - **Login with Password**: Existing users with passwords can login directly
+  - **Login with OTP**: Fallback for users who forgot password
+  - 30-day persistent session with JWT tokens
+  - Staff Portal Login link moved to footer as requested
+  - Mock OTPs provided in API responses for testing (shown in toast)
+  - Backend: `/app/backend/routes/patient_auth.py` (10 API endpoints)
+  - Frontend: `/app/frontend/src/pages/PatientLogin.jsx`
+- ✅ **Homepage Branding Updated**:
+  - Evara (Women's Health) - Already existed, verified working
+  - Reneu (Preventive Health) - Section added with tests like Full Body Checkup, Cardiac Health, Immunity Panel
+  - Senova (Senior Health) - Section added with tests like Senior Checkup, Bone Health, Memory & Brain
+  - Each section has horizontally scrollable test categories with images
+
+### Pending User Verification
+- Doctor Portal redirect from `/staff` login (should go to Doctor Portal, not DiaGyn Staff)
+- Doctor Portal branding (should show DiaGyn, not Mango Labs logo)
+
+### In Progress
+- **Doctor Session Blocking Feature**: Backend API done, frontend UI needs completion
+  - Doctors can block specific time slots (e.g., 11am-2pm)
+  - API: `/api/doctor/blocked-sessions`
+
 ### Completed (Feb 7, 2026) - Session 5
 - ✅ **30-Day Persistent Login for ALL Staff Portals**:
   - Mango Labs Staff Portal (`/mango-staff`): Added 30-day login persistence
