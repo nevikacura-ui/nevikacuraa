@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,7 @@ const API = `${BACKEND_URL}/api`;
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user: authUser, logout } = useAuth();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
   const [darkMode, setDarkMode] = useState(false);
@@ -34,17 +34,47 @@ const Profile = () => {
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [healthRecords, setHealthRecords] = useState([]);
 
-  useEffect(() => {
-    if (!user) {
-      // Check if there's a patientToken - patient portal users
-      const patientToken = localStorage.getItem('patientToken');
-      if (!patientToken) {
-        navigate('/');
-        return;
+  // Get user from auth context OR localStorage (for patient portal users)
+  const user = useMemo(() => {
+    if (authUser) return authUser;
+    
+    // Check patient info from localStorage
+    const patientInfo = localStorage.getItem('patientInfo');
+    if (patientInfo) {
+      try {
+        return JSON.parse(patientInfo);
+      } catch (e) {
+        console.error('Failed to parse patient info:', e);
       }
     }
+    
+    // Check guest info
+    const guestMobile = localStorage.getItem('guestMobile');
+    if (guestMobile) {
+      return { name: 'Guest User', phone: guestMobile, isGuest: true };
+    }
+    
+    return null;
+  }, [authUser]);
+
+  // Check if user is logged in (any method)
+  const isLoggedIn = useMemo(() => {
+    return !!(
+      authUser || 
+      localStorage.getItem('patientToken') || 
+      localStorage.getItem('token') ||
+      localStorage.getItem('guestMobile')
+    );
+  }, [authUser]);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      // Redirect to login page
+      navigate('/login');
+      return;
+    }
     fetchData();
-  }, [user, navigate]);
+  }, [isLoggedIn, navigate]);
 
   const fetchData = async () => {
     try {
