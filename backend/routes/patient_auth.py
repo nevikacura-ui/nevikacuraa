@@ -156,7 +156,7 @@ async def email_send_otp(request: EmailOTPRequest):
     If user exists without password -> send OTP to set password
     If user doesn't exist -> send OTP for new signup
     """
-    db = get_db()
+    global db
     email = request.email.lower().strip()
     
     # Check if user exists
@@ -260,7 +260,7 @@ async def whatsapp_send_otp(request: WhatsAppOTPRequest):
     """
     Step 1: Send OTP via WhatsApp for signup/login
     """
-    db = get_db()
+    global db
     phone = request.phone.strip().replace("+91", "").replace(" ", "").replace("-", "")[-10:]
     
     if len(phone) != 10 or not phone.isdigit():
@@ -398,7 +398,7 @@ async def create_password(request: CreatePasswordRequest):
     For new users: Creates account
     For existing users without password: Sets password
     """
-    db = get_db()
+    global db
     verification_token = request.verification_token
     password = request.password.strip()
     
@@ -525,7 +525,7 @@ async def login_with_password(request: LoginWithPassword):
     """
     Login with email/phone and password
     """
-    db = get_db()
+    global db
     identifier = request.identifier.strip().lower()
     password = request.password
     
@@ -587,7 +587,7 @@ async def login_otp_send(request: LoginWithOTPRequest):
     """
     Send OTP for login (useful if user forgot password)
     """
-    db = get_db()
+    global db
     identifier = request.identifier.strip().lower()
     
     # Find user
@@ -676,7 +676,7 @@ async def login_otp_verify(request: LoginWithOTPVerify):
     del patient_otp_storage[otp_key]
     
     # Update last login
-    db = get_db()
+    global db
     await db.patients.update_one(
         {"id": user["id"]},
         {"$set": {"last_login": datetime.now(timezone.utc).isoformat()}}
@@ -725,7 +725,7 @@ async def get_current_patient(authorization: str = Header(None)):
         if payload.get("type") != "patient":
             raise HTTPException(status_code=401, detail="Invalid token type")
         
-        db = get_db()
+        global db
         user = await db.patients.find_one({"id": payload.get("sub")}, {"_id": 0, "password_hash": 0})
         
         if not user:
