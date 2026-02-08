@@ -159,7 +159,8 @@ function AppContent() {
           <Route path="/psvn-foundation" element={<AnimatedPage><PSVNFoundation /></AnimatedPage>} />
           <Route path="/aanya" element={<AnimatedPage><Alyne /></AnimatedPage>} />
           <Route path="/profile" element={<AnimatedPage><Profile /></AnimatedPage>} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<PatientLogin />} />
+          <Route path="/login-old" element={<LoginPage />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-panel" element={<AdminPanel />} />
           {/* Unified Staff Login - Single entry point */}
