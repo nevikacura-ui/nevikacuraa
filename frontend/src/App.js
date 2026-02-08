@@ -79,8 +79,12 @@ import NevikaCuraOne from '@/pages/NevikaCuraOne';
 import LoginPage from '@/pages/LoginPage';
 // Patient Login (New Unified Auth)
 import PatientLogin from '@/pages/PatientLogin';
-// Unified Staff Login
+// Unified Staff Login (Portal Selector)
 import UnifiedStaffLogin from '@/pages/UnifiedStaffLogin';
+// Separate Staff Portal Logins
+import StaffPortalLogin from '@/pages/StaffPortalLogin';
+import DoctorPortalLogin from '@/pages/DoctorPortalLogin';
+import AdminPortalLogin from '@/pages/AdminPortalLogin';
 // Super Admin Dashboard
 import SuperAdminDashboard from '@/pages/SuperAdminDashboard';
 // Intro Screen (Loading + Splash combined)
