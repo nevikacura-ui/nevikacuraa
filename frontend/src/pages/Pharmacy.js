@@ -1016,12 +1016,20 @@ const Pharmacy = () => {
     setMedicines(updated);
   };
 
+  // State for OCR extraction
+  const [extractedMedicines, setExtractedMedicines] = useState([]);
+  const [extracting, setExtracting] = useState(false);
+
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setPrescriptionFile(file);
     setUploading(true);
+    setExtracting(false);
+    setExtractedMedicines([]);
+    
     try {
+      // First upload the file
       const formData = new FormData();
       formData.append('file', file);
       if (user) formData.append('user_id', user.id);
@@ -1032,12 +1040,71 @@ const Pharmacy = () => {
         }
       });
       setPrescriptionUrl(response.data.url);
-      toast.success('Prescription uploaded successfully');
+      toast.success('Prescription uploaded!');
+      
+      // Now try to extract medicines using OCR (only for images)
+      if (file.type.startsWith('image/')) {
+        setExtracting(true);
+        toast.info('Analyzing prescription...', { duration: 2000 });
+        
+        try {
+          const ocrFormData = new FormData();
+          ocrFormData.append('file', file);
+          
+          const ocrResponse = await axios.post(`${API}/prescription/extract`, ocrFormData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
+          
+          if (ocrResponse.data.success && ocrResponse.data.medicines?.length > 0) {
+            setExtractedMedicines(ocrResponse.data.medicines);
+            toast.success(`Found ${ocrResponse.data.medicines.length} medicine(s)!`);
+          } else {
+            toast.info('Could not auto-detect medicines. Please add manually.');
+          }
+        } catch (ocrError) {
+          console.log('OCR extraction failed:', ocrError);
+          // Don't show error - OCR is optional
+        } finally {
+          setExtracting(false);
+        }
+      }
     } catch (error) {
       toast.error('Failed to upload prescription');
     } finally {
       setUploading(false);
     }
+  };
+
+  // Add extracted medicine to cart
+  const addExtractedMedicine = (med) => {
+    const newMedicine = {
+      id: Date.now(),
+      name: med.name,
+      quantity: med.quantity || 1,
+      dosage: med.dosage || '',
+      frequency: med.frequency || '',
+      price: 0, // Will be calculated by pharmacy
+      fromPrescription: true
+    };
+    setMedicines(prev => [...prev, newMedicine]);
+    setExtractedMedicines(prev => prev.filter(m => m.name !== med.name));
+    toast.success(`Added ${med.name}`);
+  };
+
+  // Add all extracted medicines
+  const addAllExtractedMedicines = () => {
+    const newMedicines = extractedMedicines.map((med, idx) => ({
+      id: Date.now() + idx,
+      name: med.name,
+      quantity: med.quantity || 1,
+      dosage: med.dosage || '',
+      frequency: med.frequency || '',
+      price: 0,
+      fromPrescription: true
+    }));
+    setMedicines(prev => [...prev, ...newMedicines]);
+    toast.success(`Added ${extractedMedicines.length} medicines!`);
+    setExtractedMedicines([]);
   };
 
   const sendOtp = async () => {
