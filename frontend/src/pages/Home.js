@@ -715,6 +715,9 @@ const Home = () => {
         {/* Quick Action Cards - Call, WhatsApp, Upload, Packages */}
         <QuickActionCards />
 
+        {/* Personalized Quick Actions - Reorder & Book Again */}
+        <PersonalizedActions className="mb-6" />
+
         {/* Smart Home Feed - For logged in users */}
         {user && (
           <div className="mb-8">
