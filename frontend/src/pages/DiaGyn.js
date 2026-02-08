@@ -1421,6 +1421,11 @@ const DiaGyn = () => {
               </p>
             </div>
             
+            {/* Live Queue Status */}
+            <div className="mb-6">
+              <LiveQueueStatus clinics={availableClinics.map(c => c.name)} className="max-w-md mx-auto" />
+            </div>
+            
             {/* Clinic cards - Tablet: 2 cols with larger cards */}
             <div className={`grid gap-6 ${
               isTablet ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2'
