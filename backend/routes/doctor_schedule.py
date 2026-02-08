@@ -208,7 +208,7 @@ async def get_available_slots(date: str, doctor_id: str = None, doctor=Depends(v
     try:
         date_obj = datetime.strptime(date, "%Y-%m-%d")
         day_name = date_obj.strftime("%A").lower()
-    except:
+    except ValueError:
         raise HTTPException(status_code=400, detail="Invalid date format")
     
     # Find day schedule
@@ -255,7 +255,7 @@ async def get_available_slots(date: str, doctor_id: str = None, doctor=Depends(v
                     slot_dt = datetime.strptime(slot_time, "%H:%M")
                     if session_start <= slot_dt < session_end:
                         blocked_times.append(slot_time)
-            except:
+            except (ValueError, KeyError):
                 pass
     
     # Filter available slots (exclude booked AND blocked)
