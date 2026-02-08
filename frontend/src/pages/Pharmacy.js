@@ -12,6 +12,8 @@ import BottomNav from '@/components/BottomNav';
 import CashfreeCheckout from '@/components/CashfreeCheckout';
 import ServiceHeader from '@/components/ServiceHeader';
 import ProtonAdBanner from '@/components/ProtonAdBanner';
+import MedicineSubscription, { SubscriptionManager } from '@/components/MedicineSubscription';
+import UsuallyBoughtTogether from '@/components/UsuallyBoughtTogether';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
