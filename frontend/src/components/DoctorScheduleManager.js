@@ -18,8 +18,13 @@ const DoctorScheduleManager = ({ doctorToken, onClose }) => {
   const [schedule, setSchedule] = useState(null);
   const [activeDay, setActiveDay] = useState('monday');
   const [blockedDates, setBlockedDates] = useState([]);
+  const [blockedSessions, setBlockedSessions] = useState([]);
   const [newBlockDate, setNewBlockDate] = useState('');
   const [newBlockReason, setNewBlockReason] = useState('Leave');
+  const [newSessionDate, setNewSessionDate] = useState('');
+  const [newSessionStart, setNewSessionStart] = useState('11:00');
+  const [newSessionEnd, setNewSessionEnd] = useState('14:00');
+  const [newSessionReason, setNewSessionReason] = useState('Break');
 
   const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
