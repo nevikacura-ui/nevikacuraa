@@ -6810,6 +6810,14 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Auth V2 router: {e}")
 
+# Patient Authentication Routes (New Unified Login/Signup System)
+try:
+    from routes.patient_auth import router as patient_auth_router
+    app.include_router(patient_auth_router, prefix="/api")
+    logger.info("Patient Authentication router loaded (Email/WhatsApp OTP + Password)")
+except Exception as e:
+    logger.warning(f"Could not load Patient Auth router: {e}")
+
 # Orange Pharmacy Staff Portal Routes (Enhanced)
 try:
     from routes.orange_pharmacy import router as orange_pharmacy_router, set_db as set_orange_pharmacy_db, set_jwt_config as set_orange_pharmacy_jwt, set_notification_functions as set_orange_pharmacy_notif
