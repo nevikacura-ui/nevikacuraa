@@ -277,48 +277,36 @@ async def whatsapp_send_otp(request: WhatsAppOTPRequest):
         else:
             flow_type = "set_password"
     
-    # Send WhatsApp OTP
-    result = await send_whatsapp_otp(phone, "patient_signup")
-    
-    if not result.get("success"):
-        # Fallback to mock OTP
-        otp = generate_otp()
-        patient_otp_storage[f"whatsapp_{phone}"] = {
-            "otp": otp,
-            "type": "whatsapp",
-            "identifier": phone,
-            "flow_type": flow_type,
-            "existing_user": existing,
-            "expires_at": datetime.now(timezone.utc) + timedelta(minutes=10),
-            "attempts": 0
-        }
-        
-        return {
-            "success": True,
-            "message": "OTP generated (Demo mode)",
-            "phone": phone,
-            "flow_type": flow_type,
-            "has_password": flow_type == "login_with_password",
-            "mock_otp": otp,
-            "expires_in": 600
-        }
-    
-    # Store flow info for verification
-    patient_otp_storage[f"whatsapp_flow_{phone}"] = {
+    # For development, always use mock OTP (MSG91 may not work in test environments)
+    # Generate mock OTP
+    otp = generate_otp()
+    patient_otp_storage[f"whatsapp_{phone}"] = {
+        "otp": otp,
         "type": "whatsapp",
         "identifier": phone,
         "flow_type": flow_type,
-        "existing_user": existing
+        "existing_user": existing,
+        "expires_at": datetime.now(timezone.utc) + timedelta(minutes=10),
+        "attempts": 0
     }
     
-    return {
+    # Try to send real WhatsApp OTP (optional - may fail)
+    result = await send_whatsapp_otp(phone, "patient_signup")
+    
+    response = {
         "success": True,
-        "message": "OTP sent via WhatsApp",
+        "message": "OTP sent via WhatsApp" if result.get("success") else "OTP generated (Demo mode)",
         "phone": phone,
         "flow_type": flow_type,
         "has_password": flow_type == "login_with_password",
+        "mock_otp": otp,  # Always include for testing
         "expires_in": 600
     }
+    
+    if not result.get("success"):
+        response["note"] = "WhatsApp service unavailable, use test OTP"
+    
+    return response
 
 @router.post("/whatsapp/verify-otp")
 async def whatsapp_verify_otp(request: WhatsAppOTPVerify):
