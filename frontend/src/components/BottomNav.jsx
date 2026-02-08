@@ -20,8 +20,27 @@ const BottomNav = () => {
   const [showBookingModal, setShowBookingModal] = useState(false);
   
   // Check if user is logged in (auth context OR localStorage)
-  const isLoggedIn = authUser || localStorage.getItem('patientToken') || localStorage.getItem('guestMobile');
-  const user = authUser || (localStorage.getItem('patientInfo') ? JSON.parse(localStorage.getItem('patientInfo')) : null);
+  // Re-check on every render to catch localStorage changes
+  const [, forceUpdate] = useState(0);
+  
+  useEffect(() => {
+    // Force re-render when storage changes
+    const handleStorageChange = () => forceUpdate(n => n + 1);
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+  
+  const isLoggedIn = authUser || 
+    typeof window !== 'undefined' && (
+      localStorage.getItem('patientToken') || 
+      localStorage.getItem('guestMobile')
+    );
+  
+  const user = authUser || (
+    typeof window !== 'undefined' && localStorage.getItem('patientInfo') 
+      ? JSON.parse(localStorage.getItem('patientInfo')) 
+      : null
+  );
   
   // WhatsApp OTP Login State
   const [showLoginModal, setShowLoginModal] = useState(false);
