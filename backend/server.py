@@ -6819,6 +6819,15 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Patient Auth router: {e}")
 
+# Prescription OCR Routes
+try:
+    from routes.prescription_ocr import router as prescription_ocr_router, set_db as set_prescription_ocr_db
+    set_prescription_ocr_db(db)
+    app.include_router(prescription_ocr_router, prefix="/api")
+    logger.info("Prescription OCR router loaded")
+except Exception as e:
+    logger.warning(f"Could not load Prescription OCR router: {e}")
+
 # Orange Pharmacy Staff Portal Routes (Enhanced)
 try:
     from routes.orange_pharmacy import router as orange_pharmacy_router, set_db as set_orange_pharmacy_db, set_jwt_config as set_orange_pharmacy_jwt, set_notification_functions as set_orange_pharmacy_notif
