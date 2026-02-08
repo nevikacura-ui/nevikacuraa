@@ -15,9 +15,13 @@ const API = process.env.REACT_APP_BACKEND_URL;
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, setPatientAuth } = useAuth();
+  const { user: authUser, setPatientAuth } = useAuth();
   const [isScrolling, setIsScrolling] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  
+  // Check if user is logged in (auth context OR localStorage)
+  const isLoggedIn = authUser || localStorage.getItem('patientToken') || localStorage.getItem('guestMobile');
+  const user = authUser || (localStorage.getItem('patientInfo') ? JSON.parse(localStorage.getItem('patientInfo')) : null);
   
   // WhatsApp OTP Login State
   const [showLoginModal, setShowLoginModal] = useState(false);
