@@ -151,13 +151,12 @@ const BottomNav = () => {
     
     if (item.id === 'book') {
       setShowBookingModal(true);
-    } else if (item.id === 'profile' && !user) {
-      // Show WhatsApp OTP login modal for non-logged-in users
-      setShowLoginModal(true);
-      setLoginStep('phone');
-      setPhone('');
-      setOtp(['', '', '', '', '', '']);
-      setMockOtp(null);
+    } else if (item.id === 'profile' && !isLoggedIn) {
+      // Show login page for non-logged-in users
+      navigate('/login');
+    } else if (item.id === 'profile' && isLoggedIn) {
+      // Go to profile for logged-in users
+      navigate('/profile');
     } else if (item.path) {
       navigate(item.path);
     }
