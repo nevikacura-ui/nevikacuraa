@@ -118,6 +118,7 @@ function AppContent() {
                          window.location.pathname.includes('/report') ||
                          window.location.pathname.includes('/medicine-images') ||
                          window.location.pathname.includes('/order-tracking') ||
+                         window.location.pathname.includes('/login') ||
                          window.location.pathname.includes('/track');
     
     return isStaffPage || isPublicPage || authToken || patientToken || guestMobile || user;
