@@ -53,11 +53,7 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
   - Updated splash screen carousel image (slide 2 - medicines)
 
 ### Pending Implementation (Engagement Features)
-- **Orange Pharmacy**: Upload prescription → Auto-extract medicines UI integration
-- **Orange Pharmacy**: Subscription for chronic meds with monthly auto-delivery
-- **Orange Pharmacy**: "Usually bought together" suggestions
-- **Mango Labs**: Package Builder - "Build your own checkup" with price calculator
-- **Gamification**: Health Streak tracking, Milestone badges, Referral program
+- **Completed**: All major engagement features implemented
 
 ### Pending User Verification
 - Doctor Portal redirect from `/staff` login
