@@ -15,7 +15,7 @@ import requests
 import os
 from datetime import datetime, timedelta
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://unified-login-fix.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://role-redirect-debug.preview.emergentagent.com')
 
 # Test credentials for doctors
 DOCTOR_CREDENTIALS = {

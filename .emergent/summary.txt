@@ -1,186 +1,155 @@
-<analysis>**original_problem_statement**: The user initiated a series of feature requests and bug fixes for a multi-portal healthcare application.
-
-**Initial Requests:**
-1.  Implement a 30-day persistent login feature for Mango Labs and Orange Pharmacy staff portals.
-2.  Add a Remember Me checkbox to all staff and doctor login portals.
-3.  Update the Mango Health Labs logo across the entire application.
-4.  Enlarge the new Mango Health Labs logo for better visibility.
-5.  Change carousel images on the patient-facing page for Home collection and Fast and accurate slides.
-6.  Build out Patient Profile features: My Orders, My Lab Tests, and a Wallet.
-7.  Implement a 30-day login for patients.
-
-**Subsequent Major Requests & Bug Reports:**
-1.  **Critical Login Failure**: User reported being unable to log into any staff or doctor portal on the production URL (). This became a high-priority, multi-step debugging process.
-2.  **Incorrect Portal Redirect**: After fixing the login, the  account was incorrectly redirected to the DiaGyn staff portal instead of the Doctor Portal from the unified login page.
-3.  **Branding Correction**: The Doctor Portal was incorrectly showing the Mango Health Labs logo and branding; it should be part of DiaGyn Healthcare.
-4.  **New Feature - Doctor Session Blocking**: A feature for doctors to block specific time slots/sessions (e.g., 11 am to 2 pm) in their schedule.
-5.  **Major Feature - Login/Signup Rebuild**: A complete overhaul of the patient login/signup system to include:
-    *   Sign up via email + OTP, with password creation.
-    *   Sign up via WhatsApp + OTP, collecting email and creating a password.
-    *   A unified session so a logged-in user doesn't need to log in again for booking appointments, ordering medicine, etc.
-    *   Relocate the Staff login option to the footer.
-    *   Update homepage sections with new branding: Evara (women's health), Reneu (preventive health), Senova (senior health).
+<analysis>**original_problem_statement:**
+The user's primary goal was a complete overhaul of the patient login and signup system to use Email/WhatsApp OTP flows. Following that, the user requested a series of engagement and UI improvements across the application, including:
+- Fixing an issue where logged-in patients were asked to log in again to see their profile.
+- Updating the splash screen carousel image.
+- Adding new features to the homepage (Quick Actions, Gamification), DiaGyn (Earliest Slot), Orange Pharmacy (Prescription OCR, Subscriptions), and Mango Labs (Package Builder).
+- The latest request is to fix a bug where the unified staff login page incorrectly redirects all users to the doctor portal. The user suggested splitting the portals (Staff, Doctor, Admin) if the unified approach is too complex, and moving the Admin portal link to the homepage footer.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A multi-portal web application built with a React frontend and a Flask/MongoDB backend. It features separate portals for Doctors, DiaGyn Staff, Mango Labs Staff, and Orange Pharmacy Staff, along with a patient-facing interface. A unified staff login page () routes users to their respective portals. The production database and preview database are separate, which has been a major source of conflict and debugging.
+A full-stack healthcare application with separate portals for patients and staff. The patient authentication system has been rebuilt to support OTP-based login/signup via email and WhatsApp, along with a standard password login. The profile re-login bug has been fixed. Several new UI features have been implemented as components but may lack full backend functionality:
+-   **Mango Labs:** A Package Builder modal.
+-   **Orange Pharmacy:** A prescription OCR flow that uses Gemini to extract text, and UI placeholders for Usually Bought Together and medicine subscriptions.
+-   **DiaGyn:** UI placeholders for Earliest Available Slot and Wait Time Estimate.
+-   **Homepage:** A Gamification widget and Personalized Actions for reordering.
+
+The immediate problem is a critical bug in the staff login flow.
 
 **Last working item**:
--   **Last item agent was working**: The agent had just started the major refactor of the patient login/signup flow. It began by planning the implementation and was about to add the backend routes for email-based OTP using the Resend service.
--   **Status**: NOT STARTED
--   **Agent Testing Done**: N
--   **Which testing method agent to use?**: both
--   **User Testing Done**: N
+-   **Last item agent was working:** Investigating a critical bug where the unified staff login page () incorrectly redirects all staff members to the doctor's portal (), regardless of their actual role. The user reported this issue and suggested splitting the login pages as a potential solution. The agent had just begun troubleshooting by examining the code in .
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Frontend testing agent
+-   **User Testing Done:** Y (User discovered and reported the bug)
 
 **All Pending/In progress Issue list**:
--   **Issue 1**: Login issues on the production environment.
--   **Issue 2**: Doctor portal redirecting incorrectly.
--   **Issue 3**: Doctor portal showing incorrect branding.
+-   **Issue 1:** Unified staff login redirects all users to the doctor portal (P0)
 
-**Issues Detail**:
--   **Issue 1: Critical Login Failure on Production** (RESOLVED, but high risk of recurrence)
-    -   **Attempted fixes**: The agent reset passwords multiple times, verified credentials via API calls, and debugged backend login logic. The root causes were identified as:
-        1.  The user was testing on the production URL () while the agent was working on a preview URL with a different database.
-        2.  The production database had no staff accounts seeded.
-        3.  The backend route for creating staff accounts was flawed and didn't save usernames/passwords correctly.
-        4.  The agent had to create a special one-time setup endpoint () to seed the production database correctly after the user redeployed the fixed code.
-    -   **Next debug checklist**: If this recurs, first verify which environment the user is on (preview vs. production). Then, use the  endpoint to ensure accounts exist on production. Check browser cache and password manager autofill on the user's side.
-    -   **Why fix this issue and what will be achieved with the fix?**: This was a critical blocker preventing any user verification.
-    -   **Status**: RESOLVED
-    -   **Is recurring issue?**: Y
-    -   **Should Test backend/both after fix?**: both
-
--   **Issue 2: Unified Login Redirects Doctor to Wrong Portal** (RESOLVED, but needs user verification)
-    -   **Attempted fixes**: The agent investigated the frontend redirect logic in . It was found that while the logic seemed correct, browser caching or a stale production deployment might be the cause. An explicit fix was added to the  function to be more robust. The agent also created new accounts (, ) and added them to the setup script.
-    -   **Next debug checklist**: After deployment, clear browser cache and test logging in as  and  from the  page. Ensure they are redirected to .
-    -   **Why fix this issue and what will be achieved with the fix?**: To provide a seamless, correct user experience from the unified login page.
-    -   **Status**: USER VERIFICATION PENDING
-    -   **Is recurring issue?**: Y
-    -   **Should Test frontend/backend/both after fix?**: frontend
-
--   **Issue 3: Doctor Portal Branding Incorrect** (RESOLVED, but needs user verification)
-    -   **Attempted fixes**: The agent edited  and  to replace the Mango Health Labs logo and branding with DiaGyn branding (stethoscope icon and DiaGyn Healthcare text).
-    -   **Next debug checklist**: After deployment, log in to the Doctor Portal and verify the logo and header text are correct.
-    -   **Why fix this issue and what will be achieved with the fix?**: To align the application's branding with the business structure.
-    -   **Status**: USER VERIFICATION PENDING
-    -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: frontend
+**Issues Detail:**
+-   **Issue 1:** Unified staff login redirects all users to the doctor portal
+    -   **Attempted fixes:** The agent has only viewed the  file. No code changes have been made yet.
+    -   **Next debug checklist:**
+        1.  Analyze the  function in  to understand how the redirect path is determined based on the user's .
+        2.  Inspect the network response from the  endpoint to see what  is being returned for different staff users.
+        3.  Verify that test users in the database have the correct roles (e.g., 'staff', 'doctor', 'admin').
+        4.  Correct the redirection logic in  based on the role.
+        5.  If the unified logic remains problematic, implement the user's suggestion: create separate login pages for Staff, Doctor, and Admin.
+    -   **Why fix this issue and what will be achieved with the fix?** This fix is critical for ensuring different staff types can access their respective portals and perform their jobs.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Frontend
+    -   **Blocked on other issue:** None
 
 **In progress Task List**:
--   **Task 1: Implement Doctor Session Blocking**
-    -   **Where to resume**: The backend API endpoints () and database schema ( model) have been created in . The  function was updated to filter out blocked slots. The frontend component  needs to be completed to include the UI for adding, viewing, and deleting blocked sessions. The agent was struggling to test the existing modal interaction, which needs to be resolved.
-    -   **What will be achieved with this?**: Doctors will be able to block out specific time ranges in their daily schedule, preventing patient bookings during those times.
-    -   **Status**: IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?**: both
-    -   **Blocked on something**: No.
+-   None.
 
 **Upcoming and Future Tasks**
--   **Upcoming Tasks**:
-    -   **(P0) Rebuild Patient Login/Signup Flow**: This is the highest priority task.
-        -   Create backend routes for email OTP generation/verification using Resend ().
-        -   Create new frontend components for the unified login/signup page.
-        -   Implement UI for both email and WhatsApp OTP flows.
-        -   Implement logic to prompt for password creation upon first successful OTP verification.
-        -   Modify user/patient models to store password hashes.
-        -   Ensure a single login session persists across patient activities (booking, orders).
-        -   Move the Staff Login link to the footer of the new login page.
-    -   **(P1) Update Homepage with New Branding**:
-        -   In , replace the content/images for the sections to reflect:
-            -   Evara - women health
-            -   Reneu - preventive health
-            -   Senova - senior health
+**Upcoming Tasks:**
+-   **P1: Implement Backend for New Features:** Several frontend components have been created but are not functional. They require backend logic:
+    -   **Orange Pharmacy Subscriptions:** Implement the backend flow for creating and managing chronic medicine subscriptions.
+    -   **Usually Bought Together:** Create a backend service to generate product recommendations.
+    -   **DiaGyn Wait Time Estimates:** Develop backend logic to calculate and serve real-time wait estimates.
+    -   **Gamification Engine:** Build the backend to track health streaks, award badges, and manage referrals.
+-   **P1: User Verification of New Features:** Conduct a full test and get user feedback on all recently added features (Package Builder, OCR, etc.).
+-   **P2: Separate Admin Portal Link:** As requested by the user, move the link for the Admin portal to the homepage footer.
 
--   **Future Tasks**:
-    -   Review and complete any remaining items from the PRD.
+**Future Tasks:**
+-   **Doctor Session Blocking:** Implement the frontend UI for doctors to block out their availability.
 
 **Completed work in this session**
--   **30-Day Persistent Login**: Implemented for Mango Labs and Orange Pharmacy staff portals and added Remember Me toggles to all staff/doctor portals.
--   **Patient Portal Features**: Built out My Orders, My Lab Tests, and Wallet functionality within .
--   **Logo & Image Updates**: Updated and enlarged the Mango Health Labs logo and changed two carousel images on the patient homepage ().
--   **Production Login/Seeding Fix**: Resolved critical login failures on the production environment by creating a database seeding script () and guiding the user through redeployment.
--   **Unified Login Routing**: Fixed the redirect logic in  to ensure users are sent to the correct portal based on their role.
--   **Doctor Portal Re-branding**: Changed the Doctor Portal branding from Mango to DiaGyn ().
+-   **Patient Login/Signup Rebuild:** Successfully implemented and tested a new authentication system using Email/WhatsApp OTP and passwords. This included new backend routes () and a new frontend page ().
+-   **Profile Re-Login Bug Fix:** Resolved an issue where the  was improperly clearing the , forcing logged-in patients to log in again to view their profile.
+-   **Mango Labs Package Builder:** Created and integrated a fully functional modal () for patients to create custom lab test packages.
+-   **Prescription OCR:** Implemented a backend endpoint () using Gemini Vision and connected it to the frontend prescription upload flow in .
+-   **Splash Screen Image Update:** Changed the image on the second slide of the introductory carousel.
+-   **UI Component Scaffolding:** Created placeholder components for Gamification, Personalized Actions, Usually Bought Together, and Wait Time Estimates.
 
 **Earlier issues found/mentioned but not fixed**
--   None were completely missed, but the **Doctor Session Blocking** feature was left incomplete.
+-   None.
 
 **Known issue recurrence from previous fork**
--   Not applicable as the previous fork summary is not available.
+-   None.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend**: React.js, Tailwind CSS
--   **Backend**: Flask, Python
--   **Database**: MongoDB
--   **Authentication**: JWT (JSON Web Tokens), OTP (One-Time Password) via WhatsApp and Email (Resend).
--   **Deployment**: Separate preview and production environments. Production deployment is user-triggered.
+-   **Frontend:** React, React Router, Axios, Tailwind CSS.
+-   **Backend:** Python (Flask).
+-   **Database:** MongoDB.
+-   **Authentication:** Dual JWT systems for staff () and patients (), managed through a complex . Patient auth utilizes OTP via Resend (Email) and MSG91 (WhatsApp).
+-   **AI Integration:** Google Gemini Vision is used for prescription OCR.
 
 **key DB schema**
--   **staff**:  (Roles include , , , , )
--   **doctors**: 
+-   **users:** Stores credentials and  for staff members (e.g., 'doctor', 'staff', 'admin').
+-   **patients:** Stores patient information and credentials, including a password hash for the new login system.
 
 **changes in tech stack**
--    was introduced for sending email-based OTPs.
+-   The Gemini vision model was integrated for OCR capabilities.
 
 **All files of reference**
--   : Modified to add  endpoint to fix production database seeding.
--   : Modified repeatedly to debug login issues. Planned to be modified for new email OTP flow.
--   : Modified to add  API endpoints.
--   : Modified to fix incorrect redirect logic for different user roles.
--   : Modified to change branding from Mango to DiaGyn.
--   : Modified to begin implementation of the session blocking feature.
--   , : Modified to add persistent login.
--   : Modified to add new profile features (Orders, Tests, Wallet).
--   : Modified to update carousel images and branding.
+-   : **(BUG LOCATION)** Contains the faulty redirect logic for staff login.
+-   : New backend routes for the rebuilt patient authentication.
+-   : The new, unified patient login/signup page.
+-   : Critical file for managing authentication state; was modified to handle separate patient and staff tokens.
+-   : New component for the Build Your Own Package feature.
+-   : Contains the new  endpoint for parsing prescriptions.
+-   : Frontend updated with the prescription OCR flow.
 
-**Areas that need refactoring**:
--   The environment management process needs to be clarified. The agent should always confirm which environment (preview/production) an issue pertains to, as this was the source of significant wasted effort.
--   The staff/doctor creation logic was flawed and required a patch (). This should be integrated into a proper admin panel feature.
+**Areas that need refactoring**
+-   **Unified Staff Login:** The user has already suggested that if the current unified login () is too difficult to fix, it should be refactored into three separate login pages (Doctor, Staff, Admin). This is a strong candidate for refactoring.
+-   **AuthContext:** The  has become complex trying to manage two separate auth systems. A future refactor could unify this for better stability.
+-   ** component:** This file is extremely large and difficult to maintain due to nested conditional rendering. It should be broken down into smaller, more manageable child components.
 
 **key api endpoints**
--   : Unified login for all staff and doctors.
--   : Sends OTP to a patient's phone.
--   : **CRITICAL** one-time endpoint to seed the production database with correct staff/doctor accounts.
--   , : Manage doctor's weekly schedule.
--   , : Manage blocked time slots.
+-   : The endpoint for staff login, whose frontend implementation is causing the redirect bug.
+-   : Sends OTP for patient login/signup.
+-   : Verifies patient OTP.
+-   : Logs in a patient with a password.
+-   : New endpoint that processes an image and returns extracted text from a prescription.
 
 **Critical Info for New Agent**
--   **PRODUCTION vs. PREVIEW**: This is the most critical point. The user tests on the **production URL** (). Your changes are first applied to a **preview URL**. The user **MUST redeploy** the application for your changes to appear on production. The databases are separate. Do not assume an issue is a code bug until you've ruled out an environment mismatch.
--   **Production Database Seeding**: The production database may be empty or have stale data. A special endpoint  was created to seed it with all necessary staff/doctor accounts. You may need to have the user redeploy and then you can call this endpoint (via  or another tool) to fix account-related issues on production.
--   **User's Browser Cache**: The user has repeatedly run into issues caused by browser caching and Google Password Manager autofilling old credentials. Always advise the user to clear their cache or use an Incognito window when testing login changes.
+-   **Top Priority is the Staff Login Bug:** Your immediate task is to fix the redirect issue in . The user has approved splitting the login page into separate portals (Staff, Doctor, Admin) as a fallback solution if a quick fix isn't possible.
+-   **Dual Auth Systems:** Be aware that there are two distinct authentication systems: one for staff (using ) and a new one for patients (using ). Incorrectly handling these in the  was the source of a major bug that was just fixed. Do not reintroduce this issue.
+-   **Incomplete Features:** Many newly added features are just UI shells (, , Subscriptions, Gamification). They require backend implementation to become functional. Do not assume they work.
 
 **documents and test reports created in this job**
 -   
+-   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **Deplyed**: User confirmed deployment. (Agent proceeded to set up production accounts.)
-2.  **Why doctor portal show mango logo...**: User reported the Doctor Portal had the wrong branding (should be DiaGyn) and requested a new feature for doctors to block time slots.
-3.  **Rebuild Login portal...**: User requested a massive overhaul of the patient login/signup flow, including email/WhatsApp OTP, password creation, and a unified session. Also requested new branding for homepage sections (Evara, Reneu, Senova).
-4.  **Agent Clarification**: Agent asked for clarification on the new login flow.
-5.  **In login flow whatsapp + otp is also fine...**: User clarified requirements for the new login flow and gave the green light to proceed.
-6.  **Agent Plan**: Agent laid out the plan to start the login rebuild.
-7.  **(Last Message)** User is waiting for the agent to start implementing the new login/signup feature.
+1.  **User (latest):** Reported the staff portal redirect bug and suggested splitting the portals if the unified approach is difficult. **Status: IN PROGRESS.**
+2.  **User (x4):** Finish it. **Status: Acknowledged.**
+3.  **User:** Finish it. **Status: Acknowledged.**
+4.  **User:** Yes (approved agent's plan). **Status: Completed.**
+5.  **User:** (agent summary was presented). **Status: Acknowledged.**
+6.  **User:** (image uploaded). **Status: Acknowledged.**
+7.  **User:** Approved gamification and other features, but prioritized fixing the profile login issue first. **Status: Completed.**
+8.  **User:** Requested engagement/UI suggestions and the profile login fix. **Status: Completed.**
+9.  **User:** Requested to change an image in the splash screen carousel. **Status: Completed.**
+10. **User:** Confirmed that the Resend API key was already provided. **Status: Completed.**
 
 **Project Health Check:**
--   **Broken**: The staff login functionality was severely broken on the production environment for a significant portion of the session, causing major user frustration. It is now fixed but should be considered fragile. The unified login routing was also broken and required fixes.
--   **Mocked**: The agent bypassed the patient OTP flow by manually setting  items to test the patient portal features, as there was no mock OTP available.
+-   **Broken:** The Unified Staff Login flow is critically broken, preventing staff from accessing their correct portals.
+-   **Mocked:** Several new engagement features (e.g., Usually Bought Together, Wait Time Estimate, Gamification) are frontend-only and require backend logic to be functional.
 
 **3rd Party Integrations**
--   **Resend**: For sending email-based OTPs. Requires an API key, which seems to be configured.
+-   **Gemini Vision:** Used for prescription OCR. Uses the **Emergent LLM Key**.
+-   **Resend:** Used for sending email OTPs. Requires a **User API Key**.
+-   **MSG91:** Used for sending WhatsApp OTPs. Requires a **User API Key**.
 
 **Testing status**
--   **Testing agent used after significant changes**: YES (for patient portal features)
--   **Troubleshoot agent used after agent stuck in loop**: NO
--   **Test files created**: None.
--   **Known regressions**: The unified login redirecting doctors to the wrong portal was a regression that occurred during the session.
+-   **Testing agent used after significant changes:** YES (for the patient auth rebuild).
+-   **Troubleshoot agent used after agent stuck in loop:** NO.
+-   **Test files created:** None.
+-   **Known regressions:** The unified staff login redirect is a new regression.
 
 **Credentials to test flow:**
--   **URL**:  (for unified login)
--   **Password for ALL accounts**: 
--   **Usernames**: , , , , , 
+-   **Patient Flow:** Use the  page. The system provides mock OTPs for any test email/phone number.
+-   **Staff Flow (Bug Replication):** Use the  page. You will need to find or create users with different roles ('staff', 'doctor') in the database to test the incorrect redirection.
 
 **What agent forgot to execute**
--   The agent did not forget but was interrupted before it could fully implement and test the **Doctor Session Blocking** feature. The backend is partially done, but the frontend UI and end-to-end testing are still required.</analysis>
+-   The agent did not build the backend logic for the newly created UI components (Gamification, Subscriptions, Wait Time Estimates, etc.), leaving them non-functional.
+-   The agent did not implement the user's request to move the Admin portal link to the homepage footer.
+-   The full end-to-end flow for adding OCR-extracted medicines from a prescription to the cart was not completed.</analysis>
