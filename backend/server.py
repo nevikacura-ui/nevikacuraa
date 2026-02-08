@@ -6812,7 +6812,8 @@ except Exception as e:
 
 # Patient Authentication Routes (New Unified Login/Signup System)
 try:
-    from routes.patient_auth import router as patient_auth_router
+    from routes.patient_auth import router as patient_auth_router, set_db as set_patient_auth_db
+    set_patient_auth_db(db)
     app.include_router(patient_auth_router, prefix="/api")
     logger.info("Patient Authentication router loaded (Email/WhatsApp OTP + Password)")
 except Exception as e:
