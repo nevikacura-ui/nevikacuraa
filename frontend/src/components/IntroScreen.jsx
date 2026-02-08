@@ -36,7 +36,7 @@ const CAROUSEL_SLIDES = [
     taglinePart1: '4,000+ Genuine Medicines.',
     taglineHighlight: '100% Assured Authenticity.',
     icon: Package,
-    image: 'https://images.unsplash.com/photo-1595432576728-94e0e94a7663?w=600&h=400&fit=crop',
+    image: 'https://customer-assets.emergentagent.com/job_88151dfc-6aa7-45b4-b06b-9431ed6b374e/artifacts/i0059ama_img-5-500x500%20%281%29.jpg',
     gradient: 'from-[#f97316] to-[#ea580c]',
     highlightColor: '#FEF08A'
   },
