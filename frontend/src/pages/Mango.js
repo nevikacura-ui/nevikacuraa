@@ -11,6 +11,7 @@ import BottomNav from '@/components/BottomNav';
 import ReportTrendsChart from '@/components/ReportTrendsChart';
 import CashfreeCheckout from '@/components/CashfreeCheckout';
 import ServiceHeader from '@/components/ServiceHeader';
+import PackageBuilder from '@/components/PackageBuilder';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { 
