@@ -190,14 +190,19 @@ const PatientLogin = () => {
       const data = await res.json();
       
       if (res.ok && data.success) {
-        // Save auth data
-        localStorage.setItem('patientToken', data.token);
+        // Save auth data - do this synchronously before any navigation
+        console.log('Login successful, saving token:', data.token ? 'TOKEN_EXISTS' : 'NO_TOKEN');
+        
+        if (data.token) {
+          localStorage.setItem('patientToken', data.token);
+          localStorage.setItem('token', data.token);
+        }
         localStorage.setItem('patientInfo', JSON.stringify(data.user));
+        localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('patientLoginExpiry', (Date.now() + 30 * 24 * 60 * 60 * 1000).toString());
         
-        // Also set for compatibility with existing auth context
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        // Verify storage was saved
+        console.log('Token saved check:', localStorage.getItem('patientToken') ? 'OK' : 'FAILED');
         
         toast.success(data.message || 'Login successful!');
         
