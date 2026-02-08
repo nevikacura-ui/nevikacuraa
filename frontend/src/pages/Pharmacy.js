@@ -2619,6 +2619,49 @@ const Pharmacy = () => {
                   )}
                 </div>
               )}
+              
+              {/* Extracted Medicines from OCR */}
+              {extracting && (
+                <div className="mt-3 p-4 bg-blue-50 rounded-xl border border-blue-200 text-center">
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500 mb-2" />
+                  <p className="text-sm text-blue-700">Analyzing prescription with AI...</p>
+                </div>
+              )}
+              
+              {extractedMedicines.length > 0 && (
+                <div className="mt-3 p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-medium text-emerald-800 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" />
+                      Found {extractedMedicines.length} Medicine(s)
+                    </p>
+                    <button
+                      onClick={addAllExtractedMedicines}
+                      className="text-xs bg-emerald-600 text-white px-3 py-1 rounded-full hover:bg-emerald-700 transition-colors"
+                    >
+                      Add All
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {extractedMedicines.map((med, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-2 bg-white rounded-lg border border-emerald-100">
+                        <div>
+                          <p className="text-sm font-medium text-slate-800">{med.name}</p>
+                          <p className="text-xs text-slate-500">
+                            {[med.dosage, med.frequency, med.duration].filter(Boolean).join(' • ')}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => addExtractedMedicine(med)}
+                          className="p-1.5 bg-emerald-100 text-emerald-600 rounded-full hover:bg-emerald-200 transition-colors"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </Card>
 
             {/* Continue Button */}
