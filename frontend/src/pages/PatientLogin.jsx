@@ -190,12 +190,12 @@ const PatientLogin = () => {
       const data = await res.json();
       
       if (res.ok && data.success) {
-        // Save auth data - do this synchronously before any navigation
+        // Save auth data - ONLY use patientToken, not token (to avoid AuthContext conflict)
         console.log('Login successful, saving token:', data.token ? 'TOKEN_EXISTS' : 'NO_TOKEN');
         
         if (data.token) {
           localStorage.setItem('patientToken', data.token);
-          localStorage.setItem('token', data.token);
+          // Don't set 'token' - that's for staff/admin auth
         }
         localStorage.setItem('patientInfo', JSON.stringify(data.user));
         localStorage.setItem('user', JSON.stringify(data.user));
