@@ -272,3 +272,55 @@ async def get_all_doctors_schedules(doctor=Depends(verify_doctor)):
         "doctors": doctors,
         "schedules": schedules
     }
+
+
+
+# ============ Blocked Sessions ============
+
+@router.post("/block-session")
+async def block_session(data: BlockedSession, doctor=Depends(verify_doctor)):
+    """Block a specific time slot on a date"""
+    doctor_id = doctor.get("sub") or doctor.get("id")
+    
+    await db.doctor_schedules.update_one(
+        {"doctor_id": doctor_id},
+        {
+            "$addToSet": {
+                "blocked_sessions": {
+                    "date": data.date,
+                    "start_time": data.start_time,
+                    "end_time": data.end_time,
+                    "reason": data.reason
+                }
+            }
+        },
+        upsert=True
+    )
+    
+    return {"success": True, "message": f"Blocked session on {data.date} from {data.start_time} to {data.end_time}"}
+
+
+@router.delete("/block-session/{date}/{start_time}")
+async def unblock_session(date: str, start_time: str, doctor=Depends(verify_doctor)):
+    """Unblock a specific session"""
+    doctor_id = doctor.get("sub") or doctor.get("id")
+    
+    await db.doctor_schedules.update_one(
+        {"doctor_id": doctor_id},
+        {"$pull": {"blocked_sessions": {"date": date, "start_time": start_time}}}
+    )
+    
+    return {"success": True, "message": f"Unblocked session on {date}"}
+
+
+@router.get("/blocked-sessions")
+async def get_blocked_sessions(doctor=Depends(verify_doctor)):
+    """Get all blocked sessions"""
+    doctor_id = doctor.get("sub") or doctor.get("id")
+    
+    schedule = await db.doctor_schedules.find_one(
+        {"doctor_id": doctor_id},
+        {"blocked_sessions": 1, "_id": 0}
+    )
+    
+    return {"blocked_sessions": schedule.get("blocked_sessions", []) if schedule else []}
