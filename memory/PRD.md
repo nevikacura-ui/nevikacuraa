@@ -22,15 +22,46 @@ With unified staff login, WhatsApp OTP via MSG91, and Super Admin dashboard.
   - Mock OTPs provided in API responses for testing (shown in toast)
   - Backend: `/app/backend/routes/patient_auth.py` (10 API endpoints)
   - Frontend: `/app/frontend/src/pages/PatientLogin.jsx`
+
+- ✅ **Profile Login Fix**:
+  - Logged-in patients go directly to `/profile` without re-login prompt
+  - BottomNav shows "Profile" (not "Login") when authenticated
+  - Fixed AuthContext to use `patientInfo` from localStorage as fallback
+  - PatientPortal redirects to `/profile` for new auth users
+  - Session persists for 30 days
+
+- ✅ **Quick Actions - Reorder & Book Again**:
+  - New `PersonalizedActions` component added to homepage
+  - "Reorder Meds" button - reorders previous pharmacy order
+  - "Book Again" button - books with previous doctor
+  - "Repeat Test" button - repeats previous lab tests
+  - Based on patient's order history
+
+- ✅ **DiaGyn Flow Improvement - Earliest Available Slot**:
+  - Added "Find Earliest Available Slot" quick button on date picker
+  - Automatically finds soonest available appointment across next 7 days
+  - Shows toast with found slot details
+
+- ✅ **Prescription OCR Backend**:
+  - New route: `/api/prescription/extract`
+  - Uses Gemini Vision (via Emergent LLM key) to extract medicines from prescription images
+  - Returns medicine names, dosage, frequency, duration, quantity
+  - Fallback mock data when API not available
+
 - ✅ **Homepage Branding Updated**:
-  - Evara (Women's Health) - Already existed, verified working
-  - Reneu (Preventive Health) - Section added with tests like Full Body Checkup, Cardiac Health, Immunity Panel
-  - Senova (Senior Health) - Section added with tests like Senior Checkup, Bone Health, Memory & Brain
-  - Each section has horizontally scrollable test categories with images
+  - Evara (Women's Health), Reneu (Preventive Health), Senova (Senior Health) sections
+  - Updated splash screen carousel image (slide 2 - medicines)
+
+### Pending Implementation (Engagement Features)
+- **Orange Pharmacy**: Upload prescription → Auto-extract medicines UI integration
+- **Orange Pharmacy**: Subscription for chronic meds with monthly auto-delivery
+- **Orange Pharmacy**: "Usually bought together" suggestions
+- **Mango Labs**: Package Builder - "Build your own checkup" with price calculator
+- **Gamification**: Health Streak tracking, Milestone badges, Referral program
 
 ### Pending User Verification
-- Doctor Portal redirect from `/staff` login (should go to Doctor Portal, not DiaGyn Staff)
-- Doctor Portal branding (should show DiaGyn, not Mango Labs logo)
+- Doctor Portal redirect from `/staff` login
+- Doctor Portal branding (DiaGyn instead of Mango)
 
 ### In Progress
 - **Doctor Session Blocking Feature**: Backend API done, frontend UI needs completion
