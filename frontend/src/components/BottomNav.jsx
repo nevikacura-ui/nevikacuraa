@@ -168,15 +168,20 @@ const BottomNav = () => {
     // Haptic feedback on navigation
     selectionTap();
     
+    console.log('BottomNav click:', item.id, 'isLoggedIn:', isLoggedIn);
+    
     if (item.id === 'book') {
       setShowBookingModal(true);
     } else if (item.id === 'profile' && !isLoggedIn) {
       // Show login page for non-logged-in users
+      console.log('Navigating to /login (not logged in)');
       navigate('/login');
     } else if (item.id === 'profile' && isLoggedIn) {
       // Go to profile for logged-in users
+      console.log('Navigating to /profile (logged in)');
       navigate('/profile');
     } else if (item.path) {
+      console.log('Navigating to:', item.path);
       navigate(item.path);
     }
   };
