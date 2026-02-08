@@ -193,8 +193,9 @@ async def email_send_otp(request: EmailOTPRequest):
         "has_password": flow_type == "login_with_password"
     }
     
+    # Always include mock_otp for development/testing
+    response["mock_otp"] = otp
     if not email_sent:
-        response["mock_otp"] = otp
         response["note"] = "Email service unavailable, use test OTP"
     
     return response
