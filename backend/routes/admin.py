@@ -265,6 +265,7 @@ async def setup_default_staff(admin = Depends(verify_admin)):
         {"username": "staff_diagyn", "name": "DiaGyn Staff", "role": "diagyn_staff", "department": "diagyn", "phone": "9876543211"},
         {"username": "staff_mango", "name": "Mango Labs Staff", "role": "lab_staff", "department": "mango", "phone": "9876543212"},
         {"username": "staff_pharmacy", "name": "Orange Pharmacy Staff", "role": "pharmacy_staff", "department": "pharmacy", "phone": "9876543213"},
+        {"username": "admin", "name": "Admin User", "role": "admin", "department": "admin", "phone": "9876543214"},
     ]
     
     created = []
