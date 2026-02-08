@@ -63,6 +63,12 @@ class BlockedDate(BaseModel):
     date: str  # "2026-02-10"
     reason: str = "Leave"
 
+class BlockedSession(BaseModel):
+    date: str  # "2026-02-10"
+    start_time: str  # "11:00"
+    end_time: str  # "14:00"
+    reason: str = "Break"
+
 class ScheduleUpdate(BaseModel):
     weekly_schedule: Optional[List[DaySchedule]] = None
     slot_duration: Optional[int] = 15  # minutes per appointment
