@@ -108,7 +108,19 @@ const UnifiedStaffLogin = () => {
       localStorage.setItem('staffInfo', JSON.stringify(staff));
       
       // Get portal configuration based on role
-      const portal = PORTAL_CONFIG[staff.role];
+      const role = staff.role?.toLowerCase();
+      const portal = PORTAL_CONFIG[role];
+      
+      console.log('Login success - Role:', role, 'Portal:', portal?.path);
+      
+      // Explicit routing for doctor role
+      if (role === 'doctor') {
+        localStorage.setItem('doctorToken', token);
+        localStorage.setItem('doctorInfo', JSON.stringify(staff));
+        toast.success('Welcome, Dr. ' + staff.name + '!');
+        navigate('/doctor-portal');
+        return;
+      }
       
       if (portal) {
         toast.success(`Welcome to ${portal.name}!`);
