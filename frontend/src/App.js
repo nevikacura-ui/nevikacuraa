@@ -77,6 +77,8 @@ import HowToInstall from '@/pages/HowToInstall';
 import NevikaCuraOne from '@/pages/NevikaCuraOne';
 // Login Page
 import LoginPage from '@/pages/LoginPage';
+// Patient Login (New Unified Auth)
+import PatientLogin from '@/pages/PatientLogin';
 // Unified Staff Login
 import UnifiedStaffLogin from '@/pages/UnifiedStaffLogin';
 // Super Admin Dashboard
