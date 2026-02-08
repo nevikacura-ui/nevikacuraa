@@ -242,14 +242,31 @@ async def get_available_slots(date: str, doctor_id: str = None, doctor=Depends(v
     ).to_list(100)
     booked_times = [b.get("time") for b in booked]
     
-    # Filter available slots
-    available = [s for s in all_slots if s not in booked_times]
+    # Get blocked sessions for this date
+    blocked_sessions = schedule.get("blocked_sessions", [])
+    blocked_times = []
+    for session in blocked_sessions:
+        if session.get("date") == date:
+            # Mark all slots within the blocked session as unavailable
+            try:
+                session_start = datetime.strptime(session["start_time"], "%H:%M")
+                session_end = datetime.strptime(session["end_time"], "%H:%M")
+                for slot_time in all_slots:
+                    slot_dt = datetime.strptime(slot_time, "%H:%M")
+                    if session_start <= slot_dt < session_end:
+                        blocked_times.append(slot_time)
+            except:
+                pass
+    
+    # Filter available slots (exclude booked AND blocked)
+    available = [s for s in all_slots if s not in booked_times and s not in blocked_times]
     
     return {
         "date": date,
         "day": day_name,
         "all_slots": all_slots,
         "booked_slots": booked_times,
+        "blocked_slots": blocked_times,
         "available_slots": available,
         "slot_duration": slot_duration
     }
