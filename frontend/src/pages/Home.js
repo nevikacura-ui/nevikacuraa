@@ -719,6 +719,9 @@ const Home = () => {
         {/* Personalized Quick Actions - Reorder & Book Again */}
         <PersonalizedActions className="mb-6" />
 
+        {/* Gamification - Streak, Points, Referral */}
+        <GamificationWidget compact className="mb-6" />
+
         {/* Smart Home Feed - For logged in users */}
         {user && (
           <div className="mb-8">
