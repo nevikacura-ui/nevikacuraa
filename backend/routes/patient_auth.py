@@ -18,7 +18,6 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel, EmailStr
 
-from database import get_db
 from services.whatsapp_otp import send_whatsapp_otp, verify_whatsapp_otp
 
 logger = logging.getLogger(__name__)
@@ -34,6 +33,14 @@ SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "Nevika Cura <noreply@nevikacura.c
 # Initialize Resend
 if RESEND_API_KEY:
     resend.api_key = RESEND_API_KEY
+
+# Database reference (set by server.py)
+db = None
+
+def set_db(database):
+    """Set database instance from server.py"""
+    global db
+    db = database
 
 # In-memory OTP storage
 patient_otp_storage = {}
