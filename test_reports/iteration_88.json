@@ -1,0 +1,103 @@
+{
+  "summary": "Complete testing of Patient Login/Signup Flow with Email+OTP and WhatsApp+OTP authentication. All 23 backend API tests passed. All frontend UI tests passed including full E2E signup flow.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "features_verified": {
+    "email_otp_send_api": {
+      "endpoint": "POST /api/patient-auth/email/send-otp",
+      "status": "WORKING",
+      "response_includes": ["success", "email", "flow_type", "expires_in", "has_password", "mock_otp"]
+    },
+    "email_otp_verify_api": {
+      "endpoint": "POST /api/patient-auth/email/verify-otp",
+      "status": "WORKING",
+      "response_includes": ["success", "verified", "verification_token", "needs_password"]
+    },
+    "whatsapp_otp_send_api": {
+      "endpoint": "POST /api/patient-auth/whatsapp/send-otp",
+      "status": "WORKING",
+      "response_includes": ["success", "phone", "flow_type", "has_password", "mock_otp"]
+    },
+    "whatsapp_otp_verify_api": {
+      "endpoint": "POST /api/patient-auth/whatsapp/verify-otp",
+      "status": "WORKING",
+      "response_includes": ["success", "verified", "verification_token", "needs_email", "needs_password"]
+    },
+    "create_password_api": {
+      "endpoint": "POST /api/patient-auth/create-password",
+      "status": "WORKING",
+      "response_includes": ["success", "token", "user"],
+      "notes": "Validates: password length >= 6, email required for WhatsApp signups, valid verification_token"
+    },
+    "login_with_password_api": {
+      "endpoint": "POST /api/patient-auth/login",
+      "status": "WORKING",
+      "supports": ["email login", "phone login"],
+      "response_includes": ["success", "token", "user", "message"]
+    },
+    "validate_token_api": {
+      "endpoint": "POST /api/patient-auth/validate-token",
+      "status": "WORKING"
+    },
+    "get_current_patient_api": {
+      "endpoint": "GET /api/patient-auth/me",
+      "status": "WORKING",
+      "excludes_sensitive_data": true
+    },
+    "patient_login_ui": {
+      "email_tab_toggle": "WORKING - data-testid: auth-method-email",
+      "whatsapp_tab_toggle": "WORKING - data-testid: auth-method-whatsapp",
+      "otp_verification_screen": "WORKING - 6 OTP inputs with data-testid: otp-input-{0-5}",
+      "password_creation_screen": "WORKING",
+      "staff_portal_login_footer": "WORKING - data-testid: staff-login-footer-btn, navigates to /staff"
+    }
+  },
+  "test_flows_verified": {
+    "email_signup_e2e": {
+      "steps": ["Enter email", "Send OTP", "Verify OTP", "Create password", "Redirect to home"],
+      "status": "WORKING"
+    },
+    "whatsapp_signup_flow": {
+      "steps": ["Enter phone", "Send OTP", "Verify OTP", "Enter email + password", "Account created"],
+      "status": "WORKING (API verified)"
+    },
+    "existing_user_login": {
+      "flow": "Existing user with password gets login_with_password flow_type",
+      "status": "WORKING"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_patient_auth_unified.py",
+    "/app/test_reports/pytest/pytest_patient_auth_unified.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_patient_auth_unified.py"
+  ],
+  "success_rate": {
+    "backend": "100% (23/23 tests passed)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "note": "All OTPs are mock/test OTPs returned in API response (mock_otp field). No real credentials needed."
+  },
+  "seed_data_creation": "Test accounts created during testing with unique emails/phones",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Patient auth unified login system is fully implemented and working. Email and WhatsApp OTPs are MOCKED (returned as mock_otp in API response for testing). Full E2E signup flow verified: send OTP -> verify OTP -> create password -> redirect to home. Staff Portal Login link moved to footer as requested.",
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": [
+      "Email OTP - mock_otp returned in response for testing (real email may not be sent if RESEND_API_KEY not configured)",
+      "WhatsApp OTP - mock_otp returned in response for testing (MSG91 integration available but fallback to mock)"
+    ]
+  }
+}
