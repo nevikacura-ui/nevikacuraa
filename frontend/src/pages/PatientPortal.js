@@ -87,6 +87,21 @@ const PatientPortal = () => {
       
       if (savedToken && savedPatient) {
         try {
+          // Try new patient-auth endpoint first
+          try {
+            const newAuthResponse = await axios.get(`${API}/patient-auth/me`, {
+              headers: { 'Authorization': `Bearer ${savedToken}` }
+            });
+            
+            if (newAuthResponse.data.authenticated && newAuthResponse.data.user) {
+              // User is authenticated via new system - redirect to profile
+              navigate('/profile');
+              return;
+            }
+          } catch (e) {
+            // New auth failed, try old endpoint
+          }
+          
           const patient = JSON.parse(savedPatient);
           // Verify token is still valid with backend
           const response = await axios.get(`${API}/patients/portal/me`, {
@@ -98,7 +113,17 @@ const PatientPortal = () => {
           setIsAuthenticated(true);
           fetchAllData(response.data.patient_id, savedToken);
         } catch (error) {
-          // Token invalid - clear storage
+          // Token invalid - but check if patientInfo exists for new auth users
+          try {
+            const patient = JSON.parse(savedPatient);
+            if (patient && patient.id) {
+              // New auth user - redirect to profile
+              navigate('/profile');
+              return;
+            }
+          } catch (e) {
+            // Clear invalid storage
+          }
           localStorage.removeItem('patientToken');
           localStorage.removeItem('patientLoginExpiry');
           localStorage.removeItem('patientInfo');
