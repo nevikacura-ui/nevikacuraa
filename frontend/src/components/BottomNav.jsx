@@ -138,9 +138,9 @@ const BottomNav = () => {
     },
     { 
       id: 'profile', 
-      label: user ? 'Profile' : 'Login', 
+      label: isLoggedIn ? 'Profile' : 'Login', 
       icon: User, 
-      path: '/patient-portal',
+      path: '/profile',
       color: 'slate'
     }
   ];
