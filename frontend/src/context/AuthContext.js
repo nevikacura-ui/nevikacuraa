@@ -52,10 +52,34 @@ export const AuthProvider = ({ children }) => {
     checkBiometricAvailability();
   }, [token, patientToken]);
 
-  // Fetch patient user from patient portal API
+  // Fetch patient user from patient portal API (or new patient auth)
   const fetchPatientUser = async () => {
     try {
-      const response = await axios.get(`${API}/patients/portal/me`, {
+      // Try new patient auth endpoint first
+      let response;
+      try {
+        response = await axios.get(`${API}/patient-auth/me`, {
+          headers: { Authorization: `Bearer ${patientToken}` }
+        });
+        if (response.data.authenticated && response.data.user) {
+          setUser({
+            id: response.data.user.id,
+            name: response.data.user.name,
+            email: response.data.user.email,
+            phone: response.data.user.phone,
+            role: 'patient',
+            patient_id: response.data.user.patient_id,
+            ...response.data.user
+          });
+          setLoading(false);
+          return;
+        }
+      } catch (e) {
+        // Fall back to old endpoint
+      }
+      
+      // Try old patient portal endpoint
+      response = await axios.get(`${API}/patients/portal/me`, {
         headers: { Authorization: `Bearer ${patientToken}` }
       });
       // Convert patient data to user format
@@ -70,7 +94,29 @@ export const AuthProvider = ({ children }) => {
       });
     } catch (error) {
       console.error('Failed to fetch patient user:', error);
-      // Clear invalid patient token
+      
+      // Check if we have patientInfo in localStorage as fallback
+      const patientInfoStr = localStorage.getItem('patientInfo');
+      if (patientInfoStr) {
+        try {
+          const patientInfo = JSON.parse(patientInfoStr);
+          setUser({
+            id: patientInfo.id,
+            name: patientInfo.name,
+            email: patientInfo.email,
+            phone: patientInfo.phone,
+            role: 'patient',
+            patient_id: patientInfo.patient_id,
+            ...patientInfo
+          });
+          setLoading(false);
+          return;
+        } catch (e) {
+          // Invalid JSON
+        }
+      }
+      
+      // Clear invalid patient token only if no fallback
       localStorage.removeItem('patientToken');
       setPatientToken(null);
     } finally {
