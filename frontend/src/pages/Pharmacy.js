@@ -2801,6 +2801,18 @@ const Pharmacy = () => {
               )}
             </Card>
 
+            {/* Usually Bought Together Suggestions */}
+            <UsuallyBoughtTogether 
+              cartItems={medicines}
+              onAddToCart={(item) => {
+                setMedicines(prev => [...prev, item]);
+              }}
+              className="mt-4"
+            />
+
+            {/* Subscription Manager */}
+            <SubscriptionManager className="mt-4" />
+
             {/* Loyalty Points */}
             {user && loyaltyPoints > 0 && (
               <Card className="p-5 rounded-2xl border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
