@@ -12,7 +12,7 @@ import {
   ArrowLeft, Calendar, Moon, Sun, Heart, AlertTriangle, CheckCircle2, 
   FlaskConical, Pill, Bell, MapPin, Users, Globe, Droplets, Clock,
   ChevronRight, Settings, RefreshCw, Shield, Sparkles, Activity,
-  Lock, LogOut, Sunrise, Sunset
+  Lock, LogOut, Sunrise, Sunset, Navigation, Loader2
 } from 'lucide-react';
 import { AnimatedPage } from '@/components/PageTransition';
 import { toast } from 'sonner';
