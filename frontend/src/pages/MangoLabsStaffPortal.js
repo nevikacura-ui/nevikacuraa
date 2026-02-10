@@ -323,7 +323,12 @@ const MangoLabsStaffPortal = () => {
 
       {stats && (<div className="p-4 grid grid-cols-4 gap-2"><Card className="p-2 text-center bg-blue-50 border-blue-200"><p className="text-xl font-bold text-blue-600">{stats.today_bookings || 0}</p><p className="text-xs text-blue-700">Today</p></Card><Card className="p-2 text-center bg-yellow-50 border-yellow-200"><p className="text-xl font-bold text-yellow-600">{stats.pending_collection || 0}</p><p className="text-xs text-yellow-700">Pending</p></Card><Card className="p-2 text-center bg-purple-50 border-purple-200"><p className="text-xl font-bold text-purple-600">{stats.in_process || 0}</p><p className="text-xs text-purple-700">Processing</p></Card><Card className="p-2 text-center bg-green-50 border-green-200"><p className="text-xl font-bold text-green-600">{stats.reports_ready || 0}</p><p className="text-xs text-green-700">Ready</p></Card></div>)}
 
-      <div className="px-4 pb-3"><div className="flex gap-2 bg-white rounded-lg p-1 shadow-sm">{[{ key: 'bookings', label: 'Bookings', icon: ClipboardList }, { key: 'tests', label: 'Test Catalog', icon: TestTube }].map(tab => (<button key={tab.key} onClick={() => setActiveView(tab.key)} className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg font-medium transition-all ${activeView === tab.key ? 'bg-teal-500 text-white' : 'text-slate-600'}`}><tab.icon className="w-4 h-4" />{tab.label}</button>))}</div></div>
+      <div className="px-4 pb-3"><div className="flex gap-1 bg-white rounded-lg p-1 shadow-sm overflow-x-auto">{[
+        { key: 'bookings', label: 'Bookings', icon: ClipboardList }, 
+        { key: 'newentry', label: 'New Entry', icon: Plus }, 
+        { key: 'calculator', label: 'Calculator', icon: Calculator }, 
+        { key: 'tests', label: 'Test Rates', icon: TestTube }
+      ].map(tab => (<button key={tab.key} onClick={() => setActiveView(tab.key)} className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg font-medium transition-all whitespace-nowrap text-sm ${activeView === tab.key ? 'bg-teal-500 text-white' : 'text-slate-600'}`}><tab.icon className="w-4 h-4" />{tab.label}</button>))}</div></div>
 
       {activeView === 'bookings' && (
         <div className="px-4 pb-24">
