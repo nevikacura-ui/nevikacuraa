@@ -218,6 +218,77 @@ const MangoLabsStaffPortal = () => {
 
   const filteredBookings = bookings.filter(booking => { const matchesSearch = !searchQuery || booking.patient_name?.toLowerCase().includes(searchQuery.toLowerCase()) || booking.booking_id?.toLowerCase().includes(searchQuery.toLowerCase()) || booking.patient_phone?.includes(searchQuery); return matchesSearch; });
 
+  // Create new test entry booking
+  const handleCreateEntry = async () => {
+    if (!newEntryForm.patient_name || !newEntryForm.patient_phone || newEntryForm.selectedTests.length === 0) {
+      toast.error('Please fill patient name, phone and select at least one test');
+      return;
+    }
+    setLoading(true);
+    try {
+      const totalAmount = newEntryForm.selectedTests.reduce((sum, t) => sum + (t.price || 0), 0);
+      const payload = {
+        patient_name: newEntryForm.patient_name,
+        patient_phone: newEntryForm.patient_phone,
+        barcode: newEntryForm.barcode || `MHL${Date.now().toString(36).toUpperCase()}`,
+        tests: newEntryForm.selectedTests.map(t => t.name),
+        test_codes: newEntryForm.selectedTests.map(t => t.code),
+        priority: newEntryForm.priority,
+        notes: newEntryForm.notes,
+        total_amount: totalAmount,
+        status: 'test_booked',
+        booking_type: 'staff_entry'
+      };
+      await axios.post(`${API}/api/mango/bookings`, payload, getAuthHeaders());
+      toast.success(`Booking created successfully! Barcode: ${payload.barcode}`);
+      setShowNewEntry(false);
+      setNewEntryForm({ patient_name: '', patient_phone: '', barcode: '', selectedTests: [], priority: 'normal', notes: '' });
+      fetchBookings();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to create entry');
+    }
+    setLoading(false);
+  };
+
+  // Add test to new entry
+  const addTestToEntry = (test) => {
+    if (newEntryForm.selectedTests.find(t => t.id === test.id)) {
+      toast.info('Test already added');
+      return;
+    }
+    setNewEntryForm({ ...newEntryForm, selectedTests: [...newEntryForm.selectedTests, test] });
+    toast.success(`Added: ${test.name}`);
+  };
+
+  // Remove test from entry
+  const removeTestFromEntry = (testId) => {
+    setNewEntryForm({ ...newEntryForm, selectedTests: newEntryForm.selectedTests.filter(t => t.id !== testId) });
+  };
+
+  // Calculator functions
+  const addTestToCalculator = (test) => {
+    if (calculatorTests.find(t => t.id === test.id)) {
+      toast.info('Test already in calculator');
+      return;
+    }
+    setCalculatorTests([...calculatorTests, test]);
+  };
+
+  const removeTestFromCalculator = (testId) => {
+    setCalculatorTests(calculatorTests.filter(t => t.id !== testId));
+  };
+
+  const calculateTotal = () => {
+    return calculatorTests.reduce((sum, t) => sum + (t.price || 0), 0);
+  };
+
+  const filteredTestsForSearch = tests.filter(test => {
+    const query = calculatorSearch.toLowerCase();
+    return test.name?.toLowerCase().includes(query) || 
+           test.code?.toLowerCase().includes(query) ||
+           test.category?.toLowerCase().includes(query);
+  });
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center p-4">
