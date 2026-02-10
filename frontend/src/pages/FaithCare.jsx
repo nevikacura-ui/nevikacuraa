@@ -774,6 +774,62 @@ const FaithCare = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Ramadan Calendar Dialog */}
+        <Dialog open={showRamadanCalendar} onOpenChange={setShowRamadanCalendar}>
+          <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Moon className="w-5 h-5 text-emerald-600" />
+                Ramadan 2026 Calendar
+                <Badge className="bg-emerald-100 text-emerald-700 ml-2">Mumbai</Badge>
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-3 py-2">
+              {ramadanTimings.map((timing) => (
+                <div 
+                  key={timing.day}
+                  className={`p-3 rounded-xl border ${
+                    timing.special 
+                      ? 'border-amber-300 bg-amber-50' 
+                      : 'border-slate-200 bg-white'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm font-bold">
+                        {timing.day}
+                      </span>
+                      <div>
+                        <p className="font-medium text-slate-800">{timing.date}</p>
+                        {timing.special && (
+                          <p className="text-xs text-amber-600 font-medium">{timing.special}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <div className="flex items-center gap-1 text-indigo-600">
+                      <Sunrise className="w-4 h-4" />
+                      <span>Sehri: <strong>{timing.sehri}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-1 text-orange-600">
+                      <Sunset className="w-4 h-4" />
+                      <span>Iftar: <strong>{timing.iftar}</strong></span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="pt-3 border-t border-slate-200">
+              <p className="text-xs text-slate-500 text-center">
+                Timings are for Mumbai, India. Please verify locally.
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AnimatedPage>
   );
