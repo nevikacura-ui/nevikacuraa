@@ -282,6 +282,76 @@ const FaithCare = () => {
     );
   };
 
+  // Fetch Jamatkhanas
+  const fetchJamatkhanas = async () => {
+    try {
+      let url = `${API}/api/lifealign/jamatkhanas`;
+      const params = [];
+      
+      if (selectedCountry) {
+        params.push(`country=${selectedCountry}`);
+      }
+      
+      if (userLocation) {
+        params.push(`lat=${userLocation.lat}&lng=${userLocation.lng}`);
+      }
+      
+      if (params.length > 0) {
+        url += '?' + params.join('&');
+      }
+      
+      const res = await axios.get(url);
+      setJamatkhanas(res.data);
+    } catch (error) {
+      console.error('Error fetching Jamatkhanas:', error);
+      toast.error('Failed to load Jamatkhanas');
+    }
+  };
+
+  // Get user's current location
+  const getUserLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation not supported by your browser');
+      return;
+    }
+    
+    setLoadingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const loc = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        setUserLocation(loc);
+        setLoadingLocation(false);
+        
+        // Fetch nearest Jamatkhana
+        try {
+          const res = await axios.get(`${API}/api/lifealign/jamatkhanas?lat=${loc.lat}&lng=${loc.lng}&limit=10`);
+          setJamatkhanas(res.data);
+          toast.success('Found Jamatkhanas near you');
+        } catch (error) {
+          toast.error('Failed to find nearby Jamatkhanas');
+        }
+      },
+      (error) => {
+        setLoadingLocation(false);
+        toast.error('Unable to get your location');
+      }
+    );
+  };
+
+  // Fetch Diet Plans
+  const fetchDietPlans = async () => {
+    try {
+      const res = await axios.get(`${API}/api/lifealign/ramadan/diet-plans`);
+      setDietPlans(res.data.plans);
+    } catch (error) {
+      console.error('Error fetching diet plans:', error);
+      toast.error('Failed to load diet plans');
+    }
+  };
+
   const currentTheme = dashboard?.user_religion 
     ? RELIGION_THEMES[dashboard.user_religion.toLowerCase()] || RELIGION_THEMES.default
     : RELIGION_THEMES.default;
