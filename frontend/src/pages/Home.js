@@ -1201,29 +1201,12 @@ const Home = () => {
                       <div className="w-full h-full flex items-center justify-center">
                         <Users className="w-16 h-16 sm:w-20 sm:h-20 text-white" />
                       </div>
-                    ) : service.customIcon === 'faithcare' ? (
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#1e3a5f] to-[#2d4a6f] p-4">
-                        {/* FaithCare Icon - Dove with leaf */}
-                        <div className="relative mb-2">
-                          <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
-                            <svg viewBox="0 0 24 24" className="w-10 h-10 text-white" fill="currentColor">
-                              <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/>
-                              <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
-                              <path d="M12 6l-1 2h2l-1-2z"/>
-                            </svg>
-                          </div>
-                          {/* Leaf accent */}
-                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full opacity-80"></div>
-                        </div>
-                        <p className="text-white font-bold text-sm tracking-wide">Faith</p>
-                        <p className="text-green-300 font-medium text-xs">Care</p>
-                      </div>
                     ) : (
                       <img 
                         src={service.logo} 
                         alt={service.name} 
                         className={`w-full h-full transition-transform duration-300 group-hover:scale-105 ${
-                          service.containImage ? 'object-contain' : 'object-cover'
+                          service.containImage ? 'object-contain p-4' : 'object-cover'
                         }`}
                         style={{
                           ...(service.imagePosition ? { objectPosition: service.imagePosition } : {}),
