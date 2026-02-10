@@ -1145,23 +1145,31 @@ const Proton = () => {
       {/* ========== MANGO HEALTH LABS HERO SECTION ========== */}
       {currentStep === 0 ? (
         <>
-          {/* Hero Banner - Full width, no edges */}
-          <div className="bg-gradient-to-br from-[#1F4F46] via-[#2E6B5F] to-[#3E8A7A] relative overflow-hidden w-full">
+          {/* Hero Banner - Orange/Green Mango Theme */}
+          <div className="bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#C2410C] relative overflow-hidden w-full">
             <div className="w-full px-4 py-5">
               <div className="flex items-center justify-between">
                 {/* Left Content */}
                 <div className="flex-1 text-white z-10">
                   {/* Mango Health Labs Logo */}
                   <div className="flex items-center gap-3 mb-3">
-                    <img 
-                      src="https://customer-assets.emergentagent.com/job_89849591-2898-4d2c-93b2-e4baf0814999/artifacts/n7u3mael_Purple%20White%20Modern%20Medical%20Laboratory%20Professional%20Banner%20%28Business%20Card%20%28_20260211_040821_0000.jpg" 
-                      alt="Mango Health Labs" 
-                      className="w-20 h-10 rounded-xl shadow-lg bg-white p-1 object-contain"
-                    />
+                    <div className="w-16 h-16 bg-white rounded-2xl shadow-lg p-2 flex items-center justify-center">
+                      {/* Mango Icon - Orange circle with green leaves */}
+                      <div className="relative">
+                        <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
+                          <div className="w-6 h-6 bg-gradient-to-br from-orange-300 to-orange-500 rounded-full opacity-60"></div>
+                        </div>
+                        {/* Leaves */}
+                        <div className="absolute -top-1 left-1/2 -translate-x-1/2 flex gap-0.5">
+                          <div className="w-2 h-3 bg-green-500 rounded-full transform -rotate-12"></div>
+                          <div className="w-2 h-3 bg-green-600 rounded-full transform rotate-12"></div>
+                        </div>
+                      </div>
+                    </div>
                     <div>
-                      <h2 className="text-lg font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>Mango Health Labs</h2>
-                      <p className="text-[10px] text-white/60 italic">Formerly Proton Diagnostics</p>
-                      <p className="text-xs text-white/80">Your Trusted Diagnostic Partner</p>
+                      <h2 className="text-lg font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>MANGO</h2>
+                      <p className="text-xs text-white/90 font-medium tracking-wider">HEALTH LABS</p>
+                      <p className="text-[10px] text-orange-200 italic mt-0.5">Aam logon ki, Khaas Lab.</p>
                     </div>
                   </div>
                   <h1 className="text-xl md:text-2xl font-bold mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
