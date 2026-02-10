@@ -182,21 +182,92 @@ INITIAL_FESTIVALS = [
 
 # 2026 Festival Dates (sample)
 FESTIVAL_DATES_2026 = [
-    # Ramadan 2026 (Feb 17 - Mar 19 approx)
-    {"festival_id": "ramadan", "year": 2026, "start_date": "2026-02-17", "end_date": "2026-03-19", "moon_confirmed": False},
-    {"festival_id": "eid_fitr", "year": 2026, "start_date": "2026-03-20", "end_date": "2026-03-20", "moon_confirmed": False},
+    # Ramadan 2026 (Feb 19 - Mar 20) - Based on Mumbai calendar
+    {"festival_id": "ramadan", "year": 2026, "start_date": "2026-02-19", "end_date": "2026-03-20", "moon_confirmed": True},
+    {"festival_id": "eid_fitr", "year": 2026, "start_date": "2026-03-21", "end_date": "2026-03-21", "moon_confirmed": False},
     {"festival_id": "eid_adha", "year": 2026, "start_date": "2026-05-27", "end_date": "2026-05-27", "moon_confirmed": False},
+    {"festival_id": "laylat_qadr", "year": 2026, "start_date": "2026-03-15", "end_date": "2026-03-17", "moon_confirmed": True},
+    # Ismaili specific events 2026
+    {"festival_id": "imamat_day", "year": 2026, "start_date": "2026-07-11", "end_date": "2026-07-11", "moon_confirmed": True},
+    {"festival_id": "salgirah", "year": 2026, "start_date": "2026-12-13", "end_date": "2026-12-13", "moon_confirmed": True},
+    {"festival_id": "navroz_ismaili", "year": 2026, "start_date": "2026-03-21", "end_date": "2026-03-21", "moon_confirmed": True},
+    {"festival_id": "chand_raat", "year": 2026, "start_date": "2026-03-20", "end_date": "2026-03-20", "moon_confirmed": False},
+    {"festival_id": "shab_e_meraj", "year": 2026, "start_date": "2026-01-27", "end_date": "2026-01-27", "moon_confirmed": True},
     # Navratri 2026
     {"festival_id": "chaitra_navratri", "year": 2026, "start_date": "2026-03-29", "end_date": "2026-04-06", "moon_confirmed": True},
     {"festival_id": "sharad_navratri", "year": 2026, "start_date": "2026-09-21", "end_date": "2026-09-29", "moon_confirmed": True},
     # Other Hindu festivals 2026
     {"festival_id": "mahashivratri", "year": 2026, "start_date": "2026-02-14", "end_date": "2026-02-14", "moon_confirmed": True},
     {"festival_id": "diwali", "year": 2026, "start_date": "2026-10-20", "end_date": "2026-10-24", "moon_confirmed": True},
-    {"festival_id": "makar_sankranti", "year": 2026, "start_date": "2026-01-14", "end_date": "2026-01-14", "moon_confirmed": True},
-    # Ismaili festivals
-    {"festival_id": "imamat_day", "year": 2026, "start_date": "2026-07-11", "end_date": "2026-07-11", "moon_confirmed": True},
-    {"festival_id": "salgirah", "year": 2026, "start_date": "2026-12-13", "end_date": "2026-12-13", "moon_confirmed": True},
-    {"festival_id": "navroz_ismaili", "year": 2026, "start_date": "2026-03-21", "end_date": "2026-03-21", "moon_confirmed": True}
+    {"festival_id": "makar_sankranti", "year": 2026, "start_date": "2026-01-14", "end_date": "2026-01-14", "moon_confirmed": True}
+]
+
+# Mumbai Ramadan 2026 Daily Timings
+RAMADAN_TIMINGS_2026 = [
+    {"day": 1, "date": "2026-02-19", "sehri": "05:51", "iftar": "18:41", "special": None},
+    {"day": 2, "date": "2026-02-20", "sehri": "05:51", "iftar": "18:41", "special": None},
+    {"day": 3, "date": "2026-02-21", "sehri": "05:50", "iftar": "18:42", "special": None},
+    {"day": 4, "date": "2026-02-22", "sehri": "05:50", "iftar": "18:42", "special": None},
+    {"day": 5, "date": "2026-02-23", "sehri": "05:49", "iftar": "18:42", "special": None},
+    {"day": 6, "date": "2026-02-24", "sehri": "05:48", "iftar": "18:43", "special": None},
+    {"day": 7, "date": "2026-02-25", "sehri": "05:48", "iftar": "18:43", "special": None},
+    {"day": 8, "date": "2026-02-26", "sehri": "05:47", "iftar": "18:43", "special": None},
+    {"day": 9, "date": "2026-02-27", "sehri": "05:46", "iftar": "18:44", "special": None},
+    {"day": 10, "date": "2026-02-28", "sehri": "05:46", "iftar": "18:44", "special": None},
+    {"day": 11, "date": "2026-03-01", "sehri": "05:45", "iftar": "18:44", "special": None},
+    {"day": 12, "date": "2026-03-02", "sehri": "05:44", "iftar": "18:45", "special": None},
+    {"day": 13, "date": "2026-03-03", "sehri": "05:44", "iftar": "18:45", "special": None},
+    {"day": 14, "date": "2026-03-04", "sehri": "05:43", "iftar": "18:45", "special": None},
+    {"day": 15, "date": "2026-03-05", "sehri": "05:42", "iftar": "18:46", "special": None},
+    {"day": 16, "date": "2026-03-06", "sehri": "05:41", "iftar": "18:46", "special": None},
+    {"day": 17, "date": "2026-03-07", "sehri": "05:41", "iftar": "18:46", "special": None},
+    {"day": 18, "date": "2026-03-08", "sehri": "05:40", "iftar": "18:47", "special": None},
+    {"day": 19, "date": "2026-03-09", "sehri": "05:39", "iftar": "18:47", "special": None},
+    {"day": 20, "date": "2026-03-10", "sehri": "05:38", "iftar": "18:47", "special": None},
+    {"day": 21, "date": "2026-03-11", "sehri": "05:38", "iftar": "18:47", "special": "Odd Night - Laylat al-Qadr possible"},
+    {"day": 22, "date": "2026-03-12", "sehri": "05:37", "iftar": "18:48", "special": None},
+    {"day": 23, "date": "2026-03-13", "sehri": "05:36", "iftar": "18:48", "special": "Odd Night - Laylat al-Qadr possible"},
+    {"day": 24, "date": "2026-03-14", "sehri": "05:35", "iftar": "18:48", "special": None},
+    {"day": 25, "date": "2026-03-15", "sehri": "05:34", "iftar": "18:49", "special": "Odd Night - Laylat al-Qadr possible"},
+    {"day": 26, "date": "2026-03-16", "sehri": "05:33", "iftar": "18:49", "special": None},
+    {"day": 27, "date": "2026-03-17", "sehri": "05:33", "iftar": "18:49", "special": "Laylat al-Qadr - Night of Power"},
+    {"day": 28, "date": "2026-03-18", "sehri": "05:32", "iftar": "18:49", "special": None},
+    {"day": 29, "date": "2026-03-19", "sehri": "05:31", "iftar": "18:50", "special": "Possible Chand Raat"},
+    {"day": 30, "date": "2026-03-20", "sehri": "05:30", "iftar": "18:50", "special": "Chand Raat - Moon Sighting Night"}
+]
+
+# Exclusive FaithCare Access Accounts (30 accounts)
+FAITHCARE_ACCOUNTS = [
+    {"user_id": "FC2026001", "password": "faith@care001", "name": "User 1", "active": True},
+    {"user_id": "FC2026002", "password": "faith@care002", "name": "User 2", "active": True},
+    {"user_id": "FC2026003", "password": "faith@care003", "name": "User 3", "active": True},
+    {"user_id": "FC2026004", "password": "faith@care004", "name": "User 4", "active": True},
+    {"user_id": "FC2026005", "password": "faith@care005", "name": "User 5", "active": True},
+    {"user_id": "FC2026006", "password": "faith@care006", "name": "User 6", "active": True},
+    {"user_id": "FC2026007", "password": "faith@care007", "name": "User 7", "active": True},
+    {"user_id": "FC2026008", "password": "faith@care008", "name": "User 8", "active": True},
+    {"user_id": "FC2026009", "password": "faith@care009", "name": "User 9", "active": True},
+    {"user_id": "FC2026010", "password": "faith@care010", "name": "User 10", "active": True},
+    {"user_id": "FC2026011", "password": "faith@care011", "name": "User 11", "active": True},
+    {"user_id": "FC2026012", "password": "faith@care012", "name": "User 12", "active": True},
+    {"user_id": "FC2026013", "password": "faith@care013", "name": "User 13", "active": True},
+    {"user_id": "FC2026014", "password": "faith@care014", "name": "User 14", "active": True},
+    {"user_id": "FC2026015", "password": "faith@care015", "name": "User 15", "active": True},
+    {"user_id": "FC2026016", "password": "faith@care016", "name": "User 16", "active": True},
+    {"user_id": "FC2026017", "password": "faith@care017", "name": "User 17", "active": True},
+    {"user_id": "FC2026018", "password": "faith@care018", "name": "User 18", "active": True},
+    {"user_id": "FC2026019", "password": "faith@care019", "name": "User 19", "active": True},
+    {"user_id": "FC2026020", "password": "faith@care020", "name": "User 20", "active": True},
+    {"user_id": "FC2026021", "password": "faith@care021", "name": "User 21", "active": True},
+    {"user_id": "FC2026022", "password": "faith@care022", "name": "User 22", "active": True},
+    {"user_id": "FC2026023", "password": "faith@care023", "name": "User 23", "active": True},
+    {"user_id": "FC2026024", "password": "faith@care024", "name": "User 24", "active": True},
+    {"user_id": "FC2026025", "password": "faith@care025", "name": "User 25", "active": True},
+    {"user_id": "FC2026026", "password": "faith@care026", "name": "User 26", "active": True},
+    {"user_id": "FC2026027", "password": "faith@care027", "name": "User 27", "active": True},
+    {"user_id": "FC2026028", "password": "faith@care028", "name": "User 28", "active": True},
+    {"user_id": "FC2026029", "password": "faith@care029", "name": "User 29", "active": True},
+    {"user_id": "FC2026030", "password": "faith@care030", "name": "User 30", "active": True}
 ]
 
 # Health Logic Rules
