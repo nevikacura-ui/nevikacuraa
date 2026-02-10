@@ -215,9 +215,13 @@ const FaithCare = () => {
         <main className="max-w-5xl mx-auto px-4 py-6">
           {/* Setup Required State */}
           {dashboard?.setup_required && (
-            <Card className="p-8 text-center border-2 border-dashed border-slate-300">
-              <div className="w-16 h-16 rounded-full bg-teal-100 flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-teal-600" />
+            <Card className="p-8 text-center border-2 border-dashed border-amber-300 bg-gradient-to-br from-amber-50 to-slate-50">
+              <div className="w-20 h-20 rounded-full bg-slate-900 flex items-center justify-center mx-auto mb-4">
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_55d2778b-393f-4c6f-a4f0-366c7890154e/artifacts/rbodxuxv_file_00000000e2a47209b2515ab5afe77eeb.png"
+                  alt="FaithCare"
+                  className="h-16 w-auto object-contain"
+                />
               </div>
               <h2 className="text-xl font-bold text-slate-800 mb-2">Personalize Your Experience</h2>
               <p className="text-slate-600 mb-6 max-w-md mx-auto">
@@ -225,7 +229,7 @@ const FaithCare = () => {
               </p>
               <Button 
                 onClick={() => setShowSetup(true)}
-                className="bg-teal-600 hover:bg-teal-700"
+                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 Get Started
