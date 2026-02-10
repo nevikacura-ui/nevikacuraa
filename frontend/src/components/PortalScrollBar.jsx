@@ -115,6 +115,18 @@ const portals = [
     fillContainer: true,
     tagline: 'Measure your core.'
   },
+  // LifeAlign - Cultural & Community Health Sync
+  {
+    id: 'lifealign',
+    name: 'LifeAlign',
+    subtitle: 'Cultural Health Sync',
+    path: '/lifealign',
+    hasIcon: true,
+    icon: Calendar,
+    bgColor: '#f0fdf4',
+    iconColor: '#0d9488',
+    tagline: 'Sync with your traditions.'
+  },
   // 11. PSVN Foundation
   {
     id: 'psvn',
