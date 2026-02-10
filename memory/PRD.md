@@ -1,100 +1,70 @@
 # Nevika Cura Healthcare Platform - PRD
 
 ## Original Problem Statement
-Multi-portal healthcare platform with several specialized portals including DiaGyn, Mango Health Labs, Orange Pharmacy, FaithCare, INNERSCORE, and Reneu.
+Multi-portal healthcare platform with specialized portals: DiaGyn, Mango Health Labs, Orange Pharmacy, FaithCare, INNERSCORE, and Reneu.
 
 ## Latest Updates (February 11, 2026)
 
 ### Completed This Session:
 
-#### UI/Theme Updates:
-1. **Mango Health Labs Branding** - Complete orange/green theme overhaul:
-   - New Mango logo (orange circle with green leaves)
-   - Orange gradient header in portal (`from-[#F97316] to-[#C2410C]`)
-   - Tagline: "Aam logon ki, Khaas Lab."
-   - Updated staff portal login and header
+#### FaithCare Ismaili Features:
+1. **Salgirah Date Fixed** - Changed from December 13 to **October 12**
+2. **Nearest Jamatkhana Finder** - Find Jamatkhanas in India, USA, Canada
+   - Location-based search using GPS
+   - Filter by country
+   - Shows distance in km
+3. **Ramadan Diet Plans** - Specialized diets for:
+   - **Diabetic**: Blood sugar management during fasting
+   - **Hypertension**: Low-sodium diet during Ramadan
+   - **Renal (Kidney)**: CKD-friendly fasting guide
+   - Each plan includes Sehri/Iftar tips, foods to eat/avoid, monitoring guidance
 
-2. **FaithCare Card** - Added to home page carousel beside InnerScore
+#### UI Updates:
+1. **Mango Logo Reverted** - Using original image logo with orange theme
+2. **FaithCare Card** - Using dove logo on home page
+3. **Orange Theme** - Mango portal maintains orange gradient header
 
-#### Mango Labs Staff Portal - New Features:
-1. **New Entry Tab** - Staff can create test bookings:
-   - Patient name and phone fields
-   - Manual barcode entry (auto-generates if empty)
-   - Priority selection: Normal, Urgent, Critical
-   - Test search and multi-select
-   - Real-time cost calculation
+### Ismaili Calendar Events:
+- **Imamat Day**: July 11
+- **Salgirah**: October 12 (Birthday of HH Aga Khan)
+- **Navroz**: March 21 (Persian New Year)
 
-2. **Cost Calculator Tab** - Estimate costs for customers:
-   - Search tests by name, code, or barcode
-   - Add multiple tests to calculate total
-   - Copy estimate to clipboard for sharing
-   - Shows individual test prices and total
-
-3. **Test Booking Flow**:
-   - Status: `Booked → Sample Collected → In Lab → Report Generated → Completed`
-   - Report upload mandatory before "Report Generated"
-   - Barcode tracking for each test entry
-
-### Previous Session Completed:
-- WhatsApp OTP mandatory in Mango Labs
-- Cashfree payment integration verified
-- Booking limits removed
-- FaithCare expanded with Hindu, Jain, Muslim (Sunni/Ismaili), Christian religions
+### Jamatkhana Locations Available:
+**India:** Mumbai (Hasanabad, Khetwadi, Dongri), Ahmedabad, Bangalore, Kolkata
+**USA:** New York, Houston, Chicago, Los Angeles, Atlanta, Dallas, San Francisco
+**Canada:** Toronto, Vancouver, Calgary, Edmonton, Montreal, Ottawa
 
 ## Architecture
 ```
 /app
 ├── backend
 │   ├── routes/
-│   │   ├── cashfree.py        # Payment integration
-│   │   ├── lifealign.py       # FaithCare portal
-│   │   └── admin.py           # Staff management
-│   └── server.py              # Main FastAPI server
+│   │   └── lifealign.py       # Jamatkhana & Diet Plan APIs
+│   ├── models/
+│   │   └── lifealign.py       # Jamatkhana DB, Diet Plans data
+│   └── server.py
 ├── frontend
 │   └── src/
 │       ├── pages/
-│       │   ├── Mango.js              # Lab test booking (OTP mandatory)
-│       │   ├── MangoLabsStaffPortal.js # Staff portal with new features
-│       │   ├── Home.js               # Updated with FaithCare card
-│       │   ├── FaithCare.jsx         # Cultural health portal
-│       │   └── InnerScore.jsx        # Health analytics
-│       └── components/
-│           └── IntroScreen.jsx       # Guest OTP flow
+│       │   ├── FaithCare.jsx  # Dashboard with new features
+│       │   ├── Mango.js       # Orange theme, original logo
+│       │   └── Home.js        # FaithCare card with dove logo
 ```
 
-## Staff Portal Features
-
-### Mango Labs Staff Portal (`/mango-staff`)
-**Login:** `staff_mango` / `test`
-
-**Tabs:**
-1. **Bookings** - View and manage all test bookings
-2. **New Entry** - Create new test booking with:
-   - Patient info (name, phone)
-   - Manual barcode entry
-   - Priority (Normal/Urgent/Critical)
-   - Test multi-select with search
-3. **Calculator** - Cost estimator:
-   - Search tests by name/code
-   - Add to list, calculate total
-   - Copy estimate for sharing
-4. **Test Rates** - View/edit test catalog
-
 ## Key API Endpoints
-- `POST /api/mango/bookings` - Create new test booking
-- `PUT /api/mango/bookings/{id}/status` - Update booking status
-- `POST /api/mango/bookings/{id}/upload-report` - Upload report file
-- `GET /api/mango/tests` - Get test catalog
-- `POST /api/staff/login` - Staff authentication
+- `GET /api/lifealign/jamatkhanas` - Get Jamatkhanas (filter by country, lat/lng)
+- `GET /api/lifealign/jamatkhanas/nearest` - Get nearest Jamatkhana
+- `GET /api/lifealign/ramadan/diet-plans` - All diet plans
+- `GET /api/lifealign/ramadan/diet-plan/{condition}` - Specific plan (diabetic/hypertension/renal)
+- `GET /api/lifealign/ramadan/calendar` - Ramadan calendar with timings
 
 ## Test Credentials
-- **Staff Portal**: `staff_mango` / `test`
-- **Guest Login**: Any 10-digit phone + OTP from toast
 - **FaithCare**: FC2026001 / faith@care001
+- **Staff Portal**: staff_mango / test
 
 ## Backlog / Future Tasks
-1. Real-time timezone detection for FaithCare festivals
-2. Expand FaithCare to more religions (Sikh, Buddhist)
-3. Automatic yearly calendar updates
-4. Enhanced barcode scanning integration
-5. Staff performance analytics dashboard
+1. Add more Jamatkhana locations globally
+2. Real-time timezone detection for abroad users
+3. Integrate with Google Maps for directions
+4. Add notification reminders for Sehri/Iftar times
+5. Expand diet plans to other fasting traditions (Hindu, Jain, Christian)
