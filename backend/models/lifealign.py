@@ -452,5 +452,103 @@ HEALTH_RULES = [
             "reminder_times": ["sargi"]
         },
         "priority_level": 1
+    },
+    # Jain Paryushana rules
+    {
+        "festival_id": "paryushana",
+        "trigger_type": "BEFORE",
+        "condition_type": "DIABETES",
+        "action_type": "ALERT",
+        "action_payload": {
+            "title": "Paryushana Fasting Advisory",
+            "message": "Extended fasting during Paryushana can affect blood sugar. Consult your doctor before participating.",
+            "severity": "high"
+        },
+        "priority_level": 1
+    },
+    {
+        "festival_id": "paryushana",
+        "trigger_type": "DURING",
+        "condition_type": "GENERAL",
+        "action_type": "NUTRITION_GUIDANCE",
+        "action_payload": {
+            "title": "Paryushana Nutrition",
+            "message": "Maintain energy with easily digestible foods like khichdi, fruits, and boiled vegetables during eating hours.",
+            "diet_tips": ["light_meals", "fruits", "boiled_vegetables", "buttermilk"]
+        },
+        "priority_level": 2
+    },
+    {
+        "festival_id": "paryushana",
+        "trigger_type": "BEFORE",
+        "condition_type": "GENERAL",
+        "action_type": "RECOMMEND_TEST",
+        "action_payload": {
+            "title": "Pre-Paryushana Health Check",
+            "message": "Check your health status before beginning the fasting period.",
+            "tests": ["CBC", "Blood Sugar", "Electrolytes"]
+        },
+        "priority_level": 2
+    },
+    {
+        "festival_id": "ayambil_oli",
+        "trigger_type": "DURING",
+        "condition_type": "GENERAL",
+        "action_type": "NUTRITION_GUIDANCE",
+        "action_payload": {
+            "title": "Ayambil Nutrition",
+            "message": "Ayambil fasting involves bland, oil-free food. Ensure adequate protein through pulses and legumes.",
+            "diet_tips": ["bland_food", "no_oil", "pulses", "vegetables"]
+        },
+        "priority_level": 2
+    },
+    # Christian Lent rules
+    {
+        "festival_id": "lent",
+        "trigger_type": "BEFORE",
+        "condition_type": "DIABETES",
+        "action_type": "ALERT",
+        "action_payload": {
+            "title": "Lenten Fasting Advisory",
+            "message": "Fasting and abstinence during Lent requires careful blood sugar management. Consult your physician.",
+            "severity": "medium"
+        },
+        "priority_level": 1
+    },
+    {
+        "festival_id": "lent",
+        "trigger_type": "DURING",
+        "condition_type": "GENERAL",
+        "action_type": "NUTRITION_GUIDANCE",
+        "action_payload": {
+            "title": "Lenten Nutrition",
+            "message": "Focus on fish, vegetables, and legumes during Lent. Maintain balanced nutrition while abstaining from meat.",
+            "diet_tips": ["fish", "vegetables", "legumes", "whole_grains"]
+        },
+        "priority_level": 2
+    },
+    {
+        "festival_id": "good_friday",
+        "trigger_type": "DURING",
+        "condition_type": "DIABETES",
+        "action_type": "ALERT",
+        "action_payload": {
+            "title": "Good Friday Fast",
+            "message": "Fasting on Good Friday requires careful blood sugar monitoring. Consider partial fasting if needed.",
+            "severity": "medium"
+        },
+        "priority_level": 1
+    },
+    {
+        "festival_id": "good_friday",
+        "trigger_type": "DURING",
+        "condition_type": "GENERAL",
+        "action_type": "HYDRATION_ALERT",
+        "action_payload": {
+            "title": "Hydration Reminder",
+            "message": "Stay hydrated during your fast. Water and clear liquids are permitted.",
+            "reminder_times": ["morning", "afternoon", "evening"]
+        },
+        "priority_level": 2
     }
 ]
