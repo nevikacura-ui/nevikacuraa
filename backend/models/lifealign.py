@@ -167,8 +167,10 @@ INITIAL_FESTIVALS = [
     {"festival_id": "laylat_qadr", "religion_id": "muslim", "community_id": None, "festival_name": "Laylat al-Qadr", "festival_type": "NIGHT_VIGIL", "description": "Night of Power", "is_fixed_gregorian": False, "lunar_month": 9},
     # Ismaili specific
     {"festival_id": "imamat_day", "religion_id": "muslim", "community_id": "ismaili", "festival_name": "Imamat Day", "festival_type": "CELEBRATION", "description": "Anniversary of Imamat", "is_fixed_gregorian": True, "gregorian_date": "07-11"},
-    {"festival_id": "salgirah", "religion_id": "muslim", "community_id": "ismaili", "festival_name": "Salgirah", "festival_type": "CELEBRATION", "description": "Birthday celebration of Imam", "is_fixed_gregorian": True, "gregorian_date": "12-13"},
-    {"festival_id": "navroz_ismaili", "religion_id": "muslim", "community_id": "ismaili", "festival_name": "Navroz", "festival_type": "CELEBRATION", "description": "Persian New Year", "is_fixed_gregorian": True, "gregorian_date": "03-21"},
+    {"festival_id": "salgirah", "religion_id": "muslim", "community_id": "ismaili", "festival_name": "Salgirah", "festival_type": "CELEBRATION", "description": "Birthday of His Highness the Aga Khan", "is_fixed_gregorian": True, "gregorian_date": "12-13"},
+    {"festival_id": "navroz_ismaili", "religion_id": "muslim", "community_id": "ismaili", "festival_name": "Navroz", "festival_type": "CELEBRATION", "description": "Persian New Year - Spring Equinox", "is_fixed_gregorian": True, "gregorian_date": "03-21"},
+    {"festival_id": "chand_raat", "religion_id": "muslim", "community_id": None, "festival_name": "Chand Raat", "festival_type": "CELEBRATION", "description": "Moon Sighting Night before Eid", "is_fixed_gregorian": False, "lunar_month": 10},
+    {"festival_id": "shab_e_meraj", "religion_id": "muslim", "community_id": None, "festival_name": "Shab-e-Meraj", "festival_type": "NIGHT_VIGIL", "description": "Night of Ascension", "is_fixed_gregorian": False, "lunar_month": 7},
     # Hindu festivals
     {"festival_id": "chaitra_navratri", "religion_id": "hindu", "community_id": None, "festival_name": "Chaitra Navratri", "festival_type": "FASTING", "description": "Nine nights of spring", "is_fixed_gregorian": False},
     {"festival_id": "sharad_navratri", "religion_id": "hindu", "community_id": None, "festival_name": "Sharad Navratri", "festival_type": "FASTING", "description": "Nine nights of autumn", "is_fixed_gregorian": False},
