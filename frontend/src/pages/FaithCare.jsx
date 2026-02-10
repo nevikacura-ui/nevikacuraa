@@ -964,6 +964,220 @@ const FaithCare = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Jamatkhana Finder Dialog */}
+        <Dialog open={showJamatkhanaFinder} onOpenChange={setShowJamatkhanaFinder}>
+          <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-teal-600" />
+                Find Jamatkhana
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-2">
+              {/* Location Options */}
+              <div className="grid grid-cols-2 gap-3">
+                <Button 
+                  onClick={getUserLocation} 
+                  disabled={loadingLocation}
+                  className="bg-teal-500 hover:bg-teal-600"
+                >
+                  {loadingLocation ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Getting Location...</>
+                  ) : (
+                    <><Navigation className="w-4 h-4 mr-2" /> Use My Location</>
+                  )}
+                </Button>
+                <select 
+                  value={selectedCountry}
+                  onChange={(e) => { setSelectedCountry(e.target.value); fetchJamatkhanas(); }}
+                  className="px-3 py-2 border rounded-lg text-sm"
+                >
+                  <option value="">All Countries</option>
+                  <option value="India">India</option>
+                  <option value="USA">USA</option>
+                  <option value="Canada">Canada</option>
+                </select>
+              </div>
+
+              {userLocation && (
+                <div className="bg-teal-50 p-3 rounded-lg text-sm">
+                  <p className="text-teal-700 font-medium">Location detected</p>
+                  <p className="text-teal-600 text-xs">Showing nearest Jamatkhanas to your location</p>
+                </div>
+              )}
+
+              {/* Jamatkhana List */}
+              <div className="space-y-3 max-h-[40vh] overflow-y-auto">
+                {jamatkhanas.length === 0 ? (
+                  <div className="text-center py-6 text-slate-500">
+                    <MapPin className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                    <p>Select a country or use your location</p>
+                  </div>
+                ) : (
+                  jamatkhanas.map((jk) => (
+                    <Card key={jk.id} className="p-4 hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-bold text-slate-800">{jk.name}</h4>
+                          <p className="text-sm text-slate-600">{jk.city}, {jk.state}</p>
+                          <p className="text-xs text-slate-500 mt-1">{jk.address}</p>
+                          <div className="flex gap-4 mt-2 text-xs">
+                            <span className="text-teal-600">Morning: {jk.timings.morning}</span>
+                            <span className="text-amber-600">Evening: {jk.timings.evening}</span>
+                          </div>
+                        </div>
+                        {jk.distance_km && (
+                          <Badge className="bg-teal-100 text-teal-700 whitespace-nowrap">
+                            {jk.distance_km} km
+                          </Badge>
+                        )}
+                      </div>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Ramadan Diet Plans Dialog */}
+        <Dialog open={showDietPlans} onOpenChange={setShowDietPlans}>
+          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Heart className="w-5 h-5 text-amber-600" />
+                Ramadan Diet Plans
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="py-2">
+              {!selectedDietPlan ? (
+                <div className="grid gap-3">
+                  {dietPlans && Object.entries(dietPlans).map(([key, plan]) => (
+                    <Card 
+                      key={key}
+                      className={`p-4 cursor-pointer hover:shadow-lg transition-all border-l-4 ${
+                        key === 'diabetic' ? 'border-l-blue-500 hover:bg-blue-50' :
+                        key === 'hypertension' ? 'border-l-red-500 hover:bg-red-50' :
+                        'border-l-purple-500 hover:bg-purple-50'
+                      }`}
+                      onClick={() => setSelectedDietPlan(plan)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-bold text-lg">{plan.condition}</h3>
+                          <p className="text-sm text-slate-600">{plan.overview.substring(0, 80)}...</p>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-slate-400" />
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Button variant="ghost" onClick={() => setSelectedDietPlan(null)} className="mb-2">
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Plans
+                  </Button>
+                  
+                  <div className="bg-gradient-to-r from-amber-100 to-orange-100 p-4 rounded-xl">
+                    <h2 className="text-xl font-bold text-slate-800">{selectedDietPlan.condition}</h2>
+                    <p className="text-sm text-slate-600 mt-1">{selectedDietPlan.overview}</p>
+                  </div>
+
+                  {/* Sehri Section */}
+                  <Card className="p-4 border-l-4 border-l-teal-500">
+                    <h3 className="font-bold text-teal-700 mb-3">{selectedDietPlan.sehri.title}</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs font-medium text-slate-500 mb-1">TIPS</p>
+                        <ul className="text-sm space-y-1">
+                          {selectedDietPlan.sehri.tips.map((tip, i) => (
+                            <li key={i} className="flex items-start gap-2">
+                              <CheckCircle2 className="w-4 h-4 text-teal-500 mt-0.5 flex-shrink-0" />
+                              {tip}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-green-50 p-3 rounded-lg">
+                          <p className="text-xs font-medium text-green-700 mb-1">EAT</p>
+                          <ul className="text-xs text-green-600 space-y-0.5">
+                            {selectedDietPlan.sehri.foods_to_eat.map((food, i) => (
+                              <li key={i}>• {food}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="bg-red-50 p-3 rounded-lg">
+                          <p className="text-xs font-medium text-red-700 mb-1">AVOID</p>
+                          <ul className="text-xs text-red-600 space-y-0.5">
+                            {selectedDietPlan.sehri.foods_to_avoid.map((food, i) => (
+                              <li key={i}>• {food}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+
+                  {/* Iftar Section */}
+                  <Card className="p-4 border-l-4 border-l-amber-500">
+                    <h3 className="font-bold text-amber-700 mb-3">{selectedDietPlan.iftar.title}</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs font-medium text-slate-500 mb-1">TIPS</p>
+                        <ul className="text-sm space-y-1">
+                          {selectedDietPlan.iftar.tips.map((tip, i) => (
+                            <li key={i} className="flex items-start gap-2">
+                              <CheckCircle2 className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                              {tip}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-green-50 p-3 rounded-lg">
+                          <p className="text-xs font-medium text-green-700 mb-1">EAT</p>
+                          <ul className="text-xs text-green-600 space-y-0.5">
+                            {selectedDietPlan.iftar.foods_to_eat.map((food, i) => (
+                              <li key={i}>• {food}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="bg-red-50 p-3 rounded-lg">
+                          <p className="text-xs font-medium text-red-700 mb-1">AVOID</p>
+                          <ul className="text-xs text-red-600 space-y-0.5">
+                            {selectedDietPlan.iftar.foods_to_avoid.map((food, i) => (
+                              <li key={i}>• {food}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+
+                  {/* Monitoring Section */}
+                  <Card className="p-4 bg-slate-50">
+                    <h3 className="font-bold text-slate-700 mb-2">Daily Monitoring</h3>
+                    <ul className="text-sm space-y-1">
+                      {selectedDietPlan.monitoring.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-slate-600">
+                          <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-3 text-xs text-slate-500 bg-white p-2 rounded border">
+                      <strong>Medications:</strong> {selectedDietPlan.medications}
+                    </p>
+                  </Card>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AnimatedPage>
   );
