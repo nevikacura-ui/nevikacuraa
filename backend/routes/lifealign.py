@@ -82,7 +82,138 @@ async def initialize_lifealign_data():
             upsert=True
         )
     
-    return {"success": True, "message": "LifeAlign data initialized successfully"}
+    # Initialize Ramadan daily timings
+    for timing in RAMADAN_TIMINGS_2026:
+        timing_id = f"ramadan_2026_day_{timing['day']}"
+        await db.la_ramadan_timings.update_one(
+            {"timing_id": timing_id},
+            {"$set": {"timing_id": timing_id, "year": 2026, **timing}},
+            upsert=True
+        )
+    
+    # Initialize FaithCare exclusive accounts
+    import hashlib
+    for account in FAITHCARE_ACCOUNTS:
+        password_hash = hashlib.sha256(account["password"].encode()).hexdigest()
+        await db.faithcare_accounts.update_one(
+            {"user_id": account["user_id"]},
+            {"$set": {
+                "user_id": account["user_id"],
+                "password_hash": password_hash,
+                "name": account["name"],
+                "active": account["active"],
+                "created_at": datetime.utcnow()
+            }},
+            upsert=True
+        )
+    
+    return {"success": True, "message": "FaithCare data initialized successfully"}
+
+# ============ EXCLUSIVE ACCESS ============
+
+@router.post("/auth/login")
+async def faithcare_login(user_id: str, password: str):
+    """Authenticate FaithCare exclusive access"""
+    db = await get_db()
+    import hashlib
+    
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+    
+    account = await db.faithcare_accounts.find_one({
+        "user_id": user_id,
+        "password_hash": password_hash,
+        "active": True
+    }, {"_id": 0})
+    
+    if not account:
+        raise HTTPException(status_code=401, detail="Invalid credentials or inactive account")
+    
+    # Update last login
+    await db.faithcare_accounts.update_one(
+        {"user_id": user_id},
+        {"$set": {"last_login": datetime.utcnow()}}
+    )
+    
+    # Generate session token
+    import secrets
+    session_token = secrets.token_urlsafe(32)
+    
+    await db.faithcare_sessions.update_one(
+        {"user_id": user_id},
+        {"$set": {
+            "user_id": user_id,
+            "session_token": session_token,
+            "created_at": datetime.utcnow(),
+            "expires_at": datetime.utcnow() + timedelta(days=30)
+        }},
+        upsert=True
+    )
+    
+    return {
+        "success": True,
+        "user_id": user_id,
+        "name": account["name"],
+        "session_token": session_token
+    }
+
+@router.get("/auth/verify/{session_token}")
+async def verify_faithcare_session(session_token: str):
+    """Verify FaithCare session token"""
+    db = await get_db()
+    
+    session = await db.faithcare_sessions.find_one({
+        "session_token": session_token,
+        "expires_at": {"$gt": datetime.utcnow()}
+    }, {"_id": 0})
+    
+    if not session:
+        raise HTTPException(status_code=401, detail="Invalid or expired session")
+    
+    return {"valid": True, "user_id": session["user_id"]}
+
+@router.post("/auth/logout")
+async def faithcare_logout(session_token: str):
+    """Logout from FaithCare"""
+    db = await get_db()
+    await db.faithcare_sessions.delete_one({"session_token": session_token})
+    return {"success": True}
+
+# ============ RAMADAN TIMINGS ============
+
+@router.get("/ramadan/timings/{year}")
+async def get_ramadan_timings(year: int = 2026):
+    """Get Ramadan daily Sehri/Iftar timings"""
+    db = await get_db()
+    
+    timings = await db.la_ramadan_timings.find(
+        {"year": year},
+        {"_id": 0}
+    ).sort("day", 1).to_list(31)
+    
+    if not timings:
+        # Return from static data
+        return RAMADAN_TIMINGS_2026
+    
+    return timings
+
+@router.get("/ramadan/today")
+async def get_today_ramadan_timing():
+    """Get today's Ramadan timing if during Ramadan"""
+    db = await get_db()
+    today = date.today().isoformat()
+    
+    timing = await db.la_ramadan_timings.find_one(
+        {"date": today},
+        {"_id": 0}
+    )
+    
+    if not timing:
+        return {"is_ramadan": False, "message": "Not during Ramadan or no data for today"}
+    
+    return {
+        "is_ramadan": True,
+        **timing
+    }
 
 # ============ RELIGIONS & COMMUNITIES ============
 
