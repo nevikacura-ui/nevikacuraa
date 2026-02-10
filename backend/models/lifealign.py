@@ -143,9 +143,8 @@ class DashboardResponse(BaseModel):
 INITIAL_RELIGIONS = [
     {"religion_id": "hindu", "religion_name": "Hindu", "description": "Sanatan Dharma traditions", "is_active": True},
     {"religion_id": "muslim", "religion_name": "Muslim", "description": "Islamic traditions", "is_active": True},
-    {"religion_id": "sikh", "religion_name": "Sikh", "description": "Sikh traditions", "is_active": False},
-    {"religion_id": "jain", "religion_name": "Jain", "description": "Jain traditions", "is_active": False},
-    {"religion_id": "christian", "religion_name": "Christian", "description": "Christian traditions", "is_active": False}
+    {"religion_id": "jain", "religion_name": "Jain", "description": "Jain traditions", "is_active": True},
+    {"religion_id": "christian", "religion_name": "Christian", "description": "Christian traditions", "is_active": True}
 ]
 
 INITIAL_COMMUNITIES = [
@@ -156,7 +155,18 @@ INITIAL_COMMUNITIES = [
     # Hindu communities
     {"community_id": "hindu_general", "religion_id": "hindu", "community_name": "General", "description": "General Hindu traditions", "is_active": True},
     {"community_id": "hindu_brahmin", "religion_id": "hindu", "community_name": "Brahmin", "description": "Brahmin community", "is_active": True},
-    {"community_id": "hindu_gujarati", "religion_id": "hindu", "community_name": "Gujarati", "description": "Gujarati Hindu traditions", "is_active": True}
+    {"community_id": "hindu_gujarati", "religion_id": "hindu", "community_name": "Gujarati", "description": "Gujarati Hindu traditions", "is_active": True},
+    {"community_id": "hindu_marathi", "religion_id": "hindu", "community_name": "Marathi", "description": "Marathi Hindu traditions", "is_active": True},
+    {"community_id": "hindu_south_indian", "religion_id": "hindu", "community_name": "South Indian", "description": "South Indian Hindu traditions", "is_active": True},
+    # Jain communities
+    {"community_id": "jain_shwetambar", "religion_id": "jain", "community_name": "Shwetambar", "description": "Shwetambar Jains", "is_active": True},
+    {"community_id": "jain_digambar", "religion_id": "jain", "community_name": "Digambar", "description": "Digambar Jains", "is_active": True},
+    {"community_id": "jain_general", "religion_id": "jain", "community_name": "General", "description": "General Jain traditions", "is_active": True},
+    # Christian communities
+    {"community_id": "christian_catholic", "religion_id": "christian", "community_name": "Catholic", "description": "Roman Catholic traditions", "is_active": True},
+    {"community_id": "christian_protestant", "religion_id": "christian", "community_name": "Protestant", "description": "Protestant traditions", "is_active": True},
+    {"community_id": "christian_orthodox", "religion_id": "christian", "community_name": "Orthodox", "description": "Orthodox Christian traditions", "is_active": True},
+    {"community_id": "christian_general", "religion_id": "christian", "community_name": "General", "description": "General Christian traditions", "is_active": True}
 ]
 
 INITIAL_FESTIVALS = [
