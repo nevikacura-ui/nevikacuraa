@@ -106,5 +106,10 @@ A comprehensive healthcare application for Nevika Cura Healthcare Group with pat
 
 ---
 
-## Date: February 8, 2026
-Last Updated: Staff login portal split completed
+## Date: February 10, 2026
+
+### Latest Updates:
+1. **Shadow removed** from portal scroll bar - Clean flat background
+2. **Guest login now OTP-based** - Requires WhatsApp number + OTP verification before accessing app
+
+### Last Updated: Portal scroll bar shadow fix + Guest OTP login
