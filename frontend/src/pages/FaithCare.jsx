@@ -494,6 +494,44 @@ const FaithCare = () => {
                 </Card>
               )}
 
+              {/* Jamatkhana Finder (for Ismaili users) */}
+              {(dashboard.user_community?.toLowerCase() === 'ismaili' || selectedCommunity === 'ismaili') && (
+                <Card className="p-4 bg-gradient-to-r from-teal-600 to-cyan-600 border-0 cursor-pointer hover:shadow-lg transition-all"
+                      onClick={() => { setShowJamatkhanaFinder(true); fetchJamatkhanas(); }}>
+                  <div className="flex items-center justify-between text-white">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                        <MapPin className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold">Find Nearest Jamatkhana</h3>
+                        <p className="text-sm text-cyan-100">India • USA • Canada</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-5 h-5" />
+                  </div>
+                </Card>
+              )}
+
+              {/* Ramadan Diet Plans (for Muslim users) */}
+              {(dashboard.user_religion?.toLowerCase() === 'muslim' || selectedReligion === 'muslim') && (
+                <Card className="p-4 bg-gradient-to-r from-amber-500 to-orange-500 border-0 cursor-pointer hover:shadow-lg transition-all"
+                      onClick={() => { setShowDietPlans(true); fetchDietPlans(); }}>
+                  <div className="flex items-center justify-between text-white">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                        <Heart className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold">Ramadan Diet Plans</h3>
+                        <p className="text-sm text-orange-100">Diabetic • Hypertension • Kidney</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-5 h-5" />
+                  </div>
+                </Card>
+              )}
+
               {/* Health Readiness Score */}
               <Card className="p-6 border-0 shadow-lg">
                 <div className="flex items-center justify-between mb-4">
