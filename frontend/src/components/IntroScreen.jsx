@@ -528,6 +528,7 @@ const IntroScreen = ({ onComplete, user }) => {
                 {authStep === 'otp' && 'Verify OTP'}
                 {authStep === 'setPassword' && 'Create Password'}
                 {authStep === 'guestMobile' && 'Continue as Guest'}
+                {authStep === 'guestOtp' && 'Verify OTP'}
               </h3>
               <button 
                 onClick={() => { 
