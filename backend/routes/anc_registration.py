@@ -767,7 +767,7 @@ async def send_anc_form_link(data: ANCFormSendRequest):
     
     # Create form record
     form_id = str(uuid.uuid4())
-    base_url = os.environ.get("FRONTEND_URL", "https://role-redirect-debug.preview.emergentagent.com")
+    base_url = os.environ.get("FRONTEND_URL", "https://innerscore-health.preview.emergentagent.com")
     form_link = f"{base_url}/anc-form/{form_id}"
     
     form_record = {
@@ -1012,7 +1012,7 @@ async def resend_anc_form_link(form_id: str):
     
     # Create new form with same patient data
     new_form_id = str(uuid.uuid4())
-    base_url = os.environ.get("FRONTEND_URL", "https://role-redirect-debug.preview.emergentagent.com")
+    base_url = os.environ.get("FRONTEND_URL", "https://innerscore-health.preview.emergentagent.com")
     new_form_link = f"{base_url}/anc-form/{new_form_id}"
     
     new_form_record = {

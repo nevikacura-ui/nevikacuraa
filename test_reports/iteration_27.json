@@ -121,7 +121,7 @@
     "frontend": "100% (12/12 passed)"
   },
   "test_credentials": {
-    "api_base_url": "https://role-redirect-debug.preview.emergentagent.com"
+    "api_base_url": "https://innerscore-health.preview.emergentagent.com"
   },
   "seed_data_creation": "None - using existing test data from iteration 26",
   "retest_needed": false,

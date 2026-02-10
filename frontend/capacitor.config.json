@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://role-redirect-debug.preview.emergentagent.com",
+    "url": "https://innerscore-health.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {
