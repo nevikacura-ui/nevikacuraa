@@ -11,7 +11,7 @@ import os
 
 from models.lifealign import (
     INITIAL_RELIGIONS, INITIAL_COMMUNITIES, INITIAL_FESTIVALS,
-    FESTIVAL_DATES_2026, HEALTH_RULES,
+    FESTIVAL_DATES_2026, HEALTH_RULES, RAMADAN_TIMINGS_2026, FAITHCARE_ACCOUNTS,
     LocationType, FestivalType, ConditionType, ActionType,
     UserProfileUpdate, FestivalDateCreate, HealthRuleCreate, UserFestivalOptIn,
     ReligionResponse, CommunityResponse, FestivalResponse, FestivalDateResponse,
