@@ -1,134 +1,65 @@
 # Nevika Cura Healthcare Platform - PRD
 
 ## Original Problem Statement
-A comprehensive healthcare application for Nevika Cura Healthcare Group with patient and staff management capabilities. The user requested a complete overhaul of the patient login/signup system to use Email/WhatsApp OTP flows, followed by engagement and UI improvements.
+Multi-portal healthcare platform with several specialized portals including DiaGyn, Mango Health Labs, Orange Pharmacy, FaithCare, INNERSCORE, and Reneu.
 
-## Latest Request (Resolved)
-**Issue:** Unified staff login page incorrectly redirects all users to doctor portal regardless of their actual role.
-**Solution:** Split the unified login into 3 separate portal login pages (Staff, Doctor, Admin) as requested by the user.
+## Latest Updates (February 11, 2026)
 
----
+### Completed This Session:
+1. **WhatsApp OTP Mandatory in Mango Labs** - OTP verification is now required when booking lab tests
+2. **Mango Labs Logo Updated** - New purple/white professional banner logo applied to:
+   - Home page card (`Home.js` line 391)
+   - Mango Labs header (`Mango.js` line 1157)
+3. **Cashfree Payment Verified** - Payment gateway working at `/api/payments/cashfree/create-order`
+4. **Booking Limits Removed** - All booking restrictions removed (`server.py` lines 3484-3487):
+   - `can_book_appointment: True`
+   - `can_book_diagnostic: True`
+   - `can_book_pharmacy: True`
+   - `can_book_teleconsult: True`
 
-## What's Been Implemented
+### FaithCare Portal Expansion:
+- Added religions: Hindu, Jain, Muslim (Sunni, Ismaili, Shia), Christian
+- Added communities for each religion
+- Added festivals: Jain (Paryushana, Mahavir Jayanti, etc.), Christian (Lent, Easter, Christmas, etc.)
+- Added 2026 festival dates for all religions
+- Added health rules for Jain and Christian fasting periods
 
-### Authentication System
-- **Patient Authentication (OTP-based):**
-  - Email OTP login/signup via Resend API
-  - WhatsApp OTP login/signup via MSG91
-  - Password-based login for returning users
-  - Located: `/app/frontend/src/pages/PatientLogin.jsx`, `/app/backend/routes/patient_auth.py`
+## Architecture
+```
+/app
+├── backend
+│   ├── routes/
+│   │   ├── cashfree.py     # Cashfree payment integration
+│   │   └── lifealign.py    # FaithCare portal routes
+│   ├── models/
+│   │   └── lifealign.py    # FaithCare data models
+│   └── server.py           # Main FastAPI server
+├── frontend
+│   └── src/
+│       ├── pages/
+│       │   ├── Mango.js        # Lab test booking (OTP mandatory)
+│       │   ├── Home.js         # Main dashboard
+│       │   ├── FaithCare.jsx   # Cultural health portal
+│       │   └── InnerScore.jsx  # Health analytics
+│       └── components/
+│           └── IntroScreen.jsx  # Guest OTP flow
+```
 
-- **Staff Authentication (Separate Portals) - NEW:**
-  - **Staff Portal Login** (`/staff-portal-login`) - Teal themed, for DiaGyn clinic staff
-  - **Doctor Portal Login** (`/doctor-login`) - Blue themed, for physicians
-  - **Admin Portal Login** (`/admin-login`) - Purple themed, for administrators
-  - **Portal Selector** (`/staff`) - Shows all portal options for easy navigation
-  - Located: `/app/frontend/src/pages/StaffPortalLogin.jsx`, `/app/frontend/src/pages/DoctorPortalLogin.jsx`, `/app/frontend/src/pages/AdminPortalLogin.jsx`
+## Key API Endpoints
+- `POST /api/payments/cashfree/create-order` - Create payment order
+- `GET /api/booking-limits/status` - Check booking restrictions (all True now)
+- `POST /api/otp/whatsapp/send` - Send OTP via WhatsApp
+- `POST /api/otp/whatsapp/verify` - Verify WhatsApp OTP
+- `POST /api/lifealign/init` - Initialize FaithCare data
+- `GET /api/lifealign/religions` - Get available religions
 
-### Homepage & Navigation
-- Admin Portal link added to homepage footer (purple/violet styling)
-- Staff Portal and Doctor Portal links added to Patient Login page
-- Portal selector page with quick links to Pharmacy Staff and Lab Staff portals
+## Test Credentials
+- **Guest Login**: Any 10-digit phone number
+- **Test OTP**: Displayed in toast notification (development mode)
+- **FaithCare**: FC2026001 / faith@care001
 
-### Other Features Implemented
-- Mango Labs Package Builder modal
-- Prescription OCR using Gemini Vision
-- Splash screen image update
-- Gamification widget (UI only)
-- Personalized Actions (UI only)
-- "Usually Bought Together" (UI placeholder)
-- Wait Time Estimates (UI placeholder)
-
-### New Portals Added (Feb 2026)
-- **Reneu** - Inside Out Wellness with 5 sub-sections (Core, Skin, Hair, Women, Men)
-- **InnerScore** - AI-powered Health Intelligence Portal with BioAge, Risk, Sleep, Metabolic, Inflammation engines
-- **LifeAlign** - Cultural & Community Health Sync Engine:
-  - Multi-religion support (Hindu, Muslim + expandable)
-  - Community sub-groups (Ismaili, Sunni, Shia, Brahmin, Gujarati, etc.)
-  - India/Abroad toggle with timezone detection
-  - Dynamic festival calendars (Ramadan, Navratri, Mahashivratri, Eid, Diwali, etc.)
-  - Health logic rules engine for risk alerts during fasting periods
-  - Health Readiness Score based on chronic conditions
-  - Lab test recommendations and medication timing adjustments
-  - Scalable database schema for future religions/communities
-
----
-
-## Current Routes
-
-### Patient Routes
-- `/` - Homepage
-- `/login` - Patient Login/Signup (OTP-based)
-- `/profile` - Patient Profile
-
-### Staff Routes
-- `/staff` - Portal Selector (shows all options)
-- `/staff-portal-login` - Staff Login (→ /diagyn-staff)
-- `/doctor-login` - Doctor Login (→ /doctor-portal)
-- `/admin-login` - Admin Login (→ /admin)
-- `/diagyn-staff` - DiaGyn Staff Portal
-- `/doctor-portal` - Doctor Portal
-- `/admin` - Admin Panel
-- `/orange-staff` - Pharmacy Staff Portal
-- `/mango-staff` - Lab Staff Portal
-
----
-
-## Pending/Backlog Tasks (P1)
-
-### Backend Implementation Required
-1. **Orange Pharmacy Subscriptions** - Backend flow for chronic medicine subscriptions
-2. **"Usually Bought Together"** - Recommendation engine for products
-3. **DiaGyn Wait Time Estimates** - Real-time queue estimation
-4. **Gamification Engine** - Health streaks, badges, referral tracking
-5. **Complete OCR-to-Cart Flow** - Add extracted medicines from prescription directly to cart
-
-### Other Pending
-6. Move through DiaGyn staff portal functionality testing
-7. Full integration testing of patient auth system
-
----
-
-## Tech Stack
-- **Frontend:** React, React Router, Axios, Tailwind CSS, Shadcn UI
-- **Backend:** Python (FastAPI)
-- **Database:** MongoDB
-- **Authentication:** JWT (separate tokens for staff/patients)
-- **AI Integration:** Google Gemini Vision (prescription OCR)
-- **OTP Services:** Resend (Email), MSG91 (WhatsApp)
-
----
-
-## Key Files Reference
-
-### Authentication
-- `/app/frontend/src/pages/PatientLogin.jsx`
-- `/app/frontend/src/pages/StaffPortalLogin.jsx`
-- `/app/frontend/src/pages/DoctorPortalLogin.jsx`
-- `/app/frontend/src/pages/AdminPortalLogin.jsx`
-- `/app/frontend/src/pages/UnifiedStaffLogin.js` (Portal Selector)
-- `/app/backend/routes/patient_auth.py`
-- `/app/backend/routes/staff.py`
-
-### Context
-- `/app/frontend/src/context/AuthContext.jsx`
-
-### Navigation
-- `/app/frontend/src/App.js`
-- `/app/frontend/src/components/Footer.jsx`
-
----
-
-## Date: February 10, 2026
-
-### Latest Updates:
-1. **Shadow removed** from portal scroll bar - Clean flat background
-2. **Guest login now OTP-based** - Requires WhatsApp number + OTP verification before accessing app
-3. **Reneu Portal Redesigned** - "Inside Out Wellness" with 5 sub-sections
-4. **INNERSCORE - Health Intelligence Portal** - Premium AI-driven health scoring system with new cyan logo
-   - Added to scrollable portal header (replaced Reports/Health Log icons)
-   - Added to homepage service cards grid (5x2 layout, below Senova & Reneu)
-   - Logo: Cyan/turquoise "Inner Score" branding
-   - Dark navy background (#0f172a)
-
-### Last Updated: INNERSCORE Health Intelligence Portal complete
+## Backlog / Future Tasks
+1. Real-time timezone detection for FaithCare festivals
+2. Expand FaithCare to more religions (Sikh, Buddhist, etc.)
+3. Automatic yearly calendar updates via cron job
+4. Enhanced payment tracking and notifications
