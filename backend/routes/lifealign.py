@@ -8,10 +8,12 @@ from typing import Optional, List
 from datetime import datetime, date, timedelta
 from bson import ObjectId
 import os
+import math
 
 from models.lifealign import (
     INITIAL_RELIGIONS, INITIAL_COMMUNITIES, INITIAL_FESTIVALS,
     FESTIVAL_DATES_2026, HEALTH_RULES, RAMADAN_TIMINGS_2026, FAITHCARE_ACCOUNTS,
+    JAMATKHANAS, RAMADAN_DIET_PLANS,
     LocationType, FestivalType, ConditionType, ActionType,
     UserProfileUpdate, FestivalDateCreate, HealthRuleCreate, UserFestivalOptIn,
     ReligionResponse, CommunityResponse, FestivalResponse, FestivalDateResponse,
