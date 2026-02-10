@@ -455,8 +455,12 @@ const FaithCare = () => {
           <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-teal-500" />
-                Setup LifeAlign
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_55d2778b-393f-4c6f-a4f0-366c7890154e/artifacts/rbodxuxv_file_00000000e2a47209b2515ab5afe77eeb.png"
+                  alt="FaithCare"
+                  className="h-8 w-auto object-contain"
+                />
+                Setup FaithCare
               </DialogTitle>
             </DialogHeader>
             
