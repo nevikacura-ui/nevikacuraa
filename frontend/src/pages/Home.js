@@ -501,7 +501,7 @@ const Home = () => {
       id: 'faithcare',
       name: 'FaithCare',
       description: 'Cultural Health Sync',
-      logo: 'https://customer-assets.emergentagent.com/job_89849591-2898-4d2c-93b2-e4baf0814999/artifacts/h3v7nk0g_file_00000000e2a47209b2515ab5afe77eeb.png',
+      logo: 'https://static.prod-images.emergentagent.com/jobs/89849591-2898-4d2c-93b2-e4baf0814999/images/f4beab97190d48177e0dbd6520fe183e9b9e9a17cc9854111a8b7c1399776e10.png',
       path: '/faithcare',
       bgColor: '#0a0a0a',
       isDark: true,
