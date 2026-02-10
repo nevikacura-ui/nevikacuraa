@@ -266,7 +266,7 @@ const FaithCare = () => {
               <Card className="p-6 border-0 shadow-lg">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-teal-500" />
+                    <Shield className="w-5 h-5 text-amber-500" />
                     Health Readiness Score
                   </h3>
                   <span className={`text-3xl font-bold ${
