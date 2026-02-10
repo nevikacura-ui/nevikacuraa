@@ -3515,10 +3515,10 @@ async def get_booking_limits_status(phone: str = None, user = Depends(get_curren
         })
     
     return {
-        "can_book_appointment": active_appointment is None,
-        "can_book_diagnostic": active_diagnostic_count < 2,
-        "can_book_pharmacy": active_pharmacy_count < 2,
-        "can_book_teleconsult": active_teleconsult is None,
+        "can_book_appointment": True,
+        "can_book_diagnostic": True,
+        "can_book_pharmacy": True,
+        "can_book_teleconsult": True,
         "active_appointments": 1 if active_appointment else 0,
         "active_diagnostic_orders": active_diagnostic_count,
         "active_pharmacy_orders": active_pharmacy_count,
