@@ -177,7 +177,7 @@ INITIAL_FESTIVALS = [
     {"festival_id": "laylat_qadr", "religion_id": "muslim", "community_id": None, "festival_name": "Laylat al-Qadr", "festival_type": "NIGHT_VIGIL", "description": "Night of Power", "is_fixed_gregorian": False, "lunar_month": 9},
     # Ismaili specific
     {"festival_id": "imamat_day", "religion_id": "muslim", "community_id": "ismaili", "festival_name": "Imamat Day", "festival_type": "CELEBRATION", "description": "Anniversary of Imamat", "is_fixed_gregorian": True, "gregorian_date": "07-11"},
-    {"festival_id": "salgirah", "religion_id": "muslim", "community_id": "ismaili", "festival_name": "Salgirah", "festival_type": "CELEBRATION", "description": "Birthday of His Highness the Aga Khan", "is_fixed_gregorian": True, "gregorian_date": "12-13"},
+    {"festival_id": "salgirah", "religion_id": "muslim", "community_id": "ismaili", "festival_name": "Salgirah", "festival_type": "CELEBRATION", "description": "Birthday of His Highness the Aga Khan", "is_fixed_gregorian": True, "gregorian_date": "10-12"},
     {"festival_id": "navroz_ismaili", "religion_id": "muslim", "community_id": "ismaili", "festival_name": "Navroz", "festival_type": "CELEBRATION", "description": "Persian New Year - Spring Equinox", "is_fixed_gregorian": True, "gregorian_date": "03-21"},
     {"festival_id": "chand_raat", "religion_id": "muslim", "community_id": None, "festival_name": "Chand Raat", "festival_type": "CELEBRATION", "description": "Moon Sighting Night before Eid", "is_fixed_gregorian": False, "lunar_month": 10},
     {"festival_id": "shab_e_meraj", "religion_id": "muslim", "community_id": None, "festival_name": "Shab-e-Meraj", "festival_type": "NIGHT_VIGIL", "description": "Night of Ascension", "is_fixed_gregorian": False, "lunar_month": 7},
@@ -218,7 +218,7 @@ FESTIVAL_DATES_2026 = [
     {"festival_id": "laylat_qadr", "year": 2026, "start_date": "2026-03-15", "end_date": "2026-03-17", "moon_confirmed": True},
     # Ismaili specific events 2026
     {"festival_id": "imamat_day", "year": 2026, "start_date": "2026-07-11", "end_date": "2026-07-11", "moon_confirmed": True},
-    {"festival_id": "salgirah", "year": 2026, "start_date": "2026-12-13", "end_date": "2026-12-13", "moon_confirmed": True},
+    {"festival_id": "salgirah", "year": 2026, "start_date": "2026-10-12", "end_date": "2026-10-12", "moon_confirmed": True},
     {"festival_id": "navroz_ismaili", "year": 2026, "start_date": "2026-03-21", "end_date": "2026-03-21", "moon_confirmed": True},
     {"festival_id": "chand_raat", "year": 2026, "start_date": "2026-03-20", "end_date": "2026-03-20", "moon_confirmed": False},
     {"festival_id": "shab_e_meraj", "year": 2026, "start_date": "2026-01-27", "end_date": "2026-01-27", "moon_confirmed": True},
