@@ -170,8 +170,8 @@ const FaithCare = () => {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-600">Loading LifeAlign...</p>
+          <div className="w-16 h-16 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-600">Loading FaithCare...</p>
         </div>
       </div>
     );
@@ -179,9 +179,9 @@ const FaithCare = () => {
 
   return (
     <AnimatedPage>
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white" data-testid="lifealign-page">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white" data-testid="faithcare-page">
         {/* Header */}
-        <header className={`sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200`}>
+        <header className={`sticky top-0 z-50 bg-slate-900 border-b border-slate-800`}>
           <div className="max-w-5xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -189,25 +189,24 @@ const FaithCare = () => {
                   variant="ghost" 
                   size="icon"
                   onClick={() => navigate('/')}
-                  className="rounded-full"
-                  data-testid="lifealign-back-btn"
+                  className="rounded-full text-white hover:bg-slate-800"
+                  data-testid="faithcare-back-btn"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
-                <div>
-                  <h1 className="text-xl font-bold text-slate-900">
-                    Life<span className="text-teal-600">Align</span>
-                  </h1>
-                  <p className="text-xs text-slate-500">Cultural Health Sync</p>
-                </div>
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_55d2778b-393f-4c6f-a4f0-366c7890154e/artifacts/rbodxuxv_file_00000000e2a47209b2515ab5afe77eeb.png"
+                  alt="FaithCare"
+                  className="h-12 w-auto object-contain"
+                />
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowSetup(true)}
-                className="rounded-full"
+                className="rounded-full text-white hover:bg-slate-800"
               >
-                <Settings className="w-5 h-5 text-slate-600" />
+                <Settings className="w-5 h-5" />
               </Button>
             </div>
           </div>
