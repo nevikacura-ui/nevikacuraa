@@ -399,9 +399,9 @@ const FaithCare = () => {
 
               {/* Recommended Tests */}
               {dashboard.recommended_tests.length > 0 && (
-                <Card className="p-4 border-0 shadow-lg bg-gradient-to-r from-teal-50 to-cyan-50">
+                <Card className="p-4 border-0 shadow-lg bg-gradient-to-r from-amber-50 to-orange-50">
                   <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
-                    <FlaskConical className="w-5 h-5 text-teal-600" />
+                    <FlaskConical className="w-5 h-5 text-amber-600" />
                     Recommended Lab Tests
                   </h3>
                   <div className="space-y-2 mb-4">
@@ -411,13 +411,13 @@ const FaithCare = () => {
                           <p className="font-medium text-slate-800">{test.name}</p>
                           <p className="text-xs text-slate-500">{test.reason}</p>
                         </div>
-                        <CheckCircle2 className="w-5 h-5 text-teal-500" />
+                        <CheckCircle2 className="w-5 h-5 text-amber-500" />
                       </div>
                     ))}
                   </div>
                   <Button 
                     onClick={() => navigate('/mango')}
-                    className="w-full bg-teal-600 hover:bg-teal-700"
+                    className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
                   >
                     Book Lab Tests
                   </Button>
@@ -428,7 +428,7 @@ const FaithCare = () => {
               <div className="grid grid-cols-2 gap-3">
                 <Button 
                   onClick={() => navigate('/mango')}
-                  className="h-14 rounded-xl bg-teal-600 hover:bg-teal-700"
+                  className="h-14 rounded-xl bg-amber-600 hover:bg-amber-700"
                 >
                   <FlaskConical className="w-5 h-5 mr-2" />
                   Lab Tests
@@ -444,7 +444,7 @@ const FaithCare = () => {
 
               {/* Disclaimer */}
               <p className="text-xs text-slate-400 text-center mt-8">
-                LifeAlign provides health guidance only. Always consult a healthcare professional for medical advice.
+                FaithCare provides health guidance only. Always consult a healthcare professional for medical advice.
               </p>
             </div>
           )}
