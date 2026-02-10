@@ -6,60 +6,95 @@ Multi-portal healthcare platform with several specialized portals including DiaG
 ## Latest Updates (February 11, 2026)
 
 ### Completed This Session:
-1. **WhatsApp OTP Mandatory in Mango Labs** - OTP verification is now required when booking lab tests
-2. **Mango Labs Logo Updated** - New purple/white professional banner logo applied to:
-   - Home page card (`Home.js` line 391)
-   - Mango Labs header (`Mango.js` line 1157)
-3. **Cashfree Payment Verified** - Payment gateway working at `/api/payments/cashfree/create-order`
-4. **Booking Limits Removed** - All booking restrictions removed (`server.py` lines 3484-3487):
-   - `can_book_appointment: True`
-   - `can_book_diagnostic: True`
-   - `can_book_pharmacy: True`
-   - `can_book_teleconsult: True`
 
-### FaithCare Portal Expansion:
-- Added religions: Hindu, Jain, Muslim (Sunni, Ismaili, Shia), Christian
-- Added communities for each religion
-- Added festivals: Jain (Paryushana, Mahavir Jayanti, etc.), Christian (Lent, Easter, Christmas, etc.)
-- Added 2026 festival dates for all religions
-- Added health rules for Jain and Christian fasting periods
+#### UI/Theme Updates:
+1. **Mango Health Labs Branding** - Complete orange/green theme overhaul:
+   - New Mango logo (orange circle with green leaves)
+   - Orange gradient header in portal (`from-[#F97316] to-[#C2410C]`)
+   - Tagline: "Aam logon ki, Khaas Lab."
+   - Updated staff portal login and header
+
+2. **FaithCare Card** - Added to home page carousel beside InnerScore
+
+#### Mango Labs Staff Portal - New Features:
+1. **New Entry Tab** - Staff can create test bookings:
+   - Patient name and phone fields
+   - Manual barcode entry (auto-generates if empty)
+   - Priority selection: Normal, Urgent, Critical
+   - Test search and multi-select
+   - Real-time cost calculation
+
+2. **Cost Calculator Tab** - Estimate costs for customers:
+   - Search tests by name, code, or barcode
+   - Add multiple tests to calculate total
+   - Copy estimate to clipboard for sharing
+   - Shows individual test prices and total
+
+3. **Test Booking Flow**:
+   - Status: `Booked → Sample Collected → In Lab → Report Generated → Completed`
+   - Report upload mandatory before "Report Generated"
+   - Barcode tracking for each test entry
+
+### Previous Session Completed:
+- WhatsApp OTP mandatory in Mango Labs
+- Cashfree payment integration verified
+- Booking limits removed
+- FaithCare expanded with Hindu, Jain, Muslim (Sunni/Ismaili), Christian religions
 
 ## Architecture
 ```
 /app
 ├── backend
 │   ├── routes/
-│   │   ├── cashfree.py     # Cashfree payment integration
-│   │   └── lifealign.py    # FaithCare portal routes
-│   ├── models/
-│   │   └── lifealign.py    # FaithCare data models
-│   └── server.py           # Main FastAPI server
+│   │   ├── cashfree.py        # Payment integration
+│   │   ├── lifealign.py       # FaithCare portal
+│   │   └── admin.py           # Staff management
+│   └── server.py              # Main FastAPI server
 ├── frontend
 │   └── src/
 │       ├── pages/
-│       │   ├── Mango.js        # Lab test booking (OTP mandatory)
-│       │   ├── Home.js         # Main dashboard
-│       │   ├── FaithCare.jsx   # Cultural health portal
-│       │   └── InnerScore.jsx  # Health analytics
+│       │   ├── Mango.js              # Lab test booking (OTP mandatory)
+│       │   ├── MangoLabsStaffPortal.js # Staff portal with new features
+│       │   ├── Home.js               # Updated with FaithCare card
+│       │   ├── FaithCare.jsx         # Cultural health portal
+│       │   └── InnerScore.jsx        # Health analytics
 │       └── components/
-│           └── IntroScreen.jsx  # Guest OTP flow
+│           └── IntroScreen.jsx       # Guest OTP flow
 ```
 
+## Staff Portal Features
+
+### Mango Labs Staff Portal (`/mango-staff`)
+**Login:** `staff_mango` / `test`
+
+**Tabs:**
+1. **Bookings** - View and manage all test bookings
+2. **New Entry** - Create new test booking with:
+   - Patient info (name, phone)
+   - Manual barcode entry
+   - Priority (Normal/Urgent/Critical)
+   - Test multi-select with search
+3. **Calculator** - Cost estimator:
+   - Search tests by name/code
+   - Add to list, calculate total
+   - Copy estimate for sharing
+4. **Test Rates** - View/edit test catalog
+
 ## Key API Endpoints
-- `POST /api/payments/cashfree/create-order` - Create payment order
-- `GET /api/booking-limits/status` - Check booking restrictions (all True now)
-- `POST /api/otp/whatsapp/send` - Send OTP via WhatsApp
-- `POST /api/otp/whatsapp/verify` - Verify WhatsApp OTP
-- `POST /api/lifealign/init` - Initialize FaithCare data
-- `GET /api/lifealign/religions` - Get available religions
+- `POST /api/mango/bookings` - Create new test booking
+- `PUT /api/mango/bookings/{id}/status` - Update booking status
+- `POST /api/mango/bookings/{id}/upload-report` - Upload report file
+- `GET /api/mango/tests` - Get test catalog
+- `POST /api/staff/login` - Staff authentication
 
 ## Test Credentials
-- **Guest Login**: Any 10-digit phone number
-- **Test OTP**: Displayed in toast notification (development mode)
+- **Staff Portal**: `staff_mango` / `test`
+- **Guest Login**: Any 10-digit phone + OTP from toast
 - **FaithCare**: FC2026001 / faith@care001
 
 ## Backlog / Future Tasks
 1. Real-time timezone detection for FaithCare festivals
-2. Expand FaithCare to more religions (Sikh, Buddhist, etc.)
-3. Automatic yearly calendar updates via cron job
-4. Enhanced payment tracking and notifications
+2. Expand FaithCare to more religions (Sikh, Buddhist)
+3. Automatic yearly calendar updates
+4. Enhanced barcode scanning integration
+5. Staff performance analytics dashboard
