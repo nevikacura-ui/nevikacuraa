@@ -1141,13 +1141,28 @@ const Home = () => {
                 
                 <div className="relative flex items-center p-5 sm:p-6 min-h-[140px]">
                   <div className="flex-shrink-0 mr-4 sm:mr-5 w-28 sm:w-36 flex items-center justify-center">
-                    <img 
-                      src={service.logo} 
-                      alt={service.name} 
-                      className={`w-full h-auto object-contain transition-transform duration-300 group-hover:scale-110 ${service.containImage ? 'rounded-xl' : ''}`}
-                      data-testid={`service-logo-featured-${service.id}`}
-                      loading="eager"
-                    />
+                    {service.customIcon === 'mango' ? (
+                      <div className="w-24 h-24 bg-white rounded-2xl shadow-lg p-3 flex flex-col items-center justify-center border border-orange-100">
+                        {/* Mango fruit icon */}
+                        <div className="relative mb-1">
+                          <div className="w-12 h-14 bg-gradient-to-b from-yellow-400 via-orange-400 to-orange-500 rounded-full rounded-tl-[40%] rounded-tr-[60%]"></div>
+                          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 flex">
+                            <div className="w-2.5 h-4 bg-green-500 rounded-full transform -rotate-12 -mr-0.5"></div>
+                            <div className="w-2.5 h-4 bg-green-600 rounded-full transform rotate-12"></div>
+                          </div>
+                        </div>
+                        <p className="text-[9px] font-bold text-orange-600 tracking-tight">MANGO</p>
+                        <p className="text-[7px] text-slate-500 tracking-wider">HEALTH LABS</p>
+                      </div>
+                    ) : (
+                      <img 
+                        src={service.logo} 
+                        alt={service.name} 
+                        className={`w-full h-auto object-contain transition-transform duration-300 group-hover:scale-110 ${service.containImage ? 'rounded-xl' : ''}`}
+                        data-testid={`service-logo-featured-${service.id}`}
+                        loading="eager"
+                      />
+                    )}
                   </div>
                   <div className="flex-1">
                     <h3 
