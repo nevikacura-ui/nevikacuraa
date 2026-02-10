@@ -496,6 +496,17 @@ const Home = () => {
       bgColor: '#0f172a',
       isDark: true,
       fillLogo: true
+    },
+    {
+      id: 'faithcare',
+      name: 'FaithCare',
+      description: 'Cultural Health Sync',
+      logo: null,
+      customIcon: 'faithcare',
+      path: '/faithcare',
+      bgColor: '#1e3a5f',
+      isDark: true,
+      fillLogo: true
     }
   ];
   
