@@ -95,6 +95,18 @@ const FaithCare = () => {
   const [ramadanTimings, setRamadanTimings] = useState([]);
   const [showRamadanCalendar, setShowRamadanCalendar] = useState(false);
   
+  // Jamatkhana Finder State
+  const [showJamatkhanaFinder, setShowJamatkhanaFinder] = useState(false);
+  const [jamatkhanas, setJamatkhanas] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
+  const [loadingLocation, setLoadingLocation] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState('');
+  
+  // Ramadan Diet Plans State
+  const [showDietPlans, setShowDietPlans] = useState(false);
+  const [dietPlans, setDietPlans] = useState(null);
+  const [selectedDietPlan, setSelectedDietPlan] = useState(null);
+  
   // Setup form state
   const [selectedReligion, setSelectedReligion] = useState('');
   const [selectedCommunity, setSelectedCommunity] = useState('');
