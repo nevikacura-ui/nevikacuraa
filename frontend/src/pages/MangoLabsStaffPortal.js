@@ -46,6 +46,22 @@ const MangoLabsStaffPortal = () => {
   const [editingTest, setEditingTest] = useState(null);
   const [testForm, setTestForm] = useState({ name: '', code: '', category: '', description: '', price: '', home_collection_price: '', sample_type: '', turnaround_time: '', fasting_required: false, preparation_instructions: '' });
   const [uploadingReport, setUploadingReport] = useState(null);
+  
+  // New Test Entry state
+  const [showNewEntry, setShowNewEntry] = useState(false);
+  const [newEntryForm, setNewEntryForm] = useState({
+    patient_name: '',
+    patient_phone: '',
+    barcode: '',
+    selectedTests: [],
+    priority: 'normal',
+    notes: ''
+  });
+  
+  // Cost Calculator state
+  const [calculatorTests, setCalculatorTests] = useState([]);
+  const [calculatorSearch, setCalculatorSearch] = useState('');
+  const [showCalculator, setShowCalculator] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('staffToken');
