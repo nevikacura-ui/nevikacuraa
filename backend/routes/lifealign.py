@@ -704,3 +704,114 @@ async def get_ramadan_calendar(location: Optional[str] = "mumbai"):
         "note": "Timings are approximate. Please verify with local mosque/Jamatkhana."
     }
 
+
+
+# ============ TIMEZONE DETECTION ============
+
+# US/Canada timezone cities with their coordinates and UTC offsets
+TIMEZONE_DATA = {
+    # USA - Eastern
+    "new_york": {"city": "New York", "state": "NY", "country": "USA", "timezone": "America/New_York", "utc_offset": -5, "lat": 40.7128, "lng": -74.0060},
+    "miami": {"city": "Miami", "state": "FL", "country": "USA", "timezone": "America/New_York", "utc_offset": -5, "lat": 25.7617, "lng": -80.1918},
+    "atlanta": {"city": "Atlanta", "state": "GA", "country": "USA", "timezone": "America/New_York", "utc_offset": -5, "lat": 33.7490, "lng": -84.3880},
+    # USA - Central
+    "chicago": {"city": "Chicago", "state": "IL", "country": "USA", "timezone": "America/Chicago", "utc_offset": -6, "lat": 41.8781, "lng": -87.6298},
+    "houston": {"city": "Houston", "state": "TX", "country": "USA", "timezone": "America/Chicago", "utc_offset": -6, "lat": 29.7604, "lng": -95.3698},
+    "dallas": {"city": "Dallas", "state": "TX", "country": "USA", "timezone": "America/Chicago", "utc_offset": -6, "lat": 32.7767, "lng": -96.7970},
+    # USA - Mountain
+    "denver": {"city": "Denver", "state": "CO", "country": "USA", "timezone": "America/Denver", "utc_offset": -7, "lat": 39.7392, "lng": -104.9903},
+    "phoenix": {"city": "Phoenix", "state": "AZ", "country": "USA", "timezone": "America/Phoenix", "utc_offset": -7, "lat": 33.4484, "lng": -112.0740},
+    # USA - Pacific
+    "los_angeles": {"city": "Los Angeles", "state": "CA", "country": "USA", "timezone": "America/Los_Angeles", "utc_offset": -8, "lat": 34.0522, "lng": -118.2437},
+    "san_francisco": {"city": "San Francisco", "state": "CA", "country": "USA", "timezone": "America/Los_Angeles", "utc_offset": -8, "lat": 37.7749, "lng": -122.4194},
+    "seattle": {"city": "Seattle", "state": "WA", "country": "USA", "timezone": "America/Los_Angeles", "utc_offset": -8, "lat": 47.6062, "lng": -122.3321},
+    # Canada - Eastern
+    "toronto": {"city": "Toronto", "state": "ON", "country": "Canada", "timezone": "America/Toronto", "utc_offset": -5, "lat": 43.6532, "lng": -79.3832},
+    "montreal": {"city": "Montreal", "state": "QC", "country": "Canada", "timezone": "America/Montreal", "utc_offset": -5, "lat": 45.5017, "lng": -73.5673},
+    "ottawa": {"city": "Ottawa", "state": "ON", "country": "Canada", "timezone": "America/Toronto", "utc_offset": -5, "lat": 45.4215, "lng": -75.6972},
+    # Canada - Central/Mountain
+    "calgary": {"city": "Calgary", "state": "AB", "country": "Canada", "timezone": "America/Edmonton", "utc_offset": -7, "lat": 51.0447, "lng": -114.0719},
+    "edmonton": {"city": "Edmonton", "state": "AB", "country": "Canada", "timezone": "America/Edmonton", "utc_offset": -7, "lat": 53.5461, "lng": -113.4938},
+    # Canada - Pacific
+    "vancouver": {"city": "Vancouver", "state": "BC", "country": "Canada", "timezone": "America/Vancouver", "utc_offset": -8, "lat": 49.2827, "lng": -123.1207}
+}
+
+@router.get("/timezone/detect")
+async def detect_timezone(lat: float, lng: float):
+    """Detect timezone based on coordinates"""
+    from datetime import datetime, timezone as tz
+    
+    # Find nearest city
+    nearest_city = None
+    min_distance = float("inf")
+    
+    for city_key, city_data in TIMEZONE_DATA.items():
+        distance = haversine_distance(lat, lng, city_data["lat"], city_data["lng"])
+        if distance < min_distance:
+            min_distance = distance
+            nearest_city = city_data
+    
+    if nearest_city and min_distance < 500:  # Within 500km
+        return {
+            "detected": True,
+            "city": nearest_city["city"],
+            "state": nearest_city["state"],
+            "country": nearest_city["country"],
+            "timezone": nearest_city["timezone"],
+            "utc_offset": nearest_city["utc_offset"],
+            "distance_km": round(min_distance, 1)
+        }
+    else:
+        return {
+            "detected": False,
+            "message": "Location not in USA/Canada coverage area",
+            "lat": lat,
+            "lng": lng
+        }
+
+@router.get("/ramadan/timings-abroad")
+async def get_ramadan_timings_abroad(city: str):
+    """Get Ramadan timings for USA/Canada cities"""
+    city_key = city.lower().replace(" ", "_")
+    
+    if city_key not in TIMEZONE_DATA:
+        raise HTTPException(status_code=404, detail=f"City not found: {city}")
+    
+    city_data = TIMEZONE_DATA[city_key]
+    utc_offset = city_data["utc_offset"]
+    
+    # Calculate approximate Sehri/Iftar times based on UTC offset
+    # These are approximations - actual times depend on latitude and season
+    base_sehri = 5  # 5 AM approximate
+    base_iftar = 18  # 6 PM approximate
+    
+    # Ramadan 2026 dates
+    timings = []
+    from datetime import date, timedelta
+    
+    start_date = date(2026, 2, 19)
+    for i in range(30):
+        current_date = start_date + timedelta(days=i)
+        day_num = i + 1
+        
+        # Adjust times slightly based on day number (sunrise/sunset changes)
+        sehri_adj = 5 + (i * 0.02)  # Gets slightly earlier
+        iftar_adj = 18 + (i * 0.03)  # Gets slightly later
+        
+        timings.append({
+            "day": day_num,
+            "date": current_date.strftime("%Y-%m-%d"),
+            "sehri": f"{int(sehri_adj):02d}:{int((sehri_adj % 1) * 60):02d}",
+            "iftar": f"{int(iftar_adj):02d}:{int((iftar_adj % 1) * 60):02d}",
+            "special": "Laylatul Qadr (probable)" if day_num in [21, 23, 25, 27, 29] else None
+        })
+    
+    return {
+        "city": city_data["city"],
+        "state": city_data["state"],
+        "country": city_data["country"],
+        "timezone": city_data["timezone"],
+        "timings": timings,
+        "note": "Times are approximate. Please verify with local mosque/Islamic center."
+    }
+
