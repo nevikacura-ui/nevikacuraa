@@ -291,21 +291,35 @@ const MangoLabsStaffPortal = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center p-4">
         <Card className="w-full max-w-md p-8 shadow-2xl">
           <div className="text-center mb-8">
-            <img src="/mango-logo.png" alt="Mango Health Labs" className="w-48 h-auto mx-auto mb-4 bg-white rounded-xl p-3 shadow-md" />
+            {/* Mango Logo */}
+            <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-2xl shadow-md p-3 flex flex-col items-center justify-center">
+              <div className="relative mb-1">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-gradient-to-br from-orange-300 to-orange-500 rounded-full opacity-60"></div>
+                </div>
+                <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 flex gap-0.5">
+                  <div className="w-2.5 h-4 bg-green-500 rounded-full transform -rotate-12"></div>
+                  <div className="w-2.5 h-4 bg-green-600 rounded-full transform rotate-12"></div>
+                </div>
+              </div>
+              <p className="text-[10px] font-bold text-gray-700 tracking-tight">MANGO</p>
+              <p className="text-[8px] text-gray-500 tracking-wider">HEALTH LABS</p>
+            </div>
             <h1 className="text-2xl font-bold text-slate-800">Mango Health Labs</h1>
             <p className="text-slate-500">Staff Portal</p>
+            <p className="text-xs text-orange-600 italic mt-1">Aam logon ki, Khaas Lab.</p>
           </div>
           <div className="space-y-4">
             <div className="relative"><User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" /><Input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} className="pl-10 h-12" data-testid="mango-username" /></div>
             <div className="relative"><Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" /><Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleLogin()} className="pl-10 h-12" data-testid="mango-password" /></div>
             <div className="flex items-center gap-2">
-              <input type="checkbox" id="rememberMe" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-4 h-4 rounded accent-teal-500" data-testid="mango-remember-me" />
+              <input type="checkbox" id="rememberMe" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-4 h-4 rounded accent-orange-500" data-testid="mango-remember-me" />
               <label htmlFor="rememberMe" className="text-sm text-slate-600 cursor-pointer">Remember me for 30 days</label>
             </div>
-            <Button onClick={handleLogin} disabled={loading} className="w-full h-12 bg-teal-500 hover:bg-teal-600 text-white font-semibold" data-testid="mango-login-btn">{loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Login'}</Button>
+            <Button onClick={handleLogin} disabled={loading} className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white font-semibold" data-testid="mango-login-btn">{loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Login'}</Button>
           </div>
         </Card>
       </div>
