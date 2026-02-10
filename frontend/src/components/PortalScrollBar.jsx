@@ -82,18 +82,6 @@ const portals = [
     needsBorder: true,
     tagline: 'Renew Health, Stay Ahead.'
   },
-  // INNERSCORE - Health Intelligence Portal
-  {
-    id: 'innerscore',
-    name: 'InnerScore',
-    subtitle: 'Health Intelligence',
-    path: '/innerscore',
-    hasIcon: true,
-    icon: Activity,
-    bgColor: '#0f172a',
-    iconColor: '#06b6d4',
-    tagline: 'AI Health Scoring'
-  },
   // 8. Thrive360 - Fitness Portal
   {
     id: 'thrive360',
