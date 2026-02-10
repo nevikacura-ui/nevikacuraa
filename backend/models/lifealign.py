@@ -189,7 +189,24 @@ INITIAL_FESTIVALS = [
     {"festival_id": "shravan", "religion_id": "hindu", "community_id": None, "festival_name": "Shravan Month", "festival_type": "VEGETARIAN_PERIOD", "description": "Holy month of Shravan", "is_fixed_gregorian": False},
     {"festival_id": "karva_chauth", "religion_id": "hindu", "community_id": None, "festival_name": "Karva Chauth", "festival_type": "DRY_FAST", "description": "Day-long fast for spouse", "is_fixed_gregorian": False},
     {"festival_id": "diwali", "religion_id": "hindu", "community_id": None, "festival_name": "Diwali", "festival_type": "CELEBRATION", "description": "Festival of Lights", "is_fixed_gregorian": False},
-    {"festival_id": "makar_sankranti", "religion_id": "hindu", "community_id": None, "festival_name": "Makar Sankranti", "festival_type": "CELEBRATION", "description": "Harvest festival", "is_fixed_gregorian": True, "gregorian_date": "01-14"}
+    {"festival_id": "makar_sankranti", "religion_id": "hindu", "community_id": None, "festival_name": "Makar Sankranti", "festival_type": "CELEBRATION", "description": "Harvest festival", "is_fixed_gregorian": True, "gregorian_date": "01-14"},
+    {"festival_id": "holi", "religion_id": "hindu", "community_id": None, "festival_name": "Holi", "festival_type": "CELEBRATION", "description": "Festival of Colors", "is_fixed_gregorian": False},
+    {"festival_id": "ganesh_chaturthi", "religion_id": "hindu", "community_id": None, "festival_name": "Ganesh Chaturthi", "festival_type": "CELEBRATION", "description": "Birthday of Lord Ganesha", "is_fixed_gregorian": False},
+    {"festival_id": "janmashtami", "religion_id": "hindu", "community_id": None, "festival_name": "Janmashtami", "festival_type": "FASTING", "description": "Birthday of Lord Krishna", "is_fixed_gregorian": False},
+    # Jain festivals
+    {"festival_id": "paryushana", "religion_id": "jain", "community_id": None, "festival_name": "Paryushana Parva", "festival_type": "FASTING", "description": "Eight or ten days of fasting and reflection", "is_fixed_gregorian": False},
+    {"festival_id": "das_lakshana", "religion_id": "jain", "community_id": "jain_digambar", "festival_name": "Das Lakshana", "festival_type": "FASTING", "description": "Ten-day festival of forgiveness", "is_fixed_gregorian": False},
+    {"festival_id": "mahavir_jayanti", "religion_id": "jain", "community_id": None, "festival_name": "Mahavir Jayanti", "festival_type": "CELEBRATION", "description": "Birth anniversary of Lord Mahavir", "is_fixed_gregorian": False},
+    {"festival_id": "diwali_jain", "religion_id": "jain", "community_id": None, "festival_name": "Diwali (Jain)", "festival_type": "CELEBRATION", "description": "Nirvana of Lord Mahavir", "is_fixed_gregorian": False},
+    {"festival_id": "samvatsari", "religion_id": "jain", "community_id": None, "festival_name": "Samvatsari", "festival_type": "CELEBRATION", "description": "Day of seeking forgiveness", "is_fixed_gregorian": False},
+    {"festival_id": "ayambil_oli", "religion_id": "jain", "community_id": None, "festival_name": "Ayambil Oli", "festival_type": "FASTING", "description": "Nine-day fasting period twice a year", "is_fixed_gregorian": False},
+    # Christian festivals
+    {"festival_id": "lent", "religion_id": "christian", "community_id": None, "festival_name": "Lent", "festival_type": "FASTING", "description": "40 days of fasting before Easter", "is_fixed_gregorian": False},
+    {"festival_id": "good_friday", "religion_id": "christian", "community_id": None, "festival_name": "Good Friday", "festival_type": "FASTING", "description": "Day of fasting commemorating crucifixion", "is_fixed_gregorian": False},
+    {"festival_id": "easter", "religion_id": "christian", "community_id": None, "festival_name": "Easter", "festival_type": "CELEBRATION", "description": "Resurrection of Jesus Christ", "is_fixed_gregorian": False},
+    {"festival_id": "christmas", "religion_id": "christian", "community_id": None, "festival_name": "Christmas", "festival_type": "CELEBRATION", "description": "Birth of Jesus Christ", "is_fixed_gregorian": True, "gregorian_date": "12-25"},
+    {"festival_id": "ash_wednesday", "religion_id": "christian", "community_id": None, "festival_name": "Ash Wednesday", "festival_type": "FASTING", "description": "Beginning of Lent", "is_fixed_gregorian": False},
+    {"festival_id": "advent", "religion_id": "christian", "community_id": None, "festival_name": "Advent", "festival_type": "VEGETARIAN_PERIOD", "description": "Four weeks before Christmas", "is_fixed_gregorian": False}
 ]
 
 # 2026 Festival Dates (sample)
