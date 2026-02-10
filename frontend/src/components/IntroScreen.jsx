@@ -541,6 +541,8 @@ const IntroScreen = ({ onComplete, user }) => {
                   setConfirmPassword('');
                   setAuthStep('email');
                   setHasPassword(false);
+                  setGuestOtp(['', '', '', '', '', '']);
+                  setMockOtpGuest('');
                 }}
                 className="p-2 rounded-full hover:bg-gray-100">
                 <X className="w-5 h-5" style={{ color: THEME.textMuted }} />
