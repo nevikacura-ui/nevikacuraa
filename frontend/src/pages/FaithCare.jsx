@@ -59,7 +59,7 @@ const ALERT_PRIORITY = {
   3: { color: 'border-blue-500 bg-blue-50', icon: 'text-blue-500' }
 };
 
-const LifeAlign = () => {
+const FaithCare = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [dashboard, setDashboard] = useState(null);
