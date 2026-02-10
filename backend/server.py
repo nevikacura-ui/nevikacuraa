@@ -6889,6 +6889,14 @@ try:
 except Exception as e:
     logger.warning(f"Could not load Doctor Schedule router: {e}")
 
+# LifeAlign - Cultural & Community Health Sync Routes
+try:
+    from routes.lifealign import router as lifealign_router
+    app.include_router(lifealign_router)
+    logger.info("LifeAlign router loaded")
+except Exception as e:
+    logger.warning(f"Could not load LifeAlign router: {e}")
+
 
 app.add_middleware(
     CORSMiddleware,
