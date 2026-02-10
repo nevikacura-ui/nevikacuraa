@@ -115,17 +115,16 @@ const portals = [
     fillContainer: true,
     tagline: 'Measure your core.'
   },
-  // LifeAlign - Cultural & Community Health Sync
+  // FaithCare - Cultural & Community Health Sync
   {
-    id: 'lifealign',
-    name: 'LifeAlign',
+    id: 'faithcare',
+    name: 'FaithCare',
     subtitle: 'Cultural Health Sync',
-    path: '/lifealign',
-    hasIcon: true,
-    icon: Calendar,
-    bgColor: '#f0fdf4',
-    iconColor: '#0d9488',
-    tagline: 'Sync with your traditions.'
+    path: '/faithcare',
+    logo: 'https://customer-assets.emergentagent.com/job_55d2778b-393f-4c6f-a4f0-366c7890154e/artifacts/rbodxuxv_file_00000000e2a47209b2515ab5afe77eeb.png',
+    bgColor: '#1e293b',
+    fillContainer: true,
+    tagline: 'Care aligned with faith.'
   },
   // 11. PSVN Foundation
   {
