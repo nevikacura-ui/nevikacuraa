@@ -1117,7 +1117,7 @@ const Proton = () => {
       <ServiceHeader />
 
       {/* Build Your Own Package Banner - Always visible */}
-      <div className="bg-gradient-to-r from-purple-600 to-violet-600 text-white" data-testid="package-builder-banner-top">
+      <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white" data-testid="package-builder-banner-top">
         <div className="w-full px-4 py-3">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -1133,7 +1133,7 @@ const Proton = () => {
               onClick={() => setShowPackageBuilder(true)}
               variant="secondary"
               size="sm"
-              className="bg-white text-purple-600 hover:bg-slate-100 rounded-full font-semibold flex-shrink-0"
+              className="bg-white text-orange-600 hover:bg-slate-100 rounded-full font-semibold flex-shrink-0"
               data-testid="package-builder-btn"
             >
               Build
