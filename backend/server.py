@@ -2908,42 +2908,8 @@ async def create_appointment(input: AppointmentCreate, user = Depends(get_curren
         logger.warning(f"Date/time validation warning: {e}")
         # If parsing fails, allow the booking to proceed (backend fallback)
     
-    # BOOKING LIMIT: Check if this phone number already has an active appointment
-    active_appointment = await db.appointments.find_one({
-        "patient_phone": input.patient_phone,
-        "status": {"$in": ["pending", "Booked", "In Clinic"]},  # Not completed or cancelled
-        "appointment_type": {"$ne": "EMERGENCY"}  # Emergency appointments don't count
-    })
-    
-    if active_appointment:
-        # Notify staff about duplicate booking attempt
-        try:
-            staff_message = f"""⚠️ DUPLICATE BOOKING ATTEMPT
-
-Patient: {input.patient_name}
-Phone: {input.patient_phone}
-Tried to book: {input.doctor} at {input.clinic}
-New Date/Time: {input.date} at {input.time}
-
-❌ BLOCKED - Already has active booking:
-Doctor: {active_appointment.get('doctor')}
-Date: {active_appointment.get('date')}
-Time: {active_appointment.get('time')}
-Status: {active_appointment.get('status')}
-Booking ID: {active_appointment.get('id', 'N/A')}
-
-Please check if patient needs to reschedule."""
-
-            # Staff SMS DISABLED - using email notifications instead
-            # await send_sms_notification(STAFF_PHONE_NUMBERS.get('diagyn', ['9833188288'])[0], staff_message)
-            logger.info(f"Staff notified (via email) about duplicate booking attempt by {input.patient_phone}")
-        except Exception as e:
-            logger.error(f"Failed to notify staff about duplicate booking: {e}")
-        
-        raise HTTPException(
-            status_code=400, 
-            detail=f"You already have an active appointment on {active_appointment.get('date')} at {active_appointment.get('time')} with {active_appointment.get('doctor')}. Please complete or cancel it before booking a new one."
-        )
+    # BOOKING LIMIT REMOVED: Allow multiple appointments per user
+    # No longer blocking users from booking multiple appointments
     
     # Normalize the date to ISO format
     normalized_date = normalize_date_format(input.date)
