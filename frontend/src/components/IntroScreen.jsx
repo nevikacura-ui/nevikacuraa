@@ -717,9 +717,84 @@ const IntroScreen = ({ onComplete, user }) => {
                   data-testid="guest-continue-btn">
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>
                     <MessageCircle className="w-5 h-5 mr-2" />
-                    Continue
+                    Send OTP
                   </>}
                 </Button>
+              </div>
+            )}
+            
+            {/* Guest OTP Verification */}
+            {authStep === 'guestOtp' && (
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center" style={{ background: '#25D366' }}>
+                    <MessageCircle className="w-7 h-7 text-white" />
+                  </div>
+                  <p className="text-sm" style={{ color: THEME.textMuted }}>
+                    Enter the OTP sent to
+                  </p>
+                  <p className="font-bold text-lg" style={{ color: THEME.text }}>
+                    +91 {mobile}
+                  </p>
+                </div>
+                
+                {/* OTP Input Boxes */}
+                <div className="flex justify-center gap-2">
+                  {guestOtp.map((digit, index) => (
+                    <input
+                      key={index}
+                      ref={(el) => (guestOtpRefs.current[index] = el)}
+                      type="text"
+                      inputMode="numeric"
+                      value={digit}
+                      onChange={(e) => handleGuestOtpChange(index, e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Backspace' && !guestOtp[index] && index > 0) {
+                          guestOtpRefs.current[index - 1]?.focus();
+                        }
+                      }}
+                      className="w-11 h-13 text-center text-xl font-bold border-2 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all"
+                      style={{ borderColor: THEME.border }}
+                      maxLength={1}
+                      data-testid={`guest-otp-${index}`}
+                    />
+                  ))}
+                </div>
+                
+                <Button 
+                  onClick={() => verifyGuestOtp()}
+                  disabled={guestOtp.join('').length !== 6 || loading}
+                  className="w-full h-14 rounded-2xl font-bold"
+                  style={{ background: '#25D366' }}
+                  data-testid="guest-verify-otp-btn">
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>
+                    <CheckCircle2 className="w-5 h-5 mr-2" />
+                    Verify & Continue
+                  </>}
+                </Button>
+                
+                {/* Resend / Change Number */}
+                <div className="flex justify-center gap-4 text-sm">
+                  <button 
+                    onClick={continueAsGuest}
+                    disabled={loading}
+                    className="font-medium hover:underline"
+                    style={{ color: '#25D366' }}
+                  >
+                    Resend OTP
+                  </button>
+                  <span style={{ color: THEME.textMuted }}>|</span>
+                  <button 
+                    onClick={() => {
+                      setAuthStep('guestMobile');
+                      setGuestOtp(['', '', '', '', '', '']);
+                    }}
+                    className="font-medium hover:underline"
+                    style={{ color: THEME.textMuted }}
+                  >
+                    Change Number
+                  </button>
+                </div>
               </div>
             )}
             
