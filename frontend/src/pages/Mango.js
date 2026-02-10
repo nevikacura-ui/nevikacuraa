@@ -1154,7 +1154,7 @@ const Proton = () => {
                   {/* Mango Health Labs Logo */}
                   <div className="flex items-center gap-3 mb-3">
                     <img 
-                      src="/mango-logo.png" 
+                      src="https://customer-assets.emergentagent.com/job_89849591-2898-4d2c-93b2-e4baf0814999/artifacts/n7u3mael_Purple%20White%20Modern%20Medical%20Laboratory%20Professional%20Banner%20%28Business%20Card%20%28_20260211_040821_0000.jpg" 
                       alt="Mango Health Labs" 
                       className="w-20 h-10 rounded-xl shadow-lg bg-white p-1 object-contain"
                     />
