@@ -69,6 +69,18 @@ const FaithCare = () => {
   const [religions, setReligions] = useState([]);
   const [communities, setCommunities] = useState([]);
   
+  // Exclusive Access State
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showLogin, setShowLogin] = useState(true);
+  const [loginUserId, setLoginUserId] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [authenticatedUser, setAuthenticatedUser] = useState(null);
+  
+  // Ramadan Calendar State
+  const [ramadanTimings, setRamadanTimings] = useState([]);
+  const [showRamadanCalendar, setShowRamadanCalendar] = useState(false);
+  
   // Setup form state
   const [selectedReligion, setSelectedReligion] = useState('');
   const [selectedCommunity, setSelectedCommunity] = useState('');
@@ -76,36 +88,116 @@ const FaithCare = () => {
   const [chronicConditions, setChronicConditions] = useState([]);
   const [fastingPreference, setFastingPreference] = useState(true);
   
-  // User ID (from localStorage or context)
-  const userId = localStorage.getItem('patientToken') || localStorage.getItem('guestMobile') || 'guest_user';
-  
   const theme = RELIGION_THEMES[selectedReligion] || RELIGION_THEMES.default;
 
   useEffect(() => {
-    initializeData();
+    // Check for existing session
+    const sessionToken = localStorage.getItem('faithcareSession');
+    const savedUser = localStorage.getItem('faithcareUser');
+    
+    if (sessionToken && savedUser) {
+      verifySession(sessionToken, JSON.parse(savedUser));
+    } else {
+      setLoading(false);
+    }
   }, []);
 
-  const initializeData = async () => {
+  const verifySession = async (token, user) => {
+    try {
+      const res = await axios.get(`${API}/api/lifealign/auth/verify/${token}`);
+      if (res.data.valid) {
+        setIsAuthenticated(true);
+        setAuthenticatedUser(user);
+        setShowLogin(false);
+        await initializeData(user.user_id);
+      } else {
+        clearSession();
+      }
+    } catch (error) {
+      clearSession();
+    }
+    setLoading(false);
+  };
+
+  const clearSession = () => {
+    localStorage.removeItem('faithcareSession');
+    localStorage.removeItem('faithcareUser');
+    setIsAuthenticated(false);
+    setAuthenticatedUser(null);
+    setShowLogin(true);
+  };
+
+  const handleLogin = async () => {
+    if (!loginUserId || !loginPassword) {
+      toast.error('Please enter ID and Password');
+      return;
+    }
+    
+    setLoginLoading(true);
+    try {
+      const res = await axios.post(
+        `${API}/api/lifealign/auth/login?user_id=${loginUserId}&password=${loginPassword}`
+      );
+      
+      if (res.data.success) {
+        localStorage.setItem('faithcareSession', res.data.session_token);
+        localStorage.setItem('faithcareUser', JSON.stringify({
+          user_id: res.data.user_id,
+          name: res.data.name
+        }));
+        
+        setIsAuthenticated(true);
+        setAuthenticatedUser({ user_id: res.data.user_id, name: res.data.name });
+        setShowLogin(false);
+        toast.success(`Welcome to FaithCare, ${res.data.name}!`);
+        
+        await initializeData(res.data.user_id);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Invalid credentials');
+    }
+    setLoginLoading(false);
+  };
+
+  const handleLogout = async () => {
+    const sessionToken = localStorage.getItem('faithcareSession');
+    if (sessionToken) {
+      try {
+        await axios.post(`${API}/api/lifealign/auth/logout?session_token=${sessionToken}`);
+      } catch (e) {}
+    }
+    clearSession();
+    setDashboard(null);
+    toast.success('Logged out successfully');
+  };
+
+  const initializeData = async (userId) => {
     setLoading(true);
     try {
-      // Initialize LifeAlign data (seed data)
+      // Initialize FaithCare data (seed data)
       await axios.post(`${API}/api/lifealign/init`);
       
       // Fetch religions
       const religionsRes = await axios.get(`${API}/api/lifealign/religions`);
       setReligions(religionsRes.data);
       
+      // Fetch Ramadan timings
+      try {
+        const ramadanRes = await axios.get(`${API}/api/lifealign/ramadan/timings/2026`);
+        setRamadanTimings(ramadanRes.data);
+      } catch (e) {}
+      
       // Fetch dashboard
-      await fetchDashboard();
+      await fetchDashboard(userId);
     } catch (error) {
-      console.error('Error initializing LifeAlign:', error);
+      console.error('Error initializing FaithCare:', error);
     }
     setLoading(false);
   };
 
-  const fetchDashboard = async () => {
+  const fetchDashboard = async (userId) => {
     try {
-      const res = await axios.get(`${API}/api/lifealign/dashboard/${userId}`);
+      const res = await axios.get(`${API}/api/lifealign/dashboard/${userId || authenticatedUser?.user_id}`);
       setDashboard(res.data);
       
       if (res.data.setup_required) {
