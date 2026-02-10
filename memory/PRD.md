@@ -111,19 +111,11 @@ A comprehensive healthcare application for Nevika Cura Healthcare Group with pat
 ### Latest Updates:
 1. **Shadow removed** from portal scroll bar - Clean flat background
 2. **Guest login now OTP-based** - Requires WhatsApp number + OTP verification before accessing app
-3. **Reneu Portal Redesigned** - "Inside Out Wellness" with 5 sub-sections:
-   - Reneu Core (Vitamins & Nutrition)
-   - Reneu Skin (Skin Wellness)
-   - Reneu Hair (Hair Health)
-   - Reneu Women (Women's Wellness)
-   - Reneu Men (Men's Wellness)
-4. **INNERSCORE - Health Intelligence Portal** - Premium AI-driven health scoring system:
-   - **BioAge Engine**: Biological age calculation using weighted biomarkers (HbA1c, hs-CRP, TG/HDL, BMI, Waist, Vitamin D, ALT)
-   - **Predictive Risk Engine**: Disease risk % for Diabetes, CVD, Fatty Liver, Thyroid
-   - **Sleep & Recovery Engine**: Sleep score 0-100 with fatigue classification
-   - **Metabolic Core Engine**: Metabolic health score with visceral risk category
-   - **Inflammation Engine**: Inflammation tracking with longitudinal trends
-   - **Master INNERSCORE**: 0-100 composite health index
-   - Features: Radar chart, trend tracking, personalized actions, dark/light mode, lab booking integration
+3. **Reneu Portal Redesigned** - "Inside Out Wellness" with 5 sub-sections
+4. **INNERSCORE - Health Intelligence Portal** - Premium AI-driven health scoring system with new cyan logo
+   - Added to scrollable portal header (replaced Reports/Health Log icons)
+   - Added to homepage service cards grid (5x2 layout, below Senova & Reneu)
+   - Logo: Cyan/turquoise "Inner Score" branding
+   - Dark navy background (#0f172a)
 
 ### Last Updated: INNERSCORE Health Intelligence Portal complete
