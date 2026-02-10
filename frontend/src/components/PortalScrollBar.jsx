@@ -104,29 +104,18 @@ const portals = [
     fillContainer: true,
     tagline: "Care for Life's Next Chapter."
   },
-  // 10. Reports - Blood Charts (Icon-based with pastel background)
+  // 10. InnerScore - Health Intelligence Portal
   {
-    id: 'reports',
-    name: 'Reports',
-    subtitle: 'Blood Charts',
-    path: '/health-dashboard',
-    hasIcon: true,
-    icon: FileText,
-    bgColor: '#FFF5F0',  // Light peach pastel
-    iconColor: '#ea580c'  // Orange icon
+    id: 'innerscore',
+    name: 'InnerScore',
+    subtitle: 'Health Intelligence',
+    path: '/innerscore',
+    logo: 'https://customer-assets.emergentagent.com/job_55d2778b-393f-4c6f-a4f0-366c7890154e/artifacts/gj9y2saj_file_00000000e9b472089087d7c50ce82a55.png',
+    bgColor: '#0f172a',
+    fillContainer: true,
+    tagline: 'Measure your core.'
   },
-  // 11. Health Log - Weight & Logs (Icon-based with pastel background)
-  {
-    id: 'healthchart',
-    name: 'Health Log',
-    subtitle: 'Weight & Logs',
-    path: '/my-health',
-    hasIcon: true,
-    icon: BarChart3,
-    bgColor: '#F0FFF4',  // Light green pastel
-    iconColor: '#16a34a'  // Green icon
-  },
-  // 12. PSVN Foundation
+  // 11. PSVN Foundation
   {
     id: 'psvn',
     name: 'PSVN',
