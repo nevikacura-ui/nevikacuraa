@@ -1019,7 +1019,7 @@ const FaithCare = () => {
                   jamatkhanas.map((jk) => (
                     <Card key={jk.id} className="p-4 hover:shadow-md transition-shadow">
                       <div className="flex justify-between items-start">
-                        <div>
+                        <div className="flex-1">
                           <h4 className="font-bold text-slate-800">{jk.name}</h4>
                           <p className="text-sm text-slate-600">{jk.city}, {jk.state}</p>
                           <p className="text-xs text-slate-500 mt-1">{jk.address}</p>
@@ -1027,9 +1027,19 @@ const FaithCare = () => {
                             <span className="text-teal-600">Morning: {jk.timings.morning}</span>
                             <span className="text-amber-600">Evening: {jk.timings.evening}</span>
                           </div>
+                          {/* Google Maps Directions Button */}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="mt-3 text-xs"
+                            onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${jk.lat},${jk.lng}`, '_blank')}
+                          >
+                            <Navigation className="w-3 h-3 mr-1" />
+                            Get Directions
+                          </Button>
                         </div>
                         {jk.distance_km && (
-                          <Badge className="bg-teal-100 text-teal-700 whitespace-nowrap">
+                          <Badge className="bg-teal-100 text-teal-700 whitespace-nowrap ml-2">
                             {jk.distance_km} km
                           </Badge>
                         )}
