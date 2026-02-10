@@ -613,3 +613,94 @@ async def get_festival_status(user_id: str, festival_date_id: str):
     )
     
     return status or {"fasting_opt_in": None}
+
+
+# ============ JAMATKHANA FINDER ============
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    """Calculate distance between two points using Haversine formula"""
+    R = 6371  # Earth radius in km
+    
+    lat1_rad = math.radians(lat1)
+    lat2_rad = math.radians(lat2)
+    delta_lat = math.radians(lat2 - lat1)
+    delta_lon = math.radians(lon2 - lon1)
+    
+    a = math.sin(delta_lat/2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(delta_lon/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    
+    return R * c
+
+@router.get("/jamatkhanas")
+async def get_jamatkhanas(
+    country: Optional[str] = None,
+    city: Optional[str] = None,
+    lat: Optional[float] = None,
+    lng: Optional[float] = None,
+    limit: int = 10
+):
+    """Get Jamatkhanas, optionally filtered by location or sorted by distance"""
+    results = JAMATKHANAS.copy()
+    
+    # Filter by country
+    if country:
+        results = [jk for jk in results if jk["country"].lower() == country.lower()]
+    
+    # Filter by city
+    if city:
+        results = [jk for jk in results if city.lower() in jk["city"].lower()]
+    
+    # Sort by distance if coordinates provided
+    if lat is not None and lng is not None:
+        for jk in results:
+            jk["distance_km"] = round(haversine_distance(lat, lng, jk["lat"], jk["lng"]), 1)
+        results.sort(key=lambda x: x["distance_km"])
+    
+    return results[:limit]
+
+@router.get("/jamatkhanas/nearest")
+async def get_nearest_jamatkhana(lat: float, lng: float):
+    """Get the nearest Jamatkhana to given coordinates"""
+    results = JAMATKHANAS.copy()
+    
+    for jk in results:
+        jk["distance_km"] = round(haversine_distance(lat, lng, jk["lat"], jk["lng"]), 1)
+    
+    results.sort(key=lambda x: x["distance_km"])
+    
+    return results[0] if results else None
+
+# ============ RAMADAN DIET PLANS ============
+
+@router.get("/ramadan/diet-plans")
+async def get_ramadan_diet_plans():
+    """Get all available Ramadan diet plans"""
+    return {
+        "available_plans": list(RAMADAN_DIET_PLANS.keys()),
+        "plans": RAMADAN_DIET_PLANS
+    }
+
+@router.get("/ramadan/diet-plan/{condition}")
+async def get_ramadan_diet_plan(condition: str):
+    """Get specific Ramadan diet plan for a health condition"""
+    condition_key = condition.lower()
+    
+    if condition_key not in RAMADAN_DIET_PLANS:
+        raise HTTPException(status_code=404, detail=f"Diet plan not found for condition: {condition}")
+    
+    return RAMADAN_DIET_PLANS[condition_key]
+
+@router.get("/ramadan/calendar")
+async def get_ramadan_calendar(location: Optional[str] = "mumbai"):
+    """Get Ramadan calendar with Sehri/Iftar timings"""
+    # For now, return Mumbai timings. Can be extended for other locations.
+    return {
+        "location": location.title(),
+        "year": 2026,
+        "ramadan_start": "2026-02-19",
+        "ramadan_end": "2026-03-20",
+        "eid_expected": "2026-03-21",
+        "timings": RAMADAN_TIMINGS_2026,
+        "note": "Timings are approximate. Please verify with local mosque/Jamatkhana."
+    }
+
