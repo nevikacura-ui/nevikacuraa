@@ -449,6 +449,25 @@ const FaithCare = () => {
                 </div>
               </Card>
 
+              {/* Ramadan Calendar Button (for Muslim users) */}
+              {(dashboard.user_religion?.toLowerCase() === 'muslim' || selectedReligion === 'muslim') && ramadanTimings.length > 0 && (
+                <Card className="p-4 bg-gradient-to-r from-emerald-600 to-teal-600 border-0 cursor-pointer hover:shadow-lg transition-all"
+                      onClick={() => setShowRamadanCalendar(true)}>
+                  <div className="flex items-center justify-between text-white">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                        <Moon className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold">Ramadan 2026 Calendar</h3>
+                        <p className="text-sm text-emerald-100">Sehri & Iftar Timings • Mumbai</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-5 h-5" />
+                  </div>
+                </Card>
+              )}
+
               {/* Health Readiness Score */}
               <Card className="p-6 border-0 shadow-lg">
                 <div className="flex items-center justify-between mb-4">
