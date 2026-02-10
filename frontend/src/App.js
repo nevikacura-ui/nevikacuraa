@@ -164,7 +164,7 @@ function AppContent() {
           <Route path="/corvia" element={<AnimatedPage><Corvia /></AnimatedPage>} />
           <Route path="/reneu" element={<AnimatedPage><Reneu /></AnimatedPage>} />
           <Route path="/innerscore" element={<InnerScore />} />
-          <Route path="/lifealign" element={<LifeAlign />} />
+          <Route path="/faithcare" element={<FaithCare />} />
           <Route path="/thrive360" element={<AnimatedPage><Thrive360New /></AnimatedPage>} />
           <Route path="/senova" element={<AnimatedPage><Senova /></AnimatedPage>} />
           <Route path="/psvn-foundation" element={<AnimatedPage><PSVNFoundation /></AnimatedPage>} />
