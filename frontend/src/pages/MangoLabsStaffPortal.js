@@ -375,6 +375,324 @@ const MangoLabsStaffPortal = () => {
         </div>
       )}
 
+      {/* NEW ENTRY VIEW - Create new test booking */}
+      {activeView === 'newentry' && (
+        <div className="px-4 pb-24">
+          {/* Patient Information */}
+          <Card className="p-4 mb-4 border-l-4 border-l-teal-500">
+            <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+              <UserCircle className="w-5 h-5 text-teal-500" />
+              Patient Information
+            </h3>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2">
+                  <label className="text-xs font-medium text-slate-600">Patient Name *</label>
+                  <Input 
+                    value={newEntryForm.patient_name} 
+                    onChange={(e) => setNewEntryForm({ ...newEntryForm, patient_name: e.target.value })} 
+                    placeholder="Enter patient name"
+                    data-testid="new-entry-patient-name"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-600">Phone Number *</label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Input 
+                      value={newEntryForm.patient_phone} 
+                      onChange={(e) => setNewEntryForm({ ...newEntryForm, patient_phone: e.target.value })} 
+                      placeholder="10-digit number"
+                      className="pl-9"
+                      maxLength={10}
+                      data-testid="new-entry-patient-phone"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-600">Barcode (Manual)</label>
+                  <div className="relative">
+                    <Barcode className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Input 
+                      value={newEntryForm.barcode} 
+                      onChange={(e) => setNewEntryForm({ ...newEntryForm, barcode: e.target.value.toUpperCase() })} 
+                      placeholder="Auto-generate if empty"
+                      className="pl-9 font-mono"
+                      data-testid="new-entry-barcode"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Priority Selection */}
+              <div>
+                <label className="text-xs font-medium text-slate-600 mb-2 block">Priority</label>
+                <div className="flex gap-2">
+                  {[
+                    { key: 'normal', label: 'Normal', color: 'bg-slate-100 text-slate-700 border-slate-200' },
+                    { key: 'urgent', label: 'Urgent', color: 'bg-yellow-100 text-yellow-700 border-yellow-300' },
+                    { key: 'critical', label: 'Critical', color: 'bg-red-100 text-red-700 border-red-300' }
+                  ].map(p => (
+                    <button 
+                      key={p.key}
+                      onClick={() => setNewEntryForm({ ...newEntryForm, priority: p.key })}
+                      className={`flex-1 py-2 px-3 rounded-lg border-2 font-medium text-sm transition-all ${
+                        newEntryForm.priority === p.key 
+                          ? `${p.color} ring-2 ring-offset-1 ring-teal-500` 
+                          : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      {p.key === 'critical' && <AlertTriangle className="w-3 h-3 inline mr-1" />}
+                      {p.key === 'urgent' && <Star className="w-3 h-3 inline mr-1" />}
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Test Selection */}
+          <Card className="p-4 mb-4 border-l-4 border-l-orange-500">
+            <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+              <TestTube className="w-5 h-5 text-orange-500" />
+              Select Tests
+            </h3>
+            
+            {/* Search Tests */}
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Input 
+                value={searchQuery} 
+                onChange={(e) => setSearchQuery(e.target.value)} 
+                placeholder="Search by test name or code..."
+                className="pl-9"
+                data-testid="new-entry-test-search"
+              />
+            </div>
+            
+            {/* Available Tests Grid */}
+            <div className="max-h-60 overflow-y-auto space-y-2 mb-4">
+              {tests.filter(t => 
+                !searchQuery || 
+                t.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                t.code?.toLowerCase().includes(searchQuery.toLowerCase())
+              ).map(test => (
+                <div 
+                  key={test.id} 
+                  className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
+                    newEntryForm.selectedTests.find(t => t.id === test.id)
+                      ? 'bg-teal-50 border-teal-300'
+                      : 'bg-white border-slate-200 hover:bg-slate-50'
+                  }`}
+                  onClick={() => addTestToEntry(test)}
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">{test.code}</span>
+                      <span className="font-medium text-sm text-slate-800">{test.name}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">{test.category}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-teal-600">₹{test.price}</p>
+                    {newEntryForm.selectedTests.find(t => t.id === test.id) && (
+                      <CheckCircle2 className="w-4 h-4 text-teal-500 ml-auto mt-1" />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Selected Tests */}
+            {newEntryForm.selectedTests.length > 0 && (
+              <div className="bg-teal-50 rounded-lg p-3">
+                <p className="text-xs font-medium text-teal-700 mb-2">Selected Tests ({newEntryForm.selectedTests.length})</p>
+                <div className="space-y-2">
+                  {newEntryForm.selectedTests.map(test => (
+                    <div key={test.id} className="flex items-center justify-between bg-white rounded-lg p-2 shadow-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono text-slate-500">{test.code}</span>
+                        <span className="font-medium text-sm">{test.name}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="font-bold text-teal-600">₹{test.price}</span>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); removeTestFromEntry(test.id); }}
+                          className="text-red-500 hover:bg-red-50 p-1 rounded"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 pt-3 border-t border-teal-200 flex justify-between items-center">
+                  <span className="font-bold text-slate-800">Total Amount</span>
+                  <span className="text-xl font-bold text-teal-600">
+                    ₹{newEntryForm.selectedTests.reduce((sum, t) => sum + (t.price || 0), 0)}
+                  </span>
+                </div>
+              </div>
+            )}
+          </Card>
+
+          {/* Notes */}
+          <Card className="p-4 mb-4">
+            <label className="text-xs font-medium text-slate-600">Additional Notes</label>
+            <textarea 
+              value={newEntryForm.notes}
+              onChange={(e) => setNewEntryForm({ ...newEntryForm, notes: e.target.value })}
+              className="w-full h-20 px-3 py-2 border rounded-lg resize-none mt-1"
+              placeholder="Any special instructions..."
+            />
+          </Card>
+
+          {/* Submit Button */}
+          <Button 
+            onClick={handleCreateEntry} 
+            disabled={loading || !newEntryForm.patient_name || !newEntryForm.patient_phone || newEntryForm.selectedTests.length === 0}
+            className="w-full h-14 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-bold text-lg shadow-lg"
+            data-testid="new-entry-submit"
+          >
+            {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <CheckCircle2 className="w-5 h-5 mr-2" />}
+            Create Booking Entry
+          </Button>
+        </div>
+      )}
+
+      {/* CALCULATOR VIEW - Cost Estimator */}
+      {activeView === 'calculator' && (
+        <div className="px-4 pb-24">
+          {/* Search Tests */}
+          <Card className="p-4 mb-4 border-l-4 border-l-purple-500">
+            <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-purple-500" />
+              Cost Estimator
+            </h3>
+            <p className="text-xs text-slate-500 mb-3">Search and add tests to calculate estimated cost</p>
+            
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Input 
+                value={calculatorSearch} 
+                onChange={(e) => setCalculatorSearch(e.target.value)} 
+                placeholder="Search by name, code, or barcode..."
+                className="pl-9"
+                data-testid="calculator-search"
+              />
+            </div>
+            
+            {/* Search Results */}
+            {calculatorSearch && (
+              <div className="max-h-60 overflow-y-auto space-y-2 mb-4 border rounded-lg p-2 bg-slate-50">
+                {filteredTestsForSearch.length === 0 ? (
+                  <p className="text-center text-slate-500 py-4">No tests found</p>
+                ) : (
+                  filteredTestsForSearch.slice(0, 10).map(test => (
+                    <div 
+                      key={test.id} 
+                      className="flex items-center justify-between p-3 rounded-lg bg-white border border-slate-200 hover:border-purple-300 cursor-pointer transition-all"
+                      onClick={() => { addTestToCalculator(test); setCalculatorSearch(''); }}
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-mono">{test.code}</span>
+                          <span className="font-medium text-sm">{test.name}</span>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">{test.category}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-purple-600">₹{test.price}</span>
+                        <Plus className="w-4 h-4 text-purple-500" />
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </Card>
+
+          {/* Added Tests */}
+          <Card className="p-4 mb-4">
+            <h3 className="font-semibold text-slate-800 mb-3">
+              Selected Tests ({calculatorTests.length})
+            </h3>
+            
+            {calculatorTests.length === 0 ? (
+              <div className="text-center py-8 text-slate-400">
+                <Calculator className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <p>Add tests to calculate cost</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {calculatorTests.map((test, index) => (
+                  <div key={test.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-600 text-xs font-bold flex items-center justify-center">{index + 1}</span>
+                      <div>
+                        <span className="font-medium text-sm">{test.name}</span>
+                        <span className="text-xs text-slate-500 ml-2 font-mono">{test.code}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="font-bold text-slate-800">₹{test.price}</span>
+                      <button 
+                        onClick={() => removeTestFromCalculator(test.id)}
+                        className="text-red-500 hover:bg-red-50 p-1 rounded"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+
+          {/* Total Calculation */}
+          {calculatorTests.length > 0 && (
+            <Card className="p-4 bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-purple-100">Subtotal ({calculatorTests.length} tests)</span>
+                <span className="font-bold text-lg">₹{calculateTotal()}</span>
+              </div>
+              <div className="flex justify-between items-center mb-3 text-sm">
+                <span className="text-purple-200">Home Collection (if applicable)</span>
+                <span>+₹100</span>
+              </div>
+              <div className="border-t border-purple-400 pt-3 flex justify-between items-center">
+                <span className="font-bold text-lg">Estimated Total</span>
+                <span className="text-3xl font-bold">₹{calculateTotal()}</span>
+              </div>
+              <p className="text-xs text-purple-200 mt-2">* Final amount may vary based on additional services</p>
+              
+              <Button 
+                onClick={() => {
+                  const testList = calculatorTests.map(t => `${t.code}: ${t.name} - ₹${t.price}`).join('\n');
+                  const message = `🧪 Mango Health Labs - Estimate\n\nTests:\n${testList}\n\nTotal: ₹${calculateTotal()}`;
+                  navigator.clipboard.writeText(message);
+                  toast.success('Estimate copied to clipboard!');
+                }}
+                className="w-full mt-4 bg-white text-purple-600 hover:bg-purple-50"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                Copy Estimate to Share
+              </Button>
+              
+              <Button 
+                onClick={() => setCalculatorTests([])}
+                variant="outline"
+                className="w-full mt-2 border-white/30 text-white hover:bg-white/10"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Clear All
+              </Button>
+            </Card>
+          )}
+        </div>
+      )}
+
       {showTestForm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
           <div className="bg-white w-full max-h-[90vh] rounded-t-2xl overflow-hidden">
