@@ -625,8 +625,9 @@ const Proton = () => {
       return;
     }
     // Email is optional - skip validation if not provided
-    // Skip OTP step - directly go to booking step
-    setCurrentStep(3);
+    // WhatsApp OTP verification is MANDATORY
+    sendOtp();
+    setCurrentStep(2);
     window.scrollTo(0, 0);
   };
 
