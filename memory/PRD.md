@@ -39,6 +39,19 @@ A comprehensive healthcare application for Nevika Cura Healthcare Group with pat
 - "Usually Bought Together" (UI placeholder)
 - Wait Time Estimates (UI placeholder)
 
+### New Portals Added (Feb 2026)
+- **Reneu** - Inside Out Wellness with 5 sub-sections (Core, Skin, Hair, Women, Men)
+- **InnerScore** - AI-powered Health Intelligence Portal with BioAge, Risk, Sleep, Metabolic, Inflammation engines
+- **LifeAlign** - Cultural & Community Health Sync Engine:
+  - Multi-religion support (Hindu, Muslim + expandable)
+  - Community sub-groups (Ismaili, Sunni, Shia, Brahmin, Gujarati, etc.)
+  - India/Abroad toggle with timezone detection
+  - Dynamic festival calendars (Ramadan, Navratri, Mahashivratri, Eid, Diwali, etc.)
+  - Health logic rules engine for risk alerts during fasting periods
+  - Health Readiness Score based on chronic conditions
+  - Lab test recommendations and medication timing adjustments
+  - Scalable database schema for future religions/communities
+
 ---
 
 ## Current Routes
