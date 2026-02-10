@@ -295,11 +295,17 @@ const MangoLabsStaffPortal = () => {
         <Card className="w-full max-w-md p-8 shadow-2xl">
           <div className="text-center mb-8">
             {/* Mango Logo */}
-            <img 
-              src="https://customer-assets.emergentagent.com/job_89849591-2898-4d2c-93b2-e4baf0814999/artifacts/61w2zxv9_Screenshot_20260211-044938.png" 
-              alt="Mango Health Labs"
-              className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-white p-2 shadow-md object-contain"
-            />
+            <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-2xl shadow-lg p-3 flex flex-col items-center justify-center border border-orange-100">
+              <div className="relative mb-1">
+                <div className="w-12 h-14 bg-gradient-to-b from-yellow-400 via-orange-400 to-orange-500 rounded-full rounded-tl-[40%] rounded-tr-[60%]"></div>
+                <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 flex">
+                  <div className="w-2.5 h-4 bg-green-500 rounded-full transform -rotate-12 -mr-0.5"></div>
+                  <div className="w-2.5 h-4 bg-green-600 rounded-full transform rotate-12"></div>
+                </div>
+              </div>
+              <p className="text-[9px] font-bold text-orange-600 tracking-tight">MANGO</p>
+              <p className="text-[7px] text-slate-500 tracking-wider">HEALTH LABS</p>
+            </div>
             <h1 className="text-2xl font-bold text-slate-800">Mango Health Labs</h1>
             <p className="text-slate-500">Staff Portal</p>
             <p className="text-xs text-orange-600 italic mt-1">Aam logon ki, Khaas Lab.</p>
