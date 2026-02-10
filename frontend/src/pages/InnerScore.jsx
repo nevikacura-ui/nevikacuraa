@@ -585,12 +585,11 @@ const InnerScore = () => {
                 >
                   <ArrowLeft className={`w-5 h-5 ${theme.text}`} />
                 </Button>
-                <div>
-                  <h1 className={`text-xl font-bold tracking-wider ${theme.text}`}>
-                    INNER<span className="text-cyan-500">SCORE</span>
-                  </h1>
-                  <p className={`text-xs ${theme.textMuted}`}>Health Intelligence Portal</p>
-                </div>
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_55d2778b-393f-4c6f-a4f0-366c7890154e/artifacts/gj9y2saj_file_00000000e9b472089087d7c50ce82a55.png"
+                  alt="InnerScore"
+                  className="h-10 w-auto object-contain"
+                />
               </div>
               <div className="flex items-center gap-3">
                 <Button
