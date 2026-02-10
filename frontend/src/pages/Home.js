@@ -1141,30 +1141,13 @@ const Home = () => {
                 
                 <div className="relative flex items-center p-5 sm:p-6 min-h-[140px]">
                   <div className="flex-shrink-0 mr-4 sm:mr-5 w-28 sm:w-36 flex items-center justify-center">
-                    {service.customIcon === 'mango' ? (
-                      <div className="w-24 h-24 bg-white rounded-2xl shadow-md p-3 flex flex-col items-center justify-center">
-                        {/* Mango Icon */}
-                        <div className="relative mb-1">
-                          <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
-                            <div className="w-6 h-6 bg-gradient-to-br from-orange-300 to-orange-500 rounded-full opacity-60"></div>
-                          </div>
-                          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 flex gap-0.5">
-                            <div className="w-2.5 h-4 bg-green-500 rounded-full transform -rotate-12"></div>
-                            <div className="w-2.5 h-4 bg-green-600 rounded-full transform rotate-12"></div>
-                          </div>
-                        </div>
-                        <p className="text-[10px] font-bold text-gray-700 tracking-tight">MANGO</p>
-                        <p className="text-[8px] text-gray-500 tracking-wider">HEALTH LABS</p>
-                      </div>
-                    ) : (
-                      <img 
-                        src={service.logo} 
-                        alt={service.name} 
-                        className="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-110"
-                        data-testid={`service-logo-featured-${service.id}`}
-                        loading="eager"
-                      />
-                    )}
+                    <img 
+                      src={service.logo} 
+                      alt={service.name} 
+                      className={`w-full h-auto object-contain transition-transform duration-300 group-hover:scale-110 ${service.containImage ? 'rounded-xl' : ''}`}
+                      data-testid={`service-logo-featured-${service.id}`}
+                      loading="eager"
+                    />
                   </div>
                   <div className="flex-1">
                     <h3 
