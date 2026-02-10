@@ -68,7 +68,7 @@ import Serena from '@/pages/Serena';
 import Corvia from '@/pages/Corvia';
 import Reneu from '@/pages/Reneu';
 import InnerScore from '@/pages/InnerScore';
-import LifeAlign from '@/pages/LifeAlign';
+import FaithCare from '@/pages/FaithCare';
 import Thrive360New from '@/pages/Thrive360New';
 import Senova from '@/pages/Senova';
 import PSVNFoundation from '@/pages/PSVNFoundation';
