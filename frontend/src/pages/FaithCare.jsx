@@ -36,6 +36,20 @@ const RELIGION_THEMES = {
     accent: 'text-emerald-600',
     badge: 'bg-emerald-100 text-emerald-700'
   },
+  jain: {
+    primary: '#7B1FA2',
+    secondary: '#F3E5F5',
+    gradient: 'from-purple-500/20 to-fuchsia-500/20',
+    accent: 'text-purple-600',
+    badge: 'bg-purple-100 text-purple-700'
+  },
+  christian: {
+    primary: '#1565C0',
+    secondary: '#E3F2FD',
+    gradient: 'from-blue-500/20 to-indigo-500/20',
+    accent: 'text-blue-600',
+    badge: 'bg-blue-100 text-blue-700'
+  },
   default: {
     primary: '#1976D2',
     secondary: '#E3F2FD',
