@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   ChevronLeft, ChevronRight, FileText, BarChart3, Heart, Activity, 
-  Brain, Baby, Smile, HeartPulse, Shield, Dumbbell, Users, HandHeart
+  Brain, Baby, Smile, HeartPulse, Shield, Dumbbell, Users, HandHeart, Calendar
 } from 'lucide-react';
 
 // Portal data - 12 Health & Wellness Portals - Full branded logos
