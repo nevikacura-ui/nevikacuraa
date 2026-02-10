@@ -222,13 +222,30 @@ FESTIVAL_DATES_2026 = [
     {"festival_id": "navroz_ismaili", "year": 2026, "start_date": "2026-03-21", "end_date": "2026-03-21", "moon_confirmed": True},
     {"festival_id": "chand_raat", "year": 2026, "start_date": "2026-03-20", "end_date": "2026-03-20", "moon_confirmed": False},
     {"festival_id": "shab_e_meraj", "year": 2026, "start_date": "2026-01-27", "end_date": "2026-01-27", "moon_confirmed": True},
-    # Navratri 2026
+    # Hindu festivals 2026
     {"festival_id": "chaitra_navratri", "year": 2026, "start_date": "2026-03-29", "end_date": "2026-04-06", "moon_confirmed": True},
     {"festival_id": "sharad_navratri", "year": 2026, "start_date": "2026-09-21", "end_date": "2026-09-29", "moon_confirmed": True},
-    # Other Hindu festivals 2026
     {"festival_id": "mahashivratri", "year": 2026, "start_date": "2026-02-14", "end_date": "2026-02-14", "moon_confirmed": True},
     {"festival_id": "diwali", "year": 2026, "start_date": "2026-10-20", "end_date": "2026-10-24", "moon_confirmed": True},
-    {"festival_id": "makar_sankranti", "year": 2026, "start_date": "2026-01-14", "end_date": "2026-01-14", "moon_confirmed": True}
+    {"festival_id": "makar_sankranti", "year": 2026, "start_date": "2026-01-14", "end_date": "2026-01-14", "moon_confirmed": True},
+    {"festival_id": "holi", "year": 2026, "start_date": "2026-03-10", "end_date": "2026-03-11", "moon_confirmed": True},
+    {"festival_id": "ganesh_chaturthi", "year": 2026, "start_date": "2026-08-27", "end_date": "2026-09-06", "moon_confirmed": True},
+    {"festival_id": "janmashtami", "year": 2026, "start_date": "2026-08-14", "end_date": "2026-08-14", "moon_confirmed": True},
+    {"festival_id": "karva_chauth", "year": 2026, "start_date": "2026-10-13", "end_date": "2026-10-13", "moon_confirmed": True},
+    # Jain festivals 2026
+    {"festival_id": "paryushana", "year": 2026, "start_date": "2026-08-20", "end_date": "2026-08-27", "moon_confirmed": True},
+    {"festival_id": "das_lakshana", "year": 2026, "start_date": "2026-08-20", "end_date": "2026-08-29", "moon_confirmed": True},
+    {"festival_id": "mahavir_jayanti", "year": 2026, "start_date": "2026-04-02", "end_date": "2026-04-02", "moon_confirmed": True},
+    {"festival_id": "diwali_jain", "year": 2026, "start_date": "2026-10-20", "end_date": "2026-10-20", "moon_confirmed": True},
+    {"festival_id": "samvatsari", "year": 2026, "start_date": "2026-08-27", "end_date": "2026-08-27", "moon_confirmed": True},
+    {"festival_id": "ayambil_oli", "year": 2026, "start_date": "2026-03-22", "end_date": "2026-03-30", "moon_confirmed": True},
+    # Christian festivals 2026
+    {"festival_id": "lent", "year": 2026, "start_date": "2026-02-18", "end_date": "2026-04-04", "moon_confirmed": True},
+    {"festival_id": "ash_wednesday", "year": 2026, "start_date": "2026-02-18", "end_date": "2026-02-18", "moon_confirmed": True},
+    {"festival_id": "good_friday", "year": 2026, "start_date": "2026-04-03", "end_date": "2026-04-03", "moon_confirmed": True},
+    {"festival_id": "easter", "year": 2026, "start_date": "2026-04-05", "end_date": "2026-04-05", "moon_confirmed": True},
+    {"festival_id": "christmas", "year": 2026, "start_date": "2026-12-25", "end_date": "2026-12-25", "moon_confirmed": True},
+    {"festival_id": "advent", "year": 2026, "start_date": "2026-11-29", "end_date": "2026-12-24", "moon_confirmed": True}
 ]
 
 # Mumbai Ramadan 2026 Daily Timings
