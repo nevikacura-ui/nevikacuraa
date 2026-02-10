@@ -325,17 +325,11 @@ const MangoLabsStaffPortal = () => {
           <div className="flex items-center gap-3">
             <button onClick={() => navigate('/')} className="p-2 hover:bg-white/10 rounded-lg"><ArrowLeft className="w-5 h-5" /></button>
             {/* Mango Logo */}
-            <div className="w-12 h-12 bg-white rounded-lg p-1.5 flex flex-col items-center justify-center">
-              <div className="relative">
-                <div className="w-7 h-7 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
-                  <div className="w-3.5 h-3.5 bg-gradient-to-br from-orange-300 to-orange-500 rounded-full opacity-60"></div>
-                </div>
-                <div className="absolute -top-1 left-1/2 -translate-x-1/2 flex gap-0.5">
-                  <div className="w-1.5 h-2.5 bg-green-500 rounded-full transform -rotate-12"></div>
-                  <div className="w-1.5 h-2.5 bg-green-600 rounded-full transform rotate-12"></div>
-                </div>
-              </div>
-            </div>
+            <img 
+              src="https://customer-assets.emergentagent.com/job_89849591-2898-4d2c-93b2-e4baf0814999/artifacts/61w2zxv9_Screenshot_20260211-044938.png" 
+              alt="Mango Health Labs"
+              className="w-12 h-12 rounded-lg bg-white p-1 object-contain"
+            />
             <div><h1 className="font-bold text-lg">Mango Health Labs</h1><p className="text-xs text-orange-100">{staffInfo?.name || 'Staff'}</p></div>
           </div>
           <div className="flex items-center gap-2"><button onClick={() => { fetchBookings(); fetchTests(); fetchStats(); }} className="p-2 hover:bg-white/10 rounded-lg"><RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} /></button><button onClick={handleLogout} className="p-2 hover:bg-white/10 rounded-lg"><LogOut className="w-5 h-5" /></button></div>
