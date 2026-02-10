@@ -328,9 +328,24 @@ const MangoLabsStaffPortal = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-4 py-4 sticky top-0 z-50">
+      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-4 sticky top-0 z-50">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3"><button onClick={() => navigate('/')} className="p-2 hover:bg-white/10 rounded-lg"><ArrowLeft className="w-5 h-5" /></button><img src="/mango-logo.png" alt="Mango Health Labs" className="w-14 h-14 bg-white rounded-lg p-1.5" /><div><h1 className="font-bold text-lg">Mango Health Labs</h1><p className="text-xs text-teal-100">{staffInfo?.name || 'Staff'}</p></div></div>
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate('/')} className="p-2 hover:bg-white/10 rounded-lg"><ArrowLeft className="w-5 h-5" /></button>
+            {/* Mango Logo */}
+            <div className="w-12 h-12 bg-white rounded-lg p-1.5 flex flex-col items-center justify-center">
+              <div className="relative">
+                <div className="w-7 h-7 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
+                  <div className="w-3.5 h-3.5 bg-gradient-to-br from-orange-300 to-orange-500 rounded-full opacity-60"></div>
+                </div>
+                <div className="absolute -top-1 left-1/2 -translate-x-1/2 flex gap-0.5">
+                  <div className="w-1.5 h-2.5 bg-green-500 rounded-full transform -rotate-12"></div>
+                  <div className="w-1.5 h-2.5 bg-green-600 rounded-full transform rotate-12"></div>
+                </div>
+              </div>
+            </div>
+            <div><h1 className="font-bold text-lg">Mango Health Labs</h1><p className="text-xs text-orange-100">{staffInfo?.name || 'Staff'}</p></div>
+          </div>
           <div className="flex items-center gap-2"><button onClick={() => { fetchBookings(); fetchTests(); fetchStats(); }} className="p-2 hover:bg-white/10 rounded-lg"><RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} /></button><button onClick={handleLogout} className="p-2 hover:bg-white/10 rounded-lg"><LogOut className="w-5 h-5" /></button></div>
         </div>
       </div>
