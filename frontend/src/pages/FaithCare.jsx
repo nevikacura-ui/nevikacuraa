@@ -262,11 +262,93 @@ const FaithCare = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-600">Loading FaithCare...</p>
+          <img 
+            src="https://customer-assets.emergentagent.com/job_55d2778b-393f-4c6f-a4f0-366c7890154e/artifacts/rbodxuxv_file_00000000e2a47209b2515ab5afe77eeb.png"
+            alt="FaithCare"
+            className="h-20 w-auto mx-auto mb-4"
+          />
+          <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-400">Loading FaithCare...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Exclusive Login Screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+        <Card className="w-full max-w-sm p-6 bg-slate-800/80 border-slate-700 backdrop-blur-xl">
+          <div className="text-center mb-6">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_55d2778b-393f-4c6f-a4f0-366c7890154e/artifacts/rbodxuxv_file_00000000e2a47209b2515ab5afe77eeb.png"
+              alt="FaithCare"
+              className="h-20 w-auto mx-auto mb-4"
+            />
+            <h1 className="text-xl font-bold text-white mb-1">FaithCare</h1>
+            <p className="text-sm text-slate-400">Exclusive Access Portal</p>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm text-slate-400 block mb-1">Access ID</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
+                <Input
+                  value={loginUserId}
+                  onChange={(e) => setLoginUserId(e.target.value.toUpperCase())}
+                  placeholder="FC2026XXX"
+                  className="pl-10 bg-slate-700 border-slate-600 text-white placeholder-slate-500"
+                  data-testid="faithcare-login-id"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-sm text-slate-400 block mb-1">Password</label>
+              <Input
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="••••••••••"
+                className="bg-slate-700 border-slate-600 text-white placeholder-slate-500"
+                data-testid="faithcare-login-password"
+                onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+              />
+            </div>
+            <Button
+              onClick={handleLogin}
+              disabled={loginLoading}
+              className="w-full h-12 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+              data-testid="faithcare-login-btn"
+            >
+              {loginLoading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Shield className="w-4 h-4 mr-2" />
+                  Access Portal
+                </>
+              )}
+            </Button>
+          </div>
+          
+          <div className="mt-6 pt-4 border-t border-slate-700">
+            <p className="text-xs text-slate-500 text-center">
+              This is an exclusive portal. Access credentials are required.
+            </p>
+          </div>
+          
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/')}
+            className="w-full mt-4 text-slate-400 hover:text-white"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
+          </Button>
+        </Card>
       </div>
     );
   }
@@ -294,14 +376,25 @@ const FaithCare = () => {
                   className="h-12 w-auto object-contain"
                 />
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowSetup(true)}
-                className="rounded-full text-white hover:bg-slate-800"
-              >
-                <Settings className="w-5 h-5" />
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowSetup(true)}
+                  className="rounded-full text-white hover:bg-slate-800"
+                >
+                  <Settings className="w-5 h-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleLogout}
+                  className="rounded-full text-white hover:bg-slate-800"
+                  title="Logout"
+                >
+                  <LogOut className="w-5 h-5" />
+                </Button>
+              </div>
             </div>
           </div>
         </header>
