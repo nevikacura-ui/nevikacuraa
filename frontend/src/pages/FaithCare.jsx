@@ -534,7 +534,7 @@ const FaithCare = () => {
                       <p className="text-sm text-slate-600">Your Profile</p>
                       <p className="font-bold text-slate-800">
                         {dashboard.user_religion}
-                        {dashboard.user_community && ` • ${dashboard.user_community}`}
+                        {dashboard.user_community && ` - ${dashboard.user_community}`}
                       </p>
                     </div>
                   </div>
