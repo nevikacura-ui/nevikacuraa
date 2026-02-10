@@ -5,12 +5,14 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   ArrowLeft, Calendar, Moon, Sun, Heart, AlertTriangle, CheckCircle2, 
   FlaskConical, Pill, Bell, MapPin, Users, Globe, Droplets, Clock,
-  ChevronRight, Settings, RefreshCw, Shield, Sparkles, Activity
+  ChevronRight, Settings, RefreshCw, Shield, Sparkles, Activity,
+  Lock, LogOut, Sunrise, Sunset
 } from 'lucide-react';
 import { AnimatedPage } from '@/components/PageTransition';
 import { toast } from 'sonner';
