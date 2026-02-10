@@ -485,6 +485,16 @@ const Home = () => {
       bgColor: '#f0f4f8',
       isDark: false,
       fillLogo: true
+    },
+    {
+      id: 'innerscore',
+      name: 'InnerScore',
+      description: 'Health Intelligence',
+      logo: 'https://customer-assets.emergentagent.com/job_55d2778b-393f-4c6f-a4f0-366c7890154e/artifacts/gj9y2saj_file_00000000e9b472089087d7c50ce82a55.png',
+      path: '/innerscore',
+      bgColor: '#0f172a',
+      isDark: true,
+      fillLogo: true
     }
   ];
   
