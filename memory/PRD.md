@@ -111,5 +111,12 @@ A comprehensive healthcare application for Nevika Cura Healthcare Group with pat
 ### Latest Updates:
 1. **Shadow removed** from portal scroll bar - Clean flat background
 2. **Guest login now OTP-based** - Requires WhatsApp number + OTP verification before accessing app
+3. **Reneu Portal Redesigned** - "Inside Out Wellness" with 5 sub-sections:
+   - Reneu Core (Vitamins & Nutrition)
+   - Reneu Skin (Skin Wellness)
+   - Reneu Hair (Hair Health)
+   - Reneu Women (Women's Wellness)
+   - Reneu Men (Men's Wellness)
+   - Features: Concern Tracker, Root Cause Analysis, Lab Test Recommendations, Supplement Recommendations, Diet Tips, Progress Photo Tracker
 
-### Last Updated: Portal scroll bar shadow fix + Guest OTP login
+### Last Updated: Reneu portal complete redesign
