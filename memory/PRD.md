@@ -117,6 +117,13 @@ A comprehensive healthcare application for Nevika Cura Healthcare Group with pat
    - Reneu Hair (Hair Health)
    - Reneu Women (Women's Wellness)
    - Reneu Men (Men's Wellness)
-   - Features: Concern Tracker, Root Cause Analysis, Lab Test Recommendations, Supplement Recommendations, Diet Tips, Progress Photo Tracker
+4. **INNERSCORE - Health Intelligence Portal** - Premium AI-driven health scoring system:
+   - **BioAge Engine**: Biological age calculation using weighted biomarkers (HbA1c, hs-CRP, TG/HDL, BMI, Waist, Vitamin D, ALT)
+   - **Predictive Risk Engine**: Disease risk % for Diabetes, CVD, Fatty Liver, Thyroid
+   - **Sleep & Recovery Engine**: Sleep score 0-100 with fatigue classification
+   - **Metabolic Core Engine**: Metabolic health score with visceral risk category
+   - **Inflammation Engine**: Inflammation tracking with longitudinal trends
+   - **Master INNERSCORE**: 0-100 composite health index
+   - Features: Radar chart, trend tracking, personalized actions, dark/light mode, lab booking integration
 
-### Last Updated: Reneu portal complete redesign
+### Last Updated: INNERSCORE Health Intelligence Portal complete
