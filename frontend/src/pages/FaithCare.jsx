@@ -232,7 +232,7 @@ const FaithCare = () => {
     }
     
     try {
-      await axios.post(`${API}/api/lifealign/user/profile?user_id=${userId}`, {
+      await axios.post(`${API}/api/lifealign/user/profile?user_id=${authenticatedUser?.user_id}`, {
         religion_id: selectedReligion,
         community_id: selectedCommunity || null,
         location_type: locationType,
