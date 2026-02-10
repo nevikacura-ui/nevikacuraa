@@ -556,7 +556,7 @@ const FaithCare = () => {
                 />
               </div>
 
-              <Button onClick={saveProfile} className="w-full bg-teal-600 hover:bg-teal-700">
+              <Button onClick={saveProfile} className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700">
                 <CheckCircle2 className="w-4 h-4 mr-2" />
                 Save Preferences
               </Button>
@@ -573,4 +573,4 @@ const FaithCare = () => {
   );
 };
 
-export default LifeAlign;
+export default FaithCare;
