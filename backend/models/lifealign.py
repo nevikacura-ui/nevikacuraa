@@ -552,3 +552,146 @@ HEALTH_RULES = [
         "priority_level": 2
     }
 ]
+
+
+
+# ============ JAMATKHANA DATABASE ============
+# Ismaili Jamatkhanas in India, USA, and Canada
+
+JAMATKHANAS = [
+    # India - Mumbai
+    {"id": "jk_mumbai_1", "name": "Hasanabad Jamatkhana", "city": "Mumbai", "state": "Maharashtra", "country": "India", "address": "Hasanabad, Bhendi Bazaar, Mumbai 400003", "lat": 18.9586, "lng": 72.8313, "timings": {"morning": "05:30", "evening": "19:00"}},
+    {"id": "jk_mumbai_2", "name": "Khetwadi Jamatkhana", "city": "Mumbai", "state": "Maharashtra", "country": "India", "address": "Khetwadi, Mumbai 400004", "lat": 18.9567, "lng": 72.8215, "timings": {"morning": "05:30", "evening": "19:00"}},
+    {"id": "jk_mumbai_3", "name": "Dongri Jamatkhana", "city": "Mumbai", "state": "Maharashtra", "country": "India", "address": "Dongri, Mumbai 400009", "lat": 18.9520, "lng": 72.8390, "timings": {"morning": "05:30", "evening": "19:00"}},
+    # India - Other Cities
+    {"id": "jk_ahmedabad", "name": "Ahmedabad Jamatkhana", "city": "Ahmedabad", "state": "Gujarat", "country": "India", "address": "Relief Road, Ahmedabad 380001", "lat": 23.0225, "lng": 72.5714, "timings": {"morning": "05:30", "evening": "19:00"}},
+    {"id": "jk_bangalore", "name": "Bangalore Jamatkhana", "city": "Bangalore", "state": "Karnataka", "country": "India", "address": "Commercial Street, Bangalore 560001", "lat": 12.9814, "lng": 77.6087, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_kolkata", "name": "Kolkata Jamatkhana", "city": "Kolkata", "state": "West Bengal", "country": "India", "address": "Park Street Area, Kolkata 700016", "lat": 22.5532, "lng": 88.3510, "timings": {"morning": "05:30", "evening": "18:30"}},
+    # USA - Major Cities
+    {"id": "jk_nyc", "name": "New York Jamatkhana", "city": "New York", "state": "New York", "country": "USA", "address": "Queens, NY", "lat": 40.7128, "lng": -74.0060, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_houston", "name": "Houston Jamatkhana", "city": "Houston", "state": "Texas", "country": "USA", "address": "Sugar Land, TX", "lat": 29.6196, "lng": -95.6349, "timings": {"morning": "06:00", "evening": "20:00"}},
+    {"id": "jk_chicago", "name": "Chicago Jamatkhana", "city": "Chicago", "state": "Illinois", "country": "USA", "address": "Glenview, IL", "lat": 42.0856, "lng": -87.7870, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_la", "name": "Los Angeles Jamatkhana", "city": "Los Angeles", "state": "California", "country": "USA", "address": "Playa Vista, CA", "lat": 33.9716, "lng": -118.4296, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_atlanta", "name": "Atlanta Jamatkhana", "city": "Atlanta", "state": "Georgia", "country": "USA", "address": "Alpharetta, GA", "lat": 34.0454, "lng": -84.2807, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_dallas", "name": "Dallas Jamatkhana", "city": "Dallas", "state": "Texas", "country": "USA", "address": "Plano, TX", "lat": 33.0198, "lng": -96.6989, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_sf", "name": "San Francisco Jamatkhana", "city": "San Francisco", "state": "California", "country": "USA", "address": "Fremont, CA", "lat": 37.5485, "lng": -121.9886, "timings": {"morning": "06:00", "evening": "19:30"}},
+    # Canada
+    {"id": "jk_toronto", "name": "Toronto Headquarters", "city": "Toronto", "state": "Ontario", "country": "Canada", "address": "Don Mills, Toronto, ON", "lat": 43.7615, "lng": -79.3479, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_vancouver", "name": "Vancouver Jamatkhana", "city": "Vancouver", "state": "British Columbia", "country": "Canada", "address": "Burnaby, BC", "lat": 49.2488, "lng": -122.9805, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_calgary", "name": "Calgary Jamatkhana", "city": "Calgary", "state": "Alberta", "country": "Canada", "address": "NE Calgary, AB", "lat": 51.0883, "lng": -113.9794, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_edmonton", "name": "Edmonton Jamatkhana", "city": "Edmonton", "state": "Alberta", "country": "Canada", "address": "Edmonton, AB", "lat": 53.5461, "lng": -113.4938, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_montreal", "name": "Montreal Jamatkhana", "city": "Montreal", "state": "Quebec", "country": "Canada", "address": "Montreal, QC", "lat": 45.5017, "lng": -73.5673, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_ottawa", "name": "Ottawa Jamatkhana", "city": "Ottawa", "state": "Ontario", "country": "Canada", "address": "Ottawa, ON", "lat": 45.4215, "lng": -75.6972, "timings": {"morning": "06:00", "evening": "19:30"}}
+]
+
+# ============ RAMADAN DIET PLANS ============
+# Specialized diet plans for different health conditions during Ramadan
+
+RAMADAN_DIET_PLANS = {
+    "diabetic": {
+        "condition": "Diabetes",
+        "overview": "Managing blood sugar levels during Ramadan requires careful planning. Consult your doctor before fasting.",
+        "sehri": {
+            "title": "Sehri (Pre-Dawn Meal)",
+            "tips": [
+                "Eat complex carbohydrates: whole wheat roti, oats, brown rice",
+                "Include protein: eggs, paneer, dal, lean meat",
+                "Avoid sugary foods and white bread",
+                "Drink plenty of water (2-3 glasses)",
+                "Include fiber-rich vegetables"
+            ],
+            "foods_to_eat": ["Oatmeal with nuts", "Whole wheat paratha with yogurt", "Boiled eggs", "Grilled chicken", "Dal with vegetables", "Sugar-free milk"],
+            "foods_to_avoid": ["White bread", "Sugary cereals", "Fruit juices", "Sweetened beverages", "Fried foods"]
+        },
+        "iftar": {
+            "title": "Iftar (Breaking Fast)",
+            "tips": [
+                "Break fast with 1-2 dates and water",
+                "Wait 15-20 minutes before main meal",
+                "Avoid fried and sugary foods",
+                "Monitor blood sugar before and after eating",
+                "Eat slowly and in moderate portions"
+            ],
+            "foods_to_eat": ["Dates (1-2 only)", "Grilled meat/fish", "Vegetable soup", "Salads", "Grilled kebabs", "Roasted chickpeas"],
+            "foods_to_avoid": ["Fried samosas", "Pakoras", "Sugary drinks", "Sweets", "White rice in large quantities"]
+        },
+        "monitoring": [
+            "Check blood sugar 2-3 times daily",
+            "Watch for signs of hypoglycemia: shakiness, sweating, confusion",
+            "Break fast immediately if blood sugar drops below 70 mg/dL",
+            "Keep glucose tablets handy"
+        ],
+        "medications": "Consult your doctor for medication timing adjustments during Ramadan"
+    },
+    "hypertension": {
+        "condition": "High Blood Pressure",
+        "overview": "Maintaining blood pressure during fasting requires attention to sodium intake and hydration.",
+        "sehri": {
+            "title": "Sehri (Pre-Dawn Meal)",
+            "tips": [
+                "Avoid salty foods and pickles",
+                "Include potassium-rich foods: bananas, oranges, spinach",
+                "Eat lean proteins",
+                "Stay well hydrated",
+                "Include whole grains"
+            ],
+            "foods_to_eat": ["Banana", "Oatmeal", "Low-salt whole wheat bread", "Boiled eggs", "Yogurt (unsalted)", "Fresh fruits"],
+            "foods_to_avoid": ["Pickles", "Papad", "Processed cheese", "Canned foods", "Salted nuts"]
+        },
+        "iftar": {
+            "title": "Iftar (Breaking Fast)",
+            "tips": [
+                "Break fast with dates and water",
+                "Avoid salty snacks",
+                "Choose grilled over fried foods",
+                "Include plenty of vegetables",
+                "Limit caffeine intake"
+            ],
+            "foods_to_eat": ["Fresh fruits", "Vegetable soup (low salt)", "Grilled chicken/fish", "Salads without salt", "Baked items", "Unsalted nuts"],
+            "foods_to_avoid": ["Fried foods", "Biryani with high salt", "Kebabs with salt", "Processed meats", "Salty sauces"]
+        },
+        "monitoring": [
+            "Check blood pressure twice daily",
+            "Watch for symptoms: headache, dizziness, blurred vision",
+            "Reduce salt intake to less than 2000mg daily",
+            "Avoid dehydration"
+        ],
+        "medications": "Take medications as prescribed; consult doctor for timing during Ramadan"
+    },
+    "renal": {
+        "condition": "Kidney Disease (CKD)",
+        "overview": "Fasting with kidney disease requires careful management of fluid, protein, and electrolytes. Always consult your nephrologist.",
+        "sehri": {
+            "title": "Sehri (Pre-Dawn Meal)",
+            "tips": [
+                "Limit protein intake as advised by doctor",
+                "Control potassium intake",
+                "Manage fluid intake based on kidney function",
+                "Avoid high-phosphorus foods",
+                "Choose white rice over brown rice"
+            ],
+            "foods_to_eat": ["White rice", "Egg whites", "Cabbage", "Cauliflower", "Apples", "White bread"],
+            "foods_to_avoid": ["Bananas", "Oranges", "Tomatoes", "Potatoes", "Whole grains", "Dairy in excess"]
+        },
+        "iftar": {
+            "title": "Iftar (Breaking Fast)",
+            "tips": [
+                "Break fast with 1 date and limited water",
+                "Control portion sizes strictly",
+                "Avoid high-potassium foods",
+                "Limit phosphorus-rich foods",
+                "Eat small, frequent portions"
+            ],
+            "foods_to_eat": ["Dates (1 only)", "White rice dishes", "Grilled fish (small portion)", "Cucumber salad", "Apple", "Clear soups"],
+            "foods_to_avoid": ["Red meat", "Dried fruits", "Chocolate", "Cola drinks", "Nuts", "Cheese"]
+        },
+        "monitoring": [
+            "Monitor weight daily (fluid retention)",
+            "Track urine output",
+            "Watch for swelling in feet/ankles",
+            "Check for shortness of breath",
+            "Get regular kidney function tests during Ramadan"
+        ],
+        "medications": "Critical: Consult nephrologist for medication and dialysis schedule adjustments"
+    }
+}
