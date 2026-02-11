@@ -297,7 +297,7 @@ async def send_credentials_email(request: CredentialsEmailRequest):
     if not RESEND_API_KEY:
         return {"success": False, "error": "Email not configured"}
     
-    app_url = "https://mango-labs-portal.preview.emergentagent.com"
+    app_url = "https://faithcare-review-hub.preview.emergentagent.com"
     
     credentials_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px;">

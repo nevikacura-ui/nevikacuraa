@@ -223,7 +223,7 @@ const Footer = () => {
               </div>
               <div className="bg-white p-3 rounded-2xl shadow-xl">
                 <img 
-                  src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://mango-labs-portal.preview.emergentagent.com&color=0d9488"
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://faithcare-review-hub.preview.emergentagent.com&color=0d9488"
                   alt="Nevika Cura Website QR Code"
                   className="w-28 h-28"
                   data-testid="footer-qr-code"
