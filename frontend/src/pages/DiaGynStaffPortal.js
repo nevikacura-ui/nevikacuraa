@@ -842,6 +842,7 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
             { label: 'Wait', count: summary.checked_in || 0, color: '#f59e0b' },
             { label: 'Dr', count: summary.with_doctor || 0, color: '#8b5cf6' },
             { label: 'Done', count: summary.completed || 0, color: '#16a34a' },
+            { label: 'Reviews', count: reviewStats.today || 0, color: '#ec4899' },
           ].map(stat => (
             <div key={stat.label} className="flex items-center gap-1.5 px-2 py-1 rounded-full"
                  style={{ background: `${stat.color}15` }}>
