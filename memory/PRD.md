@@ -32,36 +32,33 @@ Multi-module healthcare application with modules including:
 
 ### Session: Feb 11, 2026
 - ✅ Fixed Mango Health Labs logo centering on Homepage and Mango page
-- ✅ Logo now properly centered in white rectangular frame using flexbox
-- ✅ Created centralized IST timezone utility module (`/app/backend/utils/timezone_utils.py`)
-- ✅ Updated review stats API to use IST date
-- ✅ Fixed ESLint warnings in FaithCare.jsx (converted functions to useCallback)
+- ✅ Adjusted logo size and frame: Frame w-44 h-20, Logo scale 1.28
+- ✅ Created centralized IST timezone utility module
+- ✅ Fixed ESLint warnings in FaithCare.jsx
 - ✅ Verified Google Review stats display in DiaGyn Staff Portal
+- ✅ Added "Send Review Request" button for completed appointments
+  - Pink button with Star icon
+  - Shows on completed appointments with phone numbers
+  - Integrates with MSG91 WhatsApp API
+  - Shows "Review Sent" badge after sending
 
 ### Previous Sessions
 - ✅ Logo and UI Overhaul for FaithCare and Mango Health Labs
 - ✅ FaithCare WhatsApp Reminders (Sehri, Iftar)
 - ✅ FaithCare Internationalization (more Jamatkhana locations, timezone-aware)
-- ✅ DiaGyn Google Review Automation (sends link on appointment completion)
+- ✅ DiaGyn Google Review Automation (auto-sends on appointment completion)
 - ✅ Credential distribution endpoint for FaithCare users
-- ✅ Comprehensive testing completed
 
-## IST Timezone Utilities
-Location: `/app/backend/utils/timezone_utils.py`
+## Google Review Feature
+### Automatic Trigger
+- Review request sent automatically when doctor completes appointment
+- Works for SCHEDULED, WALK_IN, and EMERGENCY appointments
 
-Functions available:
-- `get_ist_now()` - Current IST datetime
-- `get_ist_date()` - Current IST date (YYYY-MM-DD)
-- `get_ist_datetime_iso()` - Current IST datetime in ISO format
-- `get_ist_display_datetime()` - Formatted for display (DD-MM-YYYY HH:MM AM/PM IST)
-- `format_datetime_ist(dt_str)` - Convert any datetime string to IST display format
-- `utc_to_ist(dt)` - Convert UTC datetime to IST
-
-## Thermal Printer Formats
-Location: `/app/frontend/src/utils/thermalPrinter.js`
-
-- **Token Receipt**: Clinic name, token number, booking ID, appointment type, patient name, slot time
-- **Bill Receipt**: Clinic name, date/time, patient details, fees breakdown, total, doctor name
+### Manual Trigger (NEW)
+- Staff can click "REVIEW" button on completed appointment cards
+- Button location: DiaGyn Staff Portal → Appointment card actions
+- API: `POST /api/diagyn-staff/whatsapp/send-review-request`
+- Shows "Review Sent" badge after successful send
 
 ## Prioritized Backlog
 
@@ -75,13 +72,14 @@ Location: `/app/frontend/src/utils/thermalPrinter.js`
 - Clean up user profile page
 
 ### P3 - Future Enhancements
+- Weekly review trends visualization in Summary tab
 - Comprehensive testing run (pending user approval)
-- Review Insights card for Summary tab
 
 ## API Endpoints
 - `POST /api/lifealign/whatsapp/send-sehri-reminder` - Sehri reminder
 - `POST /api/diagyn/appointments/{id}/status` - Update appointment + trigger review
-- `GET /api/diagyn-staff/review-stats` - Review statistics (uses IST date)
+- `GET /api/diagyn-staff/review-stats` - Review statistics
+- `POST /api/diagyn-staff/whatsapp/send-review-request` - Manual review request
 - `GET /api/lifealign/ramadan-timings/{city}` - Timezone-aware Ramadan timings
 
 ## Test Credentials
