@@ -945,3 +945,123 @@ async def get_portal_config(staff = Depends(verify_staff)):
         "scan_fees": SCAN_FEES,
         "appointment_types": ["SCHEDULED", "WALK_IN", "EMERGENCY"]
     }
+
+
+# ============ GOOGLE REVIEW REQUEST API ============
+
+# Google Review Links for clinics
+GOOGLE_REVIEW_LINKS = {
+    "Pushpa Clinic": "https://g.page/r/pushpa-clinic/review",
+    "Amnion Clinic": "https://g.page/r/amnion-clinic/review",
+    "DiaGyn Healthcare": "https://g.page/r/diagyn-healthcare/review"
+}
+
+@router.post("/whatsapp/send-review-request")
+async def send_google_review_request(
+    whatsapp_number: str,
+    patient_name: str = "Patient",
+    clinic_name: str = "Pushpa Clinic",
+    doctor_name: str = "Dr. Vikas Jha",
+    review_link: str = None
+):
+    """Send Google Review request via WhatsApp after appointment"""
+    
+    # Clean phone number
+    clean_number = whatsapp_number.replace("+", "").replace(" ", "").replace("-", "")
+    if not clean_number.startswith("91"):
+        clean_number = "91" + clean_number
+    
+    # Get review link
+    if not review_link:
+        review_link = GOOGLE_REVIEW_LINKS.get(clinic_name, GOOGLE_REVIEW_LINKS["DiaGyn Healthcare"])
+    
+    try:
+        from services.msg91_whatsapp import send_msg91_whatsapp
+        
+        # Template variables: [patient_name, doctor_name, clinic_name, review_link]
+        result = await send_msg91_whatsapp(
+            recipient_phone=clean_number,
+            template_name="diagyn_google_review",
+            variables=[patient_name, doctor_name, clinic_name, review_link],
+            db=db,
+            reference_id=f"review_{clean_number}_{datetime.now().strftime('%Y%m%d%H%M')}",
+            message_type="google_review_request"
+        )
+        
+        return {
+            "success": True,
+            "message": f"Google Review request sent to {clean_number}",
+            "details": {
+                "patient": patient_name,
+                "doctor": doctor_name,
+                "clinic": clinic_name,
+                "review_link": review_link
+            },
+            "msg91_response": result
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "note": "MSG91 template 'diagyn_google_review' may need to be registered"
+        }
+
+
+@router.post("/whatsapp/bulk-review-request")
+async def send_bulk_review_requests(
+    clinic_name: str = "Pushpa Clinic",
+    date_str: str = None
+):
+    """Send review requests to all patients who had appointments on a specific date"""
+    
+    if not date_str:
+        date_str = datetime.now().strftime("%Y-%m-%d")
+    
+    # Get all completed appointments for the date
+    appointments = await db.diagyn_appointments.find({
+        "date": date_str,
+        "clinic": clinic_name,
+        "status": {"$in": ["completed", "visited"]}
+    }).to_list(length=100)
+    
+    if not appointments:
+        return {
+            "success": False,
+            "message": f"No completed appointments found for {clinic_name} on {date_str}"
+        }
+    
+    results = []
+    success_count = 0
+    
+    for apt in appointments:
+        if apt.get("phone"):
+            try:
+                result = await send_google_review_request(
+                    whatsapp_number=apt["phone"],
+                    patient_name=apt.get("patient_name", "Patient"),
+                    clinic_name=clinic_name,
+                    doctor_name=apt.get("doctor", "Doctor")
+                )
+                if result.get("success"):
+                    success_count += 1
+                results.append({
+                    "patient": apt.get("patient_name"),
+                    "phone": apt.get("phone"),
+                    "result": result
+                })
+            except Exception as e:
+                results.append({
+                    "patient": apt.get("patient_name"),
+                    "phone": apt.get("phone"),
+                    "error": str(e)
+                })
+    
+    return {
+        "success": True,
+        "clinic": clinic_name,
+        "date": date_str,
+        "total_appointments": len(appointments),
+        "review_requests_sent": success_count,
+        "details": results
+    }
+
