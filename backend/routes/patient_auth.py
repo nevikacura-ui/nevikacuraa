@@ -295,15 +295,16 @@ async def whatsapp_send_otp(request: WhatsAppOTPRequest):
     
     response = {
         "success": True,
-        "message": "OTP sent via WhatsApp" if result.get("success") else "OTP generated (Demo mode)",
+        "message": "OTP sent via WhatsApp" if result.get("success") and not result.get("mock") else "OTP generated (Demo mode)",
         "phone": phone,
         "flow_type": flow_type,
         "has_password": flow_type == "login_with_password",
-        "mock_otp": otp,  # Always include for testing
         "expires_in": 600
     }
     
-    if not result.get("success"):
+    # Only include mock_otp if WhatsApp service failed or is in mock mode
+    if result.get("mock") or not result.get("success"):
+        response["mock_otp"] = otp
         response["note"] = "WhatsApp service unavailable, use test OTP"
     
     return response
