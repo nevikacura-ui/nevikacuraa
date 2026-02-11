@@ -15,28 +15,29 @@ def generate_otp():
 
 
 # ============ DATE UTILITIES ============
+# Import comprehensive timezone utilities
+from .timezone_utils import (
+    get_ist_now,
+    get_ist_date,
+    get_ist_datetime_iso,
+    get_ist_display_datetime,
+    get_ist_display_date,
+    get_ist_display_time,
+    utc_to_ist,
+    format_datetime_ist,
+    format_date_ist,
+    format_time_ist,
+    IST_OFFSET
+)
 
 def get_indian_date():
-    """Get current date in IST (UTC+5:30)"""
-    ist_offset = timedelta(hours=5, minutes=30)
-    ist_time = datetime.now(timezone.utc) + ist_offset
-    return ist_time.strftime("%Y-%m-%d")
+    """Get current date in IST (UTC+5:30) - YYYY-MM-DD"""
+    return get_ist_date()
 
 
 def get_indian_datetime():
     """Get current datetime in IST (UTC+5:30)"""
-    ist_offset = timedelta(hours=5, minutes=30)
-    ist_time = datetime.now(timezone.utc) + ist_offset
-    return ist_time
-
-
-def format_date_ist(date_str):
-    """Format a date string for display in IST"""
-    try:
-        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-        return date_obj.strftime("%d %b %Y")  # "10 Jan 2026"
-    except:
-        return date_str
+    return get_ist_now()
 
 
 # ============ PHONE UTILITIES ============
