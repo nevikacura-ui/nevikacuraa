@@ -385,7 +385,7 @@ const FaithCare = () => {
     if (authenticatedUser) {
       checkWhatsAppRegistration();
     }
-  }, [authenticatedUser]);
+  }, [authenticatedUser, checkWhatsAppRegistration]);
 
   // Fetch Jamatkhanas
   const fetchJamatkhanas = async () => {
