@@ -563,25 +563,78 @@ JAMATKHANAS = [
     {"id": "jk_mumbai_1", "name": "Hasanabad Jamatkhana", "city": "Mumbai", "state": "Maharashtra", "country": "India", "address": "Hasanabad, Bhendi Bazaar, Mumbai 400003", "lat": 18.9586, "lng": 72.8313, "timings": {"morning": "05:30", "evening": "19:00"}},
     {"id": "jk_mumbai_2", "name": "Khetwadi Jamatkhana", "city": "Mumbai", "state": "Maharashtra", "country": "India", "address": "Khetwadi, Mumbai 400004", "lat": 18.9567, "lng": 72.8215, "timings": {"morning": "05:30", "evening": "19:00"}},
     {"id": "jk_mumbai_3", "name": "Dongri Jamatkhana", "city": "Mumbai", "state": "Maharashtra", "country": "India", "address": "Dongri, Mumbai 400009", "lat": 18.9520, "lng": 72.8390, "timings": {"morning": "05:30", "evening": "19:00"}},
+    {"id": "jk_mumbai_4", "name": "Byculla Jamatkhana", "city": "Mumbai", "state": "Maharashtra", "country": "India", "address": "Byculla, Mumbai 400008", "lat": 18.9785, "lng": 72.8347, "timings": {"morning": "05:30", "evening": "19:00"}},
+    {"id": "jk_mumbai_5", "name": "Mahalaxmi Jamatkhana", "city": "Mumbai", "state": "Maharashtra", "country": "India", "address": "Mahalaxmi, Mumbai 400034", "lat": 18.9825, "lng": 72.8114, "timings": {"morning": "05:30", "evening": "19:00"}},
     # India - Other Cities
     {"id": "jk_ahmedabad", "name": "Ahmedabad Jamatkhana", "city": "Ahmedabad", "state": "Gujarat", "country": "India", "address": "Relief Road, Ahmedabad 380001", "lat": 23.0225, "lng": 72.5714, "timings": {"morning": "05:30", "evening": "19:00"}},
     {"id": "jk_bangalore", "name": "Bangalore Jamatkhana", "city": "Bangalore", "state": "Karnataka", "country": "India", "address": "Commercial Street, Bangalore 560001", "lat": 12.9814, "lng": 77.6087, "timings": {"morning": "06:00", "evening": "19:30"}},
     {"id": "jk_kolkata", "name": "Kolkata Jamatkhana", "city": "Kolkata", "state": "West Bengal", "country": "India", "address": "Park Street Area, Kolkata 700016", "lat": 22.5532, "lng": 88.3510, "timings": {"morning": "05:30", "evening": "18:30"}},
-    # USA - Major Cities
-    {"id": "jk_nyc", "name": "New York Jamatkhana", "city": "New York", "state": "New York", "country": "USA", "address": "Queens, NY", "lat": 40.7128, "lng": -74.0060, "timings": {"morning": "06:00", "evening": "19:30"}},
-    {"id": "jk_houston", "name": "Houston Jamatkhana", "city": "Houston", "state": "Texas", "country": "USA", "address": "Sugar Land, TX", "lat": 29.6196, "lng": -95.6349, "timings": {"morning": "06:00", "evening": "20:00"}},
-    {"id": "jk_chicago", "name": "Chicago Jamatkhana", "city": "Chicago", "state": "Illinois", "country": "USA", "address": "Glenview, IL", "lat": 42.0856, "lng": -87.7870, "timings": {"morning": "06:00", "evening": "19:30"}},
-    {"id": "jk_la", "name": "Los Angeles Jamatkhana", "city": "Los Angeles", "state": "California", "country": "USA", "address": "Playa Vista, CA", "lat": 33.9716, "lng": -118.4296, "timings": {"morning": "06:00", "evening": "19:30"}},
-    {"id": "jk_atlanta", "name": "Atlanta Jamatkhana", "city": "Atlanta", "state": "Georgia", "country": "USA", "address": "Alpharetta, GA", "lat": 34.0454, "lng": -84.2807, "timings": {"morning": "06:00", "evening": "19:30"}},
-    {"id": "jk_dallas", "name": "Dallas Jamatkhana", "city": "Dallas", "state": "Texas", "country": "USA", "address": "Plano, TX", "lat": 33.0198, "lng": -96.6989, "timings": {"morning": "06:00", "evening": "19:30"}},
-    {"id": "jk_sf", "name": "San Francisco Jamatkhana", "city": "San Francisco", "state": "California", "country": "USA", "address": "Fremont, CA", "lat": 37.5485, "lng": -121.9886, "timings": {"morning": "06:00", "evening": "19:30"}},
-    # Canada
-    {"id": "jk_toronto", "name": "Toronto Headquarters", "city": "Toronto", "state": "Ontario", "country": "Canada", "address": "Don Mills, Toronto, ON", "lat": 43.7615, "lng": -79.3479, "timings": {"morning": "06:00", "evening": "19:30"}},
-    {"id": "jk_vancouver", "name": "Vancouver Jamatkhana", "city": "Vancouver", "state": "British Columbia", "country": "Canada", "address": "Burnaby, BC", "lat": 49.2488, "lng": -122.9805, "timings": {"morning": "06:00", "evening": "19:30"}},
-    {"id": "jk_calgary", "name": "Calgary Jamatkhana", "city": "Calgary", "state": "Alberta", "country": "Canada", "address": "NE Calgary, AB", "lat": 51.0883, "lng": -113.9794, "timings": {"morning": "06:00", "evening": "19:30"}},
-    {"id": "jk_edmonton", "name": "Edmonton Jamatkhana", "city": "Edmonton", "state": "Alberta", "country": "Canada", "address": "Edmonton, AB", "lat": 53.5461, "lng": -113.4938, "timings": {"morning": "06:00", "evening": "19:30"}},
-    {"id": "jk_montreal", "name": "Montreal Jamatkhana", "city": "Montreal", "state": "Quebec", "country": "Canada", "address": "Montreal, QC", "lat": 45.5017, "lng": -73.5673, "timings": {"morning": "06:00", "evening": "19:30"}},
-    {"id": "jk_ottawa", "name": "Ottawa Jamatkhana", "city": "Ottawa", "state": "Ontario", "country": "Canada", "address": "Ottawa, ON", "lat": 45.4215, "lng": -75.6972, "timings": {"morning": "06:00", "evening": "19:30"}}
+    {"id": "jk_delhi", "name": "Delhi Jamatkhana", "city": "New Delhi", "state": "Delhi", "country": "India", "address": "Nizamuddin, New Delhi 110013", "lat": 28.5921, "lng": 77.2416, "timings": {"morning": "05:30", "evening": "19:00"}},
+    {"id": "jk_hyderabad", "name": "Hyderabad Jamatkhana", "city": "Hyderabad", "state": "Telangana", "country": "India", "address": "Banjara Hills, Hyderabad 500034", "lat": 17.4256, "lng": 78.4481, "timings": {"morning": "05:30", "evening": "19:00"}},
+    {"id": "jk_pune", "name": "Pune Jamatkhana", "city": "Pune", "state": "Maharashtra", "country": "India", "address": "Camp Area, Pune 411001", "lat": 18.5074, "lng": 73.8077, "timings": {"morning": "05:30", "evening": "19:00"}},
+    {"id": "jk_surat", "name": "Surat Jamatkhana", "city": "Surat", "state": "Gujarat", "country": "India", "address": "Ring Road, Surat 395002", "lat": 21.1702, "lng": 72.8311, "timings": {"morning": "05:30", "evening": "19:00"}},
+    
+    # USA - East Coast
+    {"id": "jk_nyc_queens", "name": "Headquarters Jamatkhana", "city": "New York", "state": "New York", "country": "USA", "address": "188-15 Union Turnpike, Fresh Meadows, NY 11366", "lat": 40.7282, "lng": -73.7949, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_nyc_manhattan", "name": "Manhattan Jamatkhana", "city": "New York", "state": "New York", "country": "USA", "address": "1 East 28th Street, New York, NY 10016", "lat": 40.7435, "lng": -73.9846, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_nj", "name": "New Jersey Jamatkhana", "city": "Edison", "state": "New Jersey", "country": "USA", "address": "Edison, NJ 08817", "lat": 40.5187, "lng": -74.4121, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_boston", "name": "Boston Jamatkhana", "city": "Boston", "state": "Massachusetts", "country": "USA", "address": "Waltham, MA 02451", "lat": 42.3765, "lng": -71.2356, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_philly", "name": "Philadelphia Jamatkhana", "city": "Philadelphia", "state": "Pennsylvania", "country": "USA", "address": "King of Prussia, PA 19406", "lat": 40.0876, "lng": -75.3821, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_dc", "name": "Washington DC Jamatkhana", "city": "Washington", "state": "DC", "country": "USA", "address": "Silver Spring, MD 20910", "lat": 38.9943, "lng": -77.0266, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_atlanta", "name": "Atlanta Jamatkhana", "city": "Atlanta", "state": "Georgia", "country": "USA", "address": "5765 N Point Pkwy, Alpharetta, GA 30022", "lat": 34.0454, "lng": -84.2807, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_miami", "name": "Miami Jamatkhana", "city": "Miami", "state": "Florida", "country": "USA", "address": "Coral Springs, FL 33065", "lat": 26.2285, "lng": -80.2711, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_tampa", "name": "Tampa Jamatkhana", "city": "Tampa", "state": "Florida", "country": "USA", "address": "Brandon, FL 33511", "lat": 27.9378, "lng": -82.2859, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_orlando", "name": "Orlando Jamatkhana", "city": "Orlando", "state": "Florida", "country": "USA", "address": "Orlando, FL 32819", "lat": 28.4512, "lng": -81.4624, "timings": {"morning": "06:00", "evening": "19:30"}},
+    
+    # USA - South/Central
+    {"id": "jk_houston_main", "name": "Houston Headquarters", "city": "Houston", "state": "Texas", "country": "USA", "address": "12655 Dairy Ashford, Sugar Land, TX 77478", "lat": 29.6196, "lng": -95.6349, "timings": {"morning": "06:00", "evening": "20:00"}},
+    {"id": "jk_houston_katy", "name": "Katy Jamatkhana", "city": "Houston", "state": "Texas", "country": "USA", "address": "Katy, TX 77449", "lat": 29.7858, "lng": -95.8245, "timings": {"morning": "06:00", "evening": "20:00"}},
+    {"id": "jk_dallas_main", "name": "Dallas Headquarters", "city": "Dallas", "state": "Texas", "country": "USA", "address": "3901 W Park Blvd, Plano, TX 75075", "lat": 33.0198, "lng": -96.6989, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_austin", "name": "Austin Jamatkhana", "city": "Austin", "state": "Texas", "country": "USA", "address": "Austin, TX 78729", "lat": 30.4515, "lng": -97.7925, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_chicago_main", "name": "Chicago Headquarters", "city": "Chicago", "state": "Illinois", "country": "USA", "address": "2550 Willow Rd, Glenview, IL 60025", "lat": 42.0856, "lng": -87.7870, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_detroit", "name": "Detroit Jamatkhana", "city": "Detroit", "state": "Michigan", "country": "USA", "address": "Canton, MI 48187", "lat": 42.3087, "lng": -83.4817, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_minneapolis", "name": "Minneapolis Jamatkhana", "city": "Minneapolis", "state": "Minnesota", "country": "USA", "address": "Bloomington, MN 55437", "lat": 44.8408, "lng": -93.2983, "timings": {"morning": "06:00", "evening": "19:30"}},
+    
+    # USA - West Coast
+    {"id": "jk_la_main", "name": "Los Angeles Headquarters", "city": "Los Angeles", "state": "California", "country": "USA", "address": "5959 Triumph St, Commerce, CA 90040", "lat": 33.9716, "lng": -118.1581, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_la_oc", "name": "Orange County Jamatkhana", "city": "Irvine", "state": "California", "country": "USA", "address": "Irvine, CA 92618", "lat": 33.6846, "lng": -117.8265, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_sf_main", "name": "San Francisco Headquarters", "city": "San Francisco", "state": "California", "country": "USA", "address": "36650 Fremont Blvd, Fremont, CA 94536", "lat": 37.5485, "lng": -121.9886, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_sj", "name": "San Jose Jamatkhana", "city": "San Jose", "state": "California", "country": "USA", "address": "San Jose, CA 95134", "lat": 37.4275, "lng": -121.9066, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_sandiego", "name": "San Diego Jamatkhana", "city": "San Diego", "state": "California", "country": "USA", "address": "San Diego, CA 92126", "lat": 32.9157, "lng": -117.1219, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_seattle", "name": "Seattle Jamatkhana", "city": "Seattle", "state": "Washington", "country": "USA", "address": "Kirkland, WA 98034", "lat": 47.7088, "lng": -122.1915, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_portland", "name": "Portland Jamatkhana", "city": "Portland", "state": "Oregon", "country": "USA", "address": "Beaverton, OR 97008", "lat": 45.4654, "lng": -122.8023, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_phoenix", "name": "Phoenix Jamatkhana", "city": "Phoenix", "state": "Arizona", "country": "USA", "address": "Scottsdale, AZ 85260", "lat": 33.5684, "lng": -111.8906, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_denver", "name": "Denver Jamatkhana", "city": "Denver", "state": "Colorado", "country": "USA", "address": "Aurora, CO 80014", "lat": 39.6501, "lng": -104.7854, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_lasvegas", "name": "Las Vegas Jamatkhana", "city": "Las Vegas", "state": "Nevada", "country": "USA", "address": "Henderson, NV 89052", "lat": 36.0123, "lng": -115.0372, "timings": {"morning": "06:00", "evening": "19:30"}},
+    
+    # Canada - Ontario
+    {"id": "jk_toronto_hq", "name": "Toronto Headquarters (Aga Khan Museum)", "city": "Toronto", "state": "Ontario", "country": "Canada", "address": "77 Wynford Dr, North York, ON M3C 1K1", "lat": 43.7267, "lng": -79.3312, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_toronto_don", "name": "Don Mills Jamatkhana", "city": "Toronto", "state": "Ontario", "country": "Canada", "address": "Don Mills, Toronto, ON M3C", "lat": 43.7615, "lng": -79.3479, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_toronto_scar", "name": "Scarborough Jamatkhana", "city": "Toronto", "state": "Ontario", "country": "Canada", "address": "Scarborough, ON M1S", "lat": 43.7945, "lng": -79.2748, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_toronto_miss", "name": "Mississauga Jamatkhana", "city": "Mississauga", "state": "Ontario", "country": "Canada", "address": "Mississauga, ON L5N", "lat": 43.5890, "lng": -79.6441, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_brampton", "name": "Brampton Jamatkhana", "city": "Brampton", "state": "Ontario", "country": "Canada", "address": "Brampton, ON L6Y", "lat": 43.6834, "lng": -79.7663, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_ottawa", "name": "Ottawa Jamatkhana", "city": "Ottawa", "state": "Ontario", "country": "Canada", "address": "Ottawa, ON K2P", "lat": 45.4215, "lng": -75.6972, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_hamilton", "name": "Hamilton Jamatkhana", "city": "Hamilton", "state": "Ontario", "country": "Canada", "address": "Hamilton, ON L8E", "lat": 43.2557, "lng": -79.8711, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_london_on", "name": "London Jamatkhana", "city": "London", "state": "Ontario", "country": "Canada", "address": "London, ON N6A", "lat": 42.9849, "lng": -81.2453, "timings": {"morning": "06:00", "evening": "19:30"}},
+    
+    # Canada - British Columbia
+    {"id": "jk_vancouver_main", "name": "Vancouver Headquarters", "city": "Vancouver", "state": "British Columbia", "country": "Canada", "address": "4010 Canada Way, Burnaby, BC V5G 1G7", "lat": 49.2618, "lng": -123.0009, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_burnaby", "name": "Burnaby Jamatkhana", "city": "Burnaby", "state": "British Columbia", "country": "Canada", "address": "Burnaby, BC V5H", "lat": 49.2488, "lng": -122.9805, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_surrey", "name": "Surrey Jamatkhana", "city": "Surrey", "state": "British Columbia", "country": "Canada", "address": "Surrey, BC V3T", "lat": 49.1913, "lng": -122.8490, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_richmond", "name": "Richmond Jamatkhana", "city": "Richmond", "state": "British Columbia", "country": "Canada", "address": "Richmond, BC V6X", "lat": 49.1666, "lng": -123.1336, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_victoria", "name": "Victoria Jamatkhana", "city": "Victoria", "state": "British Columbia", "country": "Canada", "address": "Victoria, BC V8Z", "lat": 48.4284, "lng": -123.3656, "timings": {"morning": "06:00", "evening": "19:30"}},
+    
+    # Canada - Alberta
+    {"id": "jk_calgary_main", "name": "Calgary Headquarters", "city": "Calgary", "state": "Alberta", "country": "Canada", "address": "1823 33 St SW, Calgary, AB T3C 1P1", "lat": 51.0362, "lng": -114.1154, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_calgary_ne", "name": "Calgary NE Jamatkhana", "city": "Calgary", "state": "Alberta", "country": "Canada", "address": "NE Calgary, AB T3J", "lat": 51.0883, "lng": -113.9794, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_edmonton_main", "name": "Edmonton Headquarters", "city": "Edmonton", "state": "Alberta", "country": "Canada", "address": "11507 101 St NW, Edmonton, AB T5G 2A7", "lat": 53.5565, "lng": -113.5011, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_edmonton_s", "name": "Edmonton South Jamatkhana", "city": "Edmonton", "state": "Alberta", "country": "Canada", "address": "South Edmonton, AB T6H", "lat": 53.4684, "lng": -113.4938, "timings": {"morning": "06:00", "evening": "19:30"}},
+    
+    # Canada - Other Provinces
+    {"id": "jk_montreal", "name": "Montreal Jamatkhana", "city": "Montreal", "state": "Quebec", "country": "Canada", "address": "Brossard, QC J4Z", "lat": 45.4580, "lng": -73.4507, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_winnipeg", "name": "Winnipeg Jamatkhana", "city": "Winnipeg", "state": "Manitoba", "country": "Canada", "address": "Winnipeg, MB R3M", "lat": 49.8538, "lng": -97.1478, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_saskatoon", "name": "Saskatoon Jamatkhana", "city": "Saskatoon", "state": "Saskatchewan", "country": "Canada", "address": "Saskatoon, SK S7L", "lat": 52.1332, "lng": -106.6700, "timings": {"morning": "06:00", "evening": "19:30"}},
+    {"id": "jk_halifax", "name": "Halifax Jamatkhana", "city": "Halifax", "state": "Nova Scotia", "country": "Canada", "address": "Halifax, NS B3K", "lat": 44.6476, "lng": -63.5728, "timings": {"morning": "06:00", "evening": "19:30"}}
 ]
 
 # ============ RAMADAN DIET PLANS ============
