@@ -305,8 +305,8 @@ const IntroScreen = ({ onComplete, user }) => {
       if (res.data.success) {
         toast.success('OTP sent to your WhatsApp!');
         
-        // Show mock OTP for testing
-        if (res.data.mock_otp) {
+        // Only show mock OTP if service is in demo mode
+        if (res.data.mock_otp && res.data.note) {
           setMockOtpGuest(res.data.mock_otp);
           toast.info(`Test OTP: ${res.data.mock_otp}`, { duration: 15000 });
         }
@@ -317,11 +317,7 @@ const IntroScreen = ({ onComplete, user }) => {
         toast.error(res.data.detail || 'Failed to send OTP');
       }
     } catch (error) {
-      // Show mock OTP for dev/testing environment
-      const mockOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      setMockOtpGuest(mockOtp);
-      toast.info(`Test OTP: ${mockOtp}`, { duration: 15000 });
-      setAuthStep('guestOtp');
+      toast.error('Failed to send OTP. Please try again.');
     }
     setLoading(false);
   };
