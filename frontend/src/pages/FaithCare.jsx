@@ -1308,6 +1308,155 @@ const FaithCare = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* WhatsApp Reminder Dialog */}
+        <Dialog open={showWhatsAppReminder} onOpenChange={setShowWhatsAppReminder}>
+          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-700">
+            <DialogHeader>
+              <DialogTitle className="text-white flex items-center gap-2">
+                <Bell className="w-5 h-5 text-green-400" />
+                WhatsApp Reminders
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-6 pt-4">
+              {/* WhatsApp Number Input */}
+              <div>
+                <label className="text-sm text-slate-400 block mb-2">WhatsApp Number</label>
+                <div className="flex gap-2">
+                  <div className="flex items-center bg-slate-700 px-3 rounded-l-lg border border-slate-600">
+                    <span className="text-slate-300 text-sm">+91</span>
+                  </div>
+                  <Input
+                    type="tel"
+                    value={whatsappNumber}
+                    onChange={(e) => setWhatsappNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    placeholder="10 digit number"
+                    className="flex-1 bg-slate-700 border-slate-600 text-white placeholder-slate-500 rounded-l-none"
+                    data-testid="whatsapp-number-input"
+                  />
+                </div>
+              </div>
+
+              {/* Reminder Preferences */}
+              <div className="space-y-4">
+                <p className="text-sm text-slate-400">Choose your reminders:</p>
+                
+                {/* Sehri Reminder */}
+                <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                      <Moon className="w-5 h-5 text-indigo-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-medium">Sehri Reminder</p>
+                      <p className="text-xs text-slate-400">Before dawn meal time</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={enableSehriReminder}
+                    onCheckedChange={setEnableSehriReminder}
+                    data-testid="sehri-toggle"
+                  />
+                </div>
+
+                {/* Iftar Reminder */}
+                <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
+                      <Sunset className="w-5 h-5 text-orange-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-medium">Iftar Reminder</p>
+                      <p className="text-xs text-slate-400">Break fast time alert</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={enableIftarReminder}
+                    onCheckedChange={setEnableIftarReminder}
+                    data-testid="iftar-toggle"
+                  />
+                </div>
+
+                {/* Festival Alerts */}
+                <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
+                      <Calendar className="w-5 h-5 text-amber-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-medium">Festival Alerts</p>
+                      <p className="text-xs text-slate-400">Important dates & events</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={enableFestivalAlerts}
+                    onCheckedChange={setEnableFestivalAlerts}
+                    data-testid="festival-toggle"
+                  />
+                </div>
+              </div>
+
+              {/* Test Reminder Buttons */}
+              {whatsappNumber.length === 10 && (
+                <div className="pt-2">
+                  <p className="text-xs text-slate-500 mb-2">Send test reminder:</p>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => sendTestReminder('sehri')}
+                      className="flex-1 border-indigo-500/50 text-indigo-400 hover:bg-indigo-500/10"
+                    >
+                      <Moon className="w-3 h-3 mr-1" /> Sehri
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => sendTestReminder('iftar')}
+                      className="flex-1 border-orange-500/50 text-orange-400 hover:bg-orange-500/10"
+                    >
+                      <Sunset className="w-3 h-3 mr-1" /> Iftar
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => sendTestReminder('festival')}
+                      className="flex-1 border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
+                    >
+                      <Calendar className="w-3 h-3 mr-1" /> Festival
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Save Button */}
+              <Button
+                onClick={saveWhatsAppReminder}
+                disabled={savingWhatsApp || whatsappNumber.length !== 10}
+                className="w-full h-12 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                data-testid="save-whatsapp-btn"
+              >
+                {savingWhatsApp ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Bell className="w-4 h-4 mr-2" />
+                    {whatsappRegistered ? 'Update Reminders' : 'Activate Reminders'}
+                  </>
+                )}
+              </Button>
+
+              {/* Note */}
+              <p className="text-xs text-slate-500 text-center">
+                Reminders will be sent via WhatsApp. Standard messaging rates may apply.
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AnimatedPage>
   );
