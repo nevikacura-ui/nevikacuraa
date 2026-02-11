@@ -132,7 +132,7 @@ async def send_email_otp(email: str, otp: str, purpose: str = "signup") -> bool:
         </div>
         """
         
-        result = resend.Emails.send({
+        resend.Emails.send({
             "from": SENDER_EMAIL,
             "to": [email],
             "subject": subject,
