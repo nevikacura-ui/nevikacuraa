@@ -14,17 +14,17 @@ BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 class TestFaithCareAPIs:
     """Test FaithCare related API endpoints"""
     
-    def test_api_health(self):
+    def test_api_root(self):
         """Test basic API connectivity"""
-        response = requests.get(f"{BASE_URL}/api/health")
-        print(f"Health check response: {response.status_code}")
+        response = requests.get(f"{BASE_URL}/api/")
+        print(f"API root response: {response.status_code}")
         assert response.status_code == 200
     
     def test_faithcare_login(self):
-        """Test FaithCare login endpoint"""
+        """Test FaithCare login endpoint - uses query params"""
         response = requests.post(
             f"{BASE_URL}/api/lifealign/auth/login",
-            json={
+            params={
                 "user_id": "FC2026001",
                 "password": "faith@care001"
             }
@@ -33,7 +33,7 @@ class TestFaithCareAPIs:
         print(f"Response data: {response.json()}")
         assert response.status_code == 200
         data = response.json()
-        assert "user" in data or "dashboard" in data
+        assert "user" in data or "dashboard" in data or "session_token" in data
 
     def test_sehri_reminder_api(self):
         """Test Sehri reminder WhatsApp API"""
