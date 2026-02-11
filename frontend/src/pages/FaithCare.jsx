@@ -107,6 +107,15 @@ const FaithCare = () => {
   const [dietPlans, setDietPlans] = useState(null);
   const [selectedDietPlan, setSelectedDietPlan] = useState(null);
   
+  // WhatsApp Reminder State
+  const [showWhatsAppReminder, setShowWhatsAppReminder] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [enableSehriReminder, setEnableSehriReminder] = useState(true);
+  const [enableIftarReminder, setEnableIftarReminder] = useState(true);
+  const [enableFestivalAlerts, setEnableFestivalAlerts] = useState(true);
+  const [savingWhatsApp, setSavingWhatsApp] = useState(false);
+  const [whatsappRegistered, setWhatsappRegistered] = useState(false);
+  
   // Setup form state
   const [selectedReligion, setSelectedReligion] = useState('');
   const [selectedCommunity, setSelectedCommunity] = useState('');
