@@ -10,7 +10,7 @@ import {
   Search, Plus, CheckCircle2, UserPlus, AlertTriangle,
   Building2, Stethoscope, IndianRupee, RefreshCw,
   ChevronRight, Loader2, Users, TrendingUp, X, CalendarPlus,
-  Printer, Bluetooth
+  Printer, Bluetooth, Star
 } from 'lucide-react';
 import { lightTap, mediumTap, heavyTap, successPattern, errorPattern, selectionTap } from '@/utils/haptics';
 import thermalPrinter from '@/utils/thermalPrinter';
