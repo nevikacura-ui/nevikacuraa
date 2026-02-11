@@ -691,11 +691,86 @@ async def get_ramadan_diet_plan(condition: str):
     return RAMADAN_DIET_PLANS[condition_key]
 
 @router.get("/ramadan/calendar")
-async def get_ramadan_calendar(location: Optional[str] = "mumbai"):
-    """Get Ramadan calendar with Sehri/Iftar timings"""
-    # For now, return Mumbai timings. Can be extended for other locations.
+async def get_ramadan_calendar(
+    location: Optional[str] = "mumbai",
+    timezone: Optional[str] = None,
+    lat: Optional[float] = None,
+    lng: Optional[float] = None
+):
+    """Get Ramadan calendar with Sehri/Iftar timings based on location/timezone"""
+    
+    # International timezone adjustments (UTC offset from India +5:30)
+    TIMEZONE_ADJUSTMENTS = {
+        "America/New_York": {"offset_hours": -10.5, "city": "New York"},
+        "America/Toronto": {"offset_hours": -10.5, "city": "Toronto"},
+        "America/Chicago": {"offset_hours": -11.5, "city": "Chicago"},
+        "America/Denver": {"offset_hours": -12.5, "city": "Denver"},
+        "America/Los_Angeles": {"offset_hours": -13.5, "city": "Los Angeles"},
+        "America/Vancouver": {"offset_hours": -13.5, "city": "Vancouver"},
+        "America/Edmonton": {"offset_hours": -12.5, "city": "Calgary/Edmonton"},
+        "America/Phoenix": {"offset_hours": -12.5, "city": "Phoenix"},
+        "America/Montreal": {"offset_hours": -10.5, "city": "Montreal"},
+        "Europe/London": {"offset_hours": -5.5, "city": "London"},
+        "Europe/Paris": {"offset_hours": -4.5, "city": "Paris"},
+        "Asia/Dubai": {"offset_hours": -1.5, "city": "Dubai"},
+        "Asia/Singapore": {"offset_hours": 2.5, "city": "Singapore"},
+    }
+    
+    # If GPS coordinates provided, detect timezone
+    detected_city = None
+    if lat and lng:
+        for city_key, city_data in TIMEZONE_DATA.items():
+            distance = haversine_distance(lat, lng, city_data["lat"], city_data["lng"])
+            if distance < 500:
+                timezone = city_data["timezone"]
+                detected_city = city_data["city"]
+                break
+    
+    # If timezone provided, adjust timings
+    if timezone and timezone in TIMEZONE_ADJUSTMENTS:
+        adj = TIMEZONE_ADJUSTMENTS[timezone]
+        adjusted_timings = []
+        
+        for day in RAMADAN_TIMINGS_2026:
+            # Parse original times and adjust
+            sehri_parts = day["sehri_end"].split(":")
+            iftar_parts = day["iftar"].split(":")
+            
+            sehri_hour = int(sehri_parts[0]) + adj["offset_hours"]
+            iftar_hour = int(iftar_parts[0]) + adj["offset_hours"]
+            
+            # Handle day wrap-around
+            if sehri_hour < 0:
+                sehri_hour += 24
+            if sehri_hour >= 24:
+                sehri_hour -= 24
+            if iftar_hour < 0:
+                iftar_hour += 24
+            if iftar_hour >= 24:
+                iftar_hour -= 24
+            
+            adjusted_timings.append({
+                **day,
+                "sehri_end": f"{int(sehri_hour):02d}:{sehri_parts[1]}",
+                "iftar": f"{int(iftar_hour):02d}:{iftar_parts[1]}",
+                "timezone_adjusted": True
+            })
+        
+        return {
+            "location": detected_city or adj["city"],
+            "timezone": timezone,
+            "year": 2026,
+            "ramadan_start": "2026-02-19",
+            "ramadan_end": "2026-03-20",
+            "eid_expected": "2026-03-21",
+            "timings": adjusted_timings,
+            "note": f"Timings adjusted for {timezone}. Please verify with local mosque/Jamatkhana."
+        }
+    
+    # Default Mumbai timings
     return {
         "location": location.title(),
+        "timezone": "Asia/Kolkata",
         "year": 2026,
         "ramadan_start": "2026-02-19",
         "ramadan_end": "2026-03-20",
