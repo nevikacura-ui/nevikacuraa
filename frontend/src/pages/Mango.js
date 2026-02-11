@@ -1155,7 +1155,7 @@ const Proton = () => {
                   <div className="flex items-center gap-4 mb-3">
                     <div className="w-52 h-24 rounded-xl bg-white shadow-lg flex items-center justify-center overflow-hidden p-2">
                       <img 
-                        src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/73lspmb8_Purple%20White%20Modern%20Medical%20Laboratory%20Professional%20Banner%20%28Business%20Card%20%28_20260211_040821_0000.jpg"
+                        src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/1o2w2pps_Purple%20White%20Modern%20Medical%20Laboratory%20Professional%20Banner%20%28Business%20Card%20%28_20260211_062110_0001.png"
                         alt="Mango Health Labs"
                         className="max-w-full max-h-full object-contain"
                         data-testid="mango-hero-logo"
