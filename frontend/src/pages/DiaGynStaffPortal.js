@@ -1241,7 +1241,7 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
 // ============ Appointment Card ============
 // Staff can only CHECK IN and move to WITH DR - CANNOT Complete (doctor does that)
 // Staff can print BILL for completed appointments
-const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, onPrintBill, printerConnected }) => {
+const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, onPrintBill, onSendReview, printerConnected }) => {
   const status = STATUS_STYLES[apt.status] || STATUS_STYLES['Booked'];
   const type = TYPE_STYLES[apt.appointment_type] || TYPE_STYLES['SCHEDULED'];
   
