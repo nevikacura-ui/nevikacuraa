@@ -388,6 +388,19 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
     }
   }, [selectedDate, selectedClinic]);
 
+  // Fetch Google Review stats
+  const fetchReviewStats = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/api/diagyn-staff/review-stats`, {
+        params: { clinic: selectedClinic, date: selectedDate },
+        ...getAuthHeaders()
+      });
+      setReviewStats(res.data);
+    } catch (error) {
+      console.log('Review stats not available');
+    }
+  }, [selectedClinic, selectedDate]);
+
   // Load slots for walk-in (current session only)
   const loadWalkinSlots = useCallback(async () => {
     if (!selectedDoctor || !currentSession) {
