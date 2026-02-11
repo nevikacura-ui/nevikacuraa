@@ -1290,6 +1290,22 @@ const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, onPr
                     <Printer className="w-3 h-3" /> BILL
                   </button>
                 )}
+                {/* Send Review Request Button (pink) for completed appointments */}
+                {apt.status === 'Completed' && !apt.review_request_sent && (apt.patient_phone || apt.mobile) && (
+                  <button onClick={() => { mediumTap(); onSendReview(apt); }}
+                    className="px-2 py-1 rounded-md text-xs font-bold text-white flex items-center gap-1"
+                    style={{ background: '#ec4899' }}
+                    data-testid={`send-review-btn-${apt.booking_id}`}
+                    title="Send Google Review Request">
+                    <Star className="w-3 h-3" /> REVIEW
+                  </button>
+                )}
+                {/* Review Sent Badge */}
+                {apt.status === 'Completed' && apt.review_request_sent && (
+                  <span className="px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1 bg-green-100 text-green-700">
+                    <CheckCircle2 className="w-3 h-3" /> Review Sent
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className="text-xs font-mono px-1.5 py-0.5 rounded" 
