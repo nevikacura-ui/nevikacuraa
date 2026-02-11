@@ -707,6 +707,47 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
     }
   };
 
+  // Send Google Review Request to patient
+  const sendReviewRequest = async (apt) => {
+    if (!apt.patient_phone && !apt.patient_mobile) {
+      toast.error('No phone number available');
+      return;
+    }
+    
+    const phone = apt.patient_phone || apt.patient_mobile;
+    
+    try {
+      const res = await axios.post(`${API}/api/diagyn-staff/whatsapp/send-review-request`, null, {
+        params: {
+          whatsapp_number: phone,
+          patient_name: apt.patient_name || 'Patient',
+          clinic_name: apt.clinic || selectedClinic,
+          doctor_name: apt.doctor || 'Doctor'
+        },
+        ...getAuthHeaders()
+      });
+      
+      if (res.data.success) {
+        toast.success('Review request sent via WhatsApp!');
+        successPattern();
+        // Update local state to show review was sent
+        setAppointments(prev => prev.map(a => 
+          a.booking_id === apt.booking_id 
+            ? { ...a, review_request_sent: true } 
+            : a
+        ));
+        // Refresh review stats
+        fetchReviewStats();
+      } else {
+        toast.error(res.data.error || 'Failed to send review request');
+        errorPattern();
+      }
+    } catch (error) {
+      toast.error('Failed to send review request');
+      errorPattern();
+    }
+  };
+
   // Staff cannot complete appointments - only doctors can (removed completion modal)
 
   // ============ Login Screen ============
