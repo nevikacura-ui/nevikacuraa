@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Mail, Phone, ArrowRight, Loader2, User, X, Calendar, FlaskConical, Package, Lock, MessageCircle, CheckCircle2 } from 'lucide-react';
 import axios from 'axios';
 
-const API = process.env.REACT_APP_BACKEND_URL ? `${process.env.REACT_APP_BACKEND_URL}/api` : '/api';
+const API = process.env.REACT_APP_BACKEND_URL || '';
 
 // Theme colors
 const THEME = {
