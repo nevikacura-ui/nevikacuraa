@@ -1164,7 +1164,7 @@ async def get_review_stats(
     """Get Google Review request statistics for doctor portal"""
     
     if not date:
-        date = datetime.now().strftime("%Y-%m-%d")
+        date = get_ist_date()  # Use IST date for consistency
     
     try:
         # Count today's review requests sent
