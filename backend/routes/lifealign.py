@@ -815,3 +815,413 @@ async def get_ramadan_timings_abroad(city: str):
         "note": "Times are approximate. Please verify with local mosque/Islamic center."
     }
 
+
+
+# ============ EMAIL & WHATSAPP NOTIFICATION ENDPOINTS ============
+
+import resend
+import asyncio
+
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
+SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "Nevika Cura <noreply@nevikacura.com>")
+
+if RESEND_API_KEY:
+    resend.api_key = RESEND_API_KEY
+
+@router.post("/send-credentials-email")
+async def send_faithcare_credentials_email(to_email: str = "nevikacura@gmail.com"):
+    """Send all 30 FaithCare login credentials via email"""
+    
+    if not RESEND_API_KEY:
+        raise HTTPException(status_code=500, detail="Email service not configured")
+    
+    # Build HTML table of credentials
+    credentials_rows = ""
+    for idx, account in enumerate(FAITHCARE_ACCOUNTS, 1):
+        credentials_rows += f"""
+        <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 10px; text-align: center;">{idx}</td>
+            <td style="padding: 10px; font-family: monospace; font-weight: bold;">{account['user_id']}</td>
+            <td style="padding: 10px; font-family: monospace;">{account['password']}</td>
+        </tr>
+        """
+    
+    html_content = f"""
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 700px; margin: 0 auto; background: #f8fafc;">
+        <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
+            <img src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/52amv6l6_file_00000000e2a47209b2515ab5afe77eeb.png" alt="FaithCare" style="height: 80px; margin-bottom: 15px;" />
+            <h1 style="color: #f59e0b; margin: 0; font-size: 28px;">FaithCare</h1>
+            <p style="color: #94a3b8; margin: 10px 0 0 0;">Exclusive Access Credentials</p>
+        </div>
+        
+        <div style="padding: 30px; background: white;">
+            <p style="color: #334155; font-size: 16px; line-height: 1.6;">
+                Below are the <strong>30 exclusive FaithCare access credentials</strong> for your users. 
+                Each user can log in to the FaithCare portal at:
+            </p>
+            
+            <div style="background: #f1f5f9; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+                <a href="https://mango-labs-portal.preview.emergentagent.com/faithcare" style="color: #f59e0b; font-weight: bold; font-size: 16px;">
+                    https://mango-labs-portal.preview.emergentagent.com/faithcare
+                </a>
+            </div>
+            
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <thead>
+                    <tr style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">
+                        <th style="padding: 15px; text-align: center; width: 60px;">#</th>
+                        <th style="padding: 15px; text-align: left;">Access ID</th>
+                        <th style="padding: 15px; text-align: left;">Password</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {credentials_rows}
+                </tbody>
+            </table>
+            
+            <div style="margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                <p style="margin: 0; color: #92400e; font-weight: bold;">Important Notes:</p>
+                <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #92400e;">
+                    <li>These credentials are for exclusive FaithCare portal access</li>
+                    <li>Users can customize their religion, community, and health conditions</li>
+                    <li>Festival reminders and health alerts will be sent based on user profile</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="padding: 20px; text-align: center; background: #1e293b; border-radius: 0 0 12px 12px;">
+            <p style="color: #64748b; margin: 0; font-size: 14px;">
+                &copy; 2026 Nevika Cura - FaithCare | Cultural Health Sync
+            </p>
+        </div>
+    </div>
+    """
+    
+    try:
+        # Send email using Resend
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [to_email],
+            "subject": "FaithCare - 30 Exclusive Access Credentials",
+            "html": html_content
+        }
+        
+        email_result = await asyncio.to_thread(resend.Emails.send, params)
+        
+        return {
+            "success": True,
+            "message": f"Credentials email sent successfully to {to_email}",
+            "email_id": email_result.get("id") if isinstance(email_result, dict) else str(email_result),
+            "credentials_count": len(FAITHCARE_ACCOUNTS)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
+
+
+# ============ WHATSAPP REMINDER SERVICE ============
+
+from services.msg91_whatsapp import send_msg91_whatsapp
+
+# MSG91 WhatsApp Templates for FaithCare
+FAITHCARE_TEMPLATES = {
+    "sehri_reminder": "faithcare_sehri_reminder",
+    "iftar_reminder": "faithcare_iftar_reminder", 
+    "festival_reminder": "faithcare_festival_reminder",
+    "health_alert": "faithcare_health_alert"
+}
+
+@router.post("/whatsapp/register")
+async def register_whatsapp_number(
+    user_id: str,
+    whatsapp_number: str,
+    enable_sehri_reminder: bool = True,
+    enable_iftar_reminder: bool = True,
+    enable_festival_alerts: bool = True
+):
+    """Register WhatsApp number for FaithCare reminders"""
+    
+    # Validate user exists
+    user_found = False
+    for account in FAITHCARE_ACCOUNTS:
+        if account["user_id"] == user_id:
+            user_found = True
+            break
+    
+    if not user_found:
+        raise HTTPException(status_code=404, detail="FaithCare user not found")
+    
+    # Clean phone number
+    clean_number = whatsapp_number.replace("+", "").replace(" ", "").replace("-", "")
+    if not clean_number.startswith("91"):
+        clean_number = "91" + clean_number
+    
+    db = await get_db()
+    
+    # Save/Update WhatsApp preferences
+    await db.faithcare_whatsapp_prefs.update_one(
+        {"user_id": user_id},
+        {"$set": {
+            "user_id": user_id,
+            "whatsapp_number": clean_number,
+            "enable_sehri_reminder": enable_sehri_reminder,
+            "enable_iftar_reminder": enable_iftar_reminder,
+            "enable_festival_alerts": enable_festival_alerts,
+            "updated_at": datetime.utcnow()
+        }},
+        upsert=True
+    )
+    
+    return {
+        "success": True,
+        "message": f"WhatsApp registered for user {user_id}",
+        "whatsapp_number": clean_number,
+        "preferences": {
+            "sehri_reminder": enable_sehri_reminder,
+            "iftar_reminder": enable_iftar_reminder,
+            "festival_alerts": enable_festival_alerts
+        }
+    }
+
+
+@router.post("/whatsapp/send-sehri-reminder")
+async def send_sehri_reminder(
+    whatsapp_number: str,
+    user_name: str = "User",
+    sehri_time: str = "04:30 AM",
+    date_str: str = None
+):
+    """Send Sehri reminder via WhatsApp"""
+    
+    # Clean phone number
+    clean_number = whatsapp_number.replace("+", "").replace(" ", "").replace("-", "")
+    if not clean_number.startswith("91"):
+        clean_number = "91" + clean_number
+    
+    if not date_str:
+        date_str = datetime.now().strftime("%d %b %Y")
+    
+    db = await get_db()
+    
+    # Use MSG91 to send WhatsApp message
+    # Variables: [user_name, sehri_time, date]
+    try:
+        result = await send_msg91_whatsapp(
+            recipient_phone=clean_number,
+            template_name="faithcare_sehri_reminder",
+            variables=[user_name, sehri_time, date_str],
+            db=db,
+            reference_id=f"sehri_{clean_number}_{datetime.now().strftime('%Y%m%d')}",
+            message_type="faithcare_reminder"
+        )
+        
+        return {
+            "success": True,
+            "message": f"Sehri reminder sent to {clean_number}",
+            "reminder": {
+                "type": "sehri",
+                "time": sehri_time,
+                "date": date_str,
+                "user": user_name
+            },
+            "msg91_response": result
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "note": "MSG91 template 'faithcare_sehri_reminder' may need to be registered"
+        }
+
+
+@router.post("/whatsapp/send-iftar-reminder")
+async def send_iftar_reminder(
+    whatsapp_number: str,
+    user_name: str = "User",
+    iftar_time: str = "06:45 PM",
+    date_str: str = None
+):
+    """Send Iftar reminder via WhatsApp"""
+    
+    clean_number = whatsapp_number.replace("+", "").replace(" ", "").replace("-", "")
+    if not clean_number.startswith("91"):
+        clean_number = "91" + clean_number
+    
+    if not date_str:
+        date_str = datetime.now().strftime("%d %b %Y")
+    
+    db = await get_db()
+    
+    try:
+        result = await send_msg91_whatsapp(
+            recipient_phone=clean_number,
+            template_name="faithcare_iftar_reminder",
+            variables=[user_name, iftar_time, date_str],
+            db=db,
+            reference_id=f"iftar_{clean_number}_{datetime.now().strftime('%Y%m%d')}",
+            message_type="faithcare_reminder"
+        )
+        
+        return {
+            "success": True,
+            "message": f"Iftar reminder sent to {clean_number}",
+            "reminder": {
+                "type": "iftar",
+                "time": iftar_time,
+                "date": date_str,
+                "user": user_name
+            },
+            "msg91_response": result
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "note": "MSG91 template 'faithcare_iftar_reminder' may need to be registered"
+        }
+
+
+@router.post("/whatsapp/send-festival-reminder")
+async def send_festival_reminder(
+    whatsapp_number: str,
+    user_name: str = "User",
+    festival_name: str = "Festival",
+    festival_date: str = None,
+    message: str = None
+):
+    """Send important festival/date reminder via WhatsApp"""
+    
+    clean_number = whatsapp_number.replace("+", "").replace(" ", "").replace("-", "")
+    if not clean_number.startswith("91"):
+        clean_number = "91" + clean_number
+    
+    if not festival_date:
+        festival_date = datetime.now().strftime("%d %b %Y")
+    
+    if not message:
+        message = f"Wishing you a blessed {festival_name}!"
+    
+    db = await get_db()
+    
+    try:
+        result = await send_msg91_whatsapp(
+            recipient_phone=clean_number,
+            template_name="faithcare_festival_reminder",
+            variables=[user_name, festival_name, festival_date, message],
+            db=db,
+            reference_id=f"festival_{clean_number}_{datetime.now().strftime('%Y%m%d')}",
+            message_type="faithcare_reminder"
+        )
+        
+        return {
+            "success": True,
+            "message": f"Festival reminder sent to {clean_number}",
+            "reminder": {
+                "type": "festival",
+                "festival": festival_name,
+                "date": festival_date,
+                "user": user_name
+            },
+            "msg91_response": result
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "note": "MSG91 template 'faithcare_festival_reminder' may need to be registered"
+        }
+
+
+@router.get("/whatsapp/user-preferences/{user_id}")
+async def get_whatsapp_preferences(user_id: str):
+    """Get WhatsApp notification preferences for a user"""
+    
+    db = await get_db()
+    prefs = await db.faithcare_whatsapp_prefs.find_one(
+        {"user_id": user_id},
+        {"_id": 0}
+    )
+    
+    if not prefs:
+        return {
+            "user_id": user_id,
+            "registered": False,
+            "message": "No WhatsApp preferences found for this user"
+        }
+    
+    return {
+        "user_id": user_id,
+        "registered": True,
+        "preferences": prefs
+    }
+
+
+@router.post("/whatsapp/bulk-reminder")
+async def send_bulk_reminder(
+    reminder_type: str,  # "sehri", "iftar", "festival"
+    time_str: str = None,
+    festival_name: str = None,
+    message: str = None
+):
+    """Send bulk reminder to all registered FaithCare users"""
+    
+    db = await get_db()
+    
+    # Get all registered users
+    cursor = db.faithcare_whatsapp_prefs.find({}, {"_id": 0})
+    users = await cursor.to_list(length=100)
+    
+    if not users:
+        return {
+            "success": False,
+            "message": "No users registered for WhatsApp reminders"
+        }
+    
+    results = []
+    success_count = 0
+    
+    for user in users:
+        # Check preferences
+        if reminder_type == "sehri" and not user.get("enable_sehri_reminder", True):
+            continue
+        if reminder_type == "iftar" and not user.get("enable_iftar_reminder", True):
+            continue
+        if reminder_type == "festival" and not user.get("enable_festival_alerts", True):
+            continue
+        
+        try:
+            if reminder_type == "sehri":
+                result = await send_sehri_reminder(
+                    whatsapp_number=user["whatsapp_number"],
+                    user_name=user.get("user_name", "User"),
+                    sehri_time=time_str or "04:30 AM"
+                )
+            elif reminder_type == "iftar":
+                result = await send_iftar_reminder(
+                    whatsapp_number=user["whatsapp_number"],
+                    user_name=user.get("user_name", "User"),
+                    iftar_time=time_str or "06:45 PM"
+                )
+            elif reminder_type == "festival":
+                result = await send_festival_reminder(
+                    whatsapp_number=user["whatsapp_number"],
+                    user_name=user.get("user_name", "User"),
+                    festival_name=festival_name or "Important Day",
+                    message=message
+                )
+            else:
+                continue
+            
+            if result.get("success"):
+                success_count += 1
+            results.append({"user_id": user["user_id"], "result": result})
+        except Exception as e:
+            results.append({"user_id": user["user_id"], "error": str(e)})
+    
+    return {
+        "success": True,
+        "reminder_type": reminder_type,
+        "total_users": len(users),
+        "sent_successfully": success_count,
+        "details": results
+    }
+
