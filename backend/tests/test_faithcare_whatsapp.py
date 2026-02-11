@@ -159,8 +159,9 @@ class TestRamadanFeatures:
     
     def test_ramadan_calendar(self):
         """Test Ramadan calendar endpoint"""
-        response = requests.get(f"{BASE_URL}/api/lifealign/ramadan/calendar/2026")
+        response = requests.get(f"{BASE_URL}/api/lifealign/ramadan/calendar")
         print(f"Ramadan calendar response: {response.status_code}")
+        print(f"Response data preview: {str(response.json())[:300]}")
         assert response.status_code == 200
     
     def test_ramadan_diet_plans(self):
@@ -170,6 +171,18 @@ class TestRamadanFeatures:
         assert response.status_code == 200
         data = response.json()
         assert "plans" in data
+    
+    def test_ramadan_timings_2026(self):
+        """Test Ramadan timings for 2026"""
+        response = requests.get(f"{BASE_URL}/api/lifealign/ramadan/timings/2026")
+        print(f"Ramadan timings 2026 response: {response.status_code}")
+        assert response.status_code == 200
+    
+    def test_ramadan_today(self):
+        """Test getting today's Ramadan info"""
+        response = requests.get(f"{BASE_URL}/api/lifealign/ramadan/today")
+        print(f"Ramadan today response: {response.status_code}")
+        assert response.status_code == 200
 
 
 if __name__ == "__main__":
