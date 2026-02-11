@@ -361,7 +361,7 @@ const FaithCare = () => {
       <div className="min-h-screen bg-gradient-to-br from-[#f8f5ff] via-[#fff5f8] to-[#fef5eb] flex items-center justify-center">
         <div className="text-center">
           <img 
-            src="https://static.prod-images.emergentagent.com/jobs/c3c7c000-c0b8-475a-b79b-a8334b822713/images/0ac1573dd2e90bba55ee9cd027f2928351a150a2010fb9f3df041bce1c251223.png"
+            src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/52amv6l6_file_00000000e2a47209b2515ab5afe77eeb.png"
             alt="FaithCare"
             className="h-24 w-auto mx-auto mb-4"
           />
@@ -379,7 +379,7 @@ const FaithCare = () => {
         <Card className="w-full max-w-sm p-6 bg-white/90 border-purple-100 backdrop-blur-xl shadow-xl">
           <div className="text-center mb-6">
             <img 
-              src="https://static.prod-images.emergentagent.com/jobs/c3c7c000-c0b8-475a-b79b-a8334b822713/images/0ac1573dd2e90bba55ee9cd027f2928351a150a2010fb9f3df041bce1c251223.png"
+              src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/52amv6l6_file_00000000e2a47209b2515ab5afe77eeb.png"
               alt="FaithCare"
               className="h-24 w-auto mx-auto mb-4"
             />
@@ -467,7 +467,7 @@ const FaithCare = () => {
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
                 <img 
-                  src="https://static.prod-images.emergentagent.com/jobs/c3c7c000-c0b8-475a-b79b-a8334b822713/images/0ac1573dd2e90bba55ee9cd027f2928351a150a2010fb9f3df041bce1c251223.png"
+                  src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/52amv6l6_file_00000000e2a47209b2515ab5afe77eeb.png"
                   alt="FaithCare"
                   className="h-12 w-auto object-contain"
                 />
@@ -501,7 +501,7 @@ const FaithCare = () => {
             <Card className="p-8 text-center border-2 border-dashed border-amber-300 bg-gradient-to-br from-amber-50 to-slate-50">
               <div className="w-20 h-20 rounded-full bg-slate-900 flex items-center justify-center mx-auto mb-4">
                 <img 
-                  src="https://static.prod-images.emergentagent.com/jobs/c3c7c000-c0b8-475a-b79b-a8334b822713/images/0ac1573dd2e90bba55ee9cd027f2928351a150a2010fb9f3df041bce1c251223.png"
+                  src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/52amv6l6_file_00000000e2a47209b2515ab5afe77eeb.png"
                   alt="FaithCare"
                   className="h-16 w-auto object-contain"
                 />
@@ -796,7 +796,7 @@ const FaithCare = () => {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <img 
-                  src="https://static.prod-images.emergentagent.com/jobs/c3c7c000-c0b8-475a-b79b-a8334b822713/images/0ac1573dd2e90bba55ee9cd027f2928351a150a2010fb9f3df041bce1c251223.png"
+                  src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/52amv6l6_file_00000000e2a47209b2515ab5afe77eeb.png"
                   alt="FaithCare"
                   className="h-8 w-auto object-contain"
                 />
