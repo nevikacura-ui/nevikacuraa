@@ -693,6 +693,8 @@ async def update_appointment_status(
             update_data["follow_up_date"] = data.follow_up_date
         
         # Auto-send Google Review request via WhatsApp
+        # Works for ALL appointment types: SCHEDULED, WALK_IN, EMERGENCY
+        appointment_type = appointment.get("appointment_type", "SCHEDULED")
         if appointment.get("phone"):
             try:
                 from services.msg91_whatsapp import send_msg91_whatsapp
@@ -723,7 +725,7 @@ async def update_appointment_status(
                 )
                 update_data["review_request_sent"] = True
                 update_data["review_request_sent_at"] = datetime.now(timezone.utc).isoformat()
-                logger.info(f"Google Review request sent to {clean_phone} for {clinic_name}")
+                logger.info(f"Google Review request sent to {clean_phone} for {clinic_name} ({appointment_type} appointment)")
             except Exception as e:
                 logger.error(f"Failed to send review request: {e}")
                 update_data["review_request_error"] = str(e)
