@@ -388,10 +388,9 @@ const Home = () => {
       id: 'mango',
       name: 'Mango Health Labs',
       description: 'Book lab tests & health checkups',
-      logo: null,
-      customIcon: 'mango',
+      logo: 'https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/73lspmb8_Purple%20White%20Modern%20Medical%20Laboratory%20Professional%20Banner%20%28Business%20Card%20%28_20260211_040821_0000.jpg',
       path: '/mango',
-      bgColor: '#FFF7ED',
+      bgColor: '#ffffff',
       isDark: false,
       featured: true
     },
@@ -501,10 +500,10 @@ const Home = () => {
       id: 'faithcare',
       name: 'FaithCare',
       description: 'Cultural Health Sync',
-      logo: 'https://static.prod-images.emergentagent.com/jobs/c3c7c000-c0b8-475a-b79b-a8334b822713/images/0ac1573dd2e90bba55ee9cd027f2928351a150a2010fb9f3df041bce1c251223.png',
+      logo: 'https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/52amv6l6_file_00000000e2a47209b2515ab5afe77eeb.png',
       path: '/faithcare',
-      bgColor: '#f8f5ff',
-      isDark: false,
+      bgColor: '#0a0a0a',
+      isDark: true,
       fillLogo: true,
       containImage: true
     }
