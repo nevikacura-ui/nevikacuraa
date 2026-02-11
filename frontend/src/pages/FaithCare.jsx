@@ -375,16 +375,16 @@ const FaithCare = () => {
   // Exclusive Login Screen
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-sm p-6 bg-slate-800/80 border-slate-700 backdrop-blur-xl">
+      <div className="min-h-screen bg-gradient-to-br from-[#f8f5ff] via-[#fff5f8] to-[#fef5eb] flex items-center justify-center p-4">
+        <Card className="w-full max-w-sm p-6 bg-white/90 border-purple-100 backdrop-blur-xl shadow-xl">
           <div className="text-center mb-6">
             <img 
               src="https://static.prod-images.emergentagent.com/jobs/c3c7c000-c0b8-475a-b79b-a8334b822713/images/0ac1573dd2e90bba55ee9cd027f2928351a150a2010fb9f3df041bce1c251223.png"
               alt="FaithCare"
-              className="h-20 w-auto mx-auto mb-4"
+              className="h-24 w-auto mx-auto mb-4"
             />
-            <h1 className="text-xl font-bold text-white mb-1">FaithCare</h1>
-            <p className="text-sm text-slate-400">Exclusive Access Portal</p>
+            <h1 className="text-xl font-bold text-slate-800 mb-1">FaithCare</h1>
+            <p className="text-sm text-slate-500">Exclusive Access Portal</p>
           </div>
           
           <div className="space-y-4">
