@@ -703,10 +703,10 @@ async def update_appointment_status(
                 
                 # Get clinic-specific Google Review link
                 review_links = {
-                    "Pushpa Clinic": "https://g.page/r/CUkMgdq8WxC_EBM/review",
-                    "Amnion Clinic": "https://g.page/r/CfTCLvOyJIHjEBM/review"
+                    "Pushpa Clinic": "https://g.page/r/CZBa3QPJ_1lXECI/review",
+                    "Amnion Clinic": "https://g.page/r/CZyZHBaBV8i_EBI/review"
                 }
-                review_link = review_links.get(clinic_name, "https://g.page/r/diagyn-healthcare/review")
+                review_link = review_links.get(clinic_name, "https://g.page/r/CZBa3QPJ_1lXECI/review")
                 
                 clean_phone = appointment["phone"].replace("+", "").replace(" ", "").replace("-", "")
                 if not clean_phone.startswith("91"):
@@ -987,9 +987,9 @@ async def get_portal_config(staff = Depends(verify_staff)):
 
 # Google Review Links for clinics
 GOOGLE_REVIEW_LINKS = {
-    "Pushpa Clinic": "https://g.page/r/pushpa-clinic/review",
-    "Amnion Clinic": "https://g.page/r/amnion-clinic/review",
-    "DiaGyn Healthcare": "https://g.page/r/diagyn-healthcare/review"
+    "Pushpa Clinic": "https://g.page/r/CZBa3QPJ_1lXECI/review",
+    "Amnion Clinic": "https://g.page/r/CZyZHBaBV8i_EBI/review",
+    "DiaGyn Healthcare": "https://g.page/r/CZBa3QPJ_1lXECI/review"
 }
 
 @router.post("/whatsapp/send-review-request")
