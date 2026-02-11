@@ -1,70 +1,109 @@
-# Nevika Cura Healthcare Platform - PRD
+# Nevika Cura - Healthcare Application PRD
 
 ## Original Problem Statement
-Multi-portal healthcare platform with specialized portals: DiaGyn, Mango Health Labs, Orange Pharmacy, FaithCare, INNERSCORE, and Reneu.
+Healthcare application with multiple modules including FaithCare (cultural health sync) and Mango Health Labs (diagnostics portal).
 
-## Latest Updates (February 11, 2026)
+## Core Modules
 
-### Completed This Session:
+### 1. FaithCare - Cultural Health Sync
+- **Religions Supported**: Hindu, Jain, Muslim (Sunni, Ismaili), Christian
+- **Features**:
+  - Exclusive login portal (30 credentials: FC2026001-FC2026030)
+  - Festival calendar with health alerts
+  - Ramadan 2026 Calendar with Sehri/Iftar timings
+  - Ramadan Diet Plans (Diabetic, Hypertension, Kidney)
+  - Jamatkhana Finder (for Ismaili users)
+  - **WhatsApp Reminders** (Sehri, Iftar, Festival alerts)
+- **Logo**: Black background dove logo
+- **Theme**: Dark slate with amber accents
 
-#### FaithCare Ismaili Features:
-1. **Salgirah Date Fixed** - Changed from December 13 to **October 12**
-2. **Nearest Jamatkhana Finder** - Find Jamatkhanas in India, USA, Canada
-   - Location-based search using GPS
-   - Filter by country
-   - Shows distance in km
-3. **Ramadan Diet Plans** - Specialized diets for:
-   - **Diabetic**: Blood sugar management during fasting
-   - **Hypertension**: Low-sodium diet during Ramadan
-   - **Renal (Kidney)**: CKD-friendly fasting guide
-   - Each plan includes Sehri/Iftar tips, foods to eat/avoid, monitoring guidance
+### 2. Mango Health Labs - Diagnostics Portal
+- **User Features**: Book lab tests, WhatsApp OTP verification (mandatory for guests)
+- **Staff Portal**: 
+  - New Entry form (patient booking with barcode)
+  - Status tracking (Booked → Sample Collected → In Lab → Report Generated)
+  - Cost Calculator
+- **Logo**: White background with mango icon and "Aam logon ki, Khaas Lab" tagline
+- **Theme**: Orange gradient
 
-#### UI Updates:
-1. **Mango Logo Reverted** - Using original image logo with orange theme
-2. **FaithCare Card** - Using dove logo on home page
-3. **Orange Theme** - Mango portal maintains orange gradient header
+## What's Been Implemented
 
-### Ismaili Calendar Events:
-- **Imamat Day**: July 11
-- **Salgirah**: October 12 (Birthday of HH Aga Khan)
-- **Navroz**: March 21 (Persian New Year)
+### Session: February 11, 2026
 
-### Jamatkhana Locations Available:
-**India:** Mumbai (Hasanabad, Khetwadi, Dongri), Ahmedabad, Bangalore, Kolkata
-**USA:** New York, Houston, Chicago, Los Angeles, Atlanta, Dallas, San Francisco
-**Canada:** Toronto, Vancouver, Calgary, Edmonton, Montreal, Ottawa
+#### Completed Features:
+1. ✅ **Email Credentials API** - Sends 30 FaithCare credentials to specified email
+2. ✅ **WhatsApp Reminder System** for FaithCare:
+   - `/api/lifealign/whatsapp/register` - Register user for reminders
+   - `/api/lifealign/whatsapp/send-sehri-reminder` - Sehri alerts
+   - `/api/lifealign/whatsapp/send-iftar-reminder` - Iftar alerts  
+   - `/api/lifealign/whatsapp/send-festival-reminder` - Festival alerts
+   - `/api/lifealign/whatsapp/user-preferences/{user_id}` - Get preferences
+   - `/api/lifealign/whatsapp/bulk-reminder` - Send to all registered users
+3. ✅ **FaithCare UI Updates**:
+   - WhatsApp Reminders card on dashboard
+   - Dialog with toggles for Sehri/Iftar/Festival
+   - Test reminder buttons
+4. ✅ **Logo Updates**:
+   - Mango: New white background logo (all locations)
+   - FaithCare: Dove logo with scale 1.45
+5. ✅ **UI Fixes**:
+   - "in 60 MINS" text changed to white
+   - Homepage service cards styling
 
-## Architecture
-```
-/app
-├── backend
-│   ├── routes/
-│   │   └── lifealign.py       # Jamatkhana & Diet Plan APIs
-│   ├── models/
-│   │   └── lifealign.py       # Jamatkhana DB, Diet Plans data
-│   └── server.py
-├── frontend
-│   └── src/
-│       ├── pages/
-│       │   ├── FaithCare.jsx  # Dashboard with new features
-│       │   ├── Mango.js       # Orange theme, original logo
-│       │   └── Home.js        # FaithCare card with dove logo
-```
+#### MSG91 Templates Created:
+- `faithcare_sehri_remind` - Sehri reminder with "Ya Ali Madad" greeting
+- `faithcare_iftar_reminder` - Iftar reminder
 
-## Key API Endpoints
-- `GET /api/lifealign/jamatkhanas` - Get Jamatkhanas (filter by country, lat/lng)
-- `GET /api/lifealign/jamatkhanas/nearest` - Get nearest Jamatkhana
-- `GET /api/lifealign/ramadan/diet-plans` - All diet plans
-- `GET /api/lifealign/ramadan/diet-plan/{condition}` - Specific plan (diabetic/hypertension/renal)
-- `GET /api/lifealign/ramadan/calendar` - Ramadan calendar with timings
+## Technical Architecture
 
-## Test Credentials
-- **FaithCare**: FC2026001 / faith@care001
-- **Staff Portal**: staff_mango / test
+### Backend: Python/FastAPI
+- `/app/backend/server.py` - Main server
+- `/app/backend/routes/lifealign.py` - FaithCare routes (including WhatsApp)
+- `/app/backend/services/msg91_whatsapp.py` - MSG91 WhatsApp integration
+
+### Frontend: React/Vite
+- `/app/frontend/src/pages/FaithCare.jsx` - FaithCare portal
+- `/app/frontend/src/pages/Mango.js` - Mango Health Labs
+- `/app/frontend/src/pages/MangoLabsStaffPortal.js` - Staff portal
+- `/app/frontend/src/pages/Home.js` - Homepage with service cards
+
+### Database: MongoDB
+- `faithcare_whatsapp_prefs` - WhatsApp notification preferences
+
+## Credentials
+
+### FaithCare (30 accounts)
+- Format: `FC2026001` to `FC2026030`
+- Password format: `faith@care001` to `faith@care030`
+- Email sent to: nevikacura@gmail.com
+
+### Mango Staff Portal
+- Username: `staff_mango`
+- Password: `test`
+
+## Important Notes
+
+### WhatsApp Opt-in Requirement
+Users must first message the WhatsApp Business number (918108888330) before receiving template messages. This is Meta/WhatsApp's anti-spam policy.
+
+### MSG91 Configuration
+- Auth Key: Configured in backend/.env
+- WhatsApp Number: 918108888330
+- Templates must be approved by Meta for delivery
 
 ## Backlog / Future Tasks
-1. Add more Jamatkhana locations globally
-2. Real-time timezone detection for abroad users
-3. Integrate with Google Maps for directions
-4. Add notification reminders for Sehri/Iftar times
-5. Expand diet plans to other fasting traditions (Hindu, Jain, Christian)
+
+### P1 - High Priority
+- [ ] Real-time timezone detection for Sehri/Iftar (international users)
+- [ ] GPS integration for Jamatkhana finder
+- [ ] Add more Jamatkhana locations (USA/Canada)
+
+### P2 - Medium Priority
+- [ ] Clean up user profile page (remove theme toggle)
+- [ ] Camera-based barcode scanning for Staff Portal
+- [ ] Full end-to-end Cashfree payment testing
+
+### P3 - Low Priority
+- [ ] Sehri/Iftar push notifications (Firebase)
+- [ ] Backend modularization (Flask Blueprints)
+- [ ] Database migration (in-memory → persistent)
