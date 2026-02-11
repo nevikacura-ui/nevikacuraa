@@ -943,6 +943,7 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
                     onWithDoctor={() => updateStatus(apt.id, 'WithDoctor')}
                     onReprint={reprintToken}
                     onPrintBill={printBill}
+                    onSendReview={sendReviewRequest}
                     printerConnected={printerConnected} />
                 ))}
               </div>
