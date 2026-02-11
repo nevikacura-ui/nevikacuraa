@@ -121,6 +121,9 @@ const DiaGynStaffPortal = () => {
   const [foundPatient, setFoundPatient] = useState(null);
   const [searchingPatient, setSearchingPatient] = useState(false);
 
+  // Google Review Stats
+  const [reviewStats, setReviewStats] = useState({ sent: 0, today: 0 });
+
   // Bluetooth Printer state
   const [printerConnected, setPrinterConnected] = useState(false);
   const [printerName, setPrinterName] = useState('');
