@@ -266,13 +266,18 @@ const FaithCare = () => {
       return;
     }
     
+    // Auto-detect timezone
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
     try {
       await axios.post(`${API}/api/lifealign/user/profile?user_id=${authenticatedUser?.user_id}`, {
         religion_id: selectedReligion,
         community_id: selectedCommunity || null,
         location_type: locationType,
         chronic_conditions: chronicConditions,
-        fasting_preference: fastingPreference
+        fasting_preference: fastingPreference,
+        timezone: userTimezone,
+        country: locationType === 'ABROAD' ? 'International' : 'India'
       });
       
       toast.success('Profile saved successfully');
