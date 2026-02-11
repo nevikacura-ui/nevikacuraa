@@ -1139,20 +1139,17 @@ const Home = () => {
                   service.isDark ? 'bg-white/10' : 'bg-gray-100/50'
                 }`}></div>
                 
-                <div className="relative flex items-center p-5 sm:p-6 min-h-[140px]">
-                  <div className="flex-shrink-0 mr-4 sm:mr-5 w-28 sm:w-36 flex items-center justify-center">
-                    {service.customIcon === 'mango' ? (
-                      <div className="w-24 h-24 bg-white rounded-2xl shadow-lg p-3 flex flex-col items-center justify-center border border-orange-100">
-                        {/* Mango fruit icon */}
-                        <div className="relative mb-1">
-                          <div className="w-12 h-14 bg-gradient-to-b from-yellow-400 via-orange-400 to-orange-500 rounded-full rounded-tl-[40%] rounded-tr-[60%]"></div>
-                          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 flex">
-                            <div className="w-2.5 h-4 bg-green-500 rounded-full transform -rotate-12 -mr-0.5"></div>
-                            <div className="w-2.5 h-4 bg-green-600 rounded-full transform rotate-12"></div>
-                          </div>
-                        </div>
-                        <p className="text-[9px] font-bold text-orange-600 tracking-tight">MANGO</p>
-                        <p className="text-[7px] text-slate-500 tracking-wider">HEALTH LABS</p>
+                <div className="relative flex items-center p-5 sm:p-6 min-h-[140px] lg:min-h-[160px]">
+                  <div className="flex-shrink-0 mr-4 sm:mr-5 w-28 sm:w-36 lg:w-44 flex items-center justify-center">
+                    {service.id === 'mango' ? (
+                      <div className="w-28 h-28 sm:w-32 sm:h-32 lg:w-40 lg:h-36 bg-white rounded-2xl shadow-lg flex items-center justify-center p-3 border border-gray-100">
+                        <img 
+                          src={service.logo}
+                          alt={service.name}
+                          className="max-w-full max-h-full object-contain"
+                          data-testid={`service-logo-featured-${service.id}`}
+                          loading="eager"
+                        />
                       </div>
                     ) : (
                       <img 
@@ -1166,13 +1163,13 @@ const Home = () => {
                   </div>
                   <div className="flex-1">
                     <h3 
-                      className={`text-lg sm:text-xl font-bold mb-1 tracking-tight ${service.isDark ? 'text-white' : 'text-slate-800'}`}
+                      className={`text-lg sm:text-xl lg:text-2xl font-bold mb-1 tracking-tight ${service.isDark ? 'text-white' : 'text-slate-800'}`}
                       style={{ fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.02em' }}
                     >
                       {service.name}
                     </h3>
                     <p 
-                      className={`text-sm mb-3 ${service.isDark ? 'text-white/70' : 'text-slate-500'}`}
+                      className={`text-sm lg:text-base mb-3 ${service.isDark ? 'text-white/70' : 'text-slate-500'}`}
                       style={{ fontFamily: 'DM Sans, sans-serif' }}
                     >
                       {service.description}
@@ -1180,7 +1177,7 @@ const Home = () => {
                     <Button
                       onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                       size="sm"
-                      className={`rounded-xl font-semibold transition-all duration-300 ${
+                      className={`rounded-xl font-semibold transition-all duration-300 lg:px-6 lg:py-2 ${
                         service.isDark 
                           ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' 
                           : 'bg-teal-500 hover:bg-teal-600 text-white'
