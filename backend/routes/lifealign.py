@@ -733,7 +733,7 @@ async def get_ramadan_calendar(
         
         for day in RAMADAN_TIMINGS_2026:
             # Parse original times and adjust
-            sehri_parts = day["sehri_end"].split(":")
+            sehri_parts = day["sehri"].split(":")
             iftar_parts = day["iftar"].split(":")
             
             sehri_hour = int(sehri_parts[0]) + adj["offset_hours"]
@@ -751,7 +751,7 @@ async def get_ramadan_calendar(
             
             adjusted_timings.append({
                 **day,
-                "sehri_end": f"{int(sehri_hour):02d}:{sehri_parts[1]}",
+                "sehri": f"{int(sehri_hour):02d}:{sehri_parts[1]}",
                 "iftar": f"{int(iftar_hour):02d}:{iftar_parts[1]}",
                 "timezone_adjusted": True
             })
