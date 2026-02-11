@@ -1194,7 +1194,7 @@ const Home = () => {
           </div>
           
           {/* Secondary Services - 2x4 Grid (Evara, Glydex, Alyne, Thrive360, Serena, Corvia, Reneu, Senova) */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 lg:gap-6 mt-6">
             {secondaryServices.map((service) => (
               <div
                 key={service.id}
@@ -1206,12 +1206,12 @@ const Home = () => {
                 data-testid={`service-card-${service.id}`}
               >
                 {/* Card Content */}
-                <div className="h-[200px] sm:h-[220px] flex flex-col">
+                <div className="h-[200px] sm:h-[220px] lg:h-[260px] flex flex-col">
                   {/* Logo Section - Fills the card */}
                   <div className="flex-1 overflow-hidden">
                     {service.useIcon ? (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Users className="w-16 h-16 sm:w-20 sm:h-20 text-white" />
+                        <Users className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 text-white" />
                       </div>
                     ) : (
                       <img 
@@ -1231,11 +1231,11 @@ const Home = () => {
                   </div>
                   
                   {/* Explore Button - Fixed at bottom with gradient */}
-                  <div className="p-3 flex-shrink-0">
+                  <div className="p-3 lg:p-4 flex-shrink-0">
                     <Button
                       onClick={(e) => { e.stopPropagation(); navigate(service.path); }}
                       data-testid={`service-button-${service.id}`}
-                      className="w-full rounded-xl font-semibold transition-all duration-300 shadow-lg py-2 text-white border-0"
+                      className="w-full rounded-xl font-semibold transition-all duration-300 shadow-lg py-2 lg:py-3 text-white border-0"
                       style={{
                         background: service.isDark 
                           ? 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%)' 
