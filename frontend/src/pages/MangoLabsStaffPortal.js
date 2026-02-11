@@ -294,17 +294,14 @@ const MangoLabsStaffPortal = () => {
       <div className="min-h-screen bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center p-4">
         <Card className="w-full max-w-md p-8 shadow-2xl">
           <div className="text-center mb-8">
-            {/* Mango Logo */}
-            <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-2xl shadow-lg p-3 flex flex-col items-center justify-center border border-orange-100">
-              <div className="relative mb-1">
-                <div className="w-12 h-14 bg-gradient-to-b from-yellow-400 via-orange-400 to-orange-500 rounded-full rounded-tl-[40%] rounded-tr-[60%]"></div>
-                <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 flex">
-                  <div className="w-2.5 h-4 bg-green-500 rounded-full transform -rotate-12 -mr-0.5"></div>
-                  <div className="w-2.5 h-4 bg-green-600 rounded-full transform rotate-12"></div>
-                </div>
-              </div>
-              <p className="text-[9px] font-bold text-orange-600 tracking-tight">MANGO</p>
-              <p className="text-[7px] text-slate-500 tracking-wider">HEALTH LABS</p>
+            {/* Mango Logo - Enlarged Rectangular */}
+            <div className="w-48 h-24 mx-auto mb-4 bg-white rounded-2xl shadow-lg overflow-hidden border border-orange-100">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/73lspmb8_Purple%20White%20Modern%20Medical%20Laboratory%20Professional%20Banner%20%28Business%20Card%20%28_20260211_040821_0000.jpg"
+                alt="Mango Health Labs"
+                className="w-full h-full object-contain p-2"
+                data-testid="mango-staff-login-logo"
+              />
             </div>
             <h1 className="text-2xl font-bold text-slate-800">Mango Health Labs</h1>
             <p className="text-slate-500">Staff Portal</p>
@@ -331,16 +328,14 @@ const MangoLabsStaffPortal = () => {
           <div className="flex items-center gap-3">
             <button onClick={() => navigate('/')} className="p-2 hover:bg-white/10 rounded-lg"><ArrowLeft className="w-5 h-5" /></button>
             {/* Mango Logo */}
-            <div className="w-11 h-11 bg-white rounded-lg p-1.5 flex flex-col items-center justify-center">
-              <div className="relative">
-                <div className="w-6 h-7 bg-gradient-to-b from-yellow-400 via-orange-400 to-orange-500 rounded-full rounded-tl-[40%] rounded-tr-[60%]"></div>
-                <div className="absolute -top-1 left-1/2 -translate-x-1/2 flex">
-                  <div className="w-1.5 h-2 bg-green-500 rounded-full transform -rotate-12"></div>
-                  <div className="w-1.5 h-2 bg-green-600 rounded-full transform rotate-12"></div>
-                </div>
-              </div>
+            <div className="w-24 h-12 bg-white rounded-lg overflow-hidden">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/73lspmb8_Purple%20White%20Modern%20Medical%20Laboratory%20Professional%20Banner%20%28Business%20Card%20%28_20260211_040821_0000.jpg"
+                alt="Mango Health Labs"
+                className="w-full h-full object-contain p-1"
+              />
             </div>
-            <div><h1 className="font-bold text-lg">Mango Health Labs</h1><p className="text-xs text-orange-100">{staffInfo?.name || 'Staff'}</p></div>
+            <div><h1 className="font-bold text-lg">Staff Portal</h1><p className="text-xs text-orange-100">{staffInfo?.name || 'Staff'}</p></div>
           </div>
           <div className="flex items-center gap-2"><button onClick={() => { fetchBookings(); fetchTests(); fetchStats(); }} className="p-2 hover:bg-white/10 rounded-lg"><RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} /></button><button onClick={handleLogout} className="p-2 hover:bg-white/10 rounded-lg"><LogOut className="w-5 h-5" /></button></div>
         </div>
