@@ -691,6 +691,42 @@ async def update_appointment_status(
             update_data["completion_notes"] = data.notes
         if data.follow_up_date:
             update_data["follow_up_date"] = data.follow_up_date
+        
+        # Auto-send Google Review request via WhatsApp
+        if appointment.get("phone"):
+            try:
+                from services.msg91_whatsapp import send_msg91_whatsapp
+                
+                patient_name = appointment.get("patient_name", "Patient")
+                doctor_name = appointment.get("doctor", "Doctor")
+                clinic_name = appointment.get("clinic", "DiaGyn Healthcare")
+                
+                # Get clinic-specific Google Review link
+                review_links = {
+                    "Pushpa Clinic": "https://g.page/r/CUkMgdq8WxC_EBM/review",
+                    "Amnion Clinic": "https://g.page/r/CfTCLvOyJIHjEBM/review"
+                }
+                review_link = review_links.get(clinic_name, "https://g.page/r/diagyn-healthcare/review")
+                
+                clean_phone = appointment["phone"].replace("+", "").replace(" ", "").replace("-", "")
+                if not clean_phone.startswith("91"):
+                    clean_phone = "91" + clean_phone
+                
+                # Send review request
+                await send_msg91_whatsapp(
+                    recipient_phone=clean_phone,
+                    template_name="diagyn_google_review",
+                    variables=[patient_name, doctor_name, clinic_name, review_link],
+                    db=db,
+                    reference_id=f"review_{appointment_id}_{datetime.now().strftime('%Y%m%d%H%M')}",
+                    message_type="google_review_request"
+                )
+                update_data["review_request_sent"] = True
+                update_data["review_request_sent_at"] = datetime.now(timezone.utc).isoformat()
+                logger.info(f"Google Review request sent to {clean_phone} for {clinic_name}")
+            except Exception as e:
+                logger.error(f"Failed to send review request: {e}")
+                update_data["review_request_error"] = str(e)
     
     await db.appointments.update_one(
         {"id": appointment_id},
