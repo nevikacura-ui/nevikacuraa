@@ -1140,12 +1140,12 @@ const Home = () => {
                 }`}></div>
                 
                 <div className="relative flex items-center p-5 sm:p-6 min-h-[140px] lg:min-h-[160px]">
-                  <div className="flex-shrink-0 mr-4 sm:mr-5 w-28 sm:w-36 lg:w-44 flex items-center justify-center">
+                  <div className={`flex-shrink-0 mr-4 sm:mr-5 flex items-center justify-center ${service.id === 'mango' ? 'w-32 sm:w-40 lg:w-48 h-20 sm:h-24 lg:h-28 bg-white rounded-xl shadow-sm' : 'w-28 sm:w-36 lg:w-44'}`}>
                     <img 
                       src={service.logo} 
                       alt={service.name} 
-                      className={`w-full h-auto object-contain transition-transform duration-300 group-hover:scale-110 ${service.containImage ? 'rounded-xl' : ''}`}
-                      style={service.id === 'mango' ? { transform: 'scale(1.3)' } : {}}
+                      className={`object-contain transition-transform duration-300 group-hover:scale-110 ${service.containImage ? 'rounded-xl' : ''} ${service.id === 'mango' ? 'max-w-[90%] max-h-[85%]' : 'w-full h-auto'}`}
+                      style={service.id === 'mango' ? { transform: 'scale(1.35)' } : {}}
                       data-testid={`service-logo-featured-${service.id}`}
                       loading="eager"
                     />
