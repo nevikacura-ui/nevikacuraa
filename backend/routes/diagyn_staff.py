@@ -15,6 +15,30 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/diagyn-staff", tags=["DiaGyn Staff Portal"])
 
+# IST Timezone Helper
+IST_OFFSET = timedelta(hours=5, minutes=30)
+
+def get_ist_now():
+    """Get current time in IST"""
+    return datetime.now(timezone.utc) + IST_OFFSET
+
+def get_ist_date():
+    """Get current date in IST (YYYY-MM-DD)"""
+    return get_ist_now().strftime("%Y-%m-%d")
+
+def get_ist_datetime():
+    """Get current datetime in IST (ISO format)"""
+    return get_ist_now().isoformat()
+
+def format_ist_display(dt_str):
+    """Format datetime for display (DD-MM-YYYY HH:MM AM/PM)"""
+    try:
+        dt = datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
+        ist_dt = dt + IST_OFFSET
+        return ist_dt.strftime("%d-%m-%Y %I:%M %p")
+    except:
+        return dt_str
+
 # Database and config - injected from server.py
 db = None
 JWT_SECRET = None
