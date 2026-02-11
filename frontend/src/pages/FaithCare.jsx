@@ -241,30 +241,6 @@ const FaithCare = () => {
     toast.success('Logged out successfully');
   };
 
-  const initializeData = async (userId) => {
-    setLoading(true);
-    try {
-      // Initialize FaithCare data (seed data)
-      await axios.post(`${API}/api/lifealign/init`);
-      
-      // Fetch religions
-      const religionsRes = await axios.get(`${API}/api/lifealign/religions`);
-      setReligions(religionsRes.data);
-      
-      // Fetch Ramadan timings
-      try {
-        const ramadanRes = await axios.get(`${API}/api/lifealign/ramadan/timings/2026`);
-        setRamadanTimings(ramadanRes.data);
-      } catch (e) {}
-      
-      // Fetch dashboard
-      await fetchDashboard(userId);
-    } catch (error) {
-      console.error('Error initializing FaithCare:', error);
-    }
-    setLoading(false);
-  };
-
   const fetchDashboard = async (userId) => {
     try {
       const res = await axios.get(`${API}/api/lifealign/dashboard/${userId || authenticatedUser?.user_id}`);
