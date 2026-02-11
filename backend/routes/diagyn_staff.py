@@ -1103,3 +1103,53 @@ async def send_bulk_review_requests(
         "details": results
     }
 
+
+
+@router.get("/review-stats")
+async def get_review_stats(
+    clinic: str = "Pushpa Clinic",
+    date: str = None
+):
+    """Get Google Review request statistics for doctor portal"""
+    
+    if not date:
+        date = datetime.now().strftime("%Y-%m-%d")
+    
+    try:
+        # Count today's review requests sent
+        today_reviews = await db.diagyn_appointments.count_documents({
+            "clinic": clinic,
+            "date": date,
+            "review_request_sent": True
+        })
+        
+        # Count total reviews sent this week
+        week_start = (datetime.strptime(date, "%Y-%m-%d") - timedelta(days=7)).strftime("%Y-%m-%d")
+        weekly_reviews = await db.diagyn_appointments.count_documents({
+            "clinic": clinic,
+            "date": {"$gte": week_start, "$lte": date},
+            "review_request_sent": True
+        })
+        
+        # Count total completed appointments today
+        total_completed = await db.diagyn_appointments.count_documents({
+            "clinic": clinic,
+            "date": date,
+            "status": "Completed"
+        })
+        
+        return {
+            "today": today_reviews,
+            "weekly": weekly_reviews,
+            "total_completed_today": total_completed,
+            "review_rate": round((today_reviews / total_completed * 100) if total_completed > 0 else 0, 1)
+        }
+    except Exception as e:
+        return {
+            "today": 0,
+            "weekly": 0,
+            "total_completed_today": 0,
+            "review_rate": 0,
+            "error": str(e)
+        }
+
