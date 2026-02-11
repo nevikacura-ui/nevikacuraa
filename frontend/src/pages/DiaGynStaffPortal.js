@@ -464,6 +464,11 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
     if (isAuthenticated && activeView === 'summary') loadSummaries();
   }, [isAuthenticated, activeView, loadSummaries]);
 
+  // Load review stats when appointments view is active
+  useEffect(() => {
+    if (isAuthenticated && activeView === 'appointments') fetchReviewStats();
+  }, [isAuthenticated, activeView, fetchReviewStats]);
+
   useEffect(() => {
     if (isAuthenticated && activeView === 'walkin' && selectedDoctor) {
       loadWalkinSlots();
