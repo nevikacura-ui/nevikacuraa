@@ -691,6 +691,37 @@ const FaithCare = () => {
                 </Card>
               )}
 
+              {/* WhatsApp Reminders Card */}
+              <Card 
+                className={`p-4 border-0 cursor-pointer hover:shadow-lg transition-all ${
+                  whatsappRegistered 
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-600' 
+                    : 'bg-gradient-to-r from-slate-700 to-slate-800'
+                }`}
+                onClick={() => setShowWhatsAppReminder(true)}
+                data-testid="whatsapp-reminder-card"
+              >
+                <div className="flex items-center justify-between text-white">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                      <Bell className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold flex items-center gap-2">
+                        WhatsApp Reminders
+                        {whatsappRegistered && <CheckCircle2 className="w-4 h-4 text-green-200" />}
+                      </h3>
+                      <p className="text-sm opacity-80">
+                        {whatsappRegistered 
+                          ? 'Sehri • Iftar • Festival Alerts Active' 
+                          : 'Get Sehri, Iftar & Festival reminders'}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5" />
+                </div>
+              </Card>
+
               {/* Health Readiness Score */}
               <Card className="p-6 border-0 shadow-lg">
                 <div className="flex items-center justify-between mb-4">
