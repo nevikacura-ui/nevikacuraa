@@ -505,7 +505,8 @@ const Home = () => {
       bgColor: '#0a0a0a',
       isDark: true,
       fillLogo: true,
-      containImage: true
+      containImage: false,
+      scale: 1.15
     }
   ];
   
