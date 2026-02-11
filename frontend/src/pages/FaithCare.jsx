@@ -307,8 +307,8 @@ const FaithCare = () => {
     );
   };
 
-  // WhatsApp Reminder Functions
-  const checkWhatsAppRegistration = async () => {
+  // WhatsApp Reminder Functions - memoized to fix ESLint warning
+  const checkWhatsAppRegistration = useCallback(async () => {
     if (!authenticatedUser?.user_id) return;
     try {
       const res = await axios.get(`${API}/api/lifealign/whatsapp/user-preferences/${authenticatedUser.user_id}`);
@@ -322,7 +322,7 @@ const FaithCare = () => {
     } catch (error) {
       console.log('WhatsApp preferences not found');
     }
-  };
+  }, [authenticatedUser?.user_id]);
 
   const saveWhatsAppReminder = async () => {
     if (!whatsappNumber || whatsappNumber.length < 10) {
