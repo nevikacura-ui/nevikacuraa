@@ -1151,22 +1151,15 @@ const Proton = () => {
               <div className="flex items-center justify-between">
                 {/* Left Content */}
                 <div className="flex-1 text-white z-10">
-                  {/* Mango Health Labs Logo */}
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-14 h-14 rounded-xl bg-white shadow-lg flex items-center justify-center p-2">
-                      {/* Mango fruit icon */}
-                      <div className="relative">
-                        <div className="w-9 h-10 bg-gradient-to-b from-yellow-400 via-orange-400 to-orange-500 rounded-full rounded-tl-[40%] rounded-tr-[60%]"></div>
-                        <div className="absolute -top-1 left-1/2 -translate-x-1/2 flex">
-                          <div className="w-2 h-3 bg-green-500 rounded-full transform -rotate-12 -mr-0.5"></div>
-                          <div className="w-2 h-3 bg-green-600 rounded-full transform rotate-12"></div>
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-bold" style={{ fontFamily: 'Outfit, sans-serif' }}>Mango Health Labs</h2>
-                      <p className="text-xs text-white/80">Your Trusted Diagnostic Partner</p>
-                      <p className="text-[10px] text-orange-200 italic mt-0.5">Aam logon ki, Khaas Lab.</p>
+                  {/* Mango Health Labs Logo - Enlarged Rectangular */}
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="w-40 h-20 rounded-xl bg-white shadow-lg flex items-center justify-center overflow-hidden">
+                      <img 
+                        src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/73lspmb8_Purple%20White%20Modern%20Medical%20Laboratory%20Professional%20Banner%20%28Business%20Card%20%28_20260211_040821_0000.jpg"
+                        alt="Mango Health Labs"
+                        className="w-full h-full object-contain p-1"
+                        data-testid="mango-hero-logo"
+                      />
                     </div>
                   </div>
                   <h1 className="text-xl md:text-2xl font-bold mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
