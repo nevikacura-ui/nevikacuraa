@@ -731,28 +731,58 @@ async def get_ramadan_calendar(
         adj = TIMEZONE_ADJUSTMENTS[timezone]
         adjusted_timings = []
         
+        # Note: These are approximate times for the international city
+        # In reality, Sehri/Iftar times depend on local sunrise/sunset
+        # These are approximations based on typical Ramadan times for each region
+        
+        # Approximate Sehri/Iftar times for major regions during late Feb/March
+        REGIONAL_TIMINGS = {
+            "America/New_York": {"sehri_base": "05:15", "iftar_base": "18:05"},
+            "America/Toronto": {"sehri_base": "05:30", "iftar_base": "18:10"},
+            "America/Chicago": {"sehri_base": "05:25", "iftar_base": "18:00"},
+            "America/Denver": {"sehri_base": "05:20", "iftar_base": "17:55"},
+            "America/Los_Angeles": {"sehri_base": "05:10", "iftar_base": "18:00"},
+            "America/Vancouver": {"sehri_base": "05:25", "iftar_base": "18:10"},
+            "America/Edmonton": {"sehri_base": "05:35", "iftar_base": "18:05"},
+            "America/Phoenix": {"sehri_base": "05:15", "iftar_base": "18:10"},
+            "America/Montreal": {"sehri_base": "05:25", "iftar_base": "18:05"},
+            "Europe/London": {"sehri_base": "05:30", "iftar_base": "17:45"},
+            "Europe/Paris": {"sehri_base": "06:00", "iftar_base": "18:30"},
+            "Asia/Dubai": {"sehri_base": "05:20", "iftar_base": "18:20"},
+            "Asia/Singapore": {"sehri_base": "05:50", "iftar_base": "19:10"},
+        }
+        
+        regional = REGIONAL_TIMINGS.get(timezone, {"sehri_base": "05:30", "iftar_base": "18:00"})
+        sehri_base = regional["sehri_base"]
+        iftar_base = regional["iftar_base"]
+        
         for day in RAMADAN_TIMINGS_2026:
-            # Parse original times and adjust
-            sehri_parts = day["sehri"].split(":")
-            iftar_parts = day["iftar"].split(":")
+            # Adjust times slightly based on day of Ramadan (gets later as days progress)
+            day_num = day["day"]
+            sehri_parts = sehri_base.split(":")
+            iftar_parts = iftar_base.split(":")
             
-            sehri_hour = int(sehri_parts[0]) + adj["offset_hours"]
-            iftar_hour = int(iftar_parts[0]) + adj["offset_hours"]
+            # Sehri gets earlier, Iftar gets later as Ramadan progresses
+            sehri_min_adj = -(day_num // 3)  # Gets earlier
+            iftar_min_adj = (day_num // 3)   # Gets later
             
-            # Handle day wrap-around
-            if sehri_hour < 0:
-                sehri_hour += 24
-            if sehri_hour >= 24:
-                sehri_hour -= 24
-            if iftar_hour < 0:
-                iftar_hour += 24
-            if iftar_hour >= 24:
-                iftar_hour -= 24
+            sehri_hour = int(sehri_parts[0])
+            sehri_min = int(sehri_parts[1]) + sehri_min_adj
+            iftar_hour = int(iftar_parts[0])
+            iftar_min = int(iftar_parts[1]) + iftar_min_adj
+            
+            # Handle minute overflow
+            if sehri_min < 0:
+                sehri_min += 60
+                sehri_hour -= 1
+            if iftar_min >= 60:
+                iftar_min -= 60
+                iftar_hour += 1
             
             adjusted_timings.append({
                 **day,
-                "sehri": f"{int(sehri_hour):02d}:{sehri_parts[1]}",
-                "iftar": f"{int(iftar_hour):02d}:{iftar_parts[1]}",
+                "sehri": f"{sehri_hour:02d}:{sehri_min:02d}",
+                "iftar": f"{iftar_hour:02d}:{iftar_min:02d}",
                 "timezone_adjusted": True
             })
         
@@ -764,7 +794,7 @@ async def get_ramadan_calendar(
             "ramadan_end": "2026-03-20",
             "eid_expected": "2026-03-21",
             "timings": adjusted_timings,
-            "note": f"Timings adjusted for {timezone}. Please verify with local mosque/Jamatkhana."
+            "note": f"Timings for {adj['city']} ({timezone}). Please verify with local mosque/Jamatkhana for exact times."
         }
     
     # Default Mumbai timings
