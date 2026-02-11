@@ -130,39 +130,27 @@ class TestFaithCareAPIs:
 
 
 class TestMangoStaffPortal:
-    """Test Mango Staff Portal API endpoints"""
+    """Test Mango Staff Portal API endpoints - routes under /api/mango/"""
     
-    def test_mango_staff_login(self):
-        """Test Mango Staff Portal login"""
-        response = requests.post(
-            f"{BASE_URL}/api/mango-staff/auth/login",
-            json={
-                "username": "staff_mango",
-                "password": "test"
-            }
-        )
-        print(f"Mango staff login response: {response.status_code}")
-        print(f"Response data: {response.json()}")
-        assert response.status_code == 200
-        data = response.json()
-        assert data.get("success") == True
-    
-    def test_mango_staff_bookings(self):
-        """Test fetching Mango staff bookings"""
-        # First login to get auth
-        login_resp = requests.post(
-            f"{BASE_URL}/api/mango-staff/auth/login",
-            json={"username": "staff_mango", "password": "test"}
-        )
-        
-        response = requests.get(f"{BASE_URL}/api/mango-staff/bookings")
+    def test_mango_bookings(self):
+        """Test fetching Mango bookings"""
+        response = requests.get(f"{BASE_URL}/api/mango/bookings")
         print(f"Mango bookings response: {response.status_code}")
+        print(f"Response data: {response.json()}")
         assert response.status_code == 200
     
     def test_mango_tests_catalog(self):
         """Test fetching Mango tests catalog"""
-        response = requests.get(f"{BASE_URL}/api/mango-staff/tests")
+        response = requests.get(f"{BASE_URL}/api/mango/tests")
         print(f"Mango tests catalog response: {response.status_code}")
+        print(f"Response data: {response.json()}")
+        assert response.status_code == 200
+    
+    def test_mango_dashboard_stats(self):
+        """Test fetching Mango dashboard stats"""
+        response = requests.get(f"{BASE_URL}/api/mango/dashboard/stats")
+        print(f"Mango dashboard stats response: {response.status_code}")
+        print(f"Response data: {response.json()}")
         assert response.status_code == 200
 
 
