@@ -1003,11 +1003,12 @@ async def send_sehri_reminder(
     db = await get_db()
     
     # Use MSG91 to send WhatsApp message
+    # Template: faithcare_sehri_remind (note: no "er" at end)
     # Variables: [user_name, sehri_time, date]
     try:
         result = await send_msg91_whatsapp(
             recipient_phone=clean_number,
-            template_name="faithcare_sehri_reminder",
+            template_name="faithcare_sehri_remind",
             variables=[user_name, sehri_time, date_str],
             db=db,
             reference_id=f"sehri_{clean_number}_{datetime.now().strftime('%Y%m%d')}",
@@ -1029,7 +1030,7 @@ async def send_sehri_reminder(
         return {
             "success": False,
             "error": str(e),
-            "note": "MSG91 template 'faithcare_sehri_reminder' may need to be registered"
+            "note": "MSG91 template 'faithcare_sehri_remind' may need to be registered"
         }
 
 
