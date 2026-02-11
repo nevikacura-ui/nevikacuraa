@@ -775,6 +775,33 @@ async def update_appointment_status(
             "appointment_type": appointment.get("appointment_type", "SCHEDULED")
         }
     
+    # Include bill/receipt data on completion
+    if data.status == "Completed":
+        # Get IST time
+        ist_now = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
+        
+        response["bill_data"] = {
+            "bill_number": f"DG{ist_now.strftime('%Y%m%d')}{appointment.get('token_number', '000'):03d}",
+            "patient_name": appointment.get("patient_name"),
+            "patient_phone": appointment.get("phone"),
+            "patient_age": appointment.get("age"),
+            "clinic": appointment.get("clinic"),
+            "clinic_address": CLINICS.get(appointment.get("clinic"), {}).get("address", ""),
+            "doctor": appointment.get("doctor"),
+            "date": appointment.get("date"),
+            "time": appointment.get("time") or "Emergency",
+            "booking_id": appointment.get("booking_id"),
+            "token_number": appointment.get("token_number"),
+            "fee_code": data.fee_code,
+            "scan_codes": data.scan_codes or [],
+            "total_amount": data.total_amount,
+            "notes": data.notes,
+            "follow_up_date": data.follow_up_date,
+            "completed_at": ist_now.strftime("%d-%m-%Y %I:%M %p"),
+            "completed_by": staff.get("name", "Doctor"),
+            "appointment_type": appointment.get("appointment_type", "SCHEDULED")
+        }
+    
     return response
 
 
