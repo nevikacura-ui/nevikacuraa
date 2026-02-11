@@ -291,6 +291,86 @@ const FaithCare = () => {
     );
   };
 
+  // WhatsApp Reminder Functions
+  const checkWhatsAppRegistration = async () => {
+    if (!authenticatedUser?.user_id) return;
+    try {
+      const res = await axios.get(`${API}/api/lifealign/whatsapp/user-preferences/${authenticatedUser.user_id}`);
+      if (res.data.registered) {
+        setWhatsappRegistered(true);
+        setWhatsappNumber(res.data.preferences.whatsapp_number?.replace('91', '') || '');
+        setEnableSehriReminder(res.data.preferences.enable_sehri_reminder ?? true);
+        setEnableIftarReminder(res.data.preferences.enable_iftar_reminder ?? true);
+        setEnableFestivalAlerts(res.data.preferences.enable_festival_alerts ?? true);
+      }
+    } catch (error) {
+      console.log('WhatsApp preferences not found');
+    }
+  };
+
+  const saveWhatsAppReminder = async () => {
+    if (!whatsappNumber || whatsappNumber.length < 10) {
+      toast.error('Please enter a valid 10-digit WhatsApp number');
+      return;
+    }
+    
+    setSavingWhatsApp(true);
+    try {
+      const res = await axios.post(
+        `${API}/api/lifealign/whatsapp/register?user_id=${authenticatedUser?.user_id}&whatsapp_number=${whatsappNumber}&enable_sehri_reminder=${enableSehriReminder}&enable_iftar_reminder=${enableIftarReminder}&enable_festival_alerts=${enableFestivalAlerts}`
+      );
+      
+      if (res.data.success) {
+        toast.success('WhatsApp reminders activated!');
+        setWhatsappRegistered(true);
+        setShowWhatsAppReminder(false);
+      }
+    } catch (error) {
+      toast.error('Failed to save WhatsApp preferences');
+    }
+    setSavingWhatsApp(false);
+  };
+
+  const sendTestReminder = async (type) => {
+    if (!whatsappNumber || whatsappNumber.length < 10) {
+      toast.error('Please enter a valid WhatsApp number first');
+      return;
+    }
+    
+    try {
+      let endpoint = '';
+      let params = `whatsapp_number=${whatsappNumber}&user_name=${authenticatedUser?.user_id || 'User'}`;
+      
+      if (type === 'sehri') {
+        endpoint = 'send-sehri-reminder';
+        params += '&sehri_time=04:30 AM';
+      } else if (type === 'iftar') {
+        endpoint = 'send-iftar-reminder';
+        params += '&iftar_time=06:45 PM';
+      } else {
+        endpoint = 'send-festival-reminder';
+        params += '&festival_name=Test Festival';
+      }
+      
+      const res = await axios.post(`${API}/api/lifealign/whatsapp/${endpoint}?${params}`);
+      
+      if (res.data.success) {
+        toast.success(`Test ${type} reminder sent to WhatsApp!`);
+      } else {
+        toast.info('Reminder queued. Template may need MSG91 approval.');
+      }
+    } catch (error) {
+      toast.error('Failed to send test reminder');
+    }
+  };
+
+  // Check WhatsApp registration on auth
+  useEffect(() => {
+    if (authenticatedUser) {
+      checkWhatsAppRegistration();
+    }
+  }, [authenticatedUser]);
+
   // Fetch Jamatkhanas
   const fetchJamatkhanas = async () => {
     try {
