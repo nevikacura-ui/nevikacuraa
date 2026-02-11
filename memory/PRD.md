@@ -1,116 +1,73 @@
-# Nevika Cura - Healthcare Application PRD
+# Nevika Cura - Product Requirements Document
 
 ## Original Problem Statement
-Healthcare application with multiple modules including FaithCare (cultural health sync) and Mango Health Labs (diagnostics portal).
+Multi-module healthcare application with modules including:
+- **FaithCare** (Ramadan services with WhatsApp reminders)
+- **Mango Health Labs** (diagnostics)
+- **DiaGyn** (clinic management)
 
-## Core Modules
+## Core Requirements
+1. Logo management for Mango Health Labs and FaithCare
+2. WhatsApp reminder system for FaithCare (Sehri, Iftar, important dates)
+3. Google Review automation for DiaGyn clinics
+4. IST timezone standardization for all communications
 
-### 1. FaithCare - Cultural Health Sync
-- **Religions Supported**: Hindu, Jain, Muslim (Sunni, Ismaili), Christian
-- **Features**:
-  - Exclusive login portal (30 credentials: FC2026001-FC2026030)
-  - Festival calendar with health alerts
-  - Ramadan 2026 Calendar with Sehri/Iftar timings
-  - Ramadan Diet Plans (Diabetic, Hypertension, Kidney)
-  - Jamatkhana Finder (for Ismaili users)
-  - **WhatsApp Reminders** (Sehri, Iftar, Festival alerts) ✅ WORKING
-- **Logo**: Black background dove logo
-- **Theme**: Dark slate with amber accents
+## Architecture
+- **Frontend**: React, Tailwind CSS
+- **Backend**: Python, FastAPI
+- **Database**: MongoDB + JSON files for static data
+- **Integrations**: MSG91 (WhatsApp), Resend (Email)
 
-### 2. Mango Health Labs - Diagnostics Portal
-- **User Features**: Book lab tests, WhatsApp OTP verification (mandatory for guests)
-- **Staff Portal**: 
-  - New Entry form (patient booking with barcode)
-  - Status tracking (Booked → Sample Collected → In Lab → Report Generated)
-  - Cost Calculator
-- **Logo**: White background with mango icon and "Aam logon ki, Khaas Lab" tagline
-- **Theme**: Orange gradient
-
-### 3. DiaGyn Healthcare - Clinic Management
-- **Clinics**: Pushpa Clinic, Amnion Clinic
-- **Features**:
-  - Appointment booking (Online, Walk-in, Emergency)
-  - Doctor dashboard
-  - **Auto Google Review Request** on appointment completion ✅ WORKING
+## Key Files
+- `/app/frontend/src/pages/Home.js` - Homepage with service cards
+- `/app/frontend/src/pages/Mango.js` - Mango Health Labs page
+- `/app/frontend/src/pages/FaithCare.jsx` - FaithCare module
+- `/app/frontend/src/utils/thermalPrinter.js` - Thermal printer utilities
+- `/app/backend/routes/lifealign.py` - FaithCare APIs
+- `/app/backend/routes/diagyn_staff.py` - DiaGyn APIs
+- `/app/backend/routes/clinic_management.py` - Appointment management
 
 ## What's Been Implemented
 
-### Session: February 11, 2026
+### Session: Feb 11, 2026
+- ✅ Fixed Mango Health Labs logo centering on Homepage and Mango page
+- ✅ Logo now properly centered in white rectangular frame using flexbox
+- ✅ Verified by testing agent (0px offset from center)
 
-#### Completed Features:
-1. ✅ **Email Credentials API** - Sends 30 FaithCare credentials to email
-2. ✅ **FaithCare WhatsApp Reminders**:
-   - Sehri reminder (template: `faithcare_sehri_remind`)
-   - Iftar reminder (template: `faithcare_iftar_reminder`)
-   - Festival alerts
-   - UI with toggles in FaithCare dashboard
-3. ✅ **DiaGyn Google Review System**:
-   - Auto-sends review request when appointment completed
-   - Works for ALL appointment types (scheduled, walk-in, emergency)
-   - Clinic-specific review links (Pushpa & Amnion)
-   - Template: `diagyn_google_review`
-4. ✅ **Logo Updates**:
-   - Mango: New white background logo
-   - FaithCare: Dove logo with scale 1.45
-5. ✅ **UI Fixes**:
-   - "in 60 MINS" text changed to white
-   - Homepage service cards styling
+### Previous Sessions
+- ✅ Logo and UI Overhaul for FaithCare and Mango Health Labs
+- ✅ FaithCare WhatsApp Reminders (Sehri, Iftar)
+- ✅ FaithCare Internationalization (more Jamatkhana locations, timezone-aware)
+- ✅ DiaGyn Google Review Automation (sends link on appointment completion)
+- ✅ Credential distribution endpoint for FaithCare users
+- ✅ Comprehensive testing completed
 
-#### MSG91 Templates Created:
-| Template | Purpose | Status |
-|----------|---------|--------|
-| `faithcare_sehri_remind` | Sehri reminder with "Ya Ali Madad" | ✅ Working |
-| `faithcare_iftar_reminder` | Iftar reminder | ✅ Working |
-| `diagyn_google_review` | Google Review request | ✅ Working |
+## Prioritized Backlog
 
-## API Endpoints
-
-### FaithCare WhatsApp
-- `POST /api/lifealign/whatsapp/register` - Register for reminders
-- `POST /api/lifealign/whatsapp/send-sehri-reminder` - Send Sehri alert
-- `POST /api/lifealign/whatsapp/send-iftar-reminder` - Send Iftar alert
-- `POST /api/lifealign/whatsapp/send-festival-reminder` - Send festival alert
-- `POST /api/lifealign/send-credentials-email` - Email 30 credentials
-
-### DiaGyn Google Review
-- `POST /api/diagyn-staff/whatsapp/send-review-request` - Manual review request
-- `POST /api/diagyn-staff/whatsapp/bulk-review-request` - Bulk send by date
-- **Auto-trigger**: On appointment completion (status = "Completed")
-
-## Google Review Links
-| Clinic | Link |
-|--------|------|
-| Pushpa Clinic | https://g.page/r/CZBa3QPJ_1lXECI/review |
-| Amnion Clinic | https://g.page/r/CZyZHBaBV8i_EBI/review |
-
-## Credentials
-
-### FaithCare (30 accounts)
-- Format: `FC2026001` to `FC2026030`
-- Password format: `faith@care001` to `faith@care030`
-- Email sent to: nevikacura@gmail.com
-
-### Mango Staff Portal
-- Username: `staff_mango`
-- Password: `test`
-
-## Important Notes
-
-### WhatsApp Opt-in Requirement
-Users must first message the WhatsApp Business number (918108888330) before receiving template messages. This is Meta/WhatsApp's anti-spam policy.
-
-## Backlog / Future Tasks
+### P0 - Critical
+- None currently
 
 ### P1 - High Priority
-- [ ] Real-time timezone detection for Sehri/Iftar (international users)
-- [ ] GPS integration for Jamatkhana finder
-- [ ] Add more Jamatkhana locations (USA/Canada)
+- IST Timezone Standardization (partially done, needs systematic implementation)
+- Verify Google Review Stats on doctor portal
 
 ### P2 - Medium Priority
-- [ ] Clean up user profile page
-- [ ] Camera-based barcode scanning for Staff Portal
-- [ ] Cashfree payment testing
+- Fix ESLint warnings in FaithCare.jsx (lines 138, 372)
+- Clean up user profile page
 
-### P3 - Low Priority
-- [ ] Push notifications (Firebase)
-- [ ] Backend modularization
+### P3 - Future Enhancements
+- Comprehensive testing run (pending user approval)
+
+## API Endpoints
+- `POST /api/lifealign/whatsapp/send-sehri-reminder` - Sehri reminder
+- `POST /api/diagyn/appointments/{id}/status` - Update appointment + trigger review
+- `GET /api/diagyn/review-stats` - Review statistics
+- `GET /api/lifealign/ramadan-timings/{city}` - Timezone-aware Ramadan timings
+
+## Test Credentials
+- **FaithCare**: User `FC2026001`, Password `faith@care001`
+- **Mango Staff**: User `staff_mango`, Password `test`
+
+## Known Issues
+- Login/OTP modal blocks UI verification (use testing agent or valid credentials)
+- ESLint warnings in FaithCare.jsx (non-critical)
