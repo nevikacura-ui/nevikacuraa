@@ -684,10 +684,10 @@ async def update_appointment_status(
     }
     
     if data.status == "CheckedIn":
-        update_data["checked_in_at"] = datetime.now(timezone.utc).isoformat()
+        update_data["checked_in_at"] = get_ist_datetime()
         
         # Generate daily token number (continuous for whole day, resets next day)
-        today_ist = (datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)).strftime("%Y-%m-%d")
+        today_ist = get_ist_date()
         clinic = appointment.get("clinic", "")
         
         # Count existing check-ins for today at this clinic
