@@ -1141,25 +1141,14 @@ const Home = () => {
                 
                 <div className="relative flex items-center p-5 sm:p-6 min-h-[140px] lg:min-h-[160px]">
                   <div className="flex-shrink-0 mr-4 sm:mr-5 w-28 sm:w-36 lg:w-44 flex items-center justify-center">
-                    {service.id === 'mango' ? (
-                      <div className="w-28 h-28 sm:w-32 sm:h-32 lg:w-40 lg:h-36 bg-white rounded-2xl shadow-lg flex items-center justify-center p-3 border border-gray-100">
-                        <img 
-                          src={service.logo}
-                          alt={service.name}
-                          className="max-w-full max-h-full object-contain"
-                          data-testid={`service-logo-featured-${service.id}`}
-                          loading="eager"
-                        />
-                      </div>
-                    ) : (
-                      <img 
-                        src={service.logo} 
-                        alt={service.name} 
-                        className={`w-full h-auto object-contain transition-transform duration-300 group-hover:scale-110 ${service.containImage ? 'rounded-xl' : ''}`}
-                        data-testid={`service-logo-featured-${service.id}`}
-                        loading="eager"
-                      />
-                    )}
+                    <img 
+                      src={service.logo} 
+                      alt={service.name} 
+                      className={`w-full h-auto object-contain transition-transform duration-300 group-hover:scale-110 ${service.containImage ? 'rounded-xl' : ''}`}
+                      style={service.id === 'mango' ? { transform: 'scale(1.3)' } : {}}
+                      data-testid={`service-logo-featured-${service.id}`}
+                      loading="eager"
+                    />
                   </div>
                   <div className="flex-1">
                     <h3 
