@@ -389,26 +389,26 @@ const FaithCare = () => {
           
           <div className="space-y-4">
             <div>
-              <label className="text-sm text-slate-400 block mb-1">Access ID</label>
+              <label className="text-sm text-slate-600 block mb-1">Access ID</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
+                <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
                 <Input
                   value={loginUserId}
                   onChange={(e) => setLoginUserId(e.target.value.toUpperCase())}
                   placeholder="FC2026XXX"
-                  className="pl-10 bg-slate-700 border-slate-600 text-white placeholder-slate-500"
+                  className="pl-10 bg-white border-purple-200 text-slate-800 placeholder-slate-400"
                   data-testid="faithcare-login-id"
                 />
               </div>
             </div>
             <div>
-              <label className="text-sm text-slate-400 block mb-1">Password</label>
+              <label className="text-sm text-slate-600 block mb-1">Password</label>
               <Input
                 type="password"
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
                 placeholder="••••••••••"
-                className="bg-slate-700 border-slate-600 text-white placeholder-slate-500"
+                className="bg-white border-purple-200 text-slate-800 placeholder-slate-400"
                 data-testid="faithcare-login-password"
                 onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
               />
