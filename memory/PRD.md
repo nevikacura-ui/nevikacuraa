@@ -1,62 +1,54 @@
 # Nevika Cura - Product Requirements Document
 
-## Original Problem Statement
-Multi-module healthcare application with modules including:
-- **FaithCare** (Ramadan services with WhatsApp reminders)
-- **Mango Health Labs** (diagnostics)
-- **DiaGyn** (clinic management)
-
 ## Architecture
 - **Frontend**: React, Tailwind CSS
 - **Backend**: Python, FastAPI
-- **Database**: MongoDB + JSON files for static data
+- **Database**: MongoDB
 - **Integrations**: MSG91 (WhatsApp), Resend (Email)
+
+## Staff Notification Numbers (NEW)
+| Clinic/Service | Phone Number |
+|----------------|--------------|
+| Pushpa Clinic | 8108500522 |
+| Amnion Clinic | 8108500533 |
+| Mango Health Labs | 7030040040 |
+| Ornave | 7039030030 |
 
 ## What's Been Implemented
 
-### Session: Feb 11, 2026
-- ✅ Fixed Mango logo alignment on Homepage (equidistant from borders like DiaGyn)
-- ✅ Fixed Mango logo alignment on Mango Labs page hero section
-- ✅ Fixed mock OTP issue - now only shows when WhatsApp service fails
-- ✅ Fixed double `/api/api/` URL bug in IntroScreen.jsx
-- ✅ Added "Send Review Request" button for completed appointments
-- ✅ Created centralized IST timezone utilities
-- ✅ Fixed ESLint warnings in FaithCare.jsx
+### Session: Feb 12, 2026
+- ✅ Added staff WhatsApp notifications for new appointments
+- ✅ Added staff WhatsApp notifications for Mango Labs orders
+- ✅ Staff notifications use same template as patient confirmations
+- ✅ Notifications include `[STAFF ALERT]` prefix for easy identification
 
 ### Previous Sessions
-- ✅ Logo and UI Overhaul for FaithCare and Mango Health Labs
-- ✅ FaithCare WhatsApp Reminders (Sehri, Iftar)
-- ✅ DiaGyn Google Review Automation (auto-sends on appointment completion)
+- ✅ Mango logo alignment fixes (Homepage + Mango page)
+- ✅ Mock OTP fix - only shows when WhatsApp service fails
+- ✅ Send Review Request button for completed appointments
+- ✅ IST timezone utilities
+- ✅ FaithCare WhatsApp reminders
+- ✅ Google Review automation
 
-## Key Files
-- `/app/frontend/src/pages/Home.js` - Homepage with service cards
-- `/app/frontend/src/pages/Mango.js` - Mango Health Labs page
-- `/app/frontend/src/pages/DiaGynStaffPortal.js` - DiaGyn Staff Portal
-- `/app/frontend/src/components/IntroScreen.jsx` - Guest login/OTP flow
-- `/app/backend/routes/patient_auth.py` - Patient authentication with OTP
-- `/app/backend/routes/diagyn_staff.py` - DiaGyn APIs including review requests
-- `/app/backend/utils/timezone_utils.py` - IST timezone utilities
+## Key Files Modified
+- `/app/backend/server.py` - Staff notification functions updated
+- `/app/frontend/src/pages/Home.js` - Logo alignment
+- `/app/frontend/src/pages/Mango.js` - Logo alignment
+- `/app/frontend/src/pages/DiaGynStaffPortal.js` - Review button
+- `/app/frontend/src/components/IntroScreen.jsx` - OTP fix
 
-## Google Review Feature
-- **Auto**: Review request sent when doctor completes appointment
-- **Manual**: Staff can click "REVIEW" button on completed appointment cards
-- **API**: `POST /api/diagyn-staff/whatsapp/send-review-request`
+## Appointment Flow
+1. Patient books appointment online
+2. System creates appointment in `db.appointments`
+3. Email sent to admin + patient (with QR code)
+4. WhatsApp sent to patient (MSG91)
+5. **NEW**: WhatsApp sent to staff (clinic-specific number)
+6. Real-time slot update broadcast via WebSocket
 
-## OTP Behavior
-- Real WhatsApp OTP sent via MSG91 when configured
-- Mock OTP only shown when WhatsApp service unavailable
-- Fixed URL bug that caused 404 errors on guest login
-
-## Prioritized Backlog
-
-### P2 - Medium Priority
-- Clean up user profile page
-
-### P3 - Future Enhancements
-- Weekly review trends visualization
-- Comprehensive testing run
+## Known Issue
+- PC-00058 not found in database - may have been booked on production environment
+- Preview uses `test_database`, production may use different DB
 
 ## Test Credentials
-- **FaithCare**: User `FC2026001`, Password `faith@care001`
-- **DiaGyn Staff**: User `staff_diagyn`, Password `test`
-- **Mango Staff**: User `staff_mango`, Password `test`
+- **DiaGyn Staff**: `staff_diagyn` / `test`
+- **Mango Staff**: `staff_mango` / `test`
