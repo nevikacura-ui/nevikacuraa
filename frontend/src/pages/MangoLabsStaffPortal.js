@@ -401,14 +401,68 @@ const MangoLabsStaffPortal = () => {
                 const currentStatus = TEST_STATUSES.find(s => s.key === booking.status) || TEST_STATUSES[0];
                 const currentIndex = TEST_STATUSES.findIndex(s => s.key === booking.status);
                 const nextStatus = currentIndex < TEST_STATUSES.length - 2 ? TEST_STATUSES[currentIndex + 1] : null;
+                const needsPaymentLink = booking.payment_method === 'pay_later' && booking.payment_status !== 'PAID';
                 return (
                   <Card key={booking.booking_id} className="p-4 shadow-sm">
-                    <div className="flex justify-between items-start mb-3"><div><p className="font-bold text-slate-800">#{booking.booking_id}</p><p className="text-sm text-slate-600">{booking.patient_name}</p><p className="text-xs text-slate-400">{booking.patient_phone}</p></div><span className="px-2 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: currentStatus.bgColor, color: currentStatus.color }}>{currentStatus.label}</span></div>
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <p className="font-bold text-slate-800">#{booking.booking_id}</p>
+                        <p className="text-sm text-slate-600">{booking.patient_name}</p>
+                        <p className="text-xs text-slate-400">{booking.patient_phone}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="px-2 py-1 rounded-full text-xs font-semibold block mb-1" style={{ backgroundColor: currentStatus.bgColor, color: currentStatus.color }}>{currentStatus.label}</span>
+                        {booking.payment_method && (
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                            booking.payment_method === 'cod' ? 'bg-green-100 text-green-700' :
+                            booking.payment_method === 'pay_later' ? 'bg-purple-100 text-purple-700' :
+                            booking.payment_method === 'cashfree' ? 'bg-orange-100 text-orange-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {booking.payment_method === 'cod' ? 'Cash' : 
+                             booking.payment_method === 'pay_later' ? 'Pay Later' : 
+                             booking.payment_method === 'cashfree' ? 'Online' : booking.payment_method}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {/* Payment Status for Pay Later bookings */}
+                    {booking.payment_method === 'pay_later' && (
+                      <div className={`flex items-center gap-2 text-xs mb-3 px-2 py-1.5 rounded-lg ${
+                        booking.payment_status === 'PAID' ? 'bg-green-50 text-green-700' :
+                        booking.payment_status === 'LINK_SENT' ? 'bg-blue-50 text-blue-700' :
+                        'bg-yellow-50 text-yellow-700'
+                      }`}>
+                        {booking.payment_status === 'PAID' ? (
+                          <><CheckCircle2 className="w-3 h-3" /> Payment Received</>
+                        ) : booking.payment_status === 'LINK_SENT' ? (
+                          <><Link className="w-3 h-3" /> Payment Link Sent</>
+                        ) : (
+                          <><Clock className="w-3 h-3" /> Awaiting Payment Link</>
+                        )}
+                      </div>
+                    )}
                     <div className="bg-slate-50 rounded-lg p-2 mb-3"><p className="text-xs text-slate-500">Tests:</p><p className="text-sm font-medium">{booking.tests?.join(', ') || 'N/A'}</p><p className="text-xs text-teal-600 font-semibold mt-1">₹{booking.total_amount || 0}</p></div>
                     {booking.report_uploaded && (<div className="flex items-center gap-2 text-xs text-green-600 mb-3"><FileText className="w-3 h-3" /><span>Report uploaded</span><button onClick={() => sendReportToPatient(booking.booking_id)} className="ml-auto text-blue-600 hover:underline flex items-center gap-1"><Send className="w-3 h-3" /> Send</button></div>)}
                     {uploadingReport === booking.booking_id && (<div className="mb-3 p-3 bg-teal-50 rounded-lg"><p className="text-xs text-teal-700 mb-2">Upload report PDF</p><input type="file" accept=".pdf" onChange={(e) => { if (e.target.files[0]) handleReportUpload(booking.booking_id, e.target.files[0]); }} className="text-xs" /></div>)}
                     <div className="flex gap-1 mb-3">{TEST_STATUSES.slice(0, -1).map((status, idx) => (<div key={status.key} className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: idx <= currentIndex ? status.color : '#e2e8f0' }} />))}</div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
+                      {/* Send Payment Link Button - for pay_later bookings */}
+                      {needsPaymentLink && booking.total_amount > 0 && (
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          className="border-purple-300 text-purple-700 hover:bg-purple-50"
+                          onClick={() => sendPaymentLink(booking)}
+                          disabled={sendingPaymentLink === booking.booking_id}
+                        >
+                          {sendingPaymentLink === booking.booking_id ? (
+                            <><Loader2 className="w-3 h-3 mr-1 animate-spin" /> Sending...</>
+                          ) : (
+                            <><Link className="w-3 h-3 mr-1" /> Payment Link</>
+                          )}
+                        </Button>
+                      )}
                       {booking.status === 'in_process' && !booking.report_uploaded && (<Button size="sm" variant="outline" onClick={() => setUploadingReport(booking.booking_id)}><Upload className="w-3 h-3 mr-1" /> Upload Report</Button>)}
                       {nextStatus && booking.status !== 'completed' && booking.status !== 'cancelled' && (<Button size="sm" className="flex-1" style={{ backgroundColor: nextStatus.color }} onClick={() => updateBookingStatus(booking.booking_id, nextStatus.key)}>{nextStatus.label} <ChevronRight className="w-3 h-3 ml-1" /></Button>)}
                       {booking.status === 'report_generated' && (<Button size="sm" className="flex-1 bg-emerald-500 hover:bg-emerald-600" onClick={() => updateBookingStatus(booking.booking_id, 'completed')}><CheckCircle2 className="w-3 h-3 mr-1" /> Complete</Button>)}
