@@ -694,7 +694,7 @@ async def create_and_send_payment_link(request: PaymentLinkRequest):
 async def get_payment_link_status(order_id: str):
     """Get the status of a payment link order"""
     try:
-        if not db:
+        if db is None:
             raise HTTPException(status_code=500, detail="Database not connected")
         
         # Find payment link order
