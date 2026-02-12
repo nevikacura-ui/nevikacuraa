@@ -289,6 +289,7 @@ const IntroScreen = ({ onComplete, user }) => {
   };
   
   // Guest login - OTP based (send OTP first, then verify)
+  // If WhatsApp fails, redirect to email flow
   const continueAsGuest = async () => {
     if (!mobile || mobile.length !== 10) {
       toast.error('Enter valid 10-digit WhatsApp number');
@@ -304,20 +305,21 @@ const IntroScreen = ({ onComplete, user }) => {
       
       if (res.data.success) {
         toast.success('OTP sent to your WhatsApp!');
-        
-        // Only show mock OTP if service is in demo mode
-        if (res.data.mock_otp && res.data.note) {
-          setMockOtpGuest(res.data.mock_otp);
-          toast.info(`Test OTP: ${res.data.mock_otp}`, { duration: 15000 });
-        }
-        
         // Move to OTP verification step
         setAuthStep('guestOtp');
+      } else if (res.data.whatsapp_failed || res.data.redirect_to_email) {
+        // WhatsApp failed - redirect to email verification
+        toast.info('WhatsApp unavailable. Please use email to login.');
+        setAuthMode('email');
+        setAuthStep('email');
       } else {
         toast.error(res.data.detail || 'Failed to send OTP');
       }
     } catch (error) {
-      toast.error('Failed to send OTP. Please try again.');
+      // On error, redirect to email flow
+      toast.info('WhatsApp service unavailable. Please use email instead.');
+      setAuthMode('email');
+      setAuthStep('email');
     }
     setLoading(false);
   };
