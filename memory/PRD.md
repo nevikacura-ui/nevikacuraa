@@ -6,17 +6,25 @@
 - **Database**: MongoDB
 - **Integrations**: MSG91 (WhatsApp), Resend (Email)
 
-## Staff Notification Numbers (NEW)
+## Staff Notification Numbers (UPDATED Feb 12, 2026)
 | Clinic/Service | Phone Number |
 |----------------|--------------|
 | Pushpa Clinic | 8108500522 |
 | Amnion Clinic | 8108500533 |
-| Mango Health Labs | 7030040040 |
+| Mango Health Labs | **7039040040** (Updated) |
 | Ornave | 7039030030 |
+
+## Notification Logic
+- **Online appointments**: ✅ Send staff notification
+- **Walk-in appointments**: ❌ No notification (staff already present)
+- **Emergency appointments**: ❌ No notification (staff already present)
 
 ## What's Been Implemented
 
-### Session: Feb 12, 2026
+### Session: Feb 12, 2026 (Latest)
+- ✅ Updated Mango Health Labs number from 7030040040 to **7039040040**
+- ✅ Added skip logic for walk-in/emergency appointments (no staff notification)
+- ✅ Staff notifications now only sent for ONLINE bookings
 - ✅ Added staff WhatsApp notifications for new appointments
 - ✅ Added staff WhatsApp notifications for Mango Labs orders
 - ✅ Staff notifications use same template as patient confirmations
