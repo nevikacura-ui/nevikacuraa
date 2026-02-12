@@ -10,7 +10,7 @@ import {
   Search, Plus, CheckCircle2, Package, AlertTriangle,
   Building2, IndianRupee, RefreshCw, Truck, ShoppingBag,
   ChevronRight, Loader2, TrendingUp, X, Pill, ClipboardList,
-  Image as ImageIcon, Upload, Link as LinkIcon, Camera,
+  Image as ImageIcon, Upload, Link, Camera,
   FileText, Send, Edit2, Trash2, Save, MoreVertical
 } from 'lucide-react';
 
