@@ -302,34 +302,44 @@ const CashfreeCheckout = ({
             {paymentMethods.map((method) => (
               <button
                 key={method.id}
-                onClick={() => setSelectedMethod(method.id)}
+                onClick={() => !method.disabled && setSelectedMethod(method.id)}
+                disabled={method.disabled}
                 className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${
-                  selectedMethod === method.id
-                    ? method.color === 'green' 
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-purple-500 bg-purple-50'
-                    : 'border-slate-200 hover:border-slate-300'
+                  method.disabled 
+                    ? 'border-slate-200 bg-slate-100 opacity-60 cursor-not-allowed'
+                    : selectedMethod === method.id
+                      ? method.color === 'green' 
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-purple-500 bg-purple-50'
+                      : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                    method.disabled ? 'bg-slate-400' :
                     method.color === 'green' ? 'bg-green-500' : 'bg-purple-500'
                   }`}>
                     <method.icon className="w-5 h-5 text-white" />
                   </div>
                   <div className="text-left">
-                    <p className="font-semibold text-slate-800">{method.title}</p>
-                    <p className="text-sm text-slate-500">{method.subtitle}</p>
+                    <div className="flex items-center gap-2">
+                      <p className={`font-semibold ${method.disabled ? 'text-slate-500' : 'text-slate-800'}`}>{method.title}</p>
+                      {method.recommended && (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Recommended</span>
+                      )}
+                    </div>
+                    <p className={`text-sm ${method.disabled ? 'text-slate-400' : 'text-slate-500'}`}>{method.subtitle}</p>
                   </div>
                 </div>
                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  method.disabled ? 'border-slate-300' :
                   selectedMethod === method.id
                     ? method.color === 'green'
                       ? 'border-green-500 bg-green-500'
                       : 'border-purple-500 bg-purple-500'
                     : 'border-slate-300'
                 }`}>
-                  {selectedMethod === method.id && (
+                  {selectedMethod === method.id && !method.disabled && (
                     <div className="w-2 h-2 bg-white rounded-full" />
                   )}
                 </div>
