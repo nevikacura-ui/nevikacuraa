@@ -458,24 +458,27 @@ const MangoLabsStaffPortal = () => {
                     <div className="flex gap-1 mb-3">{TEST_STATUSES.slice(0, -1).map((status, idx) => (<div key={status.key} className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: idx <= currentIndex ? status.color : '#e2e8f0' }} />))}</div>
                     <div className="flex gap-2 flex-wrap">
                       {/* Send/Resend Payment Link Button - only for sample_collected status */}
-                      {(canSendPaymentLink || hasPaymentLinkSent) && booking.total_amount > 0 && booking.status === 'sample_collected' && (
+                      {(canSendPaymentLink || hasPaymentLinkSent) && booking.total_amount > 0 && booking.status === 'sample_collected' && booking.payment_status !== 'PAID' && (
                         <Button 
                           size="sm" 
                           variant="outline"
                           className="border-purple-300 text-purple-700 hover:bg-purple-50"
                           onClick={() => sendPaymentLink(booking)}
                           disabled={sendingPaymentLink === booking.booking_id}
+                          data-testid={`send-payment-link-${booking.booking_id}`}
                         >
                           {sendingPaymentLink === booking.booking_id ? (
                             <><Loader2 className="w-3 h-3 mr-1 animate-spin" /> Sending...</>
+                          ) : hasPaymentLinkSent ? (
+                            <><RefreshCw className="w-3 h-3 mr-1" /> Resend Link</>
                           ) : (
-                            <><Link className="w-3 h-3 mr-1" /> Payment Link</>
+                            <><Link className="w-3 h-3 mr-1" /> Send Payment Link</>
                           )}
                         </Button>
                       )}
                       {booking.status === 'in_process' && !booking.report_uploaded && (<Button size="sm" variant="outline" onClick={() => setUploadingReport(booking.booking_id)}><Upload className="w-3 h-3 mr-1" /> Upload Report</Button>)}
                       {nextStatus && booking.status !== 'completed' && booking.status !== 'cancelled' && (<Button size="sm" className="flex-1" style={{ backgroundColor: nextStatus.color }} onClick={() => updateBookingStatus(booking.booking_id, nextStatus.key)}>{nextStatus.label} <ChevronRight className="w-3 h-3 ml-1" /></Button>)}
-                      {booking.status === 'report_generated' && (<Button size="sm" className="flex-1 bg-emerald-500 hover:bg-emerald-600" onClick={() => updateBookingStatus(booking.booking_id, 'completed')}><CheckCircle2 className="w-3 h-3 mr-1" /> Complete</Button>)}
+                      {booking.status === 'report_generated' && (<Button size="sm" className="flex-1 bg-emerald-500 hover:bg-emerald-600" onClick={() => updateBookingStatus(booking.booking_id, 'completed')}><CheckCircle2 className="w-3 h-3 mr-1" /> Complete</Button>)}}
                     </div>
                   </Card>
                 );
