@@ -84,7 +84,6 @@ const IntroScreen = ({ onComplete, user }) => {
   
   // Guest OTP state
   const [guestOtp, setGuestOtp] = useState(['', '', '', '', '', '']);
-  const [mockOtpGuest, setMockOtpGuest] = useState('');
   const guestOtpRefs = useRef([]);
   
   const splashWords = ['Book.', 'Order.', 'Test.', 'Care.'];
