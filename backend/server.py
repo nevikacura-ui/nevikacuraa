@@ -709,9 +709,9 @@ async def notify_staff_new_order(order_details: dict, department: str):
     """Notify staff about new order via WhatsApp (Mango Labs, Ornave)"""
     # Map department to staff phone number
     department_phones = {
-        "proton": "917030040040",      # Mango Health Labs (Proton Diagnostics)
-        "mango": "917030040040",       # Mango Health Labs
-        "mango_labs": "917030040040",  # Mango Health Labs
+        "proton": "917039040040",      # Mango Health Labs (Proton Diagnostics)
+        "mango": "917039040040",       # Mango Health Labs
+        "mango_labs": "917039040040",  # Mango Health Labs
         "ornave": "917039030030",      # Ornave Pharmacy
         "pharmacy": "917039030030",    # Ornave Pharmacy
     }
