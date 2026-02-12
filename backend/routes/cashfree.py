@@ -659,7 +659,7 @@ async def create_and_send_payment_link(request: PaymentLinkRequest):
         payment_link_order["sent_via"] = sent_via
         
         # Save to database
-        if db:
+        if db is not None:
             await db.payment_links.insert_one(payment_link_order)
             
             # Update original order with payment link reference
