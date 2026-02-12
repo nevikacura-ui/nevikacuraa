@@ -346,43 +346,73 @@ async def whatsapp_verify_otp(request: WhatsAppOTPVerify):
     """
     Step 2: Verify WhatsApp OTP
     Returns verification_token for email collection and password creation
+    
+    Verification order:
+    1. Check local patient_otp_storage (backup from send-otp)
+    2. Check whatsapp_otp service storage (primary)
     """
     phone = request.phone.strip().replace("+91", "").replace(" ", "").replace("-", "")[-10:]
     otp = request.otp.strip()
     
-    # Check mock OTP first
+    logger.info(f"Verifying OTP for phone: ****{phone[-4:]}, otp: {otp[:2]}****")
+    
+    flow_type = "signup"
+    existing_user = None
+    verified = False
+    error_message = None
+    
+    # Get flow info first
+    flow_info = patient_otp_storage.get(f"whatsapp_flow_{phone}", {})
+    if flow_info:
+        flow_type = flow_info.get("flow_type", "signup")
+        existing_user = flow_info.get("existing_user")
+    
+    # Method 1: Check local patient_otp_storage first
     otp_key = f"whatsapp_{phone}"
     stored = patient_otp_storage.get(otp_key)
     
     if stored:
-        # Verify mock OTP
+        logger.info(f"Found OTP in local storage for ****{phone[-4:]}")
+        
         if stored["attempts"] >= 3:
             del patient_otp_storage[otp_key]
             raise HTTPException(status_code=400, detail="Too many attempts. Please request a new OTP.")
         
         if datetime.now(timezone.utc) > stored["expires_at"]:
             del patient_otp_storage[otp_key]
-            raise HTTPException(status_code=400, detail="OTP expired.")
+            raise HTTPException(status_code=400, detail="OTP expired. Please request a new one.")
         
         stored["attempts"] += 1
         
-        if stored["otp"] != otp:
+        if stored["otp"] == otp:
+            verified = True
+            flow_type = stored.get("flow_type", flow_type)
+            existing_user = stored.get("existing_user", existing_user)
+            del patient_otp_storage[otp_key]
+            logger.info(f"OTP verified via local storage for ****{phone[-4:]}")
+        else:
             remaining = 3 - stored["attempts"]
-            raise HTTPException(status_code=400, detail=f"Invalid OTP. {remaining} attempts remaining.")
-        
-        flow_type = stored["flow_type"]
-        existing_user = stored.get("existing_user")
-        del patient_otp_storage[otp_key]
-    else:
-        # Try MSG91 verification
+            error_message = f"Invalid OTP. {remaining} attempts remaining."
+    
+    # Method 2: If not found locally or verification failed, try the whatsapp_otp service
+    if not verified and not error_message:
+        logger.info(f"Trying whatsapp_otp service for ****{phone[-4:]}")
         result = await verify_whatsapp_otp(phone, otp)
         
-        if not result.get("success"):
-            raise HTTPException(status_code=400, detail=result.get("error", "Invalid OTP"))
-        
-        flow_info = patient_otp_storage.get(f"whatsapp_flow_{phone}", {})
-        flow_type = flow_info.get("flow_type", "signup")
-        existing_user = flow_info.get("existing_user")
+        if result.get("success"):
+            verified = True
+            logger.info(f"OTP verified via whatsapp_otp service for ****{phone[-4:]}")
+        else:
+            error_message = result.get("error", "Invalid OTP. Please check and try again.")
+    
+    # If still not verified, return the error
+    if not verified:
+        logger.warning(f"OTP verification failed for ****{phone[-4:]}: {error_message}")
+        raise HTTPException(status_code=400, detail=error_message or "Invalid OTP. Please request a new one.")
+    
+    # Clean up flow info
+    if f"whatsapp_flow_{phone}" in patient_otp_storage:
+        del patient_otp_storage[f"whatsapp_flow_{phone}"]
     
     # Generate verification token
     verification_token = str(uuid.uuid4())
