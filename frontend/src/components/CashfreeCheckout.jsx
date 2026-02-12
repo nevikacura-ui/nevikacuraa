@@ -190,20 +190,25 @@ const CashfreeCheckout = ({
     }
   };
 
+  // Disable online payment if amount is 0 (prescription orders need pharmacist confirmation)
+  const isOnlineDisabled = finalAmount <= 0;
+
   const paymentMethods = [
     ...(allowCOD ? [{
       id: 'cod',
       title: 'Cash on Delivery',
-      subtitle: 'Pay when you receive',
+      subtitle: finalAmount <= 0 ? 'Pharmacist will confirm amount' : 'Pay when you receive',
       icon: Banknote,
-      color: 'green'
+      color: 'green',
+      recommended: finalAmount <= 0
     }] : []),
     {
       id: 'online',
       title: 'Pay Online',
-      subtitle: 'UPI, Cards, NetBanking',
+      subtitle: isOnlineDisabled ? 'Amount must be confirmed first' : 'UPI, Cards, NetBanking',
       icon: Smartphone,
-      color: 'purple'
+      color: 'purple',
+      disabled: isOnlineDisabled
     }
   ];
 
