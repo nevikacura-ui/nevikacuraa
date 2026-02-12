@@ -273,6 +273,47 @@ const OrangePharmacyStaffPortal = () => {
     }
   };
 
+  // Send Payment Link to customer (for Pay Later orders)
+  const sendPaymentLink = async (order) => {
+    if (!order.total || order.total <= 0) {
+      toast.error('Please update order total before sending payment link');
+      return;
+    }
+    
+    setSendingPaymentLink(order.order_id);
+    try {
+      const itemsDescription = order.items?.map(i => `${i.name} x${i.qty || 1}`).join(', ') || 'Pharmacy items';
+      
+      const res = await axios.post(`${API}/api/payments/cashfree/create-payment-link`, {
+        order_id: order.order_id,
+        order_type: 'pharmacy',
+        customer_name: order.customer_name,
+        customer_phone: order.customer_phone,
+        customer_email: order.customer_email || null,
+        amount: order.total,
+        send_via: order.customer_email ? 'both' : 'whatsapp',
+        items_description: itemsDescription
+      });
+      
+      if (res.data.success) {
+        toast.success(`Payment link sent! ${res.data.sent_via.join(', ')}`);
+        // Update local order state
+        setOrders(prev => prev.map(o => 
+          o.order_id === order.order_id 
+            ? { ...o, payment_status: 'LINK_SENT', payment_link: res.data.payment_link }
+            : o
+        ));
+      } else {
+        toast.error(res.data.message || 'Failed to send payment link');
+      }
+    } catch (error) {
+      console.error('Payment link error:', error);
+      toast.error(error.response?.data?.detail || 'Failed to send payment link');
+    } finally {
+      setSendingPaymentLink(null);
+    }
+  };
+
   // Save medicine
   const saveMedicine = async () => {
     if (!medicineForm.name || !medicineForm.mrp) {
