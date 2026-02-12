@@ -401,7 +401,11 @@ const MangoLabsStaffPortal = () => {
                 const currentStatus = TEST_STATUSES.find(s => s.key === booking.status) || TEST_STATUSES[0];
                 const currentIndex = TEST_STATUSES.findIndex(s => s.key === booking.status);
                 const nextStatus = currentIndex < TEST_STATUSES.length - 2 ? TEST_STATUSES[currentIndex + 1] : null;
-                const needsPaymentLink = booking.payment_method === 'pay_later' && booking.payment_status !== 'PAID';
+                // Show payment link only for 'sample_collected' status and pay_later method
+                const canSendPaymentLink = booking.payment_method === 'pay_later' && 
+                                          booking.payment_status !== 'PAID' && 
+                                          booking.status === 'sample_collected';
+                const hasPaymentLinkSent = booking.payment_status === 'LINK_SENT';
                 return (
                   <Card key={booking.booking_id} className="p-4 shadow-sm">
                     <div className="flex justify-between items-start mb-3">
@@ -409,6 +413,12 @@ const MangoLabsStaffPortal = () => {
                         <p className="font-bold text-slate-800">#{booking.booking_id}</p>
                         <p className="text-sm text-slate-600">{booking.patient_name}</p>
                         <p className="text-xs text-slate-400">{booking.patient_phone}</p>
+                        {/* Show booking time */}
+                        {booking.created_at && (
+                          <p className="text-[10px] text-slate-400 mt-1">
+                            Booked: {new Date(booking.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true })}
+                          </p>
+                        )}
                       </div>
                       <div className="text-right">
                         <span className="px-2 py-1 rounded-full text-xs font-semibold block mb-1" style={{ backgroundColor: currentStatus.bgColor, color: currentStatus.color }}>{currentStatus.label}</span>
@@ -447,8 +457,8 @@ const MangoLabsStaffPortal = () => {
                     {uploadingReport === booking.booking_id && (<div className="mb-3 p-3 bg-teal-50 rounded-lg"><p className="text-xs text-teal-700 mb-2">Upload report PDF</p><input type="file" accept=".pdf" onChange={(e) => { if (e.target.files[0]) handleReportUpload(booking.booking_id, e.target.files[0]); }} className="text-xs" /></div>)}
                     <div className="flex gap-1 mb-3">{TEST_STATUSES.slice(0, -1).map((status, idx) => (<div key={status.key} className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: idx <= currentIndex ? status.color : '#e2e8f0' }} />))}</div>
                     <div className="flex gap-2 flex-wrap">
-                      {/* Send Payment Link Button - for pay_later bookings */}
-                      {needsPaymentLink && booking.total_amount > 0 && (
+                      {/* Send/Resend Payment Link Button - only for sample_collected status */}
+                      {(canSendPaymentLink || hasPaymentLinkSent) && booking.total_amount > 0 && booking.status === 'sample_collected' && (
                         <Button 
                           size="sm" 
                           variant="outline"
