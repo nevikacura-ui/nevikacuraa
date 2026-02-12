@@ -629,10 +629,63 @@ async def send_staff_sms_notification(department: str, message: str):
     logger.info(f"Staff SMS DISABLED - Use WhatsApp/email instead. Department: {department}")
     return {"success": True, "note": "Staff SMS disabled - WhatsApp/email used instead"}
 
+# Staff notification phone numbers by clinic/service
+STAFF_NOTIFICATION_NUMBERS = {
+    # DiaGyn Clinics
+    "pushpa clinic": "918108500522",
+    "pushpa": "918108500522",
+    "amnion clinic": "918108500533",
+    "amnion": "918108500533",
+    # Mango Health Labs
+    "mango health labs": "917030040040",
+    "mango labs": "917030040040",
+    "mango": "917030040040",
+    # Ornave
+    "ornave": "917039030030",
+    "ornave pharmacy": "917039030030",
+}
+
 async def notify_staff_new_appointment(appointment_details: dict):
     """Notify clinic staff about new appointment via WhatsApp"""
-    logger.info(f"Staff notification: New appointment for {appointment_details.get('patient_name')}")
-    return {"success": True, "method": "whatsapp"}
+    clinic = appointment_details.get('clinic', '').lower().strip()
+    
+    # Find staff phone for this clinic
+    staff_phone = None
+    for key, phone in STAFF_NOTIFICATION_NUMBERS.items():
+        if key in clinic:
+            staff_phone = phone
+            break
+    
+    if not staff_phone:
+        logger.warning(f"No staff number configured for clinic: {clinic}")
+        return {"success": False, "error": "No staff number for clinic"}
+    
+    # Format the notification message using the same template as patient confirmation
+    patient_name = appointment_details.get('patient_name', 'Patient')
+    doctor = appointment_details.get('doctor', 'Doctor')
+    date = appointment_details.get('date', '')
+    time = appointment_details.get('time', '')
+    booking_id = appointment_details.get('booking_id', '')
+    patient_phone = appointment_details.get('patient_phone', 'Not provided')
+    booking_type = appointment_details.get('booking_type', 'online')
+    
+    try:
+        # Send WhatsApp to staff using the appointment confirmation template
+        result = await send_diagyn_appointment_confirmation(
+            phone=staff_phone,
+            patient_name=f"[STAFF ALERT] {patient_name}",
+            date=date,
+            time=time,
+            doctor_name=doctor,
+            clinic_name=appointment_details.get('clinic', 'DiaGyn Clinic'),
+            booking_id=f"{booking_id} | Ph: {patient_phone[-4:] if len(patient_phone) >= 4 else patient_phone}",
+            db=db
+        )
+        logger.info(f"✅ Staff notification sent to {staff_phone} for booking {booking_id}")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Staff notification failed: {e}")
+        return {"success": False, "error": str(e)}
 
 async def notify_staff_new_signup(user_details: dict):
     """Notify staff about new user signup via WhatsApp"""
