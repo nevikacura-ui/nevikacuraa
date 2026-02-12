@@ -596,8 +596,10 @@ const OrangePharmacyStaffPortal = () => {
                   onStatusChange={updateOrderStatus}
                   onUploadInvoice={() => setUploadingInvoice(order.order_id)}
                   onSendInvoice={() => sendInvoiceToCustomer(order.order_id)}
+                  onSendPaymentLink={sendPaymentLink}
                   isUploadingInvoice={uploadingInvoice === order.order_id}
                   handleInvoiceUpload={handleInvoiceUpload}
+                  sendingPaymentLink={sendingPaymentLink === order.order_id}
                 />
               ))
             )}
