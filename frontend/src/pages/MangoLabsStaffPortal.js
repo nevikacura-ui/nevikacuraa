@@ -203,6 +203,47 @@ const MangoLabsStaffPortal = () => {
     } catch (error) { toast.error('Failed to send report'); }
   };
 
+  // Send Payment Link to customer (for Pay Later bookings)
+  const sendPaymentLink = async (booking) => {
+    if (!booking.total_amount || booking.total_amount <= 0) {
+      toast.error('Please confirm booking amount before sending payment link');
+      return;
+    }
+    
+    setSendingPaymentLink(booking.booking_id);
+    try {
+      const testsDescription = booking.tests?.join(', ') || 'Lab Tests';
+      
+      const res = await axios.post(`${API}/api/payments/cashfree/create-payment-link`, {
+        order_id: booking.booking_id,
+        order_type: 'lab_test',
+        customer_name: booking.patient_name,
+        customer_phone: booking.patient_phone,
+        customer_email: booking.patient_email || null,
+        amount: booking.total_amount,
+        send_via: booking.patient_email ? 'both' : 'whatsapp',
+        items_description: testsDescription
+      });
+      
+      if (res.data.success) {
+        toast.success(`Payment link sent! ${res.data.sent_via.join(', ')}`);
+        // Update local booking state
+        setBookings(prev => prev.map(b => 
+          b.booking_id === booking.booking_id 
+            ? { ...b, payment_status: 'LINK_SENT', payment_link: res.data.payment_link }
+            : b
+        ));
+      } else {
+        toast.error(res.data.message || 'Failed to send payment link');
+      }
+    } catch (error) {
+      console.error('Payment link error:', error);
+      toast.error(error.response?.data?.detail || 'Failed to send payment link');
+    } finally {
+      setSendingPaymentLink(null);
+    }
+  };
+
   const saveTest = async () => {
     if (!testForm.name || !testForm.price) { toast.error('Name and Price are required'); return; }
     setLoading(true);
