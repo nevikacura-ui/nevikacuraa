@@ -76,6 +76,9 @@ const OrangePharmacyStaffPortal = () => {
   // Invoice upload
   const [uploadingInvoice, setUploadingInvoice] = useState(null);
   
+  // Payment link
+  const [sendingPaymentLink, setSendingPaymentLink] = useState(null);
+  
   // Sync inventory
   const [syncing, setSyncing] = useState(false);
 
