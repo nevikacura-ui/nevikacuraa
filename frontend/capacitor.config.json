@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://faith-care-whatsapp.preview.emergentagent.com",
+    "url": "https://staff-pay-portal-1.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {

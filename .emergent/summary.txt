@@ -1,114 +1,141 @@
 <analysis>**original_problem_statement:**
-The user initiated a series of feature requests for a multi-module healthcare application. The core requirements include:
-1.  **UI/Logo Management**: Iteratively update and align logos for Mango Health Labs and DiaGyn based on visual feedback.
-2.  **FaithCare Module**: Implement a WhatsApp reminder system for religious events, manage Jamatkhana locations, and provide timezone-aware timings.
-3.  **DiaGyn (Clinic) Module**:
-    *   Automate sending Google Review WhatsApp messages to patients upon appointment completion.
-    *   Display Google Review statistics on the doctor's staff portal.
-    *   Add a manual button for staff to send review requests.
-4.  **Appointment Sync & Notifications**:
-    *   Investigate why appointments booked on the website are not visible to staff in the app.
-    *   Implement a WhatsApp notification system to inform staff of new online bookings for different clinics (Pushpa, Amnion, Mango Health Labs, Ornave).
-5.  **System-Wide Changes**:
+The user is developing a multi-module healthcare application (Mango Health Labs, DiaGyn, Orange Pharmacy) and has requested a series of features and fixes:
+1.  **Staff Notifications**: Implement and refine a WhatsApp notification system for staff when new online appointments are booked, with specific rules to exclude walk-in and emergency types.
+2.  **Payment System Overhaul**:
+    *   Fix a critical bug where the Cashfree payment gateway was failing for Orange Pharmacy orders, especially for prescription uploads with a zero initial amount.
+    *   Implement a new Pay Later payment option for both Mango Health Labs and Orange Pharmacy. This flow allows customers to place an order without immediate payment.
+    *   Enable staff to generate and send a Cashfree payment link to the customer via Email/WhatsApp once the final bill is ready.
+    *   The payment options should be: Cash on Delivery, Pay Online Now, and Pay Later.
+3.  **Authentication Flow**: Remove a confusing mock OTP from the guest login flow. If the primary WhatsApp OTP fails, the system should fall back to requesting the user's email to send an OTP.
+4.  **UI/UX**:
+    *   Update the Mango Health Labs page logo to be centered and scale responsively (bigger to smaller).
+    *   Add a Resend Payment Link feature for staff.
+    *   Conditionally show the Send Payment Link button in the Mango staff portal based on the appointment status.
+5.  **System-Wide**:
     *   Standardize all user-facing timestamps to Indian Standard Time (IST).
-    *   Resolve user confusion regarding a mock OTP during guest login.
-    *   Provide the format for bills/tokens generated for a thermal printer.
+    *   Provide the bill/token format generated for a thermal printer.
+    *   Clean up the user profile page.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A multi-module healthcare application with a React frontend and a Python (FastAPI) backend.
--   **Modules**: FaithCare (religious services), Mango Health Labs (diagnostics), DiaGyn (clinic management), and Ornave.
--   **Integrations**: MSG91 for WhatsApp and Resend for email are configured and functional.
--   **Data Store**: JSON files are used as a database.
--   **Key Features**: The application supports automated and manual WhatsApp messages for Google Reviews, displays review statistics on the staff portal, and has a partially implemented staff notification system for new online appointments. The UI has undergone multiple revisions for logo placement and alignment. A centralized utility for IST conversion has been created but not fully deployed across the codebase.
+The application is a multi-module system with a React frontend and FastAPI backend.
+*   **Payment System**: The app now supports three payment methods: Cash on Delivery, Pay Online Now (using Cashfree), and a new Pay Later flow. A backend endpoint () has been created to generate and email Cashfree payment links. The staff portals for the Pharmacy and Mango labs have been updated with buttons to trigger this functionality for Pay Later orders.
+*   **Staff Notifications**: The logic has been updated to prevent notifications for walk-in and emergency appointments, and the contact number for Mango has been corrected.
+*   **Authentication**: The mock OTP logic has been removed from the backend and partially from the frontend. A fallback to an email OTP flow has been initiated but is not fully tested.
+*   **Timezone**: A centralized IST utility exists (), but its application across the codebase is incomplete.
+*   **Database**: JSON files are used for data storage.
 
 **Last working item**:
-The agent was implementing WhatsApp notifications for staff when new online appointments are booked. The user provided critical follow-up instructions to modify this feature.
+The agent was refining the newly implemented Pay Later feature based on the user's latest instructions.
 
-*   **Last item agent was working**: Modifying the recently implemented staff notification feature based on user feedback. The user requested to change a contact number for Mango notifications and, crucially, to prevent notifications from being sent for walk-in and emergency appointments.
+*   **Last item agent was working**: Adding a resend payment link capability and implementing logic to only show the Send Payment Link button in the Mango staff portal when an appointment is in the 'Sample collected' state, but not yet 'In lab'.
 *   **Status**: IN PROGRESS
-*   **Agent Testing Done**: N
-*   **Which testing method agent to use?**: backend testing agent. The agent should use  commands to simulate booking different appointment types (online, walk-in, emergency) to verify that notifications are sent or skipped according to the new logic.
+*   **Agent Testing Done**: N (The core payment link API was tested with , but the new conditional logic and frontend changes are untested).
+*   **Which testing method agent to use?**: both. Use the  to perform end-to-end testing of the entire Pay Later flow, including the new conditional button logic in both the Orange Pharmacy and Mango Labs staff portals. The test should verify that the buttons appear/disappear correctly based on payment method and order/appointment status.
 *   **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
-*   **Issue 1**: Conditional Staff Appointment Notifications (P0)
-*   **Issue 2**: Mock OTP Logic Verification (P1)
-*   **Issue 3**: Appointment Sync Discrepancy (P2)
+*   **Issue 1**: Finalize Pay Later Feature (P0)
+*   **Issue 2**: Cashfree Payment Flow for Zero-Amount Orders (P1)
+*   **Issue 3**: Mock OTP Logic Removal and Email Fallback (P1)
 *   **Issue 4**: Incomplete IST Timezone Standardization (P2)
+*   **Issue 5**: Mango Logo Responsive Scaling (P3)
+*   **Issue 6**: Unrequested Staff Notification Dashboard (P3)
 
 **Issues Detail**:
-*   **Issue 1: Conditional Staff Appointment Notifications**
-    *   **Attempted fixes**: The agent added code to  to call a notification function when online appointments are created. This implementation is too broad and does not meet the user's latest requirements.
+*   **Issue 1: Finalize Pay Later Feature**
+    *   **Attempted fixes**: The core Pay Later flow (frontend options, backend API, staff portal buttons) has been implemented.
     *   **Next debug checklist**:
-        1.  Open  and update the  dictionary to change the 'mango' number to .
-        2.  Locate the code that creates walk-in and emergency appointments, likely in .
-        3.  Ensure that the staff notification function () is *not* called from these flows.
-        4.  Alternatively, modify  in  to include a conditional check on the appointment type, preventing messages for 'walk-in' and 'emergency' types.
-        5.  Test by creating an online appointment and verifying a notification is triggered.
-        6.  Test by creating a walk-in/emergency appointment and verifying no notification is triggered.
-    *   **Why fix this issue and what will be achieved with the fix?**: To align the feature with the user's precise business logic and prevent unnecessary alerts for staff.
+        1.  Modify the staff portal components (, ) to support a Resend Payment Link action. This could be the same button, perhaps with different text or a confirmation step.
+        2.  In , add conditional logic to show the Send Payment Link button only when .
+        3.  Test the full end-to-end flow for all three payment options across both Pharmacy and Mango modules.
+    *   **Why fix this issue and what will be achieved with the fix?**: To complete the user's requested payment workflow, giving staff precise control over when and how they request payment from customers.
+    *   **Status**: IN PROGRESS
+    *   **Is recurring issue?**: N
+    *   **Should Test frontend/backend/both after fix?**: Both
+    *   **Blocked on other issue**: None
+
+*   **Issue 2: Cashfree Payment Flow for Zero-Amount Orders**
+    *   **Attempted fixes**: The agent fixed the immediate bug by disabling the Pay Online Now option in  when the order total is zero, defaulting to Cash on Delivery.
+    *   **Next debug checklist**: This fix needs to be verified by the user. The agent should confirm if this behavior (disabling online payment for prescription uploads) is the desired long-term solution.
+    *   **Why fix this issue and what will be achieved with the fix?**: Prevents a critical payment failure and bad user experience in the pharmacy module.
+    *   **Status**: USER VERIFICATION PENDING
+    *   **Is recurring issue?**: Y (Payment issues)
+    *   **Should Test frontend/backend/both after fix?**: Frontend
+    *   **Blocked on other issue**: None
+
+*   **Issue 3: Mock OTP Logic Removal and Email Fallback**
+    *   **Attempted fixes**: Backend API in  was updated to remove . The frontend in  was updated to show an email input form when WhatsApp fails.
+    *   **Next debug checklist**:
+        1.  Thoroughly test the guest login flow.
+        2.  Simulate a WhatsApp failure to ensure the email input appears correctly.
+        3.  Verify the end-to-end email OTP flow works as intended.
+    *   **Why fix this issue and what will be achieved with the fix?**: To provide a clean, professional login experience and remove confusing test artifacts.
+    *   **Status**: IN PROGRESS
+    *   **Is recurring issue?**: Y
+    *   **Should Test frontend/backend/both after fix?**: Both
+    *   **Blocked on other issue**: None
+
+*   **Issue 4: Incomplete IST Timezone Standardization**
+    *   **Attempted fixes**: The agent created a centralized utility  in  and started applying it in . The replacement is not comprehensive.
+    *   **Next debug checklist**:
+        1.  Perform a global search for  and  in all backend Python files.
+        2.  Replace all instances that generate user-facing timestamps with .
+    *   **Why fix this issue and what will be achieved with the fix?**: Ensures all timestamps shown to users are consistent and in the correct timezone (IST).
     *   **Status**: IN PROGRESS
     *   **Is recurring issue?**: N
     *   **Should Test frontend/backend/both after fix?**: Backend
     *   **Blocked on other issue**: None
 
-*   **Issue 2: Mock OTP Logic Verification**
-    *   **Attempted fixes**: The agent modified  to conditionally return a  field and updated the toast notification logic in .
+*   **Issue 5: Mango Logo Responsive Scaling**
+    *   **Attempted fixes**: The agent centered the logo in  using flexbox.
+    *   **Next debug checklist**: Implement the bigger to smaller effect. This can be achieved using responsive Tailwind CSS classes (e.g., ) or a CSS animation. Verify the visual result with a screenshot.
+    *   **Why fix this issue and what will be achieved with the fix?**: Fulfills the user's specific design request for the Mango Health Labs page.
+    *   **Status**: IN PROGRESS
+    *   **Is recurring issue?**: Y (UI feedback)
+    *   **Should Test frontend/backend/both after fix?**: Frontend
+    *   **Blocked on other issue**: None
+
+*   **Issue 6: Unrequested Staff Notification Dashboard**
+    *   **Attempted fixes**: The agent created a new endpoint () and started logging notifications to a JSON file. This was not requested by the user.
     *   **Next debug checklist**:
-        1.  Trigger the guest login flow.
-        2.  Verify that when a real WhatsApp OTP is successfully sent, the frontend does not display any mock OTP information.
-        3.  Confirm that the  is only present in the API response as a fallback when the real OTP service fails.
-    *   **Why fix this issue and what will be achieved with the fix?**: To eliminate user confusion and ensure test data is not shown in the production user flow.
-    *   **Status**: USER VERIFICATION PENDING
-    *   **Is recurring issue?**: Y
-    *   **Should Test frontend/backend/both after fix?**: Both
-
-*   **Issue 3: Appointment Sync Discrepancy**
-    *   **Attempted fixes**: Agent investigated the user's report of a missing appointment () and concluded it was likely booked in a different environment (production vs. development), as it was not found in the agent's database.
-    *   **Next debug checklist**: This issue is more of a workflow clarification. The agent should complete the notification feature (Issue 1) which serves as a better sync confirmation for staff. If the user asks again, the agent should explain the environment difference.
-    *   **Why fix this issue and what will be achieved with the fix?**: To address the user's concern about data synchronization and provide a reliable notification system as a solution.
-    *   **Status**: BLOCKED
-    *   **Is recurring issue?**: N
-    *   **Should Test frontend/backend/both after fix?**: Backend
-    *   **Blocked on other issue**: Issue 1
-
-*   **Issue 4: Incomplete IST Timezone Standardization**
-    *   **Attempted fixes**: An  helper function was created and applied in some parts of the backend.
-    *   **Next debug checklist**: Perform a global search for  and  across all backend files (, , , ) and replace all instances that produce user-facing timestamps with the centralized IST utility.
-    *   **Why fix this issue and what will be achieved with the fix?**: To ensure all user-facing communications (WhatsApp, Email, UI) display time consistently in IST, as requested by the user.
+        1.  Inform the user about this partially implemented feature.
+        2.  Ask if they want to keep, complete, or remove it.
+        3.  If they want to remove it, delete the endpoint from  and the associated logging code.
+    *   **Why fix this issue and what will be achieved with the fix?**: To remove unrequested code and align the agent's work with the user's priorities.
     *   **Status**: IN PROGRESS
     *   **Is recurring issue?**: N
     *   **Should Test frontend/backend/both after fix?**: Backend
     *   **Blocked on other issue**: None
 
 **In progress Task List**:
-*   None, all are captured in the Issues list.
+*   All ongoing work is captured in the All Pending/In progress Issue list above.
 
 **Upcoming and Future Tasks**
 *   **Upcoming Tasks**:
-    *   (P1) Confirm with the user that all requested changes from their last message have been implemented before finishing.
+    *   (P1) **Comprehensive Testing**: After finishing the Pay Later refinements, perform a full end-to-end test of all payment flows and the updated staff portals.
 *   **Future Tasks**:
-    *   (P2) **Share Thermal Printer Format**: Analyze the code in  and provide a sample output of the bill/token format to the user.
-    *   (P2) **Systematic IST Conversion**: Complete the full audit and replacement of UTC timestamps.
-    *   (P3) **Clean up user profile page**: This task was noted in a previous agent's plan but never addressed.
-    *   (P3) **Comprehensive Testing**: A full testing run was requested by the user, to be performed after receiving their confirmation.
+    *   (P2) **Share Thermal Printer Format**: Analyze the code in  (if it exists) or create a sample format and share it with the user.
+    *   (P3) **Clean up user profile page**: This is a pending task from a previous session that has not been addressed.
 
 **Completed work in this session**
--   **Logo Alignment & Sizing**: Fixed and verified the alignment and sizing of the Mango Health Labs logo on both the homepage and the Mango-specific page across multiple iterations.
--   **ESLint Warning Fixes**: Resolved  dependency warnings in  by refactoring functions with .
--   **Google Review Stats Verification**: Successfully logged into the DiaGyn Staff Portal (/) and confirmed the Reviews statistic is visible.
--   **Manual Google Review Button**: Implemented and verified a REVIEW button on completed appointment cards in the DiaGyn portal to allow staff to manually send a review request.
--   **Staff Notification V1**: Implemented the initial version of staff WhatsApp notifications for new online bookings in .
+-   **Staff Notification Logic**: Correctly updated the Mango staff phone number and added logic to skip notifications for 'walk-in' and 'emergency' appointments.
+-   **Cashfree Zero-Amount Bug Fix**: Prevented payment failures by disabling the Pay Online option for pharmacy orders with a zero total.
+-   **Pay Later Feature (V1)**: Implemented the initial version of the Pay Later flow, including:
+    -   Added Pay Later as a payment option on the frontend for Pharmacy and Mango.
+    -   Created a backend API to generate and send Cashfree payment links via email.
+    -   Added Send Payment Link buttons to the Pharmacy and Mango staff portals.
+-   **Mango Logo Centering**: Centered the logo on the Mango Health Labs homepage.
+-   **Mock OTP Backend Removal**: Removed mock OTP generation logic from the backend authentication endpoint.
 
 **Earlier issues found/mentioned but not fixed**
-*   **ESLint Warnings in FaithCare.jsx**: These were noted in the initial handoff and have now been **RESOLVED** in this session.
-*   **Thermal Printer Format Request**: The user asked for the bill/token format. The agent located the relevant code but has not yet provided the output to the user.
+*   **Clean up user profile page**: A long-standing backlog item that remains unaddressed.
+*   **Thermal Printer Format Request**: The user's request has not been fulfilled yet.
 
 **Known issue recurrence from previous fork**
-*   **UI Feedback Loop**: The user provides iterative visual feedback, especially on logos. This is a recurring pattern requiring multiple small adjustments.
-*   **Login/OTP Blocker**: The agent continues to be blocked by the login screen when attempting manual UI verification. The  remains the most effective workaround.
+*   **UI Feedback Loop**: The user provides iterative visual feedback. The Mango logo is an example of this.
+*   **Login/OTP Blocker**: The agent is consistently blocked by the login screen when using the  tool, making  essential for UI verification.
 
 **Code Architecture**
 
@@ -117,71 +144,74 @@ The agent was implementing WhatsApp notifications for staff when new online appo
 *   **Frontend**: React, Tailwind CSS
 *   **Backend**: Python, FastAPI
 *   **Database**: Flat-file JSON files.
-*   **Integrations**: MSG91 (WhatsApp), Resend (Email).
+*   **Integrations**: MSG91 (WhatsApp), Resend (Email), **Cashfree (Payments)**.
 
 **key DB schema**
-*   **appointments**: Collection storing appointment details, including , , , Thu Feb 12 16:14:20 UTC 2026, and .
+*   **orders/bookings**: Should now include a  field (e.g., 'cod', 'online', 'pay_later').
 
 **changes in tech stack**
-*   None.
+*   **Cashfree Payment Gateway** has been deeply integrated into the application for both immediate payments and generating payment links.
 
 **All files of reference**
-*   : Contains staff contact numbers for notifications; needs updating.
-*   : Contains the logic for online bookings and calls the staff notification functions.
-*   : Logic for creating walk-in/emergency appointments; needs review to prevent notifications.
-*    & : Edited for logo alignment.
-*   : Edited to add the manual REVIEW button.
-*   : Edited for conditional  logic.
+*   
+*   
+*   
+*   
+*   
+*   
+*   
+*   
+*   
+*   
+*   
 
 **Areas that need refactoring**:
-*   **Monolithic **: This large file handles numerous distinct functionalities and should be broken down into separate FastAPI routers for better maintainability.
-*   **Configuration Management**: Staff phone numbers for notifications are hardcoded in . These should be externalized into environment variables.
-*   **Timezone Handling**: The new IST utility needs to be systematically applied across the entire codebase to replace all ad-hoc timezone logic.
+*   **Monolithic **: Still contains a large amount of unrelated business logic.
+*   **Hardcoded Configuration**: Staff numbers and email content are hardcoded in service files instead of being in environment variables or configuration files.
+*   **Inconsistent Timezone Handling**: The  utility needs to be applied globally.
 
 **key api endpoints**
-*   : Creates a new online appointment (defined in ).
-*   : Creates a walk-in appointment.
-*   : Sends OTP for guest login.
+*   : Creates a Cashfree order for immediate payment.
+*   : Generates a Cashfree payment link and sends it via email.
 
 **Critical Info for New Agent**
-*   **Address User's Last Message First**: The user's most recent message contains specific, high-priority modifications for the staff notification feature. Implement these changes before addressing any other tasks.
-*   **Environment Mismatch**: Be aware that the user is likely using a separate (production) environment. Data like specific appointments (e.g., ) will not exist in your development database. Communicate this if questions arise.
-*   **Use Testing Agent for UI**: The application's login/OTP screen consistently blocks manual UI verification. Rely on the  to get screenshots and confirm visual changes on protected pages.
+*   **Prioritize User's Last Message**: The user's most recent request is to refine the Pay Later feature (resend link, conditional button). This is the highest priority (P0).
+*   **Verify Unrequested Features**: The agent implemented a notification logging feature that was not requested. You must ask the user whether to keep or remove this feature to avoid building unnecessary components.
+*   **Adherence to System Prompt**: The agent did not use the  for the Cashfree integration. While the integration appears to work, be aware of this deviation from standard procedure.
+*   **Testing is Crucial**: The new payment flows are complex and touch multiple parts of the application. Use the  to perform comprehensive end-to-end testing before marking the task as complete.
 
 **documents and test reports created in this job**
-*   
-*   
-*   
-*   
+*    (has been updated).
+*   Test reports from the previous session exist, but no new ones were generated in this session.
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User**: Finish the pending task. (Agent finished, but prematurely).
-2.  **User**: *Reports appointment sync issue and requests staff WhatsApp notifications for new bookings with specific numbers for each clinic.* (Task started).
-3.  **User**: *Provides image and reports multiple issues:* , ,  (Tasks completed).
-4.  **User**:  (Tasks completed).
-5.  **User**:  (Task completed).
-6.  **User**:  (Task completed).
-7.  **User**:  **(PENDING - HIGHEST PRIORITY)**
+1.  **User (Msg 270)**: Requests to remove QR/Card option and replace it with a Pay Later feature where staff sends a payment link.
+2.  **User (Msg 279)**: Clarifies they want *three* options: Cash on Delivery, Pay Online Now, and Pay Later.
+3.  **User (Msg 372)**: Asks to add a resend payment link feature and to make the send payment link button in the Mango portal conditional on status ('Sample collected'). Requests to finish the future backlog.
+*(Older messages related to the Cashfree bug and logo issue have been addressed)*.
 
 **Project Health Check:**
-*   **Broken**: The data sync between the user's production environment and the agent's development environment is a point of confusion. The agent should rely on implementing robust features (like notifications) rather than debugging specific data points from the user's environment.
-*   **Mocked**: The guest OTP flow includes a conditional mock response, which has been investigated and refined but requires final verification.
+*   **Broken**: The IST timezone standardization is incomplete, which can lead to inconsistent data and user confusion. The new payment flows, while implemented, are not fully tested and may contain bugs.
+*   **Mocked**: The guest OTP fallback to email is implemented but not verified end-to-end.
 
 **3rd Party Integrations**
-*   **MSG91 (WhatsApp)** — Used for all template messages. Requires User API Key.
-*   **Resend (Email)** — Used for sending transactional emails. Requires User API Key.
+*   **MSG91 (WhatsApp)** — Requires User API Key.
+*   **Resend (Email)** — Requires User API Key.
+*   **Cashfree (Payments)** — Implemented for creating orders and payment links. Requires User API Key.
 
 **Testing status**
-*   **Testing agent used after significant changes**: YES (for UI changes).
+*   **Testing agent used after significant changes**: NO (The agent planned to but was interrupted).
 *   **Troubleshoot agent used after agent stuck in loop**: NO
 *   **Test files created**: None.
-*   **Known regressions**: None identified.
+*   **Known regressions**: None identified, but the new payment features are untested and could have introduced regressions.
 
 **Credentials to test flow:**
 *   **DiaGyn Staff Login**: User: , Password: 
 *   **Mango Staff Login**: User: , Password: 
+*   **Orange Pharmacy Staff Login**: User: , Password:  (assuming this exists based on portal name)
 
 **What agent forgot to execute**
-*   The agent did not provide the user with the requested **thermal printer bill format**.
-*   The agent did not start the task to **Clean up user profile page**.
-*   The agent prematurely finished the job without addressing the user's final clarifying instructions, requiring the next agent to immediately correct the implementation.</analysis>
+*   The agent did not use  for the new Cashfree integration, which violates a critical rule.
+*   The agent has not yet provided the user with the requested **thermal printer bill format**.
+*   The agent has not addressed the long-pending task to **Clean up user profile page**.
+*   The agent only partially implemented the Mango logo request (centering is done, but responsive scaling is not).</analysis>

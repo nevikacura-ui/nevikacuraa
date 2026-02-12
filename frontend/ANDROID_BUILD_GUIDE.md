@@ -92,6 +92,6 @@ Then rebuild the APK in Android Studio.
 ---
 
 ## Questions?
-The app is configured to load from: `https://faith-care-whatsapp.preview.emergentagent.com`
+The app is configured to load from: `https://staff-pay-portal-1.preview.emergentagent.com`
 
 This means you just need to build the APK once, and all future updates to your website will automatically appear in the app!

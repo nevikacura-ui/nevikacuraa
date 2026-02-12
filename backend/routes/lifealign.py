@@ -966,8 +966,8 @@ async def send_faithcare_credentials_email(to_email: str = "nevikacura@gmail.com
             </p>
             
             <div style="background: #f1f5f9; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
-                <a href="https://faith-care-whatsapp.preview.emergentagent.com/faithcare" style="color: #f59e0b; font-weight: bold; font-size: 16px;">
-                    https://faith-care-whatsapp.preview.emergentagent.com/faithcare
+                <a href="https://staff-pay-portal-1.preview.emergentagent.com/faithcare" style="color: #f59e0b; font-weight: bold; font-size: 16px;">
+                    https://staff-pay-portal-1.preview.emergentagent.com/faithcare
                 </a>
             </div>
             

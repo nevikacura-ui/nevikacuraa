@@ -153,5 +153,5 @@ async def upload_report(
     return {
         "success": True,
         "message": f"Report uploaded for {booking_id}",
-        "download_link": f"https://faith-care-whatsapp.preview.emergentagent.com/report/{booking_id.upper()}"
+        "download_link": f"https://staff-pay-portal-1.preview.emergentagent.com/report/{booking_id.upper()}"
     }
