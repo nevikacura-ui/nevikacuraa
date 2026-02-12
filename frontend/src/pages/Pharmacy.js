@@ -2875,7 +2875,25 @@ const Pharmacy = () => {
                   {paymentMethod === 'cod' && <CheckCircle2 className="w-5 h-5 text-orange-500" />}
                 </button>
 
-                {/* Option 2: Pay Later (Get Payment Link) */}
+                {/* Option 2: Pay Online Now */}
+                <button
+                  onClick={() => setPaymentMethod('cashfree')}
+                  className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
+                    paymentMethod === 'cashfree' ? 'border-orange-500 bg-orange-50' : 'border-orange-100 hover:border-orange-300'
+                  }`}
+                  data-testid="payment-cashfree"
+                >
+                  <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                    <Smartphone className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <span className="text-sm font-semibold text-slate-800 block">Pay Online Now</span>
+                    <span className="text-xs text-slate-500">UPI, Cards, Net Banking</span>
+                  </div>
+                  {paymentMethod === 'cashfree' && <CheckCircle2 className="w-5 h-5 text-orange-500" />}
+                </button>
+
+                {/* Option 3: Pay Later */}
                 <button
                   onClick={() => setPaymentMethod('pay_later')}
                   className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
@@ -2884,11 +2902,11 @@ const Pharmacy = () => {
                   data-testid="payment-pay-later"
                 >
                   <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                    <Link className="w-6 h-6 text-purple-600" />
+                    <Clock className="w-6 h-6 text-purple-600" />
                   </div>
                   <div className="text-left flex-1">
                     <span className="text-sm font-semibold text-slate-800 block">Pay Later</span>
-                    <span className="text-xs text-slate-500">Get payment link after bill confirmation</span>
+                    <span className="text-xs text-slate-500">Receive payment link after bill confirmation</span>
                   </div>
                   <div className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                     Recommended
