@@ -77,16 +77,30 @@ const CashfreeCheckout = ({
   };
 
   const handleCashfreePayment = async () => {
+    // Prevent payment for zero amounts (prescription orders need pharmacist confirmation first)
+    if (finalAmount <= 0) {
+      toast.error('Order amount must be confirmed first. Please select Cash on Delivery or wait for pharmacist to confirm the bill.');
+      return;
+    }
+    
     setProcessing(true);
     try {
+      // Clean and validate phone number
+      const cleanPhone = orderDetails.customerPhone?.replace(/\D/g, '').slice(-10);
+      if (!cleanPhone || cleanPhone.length !== 10) {
+        toast.error('Please enter a valid 10-digit phone number');
+        setProcessing(false);
+        return;
+      }
+      
       const res = await fetch(`${API}/api/payments/cashfree/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customer_id: `USER_${Date.now()}`,
-          customer_name: orderDetails.customerName,
+          customer_name: orderDetails.customerName || 'Guest User',
           customer_email: orderDetails.customerEmail || 'guest@nevikacura.com',
-          customer_phone: orderDetails.customerPhone.replace(/\D/g, ''),
+          customer_phone: cleanPhone,
           amount: finalAmount,
           original_amount: orderDetails.amount,
           discount_amount: discountAmount,
@@ -102,11 +116,13 @@ const CashfreeCheckout = ({
       if (data.success && data.payment_session_id) {
         await loadCashfreeCheckout(data.payment_session_id, data.order_id);
       } else {
-        toast.error(data.detail || data.message || 'Failed to create payment');
+        // Better error messages based on response
+        const errorMsg = data.detail?.[0]?.msg || data.detail || data.message || 'Failed to create payment order';
+        toast.error(errorMsg);
       }
     } catch (error) {
       console.error('Payment error:', error);
-      toast.error('Payment failed. Please try again.');
+      toast.error('Payment failed. Please check your connection and try again.');
     } finally {
       setProcessing(false);
     }
