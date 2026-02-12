@@ -260,6 +260,7 @@ async def email_verify_otp(request: EmailOTPVerify):
 async def whatsapp_send_otp(request: WhatsAppOTPRequest):
     """
     Step 1: Send OTP via WhatsApp for signup/login
+    If WhatsApp fails, redirect user to email verification instead (no mock OTP)
     """
     global db
     phone = request.phone.strip().replace("+91", "").replace(" ", "").replace("-", "")[-10:]
@@ -277,8 +278,7 @@ async def whatsapp_send_otp(request: WhatsAppOTPRequest):
         else:
             flow_type = "set_password"
     
-    # For development, always use mock OTP (MSG91 may not work in test environments)
-    # Generate mock OTP
+    # Generate OTP
     otp = generate_otp()
     patient_otp_storage[f"whatsapp_{phone}"] = {
         "otp": otp,
@@ -290,24 +290,30 @@ async def whatsapp_send_otp(request: WhatsAppOTPRequest):
         "attempts": 0
     }
     
-    # Try to send real WhatsApp OTP (optional - may fail)
+    # Try to send real WhatsApp OTP
     result = await send_whatsapp_otp(phone, "patient_signup")
     
-    response = {
-        "success": True,
-        "message": "OTP sent via WhatsApp" if result.get("success") and not result.get("mock") else "OTP generated (Demo mode)",
-        "phone": phone,
-        "flow_type": flow_type,
-        "has_password": flow_type == "login_with_password",
-        "expires_in": 600
-    }
-    
-    # Only include mock_otp if WhatsApp service failed or is in mock mode
-    if result.get("mock") or not result.get("success"):
-        response["mock_otp"] = otp
-        response["note"] = "WhatsApp service unavailable, use test OTP"
-    
-    return response
+    if result.get("success") and not result.get("mock"):
+        # WhatsApp OTP sent successfully
+        return {
+            "success": True,
+            "message": "OTP sent via WhatsApp",
+            "phone": phone,
+            "flow_type": flow_type,
+            "has_password": flow_type == "login_with_password",
+            "expires_in": 600
+        }
+    else:
+        # WhatsApp failed - redirect to email verification (NO mock OTP)
+        return {
+            "success": False,
+            "whatsapp_failed": True,
+            "message": "WhatsApp service unavailable. Please use email for verification.",
+            "phone": phone,
+            "flow_type": flow_type,
+            "has_password": flow_type == "login_with_password",
+            "redirect_to_email": True
+        }
 
 @router.post("/whatsapp/verify-otp")
 async def whatsapp_verify_otp(request: WhatsAppOTPVerify):
