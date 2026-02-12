@@ -659,8 +659,23 @@ async def notify_staff_new_appointment(appointment_details: dict):
     booking_type = appointment_details.get('booking_type', '').lower().strip()
     appointment_type = appointment_details.get('appointment_type', '').upper().strip()
     
+    # Log notification attempt to database for dashboard
+    notification_log = {
+        "id": str(uuid.uuid4()),
+        "type": "staff_appointment_notification",
+        "clinic": appointment_details.get('clinic', ''),
+        "booking_id": appointment_details.get('booking_id', ''),
+        "booking_type": booking_type,
+        "appointment_type": appointment_type,
+        "created_at": get_ist_now().isoformat(),
+        "status": "pending"
+    }
+    
     if booking_type in ['walk_in', 'walkin', 'emergency'] or appointment_type in ['WALK-IN', 'WALK_IN', 'EMERGENCY']:
         logger.info(f"Skipping staff notification for {booking_type or appointment_type} appointment (staff already present)")
+        notification_log["status"] = "skipped"
+        notification_log["reason"] = "walk-in/emergency - staff already present"
+        await db.staff_notification_logs.insert_one(notification_log)
         return {"success": True, "skipped": True, "reason": "walk-in/emergency appointments don't need staff notification"}
     
     clinic = appointment_details.get('clinic', '').lower().strip()
@@ -674,7 +689,12 @@ async def notify_staff_new_appointment(appointment_details: dict):
     
     if not staff_phone:
         logger.warning(f"No staff number configured for clinic: {clinic}")
+        notification_log["status"] = "failed"
+        notification_log["reason"] = "No staff number configured"
+        await db.staff_notification_logs.insert_one(notification_log)
         return {"success": False, "error": "No staff number for clinic"}
+    
+    notification_log["staff_phone"] = staff_phone
     
     # Format the notification message using the same template as patient confirmation
     patient_name = appointment_details.get('patient_name', 'Patient')
