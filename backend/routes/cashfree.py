@@ -513,3 +513,249 @@ async def verify_payment(order_id: str):
     except Exception as e:
         logger.error(f"Error verifying payment: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to verify payment")
+
+
+# ============ Payment Link for Pay Later Orders ============
+
+class PaymentLinkRequest(BaseModel):
+    """Request model for creating and sending payment link"""
+    order_id: str  # Original order ID (pharmacy/lab order)
+    order_type: str  # pharmacy, lab_test
+    customer_name: str
+    customer_phone: str
+    customer_email: Optional[str] = None
+    amount: float = Field(..., gt=0)
+    send_via: str = "whatsapp"  # whatsapp, email, both
+    items_description: Optional[str] = None  # Brief description of items
+
+class PaymentLinkResponse(BaseModel):
+    """Response model for payment link"""
+    success: bool
+    payment_link: str
+    order_id: str
+    cf_order_id: Optional[str] = None
+    message: str
+    sent_via: list
+
+@router.post("/create-payment-link", response_model=PaymentLinkResponse)
+async def create_and_send_payment_link(request: PaymentLinkRequest):
+    """
+    Create a Cashfree payment link and send to customer via WhatsApp/Email.
+    Used for 'Pay Later' orders where staff confirms the bill amount.
+    """
+    try:
+        cashfree = init_cashfree()
+        
+        # Clean phone number
+        phone = request.customer_phone.replace("+91", "").replace(" ", "").replace("-", "")[-10:]
+        
+        # Generate unique order ID for payment
+        payment_order_id = f"PAY_{request.order_type.upper()}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{request.order_id[-6:]}"
+        
+        # Production domain for return URL
+        return_url = "https://nevikacura.com/payment-success"
+        
+        # Create Cashfree order
+        customer = CustomerDetails(
+            customer_id=f"CUST_{phone}",
+            customer_name=request.customer_name,
+            customer_phone=f"91{phone}",
+            customer_email=request.customer_email or "customer@nevikacura.com"
+        )
+        
+        order_meta = OrderMeta(
+            return_url=f"{return_url}?order_id={payment_order_id}",
+            notify_url=None,
+            payment_methods=None
+        )
+        
+        order_request = CreateOrderRequest(
+            order_id=payment_order_id,
+            order_amount=request.amount,
+            order_currency="INR",
+            customer_details=customer,
+            order_meta=order_meta,
+            order_note=f"Payment for {request.order_type}: {request.items_description or request.order_id}"
+        )
+        
+        response = cashfree.PGCreateOrder(
+            x_api_version=API_VERSION,
+            create_order_request=order_request
+        )
+        
+        if not response or not response.data:
+            raise HTTPException(status_code=500, detail="Failed to create payment order")
+        
+        cf_order_id = response.data.cf_order_id
+        payment_session_id = response.data.payment_session_id
+        
+        # Build payment link - Use Cashfree's hosted checkout
+        payment_link = f"https://payments.cashfree.com/order/#/{payment_order_id}"
+        
+        # Store payment link order in database
+        payment_link_order = {
+            "payment_order_id": payment_order_id,
+            "original_order_id": request.order_id,
+            "order_type": request.order_type,
+            "cf_order_id": cf_order_id,
+            "payment_session_id": payment_session_id,
+            "customer_name": request.customer_name,
+            "customer_phone": phone,
+            "customer_email": request.customer_email,
+            "amount": request.amount,
+            "items_description": request.items_description,
+            "payment_link": payment_link,
+            "status": "LINK_SENT",
+            "payment_status": "PENDING",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "sent_via": []
+        }
+        
+        sent_via = []
+        
+        # Send via WhatsApp
+        if request.send_via in ["whatsapp", "both"]:
+            try:
+                from services.whatsapp_service import send_whatsapp_template
+                
+                # Send payment link message
+                whatsapp_result = await send_whatsapp_template(
+                    phone=phone,
+                    template_name="payment_link_reminder",
+                    variables={
+                        "customer_name": request.customer_name,
+                        "amount": f"₹{request.amount:.2f}",
+                        "order_type": "Lab Test" if request.order_type == "lab_test" else "Pharmacy Order",
+                        "payment_link": payment_link
+                    }
+                )
+                if whatsapp_result.get("success"):
+                    sent_via.append("whatsapp")
+                    logger.info(f"Payment link sent via WhatsApp to {phone}")
+            except Exception as wa_error:
+                logger.warning(f"WhatsApp send failed: {wa_error}")
+                # Fallback: Try direct WhatsApp link opening
+                sent_via.append("whatsapp_link_generated")
+        
+        # Send via Email
+        if request.send_via in ["email", "both"] and request.customer_email:
+            try:
+                from services.email_service import send_payment_link_email
+                
+                email_result = await send_payment_link_email(
+                    to_email=request.customer_email,
+                    customer_name=request.customer_name,
+                    amount=request.amount,
+                    order_type=request.order_type,
+                    payment_link=payment_link,
+                    items_description=request.items_description
+                )
+                if email_result.get("success"):
+                    sent_via.append("email")
+                    logger.info(f"Payment link sent via Email to {request.customer_email}")
+            except Exception as email_error:
+                logger.warning(f"Email send failed: {email_error}")
+        
+        payment_link_order["sent_via"] = sent_via
+        
+        # Save to database
+        if db:
+            await db.payment_links.insert_one(payment_link_order)
+            
+            # Update original order with payment link reference
+            collection_name = f"{request.order_type}_orders" if request.order_type != "lab_test" else "lab_orders"
+            await db[collection_name].update_one(
+                {"id": request.order_id},
+                {"$set": {
+                    "payment_link_order_id": payment_order_id,
+                    "payment_link": payment_link,
+                    "payment_link_sent_at": datetime.now(timezone.utc).isoformat(),
+                    "payment_status": "LINK_SENT"
+                }}
+            )
+        
+        return PaymentLinkResponse(
+            success=True,
+            payment_link=payment_link,
+            order_id=payment_order_id,
+            cf_order_id=cf_order_id,
+            message=f"Payment link created and sent via {', '.join(sent_via) if sent_via else 'generated'}",
+            sent_via=sent_via
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating payment link: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to create payment link: {str(e)}")
+
+
+@router.get("/payment-link-status/{order_id}")
+async def get_payment_link_status(order_id: str):
+    """Get the status of a payment link order"""
+    try:
+        if not db:
+            raise HTTPException(status_code=500, detail="Database not connected")
+        
+        # Find payment link order
+        order = await db.payment_links.find_one(
+            {"payment_order_id": order_id},
+            {"_id": 0}
+        )
+        
+        if not order:
+            raise HTTPException(status_code=404, detail="Payment link order not found")
+        
+        # Check payment status with Cashfree
+        try:
+            cashfree = init_cashfree()
+            response = cashfree.PGFetchOrder(
+                x_api_version=API_VERSION,
+                order_id=order_id
+            )
+            
+            if response and response.data:
+                cf_status = response.data.order_status
+                
+                # Update database if status changed
+                if cf_status != order.get("payment_status"):
+                    await db.payment_links.update_one(
+                        {"payment_order_id": order_id},
+                        {"$set": {
+                            "payment_status": cf_status,
+                            "updated_at": datetime.now(timezone.utc).isoformat()
+                        }}
+                    )
+                    
+                    # If paid, update original order
+                    if cf_status == "PAID":
+                        collection_name = f"{order['order_type']}_orders" if order['order_type'] != "lab_test" else "lab_orders"
+                        await db[collection_name].update_one(
+                            {"id": order["original_order_id"]},
+                            {"$set": {
+                                "payment_status": "PAID",
+                                "paid_at": datetime.now(timezone.utc).isoformat()
+                            }}
+                        )
+                    
+                    order["payment_status"] = cf_status
+                    
+        except Exception as cf_error:
+            logger.warning(f"Could not fetch status from Cashfree: {cf_error}")
+        
+        return {
+            "success": True,
+            "payment_order_id": order_id,
+            "original_order_id": order.get("original_order_id"),
+            "amount": order.get("amount"),
+            "payment_status": order.get("payment_status", "PENDING"),
+            "payment_link": order.get("payment_link"),
+            "sent_via": order.get("sent_via", []),
+            "created_at": order.get("created_at")
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting payment link status: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to get payment status")
