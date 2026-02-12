@@ -50,6 +50,9 @@ from services.whatsapp_otp import set_db as set_otp_db, set_send_function as set
 from data.medicine_inventory import MEDICINE_INVENTORY
 from data.diagnostic_tests import DIAGNOSTIC_TESTS, DIAGNOSTIC_TEST_PRICES
 
+# Import IST timezone utilities
+from utils.timezone_utils import get_ist_now, get_ist_date, get_ist_display_datetime, get_ist_display_time
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
