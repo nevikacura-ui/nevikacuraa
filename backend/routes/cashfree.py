@@ -559,7 +559,7 @@ async def create_and_send_payment_link(request: PaymentLinkRequest):
         customer = CustomerDetails(
             customer_id=f"CUST_{phone}",
             customer_name=request.customer_name,
-            customer_phone=f"91{phone}",
+            customer_phone=phone,  # 10 digit phone without country code
             customer_email=request.customer_email or "customer@nevikacura.com"
         )
         
