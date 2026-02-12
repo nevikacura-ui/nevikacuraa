@@ -1148,32 +1148,31 @@ const Proton = () => {
           {/* Hero Banner - Orange Theme */}
           <div className="bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#C2410C] relative overflow-hidden w-full">
             <div className="w-full px-4 py-5">
-              <div className="flex items-center justify-between">
-                {/* Left Content */}
-                <div className="flex-1 text-white z-10">
-                  {/* Mango Health Labs Logo - Properly centered like DiaGyn */}
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="w-44 h-20 rounded-lg bg-white shadow-lg flex items-center justify-center p-2">
-                      <img 
-                        src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/1o2w2pps_Purple%20White%20Modern%20Medical%20Laboratory%20Professional%20Banner%20%28Business%20Card%20%28_20260211_062110_0001.png"
-                        alt="Mango Health Labs"
-                        className="w-[90%] h-[90%] object-contain"
-                        data-testid="mango-hero-logo"
-                      />
-                    </div>
-                  </div>
-                  <h1 className="text-xl md:text-2xl font-bold mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                    Blood Test At Home
-                  </h1>
-                  <div className="flex items-center gap-1 mb-2">
-                    <Clock className="w-4 h-4 text-white" />
-                    <span className="font-semibold text-white text-sm">in 60 MINS</span>
-                  </div>
+              {/* Centered Mango Health Labs Logo */}
+              <div className="flex flex-col items-center justify-center mb-4">
+                <div className="w-40 h-20 rounded-lg bg-white shadow-lg flex items-center justify-center p-2 transform hover:scale-105 transition-transform duration-300">
+                  <img 
+                    src="https://customer-assets.emergentagent.com/job_c3c7c000-c0b8-475a-b79b-a8334b822713/artifacts/1o2w2pps_Purple%20White%20Modern%20Medical%20Laboratory%20Professional%20Banner%20%28Business%20Card%20%28_20260211_062110_0001.png"
+                    alt="Mango Health Labs"
+                    className="w-[85%] h-[85%] object-contain"
+                    data-testid="mango-hero-logo"
+                  />
                 </div>
               </div>
               
-              {/* Reports badge - moved below to avoid congestion */}
-              <div className="flex items-center gap-2 flex-wrap mt-1">
+              {/* Center Content */}
+              <div className="flex flex-col items-center justify-center text-white z-10">
+                <h1 className="text-xl md:text-2xl font-bold mb-1 text-center" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  Blood Test At Home
+                </h1>
+                <div className="flex items-center gap-1 mb-2">
+                  <Clock className="w-4 h-4 text-white" />
+                  <span className="font-semibold text-white text-sm">in 60 MINS</span>
+                </div>
+              </div>
+              
+              {/* Reports badge - centered below */}
+              <div className="flex items-center gap-2 flex-wrap mt-1 justify-center">
                 <div className="flex items-center gap-1 bg-orange-500/30 backdrop-blur-sm rounded-full px-2.5 py-0.5">
                   <CheckCircle2 className="w-2.5 h-2.5 text-orange-200" />
                   <span className="text-[10px] font-medium text-orange-200">Reports in 06 HRS</span>
