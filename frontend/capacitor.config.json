@@ -4,7 +4,7 @@
   "webDir": "build",
   "server": {
     "androidScheme": "https",
-    "url": "https://faithcare-review-hub.preview.emergentagent.com",
+    "url": "https://faith-care-whatsapp.preview.emergentagent.com",
     "cleartext": false
   },
   "android": {

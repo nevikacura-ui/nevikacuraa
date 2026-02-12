@@ -1,122 +1,114 @@
 <analysis>**original_problem_statement:**
-The user initiated the session with a series of UI update requests and then continued to add more features and modifications throughout the conversation.
-
-**Initial & Key PRODUCT REQUIREMENTS:**
-1.  **Logo Management**:
-    *   Update logos for Mango Health Labs and FaithCare across the application.
-    *   Iteratively adjust logo size, placement, and background based on visual feedback.
-2.  **FaithCare Module**:
-    *   Implement a WhatsApp reminder system for Sehri, Iftar, and other important dates for FaithCare users.
-    *   Create a UI for users to register their WhatsApp number and manage reminder preferences.
-    *   Expand the list of Jamatkhana locations to include more in the USA/Canada.
-    *   Implement real-time timezone detection for international users to get accurate Sehri/Iftar times.
-    *   Integrate GPS to find the nearest Jamatkhana.
+The user initiated a series of feature requests for a multi-module healthcare application. The core requirements include:
+1.  **UI/Logo Management**: Iteratively update and align logos for Mango Health Labs and DiaGyn based on visual feedback.
+2.  **FaithCare Module**: Implement a WhatsApp reminder system for religious events, manage Jamatkhana locations, and provide timezone-aware timings.
 3.  **DiaGyn (Clinic) Module**:
-    *   Create and automate a WhatsApp message to be sent to patients requesting a Google Review upon appointment completion.
-    *   The system must be dynamic to handle two different clinics (Pushpa & Amnion) with their respective review links.
-    *   This feature must work for all appointment types (user-booked, staff walk-in, emergency).
+    *   Automate sending Google Review WhatsApp messages to patients upon appointment completion.
     *   Display Google Review statistics on the doctor's staff portal.
-4.  **System-Wide Changes**:
-    *   Make Indian Standard Time (IST) the default timezone for all user-facing communications (WhatsApp, Email, UI).
-    *   Provide the format for bills and tokens intended for a thermal printer.
-    *   Run comprehensive testing and provide a report of all issues.
+    *   Add a manual button for staff to send review requests.
+4.  **Appointment Sync & Notifications**:
+    *   Investigate why appointments booked on the website are not visible to staff in the app.
+    *   Implement a WhatsApp notification system to inform staff of new online bookings for different clinics (Pushpa, Amnion, Mango Health Labs, Ornave).
+5.  **System-Wide Changes**:
+    *   Standardize all user-facing timestamps to Indian Standard Time (IST).
+    *   Resolve user confusion regarding a mock OTP during guest login.
+    *   Provide the format for bills/tokens generated for a thermal printer.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A multi-module healthcare application built with a React frontend and Python (FastAPI) backend.
--   **Modules**: FaithCare (Ramadan services), Mango Health Labs (diagnostics), and DiaGyn (clinic management).
+A multi-module healthcare application with a React frontend and a Python (FastAPI) backend.
+-   **Modules**: FaithCare (religious services), Mango Health Labs (diagnostics), DiaGyn (clinic management), and Ornave.
 -   **Integrations**: MSG91 for WhatsApp and Resend for email are configured and functional.
--   **Features**: New backend endpoints exist for sending FaithCare credentials via email, dispatching various WhatsApp reminders (Sehri, Iftar, Google Review), and providing review statistics. The logic to automatically send Google Review links when a doctor completes an appointment is implemented. The frontend includes a UI for managing WhatsApp reminders in FaithCare and is set up to show review stats in the DiaGyn portal.
--   **Data**: The application uses JSON files as a database for user data and application data like Jamatkhana locations.
+-   **Data Store**: JSON files are used as a database.
+-   **Key Features**: The application supports automated and manual WhatsApp messages for Google Reviews, displays review statistics on the staff portal, and has a partially implemented staff notification system for new online appointments. The UI has undergone multiple revisions for logo placement and alignment. A centralized utility for IST conversion has been created but not fully deployed across the codebase.
 
 **Last working item**:
-The agent was addressing a multi-part user request involving UI fixes, timezone standardization, and information retrieval.
+The agent was implementing WhatsApp notifications for staff when new online appointments are booked. The user provided critical follow-up instructions to modify this feature.
 
-*   **Last item agent was working**: Fixing the layout of the Mango Health Labs logo on the homepage card to ensure it's centered, and responding to the user's request for the thermal printer bill format. The agent confirmed that print functions (, ) already exist in the codebase but did not share the output format with the user.
+*   **Last item agent was working**: Modifying the recently implemented staff notification feature based on user feedback. The user requested to change a contact number for Mango notifications and, crucially, to prevent notifications from being sent for walk-in and emergency appointments.
 *   **Status**: IN PROGRESS
-*   **Agent Testing Done**: N (For the latest UI changes, as the agent was blocked by a login screen).
-*   **Which testing method agent to use?**: **Frontend testing agent** to bypass the login/OTP screen and get a screenshot to verify the UI changes on the homepage.
+*   **Agent Testing Done**: N
+*   **Which testing method agent to use?**: backend testing agent. The agent should use  commands to simulate booking different appointment types (online, walk-in, emergency) to verify that notifications are sent or skipped according to the new logic.
 *   **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
-*   **Issue 1**: UI changes from the last user requests are incomplete and unverified. (P0)
-*   **Issue 2**: The task to make IST the default timezone across all user communications is incomplete. (P1)
+*   **Issue 1**: Conditional Staff Appointment Notifications (P0)
+*   **Issue 2**: Mock OTP Logic Verification (P1)
+*   **Issue 3**: Appointment Sync Discrepancy (P2)
+*   **Issue 4**: Incomplete IST Timezone Standardization (P2)
 
 **Issues Detail**:
-*   **Issue 1: Incomplete UI Fixes and Verification**
-    *   **Attempted fixes**: The agent modified CSS classes in  and  to center the logo and adjust frame sizes. However, it was unable to verify the changes visually due to being blocked by a login/OTP screen on the homepage.
+*   **Issue 1: Conditional Staff Appointment Notifications**
+    *   **Attempted fixes**: The agent added code to  to call a notification function when online appointments are created. This implementation is too broad and does not meet the user's latest requirements.
     *   **Next debug checklist**:
-        1.  Use the **frontend testing agent** to log in or bypass the OTP screen.
-        2.  Navigate to the homepage and the Mango Labs page.
-        3.  Take screenshots of both the mobile and desktop views to verify:
-            *   Is the Mango logo perfectly centered within its card on the homepage?
-            *   On the Mango Labs page, has the rectangular frame size been reverted while the logo inside is enlarged?
-        4.  Adjust the Tailwind CSS classes in  and  if the alignment or size is still incorrect.
-    *   **Why fix this issue and what will be achieved with the fix?**: To satisfy the user's explicit visual requirements for the application's branding and layout.
-    *   **Status**: IN PROGRESS
-    *   **Is recurring issue?**: Y (The user has provided iterative feedback on logos and layouts multiple times).
-    *   **Should Test frontend/backend/both after fix?**: Frontend.
-    *   **Blocked on other issue**: None.
-
-*   **Issue 2: Incomplete IST Conversion**
-    *   **Attempted fixes**: The agent created an  helper function in  and replaced a few instances of . This is an incomplete, ad-hoc solution.
-    *   **Next debug checklist**:
-        1.  Review all backend files that generate user-facing timestamps (e.g., , , ).
-        2.  Search for all instances of  or  that are used in emails, WhatsApp messages, or API responses displayed to the user.
-        3.  Systematically replace them with a centralized IST conversion utility to ensure consistency.
-        4.  Verify the implementation by triggering events that send communications, like completing an appointment, and checking the timestamp in the resulting message.
-    *   **Why fix this issue and what will be achieved with the fix?**: The user requested that all timings be in IST to avoid confusion for users in India. This will ensure a consistent and user-friendly experience.
+        1.  Open  and update the  dictionary to change the 'mango' number to .
+        2.  Locate the code that creates walk-in and emergency appointments, likely in .
+        3.  Ensure that the staff notification function () is *not* called from these flows.
+        4.  Alternatively, modify  in  to include a conditional check on the appointment type, preventing messages for 'walk-in' and 'emergency' types.
+        5.  Test by creating an online appointment and verifying a notification is triggered.
+        6.  Test by creating a walk-in/emergency appointment and verifying no notification is triggered.
+    *   **Why fix this issue and what will be achieved with the fix?**: To align the feature with the user's precise business logic and prevent unnecessary alerts for staff.
     *   **Status**: IN PROGRESS
     *   **Is recurring issue?**: N
-    *   **Should Test frontend/backend/both after fix?**: Backend.
-    *   **Blocked on other issue**: None.
+    *   **Should Test frontend/backend/both after fix?**: Backend
+    *   **Blocked on other issue**: None
+
+*   **Issue 2: Mock OTP Logic Verification**
+    *   **Attempted fixes**: The agent modified  to conditionally return a  field and updated the toast notification logic in .
+    *   **Next debug checklist**:
+        1.  Trigger the guest login flow.
+        2.  Verify that when a real WhatsApp OTP is successfully sent, the frontend does not display any mock OTP information.
+        3.  Confirm that the  is only present in the API response as a fallback when the real OTP service fails.
+    *   **Why fix this issue and what will be achieved with the fix?**: To eliminate user confusion and ensure test data is not shown in the production user flow.
+    *   **Status**: USER VERIFICATION PENDING
+    *   **Is recurring issue?**: Y
+    *   **Should Test frontend/backend/both after fix?**: Both
+
+*   **Issue 3: Appointment Sync Discrepancy**
+    *   **Attempted fixes**: Agent investigated the user's report of a missing appointment () and concluded it was likely booked in a different environment (production vs. development), as it was not found in the agent's database.
+    *   **Next debug checklist**: This issue is more of a workflow clarification. The agent should complete the notification feature (Issue 1) which serves as a better sync confirmation for staff. If the user asks again, the agent should explain the environment difference.
+    *   **Why fix this issue and what will be achieved with the fix?**: To address the user's concern about data synchronization and provide a reliable notification system as a solution.
+    *   **Status**: BLOCKED
+    *   **Is recurring issue?**: N
+    *   **Should Test frontend/backend/both after fix?**: Backend
+    *   **Blocked on other issue**: Issue 1
+
+*   **Issue 4: Incomplete IST Timezone Standardization**
+    *   **Attempted fixes**: An  helper function was created and applied in some parts of the backend.
+    *   **Next debug checklist**: Perform a global search for  and  across all backend files (, , , ) and replace all instances that produce user-facing timestamps with the centralized IST utility.
+    *   **Why fix this issue and what will be achieved with the fix?**: To ensure all user-facing communications (WhatsApp, Email, UI) display time consistently in IST, as requested by the user.
+    *   **Status**: IN PROGRESS
+    *   **Is recurring issue?**: N
+    *   **Should Test frontend/backend/both after fix?**: Backend
+    *   **Blocked on other issue**: None
 
 **In progress Task List**:
-*   **Task 1**: Fulfill user request for bill/token format. (P0)
-*   **Task 2**: Verify Google Review stats on the doctor portal. (P1)
-
-**Task Detail**:
-*   **Task 1: Share Thermal Printer Bill/Token Format**
-    *   **Where to resume**: The agent has already located the relevant file:  and functions  and . The next step is to analyze these functions and generate a sample of the output format.
-    *   **What will be achieved with this?**: This will provide the user with the requested information about the structure and content of the receipts generated by the system.
-    *   **Status**: IN PROGRESS
-    *   **Should Test frontend/backend/both after fix?**: N/A (Information request).
-    *   **Blocked on something**: No.
-
-*   **Task 2: Verify Google Review Stats on Doctor Portal**
-    *   **Where to resume**: The frontend and backend logic is implemented. The agent needs to log in to the DiaGyn Staff Portal and take a screenshot.
-    *   **What will be achieved with this?**: This will confirm that the new feature for displaying review statistics to doctors is working as intended.
-    *   **Status**: IN PROGRESS
-    *   **Should Test frontend/backend/both after fix?**: Frontend.
-    *   **Blocked on something**: Requires successful login to the staff portal ( with credentials  / ).
+*   None, all are captured in the Issues list.
 
 **Upcoming and Future Tasks**
 *   **Upcoming Tasks**:
-    *   **Homepage Screenshot (P1)**: Provide a screenshot of the homepage in desktop view, showing all the service toggles. This is currently blocked by the login screen.
-    *   **Comprehensive Testing (P2)**: The user has requested to run comprehensive testing again, but only after receiving confirmation from them. This is pending user approval.
+    *   (P1) Confirm with the user that all requested changes from their last message have been implemented before finishing.
 *   **Future Tasks**:
-    *   **Clean up user profile page (P2)**: This was part of an earlier agent plan but was never addressed.
+    *   (P2) **Share Thermal Printer Format**: Analyze the code in  and provide a sample output of the bill/token format to the user.
+    *   (P2) **Systematic IST Conversion**: Complete the full audit and replacement of UTC timestamps.
+    *   (P3) **Clean up user profile page**: This task was noted in a previous agent's plan but never addressed.
+    *   (P3) **Comprehensive Testing**: A full testing run was requested by the user, to be performed after receiving their confirmation.
 
 **Completed work in this session**
-*   **Logo and UI Overhaul**: Successfully updated logos for FaithCare and Mango Health Labs multiple times based on user feedback. Adjusted component layouts, colors, and responsive behavior in , , and .
-*   **FaithCare WhatsApp Reminders**: Implemented a complete end-to-end feature for WhatsApp reminders, including backend APIs (), a frontend UI for user registration, and successful debugging of MSG91 delivery issues.
-*   **FaithCare Internationalization**: Added more Jamatkhana locations for North America and implemented a timezone-aware API for calculating Sehri/Iftar times.
-*   **DiaGyn Google Review Automation**: Created a backend process in  to automatically send a customized WhatsApp message with the correct Google Review link when a doctor completes an appointment. This works dynamically for both clinics.
-*   **Credential Distribution**: Created and used an endpoint () to email 30 FaithCare user credentials to the user.
-*   **Comprehensive Testing**: Executed a full testing run for frontend and backend functionalities and delivered a detailed report to the user.
+-   **Logo Alignment & Sizing**: Fixed and verified the alignment and sizing of the Mango Health Labs logo on both the homepage and the Mango-specific page across multiple iterations.
+-   **ESLint Warning Fixes**: Resolved  dependency warnings in  by refactoring functions with .
+-   **Google Review Stats Verification**: Successfully logged into the DiaGyn Staff Portal (/) and confirmed the Reviews statistic is visible.
+-   **Manual Google Review Button**: Implemented and verified a REVIEW button on completed appointment cards in the DiaGyn portal to allow staff to manually send a review request.
+-   **Staff Notification V1**: Implemented the initial version of staff WhatsApp notifications for new online bookings in .
 
 **Earlier issues found/mentioned but not fixed**
-*   **Issue 1: ESLint Warnings in FaithCare.jsx**
-    *   **Debug checklist**: The test report mentioned missing dependencies in  hooks at lines 138 and 372 of . These should be reviewed and the dependency arrays should be corrected to include the missing variables.
-    *   **Why to solve this issue and what will be achieved with this?**: Fixing this improves code quality and prevents potential stale state issues or infinite loops in the React component, even if it's not currently causing a visible bug.
-    *   **Should Test frontend/backend/both after fix**: Frontend.
-    *   **Is recurring issue?**: N
+*   **ESLint Warnings in FaithCare.jsx**: These were noted in the initial handoff and have now been **RESOLVED** in this session.
+*   **Thermal Printer Format Request**: The user asked for the bill/token format. The agent located the relevant code but has not yet provided the output to the user.
 
 **Known issue recurrence from previous fork**
-*   **Issue recurrence in previous fork**: N/A
-*   **Recurrence count**: N/A
-*   **Status**: N/A
+*   **UI Feedback Loop**: The user provides iterative visual feedback, especially on logos. This is a recurring pattern requiring multiple small adjustments.
+*   **Login/OTP Blocker**: The agent continues to be blocked by the login screen when attempting manual UI verification. The  remains the most effective workaround.
 
 **Code Architecture**
 
@@ -124,80 +116,72 @@ The agent was addressing a multi-part user request involving UI fixes, timezone 
 **Key Technical Concepts**
 *   **Frontend**: React, Tailwind CSS
 *   **Backend**: Python, FastAPI
-*   **Database**: Flat-file JSON files serve as the database.
+*   **Database**: Flat-file JSON files.
 *   **Integrations**: MSG91 (WhatsApp), Resend (Email).
-*   **Timezones**:  library on the backend for server-side timezone conversions.
 
 **key DB schema**
-*   : 
-*   : 
-*   **Appointments**: Managed in a collection, schema includes , , , .
+*   **appointments**: Collection storing appointment details, including , , , Thu Feb 12 16:14:20 UTC 2026, and .
 
 **changes in tech stack**
 *   None.
 
 **All files of reference**
-*   : Edited for logo updates, card layouts, and color fixes.
-*   : Edited to add the WhatsApp reminder UI and timezone logic.
-*   : Edited to update the main logo and its container.
-*   : Edited to add the UI for Google Review statistics.
-*   : Edited to add APIs for WhatsApp reminders and timezone-aware timings.
-*   : Edited to add Google Review sending logic and a stats API.
-*   : Edited to integrate the review sending logic on appointment completion.
-*   : Contains the receipt format logic requested by the user.
+*   : Contains staff contact numbers for notifications; needs updating.
+*   : Contains the logic for online bookings and calls the staff notification functions.
+*   : Logic for creating walk-in/emergency appointments; needs review to prevent notifications.
+*    & : Edited for logo alignment.
+*   : Edited to add the manual REVIEW button.
+*   : Edited for conditional  logic.
 
 **Areas that need refactoring**:
-*   **Timezone Handling**: The current approach of adding an  helper is not systematic. A centralized utility or middleware should be implemented to handle all UTC to IST conversions consistently.
-*   **Configuration Management**: Secrets like API keys and configuration like MSG91 template names are hardcoded in application logic. They should be externalized to environment variables for better security and maintainability.
+*   **Monolithic **: This large file handles numerous distinct functionalities and should be broken down into separate FastAPI routers for better maintainability.
+*   **Configuration Management**: Staff phone numbers for notifications are hardcoded in . These should be externalized into environment variables.
+*   **Timezone Handling**: The new IST utility needs to be systematically applied across the entire codebase to replace all ad-hoc timezone logic.
 
 **key api endpoints**
-*   : Sends a Sehri reminder.
-*   : Updates appointment status and triggers a Google Review request on completion.
-*   : Retrieves statistics on sent Google review requests.
-*   : Provides timezone-aware Ramadan timings.
+*   : Creates a new online appointment (defined in ).
+*   : Creates a walk-in appointment.
+*   : Sends OTP for guest login.
 
 **Critical Info for New Agent**
-*   **WhatsApp Opt-In Policy**: WhatsApp will block messages (Error 131049) sent to users who have not opted-in by messaging the business number first. This is a crucial point for debugging any future message not received issues.
-*   **UI Feedback is Iterative**: The user frequently provides visual feedback with images. Be prepared for multiple small cycles of UI tweaks, screenshot verification, and adjustments.
-*   **Login/OTP Blocker**: The main application homepage is protected by a login/OTP flow that has consistently blocked UI verification. You **must** use the frontend testing agent or valid credentials to get past this barrier to test and verify changes on protected pages.
-*   **Codebase Naming**: The module the user calls FaithCare is named  in the backend code.
+*   **Address User's Last Message First**: The user's most recent message contains specific, high-priority modifications for the staff notification feature. Implement these changes before addressing any other tasks.
+*   **Environment Mismatch**: Be aware that the user is likely using a separate (production) environment. Data like specific appointments (e.g., ) will not exist in your development database. Communicate this if questions arise.
+*   **Use Testing Agent for UI**: The application's login/OTP screen consistently blocks manual UI verification. Rely on the  to get screenshots and confirm visual changes on protected pages.
 
 **documents and test reports created in this job**
-*   A comprehensive test report was generated by the agent and sent to the user in the chat history.
+*   
+*   
+*   
+*   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **Yes**: Confirmed receipt of the test Google Review WhatsApp message. (Completed)
-2.  **Make sure to send this review link to all patient...**: Requested the review feature works for all appointment types. (Completed)
-3.  **Update it**: Provided new Google Review links for the clinics. (Completed)
-4.  **Should I use...**: Asked for clarification on the correct Google Review link format. (Completed)
-5.  **Will it work for both doctors patients and for both clinic ??**: Asked for confirmation on the feature's scope. (Completed)
-6.  **When ever doctor enter fees and complete the appointment...**: Defined the trigger for sending the review link. (Completed)
-7.  **Ok show in doctor portals only...**: Requested Google Review stats on doctor portals and more Jamatkhana features. (In Progress)
-8.  **Enlarge this logo by 40 %...**: Multi-part request for UI tweaks, bill format info, and UTC-to-IST conversion. (In Progress)
-9.  **- dont increase the size of the frame..."**: Corrective feedback on the logo enlargement. (In Progress)
-10. **"Logo should in middle of white frame"**: Corrective feedback on logo alignment. (In Progress)
-11. **"1. Yes 2. Isnt it there ??**: Asked if the print bill functionality already existed. (Completed)
+1.  **User**: Finish the pending task. (Agent finished, but prematurely).
+2.  **User**: *Reports appointment sync issue and requests staff WhatsApp notifications for new bookings with specific numbers for each clinic.* (Task started).
+3.  **User**: *Provides image and reports multiple issues:* , ,  (Tasks completed).
+4.  **User**:  (Tasks completed).
+5.  **User**:  (Task completed).
+6.  **User**:  (Task completed).
+7.  **User**:  **(PENDING - HIGHEST PRIORITY)**
 
 **Project Health Check:**
-*   **Broken**: The testing and verification workflow for the main homepage is broken due to a mandatory login/OTP screen that the agent has been unable to bypass manually. This needs to be addressed with the proper testing tools to ensure UI changes can be verified efficiently.
+*   **Broken**: The data sync between the user's production environment and the agent's development environment is a point of confusion. The agent should rely on implementing robust features (like notifications) rather than debugging specific data points from the user's environment.
+*   **Mocked**: The guest OTP flow includes a conditional mock response, which has been investigated and refined but requires final verification.
 
 **3rd Party Integrations**
-*   **MSG91 (WhatsApp)** — Used for all WhatsApp template messages. Requires User API Key.
-*   **Resend (Email)** — Used for sending transactional emails like credential delivery. Requires User API Key.
-*   **Google Maps/Business** — Used for generating direct Google Review links. Does not require an API key for this usage.
+*   **MSG91 (WhatsApp)** — Used for all template messages. Requires User API Key.
+*   **Resend (Email)** — Used for sending transactional emails. Requires User API Key.
 
 **Testing status**
-*   **Testing agent used after significant changes**: YES
+*   **Testing agent used after significant changes**: YES (for UI changes).
 *   **Troubleshoot agent used after agent stuck in loop**: NO
 *   **Test files created**: None.
-*   **Known regressions**: None.
+*   **Known regressions**: None identified.
 
 **Credentials to test flow:**
-*   **FaithCare Login**: User: , Password: 
+*   **DiaGyn Staff Login**: User: , Password: 
 *   **Mango Staff Login**: User: , Password: 
 
 **What agent forgot to execute**
-*   The agent never provided the requested **desktop screenshot of the homepage toggles**.
-*   The agent did not share the **thermal printer bill format** with the user, despite identifying the code that generates it.
-*   The agent did not start the task to **Clean up user profile page** from its own internal plan.
-*   The **ESLint warnings** found during testing were noted but never fixed.</analysis>
+*   The agent did not provide the user with the requested **thermal printer bill format**.
+*   The agent did not start the task to **Clean up user profile page**.
+*   The agent prematurely finished the job without addressing the user's final clarifying instructions, requiring the next agent to immediately correct the implementation.</analysis>
