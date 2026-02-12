@@ -693,9 +693,45 @@ async def notify_staff_new_signup(user_details: dict):
     return {"success": True, "method": "whatsapp"}
 
 async def notify_staff_new_order(order_details: dict, department: str):
-    """Notify staff about new order via WhatsApp"""
-    logger.info(f"Staff notification: New {department} order - {order_details.get('id', '')[:8]}")
-    return {"success": True, "method": "whatsapp"}
+    """Notify staff about new order via WhatsApp (Mango Labs, Ornave)"""
+    # Map department to staff phone number
+    department_phones = {
+        "proton": "917030040040",      # Mango Health Labs (Proton Diagnostics)
+        "mango": "917030040040",       # Mango Health Labs
+        "mango_labs": "917030040040",  # Mango Health Labs
+        "ornave": "917039030030",      # Ornave Pharmacy
+        "pharmacy": "917039030030",    # Ornave Pharmacy
+    }
+    
+    staff_phone = department_phones.get(department.lower().strip())
+    
+    if not staff_phone:
+        logger.warning(f"No staff number configured for department: {department}")
+        return {"success": False, "error": "No staff number for department"}
+    
+    try:
+        # For Mango Labs orders, use the lab confirmation template
+        if department.lower() in ["proton", "mango", "mango_labs"]:
+            result = await send_proton_lab_confirmation(
+                phone=staff_phone,
+                patient_name=f"[STAFF ALERT] {order_details.get('patient_name', 'Patient')}",
+                tests=order_details.get('test_name', order_details.get('tests', 'Tests')),
+                preferred_date=order_details.get('preferred_date', 'TBD'),
+                preferred_time=order_details.get('preferred_time', 'TBD'),
+                booking_id=f"{str(order_details.get('id', ''))[:8]} | Ph: {str(order_details.get('patient_phone', ''))[-4:]}",
+                address=order_details.get('address', 'See order details'),
+                db=db
+            )
+        else:
+            # For pharmacy orders, log for now (can add pharmacy template later)
+            logger.info(f"Staff notification: New {department} order - {order_details.get('id', '')[:8]}")
+            result = {"success": True, "method": "log_only"}
+        
+        logger.info(f"✅ Staff notification sent to {staff_phone} for {department} order")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Staff order notification failed: {e}")
+        return {"success": False, "error": str(e)}
 
 async def send_appointment_sms(patient_phone: str, appointment_details: dict):
     """Send appointment confirmation - Uses WhatsApp via MSG91"""
