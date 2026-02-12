@@ -23,7 +23,9 @@ const CashfreeCheckout = ({
   returnPath = '/'  // Path to return after payment
 }) => {
   const [processing, setProcessing] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState(allowCOD ? 'cod' : 'online');
+  // Default to COD for prescription orders (amount = 0) or when COD is allowed
+  const defaultMethod = orderDetails.amount <= 0 || allowCOD ? 'cod' : 'online';
+  const [selectedMethod, setSelectedMethod] = useState(defaultMethod);
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
