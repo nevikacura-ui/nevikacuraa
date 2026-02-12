@@ -637,16 +637,29 @@ STAFF_NOTIFICATION_NUMBERS = {
     "amnion clinic": "918108500533",
     "amnion": "918108500533",
     # Mango Health Labs
-    "mango health labs": "917030040040",
-    "mango labs": "917030040040",
-    "mango": "917030040040",
+    "mango health labs": "917039040040",
+    "mango labs": "917039040040",
+    "mango": "917039040040",
     # Ornave
     "ornave": "917039030030",
     "ornave pharmacy": "917039030030",
 }
 
 async def notify_staff_new_appointment(appointment_details: dict):
-    """Notify clinic staff about new appointment via WhatsApp"""
+    """Notify clinic staff about new ONLINE appointment via WhatsApp.
+    
+    NOTE: Staff notifications are ONLY sent for online bookings.
+    Walk-in and emergency appointments do NOT trigger staff notifications
+    as staff are already present when these are created.
+    """
+    # Skip notification for walk-in and emergency appointments
+    booking_type = appointment_details.get('booking_type', '').lower().strip()
+    appointment_type = appointment_details.get('appointment_type', '').upper().strip()
+    
+    if booking_type in ['walk_in', 'walkin', 'emergency'] or appointment_type in ['WALK-IN', 'WALK_IN', 'EMERGENCY']:
+        logger.info(f"Skipping staff notification for {booking_type or appointment_type} appointment (staff already present)")
+        return {"success": True, "skipped": True, "reason": "walk-in/emergency appointments don't need staff notification"}
+    
     clinic = appointment_details.get('clinic', '').lower().strip()
     
     # Find staff phone for this clinic
