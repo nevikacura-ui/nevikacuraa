@@ -640,7 +640,7 @@ async def create_and_send_payment_link(request: PaymentLinkRequest):
         # Send via Email
         if request.send_via in ["email", "both"] and request.customer_email:
             try:
-                from services.email_service import send_payment_link_email
+                from services.email import send_payment_link_email
                 
                 email_result = await send_payment_link_email(
                     to_email=request.customer_email,
