@@ -1322,6 +1322,13 @@ const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, onPr
         <div className="flex items-center gap-3 text-xs text-gray-600 mt-2">
           <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {apt.time || 'Emergency'}</span>
           <span className="flex items-center gap-1"><Stethoscope className="w-3 h-3" /> {apt.doctor?.replace('Dr. ', '')}</span>
+          {/* Show booking time for walk-in and emergency */}
+          {(apt.appointment_type === 'WALK_IN' || apt.appointment_type === 'EMERGENCY') && apt.created_at && (
+            <span className="flex items-center gap-1 text-gray-500">
+              <CalendarPlus className="w-3 h-3" /> 
+              Booked: {new Date(apt.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+            </span>
+          )}
         </div>
         <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
           <div className="flex items-center gap-2 flex-wrap">
