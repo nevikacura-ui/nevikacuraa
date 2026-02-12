@@ -478,7 +478,7 @@ const MangoLabsStaffPortal = () => {
                       )}
                       {booking.status === 'in_process' && !booking.report_uploaded && (<Button size="sm" variant="outline" onClick={() => setUploadingReport(booking.booking_id)}><Upload className="w-3 h-3 mr-1" /> Upload Report</Button>)}
                       {nextStatus && booking.status !== 'completed' && booking.status !== 'cancelled' && (<Button size="sm" className="flex-1" style={{ backgroundColor: nextStatus.color }} onClick={() => updateBookingStatus(booking.booking_id, nextStatus.key)}>{nextStatus.label} <ChevronRight className="w-3 h-3 ml-1" /></Button>)}
-                      {booking.status === 'report_generated' && (<Button size="sm" className="flex-1 bg-emerald-500 hover:bg-emerald-600" onClick={() => updateBookingStatus(booking.booking_id, 'completed')}><CheckCircle2 className="w-3 h-3 mr-1" /> Complete</Button>)}}
+                      {booking.status === 'report_generated' && (<Button size="sm" className="flex-1 bg-emerald-500 hover:bg-emerald-600" onClick={() => updateBookingStatus(booking.booking_id, 'completed')}><CheckCircle2 className="w-3 h-3 mr-1" /> Complete</Button>)}
                     </div>
                   </Card>
                 );
