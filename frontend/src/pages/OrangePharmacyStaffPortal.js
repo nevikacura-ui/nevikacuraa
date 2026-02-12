@@ -1014,7 +1014,24 @@ const OrderCard = ({ order, onStatusChange, onUploadInvoice, onSendInvoice, onSe
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
+        {/* Send Payment Link Button - for pay_later orders */}
+        {needsPaymentLink && order.total > 0 && (
+          <Button 
+            size="sm" 
+            variant="outline"
+            className="border-purple-300 text-purple-700 hover:bg-purple-50"
+            onClick={() => onSendPaymentLink(order)}
+            disabled={sendingPaymentLink}
+          >
+            {sendingPaymentLink ? (
+              <><Loader2 className="w-3 h-3 mr-1 animate-spin" /> Sending...</>
+            ) : (
+              <><Link className="w-3 h-3 mr-1" /> Send Payment Link</>
+            )}
+          </Button>
+        )}
+        
         {!order.invoice_uploaded && order.status !== 'completed' && order.status !== 'cancelled' && (
           <Button 
             size="sm" 
