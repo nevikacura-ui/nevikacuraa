@@ -349,7 +349,7 @@ const IntroScreen = ({ onComplete, user }) => {
     
     setLoading(true);
     try {
-      // First try to verify via WhatsApp OTP endpoint
+      // Verify via WhatsApp OTP endpoint
       const res = await axios.post(`${API}/api/patient-auth/whatsapp/verify-otp`, { 
         phone: mobile, 
         otp: otp 
@@ -370,17 +370,9 @@ const IntroScreen = ({ onComplete, user }) => {
         guestOtpRefs.current[0]?.focus();
       }
     } catch (error) {
-      // Check if mock OTP matches (for testing)
-      if (mockOtpGuest && otp === mockOtpGuest) {
-        localStorage.setItem('guestMobile', mobile);
-        localStorage.setItem('guestMode', 'true');
-        toast.success('Phone verified! Welcome to Nevika Cura');
-        onComplete();
-      } else {
-        toast.error(error.response?.data?.detail || 'Invalid OTP');
-        setGuestOtp(['', '', '', '', '', '']);
-        guestOtpRefs.current[0]?.focus();
-      }
+      toast.error(error.response?.data?.detail || 'Invalid OTP');
+      setGuestOtp(['', '', '', '', '', '']);
+      guestOtpRefs.current[0]?.focus();
     }
     setLoading(false);
   };
