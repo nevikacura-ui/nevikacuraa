@@ -911,10 +911,13 @@ const OrangePharmacyStaffPortal = () => {
 };
 
 // ============ Order Card Component ============
-const OrderCard = ({ order, onStatusChange, onUploadInvoice, onSendInvoice, isUploadingInvoice, handleInvoiceUpload }) => {
+const OrderCard = ({ order, onStatusChange, onUploadInvoice, onSendInvoice, onSendPaymentLink, isUploadingInvoice, handleInvoiceUpload, sendingPaymentLink }) => {
   const currentStatus = ORDER_STATUSES.find(s => s.key === order.status) || ORDER_STATUSES[0];
   const currentIndex = ORDER_STATUSES.findIndex(s => s.key === order.status);
   const nextStatus = currentIndex < ORDER_STATUSES.length - 2 ? ORDER_STATUSES[currentIndex + 1] : null;
+  
+  // Check if order needs payment link (pay_later method and not yet paid)
+  const needsPaymentLink = order.payment_method === 'pay_later' && order.payment_status !== 'PAID';
 
   return (
     <Card className="p-4 shadow-sm">
@@ -924,13 +927,45 @@ const OrderCard = ({ order, onStatusChange, onUploadInvoice, onSendInvoice, isUp
           <p className="text-sm text-slate-600">{order.customer_name}</p>
           <p className="text-xs text-slate-400">{order.customer_phone}</p>
         </div>
-        <span 
-          className="px-2 py-1 rounded-full text-xs font-semibold"
-          style={{ backgroundColor: currentStatus.bgColor, color: currentStatus.color }}
-        >
-          {currentStatus.label}
-        </span>
+        <div className="text-right">
+          <span 
+            className="px-2 py-1 rounded-full text-xs font-semibold block mb-1"
+            style={{ backgroundColor: currentStatus.bgColor, color: currentStatus.color }}
+          >
+            {currentStatus.label}
+          </span>
+          {/* Payment Method Badge */}
+          {order.payment_method && (
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
+              order.payment_method === 'cod' ? 'bg-green-100 text-green-700' :
+              order.payment_method === 'pay_later' ? 'bg-purple-100 text-purple-700' :
+              order.payment_method === 'cashfree' ? 'bg-orange-100 text-orange-700' :
+              'bg-gray-100 text-gray-700'
+            }`}>
+              {order.payment_method === 'cod' ? 'Cash' : 
+               order.payment_method === 'pay_later' ? 'Pay Later' : 
+               order.payment_method === 'cashfree' ? 'Online' : order.payment_method}
+            </span>
+          )}
+        </div>
       </div>
+      
+      {/* Payment Status for Pay Later orders */}
+      {order.payment_method === 'pay_later' && (
+        <div className={`flex items-center gap-2 text-xs mb-3 px-2 py-1.5 rounded-lg ${
+          order.payment_status === 'PAID' ? 'bg-green-50 text-green-700' :
+          order.payment_status === 'LINK_SENT' ? 'bg-blue-50 text-blue-700' :
+          'bg-yellow-50 text-yellow-700'
+        }`}>
+          {order.payment_status === 'PAID' ? (
+            <><CheckCircle2 className="w-3 h-3" /> Payment Received</>
+          ) : order.payment_status === 'LINK_SENT' ? (
+            <><Link className="w-3 h-3" /> Payment Link Sent</>
+          ) : (
+            <><Clock className="w-3 h-3" /> Awaiting Payment Link</>
+          )}
+        </div>
+      )}
       
       <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
         <span>{order.items?.length || 0} item(s)</span>
