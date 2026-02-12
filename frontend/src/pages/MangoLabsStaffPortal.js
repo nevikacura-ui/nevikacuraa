@@ -46,6 +46,7 @@ const MangoLabsStaffPortal = () => {
   const [editingTest, setEditingTest] = useState(null);
   const [testForm, setTestForm] = useState({ name: '', code: '', category: '', description: '', price: '', home_collection_price: '', sample_type: '', turnaround_time: '', fasting_required: false, preparation_instructions: '' });
   const [uploadingReport, setUploadingReport] = useState(null);
+  const [sendingPaymentLink, setSendingPaymentLink] = useState(null);
   
   // New Test Entry state
   const [showNewEntry, setShowNewEntry] = useState(false);
