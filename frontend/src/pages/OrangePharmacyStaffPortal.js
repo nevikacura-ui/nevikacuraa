@@ -964,6 +964,7 @@ const OrderCard = ({ order, onStatusChange, onUploadInvoice, onSendInvoice, onSe
   
   // Check if order needs payment link (pay_later method and not yet paid)
   const needsPaymentLink = order.payment_method === 'pay_later' && order.payment_status !== 'PAID';
+  const hasPaymentLinkSent = order.payment_status === 'LINK_SENT';
 
   return (
     <Card className="p-4 shadow-sm">
@@ -972,6 +973,12 @@ const OrderCard = ({ order, onStatusChange, onUploadInvoice, onSendInvoice, onSe
           <p className="font-bold text-slate-800">#{order.order_id}</p>
           <p className="text-sm text-slate-600">{order.customer_name}</p>
           <p className="text-xs text-slate-400">{order.customer_phone}</p>
+          {/* Show booking/order time */}
+          {order.created_at && (
+            <p className="text-[10px] text-slate-400 mt-1">
+              Ordered: {new Date(order.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true })}
+            </p>
+          )}
         </div>
         <div className="text-right">
           <span 
@@ -1061,17 +1068,20 @@ const OrderCard = ({ order, onStatusChange, onUploadInvoice, onSendInvoice, onSe
 
       {/* Action Buttons */}
       <div className="flex gap-2 flex-wrap">
-        {/* Send Payment Link Button - for pay_later orders */}
-        {needsPaymentLink && order.total > 0 && (
+        {/* Send/Resend Payment Link Button - for pay_later orders */}
+        {(needsPaymentLink || hasPaymentLinkSent) && order.total > 0 && order.payment_status !== 'PAID' && (
           <Button 
             size="sm" 
             variant="outline"
             className="border-purple-300 text-purple-700 hover:bg-purple-50"
             onClick={() => onSendPaymentLink(order)}
             disabled={sendingPaymentLink}
+            data-testid={`send-payment-link-${order.order_id}`}
           >
             {sendingPaymentLink ? (
               <><Loader2 className="w-3 h-3 mr-1 animate-spin" /> Sending...</>
+            ) : hasPaymentLinkSent ? (
+              <><RefreshCw className="w-3 h-3 mr-1" /> Resend Link</>
             ) : (
               <><Link className="w-3 h-3 mr-1" /> Send Payment Link</>
             )}
