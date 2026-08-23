@@ -30,22 +30,20 @@ DOCTOR_WHATSAPP_NUMBERS = {
 }
 
 STAFF_NOTIFICATION_NUMBERS = {
-    "pushpa clinic": "918108500522",
-    "pushpa": "918108500522",
-    "amnion clinic": "918108500533",
-    "amnion": "918108500533",
+    "pushpa clinic": os.environ.get("STAFF_PHONE_DIAGYN", "918108500522"),
+    "pushpa": os.environ.get("STAFF_PHONE_DIAGYN", "918108500522"),
     "nevika cura": "919833188288",
     "nevika": "919833188288",
-    "diagyn": "918108500522",
-    "vasai": "918108500522",
-    "naigaon": "918108500522",
-    "mango health labs": "917039040040",
-    "mango labs": "917039040040",
-    "mango": "917039040040",
-    "orange": "917039030030",
-    "orange pharmacy": "917039030030",
-    "ornave": "917039030030",
-    "ornave pharmacy": "917039030030",
+    "diagyn": os.environ.get("STAFF_PHONE_DIAGYN", "918108500522"),
+    "vasai": os.environ.get("STAFF_PHONE_DIAGYN", "918108500522"),
+    "naigaon": os.environ.get("STAFF_PHONE_DIAGYN", "918108500522"),
+    "mango health labs": os.environ.get("STAFF_PHONE_LABS", "917039040040"),
+    "mango labs": os.environ.get("STAFF_PHONE_LABS", "917039040040"),
+    "mango": os.environ.get("STAFF_PHONE_LABS", "917039040040"),
+    "orange": os.environ.get("STAFF_PHONE_PHARMACY", "917039030030"),
+    "orange pharmacy": os.environ.get("STAFF_PHONE_PHARMACY", "917039030030"),
+    "ornave": os.environ.get("STAFF_PHONE_PHARMACY", "917039030030"),
+    "ornave pharmacy": os.environ.get("STAFF_PHONE_PHARMACY", "917039030030"),
 }
 
 # Initialize Resend

@@ -89,7 +89,7 @@ const AuthDialogV2 = ({
     setLoading(true);
     try {
       // Use SMS OTP via MSG91
-      const res = await axios.post(`${API}/otp/sms/send`, { 
+      const res = await axios.post(`${API}/api/otp/sms/send`, { 
         phone: guestPhone,
         purpose: 'guest_login'
       });
@@ -116,7 +116,7 @@ const AuthDialogV2 = ({
     setLoading(true);
     try {
       // Verify SMS OTP
-      const otpRes = await axios.post(`${API}/otp/sms/verify`, { 
+      const otpRes = await axios.post(`${API}/api/otp/sms/verify`, { 
         phone: guestPhone, 
         otp: guestOtp 
       });
@@ -157,7 +157,7 @@ const AuthDialogV2 = ({
     setLoading(true);
     try {
       // First send SMS OTP to verify phone
-      const res = await axios.post(`${API}/otp/sms/send`, { 
+      const res = await axios.post(`${API}/api/otp/sms/send`, { 
         phone: signupPhone,
         purpose: 'signup'
       });
@@ -191,7 +191,7 @@ const AuthDialogV2 = ({
     setLoading(true);
     try {
       // First verify SMS OTP
-      const otpRes = await axios.post(`${API}/otp/sms/verify`, { 
+      const otpRes = await axios.post(`${API}/api/otp/sms/verify`, { 
         phone: signupPhone, 
         otp: signupOtp 
       });

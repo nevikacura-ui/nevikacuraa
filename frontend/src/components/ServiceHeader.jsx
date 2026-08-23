@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Heart, Stethoscope, FlaskConical, Package, Shield, User, Wallet } from 'lucide-react';
+import { Heart, Stethoscope, FlaskConical, Package, Shield, User, Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { useCart } from '@/context/CartContext';
 import { useFestivalTheme } from '@/components/FestivalBanner';
+import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { selectionTap } from '@/utils/haptics';
 import NotificationBell from '@/components/NotificationBell';
 
@@ -102,11 +102,12 @@ const tabs = [
   },
 ];
 
-export const ServiceHeader = ({ lightMode = false }) => {
+export const ServiceHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
-  const { curaCoins } = useCart();
+  const { isDarkMode, toggleDarkMode } = useThemeLanguage();
+  const lightMode = !isDarkMode;
   
   const activeService = getActiveService(location.pathname);
   const activeTab = tabs.find(t => t.id === activeService);
@@ -140,17 +141,21 @@ export const ServiceHeader = ({ lightMode = false }) => {
             data-testid="main-logo"
           />
           <div className="flex items-center gap-1">
-            {/* CuraPay Wallet — Blinkit/Zepto style */}
+            {/* Theme Toggle — Sun/Moon */}
             <button
-              onClick={() => { selectionTap(); navigate('/cura-wallet'); }}
-              className="relative p-2 rounded-full hover:bg-white/10 transition-colors"
-              data-testid="header-curapay-btn"
+              onClick={() => { selectionTap(); toggleDarkMode(); }}
+              className="relative p-2 rounded-full transition-all duration-300"
+              style={{
+                background: lightMode ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.08)',
+              }}
+              data-testid="theme-toggle-btn"
+              aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
             >
-              <Wallet className="w-[20px] h-[20px] transition-colors duration-500" style={{ color: lightMode ? '#B45309' : '#FBBF24' }} />
-              <span className="absolute -top-0.5 -right-1 min-w-[20px] h-[16px] flex items-center justify-center rounded-full text-[9px] font-bold px-1 leading-none transition-colors duration-500"
-                style={{ background: lightMode ? '#F59E0B' : '#FBBF24', color: lightMode ? '#fff' : '#000' }}>
-                {curaCoins > 999 ? '999+' : curaCoins}
-              </span>
+              {isDarkMode ? (
+                <Sun className="w-[20px] h-[20px] transition-all duration-300" style={{ color: '#FBBF24' }} />
+              ) : (
+                <Moon className="w-[20px] h-[20px] transition-all duration-300" style={{ color: '#6366F1' }} />
+              )}
             </button>
 
             {/* Notifications */}

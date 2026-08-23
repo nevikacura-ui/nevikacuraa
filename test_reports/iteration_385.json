@@ -1,0 +1,79 @@
+{
+  "summary": "Tested 2 fixes for Nevika Cura Healthcare Platform iteration 385: SPA Fallback API Guard + Theme Toggle. Backend: 7/7 tests PASSED. Frontend: All UI tests PASSED.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_spa_theme_385.py",
+    "/app/test_reports/pytest/pytest_spa_theme_385.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "SPA fallback fix correctly guards /api/ paths - returns JSON 404 instead of HTML",
+    "Theme toggle button (data-testid='theme-toggle-btn') correctly replaces wallet icon",
+    "Sun icon shown in dark mode, Moon icon shown in light mode - correct behavior",
+    "ThemeLanguageContext properly manages isDarkMode state and toggleDarkMode function",
+    "Navigation tabs (Cura, Consult, Labs, Pharmacy) all work correctly with proper active states"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_spa_theme_385.py"
+  ],
+  "success_rate": {
+    "backend": "100% (7/7 tests passed)",
+    "frontend": "100% (All UI elements verified)"
+  },
+  "test_credentials": "Patient phone: 9876543210",
+  "seed_data_creation": "None required",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Both fixes verified working: 1) SPA Fallback - server.py lines 2485-2499 now guards /api/ paths, returning JSON 404 for non-existent API endpoints instead of HTML. 2) Theme Toggle - ServiceHeader.jsx has theme toggle button (data-testid='theme-toggle-btn') that uses ThemeLanguageContext to toggle between light/dark modes. Sun icon in dark mode, Moon icon in light mode. Wallet icon (header-curapay-btn) correctly removed from header.",
+  "features_tested": {
+    "spa_fallback_api_guard": {
+      "status": "PASS",
+      "tests": [
+        "GET /api/health returns JSON {status: ok}",
+        "GET /api/doctors/featured returns list of doctors",
+        "POST /api/otp/sms/send returns JSON (success or rate limit)",
+        "GET /api/nonexistent-endpoint returns JSON 404 (not HTML)",
+        "GET /some-random-page returns HTML (SPA fallback)",
+        "GET /diagyn returns HTML (SPA fallback)",
+        "GET /labs returns HTML (SPA fallback)"
+      ]
+    },
+    "theme_toggle": {
+      "status": "PASS",
+      "tests": [
+        "Theme toggle button exists (data-testid='theme-toggle-btn')",
+        "Wallet icon (header-curapay-btn) removed from header",
+        "Moon icon shown in light mode",
+        "Sun icon shown in dark mode",
+        "Clicking toggle switches between dark and light mode",
+        "Theme persists correctly after toggle"
+      ]
+    },
+    "navigation_tabs": {
+      "status": "PASS",
+      "tests": [
+        "nav-home tab navigates to /",
+        "nav-diagyn tab navigates to /diagyn",
+        "nav-mango tab navigates to /labs",
+        "nav-orange tab navigates to /orange",
+        "Active tab has correct styling"
+      ]
+    },
+    "header_elements": {
+      "status": "PASS",
+      "tests": [
+        "Main logo (data-testid='main-logo') present",
+        "Notification bell present",
+        "Profile/Login button present"
+      ]
+    }
+  }
+}

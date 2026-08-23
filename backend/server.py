@@ -2403,10 +2403,15 @@ except Exception as e:
 
 
 
+_cors_raw = os.environ.get('CORS_ORIGINS', '')
+_cors_origins = [o.strip() for o in _cors_raw.split(',') if o.strip()]
+if not _cors_origins:
+    _cors_origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=[o.strip() for o in os.environ.get('CORS_ORIGINS', '').split(',') if o.strip()],
+    allow_origins=_cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -2475,3 +2480,20 @@ app.add_middleware(SanitizeInputMiddleware)
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+
+
+# ── SPA Fallback for Railway deployment ──
+# When deployed on Railway (single service), non-API routes serve React's index.html
+import pathlib
+_spa_index = pathlib.Path("/app/frontend/build/index.html")
+
+@app.get("/{full_path:path}")
+async def spa_fallback(full_path: str):
+    """Catch-all for React Router. Only active when frontend build exists.
+    IMPORTANT: Skip /api/ paths so they return proper 404s instead of HTML."""
+    if full_path.startswith("api/") or full_path.startswith("api"):
+        return JSONResponse(status_code=404, content={"detail": "Not found", "path": f"/{full_path}"})
+    if _spa_index.exists():
+        from starlette.responses import FileResponse
+        return FileResponse(str(_spa_index))
+    return JSONResponse(status_code=404, content={"detail": "Not found", "path": f"/{full_path}"})

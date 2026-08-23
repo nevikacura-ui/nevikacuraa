@@ -66,7 +66,7 @@ export const useUnifiedAuth = () => {
         throw new Error('Please enter a valid 10-digit phone number');
       }
       
-      const response = await axios.post(`${API}/otp/sms/send`, {
+      const response = await axios.post(`${API}/api/otp/sms/send`, {
         phone: cleanPhone,
         purpose
       });
@@ -118,7 +118,7 @@ export const useUnifiedAuth = () => {
         throw new Error('Please enter a valid 6-digit OTP');
       }
       
-      const response = await axios.post(`${API}/otp/sms/verify`, {
+      const response = await axios.post(`${API}/api/otp/sms/verify`, {
         phone: userInfo.phone,
         otp: cleanOtp
       });
