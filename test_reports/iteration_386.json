@@ -1,0 +1,95 @@
+{
+  "summary": "Tested order tracking wiring for Nevika Cura Healthcare Platform iteration 386. Backend: 11/11 tests PASSED. Frontend: All UI tests PASSED. Home page hero tracking card displays active orders with correct styling (orange for pharmacy, cyan for lab). My Orders page shows filter tabs and order cards correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_order_tracking_386.py",
+    "/app/test_reports/pytest/pytest_order_tracking_386.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Home.js correctly fetches from /api/orders/my-orders endpoint (lines 200-216)",
+    "Home.js filters orders by order_type ('pharmacy' vs 'diagnostic') and excludes delivered/draft/cancelled orders",
+    "HeroTrackingCard displays pharmacy orders with orange styling and lab orders with cyan styling",
+    "MyOrders.jsx correctly fetches from /api/orders/my-orders and displays filter tabs (All, Medicine, Lab Tests)",
+    "PaymentSuccess.jsx has all three buttons: 'View Booking Pass', 'Go Home' (data-testid='payment-success-home'), 'View My Orders' (data-testid='payment-success-my-orders')",
+    "Backend /api/orders/my-orders endpoint returns orders with order_type field ('pharmacy' or 'diagnostic')",
+    "SPA fallback correctly returns JSON 404 for /api/nonexistent (not HTML)"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_order_tracking_386.py"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 tests passed)",
+    "frontend": "100% (All UI elements verified)"
+  },
+  "test_credentials": "Patient phone: 9876543210",
+  "seed_data_creation": "None required - existing test data used",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Order tracking wiring verified working: 1) Home page fetches from /api/orders/my-orders and displays active orders in hero tracking card with correct styling (orange for pharmacy, cyan for lab). 2) My Orders page (/my-orders) shows all orders with filter tabs. 3) PaymentSuccess page has 'Go Home' and 'View My Orders' buttons in success state. 4) Theme toggle and SPA fallback continue to work correctly from iteration 385.",
+  "features_tested": {
+    "home_page_order_tracking": {
+      "status": "PASS",
+      "tests": [
+        "Hero tracking card (data-testid='hero-tracking-card') displays when orders exist",
+        "Pharmacy orders shown with orange styling (data-testid='tracking-pharmacy-*')",
+        "Lab orders shown with cyan styling (data-testid='tracking-lab-*')",
+        "Orders fetched from /api/orders/my-orders endpoint",
+        "Draft and delivered orders correctly filtered out"
+      ]
+    },
+    "my_orders_page": {
+      "status": "PASS",
+      "tests": [
+        "Page loads at /my-orders route",
+        "Filter tabs present (All, Medicine, Lab Tests) with counts",
+        "Order cards display with status badges, dates, amounts",
+        "View Details link present on each order card",
+        "Reorder button shown for delivered pharmacy orders"
+      ]
+    },
+    "payment_success_page": {
+      "status": "PASS",
+      "tests": [
+        "Page loads with data-testid='payment-success-page'",
+        "Verifying state shows spinner",
+        "Error state shows 'Something went wrong' for invalid orders",
+        "Success state has 'View Booking Pass' button (data-testid='payment-success-continue')",
+        "Success state has 'Go Home' button (data-testid='payment-success-home')",
+        "Success state has 'View My Orders' button (data-testid='payment-success-my-orders')"
+      ]
+    },
+    "backend_my_orders_api": {
+      "status": "PASS",
+      "tests": [
+        "GET /api/orders/my-orders?phone=9876543210 returns success: true",
+        "Response includes orders array with order_type field",
+        "Response includes pharmacy_count and diagnostic_count",
+        "Pharmacy orders have order_type='pharmacy' and order_type_label='Medicine Order'",
+        "Diagnostic orders have order_type='diagnostic' and order_type_label='Lab Test'"
+      ]
+    },
+    "spa_fallback": {
+      "status": "PASS",
+      "tests": [
+        "GET /api/nonexistent returns JSON 404 (not HTML)",
+        "GET /my-orders returns HTML (SPA fallback)"
+      ]
+    },
+    "theme_toggle": {
+      "status": "PASS",
+      "tests": [
+        "Theme toggle button exists (data-testid='theme-toggle-btn')",
+        "Wallet icon correctly removed from header"
+      ]
+    }
+  }
+}

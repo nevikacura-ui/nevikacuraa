@@ -29,15 +29,21 @@ const API = process.env.REACT_APP_BACKEND_URL;
 const StatusBadge = ({ status, isDark }) => {
   const map = {
     'Confirmed': { bg: 'rgba(16,185,129,0.12)', text: '#10B981', label: 'Confirmed' },
+    'confirmed': { bg: 'rgba(16,185,129,0.12)', text: '#10B981', label: 'Confirmed' },
+    'Order Booked': { bg: 'rgba(59,130,246,0.12)', text: '#3B82F6', label: 'Booked' },
+    'pending': { bg: 'rgba(245,158,11,0.12)', text: '#F59E0B', label: 'Pending' },
+    'Pending': { bg: 'rgba(245,158,11,0.12)', text: '#F59E0B', label: 'Pending' },
     'In Queue': { bg: 'rgba(245,158,11,0.12)', text: '#F59E0B', label: 'In Queue' },
     'In Progress': { bg: 'rgba(59,130,246,0.12)', text: '#3B82F6', label: 'In Progress' },
     'Processing': { bg: 'rgba(59,130,246,0.12)', text: '#3B82F6', label: 'Processing' },
     'Shipped': { bg: 'rgba(139,92,246,0.12)', text: '#8B5CF6', label: 'Shipped' },
     'Out for Delivery': { bg: 'rgba(234,88,12,0.12)', text: '#EA580C', label: 'Out for Delivery' },
     'Delivered': { bg: 'rgba(16,185,129,0.12)', text: '#10B981', label: 'Delivered' },
+    'delivered': { bg: 'rgba(16,185,129,0.12)', text: '#10B981', label: 'Delivered' },
     'Sample Collected': { bg: 'rgba(6,182,212,0.12)', text: '#06B6D4', label: 'Collected' },
     'Report Ready': { bg: 'rgba(16,185,129,0.12)', text: '#10B981', label: 'Report Ready' },
     'Completed': { bg: 'rgba(16,185,129,0.12)', text: '#10B981', label: 'Completed' },
+    'completed': { bg: 'rgba(16,185,129,0.12)', text: '#10B981', label: 'Completed' },
   };
   const s = map[status] || { bg: 'rgba(107,114,128,0.12)', text: '#6B7280', label: status || 'Pending' };
   return (
@@ -98,8 +104,8 @@ const HeroTrackingCard = ({ appointments, pharmacyOrders, labOrders, isDarkMode,
             <Package className="w-4 h-4 text-orange-500" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold truncate" style={{ color: textPrimary }}>{order.order_id || 'Pharmacy Order'}</p>
-            <p className="text-[10px]" style={{ color: textSecondary }}>{order.item_count || order.items?.length || 0} items · ₹{order.total || order.amount || '—'}</p>
+            <p className="text-xs font-semibold truncate" style={{ color: textPrimary }}>{order.order_id || order.booking_id || 'Pharmacy Order'}</p>
+            <p className="text-[10px]" style={{ color: textSecondary }}>{(order.items || order.medicines || []).length || '?'} items · ₹{order.total_amount || order.total || order.amount || '—'}</p>
           </div>
           <StatusBadge status={order.status} isDark={isDarkMode} />
           <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" style={{ color: textSecondary }} />
@@ -116,8 +122,8 @@ const HeroTrackingCard = ({ appointments, pharmacyOrders, labOrders, isDarkMode,
             <FlaskConical className="w-4 h-4 text-cyan-500" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold truncate" style={{ color: textPrimary }}>{order.order_id || 'Lab Test'}</p>
-            <p className="text-[10px]" style={{ color: textSecondary }}>{order.test_count || order.tests?.length || 0} tests · ₹{order.total || order.amount || '—'}</p>
+            <p className="text-xs font-semibold truncate" style={{ color: textPrimary }}>{order.order_id || order.booking_id || 'Lab Test'}</p>
+            <p className="text-[10px]" style={{ color: textSecondary }}>{(order.tests || order.items || []).length || '?'} tests · ₹{order.total_amount || order.total || order.amount || '—'}</p>
           </div>
           <StatusBadge status={order.status} isDark={isDarkMode} />
           <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" style={{ color: textSecondary }} />
@@ -191,21 +197,21 @@ const Home = () => {
       })
       .catch(() => {});
 
-    // Fetch pharmacy orders
-    fetch(`${API}/api/pharmacy/orders?phone=${phone}`)
+    // Fetch pharmacy + lab orders from unified my-orders endpoint
+    fetch(`${API}/api/orders/my-orders?phone=${phone}`)
       .then(r => r.json())
       .then(data => {
-        const active = (data.orders || []).filter(o => !['Delivered', 'Cancelled', 'completed'].includes(o.status));
-        setPharmacyOrders(active.slice(0, 3));
-      })
-      .catch(() => {});
-
-    // Fetch lab orders
-    fetch(`${API}/api/mango/orders?phone=${phone}`)
-      .then(r => r.json())
-      .then(data => {
-        const active = (data.orders || []).filter(o => !['Delivered', 'Cancelled', 'completed', 'Report Ready'].includes(o.status));
-        setLabOrders(active.slice(0, 3));
+        if (!data.success) return;
+        const allOrders = data.orders || [];
+        const excludeStatuses = ['delivered', 'cancelled', 'completed', 'report ready', 'draft'];
+        const pharmActive = allOrders
+          .filter(o => o.order_type === 'pharmacy' && !excludeStatuses.includes((o.status || '').toLowerCase()))
+          .slice(0, 3);
+        const labActive = allOrders
+          .filter(o => o.order_type === 'diagnostic' && !excludeStatuses.includes((o.status || '').toLowerCase()))
+          .slice(0, 3);
+        setPharmacyOrders(pharmActive);
+        setLabOrders(labActive);
       })
       .catch(() => {});
   }, [patientPhone]);

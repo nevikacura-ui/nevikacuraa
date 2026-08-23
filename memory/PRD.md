@@ -7,15 +7,17 @@ Finalize the Nevika Cura Healthcare Platform for production. Build a robust, gli
 ```
 /app
 ├── frontend/ (React + TailwindCSS + Shadcn/UI)
-│   ├── src/pages/ (Home, DiaGyn, Pharmacy, Labs, Queue, etc.)
+│   ├── src/pages/ (Home, DiaGyn, Pharmacy, Labs, MyOrders, PaymentSuccess, etc.)
 │   ├── src/components/ (ServiceHeader [theme toggle], BottomNav, FamilyMemberPicker, etc.)
 │   ├── src/context/ (AuthContext, CartContext, ThemeLanguageContext)
 │   └── src/pages/diagyn/ (data.js - clinic/doctor config)
 ├── backend/ (FastAPI + MongoDB via Motor)
-│   ├── routes/ (sms_otp, order_notifications, pharmacy_browse, medicine_reminders, health_records, etc.)
+│   ├── routes/ (sms_otp, order_notifications, inventory [my-orders], cashfree, etc.)
 │   ├── services/ (msg91_sms_otp, msg91_whatsapp, email_templates, etc.)
 │   ├── utils/ (constants, auth_utils)
 │   └── data/ (clinic_config)
+├── railway.toml (Railway deployment config)
+├── nixpacks.toml (Build phases for Railway)
 └── memory/ (PRD.md, test_credentials.md)
 ```
 
@@ -44,23 +46,12 @@ Finalize the Nevika Cura Healthcare Platform for production. Build a robust, gli
 
 ### Session: Aug 23, 2026 — All Tasks Completed
 
-#### Batch 1: UI & Config
-1. **MSG91 SMS OTP (Flow API)** — v5/flow endpoint, SHA-256 hashed OTP in MongoDB, rate limiting, audit logging
-2. **Light Theme UI (Default)** — IntroScreen, OnboardingTour, Home, BottomNav all light-themed
-3. **Clubbed Pushpa & Amnion Clinics** — Amnion hidden everywhere (15+ files updated)
-4. **Remove Bottom Nav from Home** — Home page clean without bottom nav
-5. **Home Page Minimal Redesign** — Hero tracking card, toggle for My Portal/CuraOne
-6. **Bottom Nav Simplified** — Only Home + My Cura + Book FAB
-7. **Boarding Pass Refined** — Removed Doctor-PC labels, centered logo
-
-#### Batch 2: Features
-8. **Order Notifications (WhatsApp)** — Auto-send WhatsApp on pharmacy/lab status changes
-9. **Family Members Management** — Max 5 per patient, CRUD via /api/health-records/family/{phone}
-10. **Refill Reminders (WhatsApp)** — When medicine stock <=5, WhatsApp alert sent automatically
-
-#### Bug Fixes & Enhancements (Aug 23, 2026 — Latest)
-11. **SPA Fallback Routing Fix** — Fixed wildcard `/{full_path:path}` intercepting /api/ routes. Now returns JSON 404 for unmatched API paths, serves React index.html for non-API routes only.
-12. **Theme Toggle in Header** — Replaced CuraPay wallet icon with Sun/Moon theme toggle button. Uses ThemeLanguageContext. Toggles between light and dark mode across the entire app.
+#### Bug Fixes & Enhancements
+1. **SPA Fallback Routing Fix** — Fixed wildcard `/{full_path:path}` intercepting /api/ routes. Returns JSON 404 for unmatched API paths, serves React index.html for non-API routes.
+2. **Theme Toggle in Header** — Replaced CuraPay wallet icon with Sun/Moon toggle button. Uses ThemeLanguageContext.
+3. **Order Tracking Wired to Home + My Orders** — Home page hero tracking card now fetches from patient-facing `/api/orders/my-orders` (was incorrectly using staff-only endpoints). Shows active pharmacy + lab orders. Draft/delivered orders filtered out.
+4. **PaymentSuccess Enhanced** — Added "View My Orders" button alongside "Go Home" and "View Booking Pass" after Cashfree payment confirmation.
+5. **Railway Deployment Ready** — `railway.toml`, `nixpacks.toml` (with emergentintegrations extra-index-url), static file mounting in server.py for single-service deployment.
 
 ## Prioritized Backlog
 
@@ -69,7 +60,7 @@ Finalize the Nevika Cura Healthcare Platform for production. Build a robust, gli
 - Resume 1mg image scraping (needs ZenRows API key)
 
 ### P2 (Medium)
-- Railway deployment (guide at /app/COMPLETE_RAILWAY_DEPLOYMENT_GUIDE.md)
+- Railway production deployment execution
 - Custom domain setup (nevikacura.com)
 
 ## 3rd Party Integrations
@@ -81,6 +72,5 @@ Finalize the Nevika Cura Healthcare Platform for production. Build a robust, gli
 - ZenRows (Scraping - needs new key)
 
 ## Testing Status
-- Iteration 383: 13/13 tests passed (UI + API)
-- Iteration 384: 21/21 tests passed (Order Notifications + Family Members + Refill Reminders)
-- Iteration 385: 100% pass — SPA Fallback API Guard (7/7 backend) + Theme Toggle (all UI verified)
+- Iteration 385: 100% pass — SPA Fallback + Theme Toggle
+- Iteration 386: 100% pass (11/11 backend, all frontend) — Order tracking, My Orders, PaymentSuccess wiring

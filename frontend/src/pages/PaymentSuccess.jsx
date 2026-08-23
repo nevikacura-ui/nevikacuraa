@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { CheckCircle2, XCircle, Loader2, ArrowRight, Phone, Home, RefreshCw } from 'lucide-react';
+import { CheckCircle2, XCircle, Loader2, ArrowRight, Phone, Home, RefreshCw, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { bookingConfirmed, errorPattern } from '@/utils/haptics';
@@ -273,8 +273,17 @@ export default function PaymentSuccess() {
                 onClick={() => navigate('/')}
                 variant="outline"
                 className="w-full py-3 rounded-xl border-white/10 text-white/60 hover:text-white hover:bg-white/5"
+                data-testid="payment-success-home"
               >
                 <Home className="w-4 h-4 mr-2" /> Go Home
+              </Button>
+              <Button
+                onClick={() => navigate('/my-orders')}
+                variant="outline"
+                className="w-full py-3 rounded-xl border-white/10 text-white/60 hover:text-white hover:bg-white/5"
+                data-testid="payment-success-my-orders"
+              >
+                <Package className="w-4 h-4 mr-2" /> View My Orders
               </Button>
             </div>
           </div>

@@ -4,7 +4,7 @@ nixPkgs = ["python311", "nodejs-18_x", "yarn"]
 [phases.install]
 cmds = [
   "pip install --upgrade pip",
-  "pip install -r backend/requirements.txt",
+  "pip install --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/ -r backend/requirements.txt",
   "cd frontend && yarn install --frozen-lockfile"
 ]
 

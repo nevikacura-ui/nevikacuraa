@@ -2482,18 +2482,49 @@ async def shutdown_db_client():
     client.close()
 
 
-# ── SPA Fallback for Railway deployment ──
-# When deployed on Railway (single service), non-API routes serve React's index.html
+# ── Railway Single-Service: Serve React build + SPA Fallback ──
 import pathlib
-_spa_index = pathlib.Path("/app/frontend/build/index.html")
+_build_dir = pathlib.Path("/app/frontend/build")
+_spa_index = _build_dir / "index.html"
+
+# Mount React build static assets (JS/CSS/media) — only when build exists
+if _build_dir.is_dir():
+    _static_dir = _build_dir / "static"
+    if _static_dir.is_dir():
+        app.mount("/static", StaticFiles(directory=str(_static_dir)), name="react_static")
+        logger.info(f"Mounted React static assets from {_static_dir}")
+
+    # Serve root-level build files (favicon.ico, manifest.json, robots.txt, icons, etc.)
+    # These are individual file routes so they don't conflict with API or SPA fallback
+    @app.get("/favicon.ico")
+    @app.get("/manifest.json")
+    @app.get("/robots.txt")
+    @app.get("/logo192.png")
+    @app.get("/logo512.png")
+    @app.get("/asset-manifest.json")
+    async def serve_build_root_file(request: Request):
+        file_path = _build_dir / request.url.path.lstrip("/")
+        if file_path.is_file():
+            return FileResponse(str(file_path))
+        return JSONResponse(status_code=404, content={"detail": "Not found"})
+
+    # Serve files from /icons/ and /images/ subdirectories in build
+    for subdir in ["icons", "images", "fonts"]:
+        sub_path = _build_dir / subdir
+        if sub_path.is_dir():
+            app.mount(f"/{subdir}", StaticFiles(directory=str(sub_path)), name=f"build_{subdir}")
+            logger.info(f"Mounted /{subdir} from build directory")
+
+    logger.info("Railway SPA mode: Frontend build detected and mounted")
+else:
+    logger.info("No frontend build found — running in API-only mode")
 
 @app.get("/{full_path:path}")
 async def spa_fallback(full_path: str):
-    """Catch-all for React Router. Only active when frontend build exists.
-    IMPORTANT: Skip /api/ paths so they return proper 404s instead of HTML."""
-    if full_path.startswith("api/") or full_path.startswith("api"):
+    """Catch-all for React Router. Serves index.html for non-API routes.
+    API paths get a proper JSON 404 so they never return HTML."""
+    if full_path.startswith("api/") or full_path == "api":
         return JSONResponse(status_code=404, content={"detail": "Not found", "path": f"/{full_path}"})
-    if _spa_index.exists():
-        from starlette.responses import FileResponse
+    if _spa_index.is_file():
         return FileResponse(str(_spa_index))
     return JSONResponse(status_code=404, content={"detail": "Not found", "path": f"/{full_path}"})
