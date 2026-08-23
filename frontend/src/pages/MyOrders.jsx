@@ -17,11 +17,14 @@ import {
 } from 'lucide-react';
 import { OrderCardSkeleton, StatsSkeleton } from '@/components/ui/skeleton-loaders';
 import { toast } from 'sonner';
+import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import OrderTimeline from '@/components/OrderTimeline';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 const MyOrders = () => {
   const navigate = useNavigate();
+  const { isDarkMode } = useThemeLanguage();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ pharmacy: 0, diagnostic: 0, total: 0 });
@@ -154,20 +157,21 @@ const MyOrders = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
+    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-[#050510]' : 'bg-gradient-to-b from-orange-50 to-white'}`}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 sticky top-0 z-10">
+      <div className={`p-4 sticky top-0 z-10 ${isDarkMode ? '' : 'bg-gradient-to-r from-orange-500 to-orange-600'}`}
+        style={isDarkMode ? { background: 'rgba(10,11,20,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)' } : {}}>
         <div className="max-w-4xl mx-auto flex items-center gap-4">
           <button 
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-white/20 rounded-full transition-colors"
+            className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10' : 'hover:bg-white/20'}`}
             data-testid="back-button"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className={`w-5 h-5 ${isDarkMode ? 'text-white' : 'text-white'}`} />
           </button>
           <div>
-            <h1 className="text-xl font-bold">My Orders</h1>
-            <p className="text-sm opacity-90">Track your medicine & lab orders</p>
+            <h1 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-white'}`}>My Orders</h1>
+            <p className={`text-sm ${isDarkMode ? 'text-white/50' : 'opacity-90 text-white'}`}>Track your medicine & lab orders</p>
           </div>
         </div>
       </div>
@@ -185,8 +189,8 @@ const MyOrders = () => {
               onClick={() => setActiveFilter(tab.key)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                 activeFilter === tab.key 
-                  ? 'bg-orange-500 text-white shadow-sm' 
-                  : 'bg-white text-gray-600 border border-gray-200'
+                  ? (isDarkMode ? 'bg-orange-500/90 text-white shadow-sm' : 'bg-orange-500 text-white shadow-sm')
+                  : (isDarkMode ? 'bg-white/5 text-white/60 border border-white/10' : 'bg-white text-gray-600 border border-gray-200')
               }`}
               data-testid={`filter-${tab.key}`}
             >
@@ -198,17 +202,20 @@ const MyOrders = () => {
         {/* Track Order Quick Action */}
         <button 
           onClick={() => navigate('/order-tracking')}
-          className="w-full mb-4 flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-orange-100 active:scale-[0.98] transition-all"
+          className={`w-full mb-4 flex items-center gap-3 p-4 rounded-2xl active:scale-[0.98] transition-all ${
+            isDarkMode ? 'border border-white/8' : 'bg-white shadow-sm border border-orange-100'
+          }`}
+          style={isDarkMode ? { background: 'rgba(255,255,255,0.04)' } : {}}
           data-testid="track-order-btn"
         >
-          <div className="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center">
-            <Truck className="w-5 h-5 text-orange-500" />
+          <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-orange-500/15' : 'bg-orange-50'}`}>
+            <Truck className={`w-5 h-5 ${isDarkMode ? 'text-orange-400' : 'text-orange-500'}`} />
           </div>
           <div className="flex-1 text-left">
-            <p className="text-sm font-semibold text-gray-800">Track Live Order</p>
-            <p className="text-xs text-gray-400">Real-time delivery status</p>
+            <p className={`text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Track Live Order</p>
+            <p className={`text-xs ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>Real-time delivery status</p>
           </div>
-          <ChevronRight className="w-5 h-5 text-gray-300" />
+          <ChevronRight className={`w-5 h-5 ${isDarkMode ? 'text-white/20' : 'text-gray-300'}`} />
         </button>
 
         {/* Orders List */}
@@ -220,12 +227,12 @@ const MyOrders = () => {
               <OrderCardSkeleton />
             </>
           ) : orders.filter(o => activeFilter === 'all' || o.order_type === activeFilter).length === 0 ? (
-            <div className="bg-white rounded-2xl p-8 text-center border border-gray-100">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                <ShoppingBag className="w-10 h-10 text-gray-400" />
+            <div className={`rounded-2xl p-8 text-center border ${isDarkMode ? 'bg-white/3 border-white/6' : 'bg-white border-gray-100'}`}>
+              <div className={`w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center ${isDarkMode ? 'bg-white/5' : 'bg-gray-100'}`}>
+                <ShoppingBag className={`w-10 h-10 ${isDarkMode ? 'text-white/20' : 'text-gray-400'}`} />
               </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">No Orders Yet</h3>
-              <p className="text-gray-500 text-sm mb-4">Your orders will appear here after you place them.</p>
+              <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>No Orders Yet</h3>
+              <p className={`text-sm mb-4 ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>Your orders will appear here after you place them.</p>
               <button 
                 onClick={() => navigate('/orange')}
                 className="px-6 py-2.5 bg-orange-500 text-white rounded-xl text-sm font-semibold"
@@ -238,24 +245,29 @@ const MyOrders = () => {
             orders.filter(o => activeFilter === 'all' || o.order_type === activeFilter).map((order, index) => (
                 <div 
                   key={order.id || index}
-                  className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                  className={`rounded-2xl overflow-hidden transition-shadow ${
+                    isDarkMode ? 'border border-white/6 hover:border-white/12' : 'bg-white border border-gray-100 shadow-sm hover:shadow-md'
+                  }`}
+                  style={isDarkMode ? { background: 'rgba(255,255,255,0.03)' } : {}}
                   data-testid={`order-card-${index}`}
                 >
                   {/* Order Header */}
-                  <div className="p-4 border-b border-gray-50 flex items-center justify-between">
+                  <div className={`p-4 flex items-center justify-between ${isDarkMode ? 'border-b border-white/6' : 'border-b border-gray-50'}`}>
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                        order.order_type === 'pharmacy' ? 'bg-orange-100' : 'bg-blue-100'
+                        order.order_type === 'pharmacy' 
+                          ? (isDarkMode ? 'bg-orange-500/15' : 'bg-orange-100')
+                          : (isDarkMode ? 'bg-cyan-500/15' : 'bg-blue-100')
                       }`}>
                         {order.order_type === 'pharmacy' ? (
-                          <Package className="w-5 h-5 text-orange-600" />
+                          <Package className={`w-5 h-5 ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`} />
                         ) : (
-                          <FlaskConical className="w-5 h-5 text-blue-600" />
+                          <FlaskConical className={`w-5 h-5 ${isDarkMode ? 'text-cyan-400' : 'text-blue-600'}`} />
                         )}
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-800">{order.order_type_label}</p>
-                        <p className="text-xs text-gray-500">#{(order.id || '').slice(0, 8).toUpperCase()}</p>
+                        <p className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{order.order_type_label}</p>
+                        <p className={`text-xs ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>#{(order.id || '').slice(0, 8).toUpperCase()}</p>
                       </div>
                     </div>
                     <div className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1 border ${getStatusColor(order.status)}`}>
@@ -263,12 +275,21 @@ const MyOrders = () => {
                       {order.status || 'Pending'}
                     </div>
                   </div>
+
+                  {/* Order Timeline */}
+                  <div className={`px-4 pt-3 ${isDarkMode ? '' : 'bg-gray-50/50'}`}>
+                    <OrderTimeline 
+                      status={order.status} 
+                      orderType={order.order_type} 
+                      isDark={isDarkMode}
+                    />
+                  </div>
                   
                   {/* Order Items */}
                   <div className="p-4">
                     {order.medicines && order.medicines.length > 0 && (
                       <div className="mb-3">
-                        <p className="text-sm text-gray-600">
+                        <p className={`text-sm ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
                           {order.medicines.slice(0, 3).map(m => m.name || m).join(', ')}
                           {order.medicines.length > 3 && ` +${order.medicines.length - 3} more`}
                         </p>
@@ -277,7 +298,7 @@ const MyOrders = () => {
                     
                     {order.tests && order.tests.length > 0 && (
                       <div className="mb-3">
-                        <p className="text-sm text-gray-600">
+                        <p className={`text-sm ${isDarkMode ? 'text-white/60' : 'text-gray-600'}`}>
                           {order.tests.slice(0, 3).map(t => t.name || t).join(', ')}
                           {order.tests.length > 3 && ` +${order.tests.length - 3} more`}
                         </p>
@@ -285,30 +306,34 @@ const MyOrders = () => {
                     )}
                     
                     <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2 text-gray-500">
+                      <div className={`flex items-center gap-2 ${isDarkMode ? 'text-white/40' : 'text-gray-500'}`}>
                         <Calendar className="w-4 h-4" />
                         {formatDate(order.created_at)}
                       </div>
                       {order.total_amount && (
-                        <p className="font-bold text-green-600">₹{order.total_amount}</p>
+                        <p className={`font-bold ${isDarkMode ? 'text-emerald-400' : 'text-green-600'}`}>₹{order.total_amount}</p>
                       )}
                     </div>
                   </div>
                   
                   {/* View Details + Reorder */}
-                  <div className="px-4 py-3 bg-gray-50 flex items-center justify-between">
+                  <div className={`px-4 py-3 flex items-center justify-between ${isDarkMode ? 'bg-white/2 border-t border-white/4' : 'bg-gray-50'}`}>
                     <div 
-                      className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 rounded-lg px-2 py-1 transition-colors"
+                      className={`flex items-center gap-1 cursor-pointer rounded-lg px-2 py-1 transition-colors ${
+                        isDarkMode ? 'hover:bg-white/5' : 'hover:bg-gray-100'
+                      }`}
                       onClick={() => navigate(`/order-tracking?id=${order.id}`)}
                     >
-                      <span className="text-sm font-medium text-orange-600">View Details</span>
-                      <ChevronRight className="w-5 h-5 text-orange-600" />
+                      <span className={`text-sm font-medium ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`}>View Details</span>
+                      <ChevronRight className={`w-5 h-5 ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`} />
                     </div>
                     {order.order_type === 'pharmacy' && (order.status === 'completed' || order.status === 'delivered') && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleReorder(order.id); }}
                         disabled={reordering === order.id}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 text-teal-600 hover:bg-teal-100 text-xs font-medium transition-colors disabled:opacity-50"
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 ${
+                          isDarkMode ? 'bg-teal-500/15 text-teal-400 hover:bg-teal-500/25' : 'bg-teal-50 text-teal-600 hover:bg-teal-100'
+                        }`}
                         data-testid={`reorder-btn-${index}`}
                       >
                         {reordering === order.id ? (

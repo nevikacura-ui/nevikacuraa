@@ -25,6 +25,36 @@ import PortalScrollBar from '@/components/PortalScrollBar';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
+/* ── Claymorphism Styles (Light Mode) ── */
+const clay = {
+  card: {
+    background: 'rgba(255,255,255,0.7)',
+    border: '1px solid rgba(255,255,255,0.8)',
+    borderRadius: '20px',
+    boxShadow: '8px 8px 20px rgba(166,160,154,0.18), -6px -6px 16px rgba(255,255,255,0.85), inset 2px 2px 4px rgba(255,255,255,0.6), inset -1px -1px 3px rgba(0,0,0,0.02)',
+  },
+  btn: {
+    background: 'rgba(255,255,255,0.6)',
+    border: '1px solid rgba(255,255,255,0.7)',
+    boxShadow: '5px 5px 12px rgba(166,160,154,0.15), -4px -4px 10px rgba(255,255,255,0.8), inset 1px 1px 3px rgba(255,255,255,0.5)',
+  },
+  pill: {
+    background: 'rgba(255,255,255,0.55)',
+    boxShadow: '4px 4px 10px rgba(166,160,154,0.12), -3px -3px 8px rgba(255,255,255,0.7)',
+  },
+  header: {
+    background: 'rgba(245,240,235,0.75)',
+    backdropFilter: 'blur(24px) saturate(1.3)',
+    WebkitBackdropFilter: 'blur(24px) saturate(1.3)',
+    borderBottom: '1px solid rgba(255,255,255,0.5)',
+    boxShadow: '0 4px 16px rgba(166,160,154,0.1)',
+  },
+  activePill: {
+    background: '#fff',
+    boxShadow: '4px 4px 10px rgba(166,160,154,0.15), -3px -3px 8px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.5)',
+  },
+};
+
 /* ── Minimal Status Badge ── */
 const StatusBadge = ({ status, isDark }) => {
   const map = {
