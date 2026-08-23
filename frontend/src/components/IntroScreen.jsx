@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { Mail, Phone, ArrowRight, Loader2, User, X, Calendar, FlaskConical, Package, Lock, MessageCircle, CheckCircle2, Download, Stethoscope } from 'lucide-react';
+import { Mail, Phone, ArrowRight, Loader2, User, X, Calendar, FlaskConical, Package, Lock, MessageCircle, CheckCircle2, Download, Stethoscope, Smartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import LuxuryNotification from './LuxuryNotification';
@@ -744,9 +744,9 @@ const IntroScreen = ({ onComplete, user }) => {
           <Button 
             onClick={() => { setShowAuthModal(true); setAuthStep('whatsappLogin'); }}
             className="flex-1 h-12 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-1.5 relative overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)', border: '1px solid rgba(255,255,255,0.15)' }}
+            style={{ background: 'linear-gradient(135deg, #1F4F46, #2E6B5F)', border: '1px solid rgba(255,255,255,0.15)' }}
             data-testid="guest-btn">
-            <MessageCircle className="w-4 h-4" />
+            <Smartphone className="w-4 h-4" />
             Continue
             <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" style={{ animation: 'shimmer 2s infinite' }} />
           </Button>
@@ -800,7 +800,7 @@ const IntroScreen = ({ onComplete, user }) => {
                 {authStep === 'otp' && 'Verify OTP'}
                 {authStep === 'setPassword' && 'Create Password'}
                 {authStep === 'whatsappLogin' && 'Login with Phone'}
-                {authStep === 'whatsappOtp' && 'Verify WhatsApp OTP'}
+                {authStep === 'whatsappOtp' && 'Verify SMS OTP'}
               </h3>
               <button 
                 onClick={() => { 
@@ -903,28 +903,10 @@ const IntroScreen = ({ onComplete, user }) => {
                 <Button 
                   onClick={() => setAuthStep('whatsappLogin')}
                   className="w-full h-14 rounded-2xl font-bold text-white shadow-lg btn-press"
-                  style={{ background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)', boxShadow: '0 4px 24px rgba(37,211,102,0.3), inset 0 1px 0 rgba(255,255,255,0.2)' }}
+                  style={{ background: 'linear-gradient(135deg, #1F4F46 0%, #2E6B5F 100%)', boxShadow: '0 4px 24px rgba(31,79,70,0.3), inset 0 1px 0 rgba(255,255,255,0.2)' }}
                   data-testid="whatsapp-login-option">
-                  <MessageCircle className="w-5 h-5 mr-2" />
-                  WhatsApp + OTP
-                </Button>
-                
-                <Button 
-                  onClick={() => setAuthStep('email')}
-                  className="w-full h-14 rounded-2xl font-bold shadow-lg btn-press"
-                  style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '2px solid rgba(31,79,70,0.2)', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', color: '#1A2B28' }}
-                  data-testid="email-login-option">
-                  <Mail className="w-5 h-5 mr-2" style={{ color: THEME.primary }} />
-                  Email + OTP
-                </Button>
-
-                <Button 
-                  onClick={() => setAuthStep('emailPassword')}
-                  className="w-full h-14 rounded-2xl font-bold shadow-lg"
-                  style={{ background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(31,79,70,0.25)', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', color: '#1A2B28' }}
-                  data-testid="email-password-login-option">
-                  <Lock className="w-5 h-5 mr-2" />
-                  Email + Password
+                  <Smartphone className="w-5 h-5 mr-2" />
+                  SMS OTP
                 </Button>
                 
                 {/* Doctor & Staff Portal - two small buttons side by side */}
@@ -1254,10 +1236,10 @@ const IntroScreen = ({ onComplete, user }) => {
                 <div className="text-center mb-2">
                   <div className="w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center"
                     style={{ background: 'linear-gradient(135deg, rgba(31,79,70,0.8) 0%, rgba(46,107,95,0.6) 100%)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 4px 20px rgba(31,79,70,0.25), inset 0 1px 0 rgba(255,255,255,0.15)' }}>
-                    <MessageCircle className="w-8 h-8 text-white" />
+                    <Smartphone className="w-8 h-8 text-white" />
                   </div>
                   <p className="text-sm font-medium" style={{ color: '#1A2B28' }}>
-                    Enter your WhatsApp number to receive OTP
+                    Enter your mobile number to receive SMS OTP
                   </p>
                 </div>
                 <div className="relative flex items-center" ref={isdPickerRef}>
@@ -1356,7 +1338,7 @@ const IntroScreen = ({ onComplete, user }) => {
                     <div className="text-center">
                       <div className="w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center"
                         style={{ background: 'linear-gradient(135deg, rgba(31,79,70,0.8) 0%, rgba(46,107,95,0.6) 100%)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 4px 20px rgba(31,79,70,0.25), inset 0 1px 0 rgba(255,255,255,0.15)' }}>
-                        <MessageCircle className="w-8 h-8 text-white" />
+                        <Smartphone className="w-8 h-8 text-white" />
                       </div>
                       <p className="text-sm font-medium" style={{ color: '#1A2B28' }}>Enter the OTP sent to</p>
                       <p className="font-bold text-lg" style={{ color: THEME.primary }}>{isdCode} {mobile}</p>
@@ -1364,7 +1346,7 @@ const IntroScreen = ({ onComplete, user }) => {
                         <p className="text-xs font-semibold mt-1.5 py-1.5 rounded-lg" 
                           style={{ color: '#0D9488', background: 'rgba(13,148,136,0.08)', animation: 'authTextSlide 0.3s ease-out' }}
                           data-testid="wa-otp-sent-flash">
-                          OTP sent to your WhatsApp!
+                          OTP sent via SMS!
                         </p>
                       )}
                     </div>

@@ -310,15 +310,15 @@ const AuthDialogV2 = ({
               <>
                 <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-sm text-green-800 flex items-center gap-2">
                   <MessageCircle className="w-5 h-5 text-green-600" />
-                  <span><strong>SMS OTP:</strong> Enter your WhatsApp number to receive verification code</span>
+                  <span><strong>SMS OTP:</strong> Enter your mobile number to receive verification code</span>
                 </div>
                 <div>
-                  <Label className="font-semibold">WhatsApp Number</Label>
+                  <Label className="font-semibold">Mobile Number</Label>
                   <div className="flex mt-1.5">
                     <div className="flex items-center px-3 bg-gray-100 rounded-l-xl border border-r-0 font-bold text-gray-600">+91</div>
                     <Input 
                       type="tel" 
-                      placeholder="WhatsApp number (10 digits)" 
+                      placeholder="Mobile number (10 digits)" 
                       value={guestPhone}
                       onChange={(e) => setGuestPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                       className="rounded-l-none rounded-r-xl h-12"
@@ -401,7 +401,7 @@ const AuthDialogV2 = ({
                 <div>
                   <Label className="font-semibold flex items-center gap-2">
                     <MessageCircle className="w-4 h-4 text-green-600" />
-                    WhatsApp Number (Required)
+                    Mobile Number (Required)
                   </Label>
                   <div className="flex mt-1.5">
                     <div className="flex items-center px-3 bg-gray-100 rounded-l-xl border border-r-0 font-bold text-gray-600">+91</div>

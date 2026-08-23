@@ -7,7 +7,7 @@ const API = process.env.REACT_APP_BACKEND_URL;
 
 /**
  * MembershipAdCard — Nevika Cura Membership ad (red-white-black translucent)
- * Flow: WhatsApp → OTP → Membership Form → Payment
+ * Flow: SMS OTP → Membership Form → Payment
  */
 const MembershipAdCard = ({ className = '' }) => {
   const [showFlow, setShowFlow] = useState(false);
@@ -188,11 +188,11 @@ const MembershipAdCard = ({ className = '' }) => {
                   <div className="w-14 h-14 rounded-2xl mx-auto mb-3 flex items-center justify-center" style={{ background: 'rgba(220,38,38,0.12)', border: '1px solid rgba(220,38,38,0.2)' }}>
                     <Phone className="w-7 h-7 text-red-400" />
                   </div>
-                  <h2 className="text-xl font-bold text-white">Enter WhatsApp Number</h2>
+                  <h2 className="text-xl font-bold text-white">Enter Mobile Number</h2>
                   <p className="text-white/30 text-sm mt-1">We'll send an OTP for verification</p>
                 </div>
                 <div className="rounded-2xl border border-white/[0.08] p-4" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                  <label className="text-white/30 text-[10px] uppercase tracking-wider font-medium">WhatsApp Number</label>
+                  <label className="text-white/30 text-[10px] uppercase tracking-wider font-medium">Mobile Number</label>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-white/40 text-sm font-semibold">+91</span>
                     <input type="tel" maxLength={10} value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
@@ -273,7 +273,7 @@ const MembershipAdCard = ({ className = '' }) => {
                   </div>
                   {/* Phone (pre-filled) */}
                   <div className="rounded-2xl border border-white/[0.08] p-4 opacity-60" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                    <label className="text-white/30 text-[10px] uppercase tracking-wider font-medium">WhatsApp Number (Verified)</label>
+                    <label className="text-white/30 text-[10px] uppercase tracking-wider font-medium">Mobile Number (Verified)</label>
                     <div className="flex items-center gap-2 mt-2">
                       <Phone className="w-4 h-4 text-green-400/50" />
                       <span className="text-white/60 text-sm font-semibold">+91 {formData.phone || phone}</span>

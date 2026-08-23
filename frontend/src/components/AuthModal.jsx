@@ -560,73 +560,29 @@ const AuthModal = ({ open, onClose }) => {
           </DialogDescription>
         </DialogHeader>
 
-        {/* Method Selection - Primary Step */}
+        {/* Method Selection — Only SMS OTP for patients */}
         {step === 'method-select' && (
           <div className="space-y-4">
-            {/* Email OTP - Most Preferred */}
-            <button
-              onClick={() => {
-                setAuthMethod('email-otp');
-                setStep('email-otp');
-              }}
-              className="w-full p-4 border-2 border-teal-200 bg-teal-50 rounded-xl hover:border-teal-400 hover:bg-teal-100 transition-all text-left group"
-              data-testid="auth-method-email-otp"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-teal-100 rounded-lg group-hover:bg-teal-200">
-                  <svg className="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-800">Email + OTP</p>
-                  <p className="text-xs text-gray-500">Recommended • No password needed</p>
-                </div>
-                <span className="ml-auto bg-teal-500 text-white text-xs px-2 py-1 rounded-full">Best</span>
-              </div>
-            </button>
-            
-            {/* Email + Password */}
-            <button
-              onClick={() => {
-                setAuthMethod('password');
-                setStep('password-login');
-              }}
-              className="w-full p-4 border border-gray-200 rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all text-left"
-              data-testid="auth-method-password"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-800">Email + Password</p>
-                  <p className="text-xs text-gray-500">Traditional login</p>
-                </div>
-              </div>
-            </button>
-            
-            {/* Phone OTP - WhatsApp */}
+            {/* Phone + SMS OTP - Primary */}
             <button
               onClick={() => {
                 setAuthMethod('phone-otp');
                 setStep('phone-otp');
               }}
-              className="w-full p-4 border border-gray-200 rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all text-left opacity-80"
+              className="w-full p-4 border-2 border-teal-200 bg-teal-50 rounded-xl hover:border-teal-400 hover:bg-teal-100 transition-all text-left group"
               data-testid="auth-method-phone-otp"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="p-2 bg-teal-100 rounded-lg group-hover:bg-teal-200">
+                  <svg className="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div>
                   <p className="font-semibold text-gray-800">Phone + SMS OTP</p>
-                  <p className="text-xs text-gray-500">International numbers supported</p>
+                  <p className="text-xs text-gray-500">Quick & secure verification</p>
                 </div>
+                <span className="ml-auto bg-teal-500 text-white text-xs px-2 py-1 rounded-full">Best</span>
               </div>
             </button>
             
@@ -653,7 +609,7 @@ const AuthModal = ({ open, onClose }) => {
             )}
             
             <p className="text-xs text-center text-gray-400 mt-2">
-              Email OTP is free and doesn't require SMS charges
+              Secure OTP verification via SMS
             </p>
           </div>
         )}
@@ -702,7 +658,7 @@ const AuthModal = ({ open, onClose }) => {
           <form onSubmit={handleSendPhoneOtp} className="space-y-4">
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-xs text-amber-700">
-                <strong>Note:</strong> OTP will be sent via SMS. Ensure WhatsApp is active on this number.
+                <strong>Note:</strong> OTP will be sent via SMS to this number.
               </p>
             </div>
             <div>

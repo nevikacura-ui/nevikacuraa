@@ -25,7 +25,7 @@ const WhatsAppOTP = ({
   onVerified, 
   onCancel,
   autoSend = true,
-  buttonText = 'Verify via WhatsApp'
+  buttonText = 'Verify via SMS'
 }) => {
   const [step, setStep] = useState('idle'); // idle, sending, otp_sent, verifying, verified
   const [otp, setOtp] = useState(['', '', '', '', '', '']);

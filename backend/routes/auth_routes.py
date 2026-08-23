@@ -576,10 +576,10 @@ async def get_user_preferences(user: User = Depends(get_current_user)):
 # ============ OTP-based Auth Endpoints ============
 
 async def send_sms_otp(phone: str) -> dict:
-    return {"success": False, "error": "SMS OTP disabled - use WhatsApp OTP"}
+    return {"success": False, "error": "SMS OTP disabled"}
 
 async def verify_sms_otp(phone: str, code: str) -> dict:
-    return {"success": False, "error": "SMS OTP disabled - use WhatsApp OTP"}
+    return {"success": False, "error": "SMS OTP disabled"}
 
 
 @router.post("/auth/otp/send")

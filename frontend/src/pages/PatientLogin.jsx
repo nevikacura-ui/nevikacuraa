@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { ArrowRight, Loader2, Eye, EyeOff, Shield, Stethoscope, ArrowLeft, Mail, MessageCircle } from 'lucide-react';
+import { ArrowRight, Loader2, Eye, EyeOff, Shield, Stethoscope, ArrowLeft, Mail, Smartphone } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -94,7 +94,7 @@ const PatientLogin = () => {
       const data = await res.json();
       
       if (res.ok && data.success) {
-        toast.success(`OTP sent via ${authMethod === 'email' ? 'Email' : 'WhatsApp'}!`);
+        toast.success(`OTP sent via ${authMethod === 'email' ? 'Email' : 'SMS'}!`);
         setFlowType(data.flow_type);
         setHasPassword(data.has_password || false);
         
@@ -394,15 +394,15 @@ const PatientLogin = () => {
                       <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-gray-300 transition-colors" />
                     </button>
 
-                    {/* WhatsApp Button */}
+                    {/* SMS OTP Button */}
                     <button
                       onClick={handleSelectWhatsApp}
                       className="w-full h-12 bg-[#1a1a1a]/80 hover:bg-[#252525] border border-white/10 rounded-xl flex items-center justify-between px-4 transition-all group"
                       data-testid="whatsapp-login-btn"
                     >
                       <div className="flex items-center gap-3">
-                        <MessageCircle className="w-5 h-5 text-green-400" />
-                        <span className="text-gray-300 text-sm font-medium">Login by WhatsApp</span>
+                        <Smartphone className="w-5 h-5 text-green-400" />
+                        <span className="text-gray-300 text-sm font-medium">Login by SMS OTP</span>
                       </div>
                       <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-gray-300 transition-colors" />
                     </button>
@@ -443,7 +443,7 @@ const PatientLogin = () => {
               </>
             )}
 
-            {/* ========== STEP: ENTER PHONE (WhatsApp) ========== */}
+            {/* ========== STEP: ENTER PHONE (SMS OTP) ========== */}
             {step === 'enter-phone' && (
               <>
                 {/* Back Button */}
@@ -458,9 +458,9 @@ const PatientLogin = () => {
                 {/* Header */}
                 <div className="text-center mb-8">
                   <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-500/30">
-                    <MessageCircle className="w-7 h-7 text-white" />
+                    <Smartphone className="w-7 h-7 text-white" />
                   </div>
-                  <h1 className="text-3xl font-bold text-white mb-2">WhatsApp Login</h1>
+                  <h1 className="text-3xl font-bold text-white mb-2">SMS OTP Login</h1>
                   <p className="text-gray-400 text-sm">Enter your mobile number to receive OTP</p>
                 </div>
 
@@ -496,7 +496,7 @@ const PatientLogin = () => {
                   </div>
 
                   <p className="text-xs text-gray-500 text-center mt-4">
-                    We'll send a 6-digit verification code via WhatsApp
+                    We'll send a 6-digit verification code via SMS
                   </p>
                 </div>
               </>
@@ -520,10 +520,10 @@ const PatientLogin = () => {
                   {authMethod === 'email' ? (
                     <Mail className="w-6 h-6 text-teal-400" />
                   ) : (
-                    <MessageCircle className="w-6 h-6 text-green-400" />
+                    <Smartphone className="w-6 h-6 text-green-400" />
                   )}
                   <h1 className="text-2xl font-bold text-white">
-                    {authMethod === 'email' ? 'Email' : 'WhatsApp'} verification
+                    {authMethod === 'email' ? 'Email' : 'SMS'} verification
                   </h1>
                 </div>
 

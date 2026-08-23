@@ -70,7 +70,7 @@ const MembershipAdModal = ({ open, onClose }) => {
     setLoading(true);
     try {
       await axios.post(`${API}/api/auth/guest/send-otp`, { mobile: phone.slice(-10) });
-      toast.success('OTP sent to your WhatsApp!');
+      toast.success('OTP sent via SMS!');
       setStep('otp');
       setTimer(30);
     } catch { toast.error('Could not send OTP. Try again.'); }
