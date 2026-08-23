@@ -1,3008 +1,401 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/context/AuthContext';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import SubscriptionGate from '@/components/SubscriptionGate';
-import PortalMembershipForm from '@/components/PortalMembershipForm';
-import ProtonAdBanner from '@/components/ProtonAdBanner';
-import { 
-  ArrowLeft, Heart, Activity, AlertTriangle, Droplets, Apple, 
-  Calendar, TrendingUp, TrendingDown, Pill, Phone,
-  Utensils, TestTube, ChevronRight, Info, CheckCircle, AlertCircle,
-  LineChart, Target, Trash2, Share2, FileDown, Search, X, Mail, User, Lock, Check, ClipboardList
+import { useSubscriptionRedirect } from '@/hooks/useSubscriptionRedirect';
+import PortalCheckout from '@/components/PortalCheckout';
+import HealthReminders from '@/components/HealthReminders';
+import { SugarTrendChart, DailySummaryBar } from '@/components/HealthCharts';
+import { HbA1cRing, MedicationAdherence } from '@/components/HealthRings';
+import {
+  ArrowLeft, Activity, AlertTriangle, Droplets, Apple, Calendar,
+  TrendingDown, Check, Target, Crown, Lock, Clock, Phone, Utensils,
+  TestTube, Shield, Zap, AlertCircle, Star, ChevronRight, Bell, Stethoscope
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Diabetic Diet Plans - Detailed
+const FOOD_IMAGES = {
+  veg_breakfast: 'https://images.unsplash.com/photo-1644289450169-bc58aa16bacb?w=400&q=80',
+  veg_lunch: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&q=80',
+  salad: 'https://images.unsplash.com/photo-1622205705740-c8ac6eff77d1?w=400&q=80',
+  healthy: 'https://images.unsplash.com/photo-1723985021773-d1f4c4ebfdd1?w=400&q=80',
+};
+
+// ==================== STATIC DATA ====================
 const DIET_PLANS = {
   vegetarian: {
     breakfast: [
-      { item: "Oats Upma with vegetables", portion: "1 bowl (150g)", calories: "180", benefits: "High fiber, keeps sugar stable" },
-      { item: "Moong Dal Chilla (2 pieces)", portion: "Medium size", calories: "150", benefits: "Protein-rich, low GI" },
-      { item: "Vegetable Poha (flattened rice)", portion: "1 bowl (150g)", calories: "200", benefits: "Light, easy to digest" },
-      { item: "Idli (2) with Sambar", portion: "2 medium idlis", calories: "170", benefits: "Fermented, good for gut" },
-      { item: "Besan Cheela with mint chutney", portion: "2 pieces", calories: "160", benefits: "High protein, low carb" },
-      { item: "Ragi Dosa with coconut chutney", portion: "2 dosas", calories: "180", benefits: "Rich in calcium & fiber" },
-      { item: "Sprouts Salad", portion: "1 cup", calories: "120", benefits: "Protein & fiber boost" }
+      { item: "Oats Upma with vegetables", portion: "1 bowl", calories: "180", benefit: "High fiber" },
+      { item: "Moong Dal Chilla", portion: "2 pieces", calories: "150", benefit: "Protein-rich" },
+      { item: "Besan Cheela + mint chutney", portion: "2 pieces", calories: "160", benefit: "Low GI" },
+      { item: "Ragi Dosa + coconut chutney", portion: "2 dosas", calories: "180", benefit: "Calcium & fiber" },
+      { item: "Sprouts Salad", portion: "1 cup", calories: "120", benefit: "Protein boost" },
     ],
     lunch: [
-      { item: "Brown Rice + Dal + Sabzi + Salad", portion: "1 roti rice + 1 bowl dal", calories: "350", benefits: "Complete balanced meal" },
-      { item: "2 Roti + Palak Paneer + Raita", portion: "Regular serving", calories: "380", benefits: "Iron & protein rich" },
-      { item: "Quinoa Pulao + Curd + Vegetables", portion: "1 bowl quinoa", calories: "320", benefits: "Complete protein, low GI" },
-      { item: "Bajra Roti + Mixed Vegetable Curry", portion: "2 rotis", calories: "340", benefits: "Millets control sugar" },
-      { item: "Jowar Roti + Bhindi Sabzi + Dal", portion: "2 rotis", calories: "330", benefits: "High fiber millet" },
-      { item: "Vegetable Khichdi + Kadhi", portion: "1 bowl", calories: "300", benefits: "Easy to digest, balanced" }
+      { item: "Brown Rice + Dal + Sabzi", portion: "1 bowl", calories: "350", benefit: "Balanced meal" },
+      { item: "2 Roti + Palak Paneer + Raita", portion: "Regular", calories: "380", benefit: "Iron & protein" },
+      { item: "Quinoa Pulao + Curd", portion: "1 bowl", calories: "320", benefit: "Low GI" },
+      { item: "Bajra Roti + Mixed Veg Curry", portion: "2 rotis", calories: "340", benefit: "Controls sugar" },
     ],
     dinner: [
-      { item: "Vegetable Soup + 1 Roti + Sabzi", portion: "Light serving", calories: "250", benefits: "Light dinner, good sleep" },
-      { item: "Moong Dal Khichdi", portion: "1 bowl", calories: "280", benefits: "Easy on stomach" },
-      { item: "Grilled Paneer Salad", portion: "1 large plate", calories: "220", benefits: "High protein, low carb" },
-      { item: "Dalia (Broken Wheat) with Vegetables", portion: "1 bowl", calories: "240", benefits: "Fiber-rich grain" },
-      { item: "Mixed Vegetable Clear Soup + Chapati", portion: "1 bowl + 1 roti", calories: "200", benefits: "Light & nutritious" },
-      { item: "Stuffed Capsicum with Paneer", portion: "2 pieces", calories: "230", benefits: "Protein without carbs" }
+      { item: "Vegetable Soup + 1 Roti", portion: "Light", calories: "250", benefit: "Light dinner" },
+      { item: "Moong Dal Khichdi", portion: "1 bowl", calories: "280", benefit: "Easy to digest" },
+      { item: "Grilled Paneer Salad", portion: "1 plate", calories: "220", benefit: "Low carb" },
+      { item: "Dalia with Vegetables", portion: "1 bowl", calories: "240", benefit: "Fiber-rich" },
     ],
     snacks: [
-      { item: "Roasted Chana (Chickpeas)", portion: "1/4 cup (30g)", calories: "80", benefits: "Protein snack" },
-      { item: "Mixed Nuts (unsalted)", portion: "10-12 pieces", calories: "100", benefits: "Good fats, filling" },
-      { item: "Cucumber & Carrot sticks", portion: "1 cup", calories: "30", benefits: "Zero sugar, hydrating" },
-      { item: "Buttermilk (Chaas)", portion: "1 glass", calories: "40", benefits: "Probiotic, cooling" },
-      { item: "Apple or Guava", portion: "1 medium", calories: "60", benefits: "Low GI fruits" },
-      { item: "Makhana (Fox Nuts)", portion: "1/2 cup", calories: "50", benefits: "Low calorie, crunchy" },
-      { item: "Sprouts Chaat", portion: "1/2 cup", calories: "70", benefits: "Protein boost" },
-      { item: "Green Tea (unsweetened)", portion: "1 cup", calories: "0", benefits: "Antioxidants" }
-    ]
+      { item: "Roasted Chana", portion: "30g", calories: "80", benefit: "Protein snack" },
+      { item: "Mixed Nuts", portion: "10-12 pcs", calories: "100", benefit: "Good fats" },
+      { item: "Makhana (Fox Nuts)", portion: "1/2 cup", calories: "50", benefit: "Low calorie" },
+      { item: "Green Tea", portion: "1 cup", calories: "0", benefit: "Antioxidants" },
+    ],
   },
   nonVegetarian: {
     breakfast: [
-      { item: "Egg White Omelette (3 whites) + Toast", portion: "3 egg whites + 1 toast", calories: "200", benefits: "Pure protein start" },
-      { item: "Boiled Eggs with Vegetables", portion: "2 whole eggs", calories: "180", benefits: "Complete protein" },
-      { item: "Oats with Scrambled Egg", portion: "1 bowl", calories: "220", benefits: "Fiber + protein combo" },
-      { item: "Chicken Sandwich (whole wheat)", portion: "1 sandwich", calories: "250", benefits: "Lean protein" }
+      { item: "Egg White Omelette + Toast", portion: "3 whites", calories: "200", benefit: "Pure protein" },
+      { item: "Boiled Eggs + Vegetables", portion: "2 eggs", calories: "180", benefit: "Complete protein" },
+      { item: "Oats with Scrambled Egg", portion: "1 bowl", calories: "220", benefit: "Fiber + protein" },
     ],
     lunch: [
-      { item: "Grilled Chicken Breast + Brown Rice + Salad", portion: "100g chicken", calories: "400", benefits: "Lean protein meal" },
-      { item: "Fish Curry + 2 Roti + Vegetables", portion: "100g fish", calories: "420", benefits: "Omega-3 rich" },
-      { item: "Chicken Soup + Roti + Sabzi", portion: "1 bowl + 2 roti", calories: "380", benefits: "Light & filling" },
-      { item: "Egg Curry + Brown Rice", portion: "2 eggs", calories: "350", benefits: "Budget protein" },
-      { item: "Tandoori Chicken + Salad + Raita", portion: "2 pieces", calories: "320", benefits: "Grilled, not fried" }
+      { item: "Grilled Chicken + Brown Rice", portion: "100g", calories: "400", benefit: "Lean protein" },
+      { item: "Fish Curry + 2 Roti + Vegs", portion: "100g", calories: "420", benefit: "Omega-3 rich" },
+      { item: "Tandoori Chicken + Salad", portion: "2 pcs", calories: "320", benefit: "Grilled, healthy" },
     ],
     dinner: [
-      { item: "Grilled Fish with Steamed Vegetables", portion: "100g fish", calories: "280", benefits: "Light protein dinner" },
-      { item: "Chicken Salad with Olive Oil", portion: "1 large plate", calories: "250", benefits: "Low carb dinner" },
-      { item: "Egg Curry + 1 Roti", portion: "2 eggs", calories: "300", benefits: "Simple & nutritious" },
-      { item: "Fish Tikka + Mint Chutney", portion: "4-5 pieces", calories: "220", benefits: "Grilled, healthy" },
-      { item: "Chicken Clear Soup", portion: "1 large bowl", calories: "150", benefits: "Very light option" }
+      { item: "Grilled Fish + Steamed Vegs", portion: "100g", calories: "280", benefit: "Light protein" },
+      { item: "Chicken Salad + Olive Oil", portion: "1 plate", calories: "250", benefit: "Low carb" },
+      { item: "Fish Tikka + Mint Chutney", portion: "4-5 pcs", calories: "220", benefit: "Healthy grilled" },
     ],
     snacks: [
-      { item: "Boiled Egg", portion: "1 egg", calories: "70", benefits: "Quick protein" },
-      { item: "Chicken Soup (clear)", portion: "1 cup", calories: "80", benefits: "Warm & filling" },
-      { item: "Fish Tikka (grilled)", portion: "2-3 pieces", calories: "120", benefits: "Lean protein snack" },
-      { item: "Egg Bhurji (dry)", portion: "1 egg", calories: "90", benefits: "Spiced protein" }
-    ]
-  },
-  dos: [
-    "Eat at regular intervals - every 3-4 hours to maintain stable sugar",
-    "Include fiber-rich foods in every meal (vegetables, whole grains)",
-    "Choose whole grains over refined carbs (brown rice, whole wheat)",
-    "Drink plenty of water - 8-10 glasses daily",
-    "Include protein in every meal to slow sugar absorption",
-    "Use healthy cooking oils sparingly (olive, mustard, coconut)",
-    "Eat low glycemic fruits - apple, guava, orange, papaya",
-    "Include green leafy vegetables daily (spinach, methi, palak)",
-    "Have dinner at least 2-3 hours before sleeping",
-    "Chew food slowly - helps in better digestion",
-    "Monitor portion sizes - use smaller plates",
-    "Include cinnamon, fenugreek in diet - helps control sugar"
-  ],
-  donts: [
-    "Avoid white rice, maida (refined flour), white bread",
-    "Limit sugar and sugary drinks completely - including packaged juices",
-    "Avoid fried and processed foods - samosas, pakoras, chips",
-    "Don't skip meals, especially breakfast - causes sugar spikes later",
-    "Limit fruit juices - eat whole fruits instead for fiber",
-    "Avoid high-GI fruits in excess - mango, banana, grapes, chikoo",
-    "Don't eat heavy meals at night - light dinner is best",
-    "Avoid alcohol or limit strictly - affects sugar control",
-    "Don't eat when stressed - affects digestion",
-    "Avoid late night snacking",
-    "Don't consume honey thinking it's healthy - it still raises sugar",
-    "Avoid sweetened yogurt - choose plain curd instead"
-  ],
-  timings: {
-    breakfast: "7:00 AM - 8:30 AM",
-    midMorning: "10:30 AM - 11:00 AM",
-    lunch: "12:30 PM - 1:30 PM",
-    eveningSnack: "4:00 PM - 5:00 PM",
-    dinner: "7:00 PM - 8:00 PM (latest by 8:30 PM)"
+      { item: "Boiled Egg", portion: "1 egg", calories: "70", benefit: "Quick protein" },
+      { item: "Chicken Soup (clear)", portion: "1 cup", calories: "80", benefit: "Warm & filling" },
+    ],
   }
 };
 
-// Warning Signs
 const WARNING_SIGNS = [
-  { sign: "Excessive Thirst (Polydipsia)", description: "Feeling thirsty all the time, even after drinking water", icon: "💧", action: "Track water intake, check sugar levels" },
-  { sign: "Frequent Urination (Polyuria)", description: "Urinating more often, especially at night (3+ times)", icon: "🚽", action: "Note frequency, check for UTI" },
-  { sign: "Unexplained Weight Loss", description: "Losing weight without trying or change in diet", icon: "⚖️", action: "Urgent - consult doctor immediately" },
-  { sign: "Extreme Fatigue", description: "Feeling very tired despite adequate rest and sleep", icon: "😴", action: "Check sugar levels, rest adequately" },
-  { sign: "Blurred Vision", description: "Difficulty seeing clearly, vision changes", icon: "👁️", action: "Get eye checkup, control sugar" },
-  { sign: "Slow Wound Healing", description: "Cuts and bruises take longer than usual to heal", icon: "🩹", action: "Keep wounds clean, see doctor" },
-  { sign: "Tingling or Numbness", description: "Tingling sensation in hands or feet (neuropathy sign)", icon: "🖐️", action: "Important - nerve damage sign" },
-  { sign: "Frequent Infections", description: "Recurring skin, gum, or urinary infections", icon: "🦠", action: "Maintain hygiene, consult doctor" }
+  { sign: "Excessive Thirst", desc: "Feeling thirsty all the time", action: "Track water intake, check sugar", icon: Droplets, bg: "bg-blue-50", clr: "text-blue-500" },
+  { sign: "Frequent Urination", desc: "Urinating more often at night", action: "Note frequency, check UTI", icon: AlertCircle, bg: "bg-yellow-50", clr: "text-yellow-600" },
+  { sign: "Unexplained Weight Loss", desc: "Losing weight without trying", action: "Consult doctor immediately", icon: TrendingDown, bg: "bg-red-50", clr: "text-red-500" },
+  { sign: "Extreme Fatigue", desc: "Very tired despite rest", action: "Check sugar levels", icon: Zap, bg: "bg-purple-50", clr: "text-purple-500" },
+  { sign: "Blurred Vision", desc: "Difficulty seeing clearly", action: "Get eye checkup", icon: AlertTriangle, bg: "bg-amber-50", clr: "text-amber-500" },
+  { sign: "Slow Wound Healing", desc: "Cuts take longer to heal", action: "See doctor", icon: Shield, bg: "bg-green-50", clr: "text-green-500" },
+  { sign: "Tingling/Numbness", desc: "Tingling in hands or feet", action: "Nerve damage sign", icon: Zap, bg: "bg-rose-50", clr: "text-rose-500" },
 ];
 
-// Hypoglycemia Emergency Guide - Complete
-const HYPOGLYCEMIA_GUIDE = {
-  whatIs: "Hypoglycemia (low blood sugar) occurs when blood glucose drops below 70 mg/dL. It can happen quickly and needs immediate attention. It's more common in people taking insulin or certain diabetes medications.",
-  causes: [
-    "Skipping or delaying meals",
-    "Taking too much insulin or diabetes medication",
-    "Exercising more than usual without eating",
-    "Drinking alcohol without food",
-    "Not eating enough carbohydrates"
-  ],
-  symptoms: {
-    early: [
-      { symptom: "Sweating", description: "Sudden cold sweats, clammy skin" },
-      { symptom: "Trembling/Shaking", description: "Hands trembling, feeling shaky" },
-      { symptom: "Hunger", description: "Sudden intense hunger" },
-      { symptom: "Dizziness", description: "Feeling lightheaded or unsteady" },
-      { symptom: "Fast heartbeat", description: "Heart pounding or racing" }
-    ],
-    moderate: [
-      { symptom: "Confusion", description: "Difficulty thinking clearly" },
-      { symptom: "Irritability", description: "Sudden mood changes, anxiety" },
-      { symptom: "Weakness", description: "Feeling weak, difficulty standing" },
-      { symptom: "Headache", description: "Sudden headache" },
-      { symptom: "Pale skin", description: "Looking pale or grey" }
-    ],
-    severe: [
-      { symptom: "Blurred vision", description: "Cannot see properly" },
-      { symptom: "Difficulty speaking", description: "Slurred speech" },
-      { symptom: "Seizures", description: "Convulsions - EMERGENCY" },
-      { symptom: "Unconsciousness", description: "Passing out - CALL 112" }
-    ]
-  },
-  rule15: {
-    title: "The 15-15 Rule",
-    steps: [
-      "Check blood sugar if possible",
-      "If below 70 mg/dL or feeling symptoms:",
-      "Take 15 grams of fast-acting carbohydrates",
-      "Wait 15 minutes",
-      "Recheck blood sugar",
-      "If still low, repeat",
-      "Once normal, eat a small snack"
-    ]
-  },
-  fastSugarOptions: [
-    { item: "Glucose tablets", amount: "3-4 tablets", grams: "15g" },
-    { item: "Sugar in water", amount: "4 teaspoons sugar in 1/2 glass water", grams: "15g" },
-    { item: "Fruit juice (no sugar added)", amount: "1/2 cup (120ml)", grams: "15g" },
-    { item: "Regular soda (not diet)", amount: "1/2 cup (120ml)", grams: "15g" },
-    { item: "Honey", amount: "1 tablespoon", grams: "15g" },
-    { item: "Candy (hard)", amount: "5-6 pieces", grams: "15g" },
-    { item: "Raisins", amount: "2 tablespoons", grams: "15g" }
-  ],
-  unconsciousPerson: [
-    "DO NOT give anything by mouth - choking risk!",
-    "Place person on their side (recovery position)",
-    "Call emergency services immediately - 112",
-    "If available and trained - use glucagon injection",
-    "Stay with the person until help arrives",
-    "Note the time symptoms started"
-  ],
-  prevention: [
-    "Never skip meals, especially if on medication",
-    "Always carry fast-acting sugar with you",
-    "Check sugar before driving or exercise",
-    "Wear a medical ID bracelet",
-    "Inform family and colleagues about symptoms",
-    "Don't drink alcohol on empty stomach"
-  ]
-};
+const EMERGENCY_STEPS = [
+  { step: 1, title: "Recognize Symptoms", desc: "Sweating, trembling, hunger, dizziness, fast heartbeat, confusion" },
+  { step: 2, title: "Check Blood Sugar", desc: "If below 70 mg/dL, it's hypoglycemia. Act immediately." },
+  { step: 3, title: "15-15 Rule", desc: "Eat 15g fast-acting carbs: 3-4 glucose tablets, 1/2 cup juice, or 1 tbsp honey" },
+  { step: 4, title: "Wait 15 Minutes", desc: "Recheck blood sugar after 15 minutes" },
+  { step: 5, title: "Repeat if Needed", desc: "If still below 70 mg/dL, repeat step 3" },
+  { step: 6, title: "Eat a Snack", desc: "Once stable, eat a small meal with protein and carbs" },
+];
 
-// Diabetic Neuropathy Guide
-const NEUROPATHY_GUIDE = {
-  whatIs: "Diabetic neuropathy is nerve damage caused by prolonged high blood sugar. It most commonly affects the legs and feet, but can affect other parts of the body too. Early detection and good sugar control can prevent or slow progression.",
-  types: [
-    { name: "Peripheral Neuropathy", description: "Affects feet and legs first, then hands and arms. Most common type.", icon: "🦶" },
-    { name: "Autonomic Neuropathy", description: "Affects digestive system, bladder, heart rate, and blood pressure.", icon: "❤️" },
-    { name: "Proximal Neuropathy", description: "Affects thighs, hips, buttocks. Can cause weakness in legs.", icon: "🦵" },
-    { name: "Focal Neuropathy", description: "Sudden weakness of one nerve, often in hand, head, or leg.", icon: "🖐️" }
-  ],
-  symptoms: [
-    { symptom: "Numbness or tingling", area: "Feet, legs, hands", severity: "Early sign" },
-    { symptom: "Burning sensation", area: "Feet, especially at night", severity: "Common" },
-    { symptom: "Sharp, jabbing pain", area: "Affected areas", severity: "Moderate" },
-    { symptom: "Extreme sensitivity to touch", area: "Skin on feet/hands", severity: "Common" },
-    { symptom: "Muscle weakness", area: "Legs, difficulty walking", severity: "Progressive" },
-    { symptom: "Loss of balance", area: "While walking/standing", severity: "Advanced" },
-    { symptom: "Foot ulcers/infections", area: "Feet", severity: "Serious - see doctor" }
-  ],
-  prevention: [
-    "Keep blood sugar in target range - most important factor",
-    "Check feet daily for cuts, blisters, redness, swelling",
-    "Never walk barefoot, even at home",
-    "Wear comfortable, well-fitting shoes",
-    "Keep feet clean and dry, moisturize (not between toes)",
-    "Trim toenails straight across, file edges gently",
-    "Avoid extreme temperatures - test bath water first",
-    "Don't sit cross-legged for long periods",
-    "Exercise regularly to improve blood flow",
-    "Quit smoking - it worsens circulation"
-  ],
-  dailyExercises: [
-    { exercise: "Toe Wiggles", description: "Wiggle toes up and down for 30 seconds, 3 times daily", benefit: "Improves circulation" },
-    { exercise: "Ankle Circles", description: "Rotate ankles clockwise then counter-clockwise, 10 times each", benefit: "Maintains flexibility" },
-    { exercise: "Heel-Toe Raises", description: "While sitting, lift heels then toes alternately, 15 times", benefit: "Strengthens muscles" },
-    { exercise: "Towel Scrunches", description: "Place towel on floor, scrunch with toes, 10 times", benefit: "Foot muscle strength" },
-    { exercise: "Walking", description: "15-30 minutes daily walk in comfortable shoes", benefit: "Overall circulation" }
-  ],
-  whenToSeeDoctor: [
-    "Any cut or sore on foot that doesn't heal in 2 days",
-    "Signs of infection: redness, warmth, swelling, discharge",
-    "New numbness, tingling, or pain in feet/hands",
-    "Changes in foot shape or color",
-    "Difficulty walking or balance problems",
-    "Burning pain that disrupts sleep"
-  ]
-};
-
-// Diabetic Foot Care Guide
-const FOOT_CARE_GUIDE = {
-  importance: "Diabetes can cause poor blood flow and nerve damage in feet, making it harder to heal from injuries and notice problems. Proper foot care can prevent serious complications including infections and amputations.",
-  dailyChecklist: [
-    { task: "Inspect feet thoroughly", how: "Check top, bottom, sides, between toes. Use mirror for bottom.", look: "Cuts, blisters, redness, swelling, nail problems" },
-    { task: "Wash feet daily", how: "Use lukewarm water (test with elbow). Mild soap. Don't soak.", look: "Dry thoroughly, especially between toes" },
-    { task: "Moisturize", how: "Apply lotion on tops and bottoms of feet", look: "Avoid between toes to prevent fungal infection" },
-    { task: "Check shoes before wearing", how: "Run hand inside to feel for objects, rough spots", look: "Pebbles, torn lining, anything that could hurt" },
-    { task: "Wear clean, dry socks", how: "Change daily. Choose seamless, padded socks", look: "Avoid tight elastic bands that reduce circulation" }
-  ],
-  dos: [
-    "Cut toenails straight across, file edges smooth",
-    "Wear shoes that fit well - shop in afternoon when feet are larger",
-    "Break in new shoes gradually - 1-2 hours at a time",
-    "Wear slippers or shoes at home - never barefoot",
-    "Keep feet warm with socks - not heating pads",
-    "Wiggle toes and move ankles throughout the day",
-    "Put feet up when sitting to help circulation",
-    "Get feet checked at every doctor visit"
-  ],
-  donts: [
-    "Don't walk barefoot - even at home or beach",
-    "Don't use heating pads, hot water bottles on feet",
-    "Don't cut corns or calluses yourself",
-    "Don't use sharp objects on feet",
-    "Don't wear tight socks or shoes",
-    "Don't smoke - it reduces blood flow to feet",
-    "Don't ignore any foot problem, even small ones",
-    "Don't soak feet for long periods"
-  ],
-  shoeTips: [
-    { tip: "Right size", detail: "Shoes should have 1/2 inch space at longest toe" },
-    { tip: "Width matters", detail: "Shoes should be wide enough to not squeeze toes" },
-    { tip: "Low heels", detail: "Avoid high heels, choose shoes with good support" },
-    { tip: "Breathable material", detail: "Leather or canvas allows air flow" },
-    { tip: "Cushioned sole", detail: "Provides protection and shock absorption" },
-    { tip: "No seams inside", detail: "Inner seams can cause rubbing and blisters" }
-  ],
-  emergencySigns: [
-    { sign: "Color changes", description: "Foot turns red, blue, or black", action: "See doctor same day" },
-    { sign: "Temperature changes", description: "One foot much warmer or colder than other", action: "See doctor within 24 hours" },
-    { sign: "Swelling", description: "Sudden swelling in foot or ankle", action: "Elevate foot, see doctor" },
-    { sign: "Pain", description: "New pain in legs when walking (claudication)", action: "See doctor soon" },
-    { sign: "Wound not healing", description: "Any cut/sore not improving in 2 days", action: "See doctor immediately" },
-    { sign: "Signs of infection", description: "Redness spreading, pus, fever, red streaks", action: "URGENT - see doctor today" }
-  ]
-};
-
-// Diabetic Tests (prices removed for seamless booking)
 const DIABETIC_TESTS = [
-  { id: "fbs", name: "Fasting Blood Sugar (FBS)", description: "Blood sugar after 8-12 hours fasting. Normal: 70-100 mg/dL", frequency: "Monthly" },
-  { id: "ppbs", name: "Post-Prandial Blood Sugar (PPBS)", description: "Blood sugar 2 hours after meal. Normal: <140 mg/dL", frequency: "Monthly" },
-  { id: "urine_sugar", name: "Urine Sugar / Routine", description: "Detects glucose in urine. Helps monitor kidney function and sugar control", frequency: "Monthly" },
-  { id: "hba1c", name: "HbA1c (Glycated Hemoglobin)", description: "3-month average blood sugar. Target: <7% for diabetics", frequency: "Every 3 months" },
-  { id: "lipid", name: "Lipid Profile", description: "Cholesterol and triglyceride levels. Important for heart health", frequency: "Every 6 months" },
-  { id: "kidney", name: "Kidney Function Test (KFT)", description: "Checks kidney health - creatinine, urea, eGFR", frequency: "Every 6-12 months" },
-  { id: "urine", name: "Urine Microalbumin", description: "Early detection of kidney damage in diabetes", frequency: "Yearly" },
-  { id: "liver", name: "Liver Function Test (LFT)", description: "Checks liver health - important if on medications", frequency: "Yearly" }
+  { name: "HbA1c", frequency: "Every 3 months", purpose: "3-month average sugar", target: "Below 7%" },
+  { name: "Fasting Blood Sugar", frequency: "Weekly/Monthly", purpose: "Morning sugar level", target: "70-100 mg/dL" },
+  { name: "Post-Meal Sugar", frequency: "Daily/Weekly", purpose: "2hrs after eating", target: "Below 140 mg/dL" },
+  { name: "Kidney Function (KFT)", frequency: "Every 6 months", purpose: "Check kidney health", target: "Normal range" },
+  { name: "Lipid Profile", frequency: "Every 6 months", purpose: "Cholesterol levels", target: "LDL < 100" },
+  { name: "Eye Exam", frequency: "Yearly", purpose: "Diabetic retinopathy", target: "No changes" },
+  { name: "Foot Exam", frequency: "Yearly", purpose: "Nerve damage check", target: "Normal sensation" },
 ];
 
+const MealCard = ({ meal, items }) => (
+  <div className="space-y-2">
+    <h4 className="font-semibold text-gray-700 text-sm capitalize flex items-center gap-2"><Clock className="w-3.5 h-3.5 text-blue-500" /> {meal}</h4>
+    {items.map((item, i) => (<div key={i} className="bg-gray-50 rounded-xl p-3 flex items-center justify-between"><div className="flex-1"><p className="text-sm font-medium text-gray-700">{item.item}</p><p className="text-xs text-gray-500">{item.portion} · {item.benefit}</p></div><Badge className="bg-blue-50 text-blue-600 text-[10px]">{item.calories} cal</Badge></div>))}
+  </div>
+);
+
+// ==================== MAIN COMPONENT ====================
 const Glydex = () => {
   const navigate = useNavigate();
-  const { user, token: authToken, patientToken } = useAuth();
-  
-  // Use main app auth or patient token OR staff token (staff gets full access)
-  const staffToken = localStorage.getItem('staffToken');
-  const staffInfo = localStorage.getItem('staffInfo');
-  const isStaffLoggedIn = !!(staffToken && staffInfo);
-  
-  const token = authToken || patientToken || localStorage.getItem('token') || localStorage.getItem('patientToken') || staffToken;
-  
-  // Create a user object for staff if staff is logged in
-  const effectiveUser = user || (isStaffLoggedIn ? (() => {
-    try {
-      const staff = JSON.parse(staffInfo);
-      return {
-        name: staff.name || staff.username,
-        id: staff.id || 'staff_' + staff.username,
-        phone: staff.phone || '',
-        email: staff.email || '',
-        isStaff: true,
-        staffRole: staff.role
-      };
-    } catch (e) { return null; }
-  })() : null);
-  
-  // UI state
-  const [loading, setLoading] = useState(false);
-  const [profile, setProfile] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  // Feature dialogs
+  const { isSubscribed, trial, gate, canAccess, startTrial } = useSubscriptionRedirect();
+
   const [showDiet, setShowDiet] = useState(false);
   const [showSugarLog, setShowSugarLog] = useState(false);
   const [showTests, setShowTests] = useState(false);
   const [showWarnings, setShowWarnings] = useState(false);
   const [showEmergency, setShowEmergency] = useState(false);
-  const [showProfileSetup, setShowProfileSetup] = useState(false);
-  const [showNeuropathy, setShowNeuropathy] = useState(false);
-  const [showFootCare, setShowFootCare] = useState(false);
-  
-  // Selected tests for booking
-  const [selectedDiabeticTests, setSelectedDiabeticTests] = useState([]);
-  
-  // Sugar log state
-  const [sugarLogs, setSugarLogs] = useState([]);
-  const [newLog, setNewLog] = useState({ 
-    type: 'fbs', 
-    value: '', 
-    date: new Date().toISOString().split('T')[0], 
-    time: new Date().toTimeString().slice(0, 5)
-  });
-  
-  // Profile setup
-  const [profileData, setProfileData] = useState({
-    diabetesType: '',
-    age: '',
-    gender: '',
-    // Extended diabetes fields
-    dateOfDiagnosis: '',
-    hba1cTarget: '',
-    currentMedications: [],
-    insulinUser: false,
-    complications: [],
-    emergencyContactName: '',
-    emergencyContactPhone: '',
-    testReminders: true,
-    medicineReminders: true,
-    lastHba1cDate: '',
-    lastKidneyTestDate: ''
-  });
-  
-  // Medication input for adding to list
-  const [newMedication, setNewMedication] = useState('');
-  
-  // Reminders state
-  const [reminders, setReminders] = useState(null);
+  const [showCheckout, setShowCheckout] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
 
-  // HbA1c tracking state
-  const [showHbA1c, setShowHbA1c] = useState(false);
-  const [hba1cLogs, setHba1cLogs] = useState([]);
-  const [hba1cTrend, setHba1cTrend] = useState(null);
-  const [hba1cAnalysis, setHba1cAnalysis] = useState(null);
-  const [newHba1c, setNewHba1c] = useState({
-    value: '',
-    date: new Date().toISOString().split('T')[0],
-    lab_name: '',
-    notes: ''
-  });
+  const [sugarLogs, setSugarLogs] = useState([]);
+  const [newLog, setNewLog] = useState({ type: 'fbs', value: '', date: new Date().toISOString().split('T')[0], time: new Date().toTimeString().slice(0, 5) });
 
-  // Calories Tracker state
-  const [showCaloriesTracker, setShowCaloriesTracker] = useState(false);
-  const [foodDatabase, setFoodDatabase] = useState({});
-  const [selectedFoodCategory, setSelectedFoodCategory] = useState('breakfast');
-  const [calorieLogs, setCalorieLogs] = useState([]);
-  const [dailyTotals, setDailyTotals] = useState({ calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
-  const [foodSearchQuery, setFoodSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const token = localStorage.getItem('token') || localStorage.getItem('patientToken') || localStorage.getItem('staffToken');
 
-  // Email OTP Signup State (for non-logged in users)
-  const [showSignup, setShowSignup] = useState(false);
-  const [signupData, setSignupData] = useState({ name: '', email: '', phone: '', password: '' });
-  const [loginMode, setLoginMode] = useState(false);
-  const [emailOtpSent, setEmailOtpSent] = useState(false);
-  const [emailOtp, setEmailOtp] = useState(['', '', '', '', '', '']);
-  const [emailOtpLoading, setEmailOtpLoading] = useState(false);
-  const [emailVerificationToken, setEmailVerificationToken] = useState('');
-  const [mockEmailOtp, setMockEmailOtp] = useState('');
-  const [otpResendTimer, setOtpResendTimer] = useState(0);
-  
-  // Portal Membership Form state
-  const [showMembershipForm, setShowMembershipForm] = useState(false);
-
-  // OTP Resend Timer effect
-  useEffect(() => {
-    if (otpResendTimer > 0) {
-      const timer = setTimeout(() => setOtpResendTimer(otpResendTimer - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [otpResendTimer]);
-
-  // Email OTP Functions
-  const sendEmailOtp = async () => {
-    if (!signupData.email || !signupData.email.includes('@')) {
-      toast.error('Please enter a valid email address');
-      return;
-    }
-    setEmailOtpLoading(true);
-    try {
-      // If phone is provided, use WhatsApp OTP
-      if (signupData.phone && signupData.phone.length >= 10) {
-        const res = await fetch(`${API_URL}/api/otp/whatsapp/send`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: signupData.phone, purpose: 'glydex' })
-        });
-        const data = await res.json();
-        if (data.success) {
-          setEmailOtpSent(true);
-          if (data.mock && data.otp) {
-            setMockEmailOtp(data.otp);
-          }
-          setOtpResendTimer(60);
-          toast.success('OTP sent via WhatsApp!', {
-            description: data.mock ? `Use code: ${data.otp}` : 'Check your WhatsApp'
-          });
-        } else {
-          toast.error(data.detail || 'Failed to send OTP');
-        }
-      } else {
-        // Fallback to email OTP
-        const res = await fetch(`${API_URL}/api/auth/email-otp/send`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: signupData.email.toLowerCase() })
-        });
-        const data = await res.json();
-        if (data.success) {
-          setEmailOtpSent(true);
-          setMockEmailOtp(data.mock_otp || '');
-          setOtpResendTimer(60);
-          toast.success('Verification code sent to your email!');
-        } else {
-          toast.error(data.detail || 'Failed to send verification code');
-        }
-      }
-    } catch (error) {
-      toast.error('Failed to send verification code');
-    } finally {
-      setEmailOtpLoading(false);
-    }
-  };
-
-  const verifyEmailOtp = async () => {
-    const otpValue = emailOtp.join('');
-    if (otpValue.length !== 6) {
-      toast.error('Please enter complete 6-digit code');
-      return;
-    }
-    setEmailOtpLoading(true);
-    try {
-      // If phone was used, verify via WhatsApp OTP
-      if (signupData.phone && signupData.phone.length >= 10) {
-        const res = await fetch(`${API_URL}/api/otp/whatsapp/verify`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: signupData.phone, otp: otpValue })
-        });
-        const data = await res.json();
-        if (data.success) {
-          setEmailVerificationToken('whatsapp_verified_' + signupData.phone);
-          toast.success('Phone verified! Complete your profile.');
-        } else {
-          toast.error(data.detail || data.error || 'Invalid OTP');
-          setEmailOtp(['', '', '', '', '', '']);
-        }
-      } else {
-        // Email OTP verification
-        const res = await fetch(`${API_URL}/api/auth/email-otp/verify`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: signupData.email.toLowerCase(), otp: otpValue })
-        });
-        const data = await res.json();
-        if (data.success && data.verified) {
-          setEmailVerificationToken(data.verification_token);
-          if (data.user_exists) {
-            // Login existing user
-            const loginRes = await fetch(`${API_URL}/api/auth/email-otp/login`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email: signupData.email.toLowerCase(), verification_token: data.verification_token })
-            });
-            const loginData = await loginRes.json();
-            if (loginData.token) {
-              localStorage.setItem('token', loginData.token);
-              if (loginData.user?.id) {
-                localStorage.setItem('patientId', loginData.user.id);
-              }
-              window.location.reload();
-            } else {
-              toast.error(loginData.detail || 'Login failed');
-            }
-          } else {
-            toast.success('Email verified! Complete your profile.');
-          }
-        } else {
-          toast.error(data.detail || 'Invalid verification code');
-          setEmailOtp(['', '', '', '', '', '']);
-        }
-      }
-    } catch (error) {
-      toast.error('Verification failed');
-    } finally {
-      setEmailOtpLoading(false);
-    }
-  };
-
-  const completeRegistration = async () => {
-    if (!signupData.name.trim()) {
-      toast.error('Please enter your name');
-      return;
-    }
-    if (!signupData.password || signupData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_URL}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: signupData.email.toLowerCase(),
-          name: signupData.name,
-          phone: signupData.phone || '',
-          password: signupData.password,
-          verification_token: emailVerificationToken
-        })
-      });
-      const data = await res.json();
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        // Save patientId for subscription flow
-        if (data.user?.id) {
-          localStorage.setItem('patientId', data.user.id);
-        }
-        toast.success('Account created successfully!');
-        window.location.reload();
-      } else {
-        toast.error(data.detail || 'Registration failed');
-      }
-    } catch (error) {
-      toast.error('Registration failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEmailOtpChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return;
-    const newOtp = [...emailOtp];
-    newOtp[index] = value.slice(-1);
-    setEmailOtp(newOtp);
-    if (value && index < 5) {
-      const nextInput = document.getElementById(`glydex-otp-${index + 1}`);
-      if (nextInput) nextInput.focus();
-    }
-  };
-
-  const handleEmailOtpKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !emailOtp[index] && index > 0) {
-      const prevInput = document.getElementById(`glydex-otp-${index - 1}`);
-      if (prevInput) prevInput.focus();
-    }
-  };
-
-  const resetSignupForm = () => {
-    setSignupData({ name: '', email: '', phone: '', password: '' });
-    setEmailOtpSent(false);
-    setEmailOtp(['', '', '', '', '', '']);
-    setEmailVerificationToken('');
-    setMockEmailOtp('');
-    setLoginMode(false);
-  };
-
-  useEffect(() => {
-    if (token) {
-      fetchProfile();
-      fetchSugarLogs();
-      fetchHba1cData();
-      fetchReminders();
-    }
-  }, [token]);
-
-  const fetchReminders = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/glydex/reminders`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setReminders(data);
-      }
-    } catch (error) {
-      console.error('Error fetching reminders:', error);
-    }
-  };
-
-  const fetchProfile = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/glydex/profile`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setProfile(data.profile);
-        if (!data.profile) {
-          setShowProfileSetup(true);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    }
-  };
+  useEffect(() => { if (token) fetchSugarLogs(); }, [token]);
 
   const fetchSugarLogs = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/glydex/sugar-logs`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setSugarLogs(data.logs || []);
-      }
-    } catch (error) {
-      console.error('Error fetching sugar logs:', error);
-    }
+    try { const res = await fetch(`${API_URL}/api/glydex/sugar-logs`, { headers: { Authorization: `Bearer ${token}` } }); if (res.ok) { const data = await res.json(); setSugarLogs(data.logs || []); } } catch (e) {}
   };
 
-  const fetchHba1cData = async () => {
-    try {
-      const [logsRes, trendRes] = await Promise.all([
-        fetch(`${API_URL}/api/glydex/hba1c-logs`, {
-          headers: { Authorization: `Bearer ${token}` }
-        }),
-        fetch(`${API_URL}/api/glydex/hba1c-trend`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-      ]);
-      
-      if (logsRes.ok) {
-        const data = await logsRes.json();
-        setHba1cLogs(data.logs || []);
-      }
-      
-      if (trendRes.ok) {
-        const data = await trendRes.json();
-        setHba1cTrend(data.trend || []);
-        setHba1cAnalysis(data.analysis);
-      }
-    } catch (error) {
-      console.error('Error fetching HbA1c data:', error);
-    }
-  };
-
-  const handleAddHba1c = async () => {
-    if (!newHba1c.value || !newHba1c.date) {
-      toast.error('Please enter HbA1c value and date');
-      return;
-    }
-    const value = parseFloat(newHba1c.value);
-    if (isNaN(value) || value < 3 || value > 20) {
-      toast.error('Please enter a valid HbA1c value (3-20%)');
-      return;
-    }
-    
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_URL}/api/glydex/hba1c-logs`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({...newHba1c, value})
-      });
-      if (response.ok) {
-        const data = await response.json();
-        toast.success(`HbA1c logged! Status: ${data.status}`);
-        setNewHba1c({
-          value: '',
-          date: new Date().toISOString().split('T')[0],
-          lab_name: '',
-          notes: ''
-        });
-        fetchHba1cData();
-      }
-    } catch (error) {
-      toast.error('Failed to log HbA1c');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteHba1c = async (logId) => {
-    try {
-      const response = await fetch(`${API_URL}/api/glydex/hba1c-logs/${logId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.ok) {
-        toast.success('HbA1c log deleted');
-        fetchHba1cData();
-      }
-    } catch (error) {
-      toast.error('Failed to delete log');
-    }
-  };
-
-  const getHba1cStatus = (value) => {
-    if (value < 5.7) return { status: 'Normal', color: 'text-green-600', bg: 'bg-green-100' };
-    if (value < 6.5) return { status: 'Pre-diabetic', color: 'text-yellow-600', bg: 'bg-yellow-100' };
-    if (value < 7) return { status: 'Good Control', color: 'text-blue-600', bg: 'bg-blue-100' };
-    if (value < 8) return { status: 'Fair Control', color: 'text-orange-600', bg: 'bg-orange-100' };
-    return { status: 'Needs Attention', color: 'text-red-600', bg: 'bg-red-100' };
-  };
-
-  const toggleTestSelection = (testName) => {
-    setSelectedDiabeticTests(prev => 
-      prev.includes(testName) 
-        ? prev.filter(t => t !== testName)
-        : [...prev, testName]
-    );
-  };
-
-  const handleBookSelectedTests = () => {
-    if (selectedDiabeticTests.length === 0) {
-      toast.error('Please select at least one test');
-      return;
-    }
-    // Pass selected tests via URL params
-    const testsParam = encodeURIComponent(selectedDiabeticTests.join(','));
-    setShowTests(false);
-    navigate(`/mango?tests=${testsParam}&from=glydex`);
-  };
-
-  // Share blood sugar report via WhatsApp
-  const shareReportOnWhatsApp = async () => {
-    if (!token) {
-      toast.error('Please login to share report');
-      return;
-    }
-    try {
-      const response = await fetch(`${API_URL}/api/glydex/share-report`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await response.json();
-      if (data.whatsapp_url) {
-        window.open(data.whatsapp_url, '_blank');
-        toast.success('Opening WhatsApp to share report');
-      } else {
-        toast.error('No data to share. Start logging your blood sugar!');
-      }
-    } catch (error) {
-      toast.error('Failed to generate report');
-    }
-  };
-
-  // Calories Tracker Functions
-  const fetchFoodDatabase = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/calories/food-database`);
-      const data = await response.json();
-      setFoodDatabase(data.foods || {});
-    } catch (error) {
-      console.error('Failed to fetch food database');
-    }
-  };
-
-  const fetchCalorieLogs = async (date = selectedDate) => {
-    if (!token) return;
-    try {
-      const response = await fetch(`${API_URL}/api/calories/logs?date=${date}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await response.json();
-      setCalorieLogs(data.logs || []);
-      setDailyTotals(data.totals || { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
-    } catch (error) {
-      console.error('Failed to fetch calorie logs');
-    }
-  };
-
-  const searchFoods = async (query) => {
-    if (query.length < 2) {
-      setSearchResults([]);
-      return;
-    }
-    try {
-      const response = await fetch(`${API_URL}/api/calories/search?q=${encodeURIComponent(query)}`);
-      const data = await response.json();
-      setSearchResults(data.results || []);
-    } catch (error) {
-      console.error('Search failed');
-    }
-  };
-
-  const addFoodToLog = async (food, mealType = 'other', quantity = 1) => {
-    if (!token) {
-      toast.error('Please login to track calories');
-      return;
-    }
-    try {
-      const response = await fetch(`${API_URL}/api/calories/log`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          food_name: food.name,
-          calories: food.calories,
-          protein: food.protein || 0,
-          carbs: food.carbs || 0,
-          fat: food.fat || 0,
-          fiber: food.fiber || 0,
-          meal_type: mealType,
-          quantity: quantity,
-          date: selectedDate
-        })
-      });
-      if (response.ok) {
-        toast.success(`Added ${food.name}`);
-        fetchCalorieLogs();
-        setFoodSearchQuery('');
-        setSearchResults([]);
-      }
-    } catch (error) {
-      toast.error('Failed to log food');
-    }
-  };
-
-  const deleteCalorieLog = async (logId) => {
-    try {
-      await fetch(`${API_URL}/api/calories/logs/${logId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchCalorieLogs();
-      toast.success('Deleted');
-    } catch (error) {
-      toast.error('Failed to delete');
-    }
-  };
-
-  const handleSaveProfile = async () => {
-    if (!profileData.diabetesType) {
-      toast.error('Please select your diabetes type');
-      return;
-    }
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_URL}/api/glydex/profile`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(profileData)
-      });
-      if (response.ok) {
-        toast.success('Profile saved!');
-        setShowProfileSetup(false);
-        fetchProfile();
-      }
-    } catch (error) {
-      toast.error('Failed to save profile');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAddSugarLog = async () => {
-    if (!newLog.value || !newLog.date) {
-      toast.error('Please enter sugar value and date');
-      return;
-    }
-    const value = parseInt(newLog.value);
-    if (isNaN(value) || value < 20 || value > 600) {
-      toast.error('Please enter a valid sugar value (20-600 mg/dL)');
-      return;
-    }
-    
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_URL}/api/glydex/sugar-logs`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(newLog)
-      });
-      if (response.ok) {
-        toast.success('Sugar reading logged!');
-        setNewLog({ 
-          type: 'fbs', 
-          value: '', 
-          date: new Date().toISOString().split('T')[0],
-          time: new Date().toTimeString().slice(0, 5)
-        });
-        fetchSugarLogs();
-        
-        // Alert for abnormal values
-        if (value < 70) {
-          toast.error('⚠️ LOW SUGAR! Check emergency guidance immediately.', { duration: 8000 });
-          setShowEmergency(true);
-        } else if (value > 250) {
-          toast.warning('⚠️ Very high sugar. Please consult your doctor today.', { duration: 5000 });
-        } else if (value > 180) {
-          toast.warning('Sugar is high. Monitor closely and follow diet.', { duration: 5000 });
-        }
-      }
-    } catch (error) {
-      toast.error('Failed to log reading');
-    } finally {
-      setLoading(false);
-    }
+  const addSugarLog = async () => {
+    if (!newLog.value) { toast.error('Please enter blood sugar value'); return; }
+    try { const res = await fetch(`${API_URL}/api/glydex/sugar-log`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify(newLog) }); if (res.ok) { toast.success('Blood sugar logged'); fetchSugarLogs(); setNewLog({ ...newLog, value: '' }); } } catch (e) { toast.error('Failed to log'); }
   };
 
   const getSugarStatus = (value, type) => {
     const v = parseInt(value);
-    if (type === 'fbs') {
-      if (v < 70) return { status: 'Low', color: 'text-red-600', bg: 'bg-red-100', icon: TrendingDown };
-      if (v <= 100) return { status: 'Normal', color: 'text-green-600', bg: 'bg-green-100', icon: CheckCircle };
-      if (v <= 125) return { status: 'Pre-diabetic', color: 'text-yellow-600', bg: 'bg-yellow-100', icon: AlertCircle };
-      return { status: 'High', color: 'text-red-600', bg: 'bg-red-100', icon: TrendingUp };
-    } else {
-      if (v < 70) return { status: 'Low', color: 'text-red-600', bg: 'bg-red-100', icon: TrendingDown };
-      if (v <= 140) return { status: 'Normal', color: 'text-green-600', bg: 'bg-green-100', icon: CheckCircle };
-      if (v <= 199) return { status: 'Pre-diabetic', color: 'text-yellow-600', bg: 'bg-yellow-100', icon: AlertCircle };
-      return { status: 'High', color: 'text-red-600', bg: 'bg-red-100', icon: TrendingUp };
-    }
+    if (type === 'fbs') { if (v < 70) return { label: 'Low', color: 'bg-red-100 text-red-600' }; if (v <= 100) return { label: 'Normal', color: 'bg-green-100 text-green-600' }; if (v <= 125) return { label: 'Pre-diabetic', color: 'bg-amber-100 text-amber-600' }; return { label: 'High', color: 'bg-red-100 text-red-600' }; }
+    if (v < 70) return { label: 'Low', color: 'bg-red-100 text-red-600' }; if (v <= 140) return { label: 'Normal', color: 'bg-green-100 text-green-600' }; if (v <= 199) return { label: 'Pre-diabetic', color: 'bg-amber-100 text-amber-600' }; return { label: 'High', color: 'bg-red-100 text-red-600' };
   };
 
-  // If not logged in, show welcome screen with login prompt
-  if (!token) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500">
-        <header className="bg-white/10 backdrop-blur-xl sticky top-0 z-50 border-b border-white/20">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={() => navigate('/')} className="text-white hover:bg-white/20" data-testid="back-button">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <img 
-                src="https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png" 
-                alt="Glydex" 
-                className="h-16 sm:h-20 w-auto bg-white rounded-xl p-2"
-              />
-            </div>
-          </div>
-        </header>
+  const latestLog = sugarLogs[0];
+  const latestStatus = latestLog ? getSugarStatus(latestLog.value, latestLog.type) : null;
 
-        <main className="max-w-4xl mx-auto px-4 py-12 text-center">
-          <div className="mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full text-white text-sm font-medium mb-6 backdrop-blur-sm">
-              <Heart className="w-4 h-4" />
-              Diabetes Care Portal
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              Take Control of Your <span className="text-yellow-300">Diabetes</span>
-            </h1>
-            <p className="text-lg text-white/90 max-w-2xl mx-auto mb-8" style={{ fontFamily: 'DM Sans, sans-serif' }}>
-              Track blood sugar, follow diet plans, and stay prepared for emergencies.
-            </p>
-          </div>
-
-          <Card className="max-w-md mx-auto p-8 bg-white/95 backdrop-blur-xl shadow-2xl rounded-3xl border-0">
-            <div className="text-center mb-6">
-              <img src="https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png" alt="Glydex" className="w-24 h-24 mx-auto mb-4 object-contain" />
-              <h2 className="text-xl font-semibold mb-2 text-slate-800">Get Started with Glydex</h2>
-              <p className="text-slate-600">Create an account or login to access Diabetes Care features</p>
-            </div>
-            <div className="space-y-3">
-              <Button 
-                onClick={() => setShowSignup(true)}
-                className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-lg py-6 rounded-xl shadow-lg"
-                data-testid="glydex-signup-btn"
-              >
-                <Mail className="w-5 h-5 mr-2" />
-                Continue with Email
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={() => { setShowSignup(true); setLoginMode(true); }}
-                className="w-full text-lg py-6 rounded-xl border-2"
-                data-testid="glydex-login-btn"
-              >
-                Login with Email
-              </Button>
-            </div>
-          </Card>
-        </main>
-        
-        {/* Email Signup/Login Dialog */}
-        <Dialog open={showSignup} onOpenChange={(open) => { if (!open) resetSignupForm(); setShowSignup(open); }}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Droplets className="w-5 h-5 text-emerald-500" />
-                {emailOtpSent && !emailVerificationToken ? 'Verify Email' : 
-                 emailVerificationToken ? 'Complete Profile' : 
-                 loginMode ? 'Welcome Back' : 'Join Glydex'}
-              </DialogTitle>
-              <DialogDescription>
-                {emailOtpSent && !emailVerificationToken ? 
-                  `Enter the 6-digit code sent to ${signupData.email}` :
-                 emailVerificationToken ? 
-                  'Finish setting up your account' :
-                 loginMode ?
-                  'Login with your email to continue' :
-                  'Verify your email to start tracking your diabetes'}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="space-y-4 py-4">
-              {/* Step 1: Email Input */}
-              {!emailOtpSent && (
-                <>
-                  <div>
-                    <Label>Email Address *</Label>
-                    <div className="relative">
-                      <Mail className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
-                      <Input 
-                        type="email"
-                        placeholder="your@email.com"
-                        className="pl-10"
-                        value={signupData.email}
-                        onChange={(e) => setSignupData({...signupData, email: e.target.value})}
-                        data-testid="glydex-email-input"
-                        onKeyDown={(e) => e.key === 'Enter' && sendEmailOtp()}
-                      />
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {loginMode ? 'We will send a login code to your email' : 'We will send a verification code to your email'}
-                    </p>
-                  </div>
-                  
-                  <Button 
-                    onClick={sendEmailOtp}
-                    className="w-full bg-emerald-500 hover:bg-emerald-600"
-                    disabled={emailOtpLoading || !signupData.email}
-                    data-testid="glydex-send-otp-btn"
-                  >
-                    {emailOtpLoading ? 'Sending...' : loginMode ? 'Send Login Code' : 'Continue with Email'}
-                  </Button>
-                  
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-gray-500">or</span>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    variant="outline"
-                    onClick={() => setLoginMode(!loginMode)}
-                    className="w-full"
-                    data-testid="glydex-toggle-login-btn"
-                  >
-                    {loginMode ? 'Create New Account' : 'Login with Email'}
-                  </Button>
-                </>
-              )}
-
-              {/* Step 2: OTP Verification */}
-              {emailOtpSent && !emailVerificationToken && (
-                <>
-                  <div>
-                    <Label>Verification Code</Label>
-                    <div className="flex gap-2 mt-2 justify-center">
-                      {emailOtp.map((digit, idx) => (
-                        <Input
-                          key={idx}
-                          id={`glydex-otp-${idx}`}
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={1}
-                          value={digit}
-                          onChange={(e) => handleEmailOtpChange(idx, e.target.value)}
-                          onKeyDown={(e) => handleEmailOtpKeyDown(idx, e)}
-                          className="w-10 h-12 text-center text-lg font-mono"
-                          data-testid={`glydex-otp-input-${idx}`}
-                        />
-                      ))}
-                    </div>
-                    {mockEmailOtp && (
-                      <p className="text-xs text-center text-amber-600 mt-2 bg-amber-50 p-2 rounded">
-                        Demo OTP: <strong>{mockEmailOtp}</strong>
-                      </p>
-                    )}
-                  </div>
-                  
-                  <Button 
-                    onClick={verifyEmailOtp}
-                    className="w-full bg-emerald-500 hover:bg-emerald-600"
-                    disabled={emailOtpLoading || emailOtp.join('').length !== 6}
-                    data-testid="glydex-verify-otp-btn"
-                  >
-                    {emailOtpLoading ? 'Verifying...' : 'Verify Code'}
-                  </Button>
-                  
-                  <div className="flex justify-between items-center text-sm">
-                    <button onClick={() => setEmailOtpSent(false)} className="text-gray-500 hover:text-gray-700">
-                      ← Change Email
-                    </button>
-                    {otpResendTimer > 0 ? (
-                      <span className="text-gray-400">Resend in {otpResendTimer}s</span>
-                    ) : (
-                      <button onClick={sendEmailOtp} className="text-emerald-600 hover:underline">Resend Code</button>
-                    )}
-                  </div>
-                </>
-              )}
-
-              {/* Step 3: Complete Registration */}
-              {emailVerificationToken && (
-                <>
-                  <div className="p-3 bg-green-50 rounded-lg flex items-center gap-2">
-                    <Check className="w-5 h-5 text-green-600" />
-                    <span className="text-sm text-green-700">Email verified: {signupData.email}</span>
-                  </div>
-                  
-                  <div>
-                    <Label>Full Name *</Label>
-                    <div className="relative">
-                      <User className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
-                      <Input placeholder="Your name" className="pl-10" value={signupData.name}
-                        onChange={(e) => setSignupData({...signupData, name: e.target.value})}
-                        data-testid="glydex-name-input"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label>Phone Number (Optional)</Label>
-                    <div className="relative">
-                      <Phone className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
-                      <Input placeholder="10-digit mobile number" className="pl-10" value={signupData.phone}
-                        onChange={(e) => setSignupData({...signupData, phone: e.target.value})}
-                        data-testid="glydex-phone-input"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label>Password *</Label>
-                    <div className="relative">
-                      <Lock className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
-                      <Input type="password" placeholder="Create a password (min 6 characters)" className="pl-10"
-                        value={signupData.password}
-                        onChange={(e) => setSignupData({...signupData, password: e.target.value})}
-                        data-testid="glydex-password-input"
-                      />
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={completeRegistration}
-                    className="w-full bg-emerald-500 hover:bg-emerald-600"
-                    disabled={loading}
-                    data-testid="glydex-complete-signup-btn"
-                  >
-                    {loading ? 'Creating Account...' : 'Create Account'}
-                  </Button>
-                </>
-              )}
-              
-              <p className="text-xs text-center text-gray-400">
-                This account works with Nevika Cura app too!
-              </p>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
-  }
-
-  // Logged in - Show Dashboard
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
-      <header className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 sticky top-0 z-50 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={() => navigate('/')} className="text-white hover:bg-white/20 rounded-full" data-testid="back-button">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <img 
-                src="https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png" 
-                alt="Glydex" 
-                className="h-14 sm:h-16 w-auto bg-white rounded-xl p-1.5"
-              />
-            </div>
-            <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full">
-              <span className="text-sm text-white font-medium">Welcome, {effectiveUser?.name || 'User'}</span>
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-indigo-50" data-testid="glydex-portal">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-xl border-b sticky top-0 z-50">
+        <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+          <button onClick={() => navigate('/')} className="p-2 rounded-xl hover:bg-gray-100" data-testid="glydex-back-btn"><ArrowLeft className="w-5 h-5 text-gray-600" /></button>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center"><Activity className="w-4 h-4 text-white" /></div>
+            <span className="font-bold text-gray-800 text-lg">Glydex</span>
+            <span className="text-[9px] text-gray-400 font-medium ml-1">A Nevika Cura Company</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowReminders(true)} className="p-2 rounded-xl hover:bg-gray-100" data-testid="glydex-bell-btn"><Bell className="w-5 h-5 text-gray-500" /></button>
+            {isSubscribed && <Badge className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-[10px] px-2 border-0"><Crown className="w-3 h-3 mr-1" />Pro</Badge>}
+            {trial?.active && !isSubscribed && <Badge className="bg-emerald-100 text-emerald-700 text-[10px] px-2 border border-emerald-200">{trial.days_remaining}d trial</Badge>}
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-6">
-        <SubscriptionGate
-          planType="glydex"
-          patientId={effectiveUser?.id || user?.patient_id || localStorage.getItem('patientId')}
-          patientName={effectiveUser?.name}
-          patientPhone={effectiveUser?.phone}
-          patientEmail={effectiveUser?.email}
-        >
-        {/* Health Guides Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {/* Emergency Alert Banner */}
-          <Card 
-            className="border-red-300 bg-gradient-to-r from-red-50 to-red-100 cursor-pointer hover:shadow-lg transition-all" 
-            onClick={() => setShowEmergency(true)}
-            data-testid="emergency-banner"
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center animate-pulse flex-shrink-0">
-                  <AlertTriangle className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-red-800 text-sm">Hypoglycemia Emergency</p>
-                  <p className="text-xs text-red-600">Low sugar? Know what to do</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-red-400 flex-shrink-0" />
+      <div className="max-w-lg mx-auto px-4 pb-24 pt-5 space-y-6">
+        {/* Hero Banner - Rich Warm Premium */}
+        <div className="bg-gradient-to-br from-[#1a3a7a] via-[#2952a3] to-[#3b6acc] rounded-2xl p-5 text-white shadow-xl relative overflow-hidden" data-testid="glydex-hero">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]" />
+          <div className="relative z-10">
+            <p className="text-blue-200/90 font-medium tracking-wide uppercase text-[11px]">Diabetes Care Portal</p>
+            <h1 className="text-2xl font-bold mt-1">Manage Your Sugar, Smart</h1>
+            <p className="text-xs text-white/60 mt-2">Diet plans, sugar tracking, tests & emergency guides</p>
+            {latestLog && (
+              <div className="mt-4 bg-white/10 backdrop-blur-sm rounded-xl p-3 inline-flex items-center gap-3 border border-white/10">
+                <Activity className="w-5 h-5" />
+                <div><p className="text-[10px] text-white/50">Last Reading</p><p className="text-lg font-bold">{latestLog.value} mg/dL</p></div>
+                <Badge className={`${latestStatus?.color} text-[10px]`}>{latestStatus?.label}</Badge>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Neuropathy Guide */}
-          <Card 
-            className="border-purple-300 bg-gradient-to-r from-purple-50 to-purple-100 cursor-pointer hover:shadow-lg transition-all" 
-            onClick={() => setShowNeuropathy(true)}
-            data-testid="neuropathy-banner"
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center flex-shrink-0">
-                  <Activity className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-purple-800 text-sm">Diabetic Neuropathy</p>
-                  <p className="text-xs text-purple-600">Nerve care & prevention tips</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-purple-400 flex-shrink-0" />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Foot Care Guide */}
-          <Card 
-            className="border-blue-300 bg-gradient-to-r from-blue-50 to-blue-100 cursor-pointer hover:shadow-lg transition-all" 
-            onClick={() => setShowFootCare(true)}
-            data-testid="footcare-banner"
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
-                  <Heart className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-blue-800 text-sm">Diabetic Foot Care</p>
-                  <p className="text-xs text-blue-600">Daily care & prevention</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-blue-400 flex-shrink-0" />
-              </div>
-            </CardContent>
-          </Card>
+            )}
+            <div className="flex gap-4 mt-4">
+              <div className="text-center"><p className="text-xl font-bold">{sugarLogs.length}</p><p className="text-[10px] text-white/50">Readings</p></div>
+              <div className="w-px bg-white/15" />
+              <div className="text-center"><p className="text-xl font-bold">&lt;100</p><p className="text-[10px] text-white/50">FBS Target</p></div>
+              <div className="w-px bg-white/15" />
+              <div className="text-center"><p className="text-xl font-bold">&lt;7%</p><p className="text-[10px] text-white/50">HbA1c</p></div>
+            </div>
+          </div>
         </div>
 
-        {/* Complete Health Profile Card */}
-        {effectiveUser && (
-          <Card 
-            className="mb-6 bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 cursor-pointer hover:shadow-md transition-all"
-            onClick={() => setShowMembershipForm(true)}
-            data-testid="complete-health-profile-glydex"
-          >
-            <CardContent className="p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
-                  <ClipboardList className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="font-semibold text-emerald-800">Complete Health Profile</p>
-                  <p className="text-sm text-emerald-600">Get personalized diabetes care recommendations</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-emerald-400" />
-            </CardContent>
-          </Card>
+        {/* Health Insight Rings - Always Visible */}
+        <div className="space-y-3">
+          <HbA1cRing currentHbA1c={7.2} target={7.0} />
+          <MedicationAdherence weekData={[true, true, false, true, true, null, null]} />
+        </div>
+
+        {/* Data Visualization */}
+        {sugarLogs.length > 0 && (
+          <div className="space-y-3" data-testid="glydex-charts">
+            <DailySummaryBar logs={sugarLogs} />
+            <SugarTrendChart logs={sugarLogs} period={30} />
+          </div>
         )}
 
-        {/* Search Box */}
-        <Card className="mb-6 p-4 rounded-2xl border-0 shadow-md bg-white">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
-            <Input
-              placeholder="Search features, diet plans, tests, symptoms..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 pr-10 py-3 rounded-xl border-teal-200 focus:border-teal-500 focus:ring-teal-500/20 text-base"
-              data-testid="glydex-search"
-            />
-            {searchTerm && (
-              <button 
-                onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
+        {/* Feature Cards - Alyne Style 2x2 Grid */}
+        <div>
+          <h2 className="text-lg font-bold text-gray-800 mb-1">Health Tools</h2>
+          <p className="text-sm text-gray-400 mb-4">Track, plan, and manage diabetes</p>
+          <div className="grid grid-cols-2 gap-3">
+            <button onClick={gate(() => setShowDiet(true), 'diet_plans', 'glydex')} className="bg-gradient-to-br from-emerald-400 via-green-400 to-teal-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg relative" data-testid="glydex-diet-plans">
+              <Utensils className="w-8 h-8 mb-2" />
+              <h4 className="font-bold text-sm">Diet Plans</h4>
+              <p className="text-[10px] text-white/70 mt-1">Veg & Non-Veg meals</p>
+              {!canAccess('diet_plans', 'glydex') && <Lock className="absolute top-3 right-3 w-4 h-4 text-white/40" />}
+            </button>
+            <button onClick={gate(() => setShowSugarLog(true), 'sugar_log', 'glydex')} className="bg-gradient-to-br from-blue-400 via-indigo-400 to-violet-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg relative" data-testid="glydex-sugar-log">
+              <Activity className="w-8 h-8 mb-2" />
+              <h4 className="font-bold text-sm">Sugar Logger</h4>
+              <p className="text-[10px] text-white/70 mt-1">Track FBS, PP, Random</p>
+              {!isSubscribed && canAccess('sugar_log', 'glydex') && <span className="absolute top-2 right-2 text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-white/25">TRIAL</span>}
+              {!canAccess('sugar_log', 'glydex') && <Lock className="absolute top-3 right-3 w-4 h-4 text-white/40" />}
+            </button>
+            <button onClick={gate(() => setShowTests(true), 'essential_tests', 'glydex')} className="bg-gradient-to-br from-purple-400 via-violet-500 to-fuchsia-500 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg relative" data-testid="glydex-tests">
+              <TestTube className="w-8 h-8 mb-2" />
+              <h4 className="font-bold text-sm">Essential Tests</h4>
+              <p className="text-[10px] text-white/70 mt-1">HbA1c, KFT, Lipid</p>
+              {!canAccess('essential_tests', 'glydex') && <Lock className="absolute top-3 right-3 w-4 h-4 text-white/40" />}
+            </button>
+            <button onClick={gate(() => setShowWarnings(true), 'warnings', 'glydex')} className="bg-gradient-to-br from-amber-400 via-orange-400 to-red-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg relative" data-testid="glydex-warnings">
+              <AlertTriangle className="w-8 h-8 mb-2" />
+              <h4 className="font-bold text-sm">Warning Signs</h4>
+              <p className="text-[10px] text-white/70 mt-1">7 key symptoms</p>
+              {!isSubscribed && canAccess('warnings', 'glydex') && <span className="absolute top-2 right-2 text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-white/25">TRIAL</span>}
+              {!canAccess('warnings', 'glydex') && <Lock className="absolute top-3 right-3 w-4 h-4 text-white/40" />}
+            </button>
+            {/* Emergency - Always Free, spans full width */}
+            <button onClick={() => setShowEmergency(true)} className="col-span-2 bg-gradient-to-r from-red-400 via-rose-400 to-pink-400 text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-105 shadow-lg flex items-center gap-4" data-testid="glydex-emergency">
+              <Zap className="w-10 h-10 flex-shrink-0" />
+              <div><h4 className="font-bold text-sm">Hypo Emergency Guide</h4><p className="text-[10px] text-white/70 mt-0.5">Step-by-step for low blood sugar — Always Free</p></div>
+              <ChevronRight className="w-5 h-5 text-white/50 ml-auto" />
+            </button>
+          </div>
+        </div>
+
+        {/* Consult CTA */}
+        <button onClick={() => window.location.href = '/appointment-calendar'} className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white p-4 rounded-2xl flex items-center gap-3 hover:opacity-90 transition-all shadow-lg" data-testid="glydex-consult-cta">
+          <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center"><Stethoscope className="w-5 h-5" /></div>
+          <div className="flex-1 text-left"><h4 className="font-bold text-sm">Consult a Diabetologist</h4><p className="text-[10px] text-white/70">Book appointment at DiaGyn Healthcare</p></div>
+          <ChevronRight className="w-5 h-5 text-white/60" />
+        </button>
+
+        {/* Food Section */}
+        <div>
+          <h2 className="text-lg font-bold text-gray-800 mb-1">Diabetic-Friendly Food</h2>
+          <p className="text-sm text-gray-400 mb-4">Low GI, high fiber, balanced nutrition</p>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { img: FOOD_IMAGES.veg_breakfast, title: "Vegetarian", desc: "Dal, roti, sabzi" },
+              { img: FOOD_IMAGES.salad, title: "Salads", desc: "Low calorie, filling" },
+              { img: FOOD_IMAGES.healthy, title: "Snacks", desc: "Nuts, seeds, fruits" },
+              { img: FOOD_IMAGES.veg_lunch, title: "Full Meals", desc: "Balanced thali" },
+            ].map((m) => (
+              <button key={m.title} onClick={gate(() => setShowDiet(true), 'diet_plans', 'glydex')} className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg hover:scale-105 transition-all text-left border border-gray-100" data-testid={`glydex-food-${m.title.toLowerCase().replace(/\s/g, '-')}`}>
+                <div className="h-24 overflow-hidden"><img src={m.img} alt={m.title} className="w-full h-full object-cover" loading="lazy" /></div>
+                <div className="p-3"><h4 className="font-semibold text-gray-800 text-sm">{m.title}</h4><p className="text-[10px] text-gray-500">{m.desc}</p></div>
               </button>
-            )}
-          </div>
-          
-          {/* Search Results */}
-          {searchTerm && (
-            <div className="mt-3 space-y-2">
-              {/* Filter and show matching features */}
-              {[
-                { name: 'Log Blood Sugar', desc: 'Track FBS & PPBS', icon: '🩸', action: () => setShowSugarLog(true), keywords: ['sugar', 'blood', 'fbs', 'ppbs', 'glucose', 'log'] },
-                { name: 'Diet Plan', desc: 'Veg & Non-Veg options', icon: '🥗', action: () => setShowDiet(true), keywords: ['diet', 'food', 'meal', 'eat', 'nutrition', 'vegetarian'] },
-                { name: 'Book Tests', desc: 'HbA1c, Lipid Profile', icon: '🧪', action: () => setShowTests(true), keywords: ['test', 'hba1c', 'lipid', 'kidney', 'lab', 'blood'] },
-                { name: 'Warning Signs', desc: 'Know the symptoms', icon: '⚠️', action: () => setShowWarnings(true), keywords: ['warning', 'symptom', 'emergency', 'hypo', 'hyper', 'sign'] },
-                { name: 'HbA1c Trend', desc: '3-month sugar control', icon: '📈', action: () => setShowHbA1c(true), keywords: ['hba1c', 'trend', 'chart', 'control', 'average'] },
-                { name: 'Calorie Tracker', desc: 'Indian foods database', icon: '🍽️', action: () => { setShowCaloriesTracker(true); fetchFoodDatabase(); fetchCalorieLogs(); }, keywords: ['calorie', 'food', 'track', 'weight', 'indian'] },
-                { name: 'Foot Care', desc: 'Daily care tips', icon: '🦶', action: () => setShowFootCare(true), keywords: ['foot', 'care', 'neuropathy', 'wound', 'infection'] },
-                { name: 'Emergency Guide', desc: 'Hypo/Hyper emergencies', icon: '🚨', action: () => setShowEmergency(true), keywords: ['emergency', 'hypo', 'hyper', 'low', 'high', 'crisis'] },
-              ].filter(item => 
-                item.keywords.some(kw => kw.includes(searchTerm.toLowerCase())) ||
-                item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.desc.toLowerCase().includes(searchTerm.toLowerCase())
-              ).map((item, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => { item.action(); setSearchTerm(''); }}
-                  className="w-full flex items-center gap-3 p-3 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors text-left"
-                >
-                  <span className="text-2xl">{item.icon}</span>
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-800">{item.name}</p>
-                    <p className="text-xs text-gray-500">{item.desc}</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-teal-400" />
-                </button>
-              ))}
-              
-              {/* No results */}
-              {[
-                { keywords: ['sugar', 'blood', 'fbs', 'ppbs', 'glucose', 'log'] },
-                { keywords: ['diet', 'food', 'meal', 'eat', 'nutrition', 'vegetarian'] },
-                { keywords: ['test', 'hba1c', 'lipid', 'kidney', 'lab', 'blood'] },
-                { keywords: ['warning', 'symptom', 'emergency', 'hypo', 'hyper', 'sign'] },
-                { keywords: ['hba1c', 'trend', 'chart', 'control', 'average'] },
-                { keywords: ['calorie', 'food', 'track', 'weight', 'indian'] },
-                { keywords: ['foot', 'care', 'neuropathy', 'wound', 'infection'] },
-                { keywords: ['emergency', 'hypo', 'hyper', 'low', 'high', 'crisis'] },
-              ].every(item => !item.keywords.some(kw => kw.includes(searchTerm.toLowerCase()))) && 
-              !['log blood sugar', 'diet plan', 'book tests', 'warning signs', 'hba1c trend', 'calorie tracker', 'foot care', 'emergency guide'].some(n => n.includes(searchTerm.toLowerCase())) && (
-                <div className="p-4 text-center text-gray-500 bg-gray-50 rounded-xl">
-                  <p className="text-sm">No results for "{searchTerm}"</p>
-                  <p className="text-xs mt-1">Try: sugar, diet, test, warning, calorie</p>
-                </div>
-              )}
-            </div>
-          )}
-        </Card>
-
-        {/* Quick Actions Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
-          <Card 
-            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-white hover:scale-105 active:scale-95"
-            onClick={() => setShowSugarLog(true)}
-            data-testid="log-sugar-btn"
-          >
-            <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-teal-100 to-cyan-100 flex items-center justify-center shadow-inner">
-                <span className="text-3xl">🩸</span>
-              </div>
-              <p className="font-semibold text-gray-800">Log Sugar</p>
-              <p className="text-xs text-teal-600 mt-1">FBS & PPBS</p>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-white hover:scale-105 active:scale-95"
-            onClick={() => setShowDiet(true)}
-            data-testid="diet-plan-btn"
-          >
-            <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center shadow-inner">
-                <span className="text-3xl">🥗</span>
-              </div>
-              <p className="font-semibold text-gray-800">Diet Plan</p>
-              <p className="text-xs text-emerald-600 mt-1">Veg & Non-Veg</p>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-white hover:scale-105 active:scale-95"
-            onClick={() => setShowTests(true)}
-            data-testid="book-tests-btn"
-          >
-            <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center shadow-inner">
-                <span className="text-3xl">🧪</span>
-              </div>
-              <p className="font-semibold text-gray-800">Book Tests</p>
-              <p className="text-xs text-purple-600 mt-1">HbA1c, Lipid</p>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-white hover:scale-105 active:scale-95"
-            onClick={() => setShowWarnings(true)}
-            data-testid="warning-signs-btn"
-          >
-            <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center shadow-inner">
-                <span className="text-3xl">⚠️</span>
-              </div>
-              <p className="font-semibold text-gray-800">Warning Signs</p>
-              <p className="text-xs text-amber-600 mt-1">Know symptoms</p>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-white hover:scale-105 active:scale-95"
-            onClick={() => setShowHbA1c(true)}
-            data-testid="hba1c-trend-btn"
-          >
-            <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center shadow-inner">
-                <span className="text-3xl">📈</span>
-              </div>
-              <p className="font-semibold text-gray-800">HbA1c Trend</p>
-              <p className="text-xs text-indigo-600 mt-1">3-month control</p>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className="cursor-pointer hover:shadow-xl transition-all border-0 bg-white hover:scale-105 active:scale-95"
-            onClick={() => {
-              setShowCaloriesTracker(true);
-              fetchFoodDatabase();
-              fetchCalorieLogs();
-            }}
-            data-testid="calorie-tracker-btn"
-          >
-            <CardContent className="p-5 text-center">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center shadow-inner">
-                <span className="text-3xl">🍽️</span>
-              </div>
-              <p className="font-semibold text-gray-800">Calorie Tracker</p>
-              <p className="text-xs text-rose-600 mt-1">Indian Foods</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* HbA1c Trend Chart Card */}
-        {hba1cAnalysis && (
-          <Card className="mb-6 border-indigo-200">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <LineChart className="w-5 h-5 text-indigo-600" />
-                  HbA1c Trend
-                </CardTitle>
-                <Button size="sm" variant="outline" onClick={() => setShowHbA1c(true)}>
-                  + Log HbA1c
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {/* Summary Stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                <div className="bg-indigo-50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-indigo-700">{hba1cAnalysis.latest}%</p>
-                  <p className="text-xs text-indigo-600">Latest</p>
-                </div>
-                <div className="bg-gray-50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-gray-700">{hba1cAnalysis.average}%</p>
-                  <p className="text-xs text-gray-600">Average</p>
-                </div>
-                <div className="bg-green-50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-green-700">{hba1cAnalysis.lowest}%</p>
-                  <p className="text-xs text-green-600">Lowest</p>
-                </div>
-                <div className="bg-red-50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-red-700">{hba1cAnalysis.highest}%</p>
-                  <p className="text-xs text-red-600">Highest</p>
-                </div>
-              </div>
-
-              {/* Visual Chart */}
-              {hba1cTrend && hba1cTrend.length > 0 && (
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <div className="flex items-end justify-between h-32 gap-1">
-                    {hba1cTrend.slice(-10).map((log, idx) => {
-                      const height = Math.min(100, Math.max(20, ((log.value - 4) / 10) * 100));
-                      const status = getHba1cStatus(log.value);
-                      return (
-                        <div key={idx} className="flex-1 flex flex-col items-center gap-1">
-                          <span className="text-xs font-medium text-gray-600">{log.value}%</span>
-                          <div 
-                            className={`w-full rounded-t-lg ${status.bg} transition-all`}
-                            style={{ height: `${height}%` }}
-                            title={`${log.date}: ${log.value}%`}
-                          />
-                          <span className="text-[10px] text-gray-400">{log.date.slice(5)}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  
-                  {/* Target line reference */}
-                  <div className="flex items-center justify-center gap-4 mt-3 text-xs">
-                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-green-100"></span> &lt;6.5% Excellent</span>
-                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-100"></span> &lt;7% Good</span>
-                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-orange-100"></span> &lt;8% Fair</span>
-                    <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-100"></span> &gt;8% Needs Work</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Trend Direction */}
-              <div className="mt-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {hba1cAnalysis.trend_direction === 'improving' && (
-                    <><TrendingDown className="w-5 h-5 text-green-500" /><span className="text-green-600 font-medium">Improving</span></>
-                  )}
-                  {hba1cAnalysis.trend_direction === 'worsening' && (
-                    <><TrendingUp className="w-5 h-5 text-red-500" /><span className="text-red-600 font-medium">Needs Attention</span></>
-                  )}
-                  {hba1cAnalysis.trend_direction === 'stable' && (
-                    <><Target className="w-5 h-5 text-blue-500" /><span className="text-blue-600 font-medium">Stable</span></>
-                  )}
-                </div>
-                <span className="text-sm text-gray-500">{hba1cAnalysis.total_tests} tests recorded</span>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Recent Sugar Logs */}
-        <Card className="mb-6">
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Activity className="w-5 h-5 text-teal-600" />
-                Recent Sugar Readings
-              </CardTitle>
-              <Button size="sm" variant="outline" onClick={() => setShowSugarLog(true)}>
-                + Add New
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {sugarLogs.length > 0 ? (
-              <div className="space-y-2">
-                {sugarLogs.slice(0, 5).map((log, idx) => {
-                  const status = getSugarStatus(log.value, log.type);
-                  const StatusIcon = status.icon;
-                  return (
-                    <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-gray-100">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-xl ${status.bg} flex items-center justify-center`}>
-                          <StatusIcon className={`w-5 h-5 ${status.color}`} />
-                        </div>
-                        <div>
-                          <p className="font-bold text-lg">{log.value} <span className="text-sm font-normal text-gray-500">mg/dL</span></p>
-                          <p className="text-xs text-gray-500">{log.type.toUpperCase()} • {log.date} {log.time && `at ${log.time}`}</p>
-                        </div>
-                      </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${status.bg} ${status.color}`}>
-                        {status.status}
-                      </span>
-                    </div>
-                  );
-                })}
-                {/* Share Report Button */}
-                <Button 
-                  variant="outline" 
-                  onClick={shareReportOnWhatsApp}
-                  className="w-full mt-3 border-teal-300 text-teal-600 hover:bg-teal-50"
-                  data-testid="share-glydex-report-btn"
-                >
-                  <Share2 className="w-4 h-4 mr-2" /> Share Report via WhatsApp
-                </Button>
-                {/* Download PDF Button */}
-                <Button 
-                  variant="outline" 
-                  onClick={() => {
-                    const token = localStorage.getItem('token');
-                    if (!token) {
-                      toast.error('Please login to download PDF');
-                      return;
-                    }
-                    window.open(`${API_URL}/api/glydex/download-pdf?token=${token}`, '_blank');
-                    toast.success('Downloading PDF report...');
-                  }}
-                  className="w-full mt-2 border-blue-300 text-blue-600 hover:bg-blue-50"
-                  data-testid="download-glydex-pdf-btn"
-                >
-                  <FileDown className="w-4 h-4 mr-2" /> Download PDF Report
-                </Button>
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <Droplets className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-                <p className="text-gray-500 mb-3">No readings logged yet</p>
-                <Button onClick={() => setShowSugarLog(true)} className="bg-teal-600 hover:bg-teal-700">
-                  Log Your First Reading
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Order Medicine CTA */}
-        <Card className="bg-gradient-to-r from-orange-500 to-amber-500 border-0 text-white overflow-hidden">
-          <CardContent className="p-6 relative">
-            <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-            <div className="relative flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
-                  <Pill className="w-7 h-7" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold">Order Diabetic Medicines</h3>
-                  <p className="text-orange-100 text-sm">Get monthly supplies delivered home</p>
-                </div>
-              </div>
-              <Button 
-                onClick={() => navigate('/pharmacy')}
-                className="bg-white text-orange-600 hover:bg-orange-50 font-semibold px-6 w-full sm:w-auto"
-                data-testid="order-medicine-btn"
-              >
-                Order from Orange Pharmacy
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-        </SubscriptionGate>
-      </main>
-
-      {/* Sugar Log Dialog */}
-      <Dialog open={showSugarLog} onOpenChange={setShowSugarLog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Droplets className="w-5 h-5 text-teal-600" />
-              Log Blood Sugar Reading
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label>Reading Type *</Label>
-              <Select value={newLog.type} onValueChange={(v) => setNewLog({...newLog, type: v})}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="fbs">FBS (Fasting - Empty Stomach)</SelectItem>
-                  <SelectItem value="ppbs">PPBS (2 Hours After Meal)</SelectItem>
-                  <SelectItem value="random">Random (Anytime)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Sugar Value (mg/dL) *</Label>
-              <Input 
-                type="number"
-                placeholder="e.g., 120"
-                value={newLog.value}
-                onChange={(e) => setNewLog({...newLog, value: e.target.value})}
-                className="text-lg"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Date *</Label>
-                <Input 
-                  type="date"
-                  value={newLog.date}
-                  onChange={(e) => setNewLog({...newLog, date: e.target.value})}
-                />
-              </div>
-              <div>
-                <Label>Time</Label>
-                <Input 
-                  type="time"
-                  value={newLog.time}
-                  onChange={(e) => setNewLog({...newLog, time: e.target.value})}
-                />
-              </div>
-            </div>
-            
-            <Card className="bg-teal-50 border-teal-200">
-              <CardContent className="p-3">
-                <p className="font-medium text-teal-800 text-sm mb-2">Reference Ranges:</p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="bg-white rounded p-2">
-                    <p className="font-semibold text-teal-700">FBS (Fasting)</p>
-                    <p className="text-green-600">Normal: 70-100</p>
-                    <p className="text-yellow-600">Pre-diabetic: 100-125</p>
-                    <p className="text-red-600">Diabetic: 126+</p>
-                  </div>
-                  <div className="bg-white rounded p-2">
-                    <p className="font-semibold text-teal-700">PPBS (After Meal)</p>
-                    <p className="text-green-600">Normal: 70-140</p>
-                    <p className="text-yellow-600">Pre-diabetic: 140-199</p>
-                    <p className="text-red-600">Diabetic: 200+</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Button onClick={handleAddSugarLog} disabled={loading} className="w-full bg-teal-600 hover:bg-teal-700 py-6 text-lg">
-              {loading ? 'Saving...' : 'Save Reading'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Diet Plan Dialog - Detailed */}
-      <Dialog open={showDiet} onOpenChange={setShowDiet}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-4 bg-gradient-to-r from-green-500 to-teal-500 text-white">
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Utensils className="w-6 h-6" />
-              Diabetic Diet Plan
-            </DialogTitle>
-            <DialogDescription className="text-green-100">
-              Indian-friendly meal guidance • General guidance only - consult dietitian
-            </DialogDescription>
-          </DialogHeader>
-          
-          <Tabs defaultValue="veg" className="flex-1 overflow-hidden flex flex-col">
-            <TabsList className="w-full justify-start px-4 pt-2 bg-gray-50 flex-shrink-0">
-              <TabsTrigger value="veg" className="flex-1">🥗 Vegetarian</TabsTrigger>
-              <TabsTrigger value="nonveg" className="flex-1">🍗 Non-Veg</TabsTrigger>
-              <TabsTrigger value="tips" className="flex-1">📋 Tips</TabsTrigger>
-            </TabsList>
-            
-            <div className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
-              <TabsContent value="veg" className="p-4 space-y-4 m-0">
-                <Card className="bg-blue-50 border-blue-200">
-                  <CardContent className="p-3">
-                    <p className="text-sm text-blue-800">
-                      <strong>Recommended Timings:</strong> Breakfast {DIET_PLANS.timings.breakfast} | Lunch {DIET_PLANS.timings.lunch} | Dinner {DIET_PLANS.timings.dinner}
-                    </p>
-                  </CardContent>
-                </Card>
-                
-                {['breakfast', 'lunch', 'dinner', 'snacks'].map(meal => (
-                  <Card key={meal} className="border-green-200">
-                    <CardHeader className="py-3 bg-green-50">
-                      <CardTitle className="text-base capitalize text-green-700 flex items-center gap-2">
-                        {meal === 'breakfast' && '🌅'}
-                        {meal === 'lunch' && '☀️'}
-                        {meal === 'dinner' && '🌙'}
-                        {meal === 'snacks' && '🥜'}
-                        {meal}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="py-2">
-                      {DIET_PLANS.vegetarian[meal].map((item, idx) => (
-                        <div key={idx} className="py-2 border-b last:border-0">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <p className="font-medium text-sm">{item.item}</p>
-                              <p className="text-xs text-gray-500">{item.portion}</p>
-                            </div>
-                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{item.calories} cal</span>
-                          </div>
-                          <p className="text-xs text-green-600 mt-1">✓ {item.benefits}</p>
-                        </div>
-                      ))}
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabsContent>
-              
-              <TabsContent value="nonveg" className="p-4 space-y-4 m-0">
-                {['breakfast', 'lunch', 'dinner', 'snacks'].map(meal => (
-                  <Card key={meal} className="border-orange-200">
-                    <CardHeader className="py-3 bg-orange-50">
-                      <CardTitle className="text-base capitalize text-orange-700">{meal}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="py-2">
-                      {DIET_PLANS.nonVegetarian[meal].map((item, idx) => (
-                        <div key={idx} className="py-2 border-b last:border-0">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <p className="font-medium text-sm">{item.item}</p>
-                              <p className="text-xs text-gray-500">{item.portion}</p>
-                            </div>
-                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{item.calories} cal</span>
-                          </div>
-                          <p className="text-xs text-orange-600 mt-1">✓ {item.benefits}</p>
-                        </div>
-                      ))}
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabsContent>
-              
-              <TabsContent value="tips" className="p-4 space-y-4 m-0">
-                <Card className="border-green-200 bg-green-50">
-                  <CardHeader className="py-3">
-                    <CardTitle className="text-base text-green-700 flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5" /> Do's - Follow These
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-2">
-                    {DIET_PLANS.dos.map((tip, idx) => (
-                      <p key={idx} className="text-sm py-1.5 text-green-800 border-b border-green-100 last:border-0">
-                        ✓ {tip}
-                      </p>
-                    ))}
-                  </CardContent>
-                </Card>
-                
-                <Card className="border-red-200 bg-red-50">
-                  <CardHeader className="py-3">
-                    <CardTitle className="text-base text-red-700 flex items-center gap-2">
-                      <AlertCircle className="w-5 h-5" /> Don'ts - Avoid These
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-2">
-                    {DIET_PLANS.donts.map((tip, idx) => (
-                      <p key={idx} className="text-sm py-1.5 text-red-800 border-b border-red-100 last:border-0">
-                        ✗ {tip}
-                      </p>
-                    ))}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </div>
-          </Tabs>
-          
-          <div className="p-3 bg-amber-50 border-t border-amber-200 flex-shrink-0">
-            <p className="text-xs text-amber-700 text-center">
-              ⚠️ This is general guidance only. Please consult a dietitian for personalized diet plans based on your condition.
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Book Tests Dialog */}
-      <Dialog open={showTests} onOpenChange={(open) => { setShowTests(open); if (!open) setSelectedDiabeticTests([]); }}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white flex-shrink-0">
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <TestTube className="w-6 h-6" />
-              Book Diabetic Tests
-            </DialogTitle>
-            <DialogDescription className="text-purple-100">
-              Select tests and book via Mango Health Labs
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-y-auto p-4" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <div className="space-y-2">
-              {DIABETIC_TESTS.map(test => {
-                const isSelected = selectedDiabeticTests.includes(test.name);
-                return (
-                  <div 
-                    key={test.id} 
-                    className={`cursor-pointer rounded-lg border p-4 ${isSelected ? 'border-purple-500 bg-purple-50 ring-2 ring-purple-200' : 'border-gray-200 active:bg-gray-50'}`}
-                    onClick={() => toggleTestSelection(test.name)}
-                    data-testid={`test-${test.id}`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${isSelected ? 'border-purple-500 bg-purple-500' : 'border-gray-300'}`}>
-                        {isSelected && <CheckCircle className="w-4 h-4 text-white" />}
-                      </div>
-                      <div className="flex-1">
-                        <p className={`font-semibold ${isSelected ? 'text-purple-700' : 'text-gray-800'}`}>{test.name}</p>
-                        <p className="text-sm text-gray-500 mt-1">{test.description}</p>
-                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded mt-2 inline-block">{test.frequency}</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-          
-          <div className="p-4 border-t bg-gray-50 flex-shrink-0">
-            {selectedDiabeticTests.length > 0 && (
-              <div className="mb-3 p-2 bg-purple-100 rounded-lg">
-                <p className="text-sm text-purple-700 font-medium">
-                  Selected: {selectedDiabeticTests.length} test{selectedDiabeticTests.length > 1 ? 's' : ''}
-                </p>
-                <p className="text-xs text-purple-600">{selectedDiabeticTests.join(', ')}</p>
-              </div>
-            )}
-            <Button 
-              onClick={handleBookSelectedTests}
-              disabled={selectedDiabeticTests.length === 0}
-              className="w-full bg-purple-600 hover:bg-purple-700 py-6 text-lg disabled:opacity-50"
-            >
-              {selectedDiabeticTests.length === 0 
-                ? 'Select tests to continue' 
-                : `Book ${selectedDiabeticTests.length} Test${selectedDiabeticTests.length > 1 ? 's' : ''} at Mango`}
-            </Button>
-            <p className="text-xs text-gray-500 text-center mt-2">
-              Sample collection available at home
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Warning Signs Dialog */}
-      <Dialog open={showWarnings} onOpenChange={setShowWarnings}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Info className="w-5 h-5 text-amber-600" />
-              Warning Signs of Diabetes
-            </DialogTitle>
-            <DialogDescription>
-              Recognize these symptoms early and consult your doctor
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-3">
-            {WARNING_SIGNS.map((item, idx) => (
-              <Card key={idx} className="border-amber-100 hover:border-amber-300 transition-all">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <span className="text-2xl">{item.icon}</span>
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-800">{item.sign}</p>
-                      <p className="text-sm text-gray-500 mt-1">{item.description}</p>
-                      <p className="text-xs text-amber-600 mt-2 bg-amber-50 px-2 py-1 rounded inline-block">
-                        💡 {item.action}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             ))}
           </div>
-          
-          <Card className="bg-blue-50 border-blue-200 mt-4">
-            <CardContent className="p-4 text-center">
-              <p className="text-blue-800 font-medium">
-                🩺 If any of these symptoms persist, please consult your doctor immediately.
-              </p>
-            </CardContent>
-          </Card>
-        </DialogContent>
-      </Dialog>
+        </div>
 
-      {/* Emergency Hypoglycemia Dialog - Complete */}
-      <Dialog open={showEmergency} onOpenChange={setShowEmergency}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-4 bg-gradient-to-r from-red-500 to-red-600 text-white flex-shrink-0">
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <AlertTriangle className="w-6 h-6" />
-              Hypoglycemia Emergency Guide
-            </DialogTitle>
-            <DialogDescription className="text-red-100">
-              What to do when blood sugar drops low - Save this information!
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <div className="p-4 space-y-4">
-              {/* What is it */}
-              <Card className="bg-red-50 border-red-200">
-                <CardContent className="p-4">
-                  <h4 className="font-bold text-red-800 mb-2">What is Hypoglycemia?</h4>
-                  <p className="text-sm text-red-700">{HYPOGLYCEMIA_GUIDE.whatIs}</p>
-                  <div className="mt-3">
-                    <p className="text-xs font-semibold text-red-800 mb-1">Common Causes:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {HYPOGLYCEMIA_GUIDE.causes.map((cause, idx) => (
-                        <span key={idx} className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">
-                          {cause}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* Symptoms by Severity */}
-              <div>
-                <h4 className="font-bold text-gray-800 mb-3">Symptoms to Watch</h4>
-                
-                <Card className="mb-2 border-yellow-200">
-                  <CardHeader className="py-2 bg-yellow-50">
-                    <CardTitle className="text-sm text-yellow-700">⚡ Early Symptoms</CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-2">
-                    <div className="grid grid-cols-2 gap-2">
-                      {HYPOGLYCEMIA_GUIDE.symptoms.early.map((item, idx) => (
-                        <div key={idx} className="text-xs p-2 bg-yellow-50 rounded">
-                          <p className="font-medium">{item.symptom}</p>
-                          <p className="text-gray-500">{item.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="mb-2 border-orange-200">
-                  <CardHeader className="py-2 bg-orange-50">
-                    <CardTitle className="text-sm text-orange-700">⚠️ Moderate Symptoms</CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-2">
-                    <div className="grid grid-cols-2 gap-2">
-                      {HYPOGLYCEMIA_GUIDE.symptoms.moderate.map((item, idx) => (
-                        <div key={idx} className="text-xs p-2 bg-orange-50 rounded">
-                          <p className="font-medium">{item.symptom}</p>
-                          <p className="text-gray-500">{item.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="border-red-300 bg-red-50">
-                  <CardHeader className="py-2 bg-red-100">
-                    <CardTitle className="text-sm text-red-700">🚨 SEVERE - Call 112 Immediately</CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-2">
-                    <div className="grid grid-cols-2 gap-2">
-                      {HYPOGLYCEMIA_GUIDE.symptoms.severe.map((item, idx) => (
-                        <div key={idx} className="text-xs p-2 bg-red-100 rounded">
-                          <p className="font-bold text-red-700">{item.symptom}</p>
-                          <p className="text-red-600">{item.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              
-              {/* 15-15 Rule */}
-              <Card className="border-green-300 bg-green-50">
-                <CardHeader className="py-3 bg-green-100">
-                  <CardTitle className="text-base text-green-800">✅ The 15-15 Rule - What To Do</CardTitle>
-                </CardHeader>
-                <CardContent className="py-3">
-                  {HYPOGLYCEMIA_GUIDE.rule15.steps.map((step, idx) => (
-                    <p key={idx} className="text-sm py-1 text-green-800">
-                      {idx + 1}. {step}
-                    </p>
-                  ))}
-                </CardContent>
-              </Card>
-              
-              {/* Fast Sugar Options */}
-              <Card className="border-blue-200">
-                <CardHeader className="py-2 bg-blue-50">
-                  <CardTitle className="text-sm text-blue-700">🍬 Fast-Acting Sugar Options (15g each)</CardTitle>
-                </CardHeader>
-                <CardContent className="py-2">
-                  <div className="grid grid-cols-2 gap-2">
-                    {HYPOGLYCEMIA_GUIDE.fastSugarOptions.map((option, idx) => (
-                      <div key={idx} className="text-xs p-2 bg-blue-50 rounded border border-blue-100">
-                        <p className="font-medium text-blue-800">{option.item}</p>
-                        <p className="text-blue-600">{option.amount}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* If Unconscious */}
-              <Card className="border-red-400 bg-red-100">
-                <CardHeader className="py-3 bg-red-200">
-                  <CardTitle className="text-base text-red-800">🚨 If Person is UNCONSCIOUS</CardTitle>
-                </CardHeader>
-                <CardContent className="py-3">
-                  {HYPOGLYCEMIA_GUIDE.unconsciousPerson.map((action, idx) => (
-                    <p key={idx} className="text-sm py-1.5 text-red-800 font-medium border-b border-red-200 last:border-0">
-                      {idx + 1}. {action}
-                    </p>
-                  ))}
-                </CardContent>
-              </Card>
-              
-              {/* Prevention */}
-              <Card className="border-teal-200">
-                <CardHeader className="py-2 bg-teal-50">
-                  <CardTitle className="text-sm text-teal-700">🛡️ Prevention Tips</CardTitle>
-                </CardHeader>
-                <CardContent className="py-2">
-                  {HYPOGLYCEMIA_GUIDE.prevention.map((tip, idx) => (
-                    <p key={idx} className="text-xs py-1 text-teal-700">✓ {tip}</p>
-                  ))}
-                </CardContent>
-              </Card>
+        {/* Trial / Subscribe CTA */}
+        {!isSubscribed && (
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-5 text-center" data-testid="glydex-subscribe-cta">
+            <Crown className="w-10 h-10 text-blue-500 mx-auto mb-3" />
+            {trial?.active ? (
+              <><h3 className="text-lg font-bold text-gray-800">Trial Active — {trial.days_remaining} days left</h3><p className="text-sm text-gray-500 mt-1 mb-4">Upgrade to unlock diet plans, tests & full access</p></>
+            ) : (
+              <><h3 className="text-lg font-bold text-gray-800">Unlock Full Diabetes Care</h3><p className="text-sm text-gray-500 mt-1 mb-4">Premium diet plans, sugar tracker & health tools</p></>
+            )}
+            <div className="flex gap-3 justify-center flex-wrap">
+              {!trial?.active && <Button onClick={startTrial} className="rounded-full px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white shadow-md" data-testid="glydex-trial-btn"><Zap className="w-4 h-4 mr-2" /> 7-Day Free Trial</Button>}
+              <Button onClick={() => setShowCheckout(true)} className="rounded-full px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md hover:shadow-lg" data-testid="glydex-subscribe-btn"><Crown className="w-4 h-4 mr-2" /> Subscribe Now</Button>
             </div>
           </div>
-          
-          <div className="p-4 bg-gray-100 border-t flex-shrink-0">
-            <div className="flex gap-3 mb-3">
-              <Button 
-                className="flex-1 bg-red-600 hover:bg-red-700"
-                onClick={() => window.open('tel:112', '_self')}
-              >
-                <Phone className="w-4 h-4 mr-2" />
-                Emergency 112
-              </Button>
-              <Button 
-                variant="outline"
-                className="flex-1 border-teal-600 text-teal-600"
-                onClick={() => window.open('tel:9403890429', '_self')}
-              >
-                <Phone className="w-4 h-4 mr-2" />
-                Clinic: 9403890429
-              </Button>
-            </div>
-            <p className="text-xs text-gray-600 text-center">
-              ⚠️ This is emergency first-aid guidance, not medical treatment. Always seek professional help.
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
+        )}
 
-      {/* Diabetic Neuropathy Dialog */}
-      <Dialog open={showNeuropathy} onOpenChange={setShowNeuropathy}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white flex-shrink-0">
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Activity className="w-6 h-6" />
-              Diabetic Neuropathy Guide
-            </DialogTitle>
-            <DialogDescription className="text-purple-100">
-              Prevention tips for nerve damage - No medication advice
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <div className="p-4 space-y-4">
-              {/* What is it */}
-              <Card className="bg-purple-50 border-purple-200">
-                <CardContent className="p-4">
-                  <h4 className="font-bold text-purple-800 mb-2">What is Diabetic Neuropathy?</h4>
-                  <p className="text-sm text-purple-700">{NEUROPATHY_GUIDE.whatIs}</p>
-                </CardContent>
-              </Card>
-
-              {/* Types */}
-              <div>
-                <h4 className="font-bold text-gray-800 mb-3">Types of Neuropathy</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {NEUROPATHY_GUIDE.types.map((type, idx) => (
-                    <Card key={idx} className="border-purple-100">
-                      <CardContent className="p-3">
-                        <span className="text-2xl">{type.icon}</span>
-                        <p className="font-semibold text-sm text-purple-700 mt-1">{type.name}</p>
-                        <p className="text-xs text-gray-500 mt-1">{type.description}</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
-              {/* Symptoms */}
-              <div>
-                <h4 className="font-bold text-gray-800 mb-3">Warning Symptoms</h4>
-                <div className="space-y-2">
-                  {NEUROPATHY_GUIDE.symptoms.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium text-sm">{item.symptom}</p>
-                        <p className="text-xs text-gray-500">{item.area}</p>
-                      </div>
-                      <span className={`text-xs px-2 py-1 rounded ${item.severity === 'Serious - see doctor' ? 'bg-red-100 text-red-700' : 'bg-purple-100 text-purple-700'}`}>
-                        {item.severity}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Prevention */}
-              <Card className="border-green-200 bg-green-50">
-                <CardHeader className="py-3">
-                  <CardTitle className="text-base text-green-700 flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5" /> Prevention Tips
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="py-2">
-                  {NEUROPATHY_GUIDE.prevention.map((tip, idx) => (
-                    <p key={idx} className="text-sm py-1.5 text-green-800 border-b border-green-100 last:border-0">
-                      ✓ {tip}
-                    </p>
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Daily Exercises */}
-              <div>
-                <h4 className="font-bold text-gray-800 mb-3">Daily Exercises for Feet</h4>
-                <div className="space-y-2">
-                  {NEUROPATHY_GUIDE.dailyExercises.map((ex, idx) => (
-                    <Card key={idx} className="border-blue-100">
-                      <CardContent className="p-3">
-                        <p className="font-semibold text-blue-700">{ex.exercise}</p>
-                        <p className="text-sm text-gray-600 mt-1">{ex.description}</p>
-                        <p className="text-xs text-blue-600 mt-1">💪 {ex.benefit}</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
-              {/* When to see doctor */}
-              <Card className="border-red-200 bg-red-50">
-                <CardHeader className="py-3">
-                  <CardTitle className="text-base text-red-700 flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5" /> When to See a Doctor
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="py-2">
-                  {NEUROPATHY_GUIDE.whenToSeeDoctor.map((item, idx) => (
-                    <p key={idx} className="text-sm py-1.5 text-red-800 border-b border-red-100 last:border-0">
-                      🚨 {item}
-                    </p>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Diabetic Foot Care Dialog */}
-      <Dialog open={showFootCare} onOpenChange={setShowFootCare}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white flex-shrink-0">
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Heart className="w-6 h-6" />
-              Diabetic Foot Care Guide
-            </DialogTitle>
-            <DialogDescription className="text-blue-100">
-              Daily care tips to prevent complications - No medication advice
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <div className="p-4 space-y-4">
-              {/* Importance */}
-              <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="p-4">
-                  <h4 className="font-bold text-blue-800 mb-2">Why Foot Care Matters</h4>
-                  <p className="text-sm text-blue-700">{FOOT_CARE_GUIDE.importance}</p>
-                </CardContent>
-              </Card>
-
-              {/* Daily Checklist */}
-              <div>
-                <h4 className="font-bold text-gray-800 mb-3">Daily Foot Care Checklist</h4>
-                <div className="space-y-2">
-                  {FOOT_CARE_GUIDE.dailyChecklist.map((item, idx) => (
-                    <Card key={idx} className="border-blue-100">
-                      <CardContent className="p-3">
-                        <p className="font-semibold text-blue-700">{idx + 1}. {item.task}</p>
-                        <p className="text-sm text-gray-600 mt-1"><strong>How:</strong> {item.how}</p>
-                        <p className="text-xs text-blue-600 mt-1">👀 {item.look}</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
-              {/* Do's */}
-              <Card className="border-green-200 bg-green-50">
-                <CardHeader className="py-3">
-                  <CardTitle className="text-base text-green-700 flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5" /> Do's - Follow These
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="py-2">
-                  {FOOT_CARE_GUIDE.dos.map((tip, idx) => (
-                    <p key={idx} className="text-sm py-1.5 text-green-800 border-b border-green-100 last:border-0">
-                      ✓ {tip}
-                    </p>
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Don'ts */}
-              <Card className="border-red-200 bg-red-50">
-                <CardHeader className="py-3">
-                  <CardTitle className="text-base text-red-700 flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5" /> Don'ts - Avoid These
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="py-2">
-                  {FOOT_CARE_GUIDE.donts.map((tip, idx) => (
-                    <p key={idx} className="text-sm py-1.5 text-red-800 border-b border-red-100 last:border-0">
-                      ✗ {tip}
-                    </p>
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Shoe Tips */}
-              <div>
-                <h4 className="font-bold text-gray-800 mb-3">Choosing the Right Shoes</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {FOOT_CARE_GUIDE.shoeTips.map((item, idx) => (
-                    <Card key={idx} className="border-gray-200">
-                      <CardContent className="p-3">
-                        <p className="font-semibold text-sm text-gray-700">👟 {item.tip}</p>
-                        <p className="text-xs text-gray-500 mt-1">{item.detail}</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
-              {/* Emergency Signs */}
-              <Card className="border-orange-200 bg-orange-50">
-                <CardHeader className="py-3">
-                  <CardTitle className="text-base text-orange-700 flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5" /> Emergency Warning Signs
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="py-2">
-                  {FOOT_CARE_GUIDE.emergencySigns.map((item, idx) => (
-                    <div key={idx} className="py-2 border-b border-orange-100 last:border-0">
-                      <p className="font-medium text-sm text-orange-800">{item.sign}</p>
-                      <p className="text-xs text-gray-600">{item.description}</p>
-                      <p className="text-xs text-red-600 font-medium mt-1">⚡ {item.action}</p>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Profile Setup Dialog - Extended Diabetes Information */}
-      <Dialog open={showProfileSetup} onOpenChange={setShowProfileSetup}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-4 bg-gradient-to-r from-teal-500 to-teal-600 text-white flex-shrink-0">
-            <DialogTitle className="text-xl">Complete Your Diabetes Profile</DialogTitle>
-            <DialogDescription className="text-teal-100">
-              Help us personalize your diabetes care experience
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-y-auto p-4" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <div className="space-y-6">
-              {/* Basic Info */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-gray-700 border-b pb-2">Basic Information</h3>
-                <div>
-                  <Label>Diabetes Type *</Label>
-                  <Select value={profileData.diabetesType} onValueChange={(v) => setProfileData({...profileData, diabetesType: v})}>
-                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="type1">Type 1 Diabetes</SelectItem>
-                      <SelectItem value="type2">Type 2 Diabetes</SelectItem>
-                      <SelectItem value="gestational">Gestational Diabetes</SelectItem>
-                      <SelectItem value="prediabetes">Pre-diabetes</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label>Age</Label>
-                    <Input 
-                      type="number"
-                      placeholder="e.g., 45"
-                      value={profileData.age}
-                      onChange={(e) => setProfileData({...profileData, age: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label>Gender</Label>
-                    <Select value={profileData.gender} onValueChange={(v) => setProfileData({...profileData, gender: v})}>
-                      <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label>Date of Diagnosis</Label>
-                    <Input 
-                      type="date"
-                      value={profileData.dateOfDiagnosis}
-                      onChange={(e) => setProfileData({...profileData, dateOfDiagnosis: e.target.value})}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Medical Details */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-gray-700 border-b pb-2">Medical Details</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>HbA1c Target Range</Label>
-                    <Select value={profileData.hba1cTarget} onValueChange={(v) => setProfileData({...profileData, hba1cTarget: v})}>
-                      <SelectTrigger><SelectValue placeholder="Select target" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="below-6.5">Below 6.5% (Strict)</SelectItem>
-                        <SelectItem value="6.5-7.0">6.5% - 7.0% (Standard)</SelectItem>
-                        <SelectItem value="7.0-7.5">7.0% - 7.5% (Moderate)</SelectItem>
-                        <SelectItem value="7.5-8.0">7.5% - 8.0% (Relaxed)</SelectItem>
-                        <SelectItem value="above-8.0">Above 8.0% (As advised)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label className="flex items-center gap-2">
-                      <input 
-                        type="checkbox" 
-                        checked={profileData.insulinUser}
-                        onChange={(e) => setProfileData({...profileData, insulinUser: e.target.checked})}
-                        className="rounded"
-                      />
-                      On Insulin Therapy
-                    </Label>
-                  </div>
-                </div>
-
-                {/* Current Medications */}
-                <div>
-                  <Label>Current Medications</Label>
-                  <div className="flex gap-2 mb-2">
-                    <Input 
-                      placeholder="Add medication name..."
-                      value={newMedication}
-                      onChange={(e) => setNewMedication(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter' && newMedication.trim()) {
-                          setProfileData({
-                            ...profileData, 
-                            currentMedications: [...(profileData.currentMedications || []), newMedication.trim()]
-                          });
-                          setNewMedication('');
-                        }
-                      }}
-                    />
-                    <Button 
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        if (newMedication.trim()) {
-                          setProfileData({
-                            ...profileData, 
-                            currentMedications: [...(profileData.currentMedications || []), newMedication.trim()]
-                          });
-                          setNewMedication('');
-                        }
-                      }}
-                    >
-                      Add
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {(profileData.currentMedications || []).map((med, idx) => (
-                      <span key={idx} className="bg-teal-100 text-teal-800 px-2 py-1 rounded-full text-sm flex items-center gap-1">
-                        <Pill className="w-3 h-3" /> {med}
-                        <button 
-                          onClick={() => setProfileData({
-                            ...profileData,
-                            currentMedications: profileData.currentMedications.filter((_, i) => i !== idx)
-                          })}
-                          className="ml-1 text-teal-600 hover:text-red-500"
-                        >×</button>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Complications */}
-                <div>
-                  <Label>Known Complications (if any)</Label>
-                  <div className="grid grid-cols-2 gap-2 mt-2">
-                    {['Neuropathy', 'Retinopathy', 'Nephropathy', 'Cardiovascular', 'Foot Problems', 'None'].map(comp => (
-                      <label key={comp} className="flex items-center gap-2 text-sm cursor-pointer">
-                        <input 
-                          type="checkbox"
-                          checked={(profileData.complications || []).includes(comp)}
-                          onChange={(e) => {
-                            if (comp === 'None') {
-                              setProfileData({...profileData, complications: e.target.checked ? ['None'] : []});
-                            } else {
-                              const newComps = e.target.checked 
-                                ? [...(profileData.complications || []).filter(c => c !== 'None'), comp]
-                                : (profileData.complications || []).filter(c => c !== comp);
-                              setProfileData({...profileData, complications: newComps});
-                            }
-                          }}
-                          className="rounded"
-                        />
-                        {comp}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Emergency Contact */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-gray-700 border-b pb-2">Emergency Contact</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Contact Name</Label>
-                    <Input 
-                      placeholder="Name of emergency contact"
-                      value={profileData.emergencyContactName}
-                      onChange={(e) => setProfileData({...profileData, emergencyContactName: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label>Contact Phone</Label>
-                    <Input 
-                      placeholder="Phone number"
-                      value={profileData.emergencyContactPhone}
-                      onChange={(e) => setProfileData({...profileData, emergencyContactPhone: e.target.value})}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Test History */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-gray-700 border-b pb-2">Last Test Dates (for reminders)</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Last HbA1c Test</Label>
-                    <Input 
-                      type="date"
-                      value={profileData.lastHba1cDate}
-                      onChange={(e) => setProfileData({...profileData, lastHba1cDate: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label>Last Kidney Function Test</Label>
-                    <Input 
-                      type="date"
-                      value={profileData.lastKidneyTestDate}
-                      onChange={(e) => setProfileData({...profileData, lastKidneyTestDate: e.target.value})}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Reminder Preferences */}
-              <div className="space-y-4 bg-blue-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-blue-700">🔔 Reminder Preferences</h3>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input 
-                      type="checkbox"
-                      checked={profileData.testReminders}
-                      onChange={(e) => setProfileData({...profileData, testReminders: e.target.checked})}
-                      className="rounded"
-                    />
-                    <span className="text-sm">Send me test reminders (HbA1c every 3 months, Kidney yearly)</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input 
-                      type="checkbox"
-                      checked={profileData.medicineReminders}
-                      onChange={(e) => setProfileData({...profileData, medicineReminders: e.target.checked})}
-                      className="rounded"
-                    />
-                    <span className="text-sm">Send me medicine refill reminders (every 30 days)</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="p-4 border-t bg-gray-50 flex gap-3">
-            <Button variant="outline" onClick={() => setShowProfileSetup(false)} className="flex-1">
-              Skip for now
-            </Button>
-            <Button onClick={handleSaveProfile} disabled={loading} className="flex-1 bg-teal-600 hover:bg-teal-700">
-              {loading ? 'Saving...' : 'Save Profile'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* HbA1c Tracking Dialog */}
-      <Dialog open={showHbA1c} onOpenChange={setShowHbA1c}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-4 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white flex-shrink-0">
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <LineChart className="w-6 h-6" />
-              HbA1c Tracking
-            </DialogTitle>
-            <DialogDescription className="text-indigo-100">
-              Track your 3-month glucose control • Target: &lt;7% for diabetics
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <div className="p-4 space-y-4">
-              {/* Add New HbA1c */}
-              <Card className="border-indigo-200">
-                <CardHeader className="py-3 bg-indigo-50">
-                  <CardTitle className="text-base text-indigo-700">Log New HbA1c Result</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label>HbA1c Value (%) *</Label>
-                      <Input 
-                        type="number"
-                        step="0.1"
-                        placeholder="e.g., 6.5"
-                        value={newHba1c.value}
-                        onChange={(e) => setNewHba1c({...newHba1c, value: e.target.value})}
-                        className="text-lg"
-                      />
-                    </div>
-                    <div>
-                      <Label>Test Date *</Label>
-                      <Input 
-                        type="date"
-                        value={newHba1c.date}
-                        onChange={(e) => setNewHba1c({...newHba1c, date: e.target.value})}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <Label>Lab Name (Optional)</Label>
-                    <Input 
-                      placeholder="e.g., Mango Health Labs"
-                      value={newHba1c.lab_name}
-                      onChange={(e) => setNewHba1c({...newHba1c, lab_name: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label>Notes (Optional)</Label>
-                    <Input 
-                      placeholder="Any remarks..."
-                      value={newHba1c.notes}
-                      onChange={(e) => setNewHba1c({...newHba1c, notes: e.target.value})}
-                    />
-                  </div>
-                  <Button 
-                    onClick={handleAddHba1c} 
-                    disabled={loading} 
-                    className="w-full bg-indigo-600 hover:bg-indigo-700"
-                  >
-                    {loading ? 'Saving...' : 'Save HbA1c Result'}
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Reference Info */}
-              <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="p-4">
-                  <h4 className="font-semibold text-blue-800 mb-2">📊 HbA1c Reference Ranges</h4>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="bg-white rounded p-2">
-                      <p className="font-medium text-green-700">&lt; 5.7%</p>
-                      <p className="text-xs text-gray-600">Normal (Non-diabetic)</p>
-                    </div>
-                    <div className="bg-white rounded p-2">
-                      <p className="font-medium text-yellow-700">5.7 - 6.4%</p>
-                      <p className="text-xs text-gray-600">Pre-diabetes</p>
-                    </div>
-                    <div className="bg-white rounded p-2">
-                      <p className="font-medium text-blue-700">&lt; 7%</p>
-                      <p className="text-xs text-gray-600">Good Control (Diabetic)</p>
-                    </div>
-                    <div className="bg-white rounded p-2">
-                      <p className="font-medium text-red-700">&gt; 8%</p>
-                      <p className="text-xs text-gray-600">Needs Improvement</p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-blue-600 mt-3">
-                    💡 HbA1c reflects your average blood sugar over 2-3 months. Test every 3 months for best tracking.
-                  </p>
-                </CardContent>
-              </Card>
-
-              {/* History */}
-              {hba1cLogs.length > 0 && (
-                <div>
-                  <h4 className="font-semibold text-gray-800 mb-3">Your HbA1c History</h4>
-                  <div className="space-y-2">
-                    {hba1cLogs.map((log, idx) => {
-                      const status = getHba1cStatus(log.value);
-                      return (
-                        <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-gray-100">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-12 h-12 rounded-xl ${status.bg} flex items-center justify-center`}>
-                              <span className={`text-lg font-bold ${status.color}`}>{log.value}%</span>
-                            </div>
-                            <div>
-                              <p className={`font-semibold ${status.color}`}>{status.status}</p>
-                              <p className="text-xs text-gray-500">{log.date} {log.lab_name && `• ${log.lab_name}`}</p>
-                            </div>
-                          </div>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => handleDeleteHba1c(log.id)}
-                            className="text-gray-400 hover:text-red-500"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {hba1cLogs.length === 0 && (
-                <div className="text-center py-6">
-                  <LineChart className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-                  <p className="text-gray-500">No HbA1c results logged yet</p>
-                  <p className="text-sm text-gray-400">Add your first result above to start tracking</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Calorie Tracker Dialog */}
-      <Dialog open={showCaloriesTracker} onOpenChange={setShowCaloriesTracker}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader className="flex-shrink-0">
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Utensils className="w-6 h-6 text-orange-600" />
-              Indian Food Calorie Tracker
-            </DialogTitle>
-            <DialogDescription>
-              Track your daily food intake with our database of 100+ Indian dishes
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-y-auto px-1">
-            {/* Date Selector */}
-            <div className="flex items-center gap-3 mb-4">
-              <Label>Date:</Label>
-              <Input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => {
-                  setSelectedDate(e.target.value);
-                  fetchCalorieLogs(e.target.value);
-                }}
-                className="w-40"
-              />
-            </div>
-
-            {/* Daily Summary */}
-            <Card className="mb-4 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
-              <CardContent className="p-4">
-                <h4 className="font-semibold text-orange-800 mb-3 flex items-center gap-2">
-                  <Target className="w-4 h-4" />
-                  Today's Summary
-                </h4>
-                <div className="grid grid-cols-5 gap-2 text-center">
-                  <div className="bg-white rounded-lg p-2">
-                    <p className="text-xl font-bold text-orange-600">{dailyTotals.calories}</p>
-                    <p className="text-xs text-gray-500">Calories</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-2">
-                    <p className="text-lg font-bold text-blue-600">{dailyTotals.protein}g</p>
-                    <p className="text-xs text-gray-500">Protein</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-2">
-                    <p className="text-lg font-bold text-purple-600">{dailyTotals.carbs}g</p>
-                    <p className="text-xs text-gray-500">Carbs</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-2">
-                    <p className="text-lg font-bold text-yellow-600">{dailyTotals.fat}g</p>
-                    <p className="text-xs text-gray-500">Fat</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-2">
-                    <p className="text-lg font-bold text-green-600">{dailyTotals.fiber}g</p>
-                    <p className="text-xs text-gray-500">Fiber</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Search Bar */}
-            <div className="mb-4">
-              <Label className="text-sm font-medium mb-2 block">Search Indian Foods</Label>
-              <Input
-                placeholder="Type to search... (e.g., Dosa, Biryani, Roti)"
-                value={foodSearchQuery}
-                onChange={(e) => {
-                  setFoodSearchQuery(e.target.value);
-                  searchFoods(e.target.value);
-                }}
-                className="mb-2"
-                data-testid="food-search-input"
-              />
-              
-              {/* Search Results */}
-              {searchResults.length > 0 && (
-                <Card className="border-orange-200">
-                  <CardContent className="p-2 max-h-48 overflow-y-auto">
-                    {searchResults.map((food, idx) => (
-                      <div 
-                        key={idx}
-                        className="flex items-center justify-between p-2 hover:bg-orange-50 rounded-lg cursor-pointer"
-                        onClick={() => addFoodToLog(food, food.meal_category || 'other')}
-                      >
-                        <div>
-                          <p className="font-medium text-sm">{food.name}</p>
-                          <p className="text-xs text-gray-500">{food.category} • {food.meal_category}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-orange-600">{food.calories} cal</p>
-                          <p className="text-xs text-gray-400">P:{food.protein}g C:{food.carbs}g</p>
-                        </div>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-
-            {/* Category Browser */}
-            <div className="mb-4">
-              <Label className="text-sm font-medium mb-2 block">Browse by Category</Label>
-              <div className="flex flex-wrap gap-2 mb-3">
-                {Object.keys(foodDatabase).map(category => (
-                  <Button
-                    key={category}
-                    size="sm"
-                    variant={selectedFoodCategory === category ? "default" : "outline"}
-                    onClick={() => setSelectedFoodCategory(category)}
-                    className={selectedFoodCategory === category ? "bg-orange-500 hover:bg-orange-600" : ""}
-                  >
-                    {category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                  </Button>
-                ))}
-              </div>
-
-              {/* Food Items in Selected Category */}
-              {foodDatabase[selectedFoodCategory] && (
-                <Card className="border-gray-200">
-                  <CardContent className="p-2 max-h-52 overflow-y-auto">
-                    <div className="grid gap-1">
-                      {foodDatabase[selectedFoodCategory].map((food, idx) => (
-                        <div 
-                          key={idx}
-                          className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg cursor-pointer border-b last:border-b-0"
-                          onClick={() => addFoodToLog(food, selectedFoodCategory)}
-                          data-testid={`food-item-${idx}`}
-                        >
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm truncate">{food.name}</p>
-                            <p className="text-xs text-gray-400">{food.category}</p>
-                          </div>
-                          <div className="text-right flex-shrink-0 ml-2">
-                            <p className="font-bold text-orange-600 text-sm">{food.calories} cal</p>
-                            <p className="text-xs text-gray-400">P:{food.protein} C:{food.carbs} F:{food.fat}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-
-            {/* Today's Food Log */}
-            <div className="mb-4">
-              <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                Food Log ({selectedDate})
-              </h4>
-              {calorieLogs.length > 0 ? (
-                <Card>
-                  <CardContent className="p-2">
-                    {calorieLogs.map((log, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg border-b last:border-b-0">
-                        <div>
-                          <p className="font-medium text-sm">{log.food_name}</p>
-                          <p className="text-xs text-gray-400">
-                            {log.meal_type} • Qty: {log.quantity}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-orange-600">{log.calories} cal</span>
-                          <Button 
-                            size="sm" 
-                            variant="ghost"
-                            onClick={() => deleteCalorieLog(log.id)}
-                            className="h-8 w-8 p-0 text-gray-400 hover:text-red-500"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="text-center py-6 bg-gray-50 rounded-xl">
-                  <Utensils className="w-10 h-10 mx-auto text-gray-300 mb-2" />
-                  <p className="text-gray-500 text-sm">No food logged yet</p>
-                  <p className="text-xs text-gray-400">Search or browse foods above to add</p>
-                </div>
-              )}
-            </div>
-
-            {/* Diabetic-Friendly Tip */}
-            <Card className="bg-green-50 border-green-200">
-              <CardContent className="p-3">
-                <p className="text-sm text-green-800">
-                  💡 <strong>Tip for Diabetics:</strong> Check the "diabetic_friendly" category for low-GI foods. 
-                  Focus on foods high in fiber and protein to maintain stable blood sugar.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Portal Membership Form */}
-      <PortalMembershipForm
-        open={showMembershipForm}
-        onOpenChange={setShowMembershipForm}
-        planType="glydex"
-        existingData={effectiveUser ? {
-          name: effectiveUser.name,
-          phone: effectiveUser.phone,
-          email: effectiveUser.email
-        } : null}
-        onSuccess={() => {
-          toast.success('Health profile submitted successfully!');
-        }}
-      />
-
-      {/* Mango Health Labs Ad Banner */}
-      <div className="max-w-5xl mx-auto mb-6 px-4">
-        <ProtonAdBanner />
+        {/* Emergency Quick Access */}
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center gap-3" data-testid="glydex-emergency-quick">
+          <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center"><Phone className="w-5 h-5 text-red-500" /></div>
+          <div className="flex-1"><h4 className="font-semibold text-gray-800 text-sm">Sugar below 70?</h4><p className="text-xs text-gray-500">Act immediately</p></div>
+          <button onClick={() => setShowEmergency(true)} className="px-4 py-2 bg-red-500 text-white rounded-xl text-sm font-bold shadow-md hover:bg-red-600" data-testid="glydex-emergency-btn">Guide</button>
+        </div>
       </div>
+
+      {/* ==================== DIALOGS ==================== */}
+      {/* Diet Plans */}
+      <Dialog open={showDiet} onOpenChange={setShowDiet}>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-hidden p-0 rounded-2xl border-0">
+          <div className="bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 p-5 text-white">
+            <DialogHeader><DialogTitle className="text-xl text-white flex items-center gap-2"><Utensils className="w-6 h-6" /> Diabetic Diet Plans</DialogTitle></DialogHeader>
+          </div>
+          <ScrollArea className="max-h-[65vh] px-5 py-4">
+            <Tabs defaultValue="veg">
+              <TabsList className="grid grid-cols-2 mb-4"><TabsTrigger value="veg">Vegetarian</TabsTrigger><TabsTrigger value="nonveg">Non-Vegetarian</TabsTrigger></TabsList>
+              <TabsContent value="veg" className="space-y-5">
+                <div className="rounded-xl overflow-hidden mb-2"><img src={FOOD_IMAGES.veg_breakfast} alt="Veg food" className="w-full h-32 object-cover rounded-xl" /></div>
+                {['breakfast', 'lunch', 'dinner', 'snacks'].map((meal) => (<MealCard key={meal} meal={meal} items={DIET_PLANS.vegetarian[meal]} />))}
+              </TabsContent>
+              <TabsContent value="nonveg" className="space-y-5">
+                <div className="rounded-xl overflow-hidden mb-2"><img src={FOOD_IMAGES.veg_lunch} alt="Non-veg" className="w-full h-32 object-cover rounded-xl" /></div>
+                {['breakfast', 'lunch', 'dinner', 'snacks'].map((meal) => (<MealCard key={meal} meal={meal} items={DIET_PLANS.nonVegetarian[meal]} />))}
+              </TabsContent>
+            </Tabs>
+            <div className="mt-4 bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+              <h4 className="text-sm font-semibold text-emerald-700">Golden Rules</h4>
+              <ul className="mt-2 space-y-1.5 text-xs text-gray-600">{["Eat at fixed times daily", "Never skip breakfast", "Choose whole grains over refined", "Half plate = vegetables"].map((r, i) => (<li key={i} className="flex gap-2"><Check className="w-3 h-3 text-emerald-500 flex-shrink-0 mt-0.5" />{r}</li>))}</ul>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Blood Sugar Logger */}
+      <Dialog open={showSugarLog} onOpenChange={setShowSugarLog}>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-hidden p-0 rounded-2xl border-0">
+          <div className="bg-gradient-to-r from-blue-400 via-indigo-400 to-violet-400 p-5 text-white">
+            <DialogHeader><DialogTitle className="text-xl text-white flex items-center gap-2"><Activity className="w-6 h-6" /> Blood Sugar Log</DialogTitle></DialogHeader>
+          </div>
+          <ScrollArea className="max-h-[65vh] px-5 py-4">
+            <Tabs defaultValue="add">
+              <TabsList className="grid grid-cols-2 mb-4"><TabsTrigger value="add">Add Reading</TabsTrigger><TabsTrigger value="history">History</TabsTrigger></TabsList>
+              <TabsContent value="add" className="space-y-4">
+                <div><label className="text-sm font-medium text-gray-700 mb-1 block">Reading Type</label><div className="grid grid-cols-3 gap-2">{[{ v: 'fbs', l: 'Fasting' }, { v: 'ppbs', l: 'Post-Meal' }, { v: 'random', l: 'Random' }].map((t) => (<button key={t.v} onClick={() => setNewLog({...newLog, type: t.v})} className={`py-2.5 rounded-xl text-sm font-medium transition-all ${newLog.type === t.v ? 'bg-blue-100 text-blue-600 border-2 border-blue-300' : 'bg-gray-50 text-gray-600 border-2 border-transparent'}`}>{t.l}</button>))}</div></div>
+                <div><label className="text-sm font-medium text-gray-700 mb-1 block">Blood Sugar (mg/dL)</label><Input type="number" placeholder="Enter value" value={newLog.value} onChange={(e) => setNewLog({...newLog, value: e.target.value})} className="text-lg" data-testid="sugar-value-input" />{newLog.value && <div className="mt-2"><Badge className={`${getSugarStatus(newLog.value, newLog.type).color} text-xs px-3 py-1`}>{getSugarStatus(newLog.value, newLog.type).label}</Badge></div>}</div>
+                <div className="grid grid-cols-2 gap-3"><div><label className="text-sm font-medium text-gray-700 mb-1 block">Date</label><Input type="date" value={newLog.date} onChange={(e) => setNewLog({...newLog, date: e.target.value})} /></div><div><label className="text-sm font-medium text-gray-700 mb-1 block">Time</label><Input type="time" value={newLog.time} onChange={(e) => setNewLog({...newLog, time: e.target.value})} /></div></div>
+                <Button onClick={addSugarLog} className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl py-3" data-testid="sugar-log-btn"><Check className="w-4 h-4 mr-2" /> Log Reading</Button>
+                <div className="bg-blue-50 rounded-xl p-4 border border-blue-200"><h4 className="text-sm font-semibold text-blue-700 mb-2">Normal Ranges</h4><div className="space-y-1.5 text-xs text-gray-600">{[["Fasting", "70-100 mg/dL"], ["Post-Meal", "70-140 mg/dL"], ["Random", "70-140 mg/dL"], ["HbA1c", "Below 7%"]].map(([k, v], i) => (<div key={i} className="flex justify-between"><span>{k}</span><span className="font-medium text-gray-800">{v}</span></div>))}</div></div>
+              </TabsContent>
+              <TabsContent value="history" className="space-y-3">
+                {sugarLogs.length > 0 ? sugarLogs.slice(0, 10).map((log, i) => { const status = getSugarStatus(log.value, log.type); return (<div key={i} className="bg-gray-50 rounded-xl p-3 flex items-center gap-3"><div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center"><Activity className="w-5 h-5 text-blue-500" /></div><div className="flex-1"><div className="flex items-center gap-2"><p className="text-sm font-bold text-gray-800">{log.value} mg/dL</p><Badge className={`${status.color} text-[10px]`}>{status.label}</Badge></div><p className="text-xs text-gray-500">{log.type === 'fbs' ? 'Fasting' : log.type === 'ppbs' ? 'Post-Meal' : 'Random'} · {log.date}</p></div></div>); }) : (<div className="text-center py-8"><Activity className="w-12 h-12 mx-auto mb-2 text-gray-200" /><p className="text-sm text-gray-400">No readings yet</p></div>)}
+              </TabsContent>
+            </Tabs>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Essential Tests */}
+      <Dialog open={showTests} onOpenChange={setShowTests}>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-hidden p-0 rounded-2xl border-0">
+          <div className="bg-gradient-to-r from-purple-400 via-violet-500 to-fuchsia-500 p-5 text-white">
+            <DialogHeader><DialogTitle className="text-xl text-white flex items-center gap-2"><TestTube className="w-6 h-6" /> Essential Tests</DialogTitle></DialogHeader>
+            <p className="text-purple-100 text-sm mt-2">Regular testing prevents complications</p>
+          </div>
+          <ScrollArea className="max-h-[60vh] px-5 py-4 space-y-3">
+            {DIABETIC_TESTS.map((test, i) => (<div key={i} className="bg-gray-50 rounded-xl p-4 mb-3"><div className="flex items-center justify-between mb-2"><h4 className="text-sm font-bold text-gray-700">{test.name}</h4><Badge className="bg-purple-100 text-purple-700 text-[10px]">{test.frequency}</Badge></div><p className="text-xs text-gray-500">{test.purpose}</p><div className="flex items-center gap-1 mt-2"><Target className="w-3 h-3 text-purple-500" /><span className="text-xs text-purple-600 font-medium">Target: {test.target}</span></div></div>))}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Warning Signs */}
+      <Dialog open={showWarnings} onOpenChange={setShowWarnings}>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-hidden p-0 rounded-2xl border-0">
+          <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 p-5 text-white">
+            <DialogHeader><DialogTitle className="text-xl text-white flex items-center gap-2"><AlertTriangle className="w-6 h-6" /> Warning Signs</DialogTitle></DialogHeader>
+          </div>
+          <ScrollArea className="max-h-[60vh] px-5 py-4 space-y-3">
+            {WARNING_SIGNS.map((w, i) => (<div key={i} className={`rounded-xl p-4 mb-3 flex items-start gap-3 ${w.bg}`}><div className={`w-10 h-10 rounded-xl bg-white flex items-center justify-center flex-shrink-0`}><w.icon className={`w-5 h-5 ${w.clr}`} /></div><div><h4 className="text-sm font-semibold text-gray-700">{w.sign}</h4><p className="text-xs text-gray-500 mt-0.5">{w.desc}</p><p className="text-xs text-blue-600 font-medium mt-1">{w.action}</p></div></div>))}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Emergency Guide - ALWAYS accessible */}
+      <Dialog open={showEmergency} onOpenChange={setShowEmergency}>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-hidden p-0 rounded-2xl border-0">
+          <div className="bg-gradient-to-r from-red-400 via-rose-400 to-pink-400 p-5 text-white">
+            <DialogHeader><DialogTitle className="text-xl text-white flex items-center gap-2"><Zap className="w-6 h-6" /> Hypoglycemia Emergency</DialogTitle></DialogHeader>
+            <p className="text-red-100 text-sm mt-2">If blood sugar drops below 70 mg/dL</p>
+          </div>
+          <ScrollArea className="max-h-[60vh] px-5 py-4 space-y-3">
+            {EMERGENCY_STEPS.map((s) => (<div key={s.step} className="flex items-start gap-3 mb-3"><div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0"><span className="text-sm font-bold text-red-600">{s.step}</span></div><div><h4 className="text-sm font-semibold text-gray-700">{s.title}</h4><p className="text-xs text-gray-500 mt-0.5">{s.desc}</p></div></div>))}
+            <div className="bg-red-50 rounded-xl p-4 border border-red-200 mt-2">
+              <h4 className="text-sm font-semibold text-red-700">Call Emergency If:</h4>
+              <ul className="mt-2 space-y-1.5 text-xs text-gray-600">{["Person is unconscious or confused", "Sugar doesn't rise after 2 attempts", "Person has seizures"].map((s, i) => (<li key={i} className="flex gap-2"><AlertTriangle className="w-3 h-3 text-red-500 flex-shrink-0 mt-0.5" />{s}</li>))}</ul>
+              <a href="tel:112" className="mt-3 block w-full text-center py-2.5 bg-red-500 text-white rounded-xl text-sm font-bold shadow-md hover:bg-red-600">Call 112 Emergency</a>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+      <PortalCheckout open={showCheckout} onOpenChange={setShowCheckout} portalName="Glydex" accentGradient="from-blue-500 to-indigo-600" />
+      <HealthReminders open={showReminders} onOpenChange={setShowReminders} portal="glydex" />
     </div>
   );
 };

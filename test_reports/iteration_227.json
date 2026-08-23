@@ -1,0 +1,104 @@
+{
+  "summary": "OTP bypass verification for guest users - ALL 6 TESTS PASSED. Verified that users with guestMobile or userPhone in localStorage can skip OTP verification across all booking flows: DiaGyn appointments, PharmacyCheckout, MangoCheckout, and UnifiedCheckout. The fix correctly detects guestMobile OR userPhone and shows verified state with disabled phone field and 'Book Appointment' button instead of 'Continue'.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_227.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only test)",
+    "frontend": "100% (6/6 tests passed)"
+  },
+  "seed_data_creation": "Used localStorage simulation: guestMobile=9876543210 OR userPhone=9876543210, patientName=Test Guest/Login User, pharmacyCart/labCart items",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "OTP bypass fix verified working in all 4 booking flows. The fix uses guestMobile || userPhone check in localStorage to auto-bypass OTP verification. Key assertions: 1) Phone field auto-filled, 2) Phone field disabled, 3) 'Verified via login' badge shown, 4) Button says 'Book Appointment' not 'Continue'.",
+  "test_results_detail": {
+    "test_1_diagyn_guestMobile": {
+      "description": "DiaGyn booking with guestMobile in localStorage",
+      "route": "/diagyn -> Book Appointment -> PatientInfoModal",
+      "phone_autofilled": "PASS - 9876543210 from guestMobile",
+      "phone_disabled": "PASS - Input is disabled",
+      "verified_badge": "PASS - 'Verified via login' green badge visible",
+      "button_text": "PASS - Button says 'Book Appointment'"
+    },
+    "test_2_pharmacy_checkout": {
+      "description": "PharmacyCheckout (/pharmacy/checkout) with guestMobile",
+      "route": "/pharmacy/checkout",
+      "verified_state": "PASS - Shows 'Test Guest User' with '+91 9876543210 - Verified'",
+      "send_otp_button": "PASS - NOT in DOM (OTP bypass active)",
+      "continue_enabled": "PASS - Continue button is ENABLED"
+    },
+    "test_3_mango_checkout": {
+      "description": "MangoCheckout (/mango/checkout) with guestMobile",
+      "route": "/mango/checkout",
+      "verified_state": "PASS - Shows 'Test Guest User' with '+91 9876543210 - Verified'",
+      "send_otp_button": "PASS - NOT in DOM (OTP bypass active)",
+      "otp_inputs": "PASS - No OTP input fields found",
+      "continue_enabled": "PASS - Continue button is ENABLED"
+    },
+    "test_4_unified_checkout": {
+      "description": "UnifiedCheckout (/unified-checkout?type=pharmacy) with guestMobile",
+      "route": "/unified-checkout?type=pharmacy",
+      "phone_verified_badge": "PASS - 'Phone verified via login' green badge visible",
+      "send_otp_button": "PASS - NOT in DOM",
+      "otp_input": "PASS - NOT in DOM",
+      "phone_prefilled": "PASS - 9876543210 from guestMobile",
+      "phone_disabled": "PASS - Input is disabled",
+      "continue_to_payment": "PASS - 'Continue to Payment' button visible"
+    },
+    "test_5_diagyn_userPhone_only": {
+      "description": "DiaGyn booking with ONLY userPhone (from LoginPage, no guestMobile)",
+      "route": "/diagyn -> Book Appointment -> PatientInfoModal",
+      "phone_autofilled": "PASS - 9876543210 from userPhone",
+      "phone_disabled": "PASS - Input is disabled",
+      "verified_badge": "PASS - 'Verified via login' badge visible",
+      "button_text": "PASS - Button says 'Book Appointment'"
+    },
+    "test_6_non_verified_flow": {
+      "description": "DiaGyn booking WITHOUT guestMobile AND userPhone (normal OTP flow)",
+      "route": "/diagyn -> Book Appointment -> PatientInfoModal",
+      "phone_empty": "PASS - Phone input is empty",
+      "phone_editable": "PASS - Phone input is ENABLED (editable)",
+      "verified_badge": "PASS - 'Verified via login' badge NOT shown",
+      "button_text": "PASS - Button says 'Continue' (goes to OTP step)"
+    }
+  },
+  "bugs_verified_fixed": [
+    {
+      "bug": "Guest users asked for OTP again during DiaGyn booking despite already verifying via OTP at guest login",
+      "fix_location": "DiaGynRedesigned.js PatientInfoModal - lines 1390-1393, 1440-1457, 1577-1593",
+      "fix_description": "Added isAlreadyVerified check using guestMobile || userPhone to auto-bypass OTP verification and show 'Book Appointment' button instead of 'Continue'"
+    },
+    {
+      "bug": "Guest users asked for OTP again during checkout flows (PharmacyCheckout, MangoCheckout, UnifiedCheckout)",
+      "fix_location": "PharmacyCheckout.jsx lines 56-58, MangoCheckout.jsx lines 73-74, UnifiedCheckout.jsx lines 92-99",
+      "fix_description": "Added isGuestVerified check that reads guestMobile || userPhone from localStorage to auto-bypass OTP verification"
+    }
+  ],
+  "implementation_notes": {
+    "key_logic": "const guestMobile = localStorage.getItem('guestMobile') || localStorage.getItem('userPhone') || ''; const isAlreadyVerified = Boolean(guestMobile);",
+    "affected_files": [
+      "DiaGynRedesigned.js - PatientInfoModal component",
+      "PharmacyCheckout.jsx",
+      "MangoCheckout.jsx",
+      "UnifiedCheckout.jsx"
+    ],
+    "ui_changes": [
+      "Phone field shows green 'Verified via login' badge when verified",
+      "Phone field is disabled (not editable) when verified",
+      "Button text changes from 'Continue' to 'Book Appointment' when verified",
+      "OTP input fields and 'Send OTP' button are hidden when verified"
+    ]
+  }
+}

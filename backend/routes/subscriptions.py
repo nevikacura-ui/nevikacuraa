@@ -249,6 +249,7 @@ class CouponValidateResponse(BaseModel):
     valid: bool
     discount_percent: int = 0
     message: str
+    duration_days: Optional[int] = None
 
 class SubscriptionCreateRequest(BaseModel):
     plan_type: str
@@ -362,8 +363,78 @@ async def validate_coupon(request: CouponValidateRequest):
     return CouponValidateResponse(
         valid=True,
         discount_percent=coupon.get("discount_percent", 100),
-        message=f"Coupon valid! {coupon.get('discount_percent', 100)}% discount applied"
+        message=f"Coupon valid! {coupon.get('discount_percent', 100)}% discount applied",
+        duration_days=coupon.get("duration_days", 180)
     )
+
+class RedeemCouponRequest(BaseModel):
+    coupon_code: str
+    plan_type: str
+    patient_id: str
+    patient_name: str
+    patient_email: str
+    patient_phone: Optional[str] = ""
+    device_id: Optional[str] = None
+
+@router.post("/redeem-coupon")
+async def redeem_coupon(request: RedeemCouponRequest):
+    """Redeem a 100% discount coupon to activate free subscription"""
+    coupon = await db.coupons.find_one({
+        "code": request.coupon_code.upper(),
+        "plan_type": request.plan_type,
+        "is_active": True
+    })
+    
+    if not coupon:
+        return {"success": False, "message": "Invalid or expired coupon code"}
+    
+    if coupon.get("used_by"):
+        return {"success": False, "message": "Coupon already used"}
+    
+    if coupon.get("expires_at"):
+        expiry = datetime.fromisoformat(coupon["expires_at"].replace("Z", "+00:00"))
+        if datetime.now(timezone.utc) > expiry:
+            return {"success": False, "message": "Coupon has expired"}
+    
+    discount = coupon.get("discount_percent", 100)
+    if discount < 100:
+        return {"success": False, "message": "This coupon requires payment. Use checkout instead."}
+    
+    duration = coupon.get("duration_days", 180)
+    
+    # Activate subscription
+    subscription = await activate_subscription(
+        patient_id=request.patient_id,
+        patient_name=request.patient_name,
+        patient_phone=request.patient_phone,
+        patient_email=request.patient_email,
+        plan_type=request.plan_type,
+        payment_method="coupon_redeem",
+        coupon_code=request.coupon_code.upper(),
+        amount_paid=0
+    )
+    
+    # Mark coupon as used
+    await db.coupons.update_one(
+        {"code": request.coupon_code.upper()},
+        {"$set": {
+            "used_by": request.patient_id,
+            "used_at": datetime.now(timezone.utc).isoformat(),
+            "used_email": request.patient_email,
+            "used_device": request.device_id,
+            "is_active": False
+        }}
+    )
+    
+    logger.info(f"Coupon redeemed: {request.coupon_code} by {request.patient_id} for {request.plan_type}")
+    
+    return {
+        "success": True,
+        "subscription_id": subscription["subscription_id"],
+        "plan_name": subscription["plan_name"],
+        "duration_days": duration,
+        "message": f"Subscription activated! Enjoy {duration // 30} months free access."
+    }
 
 @router.post("/create-checkout")
 async def create_subscription_checkout(request: SubscriptionCreateRequest):
@@ -423,7 +494,7 @@ async def create_subscription_checkout(request: SubscriptionCreateRequest):
     if not stripe_api_key:
         raise HTTPException(status_code=500, detail="Payment system not configured")
     
-    host_url = os.environ.get("REACT_APP_BACKEND_URL", "https://staff-pay-portal-1.preview.emergentagent.com")
+    host_url = os.environ.get("REACT_APP_BACKEND_URL", "https://premium-rx-portal.preview.emergentagent.com")
     webhook_url = f"{host_url}/api/webhook/subscription"
     
     stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
@@ -728,6 +799,91 @@ async def admin_generate_coupons(
         "discount_percent": discount_percent,
         "expires_at": expiry_date.isoformat(),
         "sample_codes": [c["code"] for c in coupons[:10]]
+    }
+
+@router.post("/admin/generate-and-email-coupons")
+async def generate_and_email_coupons(
+    email_to: str = "nevikacura@gmail.com",
+    count: int = 100,
+    validity_days: int = 365
+):
+    """Generate 100 coupons each for Glydex & Evara (6 months free) and email them"""
+    from services.notification_service import send_email_notification
+    
+    all_codes = {"glydex": [], "evara": []}
+    expiry_date = datetime.now(timezone.utc) + timedelta(days=validity_days)
+    
+    for plan_type in ["glydex", "evara"]:
+        prefix = "GLY" if plan_type == "glydex" else "EVA"
+        coupons = []
+        for _ in range(count):
+            code = generate_coupon_code(prefix)
+            coupon = {
+                "code": code,
+                "plan_type": plan_type,
+                "discount_percent": 100,
+                "duration_days": 180,
+                "is_active": True,
+                "used_by": None,
+                "used_at": None,
+                "coupon_type": "6_month_free",
+                "expires_at": expiry_date.isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            coupons.append(coupon)
+            all_codes[plan_type].append(code)
+        
+        await db.coupons.insert_many(coupons)
+    
+    # Build HTML email
+    glydex_codes_html = "".join([f"<tr><td style='padding:4px 12px;border:1px solid #e5e7eb;font-family:monospace;font-size:14px;'>{c}</td></tr>" for c in all_codes["glydex"]])
+    evara_codes_html = "".join([f"<tr><td style='padding:4px 12px;border:1px solid #e5e7eb;font-family:monospace;font-size:14px;'>{c}</td></tr>" for c in all_codes["evara"]])
+    
+    html = f"""
+    <div style="font-family:Arial,sans-serif;max-width:700px;margin:0 auto;padding:20px;">
+      <h1 style="color:#0d9488;">Nevika Cura - Subscription Coupon Codes</h1>
+      <p>Generated {count} unique coupon codes for each portal. Each code grants <strong>6 months free premium access</strong>.</p>
+      <p>Expiry: <strong>{expiry_date.strftime('%d %b %Y')}</strong></p>
+      
+      <h2 style="color:#3b82f6;margin-top:30px;">Glydex (Diabetes Management) - {count} Codes</h2>
+      <table style="border-collapse:collapse;width:100%;margin-bottom:30px;">{glydex_codes_html}</table>
+      
+      <h2 style="color:#ec4899;margin-top:30px;">Evara (Women's Health) - {count} Codes</h2>
+      <table style="border-collapse:collapse;width:100%;margin-bottom:30px;">{evara_codes_html}</table>
+      
+      <hr style="border:1px solid #e5e7eb;margin:30px 0;">
+      <p style="color:#6b7280;font-size:12px;">This email was auto-generated by Nevika Cura. Each code is single-use and device/email-bound on first validation.</p>
+    </div>
+    """
+    
+    try:
+        await send_email_notification(
+            subject=f"Nevika Cura - {count * 2} Subscription Coupon Codes (Glydex + Evara)",
+            html_content=html,
+            patient_email=email_to
+        )
+        logger.info(f"Coupon codes emailed to {email_to}: {count} glydex + {count} evara")
+    except Exception as e:
+        logger.error(f"Failed to email coupons: {e}")
+        return {
+            "success": True,
+            "email_sent": False,
+            "error": str(e),
+            "glydex_count": count,
+            "evara_count": count,
+            "glydex_sample": all_codes["glydex"][:5],
+            "evara_sample": all_codes["evara"][:5]
+        }
+    
+    return {
+        "success": True,
+        "email_sent": True,
+        "email_to": email_to,
+        "glydex_count": count,
+        "evara_count": count,
+        "glydex_sample": all_codes["glydex"][:5],
+        "evara_sample": all_codes["evara"][:5],
+        "expires_at": expiry_date.isoformat()
     }
 
 # ==================== FREE TRIAL ====================
@@ -1470,13 +1626,22 @@ async def purchase_membership(request: MembershipPurchaseRequest):
     if request.coupon_code:
         coupon = await db.coupons.find_one({
             "code": request.coupon_code.upper(),
-            "is_active": True
+            "is_active": True,
+            "used_by": None
         })
         if coupon:
             discount = coupon.get("discount_percent", 0)
             price = int(price * (100 - discount) / 100)
+        elif request.coupon_code:
+            raise HTTPException(status_code=400, detail="Invalid or already used coupon code")
     
     if price == 0:
+        # Mark coupon as used
+        if request.coupon_code:
+            await db.coupons.update_one(
+                {"code": request.coupon_code.upper()},
+                {"$set": {"is_active": False, "used_by": request.email.lower(), "used_at": datetime.now(timezone.utc).isoformat()}}
+            )
         # Free membership with 100% coupon
         membership = {
             "id": f"MEM-{datetime.now().strftime('%Y%m%d%H%M%S')}-{random.randint(1000, 9999)}",
@@ -1504,15 +1669,72 @@ async def purchase_membership(request: MembershipPurchaseRequest):
             "message": "Membership activated! Please complete your profile."
         }
     
-    # Redirect to Cashfree - return info for frontend to create Cashfree order
-    return {
-        "success": False,
-        "redirect_to_cashfree": True,
-        "plan_name": plan["name"],
-        "amount": price,
-        "billing_cycle": request.billing_cycle,
-        "message": "Please use /api/payments/cashfree/create-order for payment"
-    }
+    # Create Cashfree order for paid membership
+    try:
+        from routes.cashfree import init_cashfree, API_VERSION
+        from cashfree_pg.models.create_order_request import CreateOrderRequest as CFOrderRequest
+        from cashfree_pg.models.customer_details import CustomerDetails
+        from cashfree_pg.models.order_meta import OrderMeta
+        import random as _rand
+
+        timestamp = int(datetime.now(timezone.utc).timestamp())
+        order_id = f"NC_MEMBERSHIP_{timestamp}_{_rand.randint(1000,9999)}"
+        frontend_url = os.environ.get("FRONTEND_URL", os.environ.get("CORS_ORIGINS", "http://localhost:3000").split(",")[0])
+        return_url = f"{frontend_url}/one?order_id={order_id}"
+
+        cashfree = init_cashfree()
+        customer_details = CustomerDetails(
+            customer_id=f"MEM_{request.email.split('@')[0]}_{timestamp}",
+            customer_phone="9999999999",
+            customer_email=request.email,
+            customer_name=request.email.split('@')[0]
+        )
+        order_meta = OrderMeta(return_url=return_url)
+        create_req = CFOrderRequest(
+            order_id=order_id,
+            order_amount=float(price),
+            order_currency="INR",
+            customer_details=customer_details,
+            order_meta=order_meta
+        )
+        response = cashfree.PGCreateOrder(API_VERSION, create_req, None, None)
+
+        if response and response.data:
+            await db.cashfree_orders.insert_one({
+                "order_id": order_id,
+                "cf_order_id": response.data.cf_order_id,
+                "payment_session_id": response.data.payment_session_id,
+                "customer_email": request.email,
+                "customer_phone": "9999999999",
+                "customer_name": request.email.split('@')[0],
+                "amount": price,
+                "currency": "INR",
+                "product_type": "membership",
+                "product_id": request.plan_type,
+                "membership_plan": request.plan_type,
+                "billing_cycle": request.billing_cycle,
+                "plan_name": plan["name"],
+                "duration_days": duration_days,
+                "order_status": "ACTIVE",
+                "payment_status": "PENDING",
+                "payment_gateway": "cashfree",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            return {
+                "success": True,
+                "redirect_to_cashfree": True,
+                "payment_session_id": response.data.payment_session_id,
+                "order_id": order_id,
+                "plan_name": plan["name"],
+                "amount": price,
+                "billing_cycle": request.billing_cycle,
+            }
+        raise HTTPException(status_code=500, detail="Failed to create payment order")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Cashfree membership order error: {e}")
+        raise HTTPException(status_code=500, detail=f"Payment processing error: {str(e)}")
 
 class CompleteMembershipDetailsRequest(BaseModel):
     email: str
@@ -2020,3 +2242,211 @@ async def create_tiered_checkout(request: TieredCheckoutRequest):
     except Exception as e:
         logger.error(f"Stripe error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================
+# AUTO-REFILL MEDICINE SUBSCRIPTIONS
+# ============================================================
+
+class AutoRefillCreate(BaseModel):
+    patient_name: str
+    patient_phone: str
+    patient_email: Optional[str] = ""
+    items: list  # [{name, quantity, price}]
+    frequency_days: int = 30
+    delivery_address: str = ""
+    payment_method: str = "cod"
+    notes: str = ""
+
+
+@router.post("/auto-refill/create")
+async def create_auto_refill(data: AutoRefillCreate):
+    """Create a new medicine auto-refill subscription"""
+    import uuid as _uuid
+    now = datetime.now(timezone.utc)
+    next_refill = now + timedelta(days=data.frequency_days)
+    total_per_cycle = sum(i.get("price", 0) * i.get("quantity", 1) for i in data.items)
+
+    subscription = {
+        "id": str(_uuid.uuid4()),
+        "type": "auto_refill",
+        "patient_name": data.patient_name,
+        "patient_phone": data.patient_phone,
+        "patient_email": data.patient_email,
+        "items": data.items,
+        "frequency_days": data.frequency_days,
+        "delivery_address": data.delivery_address,
+        "payment_method": data.payment_method,
+        "notes": data.notes,
+        "total_per_cycle": total_per_cycle,
+        "discount_percent": 5,
+        "discounted_total": round(total_per_cycle * 0.95),
+        "status": "active",
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+        "next_refill_date": next_refill.isoformat(),
+        "last_refill_date": None,
+        "total_cycles_completed": 0,
+        "total_revenue": 0
+    }
+
+    await db.auto_refill_subscriptions.insert_one(subscription)
+    del subscription["_id"]
+    return {"success": True, "subscription": subscription}
+
+
+@router.get("/auto-refill/list")
+async def list_auto_refills(phone: str = None, status: str = None):
+    """List auto-refill subscriptions"""
+    query = {"type": "auto_refill"}
+    if phone:
+        query["patient_phone"] = phone
+    if status:
+        query["status"] = status
+
+    subs = await db.auto_refill_subscriptions.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return {"subscriptions": subs, "total": len(subs)}
+
+
+@router.get("/auto-refill/{sub_id}")
+async def get_auto_refill(sub_id: str):
+    """Get single auto-refill subscription"""
+    sub = await db.auto_refill_subscriptions.find_one({"id": sub_id}, {"_id": 0})
+    if not sub:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    return sub
+
+
+@router.put("/auto-refill/{sub_id}")
+async def update_auto_refill(sub_id: str, data: dict):
+    """Update auto-refill subscription"""
+    sub = await db.auto_refill_subscriptions.find_one({"id": sub_id})
+    if not sub:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+
+    allowed = ["items", "frequency_days", "delivery_address", "payment_method", "notes", "status"]
+    update = {k: v for k, v in data.items() if k in allowed}
+    update["updated_at"] = datetime.now(timezone.utc).isoformat()
+
+    if "items" in update:
+        total = sum(i.get("price", 0) * i.get("quantity", 1) for i in update["items"])
+        update["total_per_cycle"] = total
+        update["discounted_total"] = round(total * 0.95)
+    if "frequency_days" in update:
+        update["next_refill_date"] = (datetime.now(timezone.utc) + timedelta(days=update["frequency_days"])).isoformat()
+
+    await db.auto_refill_subscriptions.update_one({"id": sub_id}, {"$set": update})
+    updated = await db.auto_refill_subscriptions.find_one({"id": sub_id}, {"_id": 0})
+    return {"success": True, "subscription": updated}
+
+
+@router.post("/auto-refill/{sub_id}/pause")
+async def pause_auto_refill(sub_id: str, data: dict = {}):
+    """Pause auto-refill"""
+    sub = await db.auto_refill_subscriptions.find_one({"id": sub_id})
+    if not sub:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    pause_days = data.get("pause_days", 30)
+    await db.auto_refill_subscriptions.update_one({"id": sub_id}, {"$set": {
+        "status": "paused",
+        "pause_until": (datetime.now(timezone.utc) + timedelta(days=pause_days)).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }})
+    return {"success": True, "message": f"Paused for {pause_days} days"}
+
+
+@router.post("/auto-refill/{sub_id}/resume")
+async def resume_auto_refill(sub_id: str):
+    """Resume paused auto-refill"""
+    sub = await db.auto_refill_subscriptions.find_one({"id": sub_id})
+    if not sub:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    freq = sub.get("frequency_days", 30)
+    await db.auto_refill_subscriptions.update_one({"id": sub_id}, {"$set": {
+        "status": "active",
+        "pause_until": None,
+        "next_refill_date": (datetime.now(timezone.utc) + timedelta(days=freq)).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }})
+    return {"success": True, "message": "Subscription resumed"}
+
+
+@router.post("/auto-refill/{sub_id}/cancel")
+async def cancel_auto_refill(sub_id: str, data: dict = {}):
+    """Cancel auto-refill"""
+    sub = await db.auto_refill_subscriptions.find_one({"id": sub_id})
+    if not sub:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    await db.auto_refill_subscriptions.update_one({"id": sub_id}, {"$set": {
+        "status": "cancelled",
+        "cancelled_at": datetime.now(timezone.utc).isoformat(),
+        "cancel_reason": data.get("reason", ""),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }})
+    return {"success": True, "message": "Subscription cancelled"}
+
+
+@router.post("/auto-refill/process-due")
+async def process_due_auto_refills():
+    """Process all auto-refill subscriptions due today (cron endpoint)"""
+    import uuid as _uuid
+    now = datetime.now(timezone.utc).isoformat()
+    due = await db.auto_refill_subscriptions.find({
+        "status": "active",
+        "next_refill_date": {"$lte": now}
+    }, {"_id": 0}).to_list(500)
+
+    processed = 0
+    for sub in due:
+        try:
+            order = {
+                "id": str(_uuid.uuid4()),
+                "subscription_id": sub["id"],
+                "customer_name": sub["patient_name"],
+                "customer_phone": sub["patient_phone"],
+                "items": sub["items"],
+                "total_amount": sub.get("discounted_total", sub["total_per_cycle"]),
+                "delivery_address": sub["delivery_address"],
+                "payment_method": sub["payment_method"],
+                "status": "pending",
+                "type": "auto_refill",
+                "created_at": now
+            }
+            await db.pharmacy_orders.insert_one(order)
+            freq = sub.get("frequency_days", 30)
+            await db.auto_refill_subscriptions.update_one({"id": sub["id"]}, {"$set": {
+                "next_refill_date": (datetime.now(timezone.utc) + timedelta(days=freq)).isoformat(),
+                "last_refill_date": now,
+                "total_cycles_completed": sub.get("total_cycles_completed", 0) + 1,
+                "total_revenue": sub.get("total_revenue", 0) + sub.get("discounted_total", sub["total_per_cycle"]),
+                "updated_at": now
+            }})
+            processed += 1
+        except Exception as e:
+            logger.error(f"Auto-refill processing failed for {sub['id']}: {e}")
+
+    return {"success": True, "processed": processed, "total_due": len(due)}
+
+
+@router.get("/auto-refill/dashboard/stats")
+async def auto_refill_dashboard():
+    """Dashboard stats for staff portal"""
+    active = await db.auto_refill_subscriptions.count_documents({"status": "active"})
+    paused = await db.auto_refill_subscriptions.count_documents({"status": "paused"})
+    cancelled = await db.auto_refill_subscriptions.count_documents({"status": "cancelled"})
+
+    pipeline = [
+        {"$match": {"status": "active"}},
+        {"$group": {"_id": None, "mrr": {"$sum": "$discounted_total"}, "avg": {"$avg": "$discounted_total"}}}
+    ]
+    rev = await db.auto_refill_subscriptions.aggregate(pipeline).to_list(1)
+    r = rev[0] if rev else {"mrr": 0, "avg": 0}
+
+    return {
+        "active": active,
+        "paused": paused,
+        "cancelled": cancelled,
+        "monthly_recurring_revenue": r.get("mrr", 0),
+        "avg_order_value": round(r.get("avg", 0)),
+        "total_subscriptions": active + paused + cancelled
+    }

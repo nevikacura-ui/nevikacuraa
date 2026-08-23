@@ -1,0 +1,95 @@
+{
+  "summary": "Boarding Pass v3 Hybrid Design Testing - All 12 features tested. Frontend: All 3 variants (DiaGyn/lavender, Mango/green, Orange/orange) render correctly with dark header + white body + barcode. Backend: 24h duplicate appointment blocking works, CuraBonus removed from PharmacyCheckout, ₹49 delivery charge logic verified.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "/api/send-booking-email",
+        "issue": "Returns 'Invalid email' when using 'patient_email' key instead of 'email' - minor API contract issue",
+        "priority": "LOW"
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_boarding_pass_features.py",
+    "/app/test_reports/iteration_369.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "BookingConfirmation.jsx: Hybrid design with dark header (#1a1a1a) + white body working correctly",
+    "Theme-colored page backgrounds: DiaGyn (lavender gradient), Mango (green gradient), Orange (orange gradient)",
+    "DiaGyn shows 'Consultation fee to be paid at clinic' when amount=0 (no ₹ displayed)",
+    "CONFIRMED badge (#DFFF00 yellow-green) displays on all variants",
+    "Barcode visual renders with booking ID",
+    "PharmacyCheckout.jsx: No CuraBonus/cura_bonus references found - widget removed",
+    "CartPage.jsx line 169: deliveryCharge = (pharmacyCart.length > 0 && pharmSubtotal < 1000) ? 49 : 0",
+    "appointment_routes.py lines 242-258 and 740-754: 24h duplicate blocking implemented correctly",
+    "email_templates.py: appointment_confirmation_email uses _boarding_pass_card for DiaGyn emails"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (3/3 tests passed)",
+    "frontend": "100% (12/12 features verified)"
+  },
+  "test_credentials": "No auth required - booking confirmation pages accessible via URL params",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Boarding pass v3 hybrid design fully tested. All 3 variants working with theme-colored page backgrounds. 24h duplicate appointment blocking verified. CuraBonus removed from PharmacyCheckout. ₹49 delivery charge for orders under ₹1000 implemented.",
+  "features_tested": {
+    "DiaGyn_lavender_bg": {
+      "status": "PASS",
+      "details": "Lavender gradient background (rgb(200,184,216) to rgb(160,140,184)), dark header, white body"
+    },
+    "Mango_green_bg": {
+      "status": "PASS",
+      "details": "Green gradient background (rgb(45,142,70) to rgb(20,82,35)), dark header, white body"
+    },
+    "Orange_orange_bg": {
+      "status": "PASS",
+      "details": "Orange gradient background (rgb(234,122,46) to rgb(184,74,10)), dark header, white body"
+    },
+    "DiaGyn_no_fee_message": {
+      "status": "PASS",
+      "details": "Shows 'Consultation fee to be paid at clinic' when amount=0 (no ₹ amount displayed)"
+    },
+    "CONFIRMED_badge": {
+      "status": "PASS",
+      "details": "Yellow-green (#DFFF00) badge visible on all 3 variants"
+    },
+    "Add_to_Calendar_button": {
+      "status": "PASS",
+      "details": "Button visible and clickable on all variants"
+    },
+    "Download_Image_button": {
+      "status": "PASS",
+      "details": "Button visible and clickable on all variants"
+    },
+    "Barcode_visual": {
+      "status": "PASS",
+      "details": "Barcode renders with booking ID text below"
+    },
+    "PharmacyCheckout_no_CuraBonus": {
+      "status": "PASS",
+      "details": "No CuraBonus/cura_bonus references in PharmacyCheckout.jsx"
+    },
+    "Cart_delivery_charge_49": {
+      "status": "PASS",
+      "details": "₹49 delivery for orders under ₹1000, FREE for ₹1000+ (line 169)"
+    },
+    "24h_duplicate_blocking": {
+      "status": "PASS",
+      "details": "Same patient cannot book multiple appointments within 24 hours (lines 242-258, 740-754)"
+    },
+    "Email_template_boarding_pass": {
+      "status": "PASS",
+      "details": "appointment_confirmation_email uses _boarding_pass_card for DiaGyn emails"
+    }
+  },
+  "console_errors": "Only expected vibrate API warning in automated testing (not a real error)"
+}

@@ -1,13 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { 
-  Mail, Lock, MessageCircle, Loader2, ArrowLeft, CheckCircle2, 
-  Eye, EyeOff, Phone, User, ChevronRight, Shield
-} from 'lucide-react';
+import { ArrowRight, Loader2, Eye, EyeOff, Shield, Stethoscope, ArrowLeft, Mail, MessageCircle } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -17,8 +12,8 @@ const PatientLogin = () => {
   // Auth method selection
   const [authMethod, setAuthMethod] = useState('email'); // 'email' or 'whatsapp'
   
-  // Step tracking
-  const [step, setStep] = useState('choose'); // 'choose', 'otp', 'password', 'create-password'
+  // Step tracking: 'choose', 'enter-phone', 'otp', 'password', 'create-password'
+  const [step, setStep] = useState('choose');
   
   // Form data
   const [email, setEmail] = useState('');
@@ -31,7 +26,7 @@ const PatientLogin = () => {
   
   // Flow state
   const [verificationToken, setVerificationToken] = useState('');
-  const [flowType, setFlowType] = useState(''); // 'signup', 'set_password', 'login_with_password'
+  const [flowType, setFlowType] = useState('');
   const [needsEmail, setNeedsEmail] = useState(false);
   const [hasPassword, setHasPassword] = useState(false);
   
@@ -42,7 +37,6 @@ const PatientLogin = () => {
   // OTP input refs
   const otpRefs = useRef([]);
 
-  // Resend timer countdown
   useEffect(() => {
     if (resendTimer > 0) {
       const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
@@ -50,7 +44,6 @@ const PatientLogin = () => {
     }
   }, [resendTimer]);
 
-  // Focus first OTP input when step changes to OTP
   useEffect(() => {
     if (step === 'otp') {
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
@@ -58,6 +51,17 @@ const PatientLogin = () => {
   }, [step]);
 
   // ============ HANDLERS ============
+
+  const handleSelectEmail = () => {
+    setAuthMethod('email');
+    // Email input is already on the choose screen, just focus it
+    document.querySelector('[data-testid="email-input"]')?.focus();
+  };
+
+  const handleSelectWhatsApp = () => {
+    setAuthMethod('whatsapp');
+    setStep('enter-phone');
+  };
 
   const handleSendOTP = async () => {
     if (authMethod === 'email') {
@@ -91,19 +95,15 @@ const PatientLogin = () => {
       
       if (res.ok && data.success) {
         toast.success(`OTP sent via ${authMethod === 'email' ? 'Email' : 'WhatsApp'}!`);
-        
-        // Handle flow type
         setFlowType(data.flow_type);
         setHasPassword(data.has_password || false);
         
-        // Show mock OTP in dev
         if (data.mock_otp) {
           toast.info(`Test OTP: ${data.mock_otp}`, { duration: 15000 });
         }
         
         setResendTimer(30);
         
-        // If user has password and is logging in, show password form
         if (data.flow_type === 'login_with_password' && data.has_password) {
           setStep('password');
         } else {
@@ -147,15 +147,12 @@ const PatientLogin = () => {
       
       if (res.ok && data.success) {
         toast.success(data.message || 'Verified!');
-        
         setVerificationToken(data.verification_token);
         setNeedsEmail(data.needs_email || false);
         
-        // If needs password, go to password creation
         if (data.needs_password) {
           setStep('create-password');
         } else {
-          // Should not happen normally, but handle it
           toast.success('Login successful!');
         }
       } else {
@@ -190,23 +187,15 @@ const PatientLogin = () => {
       const data = await res.json();
       
       if (res.ok && data.success) {
-        // Save auth data - ONLY use patientToken, not token (to avoid AuthContext conflict)
-        console.log('Login successful, saving token:', data.token ? 'TOKEN_EXISTS' : 'NO_TOKEN');
-        
         if (data.token) {
           localStorage.setItem('patientToken', data.token);
-          // Don't set 'token' - that's for staff/admin auth
         }
         localStorage.setItem('patientInfo', JSON.stringify(data.user));
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('patientLoginExpiry', (Date.now() + 30 * 24 * 60 * 60 * 1000).toString());
         
-        // Verify storage was saved
-        console.log('Token saved check:', localStorage.getItem('patientToken') ? 'OK' : 'FAILED');
-        
         toast.success(data.message || 'Login successful!');
         
-        // Navigate to home or intended destination
         setTimeout(() => {
           navigate('/');
           window.location.reload();
@@ -233,7 +222,6 @@ const PatientLogin = () => {
       return;
     }
     
-    // For WhatsApp signups, validate email
     if (needsEmail && (!email || !email.includes('@'))) {
       toast.error('Please enter a valid email address');
       return;
@@ -257,12 +245,10 @@ const PatientLogin = () => {
       const data = await res.json();
       
       if (res.ok && data.success) {
-        // Save auth data - ONLY use patientToken, not token
         localStorage.setItem('patientToken', data.token);
         localStorage.setItem('patientInfo', JSON.stringify(data.user));
         localStorage.setItem('patientLoginExpiry', (Date.now() + 30 * 24 * 60 * 60 * 1000).toString());
         localStorage.setItem('user', JSON.stringify(data.user));
-        // Don't set 'token' - that's for staff/admin auth
         
         toast.success(data.message || 'Account created successfully!');
         
@@ -297,22 +283,16 @@ const PatientLogin = () => {
     }
   };
 
-  const handleOTPPaste = (e) => {
-    e.preventDefault();
-    const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-    const newOtp = [...otp];
-    paste.split('').forEach((char, i) => {
-      if (i < 6) newOtp[i] = char;
-    });
-    setOtp(newOtp);
-    if (paste.length === 6) {
-      otpRefs.current[5]?.focus();
-    }
-  };
-
   const goBack = () => {
-    if (step === 'otp' || step === 'password') {
+    if (step === 'enter-phone') {
       setStep('choose');
+      setPhone('');
+    } else if (step === 'otp' || step === 'password') {
+      if (authMethod === 'whatsapp') {
+        setStep('enter-phone');
+      } else {
+        setStep('choose');
+      }
       setOtp(['', '', '', '', '', '']);
       setPassword('');
     } else if (step === 'create-password') {
@@ -322,434 +302,434 @@ const PatientLogin = () => {
     }
   };
 
-  // ============ RENDER HELPERS ============
-
-  const renderChooseMethod = () => (
-    <div className="space-y-6">
-      {/* Auth Method Toggle */}
-      <div className="flex gap-2 bg-slate-100 p-1 rounded-xl">
-        <button
-          onClick={() => setAuthMethod('email')}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all ${
-            authMethod === 'email' 
-              ? 'bg-white text-teal-600 shadow-sm' 
-              : 'text-slate-500 hover:text-slate-700'
-          }`}
-          data-testid="auth-method-email"
-        >
-          <Mail className="w-4 h-4" />
-          Email
-        </button>
-        <button
-          onClick={() => setAuthMethod('whatsapp')}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all ${
-            authMethod === 'whatsapp' 
-              ? 'bg-white text-green-600 shadow-sm' 
-              : 'text-slate-500 hover:text-slate-700'
-          }`}
-          data-testid="auth-method-whatsapp"
-        >
-          <MessageCircle className="w-4 h-4" />
-          WhatsApp
-        </button>
-      </div>
-
-      {/* Input Field */}
-      {authMethod === 'email' ? (
-        <div className="space-y-2">
-          <Label className="text-slate-700">Email Address</Label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="pl-11 py-6 text-base"
-              data-testid="email-input"
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <Label className="text-slate-700">Mobile Number</Label>
-          <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-slate-500 font-medium">
-              +91
-            </div>
-            <Input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-              placeholder="Enter 10-digit number"
-              className="pl-14 py-6 text-base"
-              maxLength={10}
-              data-testid="phone-input"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Continue Button */}
-      <Button
-        onClick={handleSendOTP}
-        disabled={loading}
-        className={`w-full py-6 text-base font-semibold rounded-xl ${
-          authMethod === 'email'
-            ? 'bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600'
-            : 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
-        }`}
-        data-testid="send-otp-btn"
-      >
-        {loading ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
-        ) : (
-          <>
-            Continue
-            <ChevronRight className="w-5 h-5 ml-2" />
-          </>
-        )}
-      </Button>
-
-      <p className="text-xs text-center text-slate-500">
-        {authMethod === 'email' 
-          ? 'We\'ll send a verification code to your email'
-          : 'We\'ll send a verification code via WhatsApp'
-        }
-      </p>
-    </div>
-  );
-
-  const renderOTPInput = () => (
-    <div className="space-y-6">
-      <div className="text-center">
-        <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center ${
-          authMethod === 'email' ? 'bg-teal-100' : 'bg-green-100'
-        }`}>
-          {authMethod === 'email' ? (
-            <Mail className="w-8 h-8 text-teal-600" />
-          ) : (
-            <MessageCircle className="w-8 h-8 text-green-600" />
-          )}
-        </div>
-        <h2 className="text-xl font-bold text-slate-800">Enter Verification Code</h2>
-        <p className="text-slate-500 mt-1">
-          Sent to {authMethod === 'email' ? email : `+91 ${phone}`}
-        </p>
-      </div>
-
-      {/* OTP Input */}
-      <div className="flex justify-center gap-3" onPaste={handleOTPPaste}>
-        {otp.map((digit, index) => (
-          <input
-            key={index}
-            ref={(el) => (otpRefs.current[index] = el)}
-            type="text"
-            inputMode="numeric"
-            value={digit}
-            onChange={(e) => handleOTPChange(index, e.target.value)}
-            onKeyDown={(e) => handleOTPKeyDown(index, e)}
-            className="w-12 h-14 text-center text-2xl font-bold border-2 border-slate-200 rounded-xl focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition-all"
-            maxLength={1}
-            data-testid={`otp-input-${index}`}
-          />
-        ))}
-      </div>
-
-      <Button
-        onClick={handleVerifyOTP}
-        disabled={loading || otp.join('').length !== 6}
-        className={`w-full py-6 text-base font-semibold rounded-xl ${
-          authMethod === 'email'
-            ? 'bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600'
-            : 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
-        }`}
-        data-testid="verify-otp-btn"
-      >
-        {loading ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
-        ) : (
-          <>
-            <CheckCircle2 className="w-5 h-5 mr-2" />
-            Verify & Continue
-          </>
-        )}
-      </Button>
-
-      {/* Resend OTP */}
-      <div className="text-center">
-        {resendTimer > 0 ? (
-          <p className="text-slate-500 text-sm">
-            Resend code in <span className="font-semibold text-teal-600">{resendTimer}s</span>
-          </p>
-        ) : (
-          <button
-            onClick={handleSendOTP}
-            className="text-teal-600 font-semibold text-sm hover:underline"
-            disabled={loading}
-          >
-            Resend Code
-          </button>
-        )}
-      </div>
-    </div>
-  );
-
-  const renderPasswordLogin = () => (
-    <div className="space-y-6">
-      <div className="text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-100 flex items-center justify-center">
-          <Lock className="w-8 h-8 text-slate-600" />
-        </div>
-        <h2 className="text-xl font-bold text-slate-800">Welcome Back!</h2>
-        <p className="text-slate-500 mt-1">
-          Enter your password to login
-        </p>
-      </div>
-
-      <div className="space-y-2">
-        <Label className="text-slate-700">Password</Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-          <Input
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-            className="pl-11 pr-11 py-6 text-base"
-            data-testid="password-input"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-          >
-            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-          </button>
-        </div>
-      </div>
-
-      <Button
-        onClick={handlePasswordLogin}
-        disabled={loading || !password}
-        className="w-full py-6 text-base font-semibold rounded-xl bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900"
-        data-testid="password-login-btn"
-      >
-        {loading ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
-        ) : (
-          <>
-            <Lock className="w-5 h-5 mr-2" />
-            Login
-          </>
-        )}
-      </Button>
-
-      {/* Forgot Password - Use OTP */}
-      <div className="text-center">
-        <button
-          onClick={() => setStep('otp')}
-          className="text-teal-600 font-medium text-sm hover:underline"
-        >
-          Forgot password? Login with OTP
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderCreatePassword = () => (
-    <div className="space-y-5">
-      <div className="text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-100 flex items-center justify-center">
-          <User className="w-8 h-8 text-emerald-600" />
-        </div>
-        <h2 className="text-xl font-bold text-slate-800">
-          {flowType === 'signup' ? 'Create Your Account' : 'Set Your Password'}
-        </h2>
-        <p className="text-slate-500 mt-1">
-          {flowType === 'signup' 
-            ? 'Complete your profile to get started'
-            : 'Create a password for quick login'
-          }
-        </p>
-      </div>
-
-      {/* Name (for new signups) */}
-      {flowType === 'signup' && (
-        <div className="space-y-2">
-          <Label className="text-slate-700">Your Name</Label>
-          <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <Input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-              className="pl-11 py-5"
-              data-testid="name-input"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Email (for WhatsApp signups) */}
-      {needsEmail && (
-        <div className="space-y-2">
-          <Label className="text-slate-700">Email Address</Label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="pl-11 py-5"
-              data-testid="email-collect-input"
-            />
-          </div>
-          <p className="text-xs text-slate-500">We'll use this for order updates and receipts</p>
-        </div>
-      )}
-
-      {/* Password */}
-      <div className="space-y-2">
-        <Label className="text-slate-700">Create Password</Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-          <Input
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Create a password (min 6 chars)"
-            className="pl-11 pr-11 py-5"
-            data-testid="create-password-input"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-          >
-            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Confirm Password */}
-      <div className="space-y-2">
-        <Label className="text-slate-700">Confirm Password</Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-          <Input
-            type={showPassword ? 'text' : 'password'}
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirm your password"
-            className="pl-11 py-5"
-            data-testid="confirm-password-input"
-          />
-        </div>
-        {confirmPassword && password !== confirmPassword && (
-          <p className="text-xs text-red-500">Passwords do not match</p>
-        )}
-      </div>
-
-      <Button
-        onClick={handleCreatePassword}
-        disabled={loading || password.length < 6 || password !== confirmPassword}
-        className="w-full py-6 text-base font-semibold rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
-        data-testid="create-account-btn"
-      >
-        {loading ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
-        ) : (
-          <>
-            <CheckCircle2 className="w-5 h-5 mr-2" />
-            {flowType === 'signup' ? 'Create Account' : 'Set Password & Login'}
-          </>
-        )}
-      </Button>
-    </div>
-  );
+  // ============ RENDER ============
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-emerald-50/20">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
-        <div className="max-w-md mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <button 
-              onClick={goBack}
-              className="flex items-center gap-2 text-slate-600 hover:text-teal-600 transition-colors"
-              data-testid="back-btn"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span className="font-medium">Back</span>
-            </button>
-            <img 
-              src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
-              alt="Nevika Cura" 
-              className="h-10 w-auto object-contain cursor-pointer"
-              onClick={() => navigate('/')}
-            />
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-md mx-auto px-4 py-8">
-        {/* Title Section */}
-        {step === 'choose' && (
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-slate-800 mb-2">
-              Login or Sign Up
-            </h1>
-            <p className="text-slate-500">
-              Access your health records, bookings & more
-            </p>
-          </div>
+    <div className="min-h-screen bg-[#050510] flex items-center justify-center p-4">
+      {/* Glassmorphism Card */}
+      <div className="relative w-full max-w-md">
+        {/* Glow effects */}
+        {step === 'otp' ? (
+          <>
+            <div className="absolute left-1/4 -bottom-8 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl" />
+            <div className="absolute right-1/4 -bottom-4 w-32 h-32 bg-pink-400/15 rounded-full blur-2xl" />
+            <div className="absolute -left-4 top-1/4 w-24 h-24 bg-blue-500/20 rounded-full blur-2xl" />
+          </>
+        ) : (
+          <>
+            <div className="absolute -left-4 top-1/4 w-32 h-32 bg-teal-500/30 rounded-full blur-3xl" />
+            <div className="absolute -left-8 top-1/3 w-24 h-24 bg-cyan-400/20 rounded-full blur-2xl" />
+          </>
         )}
-
+        
         {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-6">
-          {step === 'choose' && renderChooseMethod()}
-          {step === 'otp' && renderOTPInput()}
-          {step === 'password' && renderPasswordLogin()}
-          {step === 'create-password' && renderCreatePassword()}
-        </div>
+        <div className="relative backdrop-blur-xl bg-gradient-to-br from-white/10 via-white/5 to-transparent border border-white/10 rounded-3xl p-8 shadow-2xl">
+          {/* Gradient border effect for OTP screen */}
+          {step === 'otp' && (
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-teal-500/20 via-transparent to-purple-500/20 pointer-events-none" />
+          )}
+          
+          <div className="relative z-10">
+            
+            {/* ========== STEP: CHOOSE ========== */}
+            {step === 'choose' && (
+              <>
+                {/* Header */}
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold text-white mb-2">Welcome back</h1>
+                  <p className="text-gray-400 text-sm">Sign in to your account</p>
+                </div>
 
-        {/* Staff & Doctor Login - Footer */}
-        <div className="mt-8 pt-6 border-t border-slate-200">
-          <div className="text-center">
-            <p className="text-sm text-slate-500 mb-3">Staff or Healthcare Provider?</p>
-            <div className="flex gap-2 justify-center">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/staff-portal-login')}
-                className="text-teal-600 border-teal-200 hover:bg-teal-50"
-                data-testid="staff-login-footer-btn"
-              >
-                <Shield className="w-4 h-4 mr-2" />
-                Staff Portal
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/doctor-login')}
-                className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                data-testid="doctor-login-footer-btn"
-              >
-                <User className="w-4 h-4 mr-2" />
-                Doctor Portal
-              </Button>
-            </div>
+                <div className="space-y-4">
+                  {/* Email Input */}
+                  <div className="space-y-2">
+                    <label className="text-xs text-gray-400 uppercase tracking-wide">Email</label>
+                    <div className="relative">
+                      <Input
+                        type="email"
+                        value={email}
+                        onChange={(e) => { setEmail(e.target.value); setAuthMethod('email'); }}
+                        placeholder="username@gmail.com"
+                        className="w-full h-12 bg-[#1a1a1a]/80 border-white/10 rounded-xl text-white placeholder:text-gray-500 pr-14 focus:border-teal-500/50 focus:ring-teal-500/20"
+                        onKeyDown={(e) => e.key === 'Enter' && handleSendOTP()}
+                        data-testid="email-input"
+                      />
+                      <button
+                        onClick={handleSendOTP}
+                        disabled={loading || !email}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full flex items-center justify-center hover:from-teal-500 hover:to-cyan-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-teal-500/30"
+                        data-testid="send-otp-btn"
+                      >
+                        {loading && authMethod === 'email' ? (
+                          <Loader2 className="w-4 h-4 text-white animate-spin" />
+                        ) : (
+                          <ArrowRight className="w-4 h-4 text-white" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white/10"></div>
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-[#050510] px-4 text-xs text-gray-500 uppercase">Or</span>
+                    </div>
+                  </div>
+
+                  {/* Login Method Buttons */}
+                  <div className="space-y-3">
+                    {/* Email Button */}
+                    <button
+                      onClick={handleSelectEmail}
+                      className="w-full h-12 bg-[#1a1a1a]/80 hover:bg-[#252525] border border-white/10 rounded-xl flex items-center justify-between px-4 transition-all group"
+                      data-testid="email-login-btn"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Mail className="w-5 h-5 text-teal-400" />
+                        <span className="text-gray-300 text-sm font-medium">Login by Email</span>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-gray-300 transition-colors" />
+                    </button>
+
+                    {/* WhatsApp Button */}
+                    <button
+                      onClick={handleSelectWhatsApp}
+                      className="w-full h-12 bg-[#1a1a1a]/80 hover:bg-[#252525] border border-white/10 rounded-xl flex items-center justify-between px-4 transition-all group"
+                      data-testid="whatsapp-login-btn"
+                    >
+                      <div className="flex items-center gap-3">
+                        <MessageCircle className="w-5 h-5 text-green-400" />
+                        <span className="text-gray-300 text-sm font-medium">Login by WhatsApp</span>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-gray-300 transition-colors" />
+                    </button>
+                  </div>
+
+                  {/* Sign Up Link */}
+                  <p className="text-center text-sm text-gray-400 mt-6">
+                    Don't have an account?{' '}
+                    <button 
+                      onClick={() => toast.info('Enter your email or phone to create an account')}
+                      className="text-teal-400 font-semibold hover:text-teal-300 transition-colors"
+                    >
+                      Sign up
+                    </button>
+                  </p>
+
+                  {/* Staff & Doctor Portal Links */}
+                  <div className="pt-6 mt-4 border-t border-white/10">
+                    <p className="text-center text-xs text-gray-500 mb-3">Staff or Healthcare Provider?</p>
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => navigate('/staff')}
+                        className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/60 hover:bg-[#252525] border border-teal-500/30 rounded-xl text-teal-400 text-sm font-medium transition-all"
+                      >
+                        <Shield className="w-4 h-4" />
+                        Staff Portal
+                      </button>
+                      <button
+                        onClick={() => navigate('/doctor-login')}
+                        className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a]/60 hover:bg-[#252525] border border-blue-500/30 rounded-xl text-blue-400 text-sm font-medium transition-all"
+                      >
+                        <Stethoscope className="w-4 h-4" />
+                        Doctor Portal
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* ========== STEP: ENTER PHONE (WhatsApp) ========== */}
+            {step === 'enter-phone' && (
+              <>
+                {/* Back Button */}
+                <button 
+                  onClick={goBack}
+                  className="flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span className="text-sm">Back</span>
+                </button>
+
+                {/* Header */}
+                <div className="text-center mb-8">
+                  <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-500/30">
+                    <MessageCircle className="w-7 h-7 text-white" />
+                  </div>
+                  <h1 className="text-3xl font-bold text-white mb-2">WhatsApp Login</h1>
+                  <p className="text-gray-400 text-sm">Enter your mobile number to receive OTP</p>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Phone Input */}
+                  <div className="space-y-2">
+                    <label className="text-xs text-gray-400 uppercase tracking-wide">Mobile Number</label>
+                    <div className="relative">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">+91</div>
+                      <Input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                        placeholder="Enter 10-digit number"
+                        className="w-full h-14 bg-[#1a1a1a]/80 border-white/10 rounded-xl text-white placeholder:text-gray-500 pl-14 pr-14 focus:border-green-500/50 focus:ring-green-500/20 text-lg"
+                        onKeyDown={(e) => e.key === 'Enter' && handleSendOTP()}
+                        maxLength={10}
+                        data-testid="phone-input"
+                      />
+                      <button
+                        onClick={handleSendOTP}
+                        disabled={loading || phone.length !== 10}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center hover:from-green-500 hover:to-emerald-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-green-500/30"
+                        data-testid="send-whatsapp-otp-btn"
+                      >
+                        {loading ? (
+                          <Loader2 className="w-5 h-5 text-white animate-spin" />
+                        ) : (
+                          <ArrowRight className="w-5 h-5 text-white" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-gray-500 text-center mt-4">
+                    We'll send a 6-digit verification code via WhatsApp
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* ========== STEP: OTP VERIFICATION ========== */}
+            {step === 'otp' && (
+              <>
+                {/* Back Button */}
+                <button 
+                  onClick={goBack}
+                  className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-6">
+                  {authMethod === 'email' ? (
+                    <Mail className="w-6 h-6 text-teal-400" />
+                  ) : (
+                    <MessageCircle className="w-6 h-6 text-green-400" />
+                  )}
+                  <h1 className="text-2xl font-bold text-white">
+                    {authMethod === 'email' ? 'Email' : 'WhatsApp'} verification
+                  </h1>
+                </div>
+
+                <p className="text-gray-400 text-sm mb-8">
+                  We sent a 6-digit code to {authMethod === 'email' ? email : `+91 ${phone}`}. Enter it below to continue.
+                </p>
+
+                <div className="space-y-6">
+                  {/* OTP Label */}
+                  <label className="text-xs text-gray-400 uppercase tracking-wide">6-digit code</label>
+                  
+                  {/* OTP Inputs */}
+                  <div className="flex justify-between gap-2">
+                    {otp.map((digit, index) => (
+                      <input
+                        key={index}
+                        ref={(el) => (otpRefs.current[index] = el)}
+                        type="text"
+                        inputMode="numeric"
+                        value={digit}
+                        onChange={(e) => handleOTPChange(index, e.target.value)}
+                        onKeyDown={(e) => handleOTPKeyDown(index, e)}
+                        className="w-12 h-14 text-center text-2xl font-bold bg-[#1a1a1a] border-2 border-white/10 rounded-xl text-white focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
+                        maxLength={1}
+                        data-testid={`otp-input-${index}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Verify Button - Gradient */}
+                  <button
+                    onClick={handleVerifyOTP}
+                    disabled={loading || otp.join('').length !== 6}
+                    className="w-full h-14 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 hover:from-orange-500 hover:via-pink-600 hover:to-purple-600 rounded-xl flex items-center justify-center transition-all disabled:opacity-50 shadow-lg shadow-purple-500/20 text-white font-semibold text-lg"
+                    data-testid="verify-otp-btn"
+                  >
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify'}
+                  </button>
+
+                  {/* Resend Code Button */}
+                  <button
+                    onClick={handleSendOTP}
+                    disabled={loading || resendTimer > 0}
+                    className="w-full h-12 bg-[#2a2a2a] hover:bg-[#333] border border-white/5 rounded-xl text-gray-300 font-medium transition-all disabled:opacity-50"
+                  >
+                    {resendTimer > 0 ? `Resend code in ${resendTimer}s` : 'Resend code'}
+                  </button>
+
+                  {/* Tip */}
+                  <p className="text-xs text-gray-500 text-center">
+                    Tip: Check Spam or Promotions if you don't see the {authMethod === 'email' ? 'email' : 'message'}.
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* ========== STEP: PASSWORD LOGIN ========== */}
+            {step === 'password' && (
+              <>
+                <button 
+                  onClick={goBack}
+                  className="flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span className="text-sm">Back</span>
+                </button>
+
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold text-white mb-2">Enter Password</h1>
+                  <p className="text-gray-400 text-sm">Enter your password to continue</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs text-gray-400 uppercase tracking-wide">Password</label>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Enter your password"
+                        className="w-full h-12 bg-[#1a1a1a]/80 border-white/10 rounded-xl text-white placeholder:text-gray-500 pr-14 focus:border-teal-500/50"
+                        onKeyDown={(e) => e.key === 'Enter' && handlePasswordLogin()}
+                        data-testid="password-input"
+                      />
+                      <button
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                      >
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handlePasswordLogin}
+                    disabled={loading || !password}
+                    className="w-full h-12 bg-gradient-to-r from-teal-400 to-cyan-400 hover:from-teal-500 hover:to-cyan-500 rounded-xl flex items-center justify-center transition-all disabled:opacity-50 shadow-lg shadow-teal-500/20 text-white font-semibold"
+                    data-testid="password-login-btn"
+                  >
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Login'}
+                  </button>
+
+                  <div className="text-center">
+                    <button 
+                      onClick={() => setStep('otp')}
+                      className="text-teal-400 text-sm hover:underline"
+                    >
+                      Forgot password? Use OTP
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* ========== STEP: CREATE PASSWORD ========== */}
+            {step === 'create-password' && (
+              <>
+                <button 
+                  onClick={goBack}
+                  className="flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span className="text-sm">Back</span>
+                </button>
+
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
+                  <p className="text-gray-400 text-sm">Set a password for your account</p>
+                </div>
+
+                <div className="space-y-4">
+                  {flowType === 'signup' && (
+                    <div className="space-y-2">
+                      <label className="text-xs text-gray-400 uppercase tracking-wide">Your Name</label>
+                      <Input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Enter your name"
+                        className="w-full h-12 bg-[#1a1a1a]/80 border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:border-teal-500/50"
+                        data-testid="name-input"
+                      />
+                    </div>
+                  )}
+
+                  {needsEmail && (
+                    <div className="space-y-2">
+                      <label className="text-xs text-gray-400 uppercase tracking-wide">Email</label>
+                      <Input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        className="w-full h-12 bg-[#1a1a1a]/80 border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:border-teal-500/50"
+                      />
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <label className="text-xs text-gray-400 uppercase tracking-wide">Password</label>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Create a password (min 6 chars)"
+                        className="w-full h-12 bg-[#1a1a1a]/80 border-white/10 rounded-xl text-white placeholder:text-gray-500 pr-14 focus:border-teal-500/50"
+                        data-testid="create-password-input"
+                      />
+                      <button
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                      >
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs text-gray-400 uppercase tracking-wide">Confirm Password</label>
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm password"
+                      className="w-full h-12 bg-[#1a1a1a]/80 border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:border-teal-500/50"
+                      data-testid="confirm-password-input"
+                    />
+                  </div>
+
+                  <button
+                    onClick={handleCreatePassword}
+                    disabled={loading || password.length < 6 || password !== confirmPassword}
+                    className="w-full h-12 bg-gradient-to-r from-teal-400 to-cyan-400 hover:from-teal-500 hover:to-cyan-500 rounded-xl flex items-center justify-center transition-all disabled:opacity-50 shadow-lg shadow-teal-500/20 text-white font-semibold"
+                    data-testid="create-account-btn"
+                  >
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Create Account'}
+                  </button>
+                </div>
+              </>
+            )}
+
           </div>
         </div>
-
-        {/* Footer */}
-        <p className="text-xs text-center text-slate-400 mt-8">
-          By continuing, you agree to our Terms of Service and Privacy Policy
-        </p>
-      </main>
+      </div>
     </div>
   );
 };

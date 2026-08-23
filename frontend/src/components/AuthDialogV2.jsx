@@ -88,8 +88,8 @@ const AuthDialogV2 = ({
     
     setLoading(true);
     try {
-      // Use WhatsApp OTP via MSG91
-      const res = await axios.post(`${API}/otp/whatsapp/send`, { 
+      // Use SMS OTP via MSG91
+      const res = await axios.post(`${API}/otp/sms/send`, { 
         phone: guestPhone,
         purpose: 'guest_login'
       });
@@ -98,8 +98,8 @@ const AuthDialogV2 = ({
       if (res.data.mock && res.data.otp) {
         setGuestMockOtp(res.data.otp);
       }
-      toast.success('OTP sent via WhatsApp!', {
-        description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your WhatsApp'
+      toast.success('OTP sent via SMS!', {
+        description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your messages'
       });
     } catch (e) {
       toast.error(e.response?.data?.detail || 'Failed to send OTP');
@@ -115,8 +115,8 @@ const AuthDialogV2 = ({
     
     setLoading(true);
     try {
-      // Verify WhatsApp OTP
-      const otpRes = await axios.post(`${API}/otp/whatsapp/verify`, { 
+      // Verify SMS OTP
+      const otpRes = await axios.post(`${API}/otp/sms/verify`, { 
         phone: guestPhone, 
         otp: guestOtp 
       });
@@ -156,8 +156,8 @@ const AuthDialogV2 = ({
     
     setLoading(true);
     try {
-      // First send WhatsApp OTP to verify phone
-      const res = await axios.post(`${API}/otp/whatsapp/send`, { 
+      // First send SMS OTP to verify phone
+      const res = await axios.post(`${API}/otp/sms/send`, { 
         phone: signupPhone,
         purpose: 'signup'
       });
@@ -166,8 +166,8 @@ const AuthDialogV2 = ({
       if (res.data.mock && res.data.otp) {
         setSignupMockOtp(res.data.otp);
       }
-      toast.success('OTP sent via WhatsApp!', {
-        description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your WhatsApp'
+      toast.success('OTP sent via SMS!', {
+        description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your messages'
       });
     } catch (e) {
       if (e.response?.data?.detail?.includes('already registered')) {
@@ -190,8 +190,8 @@ const AuthDialogV2 = ({
     
     setLoading(true);
     try {
-      // First verify WhatsApp OTP
-      const otpRes = await axios.post(`${API}/otp/whatsapp/verify`, { 
+      // First verify SMS OTP
+      const otpRes = await axios.post(`${API}/otp/sms/verify`, { 
         phone: signupPhone, 
         otp: signupOtp 
       });
@@ -310,7 +310,7 @@ const AuthDialogV2 = ({
               <>
                 <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-sm text-green-800 flex items-center gap-2">
                   <MessageCircle className="w-5 h-5 text-green-600" />
-                  <span><strong>WhatsApp OTP:</strong> Enter your WhatsApp number to receive verification code</span>
+                  <span><strong>SMS OTP:</strong> Enter your WhatsApp number to receive verification code</span>
                 </div>
                 <div>
                   <Label className="font-semibold">WhatsApp Number</Label>
@@ -407,14 +407,14 @@ const AuthDialogV2 = ({
                     <div className="flex items-center px-3 bg-gray-100 rounded-l-xl border border-r-0 font-bold text-gray-600">+91</div>
                     <Input 
                       type="tel" 
-                      placeholder="For WhatsApp OTP verification" 
+                      placeholder="For SMS OTP verification" 
                       value={signupPhone}
                       onChange={(e) => setSignupPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                       className="rounded-l-none rounded-r-xl h-11"
                       data-testid="signup-phone-input"
                     />
                   </div>
-                  <p className="text-xs text-green-600 mt-1">OTP will be sent via WhatsApp for verification</p>
+                  <p className="text-xs text-green-600 mt-1">OTP will be sent via SMS for verification</p>
                 </div>
                 <Button 
                   onClick={handleSignupSendOtp} 
@@ -425,7 +425,7 @@ const AuthDialogV2 = ({
                 >
                   {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>
                     <MessageCircle className="w-4 h-4 mr-2" />
-                    Send WhatsApp OTP
+                    Send SMS OTP
                   </>}
                 </Button>
               </>
@@ -434,7 +434,7 @@ const AuthDialogV2 = ({
                 <div className="text-center mb-2">
                   <div className="flex items-center justify-center gap-2 text-sm text-green-600 mb-1">
                     <MessageCircle className="w-4 h-4" />
-                    OTP sent to WhatsApp: ******{signupPhone.slice(-4)}
+                    OTP sent via SMS: ******{signupPhone.slice(-4)}
                   </div>
                   <button onClick={() => setStep('input')} className="text-sm underline font-semibold" style={{ color: THEME.accent }}>Change</button>
                 </div>

@@ -1,0 +1,113 @@
+{
+  "summary": "Completed comprehensive testing for Cura Wallet + CuraX Coins system (Iteration 192). All 15 backend tests PASSED covering wallet creation, add money, coin earning/redemption, referral code, and data persistence. Frontend testing PASSED: Profile page shows all 10 menu items, wallet balance displayed in user card, Cura Wallet page functional with Add Money modal, CuraX Coins page with redeem modal, all sub-pages (Addresses, Family, Favorites) load correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/referral/apply",
+        "issue": "Route conflict - old referral.py router (line 10107) takes priority over wallet_routes.py, causing JSON body to fail with 'referee_id required' error. However, the endpoint from wallet_routes.py is accessible and works for the Cura Wallet system.",
+        "priority": "LOW - doesn't affect wallet system"
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_wallet_coins_system.py",
+    "/app/test_reports/pytest/pytest_wallet_coins_system.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_wallet_coins_system.py"
+  ],
+  "success_rate": {
+    "backend": "100% - 15/15 tests passed",
+    "frontend": "100% - All UI verifications passed"
+  },
+  "test_credentials": "Phone: 9876543210, Guest mode (set localStorage userPhone)",
+  "seed_data_creation": "Initial wallet seeded with ₹500 balance and 20 coins. Additional test data created during testing.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Cura Wallet + CuraX Coins system fully functional. Wallet APIs: GET /api/wallet/{phone}, POST /api/wallet/add-money, GET /api/wallet/transactions/{phone}. Coins APIs: POST /api/coins/earn, POST /api/coins/redeem, GET /api/coins/transactions/{phone}, GET /api/coins/rules. Referral API: GET /api/referral/{phone}. Frontend pages verified: /patient-profile (10 menu items), /cura-wallet, /cura-coins, /patient-profile/addresses, /patient-profile/family, /patient-profile/favorites. All modals and buttons functional.",
+  "feature_verification": {
+    "backend_apis": {
+      "wallet": {
+        "get_wallet": "GET /api/wallet/{phone} - PASS (creates if not exists)",
+        "add_money": "POST /api/wallet/add-money - PASS",
+        "get_transactions": "GET /api/wallet/transactions/{phone} - PASS",
+        "negative_amount": "Rejected with 400 - PASS",
+        "zero_amount": "Rejected with 400 - PASS"
+      },
+      "coins": {
+        "earn_coins": "POST /api/coins/earn - PASS (respects tier multiplier)",
+        "redeem_coins": "POST /api/coins/redeem - PASS (1:1 ratio)",
+        "redeem_min_100": "Rejected <100 coins - PASS",
+        "redeem_insufficient": "Rejected when not enough coins - PASS",
+        "get_transactions": "GET /api/coins/transactions/{phone} - PASS",
+        "get_rules": "GET /api/coins/rules - PASS (7 actions, 4 tiers)"
+      },
+      "referral": {
+        "get_code": "GET /api/referral/{phone} - PASS"
+      },
+      "data_persistence": {
+        "wallet_balance": "PASS - changes persist to DB",
+        "coin_balance": "PASS - changes persist to DB"
+      }
+    },
+    "frontend_ui": {
+      "patient_profile_page": {
+        "url": "/patient-profile",
+        "menu_items": 10,
+        "user_card_wallet_display": "PASS - Shows ₹ balance and coins count",
+        "menu_items_verified": [
+          "My Orders", "My Lab Tests", "My Consultations", "Health Insights",
+          "Saved Addresses", "Family Members", "My Favorites", "Cura Wallet",
+          "CuraX Coins", "Scan Medicines"
+        ]
+      },
+      "cura_wallet_page": {
+        "url": "/cura-wallet",
+        "balance_display": "PASS",
+        "coins_display": "PASS",
+        "referral_code_display": "PASS - CURA3210",
+        "add_money_button": "PASS",
+        "add_money_modal": "PASS - Opens with amount input and preset buttons",
+        "transaction_history": "PASS",
+        "curaX_coins_button": "PASS - Navigates to /cura-coins"
+      },
+      "curax_coins_page": {
+        "url": "/cura-coins",
+        "coins_balance_display": "PASS",
+        "redemption_value_display": "PASS",
+        "tier_badge": "PASS - Shows Standard tier with 1x multiplier",
+        "earning_rules": "PASS - 7 actions listed with coin values",
+        "redeem_button": "PASS",
+        "redeem_modal": "PASS - Opens with preset buttons and input",
+        "coin_history": "PASS"
+      },
+      "saved_addresses_page": {
+        "url": "/patient-profile/addresses",
+        "page_loads": "PASS",
+        "add_button": "PASS"
+      },
+      "family_members_page": {
+        "url": "/patient-profile/family",
+        "page_loads": "PASS",
+        "add_button": "PASS"
+      },
+      "my_favorites_page": {
+        "url": "/patient-profile/favorites",
+        "page_loads": "PASS",
+        "shows_items": "PASS - Paracetamol 500mg, Complete Blood Count"
+      }
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": ["/api/health-stats/{phone}"]
+  }
+}

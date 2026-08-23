@@ -1,0 +1,1595 @@
+[
+  {
+    "sl_no": "1",
+    "name": "ACYCLOSURE P",
+    "composition": "ACECLOFENAC 100MG + PARACETAMOL 325MG",
+    "pack": "10",
+    "mrp": 62.9,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "2",
+    "name": "ACYCLOSURE SP",
+    "composition": "ACECLOFENAC 100MG + PARACETAMOL 325MG + SERRATIOPEPTIDASE 15MG",
+    "pack": "10",
+    "mrp": 95.7,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "3",
+    "name": "ACYCLOSURE TH 4",
+    "composition": "THIOCOLCHICOSIDE 4MG + ACECLOFENAC 100MG",
+    "pack": "10",
+    "mrp": 278.0,
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "4",
+    "name": "ACYCLOSURE TH 8",
+    "composition": "THIOCOLCHICOSIDE 8MG + ACECLOFENAC 100MG",
+    "pack": "10",
+    "mrp": 385.5,
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "5",
+    "name": "ACYCLOSURE TH PLUS",
+    "composition": "THIOCOLCHICOSIDE 4MG + ACECLOFENAC 100MG + PARACETAMOL 325MG",
+    "pack": "10",
+    "mrp": 223.0,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "6",
+    "name": "ALLERFEX M",
+    "composition": "FEXOFENADINE 120MG + MONTELUKAST 10MG",
+    "pack": "10",
+    "mrp": 136.0,
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "7",
+    "name": "ALLUGEL MPS MINT",
+    "composition": "ALUMINIUM HYDROXIDE 200 mg + MAGNESIUM HYDROXIDE 200 mg + ACTIVATED DIMETHICONE 25 MG",
+    "pack": "170 ML",
+    "mrp": 99.0,
+    "form": "Cream",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "8",
+    "name": "ALLUGEL MPS ORANGE",
+    "composition": "ALUMINIUM HYDROXIDE 200 mg + MAGNESIUM HYDROXIDE 200 mg + ACTIVATED DIMETHICONE 25 MG",
+    "pack": "170 ML",
+    "mrp": 99.0,
+    "form": "Cream",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "9",
+    "name": "ALLUGEL MPS SAUNF",
+    "composition": "ALUMINIUM HYDROXIDE 200 mg + MAGNESIUM HYDROXIDE 200 mg + ACTIVATED DIMETHICONE 25 MG",
+    "pack": "170 ML",
+    "mrp": 99.0,
+    "form": "Cream",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "10",
+    "name": "ALLUGEL MPS MINT FLAVOUR",
+    "composition": "DIMETHICONE 50MG + MAGNESIUM HYDROXIDE 250MG + ALUMINIUM HYDROXIDE 250MG + MAGNE- SIUM ALUMINIUM SILICATE 50MG",
+    "pack": "15",
+    "mrp": 32.95,
+    "form": "Cream",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "11",
+    "name": "ALLUGEL MPS ASSORTED FLAVOUR",
+    "composition": "DIMETHICONE 50MG + MAGNESIUM HYDROXIDE 250MG + ALUMINIUM HYDROXIDE 250MG + MAGNE- SIUM ALUMINIUM SILICATE 50MG",
+    "pack": "15",
+    "mrp": 32.95,
+    "form": "Cream",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "12",
+    "name": "ALLUGEL O",
+    "composition": "MAGNESIUM HYDROXIDE 98MG+ALUMINIUM HYDROXIDE 291MG+OXETACAINE 10MG PER 5ML",
+    "pack": "200 ML",
+    "mrp": 164.85,
+    "form": "Cream",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "13",
+    "name": "AMPOXIN CV 375",
+    "composition": "AMOCILLIN 250 MG + POTASSIUM CLAV 125 MG",
+    "pack": "10",
+    "mrp": 220.2,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "14",
+    "name": "AMPOXIN CV 625",
+    "composition": "AMOXYCILLIN 500MG + CLAVULANIC ACID 125MG",
+    "pack": "10",
+    "mrp": 204.93,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "15",
+    "name": "AMPOXIN CV DRY SYRUP",
+    "composition": "EACH 5ML CONTAINS AMOXYCILLIN 200MG + CLAVULANIC ACID 28.5MG",
+    "pack": "30 ML",
+    "mrp": 67.81,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "16",
+    "name": "AMPOXIN CV FORTE SYRUP",
+    "composition": "EACH 5ML CONTAINS AMOXYCILLIN 400MG + CLAVULANIC ACID 57MG",
+    "pack": "30 ML",
+    "mrp": 155.0,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "17",
+    "name": "BINAFIDE 0.5",
+    "composition": "BUDESONIDE 0.5MG",
+    "pack": "5x2ML",
+    "mrp": 133.2,
+    "form": "Tablet",
+    "category": "Respiratory"
+  },
+  {
+    "sl_no": "18",
+    "name": "BINAFIDE 1",
+    "composition": "BUDESONIDE 1MG",
+    "pack": "5x2ML",
+    "mrp": 134.05,
+    "form": "Tablet",
+    "category": "Respiratory"
+  },
+  {
+    "sl_no": "19",
+    "name": "BINAFIDE DUO",
+    "composition": "LEVOSALBUTAMOL 1.25MG + IPRATROPIUM 500MCG",
+    "pack": "2.5ML",
+    "mrp": 48.3,
+    "form": "Tablet",
+    "category": "Respiratory"
+  },
+  {
+    "sl_no": "20",
+    "name": "BINAFIDE F",
+    "composition": "FORMOTEROL 20 MCG + BUDESONIDE 500 MCG RESPULES, 2ML",
+    "pack": "2ML",
+    "mrp": 56.0,
+    "form": "Inhaler",
+    "category": "Respiratory"
+  },
+  {
+    "sl_no": "21",
+    "name": "CEFLOCHEM SB 1.5GM",
+    "composition": "CEFOPERAZONE 1000MG + SULBACTAM 500MG",
+    "pack": "1",
+    "mrp": 879.0,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "22",
+    "name": "CHANGE M SUSP 30ML",
+    "composition": "OFLOXACIN 50MG + METRONIDAZOLE 100MG",
+    "pack": "1",
+    "mrp": 82.4,
+    "form": "Syrup",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "23",
+    "name": "CHANGE M SUSP 60ML",
+    "composition": "OFLOXACIN 50MG + METRONIDAZOLE 100MG",
+    "pack": "1",
+    "mrp": 150.0,
+    "form": "Syrup",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "24",
+    "name": "CHERRYMAX",
+    "composition": "DEXTROMETHORPHAN HYDROBROMIDE 10MG + PHENYLEPHRINE HYDROCHLORIDE 5MG + CHLORPHE- NIRAMINE MALEATE 2MG",
+    "pack": "10",
+    "mrp": 67.6,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "25",
+    "name": "CLOTRISURE CREAM",
+    "composition": "CLOTRIMAZOLE CREAM 1% W/W",
+    "pack": "15GM",
+    "mrp": 50.4,
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "sl_no": "26",
+    "name": "CYPSTAR",
+    "composition": "CYPROHEPTADINE 2MG + TRICHOLINE CITRATE 275MG + SORBITOL 375MG PER 5ML SYRUP",
+    "pack": "200ML",
+    "mrp": 98.5,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "27",
+    "name": "BRO CORDINE",
+    "composition": "EACH 5 ML CONTAINS TERBUTALINE SULPHATE 1.25 MG+BROMHEXINE HYDROCHLORIDE 4 MG+- GUAIPHENESIN 50 MG+MENTHOL 0.50 MG",
+    "pack": "100ML",
+    "mrp": 117.5,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "28",
+    "name": "CORDINE DX",
+    "composition": "EACH 5 ML CONTAINS DEXTROMETHORPHAN HCL 10MG + CPM 2MG",
+    "pack": "100ML",
+    "mrp": 139.0,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "29",
+    "name": "CORDINE DX PLUS",
+    "composition": "EACH 5 ML CONTAINS PHENYLEPHRINE 5MG + CPM 2MG + DEXTROMETHORPHAN 10MG",
+    "pack": "100ML",
+    "mrp": 141.2,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "30",
+    "name": "CORDINE LS",
+    "composition": "EACH 5 ML CONTAINS LEVOSALBUTAMOL 1MG + AMBROXOL 30MG + GUAIFENESIN 50MG",
+    "pack": "100ML",
+    "mrp": 121.99,
+    "form": "Syrup",
+    "category": "Respiratory"
+  },
+  {
+    "sl_no": "31",
+    "name": "D3-HIGH CAPSULE",
+    "composition": "VITAMIN D3 (CHOLECALCIFEROL) 60000 IU",
+    "pack": "4",
+    "mrp": 117.95,
+    "form": "Capsule",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "sl_no": "32",
+    "name": "D3-HIGH DROP",
+    "composition": "EACH ML CONTAINS VITAMIN D3 (CHOLECALCIFEROL) 400 IU",
+    "pack": "30ML",
+    "mrp": 87.69,
+    "form": "Syrup",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "sl_no": "33",
+    "name": "D3-HIGH SACHET",
+    "composition": "VITAMIN D3 (CHOLECALCIFEROL) 60000 IU",
+    "pack": "1GM",
+    "mrp": 38.05,
+    "form": "Powder",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "sl_no": "34",
+    "name": "D3-HIGH SOLUTION (NANO SHOT)",
+    "composition": "VITAMIN D3 (CHOLECALCIFEROL) 60000 IU",
+    "pack": "5ML",
+    "mrp": 77.95,
+    "form": "Tablet",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "sl_no": "35",
+    "name": "DICLOGESIC SPRAY",
+    "composition": "DICLOFENAC SODIUM 1% W/W + VIRGIN LINSEED OIL 3% W/W + METHYL SALICYLATE 10% W/W + MENTHOL 5% W/W",
+    "pack": "55GM",
+    "mrp": 197.5,
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "36",
+    "name": "DICLOGESIC MAXX SPRAY",
+    "composition": "DICLOFENAC SODIUM 2% W/W + METHYL SALICYLATE 10% W/W + MENTHOL 5% W/W",
+    "pack": "55GM",
+    "mrp": 241.2,
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "37",
+    "name": "DICLOGESIC GEL 30GM",
+    "composition": "DICLOFENAC 1% W/W + VIRGIN LINSEED OIL 3% W/W + METHYL SALICYLATE 10% W/W + MENTHOL 5% W/W + CAPSAICIN 0.025 W/W PRESERVATIVE: BENZYL ALCOHOL IP 1% W/W",
+    "pack": "30GM",
+    "mrp": 132.4,
+    "form": "Cream",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "38",
+    "name": "DICLOGESIC GEL 50GM",
+    "composition": "DICLOFENAC 1% W/W + VIRGIN LINSEED OIL 3% W/W + METHYL SALICYLATE 10% W/W + MENTHOL 5% W/W + CAPSAICIN 0.025 W/W PRESERVATIVE: BENZYL ALCOHOL IP 1% W/W",
+    "pack": "50GM",
+    "mrp": 220.65,
+    "form": "Cream",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "39",
+    "name": "DICLOGESIC GEL 75GM",
+    "composition": "DICLOFENAC 1% W/W + VIRGIN LINSEED OIL 3% W/W + METHYL SALICYLATE 10% W/W + MENTHOL 5% W/W + CAPSAICIN 0.025 W/W PRESERVATIVE: BENZYL ALCOHOL IP 1% W/W",
+    "pack": "75GM",
+    "mrp": 331.0,
+    "form": "Cream",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "40",
+    "name": "DICLOGESIC TABLET",
+    "composition": "DICLOFENAC 50 MG + PARACETAMOL 325 MG",
+    "pack": "10",
+    "mrp": 62.64,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "41",
+    "name": "DICLOGESIC-SP",
+    "composition": "DICLOFENAC 50 MG + PARACETAMOL 325 MG + SERRATIOPEPTIDASE 15 MG",
+    "pack": "10",
+    "mrp": 120.34,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "42",
+    "name": "DICLOGESIC TH 4",
+    "composition": "DICLOFENAC 50 MG + THIOCOLCHICOSIDE 4 MG",
+    "pack": "10",
+    "mrp": 124.3,
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "43",
+    "name": "DICLOGESIC TH 8",
+    "composition": "DICLOFENAC 50 MG + THIOCOLCHICOSIDE 8 MG",
+    "pack": "10",
+    "mrp": 191.4,
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "44",
+    "name": "DOMSTAL RD",
+    "composition": "OMEPRAZOLE 20 MG + DOMPERIDONE 10 MG",
+    "pack": "15",
+    "mrp": 183.45,
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "45",
+    "name": "DYNAPRES D",
+    "composition": "TAMSULOSIN 0.4 MG + DUTASTERIDE 0.5 MG",
+    "pack": "15",
+    "mrp": 330.0,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "46",
+    "name": "EMSCAB 100 ML",
+    "composition": "GAMMA BENZENE HEXACHRLORIDE IP 1% w/v + CETRIMIDE IP 0.1% w/v",
+    "pack": "100ML",
+    "mrp": 84.7,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "47",
+    "name": "EMSCAB PLUS",
+    "composition": "PERMETHRIN LOTION 5%",
+    "pack": "50ML",
+    "mrp": 55.88,
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "sl_no": "48",
+    "name": "ETOXIB 60 MG",
+    "composition": "ETORICOXIB 60 MG",
+    "pack": "10",
+    "mrp": 130.25,
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "49",
+    "name": "ETOXIB 90 MG",
+    "composition": "ETORICOXIB 90 MG",
+    "pack": "10",
+    "mrp": 220.0,
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "50",
+    "name": "ETOXIB 120 MG",
+    "composition": "ETORICOXIB 120 MG",
+    "pack": "10",
+    "mrp": 238.3,
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "51",
+    "name": "ETOXIB MR",
+    "composition": "ETORICOXIB 60 MG + THIOCOLCHICOSIDE 4 MG",
+    "pack": "10",
+    "mrp": 330.4,
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "52",
+    "name": "EVEGLOW CREAM",
+    "composition": "HYDROQUINONE 2% + TRETINOIN 0.025% + MOMETASONE 0.1%",
+    "pack": "15GM",
+    "mrp": 156.7,
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "sl_no": "53",
+    "name": "FLUCOBIG 150 1\u2019s",
+    "composition": "FLUCONAZOLE 150MG",
+    "pack": "1",
+    "mrp": 13.5,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "54",
+    "name": "FLUCOBIG 150 2\u2019s",
+    "composition": "FLUCONAZOLE 150MG",
+    "pack": "2",
+    "mrp": 27.0,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "55",
+    "name": "FLUCOBIG 200 1\u2019s",
+    "composition": "FLUCONAZOLE 200MG",
+    "pack": "1",
+    "mrp": 19.53,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "56",
+    "name": "FLUCOBIG 200 2\u2019s",
+    "composition": "FLUCONAZOLE 200MG",
+    "pack": "2",
+    "mrp": 39.06,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "57",
+    "name": "GUTQUICK",
+    "composition": "EACH 5ML CONTAINS LIQUID PARAFFIN 1.25 ML,MILK OF MAGNESIA 3.75 ML,SODIUM PICOSULFATE B.P 3.33 MG",
+    "pack": "170ML",
+    "mrp": 160.0,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "58",
+    "name": "KREAMVIN GEL",
+    "composition": "NANO CRYSTALLINE SILVER GEL 0.002%",
+    "pack": "10 GM",
+    "mrp": 84.5,
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "sl_no": "59",
+    "name": "LOFECTION LB",
+    "composition": "DOXYCYCLINE 100 MG + LACTIC ACID 5 BILLION SPORES",
+    "pack": "10",
+    "mrp": 118.0,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "60",
+    "name": "LEZYNCET M SUSP 30ML",
+    "composition": "EACH 5ML CONTAINS LEVOCETRIZINE HCL 2.5MG + MONTELUKAST 4MG",
+    "pack": "30ML",
+    "mrp": 47.65,
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "61",
+    "name": "LEZYNCET M SUSP 60ML",
+    "composition": "EACH 5ML CONTAINS LEVOCETRIZINE HCL 2.5MG + MONTELUKAST 4MG",
+    "pack": "60 ML",
+    "mrp": 95.3,
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "62",
+    "name": "LULI EASE",
+    "composition": "LULICONAZOLE 1%",
+    "pack": "10GM",
+    "mrp": 165.0,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "63",
+    "name": "MAXISPAS",
+    "composition": "MEFENAMIC ACID 250 MG + DICYCLOMINE HCL 10 MG",
+    "pack": "10",
+    "mrp": 33.24,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "64",
+    "name": "MAXISPAS DROP",
+    "composition": "EACH ML CONTAINS DICYCLOMINE 10MG + DIMETHICONE 40MG",
+    "pack": "10ML",
+    "mrp": 49.5,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "65",
+    "name": "MAXIZONE SB INJ",
+    "composition": "CEFTRIAXONE 1000MG + SULBACTAM 500MG",
+    "pack": "1",
+    "mrp": 176.5,
+    "form": "Injection",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "66",
+    "name": "MAXIZONE 0.5",
+    "composition": "CEFTRIAXONE INJECTION IP 500 MG",
+    "pack": "10ML",
+    "mrp": 56.29,
+    "form": "Injection",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "67",
+    "name": "MAXIZONE 1",
+    "composition": "CEFTRIAXONE INJECTION IP 1 GM",
+    "pack": "10ML",
+    "mrp": 66.42,
+    "form": "Injection",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "68",
+    "name": "MOPRY 5GM",
+    "composition": "MUPIROCIN 2%",
+    "pack": "5GM",
+    "mrp": 113.62,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "69",
+    "name": "MOPRY 15GM",
+    "composition": "MUPIROCIN 2%",
+    "pack": "15GM",
+    "mrp": 340.86,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "70",
+    "name": "MOXIF EYE DROP",
+    "composition": "MOXIFLOXACIN 0.5%",
+    "pack": "10ML",
+    "mrp": 130.0,
+    "form": "Drops",
+    "category": "Eye Care"
+  },
+  {
+    "sl_no": "71",
+    "name": "NIMUNICE",
+    "composition": "NIMESULIDE 100MG",
+    "pack": "10",
+    "mrp": 32.65,
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "72",
+    "name": "NIMUNICE P",
+    "composition": "NIMESULIDE 100MG + PARACETAMOL 325MG",
+    "pack": "10",
+    "mrp": 48.1,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "73",
+    "name": "NOCKTUM 250",
+    "composition": "CEFUROXIME 250MG",
+    "pack": "10",
+    "mrp": 566.0,
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "74",
+    "name": "NOCKTUM 500",
+    "composition": "CEFUROXIME 500MG",
+    "pack": "10",
+    "mrp": 576.01,
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "75",
+    "name": "NOCKTUM CV",
+    "composition": "CEFUROXIME 500MG + CLAVULANIC ACID 125 MG",
+    "pack": "10",
+    "mrp": 701.33,
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "76",
+    "name": "OFLOXIBACT EYE DROP",
+    "composition": "OFLOXACIN 0.3%",
+    "pack": "10ML",
+    "mrp": 45.0,
+    "form": "Drops",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "77",
+    "name": "OFLOXIBACT D EYE DROP",
+    "composition": "OFLOXACIN 0.3% + DEXAMETHASONE 0.5%",
+    "pack": "10ML",
+    "mrp": 63.75,
+    "form": "Drops",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "78",
+    "name": "OFLOXIBACT 200MG TAB",
+    "composition": "OFLOXACIN 200MG",
+    "pack": "10",
+    "mrp": 84.55,
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "79",
+    "name": "OFLOXIBACT- OZ TAB",
+    "composition": "OFLOXACIN 200MG + ORNIDAZOLE-500MG",
+    "pack": "10",
+    "mrp": 157.0,
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "80",
+    "name": "OMIZAC CAP",
+    "composition": "OMEPRAZOLE 20MG",
+    "pack": "20",
+    "mrp": 64.28,
+    "form": "Capsule",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "81",
+    "name": "OMIZAC D",
+    "composition": "OMEPRAZOLE 20MG+ DOMPERDONE 10MG",
+    "pack": "20",
+    "mrp": 150.55,
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "82",
+    "name": "PANSPED 20",
+    "composition": "PANTOPRAZOLE 20MG",
+    "pack": "10",
+    "mrp": 82.25,
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "83",
+    "name": "PANSPED 40 10\u2019s",
+    "composition": "PANTOPRAZOLE 40MG",
+    "pack": "10",
+    "mrp": 151.5,
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "84",
+    "name": "PANSPED 40 15\u2019s",
+    "composition": "PANTOPRAZOLE 40MG",
+    "pack": "15",
+    "mrp": 227.25,
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "85",
+    "name": "PANSPED DSR 10\u2019s",
+    "composition": "PANTOPROZOLE 40MG + DOMPERIDONE 30MG SR",
+    "pack": "10",
+    "mrp": 169.0,
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "86",
+    "name": "PANSPED DSR 15\u2019s",
+    "composition": "PANTOPROZOLE 40MG + DOMPERIDONE 30MG SR",
+    "pack": "15",
+    "mrp": 253.5,
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "87",
+    "name": "PANSPED D 20",
+    "composition": "PANTOPRAZOLE 20MG + DOMPERIDONE 10MG",
+    "pack": "10",
+    "mrp": 85.05,
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "88",
+    "name": "PANSPED D 40",
+    "composition": "PANTOPRAZOLE 40MG + DOMPERIDONE 10MG",
+    "pack": "10",
+    "mrp": 99.15,
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "89",
+    "name": "PANSPED IV",
+    "composition": "PANTOPRAZOLE FOR INJECTION 40MG",
+    "pack": "1",
+    "mrp": 56.5,
+    "form": "Injection",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "90",
+    "name": "PANSPED L",
+    "composition": "PANTOPRAZOLE 40MG + LEVOSULPIRIDE 75MG CAP",
+    "pack": "10",
+    "mrp": 196.4,
+    "form": "Capsule",
+    "category": "Digestive Health"
+  },
+  {
+    "sl_no": "91",
+    "name": "PREGASK(PINK), TEST KIT",
+    "composition": "HCG PREGNANCY TEST KIT",
+    "pack": "1",
+    "mrp": 60.0,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "92",
+    "name": "PREGASK(PURPLE), TEST KIT",
+    "composition": "HCG PREGNANCY TEST KIT WITH COLLECTION TRAY",
+    "pack": "1",
+    "mrp": 80.0,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "93",
+    "name": "QUINTOR EYE DROP",
+    "composition": "CIPROFLOXACIN 0.3%",
+    "pack": "15ML",
+    "mrp": 21.84,
+    "form": "Drops",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "94",
+    "name": "SMOOTHEYE EYE DROP",
+    "composition": "CARBOXYMETHYLCELLULOSE 0.5%",
+    "pack": "10 ML",
+    "mrp": 137.75,
+    "form": "Drops",
+    "category": "Eye Care"
+  },
+  {
+    "sl_no": "95",
+    "name": "TOPCEF 50 DT",
+    "composition": "CEFIXIME 50MG DISPERSIBLE MANGO FLAVOUR",
+    "pack": "10",
+    "mrp": 58.9,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "96",
+    "name": "TOPCEF 100 DT",
+    "composition": "CEFIXIME 100MG DISPERSIBLE MANGO FLAVOUR",
+    "pack": "10",
+    "mrp": 92.7,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "97",
+    "name": "TOPCEF 200 DT",
+    "composition": "CEFIXIME 200MG DISPERSIBLE MANGO FLAVOUR",
+    "pack": "10",
+    "mrp": 111.39,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "98",
+    "name": "TOPCEF 50 DS",
+    "composition": "EACH 5ML CONTAINS CEFIXIME 50MG",
+    "pack": "30ML",
+    "mrp": 54.62,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "99",
+    "name": "TOPCEF 100 DS",
+    "composition": "EACH 5ML CONTAINS CEFIXIME 100MG",
+    "pack": "30ML",
+    "mrp": 78.47,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "100",
+    "name": "TOPCEF CLAV",
+    "composition": "CEFIXIME 200MG + CLAVULANIC ACID 125 MG",
+    "pack": "10",
+    "mrp": 377.0,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "101",
+    "name": "TOPCEF O 200",
+    "composition": "CEFIXIME 200MG + OFLOXACIN 200MG",
+    "pack": "10",
+    "mrp": 252.15,
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "102",
+    "name": "TOPCEF O DS",
+    "composition": "EACH 5ML CONTAINS CEFIXIME 50MG + OFLOXACIN 50MG",
+    "pack": "30ML",
+    "mrp": 63.8,
+    "form": "Syrup",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "103",
+    "name": "TOPCID 20",
+    "composition": "FAMOTIDINE 20MG",
+    "pack": "14",
+    "mrp": 6.7,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "104",
+    "name": "TOPCID 40",
+    "composition": "FAMOTIDINE 40MG",
+    "pack": "14",
+    "mrp": 10.35,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "105",
+    "name": "TORBAC",
+    "composition": "PIPERACILLIN 4000MG+ TAZOBACTUM 500MG INJECTION",
+    "pack": "1",
+    "mrp": 447.29,
+    "form": "Injection",
+    "category": "General"
+  },
+  {
+    "sl_no": "106",
+    "name": "TORHISGO 8, 10\u2019S",
+    "composition": "BETAHISTINE 8MG",
+    "pack": "10",
+    "mrp": 54.45,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "107",
+    "name": "TORHISGO 8, 15\u2019S",
+    "composition": "BETAHISTINE 8MG",
+    "pack": "15",
+    "mrp": 81.67,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "108",
+    "name": "TORHISGO 16, 10\u2019S",
+    "composition": "BETAHISTINE 16MG",
+    "pack": "10",
+    "mrp": 109.0,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "109",
+    "name": "TORHISGO 16, 15\u2019S",
+    "composition": "BETAHISTINE 16MG",
+    "pack": "15",
+    "mrp": 163.5,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "110",
+    "name": "TORMOXIN 125 KID TAB",
+    "composition": "AMOXYCILLIN 125MG TAB",
+    "pack": "10",
+    "mrp": 68.9,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "111",
+    "name": "TORMOXIN 125 DRY SYP",
+    "composition": "EACH 5ML CONTAINS AMOXYCILLIN 125MG (MANGO FLAVOUR)",
+    "pack": "30ML",
+    "mrp": 33.0,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "112",
+    "name": "TORMOXIN 250 DRY SYP",
+    "composition": "EACH 5ML CONTAINS AMOXYCILLIN 250MG (ORANGE FLAVOUR)",
+    "pack": "60ML",
+    "mrp": 104.72,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "113",
+    "name": "TORMOXIN 250",
+    "composition": "AMOXYCILLIN 250MG CAP",
+    "pack": "10",
+    "mrp": 27.32,
+    "form": "Capsule",
+    "category": "General"
+  },
+  {
+    "sl_no": "114",
+    "name": "TORMOXIN 500",
+    "composition": "AMOXYCILLIN 500MG CAP",
+    "pack": "10",
+    "mrp": 82.37,
+    "form": "Capsule",
+    "category": "General"
+  },
+  {
+    "sl_no": "115",
+    "name": "TORMOXIN CLAV 375",
+    "composition": "AMOXYCILLIN 250MG + CLAVULANIC ACID 125MG",
+    "pack": "10",
+    "mrp": 242.0,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "116",
+    "name": "TORMOXIN CLAV 625",
+    "composition": "AMOXYCILLIN 500MG + CLAVULANIC ACID 125MG",
+    "pack": "10",
+    "mrp": 204.93,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "117",
+    "name": "TORMOXIN CLAV SYRUP",
+    "composition": "EACH 5ML CONTAINS AMOXYCILLIN 200MG + CLAVULANIC ACID 28.5MG",
+    "pack": "30ML",
+    "mrp": 68.99,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "118",
+    "name": "TORMOXIN CLAV FORTE SYRUP",
+    "composition": "EACH 5ML CONTAINS AMOXYCILLIN 400MG + CLAVULANIC ACID 57MG",
+    "pack": "30ML",
+    "mrp": 155.0,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "119",
+    "name": "TORTHROCIN 250",
+    "composition": "AZITHROMYCIN 250MG",
+    "pack": "6",
+    "mrp": 78.42,
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "120",
+    "name": "TORTHROCIN 500",
+    "composition": "AZITHROMYCIN 500MG",
+    "pack": "5",
+    "mrp": 131.97,
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "121",
+    "name": "TRICUTIS 100",
+    "composition": "ITRACONAZOLE 100MG (AS PELLETS)",
+    "pack": "10",
+    "mrp": 186.7,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "122",
+    "name": "TRICUTIS 200",
+    "composition": "ITRACONAZOLE 200MG (AS PELLETS)",
+    "pack": "10",
+    "mrp": 247.74,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "123",
+    "name": "U.V.A CEF 50 DRY SYRUP",
+    "composition": "EACH 5ML CONTAINS CEFPODOXIME 50MG",
+    "pack": "30ML",
+    "mrp": 115.0,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "124",
+    "name": "U.V.A CEF 100 DRY SYRUP",
+    "composition": "EACH 5ML CONTAINS CEFPODOXIME 100MG",
+    "pack": "30ML",
+    "mrp": 219.0,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "125",
+    "name": "U.V.A CEF 100 DT",
+    "composition": "CEFPODOXIME 100MG",
+    "pack": "10",
+    "mrp": 153.5,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "126",
+    "name": "U.V.A CEF 200",
+    "composition": "CEFPODOXIME 200MG",
+    "pack": "10",
+    "mrp": 231.6,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "127",
+    "name": "U.V.A CEF CV",
+    "composition": "CEFPODOXIME 200MG + CLAVULANIC ACID 125MG",
+    "pack": "10",
+    "mrp": 488.4,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "128",
+    "name": "U.V.A CEF CV DS",
+    "composition": "CEFPODOXIME 50MG + CLAVULANIC ACID 31.25MG",
+    "pack": "30ML",
+    "mrp": 99.6,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "129",
+    "name": "UNIBREETH",
+    "composition": "WHITE SOFT PARAFFIN 13.2%W/W + LIGHT LIQUID PARAFFIN 10.2% W/W IN A CREAM BASE",
+    "pack": "60GM",
+    "mrp": 192.3,
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "sl_no": "130",
+    "name": "UNIDERM NM 15 GM CREAM",
+    "composition": "CLOBETASOL 0.05% + NEOMYCIN 0.5% + MICONAZOLE 2%",
+    "pack": "15 GM",
+    "mrp": 100.0,
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "sl_no": "131",
+    "name": "UNIDINE 5% 20 GM OINTMENT",
+    "composition": "POVIDONE IODINE CREAM - 5%",
+    "pack": "20 GM",
+    "mrp": 40.8,
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "sl_no": "132",
+    "name": "UNIDINE 5% 100 ML SOLUTION",
+    "composition": "POVIDONE IODINE SOLUTION - 5%",
+    "pack": "100 ML",
+    "mrp": 48.66,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "133",
+    "name": "UNIDINE 10% 100 ML SOLUTION",
+    "composition": "POVIDONE IODINE SOLUTION - 10%",
+    "pack": "100 ML",
+    "mrp": 96.32,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "134",
+    "name": "UNIDINE 5% 500 ML SOLUTION",
+    "composition": "POVIDONE IODINE SOLUTION - 5%",
+    "pack": "500 ML",
+    "mrp": 243.3,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "135",
+    "name": "UNIDINE 10% 500 ML SOLUTION",
+    "composition": "POVIDONE IODINE SOLUTION - 10%",
+    "pack": "500 ML",
+    "mrp": 537.6,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "136",
+    "name": "UNIDINE 7.5% 500 ML SCRUB",
+    "composition": "POVIDONE IODINE SCRUB - 7.5%",
+    "pack": "500ML",
+    "mrp": 339.71,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "137",
+    "name": "UNIDINE 5% 250 GM OINTMENT",
+    "composition": "POVIDONE IODINE OINTMENT - 5%",
+    "pack": "250 GM",
+    "mrp": 510.0,
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "sl_no": "138",
+    "name": "UNIENZYME DROPS",
+    "composition": "EACH ML CONTAINS FUNGAL DIASTASE 20MG + CARAWAY OIL 400MCG + CINNAMOM OIL 200MCG + CARDAMOM OIL 400MCG + SIMETHICONE 40MG + PAPAIN 10MG",
+    "pack": "15ML",
+    "mrp": 122.65,
+    "form": "Syrup",
+    "category": "Pain Relief"
+  },
+  {
+    "sl_no": "139",
+    "name": "UNIENZYME SYRUP PINEAPPLE",
+    "composition": "EACH 5ML CONTAINS PEPSIN 10MG + DIASTASE 50MG",
+    "pack": "200ML",
+    "mrp": 169.65,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "140",
+    "name": "UNIENZYME SYRUP CARDAMOM",
+    "composition": "EACH 5ML CONTAINS PEPSIN 10MG + DIASTASE 50MG",
+    "pack": "200ML",
+    "mrp": 154.4,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "141",
+    "name": "UNILAX 100",
+    "composition": "EACH 15ML CONTAINS LACTULOSE 10GM",
+    "pack": "100 ML",
+    "mrp": 128.93,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "142",
+    "name": "UNILAX 200",
+    "composition": "EACH 15ML CONTAINS LACTULOSE 10GM",
+    "pack": "200 ML",
+    "mrp": 257.87,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "143",
+    "name": "UNILAX 450",
+    "composition": "EACH 15ML CONTAINS LACTULOSE 10GM",
+    "pack": "450 ML",
+    "mrp": 580.2,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "144",
+    "name": "UNIMIKA 100",
+    "composition": "AMIKACIN SULPHATE INJECTION IP 100 MG/2ML",
+    "pack": "2ML",
+    "mrp": 39.85,
+    "form": "Injection",
+    "category": "General"
+  },
+  {
+    "sl_no": "145",
+    "name": "UNIMIKA 250",
+    "composition": "AMIKACIN SULPHATE INJECTION IP 250MG/2ML",
+    "pack": "2ML",
+    "mrp": 41.0,
+    "form": "Injection",
+    "category": "General"
+  },
+  {
+    "sl_no": "146",
+    "name": "UNISTAT 10",
+    "composition": "ATORVASTATIN 10MG",
+    "pack": "10",
+    "mrp": 55.66,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "147",
+    "name": "UNISTAT 20",
+    "composition": "ATORVASTATIN 20MG",
+    "pack": "10",
+    "mrp": 140.56,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "148",
+    "name": "UNISTAT 40",
+    "composition": "ATORVASTATIN 40MG",
+    "pack": "10",
+    "mrp": 216.04,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "149",
+    "name": "UNISTAT F",
+    "composition": "ATORVASTATIN 10MG + FENOFIBRATE 160MG",
+    "pack": "10",
+    "mrp": 285.0,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "150",
+    "name": "UNIPREST M",
+    "composition": "COMBIKIT OF 1 TABLET OF MIFEPRISTONE 200MG + 4 TABLETS OF MISOPROSTOL 200MCG",
+    "pack": "5",
+    "mrp": 477.98,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "151",
+    "name": "UNISPEED CZ",
+    "composition": "ASCORBIC ACID 500 MG + ZINC 5 MG",
+    "pack": "15",
+    "mrp": 103.95,
+    "form": "Tablet",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "sl_no": "152",
+    "name": "UNIVITAL NF",
+    "composition": "MULTIVITAMINS + MULTIMINERALS + GINSENG",
+    "pack": "10",
+    "mrp": 132.5,
+    "form": "Tablet",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "sl_no": "153",
+    "name": "UVNIL 5 10\u2019s",
+    "composition": "LEVOCETIRIZINE 5MG",
+    "pack": "10",
+    "mrp": 113.2,
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "154",
+    "name": "UVNIL 5 15\u2019s",
+    "composition": "LEVOCETIRIZINE 5MG",
+    "pack": "15",
+    "mrp": 169.8,
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "155",
+    "name": "UVNIL MONT",
+    "composition": "LEVOCETIRIZINE 5MG + MONTELUKAST 10MG",
+    "pack": "10",
+    "mrp": 135.0,
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "156",
+    "name": "UVNIL MONT KID TAB",
+    "composition": "LEVOCETIRIZINE 2.5 MG + MONTELUKAST 4 MG",
+    "pack": "10",
+    "mrp": 87.9,
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "157",
+    "name": "UVNIL MONT KID SUSPENSION 30ML",
+    "composition": "EACH 5ML CONTAINS LEVOCETRIZINE HCL 2.5MG + MONTELUKAST 4MG",
+    "pack": "30ML",
+    "mrp": 47.65,
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "158",
+    "name": "UVNIL MONT KID SUSPENSION 60ML",
+    "composition": "EACH 5ML CONTAINS LEVOCETRIZINE HCL 2.5MG + MONTELUKAST 4MG",
+    "pack": "60ML",
+    "mrp": 95.3,
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "159",
+    "name": "UVNIL SYRUP 30ML",
+    "composition": "EACH 5ML CONTAINS LEVOCETIRIZINE 2.5MG",
+    "pack": "30ML",
+    "mrp": 70.8,
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "160",
+    "name": "UVNIL SYRUP 60ML",
+    "composition": "EACH 5ML CONTAINS LEVOCETIRIZINE 2.5MG",
+    "pack": "60ML",
+    "mrp": 141.6,
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "161",
+    "name": "VIZYLAC JUNIOR",
+    "composition": "SPORES OF POLYANTIBIOTIC RESISTANT BACILLUS CLAUSII SUSP 2 BILLION/5ML",
+    "pack": "5 ML",
+    "mrp": 46.2,
+    "form": "Syrup",
+    "category": "Antibiotics"
+  },
+  {
+    "sl_no": "162",
+    "name": "VOMILIFE MD",
+    "composition": "ONDANSETRON 4MG",
+    "pack": "10",
+    "mrp": 26.9,
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "sl_no": "163",
+    "name": "VOMILIFE SYRUP",
+    "composition": "EACH 5ML CONTAINS ONDANSETRON 2MG",
+    "pack": "30 ML",
+    "mrp": 42.33,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "164",
+    "name": "VOMILIFE INJ 2ML",
+    "composition": "EACH ML CONTAINS ONDANSETRON 2MG",
+    "pack": "2 ML",
+    "mrp": 13.57,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "165",
+    "name": "VOMILIFE INJ 4ML",
+    "composition": "EACH ML CONTAINS ONDANSETRON 2MG",
+    "pack": "4 ML",
+    "mrp": 27.14,
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "sl_no": "166",
+    "name": "XT PARA 500",
+    "composition": "PARACETAMOL 500MG",
+    "pack": "10",
+    "mrp": 10.04,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "167",
+    "name": "XT PARA 650",
+    "composition": "PARACETAMOL 650MG",
+    "pack": "10",
+    "mrp": 22.46,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "168",
+    "name": "XT PARA 1000",
+    "composition": "PARACETAMOL 1000MG (300MG IMMEDIATE RELEASE & 700MG SUSTAINED RELEASE)",
+    "pack": "12",
+    "mrp": 91.0,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "169",
+    "name": "XT PARA SUSP",
+    "composition": "EACH 5ML CONTAINS PARACETAMOL 250MG",
+    "pack": "60ML",
+    "mrp": 45.02,
+    "form": "Syrup",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "170",
+    "name": "XTPARA MF 50",
+    "composition": "EACH 5ML CONTAINS PARACETAMOl 125 MG + MEFENAMIC ACID 50 MG",
+    "pack": "60ML",
+    "mrp": 47.95,
+    "form": "Syrup",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "171",
+    "name": "XTPARA MF 100",
+    "composition": "EACH 5ML CONTAINS PARACETAMOL 250 MG + MEFENAMIC ACID 100 MG",
+    "pack": "60ML",
+    "mrp": 55.35,
+    "form": "Syrup",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "172",
+    "name": "XTPARA COLD DS",
+    "composition": "EACH 5ML CONTAINS PARACETAMOL 250MG + PHENYLEPHRINE 5MG + CPM 2MG + SODIUM CITRATE 60MG + AMMONIUM CHLORIDE 120MG + MENTHOL 1MG",
+    "pack": "60ML",
+    "mrp": 72.15,
+    "form": "Syrup",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "173",
+    "name": "XTPARA COLD TAB",
+    "composition": "PARACETAMOL 500MG + PHENYLEPHRINE 10MG + CHLORPHENIRAMINE MALEATE 2MG",
+    "pack": "10",
+    "mrp": 53.65,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "174",
+    "name": "XTPARA COLD & FLU",
+    "composition": "PARACETAMOL 500MG + PHENYLEPHRINE HCL 5MG + CAFFEINE 30MG + DIPHENHYDRAMINE HCL 25MG",
+    "pack": "10",
+    "mrp": 47.4,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "175",
+    "name": "XTPARA SPAS",
+    "composition": "PARACETAMOL 325MG + DICYCLOMINE 20MG",
+    "pack": "10",
+    "mrp": 23.7,
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "sl_no": "176",
+    "name": "ZYNCET TABLET",
+    "composition": "CETIRIZINE DIHYDROCHLORIDE 10MG",
+    "pack": "10",
+    "mrp": 21.05,
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "sl_no": "177",
+    "name": "ZYNCET SYRUP",
+    "composition": "EACH 5ML CONTAINS CETIRIZINE DIHYDROCHLORIDE 5MG",
+    "pack": "60 ML",
+    "mrp": 44.35,
+    "form": "Syrup",
+    "category": "Allergy"
+  }
+]

@@ -443,115 +443,105 @@ class ThermalPrinter {
   // Print bill receipt for completed appointments
   async printBill(billData) {
     try {
-      // Try to reconnect if disconnected
       if (!this.isConnected && this.device) {
         await this.reconnect();
       }
-      
       await this.init();
       
-      // Header separator
-      await this.printText('================================', { center: true });
+      // Compact 58mm receipt — small font
+      await this.printText('--------------------------------', { center: true });
       
-      // Clinic name (large, bold, centered)
-      const clinicName = billData.clinic?.replace(' Clinic', '').toUpperCase() || 'CLINIC';
-      await this.printText(clinicName + ' CLINIC', { center: true, bold: true, doubleWidth: true });
+      // Clinic name (bold, centered, no address)
+      const clinicName = (billData.clinic || 'CLINIC').toUpperCase();
+      await this.printText(clinicName, { center: true, bold: true });
+      await this.printText('BILL / RECEIPT', { center: true });
+      await this.printText('--------------------------------', { center: true });
       
-      // Clinic address
-      if (billData.clinic_address) {
-        const shortAddress = billData.clinic_address.split(',')[0];
-        await this.printText(shortAddress, { center: true });
-      }
-      
-      await this.printText('================================', { center: true });
-      await this.printText('BILL / RECEIPT', { center: true, bold: true });
-      await this.printLine('-');
-      
-      // Date and Bill ID
+      // Date, Time, Ref
       const now = new Date();
-      const istTime = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
-      const dateStr = istTime.toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
-      const timeStr = istTime.toLocaleTimeString('en-IN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
-      
-      await this.printText('Date: ' + dateStr + ' ' + timeStr);
-      if (billData.booking_id) {
-        await this.printText('Ref: ' + billData.booking_id);
-      }
+      const ist = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
+      const dateStr = ist.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      const timeStr = ist.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+      await this.printText(dateStr + '  ' + timeStr);
+      if (billData.booking_id) await this.printText('Ref: ' + billData.booking_id);
       
       await this.printLine('-');
       
-      // Patient details
-      await this.printText('Patient:', { bold: true });
-      await this.printText(billData.patient_name || 'N/A', { doubleHeight: true });
-      await this.printText('Mobile: ' + (billData.patient_mobile || 'N/A'));
+      // Patient + Doctor
+      await this.printText(billData.patient_name || 'N/A', { bold: true });
+      await this.printText('Ph: ' + (billData.patient_mobile || '-'));
+      await this.printText('Dr: ' + (billData.doctor || '-'));
       
       await this.printLine('-');
-      await this.feed(1);
       
-      // Fees and charges header
-      await this.printText('FEES & CHARGES', { bold: true });
-      await this.printLine('-');
+      // Charges itemized
+      let subtotal = 0;
       
-      // Fee code breakdown
+      // Consultation fee
       if (billData.fee_code && billData.fee_details) {
-        const feeLabel = billData.fee_details.label || billData.fee_code;
-        const feeAmount = billData.fee_details.amount || 0;
-        // Format: Code - Label ... Amount
-        await this.printText(billData.fee_code + ' - ' + feeLabel);
-        await this.printText('                       Rs.' + feeAmount.toFixed(0));
+        const amt = billData.fee_details.amount || 0;
+        const label = (billData.fee_details.label || billData.fee_code).substring(0, 20);
+        await this.printText(label);
+        await this.printText(this.rightAlign('Rs.' + amt.toFixed(0), 32));
+        subtotal += amt;
       }
       
-      // Scan codes breakdown
+      // Scans itemized
       if (billData.scan_codes && billData.scan_codes.length > 0) {
         for (const scan of billData.scan_codes) {
-          const scanLabel = scan.label || scan.code;
-          const scanAmount = scan.amount || 0;
-          await this.printText(scan.code + ' - ' + scanLabel);
-          await this.printText('                       Rs.' + scanAmount.toFixed(0));
+          const amt = scan.amount || 0;
+          const label = (scan.label || scan.code).substring(0, 20);
+          await this.printText(label);
+          await this.printText(this.rightAlign('Rs.' + amt.toFixed(0), 32));
+          subtotal += amt;
         }
       }
       
-      await this.printLine('-');
-      await this.feed(1);
+      // Medicines
+      if (billData.medicine_amount > 0) {
+        await this.printText('Medicines');
+        await this.printText(this.rightAlign('Rs.' + billData.medicine_amount.toFixed(0), 32));
+        subtotal += billData.medicine_amount;
+      }
       
-      // Total (LARGE)
-      await this.printText('TOTAL', { bold: true });
-      await this.printText('Rs. ' + (billData.total_amount || 0).toFixed(0), { bold: true, doubleSize: true });
+      // Misc
+      if (billData.misc_amount > 0) {
+        await this.printText('Miscellaneous');
+        await this.printText(this.rightAlign('Rs.' + billData.misc_amount.toFixed(0), 32));
+        subtotal += billData.misc_amount;
+      }
       
-      await this.printLine('=');
-      await this.feed(1);
+      await this.printText('--------------------------------', { center: true });
       
-      // Doctor name
-      if (billData.doctor) {
-        await this.printText('Treated by: ' + billData.doctor, { center: true });
+      // Total
+      const total = billData.total_amount || subtotal;
+      await this.printText('TOTAL: Rs.' + total.toFixed(0), { bold: true });
+      
+      // Payment method
+      if (billData.payment_method) {
+        await this.printText('Paid: ' + billData.payment_method.toUpperCase());
       }
       
       await this.printLine('-');
-      await this.feed(1);
       
-      // Thank you message
-      await this.printText('Thank you for choosing', { center: true });
+      // Footer
+      await this.printText('Thank you!', { center: true });
       await this.printText('NEVIKA CURA', { center: true, bold: true });
-      await this.printText('Get well soon!', { center: true });
-      
-      await this.printText('================================', { center: true });
+      await this.printText('--------------------------------', { center: true });
       
       // Feed for tear-off
-      await this.feed(4);
+      await this.feed(3);
       
       return { success: true };
     } catch (error) {
       console.error('Print bill error:', error);
       return { success: false, error: error.message };
     }
+  }
+  
+  rightAlign(text, width = 32) {
+    const padding = Math.max(0, width - text.length);
+    return ' '.repeat(padding) + text;
   }
 }
 

@@ -7,6 +7,40 @@ import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import axios from 'axios';
 
+// Common ISD country codes
+const COUNTRY_CODES = [
+  { code: '+91', country: 'IN', label: 'India', flag: '🇮🇳', digits: 10 },
+  { code: '+1', country: 'US', label: 'USA / Canada', flag: '🇺🇸', digits: 10 },
+  { code: '+44', country: 'GB', label: 'United Kingdom', flag: '🇬🇧', digits: 10 },
+  { code: '+971', country: 'AE', label: 'UAE', flag: '🇦🇪', digits: 9 },
+  { code: '+966', country: 'SA', label: 'Saudi Arabia', flag: '🇸🇦', digits: 9 },
+  { code: '+65', country: 'SG', label: 'Singapore', flag: '🇸🇬', digits: 8 },
+  { code: '+61', country: 'AU', label: 'Australia', flag: '🇦🇺', digits: 9 },
+  { code: '+49', country: 'DE', label: 'Germany', flag: '🇩🇪', digits: 11 },
+  { code: '+33', country: 'FR', label: 'France', flag: '🇫🇷', digits: 9 },
+  { code: '+81', country: 'JP', label: 'Japan', flag: '🇯🇵', digits: 10 },
+  { code: '+86', country: 'CN', label: 'China', flag: '🇨🇳', digits: 11 },
+  { code: '+82', country: 'KR', label: 'South Korea', flag: '🇰🇷', digits: 10 },
+  { code: '+60', country: 'MY', label: 'Malaysia', flag: '🇲🇾', digits: 10 },
+  { code: '+63', country: 'PH', label: 'Philippines', flag: '🇵🇭', digits: 10 },
+  { code: '+64', country: 'NZ', label: 'New Zealand', flag: '🇳🇿', digits: 9 },
+  { code: '+27', country: 'ZA', label: 'South Africa', flag: '🇿🇦', digits: 9 },
+  { code: '+234', country: 'NG', label: 'Nigeria', flag: '🇳🇬', digits: 10 },
+  { code: '+254', country: 'KE', label: 'Kenya', flag: '🇰🇪', digits: 9 },
+  { code: '+977', country: 'NP', label: 'Nepal', flag: '🇳🇵', digits: 10 },
+  { code: '+94', country: 'LK', label: 'Sri Lanka', flag: '🇱🇰', digits: 9 },
+  { code: '+880', country: 'BD', label: 'Bangladesh', flag: '🇧🇩', digits: 10 },
+  { code: '+92', country: 'PK', label: 'Pakistan', flag: '🇵🇰', digits: 10 },
+  { code: '+974', country: 'QA', label: 'Qatar', flag: '🇶🇦', digits: 8 },
+  { code: '+968', country: 'OM', label: 'Oman', flag: '🇴🇲', digits: 8 },
+  { code: '+973', country: 'BH', label: 'Bahrain', flag: '🇧🇭', digits: 8 },
+  { code: '+965', country: 'KW', label: 'Kuwait', flag: '🇰🇼', digits: 8 },
+  { code: '+39', country: 'IT', label: 'Italy', flag: '🇮🇹', digits: 10 },
+  { code: '+34', country: 'ES', label: 'Spain', flag: '🇪🇸', digits: 9 },
+  { code: '+55', country: 'BR', label: 'Brazil', flag: '🇧🇷', digits: 11 },
+  { code: '+52', country: 'MX', label: 'Mexico', flag: '🇲🇽', digits: 10 },
+];
+
 const AuthModal = ({ open, onClose }) => {
   const { sendAuthOtp, verifyAuthOtp, loginWithOtp, registerWithOtp, login, fetchUser, biometricAvailable, biometricEnabled, loginWithBiometric, setPatientAuth } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -14,6 +48,9 @@ const AuthModal = ({ open, onClose }) => {
   const [step, setStep] = useState('method-select');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
+  const [showCountryPicker, setShowCountryPicker] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [mockOtp, setMockOtp] = useState('');
   const [otpMethod, setOtpMethod] = useState(''); // 'email' or 'sms' or 'mock'
@@ -26,7 +63,36 @@ const AuthModal = ({ open, onClose }) => {
   const [authMethod, setAuthMethod] = useState(''); // 'email-otp', 'password', 'phone-otp', 'google', 'biometric'
   const [loginError, setLoginError] = useState('');
   const otpRefs = React.useRef([]);
+  const countryPickerRef = React.useRef(null);
   const API = process.env.REACT_APP_BACKEND_URL;
+
+  // Get selected country info
+  const selectedCountry = COUNTRY_CODES.find(c => c.code === countryCode) || COUNTRY_CODES[0];
+  const maxDigits = selectedCountry.digits || 10;
+
+  // Full phone for backend = country code (without +) + phone digits
+  const getFullPhone = () => `${countryCode.replace('+', '')}${phone}`;
+
+  // Close country picker on outside click
+  React.useEffect(() => {
+    const handler = (e) => {
+      if (countryPickerRef.current && !countryPickerRef.current.contains(e.target)) {
+        setShowCountryPicker(false);
+        setCountrySearch('');
+      }
+    };
+    if (showCountryPicker) document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showCountryPicker]);
+
+  // Filter countries by search
+  const filteredCountries = countrySearch
+    ? COUNTRY_CODES.filter(c =>
+        c.label.toLowerCase().includes(countrySearch.toLowerCase()) ||
+        c.code.includes(countrySearch) ||
+        c.country.toLowerCase().includes(countrySearch.toLowerCase())
+      )
+    : COUNTRY_CODES;
 
   // Available interests
   const availableInterests = [
@@ -43,6 +109,9 @@ const AuthModal = ({ open, onClose }) => {
       setStep('method-select');
       setEmail('');
       setPhone('');
+      setCountryCode('+91');
+      setShowCountryPicker(false);
+      setCountrySearch('');
       setOtp(['', '', '', '', '', '']);
       setMockOtp('');
       setUserExists(false);
@@ -90,14 +159,15 @@ const AuthModal = ({ open, onClose }) => {
   // Send Phone SMS OTP
   const handleSendPhoneOtp = async (e) => {
     e.preventDefault();
-    if (!phone || phone.length !== 10) {
-      toast.error('Please enter a valid 10-digit phone number');
+    if (!phone || phone.length < 4) {
+      toast.error('Please enter a valid phone number');
       return;
     }
     setLoading(true);
+    const fullPhone = getFullPhone();
     try {
       // Try staff auth OTP first
-      const response = await sendAuthOtp(phone);
+      const response = await sendAuthOtp(fullPhone);
       setOtpMethod(response.method || 'sms');
       if (response.mock_otp) setMockOtp(response.mock_otp);
       setStep('phone-otp-verify');
@@ -106,7 +176,7 @@ const AuthModal = ({ open, onClose }) => {
     } catch (error) {
       // Staff auth failed - try patient portal OTP
       try {
-        const patientOtpRes = await axios.post(`${API}/api/patients/portal/send-otp?mobile=${phone}`);
+        const patientOtpRes = await axios.post(`${API}/api/patients/portal/send-otp?mobile=${fullPhone}`);
         if (patientOtpRes.data.success) {
           setOtpMethod('patient');
           if (patientOtpRes.data.mock_otp) setMockOtp(patientOtpRes.data.mock_otp);
@@ -183,8 +253,9 @@ const AuthModal = ({ open, onClose }) => {
   const handleVerifyPhoneOtp = async (otpString) => {
     if (otpString.length !== 6) return;
     setLoading(true);
+    const fullPhone = getFullPhone();
     try {
-      const response = await verifyAuthOtp(phone, otpString);
+      const response = await verifyAuthOtp(fullPhone, otpString);
       setUserExists(response.user_exists);
       if (response.verification_token) {
         setVerificationToken(response.verification_token);
@@ -192,13 +263,13 @@ const AuthModal = ({ open, onClose }) => {
       
       if (response.user_exists) {
         // User exists in staff/admin database - login directly
-        await loginWithOtp(phone, otpString);
+        await loginWithOtp(fullPhone, otpString);
         toast.success('Logged in successfully!');
         onClose();
       } else {
         // User not in staff database - try patient portal login
         try {
-          const patientResponse = await axios.post(`${API}/api/patients/portal/verify-otp?mobile=${phone}&otp=${otpString}`);
+          const patientResponse = await axios.post(`${API}/api/patients/portal/verify-otp?mobile=${fullPhone}&otp=${otpString}`);
           if (patientResponse.data.success && patientResponse.data.token) {
             // Patient login successful
             const { token, patient } = patientResponse.data;
@@ -215,14 +286,14 @@ const AuthModal = ({ open, onClose }) => {
         }
         
         // Neither staff nor patient - new user, show registration form
-        setRegisterForm({ ...registerForm, phone });
+        setRegisterForm({ ...registerForm, phone: fullPhone });
         setStep('register');
         toast.success('Phone verified! Complete your registration.');
       }
     } catch (error) {
       // Staff auth failed - try patient portal login as fallback
       try {
-        const patientResponse = await axios.post(`${API}/api/patients/portal/verify-otp?mobile=${phone}&otp=${otpString}`);
+        const patientResponse = await axios.post(`${API}/api/patients/portal/verify-otp?mobile=${fullPhone}&otp=${otpString}`);
         if (patientResponse.data.success && patientResponse.data.token) {
           const { token, patient } = patientResponse.data;
           localStorage.setItem('patientToken', token);
@@ -295,7 +366,7 @@ const AuthModal = ({ open, onClose }) => {
     setLoading(true);
     try {
       const regEmail = registerForm.email || email;
-      const regPhone = registerForm.phone || phone;
+      const regPhone = registerForm.phone || (phone ? getFullPhone() : '');
       
       const response = await fetch(`${API}/api/auth/register`, {
         method: 'POST',
@@ -401,8 +472,9 @@ const AuthModal = ({ open, onClose }) => {
       return;
     }
     setLoading(true);
+    const fullPhone = getFullPhone();
     try {
-      const response = await verifyAuthOtp(phone, otpValue);
+      const response = await verifyAuthOtp(fullPhone, otpValue);
       setUserExists(response.user_exists);
       
       // Store verification token for registration
@@ -412,7 +484,7 @@ const AuthModal = ({ open, onClose }) => {
       
       if (response.user_exists) {
         // User exists - login directly
-        await loginWithOtp(phone, otpValue);
+        await loginWithOtp(fullPhone, otpValue);
         toast.success('Logged in successfully!');
         onClose();
       } else {
@@ -431,9 +503,10 @@ const AuthModal = ({ open, onClose }) => {
     setLoading(true);
     const formData = new FormData(e.target);
     const otpValue = otp.join('');
+    const fullPhone = getFullPhone();
     try {
       await registerWithOtp(
-        phone,
+        fullPhone,
         otpValue,
         formData.get('email'),
         formData.get('password'),
@@ -452,8 +525,9 @@ const AuthModal = ({ open, onClose }) => {
   const handleResendOtp = async () => {
     if (resendTimer > 0) return;
     setLoading(true);
+    const fullPhone = getFullPhone();
     try {
-      const response = await sendAuthOtp(phone);
+      const response = await sendAuthOtp(fullPhone);
       setMockOtp(response.mock_otp || '');
       setOtpMethod(response.method || 'mock');
       setOtp(['', '', '', '', '', '']);
@@ -534,7 +608,7 @@ const AuthModal = ({ open, onClose }) => {
               </div>
             </button>
             
-            {/* Phone OTP - Least Preferred */}
+            {/* Phone OTP - WhatsApp */}
             <button
               onClick={() => {
                 setAuthMethod('phone-otp');
@@ -544,14 +618,14 @@ const AuthModal = ({ open, onClose }) => {
               data-testid="auth-method-phone-otp"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div>
                   <p className="font-semibold text-gray-800">Phone + SMS OTP</p>
-                  <p className="text-xs text-gray-500">SMS charges may apply</p>
+                  <p className="text-xs text-gray-500">International numbers supported</p>
                 </div>
               </div>
             </button>
@@ -628,19 +702,71 @@ const AuthModal = ({ open, onClose }) => {
           <form onSubmit={handleSendPhoneOtp} className="space-y-4">
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-xs text-amber-700">
-                <strong>Note:</strong> SMS charges may apply. Email OTP is free!
+                <strong>Note:</strong> OTP will be sent via SMS. Ensure WhatsApp is active on this number.
               </p>
             </div>
             <div>
               <Label htmlFor="phone">Phone Number</Label>
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground font-medium px-3 py-2 bg-gray-100 rounded-l-xl">+91</span>
+              <div className="flex items-center gap-0 relative">
+                {/* Country code selector */}
+                <div className="relative" ref={countryPickerRef}>
+                  <button
+                    type="button"
+                    onClick={() => setShowCountryPicker(!showCountryPicker)}
+                    className="flex items-center gap-1 px-3 h-12 bg-gray-100 border border-r-0 border-gray-200 rounded-l-xl hover:bg-gray-200 transition-colors min-w-[90px] justify-center"
+                    data-testid="country-code-selector"
+                  >
+                    <span className="text-base">{selectedCountry.flag}</span>
+                    <span className="text-sm font-medium text-gray-700">{countryCode}</span>
+                    <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {showCountryPicker && (
+                    <div className="absolute top-full left-0 mt-1 w-64 max-h-60 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden" data-testid="country-picker-dropdown">
+                      <div className="p-2 border-b border-gray-100">
+                        <input
+                          type="text"
+                          placeholder="Search country..."
+                          value={countrySearch}
+                          onChange={(e) => setCountrySearch(e.target.value)}
+                          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-teal-400"
+                          autoFocus
+                          data-testid="country-search-input"
+                        />
+                      </div>
+                      <div className="overflow-y-auto max-h-48">
+                        {filteredCountries.map((c) => (
+                          <button
+                            key={c.code}
+                            type="button"
+                            onClick={() => {
+                              setCountryCode(c.code);
+                              setShowCountryPicker(false);
+                              setCountrySearch('');
+                              setPhone('');
+                            }}
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 hover:bg-teal-50 transition-colors text-left ${countryCode === c.code ? 'bg-teal-50' : ''}`}
+                            data-testid={`country-option-${c.country}`}
+                          >
+                            <span className="text-base">{c.flag}</span>
+                            <span className="text-sm text-gray-700 flex-1">{c.label}</span>
+                            <span className="text-xs text-gray-400 font-mono">{c.code}</span>
+                          </button>
+                        ))}
+                        {filteredCountries.length === 0 && (
+                          <p className="text-sm text-gray-400 text-center py-4">No country found</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <Input 
                   id="phone" 
                   type="tel"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  placeholder="10-digit number"
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, maxDigits))}
+                  placeholder={`${maxDigits}-digit number`}
                   required 
                   data-testid="auth-phone-input"
                   className="h-12 rounded-r-xl rounded-l-none flex-1"
@@ -650,7 +776,7 @@ const AuthModal = ({ open, onClose }) => {
             <Button 
               type="submit" 
               className="w-full rounded-full h-12" 
-              disabled={loading || phone.length !== 10}
+              disabled={loading || phone.length < 4}
               data-testid="send-phone-otp-button"
             >
               {loading ? 'Sending...' : 'Send OTP via SMS'}
@@ -757,7 +883,7 @@ const AuthModal = ({ open, onClose }) => {
               </div>
             )}
             <p className="text-sm text-gray-600 text-center">
-              Code sent to <strong>+91 {phone}</strong>
+              Code sent to <strong>{countryCode} {phone}</strong>
             </p>
             <div className="flex justify-center gap-2">
               {otp.map((digit, index) => (
@@ -820,7 +946,7 @@ const AuthModal = ({ open, onClose }) => {
             )}
             {(phone || registerForm.phone) && !email && (
               <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-sm text-green-700">✓ Phone verified: <strong>+91 {phone || registerForm.phone}</strong></p>
+                <p className="text-sm text-green-700">✓ Phone verified: <strong>{countryCode} {phone || registerForm.phone}</strong></p>
               </div>
             )}
             <div>
@@ -852,17 +978,17 @@ const AuthModal = ({ open, onClose }) => {
             {!phone && (
               <div>
                 <Label htmlFor="reg-phone">Phone Number (Optional)</Label>
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground font-medium px-3 py-2 bg-gray-100 rounded-l-xl">+91</span>
+                <div className="flex items-center gap-0">
+                  <span className="text-muted-foreground font-medium px-3 py-2 bg-gray-100 rounded-l-xl text-sm">{countryCode}</span>
                   <Input 
                     id="reg-phone" 
                     value={registerForm.phone}
-                    onChange={(e) => setRegisterForm({...registerForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})}
-                    placeholder="For appointment SMS"
+                    onChange={(e) => setRegisterForm({...registerForm, phone: e.target.value.replace(/\D/g, '').slice(0, maxDigits)})}
+                    placeholder="For appointment notifications"
                     className="h-12 rounded-r-xl rounded-l-none flex-1"
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Required only for appointment SMS notifications</p>
+                <p className="text-xs text-gray-500 mt-1">Required only for appointment WhatsApp notifications</p>
               </div>
             )}
             <div>

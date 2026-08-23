@@ -1,0 +1,35 @@
+{
+  "iteration": 251,
+  "date": "2026-03-21",
+  "test_type": "self_test_screenshots_curl_lint",
+  "results": {
+    "backend": {
+      "wallet_balance_api": "PASS - /api/wallet/balance responds correctly (401 without auth)",
+      "cashfree_topup_api": "PASS - /api/wallet/cashfree-topup endpoint registered",
+      "cashfree_verify_api": "PASS - /api/wallet/cashfree-topup/verify/{order_id} registered",
+      "curapay_checkout_api": "PASS - /api/wallet/curapay/checkout endpoint registered",
+      "coupon_validate": "PASS - validates and returns correct response",
+      "coupon_redeem": "PASS - redeems and activates subscription",
+      "coupon_reuse_prevention": "PASS - used coupon returns invalid",
+      "coupon_email": "PASS - 200 codes emailed to nevikacura@gmail.com"
+    },
+    "frontend": {
+      "curapay_wallet_page": "PASS - Renders with glassmorphism balance card, CuraPay branding, logos, add money, transactions, pay-at grid",
+      "curapay_checkout_option": "PASS - Code integrated in UnifiedCheckout.jsx (shows when walletBalance > 0)",
+      "membership_rename": "PASS - MembershipCard, MembershipLinkBanner, HomeMembershipForm, MembershipPlans all renamed to 'Cura Card'",
+      "orange_staff_past_orders": "PASS - Tab visible and functional",
+      "mango_staff_past_orders": "PASS - Tab visible and functional",
+      "diagyn_staff_archives": "PASS - Toggle visible with IST-based filtering",
+      "glydex_hba1c_ring": "PASS - Ring chart visible",
+      "glydex_med_adherence": "PASS - Weekly tracker visible",
+      "evara_fertility_window": "PASS - Cycle ring + mini bar visible",
+      "reneu_water_intake": "PASS - Water ring visible",
+      "profile_declutter": "PASS - Removed Birthday, Biometric, Trusted, Notifications"
+    },
+    "lint": {
+      "frontend_all_files": "PASS - No lint errors",
+      "backend_wallet": "PASS - Fixed f-string warning"
+    }
+  },
+  "notes": "CuraPay payment flow: 1) User adds money via Cashfree SDK, 2) Cashfree returns to /cura-wallet?topup_order=xxx, 3) Frontend verifies and credits, 4) At checkout, select CuraPay → instant deduction + 3% loyalty points."
+}

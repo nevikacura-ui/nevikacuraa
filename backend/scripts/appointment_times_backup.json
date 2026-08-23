@@ -1,0 +1,713 @@
+{
+  "created_at": "2026-02-14T08:05:01.573300+00:00",
+  "total_appointments": 101,
+  "appointments": [
+    {
+      "_id": "69628cd847bc3e3b474770a1",
+      "booking_id": "PC-00001",
+      "time": "11:00",
+      "date": "2026-01-10",
+      "patient_name": "TEST_Patient_Comprehensive"
+    },
+    {
+      "_id": "69628cda47bc3e3b474770a3",
+      "booking_id": "PC-00002",
+      "time": "13:45",
+      "date": "2026-01-10",
+      "patient_name": "TEST_Slot_Blocking"
+    },
+    {
+      "_id": "69628cdd47bc3e3b474770aa",
+      "booking_id": "PC-00003",
+      "time": "11:15",
+      "date": "2026-01-10",
+      "patient_name": "TEST_WalkIn_Patient"
+    },
+    {
+      "_id": "69628e1047bc3e3b474770b6",
+      "booking_id": "PC-00004",
+      "time": "12:00",
+      "date": "2026-01-10",
+      "patient_name": "Test Patient 1"
+    },
+    {
+      "_id": "69628fb9b00b138154fb6f97",
+      "booking_id": "PC-00005",
+      "time": "21:45",
+      "date": "2026-01-10",
+      "patient_name": "TEST_Patient_Booking"
+    },
+    {
+      "_id": "6962c5b8fd8e0627cd59a57c",
+      "booking_id": "PC-00006",
+      "time": "10:00 AM",
+      "date": "2026-01-10",
+      "patient_name": "Test Feedback Patient"
+    },
+    {
+      "_id": "6962c5befd8e0627cd59a587",
+      "booking_id": "PC-00007",
+      "time": "02:00 PM",
+      "date": "2026-01-10",
+      "patient_name": "Test Checkin Patient"
+    },
+    {
+      "_id": "6962c6b2fd8e0627cd59a58e",
+      "booking_id": "PC-00008",
+      "time": "11:30 AM",
+      "date": "2026-01-10",
+      "patient_name": "Test Feedback Patient"
+    },
+    {
+      "_id": "6962c6b9fd8e0627cd59a599",
+      "booking_id": "PC-00009",
+      "time": "02:30 PM",
+      "date": "2026-01-10",
+      "patient_name": "Test Checkin Patient"
+    },
+    {
+      "_id": "696310243cacdef839179c05",
+      "booking_id": "PC-00010",
+      "time": "18:00",
+      "date": "2026-01-12",
+      "patient_name": "Vikas vinod jha"
+    },
+    {
+      "_id": "696312137ad3b5cb9ca85255",
+      "booking_id": "PC-00011",
+      "time": "10:00 AM",
+      "date": "2026-01-15",
+      "patient_name": "Test Patient SMS"
+    },
+    {
+      "_id": "69631804aba0faed9a053f84",
+      "booking_id": "PC-00012",
+      "time": "18:15",
+      "date": "2026-01-12",
+      "patient_name": "Vikas vinod jha"
+    },
+    {
+      "_id": "69632c3d5c2c0bdf57bf3c35",
+      "booking_id": "PC-00013",
+      "time": "10:00 AM",
+      "date": "2026-01-15",
+      "patient_name": "Test Patient"
+    },
+    {
+      "_id": "6963e93cb659f27fbb15129b",
+      "booking_id": "AC-00001",
+      "time": "16:00",
+      "date": "2026-02-17",
+      "patient_name": "Test Patient 12384727"
+    },
+    {
+      "_id": "6963e9a2b659f27fbb1512a7",
+      "booking_id": "AC-00002",
+      "time": "14:00",
+      "date": "2026-02-18",
+      "patient_name": "Test Patient 33129586"
+    },
+    {
+      "_id": "6963ea14b659f27fbb1512b3",
+      "booking_id": "AC-00003",
+      "time": "15:00",
+      "date": "2026-02-16",
+      "patient_name": "Test Patient 21291432"
+    },
+    {
+      "_id": "696410a7d246bc9f80e0ef0e",
+      "booking_id": "PC-00014",
+      "time": "10:00 AM",
+      "date": "2026-01-20",
+      "patient_name": "Test Patient"
+    },
+    {
+      "_id": "69641d42a72d4b7378aa354a",
+      "booking_id": "PC-00015",
+      "time": "11:00",
+      "date": "2026-01-11",
+      "patient_name": "Test Patient"
+    },
+    {
+      "_id": "69641d79a72d4b7378aa3551",
+      "booking_id": "PC-00016",
+      "time": "14:30",
+      "date": "2026-01-11",
+      "patient_name": "Demo Patient Fee Test"
+    },
+    {
+      "_id": "69641efaa72d4b7378aa355b",
+      "booking_id": "PC-00017",
+      "time": "15:00",
+      "date": "2026-01-11",
+      "patient_name": "E2E Test Patient"
+    },
+    {
+      "_id": "6966148571264c3b651b30fd",
+      "booking_id": "PC-00018",
+      "time": "11:00",
+      "date": "2026-01-20",
+      "patient_name": "Test Patient"
+    },
+    {
+      "_id": "696682af5aee099ef9f4082f",
+      "booking_id": "PC-00019",
+      "time": "11:00",
+      "date": "2026-01-14",
+      "patient_name": "Test Patient"
+    },
+    {
+      "_id": "696682b05aee099ef9f40831",
+      "booking_id": "PC-00020",
+      "time": "11:15",
+      "date": "2026-01-14",
+      "patient_name": "Test Patient"
+    },
+    {
+      "_id": "6967a9b25923a3c71ef6516d",
+      "booking_id": "PC-00021",
+      "time": "20:30",
+      "date": "2026-01-14",
+      "patient_name": " Neha"
+    },
+    {
+      "_id": "6968175c84367cf1379a5162",
+      "booking_id": "AC-00004",
+      "time": "13:00",
+      "date": "2025-12-25",
+      "patient_name": "TEST_Appt_Email_User"
+    },
+    {
+      "_id": "696817a884367cf1379a519f",
+      "booking_id": "PC-00022",
+      "time": "11:30",
+      "date": "2026-01-10",
+      "patient_name": "TEST_WalkIn_Patient"
+    },
+    {
+      "_id": "696817bb84367cf1379a51ae",
+      "booking_id": "PC-00023",
+      "time": "11:30",
+      "date": "2026-01-15",
+      "patient_name": "TEST_WalkIn_5065350d"
+    },
+    {
+      "_id": "696817bc84367cf1379a51b2",
+      "booking_id": "PC-00024",
+      "time": "11:45",
+      "date": "2026-01-15",
+      "patient_name": "TEST_First_c7bca444"
+    },
+    {
+      "_id": "696817bc84367cf1379a51b6",
+      "booking_id": "PC-00025",
+      "time": "12:00",
+      "date": "2026-01-15",
+      "patient_name": "TEST_Patient_70c13452"
+    },
+    {
+      "_id": "69681a6484367cf1379a5223",
+      "booking_id": "PC-00026",
+      "time": "11:00",
+      "date": "2026-01-13",
+      "patient_name": "Vikas "
+    },
+    {
+      "_id": "69681c0f2d35386537b560a1",
+      "booking_id": null,
+      "time": "11:30 AM",
+      "date": "2026-01-20",
+      "patient_name": "Future Test Patient"
+    },
+    {
+      "_id": "69682b2539958f4d8cd0bc7b",
+      "booking_id": "PC-00027",
+      "time": "11:00",
+      "date": "2026-01-14",
+      "patient_name": "Test Walk-in Patient"
+    },
+    {
+      "_id": "69682bb339958f4d8cd0bc7c",
+      "booking_id": "PC-00028",
+      "time": "11:30 AM",
+      "date": "2026-01-14",
+      "patient_name": "TEST_WalkIn_Patient"
+    },
+    {
+      "_id": "69682c2639958f4d8cd0bc7d",
+      "booking_id": "PC-00029",
+      "time": "11:30 AM",
+      "date": "2026-01-14",
+      "patient_name": "TEST_WalkIn_Patient"
+    },
+    {
+      "_id": "69682e3506d526f9f19169a7",
+      "booking_id": "PC-00030",
+      "time": "12:30",
+      "date": "2026-01-15",
+      "patient_name": "Nrhjn"
+    },
+    {
+      "_id": "69682e8306d526f9f19169a8",
+      "booking_id": "PC-00031",
+      "time": "11:45",
+      "date": "2026-01-15",
+      "patient_name": "Fake "
+    },
+    {
+      "_id": "6968e82d3ede0cb23b17a086",
+      "booking_id": "PC-00032",
+      "time": "19:00",
+      "date": "2026-01-15",
+      "patient_name": "Test Patient Walk-in"
+    },
+    {
+      "_id": "696a0d99bc1a0651bb494495",
+      "booking_id": "PC-00033",
+      "time": "10:06",
+      "date": "2026-01-16",
+      "patient_name": "Test Patient"
+    },
+    {
+      "_id": "696a0e62bc1a0651bb494496",
+      "booking_id": "PC-00034",
+      "time": "10:09",
+      "date": "2026-01-16",
+      "patient_name": "Vikas "
+    },
+    {
+      "_id": "696b3bec6f4ed22f34699738",
+      "booking_id": "PC-00035",
+      "time": "11:30",
+      "date": "2026-01-17",
+      "patient_name": "Test Patient"
+    },
+    {
+      "_id": "696b661f09569f86c20175c1",
+      "booking_id": "PC-00036",
+      "time": "15:30",
+      "date": "2026-01-17",
+      "patient_name": "Test Fee Patient"
+    },
+    {
+      "_id": "696b674009569f86c20175c2",
+      "booking_id": "PC-00037",
+      "time": "16:00",
+      "date": "2026-01-17",
+      "patient_name": "RealTime Test Patient"
+    },
+    {
+      "_id": "696b676109569f86c20175c3",
+      "booking_id": "PC-00038",
+      "time": "10:41",
+      "date": "2026-01-17",
+      "patient_name": "Emergency Test"
+    },
+    {
+      "_id": "696db22c2e2d8536447a1ba7",
+      "booking_id": "PC-00041",
+      "time": "19:00",
+      "date": "2026-01-19",
+      "patient_name": "BLOCKED"
+    },
+    {
+      "_id": "696dc025829fb45652bc0057",
+      "booking_id": null,
+      "time": "18:00",
+      "date": "2026-01-21",
+      "patient_name": "BLOCKED"
+    },
+    {
+      "_id": "696dc025829fb45652bc0058",
+      "booking_id": null,
+      "time": "20:00",
+      "date": "2026-01-22",
+      "patient_name": "BLOCKED"
+    },
+    {
+      "_id": "696e189292e06a5b0423e785",
+      "booking_id": "PC-00042",
+      "time": "17:00",
+      "date": "2026-01-19",
+      "patient_name": "Rahul Kumar"
+    },
+    {
+      "_id": "6974ca88e410469bf1813506",
+      "booking_id": "PC-00043",
+      "time": "15:00",
+      "date": "2026-01-24",
+      "patient_name": "Test Patient Edit"
+    },
+    {
+      "_id": "6975959f2efd362e6f590e21",
+      "booking_id": "PC-00044",
+      "time": "18:00",
+      "date": "2026-01-26",
+      "patient_name": "Vikas vinod jha"
+    },
+    {
+      "_id": "69767e1f43f48c4b41357c90",
+      "booking_id": "AC-00005",
+      "time": "18:00",
+      "date": "2026-01-28",
+      "patient_name": "Vikas vinod jha"
+    },
+    {
+      "_id": "6976fa99c76468f6c095532a",
+      "booking_id": "PC-00045",
+      "time": "13:00",
+      "date": "2026-01-26",
+      "patient_name": "Naziya Dholakia"
+    },
+    {
+      "_id": "697700db1a76be0fd3b2e3e2",
+      "booking_id": "PC-00046",
+      "time": "11:30",
+      "date": "2026-01-27",
+      "patient_name": "Test Notif User"
+    },
+    {
+      "_id": "6978ad1a9ab1b52206bf6b89",
+      "booking_id": "AC-00006",
+      "time": "10:00",
+      "date": "2026-01-28",
+      "patient_name": "Amnion Test Patient"
+    },
+    {
+      "_id": "6979206d93e45bff4a804be3",
+      "booking_id": "PC-00047",
+      "time": "11:00 AM",
+      "date": "2026-01-27",
+      "patient_name": "Updated Patient Name"
+    },
+    {
+      "_id": "6979208b93e45bff4a804be4",
+      "booking_id": "AC-00007",
+      "time": "2:00 PM",
+      "date": "2026-01-27",
+      "patient_name": "Amnion Patient"
+    },
+    {
+      "_id": "69796f1575208c2b5a559ced",
+      "booking_id": "PC-00048",
+      "time": "18:00",
+      "date": "2026-01-28",
+      "patient_name": "Vikas vinod jha"
+    },
+    {
+      "_id": "6979721906a2b9b3e08751c9",
+      "booking_id": "OP-00001",
+      "time": "11:00 AM",
+      "date": "2026-02-16",
+      "patient_name": "Test Patient 2"
+    },
+    {
+      "_id": "6979722606a2b9b3e08751cb",
+      "booking_id": "AC-00001",
+      "time": "09:00 AM",
+      "date": "2026-02-17",
+      "patient_name": "P1"
+    },
+    {
+      "_id": "6979722606a2b9b3e08751cd",
+      "booking_id": "PD-00001",
+      "time": "10:00 AM",
+      "date": "2026-02-18",
+      "patient_name": "P2"
+    },
+    {
+      "_id": "6979722706a2b9b3e08751cf",
+      "booking_id": "PC-00001",
+      "time": "11:00 AM",
+      "date": "2026-02-19",
+      "patient_name": "P3"
+    },
+    {
+      "_id": "6979725c06a2b9b3e08751d1",
+      "booking_id": "OP-00002",
+      "time": "02:00 PM",
+      "date": "2026-02-20",
+      "patient_name": "Counter Test"
+    },
+    {
+      "_id": "697973e01595fafb179bac3e",
+      "booking_id": "PD-00002",
+      "time": "11:00 AM",
+      "date": "2026-02-21",
+      "patient_name": "Test Patient"
+    },
+    {
+      "_id": "6979756157262e89b855ad32",
+      "booking_id": "PC-00002",
+      "time": "11:30 AM",
+      "date": "31/01/2026",
+      "patient_name": "SMS Test Patient"
+    },
+    {
+      "_id": "6979775257262e89b855ad34",
+      "booking_id": "PD-00003",
+      "time": "9:00 AM",
+      "date": "01/02/2026",
+      "patient_name": "SMS Verify"
+    },
+    {
+      "_id": "69797be25cf88e7fad586e26",
+      "booking_id": "AC-00002",
+      "time": "11:00 AM",
+      "date": "02/02/2026",
+      "patient_name": "SMS Verification Test"
+    },
+    {
+      "_id": "697b207ca7b7d987e4ed7748",
+      "booking_id": "PC-00050",
+      "time": "11:00 AM",
+      "date": "2026-01-30",
+      "patient_name": "New Test"
+    },
+    {
+      "_id": "697b20d0a7b7d987e4ed774c",
+      "booking_id": "PC-00051",
+      "time": "12:00 PM",
+      "date": "2026-01-30",
+      "patient_name": "Registered Patient"
+    },
+    {
+      "_id": "697e416fc68e02956732322e",
+      "booking_id": "PC-00052",
+      "time": "18:00",
+      "date": "2026-02-01",
+      "patient_name": "Brand New Patient"
+    },
+    {
+      "_id": "697e4d4eea87deb300359890",
+      "booking_id": "PC-00053",
+      "time": "18:00",
+      "date": "2026-02-02",
+      "patient_name": "Vikas vinod jha"
+    },
+    {
+      "_id": "697e553d801b1939ff2c0d32",
+      "booking_id": null,
+      "time": "11:00 AM",
+      "date": "2026-01-31",
+      "patient_name": "Vikas "
+    },
+    {
+      "_id": "697e5b6b12977a6360b3097d",
+      "booking_id": "AC-00009",
+      "time": "11:00 AM",
+      "date": "2026-02-03",
+      "patient_name": "Vikas "
+    },
+    {
+      "_id": "697e5ee912977a6360b30981",
+      "booking_id": "PC-00054",
+      "time": "6:15 PM",
+      "date": "2026-02-04",
+      "patient_name": "Neha"
+    },
+    {
+      "_id": "6980db42e3bb8116c86d2595",
+      "booking_id": "AC-00010",
+      "time": "11:00",
+      "date": "2026-02-03",
+      "patient_name": "Vikas vinod jha"
+    },
+    {
+      "_id": "69823c1eab632add910a160a",
+      "booking_id": "DG-20260203-0003",
+      "time": "10:00",
+      "date": "2026-02-03",
+      "patient_name": "Test Staff Booking"
+    },
+    {
+      "_id": "69824107126e8d9943e1e028",
+      "booking_id": "DG-20260203-0002",
+      "time": "11:00",
+      "date": "2026-02-04",
+      "patient_name": "TEST Scheduled Patient"
+    },
+    {
+      "_id": "698241283399a8a0415b520a",
+      "booking_id": "DG-20260203-0004",
+      "time": "09:40",
+      "date": "2026-02-03",
+      "patient_name": "TEST Walk-In Patient"
+    },
+    {
+      "_id": "698241283399a8a0415b520b",
+      "booking_id": "DG-20260203-0005",
+      "time": null,
+      "date": "2026-02-03",
+      "patient_name": "TEST Emergency Patient"
+    },
+    {
+      "_id": "6982413dc885ac8a20941791",
+      "booking_id": "DG-20260203-0006",
+      "time": "09:41",
+      "date": "2026-02-03",
+      "patient_name": "TEST Walk-In Patient"
+    },
+    {
+      "_id": "6982413dc885ac8a20941792",
+      "booking_id": "DG-20260203-0003",
+      "time": "11:41",
+      "date": "2026-02-04",
+      "patient_name": "TEST Scheduled Patient"
+    },
+    {
+      "_id": "6982413dc885ac8a20941793",
+      "booking_id": "DG-20260203-0007",
+      "time": null,
+      "date": "2026-02-03",
+      "patient_name": "TEST Emergency Patient"
+    },
+    {
+      "_id": "69826e1b9c949d97ff5fd7ad",
+      "booking_id": "DG-20260203-0004",
+      "time": null,
+      "date": "2026-02-04",
+      "patient_name": "TEST Emergency Patient API"
+    },
+    {
+      "_id": "69826e3f9c949d97ff5fd7ae",
+      "booking_id": "DG-20260203-0005",
+      "time": null,
+      "date": "2026-02-04",
+      "patient_name": "TEST Emergency UI Fix"
+    },
+    {
+      "_id": "6982794f159a94eca317385e",
+      "booking_id": "DG-20260203-0006",
+      "time": "12:00 PM",
+      "date": "2026-02-04",
+      "patient_name": "Token Test Patient"
+    },
+    {
+      "_id": "69835f8d2d08fb8b34dfcab3",
+      "booking_id": "BK03CA8F",
+      "time": "10:00 AM",
+      "date": "2026-02-04",
+      "patient_name": "Test Patient for Doctor"
+    },
+    {
+      "_id": "69835f8d2d08fb8b34dfcab4",
+      "booking_id": "BK228278",
+      "time": "10:30 AM",
+      "date": "2026-02-04",
+      "patient_name": "Patient In Consultation"
+    },
+    {
+      "_id": "698360400bc9525e50f61bcf",
+      "booking_id": "BK14E049",
+      "time": "11:00 AM",
+      "date": "2026-02-04",
+      "patient_name": "Flow Test Patient"
+    },
+    {
+      "_id": "6983946a1aded71239b7dbea",
+      "booking_id": "BK77FC53",
+      "time": "10:00 AM",
+      "date": "2026-02-05",
+      "patient_name": "IST Test Patient - Waiting"
+    },
+    {
+      "_id": "6983946a1aded71239b7dbeb",
+      "booking_id": "BKF324E5",
+      "time": "10:30 AM",
+      "date": "2026-02-05",
+      "patient_name": "IST Test Patient - In Consult"
+    },
+    {
+      "_id": "69839631962810b3f7a0c919",
+      "booking_id": "BK45A7A9",
+      "time": "11:30 AM",
+      "date": "2026-02-05",
+      "patient_name": "New Fee Test Patient"
+    },
+    {
+      "_id": "6986ecf15fe823d06c68e481",
+      "booking_id": "NC-1E41BDF6",
+      "time": "10:00 AM",
+      "date": "2026-02-07",
+      "patient_name": "Test Patient"
+    },
+    {
+      "_id": "698ebff6713269e3c31cdecb",
+      "booking_id": "AC-TEST001",
+      "time": "11:00 AM",
+      "date": "2026-02-13",
+      "patient_name": "John Smith"
+    },
+    {
+      "_id": "698ebff6713269e3c31cdecc",
+      "booking_id": "AC-TEST002",
+      "time": "11:30 AM",
+      "date": "2026-02-13",
+      "patient_name": "Jane Doe"
+    },
+    {
+      "_id": "698ebff6713269e3c31cdecd",
+      "booking_id": "PC-TEST001",
+      "time": "10:00 AM",
+      "date": "2026-02-13",
+      "patient_name": "Mike Wilson"
+    },
+    {
+      "_id": "698ec10c3341225652744b8b",
+      "booking_id": "PC-00055",
+      "time": "14:00",
+      "date": "2026-02-13",
+      "patient_name": "API Test Patient"
+    },
+    {
+      "_id": "698f44502b604248f1427eb1",
+      "booking_id": null,
+      "time": "14:00",
+      "date": "2026-02-14",
+      "patient_name": "BLOCKED"
+    },
+    {
+      "_id": "698f44502b604248f1427eb2",
+      "booking_id": null,
+      "time": "14:15",
+      "date": "2026-02-14",
+      "patient_name": "BLOCKED"
+    },
+    {
+      "_id": "698fc817d404a1224959cbb6",
+      "booking_id": "AC-00011",
+      "time": "12:00",
+      "date": "2026-02-14",
+      "patient_name": "Test Patient DiaGyn"
+    },
+    {
+      "_id": "698fcc81d404a1224959cbbc",
+      "booking_id": "AC-00012",
+      "time": "11:30",
+      "date": "2026-02-16",
+      "patient_name": "Test Patient"
+    },
+    {
+      "_id": "69902c541f1c5cc478bce236",
+      "booking_id": "DG-20260214-0001",
+      "time": "09:00",
+      "date": "2026-02-15",
+      "patient_name": "Test Morning Patient"
+    },
+    {
+      "_id": "69902c541f1c5cc478bce237",
+      "booking_id": "DG-20260214-0002",
+      "time": "14:30",
+      "date": "2026-02-15",
+      "patient_name": "Test Afternoon Patient"
+    },
+    {
+      "_id": "69902c541f1c5cc478bce238",
+      "booking_id": "DG-20260214-0003",
+      "time": "18:15",
+      "date": "2026-02-15",
+      "patient_name": "Test Evening Patient"
+    }
+  ]
+}

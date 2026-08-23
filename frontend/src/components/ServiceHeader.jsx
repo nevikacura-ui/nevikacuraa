@@ -1,193 +1,260 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Heart, Stethoscope, FlaskConical, Package, Shield, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Heart, Stethoscope, FlaskConical, Package, Shield, User, Wallet } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { selectionTap, lightTap } from '@/utils/haptics';
+import { useCart } from '@/context/CartContext';
+import { useFestivalTheme } from '@/components/FestivalBanner';
+import { selectionTap } from '@/utils/haptics';
+import NotificationBell from '@/components/NotificationBell';
 
-// Service theme configurations - Updated with Mango palette
 const serviceThemes = {
   home: {
     name: 'Nevika Cura',
     path: '/',
-    bgGradient: 'from-white via-slate-50 to-white',
-    headerBg: 'bg-white',
-    tabBg: 'bg-gray-100',
-    isLight: true
+    headerBg: 'bg-slate-900',
+    pageBg: '#0f172a',
+    accentColor: '#0D9488',
   },
   diagyn: {
-    name: 'DiaGyn',
+    name: 'Nevika Consult',
     path: '/diagyn',
-    bgGradient: 'from-[#1e3a5f] via-[#1e3a5f] to-[#1e3a5f]',
-    headerBg: 'bg-[#1e3a5f]',
-    tabBg: 'bg-[#2c5282]/50',
-    isLight: false
+    headerBg: 'bg-[#0D0D0D]',
+    pageBg: '#0D0D0D',
+    accentColor: '#3B82F6',
   },
   mango: {
-    name: 'Mango',
-    path: '/mango',
-    bgGradient: 'from-[#1F4F46] via-[#2E6B5F] to-[#3E8A7A]',
-    headerBg: 'bg-[#1F4F46]',
-    tabBg: 'bg-[#2E6B5F]/50',
-    isLight: false
+    name: 'Nevika Labs',
+    path: '/labs',
+    headerBg: 'bg-[#0A0A0A]',
+    pageBg: '#0A0A0A',
+    accentColor: '#C8F56A',
   },
-  pharmacy: {
-    name: 'Orange',
-    path: '/pharmacy',
-    bgGradient: 'from-orange-500 via-orange-500 to-orange-500',
-    headerBg: 'bg-orange-500',
-    tabBg: 'bg-orange-600/50',
-    isLight: false
+  orange: {
+    name: 'Nevika Pharmacy',
+    path: '/orange',
+    headerBg: 'bg-[#0a0a0a]',
+    pageBg: '#0a0a0a',
+    accentColor: '#f97316',
   }
 };
 
-// Get active service from path
 const getActiveService = (pathname) => {
   if (pathname.startsWith('/diagyn')) return 'diagyn';
-  if (pathname.startsWith('/mango')) return 'mango';
-  if (pathname.startsWith('/pharmacy')) return 'pharmacy';
+  if (pathname.startsWith('/mango') || pathname.startsWith('/labs') || pathname.startsWith('/nexugene') || pathname.startsWith('/proton')) return 'mango';
+  if (pathname.startsWith('/orange') || pathname.startsWith('/pharmacy') || pathname.startsWith('/nutricare')) return 'orange';
   return 'home';
 };
 
-export const ServiceHeader = () => {
+// Colorful gradient tabs — each has a vivid gradient + matching page bg
+const tabs = [
+  {
+    id: 'home',
+    label: 'Cura',
+    prefix: 'Nevika',
+    icon: Heart,
+    path: '/',
+    activeGradient: 'linear-gradient(180deg, #7C3AED 0%, #4C1D95 40%, #050510 100%)',
+    inactiveGradient: 'linear-gradient(180deg, rgba(124,58,237,0.12) 0%, rgba(124,58,237,0.03) 100%)',
+    iconColor: '#A78BFA',
+    pageBg: '#050510',
+    fillIcon: true,
+    lightActiveGradient: 'linear-gradient(180deg, #7C3AED 0%, #6D28D9 40%, #FFF8F0 100%)',
+    lightInactiveGradient: 'linear-gradient(180deg, rgba(124,58,237,0.04) 0%, rgba(255,248,240,0.5) 100%)',
+  },
+  {
+    id: 'diagyn',
+    label: 'Consult',
+    prefix: 'Nevika',
+    icon: Stethoscope,
+    path: '/diagyn',
+    activeGradient: 'linear-gradient(180deg, #0E7490 0%, #164E63 40%, #0D0D0D 100%)',
+    inactiveGradient: 'linear-gradient(180deg, rgba(14,116,144,0.12) 0%, rgba(14,116,144,0.03) 100%)',
+    iconColor: '#22D3EE',
+    pageBg: '#0D0D0D',
+    lightActiveGradient: 'linear-gradient(180deg, #0E7490 0%, #0891B2 40%, #FFF8F0 100%)',
+    lightInactiveGradient: 'linear-gradient(180deg, rgba(14,116,144,0.04) 0%, rgba(255,248,240,0.5) 100%)',
+  },
+  {
+    id: 'mango',
+    label: 'Labs',
+    prefix: 'Nevika',
+    icon: FlaskConical,
+    path: '/labs',
+    activeGradient: 'linear-gradient(180deg, #15803D 0%, #14532D 40%, #0A0A0A 100%)',
+    inactiveGradient: 'linear-gradient(180deg, rgba(21,128,61,0.12) 0%, rgba(21,128,61,0.03) 100%)',
+    iconColor: '#4ADE80',
+    pageBg: '#0A0A0A',
+    lightActiveGradient: 'linear-gradient(180deg, #15803D 0%, #16A34A 40%, #FFF8F0 100%)',
+    lightInactiveGradient: 'linear-gradient(180deg, rgba(21,128,61,0.04) 0%, rgba(255,248,240,0.5) 100%)',
+  },
+  {
+    id: 'orange',
+    label: 'Pharmacy',
+    prefix: 'Nevika',
+    icon: Package,
+    path: '/orange',
+    activeGradient: 'linear-gradient(180deg, #C2410C 0%, #7C2D12 40%, #0a0a0a 100%)',
+    inactiveGradient: 'linear-gradient(180deg, rgba(194,65,12,0.12) 0%, rgba(194,65,12,0.03) 100%)',
+    iconColor: '#FB923C',
+    pageBg: '#0a0a0a',
+    lightActiveGradient: 'linear-gradient(180deg, #C2410C 0%, #EA580C 40%, #FFF8F0 100%)',
+    lightInactiveGradient: 'linear-gradient(180deg, rgba(194,65,12,0.04) 0%, rgba(255,248,240,0.5) 100%)',
+  },
+];
+
+export const ServiceHeader = ({ lightMode = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const { curaCoins } = useCart();
   
   const activeService = getActiveService(location.pathname);
-  const currentTheme = serviceThemes[activeService];
-
-  // Tab configuration - using new Mango color palette
-  const tabs = [
-    { id: 'home', name: 'Nevika Cura', icon: Heart, path: '/', color: '#1F4F46' },      // Primary Dark Green
-    { id: 'diagyn', name: 'DiaGyn', icon: Stethoscope, path: '/diagyn', color: '#2E6B5F' }, // Secondary Green
-    { id: 'mango', name: 'Mango', icon: FlaskConical, path: '/mango', color: '#F4A43A' }, // Mango Orange
-    { id: 'pharmacy', name: 'Orange', icon: Package, path: '/pharmacy', color: '#f97316' }  // Orange-500
-  ];
+  const activeTab = tabs.find(t => t.id === activeService);
 
   return (
+    <>
     <header 
-      className={`${currentTheme.headerBg} sticky top-0 z-50 transition-all duration-300`}
-      style={{
-        transform: 'translateZ(0)',
+      className="sticky top-0 z-50 glass-crystal"
+      style={{ 
+        background: lightMode ? 'rgba(255,248,240,0.85)' : 'rgba(10,11,20,0.6)',
+        backdropFilter: 'blur(24px) saturate(1.3)',
+        WebkitBackdropFilter: 'blur(24px) saturate(1.3)',
+        borderBottom: lightMode ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.06)',
+        transition: 'background 0.5s ease, border-bottom 0.5s ease',
+        transform: 'translateZ(0)', 
         backfaceVisibility: 'hidden',
-        WebkitBackfaceVisibility: 'hidden'
       }}
     >
-      {/* Top Row - Logo + Actions */}
-      <div className={`border-b ${currentTheme.isLight ? 'border-slate-200' : 'border-white/10'}`}>
-        <div className="max-w-7xl mx-auto px-4 py-2.5">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <img 
-              src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
-              alt="Nevika Cura" 
-              className={`h-10 sm:h-12 w-auto object-contain cursor-pointer ${currentTheme.isLight ? '' : 'bg-white rounded-lg p-1'}`}
-              onClick={() => navigate('/')}
-              data-testid="main-logo"
-            />
-            
-            {/* Right Actions */}
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/staff')}
-                data-testid="staff-portal-btn"
-                className={`hidden sm:flex text-xs font-medium rounded-full ${
-                  currentTheme.isLight 
-                    ? 'text-slate-600 hover:text-teal-600 hover:bg-teal-50' 
-                    : 'text-white/90 hover:text-white hover:bg-white/20'
-                }`}
-              >
-                <Shield className="w-3.5 h-3.5 mr-1.5" />
-                Staff Portal
-              </Button>
-              {user ? (
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => navigate('/profile')}
-                  data-testid="profile-button"
-                  className={`rounded-full flex items-center gap-2 ${currentTheme.isLight ? 'hover:bg-slate-200 text-slate-800' : 'hover:bg-white/20 text-white'}`}
-                >
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center ${currentTheme.isLight ? 'bg-teal-100' : 'bg-white/20'}`}>
-                    <User className="w-4 h-4" />
-                  </div>
-                  <span className="hidden sm:inline text-sm font-medium max-w-[120px] truncate">
-                    {user.name || user.email?.split('@')[0] || 'Profile'}
-                  </span>
-                </Button>
-              ) : (
-                <Button 
-                  size="sm"
-                  onClick={() => navigate('/login')} 
-                  data-testid="login-button"
-                  className={`rounded-full text-xs px-4 ${
-                    currentTheme.isLight 
-                      ? 'bg-teal-500 hover:bg-teal-600 text-white' 
-                      : 'bg-white hover:bg-white/90 text-slate-800'
-                  }`}
-                >
-                  Login
-                </Button>
-              )}
-            </div>
+      {/* Top Row */}
+      <div className="max-w-7xl mx-auto px-4 py-2">
+        <div className="flex items-center justify-between">
+          <img 
+            src="/nevika-cura-dark-logo.png" 
+            alt="Nevika Cura" 
+            className="h-12 w-auto object-contain cursor-pointer -ml-1 transition-all duration-500"
+            style={lightMode ? { filter: 'brightness(0.55) saturate(1.4) contrast(1.1)' } : {}}
+            width="120"
+            height="48"
+            fetchPriority="high"
+            onClick={() => navigate('/')}
+            data-testid="main-logo"
+          />
+          <div className="flex items-center gap-1">
+            {/* CuraPay Wallet — Blinkit/Zepto style */}
+            <button
+              onClick={() => { selectionTap(); navigate('/cura-wallet'); }}
+              className="relative p-2 rounded-full hover:bg-white/10 transition-colors"
+              data-testid="header-curapay-btn"
+            >
+              <Wallet className="w-[20px] h-[20px] transition-colors duration-500" style={{ color: lightMode ? '#B45309' : '#FBBF24' }} />
+              <span className="absolute -top-0.5 -right-1 min-w-[20px] h-[16px] flex items-center justify-center rounded-full text-[9px] font-bold px-1 leading-none transition-colors duration-500"
+                style={{ background: lightMode ? '#F59E0B' : '#FBBF24', color: lightMode ? '#fff' : '#000' }}>
+                {curaCoins > 999 ? '999+' : curaCoins}
+              </span>
+            </button>
+
+            {/* Notifications */}
+            <NotificationBell lightMode={lightMode} />
+
+            {/* Profile */}
+            <button
+              onClick={() => { selectionTap(); navigate(user ? '/profile' : '/login'); }}
+              className="p-2 rounded-full hover:bg-white/10 transition-colors"
+              data-testid={user ? 'profile-button' : 'login-button'}
+            >
+              <User className="w-[20px] h-[20px] transition-colors duration-500" style={{ color: lightMode ? '#57534e' : 'rgba(255,255,255,0.7)' }} />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Row 2 - Service Tabs (Zepto-style with page attachment) */}
-      <div className="relative pb-0">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-end gap-2 pt-3 overflow-x-auto scrollbar-hide">
-            {tabs.map((tab) => {
-              const isActive = activeService === tab.id;
-              const Icon = tab.icon;
-              
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    selectionTap(); // Haptic feedback on service switch
-                    navigate(tab.path);
+      {/* Clean Gradient Tabs */}
+      <div className="relative">
+        <div className="flex items-stretch gap-1.5 px-3 pb-2">
+          {tabs.map((tab) => {
+            const isActive = activeService === tab.id;
+            const Icon = tab.icon;
+
+            return (
+              <button
+                key={tab.id}
+                onClick={() => { selectionTap(); navigate(tab.path); }}
+                className="relative flex-1 min-w-0 rounded-2xl overflow-hidden"
+                style={{
+                  background: isActive
+                    ? (lightMode ? tab.lightActiveGradient : tab.activeGradient)
+                    : (lightMode ? 'rgba(0,0,0,0.02)' : 'rgba(0,0,0,0.65)'),
+                  border: isActive
+                    ? `1.5px solid ${tab.iconColor}40`
+                    : (lightMode ? '1.5px solid rgba(0,0,0,0.04)' : '1.5px solid rgba(255,255,255,0.08)'),
+                  padding: '12px 4px 10px',
+                  transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+                }}
+                data-testid={`nav-${tab.id}`}
+              >
+                {/* Top glow bar for active */}
+                {isActive && (
+                  <div className="absolute inset-x-2 top-0 h-[2px] rounded-b-full" style={{ background: tab.iconColor, opacity: 0.7 }} />
+                )}
+
+                {/* Icon */}
+                <div
+                  className="w-9 h-9 mx-auto rounded-xl flex items-center justify-center mb-1.5"
+                  style={{
+                    background: isActive
+                      ? `linear-gradient(135deg, ${tab.iconColor}30, ${tab.iconColor}15)`
+                      : (lightMode ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.1)'),
+                    border: isActive ? `1px solid ${tab.iconColor}35` : 'none',
+                    boxShadow: isActive ? `0 0 16px ${tab.iconColor}20` : 'none',
+                    transition: 'all 0.35s ease',
                   }}
-                  className={`
-                    relative flex-shrink-0 px-5 py-3 flex items-center gap-2.5 transition-all duration-200
-                    ${isActive 
-                      ? 'bg-white text-slate-800 rounded-t-2xl' 
-                      : `${currentTheme.tabBg} ${currentTheme.isLight ? 'text-slate-600' : 'text-white'} rounded-2xl hover:opacity-90`
-                    }
-                  `}
-                  data-testid={`nav-${tab.id}`}
                 >
-                  {/* Tab icon */}
-                  <div 
-                    className="w-8 h-8 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: tab.color }}
-                  >
-                    <Icon className="w-4 h-4 text-white" />
-                  </div>
-                  <span className={`font-semibold text-sm whitespace-nowrap ${isActive ? 'font-bold text-slate-800' : ''}`}>
-                    {tab.name}
+                  <Icon
+                    className="w-[18px] h-[18px]"
+                    style={{
+                      color: isActive ? (lightMode ? tab.iconColor : tab.iconColor) : (lightMode ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.45)'),
+                      fill: tab.fillIcon && isActive ? tab.iconColor : 'none',
+                      filter: isActive ? `drop-shadow(0 0 6px ${tab.iconColor})` : 'none',
+                      transition: 'all 0.3s ease',
+                    }}
+                  />
+                </div>
+
+                {/* Label — single line, bold */}
+                <div className="text-center leading-none">
+                  <span className="block text-[7px] font-medium tracking-widest uppercase"
+                    style={{
+                      color: isActive
+                        ? (lightMode ? `${tab.iconColor}90` : `${tab.iconColor}80`)
+                        : (lightMode ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.35)'),
+                      transition: 'color 0.4s ease',
+                    }}>
+                    NEVIKA
                   </span>
-                </button>
-              );
-            })}
-          </div>
+                  <span className="block text-[11px] font-extrabold mt-0.5"
+                    style={{
+                      color: isActive
+                        ? (lightMode ? '#1c1917' : '#fff')
+                        : (lightMode ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.55)'),
+                      transition: 'color 0.4s ease',
+                    }}>
+                    {tab.label}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
-        
-        {/* White bar that connects active tab to page content */}
-        <div className="h-1 bg-white" />
       </div>
     </header>
+    </>
   );
 };
 
-// Export theme getter for pages to use
 export const getServiceTheme = (pathname) => {
   const service = getActiveService(pathname);
   return serviceThemes[service];
 };
 
+export { serviceThemes };
 export default ServiceHeader;

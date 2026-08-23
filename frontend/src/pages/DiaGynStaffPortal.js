@@ -1,45 +1,43 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { 
-  ArrowLeft, User, Lock, LogOut, Phone, Calendar, Clock, 
-  Search, Plus, CheckCircle2, UserPlus, AlertTriangle,
-  Building2, Stethoscope, IndianRupee, RefreshCw,
-  ChevronRight, Loader2, Users, TrendingUp, X, CalendarPlus,
-  Printer, Bluetooth, Star
+import {
+  LogOut, Calendar, Clock, Plus, CheckCircle2, AlertTriangle,
+  Building2, Stethoscope, RefreshCw, Loader2, Users, TrendingUp, X, Zap,
+  CalendarPlus, Bluetooth, Wifi, WifiOff, Volume2,
+  ClipboardList, Baby, ArrowLeftRight, Shield, Printer, QrCode
 } from 'lucide-react';
 import { lightTap, mediumTap, heavyTap, successPattern, errorPattern, selectionTap } from '@/utils/haptics';
 import thermalPrinter from '@/utils/thermalPrinter';
+import { useAppointmentWebSocket } from '@/hooks/useAppointmentWebSocket';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { useLiveSync, LiveSyncBadge } from '@/hooks/useLiveSync';
+import { useBluetoothSpeaker } from '@/hooks/useBluetoothSpeaker';
+import BluetoothSpeakerIndicator from '@/components/BluetoothSpeakerIndicator';
+import CodeVerificationInput from '@/components/CodeVerificationInput';
+import BillingTimerPanel from '@/components/BillingTimerPanel';
+import QueueInsightsWidget from '@/components/QueueInsightsWidget';
+import LongWaitAlert from '@/components/LongWaitAlert';
+import PortalErrorBoundary from '@/components/PortalErrorBoundary';
+import PortalSwitcher from '@/components/PortalSwitcher';
+import CountUp from '@/components/CountUp';
+
+// Refactored sub-components
+import StaffContext from './diagyn/StaffContext';
+import { COLORS } from './diagyn/staffConstants';
+import StaffAppointmentsView from './diagyn/StaffAppointmentsView';
+import StaffCheckinView from './diagyn/StaffCheckinView';
+import StaffWalkinView from './diagyn/StaffWalkinView';
+import StaffBookView from './diagyn/StaffBookView';
+import StaffANCView from './diagyn/StaffANCView';
+import StaffHistoryView from './diagyn/StaffHistoryView';
+import StaffSummaryView from './diagyn/StaffSummaryView';
+import StaffTokenView from './diagyn/StaffTokenView';
+import StaffQRScanView from './diagyn/StaffQRScanView';
 
 const API = process.env.REACT_APP_BACKEND_URL;
-
-// Colors
-const COLORS = {
-  primary: '#1a4d3f',
-  primaryDark: '#0f3129',
-  primaryLight: '#e0f2ed',
-  accent: '#7ed957',
-  accentLight: '#e8f9e0',
-  warning: '#f59e0b',
-  danger: '#dc2626',
-};
-
-const STATUS_STYLES = {
-  'Booked': { bg: '#dbeafe', text: '#1d4ed8', label: 'BOOKED' },
-  'CheckedIn': { bg: '#fef3c7', text: '#d97706', label: 'WAITING' },
-  'WithDoctor': { bg: '#e9d5ff', text: '#7c3aed', label: 'WITH DR' },
-  'Completed': { bg: '#dcfce7', text: '#16a34a', label: 'DONE' },
-};
-
-const TYPE_STYLES = {
-  'SCHEDULED': { bg: '#dcfce7', text: '#166534' },
-  'WALK_IN': { bg: '#dbeafe', text: '#1d4ed8' },
-  'EMERGENCY': { bg: '#fee2e2', text: '#dc2626' },
-};
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('staffToken');
@@ -52,58 +50,116 @@ const getISTNow = () => {
   const istOffset = 5.5 * 60 * 60 * 1000;
   return new Date(now.getTime() + istOffset);
 };
-
 const getISTDate = () => getISTNow().toISOString().split('T')[0];
-
 const getISTHour = () => getISTNow().getUTCHours();
-
+const getMaxBookingDate = () => {
+  const now = new Date();
+  now.setMonth(now.getMonth() + 3);
+  return now.toISOString().split('T')[0];
+};
 const getDayName = (dateStr) => {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   return days[new Date(dateStr).getDay()];
 };
-
-// Session logic (IST)
 const getCurrentSession = () => {
   const hour = getISTHour();
-  if (hour >= 11 && hour < 14) return 'morning'; // 11am-2pm
-  if (hour >= 18 && hour < 22) return 'evening'; // 6pm-10pm
-  return null; // No active session
+  if (hour >= 11 && hour < 14) return 'morning';
+  if (hour >= 18 && hour < 22) return 'evening';
+  return null;
 };
-
 const getSessionLabel = (session) => {
-  if (session === 'morning') return '11:00 AM - 2:00 PM';
+  if (session === 'morning') return '11:30 AM - 2:00 PM';
   if (session === 'evening') return '6:00 PM - 10:00 PM';
   return 'No Active Session';
+};
+
+const LOGIN_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000;
+
+const DOCTOR_PORTAL_THEMES = {
+  vikas: {
+    name: 'Dr. Vikas Jha', short: 'Dr. Vikas',
+    avatar: 'https://customer-assets.emergentagent.com/job_1d0b9312-d1f2-40d1-b78f-c0c28fa95ba1/artifacts/gg2swmlp_IMG-20220627-WA0003.jpg',
+    isDark: false,
+    headerBg: 'linear-gradient(160deg, #A6FF4D, #8AE030, #7ED321)',
+    headerText: '#0D1F1E',
+    headerIconColor: '#163332',
+    accentBar: 'linear-gradient(90deg, #7ED321, #A6FF4D, #7ED321)',
+    accent: '#0D1F1E', accentDark: '#0D1F1E', accentMid: '#163332',
+    accentLight: '#A6FF4D',
+    tabBg: 'rgba(13,31,30,0.06)', tabText: '#0D1F1E', tabBorder: 'rgba(13,31,30,0.15)',
+    fabGradient: 'linear-gradient(135deg, #0D1F1E, #163332)',
+    fabShadow: '0 4px 20px rgba(13,31,30,0.35)', fabIcon: '#A6FF4D',
+    cardBorder: '#0D1F1E',
+    cardActiveBg: 'rgba(255,255,255,0.95)',
+    cardInactiveBg: 'rgba(255,255,255,0.5)',
+    clinicActiveBg: 'rgba(13,31,30,0.85)',
+    clinicActiveText: '#A6FF4D',
+    clinicActiveBorder: '#0D1F1E',
+    clinicInactiveBg: 'rgba(13,31,30,0.08)',
+    clinicInactiveText: '#163332',
+    clinicInactiveBorder: 'rgba(13,31,30,0.15)',
+    statusBg: (connected) => connected ? 'rgba(13,31,30,0.12)' : 'rgba(239,68,68,0.12)',
+    statusColor: (connected) => connected ? '#0D1F1E' : '#DC2626',
+  },
+  neha: {
+    name: 'Dr. Neha Patel', short: 'Dr. Neha',
+    avatar: 'https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u05fho69_IMG-20260126-WA0000.jpg',
+    isDark: false,
+    headerBg: 'linear-gradient(160deg, #B2DFDB, #80CBC4, #A8D8D4)',
+    headerText: '#0F2A28',
+    headerIconColor: '#1A5C54',
+    accentBar: 'linear-gradient(90deg, #80CBC4, #4DB6AC, #80CBC4)',
+    accent: '#00897B', accentDark: '#004D40', accentMid: '#00695C',
+    accentLight: '#80CBC4',
+    tabBg: 'rgba(0,137,123,0.08)', tabText: '#004D40', tabBorder: 'rgba(0,137,123,0.2)',
+    fabGradient: 'linear-gradient(135deg, #00897B, #00695C)',
+    fabShadow: '0 4px 20px rgba(0,137,123,0.35)', fabIcon: '#FFFFFF',
+    cardBorder: '#00897B',
+    cardActiveBg: 'rgba(255,255,255,0.92)',
+    cardInactiveBg: 'rgba(255,255,255,0.5)',
+    clinicActiveBg: 'rgba(0,137,123,0.12)',
+    clinicActiveText: '#004D40',
+    clinicActiveBorder: 'rgba(0,137,123,0.35)',
+    clinicInactiveBg: 'rgba(0,0,0,0.04)',
+    clinicInactiveText: '#64748B',
+    clinicInactiveBorder: 'rgba(0,0,0,0.08)',
+    statusBg: (connected) => connected ? 'rgba(0,137,123,0.12)' : 'rgba(239,68,68,0.12)',
+    statusColor: (connected) => connected ? '#00695C' : '#DC2626',
+  }
 };
 
 // ============ Main Component ============
 const DiaGynStaffPortal = () => {
   const navigate = useNavigate();
+
+  // Auth state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const [staffInfo, setStaffInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(true); // Default to 30-day login
-  
-  // Clinic selection (Pushpa or Amnion only)
+
+  // Clinic selection
   const [selectedClinic, setSelectedClinic] = useState('Pushpa Clinic');
-  
-  // Views: appointments, walkin, book, summary
+  const [activeDoctorFilter, setActiveDoctorFilter] = useState('vikas');
+  const [clinicOverrides, setClinicOverrides] = useState([]);
+
+  // Views
   const [activeView, setActiveView] = useState('appointments');
   const [selectedDate, setSelectedDate] = useState(getISTDate());
-  
+  const [appointmentViewMode, setAppointmentViewMode] = useState('list');
+  const [calendarData, setCalendarData] = useState([]);
+  const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth() + 1);
+  const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
+
   const [config, setConfig] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [summary, setSummary] = useState(null);
   const [dailySummary, setDailySummary] = useState(null);
   const [weeklySummary, setWeeklySummary] = useState(null);
-  
-  // Current session state
   const [currentSession, setCurrentSession] = useState(getCurrentSession());
-  
+  const [sessionFilter, setSessionFilter] = useState('all');
+
   // Booking state
   const [selectedDoctor, setSelectedDoctor] = useState('');
   const [bookingDate, setBookingDate] = useState('');
@@ -113,258 +169,209 @@ const DiaGynStaffPortal = () => {
   const [patientId, setPatientId] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
-  
-  // Emergency mode (for booking without slot)
   const [isEmergency, setIsEmergency] = useState(false);
-  
-  // Patient lookup
+  const [fabOpen, setFabOpen] = useState(false);
   const [foundPatient, setFoundPatient] = useState(null);
   const [searchingPatient, setSearchingPatient] = useState(false);
-
-  // Google Review Stats
   const [reviewStats, setReviewStats] = useState({ sent: 0, today: 0 });
 
-  // Bluetooth Printer state
+  // Printer
   const [printerConnected, setPrinterConnected] = useState(false);
   const [printerName, setPrinterName] = useState('');
   const [isPrinting, setIsPrinting] = useState(false);
 
-  // Connect to Bluetooth printer
+  // Verification
+  const [verifyingAppointment, setVerifyingAppointment] = useState(null);
+  const [showCodeVerification, setShowCodeVerification] = useState(false);
+
+  // Code Check-in
+  const [bookingCodeInput, setBookingCodeInput] = useState('');
+  const [checkingInByCode, setCheckingInByCode] = useState(false);
+  const [codeCheckInResult, setCodeCheckInResult] = useState(null);
+
+  // Patient History
+  const [historyPhone, setHistoryPhone] = useState('');
+  const [historyData, setHistoryData] = useState(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
+
+  // Archives
+  const [showArchives, setShowArchives] = useState(false);
+  const [archivedAppointments, setArchivedAppointments] = useState([]);
+  const [loadingArchives, setLoadingArchives] = useState(false);
+
+  // ANC
+  const [ancForm, setAncForm] = useState({
+    patient_name: '', age: '', phone: '', address: '', aadhaar: '',
+    husband_name: '', husband_phone: '', husband_occupation: '',
+    lmp: '', gravida: 1, para: 0, abortion: 0, living: 0,
+    blood_group: '', rh_factor: 'Positive', weight_kg: '', height_cm: '',
+    previous_cesarean: false, diabetes: false, hypertension: false, thyroid: false, other_conditions: '',
+    doctor_assigned: '', clinic: 'Pushpa Clinic',
+  });
+  const [ancSubmitting, setAncSubmitting] = useState(false);
+  const [ancResult, setAncResult] = useState(null);
+  const [walkinTokenResult, setWalkinTokenResult] = useState(null);
+
+  const portalTheme = DOCTOR_PORTAL_THEMES[activeDoctorFilter] || DOCTOR_PORTAL_THEMES.vikas;
+
+  // Filter appointments by active doctor
+  const filteredAppointments = useMemo(() => {
+    const doctorName = DOCTOR_PORTAL_THEMES[activeDoctorFilter]?.name;
+    if (!doctorName) return appointments;
+    return appointments.filter(apt => apt.doctor === doctorName);
+  }, [appointments, activeDoctorFilter]);
+
+  // Hooks
+  const { isSupported: pushSupported, isSubscribed: pushSubscribed, subscribe: subscribePush } = usePushNotifications();
+  const btSpeaker = useBluetoothSpeaker();
+  const { isConnected: wsConnected, lastUpdate: wsLastUpdate, reconnect: wsReconnect } = useAppointmentWebSocket({
+    portal: 'diagyn_staff', clinic: selectedClinic, date: selectedDate,
+    enabled: isAuthenticated && activeView === 'appointments', showToasts: true,
+    onNewAppointment: (apt) => {
+      if (apt.clinic === selectedClinic && apt.date === selectedDate) {
+        setAppointments(prev => {
+          const exists = prev.some(a => a.id === apt.id || a.booking_id === apt.booking_id);
+          if (exists) return prev;
+          return [apt, ...prev];
+        });
+        successPattern();
+      }
+    },
+    onStatusChange: (apt) => {
+      setAppointments(prev => prev.map(a =>
+        (a.id === apt.id || a.booking_id === apt.booking_id)
+          ? { ...a, ...apt, token_number: apt.token_number || a.token_number }
+          : a
+      ));
+    }
+  });
+
+  // ============ Printer functions ============
   const connectPrinter = async () => {
     mediumTap();
-    
-    // Check if Bluetooth is available
-    if (!navigator.bluetooth) {
-      toast.error('Bluetooth not supported. Use Chrome/Edge on mobile or enable Web Bluetooth.');
-      errorPattern();
-      return;
-    }
-    
-    toast.loading('Select your printer from the list...', { id: 'printer', duration: 30000 });
+    if (!navigator.bluetooth) { toast.error('Bluetooth not supported.'); errorPattern(); return; }
+    toast.loading('Select your printer...', { id: 'printer', duration: 30000 });
     try {
       const result = await thermalPrinter.connect();
       if (result.success) {
-        setPrinterConnected(true);
-        setPrinterName(result.deviceName);
-        toast.success(`Connected: ${result.deviceName}`, { id: 'printer' });
-        successPattern();
-        
-        // Start auto-reconnect monitoring
+        setPrinterConnected(true); setPrinterName(result.deviceName);
+        toast.success(`Connected: ${result.deviceName}`, { id: 'printer' }); successPattern();
         thermalPrinter.startAutoReconnect(
-          (deviceName) => {
-            setPrinterConnected(true);
-            setPrinterName(deviceName);
-            toast.success(`Printer reconnected: ${deviceName}`);
-            successPattern();
-          },
-          () => {
-            setPrinterConnected(false);
-            toast.info('Printer disconnected - will reconnect automatically');
-          }
+          (name) => { setPrinterConnected(true); setPrinterName(name); toast.success(`Reconnected: ${name}`); successPattern(); },
+          () => { setPrinterConnected(false); toast.info('Printer disconnected'); }
         );
       } else {
-        // More helpful error messages
-        let errorMsg = result.error;
-        if (result.error?.includes('User cancelled')) {
-          errorMsg = 'Cancelled. Tap Bluetooth icon to try again.';
-        } else if (result.error?.includes('characteristic')) {
-          errorMsg = 'Printer not compatible. Try a different printer.';
-        }
-        toast.error(errorMsg, { id: 'printer' });
+        toast.error(result.error?.includes('User cancelled') ? 'Cancelled.' : (result.error || 'Failed'), { id: 'printer' });
         errorPattern();
       }
-    } catch (error) {
-      toast.error('Bluetooth error: ' + error.message, { id: 'printer' });
-      errorPattern();
-    }
+    } catch (error) { toast.error('Bluetooth error: ' + error.message, { id: 'printer' }); errorPattern(); }
   };
 
-  // Print token receipt
   const printToken = async (tokenData) => {
-    if (!printerConnected) {
-      toast.error('Connect printer first');
-      return false;
-    }
+    if (!printerConnected) { toast.error('Connect printer first'); return false; }
     setIsPrinting(true);
     try {
       const result = await thermalPrinter.printToken(tokenData);
-      if (result.success) {
-        toast.success(`Token #${tokenData.token_number} printed!`);
-        successPattern();
-        return true;
-      } else {
-        toast.error(`Print failed: ${result.error}`);
-        return false;
-      }
-    } catch (error) {
-      toast.error('Print error');
-      return false;
-    } finally {
-      setIsPrinting(false);
-    }
+      if (result.success) { toast.success(`Token #${tokenData.token_number} printed!`); successPattern(); return true; }
+      else { toast.error(`Print failed: ${result.error}`); return false; }
+    } catch { toast.error('Print error'); return false; }
+    finally { setIsPrinting(false); }
   };
 
-  // Update current session every minute
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSession(getCurrentSession());
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
+  const printTokenBrowser = (tokenData) => {
+    if (!tokenData) return;
+    const w = window.open('', '_blank', 'width=300,height=500');
+    if (!w) { toast.error('Allow pop-ups to print'); return; }
+    w.document.write(`<html><head><title>Token ${tokenData.token_number}</title>
+      <style>@page{margin:0;size:80mm auto}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Courier New',monospace;width:80mm;padding:4mm;text-align:center}.divider{border-top:1px dashed #000;margin:6px 0}.token-num{font-size:48px;font-weight:900;letter-spacing:2px;margin:8px 0}.clinic{font-size:14px;font-weight:700;margin-bottom:4px}.label{font-size:10px;color:#666;text-transform:uppercase}.value{font-size:13px;font-weight:700;margin-bottom:6px}.footer{font-size:9px;color:#999;margin-top:8px}</style></head><body>
+      <div class="clinic">NEVIKA CURA</div><div style="font-size:11px">${tokenData.clinic}</div><div class="divider"></div>
+      <div class="label">TOKEN NUMBER</div><div class="token-num">${tokenData.token_number}</div><div class="divider"></div>
+      <div class="label">Patient</div><div class="value">${tokenData.patient_name}</div>
+      <div class="label">Doctor</div><div class="value">${tokenData.doctor}</div>
+      <div class="label">Time</div><div class="value">${tokenData.time}</div>
+      <div class="label">Date</div><div class="value">${tokenData.date}</div><div class="divider"></div>
+      <div class="label">Booking ID</div><div style="font-size:11px;font-weight:600">${tokenData.booking_id}</div>
+      <div class="footer">Thank you for visiting Nevika Cura<br>Please wait for your token to be called</div>
+      <script>window.onload=function(){window.print();}<\/script></body></html>`);
+    w.document.close();
+  };
 
-  // Auto-reconnect to saved printer on mount
+  const smartPrintToken = async (tokenData) => {
+    if (printerConnected) await printToken(tokenData);
+    else printTokenBrowser(tokenData);
+  };
+
+  // ============ Effects ============
+  useEffect(() => { const i = setInterval(() => setCurrentSession(getCurrentSession()), 15000); return () => clearInterval(i); }, []);
+  useEffect(() => { axios.get(`${API}/api/clinic-override/active`).then(res => setClinicOverrides(res.data.overrides || [])).catch(() => {}); }, []);
   useEffect(() => {
-    const savedPrinter = thermalPrinter.getSavedPrinter();
-    if (savedPrinter && navigator.bluetooth) {
-      // Start auto-reconnect monitoring
+    const html = document.documentElement; const body = document.body; const app = document.querySelector('.App');
+    html.setAttribute('data-portal', 'pharmacy'); body.setAttribute('data-portal', 'pharmacy');
+    if (app) { app.style.backgroundColor = '#FAFAF8'; app.style.paddingBottom = '0'; }
+    return () => { html.removeAttribute('data-portal'); body.removeAttribute('data-portal'); if (app) { app.style.backgroundColor = ''; app.style.paddingBottom = ''; } };
+  }, []);
+  useEffect(() => {
+    const saved = thermalPrinter.getSavedPrinter();
+    if (saved && navigator.bluetooth) {
       thermalPrinter.startAutoReconnect(
-        (deviceName) => {
-          setPrinterConnected(true);
-          setPrinterName(deviceName);
-          toast.success(`Printer reconnected: ${deviceName}`);
-          successPattern();
-        },
-        () => {
-          setPrinterConnected(false);
-          toast.info('Printer disconnected - will reconnect when available');
-        }
+        (name) => { setPrinterConnected(true); setPrinterName(name); toast.success(`Reconnected: ${name}`); successPattern(); },
+        () => { setPrinterConnected(false); toast.info('Printer disconnected'); }
       );
-      
-      // Show saved printer indicator
-      if (!printerConnected) {
-        setPrinterName(savedPrinter.name + ' (saved)');
-      }
+      if (!printerConnected) setPrinterName(saved.name + ' (saved)');
     }
-    
-    return () => {
-      thermalPrinter.stopAutoReconnect();
-    };
+    return () => thermalPrinter.stopAutoReconnect();
   }, [printerConnected]);
 
-  // 30 days login persistence
-const LOGIN_EXPIRY_DAYS = 30;
-const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
-
-// ============ Auth ============
+  // Auth check
   useEffect(() => {
     const token = localStorage.getItem('staffToken');
     const info = localStorage.getItem('staffInfo');
     const expiry = localStorage.getItem('staffLoginExpiry');
-    
-    // Check if session expired
     if (expiry && new Date().getTime() > parseInt(expiry)) {
-      localStorage.removeItem('staffToken');
-      localStorage.removeItem('staffInfo');
-      localStorage.removeItem('staffLoginExpiry');
-      return;
+      localStorage.removeItem('staffToken'); localStorage.removeItem('staffInfo'); localStorage.removeItem('staffLoginExpiry');
+      setAuthChecked(true); return;
     }
-    
     if (token && info) {
       try {
         const staffData = JSON.parse(info);
-        // Only allow diagyn_staff, clinic_staff, doctors for this portal
-        const allowedRoles = ['diagyn_staff', 'clinic_staff_pushpa', 'clinic_staff_amnion', 'doctor', 'admin', 'super_admin'];
+        const allowedRoles = ['diagyn_staff', 'clinic_staff_pushpa', 'clinic_staff_amnion', 'admin', 'super_admin'];
         const dept = staffData.department?.toLowerCase() || '';
-        const isAllowed = allowedRoles.includes(staffData.role) || 
-                          dept.includes('diagyn') || dept.includes('clinic');
-        
-        if (isAllowed) {
-          setStaffInfo(staffData);
-          setIsAuthenticated(true);
-        } else {
-          // Wrong portal - redirect to unified login
-          navigate('/staff');
-        }
-      } catch (e) {
-        localStorage.removeItem('staffToken');
-        localStorage.removeItem('staffInfo');
-        localStorage.removeItem('staffLoginExpiry');
-      }
+        const staffRole = (staffData.role || '').toLowerCase();
+        const isDoctor = staffRole.includes('doctor');
+        const isAllowed = !isDoctor && (allowedRoles.includes(staffData.role) || dept.includes('diagyn') || dept.includes('clinic'));
+        if (isDoctor) navigate('/doctor', { replace: true });
+        else if (isAllowed) { setStaffInfo(staffData); setIsAuthenticated(true); }
+        else navigate('/staff');
+      } catch { localStorage.removeItem('staffToken'); localStorage.removeItem('staffInfo'); localStorage.removeItem('staffLoginExpiry'); }
     }
+    setAuthChecked(true);
   }, [navigate]);
 
-  const handleLogin = async () => {
-    if (!username || !password) {
-      errorPattern();
-      toast.error('Enter credentials');
-      return;
-    }
-    setLoading(true);
-    heavyTap();
-    try {
-      const res = await axios.post(`${API}/api/staff/login`, { username, password });
-      
-      // Store token
-      localStorage.setItem('staffToken', res.data.token);
-      
-      // Only store expiry if "Remember Me" is checked
-      if (rememberMe) {
-        const expiryTime = new Date().getTime() + LOGIN_EXPIRY_MS;
-        localStorage.setItem('staffLoginExpiry', expiryTime.toString());
-      } else {
-        localStorage.removeItem('staffLoginExpiry'); // Session-based login
-      }
-      
-      // Store full staff object including department
-      const staffData = res.data.staff || { name: res.data.name, role: res.data.role };
-      localStorage.setItem('staffInfo', JSON.stringify(staffData));
-      
-      // Check if this staff belongs to this portal
-      const allowedRoles = ['diagyn_staff', 'clinic_staff_pushpa', 'clinic_staff_amnion', 'doctor', 'admin', 'super_admin'];
-      const dept = staffData.department?.toLowerCase() || '';
-      const isAllowed = allowedRoles.includes(staffData.role) || 
-                        dept.includes('diagyn') || dept.includes('clinic');
-      
-      if (isAllowed) {
-        setStaffInfo(staffData);
-        setIsAuthenticated(true);
-        successPattern();
-        toast.success(rememberMe ? `Welcome! (Logged in for 30 days)` : `Welcome!`);
-      } else {
-        // Redirect to correct portal via unified login
-        toast.info('Redirecting to your portal...');
-        navigate('/staff');
-      }
-    } catch (error) {
-      errorPattern();
-      toast.error('Login failed');
-    }
-    setLoading(false);
-  };
-
   const handleLogout = () => {
-    heavyTap();
-    localStorage.removeItem('staffToken');
-    localStorage.removeItem('staffInfo');
-    localStorage.removeItem('staffLoginExpiry');
-    setIsAuthenticated(false);
-    toast.success('Logged out');
+    heavyTap(); localStorage.removeItem('staffToken'); localStorage.removeItem('staffInfo'); localStorage.removeItem('staffLoginExpiry');
+    setIsAuthenticated(false); toast.success('Logged out');
   };
 
   // ============ Data Loading ============
-  const loadConfig = useCallback(async () => {
-    try {
-      const res = await axios.get(`${API}/api/diagyn-staff/config`, getAuthHeaders());
-      setConfig(res.data);
-    } catch (error) {
-      console.error('Config error:', error);
+  useEffect(() => {
+    if (isAuthenticated && pushSupported && !pushSubscribed) {
+      const token = localStorage.getItem('staffToken');
+      subscribePush(token, 'diagyn_staff');
     }
+  }, [isAuthenticated, pushSupported, pushSubscribed, subscribePush]);
+
+  const loadConfig = useCallback(async () => {
+    try { const res = await axios.get(`${API}/api/diagyn-staff/config`, getAuthHeaders()); setConfig(res.data); }
+    catch (error) { console.error('Config error:', error); }
   }, []);
 
   const loadAppointments = useCallback(async () => {
     setRefreshing(true);
     try {
-      const res = await axios.get(`${API}/api/diagyn-staff/appointments/by-date`, {
-        params: { date: selectedDate, clinic: selectedClinic },
-        ...getAuthHeaders()
-      });
-      setAppointments(res.data.appointments || []);
-      setSummary(res.data.summary || {});
+      const res = await axios.get(`${API}/api/diagyn-staff/appointments/by-date`, { params: { date: selectedDate, clinic: selectedClinic }, ...getAuthHeaders() });
+      setAppointments(res.data.appointments || []); setSummary(res.data.summary || {});
     } catch (error) {
-      if (error.response?.status === 401) {
-        handleLogout();
-        toast.error('Session expired');
-      }
+      if (error.response?.status === 401 && error.response?.data?.detail === 'Session expired') { handleLogout(); toast.error('Session expired'); }
     }
     setRefreshing(false);
   }, [selectedDate, selectedClinic]);
@@ -372,116 +379,63 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
   const loadSummaries = useCallback(async () => {
     try {
       const [daily, weekly] = await Promise.all([
-        axios.get(`${API}/api/diagyn-staff/summary/daily`, {
-          params: { date: selectedDate, clinic: selectedClinic },
-          ...getAuthHeaders()
-        }),
-        axios.get(`${API}/api/diagyn-staff/summary/weekly`, {
-          params: { clinic: selectedClinic },
-          ...getAuthHeaders()
-        })
+        axios.get(`${API}/api/diagyn-staff/summary/daily`, { params: { date: selectedDate, clinic: selectedClinic }, ...getAuthHeaders() }),
+        axios.get(`${API}/api/diagyn-staff/summary/weekly`, { params: { clinic: selectedClinic }, ...getAuthHeaders() })
       ]);
-      setDailySummary(daily.data);
-      setWeeklySummary(weekly.data);
-    } catch (error) {
-      console.error('Summary error:', error);
-    }
+      setDailySummary(daily.data); setWeeklySummary(weekly.data);
+    } catch (error) { console.error('Summary error:', error); }
   }, [selectedDate, selectedClinic]);
 
-  // Fetch Google Review stats
   const fetchReviewStats = useCallback(async () => {
-    try {
-      const res = await axios.get(`${API}/api/diagyn-staff/review-stats`, {
-        params: { clinic: selectedClinic, date: selectedDate },
-        ...getAuthHeaders()
-      });
-      setReviewStats(res.data);
-    } catch (error) {
-      console.log('Review stats not available');
-    }
+    try { const res = await axios.get(`${API}/api/diagyn-staff/review-stats`, { params: { clinic: selectedClinic, date: selectedDate }, ...getAuthHeaders() }); setReviewStats(res.data); }
+    catch { /* noop */ }
   }, [selectedClinic, selectedDate]);
 
-  // Load slots for walk-in (current session only)
+  const loadCalendarData = useCallback(async () => {
+    try {
+      const daysInMonth = new Date(calendarYear, calendarMonth, 0).getDate();
+      const promises = [];
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${calendarYear}-${String(calendarMonth).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        promises.push(
+          axios.get(`${API}/api/diagyn-staff/appointments/by-date`, { params: { date: dateStr, clinic: selectedClinic }, ...getAuthHeaders() })
+            .then(res => ({ date: dateStr, count: (res.data.appointments || []).length, appointments: res.data.appointments || [] }))
+            .catch(() => ({ date: dateStr, count: 0, appointments: [] }))
+        );
+      }
+      setCalendarData(await Promise.all(promises));
+    } catch (error) { console.error('Calendar data error:', error); }
+  }, [calendarMonth, calendarYear, selectedClinic]);
+
   const loadWalkinSlots = useCallback(async () => {
-    if (!selectedDoctor || !currentSession) {
-      setAvailableSlots([]);
-      return;
-    }
-    
+    if (!selectedDoctor || !currentSession) { setAvailableSlots([]); return; }
     setLoadingSlots(true);
     try {
-      const res = await axios.get(`${API}/api/diagyn-staff/slots/available`, {
-        params: {
-          clinic: selectedClinic,
-          doctor: selectedDoctor,
-          date: getISTDate(),
-          mode: 'walkin'
-        },
-        ...getAuthHeaders()
-      });
+      const res = await axios.get(`${API}/api/diagyn-staff/slots/available`, { params: { clinic: selectedClinic, doctor: selectedDoctor, date: getISTDate(), mode: 'walkin' }, ...getAuthHeaders() });
       setAvailableSlots(res.data.available_slots || []);
     } catch (error) {
-      console.error('Slots error:', error);
       setAvailableSlots([]);
+      if (error?.response?.status === 401) { handleLogout(); toast.error('Session expired'); }
+      else toast.error('Could not load slots');
     }
     setLoadingSlots(false);
   }, [selectedDoctor, selectedClinic, currentSession]);
 
-  // Load slots for booking (future)
   const loadBookingSlots = useCallback(async () => {
-    if (!selectedDoctor || !bookingDate) {
-      setAvailableSlots([]);
-      return;
-    }
-    
+    if (!selectedDoctor || !bookingDate) { setAvailableSlots([]); return; }
     setLoadingSlots(true);
     try {
-      const res = await axios.get(`${API}/api/diagyn-staff/slots/available`, {
-        params: {
-          clinic: selectedClinic,
-          doctor: selectedDoctor,
-          date: bookingDate,
-          mode: 'book'
-        },
-        ...getAuthHeaders()
-      });
+      const res = await axios.get(`${API}/api/diagyn-staff/slots/available`, { params: { clinic: selectedClinic, doctor: selectedDoctor, date: bookingDate, mode: 'book' }, ...getAuthHeaders() });
       setAvailableSlots(res.data.available_slots || []);
-    } catch (error) {
-      console.error('Slots error:', error);
-      setAvailableSlots([]);
-    }
+    } catch { setAvailableSlots([]); }
     setLoadingSlots(false);
   }, [selectedDoctor, selectedClinic, bookingDate]);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadConfig();
-      loadAppointments();
-    }
-  }, [isAuthenticated, loadConfig, loadAppointments]);
-
-  useEffect(() => {
-    if (isAuthenticated && activeView === 'summary') loadSummaries();
-  }, [isAuthenticated, activeView, loadSummaries]);
-
-  // Load review stats when appointments view is active
-  useEffect(() => {
-    if (isAuthenticated && activeView === 'appointments') fetchReviewStats();
-  }, [isAuthenticated, activeView, fetchReviewStats]);
-
-  useEffect(() => {
-    if (isAuthenticated && activeView === 'walkin' && selectedDoctor) {
-      loadWalkinSlots();
-    }
-  }, [isAuthenticated, activeView, selectedDoctor, loadWalkinSlots]);
-
-  useEffect(() => {
-    if (isAuthenticated && activeView === 'book' && selectedDoctor && bookingDate) {
-      loadBookingSlots();
-    }
-  }, [isAuthenticated, activeView, selectedDoctor, bookingDate, loadBookingSlots]);
-
-  // Auto-refresh every 8 seconds
+  useEffect(() => { if (isAuthenticated) { loadConfig(); loadAppointments(); } }, [isAuthenticated, loadConfig, loadAppointments]);
+  useEffect(() => { if (isAuthenticated && activeView === 'summary') loadSummaries(); }, [isAuthenticated, activeView, loadSummaries]);
+  useEffect(() => { if (isAuthenticated && activeView === 'appointments') fetchReviewStats(); }, [isAuthenticated, activeView, fetchReviewStats]);
+  useEffect(() => { if (isAuthenticated && activeView === 'walkin' && selectedDoctor) loadWalkinSlots(); }, [isAuthenticated, activeView, selectedDoctor, loadWalkinSlots]);
+  useEffect(() => { if (isAuthenticated && activeView === 'book' && selectedDoctor && bookingDate) loadBookingSlots(); }, [isAuthenticated, activeView, selectedDoctor, bookingDate, loadBookingSlots]);
   useEffect(() => {
     if (!isAuthenticated) return;
     const interval = setInterval(() => {
@@ -489,881 +443,669 @@ const LOGIN_EXPIRY_MS = LOGIN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
       if (activeView === 'walkin' && selectedDoctor) loadWalkinSlots();
       if (activeView === 'book' && selectedDoctor && bookingDate) loadBookingSlots();
       setCurrentSession(getCurrentSession());
-    }, 8000);
+    }, wsConnected ? 20000 : 8000);
     return () => clearInterval(interval);
-  }, [isAuthenticated, activeView, loadAppointments, loadWalkinSlots, loadBookingSlots, selectedDoctor, bookingDate]);
+  }, [isAuthenticated, activeView, loadAppointments, loadWalkinSlots, loadBookingSlots, selectedDoctor, bookingDate, wsConnected]);
+  useEffect(() => { if (isAuthenticated && activeView === 'appointments' && appointmentViewMode === 'calendar') loadCalendarData(); }, [isAuthenticated, activeView, appointmentViewMode, calendarMonth, calendarYear, loadCalendarData]);
 
-  // ============ Patient Lookup ============
-  const lookupPatient = async () => {
-    if (!patientMobile || patientMobile.length < 10) {
-      errorPattern();
-      toast.error('Enter 10-digit mobile');
-      return;
-    }
-    setSearchingPatient(true);
-    mediumTap();
+  // Archives
+  const loadArchives = useCallback(async () => {
+    if (!isAuthenticated) return;
+    setLoadingArchives(true);
     try {
-      const res = await axios.post(`${API}/api/diagyn-staff/patient/lookup`, 
-        { mobile: patientMobile }, getAuthHeaders());
-      if (res.data.found) {
-        setFoundPatient(res.data.patient);
-        setPatientName(res.data.patient.name);
-        setPatientId(res.data.patient.id);
-        successPattern();
-        toast.success(`Found: ${res.data.patient.name}`);
-      } else {
-        setFoundPatient(null);
-        setPatientId(null);
-        toast.info('New patient - enter name');
-      }
-    } catch (error) {
-      errorPattern();
-      toast.error('Search failed');
-    }
+      const istNow = getISTNow(); const todayIST = istNow.toISOString().split('T')[0];
+      const thirtyDaysAgo = new Date(istNow.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const res = await axios.get(`${API}/api/diagyn-staff/appointments`, { params: { clinic: selectedClinic, start_date: thirtyDaysAgo, end_date: todayIST }, ...getAuthHeaders() });
+      const all = res.data.appointments || [];
+      setArchivedAppointments(all.filter(apt => {
+        const d = apt.date || apt.appointment_date;
+        return (apt.status === 'Completed' || apt.status === 'Cancelled' || apt.status === 'completed' || apt.status === 'cancelled') && d < todayIST;
+      }));
+    } catch { setArchivedAppointments([]); }
+    setLoadingArchives(false);
+  }, [isAuthenticated, selectedClinic]);
+  useEffect(() => { if (isAuthenticated && showArchives) loadArchives(); }, [isAuthenticated, showArchives, loadArchives]);
+
+  const recentCheckIns = useMemo(() => {
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    return appointments.filter(apt => apt.checked_in_at && new Date(apt.checked_in_at) > oneHourAgo).length;
+  }, [appointments]);
+
+  // ============ Actions ============
+  const lookupPatient = async () => {
+    if (!patientMobile || patientMobile.length < 10) { errorPattern(); toast.error('Enter 10-digit mobile'); return; }
+    setSearchingPatient(true); mediumTap();
+    try {
+      const res = await axios.post(`${API}/api/diagyn-staff/patient/lookup`, { mobile: patientMobile }, getAuthHeaders());
+      if (res.data.found) { setFoundPatient(res.data.patient); setPatientName(res.data.patient.name); setPatientId(res.data.patient.id); successPattern(); toast.success(`Found: ${res.data.patient.name}`); }
+      else { setFoundPatient(null); setPatientId(null); toast.info('New patient - enter name'); }
+    } catch { errorPattern(); toast.error('Search failed'); }
     setSearchingPatient(false);
   };
 
-  // ============ Booking ============
+  const lookupPatientHistory = async () => {
+    if (!historyPhone || historyPhone.length < 10) { errorPattern(); toast.error('Enter 10-digit mobile'); return; }
+    setHistoryLoading(true);
+    try {
+      const res = await axios.get(`${API}/api/clinic/patient-history/${historyPhone}`, getAuthHeaders());
+      setHistoryData(res.data); if (!res.data.patient) toast.info('No patient found'); else successPattern();
+    } catch { errorPattern(); toast.error('Failed to fetch history'); }
+    setHistoryLoading(false);
+  };
+
+  const updateAnc = (field, value) => setAncForm(prev => ({ ...prev, [field]: value }));
+
+  const submitAncRegistration = async () => {
+    if (!ancForm.patient_name || !ancForm.phone || !ancForm.husband_name || !ancForm.lmp || !ancForm.address) {
+      errorPattern(); toast.error('Fill required fields: Name, Phone, Husband Name, LMP, Address'); return;
+    }
+    setAncSubmitting(true);
+    try {
+      const regPayload = {
+        ...ancForm, age: parseInt(ancForm.age) || 0, gravida: parseInt(ancForm.gravida) || 1,
+        para: parseInt(ancForm.para) || 0, abortion: parseInt(ancForm.abortion) || 0, living: parseInt(ancForm.living) || 0,
+        weight_kg: ancForm.weight_kg ? parseFloat(ancForm.weight_kg) : null,
+        height_cm: ancForm.height_cm ? parseFloat(ancForm.height_cm) : null,
+        registered_by: staffInfo?.username || 'staff',
+      };
+      const res = await axios.post(`${API}/api/anc/register`, regPayload, getAuthHeaders());
+      await axios.post(`${API}/api/clinic/anc-send-email`, regPayload, getAuthHeaders());
+      if (res.data.success) { successPattern(); setAncResult(res.data); toast.success(`Registered: ${res.data.registration_id}. Email sent!`); }
+      else { toast.error(res.data.message || 'Registration failed'); if (res.data.existing_id) setAncResult({ registration_id: res.data.existing_id, existing: true }); }
+    } catch (err) { errorPattern(); toast.error(err?.response?.data?.detail || 'Registration failed'); }
+    setAncSubmitting(false);
+  };
+
+  const resetAncForm = () => {
+    setAncForm({ patient_name: '', age: '', phone: '', address: '', aadhaar: '', husband_name: '', husband_phone: '', husband_occupation: '',
+      lmp: '', gravida: 1, para: 0, abortion: 0, living: 0, blood_group: '', rh_factor: 'Positive', weight_kg: '', height_cm: '',
+      previous_cesarean: false, diabetes: false, hypertension: false, thyroid: false, other_conditions: '', doctor_assigned: '', clinic: 'Pushpa Clinic' });
+    setAncResult(null);
+  };
+
   const handleBooking = async (type) => {
-    if (!patientName || !patientMobile) {
-      errorPattern();
-      toast.error('Enter patient name & mobile');
-      return;
-    }
-    if (!selectedDoctor) {
-      errorPattern();
-      toast.error('Select doctor');
-      return;
-    }
-    if (type !== 'EMERGENCY' && !selectedSlot) {
-      errorPattern();
-      toast.error('Select a time slot');
-      return;
-    }
-    
+    if (!patientName || !patientMobile) { errorPattern(); toast.error('Enter patient name & mobile'); return; }
+    if (!selectedDoctor) { errorPattern(); toast.error('Select doctor'); return; }
+    if (type === 'SCHEDULED' && !selectedSlot) { errorPattern(); toast.error('Select a time slot'); return; }
     const dateToUse = type === 'SCHEDULED' ? bookingDate : getISTDate();
-    
-    setLoading(true);
-    heavyTap();
+    setLoading(true); heavyTap();
     try {
       const res = await axios.post(`${API}/api/diagyn-staff/appointments/book`, {
-        clinic: selectedClinic,
-        doctor: selectedDoctor,
-        date: dateToUse,
-        time: type === 'EMERGENCY' ? null : selectedSlot,
-        patient_name: patientName,
-        patient_mobile: patientMobile,
-        patient_id: patientId,
-        appointment_type: type
+        clinic: selectedClinic, doctor: selectedDoctor, date: dateToUse,
+        time: (type === 'EMERGENCY' || !selectedSlot) ? null : selectedSlot,
+        patient_name: patientName, patient_mobile: patientMobile, patient_id: patientId, appointment_type: type
       }, getAuthHeaders());
-      
       if (res.data.success) {
         successPattern();
-        toast.success(`Booked: ${res.data.booking_id}`);
-        resetBookingForm();
-        setActiveView('appointments');
+        if (res.data.token_data) {
+          // Show token card for both walk-in and emergency
+          setWalkinTokenResult(res.data.token_data);
+          toast.success(`Token #${res.data.token_data.token_number} assigned to ${res.data.token_data.patient_name}`);
+          // Auto-print token immediately
+          smartPrintToken(res.data.token_data);
+        } else { toast.success(`Booked: ${res.data.booking_id}`); resetBookingForm(); setActiveView('appointments'); }
         loadAppointments();
       }
-    } catch (error) {
-      errorPattern();
-      toast.error(error.response?.data?.detail || 'Booking failed');
-    }
+    } catch (error) { errorPattern(); toast.error(error.response?.data?.detail || 'Booking failed'); }
     setLoading(false);
   };
 
   const resetBookingForm = () => {
-    setSelectedDoctor('');
-    setBookingDate('');
-    setSelectedSlot('');
-    setPatientName('');
-    setPatientMobile('');
-    setPatientId(null);
-    setFoundPatient(null);
-    setAvailableSlots([]);
-    setIsEmergency(false);
+    setSelectedDoctor(''); setBookingDate(''); setSelectedSlot(''); setPatientName(''); setPatientMobile('');
+    setPatientId(null); setFoundPatient(null); setAvailableSlots([]); setIsEmergency(false); setHistoryData(null); setHistoryPhone('');
   };
 
-  // Switch view and reset
   const switchToView = (view) => {
-    selectionTap();
-    setActiveView(view);
-    resetBookingForm();
-    if (view === 'book') {
-      // Default to tomorrow for booking
-      const tomorrow = new Date(getISTNow());
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      setBookingDate(tomorrow.toISOString().split('T')[0]);
-    }
-    if (view === 'walkin' && !currentSession) {
-      // Auto-select Emergency if no active session
-      setIsEmergency(true);
-    }
+    selectionTap(); setActiveView(view); resetBookingForm();
+    if (view === 'book') { const t = new Date(getISTNow()); t.setDate(t.getDate() + 1); setBookingDate(t.toISOString().split('T')[0]); }
+    if (view === 'walkin' && !currentSession) setIsEmergency(true);
   };
 
-  // Get doctors available at current clinic
   const getDoctorsForClinic = () => {
     if (!config?.doctor_schedule) return [];
-    return Object.keys(config.doctor_schedule).filter(doctor => 
-      config.doctor_schedule[doctor][selectedClinic]
-    );
+    return Object.keys(config.doctor_schedule).filter(d => config.doctor_schedule[d][selectedClinic]);
   };
 
-  // ============ Status Updates ============
+  // Status Updates
+  const handleCheckIn = (appointment) => { setVerifyingAppointment(appointment); setShowCodeVerification(true); };
+  const onCodeVerified = async () => {
+    if (!verifyingAppointment) return;
+    setShowCodeVerification(false); successPattern(); toast.success('Code verified!');
+    await updateStatus(verifyingAppointment.id, 'CheckedIn'); setVerifyingAppointment(null);
+  };
+  const skipVerificationAndCheckIn = async () => {
+    if (!verifyingAppointment) return;
+    setShowCodeVerification(false); toast.info('Skipped verification');
+    await updateStatus(verifyingAppointment.id, 'CheckedIn'); setVerifyingAppointment(null);
+  };
+
   const updateStatus = async (appointmentId, newStatus) => {
     heavyTap();
     try {
-      const res = await axios.put(`${API}/api/diagyn-staff/appointments/${appointmentId}/status`,
-        { status: newStatus }, getAuthHeaders());
-      
-      // If check-in and printer connected, auto-print token
+      const res = await axios.put(`${API}/api/diagyn-staff/appointments/${appointmentId}/status`, { status: newStatus }, getAuthHeaders());
       if (newStatus === 'CheckedIn' && res.data.token_data) {
-        const tokenData = res.data.token_data;
-        toast.success(`Token #${tokenData.token_number} assigned!`);
-        
-        if (printerConnected) {
-          await printToken(tokenData);
-        } else {
-          // Show token number prominently if printer not connected
-          toast.info(`Token #${tokenData.token_number} - Connect printer to print`, { duration: 5000 });
-        }
-      } else {
-        toast.success(newStatus);
-      }
-      
-      successPattern();
-      loadAppointments();
-    } catch (error) {
-      errorPattern();
-      toast.error('Update failed');
-    }
+        toast.success(`Token #${res.data.token_data.token_number} assigned!`);
+        if (printerConnected) await printToken(res.data.token_data);
+        else toast.info(`Token #${res.data.token_data.token_number}`, { duration: 5000 });
+      } else toast.success(newStatus);
+      successPattern(); loadAppointments();
+    } catch { errorPattern(); toast.error('Update failed'); }
   };
 
-  // Manual reprint token for an appointment
   const reprintToken = async (apt) => {
-    if (!printerConnected) {
-      toast.error('Connect printer first');
-      return;
-    }
-    const tokenData = {
-      token_number: apt.token_number,
-      patient_name: apt.patient_name,
-      clinic: apt.clinic,
-      clinic_address: config?.clinics?.[apt.clinic]?.address || '',
-      slot_time: apt.time || 'Emergency',
-      date: apt.date,
-      booking_id: apt.booking_id,
-      appointment_type: apt.appointment_type || 'SCHEDULED'
-    };
-    await printToken(tokenData);
+    if (!printerConnected) { toast.error('Connect printer first'); return; }
+    await printToken({ token_number: apt.token_number, patient_name: apt.patient_name, clinic: apt.clinic,
+      clinic_address: config?.clinics?.[apt.clinic]?.address || '', slot_time: apt.time || 'Emergency',
+      date: apt.date, booking_id: apt.booking_id, appointment_type: apt.appointment_type || 'SCHEDULED' });
   };
 
-  // Print Bill for completed appointments (staff can print but not edit)
   const printBill = async (apt) => {
-    if (!printerConnected) {
-      toast.error('Connect printer first');
-      return;
-    }
-    
-    // Get fee details from config
-    const doctor = apt.doctor;
-    const feeCode = apt.fee_code;
-    const feeDetails = config?.fee_codes?.[doctor]?.[feeCode] || { label: feeCode, amount: 0 };
-    
-    // Get scan details
-    const scanDetails = (apt.scan_codes || []).map(code => ({
-      code,
-      label: config?.scan_fees?.[code]?.label || code,
-      amount: config?.scan_fees?.[code]?.amount || 0
-    }));
-    
-    const billData = {
-      clinic: apt.clinic,
-      clinic_address: config?.clinics?.[apt.clinic]?.address || '',
-      booking_id: apt.booking_id,
-      patient_name: apt.patient_name,
-      patient_mobile: apt.patient_phone || apt.patient_mobile,
-      doctor: apt.doctor,
-      fee_code: feeCode,
-      fee_details: feeDetails,
-      scan_codes: scanDetails,
-      total_amount: apt.total_amount || 0
-    };
-    
+    if (!printerConnected) { toast.error('Connect printer first'); return; }
+    const feeCode = apt.doctor_fee_code || apt.fee_code;
+    const rawScans = apt.doctor_scan_codes || apt.scan_codes || [];
+    const feeDetails = config?.fee_codes?.[apt.doctor]?.[feeCode] || { label: feeCode, amount: 0 };
+    const scanDetails = rawScans.map(s => typeof s === 'string'
+      ? { code: s, label: config?.scan_fees?.[s]?.label || s, amount: config?.scan_fees?.[s]?.amount || 0 }
+      : s);
     setIsPrinting(true);
     try {
-      const result = await thermalPrinter.printBill(billData);
-      if (result.success) {
-        toast.success('Bill printed!');
-        successPattern();
-      } else {
-        toast.error(`Print failed: ${result.error}`);
-        errorPattern();
-      }
-    } catch (error) {
-      toast.error('Print error');
-      errorPattern();
-    } finally {
-      setIsPrinting(false);
-    }
+      const result = await thermalPrinter.printBill({
+        clinic: apt.clinic,
+        booking_id: apt.booking_id,
+        patient_name: apt.patient_name,
+        patient_mobile: apt.patient_phone || apt.patient_mobile || apt.mobile || apt.phone || '',
+        doctor: apt.doctor,
+        fee_code: feeCode,
+        fee_details: feeDetails,
+        scan_codes: scanDetails,
+        medicine_amount: apt.medicine_amount || 0,
+        misc_amount: apt.misc_amount || 0,
+        total_amount: apt.total_amount || 0,
+        payment_method: apt.payment_method || 'cash',
+      });
+      if (result.success) { toast.success('Bill printed!'); successPattern(); }
+      else { toast.error(`Print failed: ${result.error}`); errorPattern(); }
+    } catch { toast.error('Print error'); errorPattern(); }
+    finally { setIsPrinting(false); }
   };
 
-  // Send Google Review Request to patient
   const sendReviewRequest = async (apt) => {
-    if (!apt.patient_phone && !apt.patient_mobile) {
-      toast.error('No phone number available');
-      return;
-    }
-    
     const phone = apt.patient_phone || apt.patient_mobile;
-    
+    if (!phone) { toast.error('No phone number'); return; }
     try {
       const res = await axios.post(`${API}/api/diagyn-staff/whatsapp/send-review-request`, null, {
-        params: {
-          whatsapp_number: phone,
-          patient_name: apt.patient_name || 'Patient',
-          clinic_name: apt.clinic || selectedClinic,
-          doctor_name: apt.doctor || 'Doctor'
-        },
+        params: { whatsapp_number: phone, patient_name: apt.patient_name || 'Patient', clinic_name: apt.clinic || selectedClinic, doctor_name: apt.doctor || 'Doctor' },
         ...getAuthHeaders()
       });
-      
       if (res.data.success) {
-        toast.success('Review request sent via WhatsApp!');
-        successPattern();
-        // Update local state to show review was sent
-        setAppointments(prev => prev.map(a => 
-          a.booking_id === apt.booking_id 
-            ? { ...a, review_request_sent: true } 
-            : a
-        ));
-        // Refresh review stats
+        toast.success('Review request sent!'); successPattern();
+        setAppointments(prev => prev.map(a => a.booking_id === apt.booking_id ? { ...a, review_request_sent: true } : a));
         fetchReviewStats();
+      } else { toast.error(res.data.error || 'Failed'); errorPattern(); }
+    } catch { toast.error('Failed to send review request'); errorPattern(); }
+  };
+
+  const handleCheckInByCode = async () => {
+    if (!bookingCodeInput || bookingCodeInput.length < 3) { errorPattern(); toast.error('Enter at least 3 characters'); return; }
+    setCheckingInByCode(true); setCodeCheckInResult(null); heavyTap();
+    try {
+      const res = await axios.post(`${API}/api/diagyn-staff/check-in/by-code`, { booking_code: bookingCodeInput.trim().toUpperCase(), clinic: selectedClinic }, getAuthHeaders());
+      if (res.data.success) {
+        successPattern(); toast.success(`Checked in: ${res.data.appointment?.patient_name} - Token #${res.data.token_number}`);
+        setCodeCheckInResult({ success: true, ...res.data });
+        if (printerConnected && res.data.token_data) await printToken(res.data.token_data);
+        setBookingCodeInput(''); loadAppointments();
       } else {
-        toast.error(res.data.error || 'Failed to send review request');
-        errorPattern();
+        errorPattern(); setCodeCheckInResult({ success: false, error: res.data.error, message: res.data.message, appointment: res.data.appointment });
+        toast.error(res.data.message || 'Check-in failed');
       }
     } catch (error) {
-      toast.error('Failed to send review request');
-      errorPattern();
+      errorPattern(); const msg = error.response?.data?.detail || 'No appointment found';
+      toast.error(msg); setCodeCheckInResult({ success: false, error: 'not_found', message: msg });
     }
+    setCheckingInByCode(false);
   };
 
-  // Staff cannot complete appointments - only doctors can (removed completion modal)
+  // ============ Context Value ============
+  const contextValue = useMemo(() => ({
+    // State
+    staffInfo, loading, refreshing, selectedClinic, activeDoctorFilter, activeView, selectedDate, appointmentViewMode,
+    calendarData, calendarMonth, calendarYear, config, appointments, filteredAppointments, summary, dailySummary, weeklySummary,
+    currentSession, selectedDoctor, bookingDate, selectedSlot, patientName, patientMobile, patientId,
+    availableSlots, loadingSlots, isEmergency, foundPatient, searchingPatient, reviewStats,
+    printerConnected, printerName, isPrinting, bookingCodeInput, checkingInByCode, codeCheckInResult,
+    historyPhone, historyData, historyLoading, showArchives, archivedAppointments, loadingArchives,
+    ancForm, ancSubmitting, ancResult, walkinTokenResult,
+    // Setters
+    setSelectedDate, setAppointmentViewMode, setCalendarMonth, setCalendarYear, setSelectedDoctor, setActiveDoctorFilter,
+    setBookingDate, setSelectedSlot, setPatientName, setPatientMobile, setIsEmergency,
+    setBookingCodeInput, setHistoryPhone, setShowArchives, setWalkinTokenResult,
+    // Helpers
+    getDayName, getISTDate, getMaxBookingDate, getSessionLabel, getDoctorsForClinic, portalTheme,
+    // Actions
+    loadAppointments, loadWalkinSlots, loadBookingSlots, loadCalendarData, lookupPatient,
+    lookupPatientHistory, updateAnc, submitAncRegistration, resetAncForm, handleBooking,
+    resetBookingForm, handleCheckIn, updateStatus, reprintToken, printBill, printToken,
+    smartPrintToken, sendReviewRequest, handleCheckInByCode,
+    sessionFilter, setSessionFilter,
+  }), [staffInfo, loading, refreshing, selectedClinic, activeDoctorFilter, activeView, selectedDate, appointmentViewMode,
+    calendarData, calendarMonth, calendarYear, config, appointments, filteredAppointments, summary, dailySummary, weeklySummary,
+    currentSession, sessionFilter, selectedDoctor, bookingDate, selectedSlot, patientName, patientMobile, patientId,
+    availableSlots, loadingSlots, isEmergency, foundPatient, searchingPatient, reviewStats,
+    printerConnected, printerName, isPrinting, bookingCodeInput, checkingInByCode, codeCheckInResult,
+    historyPhone, historyData, historyLoading, showArchives, archivedAppointments, loadingArchives,
+    ancForm, ancSubmitting, ancResult, walkinTokenResult,
+    loadAppointments, loadWalkinSlots, loadBookingSlots, loadCalendarData, lookupPatient,
+    lookupPatientHistory, submitAncRegistration, handleBooking, handleCheckIn, updateStatus,
+    reprintToken, printBill, sendReviewRequest, handleCheckInByCode, getDoctorsForClinic]);
 
-  // ============ Login Screen ============
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4" 
-           style={{ background: `linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%)` }}>
-        <Card className="w-full max-w-sm p-6 shadow-2xl">
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3"
-                 style={{ background: COLORS.primary }}>
-              <Stethoscope className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-xl font-bold" style={{ color: COLORS.primary }}>Nevika Cura Staff</h1>
-            <p className="text-sm text-gray-500">Staff Portal</p>
-          </div>
-          <div className="space-y-3">
-            <div className="relative">
-              <User className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-              <Input value={username} onChange={(e) => setUsername(e.target.value)}
-                placeholder="Username" className="pl-10 h-11" data-testid="login-username" />
-            </div>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password" className="pl-10 h-11" data-testid="login-password"
-                onKeyPress={(e) => e.key === 'Enter' && handleLogin()} />
-            </div>
-            <div className="flex items-center gap-2">
-              <input 
-                type="checkbox" 
-                id="rememberMe" 
-                checked={rememberMe} 
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded accent-emerald-500"
-                data-testid="remember-me-checkbox"
-              />
-              <label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
-                Remember me for 30 days
-              </label>
-            </div>
-            <Button onClick={handleLogin} disabled={loading}
-              className="w-full h-12 text-base font-bold" data-testid="login-button"
-              style={{ background: COLORS.accent }}>
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'LOGIN'}
-            </Button>
-          </div>
-          <Button variant="ghost" onClick={() => navigate('/')} className="w-full mt-4 text-gray-500">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
-          </Button>
-        </Card>
+  // ============ Auth Guard ============
+  if (!authChecked) return (
+    <div className="min-h-screen" style={{ background: '#1a1a2e' }}>
+      <div className="space-y-4 px-4 pt-16">
+        {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }} />)}
       </div>
-    );
-  }
-
-  // ============ Main Portal ============
-  return (
-    <div className="min-h-screen" style={{ background: '#f1f5f9' }}>
-      {/* Header */}
-      <header className="sticky top-0 z-50 px-3 py-2" style={{ background: COLORS.primary }}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Stethoscope className="w-6 h-6 text-white" />
-            <div>
-              <h1 className="text-white font-bold text-base">Nevika Cura Staff</h1>
-              <p className="text-white/70 text-xs">{staffInfo?.name}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-1">
-            {/* Printer Connection Button */}
-            <Button variant="ghost" size="sm" onClick={connectPrinter}
-              className={`hover:bg-white/20 h-8 px-2 ${printerConnected ? 'text-green-300' : 'text-white/70'}`}
-              disabled={isPrinting}>
-              {isPrinting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <Bluetooth className={`w-4 h-4 ${printerConnected ? 'text-green-300' : ''}`} />
-                  {printerConnected && <span className="text-xs ml-1">●</span>}
-                </>
-              )}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => { lightTap(); loadAppointments(); }}
-              className="text-white hover:bg-white/20 h-8 w-8 p-0" disabled={refreshing}>
-              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout}
-              className="text-white hover:bg-white/20 h-8 w-8 p-0">
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-        
-        {/* Printer Status Bar */}
-        {printerConnected && (
-          <div className="px-3 py-1 bg-green-600 flex items-center justify-center gap-2">
-            <Printer className="w-3 h-3 text-white" />
-            <span className="text-xs text-white font-medium">{printerName} connected</span>
-          </div>
-        )}
-        {!printerConnected && printerName && (
-          <div className="px-3 py-1 bg-amber-500 flex items-center justify-center gap-2">
-            <Bluetooth className="w-3 h-3 text-white animate-pulse" />
-            <span className="text-xs text-white font-medium">{printerName} - Reconnecting...</span>
-          </div>
-        )}
-        
-        {/* Clinic Toggle - Only Pushpa & Amnion */}
-        <div className="grid grid-cols-2 gap-2 mt-3 pb-1 px-3">
-          {['Pushpa Clinic', 'Amnion Clinic'].map(clinic => (
-            <button key={clinic} 
-              onClick={() => { 
-                selectionTap(); 
-                setSelectedClinic(clinic); 
-                resetBookingForm();
-              }}
-              className={`py-3 rounded-xl text-sm font-bold transition-all ${
-                selectedClinic === clinic ? 'bg-white shadow-md' : 'bg-white/20 text-white'
-              }`}
-              style={selectedClinic === clinic ? { color: COLORS.primary } : {}}>
-              <Building2 className="w-4 h-4 inline mr-2" />
-              {clinic.replace(' Clinic', '')}
-            </button>
-          ))}
-        </div>
-      </header>
-
-      {/* Stats Bar */}
-      {summary && activeView === 'appointments' && (
-        <div className="px-3 py-2 bg-white border-b flex gap-2 overflow-x-auto">
-          {[
-            { label: 'Booked', count: summary.booked || 0, color: '#3b82f6' },
-            { label: 'Wait', count: summary.checked_in || 0, color: '#f59e0b' },
-            { label: 'Dr', count: summary.with_doctor || 0, color: '#8b5cf6' },
-            { label: 'Done', count: summary.completed || 0, color: '#16a34a' },
-            { label: 'Reviews', count: reviewStats.today || 0, color: '#ec4899' },
-          ].map(stat => (
-            <div key={stat.label} className="flex items-center gap-1.5 px-2 py-1 rounded-full"
-                 style={{ background: `${stat.color}15` }}>
-              <div className="w-1.5 h-1.5 rounded-full" style={{ background: stat.color }}></div>
-              <span className="text-xs font-medium" style={{ color: stat.color }}>{stat.label}: {stat.count}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Navigation Tabs */}
-      <div className="px-3 py-2 bg-white border-b">
-        <div className="grid grid-cols-4 gap-1">
-          {[
-            { id: 'appointments', icon: Calendar, label: 'Today' },
-            { id: 'walkin', icon: Users, label: 'Walk-in' },
-            { id: 'book', icon: CalendarPlus, label: 'Book' },
-            { id: 'summary', icon: TrendingUp, label: 'Summary' },
-          ].map(tab => (
-            <button key={tab.id} onClick={() => switchToView(tab.id)}
-              className={`flex flex-col items-center gap-1 py-2 px-2 rounded-lg font-medium transition-all ${
-                activeView === tab.id ? 'text-white shadow-md' : 'bg-gray-100 text-gray-600'
-              }`}
-              style={activeView === tab.id ? { background: COLORS.accent } : {}}>
-              <tab.icon className="w-4 h-4" />
-              <span className="text-xs">{tab.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Content */}
-      <main className="p-3 pb-20">
-        {/* ============ APPOINTMENTS VIEW ============ */}
-        {activeView === 'appointments' && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 bg-white rounded-lg p-2 shadow-sm">
-              <Calendar className="w-4 h-4" style={{ color: COLORS.primary }} />
-              <input type="date" value={selectedDate}
-                onChange={(e) => { lightTap(); setSelectedDate(e.target.value); }}
-                className="flex-1 text-sm font-medium bg-transparent outline-none" />
-              <span className="text-xs px-2 py-0.5 rounded" style={{ background: COLORS.primaryLight, color: COLORS.primary }}>
-                {getDayName(selectedDate)}
-              </span>
-            </div>
-
-            {appointments.length === 0 ? (
-              <div className="text-center py-8 bg-white rounded-lg">
-                <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-                <p className="text-gray-500 text-sm">No appointments at {selectedClinic.replace(' Clinic', '')}</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {appointments.map(apt => (
-                  <AppointmentCard key={apt.id} apt={apt} config={config}
-                    onCheckIn={() => updateStatus(apt.id, 'CheckedIn')}
-                    onWithDoctor={() => updateStatus(apt.id, 'WithDoctor')}
-                    onReprint={reprintToken}
-                    onPrintBill={printBill}
-                    onSendReview={sendReviewRequest}
-                    printerConnected={printerConnected} />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ============ WALK-IN / EMERGENCY VIEW ============ */}
-        {activeView === 'walkin' && (
-          <div className="space-y-3">
-            {/* Current Session Status */}
-            <div className={`rounded-lg p-3 border ${currentSession ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className={`text-sm font-bold ${currentSession ? 'text-green-800' : 'text-amber-800'}`}>
-                    <Clock className="w-4 h-4 inline mr-1" />
-                    {currentSession ? `Active: ${getSessionLabel(currentSession)}` : 'No Active Session'}
-                  </p>
-                  <p className="text-xs text-gray-600 mt-1">
-                    {currentSession ? 'Walk-in & Emergency available' : 'Only Emergency available (24x7)'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Walk-in / Emergency Toggle */}
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => { 
-                    if (currentSession) {
-                      mediumTap(); 
-                      setIsEmergency(false); 
-                      setSelectedSlot(''); 
-                    }
-                  }}
-                  className={`flex-1 py-3 rounded-lg font-bold transition-all ${
-                    !currentSession 
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                      : !isEmergency 
-                        ? 'text-white' 
-                        : 'bg-gray-100 text-gray-600'
-                  }`}
-                  style={currentSession && !isEmergency ? { background: COLORS.accent } : {}}
-                  disabled={!currentSession}>
-                  <Users className="w-4 h-4 inline mr-2" />
-                  Walk-in
-                </button>
-                <button 
-                  onClick={() => { mediumTap(); setIsEmergency(true); setSelectedSlot(''); }}
-                  className={`flex-1 py-3 rounded-lg font-bold transition-all ${
-                    isEmergency ? 'text-white' : 'bg-gray-100 text-gray-600'
-                  }`}
-                  style={isEmergency ? { background: COLORS.danger } : {}}>
-                  <AlertTriangle className="w-4 h-4 inline mr-2" />
-                  Emergency (24x7)
-                </button>
-              </div>
-            </div>
-
-            {/* Select Doctor */}
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <label className="text-xs font-bold text-gray-600 mb-2 block">SELECT DOCTOR</label>
-              <div className="grid grid-cols-2 gap-2">
-                {getDoctorsForClinic().map(doctor => (
-                  <button key={doctor}
-                    onClick={() => { mediumTap(); setSelectedDoctor(doctor); setSelectedSlot(''); }}
-                    className={`p-3 rounded-lg border-2 text-left transition-all ${
-                      selectedDoctor === doctor ? 'shadow-md' : 'border-gray-200'
-                    }`}
-                    style={selectedDoctor === doctor ? { borderColor: COLORS.primary, background: COLORS.primaryLight } : {}}>
-                    <Stethoscope className="w-5 h-5 mb-1" style={{ color: COLORS.primary }} />
-                    <p className="font-bold text-sm">{doctor.replace('Dr. ', '')}</p>
-                  </button>
-                ))}
-              </div>
-              {getDoctorsForClinic().length === 0 && (
-                <p className="text-center text-gray-500 text-sm py-4">No doctors at this clinic today</p>
-              )}
-            </div>
-
-            {/* Slots (only for walk-in with active session) */}
-            {selectedDoctor && !isEmergency && currentSession && (
-              <div className="bg-white rounded-lg p-3 shadow-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-gray-600">
-                    CURRENT SESSION SLOTS
-                    <span className="ml-2 text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
-                      {getSessionLabel(currentSession)}
-                    </span>
-                  </label>
-                  {loadingSlots && <Loader2 className="w-4 h-4 animate-spin" style={{ color: COLORS.accent }} />}
-                </div>
-                {availableSlots.length > 0 ? (
-                  <div className="grid grid-cols-4 gap-1.5 max-h-40 overflow-y-auto">
-                    {availableSlots.map(slot => (
-                      <button key={slot.value}
-                        onClick={() => { lightTap(); setSelectedSlot(slot.value); }}
-                        className={`py-2 rounded-lg text-xs font-medium transition-all ${
-                          selectedSlot === slot.value ? 'text-white shadow' : 'bg-gray-100 text-gray-700'
-                        }`}
-                        style={selectedSlot === slot.value ? { background: COLORS.accent } : {}}>
-                        {slot.display}
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-gray-500 text-sm py-4">No slots available</p>
-                )}
-              </div>
-            )}
-
-            {/* No session message for walk-in */}
-            {selectedDoctor && !isEmergency && !currentSession && (
-              <div className="bg-amber-50 rounded-lg p-4 text-center">
-                <AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" />
-                <p className="text-amber-800 font-medium">No active session right now</p>
-                <p className="text-amber-600 text-sm mt-1">Morning: 11am-2pm | Evening: 6pm-10pm</p>
-                <p className="text-amber-600 text-sm">Use Emergency for urgent cases</p>
-              </div>
-            )}
-
-            {/* Patient Details */}
-            {selectedDoctor && (isEmergency || selectedSlot) && (
-              <div className="bg-white rounded-lg p-3 shadow-sm space-y-3">
-                <label className="text-xs font-bold text-gray-600 block">PATIENT DETAILS</label>
-                <div className="flex gap-2">
-                  <Input value={patientMobile} maxLength={10}
-                    onChange={(e) => setPatientMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    placeholder="Mobile (10 digits)" className="h-10" />
-                  <Button onClick={lookupPatient} disabled={searchingPatient || patientMobile.length < 10}
-                    className="h-10 px-4" style={{ background: COLORS.primary }}>
-                    {searchingPatient ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                  </Button>
-                </div>
-                {foundPatient && (
-                  <div className="p-2 rounded-lg flex items-center gap-2" style={{ background: COLORS.primaryLight }}>
-                    <CheckCircle2 className="w-5 h-5" style={{ color: COLORS.primary }} />
-                    <span className="font-medium text-sm" style={{ color: COLORS.primary }}>{foundPatient.name}</span>
-                  </div>
-                )}
-                <Input value={patientName} onChange={(e) => setPatientName(e.target.value)}
-                  placeholder="Patient Name" className="h-10" />
-              </div>
-            )}
-
-            {/* Book Button */}
-            {selectedDoctor && patientName && patientMobile && (isEmergency || selectedSlot) && (
-              <Button 
-                onClick={() => handleBooking(isEmergency ? 'EMERGENCY' : 'WALK_IN')} 
-                disabled={loading}
-                className="w-full h-14 text-lg font-bold"
-                style={{ background: isEmergency ? COLORS.danger : COLORS.accent }}>
-                {loading ? <Loader2 className="w-6 h-6 animate-spin mr-2" /> : 
-                  isEmergency ? <AlertTriangle className="w-6 h-6 mr-2" /> : <Users className="w-6 h-6 mr-2" />}
-                {isEmergency ? 'BOOK EMERGENCY' : 'BOOK WALK-IN'}
-              </Button>
-            )}
-          </div>
-        )}
-
-        {/* ============ BOOK APPOINTMENT VIEW ============ */}
-        {activeView === 'book' && (
-          <div className="space-y-3">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-sm text-blue-800 font-medium">
-                <CalendarPlus className="w-4 h-4 inline mr-1" />
-                Book future appointment at {selectedClinic.replace(' Clinic', '')}
-              </p>
-            </div>
-
-            {/* Select Doctor */}
-            <div className="bg-white rounded-lg p-3 shadow-sm">
-              <label className="text-xs font-bold text-gray-600 mb-2 block">1. SELECT DOCTOR</label>
-              <div className="grid grid-cols-2 gap-2">
-                {getDoctorsForClinic().map(doctor => (
-                  <button key={doctor}
-                    onClick={() => { mediumTap(); setSelectedDoctor(doctor); setSelectedSlot(''); }}
-                    className={`p-3 rounded-lg border-2 text-left transition-all ${
-                      selectedDoctor === doctor ? 'shadow-md' : 'border-gray-200'
-                    }`}
-                    style={selectedDoctor === doctor ? { borderColor: COLORS.primary, background: COLORS.primaryLight } : {}}>
-                    <Stethoscope className="w-5 h-5 mb-1" style={{ color: COLORS.primary }} />
-                    <p className="font-bold text-sm">{doctor.replace('Dr. ', '')}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Select Date */}
-            {selectedDoctor && (
-              <div className="bg-white rounded-lg p-3 shadow-sm">
-                <label className="text-xs font-bold text-gray-600 mb-2 block">2. SELECT DATE</label>
-                <input type="date" value={bookingDate} min={getISTDate()}
-                  onChange={(e) => { lightTap(); setBookingDate(e.target.value); setSelectedSlot(''); }}
-                  className="w-full h-10 px-3 rounded-lg border border-gray-200 text-sm" />
-                {bookingDate && <p className="text-xs text-gray-500 mt-1">{getDayName(bookingDate)}</p>}
-              </div>
-            )}
-
-            {/* Available Slots */}
-            {selectedDoctor && bookingDate && (
-              <div className="bg-white rounded-lg p-3 shadow-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-gray-600">3. SELECT SLOT</label>
-                  {loadingSlots && <Loader2 className="w-4 h-4 animate-spin" style={{ color: COLORS.accent }} />}
-                </div>
-                {availableSlots.length > 0 ? (
-                  <div className="grid grid-cols-4 gap-1.5 max-h-48 overflow-y-auto">
-                    {availableSlots.map(slot => (
-                      <button key={slot.value}
-                        onClick={() => { lightTap(); setSelectedSlot(slot.value); }}
-                        className={`py-2 rounded-lg text-xs font-medium transition-all ${
-                          selectedSlot === slot.value ? 'text-white shadow' : 'bg-gray-100 text-gray-700'
-                        }`}
-                        style={selectedSlot === slot.value ? { background: COLORS.accent } : {}}>
-                        {slot.display}
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-gray-500 text-sm py-4">
-                    {loadingSlots ? 'Loading...' : 'No slots available. Try another date.'}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Patient Details */}
-            {selectedSlot && (
-              <div className="bg-white rounded-lg p-3 shadow-sm space-y-3">
-                <label className="text-xs font-bold text-gray-600 block">4. PATIENT DETAILS</label>
-                <div className="flex gap-2">
-                  <Input value={patientMobile} maxLength={10}
-                    onChange={(e) => setPatientMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    placeholder="Mobile (10 digits)" className="h-10" />
-                  <Button onClick={lookupPatient} disabled={searchingPatient || patientMobile.length < 10}
-                    className="h-10 px-4" style={{ background: COLORS.primary }}>
-                    {searchingPatient ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                  </Button>
-                </div>
-                {foundPatient && (
-                  <div className="p-2 rounded-lg flex items-center gap-2" style={{ background: COLORS.primaryLight }}>
-                    <CheckCircle2 className="w-5 h-5" style={{ color: COLORS.primary }} />
-                    <span className="font-medium text-sm" style={{ color: COLORS.primary }}>{foundPatient.name} ({foundPatient.id})</span>
-                  </div>
-                )}
-                <Input value={patientName} onChange={(e) => setPatientName(e.target.value)}
-                  placeholder="Patient Name" className="h-10" />
-              </div>
-            )}
-
-            {/* Book Button */}
-            {selectedSlot && patientName && patientMobile && (
-              <Button onClick={() => handleBooking('SCHEDULED')} disabled={loading}
-                className="w-full h-14 text-lg font-bold" style={{ background: COLORS.accent }}>
-                {loading ? <Loader2 className="w-6 h-6 animate-spin mr-2" /> : <CalendarPlus className="w-6 h-6 mr-2" />}
-                BOOK APPOINTMENT
-              </Button>
-            )}
-          </div>
-        )}
-
-        {/* ============ SUMMARY VIEW ============ */}
-        {activeView === 'summary' && (
-          <div className="space-y-3">
-            <div className="rounded-xl p-4 text-white shadow-lg" style={{ background: COLORS.primary }}>
-              <h3 className="text-sm font-medium opacity-80">Today at {selectedClinic.replace(' Clinic', '')}</h3>
-              <div className="text-3xl font-bold mt-1">₹{(dailySummary?.total_collection || 0).toLocaleString('en-IN')}</div>
-              <p className="text-sm opacity-70 mt-1">{dailySummary?.total_patients || 0} patients</p>
-            </div>
-            <div className="bg-white rounded-xl p-4 shadow-sm">
-              <h3 className="font-bold text-gray-800 mb-3">This Week</h3>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-xl p-3" style={{ background: COLORS.primaryLight }}>
-                  <IndianRupee className="w-5 h-5 mb-1" style={{ color: COLORS.primary }} />
-                  <p className="text-xl font-bold" style={{ color: COLORS.primary }}>
-                    ₹{(weeklySummary?.total_collection || 0).toLocaleString('en-IN')}
-                  </p>
-                  <p className="text-xs text-gray-600">Collection</p>
-                </div>
-                <div className="rounded-xl p-3" style={{ background: COLORS.accentLight }}>
-                  <Users className="w-5 h-5 mb-1" style={{ color: COLORS.accent }} />
-                  <p className="text-xl font-bold" style={{ color: COLORS.accent }}>{weeklySummary?.total_patients || 0}</p>
-                  <p className="text-xs text-gray-600">Patients</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
     </div>
   );
-};
+  if (!isAuthenticated) return <Navigate to="/staff" replace />;
 
-// ============ Appointment Card ============
-// Staff can only CHECK IN and move to WITH DR - CANNOT Complete (doctor does that)
-// Staff can print BILL for completed appointments
-const AppointmentCard = ({ apt, config, onCheckIn, onWithDoctor, onReprint, onPrintBill, onSendReview, printerConnected }) => {
-  const status = STATUS_STYLES[apt.status] || STATUS_STYLES['Booked'];
-  const type = TYPE_STYLES[apt.appointment_type] || TYPE_STYLES['SCHEDULED'];
-  
-  const getAction = () => {
-    switch (apt.status) {
-      case 'Booked': return { label: 'CHECK IN', action: onCheckIn, color: '#f59e0b' };
-      case 'CheckedIn': return { label: 'WITH DR', action: onWithDoctor, color: '#8b5cf6' };
-      // Staff cannot complete - only doctors can
-      case 'WithDoctor': return null;
-      default: return null;
-    }
-  };
-  
-  const action = getAction();
-  
+  // ============ Render ============
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden border-l-4" style={{ borderLeftColor: status.text }}>
-      <div className="p-3">
-        <div className="flex items-start justify-between mb-1">
-          <div className="flex items-start gap-3">
-            {/* Token Number Badge (for checked-in patients) */}
-            {apt.token_number && (
-              <div className="flex flex-col items-center justify-center min-w-[44px] h-11 rounded-lg bg-gray-100">
-                <span className="text-[10px] text-gray-500 font-medium leading-none">TOKEN</span>
-                <span className="text-lg font-bold text-gray-700 leading-tight">{apt.token_number}</span>
+    <StaffContext.Provider value={contextValue}>
+      <div className="min-h-screen" style={{ background: COLORS.bgDark }}>
+        <style>{`
+          /* 1. Avatar pulse ring */
+          @keyframes avatarPulseRing { 0% { box-shadow: 0 0 0 0 var(--ring-color); } 70% { box-shadow: 0 0 0 6px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+          .avatar-pulse { animation: avatarPulseRing 2s ease-out infinite; }
+          @keyframes avatarScaleUp { from { transform: scale(0.85); opacity: 0.5; } to { transform: scale(1); opacity: 1; } }
+          .avatar-scale { animation: avatarScaleUp 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+          /* 3. Doctor card slide-in */
+          @keyframes doctorCardBounce { 0% { transform: translateY(8px) scale(0.95); opacity: 0; } 60% { transform: translateY(-2px) scale(1.02); } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+          .doctor-card-bounce { animation: doctorCardBounce 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+          /* 4. Clinic toggle slide indicator */
+          @keyframes clinicSlideIn { from { transform: scaleX(0.3); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+          .clinic-slide-active { animation: clinicSlideIn 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+
+          /* 5. Icon tap glow */
+          @keyframes iconTapGlow { 0% { box-shadow: 0 0 0 0 var(--glow-color); } 50% { box-shadow: 0 0 12px 3px var(--glow-color); } 100% { box-shadow: 0 0 0 0 transparent; } }
+          .icon-glow:active { animation: iconTapGlow 0.4s ease-out; }
+          .icon-glow { transition: transform 0.15s ease; }
+          .icon-glow:active { transform: scale(0.88); }
+
+          /* 6. Staggered cascade reveal */
+          @keyframes statCascade { from { opacity: 0; transform: translateY(16px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+          .stat-cascade { animation: statCascade 0.45s cubic-bezier(0.22,1,0.36,1) both; }
+
+          /* 8. Queue insights pulse */
+          @keyframes queuePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+          .queue-pulse { animation: queuePulse 0.6s ease-in-out; }
+
+          /* 9. New appointment slide-in */
+          @keyframes appointmentSlideIn { 0% { transform: translateX(60px); opacity: 0; } 60% { transform: translateX(-4px); } 100% { transform: translateX(0); opacity: 1; } }
+          @keyframes highlightFlash { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); } 40% { box-shadow: 0 0 16px 4px rgba(34,197,94,0.3); } 100% { box-shadow: 0 0 0 0 transparent; } }
+          .appointment-new { animation: appointmentSlideIn 0.5s cubic-bezier(0.22,1,0.36,1) both, highlightFlash 1.2s ease-out 0.3s both; }
+
+          /* 10. Status change ripple */
+          @keyframes statusRipple { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+          @keyframes statusShimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+          .status-ripple-container { position: relative; overflow: hidden; }
+          .status-changed { animation: statusShimmer 1s ease-out; background-size: 200% 100%; background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%); }
+
+          /* Existing animations */
+          @keyframes staffCardEntry { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+          .staff-card-anim { animation: staffCardEntry 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+          @keyframes staffCheckInFlash { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); } 50% { box-shadow: 0 0 0 8px rgba(34,197,94,0); } 100% { box-shadow: none; } }
+          .staff-checkin-flash { animation: staffCheckInFlash 0.8s ease-out; }
+          @keyframes staffStatPop { from { opacity:0; transform: scale(0.85); } to { opacity:1; transform: scale(1); } }
+          .staff-stat-anim { animation: staffStatPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+          @keyframes staffBillingPulse { 0%,100% { border-color: rgba(249,115,22,0.3); } 50% { border-color: rgba(249,115,22,0.7); } }
+          .staff-billing-pulse { animation: staffBillingPulse 1.5s ease-in-out infinite; }
+          @keyframes staffTokenRipple { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+          @keyframes staffTabSlide { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+          .staff-tab-anim { animation: staffTabSlide 0.25s ease-out; }
+        `}</style>
+        {/* Header — Doctor-themed */}
+        {(() => {
+          const dt = portalTheme;
+          const isDark = dt.isDark;
+          return (
+        <header className="sticky top-0 z-50 overflow-hidden" style={{
+          background: dt.headerBg,
+          transition: 'all 0.4s ease',
+          borderRadius: '0 0 24px 24px',
+          boxShadow: isDark ? '0 8px 32px rgba(0,0,0,0.2)' : '0 8px 32px rgba(0,0,0,0.08)',
+        }}>
+          {/* Accent bar */}
+          <div style={{ height: 3, background: dt.accentBar }} />
+
+          <div className="px-4 py-3">
+            {/* Row 1: Brand + Icons */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 relative">
+                <div className="rounded-xl p-1.5" style={{ background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.3)' }}>
+                  <img src="/diagyn_logo.svg" alt="DiaGyn" className="h-8 object-contain" data-testid="header-logo" />
+                </div>
+                <p className="text-xs font-semibold tracking-wide" style={{ color: dt.headerText === '#FFFFFF' ? 'rgba(255,255,255,0.8)' : `${dt.headerText}80` }}>Staff Portal</p>
               </div>
-            )}
-            <div>
-              <div className="flex items-center gap-2">
-                <h4 className="font-bold text-base">{apt.patient_name}</h4>
-                {/* Mobile Number Badge */}
-                {apt.mobile && (
-                  <a href={`tel:${apt.mobile}`} 
-                     className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 hover:bg-teal-100 transition-colors"
-                     onClick={(e) => e.stopPropagation()}>
-                    <Phone className="w-3 h-3" />
-                    {apt.mobile}
-                  </a>
-                )}
-                {/* Print Bill Button (dark yellow) for completed appointments */}
-                {apt.status === 'Completed' && apt.total_amount > 0 && printerConnected && (
-                  <button onClick={() => { mediumTap(); onPrintBill(apt); }}
-                    className="px-2 py-1 rounded-md text-xs font-bold text-white flex items-center gap-1"
-                    style={{ background: '#d97706' }}
-                    title="Print Bill">
-                    <Printer className="w-3 h-3" /> BILL
-                  </button>
-                )}
-                {/* Send Review Request Button (pink) for completed appointments */}
-                {apt.status === 'Completed' && !apt.review_request_sent && (apt.patient_phone || apt.mobile) && (
-                  <button onClick={() => { mediumTap(); onSendReview(apt); }}
-                    className="px-2 py-1 rounded-md text-xs font-bold text-white flex items-center gap-1"
-                    style={{ background: '#ec4899' }}
-                    data-testid={`send-review-btn-${apt.booking_id}`}
-                    title="Send Google Review Request">
-                    <Star className="w-3 h-3" /> REVIEW
-                  </button>
-                )}
-                {/* Review Sent Badge */}
-                {apt.status === 'Completed' && apt.review_request_sent && (
-                  <span className="px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1 bg-green-100 text-green-700">
-                    <CheckCircle2 className="w-3 h-3" /> Review Sent
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-xs font-mono px-1.5 py-0.5 rounded" 
-                      style={{ background: COLORS.primaryLight, color: COLORS.primary }}>{apt.booking_id}</span>
-                {apt.patient_id && <span className="text-xs font-mono text-gray-500">{apt.patient_id}</span>}
+              <div className="flex items-center gap-1">
+                <PortalSwitcher currentPortal="diagyn" iconColor={dt.headerIconColor} />
+                <button onClick={() => { lightTap(); if (!wsConnected && wsReconnect) { wsReconnect(); toast.info('Reconnecting...'); } }}
+                  className="flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all active:scale-95"
+                  style={{ background: dt.statusBg(wsConnected), color: dt.statusColor(wsConnected) }}
+                  data-testid="ws-status-btn">
+                  {wsConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+                </button>
+                <Button variant="ghost" size="sm" onClick={connectPrinter}
+                  className="h-8 px-2 rounded-xl"
+                  style={{ background: printerConnected ? (isDark ? 'rgba(139,195,74,0.15)' : 'rgba(255,255,255,0.35)') : 'transparent', color: printerConnected ? (isDark ? '#8BC34A' : '#15803D') : dt.headerIconColor }} disabled={isPrinting}
+                  data-testid="thermal-connect-btn" title="Thermal Printer">
+                  {isPrinting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Printer className="w-4 h-4" />}
+                </Button>
+                <BluetoothSpeakerIndicator connected={btSpeaker.connected} deviceName={btSpeaker.deviceName} scanning={btSpeaker.scanning}
+                  scanResults={btSpeaker.scanResults} autoConnectEnabled={btSpeaker.autoConnectEnabled}
+                  onScan={btSpeaker.scan} onConnectDevice={btSpeaker.connectDevice} onDisconnect={btSpeaker.disconnect} onToggleAutoConnect={btSpeaker.toggleAutoConnect} />
+                <LiveSyncBadge portal="diagyn" staffId={staffInfo?.id} />
+                <Button variant="ghost" size="sm" onClick={() => { lightTap(); loadAppointments(); }} className="h-8 w-8 p-0 rounded-xl icon-glow" style={{ color: dt.headerIconColor, '--glow-color': isDark ? 'rgba(139,195,74,0.4)' : 'rgba(255,255,255,0.5)' }} disabled={refreshing} data-testid="refresh-btn">
+                  <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                </Button>
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="h-8 w-8 p-0 rounded-xl icon-glow" style={{ color: dt.headerIconColor, '--glow-color': isDark ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.5)' }} data-testid="logout-btn">
+                  <LogOut className="w-4 h-4" />
+                </Button>
               </div>
             </div>
+
+            {/* Connection Status — compact inline */}
+            {(printerConnected || btSpeaker.connected || (!printerConnected && printerName)) && (
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                {printerConnected && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs" style={{ background: isDark ? 'rgba(139,195,74,0.12)' : 'rgba(255,255,255,0.4)', border: isDark ? '1px solid rgba(139,195,74,0.2)' : '1px solid rgba(255,255,255,0.5)' }}>
+                    <Printer className="w-3 h-3" style={{ color: isDark ? '#8BC34A' : '#15803D' }} />
+                    <span className="font-medium" style={{ color: isDark ? '#8BC34A' : '#15803D' }}>{printerName?.split(' (')[0]}</span>
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: isDark ? '#8BC34A' : '#22C55E' }} />
+                  </div>
+                )}
+                {!printerConnected && printerName && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs" style={{ background: isDark ? 'rgba(245,158,11,0.12)' : 'rgba(245,158,11,0.2)', border: '1px solid rgba(245,158,11,0.2)' }}>
+                    <Bluetooth className="w-3 h-3 animate-pulse" style={{ color: '#FBBF24' }} />
+                    <span className="font-medium" style={{ color: '#FBBF24' }}>Reconnecting...</span>
+                  </div>
+                )}
+                {btSpeaker.connected && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs" style={{ background: isDark ? 'rgba(232,245,233,0.08)' : 'rgba(255,255,255,0.4)', border: isDark ? '1px solid rgba(232,245,233,0.15)' : '1px solid rgba(255,255,255,0.5)' }}>
+                    <Volume2 className="w-3 h-3" style={{ color: isDark ? '#E8F5E9' : '#004D40' }} />
+                    <span className="font-medium" style={{ color: isDark ? '#E8F5E9' : '#004D40' }}>{btSpeaker.deviceName}</span>
+                    <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: isDark ? '#8BC34A' : '#00897B' }} />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Clinic Toggle */}
+            <div className="mt-3">
+              {[
+                { name: 'Pushpa Clinic', label: 'Pushpa' },
+              ].map(clinic => (
+                <button key={clinic.name}
+                  onClick={() => { selectionTap(); setSelectedClinic(clinic.name); resetBookingForm(); }}
+                  className={`w-full py-2.5 rounded-xl text-sm font-bold transition-all border flex items-center justify-center gap-2 shadow-md clinic-slide-active`}
+                  style={{ background: dt.clinicActiveBg, color: dt.clinicActiveText, borderColor: dt.clinicActiveBorder }}
+                  data-testid={`clinic-${clinic.label.toLowerCase()}`}>
+                  <img src="/diagyn_logo.svg" alt="" className="w-5 h-5 rounded" />
+                  {clinic.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Doctor Cards */}
+            <div className="grid grid-cols-2 gap-3 mt-3">
+              {Object.entries(DOCTOR_PORTAL_THEMES).map(([key, docTheme]) => {
+                const isActive = activeDoctorFilter === key;
+                const doctorCount = appointments.filter(a => a.doctor === docTheme.name).length;
+                const checkedIn = appointments.filter(a => a.doctor === docTheme.name && a.status === 'CheckedIn').length;
+                return (
+                  <button key={key}
+                    onClick={() => { selectionTap(); setActiveDoctorFilter(key); }}
+                    className={`rounded-2xl overflow-hidden transition-all text-left ${isActive ? 'shadow-lg doctor-card-bounce' : ''}`}
+                    style={{
+                      background: isActive ? dt.cardActiveBg : dt.cardInactiveBg,
+                      backdropFilter: isDark ? 'none' : 'blur(12px)',
+                      WebkitBackdropFilter: isDark ? 'none' : 'blur(12px)',
+                      boxShadow: isActive ? '0 8px 24px rgba(0,0,0,0.1)' : '0 2px 8px rgba(0,0,0,0.05)',
+                      border: isActive ? `2px solid ${docTheme.cardBorder}` : `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}`,
+                      opacity: isActive ? 1 : 0.7,
+                    }}
+                    data-testid={`doctor-filter-${key}`}>
+                    {/* Doctor accent band */}
+                    <div className="px-3 py-1.5 flex items-center gap-1.5" style={{ background: `${docTheme.accent}15` }}>
+                      <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: docTheme.accent }}>
+                        {selectedClinic.replace(' Clinic', '')}
+                      </span>
+                    </div>
+                    {/* Doctor body with avatar */}
+                    <div className="px-3 py-2.5">
+                      <div className="flex items-center gap-2.5">
+                        <img src={docTheme.avatar} alt={docTheme.short}
+                          className={`w-9 h-9 rounded-full ${isActive ? 'avatar-pulse avatar-scale' : ''}`}
+                          style={{ '--ring-color': `${docTheme.accent}60`, boxShadow: isActive ? `0 0 0 2.5px ${docTheme.accent}` : '0 0 0 1px rgba(0,0,0,0.1)' }} />
+                        <div>
+                          <p className="text-xs font-bold" style={{ color: '#1E293B' }}>{docTheme.short}</p>
+                          <p className="text-[9px]" style={{ color: '#64748B' }}>
+                            {doctorCount} today · {checkedIn} waiting
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          <span className="text-xs font-bold px-2 py-1 rounded" style={{ background: status.bg, color: status.text }}>
-            {status.label}
-          </span>
+        </header>
+          );
+        })()}
+
+        {/* Dashboard Summary — Yellow Hero + Glassmorphism */}
+        {summary && activeView === 'appointments' && (
+          <div className="px-4 py-3" style={{ background: COLORS.bgDark }}>
+            <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: portalTheme.accent }}>Today's Dashboard</p>
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide p-3 rounded-2xl" style={{
+              background: 'rgba(255,255,255,0.5)',
+              border: '1px solid rgba(0,0,0,0.04)',
+            }}>
+              {[
+                { label: 'Booked', count: summary.booked || 0, gradient: 'linear-gradient(135deg, #0D9488, #0F766E)', color: '#FFFFFF' },
+                { label: 'Waiting', count: summary.checked_in || 0, gradient: 'linear-gradient(135deg, #F59E0B, #D97706)', color: '#FFFFFF' },
+                { label: 'With Dr', count: summary.with_doctor || 0, gradient: 'linear-gradient(135deg, #8B5CF6, #7C3AED)', color: '#FFFFFF' },
+                { label: 'Billing', count: summary.billing_pending || appointments.filter(a => a.status === 'billing_pending').length, gradient: 'linear-gradient(135deg, #EF4444, #DC2626)', color: '#FFFFFF' },
+                { label: 'Done', count: summary.completed || 0, gradient: 'linear-gradient(135deg, #22C55E, #16A34A)', color: '#FFFFFF' },
+                { label: 'Reviews', count: reviewStats.today || 0, gradient: 'linear-gradient(135deg, #EC4899, #DB2777)', color: '#FFFFFF' },
+                { label: 'Recent', count: recentCheckIns, gradient: 'linear-gradient(135deg, #3B82F6, #2563EB)', color: '#FFFFFF' },
+              ].map((stat, i) => (
+                <div key={stat.label} className="stat-cascade flex-shrink-0 flex flex-col items-center px-3 py-2 rounded-xl min-w-[56px]"
+                  style={{ background: stat.gradient, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', animationDelay: `${i * 80}ms` }}>
+                  <CountUp end={stat.count} duration={900 + i * 100} className="text-base font-black" style={{ color: stat.color }} />
+                  <span className="text-[9px] font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>{stat.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Billing Timer */}
+        <div className="px-4 pt-2" style={{ background: COLORS.bgDark }}>
+          <BillingTimerPanel token={localStorage.getItem('staffToken')} clinic={selectedClinic} />
         </div>
-        <div className="flex items-center gap-3 text-xs text-gray-600 mt-2">
-          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {apt.time || 'Emergency'}</span>
-          <span className="flex items-center gap-1"><Stethoscope className="w-3 h-3" /> {apt.doctor?.replace('Dr. ', '')}</span>
-          {/* Show booking time for walk-in and emergency */}
-          {(apt.appointment_type === 'WALK_IN' || apt.appointment_type === 'EMERGENCY') && apt.created_at && (
-            <span className="flex items-center gap-1 text-gray-500">
-              <CalendarPlus className="w-3 h-3" /> 
-              Booked: {new Date(apt.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
-            </span>
+
+        {/* Queue Insights */}
+        {activeView === 'appointments' && (
+          <div className="px-4 pt-2" style={{ background: COLORS.bgDark }}>
+            <QueueInsightsWidget token={localStorage.getItem('staffToken')} clinic={selectedClinic} date={selectedDate} />
+          </div>
+        )}
+
+        {/* 30+ Minute Wait Alert — staff view (no Ready to Consult button) */}
+        {activeView === 'appointments' && (
+          <LongWaitAlert
+            appointments={appointments}
+            thresholdMinutes={30}
+            portalType="staff"
+          />
+        )}
+
+        {/* Clinic Overrides */}
+        {clinicOverrides.length > 0 && (
+          <div className="px-4 pt-2" style={{ background: COLORS.bgDark }}>
+            {clinicOverrides.map((ov, i) => (
+              <div key={i} className="p-3 rounded-xl flex items-start gap-2.5 mb-1.5"
+                style={{ background: 'linear-gradient(135deg, rgba(251,191,36,0.15), rgba(245,158,11,0.08))', border: '1px solid rgba(251,191,36,0.3)' }}
+                data-testid={`staff-override-notice-${i}`}>
+                <ArrowLeftRight className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#F59E0B' }} />
+                <div>
+                  <p className="text-xs font-bold" style={{ color: '#92400E' }}>Clinic Switch — {ov.date} ({ov.session})</p>
+                  <p className="text-xs mt-0.5" style={{ color: '#78716C' }}>
+                    {ov.doctor_name}: <span className="line-through">{ov.original_clinic_name}</span> → <span className="font-bold" style={{ color: '#059669' }}>{ov.override_clinic_name}</span>
+                    {ov.reason && ov.reason !== 'Doctor preference' ? ` — ${ov.reason}` : ''}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Navigation Tabs — Glassmorphism */}
+        <div className="px-4 py-3" style={{ background: COLORS.bgDark }}>
+          <div className="grid grid-cols-5 gap-1.5 p-1.5 rounded-2xl" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(0,0,0,0.04)' }}>
+            {[
+              { id: 'appointments', icon: Calendar, label: 'Today', color: '#3B82F6' },
+              { id: 'checkin', icon: CheckCircle2, label: 'Code', color: '#10B981' },
+              { id: 'walkin', icon: Users, label: 'Walk-in', color: '#F59E0B' },
+              { id: 'book', icon: CalendarPlus, label: 'Book', color: '#8B5CF6' },
+              { id: 'qrscan', icon: QrCode, label: 'QR Scan', color: '#14B8A6' },
+              { id: 'anc', icon: Baby, label: 'ANC', color: '#EC4899' },
+              { id: 'history', icon: ClipboardList, label: 'History', color: '#06B6D4' },
+              { id: 'token', icon: Volume2, label: 'Token', color: '#EF4444' },
+              { id: 'summary', icon: TrendingUp, label: 'Summary', color: '#F97316' },
+            ].map(tab => (
+              <button key={tab.id} onClick={() => switchToView(tab.id)}
+                className={`flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl font-medium transition-all staff-tab-anim ${activeView === tab.id ? 'shadow-md' : ''}`}
+                style={activeView === tab.id ? { background: tab.color, color: '#FFFFFF' } : { color: COLORS.textMuted }}
+                data-testid={`nav-${tab.id}`}>
+                <tab.icon className="w-4 h-4" style={activeView !== tab.id ? { color: tab.color } : {}} />
+                <span className="text-[10px]">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content Views */}
+        <PortalErrorBoundary name="Staff Portal">
+        <main className="p-4 pb-20">
+          {activeView === 'appointments' && <StaffAppointmentsView />}
+          {activeView === 'checkin' && <StaffCheckinView />}
+          {activeView === 'walkin' && <StaffWalkinView />}
+          {activeView === 'book' && <StaffBookView />}
+          {activeView === 'qrscan' && <StaffQRScanView />}
+          {activeView === 'anc' && <StaffANCView />}
+          {activeView === 'history' && <StaffHistoryView />}
+          {activeView === 'token' && <StaffTokenView />}
+          {activeView === 'summary' && <StaffSummaryView />}
+
+          {/* Code Verification Modal */}
+          {showCodeVerification && verifyingAppointment && (
+            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowCodeVerification(false)}>
+              <div className="rounded-3xl shadow-2xl w-full max-w-md overflow-hidden" style={{ background: COLORS.cream }} onClick={e => e.stopPropagation()}>
+                <div className="px-5 py-4 flex items-center justify-between" style={{ background: COLORS.gold + '20' }}>
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-5 h-5" style={{ color: COLORS.gold }} />
+                    <span className="font-bold" style={{ color: COLORS.textDark }}>Check-in Verification</span>
+                  </div>
+                  <button onClick={() => setShowCodeVerification(false)} className="p-1 rounded-full hover:bg-white/50">
+                    <X className="w-5 h-5" style={{ color: COLORS.textMuted }} />
+                  </button>
+                </div>
+                <div className="px-5 py-3 border-b" style={{ borderColor: COLORS.creamDark }}>
+                  <p className="font-bold" style={{ color: COLORS.textDark }}>{verifyingAppointment.patient_name}</p>
+                  <div className="flex items-center gap-3 text-xs mt-1" style={{ color: COLORS.textMuted }}>
+                    <span>{verifyingAppointment.booking_id}</span>
+                    <span>{verifyingAppointment.time}</span>
+                    <span>{verifyingAppointment.doctor}</span>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <CodeVerificationInput bookingId={verifyingAppointment.booking_id || verifyingAppointment.id}
+                    bookingType="diagyn" verifierId={staffInfo?.username} verifierRole="staff"
+                    onVerified={onCodeVerified} onError={() => errorPattern()} />
+                </div>
+                <div className="px-5 pb-5">
+                  <button onClick={skipVerificationAndCheckIn}
+                    className="w-full py-2 text-sm transition-colors rounded-xl hover:bg-white/10" style={{ color: COLORS.textMuted }}>
+                    Skip verification (Use 0000 or Walk-in/Emergency)
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
-        </div>
-        <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-medium px-2 py-0.5 rounded" style={{ background: type.bg, color: type.text }}>
-              {apt.appointment_type === 'WALK_IN' ? 'Walk-In' : apt.appointment_type === 'EMERGENCY' ? 'Emergency' : 'Scheduled'}
-            </span>
-            {apt.total_amount > 0 && <span className="font-bold text-sm" style={{ color: COLORS.accent }}>₹{apt.total_amount}</span>}
-            {/* Follow-up Date Badge */}
-            {apt.follow_up_date && (
-              <span className="flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded bg-teal-50 text-teal-700">
-                <Calendar className="w-3 h-3" />
-                F/U: {new Date(apt.follow_up_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            {/* Reprint Token Button (for checked-in patients with token) */}
-            {apt.token_number && apt.status !== 'Completed' && printerConnected && (
-              <button onClick={() => { lightTap(); onReprint(apt); }}
-                className="p-2 rounded-lg text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all"
-                title="Reprint Token">
-                <Printer className="w-4 h-4" />
-              </button>
-            )}
-            {action && (
-              <button onClick={() => { heavyTap(); action.action(); }}
-                className="px-4 py-2 rounded-lg text-white text-xs font-bold shadow transition-all active:scale-95"
-                style={{ background: action.color }}>
-                {action.label} <ChevronRight className="w-3 h-3 inline ml-1" />
-              </button>
-            )}
-          </div>
+        </main>
+        </PortalErrorBoundary>
+
+        {/* FAB — Fan shaped, transparent background */}
+        {fabOpen && (
+          <div className="fixed inset-0 z-40" onClick={() => setFabOpen(false)} />
+        )}
+        <div className="fixed bottom-0 right-0 z-50" style={{ width: fabOpen ? 220 : 80, height: fabOpen ? 220 : 80, transition: 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)' }}>
+          {/* Arc icons — positioned along quarter circle */}
+          {fabOpen && (
+            <>
+              {/* Walk-in — bottom-left arc position */}
+              <div className="absolute flex items-center gap-2" style={{ bottom: 28, right: 160 }}>
+                <span className="text-[11px] font-bold text-white whitespace-nowrap px-2 py-1 rounded-lg" style={{ background: 'rgba(0,0,0,0.75)' }}>Walk-in</span>
+                <button onClick={() => { heavyTap(); setFabOpen(false); switchToView('walkin'); }}
+                  className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg active:scale-90"
+                  style={{ background: 'linear-gradient(135deg, #3B82F6, #2563EB)', boxShadow: '0 4px 16px rgba(59,130,246,0.4)' }}
+                  data-testid="fab-walkin">
+                  <Users className="w-5 h-5 text-white" />
+                </button>
+              </div>
+
+              {/* Emergency — diagonal arc position */}
+              <div className="absolute flex items-center gap-2" style={{ bottom: 110, right: 110 }}>
+                <span className="text-[11px] font-bold text-white whitespace-nowrap px-2 py-1 rounded-lg" style={{ background: 'rgba(0,0,0,0.75)' }}>Emergency</span>
+                <button onClick={() => { heavyTap(); setFabOpen(false); setIsEmergency(true); switchToView('walkin'); }}
+                  className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg active:scale-90"
+                  style={{ background: 'linear-gradient(135deg, #EF4444, #DC2626)', boxShadow: '0 4px 16px rgba(239,68,68,0.4)' }}
+                  data-testid="fab-emergency">
+                  <Zap className="w-5 h-5 text-white" />
+                </button>
+              </div>
+
+              {/* Appointment — top arc position */}
+              <div className="absolute flex items-center gap-2" style={{ bottom: 160, right: 28 }}>
+                <span className="text-[11px] font-bold text-white whitespace-nowrap px-2 py-1 rounded-lg" style={{ background: 'rgba(0,0,0,0.75)' }}>Book</span>
+                <button onClick={() => { heavyTap(); setFabOpen(false); switchToView('book'); }}
+                  className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg active:scale-90"
+                  style={{ background: 'linear-gradient(135deg, #8B5CF6, #7C3AED)', boxShadow: '0 4px 16px rgba(139,92,246,0.4)' }}
+                  data-testid="fab-book">
+                  <CalendarPlus className="w-5 h-5 text-white" />
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Main FAB button — bottom right corner */}
+          <button onClick={() => { selectionTap(); setFabOpen(!fabOpen); }}
+            className="absolute bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all active:scale-90 hover:shadow-xl"
+            style={{ background: fabOpen ? 'linear-gradient(135deg, #EF4444, #DC2626)' : portalTheme.fabGradient, boxShadow: fabOpen ? '0 4px 20px rgba(239,68,68,0.4)' : portalTheme.fabShadow }}
+            data-testid="fab-diagyn-staff">
+            {fabOpen
+              ? <X className="w-6 h-6 text-white" />
+              : <Plus className="w-6 h-6" style={{ color: portalTheme.fabIcon }} />
+            }
+          </button>
         </div>
       </div>
-    </div>
+    </StaffContext.Provider>
   );
 };
 

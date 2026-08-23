@@ -1,3547 +1,455 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/context/AuthContext';
-import BottomNav from '@/components/BottomNav';
-import CashfreeCheckout from '@/components/CashfreeCheckout';
+import { useCart } from '@/context/CartContext';
+import MembershipLinkBanner from '@/components/MembershipLinkBanner';
+import OrangeTutorial from '@/components/OrangeTutorial';
 import ServiceHeader from '@/components/ServiceHeader';
-import ProtonAdBanner from '@/components/ProtonAdBanner';
-import MedicineSubscription, { SubscriptionManager } from '@/components/MedicineSubscription';
-import UsuallyBoughtTogether from '@/components/UsuallyBoughtTogether';
+import { CrossSellBanner } from '@/components/CrossSellBanner';
+import { MangoPromoCard } from '@/components/ServicePromoCards';
+import SearchFilterSheet from '@/components/SearchFilterSheet';
+import DeliveryBar from '@/components/DeliveryBar';
 import { toast } from 'sonner';
+import { lightTap } from '@/utils/haptics';
+import { ShoppingBag, RefreshCw, ChevronRight, Pill } from 'lucide-react';
 import axios from 'axios';
-import { 
-  ArrowLeft, ArrowRight, Upload, Plus, Minus, X, ShoppingCart, Pill, Search, Package, 
-  CreditCard, Banknote, CheckCircle2, Shield, Phone, Loader2, Trash2, Info, FileText,
-  Crown, Star, Gift, Trophy, TrendingUp, Medal, ChevronRight, Sparkles, Droplets, Syringe,
-  Stethoscope, Grid3X3, List, Heart, Share2, Clock, Truck, FlaskConical, Activity, Smartphone, Bookmark,
-  ShieldCheck, BadgeCheck, Eye, Bone, Baby, User, Users, HeartPulse, Brain, Leaf, Dumbbell
-} from 'lucide-react';
 
-// Custom Medical Icons (single color, minimalist style)
-const DiabetesIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <path d="M12 2C8 2 6 6 6 10c0 4 2 8 6 10 4-2 6-6 6-10 0-4-2-8-6-8z" />
-    <path d="M12 6v8M9 10h6" strokeLinecap="round" />
-  </svg>
-);
+// Modular pharmacy components
+import {
+  CategoryPills, CategoryGrid, FamilyCareBanner, TopBrandsSection,
+  ChronicCareSection, CommonConcernsSection, MedicineGrid, UploadPrescriptionDialog
+} from '@/components/pharmacy';
+import ProductDetailView from '@/components/ProductDetailView';
+import DealsOfTheDay from '@/components/pharmacy/DealsOfTheDay';
+import { FeaturedBrandsProducts } from '@/components/pharmacy/FeaturedBrandsProducts';
+import { RecentlyViewedSection, TrendingNowSection, trackMedicineView } from '@/components/pharmacy/TrendingRecentSections';
+import { PharmacyStampBadge } from '@/components/pharmacy/TrustStampBadge';
+import { PriceMatchBadge } from '@/components/HealthcareUX';
+import HeartbeatLoader from '@/components/HeartbeatLoader';
+import { MedicineCabinet, PersonalCabinet } from '@/components/pharmacy/CabinetSections';
+import { MedicineGridSkeleton } from '@/components/ui/skeleton-loaders';
+import { PullToRefreshContainer } from '@/components/ui/pull-to-refresh';
+import { TrustedFormularySection } from '@/components/pharmacy';
+import QuickReorder from '@/components/QuickReorder';
+import SubscriptionRefill from '@/components/SubscriptionRefill';
 
-const LungsIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <path d="M12 4v6M12 10c-3 0-5 2-6 5-1 3 0 5 2 5h4M12 10c3 0 5 2 6 5 1 3 0 5-2 5h-4" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
+// Extracted components
+import PharmacyDarkZone from '@/components/pharmacy/PharmacyDarkZone';
+import CustomMedicineModal from '@/components/pharmacy/CustomMedicineModal';
 
-const BoneIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <path d="M5 5c1-1 3-1 4 0s1 3 0 4l6 6c1-1 3-1 4 0s1 3 0 4-3 1-4 0-1-3 0-4l-6-6c-1 1-3 1-4 0S4 6 5 5z" strokeLinecap="round"/>
-  </svg>
-);
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-const StomachIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <path d="M8 6c-2 0-4 2-4 5 0 4 3 7 7 7 3 0 5-2 6-4 1-3 1-6-1-8-1-1-3-1-4 0" strokeLinecap="round"/>
-    <path d="M12 6V4M10 4h4" strokeLinecap="round"/>
-  </svg>
-);
-
-const VitaminIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <ellipse cx="12" cy="12" rx="4" ry="8" />
-    <line x1="8" y1="12" x2="16" y2="12" strokeLinecap="round"/>
-  </svg>
-);
-
-const SkinIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <circle cx="12" cy="12" r="8"/>
-    <path d="M12 4v2M12 18v2M4 12h2M18 12h2" strokeLinecap="round"/>
-  </svg>
-);
-
-const EyeIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
-    <circle cx="12" cy="12" r="3"/>
-  </svg>
-);
-
-const PainIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <path d="M12 2l2 7h7l-6 4 2 7-5-4-5 4 2-7-6-4h7z" strokeLinejoin="round"/>
-  </svg>
-);
-
-const ImmunityIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <path d="M12 3l8 4v5c0 5-3 8-8 10-5-2-8-5-8-10V7l8-4z" strokeLinejoin="round"/>
-    <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const KidsIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <circle cx="12" cy="8" r="4"/>
-    <path d="M6 20v-2a4 4 0 014-4h4a4 4 0 014 4v2" strokeLinecap="round"/>
-    <path d="M8 6c0-2 2-3 4-3s4 1 4 3" strokeLinecap="round"/>
-  </svg>
-);
-
-const AdultIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <circle cx="12" cy="7" r="4"/>
-    <path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" strokeLinecap="round"/>
-  </svg>
-);
-
-const ElderlyIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <circle cx="12" cy="6" r="3"/>
-    <path d="M12 9v4M8 21l4-8 4 8M10 13h4" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const HeartCareIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-    <path d="M12 21C12 21 4 14 4 9c0-3 2-5 5-5 2 0 3 1 3 1s1-1 3-1c3 0 5 2 5 5 0 5-8 12-8 12z"/>
-    <path d="M8 11h8M12 8v6" strokeLinecap="round"/>
-  </svg>
-);
-
-// Custom Tablet Icon (round pill with score line - NOT capsule)
-const TabletIcon = ({ className }) => (
-  <svg viewBox="0 0 64 64" fill="currentColor" className={className}>
-    {/* Main round tablet */}
-    <circle cx="32" cy="32" r="26" fill="currentColor" />
-    {/* Score line across the middle */}
-    <line x1="10" y1="32" x2="54" y2="32" stroke="white" strokeWidth="3" strokeLinecap="round"/>
-    {/* Subtle highlight */}
-    <ellipse cx="24" cy="22" rx="8" ry="5" fill="white" opacity="0.3"/>
-  </svg>
-);
-
-// Custom Syrup Bottle Icon (medicine bottle with liquid)
-const SyrupBottleIcon = ({ className }) => (
-  <svg viewBox="0 0 64 64" fill="currentColor" className={className}>
-    {/* Bottle cap */}
-    <rect x="22" y="4" width="20" height="8" rx="2" fill="currentColor"/>
-    {/* Bottle neck */}
-    <rect x="24" y="12" width="16" height="6" fill="currentColor"/>
-    {/* Main bottle body */}
-    <path d="M20 18 L20 54 C20 58 24 60 28 60 L36 60 C40 60 44 58 44 54 L44 18 Z" fill="currentColor"/>
-    {/* Liquid level indicator */}
-    <rect x="22" y="30" width="20" height="26" rx="2" fill="white" opacity="0.25"/>
-    {/* Label area */}
-    <rect x="24" y="36" width="16" height="14" rx="1" fill="white" opacity="0.4"/>
-    {/* Rx symbol on label */}
-    <text x="32" y="47" textAnchor="middle" fill="currentColor" fontSize="10" fontWeight="bold">Rx</text>
-    {/* Measuring lines */}
-    <line x1="42" y1="35" x2="40" y2="35" stroke="white" strokeWidth="1" opacity="0.5"/>
-    <line x1="42" y1="42" x2="40" y2="42" stroke="white" strokeWidth="1" opacity="0.5"/>
-    <line x1="42" y1="49" x2="40" y2="49" stroke="white" strokeWidth="1" opacity="0.5"/>
-  </svg>
-);
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-// ============================================
-// DESIGN SYSTEM - Orange Pharmacy Vibrant Theme
-// ============================================
-const theme = {
-  primary: '#EA580C',      // Deep Orange
-  primaryLight: '#FDBA74', // Bright Orange light
-  secondary: '#F59E0B',    // Amber
-  accent: '#DC2626',       // Red accent
-  background: '#FFF7ED',   // Warm cream
-  surface: '#FFFFFF',
-  textPrimary: '#1C1917',
-  textSecondary: '#78716C',
-  border: '#FDBA74',
-  success: '#16A34A',
-  error: '#DC2626'
-};
-
-// Medicine form icons/images
-const getMedicineIcon = (form) => {
-  const icons = {
-    'Tablet': '💊',
-    'Capsule': '💊',
-    'Syrup': '🧴',
-    'Injection': '💉',
-    'Cream': '🧴',
-    'Ointment': '🧴',
-    'Drops': '💧',
-    'Powder': '📦',
-    'Inhaler': '💨',
-    'Gel': '🧴',
-    'Suspension': '🧴',
-    'Solution': '💧',
-    'Spray': '💨',
-    'Patch': '🩹',
-    'Suppository': '💊',
-    'Manual Entry': '📝'
-  };
-  return icons[form] || '💊';
-};
-
-// Medicine category images - professional stock photos
-const categoryImages = {
-  // Product-based categories with real images matching reference UI
-  'cough-cold': {
-    label: 'Cold, Cough & Fever',
-    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop',
-    color: 'from-blue-400 to-indigo-500',
-    filter: 'cold',
-    badge: 'Best Seller'
-  },
-  'pain-relief': {
-    label: 'Pain Relief',
-    image: 'https://images.unsplash.com/photo-1641561421178-db8542057811?w=300&h=300&fit=crop',
-    color: 'from-red-400 to-rose-500',
-    filter: 'pain',
-    badge: 'Trending'
-  },
-  'digestive': {
-    label: 'Digestive Health',
-    image: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=300&h=300&fit=crop',
-    color: 'from-amber-400 to-orange-500',
-    filter: 'digestive',
-    badge: null
-  },
-  'vitamins': {
-    label: 'Vitamins & Supplements',
-    image: 'https://images.unsplash.com/photo-1670850756988-a1943aa0e554?w=300&h=300&fit=crop',
-    color: 'from-yellow-400 to-orange-400',
-    filter: 'vitamin',
-    badge: 'Must Have'
-  },
-  'diabetes': {
-    label: 'Diabetes Care',
-    image: 'https://images.unsplash.com/photo-1685660375082-7b9b12260031?w=300&h=300&fit=crop',
-    color: 'from-blue-500 to-cyan-500',
-    filter: 'diabetes',
-    badge: null
-  },
-  'skin-care': {
-    label: 'Skin Care',
-    image: 'https://images.unsplash.com/photo-1600634999627-c52556dff978?w=300&h=300&fit=crop',
-    color: 'from-pink-400 to-rose-400',
-    filter: 'skin',
-    badge: 'New'
-  },
-  'baby-care': {
-    label: 'Baby Care',
-    image: 'https://images.unsplash.com/photo-1620875638370-8957e4dbd830?w=300&h=300&fit=crop',
-    color: 'from-sky-400 to-blue-400',
-    filter: 'baby',
-    badge: null
-  },
-  'heart': {
-    label: 'Heart Care',
-    image: 'https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=300&h=300&fit=crop',
-    color: 'from-red-500 to-pink-500',
-    filter: 'cardiac',
-    badge: null
-  },
-  'respiratory': {
-    label: 'Respiratory',
-    image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=300&h=300&fit=crop',
-    color: 'from-teal-400 to-cyan-500',
-    filter: 'respiratory',
-    badge: null
-  },
-  'womens-care': {
-    label: 'Women Care',
-    image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&h=300&fit=crop',
-    color: 'from-purple-400 to-violet-500',
-    filter: 'women',
-    badge: 'Evara'
-  },
-  'oral-care': {
-    label: 'Oral Care',
-    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=300&h=300&fit=crop',
-    color: 'from-cyan-400 to-teal-500',
-    filter: 'oral',
-    badge: null
-  },
-  'hair-care': {
-    label: 'Hair Care',
-    image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&h=300&fit=crop',
-    color: 'from-amber-500 to-yellow-500',
-    filter: 'hair',
-    badge: null
-  },
-  'first-aid': {
-    label: 'First Aid',
-    image: 'https://images.unsplash.com/photo-1603398938378-e54eab446dde?w=300&h=300&fit=crop',
-    color: 'from-red-500 to-red-600',
-    filter: 'first aid',
-    badge: 'Essential'
-  },
-  'devices': {
-    label: 'Medical Devices',
-    image: 'https://images.unsplash.com/photo-1685485276914-6cefc2417c05?w=300&h=300&fit=crop',
-    color: 'from-slate-400 to-gray-500',
-    filter: 'device',
-    badge: null
-  },
-  'ayurvedic': {
-    label: 'Ayurvedic Wellness',
-    image: 'https://images.unsplash.com/photo-1611241893603-3c359704e0ee?w=300&h=300&fit=crop',
-    color: 'from-green-500 to-emerald-500',
-    filter: 'ayurvedic',
-    badge: 'Natural'
-  },
-  'fitness': {
-    label: 'Fitness & Nutrition',
-    image: 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=300&h=300&fit=crop',
-    color: 'from-orange-500 to-red-500',
-    filter: 'fitness',
-    badge: null
-  }
-};
-
-// Category Card Component with product images and badges
-const CategoryCard = ({ category, isActive, onClick }) => {
-  const cat = categoryImages[category];
-  
-  if (!cat) return null;
-  
-  return (
-    <button
-      onClick={onClick}
-      className={`flex flex-col items-center transition-all duration-300 ease-out group 
-        active:scale-95
-        ${isActive 
-          ? 'scale-105' 
-          : 'hover:scale-105 hover:-translate-y-1'
-        }`}
-      data-testid={`category-${category}`}
-    >
-      {/* Circular Image Container */}
-      <div className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden shadow-md transition-all duration-300
-        ${isActive 
-          ? 'ring-3 ring-orange-400 shadow-lg shadow-orange-200' 
-          : 'hover:shadow-lg group-hover:ring-2 group-hover:ring-orange-200'
-        }`}
-      >
-        {/* Shimmer effect on hover */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10">
-          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-        </div>
-        
-        {/* Badge */}
-        {cat.badge && (
-          <div className={`absolute -top-1 -right-1 z-20 w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold shadow-sm ${
-            cat.badge === 'Trending' ? 'bg-rose-500 text-white' :
-            cat.badge === 'New' ? 'bg-green-500 text-white' :
-            cat.badge === 'Best Seller' ? 'bg-amber-500 text-white' :
-            cat.badge === 'Must Have' ? 'bg-purple-500 text-white' :
-            cat.badge === 'Essential' ? 'bg-red-500 text-white' :
-            cat.badge === 'Natural' ? 'bg-emerald-500 text-white' :
-            cat.badge === 'Evara' ? 'bg-pink-500 text-white' :
-            'bg-blue-500 text-white'
-          }`}>
-            ★
-          </div>
-        )}
-        
-        {/* Product Image */}
-        <img 
-          src={cat.image}
-          alt={cat.label}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-        />
-        
-        {/* Active checkmark */}
-        {isActive && (
-          <div className="absolute inset-0 bg-orange-500/20 flex items-center justify-center">
-            <CheckCircle2 className="w-6 h-6 text-orange-500 bg-white rounded-full" />
-          </div>
-        )}
-      </div>
-      
-      {/* Label below image */}
-      <span className={`mt-2 text-[10px] sm:text-xs font-medium text-center leading-tight max-w-[70px] sm:max-w-[80px] transition-all duration-300
-        ${isActive 
-          ? 'text-orange-600 font-semibold' 
-          : 'text-gray-700 group-hover:text-orange-600'
-        }`}
-      >
-        {cat.label}
-      </span>
-    </button>
-  );
-};
-
-// ============================================
-// STEP PROGRESS COMPONENT
-// ============================================
-const StepProgress = ({ currentStep }) => {
-  const steps = [
-    { num: 1, label: 'Cart', icon: ShoppingCart },
-    { num: 2, label: 'Details', icon: Shield },
-    { num: 3, label: 'Pay', icon: CreditCard }
-  ];
-  
-  return (
-    <div className="flex items-center gap-1 sm:gap-2">
-      {steps.map((step, idx) => (
-        <React.Fragment key={step.num}>
-          <div className={`
-            flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all
-            ${currentStep === step.num 
-              ? 'bg-orange-500 text-white shadow-lg' 
-              : currentStep > step.num 
-                ? 'bg-emerald-100 text-emerald-600' 
-                : 'bg-slate-100 text-slate-400'
-            }
-          `}>
-            {currentStep > step.num ? <CheckCircle2 className="w-4 h-4" /> : <step.icon className="w-4 h-4" />}
-            <span className="hidden sm:inline">{step.label}</span>
-          </div>
-          {idx < steps.length - 1 && (
-            <ChevronRight className="w-4 h-4 text-slate-300" />
-          )}
-        </React.Fragment>
-      ))}
-    </div>
-  );
-};
-
-// ============================================
-// MAIN PHARMACY COMPONENT
-// ============================================
 const Pharmacy = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { user } = useAuth();
-  const searchRef = useRef(null);
-  const inventoryListRef = useRef(null);
+  const { pharmacyCart, addToPharmacyCart, removeFromPharmacyCart, updatePharmacyQuantity } = useCart();
 
-  const [currentStep, setCurrentStep] = useState(1);
-  const [medicines, setMedicines] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [inventory, setInventory] = useState([]);
-  const [inventoryLoading, setInventoryLoading] = useState(false);
-  const [totalMedicines, setTotalMedicines] = useState(0);
-  const [hasMoreMedicines, setHasMoreMedicines] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [forms, setForms] = useState([]);
-  const [selectedForm, setSelectedForm] = useState('');
-  const [manualMedicine, setManualMedicine] = useState({ name: '', quantity: 1 });
-  const [prescriptionFile, setPrescriptionFile] = useState(null);
-  const [prescriptionUrl, setPrescriptionUrl] = useState('');
-  const [uploading, setUploading] = useState(false);
-  const [patientInfo, setPatientInfo] = useState({
-    name: user?.name || '',
-    phone: user?.phone || '',
-    email: user?.email || ''
-  });
-  const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('cod');
-  const [loading, setLoading] = useState(false);
-  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
-  const [estimatedTotal, setEstimatedTotal] = useState(0);
-  
-  // Product Detail Dialog State (Blinkit-style)
+  // State
+  const [activeSection, setActiveSection] = useState('orange_pharmacy');
+  const [categorySections, setCategorySections] = useState([]);
+  const [visibleCategoryCount, setVisibleCategoryCount] = useState(5);
+  const [loading, setLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchTotal, setSearchTotal] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
-  const [showProductDetail, setShowProductDetail] = useState(false);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
-  
-  // Wishlist & Save for Later
-  const [wishlist, setWishlist] = useState(() => {
-    try {
-      const saved = localStorage.getItem('pharmacy_wishlist');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-  const [showWishlist, setShowWishlist] = useState(false);
-  const [hasSavedCart, setHasSavedCart] = useState(false);
-  
-  // Check for saved cart on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem('pharmacy_saved_cart');
-    if (savedCart) setHasSavedCart(true);
-  }, []);
-  
-  // Save wishlist to localStorage
-  useEffect(() => {
-    localStorage.setItem('pharmacy_wishlist', JSON.stringify(wishlist));
-  }, [wishlist]);
-  
-  // Wishlist functions
-  const toggleWishlist = (medicine) => {
-    const isInWishlist = wishlist.some(w => w.name === medicine.name);
-    if (isInWishlist) {
-      setWishlist(wishlist.filter(w => w.name !== medicine.name));
-      toast.success(`Removed ${medicine.name} from wishlist`);
-    } else {
-      setWishlist([...wishlist, { name: medicine.name, price: medicine.price || 50, form: medicine.form || 'Tablet' }]);
-      toast.success(`Added ${medicine.name} to wishlist`);
-    }
-  };
-  
-  const isInWishlist = (medicineName) => wishlist.some(w => w.name === medicineName);
-  
-  // Save cart for later
-  const saveCartForLater = () => {
-    if (medicines.length === 0) {
-      toast.error('No medicines in cart to save');
-      return;
-    }
-    const cartData = {
-      medicines,
-      patientInfo,
-      deliveryAddress,
-      prescriptionUrl,
-      savedAt: new Date().toISOString()
-    };
-    localStorage.setItem('pharmacy_saved_cart', JSON.stringify(cartData));
-    toast.success('Cart saved! You can continue later.');
-    setHasSavedCart(true);
-  };
-  
-  // Restore saved cart
-  const restoreSavedCart = () => {
-    const savedCart = localStorage.getItem('pharmacy_saved_cart');
-    if (savedCart) {
-      const cartData = JSON.parse(savedCart);
-      setMedicines(cartData.medicines || []);
-      setPatientInfo(prev => ({ ...prev, ...cartData.patientInfo }));
-      setDeliveryAddress(cartData.deliveryAddress || '');
-      setPrescriptionUrl(cartData.prescriptionUrl || '');
-      toast.success('Cart restored successfully!');
-    }
-  };
-  
-  // Clear saved cart
-  const clearSavedCart = () => {
-    localStorage.removeItem('pharmacy_saved_cart');
-    setHasSavedCart(false);
-    toast.success('Saved cart cleared');
-  };
-  
-  // Recently Viewed Medicines
-  const [recentlyViewed, setRecentlyViewed] = useState(() => {
-    try {
-      const saved = localStorage.getItem('recentlyViewedMedicines');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [showPrescriptionUpload, setShowPrescriptionUpload] = useState(false);
+  const [showQuickReorder, setShowQuickReorder] = useState(false);
+  const [showSubscriptionRefill, setShowSubscriptionRefill] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [categoryMedicines, setCategoryMedicines] = useState([]);
+  const [categoryPage, setCategoryPage] = useState(1);
+  const [categoryTotal, setCategoryTotal] = useState(0);
+  const [categoryLoading, setCategoryLoading] = useState(false);
+  const [expandedCategory, setExpandedCategory] = useState(null);
+  const [medicines, setMedicines] = useState([]);
+  const [showCustomMedicine, setShowCustomMedicine] = useState(false);
+  const [customMedicineName, setCustomMedicineName] = useState('');
+  const [customMedicineQty, setCustomMedicineQty] = useState(1);
+  const [showOrangeTutorial, setShowOrangeTutorial] = useState(false);
+  const loadingMoreRef = useRef(false);
+  const lightZoneRef = useRef(null);
+  const [headerLightMode, setHeaderLightMode] = useState(false);
+  const [pharmaSort, setPharmaSort] = useState('');
+  const [pharmaFilters, setPharmaFilters] = useState({});
+  const [pharmaFilterSearch, setPharmaFilterSearch] = useState('');
+  const searchTimeoutRef = useRef(null);
 
-  // OTP State
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpLoading, setOtpLoading] = useState(false);
-  const [mockOtp, setMockOtp] = useState('');
-  const [otpMethod, setOtpMethod] = useState('');
-  const [verificationToken, setVerificationToken] = useState('');
-  const [resendTimer, setResendTimer] = useState(0);
-  const otpRefs = useRef([]);
-
-  // Loyalty State
-  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
-  const [pointsToUse, setPointsToUse] = useState(0);
-  const [loadingPoints, setLoadingPoints] = useState(false);
-  const [showLoyaltyInfo, setShowLoyaltyInfo] = useState(false);
-  const [loyaltyTiers, setLoyaltyTiers] = useState(null);
-  const [loyaltyFAQ, setLoyaltyFAQ] = useState(null);
-  const [loyaltyTerms, setLoyaltyTerms] = useState(null);
-  const [userLoyaltyStatus, setUserLoyaltyStatus] = useState(null);
-  const [loyaltyTab, setLoyaltyTab] = useState('program');
-  const [leaderboard, setLeaderboard] = useState([]);
-  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
-  const [leaderboardPeriod, setLeaderboardPeriod] = useState('all');
-  const [leaderboardInfo, setLeaderboardInfo] = useState({});
-  const [frequentlyOrdered, setFrequentlyOrdered] = useState([]);
-  const [loadingFrequent, setLoadingFrequent] = useState(false);
-  
-  // Refill Reminder & Subscription States
-  const [showRefillDialog, setShowRefillDialog] = useState(false);
-  const [showSubscriptionDialog, setShowSubscriptionDialog] = useState(false);
-  const [refillForm, setRefillForm] = useState({
-    medicine_name: '',
-    dosage: '',
-    frequency: 'Daily',
-    reminder_time: '08:00',
-    reminder_type: 'sms'
-  });
-  const [subscriptionForm, setSubscriptionForm] = useState({
-    medicines: [],
-    delivery_day: 1,
-    delivery_frequency: 'monthly'
-  });
-  const [refillReminders, setRefillReminders] = useState([]);
-  const [subscriptionBoxes, setSubscriptionBoxes] = useState([]);
-  const [loadingRefills, setLoadingRefills] = useState(false);
-  const [loadingSubscriptions, setLoadingSubscriptions] = useState(false);
-  
-  const [bookingLimits, setBookingLimits] = useState({
-    canBook: true,
-    activeOrders: 0,
-    loading: true
-  });
-
-  // Check for reorder data on mount
+  // Header light mode detection
   useEffect(() => {
-    if (location.state?.reorderMedicines) {
-      setMedicines(location.state.reorderMedicines);
-      toast.success(`${location.state.reorderMedicines.length} medicines added for reorder`);
-      window.history.replaceState({}, document.title);
-    }
-  }, [location.state]);
-
-  // Fetch data on mount
-  useEffect(() => {
-    fetchForms();
-    fetchTotalCount();
-    fetchInventory(1, true);
-    if (user) {
-      fetchLoyaltyPoints();
-      fetchFrequentlyOrdered();
-    }
-  }, [user]);
-
-  // Check booking limits
-  useEffect(() => {
-    const checkBookingLimits = async () => {
-      if (!patientInfo.phone || patientInfo.phone.length < 10) {
-        setBookingLimits({ canBook: true, activeOrders: 0, loading: false });
-        return;
-      }
-      try {
-        const response = await axios.get(`${API}/booking-limits/status`, {
-          params: { phone: patientInfo.phone }
-        });
-        setBookingLimits({
-          canBook: response.data.can_book_pharmacy,
-          activeOrders: response.data.active_pharmacy_orders,
-          loading: false
-        });
-      } catch (error) {
-        setBookingLimits({ canBook: true, activeOrders: 0, loading: false });
-      }
-    };
-    const debounce = setTimeout(checkBookingLimits, 500);
-    return () => clearTimeout(debounce);
-  }, [patientInfo.phone]);
-
-  // Autocomplete suggestions - trigger from 1st character
-  useEffect(() => {
-    if (searchTerm.length < 1) {
-      setSuggestions([]);
-      setShowSuggestions(false);
-      return;
-    }
-    const fetchSuggestions = async () => {
-      try {
-        const response = await axios.get(`${API}/pharmacy/search`, {
-          params: { q: searchTerm, limit: 15, form: selectedForm || undefined }
-        });
-        setSuggestions(response.data.medicines || []);
-        setShowSuggestions(true);
-      } catch (error) {
-        console.error('Autocomplete error:', error);
-      }
-    };
-    const timer = setTimeout(fetchSuggestions, 150);  // Faster response
-    return () => clearTimeout(timer);
-  }, [searchTerm, selectedForm]);
-
-  // Filter inventory when search term, form, or category changes
-  useEffect(() => {
-    const filterInventory = async () => {
-      setCurrentPage(1);
-      setInventoryLoading(true);
-      try {
-        const response = await axios.get(`${API}/pharmacy/all`, {
-          params: { 
-            page: 1, 
-            per_page: 50, 
-            search: searchTerm || undefined,
-            form: selectedForm || undefined,
-            category: selectedCategory || undefined
-          }
-        });
-        setInventory(response.data.medicines || []);
-        setHasMoreMedicines(1 < response.data.total_pages);
-        setTotalMedicines(response.data.total);
-      } catch (error) {
-        console.error('Failed to filter inventory:', error);
-      } finally {
-        setInventoryLoading(false);
-      }
-    };
-    
-    const debounce = setTimeout(filterInventory, 300);
-    return () => clearTimeout(debounce);
-  }, [searchTerm, selectedForm, selectedCategory]);
-
-  // Resend timer
-  useEffect(() => {
-    if (resendTimer > 0) {
-      const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [resendTimer]);
-
-  // Click outside to close suggestions
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
-        setShowSuggestions(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    const target = lightZoneRef.current;
+    if (!target) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setHeaderLightMode(entry.isIntersecting),
+      { threshold: 0, rootMargin: '-60px 0px 0px 0px' }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
   }, []);
 
-  // Fetch leaderboard when period changes
-  useEffect(() => {
-    if (loyaltyTab === 'leaderboard') {
-      fetchLeaderboard(leaderboardPeriod);
-    }
-  }, [loyaltyTab, leaderboardPeriod]);
+  // Filter handlers
+  const handlePharmaFilterChange = (key, value) => {
+    setPharmaFilters(prev => prev[key] === value ? { ...prev, [key]: '' } : { ...prev, [key]: value });
+  };
+  const clearPharmaFilters = () => { setPharmaFilters({}); setPharmaSort(''); setPharmaFilterSearch(''); setSearchQuery(''); };
+  const handleFilterSearchChange = (value) => { setPharmaFilterSearch(value); setSearchQuery(value); };
 
-  const fetchInventory = async (page = 1, reset = false) => {
+  // Fetch category-wise browse (V3 API)
+  const fetchBrowse = useCallback(async () => {
     try {
-      if (page === 1) setInventoryLoading(true);
-      else setLoadingMore(true);
-      
-      const response = await axios.get(`${API}/pharmacy/all`, {
-        params: { page, per_page: 50, search: searchTerm || undefined }
-      });
-      
-      if (reset || page === 1) {
-        setInventory(response.data.medicines);
-      } else {
-        setInventory(prev => [...prev, ...response.data.medicines]);
-      }
-      
-      setHasMoreMedicines(page < response.data.total_pages);
-      setTotalMedicines(response.data.total);
+      setLoading(true);
+      const response = await axios.get(`${API_URL}/api/pharmacy/v3/browse?per_category=8&section=${activeSection}`);
+      setCategorySections(response.data.sections || []);
+      setTotalCount(response.data.total_medicines || 0);
+      setVisibleCategoryCount(5);
     } catch (error) {
-      console.error('Failed to fetch inventory:', error);
-    } finally {
-      setInventoryLoading(false);
-      setLoadingMore(false);
-    }
-  };
-
-  const fetchTotalCount = async () => {
-    try {
-      const response = await axios.get(`${API}/pharmacy/count`);
-      setTotalMedicines(response.data.total);
-    } catch (error) {
-      console.error('Failed to fetch total count:', error);
-    }
-  };
-
-  // Handle viewing a medicine - adds to recently viewed
-  const handleViewMedicine = (medicine) => {
-    setSelectedMedicine(medicine);
-    setShowProductDetail(true);
-    
-    // Add to recently viewed (max 10 items, no duplicates)
-    setRecentlyViewed(prev => {
-      const filtered = prev.filter(m => m.name !== medicine.name);
-      const updated = [medicine, ...filtered].slice(0, 10);
-      localStorage.setItem('recentlyViewedMedicines', JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const fetchLoyaltyPoints = async () => {
-    if (!user) return;
-    setLoadingPoints(true);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${API}/user/loyalty-points`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setLoyaltyPoints(response.data.loyalty_points || 0);
-    } catch (error) {
-      console.error('Failed to fetch loyalty points:', error);
-    }
-    setLoadingPoints(false);
-  };
-
-  const fetchFrequentlyOrdered = async () => {
-    if (!user) return;
-    setLoadingFrequent(true);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${API}/pharmacy/frequently-ordered`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setFrequentlyOrdered(response.data.medicines || []);
-    } catch (error) {
-      console.error('Failed to fetch frequent orders:', error);
-    }
-    setLoadingFrequent(false);
-  };
-
-  const fetchLoyaltyProgramInfo = async () => {
-    try {
-      const [tiersRes, faqRes, termsRes] = await Promise.all([
-        axios.get(`${API}/pharmacy/loyalty/tiers`),
-        axios.get(`${API}/pharmacy/loyalty/faq`),
-        axios.get(`${API}/pharmacy/loyalty/terms-and-conditions`)
-      ]);
-      setLoyaltyTiers(tiersRes.data);
-      setLoyaltyFAQ(faqRes.data);
-      setLoyaltyTerms(termsRes.data);
-      
-      if (user) {
-        const statusRes = await axios.get(`${API}/pharmacy/loyalty/user-status?user_id=${user.id}`);
-        setUserLoyaltyStatus(statusRes.data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch loyalty info:', error);
-    }
-  };
-
-  const fetchLeaderboard = async (period = 'all') => {
-    setLeaderboardLoading(true);
-    try {
-      const response = await axios.get(`${API}/pharmacy/loyalty/leaderboard?limit=10&period=${period}`);
-      setLeaderboard(response.data.leaderboard || []);
-      setLeaderboardInfo({
-        total_participants: response.data.total_participants || 0,
-        period_label: response.data.period_label || 'All Time',
-        last_updated: response.data.last_updated
-      });
-    } catch (error) {
-      console.error('Failed to fetch leaderboard:', error);
-      setLeaderboard([]);
-    }
-    setLeaderboardLoading(false);
-  };
-
-  // Fetch Refill Reminders
-  const fetchRefillReminders = async () => {
-    if (!patientInfo.phone || patientInfo.phone.length < 10) return;
-    setLoadingRefills(true);
-    try {
-      const response = await axios.get(`${API}/pharmacy/refill-reminders/${patientInfo.phone}`);
-      setRefillReminders(response.data.reminders || []);
-    } catch (error) {
-      console.error('Failed to fetch refill reminders:', error);
-    }
-    setLoadingRefills(false);
-  };
-
-  // Create Refill Reminder
-  const createRefillReminder = async () => {
-    if (!refillForm.medicine_name.trim()) {
-      toast.error('Please enter medicine name');
-      return;
-    }
-    if (!patientInfo.phone || patientInfo.phone.length < 10) {
-      toast.error('Please enter your phone number first');
-      return;
-    }
-    try {
-      await axios.post(`${API}/pharmacy/refill-reminder`, {
-        patient_phone: patientInfo.phone,
-        patient_name: patientInfo.name || 'Patient',
-        medicine_name: refillForm.medicine_name,
-        dosage: refillForm.dosage,
-        frequency: refillForm.frequency,
-        reminder_time: refillForm.reminder_time,
-        reminder_type: refillForm.reminder_type
-      });
-      toast.success('Refill reminder created! You will be notified when it\'s time to reorder.');
-      setShowRefillDialog(false);
-      setRefillForm({ medicine_name: '', dosage: '', frequency: 'Daily', reminder_time: '08:00', reminder_type: 'sms' });
-      fetchRefillReminders();
-    } catch (error) {
-      toast.error('Failed to create reminder');
-    }
-  };
-
-  // Fetch Subscription Boxes
-  const fetchSubscriptionBoxes = async () => {
-    if (!patientInfo.phone || patientInfo.phone.length < 10) return;
-    setLoadingSubscriptions(true);
-    try {
-      const response = await axios.get(`${API}/pharmacy/subscription-box/${patientInfo.phone}`);
-      setSubscriptionBoxes(response.data.subscriptions || []);
-    } catch (error) {
-      console.error('Failed to fetch subscription boxes:', error);
-    }
-    setLoadingSubscriptions(false);
-  };
-
-  // Create Subscription Box
-  const createSubscriptionBox = async () => {
-    if (medicines.length === 0) {
-      toast.error('Please add medicines to your cart first');
-      return;
-    }
-    if (!patientInfo.phone || patientInfo.phone.length < 10) {
-      toast.error('Please enter your phone number first');
-      return;
-    }
-    if (!deliveryAddress.trim()) {
-      toast.error('Please enter delivery address');
-      return;
-    }
-    try {
-      await axios.post(`${API}/pharmacy/subscription-box`, {
-        patient_phone: patientInfo.phone,
-        patient_name: patientInfo.name || 'Patient',
-        patient_email: patientInfo.email || null,
-        medicines: medicines.map(m => ({ name: m.name, quantity: m.quantity })),
-        delivery_address: deliveryAddress,
-        delivery_day: subscriptionForm.delivery_day,
-        delivery_frequency: subscriptionForm.delivery_frequency
-      });
-      toast.success('Monthly subscription created! Your medicines will be auto-delivered.');
-      setShowSubscriptionDialog(false);
-      fetchSubscriptionBoxes();
-    } catch (error) {
-      toast.error('Failed to create subscription');
-    }
-  };
-
-  // Pause/Resume Subscription
-  const toggleSubscription = async (subscriptionId, currentStatus) => {
-    try {
-      const endpoint = currentStatus === 'active' ? 'pause' : 'resume';
-      await axios.post(`${API}/pharmacy/subscription-box/${subscriptionId}/${endpoint}`);
-      toast.success(`Subscription ${endpoint === 'pause' ? 'paused' : 'resumed'}!`);
-      fetchSubscriptionBoxes();
-    } catch (error) {
-      toast.error('Failed to update subscription');
-    }
-  };
-
-  const fetchForms = async () => {
-    try {
-      const response = await axios.get(`${API}/pharmacy/forms`);
-      setForms(response.data.forms);
-    } catch (error) {
-      console.error('Failed to fetch forms:', error);
-    }
-  };
-
-  const discountAmount = (pointsToUse / 100) * 10;
-  const MAX_QUANTITY = 20;
-
-  const loadMoreMedicines = () => {
-    if (!loadingMore && hasMoreMedicines) {
-      const nextPage = currentPage + 1;
-      setCurrentPage(nextPage);
-      fetchInventory(nextPage);
-    }
-  };
-
-  const handleInventoryScroll = (e) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.target;
-    if (scrollHeight - scrollTop <= clientHeight + 100 && hasMoreMedicines && !loadingMore) {
-      loadMoreMedicines();
-    }
-  };
-
-  const addToCart = (medicine) => {
-    const existingIndex = medicines.findIndex(m => m.name === medicine.name);
-    if (existingIndex >= 0) {
-      const updated = [...medicines];
-      if (updated[existingIndex].quantity >= MAX_QUANTITY) {
-        toast.error(`Maximum ${MAX_QUANTITY} strips allowed per medicine`);
-        return;
-      }
-      updated[existingIndex].quantity += 1;
-      setMedicines(updated);
-    } else {
-      setMedicines([...medicines, { ...medicine, quantity: 1 }]);
-    }
-    toast.success(`Added ${medicine.name} to cart`);
-    setShowSuggestions(false);
-  };
-
-  const addManualMedicine = () => {
-    if (!manualMedicine.name.trim()) {
-      toast.error('Please enter medicine name');
-      return;
-    }
-    if (manualMedicine.quantity > MAX_QUANTITY) {
-      toast.error(`Maximum ${MAX_QUANTITY} strips allowed per medicine`);
-      return;
-    }
-    const existingIndex = medicines.findIndex(m => m.name.toLowerCase() === manualMedicine.name.toLowerCase());
-    if (existingIndex >= 0) {
-      const updated = [...medicines];
-      const newQty = updated[existingIndex].quantity + manualMedicine.quantity;
-      if (newQty > MAX_QUANTITY) {
-        toast.error(`Maximum ${MAX_QUANTITY} strips allowed. Current: ${updated[existingIndex].quantity}`);
-        return;
-      }
-      updated[existingIndex].quantity = newQty;
-      setMedicines(updated);
-    } else {
-      setMedicines([...medicines, { name: manualMedicine.name.trim(), quantity: manualMedicine.quantity, form: 'Manual Entry' }]);
-    }
-    toast.success(`Added ${manualMedicine.name} to cart`);
-    setManualMedicine({ name: '', quantity: 1 });
-  };
-
-  const removeMedicine = (index) => {
-    setMedicines(medicines.filter((_, i) => i !== index));
-  };
-
-  const updateQuantity = (index, quantity) => {
-    if (quantity < 1) return;
-    if (quantity > MAX_QUANTITY) {
-      toast.error(`Maximum ${MAX_QUANTITY} strips allowed per medicine`);
-      return;
-    }
-    const updated = [...medicines];
-    updated[index].quantity = quantity;
-    setMedicines(updated);
-  };
-
-  // State for OCR extraction
-  const [extractedMedicines, setExtractedMedicines] = useState([]);
-  const [extracting, setExtracting] = useState(false);
-
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setPrescriptionFile(file);
-    setUploading(true);
-    setExtracting(false);
-    setExtractedMedicines([]);
-    
-    try {
-      // First upload the file
-      const formData = new FormData();
-      formData.append('file', file);
-      if (user) formData.append('user_id', user.id);
-      const response = await axios.post(`${API}/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          ...(user && { Authorization: `Bearer ${localStorage.getItem('token')}` })
-        }
-      });
-      setPrescriptionUrl(response.data.url);
-      toast.success('Prescription uploaded!');
-      
-      // Now try to extract medicines using OCR (only for images)
-      if (file.type.startsWith('image/')) {
-        setExtracting(true);
-        toast.info('Analyzing prescription...', { duration: 2000 });
-        
-        try {
-          const ocrFormData = new FormData();
-          ocrFormData.append('file', file);
-          
-          const ocrResponse = await axios.post(`${API}/prescription/extract`, ocrFormData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-          });
-          
-          if (ocrResponse.data.success && ocrResponse.data.medicines?.length > 0) {
-            setExtractedMedicines(ocrResponse.data.medicines);
-            toast.success(`Found ${ocrResponse.data.medicines.length} medicine(s)!`);
-          } else {
-            toast.info('Could not auto-detect medicines. Please add manually.');
-          }
-        } catch (ocrError) {
-          console.log('OCR extraction failed:', ocrError);
-          // Don't show error - OCR is optional
-        } finally {
-          setExtracting(false);
-        }
-      }
-    } catch (error) {
-      toast.error('Failed to upload prescription');
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  // Add extracted medicine to cart
-  const addExtractedMedicine = (med) => {
-    const newMedicine = {
-      id: Date.now(),
-      name: med.name,
-      quantity: med.quantity || 1,
-      dosage: med.dosage || '',
-      frequency: med.frequency || '',
-      price: 0, // Will be calculated by pharmacy
-      fromPrescription: true
-    };
-    setMedicines(prev => [...prev, newMedicine]);
-    setExtractedMedicines(prev => prev.filter(m => m.name !== med.name));
-    toast.success(`Added ${med.name}`);
-  };
-
-  // Add all extracted medicines
-  const addAllExtractedMedicines = () => {
-    const newMedicines = extractedMedicines.map((med, idx) => ({
-      id: Date.now() + idx,
-      name: med.name,
-      quantity: med.quantity || 1,
-      dosage: med.dosage || '',
-      frequency: med.frequency || '',
-      price: 0,
-      fromPrescription: true
-    }));
-    setMedicines(prev => [...prev, ...newMedicines]);
-    toast.success(`Added ${extractedMedicines.length} medicines!`);
-    setExtractedMedicines([]);
-  };
-
-  const sendOtp = async () => {
-    if (!patientInfo.phone || patientInfo.phone.length < 10) {
-      toast.error('Please enter a valid mobile number');
-      return;
-    }
-    setOtpLoading(true);
-    try {
-      // Use WhatsApp OTP via MSG91
-      const response = await axios.post(`${API}/otp/whatsapp/send`, { 
-        phone: patientInfo.phone, 
-        purpose: 'pharmacy_order' 
-      });
-      setOtpSent(true);
-      // Show mock OTP if in test mode
-      if (response.data.mock && response.data.otp) {
-        setMockOtp(response.data.otp);
-        setOtpMethod('mock');
-      } else {
-        setOtpMethod('whatsapp');
-      }
-      setResendTimer(30);
-      toast.success('OTP sent via WhatsApp!', {
-        description: response.data.mock ? `Use code: ${response.data.otp}` : 'Check your WhatsApp'
-      });
-      setTimeout(() => otpRefs.current[0]?.focus(), 100);
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to send OTP');
-    } finally {
-      setOtpLoading(false);
-    }
-  };
-
-  const verifyOtp = async () => {
-    const otpValue = otp.join('');
-    if (otpValue.length !== 6) {
-      toast.error('Please enter complete 6-digit OTP');
-      return;
-    }
-    setOtpLoading(true);
-    try {
-      // Verify WhatsApp OTP
-      const response = await axios.post(`${API}/otp/whatsapp/verify`, { 
-        phone: patientInfo.phone, 
-        otp: otpValue 
-      });
-      if (response.data.success) {
-        setVerificationToken('whatsapp_verified_' + patientInfo.phone);
-        toast.success('Phone verified successfully!');
-        setCurrentStep(3);
-        window.scrollTo(0, 0);
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Invalid OTP');
-      setOtp(['', '', '', '', '', '']);
-      otpRefs.current[0]?.focus();
-    } finally {
-      setOtpLoading(false);
-    }
-  };
-
-  const handleOtpChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value.slice(-1);
-    setOtp(newOtp);
-    if (value && index < 5) otpRefs.current[index + 1]?.focus();
-  };
-
-  const handleOtpKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) otpRefs.current[index - 1]?.focus();
-  };
-
-  const goToStep2 = () => {
-    if (medicines.length === 0 && !prescriptionUrl) {
-      toast.error('Please add medicines to cart OR upload a prescription');
-      return;
-    }
-    if (!patientInfo.name.trim()) {
-      toast.error('Please enter your name');
-      return;
-    }
-    if (!patientInfo.phone || patientInfo.phone.length < 10) {
-      toast.error('Please enter a valid mobile number');
-      return;
-    }
-    // Email is optional - skip validation if not provided
-    // Skip OTP step - directly go to address/delivery step
-    setCurrentStep(3);
-    window.scrollTo(0, 0);
-  };
-
-  const goToStep1 = () => {
-    setCurrentStep(1);
-    setOtpSent(false);
-    setOtp(['', '', '', '', '', '']);
-    window.scrollTo(0, 0);
-  };
-
-  const handleSubmit = async () => {
-    if (!deliveryAddress.trim()) {
-      toast.error('Please enter delivery address');
-      return;
-    }
-    // Email is optional - only validate if provided
-    if (patientInfo.email && !patientInfo.email.includes('@')) {
-      toast.error('Please enter a valid email address');
-      return;
-    }
-    // No automatic amount - pharmacist will confirm final bill
-    setEstimatedTotal(0);
-    setShowPaymentDialog(true);
-  };
-
-  const handlePaymentSuccess = async (paymentInfo) => {
-    setLoading(true);
-    try {
-      const orderData = {
-        medicines: medicines.map(m => ({ name: m.name, quantity: m.quantity })),
-        prescription_url: prescriptionUrl || null,
-        patient_name: patientInfo.name,
-        patient_phone: patientInfo.phone,
-        patient_email: patientInfo.email || null,
-        delivery_address: deliveryAddress,
-        points_used: user ? pointsToUse : 0,
-        payment_method: paymentInfo.method,
-        cashfree_order_id: paymentInfo.orderId || null
-      };
-      await axios.post(`${API}/pharmacy`, orderData, {
-        headers: user ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {}
-      });
-      toast.success('Order confirmed! SMS sent to you and Orange Pharmacy.');
-      setTimeout(() => navigate('/'), 2000);
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to process order');
+      console.error('Failed to fetch browse:', error);
+      toast.error('Failed to load medicines');
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeSection]);
 
-  const totalItems = medicines.reduce((sum, m) => sum + m.quantity, 0);
+  // Fetch category medicines
+  const fetchCategoryMedicines = useCallback(async (categoryName, pageNum = 1, append = false) => {
+    setCategoryLoading(true);
+    try {
+      const response = await axios.get(`${API_URL}/api/pharmacy/v3/category/${encodeURIComponent(categoryName)}?page=${pageNum}&limit=30&section=${activeSection}`);
+      const data = response.data;
+      if (append) {
+        setCategoryMedicines(prev => [...prev, ...(data.medicines || [])]);
+      } else {
+        setCategoryMedicines(data.medicines || []);
+      }
+      setCategoryTotal(data.total || 0);
+      setHasMore(data.has_more || false);
+    } catch (error) {
+      console.error('Failed to fetch category:', error);
+    } finally {
+      setCategoryLoading(false);
+    }
+  }, [activeSection]);
+
+  // Legacy fetchMedicines compatibility
+  const fetchMedicines = useCallback(async (categoryFilter = null, pageNum = 1, append = false) => {
+    if (categoryFilter?.filter) {
+      setExpandedCategory(categoryFilter.filter);
+      setCategoryPage(1);
+      fetchCategoryMedicines(categoryFilter.filter, 1, false);
+      return;
+    }
+    fetchBrowse();
+  }, [fetchBrowse, fetchCategoryMedicines]);
+
+  // Search (debounced)
+  useEffect(() => {
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    if (!searchQuery.trim()) { setSearchResults([]); return; }
+    setSearchLoading(true);
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/pharmacy/v3/search?q=${encodeURIComponent(searchQuery)}&limit=20&section=${activeSection}`);
+        setSearchResults(response.data.medicines || []);
+        setSearchTotal(response.data.total || 0);
+      } catch (error) { console.error('Search failed:', error); }
+      finally { setSearchLoading(false); }
+    }, 200);
+    return () => { if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current); };
+  }, [searchQuery, activeSection]);
+
+  // Initial & section change fetches
+  useEffect(() => { fetchBrowse(); }, [fetchBrowse]);
+  useEffect(() => {
+    if (selectedCategory?.filter) {
+      setExpandedCategory(selectedCategory.filter);
+      setCategoryPage(1);
+      fetchCategoryMedicines(selectedCategory.filter, 1);
+    } else {
+      setExpandedCategory(null);
+      setCategoryMedicines([]);
+    }
+  }, [selectedCategory, fetchCategoryMedicines]);
+
+  // Cart handlers
+  const handleAddToCart = (medicine) => {
+    lightTap();
+    const price = medicine.price || medicine.sale_price || medicine.mrp;
+    addToPharmacyCart({
+      id: medicine.id || medicine.name, name: medicine.name, price, mrp: medicine.mrp,
+      quantity: 1, type: 'medicine', form: medicine.form,
+      image: medicine.image_url || medicine.image, discount_percent: medicine.discount_percent || 0
+    });
+    toast.success(`${(medicine.name || 'Item').slice(0, 30)} added`, { duration: 1500 });
+  };
+  const handleIncrement = (medicine) => { const item = pharmacyCart.find(c => c.id === medicine.id || c.name === medicine.name); if (item) updatePharmacyQuantity(item.name, item.quantity + 1); };
+  const handleDecrement = (medicine) => { const item = pharmacyCart.find(c => c.id === medicine.id || c.name === medicine.name); if (item) { if (item.quantity === 1) removeFromPharmacyCart(item.name); else updatePharmacyQuantity(item.name, item.quantity - 1); } };
+  const handleSearchSelect = (medicine) => { trackMedicineView(medicine); setSelectedMedicine(medicine); setSearchQuery(''); setSearchResults([]); };
+  const handleAddCustomMedicine = () => {
+    if (!customMedicineName.trim()) { toast.error('Please enter medicine name'); return; }
+    addToPharmacyCart({ id: `custom_${Date.now()}`, name: customMedicineName.trim(), quantity: customMedicineQty, price: 0, isCustom: true, description: 'Custom order - Price to be confirmed by pharmacy' });
+    setCustomMedicineName(''); setCustomMedicineQty(1); setShowCustomMedicine(false);
+  };
+  const handleSelectBrand = async (brand) => { setSelectedCategory({ id: brand.id, label: brand.name, filter: brand.filter, isBrand: true }); };
+  const getCartQuantity = (medicine) => { const item = pharmacyCart.find(c => c.id === medicine.id || c.name === medicine.name); return item?.quantity || 0; };
+  const handleRefresh = async () => { setPage(1); await fetchMedicines(selectedCategory, 1); };
+
+  // Filtered medicines
+  const filteredMedicines = React.useMemo(() => {
+    let result = [...medicines];
+    if (pharmaFilterSearch) { const q = pharmaFilterSearch.toLowerCase(); result = result.filter(m => m.name?.toLowerCase().includes(q) || m.manufacturer?.toLowerCase().includes(q)); }
+    if (pharmaFilters.form) result = result.filter(m => (m.form || m.unit || '').toLowerCase().includes(pharmaFilters.form.toLowerCase()));
+    if (pharmaFilters.priceRange === 'under100') result = result.filter(m => (m.sale_price || m.mrp || 0) <= 100);
+    else if (pharmaFilters.priceRange === '100to500') result = result.filter(m => { const p = m.sale_price || m.mrp || 0; return p >= 100 && p <= 500; });
+    else if (pharmaFilters.priceRange === 'above500') result = result.filter(m => (m.sale_price || m.mrp || 0) > 500);
+    if (pharmaSort === 'price_low') result.sort((a, b) => (a.sale_price || a.mrp || 0) - (b.sale_price || b.mrp || 0));
+    else if (pharmaSort === 'price_high') result.sort((a, b) => (b.sale_price || b.mrp || 0) - (a.sale_price || a.mrp || 0));
+    else if (pharmaSort === 'name_az') result.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    return result;
+  }, [medicines, pharmaFilterSearch, pharmaFilters, pharmaSort]);
 
   return (
-    <div className="min-h-screen bg-orange-50">
-      {/* Shared Service Header with Zepto-style tabs */}
-      <ServiceHeader />
+    <div className="min-h-screen bg-[#050510] pb-32">
+      <ServiceHeader currentService="orange" lightMode={headerLightMode} />
+      <DeliveryBar lightMode={headerLightMode} />
 
-      {/* ========== PHARMEASY-STYLE HERO BANNER FOR ORANGE PHARMACY ========== */}
-      <div className="bg-orange-500 relative overflow-hidden">
-        {/* Main Banner Content */}
-        <div className="max-w-5xl mx-auto px-4 py-6">
-          <div className="flex items-center gap-6">
-            {/* Left - Logo */}
-            <div className="flex-shrink-0">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/mtdgm1zn_Black%20%26%20White%20Lizard%20Lab%20Logo_20260205_012714_0000%20%281%29.png" 
-                alt="Orange Pharmacy" 
-                className="h-24 w-24 object-contain rounded-xl"
-              />
-            </div>
-            
-            {/* Center Content */}
-            <div className="flex-1 text-center">
-              {/* Main Heading */}
-              <h1 className="text-2xl md:text-3xl font-bold text-yellow-300 mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                Prescription medicines
-              </h1>
-              
-              {/* Subtitle with curved arrow */}
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <span className="text-white text-lg">Same Day Delivery</span>
-                <span className="text-white text-xl">↝</span>
-              </div>
-              
-              {/* Trust Badges Row */}
-              <div className="flex justify-center gap-6">
-                <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mb-1">
-                    <ShieldCheck className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-white text-xs font-medium">Licensed</span>
-                  <span className="text-white/80 text-xs">Pharmacy</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mb-1">
-                    <BadgeCheck className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-white text-xs font-medium">Authentic</span>
-                  <span className="text-white/80 text-xs">Medicines</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mb-1">
-                    <Truck className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-white text-xs font-medium">Priority</span>
-                  <span className="text-white/80 text-xs">Delivery</span>
-                </div>
-              </div>
-            </div>
+      {/* How to Order Banner */}
+      <div className="px-4 pt-2 pb-1">
+        <button onClick={() => setShowOrangeTutorial(true)}
+          className="w-full flex items-center gap-2.5 py-2 px-3.5 rounded-xl active:scale-[0.98] transition-all"
+          style={{ background: 'rgba(249,115,22,0.08)', border: '1px solid rgba(249,115,22,0.18)' }}
+          data-testid="how-to-book-banner">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #F97316, #EA580C)' }}>
+            <ShoppingBag className="w-3.5 h-3.5 text-white" />
           </div>
-        </div>
-        
-        {/* Bottom Strip - FREE consultation */}
-        <div className="bg-orange-600 py-2">
-          <div className="max-w-5xl mx-auto px-4 flex items-center justify-center gap-2">
-            <span className="text-yellow-300 font-bold">FREE</span>
-            <span className="text-white">doctor consultation after you order</span>
-            <span className="text-white">»</span>
-          </div>
-        </div>
+          <span className="text-xs font-bold text-orange-300 flex-1 text-left">How to Order</span>
+          <span className="text-[9px] text-orange-400/50 font-medium">3 steps</span>
+          <svg className="w-3.5 h-3.5 text-orange-400/50 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
       </div>
 
-      {/* Professional Features Carousel - Orange Pharmacy */}
-      <div className="bg-white py-6">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
-            {/* Slide 1: Genuine Medicines */}
-            <div className="min-w-[300px] md:min-w-[380px] flex-shrink-0 snap-center">
-              <div className="relative h-44 md:h-52 rounded-2xl overflow-hidden shadow-lg">
-                <img 
-                  src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&h=400&fit=crop"
-                  alt="Genuine Medicines"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-orange-500/80"></div>
-                <div className="absolute inset-0 p-5 flex flex-col justify-center">
-                  <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
-                    <span className="text-white text-xs font-bold">100% Authentic</span>
-                  </div>
-                  <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Genuine Medicines</h3>
-                  <p className="text-white/90 text-sm">Sourced directly from licensed manufacturers</p>
-                </div>
-              </div>
-            </div>
+      <PullToRefreshContainer onRefresh={handleRefresh} type="pharmacy">
+       <div>
+        {/* Dark Zone — Logo, search, quick actions, popular meds */}
+        <PharmacyDarkZone
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          searchResults={searchResults}
+          searchLoading={searchLoading}
+          totalCount={totalCount}
+          handleSearchSelect={handleSearchSelect}
+          handleAddToCart={handleAddToCart}
+          setShowPrescriptionUpload={setShowPrescriptionUpload}
+          setShowCustomMedicine={setShowCustomMedicine}
+          setShowQuickReorder={setShowQuickReorder}
+        />
 
-            {/* Slide 2: Fast Delivery */}
-            <div className="min-w-[300px] md:min-w-[380px] flex-shrink-0 snap-center">
-              <div className="relative h-44 md:h-52 rounded-2xl overflow-hidden shadow-lg">
-                <img 
-                  src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=400&fit=crop"
-                  alt="Fast Delivery"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/90 via-emerald-500/70 to-transparent"></div>
-                <div className="absolute inset-0 p-5 flex flex-col justify-center">
-                  <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
-                    <span className="text-white text-xs font-bold">Same Day Delivery</span>
-                  </div>
-                  <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Fast & Accurate Delivery</h3>
-                  <p className="text-white/90 text-sm">Medicines delivered safely to your doorstep</p>
-                </div>
-              </div>
-            </div>
+        {/* Light Zone — Shopping Area */}
+        <div className="pb-32 relative" style={{ background: '#FFF8F0' }} data-testid="pharmacy-light-zone" ref={lightZoneRef}>
+        <div className="absolute inset-0 pointer-events-none opacity-[0.015]"
+          style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.3) 1px, transparent 0)', backgroundSize: '24px 24px' }} />
 
-            {/* Slide 3: Medicine Refill Reminder */}
-            <div className="min-w-[300px] md:min-w-[380px] flex-shrink-0 snap-center">
-              <div className="relative h-44 md:h-52 rounded-2xl overflow-hidden shadow-lg">
-                <img 
-                  src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=400&fit=crop"
-                  alt="Medicine Reminder"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 via-blue-500/70 to-transparent"></div>
-                <div className="absolute inset-0 p-5 flex flex-col justify-center">
-                  <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 w-fit mb-2">
-                    <span className="text-white text-xs font-bold">Never Miss a Dose</span>
-                  </div>
-                  <h3 className="text-white text-xl md:text-2xl font-bold mb-1">Medicine Refill Reminder</h3>
-                  <p className="text-white/90 text-sm">Get notified when it's time to reorder</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Scroll Indicator Dots */}
-          <div className="flex justify-center gap-2 mt-3">
-            {[1, 2, 3].map((dot) => (
-              <div key={dot} className="w-2 h-2 rounded-full bg-orange-300"></div>
-            ))}
+        {/* Section Tabs */}
+        <div className="px-4 pt-3 pb-2" data-testid="section-tabs">
+          <div className="flex gap-2">
+            <button onClick={() => { setActiveSection('orange_pharmacy'); setSelectedCategory(null); setSearchQuery(''); }}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${activeSection === 'orange_pharmacy' ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' : 'bg-white text-gray-600 border border-gray-200'}`}
+              data-testid="tab-orange-pharmacy">All Drugs</button>
+            <button onClick={() => { setActiveSection('orange_healthplus'); setSelectedCategory(null); setSearchQuery(''); }}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${activeSection === 'orange_healthplus' ? 'bg-green-500 text-white shadow-lg shadow-green-200' : 'bg-white text-gray-600 border border-gray-200'}`}
+              data-testid="tab-orange-healthplus">Healthplus</button>
+            <button onClick={() => navigate('/orange-select')}
+              className="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all bg-white text-gray-600 border border-gray-200"
+              data-testid="tab-orange-select">Select</button>
           </div>
         </div>
-      </div>
 
-      {/* Orange Category Banner - Medicine Categories */}
-      <div className="bg-orange-500 py-3">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
-            {[
-              { icon: Heart, label: 'Heart & BP' },
-              { icon: Activity, label: 'Diabetes Care' },
-              { icon: Sparkles, label: 'Kids Health' },
-              { icon: Droplets, label: 'Gut Health' },
-              { icon: Shield, label: 'Relief & Comfort' },
-              { icon: Pill, label: 'Essential Medicines' },
-              { icon: Star, label: 'Wellness' }
-            ].map((item, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  // Scroll to relevant category
-                  toast.info(`Browsing ${item.label}`);
-                }}
-                className="flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all bg-white/20 text-white hover:bg-white hover:text-orange-600"
-              >
-                <item.icon className="w-4 h-4" />
-                <span className="text-sm font-medium">{item.label}</span>
+        <CategoryPills selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
+
+        {/* Deals + Cabinet (All Drugs) */}
+        {!selectedCategory && !searchQuery && activeSection === 'orange_pharmacy' && (
+          <>
+            <DealsOfTheDay onViewMedicine={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} />
+            <MedicineCabinet onViewMedicine={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} onAddToCart={handleAddToCart} />
+          </>
+        )}
+
+        {/* Featured Brands + Personal Cabinet (Healthplus) */}
+        {!selectedCategory && !searchQuery && activeSection === 'orange_healthplus' && (
+          <>
+            <FeaturedBrandsProducts onViewMedicine={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} onAddToCart={handleAddToCart} pharmacyCart={pharmacyCart} />
+            <PersonalCabinet onViewMedicine={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} onAddToCart={handleAddToCart} />
+          </>
+        )}
+
+        {/* Shop by Brand */}
+        {!selectedCategory && !searchQuery && (
+          <div className="px-4 mb-3">
+            <button onClick={() => navigate('/pharmacy/brands')} className="w-full py-3 bg-white rounded-xl border border-gray-200 text-sm font-bold text-orange-500 hover:bg-orange-50 transition-colors flex items-center justify-center gap-2" data-testid="shop-by-brand-btn">
+              <ShoppingBag className="w-4 h-4" />Shop by Brand<ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* Drug-specific sections (All Drugs only) */}
+        {!selectedCategory && !searchQuery && activeSection === 'orange_pharmacy' && (
+          <>
+            <TrustedFormularySection onSelectCategory={setSelectedCategory} onViewMedicine={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} onAddToCart={handleAddToCart} />
+            <CategoryGrid onSelectCategory={setSelectedCategory} />
+            <TrendingNowSection onSelect={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} store="orange_pharmacy" />
+            <PharmacyStampBadge />
+            <PriceMatchBadge variant="pharmacy" />
+            {/* Diabetes Combo Banner */}
+            <div className="mx-4 my-4">
+              <button onClick={() => setSelectedCategory('Diabetes')} className="w-full rounded-2xl p-4 flex items-center gap-4 transition-all active:scale-[0.99]" style={{ background: 'linear-gradient(135deg, #1E3A5F 0%, #0D2137 100%)', border: '1px solid rgba(59,130,246,0.2)' }} data-testid="diabetes-combo-banner">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(59,130,246,0.2)' }}><span className="text-2xl">🩸</span></div>
+                <div className="flex-1 text-left">
+                  <div className="flex items-center gap-2 mb-1"><span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: '#EF4444' }}>FLAT 20% OFF</span></div>
+                  <p className="text-sm font-bold text-white">Diabetes Care Essentials</p>
+                  <p className="text-[11px] text-white/40">Metformin, Glucometer Strips, Glimepiride & more</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-white/30" />
               </button>
-            ))}
-          </div>
-        </div>
-      </div>
+            </div>
+            {/* Auto Refill CTA */}
+            <div className="mx-4 mb-4">
+              <button onClick={() => setShowSubscriptionRefill(true)} className="w-full rounded-2xl p-3 flex items-center gap-3 transition-all active:scale-[0.99]" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.1), rgba(139,92,246,0.05))', border: '1px solid rgba(139,92,246,0.15)' }} data-testid="auto-refill-cta">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.2)' }}><RefreshCw className="w-5 h-5 text-purple-500" /></div>
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-semibold text-stone-800">Auto Refill for Chronic Meds</p>
+                  <p className="text-[10px] text-stone-500">Never run out — set monthly reminders for BP, Diabetes, Thyroid</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-stone-400" />
+              </button>
+            </div>
+            <FamilyCareBanner onSelectCategory={setSelectedCategory} />
+            <TopBrandsSection onSelectBrand={handleSelectBrand} />
+            <ChronicCareSection onSelectCategory={setSelectedCategory} />
+            <CommonConcernsSection onSelectCategory={setSelectedCategory} />
+          </>
+        )}
 
-      {/* Discount Tiers - Supersaver Zone with Progress Animation */}
-      <div className="bg-orange-50 border-b border-orange-200">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Gift className="w-5 h-5 text-orange-500" />
-            <h3 className="font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              Supersaver Zone
-            </h3>
-          </div>
-          
-          {/* Progress Level Animation */}
-          {(() => {
-            const cartTotal = medicines.reduce((sum, m) => sum + (m.price || 50) * m.quantity, 0);
-            const tiers = [
-              { min: 0, max: 500, off: 0, label: '₹0' },
-              { min: 500, max: 1000, off: 50, label: '₹500' },
-              { min: 1000, max: 1500, off: 100, label: '₹1000' },
-              { min: 1500, max: 2000, off: 150, label: '₹1500' },
-              { min: 2000, max: Infinity, off: 200, label: '₹2000+' }
-            ];
-            const currentTierIndex = tiers.findIndex(t => cartTotal >= t.min && cartTotal < t.max);
-            const currentTier = tiers[currentTierIndex] || tiers[tiers.length - 1];
-            const nextTier = tiers[Math.min(currentTierIndex + 1, tiers.length - 1)];
-            const progress = currentTier.max === Infinity ? 100 : Math.min(((cartTotal - currentTier.min) / (currentTier.max - currentTier.min)) * 100, 100);
-            const amountToNext = nextTier.min - cartTotal;
-            
-            return (
-              <div className="mb-4">
-                {/* Cart Total Display */}
-                {medicines.length > 0 && (
-                  <div className="mb-3 p-3 bg-white rounded-xl border border-orange-200 flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-slate-600">Your Cart Total</p>
-                      <p className="text-2xl font-bold text-orange-600">₹{cartTotal}</p>
-                    </div>
-                    <div className="text-right">
-                      {cartTotal >= 2000 ? (
-                        <div className="flex items-center gap-2 text-green-600">
-                          <CheckCircle2 className="w-5 h-5" />
-                          <span className="font-bold">Max Savings Unlocked!</span>
-                        </div>
-                      ) : (
-                        <div>
-                          <p className="text-xs text-slate-500">Add ₹{amountToNext} more for</p>
-                          <p className="text-lg font-bold text-orange-600">₹{nextTier.off} OFF</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-                
-                {/* Progress Bar */}
-                <div className="relative">
-                  {/* Track */}
-                  <div className="h-3 bg-orange-100 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-orange-500 rounded-full transition-all duration-500 ease-out"
-                      style={{ width: `${Math.min((cartTotal / 2000) * 100, 100)}%` }}
-                    />
-                  </div>
-                  
-                  {/* Milestone Markers */}
-                  <div className="flex justify-between mt-2">
-                    {[
-                      { value: 0, off: 0 },
-                      { value: 500, off: 50 },
-                      { value: 1000, off: 100 },
-                      { value: 1500, off: 150 },
-                      { value: 2000, off: 200 }
-                    ].map((milestone, idx) => {
-                      const isReached = cartTotal >= milestone.value;
-                      const isCurrent = cartTotal >= milestone.value && (idx === 4 || cartTotal < [0, 500, 1000, 1500, 2000, Infinity][idx + 1]);
-                      return (
-                        <div key={milestone.value} className="flex flex-col items-center" style={{ width: '20%' }}>
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
-                            isReached 
-                              ? 'bg-orange-500 text-white scale-110 shadow-lg' 
-                              : 'bg-orange-100 text-orange-400'
-                          } ${isCurrent ? 'ring-2 ring-orange-300 ring-offset-2' : ''}`}>
-                            {isReached ? '✓' : idx + 1}
-                          </div>
-                          <span className={`text-[10px] mt-1 ${isReached ? 'text-orange-600 font-bold' : 'text-slate-400'}`}>
-                            ₹{milestone.value}
-                          </span>
-                          {milestone.off > 0 && (
-                            <span className={`text-[10px] ${isReached ? 'text-green-600 font-bold' : 'text-slate-400'}`}>
-                              {isReached ? `₹${milestone.off} saved!` : `₹${milestone.off} off`}
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { min: 500, off: 50, desc: 'Above ₹500', tag: null },
-              { min: 1000, off: 100, desc: 'Above ₹1000', tag: null },
-              { min: 1500, off: 150, desc: 'Above ₹1500', tag: '+ Free Delivery' },
-              { min: 2000, off: 200, desc: 'Above ₹2000', tag: 'Best Value' }
-            ].map((tier, idx) => {
-              const cartTotal = medicines.reduce((sum, m) => sum + (m.price || 50) * m.quantity, 0);
-              const isUnlocked = cartTotal >= tier.min;
-              return (
-                <div 
-                  key={tier.min}
-                  className={`relative p-3 rounded-xl border-2 transition-all ${
-                    isUnlocked 
-                      ? 'bg-gradient-to-br from-green-500 to-emerald-500 border-green-400 text-white scale-105 shadow-lg' 
-                      : idx === 3 
-                        ? 'bg-orange-500 border-orange-400 text-white' 
-                        : 'bg-white border-orange-200 hover:border-orange-400'
-                  }`}
-                >
-                  {isUnlocked && (
-                    <span className="absolute -top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-green-600">
-                      ✓ UNLOCKED
-                    </span>
-                  )}
-                  {tier.tag && !isUnlocked && (
-                    <span className={`absolute -top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                      idx === 3 ? 'bg-white text-orange-600' : 'bg-green-500 text-white'
-                    }`}>
-                      {tier.tag}
-                    </span>
-                  )}
-                  <p className={`text-2xl font-bold ${isUnlocked ? 'text-white' : idx === 3 ? 'text-white' : 'text-orange-600'}`}>
-                    ₹{tier.off} OFF
-                  </p>
-                  <p className={`text-xs ${isUnlocked ? 'text-white/90' : idx === 3 ? 'text-white/90' : 'text-slate-500'}`}>
-                    {tier.desc}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-          
-          <p className="text-xs text-slate-400 mt-2">
-            *Free delivery on orders above ₹1500. Discounts auto-applied at checkout.
+        {/* Recently Viewed (all tabs) */}
+        {!selectedCategory && !searchQuery && (
+          <RecentlyViewedSection onSelect={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} />
+        )}
+
+        {/* Section Title */}
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <h2 className="text-xl font-bold text-stone-900" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            {selectedCategory ? selectedCategory.label : activeSection === 'orange_healthplus' ? 'All ' : 'All '}
+            {!selectedCategory && activeSection === 'orange_healthplus' && <span className="text-green-600">Health Products</span>}
+            {!selectedCategory && activeSection === 'orange_pharmacy' && <span className="text-orange-500">Medicines</span>}
+          </h2>
+          <p className="text-sm text-stone-500 mt-1">
+            {loading ? 'Loading...' : searchQuery ? `${searchTotal.toLocaleString()} results` : `${totalCount.toLocaleString()} products`}
           </p>
         </div>
-      </div>
 
-      {/* FSSAI License Badge */}
-      <div className="bg-white border-b border-slate-100">
-        <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-center gap-3">
-          <Shield className="w-4 h-4 text-green-600" />
-          <span className="text-xs text-slate-600">
-            <span className="font-semibold">FSSAI Licensed</span> • 100% Genuine Medicines • Secure Packaging
-          </span>
+        {/* Filters */}
+        <div className="max-w-7xl mx-auto px-4 pb-3 space-y-2.5" data-testid="pharmacy-search-filters">
+          <SearchFilterSheet
+            searchValue={pharmaFilterSearch} onSearchChange={handleFilterSearchChange}
+            placeholder="Filter medicines, brands..." accentColor="#f97316" lightMode={true}
+            filters={[
+              { key: 'priceRange', label: 'Price Range', options: [
+                { value: 'under100', label: 'Under ₹100' }, { value: '100to500', label: '₹100 - ₹500' }, { value: 'above500', label: 'Above ₹500' },
+              ]},
+              { key: 'form', label: 'Form / Type', options: [
+                { value: 'Tablet', label: 'Tablets' }, { value: 'Capsule', label: 'Capsules' }, { value: 'Syrup', label: 'Syrup' },
+                { value: 'Cream', label: 'Cream / Ointment' }, { value: 'Injection', label: 'Injection' }, { value: 'Drop', label: 'Drops' },
+              ]},
+            ]}
+            activeFilters={pharmaFilters} onFilterChange={handlePharmaFilterChange}
+            sortOptions={[{ value: 'price_low', label: 'Price: Low to High' }, { value: 'price_high', label: 'Price: High to Low' }, { value: 'name_az', label: 'Name: A to Z' }]}
+            activeSort={pharmaSort} onSortChange={setPharmaSort}
+            quickChips={[{ label: 'Under ₹100', key: 'priceRange', value: 'under100' }, { label: 'Tablets', key: 'form', value: 'Tablet' }, { label: 'Syrup', key: 'form', value: 'Syrup' }]}
+            resultCount={filteredMedicines.length} onClearAll={clearPharmaFilters}
+          />
         </div>
-      </div>
 
-      {/* ========== RECENTLY VIEWED SECTION ========== */}
-      {recentlyViewed.length > 0 && (
-        <div className="bg-orange-50 border-b border-orange-100">
-          <div className="max-w-5xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-orange-500" />
-                <h3 className="font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  Recently Viewed
-                </h3>
-              </div>
-              <button 
-                onClick={() => {
-                  setRecentlyViewed([]);
-                  localStorage.removeItem('recentlyViewedMedicines');
-                }}
-                className="text-slate-400 text-xs hover:text-slate-600"
-              >
-                Clear All
-              </button>
-            </div>
-            
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-              {recentlyViewed.map((item, idx) => (
-                <div 
-                  key={idx}
-                  onClick={() => handleViewMedicine(item)}
-                  className="min-w-[140px] bg-white rounded-xl border border-orange-200 overflow-hidden shadow-sm hover:shadow-md transition-all flex-shrink-0 cursor-pointer"
-                  data-testid={`recently-viewed-${idx}`}
-                >
-                  {/* Product Image Placeholder */}
-                  <div className="h-20 bg-orange-100 flex items-center justify-center relative">
-                    <Pill className="w-8 h-8 text-orange-500" />
-                    {item.off && (
-                      <span className="absolute top-1 right-1 bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
-                        {item.off}% OFF
-                      </span>
-                    )}
-                  </div>
-                  
-                  {/* Product Info */}
-                  <div className="p-2">
-                    <h4 className="text-xs font-semibold text-slate-800 line-clamp-2 leading-tight mb-1">
-                      {item.name}
-                    </h4>
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm font-bold text-slate-800">₹{item.price}</span>
-                      {item.mrp && (
-                        <span className="text-[10px] text-slate-400 line-through">₹{item.mrp}</span>
-                      )}
-                    </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToCart({ name: item.name, quantity: 1 });
-                      }}
-                      className="mt-2 w-full py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold rounded-lg transition-colors"
-                    >
-                      ADD
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========== HEALTH CATEGORIES CAROUSEL WITH IMAGES ========== */}
-      <div className="bg-white border-b border-slate-100">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              Shop by Health Concern
-            </h3>
-            <button 
-              onClick={() => setSelectedCategory('')}
-              className="text-orange-500 text-sm font-semibold"
-            >
-              View All
-            </button>
-          </div>
-          
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {[
-              { id: 'heart', name: 'Heart & BP Care', icon: '❤️', color: 'from-red-500 to-pink-500', filter: 'cardiac' },
-              { id: 'diabetes', name: 'Diabetes Care', icon: '🩸', color: 'from-blue-500 to-cyan-500', filter: 'diabetes' },
-              { id: 'respiratory', name: 'Asthma & Respiratory', icon: '🫁', color: 'from-teal-500 to-green-500', filter: 'respiratory' },
-              { id: 'bone', name: 'Bone & Joint', icon: '🦴', color: 'from-amber-500 to-orange-500', filter: 'bone' },
-              { id: 'stomach', name: 'Stomach Care', icon: '🫃', color: 'from-yellow-500 to-lime-500', filter: 'digestive' },
-              { id: 'vitamins', name: 'Vitamins & Nutrition', icon: '💊', color: 'from-purple-500 to-violet-500', filter: 'vitamin' },
-              { id: 'skincare', name: 'Skin Care', icon: '✨', color: 'from-pink-500 to-rose-500', filter: 'skin' },
-              { id: 'eye', name: 'Eye Care', icon: '👁️', color: 'from-sky-500 to-blue-500', filter: 'eye' },
-              { id: 'pain', name: 'Pain Relief', icon: '💪', color: 'from-orange-500 to-red-500', filter: 'pain' },
-              { id: 'immunity', name: 'Immunity Boosters', icon: '🛡️', color: 'from-green-500 to-emerald-500', filter: 'immunity' }
-            ].map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(selectedCategory === cat.filter ? '' : cat.filter)}
-                className={`flex flex-col items-center gap-2 min-w-[90px] transition-all ${
-                  selectedCategory === cat.filter ? 'scale-105' : 'hover:scale-105'
-                }`}
-                data-testid={`carousel-cat-${cat.id}`}
-              >
-                <div className={`relative w-20 h-20 rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br ${cat.color} ${
-                  selectedCategory === cat.filter ? 'ring-2 ring-orange-400 ring-offset-2' : ''
-                }`}>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-3xl drop-shadow-lg">{cat.icon}</span>
-                  </div>
-                </div>
-                <span className={`text-xs font-medium text-center leading-tight max-w-[80px] ${
-                  selectedCategory === cat.filter ? 'text-orange-600' : 'text-slate-600'
-                }`}>
-                  {cat.name}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ========== FAMILY CARE SECTION ========== */}
-      <div className="bg-orange-50 border-b border-orange-100">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <h3 className="font-bold text-slate-800 mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
-            Family Care
-          </h3>
-          
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { 
-                id: 'kids', 
-                name: 'Kids Care', 
-                icon: '👶🏻',
-                color: 'from-pink-400 to-rose-400',
-                filter: 'kids'
-              },
-              { 
-                id: 'adults', 
-                name: 'Adult Wellness', 
-                icon: '🧑🏻‍⚕️',
-                color: 'from-blue-400 to-indigo-400',
-                filter: 'vitamin'
-              },
-              { 
-                id: 'elderly', 
-                name: 'Elderly Care', 
-                icon: '👴🏻',
-                color: 'from-purple-400 to-violet-400',
-                filter: 'elderly'
-              }
-            ].map((fam) => (
-              <button
-                key={fam.id}
-                onClick={() => setSelectedCategory(selectedCategory === fam.filter ? '' : fam.filter)}
-                className={`relative overflow-hidden rounded-2xl aspect-square group ${
-                  selectedCategory === fam.filter ? 'ring-2 ring-orange-400' : ''
-                }`}
-                data-testid={`family-${fam.id}`}
-              >
-                <div className={`w-full h-full bg-gradient-to-br ${fam.color} flex items-center justify-center`}>
-                  <span className="text-5xl drop-shadow-lg group-hover:scale-110 transition-transform duration-300">{fam.icon}</span>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-3 text-white bg-gradient-to-t from-black/40 to-transparent">
-                  <p className="font-bold text-sm drop-shadow-lg">{fam.name}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ========== PRODUCT SECTIONS ========== */}
-      {/* Medical Devices Section */}
-      <div className="bg-white">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              <span className="text-xl">🩺</span>
-              Medical Devices
-            </h3>
-            <button className="text-orange-500 text-sm font-semibold flex items-center gap-1">
-              See all <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-          
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            {[
-              { name: 'Blood Pressure Monitor', price: 1499, mrp: 2499, off: 40, delivery: 'Same Day', image: null, icon: 'bp' },
-              { name: 'Digital Thermometer', price: 199, mrp: 399, off: 50, delivery: 'Same Day', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/7abaqhvk_digital-clinical-thermometer-1-year-warranty-ft09-1-blue-beurer-original-imahcq9ync3rygue.jpeg', icon: null },
-              { name: 'Glucometer Kit', price: 899, mrp: 1599, off: 44, delivery: 'Same Day', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/ffclpiec_HCIyO9POGo-dr_morepen_glucoone_blood_glucose_monitor_bg03_with_test_strips_pack_of_25s_50131_0_2.jpg', icon: null },
-              { name: 'Pulse Oximeter', price: 599, mrp: 999, off: 40, delivery: 'Same Day', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/2u4igyl2_bpl-smart-oxy-finger-tip-pulse-black-oximeter-black-2-1746441443.jpg', icon: null },
-              { name: 'Nebulizer', price: 1299, mrp: 2199, off: 41, delivery: 'Same Day', image: 'https://customer-assets.emergentagent.com/job_healthportal-48/artifacts/10x7bxc9_14335813a.webp', icon: null }
-            ].map((item, idx) => (
-              <div 
-                key={idx}
-                className="min-w-[160px] bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0"
-              >
-                <div className="relative">
-                  {item.image ? (
-                    <img src={item.image} alt={item.name} className="w-full h-28 object-contain bg-slate-50 p-2" />
-                  ) : (
-                    <div className="w-full h-28 bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center">
-                      <Activity className="w-12 h-12 text-orange-400" />
-                    </div>
-                  )}
-                  <button className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md">
-                    <Heart className="w-4 h-4 text-slate-400" />
-                  </button>
-                  <div className="absolute bottom-2 left-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                    {item.off}% OFF
-                  </div>
-                </div>
-                <div className="p-3">
-                  <div className="flex items-center gap-1 text-[10px] text-slate-500 mb-1">
-                    <Clock className="w-3 h-3" />
-                    {item.delivery}
-                  </div>
-                  <h4 className="text-sm font-medium text-slate-800 line-clamp-2 min-h-[2.5rem]">{item.name}</h4>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="font-bold text-slate-800">₹{item.price}</span>
-                    <span className="text-xs text-slate-400 line-through">₹{item.mrp}</span>
-                  </div>
-                  <button 
-                    onClick={() => addToCart({ name: item.name, quantity: 1 })}
-                    className="w-full mt-2 py-2 border-2 border-orange-400 text-orange-600 rounded-lg font-bold text-sm hover:bg-orange-50 transition-colors"
-                  >
-                    ADD
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Women's Health Section */}
-      <div className="bg-gradient-to-r from-pink-50 to-rose-50">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              <span className="text-xl">👩</span>
-              Women&apos;s Health Essential
-            </h3>
-            <button className="text-pink-500 text-sm font-semibold flex items-center gap-1">
-              See all <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-          
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            {[
-              { name: 'Prenatal Vitamins', price: 449, mrp: 699, off: 36, delivery: 'Same Day', badge: 'Evara Pick', category: 'Women Health' },
-              { name: 'Iron + Folic Acid', price: 199, mrp: 349, off: 43, delivery: 'Same Day', badge: 'Best Seller', category: 'Women Health' },
-              { name: 'Calcium + D3', price: 299, mrp: 499, off: 40, delivery: 'Same Day', badge: null, category: 'Women Health' },
-              { name: 'Evening Primrose Oil', price: 549, mrp: 899, off: 39, delivery: 'Same Day', badge: 'New', category: 'Women Health' },
-              { name: 'Cranberry Extract', price: 399, mrp: 649, off: 38, delivery: 'Same Day', badge: null, category: 'Women Health' }
-            ].map((item, idx) => (
-              <div 
-                key={idx}
-                onClick={() => handleViewMedicine(item)}
-                className="min-w-[160px] bg-white rounded-2xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0 cursor-pointer"
-                data-testid={`medicine-card-women-${idx}`}
-              >
-                <div className="relative bg-gradient-to-br from-pink-100 to-rose-100 h-28 flex items-center justify-center">
-                  <Pill className="w-12 h-12 text-pink-400" />
-                  <button className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md">
-                    <Heart className="w-4 h-4 text-slate-400" />
-                  </button>
-                  {item.badge && (
-                    <div className={`absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded ${
-                      item.badge === 'Evara Pick' ? 'bg-pink-500 text-white' :
-                      item.badge === 'Best Seller' ? 'bg-amber-500 text-white' :
-                      'bg-green-500 text-white'
-                    }`}>
-                      {item.badge}
-                    </div>
-                  )}
-                  <div className="absolute bottom-2 left-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                    {item.off}% OFF
-                  </div>
-                </div>
-                <div className="p-3">
-                  <div className="flex items-center gap-1 text-[10px] text-slate-500 mb-1">
-                    <Clock className="w-3 h-3" />
-                    {item.delivery}
-                  </div>
-                  <h4 className="text-sm font-medium text-slate-800 line-clamp-2 min-h-[2.5rem]">{item.name}</h4>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="font-bold text-slate-800">₹{item.price}</span>
-                    <span className="text-xs text-slate-400 line-through">₹{item.mrp}</span>
-                  </div>
-                  <button 
-                    onClick={() => addToCart({ name: item.name, quantity: 1 })}
-                    className="w-full mt-2 py-2 border-2 border-orange-400 text-orange-600 rounded-lg font-bold text-sm hover:bg-orange-50 transition-colors"
-                  >
-                    ADD
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Kid's Health Section */}
-      <div className="bg-gradient-to-r from-blue-50 to-cyan-50">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              <span className="text-xl">👶</span>
-              Kid&apos;s Health Essential
-            </h3>
-            <button className="text-blue-500 text-sm font-semibold flex items-center gap-1">
-              See all <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-          
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            {[
-              { name: 'Kids Multivitamin Gummy', price: 349, mrp: 599, off: 42, delivery: 'Same Day', badge: 'Kids Gummy', category: 'Kids Health' },
-              { name: 'Calcium for Kids', price: 249, mrp: 449, off: 44, delivery: 'Same Day', badge: null, category: 'Kids Health' },
-              { name: 'DHA Omega 3 Syrup', price: 399, mrp: 699, off: 43, delivery: 'Same Day', badge: 'Brain Health', category: 'Kids Health' },
-              { name: 'Iron Tonic for Kids', price: 179, mrp: 299, off: 40, delivery: 'Same Day', badge: null, category: 'Kids Health' },
-              { name: 'Vitamin D Drops', price: 229, mrp: 399, off: 42, delivery: 'Same Day', badge: 'Doctor Recommended', category: 'Kids Health' }
-            ].map((item, idx) => (
-              <div 
-                key={idx}
-                onClick={() => handleViewMedicine(item)}
-                className="min-w-[160px] bg-white rounded-2xl border border-blue-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex-shrink-0 cursor-pointer"
-                data-testid={`medicine-card-kids-${idx}`}
-              >
-                <div className="relative bg-gradient-to-br from-blue-100 to-cyan-100 h-28 flex items-center justify-center">
-                  <span className="text-4xl">🧸</span>
-                  <button className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md">
-                    <Heart className="w-4 h-4 text-slate-400" />
-                  </button>
-                  {item.badge && (
-                    <div className="absolute top-2 left-2 bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                      {item.badge}
-                    </div>
-                  )}
-                  <div className="absolute bottom-2 left-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                    {item.off}% OFF
-                  </div>
-                </div>
-                <div className="p-3">
-                  <div className="flex items-center gap-1 text-[10px] text-slate-500 mb-1">
-                    <Clock className="w-3 h-3" />
-                    {item.delivery}
-                  </div>
-                  <h4 className="text-sm font-medium text-slate-800 line-clamp-2 min-h-[2.5rem]">{item.name}</h4>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="font-bold text-slate-800">₹{item.price}</span>
-                    <span className="text-xs text-slate-400 line-through">₹{item.mrp}</span>
-                  </div>
-                  <button 
-                    onClick={() => addToCart({ name: item.name, quantity: 1 })}
-                    className="w-full mt-2 py-2 border-2 border-blue-400 text-blue-600 rounded-lg font-bold text-sm hover:bg-blue-50 transition-colors"
-                  >
-                    ADD
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* How It Works Banner */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-orange-100">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Info className="w-5 h-5 text-orange-500" />
-            <h3 className="font-semibold text-slate-800 font-heading">How to Order Medicines</h3>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { num: 1, title: 'Add Medicines', desc: 'Search or type name & quantity' },
-              { num: 2, title: 'Your Details', desc: 'Enter name, phone & email' },
-              { num: 3, title: 'Pharmacist Call', desc: 'We confirm order & final bill' },
-              { num: 4, title: 'Delivery', desc: 'Get invoice in My Orders', success: true }
-            ].map((step) => (
-              <div key={step.num} className="flex items-start gap-2 p-3 bg-white rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${step.success ? 'bg-emerald-500 text-white' : 'bg-orange-500 text-white'}`}>
-                  {step.num}
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-800">{step.title}</p>
-                  <p className="text-xs text-slate-500">{step.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Consultation Help Banner - For users confused about what to order */}
-      <div className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white" data-testid="consultation-help-banner">
-        <div className="max-w-5xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-white/20 rounded-full p-2 flex-shrink-0">
-                <Stethoscope className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="font-semibold text-sm">Not sure what to order?</p>
-                <p className="text-xs opacity-90">Book a FREE consultation • Pharmacist will call & generate prescription</p>
-              </div>
-            </div>
-            <Button
-              onClick={() => navigate('/diagyn')}
-              variant="secondary"
-              size="sm"
-              className="bg-white text-teal-600 hover:bg-teal-50 rounded-full font-semibold flex-shrink-0"
-              data-testid="book-consultation-btn"
-            >
-              Book Consult
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Loyalty Program Banner */}
-      <div 
-        className="bg-orange-500 text-white cursor-pointer hover:bg-orange-600 transition-colors"
-        onClick={() => { setShowLoyaltyInfo(true); fetchLoyaltyProgramInfo(); }}
-        data-testid="loyalty-banner"
-      >
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-white/20 rounded-full p-2">
-              <Crown className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="font-semibold text-sm sm:text-base">Orange Pharmacy Loyalty Program</p>
-              <p className="text-xs opacity-90">Earn points on every purchase • Bronze | Silver | Gold tiers</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {user && loyaltyPoints > 0 && (
-              <div className="bg-white/20 rounded-full px-3 py-1 text-sm font-semibold">
-                {loyaltyPoints} pts
-              </div>
-            )}
-            <ChevronRight className="w-5 h-5" />
-          </div>
-        </div>
-      </div>
-
-      {/* Smart Pharmacy Features - Refill Reminders & Subscription Box */}
-      <div className="bg-orange-50 border-b border-orange-100" data-testid="smart-pharmacy-features">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-5 h-5 text-orange-500" />
-            <h3 className="font-semibold text-slate-800">Smart Pharmacy Features</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {/* Refill Reminders Card */}
-            <button
-              onClick={() => { setShowRefillDialog(true); fetchRefillReminders(); }}
-              className="p-4 bg-white rounded-2xl border-2 border-transparent hover:border-orange-300 shadow-sm hover:shadow-md transition-all text-left group"
-              data-testid="refill-reminders-btn"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <Clock className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-slate-800 group-hover:text-orange-600 transition-colors">Refill Reminders</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Never miss a dose! Get SMS/WhatsApp reminders when medicine runs low.</p>
-                  {refillReminders.length > 0 && (
-                    <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] rounded-full font-medium">
-                      {refillReminders.length} active
-                    </span>
-                  )}
-                </div>
-              </div>
-            </button>
-
-            {/* Monthly Subscription Box Card */}
-            <button
-              onClick={() => { setShowSubscriptionDialog(true); fetchSubscriptionBoxes(); }}
-              className="p-4 bg-white rounded-2xl border-2 border-transparent hover:border-orange-300 shadow-sm hover:shadow-md transition-all text-left group"
-              data-testid="subscription-box-btn"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <Package className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-slate-800 group-hover:text-orange-600 transition-colors">Subscription Box</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Auto-delivery every month. Save 10% on regular medicines.</p>
-                  {subscriptionBoxes.length > 0 && (
-                    <span className="inline-block mt-1 px-2 py-0.5 bg-purple-100 text-purple-700 text-[10px] rounded-full font-medium">
-                      {subscriptionBoxes.length} active
-                    </span>
-                  )}
-                </div>
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Health Concerns Filter */}
-      <div className="bg-white border-b border-slate-100">
-        <div className="max-w-5xl mx-auto px-4 py-3">
-          <p className="text-xs font-medium text-slate-500 mb-2">Quick shop by health concern:</p>
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {[
-              { id: 'diabetes', name: 'Diabetes', icon: '🩸', filter: 'diabetes' },
-              { id: 'heart', name: 'Heart Care', icon: '❤️', filter: 'cardiac' },
-              { id: 'pain', name: 'Pain Relief', icon: '💊', filter: 'pain' },
-              { id: 'digestive', name: 'Digestive', icon: '🫃', filter: 'digestive' },
-              { id: 'skin', name: 'Skin Care', icon: '✨', filter: 'skin' },
-              { id: 'respiratory', name: 'Cold & Cough', icon: '🫁', filter: 'cold' },
-              { id: 'vitamins', name: 'Vitamins', icon: '💪', filter: 'vitamin' },
-              { id: 'eye', name: 'Eye Care', icon: '👁️', filter: 'eye' },
-              { id: 'bone', name: 'Bone & Joint', icon: '🦴', filter: 'bone' },
-              { id: 'mental', name: 'Mental Health', icon: '🧠', filter: 'mental' },
-              { id: 'thyroid', name: 'Thyroid', icon: '🦋', filter: 'thyroid' },
-              { id: 'immunity', name: 'Immunity', icon: '🛡️', filter: 'immunity' }
-            ].map((concern) => (
-              <button
-                key={concern.id}
-                onClick={() => setSelectedCategory(selectedCategory === concern.filter ? '' : concern.filter)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
-                  selectedCategory === concern.filter 
-                    ? 'bg-orange-500 text-white border border-orange-500' 
-                    : 'bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-300 text-slate-700'
-                }`}
-                data-testid={`health-concern-${concern.id}`}
-              >
-                <span>{concern.icon}</span>
-                {concern.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <main className="max-w-5xl mx-auto px-4 py-6">
-        {/* STEP 1: Add Medicines */}
-        {currentStep === 1 && (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-slate-800 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                Add Your Medicines
-              </h1>
-              <p className="text-slate-500" style={{ fontFamily: 'DM Sans, sans-serif' }}>
-                Search from 4,000+ medicines or add manually
-              </p>
-            </div>
-
-            {/* Search with Autocomplete */}
-            <Card className="p-5 rounded-2xl border-orange-100 shadow-sm" ref={searchRef}>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1 relative">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-                    <Input
-                      placeholder="Search medicines..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      onFocus={() => searchTerm.length >= 1 && setShowSuggestions(true)}
-                      className="pl-10 rounded-xl border-orange-200 focus:border-orange-400 focus:ring-orange-200"
-                      data-testid="medicine-search"
-                    />
-                  </div>
-                  
-                  {/* Autocomplete Dropdown */}
-                  {showSuggestions && suggestions.length > 0 && (
-                    <div className="absolute z-50 w-full mt-1 bg-white border border-orange-200 rounded-xl shadow-lg max-h-72 overflow-y-auto">
-                      <div className="px-3 py-2 text-xs text-slate-500 bg-orange-50 border-b border-orange-100">
-                        {suggestions.length} matches found
-                      </div>
-                      {suggestions.map((med, idx) => {
-                        // Highlight matching text
-                        const name = med.name || '';
-                        const lowerName = name.toLowerCase();
-                        const lowerSearch = searchTerm.toLowerCase();
-                        const matchIndex = lowerName.indexOf(lowerSearch);
-                        
-                        return (
-                          <button
-                            key={idx}
-                            onClick={() => addToCart(med)}
-                            className="w-full px-4 py-3 text-left hover:bg-orange-50 border-b border-orange-50 last:border-0 flex items-center justify-between transition-colors"
-                            data-testid={`suggestion-${idx}`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg">{getMedicineIcon(med.form)}</span>
-                              <div>
-                                <span className="font-medium text-slate-800">
-                                  {matchIndex >= 0 ? (
-                                    <>
-                                      {name.substring(0, matchIndex)}
-                                      <span className="bg-yellow-200 text-orange-700 font-semibold">
-                                        {name.substring(matchIndex, matchIndex + searchTerm.length)}
-                                      </span>
-                                      {name.substring(matchIndex + searchTerm.length)}
-                                    </>
-                                  ) : name}
-                                </span>
-                                <span className="ml-2 text-xs text-orange-600">{med.form}</span>
-                              </div>
-                            </div>
-                            <Plus className="w-4 h-4 text-orange-500" />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-                
-                <select
-                  value={selectedForm}
-                  onChange={(e) => setSelectedForm(e.target.value)}
-                  className="h-10 rounded-xl border border-orange-200 bg-white px-3 py-2 text-sm focus:border-orange-400"
-                  data-testid="form-filter"
-                >
-                  <option value="">All Forms</option>
-                  {forms.map((form) => (
-                    <option key={form} value={form}>{form}</option>
-                  ))}
-                </select>
-              </div>
-            </Card>
-
-            {/* Category Cards - Product Image Categories (12 total) */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  <Package className="w-5 h-5 text-orange-500" />
-                  Shop by Category
-                </h3>
-                {selectedCategory && (
-                  <button 
-                    onClick={() => setSelectedCategory('')}
-                    className="text-sm text-orange-600 hover:text-orange-700 font-medium"
-                  >
-                    Clear Filter ✕
-                  </button>
-                )}
-              </div>
-              {/* Grid: 4 cols on mobile (4x3), 6 cols on desktop (2x6) */}
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-                <CategoryCard 
-                  category="cough-cold" 
-                  isActive={selectedCategory === 'cold'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'cold' ? '' : 'cold')} 
-                />
-                <CategoryCard 
-                  category="pain-relief" 
-                  isActive={selectedCategory === 'pain'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'pain' ? '' : 'pain')} 
-                />
-                <CategoryCard 
-                  category="digestive" 
-                  isActive={selectedCategory === 'digestive'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'digestive' ? '' : 'digestive')} 
-                />
-                <CategoryCard 
-                  category="vitamins" 
-                  isActive={selectedCategory === 'vitamin'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'vitamin' ? '' : 'vitamin')} 
-                />
-                <CategoryCard 
-                  category="diabetes" 
-                  isActive={selectedCategory === 'diabetes'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'diabetes' ? '' : 'diabetes')} 
-                />
-                <CategoryCard 
-                  category="skin-care" 
-                  isActive={selectedCategory === 'skin'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'skin' ? '' : 'skin')} 
-                />
-                <CategoryCard 
-                  category="baby-care" 
-                  isActive={selectedCategory === 'baby'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'baby' ? '' : 'baby')} 
-                />
-                <CategoryCard 
-                  category="heart" 
-                  isActive={selectedCategory === 'cardiac'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'cardiac' ? '' : 'cardiac')} 
-                />
-                <CategoryCard 
-                  category="respiratory" 
-                  isActive={selectedCategory === 'respiratory'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'respiratory' ? '' : 'respiratory')} 
-                />
-                <CategoryCard 
-                  category="womens-care" 
-                  isActive={selectedCategory === 'women'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'women' ? '' : 'women')} 
-                />
-                <CategoryCard 
-                  category="ayurvedic" 
-                  isActive={selectedCategory === 'ayurvedic'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'ayurvedic' ? '' : 'ayurvedic')} 
-                />
-                <CategoryCard 
-                  category="fitness" 
-                  isActive={selectedCategory === 'fitness'} 
-                  onClick={() => setSelectedCategory(selectedCategory === 'fitness' ? '' : 'fitness')} 
-                />
-              </div>
-            </div>
-
-            {/* Manual Entry */}
-            <Card className="p-5 rounded-2xl border-orange-100">
-              <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                <Pill className="w-4 h-4 text-orange-500" />
-                Add Medicine Manually
-              </h3>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Medicine name"
-                  value={manualMedicine.name}
-                  onChange={(e) => setManualMedicine({ ...manualMedicine, name: e.target.value })}
-                  className="flex-1 rounded-xl border-orange-200 focus:border-orange-400"
-                  data-testid="manual-medicine-name"
-                />
-                <Input
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={manualMedicine.quantity}
-                  onChange={(e) => setManualMedicine({ ...manualMedicine, quantity: Math.min(parseInt(e.target.value) || 1, 20) })}
-                  className="w-20 rounded-xl border-orange-200"
-                  data-testid="manual-medicine-qty"
-                />
-                <Button onClick={addManualMedicine} className="bg-orange-500 hover:bg-orange-600 rounded-xl" data-testid="add-manual-btn">
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-            </Card>
-
-            {/* Frequently Ordered */}
-            {user && frequentlyOrdered.length > 0 && (
-              <Card className="p-5 rounded-2xl bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
-                <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  <TrendingUp className="w-4 h-4 text-orange-500" />
-                  Quick Reorder - Your Frequently Ordered
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {frequentlyOrdered.slice(0, 6).map((med, idx) => (
-                    <Button
-                      key={idx}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => addToCart({ name: med.name, form: med.form || 'Tablet' })}
-                      className="bg-white hover:bg-orange-100 border-orange-200 rounded-xl"
-                      data-testid={`frequent-med-${idx}`}
-                    >
-                      <Plus className="w-3 h-3 mr-1" />
-                      {med.name}
-                      <span className="ml-1 text-xs text-slate-400">({med.order_count}x)</span>
-                    </Button>
-                  ))}
-                </div>
-              </Card>
-            )}
-
-            {/* Inventory List - Blinkit Style */}
-            <Card className="p-5 rounded-2xl border-orange-100">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium text-slate-800 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  <Package className="w-4 h-4 text-orange-500" />
-                  Available Medicines
-                </h3>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-500 bg-orange-100 px-3 py-1 rounded-full">
-                    {totalMedicines.toLocaleString()} items
-                  </span>
-                  {/* View Mode Toggle */}
-                  <div className="flex bg-slate-100 rounded-lg p-1">
-                    <button
-                      onClick={() => setViewMode('grid')}
-                      className={`p-1.5 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-orange-500' : 'text-slate-400'}`}
-                    >
-                      <Grid3X3 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setViewMode('list')}
-                      className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-orange-500' : 'text-slate-400'}`}
-                    >
-                      <List className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              {inventoryLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
-                  <span className="ml-3 text-slate-500">Loading medicines...</span>
-                </div>
-              ) : (
-                <div 
-                  ref={inventoryListRef}
-                  className="max-h-[500px] overflow-y-auto"
-                  onScroll={handleInventoryScroll}
-                  data-testid="medicine-list"
-                >
-                  {inventory.length === 0 ? (
-                    <div className="p-8 text-center text-slate-500">
-                      <Package className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                      {searchTerm ? 'No medicines found matching your search' : 'No medicines available'}
-                    </div>
-                  ) : viewMode === 'grid' ? (
-                    /* GRID VIEW - Blinkit Style */
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                      {inventory.map((med, idx) => (
-                        <div
-                          key={`${med.name}-${idx}`}
-                          className="bg-white rounded-xl border border-slate-100 overflow-hidden hover:shadow-lg hover:border-orange-200 transition-all cursor-pointer group"
-                          onClick={() => navigate(`/pharmacy/product/${encodeURIComponent(med.name)}`, { state: { product: med } })}
-                          data-testid={`inventory-item-${idx}`}
-                        >
-                          {/* Product Image */}
-                          <div className="aspect-square bg-gradient-to-br from-orange-50 to-amber-50 p-4 relative">
-                            {med.image ? (
-                              <img 
-                                src={med.image} 
-                                alt={med.name}
-                                className="w-full h-full object-contain"
-                                onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-                              />
-                            ) : null}
-                            <div className={`${med.image ? 'hidden' : 'flex'} w-full h-full items-center justify-center`}>
-                              <span className="text-5xl">{getMedicineIcon(med.form)}</span>
-                            </div>
-                            {/* Quick Add Button */}
-                            <button
-                              onClick={(e) => { e.stopPropagation(); addToCart(med); }}
-                              className="absolute bottom-2 right-2 w-8 h-8 bg-orange-500 hover:bg-orange-600 text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <Plus className="w-5 h-5" />
-                            </button>
-                          </div>
-                          {/* Product Info */}
-                          <div className="p-3">
-                            <div className="flex items-center gap-1 mb-1">
-                              <span className="text-[10px] text-orange-600 font-semibold uppercase tracking-wide">{med.form}</span>
-                              <span className="text-[8px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">FSSAI</span>
-                            </div>
-                            <h4 className="font-medium text-sm text-slate-800 leading-tight line-clamp-2 mt-1 min-h-[2.5rem]">
-                              {med.name}
-                            </h4>
-                            <div className="flex items-center justify-between mt-2">
-                              <span className="text-xs text-slate-400">Tap for details</span>
-                              <button
-                                onClick={(e) => { e.stopPropagation(); addToCart(med); }}
-                                className="text-xs font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1"
-                              >
-                                <Plus className="w-3 h-3" /> ADD
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    /* LIST VIEW */
-                    <div className="divide-y divide-orange-50 border border-orange-100 rounded-xl overflow-hidden">
-                      {inventory.map((med, idx) => (
-                        <div
-                          key={`${med.name}-${idx}`}
-                          onClick={() => navigate(`/pharmacy/product/${encodeURIComponent(med.name)}`, { state: { product: med } })}
-                          className="flex items-center gap-4 p-3 hover:bg-gradient-to-r hover:from-orange-50 hover:to-amber-50 transition-colors cursor-pointer group"
-                          data-testid={`inventory-item-${idx}`}
-                        >
-                          {/* Image */}
-                          <div className="w-16 h-16 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
-                            {med.image ? (
-                              <img src={med.image} alt={med.name} className="w-full h-full object-contain p-1" />
-                            ) : (
-                              <span className="text-3xl">{getMedicineIcon(med.form)}</span>
-                            )}
-                          </div>
-                          {/* Details */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1">
-                              <span className="text-[10px] text-orange-600 font-semibold uppercase">{med.form}</span>
-                              <span className="text-[8px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">FSSAI</span>
-                            </div>
-                            <h4 className="font-medium text-sm text-slate-800 truncate">{med.name}</h4>
-                            <p className="text-xs text-slate-400 mt-0.5">Tap for more details</p>
-                          </div>
-                          {/* Add Button */}
-                          <button
-                            onClick={(e) => { e.stopPropagation(); addToCart(med); }}
-                            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-semibold flex items-center gap-1 shadow-sm"
-                          >
-                            <Plus className="w-4 h-4" /> ADD
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {loadingMore && (
-                    <div className="p-4 text-center">
-                      <Loader2 className="w-6 h-6 animate-spin text-orange-500 inline-block" />
-                    </div>
-                  )}
-                  {!hasMoreMedicines && inventory.length > 0 && (
-                    <div className="p-4 text-center text-xs text-slate-400 bg-orange-50 rounded-xl mt-3">
-                      End of list • {inventory.length} medicines shown
-                    </div>
-                  )}
-                </div>
-              )}
-            </Card>
-
-            {/* Cart */}
-            {medicines.length > 0 && (
-              <Card className="p-5 rounded-2xl border-orange-400 bg-orange-50/50">
-                <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  <ShoppingCart className="w-4 h-4 text-orange-500" />
-                  Your Cart ({totalItems} items)
-                </h3>
-                <div className="space-y-2 mb-4">
-                  {medicines.map((med, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-white rounded-xl border border-orange-200 shadow-sm">
-                      <div className="flex items-center gap-3 flex-1">
-                        <span className="text-2xl" role="img" aria-label={med.form}>{getMedicineIcon(med.form)}</span>
-                        <div>
-                          <span className="font-semibold text-sm text-slate-800">{med.name}</span>
-                          <span className="block text-xs text-orange-600">{med.form}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline" className="rounded-lg border-orange-300 hover:bg-orange-100" onClick={() => updateQuantity(idx, med.quantity - 1)} data-testid={`decrease-qty-${idx}`}>
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <span className="w-8 text-center font-bold text-orange-600">{med.quantity}</span>
-                        <Button size="sm" variant="outline" className="rounded-lg border-orange-300 hover:bg-orange-100" onClick={() => updateQuantity(idx, med.quantity + 1)} disabled={med.quantity >= 20} data-testid={`increase-qty-${idx}`}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => removeMedicine(idx)} className="text-red-500 hover:text-red-600 hover:bg-red-50" data-testid={`remove-medicine-${idx}`}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            )}
-
-            {/* Patient Info */}
-            <Card className="p-5 rounded-2xl border-orange-100">
-              <h3 className="font-medium text-slate-800 mb-4 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                <Phone className="w-4 h-4 text-orange-500" />
-                Your Details
-              </h3>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <Label className="text-slate-600 text-sm">Full Name *</Label>
-                  <Input
-                    value={patientInfo.name}
-                    onChange={(e) => setPatientInfo({ ...patientInfo, name: e.target.value })}
-                    placeholder="Enter your name"
-                    className="mt-1.5 rounded-xl border-orange-200 focus:border-orange-400"
-                    data-testid="patient-name"
-                  />
-                </div>
-                <div>
-                  <Label className="text-slate-600 text-sm">Mobile Number *</Label>
-                  <Input
-                    value={patientInfo.phone}
-                    onChange={(e) => setPatientInfo({ ...patientInfo, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
-                    placeholder="10-digit mobile number"
-                    className="mt-1.5 rounded-xl border-orange-200 focus:border-orange-400"
-                    data-testid="patient-phone"
-                  />
-                  {!bookingLimits.loading && !bookingLimits.canBook && (
-                    <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
-                      <p className="font-semibold">Order Limit Reached</p>
-                      <p>You have {bookingLimits.activeOrders} active pharmacy orders.</p>
-                    </div>
-                  )}
-                </div>
-                <div className="sm:col-span-2">
-                  <Label className="text-slate-600 text-sm">Email <span className="text-slate-400 text-xs">(Optional)</span></Label>
-                  <Input
-                    type="email"
-                    value={patientInfo.email || ''}
-                    onChange={(e) => setPatientInfo({ ...patientInfo, email: e.target.value })}
-                    placeholder="your@email.com (Optional)"
-                    className="mt-1.5 rounded-xl border-orange-200 focus:border-orange-400"
-                    data-testid="patient-email"
-                  />
-                  <p className="text-xs text-slate-500 mt-1">Optional - for order updates and invoice</p>
-                </div>
-              </div>
-            </Card>
-
-            {/* Prescription Upload */}
-            <Card className="p-5 rounded-2xl border-orange-100">
-              <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                <Upload className="w-4 h-4 text-orange-500" />
-                Upload Prescription (Optional)
-              </h3>
-              <label className="cursor-pointer block">
-                <div className={`px-4 py-6 border-2 border-dashed rounded-xl transition-colors text-center ${prescriptionUrl ? 'border-emerald-400 bg-emerald-50' : 'border-orange-200 hover:border-orange-400'}`}>
-                  {uploading ? (
-                    <div className="flex items-center justify-center gap-2 text-slate-500">
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Uploading...
-                    </div>
-                  ) : prescriptionUrl ? (
-                    <div className="flex items-center justify-center gap-2 text-emerald-600">
-                      <CheckCircle2 className="w-5 h-5" />
-                      {prescriptionFile?.name || 'Prescription uploaded'}
-                    </div>
-                  ) : (
-                    <div className="text-slate-500">
-                      <Upload className="w-8 h-8 mx-auto mb-2 text-orange-300" />
-                      <p>Click to upload prescription image or PDF</p>
-                    </div>
-                  )}
-                </div>
-                <input type="file" accept="image/*,.pdf" onChange={handleFileUpload} className="hidden" data-testid="prescription-upload" />
-              </label>
-              
-              {prescriptionUrl && (
-                <div className="mt-3 p-3 bg-orange-50 rounded-xl border border-orange-200">
-                  <p className="text-sm font-medium text-orange-800 mb-2 flex items-center gap-2">
-                    <FileText className="w-4 h-4" />
-                    Prescription Preview
-                  </p>
-                  {prescriptionFile?.type?.includes('image') || prescriptionUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                    <img src={prescriptionUrl} alt="Prescription" className="max-h-40 rounded border border-orange-200 object-contain" />
-                  ) : (
-                    <a href={prescriptionUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-orange-600 hover:underline flex items-center gap-1">
-                      <FileText className="w-4 h-4" />
-                      View PDF Prescription
-                    </a>
-                  )}
-                </div>
-              )}
-              
-              {/* Extracted Medicines from OCR */}
-              {extracting && (
-                <div className="mt-3 p-4 bg-blue-50 rounded-xl border border-blue-200 text-center">
-                  <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500 mb-2" />
-                  <p className="text-sm text-blue-700">Analyzing prescription with AI...</p>
-                </div>
-              )}
-              
-              {extractedMedicines.length > 0 && (
-                <div className="mt-3 p-4 bg-emerald-50 rounded-xl border border-emerald-200">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-medium text-emerald-800 flex items-center gap-2">
-                      <Sparkles className="w-4 h-4" />
-                      Found {extractedMedicines.length} Medicine(s)
-                    </p>
-                    <button
-                      onClick={addAllExtractedMedicines}
-                      className="text-xs bg-emerald-600 text-white px-3 py-1 rounded-full hover:bg-emerald-700 transition-colors"
-                    >
-                      Add All
-                    </button>
-                  </div>
-                  <div className="space-y-2">
-                    {extractedMedicines.map((med, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-2 bg-white rounded-lg border border-emerald-100">
-                        <div>
-                          <p className="text-sm font-medium text-slate-800">{med.name}</p>
-                          <p className="text-xs text-slate-500">
-                            {[med.dosage, med.frequency, med.duration].filter(Boolean).join(' • ')}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => addExtractedMedicine(med)}
-                          className="p-1.5 bg-emerald-100 text-emerald-600 rounded-full hover:bg-emerald-200 transition-colors"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </Card>
-
-            {/* Continue Button */}
-            <Button 
-              onClick={goToStep2} 
-              disabled={medicines.length === 0 && !prescriptionUrl}
-              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
-              data-testid="continue-to-otp"
-            >
-              Continue
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-          </div>
-        )}
-
-        {/* STEP 2: OTP Verification */}
-        {currentStep === 2 && (
-          <div className="space-y-6 max-w-md mx-auto">
-            <Card className="p-8 rounded-3xl border-orange-100 shadow-lg">
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-orange-100 to-amber-100 rounded-2xl flex items-center justify-center mb-5">
-                  <Shield className="w-10 h-10 text-orange-500" />
-                </div>
-                <h2 className="text-2xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  Verify Your Phone
-                </h2>
-                <p className="text-slate-500 mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
-                  Enter the 6-digit code sent to +91 {patientInfo.phone}
-                </p>
-              </div>
-
-              {mockOtp && otpMethod === 'mock' && (
-                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-center">
-                  <p className="text-sm text-amber-800">Demo OTP: <span className="font-mono font-bold text-lg">{mockOtp}</span></p>
-                </div>
-              )}
-
-              <div className="flex justify-center gap-2.5 mb-8">
-                {otp.map((digit, idx) => (
-                  <Input
-                    key={idx}
-                    ref={(el) => (otpRefs.current[idx] = el)}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(idx, e.target.value)}
-                    onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                    className="w-12 h-14 text-center text-xl font-bold rounded-xl border-2 border-orange-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-                    data-testid={`otp-input-${idx}`}
-                  />
-                ))}
-              </div>
-
-              <Button
-                onClick={verifyOtp}
-                disabled={otp.join('').length !== 6 || otpLoading}
-                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 rounded-full font-semibold"
-                data-testid="verify-otp-btn"
-              >
-                {otpLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify OTP'}
-              </Button>
-
-              <div className="text-center mt-5">
-                {resendTimer > 0 ? (
-                  <p className="text-sm text-slate-500">Resend OTP in {resendTimer}s</p>
-                ) : (
-                  <button onClick={sendOtp} disabled={otpLoading} className="text-sm text-orange-500 font-medium hover:underline">
-                    Resend OTP
-                  </button>
-                )}
-              </div>
-            </Card>
-
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={goToStep1} className="flex-1 rounded-full border-orange-200" data-testid="back-to-cart">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Cart
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={saveCartForLater} 
-                className="flex-1 rounded-full border-amber-300 text-amber-600 hover:bg-amber-50" 
-                data-testid="save-for-later-btn"
-              >
-                <Bookmark className="w-4 h-4 mr-2" />
-                Save for Later
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3: Delivery & Payment */}
-        {currentStep === 3 && (
-          <div className="space-y-6">
-            {/* Back Button */}
-            <button
-              onClick={goToStep1}
-              className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition-colors"
-              data-testid="back-to-cart-step3"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span className="text-sm font-medium">Back to Cart</span>
-            </button>
-            
-            <div className="text-center mb-6">
-              <div className="flex items-center justify-center gap-2 text-emerald-600 mb-2">
-                <CheckCircle2 className="w-5 h-5" />
-                <span className="text-sm font-medium">Phone verified: +91 {patientInfo.phone}</span>
-              </div>
-              <h1 className="text-3xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                Complete Your Order
-              </h1>
-            </div>
-
-            {/* Order Summary */}
-            <Card className="p-5 rounded-2xl bg-orange-50/50 border-orange-200">
-              <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                <ShoppingCart className="w-4 h-4 text-orange-500" />
-                Order Summary ({totalItems} items)
-              </h3>
-              <div className="space-y-2">
-                {medicines.map((med, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-2 bg-white rounded-lg">
-                    <span className="text-sm text-slate-700">{med.name}</span>
-                    <span className="text-sm font-medium text-orange-600">x{med.quantity}</span>
-                  </div>
-                ))}
-              </div>
-              {prescriptionUrl && (
-                <div className="mt-3 pt-3 border-t border-orange-200 flex items-center gap-2 text-sm text-emerald-600">
-                  <CheckCircle2 className="w-4 h-4" />
-                  Prescription attached
-                </div>
-              )}
-            </Card>
-
-            {/* Usually Bought Together Suggestions */}
-            <UsuallyBoughtTogether 
-              cartItems={medicines}
-              onAddToCart={(item) => {
-                setMedicines(prev => [...prev, item]);
-              }}
-              className="mt-4"
-            />
-
-            {/* Subscription Manager */}
-            <SubscriptionManager className="mt-4" />
-
-            {/* Loyalty Points */}
-            {user && loyaltyPoints > 0 && (
-              <Card className="p-5 rounded-2xl border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
-                <h3 className="font-medium text-slate-800 mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  <Star className="w-4 h-4 text-amber-500" />
-                  Use Loyalty Points
-                </h3>
-                <p className="text-sm text-slate-600 mb-3">You have <span className="font-bold text-amber-600">{loyaltyPoints} points</span> (100 pts = ₹10 off)</p>
-                <div className="flex items-center gap-3">
-                  <Input
-                    type="number"
-                    min="0"
-                    max={loyaltyPoints}
-                    value={pointsToUse}
-                    onChange={(e) => setPointsToUse(Math.min(parseInt(e.target.value) || 0, loyaltyPoints))}
-                    className="w-32 rounded-xl border-amber-200"
-                    data-testid="points-input"
-                  />
-                  <span className="text-sm text-slate-600">= ₹{discountAmount.toFixed(2)} discount</span>
-                </div>
-              </Card>
-            )}
-
-            {/* Delivery Address */}
-            <Card className="p-5 rounded-2xl border-orange-100">
-              <Label className="flex items-center gap-2 mb-2 font-medium text-slate-800">
-                Delivery Address *
-              </Label>
-              <Textarea
-                value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
-                placeholder="Enter your complete delivery address with landmark"
-                className="min-h-24 rounded-xl border-orange-200 focus:border-orange-400"
-                data-testid="delivery-address"
-              />
-            </Card>
-
-            {/* Payment Method */}
-            <Card className="p-5 rounded-2xl border-orange-100">
-              <Label className="flex items-center gap-2 mb-3 font-medium text-slate-800">
-                <CreditCard className="w-4 h-4 text-orange-500" />
-                Payment Method
-              </Label>
-              <div className="grid grid-cols-1 gap-3">
-                {/* Option 1: Cash on Delivery */}
-                <button
-                  onClick={() => setPaymentMethod('cod')}
-                  className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
-                    paymentMethod === 'cod' ? 'border-orange-500 bg-orange-50' : 'border-orange-100 hover:border-orange-300'
-                  }`}
-                  data-testid="payment-cod"
-                >
-                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <Banknote className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div className="text-left flex-1">
-                    <span className="text-sm font-semibold text-slate-800 block">Cash on Delivery</span>
-                    <span className="text-xs text-slate-500">Pay cash when order is delivered</span>
-                  </div>
-                  {paymentMethod === 'cod' && <CheckCircle2 className="w-5 h-5 text-orange-500" />}
-                </button>
-
-                {/* Option 2: Pay Online Now */}
-                <button
-                  onClick={() => setPaymentMethod('cashfree')}
-                  className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
-                    paymentMethod === 'cashfree' ? 'border-orange-500 bg-orange-50' : 'border-orange-100 hover:border-orange-300'
-                  }`}
-                  data-testid="payment-cashfree"
-                >
-                  <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                    <Smartphone className="w-6 h-6 text-orange-600" />
-                  </div>
-                  <div className="text-left flex-1">
-                    <span className="text-sm font-semibold text-slate-800 block">Pay Online Now</span>
-                    <span className="text-xs text-slate-500">UPI, Cards, Net Banking</span>
-                  </div>
-                  {paymentMethod === 'cashfree' && <CheckCircle2 className="w-5 h-5 text-orange-500" />}
-                </button>
-
-                {/* Option 3: Pay Later */}
-                <button
-                  onClick={() => setPaymentMethod('pay_later')}
-                  className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
-                    paymentMethod === 'pay_later' ? 'border-orange-500 bg-orange-50' : 'border-orange-100 hover:border-orange-300'
-                  }`}
-                  data-testid="payment-pay-later"
-                >
-                  <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <div className="text-left flex-1">
-                    <span className="text-sm font-semibold text-slate-800 block">Pay Later</span>
-                    <span className="text-xs text-slate-500">Receive payment link after bill confirmation</span>
-                  </div>
-                  <div className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                    Recommended
-                  </div>
-                  {paymentMethod === 'pay_later' && <CheckCircle2 className="w-5 h-5 text-orange-500" />}
-                </button>
-              </div>
-            </Card>
-
-            {/* Submit Button */}
-            <Button 
-              onClick={handleSubmit} 
-              disabled={loading || !deliveryAddress.trim() || !bookingLimits.canBook}
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-6 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
-              data-testid="place-order-btn"
-            >
-              {loading ? (
-                <><Loader2 className="w-5 h-5 animate-spin mr-2" /> Processing...</>
-              ) : (
-                <><Sparkles className="w-5 h-5 mr-2" /> Place Order</>
-              )}
-            </Button>
-          </div>
-        )}
-      </main>
-
-      {/* Loyalty Program Dialog */}
-      <Dialog open={showLoyaltyInfo} onOpenChange={setShowLoyaltyInfo}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto rounded-3xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-orange-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              <Crown className="w-6 h-6 text-amber-500" />
-              Orange Pharmacy Loyalty Program
-            </DialogTitle>
-          </DialogHeader>
-
-          <Tabs value={loyaltyTab} onValueChange={setLoyaltyTab} className="mt-2">
-            <TabsList className="grid w-full grid-cols-4 bg-orange-100 rounded-xl p-1">
-              <TabsTrigger value="program" className="rounded-lg data-[state=active]:bg-white">Program</TabsTrigger>
-              <TabsTrigger value="leaderboard" className="rounded-lg data-[state=active]:bg-white">Top 10</TabsTrigger>
-              <TabsTrigger value="faq" className="rounded-lg data-[state=active]:bg-white">FAQ</TabsTrigger>
-              <TabsTrigger value="terms" className="rounded-lg data-[state=active]:bg-white">Terms</TabsTrigger>
-            </TabsList>
-
-            <div className="mt-4">
-              {/* Program Tab */}
-              <TabsContent value="program" className="m-0 space-y-4">
-                {/* User Status */}
-                {user && userLoyaltyStatus && (
-                  <Card className="p-4 bg-gradient-to-r from-orange-100 to-amber-100 border-orange-200">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-orange-800">Your Status</p>
-                        <p className="text-2xl font-bold text-orange-600">{loyaltyPoints} Points</p>
-                      </div>
-                      <div className={`px-4 py-2 rounded-full font-bold text-sm ${
-                        userLoyaltyStatus.tier === 'gold' ? 'bg-yellow-400 text-yellow-900' :
-                        userLoyaltyStatus.tier === 'silver' ? 'bg-gray-300 text-gray-700' :
-                        'bg-orange-400 text-orange-900'
-                      }`}>
-                        {userLoyaltyStatus.tier?.toUpperCase() || 'BRONZE'}
-                      </div>
-                    </div>
-                  </Card>
-                )}
-
-                {/* Tier Cards */}
-                <div className="space-y-3">
-                  {[
-                    { tier: 'Bronze', color: 'orange', min: '₹0-399', points: '1 pt/₹100', benefits: ['Earn points on every purchase', 'Track order history'] },
-                    { tier: 'Silver', color: 'gray', min: '₹400-999', points: '1.5 pts/₹100', benefits: ['All Bronze benefits', '5% discount on medicines', 'Priority delivery'] },
-                    { tier: 'Gold', color: 'yellow', min: '₹1000+', points: '2 pts/₹100', benefits: ['All Silver benefits', '10% discount', 'FREE delivery', '10-Visit Reward!'] }
-                  ].map((t) => (
-                    <Card key={t.tier} className={`p-4 border-${t.color}-200 bg-${t.color}-50/50`}>
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          t.tier === 'Gold' ? 'bg-yellow-400' : t.tier === 'Silver' ? 'bg-gray-300' : 'bg-orange-400'
-                        }`}>
-                          <Crown className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold">{t.tier}</h4>
-                          <p className="text-xs text-slate-500">{t.min} per bill • {t.points}</p>
-                        </div>
-                      </div>
-                      <ul className="text-sm text-slate-600 space-y-1 ml-13">
-                        {t.benefits.map((b, i) => <li key={i}>• {b}</li>)}
-                      </ul>
-                    </Card>
-                  ))}
-                </div>
-              </TabsContent>
-
-              {/* Leaderboard Tab */}
-              <TabsContent value="leaderboard" className="m-0">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-slate-800 flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-amber-500" />
-                    Top Customers
-                  </h3>
-                  <div className="flex gap-1 bg-slate-100 rounded-lg p-1">
-                    {['weekly', 'monthly', 'all'].map((p) => (
-                      <button
-                        key={p}
-                        onClick={() => setLeaderboardPeriod(p)}
-                        className={`px-3 py-1 text-xs rounded-md transition-all ${
-                          leaderboardPeriod === p ? 'bg-orange-500 text-white' : 'text-slate-600 hover:bg-slate-200'
-                        }`}
-                        data-testid={`leaderboard-${p}`}
-                      >
-                        {p === 'weekly' ? 'Week' : p === 'monthly' ? 'Month' : 'All Time'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {leaderboardLoading ? (
-                  <div className="flex items-center justify-center py-12">
-                    <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
-                  </div>
-                ) : leaderboard.length > 0 ? (
-                  <div className="space-y-2">
-                    {leaderboard.map((entry, idx) => (
-                      <Card key={idx} className={`p-3 ${
-                        idx === 0 ? 'bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-300' :
-                        idx === 1 ? 'bg-gradient-to-r from-gray-50 to-slate-50 border-gray-300' :
-                        idx === 2 ? 'bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200' : ''
-                      }`} data-testid={`leaderboard-entry-${idx}`}>
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                            idx === 0 ? 'bg-yellow-400 text-yellow-900' :
-                            idx === 1 ? 'bg-gray-300 text-gray-700' :
-                            idx === 2 ? 'bg-orange-400 text-orange-900' : 'bg-slate-100 text-slate-500'
-                          }`}>
-                            #{entry.rank}
-                          </div>
-                          <div className="flex-1">
-                            <span className="font-medium text-slate-800">{entry.display_name}</span>
-                            <div className="text-xs text-slate-500">{entry.total_orders} orders</div>
-                          </div>
-                          <div className="text-right">
-                            <div className="flex items-center gap-1">
-                              <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                              <span className="font-bold text-orange-600">{entry.points}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <Card className="p-8 text-center bg-slate-50">
-                    <Trophy className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-                    <p className="text-slate-500">No rankings yet. Be the first!</p>
-                  </Card>
-                )}
-              </TabsContent>
-
-              {/* FAQ Tab */}
-              <TabsContent value="faq" className="m-0">
-                {loyaltyFAQ?.faqs ? (
-                  <div className="space-y-3">
-                    {loyaltyFAQ.faqs.map((faq, idx) => (
-                      <Card key={idx} className="p-4">
-                        <h4 className="font-semibold text-slate-800 mb-2">Q: {faq.q}</h4>
-                        <p className="text-sm text-slate-600">{faq.a}</p>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-slate-500">Loading FAQ...</div>
-                )}
-              </TabsContent>
-
-              {/* Terms Tab */}
-              <TabsContent value="terms" className="m-0">
-                {loyaltyTerms?.sections ? (
-                  <div className="space-y-4">
-                    <div className="text-center mb-4">
-                      <h3 className="font-semibold text-lg">{loyaltyTerms.title}</h3>
-                      <p className="text-xs text-slate-500">Effective: {loyaltyTerms.effective_date}</p>
-                    </div>
-                    {loyaltyTerms.sections.map((section, idx) => (
-                      <div key={idx} className="border-b pb-3 last:border-0">
-                        <h4 className="font-semibold text-slate-800 mb-2">{section.title}</h4>
-                        <ul className="text-sm text-slate-600 space-y-1">
-                          {section.content.map((item, i) => <li key={i}>{item}</li>)}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-slate-500">Loading Terms...</div>
-                )}
-              </TabsContent>
-            </div>
-          </Tabs>
-        </DialogContent>
-      </Dialog>
-
-      {/* Refill Reminders Dialog */}
-      <Dialog open={showRefillDialog} onOpenChange={setShowRefillDialog}>
-        <DialogContent className="max-w-md mx-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-blue-500" />
-              Refill Reminders
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            {/* Create New Reminder Form */}
-            <Card className="p-4 bg-blue-50 border-blue-200">
-              <h4 className="font-semibold text-slate-800 mb-3">Create New Reminder</h4>
-              <div className="space-y-3">
-                <div>
-                  <Label className="text-sm text-slate-600">Medicine Name *</Label>
-                  <Input
-                    value={refillForm.medicine_name}
-                    onChange={(e) => setRefillForm({...refillForm, medicine_name: e.target.value})}
-                    placeholder="e.g., Metformin 500mg"
-                    className="mt-1"
-                    data-testid="refill-medicine-name"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-sm text-slate-600">Dosage</Label>
-                    <Input
-                      value={refillForm.dosage}
-                      onChange={(e) => setRefillForm({...refillForm, dosage: e.target.value})}
-                      placeholder="e.g., 1 tablet"
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-sm text-slate-600">Frequency</Label>
-                    <select
-                      value={refillForm.frequency}
-                      onChange={(e) => setRefillForm({...refillForm, frequency: e.target.value})}
-                      className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
-                    >
-                      <option value="Daily">Daily</option>
-                      <option value="Twice Daily">Twice Daily</option>
-                      <option value="Weekly">Weekly</option>
-                      <option value="Monthly">Monthly</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-sm text-slate-600">Reminder Time</Label>
-                    <Input
-                      type="time"
-                      value={refillForm.reminder_time}
-                      onChange={(e) => setRefillForm({...refillForm, reminder_time: e.target.value})}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-sm text-slate-600">Notify Via</Label>
-                    <select
-                      value={refillForm.reminder_type}
-                      onChange={(e) => setRefillForm({...refillForm, reminder_type: e.target.value})}
-                      className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
-                    >
-                      <option value="sms">SMS</option>
-                      <option value="whatsapp">WhatsApp</option>
-                      <option value="both">Both</option>
-                    </select>
-                  </div>
-                </div>
-                <Button
-                  onClick={createRefillReminder}
-                  className="w-full bg-blue-500 hover:bg-blue-600"
-                  data-testid="create-refill-btn"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Reminder
-                </Button>
-              </div>
-            </Card>
-
-            {/* Existing Reminders */}
-            <div>
-              <h4 className="font-semibold text-slate-800 mb-2">Your Active Reminders</h4>
-              {loadingRefills ? (
-                <div className="flex justify-center py-4">
-                  <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-                </div>
-              ) : refillReminders.length > 0 ? (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {refillReminders.map((reminder, idx) => (
-                    <Card key={idx} className="p-3 flex items-center justify-between">
-                      <div>
-                        <p className="font-medium text-sm text-slate-800">{reminder.medicine_name}</p>
-                        <p className="text-xs text-slate-500">{reminder.frequency} • {reminder.reminder_time}</p>
-                      </div>
-                      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">Active</span>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <Card className="p-4 bg-slate-50 text-center">
-                  <p className="text-sm text-slate-500">No reminders yet. Create one above!</p>
-                </Card>
-              )}
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Subscription Box Dialog */}
-      <Dialog open={showSubscriptionDialog} onOpenChange={setShowSubscriptionDialog}>
-        <DialogContent className="max-w-md mx-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Package className="w-5 h-5 text-purple-500" />
-              Monthly Subscription Box
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            {/* Benefits */}
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
-              <h4 className="font-semibold text-purple-800 mb-2">Why Subscribe?</h4>
-              <ul className="space-y-1.5 text-sm text-purple-700">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-purple-500" />
-                  Save 10% on every order
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-purple-500" />
-                  Free home delivery
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-purple-500" />
-                  Never run out of medicines
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-purple-500" />
-                  Pause or cancel anytime
-                </li>
-              </ul>
-            </div>
-
-            {/* Create Subscription */}
-            {medicines.length > 0 ? (
-              <Card className="p-4 border-purple-200">
-                <h4 className="font-semibold text-slate-800 mb-3">Subscribe to Your Cart</h4>
-                <div className="space-y-3">
-                  <div className="bg-slate-50 rounded-lg p-3">
-                    <p className="text-xs text-slate-500 mb-2">Medicines in cart:</p>
-                    {medicines.slice(0, 3).map((med, idx) => (
-                      <p key={idx} className="text-sm font-medium text-slate-700">{med.name} × {med.quantity}</p>
-                    ))}
-                    {medicines.length > 3 && (
-                      <p className="text-xs text-slate-400">+{medicines.length - 3} more</p>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label className="text-sm text-slate-600">Delivery Day</Label>
-                      <select
-                        value={subscriptionForm.delivery_day}
-                        onChange={(e) => setSubscriptionForm({...subscriptionForm, delivery_day: parseInt(e.target.value)})}
-                        className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
-                      >
-                        {[1,5,10,15,20,25].map(day => (
-                          <option key={day} value={day}>{day}th of month</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <Label className="text-sm text-slate-600">Frequency</Label>
-                      <select
-                        value={subscriptionForm.delivery_frequency}
-                        onChange={(e) => setSubscriptionForm({...subscriptionForm, delivery_frequency: e.target.value})}
-                        className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
-                      >
-                        <option value="monthly">Monthly</option>
-                        <option value="bimonthly">Every 2 Months</option>
-                        <option value="quarterly">Quarterly</option>
-                      </select>
-                    </div>
-                  </div>
-                  <Button
-                    onClick={createSubscriptionBox}
-                    className="w-full bg-purple-500 hover:bg-purple-600"
-                    data-testid="create-subscription-btn"
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Start Subscription (Save 10%)
-                  </Button>
-                </div>
-              </Card>
+        {/* Medicine Grid */}
+        {loading ? (
+          <HeartbeatLoader variant="pharmacy" text="Loading medicines..." />
+        ) : searchQuery ? (
+          <div className="px-4 pb-6">
+            <p className="text-xs text-stone-500 mb-3">{searchTotal.toLocaleString()} results for "{searchQuery}"</p>
+            {searchLoading ? <MedicineGridSkeleton count={8} /> : searchResults.length === 0 ? (
+              <div className="text-center py-12"><Pill className="w-10 h-10 mx-auto text-stone-300 mb-2" /><p className="text-sm text-stone-500">No medicines found for "{searchQuery}"</p></div>
             ) : (
-              <Card className="p-4 bg-amber-50 border-amber-200">
-                <p className="text-sm text-amber-800 text-center">
-                  Add medicines to your cart first, then subscribe for auto-delivery!
-                </p>
-              </Card>
+              <MedicineGrid medicines={searchResults} loading={false} onAdd={handleAddToCart} onView={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} cart={pharmacyCart} onIncrement={handleIncrement} onDecrement={handleDecrement} />
             )}
-
-            {/* Existing Subscriptions */}
-            <div>
-              <h4 className="font-semibold text-slate-800 mb-2">Your Subscriptions</h4>
-              {loadingSubscriptions ? (
-                <div className="flex justify-center py-4">
-                  <Loader2 className="w-6 h-6 animate-spin text-purple-500" />
-                </div>
-              ) : subscriptionBoxes.length > 0 ? (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {subscriptionBoxes.map((sub, idx) => (
-                    <Card key={idx} className="p-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="font-medium text-sm text-slate-800">{sub.medicines?.length || 0} medicines</p>
-                        <span className={`px-2 py-0.5 text-xs rounded-full ${
-                          sub.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
-                        }`}>
-                          {sub.status === 'active' ? 'Active' : 'Paused'}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-500 mb-2">
-                        {sub.delivery_frequency} delivery on {sub.delivery_day}th
-                      </p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => toggleSubscription(sub.id, sub.status)}
-                        className="w-full"
-                      >
-                        {sub.status === 'active' ? 'Pause' : 'Resume'}
-                      </Button>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <Card className="p-4 bg-slate-50 text-center">
-                  <p className="text-sm text-slate-500">No subscriptions yet.</p>
-                </Card>
-              )}
-            </div>
           </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Mango Health Labs Ad Banner */}
-      <div className="max-w-5xl mx-auto mb-20">
-        <ProtonAdBanner />
-      </div>
-
-      {/* Product Detail Dialog - Blinkit Style */}
-      <Dialog open={showProductDetail} onOpenChange={setShowProductDetail}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto rounded-3xl p-0">
-          {selectedMedicine && (
-            <>
-              {/* Product Image */}
-              <div className="relative bg-gradient-to-br from-orange-100 to-amber-100 h-56 flex items-center justify-center">
-                <Pill className="w-24 h-24 text-orange-400" />
-                <button 
-                  onClick={() => setShowProductDetail(false)}
-                  className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg"
-                >
-                  <X className="w-5 h-5 text-slate-600" />
-                </button>
-                <div className="absolute bottom-4 left-4 bg-green-500 text-white text-sm font-bold px-3 py-1 rounded-lg">
-                  {selectedMedicine.off || 30}% OFF
+        ) : expandedCategory ? (
+          <div className="px-4 pb-6">
+            <div className="flex items-center justify-between mb-3">
+              <div><p className="text-base font-bold text-stone-800">{expandedCategory}</p><p className="text-xs text-stone-500">{categoryTotal.toLocaleString()} medicines</p></div>
+              <button onClick={() => { setExpandedCategory(null); setSelectedCategory(null); }} className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-orange-50 text-orange-600 border border-orange-200">Show All Categories</button>
+            </div>
+            {categoryLoading && categoryMedicines.length === 0 ? <MedicineGridSkeleton count={12} /> : (
+              <>
+                <MedicineGrid medicines={categoryMedicines} loading={false} onAdd={handleAddToCart} onView={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} cart={pharmacyCart} onIncrement={handleIncrement} onDecrement={handleDecrement} />
+                {hasMore && (
+                  <button onClick={() => { const np = categoryPage + 1; setCategoryPage(np); fetchCategoryMedicines(expandedCategory, np, true); }}
+                    disabled={categoryLoading} className="w-full mt-4 py-3 rounded-xl text-sm font-semibold bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-100 transition-colors" data-testid="load-more-category">
+                    {categoryLoading ? 'Loading...' : `Load More (${categoryMedicines.length} of ${categoryTotal})`}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="px-4 pb-6 space-y-6" data-testid="category-browse">
+            <p className="text-xs text-stone-500">{totalCount.toLocaleString()} products across {categorySections.length} categories</p>
+            {categorySections.slice(0, visibleCategoryCount).map((section) => (
+              <div key={section.category} className="space-y-3" data-testid={`category-section-${section.category}`}>
+                <div className="flex items-center justify-between">
+                  <div><h3 className="text-sm font-bold text-stone-800">{section.category}</h3><p className="text-[10px] text-stone-400">{section.total.toLocaleString()} products</p></div>
+                  {section.has_more && (
+                    <button onClick={() => { setExpandedCategory(section.category); setCategoryPage(1); fetchCategoryMedicines(section.category, 1, false); }}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-100 transition-colors" data-testid={`view-more-${section.category}`}>
+                      View All <ChevronRight className="w-3 h-3" />
+                    </button>
+                  )}
                 </div>
+                <MedicineGrid medicines={section.medicines} loading={false} onAdd={handleAddToCart} onView={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} cart={pharmacyCart} onIncrement={handleIncrement} onDecrement={handleDecrement} />
               </div>
-              
-              {/* Product Info */}
-              <div className="p-6">
-                <h2 className="text-xl font-bold text-slate-800 mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  {selectedMedicine.name}
-                </h2>
-                
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl font-bold text-slate-800">₹{selectedMedicine.price}</span>
-                  <span className="text-lg text-slate-400 line-through">₹{selectedMedicine.mrp || Math.round(selectedMedicine.price * 1.4)}</span>
-                </div>
-                
-                {/* Delivery Info */}
-                <div className="flex items-center gap-2 p-3 bg-green-50 rounded-xl mb-4">
-                  <Truck className="w-5 h-5 text-green-600" />
-                  <span className="text-sm text-green-700 font-medium">Delivery in {selectedMedicine.delivery || 'Same Day'}</span>
-                </div>
-                
-                {/* Product Details */}
-                <div className="space-y-3 mb-6">
-                  <h3 className="font-semibold text-slate-700">Product Details</h3>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="p-3 bg-slate-50 rounded-lg">
-                      <p className="text-slate-500 text-xs">Category</p>
-                      <p className="font-medium text-slate-700">{selectedMedicine.category || 'General Medicines'}</p>
-                    </div>
-                    <div className="p-3 bg-slate-50 rounded-lg">
-                      <p className="text-slate-500 text-xs">Composition</p>
-                      <p className="font-medium text-slate-700">{selectedMedicine.composition || 'Standard Formula'}</p>
-                    </div>
-                    <div className="p-3 bg-slate-50 rounded-lg">
-                      <p className="text-slate-500 text-xs">Manufacturer</p>
-                      <p className="font-medium text-slate-700">{selectedMedicine.manufacturer || 'Trusted Pharma'}</p>
-                    </div>
-                    <div className="p-3 bg-slate-50 rounded-lg">
-                      <p className="text-slate-500 text-xs">Pack Size</p>
-                      <p className="font-medium text-slate-700">{selectedMedicine.packSize || '10 tablets'}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* FSSAI Badge */}
-                <div className="flex items-center gap-2 p-3 bg-slate-100 rounded-xl mb-4">
-                  <Shield className="w-5 h-5 text-green-600" />
-                  <span className="text-xs text-slate-600">FSSAI Licensed | 100% Authentic Products</span>
-                </div>
-                
-                {/* Add to Cart Button */}
-                <Button
-                  onClick={() => {
-                    addToCart({ name: selectedMedicine.name, quantity: 1 });
-                    setShowProductDetail(false);
-                  }}
-                  className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-6 rounded-2xl font-bold text-lg"
-                  data-testid="add-to-cart-detail-btn"
-                >
-                  <ShoppingCart className="w-5 h-5 mr-2" />
-                  Add to Cart - ₹{selectedMedicine.price}
-                </Button>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-      
-      {/* Wishlist Dialog */}
-      {showWishlist && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowWishlist(false)}>
-          <div 
-            className="bg-white rounded-3xl max-w-md w-full max-h-[80vh] overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-rose-500 to-pink-500 p-5 text-white relative">
-              <button 
-                onClick={() => setShowWishlist(false)}
-                className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-              >
-                <X className="w-5 h-5" />
+            ))}
+            {categorySections.length > visibleCategoryCount && (
+              <button onClick={() => setVisibleCategoryCount(prev => prev + 5)} className="w-full py-3 rounded-xl text-sm font-semibold bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-100 transition-colors" data-testid="show-more-categories">
+                Show More Categories ({categorySections.length - visibleCategoryCount} remaining)
               </button>
-              <div className="flex items-center gap-3">
-                <Heart className="w-6 h-6 fill-white" />
-                <h2 className="text-xl font-bold">My Wishlist</h2>
-              </div>
-              <p className="text-white/80 text-sm mt-1">{wishlist.length} saved medicines</p>
-            </div>
-            
-            {/* Wishlist Items */}
-            <div className="max-h-[50vh] overflow-y-auto p-4">
-              {wishlist.length === 0 ? (
-                <div className="text-center py-10">
-                  <Heart className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500">No medicines saved yet</p>
-                  <p className="text-xs text-slate-400 mt-1">Tap the heart icon on any medicine to save it</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {wishlist.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                      <div className="flex-1">
-                        <p className="font-medium text-slate-800 text-sm">{item.name}</p>
-                        <p className="text-xs text-slate-500">{item.form}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-orange-600 font-bold">₹{item.price}</span>
-                        <button
-                          onClick={() => {
-                            addMedicine({ name: item.name, form: item.form, price: item.price });
-                            setShowWishlist(false);
-                          }}
-                          className="px-3 py-1.5 bg-orange-500 text-white text-xs font-bold rounded-lg hover:bg-orange-600"
-                        >
-                          Add
-                        </button>
-                        <button
-                          onClick={() => toggleWishlist(item)}
-                          className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            {/* Footer */}
-            {wishlist.length > 0 && (
-              <div className="p-4 border-t border-slate-200">
-                <Button
-                  onClick={() => {
-                    wishlist.forEach(item => addMedicine({ name: item.name, form: item.form, price: item.price }));
-                    setShowWishlist(false);
-                    toast.success('All wishlist items added to cart!');
-                  }}
-                  className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold py-3 rounded-xl"
-                >
-                  Add All to Cart ({wishlist.length} items)
-                </Button>
-              </div>
             )}
           </div>
-        </div>
-      )}
-      
-      {/* Bottom Navigation */}
-      <BottomNav />
+        )}
 
-      {/* Cashfree Payment Dialog */}
-      <CashfreeCheckout
-        open={showPaymentDialog}
-        onOpenChange={setShowPaymentDialog}
-        orderDetails={{
-          type: 'pharmacy',
-          amount: estimatedTotal,
-          productId: `PHARMACY_${Date.now()}`,
-          customerName: patientInfo.name,
-          customerEmail: patientInfo.email,
-          customerPhone: patientInfo.phone
-        }}
-        onPaymentSuccess={handlePaymentSuccess}
-        allowCOD={true}
-        returnPath="/pharmacy"
-      />
+        {/* Cross-promotion */}
+        <div className="px-4 pb-6 space-y-4">
+          <CrossSellBanner context="pharmacy medicine order" sourceService="pharmacy" />
+          <MangoPromoCard />
+        </div>
+        </div>
+       </div>
+      </PullToRefreshContainer>
+
+      {/* Modals & Overlays */}
+      {selectedMedicine && (
+        <ProductDetailView product={selectedMedicine} onClose={() => setSelectedMedicine(null)} onAddToCart={handleAddToCart}
+          cartQuantity={getCartQuantity(selectedMedicine)} onIncrement={() => handleIncrement(selectedMedicine)}
+          onDecrement={() => handleDecrement(selectedMedicine)} onSelectAlternative={(alt) => setSelectedMedicine(alt)} />
+      )}
+      <UploadPrescriptionDialog open={showPrescriptionUpload} onClose={() => setShowPrescriptionUpload(false)} />
+      <CustomMedicineModal show={showCustomMedicine} onClose={() => setShowCustomMedicine(false)}
+        customMedicineName={customMedicineName} setCustomMedicineName={setCustomMedicineName}
+        customMedicineQty={customMedicineQty} setCustomMedicineQty={setCustomMedicineQty}
+        onAddCustomMedicine={handleAddCustomMedicine} />
+      <QuickReorder isOpen={showQuickReorder} onClose={() => setShowQuickReorder(false)} />
+      <SubscriptionRefill isOpen={showSubscriptionRefill} onClose={() => setShowSubscriptionRefill(false)} />
+      <OrangeTutorial open={showOrangeTutorial} onClose={() => setShowOrangeTutorial(false)} />
     </div>
   );
 };

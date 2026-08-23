@@ -1,0 +1,88 @@
+{
+  "summary": "Completed comprehensive testing of P0 persistent login bug fix. All tests passed - staff login, admin login, and token persistence after page reload are working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_login_persistence.py",
+    "/app/test_reports/pytest/pytest_login_persistence_254.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "AuthContext.js correctly implements 401/403-only logout logic (lines 196-210)",
+    "Staff portal login pages correctly set 30-day staffLoginExpiry (StaffPortalLogin.jsx line 69, AdminPortalLogin.jsx line 43, DoctorPortalLogin.jsx line 71)",
+    "User data caching in localStorage (userInfo, patientInfo) is correctly implemented for offline/error resilience",
+    "safeParseJSON helper function properly handles JSON parsing errors (lines 31-37)"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (13/13 tests passed)",
+    "frontend": "100% (all persistence tests passed)"
+  },
+  "test_credentials": {
+    "admin": "username=admin, password=test1234",
+    "doctor": "username=dr_neha, password=test1234"
+  },
+  "seed_data_creation": "None - used existing staff credentials",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Login persistence bug fix has been verified. Key changes: (1) AuthContext.js now only calls logout() on 401/403 errors, not on network errors, (2) User data is cached in localStorage (userInfo/patientInfo) for offline resilience, (3) Staff login pages set 30-day staffLoginExpiry. All staff portals (DiaGyn, Mango Labs, Orange Pharmacy, Admin) correctly store staffToken, staffInfo, and staffLoginExpiry in localStorage.",
+  "features_tested": [
+    {
+      "feature": "Staff login via DiaGyn portal persists after page reload",
+      "status": "PASS",
+      "details": "staffToken, staffInfo, staffLoginExpiry all preserved after reload"
+    },
+    {
+      "feature": "Admin login persists after page reload",
+      "status": "PASS",
+      "details": "Admin stays authenticated on /admin page after reload"
+    },
+    {
+      "feature": "localStorage staffToken, staffInfo, staffLoginExpiry are set after staff login",
+      "status": "PASS",
+      "details": "All three keys correctly set with 30-day expiry"
+    },
+    {
+      "feature": "30-day login expiry is correctly calculated",
+      "status": "PASS",
+      "details": "staffLoginExpiry is set to Date.now() + 30 days in milliseconds"
+    },
+    {
+      "feature": "/api/auth/me endpoint returns user data with valid token",
+      "status": "PASS",
+      "details": "Returns user id, name, role, department correctly"
+    },
+    {
+      "feature": "/api/auth/me returns 401 for invalid/expired tokens",
+      "status": "PASS",
+      "details": "Correctly rejects invalid tokens with 401 status"
+    },
+    {
+      "feature": "Token revalidation works (simulates page reload)",
+      "status": "PASS",
+      "details": "Same token can be validated multiple times successfully"
+    },
+    {
+      "feature": "Staff info structure has required fields for caching",
+      "status": "PASS",
+      "details": "id, name, role, department, doctor_name (for doctors) all present"
+    }
+  ],
+  "rca_of_the_issue": {
+    "root_cause": "AuthContext.js was aggressively calling logout() on ANY API failure during token revalidation on mount, including network errors and server issues. This wiped all localStorage tokens even when the token was still valid.",
+    "fix_applied": [
+      "AuthContext.js fetchUser() now only calls logout() on 401/403 (token explicitly invalid)",
+      "For network errors, user data is restored from localStorage cache (userInfo/patientInfo)",
+      "User state is immediately hydrated from localStorage cache on mount for instant session restore",
+      "Staff/Doctor/Admin portal logins now set 30-day staffLoginExpiry"
+    ],
+    "verification": "All tests pass - tokens persist after page reload, 30-day expiry is set, and user remains authenticated"
+  }
+}

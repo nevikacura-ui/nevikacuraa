@@ -1,0 +1,116 @@
+{
+  "summary": "Iteration 150: Tested Mango Toggle Diagnostic Flow. All features working correctly - toggle landing page at /mango with PATHOLOGY and ULTRASOUND & ECG buttons, navigation to /mango/pathology and /mango/ultrasound, all 7 scan services displayed with correct prices, booking form with all fields, form submission to /api/proton/book, and back navigation to /mango.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_mango_toggle.py",
+    "/app/test_reports/pytest/pytest_mango_toggle.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_mango_toggle.py"
+  ],
+  "success_rate": {
+    "backend": "100% (9/9 tests passed)",
+    "frontend": "100% (All UI tests passed)"
+  },
+  "test_credentials": {
+    "guest": "localStorage: guestMobile=9999999999"
+  },
+  "seed_data_creation": "Created test bookings in sonography_bookings collection with TEST_MangoToggle_ prefix for all 7 scan types",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Mango toggle diagnostic flow fully tested. Routes: /mango (toggle landing), /mango/pathology (existing lab test flow), /mango/ultrasound (new Proton Diagnostics page). Ultrasound page has 6 ultrasound services (Early Pregnancy Scan Rs.800, NT Scan Rs.1500, Anomaly Scan Rs.2000, Growth Scan Rs.1000, Follicular Study Rs.700, Pelvis Scan Rs.900) and 1 cardiac service (ECG Rs.300). Booking form includes: Patient Name, Age, Husband Name, Phone, Address, LMP, DOB, Previous Children toggle. Form submits to /api/proton/book and navigates to /booking-confirmation. Header Mango tab remains active on all /mango/* routes. Bottom nav Lab Tests tab active on all mango sub-routes.",
+  "tests_executed": {
+    "backend": [
+      "POST /api/proton/book - Early Pregnancy Scan - PASS",
+      "POST /api/proton/book - NT Scan - PASS",
+      "POST /api/proton/book - Anomaly Scan - PASS",
+      "POST /api/proton/book - Growth Scan - PASS",
+      "POST /api/proton/book - Follicular Study - PASS",
+      "POST /api/proton/book - Pelvis Scan - PASS",
+      "POST /api/proton/book - ECG - PASS",
+      "POST /api/proton/book - With Children Info - PASS",
+      "POST /api/proton/book - Missing Required Fields (422) - PASS"
+    ],
+    "frontend": [
+      "/mango - Toggle landing page loads - PASS",
+      "/mango - Mango Health Labs branding visible - PASS",
+      "/mango - PATHOLOGY toggle button present - PASS",
+      "/mango - ULTRASOUND & ECG toggle button present - PASS",
+      "/mango - Header Mango tab active - PASS",
+      "/mango - Bottom nav Lab Tests tab active - PASS",
+      "PATHOLOGY click → navigates to /mango/pathology - PASS",
+      "/mango/pathology - Search input present - PASS",
+      "ULTRASOUND click → navigates to /mango/ultrasound - PASS",
+      "/mango/ultrasound - PROTON DIAGNOSTICS badge visible - PASS",
+      "/mango/ultrasound - Ultrasound & Cardiac Diagnostics title - PASS",
+      "/mango/ultrasound - All 7 scan services displayed with prices - PASS",
+      "/mango/ultrasound - Ultrasound Services section - PASS",
+      "/mango/ultrasound - Cardiac Services section - PASS",
+      "/mango/ultrasound - Back to Mango button present - PASS",
+      "Click scan → Booking form appears - PASS",
+      "Booking form - Patient Name field - PASS",
+      "Booking form - Age field - PASS",
+      "Booking form - Husband Name field - PASS",
+      "Booking form - Phone field - PASS",
+      "Booking form - Address field - PASS",
+      "Booking form - LMP field - PASS",
+      "Booking form - DOB field - PASS",
+      "Booking form - Previous Child toggle - PASS",
+      "Booking form - Book Scan submit button - PASS",
+      "Form submit → navigates to /booking-confirmation - PASS",
+      "Back navigation from ultrasound to /mango - PASS"
+    ]
+  },
+  "features_verified": {
+    "toggle_landing_page": {
+      "route": "/mango",
+      "elements": ["PATHOLOGY button", "ULTRASOUND & ECG button", "Mango Health Labs branding", "Proton Diagnostics footer"],
+      "status": "WORKING"
+    },
+    "pathology_navigation": {
+      "route": "/mango/pathology",
+      "description": "Existing Mango.js lab test flow",
+      "status": "WORKING"
+    },
+    "ultrasound_page": {
+      "route": "/mango/ultrasound",
+      "theme": "Dark premium with red (#E10600) accents",
+      "branding": "Proton Diagnostics",
+      "services": {
+        "ultrasound": [
+          {"name": "Early Pregnancy Scan", "price": 800},
+          {"name": "NT Scan", "price": 1500},
+          {"name": "Anomaly Scan", "price": 2000},
+          {"name": "Growth Scan", "price": 1000},
+          {"name": "Follicular Study", "price": 700},
+          {"name": "Pelvis Scan", "price": 900}
+        ],
+        "cardiac": [
+          {"name": "ECG", "price": 300}
+        ]
+      },
+      "status": "WORKING"
+    },
+    "booking_form": {
+      "fields": ["Patient Name*", "Age", "Husband Name", "Phone*", "Address", "LMP", "DOB", "Previous Children toggle"],
+      "submit_endpoint": "/api/proton/book",
+      "redirect": "/booking-confirmation",
+      "status": "WORKING"
+    },
+    "navigation_state": {
+      "header_mango_tab": "Active on /mango, /mango/pathology, /mango/ultrasound",
+      "bottom_nav_lab_tests": "Active on all /mango/* routes",
+      "status": "WORKING"
+    }
+  }
+}

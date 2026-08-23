@@ -1,0 +1,94 @@
+{
+  "summary": "Completed comprehensive testing of iteration 272 - Critical notification routing bug fixes. All 18 backend tests passed. Verified: 1) Staff WhatsApp numbers correctly routed (Mango=917039040040, Orange=917039030030, Nevika=919833188288), 2) COD diagnostic orders send patient WhatsApp via send_proton_lab_confirmation, 3) MangoCheckout COD flow sets showBookingConfirmation=true, 4) Empty cart guards check both showBookingConfirmation and orderDetails.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_notification_routing_272.py",
+    "/app/test_reports/pytest/pytest_notification_routing_272.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_notification_routing_272.py"
+  ],
+  "success_rate": {
+    "backend": "100% (18/18 tests passed)",
+    "frontend": "100% (Mango Labs page loads correctly, checkout guards verified)"
+  },
+  "test_credentials": "Test phone: 9833188288",
+  "seed_data_creation": "None required",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iteration 272 critical notification routing fixes fully verified: 1) cashfree.py webhook handlers now use correct staff numbers: confirm_lab_booking→917039040040 (Mango), confirm_pharmacy_order→917039030030 (Orange), confirm_appointment→clinic-based (Pushpa=918108500522, Amnion=918108500533), activate_membership→919833188288 (Nevika Cura). 2) notification_service.py department_phones map has correct numbers. 3) queue_status.py COD diagnostic orders call send_proton_lab_confirmation for patient WhatsApp. 4) MangoCheckout.jsx COD flow sets setShowBookingConfirmation(true) at line 409. 5) Empty cart guards in MangoCheckout.jsx (line 440) and PharmacyCheckout.jsx (line 411) check !showBookingConfirmation && !orderDetails to prevent overriding confirmation view. 6) CuraPay transition fires AFTER API success in both checkout pages. Backend logs confirmed: Staff WhatsApp sent to 917039040040, Patient WhatsApp sent to test phone.",
+  "tests_executed": {
+    "health_endpoint": {
+      "health_returns_ok": "PASS"
+    },
+    "notification_service_numbers": {
+      "mango_number_917039040040": "PASS",
+      "orange_number_917039030030": "PASS",
+      "department_phones_mango": "PASS",
+      "department_phones_orange": "PASS"
+    },
+    "cashfree_webhook_numbers": {
+      "lab_booking_staff_917039040040": "PASS - No 919833188288 hardcoded for lab",
+      "pharmacy_order_staff_917039030030": "PASS - No 919833188288 hardcoded for pharmacy",
+      "appointment_clinic_based": "PASS - Pushpa=918108500522, Amnion=918108500533",
+      "membership_nevika_919833188288": "PASS - Correct for membership"
+    },
+    "cod_diagnostic_patient_whatsapp": {
+      "queue_status_sends_patient_whatsapp": "PASS - send_proton_lab_confirmation called"
+    },
+    "cashfree_order_creation": {
+      "create_order_lab_test": "PASS - Returns payment_session_id",
+      "create_order_pharmacy": "PASS - Returns payment_session_id"
+    },
+    "cod_diagnostic_order_api": {
+      "returns_success_with_booking_id": "PASS"
+    },
+    "frontend_checkout_guards": {
+      "mango_empty_cart_guard": "PASS - Checks showBookingConfirmation and orderDetails",
+      "mango_cod_sets_confirmation": "PASS - setShowBookingConfirmation(true)",
+      "pharmacy_empty_cart_guard": "PASS - Checks showBookingConfirmation and orderDetails"
+    },
+    "curapay_transition_timing": {
+      "mango_checkout_after_api": "PASS - setShowCuraPay after API success",
+      "pharmacy_checkout_after_api": "PASS - setShowCuraPay after API success"
+    }
+  },
+  "feature_verification": {
+    "staff_whatsapp_routing": {
+      "status": "COMPLETE",
+      "details": "Staff WhatsApp numbers correctly routed: Mango Labs→917039040040, Orange Pharmacy→917039030030, Appointments→clinic-based (Pushpa=918108500522, Amnion=918108500533, default=919833188288), Membership→919833188288 (Nevika Cura). The hardcoded 919833188288 was removed from lab and pharmacy webhook handlers."
+    },
+    "cod_patient_whatsapp": {
+      "status": "COMPLETE",
+      "details": "COD diagnostic orders now send patient WhatsApp via send_proton_lab_confirmation in queue_status.py send_diagnostic_order_notifications function. Backend logs confirmed WhatsApp sent to patient phone."
+    },
+    "mango_checkout_cod_fix": {
+      "status": "COMPLETE",
+      "details": "MangoCheckout.jsx COD flow now sets setShowBookingConfirmation(true) instead of setShowSuccessAnim. This ensures BookingConfirmation component is shown after COD order success."
+    },
+    "empty_cart_guard_fix": {
+      "status": "COMPLETE",
+      "details": "Empty cart guards in MangoCheckout.jsx and PharmacyCheckout.jsx now check both !showBookingConfirmation and !orderDetails to prevent the 'No tests selected / Browse Lab Tests' page from overriding the confirmation view."
+    },
+    "curapay_transition_timing": {
+      "status": "COMPLETE",
+      "details": "CuraPay transition animation fires AFTER API calls complete in both MangoCheckout.jsx and PharmacyCheckout.jsx. This was already verified in iteration 271."
+    }
+  },
+  "backend_logs_verification": {
+    "staff_whatsapp_to_mango": "✅ MSG91 WhatsApp sent to 917039040040 using template 'proton_lab_confirm'",
+    "patient_whatsapp_sent": "✅ Patient WhatsApp sent for COD diagnostic order",
+    "staff_notification_logged": "✅ Staff notification sent to 917039040040 for proton order"
+  },
+  "console_warnings": []
+}

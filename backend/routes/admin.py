@@ -258,21 +258,23 @@ async def setup_default_staff(admin = Depends(verify_admin)):
     import bcrypt
     import uuid
     
-    password_hash = bcrypt.hashpw("test".encode(), bcrypt.gensalt()).decode()
+    password_hash = bcrypt.hashpw("test1234".encode(), bcrypt.gensalt()).decode()
     
+    # Clean staff list - only these 6 accounts should exist
     default_staff = [
-        {"username": "dr_vikas", "name": "Dr. Vikas Jha", "role": "doctor", "department": "diagyn", "phone": "9876543210"},
-        {"username": "dr_neha", "name": "Dr. Neha", "role": "doctor", "department": "diagyn", "phone": "9876543215"},
+        {"username": "dr_vikas", "name": "Dr. Vikas Jha", "role": "doctor", "department": "diagyn", "phone": "9876543210", "doctor_name": "Dr. Vikas Jha", "clinics": ["Pushpa Clinic", "Amnion Clinic"]},
+        {"username": "dr_neha", "name": "Dr. Neha Patel", "role": "doctor", "department": "diagyn", "phone": "9876543215", "doctor_name": "Dr. Neha Patel", "clinics": ["Pushpa Clinic", "Amnion Clinic"]},
         {"username": "staff_diagyn", "name": "DiaGyn Staff", "role": "diagyn_staff", "department": "diagyn", "phone": "9876543211"},
         {"username": "staff_mango", "name": "Mango Labs Staff", "role": "lab_staff", "department": "mango", "phone": "9876543212"},
-        {"username": "staff_pharmacy", "name": "Orange Pharmacy Staff", "role": "pharmacy_staff", "department": "pharmacy", "phone": "9876543213"},
+        {"username": "staff_orange", "name": "Orange Pharmacy Staff", "role": "pharmacy_staff", "department": "pharmacy", "phone": "9876543213"},
         {"username": "admin", "name": "Admin User", "role": "admin", "department": "admin", "phone": "9876543214"},
     ]
     
+    # Delete ALL existing staff to avoid duplicates
+    deleted_count = await db.staff.delete_many({})
+    
     created = []
     for staff in default_staff:
-        # Delete existing with same username
-        await db.staff.delete_many({"username": staff["username"]})
         
         staff_doc = {
             "id": str(uuid.uuid4()),
@@ -284,15 +286,18 @@ async def setup_default_staff(admin = Depends(verify_admin)):
             "password_hash": password_hash,
             "is_active": True,
             "active": True,
+            "doctor_name": staff.get("doctor_name"),  # For doctor role matching
+            "clinics": staff.get("clinics", []),  # Multi-clinic support
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.staff.insert_one(staff_doc)
         created.append(staff["username"])
     
     return {
-        "message": "Default staff created",
+        "message": "Default staff created - duplicates removed",
         "accounts": created,
-        "password": "test"
+        "password": "test1234",
+        "deleted_old_accounts": deleted_count.deleted_count
     }
 
 
@@ -432,8 +437,10 @@ async def get_recent_orders(limit: int = 20, admin = Depends(verify_admin)):
     """Get recent orders across all departments"""
     pharmacy_orders = await db.pharmacy_orders.find({}, {"_id": 0}).sort("created_at", -1).to_list(limit)
     diagnostic_orders = await db.diagnostic_orders.find({}, {"_id": 0}).sort("created_at", -1).to_list(limit)
+    appointments = await db.appointments.find({}, {"_id": 0}).sort("created_at", -1).to_list(limit)
     
     return {
+        "appointments": appointments,
         "pharmacy_orders": pharmacy_orders,
         "diagnostic_orders": diagnostic_orders
     }

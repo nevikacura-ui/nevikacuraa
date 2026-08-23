@@ -22,17 +22,17 @@ const Footer = () => {
     { name: 'Orange Pharmacy', href: '/pharmacy', icon: Pill, color: 'text-orange-500' },
   ];
 
-  // Health Portal - Wellness & specialty services
+  // Health Portal - 4 core wellness portals
   const healthPortal = [
     { name: 'Evara (PCOS Care)', href: '/evara', icon: Flower2, color: 'text-pink-400' },
     { name: 'Glydex (Diabetes)', href: '/glydex', icon: Activity, color: 'text-emerald-500' },
-    { name: 'Corvia (Heart Health)', href: '/corvia', icon: Heart, color: 'text-red-500' },
-    { name: 'Alyne (Kids Health)', href: '/alyne', icon: Baby, color: 'text-blue-400' },
-    { name: 'Aanya (Newborn)', href: '/aanya', icon: Baby, color: 'text-pink-300' },
-    { name: 'Thrive 360', href: '/thrive360', icon: Sparkles, color: 'text-purple-500' },
-    { name: 'Serena (Mental Health)', href: '/serena', icon: Brain, color: 'text-indigo-500' },
-    { name: 'Sonova (Fertility)', href: '/sonova', icon: Heart, color: 'text-rose-400' },
-    { name: 'Reneu (Senior Care)', href: '/reneu', icon: HandHeart, color: 'text-teal-500' },
+    { name: 'Reneu (Wellness)', href: '/reneu', icon: Sparkles, color: 'text-teal-500' },
+    { name: 'ALYNE (Kids Health)', href: '/alyne', icon: Baby, color: 'text-blue-400' },
+  ];
+
+  // Special Features
+  const specialFeatures = [
+    { name: 'PSVN Foundation', href: '/psvn-foundation', icon: HandHeart, color: 'text-emerald-400' },
   ];
 
   return (
@@ -59,25 +59,19 @@ const Footer = () => {
               <p className="text-sm text-gray-400 mb-5 leading-relaxed">
                 Comprehensive healthcare solutions for appointments, diagnostics, pharmacy, and specialized wellness programs.
               </p>
-              <div className="flex flex-col gap-3">
-                <Button
-                  onClick={openWhatsApp}
-                  className="bg-green-600 hover:bg-green-700 text-white gap-2 rounded-xl"
-                  data-testid="footer-whatsapp-btn"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  WhatsApp Support
-                </Button>
+              <div className="flex items-center gap-3">
                 <a 
                   href="https://drive.google.com/uc?export=download&id=1TaQ5PxgOaRUq_kyDux3lovWLg5Gs4nqi"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white rounded-xl text-sm font-medium transition-all shadow-md hover:shadow-lg"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center transition-all shadow-md hover:shadow-lg hover:scale-105"
+                  style={{ background: 'linear-gradient(135deg, #14B8A6, #0EA5E9)' }}
                   data-testid="footer-download-apk"
+                  title="Install App"
                 >
-                  <Download className="w-4 h-4" />
-                  Get the App
+                  <Download className="w-5 h-5 text-white" />
                 </a>
+                <span className="text-xs text-gray-500">Install App</span>
               </div>
             </div>
 
@@ -119,6 +113,21 @@ const Footer = () => {
                     >
                       <service.icon className={`w-3.5 h-3.5 ${service.color} group-hover:scale-110 transition-transform`} />
                       <span className="text-sm">{service.name}</span>
+                    </Link>
+                  </li>
+                ))}
+                {/* Special Features in desktop view */}
+                <li className="pt-3 mt-3 border-t border-slate-800">
+                  <span className="text-xs text-gray-500 uppercase tracking-wider">Special</span>
+                </li>
+                {specialFeatures.map((feature) => (
+                  <li key={feature.name}>
+                    <Link
+                      to={feature.href}
+                      className="flex items-center gap-2.5 text-gray-400 hover:text-white transition-colors group"
+                    >
+                      <feature.icon className={`w-3.5 h-3.5 ${feature.color} group-hover:scale-110 transition-transform`} />
+                      <span className="text-sm">{feature.name}</span>
                     </Link>
                   </li>
                 ))}
@@ -184,7 +193,7 @@ const Footer = () => {
           </div>
 
           {/* Portal Links Section */}
-          <div className="border-t border-slate-800 pt-6 mb-6">
+          <div className="border-t border-slate-800 pt-4 mb-4">
             <div className="flex flex-wrap items-center justify-center gap-6">
               <Link 
                 to="/senior-care" 
@@ -214,52 +223,75 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* QR Code Section */}
-          <div className="border-t border-slate-800 pt-8 mb-8">
-            <div className="flex flex-col items-center justify-center gap-4">
-              <div className="flex items-center gap-2 text-white">
-                <Smartphone className="w-5 h-5 text-teal-400" />
-                <span className="font-medium">Scan to Visit Website</span>
-              </div>
-              <div className="bg-white p-3 rounded-2xl shadow-xl">
-                <img 
-                  src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://staff-pay-portal-1.preview.emergentagent.com&color=0d9488"
-                  alt="Nevika Cura Website QR Code"
-                  className="w-28 h-28"
-                  data-testid="footer-qr-code"
-                />
-              </div>
-              <p className="text-xs text-gray-500">Scan to open Nevika Cura on your phone</p>
+          {/* Social Media Icons — Minimalist */}
+          <div className="border-t border-slate-800 pt-4 mb-4">
+            <div className="flex items-center justify-center gap-4">
+              {[
+                { href: 'https://www.facebook.com/share/1DjepDF7Uh/', label: 'Facebook', testId: 'social-facebook', icon: (
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]"><path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396v8.01Z"/></svg>
+                )},
+                { href: 'https://www.instagram.com/nevikacura', label: 'Instagram', testId: 'social-instagram', icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                )},
+                { href: 'https://www.threads.com/@nevikacura', label: 'Threads', testId: 'social-threads', icon: (
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.59 12c.025 3.086.718 5.496 2.057 7.164 1.432 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.96-.065-1.199.408-2.3 1.33-3.104.81-.706 1.963-1.131 3.236-1.194 1.032-.05 1.99.058 2.856.317-.048-1.442-.489-2.396-1.322-2.853-.53-.291-1.215-.422-2.037-.389-1.233.05-2.14.527-2.55 1.125l-1.7-1.127C8.38 5.4 10.058 4.695 12.043 4.613c1.205-.052 2.27.142 3.164.577 1.398.68 2.2 1.907 2.388 3.653.037.351.043.71.019 1.072.645.282 1.228.648 1.728 1.091 1.073.953 1.737 2.237 1.917 3.716.215 1.755-.26 3.752-1.91 5.37-1.85 1.814-4.105 2.632-7.163 2.908ZM12.39 13.74c-.93.047-1.665.282-2.122.682-.53.462-.7 1.047-.673 1.532.033.627.373 1.158.957 1.495.615.356 1.406.506 2.228.462 1.078-.058 1.907-.463 2.465-1.198.39-.513.675-1.2.808-2.065-.826-.291-1.76-.452-2.776-.452-.29 0-.584.014-.887.044Z"/></svg>
+                )},
+                { href: 'https://youtube.com/@nevikacura', label: 'YouTube', testId: 'social-youtube', icon: (
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z"/></svg>
+                )},
+                { href: 'https://x.com/nevikacura', label: 'X', testId: 'social-twitter', icon: (
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-[16px] h-[16px]"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                )},
+              ].map((social) => (
+                <a
+                  key={social.testId}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-testid={social.testId}
+                  aria-label={social.label}
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:scale-110 transition-all duration-300"
+                  style={{ background: 'rgba(148,163,184,0.12)' }}
+                >
+                  {social.icon}
+                </a>
+              ))}
             </div>
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-slate-800 pt-6 flex flex-col items-center gap-4">
-            {/* Tagline with visual flair */}
-            <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-teal-900/50 via-slate-800/50 to-teal-900/50 rounded-full border border-teal-800/30">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-teal-400 rounded-full animate-pulse"></span>
-                <span className="w-2 h-2 bg-teal-500 rounded-full"></span>
-                <span className="w-1.5 h-1.5 bg-teal-600 rounded-full"></span>
-              </div>
-              <p className="text-sm font-medium text-teal-100 tracking-wide flex items-center gap-3">
-                <span>Crafted by Doctors</span>
-                <span className="w-2 h-2 bg-teal-400/60 rounded-full"></span>
-                <span>Trusted by Patients</span>
-                <span className="w-2 h-2 bg-teal-400/60 rounded-full"></span>
-                <span>Managed by Doctors</span>
-              </p>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-teal-600 rounded-full"></span>
-                <span className="w-2 h-2 bg-teal-500 rounded-full"></span>
-                <span className="w-2.5 h-2.5 bg-teal-400 rounded-full animate-pulse"></span>
-              </div>
+          <div className="border-t border-slate-800 pt-4 flex flex-col items-center gap-3">
+            {/* Crafted by Doctors — Gradient Translucent Tags */}
+            <div className="flex items-center justify-center gap-3" data-testid="crafted-by-card">
+              <span
+                className="px-4 py-2 rounded-full text-xs font-semibold tracking-wide"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(20,184,166,0.18), rgba(56,189,248,0.12))',
+                  border: '1px solid rgba(20,184,166,0.2)',
+                  backdropFilter: 'blur(12px)',
+                  color: 'rgba(153,246,228,0.9)',
+                }}
+              >
+                Crafted by Doctors
+              </span>
+              <span
+                className="px-4 py-2 rounded-full text-xs font-semibold tracking-wide"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(168,85,247,0.18), rgba(236,72,153,0.12))',
+                  border: '1px solid rgba(168,85,247,0.2)',
+                  backdropFilter: 'blur(12px)',
+                  color: 'rgba(216,180,254,0.9)',
+                }}
+              >
+                Trusted by Patients
+              </span>
             </div>
             
-            {/* Copyright */}
+            {/* Copyright & Version */}
             <p className="text-xs text-gray-500">
               © {new Date().getFullYear()} Nevika Cura Healthcare. All rights reserved.
             </p>
+            <p className="text-[10px] text-gray-600" data-testid="app-version">v2.1.0</p>
           </div>
         </div>
       </footer>
@@ -322,7 +354,7 @@ const Footer = () => {
                 <Clock className="w-5 h-5 text-slate-500 mt-0.5" />
                 <div>
                   <p className="font-medium text-gray-800">Working Hours</p>
-                  <p className="text-sm text-gray-600">Monday - Saturday: 11:00 AM - 10:00 PM</p>
+                  <p className="text-sm text-gray-600">Monday - Saturday: 11:30 AM - 10:00 PM</p>
                   <p className="text-sm text-gray-600">Sunday: Emergency only</p>
                 </div>
               </div>
@@ -334,7 +366,6 @@ const Footer = () => {
                 <div>
                   <p className="font-medium text-gray-800">Locations</p>
                   <p className="text-sm text-gray-600">Pushpa Clinic - A-4, Sai Darshan, Near Don Bosco High School, Naigaon East</p>
-                  <p className="text-sm text-gray-600 mt-1">Amnion Clinic - G-7, Rashmi Star City Phase 5, Opp Thakur School, Naigaon East</p>
                 </div>
               </div>
             </div>

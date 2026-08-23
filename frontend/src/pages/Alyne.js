@@ -20,8 +20,10 @@ import {
   Phone, Eye, Scissors, Brain, Droplets, Video, ExternalLink, Leaf, Building2,
   Car, Dna, Gamepad2
 } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import Footer from '@/components/Footer';
 import { KidsZoneSection } from '@/components/AlyneKidsZone';
+import { GrowthPercentile, VaccineSchedule } from '@/components/HealthRings';
 import { CulturalBridgeSection } from '@/components/AlyneCulturalBridge';
 import { DigitalHealthTwinSection } from '@/components/AlyneHealthTwin';
 import AanyaNewbornCare from '@/components/AanyaNewbornCare';
@@ -54,10 +56,10 @@ const REGION_CONTENT = {
       "Monsoon-related infections"
     ],
     quickLinks: [
-      { name: "Govt Schemes", icon: "🏛️", id: "govt_schemes" },
-      { name: "Regional Foods", icon: "🍲", id: "regional_foods" },
-      { name: "Seasonal Alerts", icon: "🌧️", id: "seasonal_alerts" },
-      { name: "Home Remedies", icon: "🌿", id: "ayurvedic" }
+      { name: "Govt Schemes", icon: "govt", id: "govt_schemes" },
+      { name: "Regional Foods", icon: "food", id: "regional_foods" },
+      { name: "Seasonal Alerts", icon: "weather", id: "seasonal_alerts" },
+      { name: "Home Remedies", icon: "leaf", id: "ayurvedic" }
     ]
   },
   usa: {
@@ -81,12 +83,12 @@ const REGION_CONTENT = {
       "Screen time limits"
     ],
     quickLinks: [
-      { name: "Insurance Guide", icon: "💳", id: "insurance_guide" },
-      { name: "School Vaccines", icon: "🏫", id: "school_vaccines" },
-      { name: "WIC Program", icon: "🥛", id: "wic_program" },
-      { name: "Safety Guide", icon: "🚗", id: "safety_guide" },
-      { name: "Find Pediatrician", icon: "👨‍⚕️", id: "pediatrician_finder" },
-      { name: "Brightwheel", icon: "🎒", id: "brightwheel_info" }
+      { name: "Insurance Guide", icon: "shield", id: "insurance_guide" },
+      { name: "School Vaccines", icon: "school", id: "school_vaccines" },
+      { name: "WIC Program", icon: "heart", id: "wic_program" },
+      { name: "Safety Guide", icon: "car", id: "safety_guide" },
+      { name: "Find Pediatrician", icon: "doctor", id: "pediatrician_finder" },
+      { name: "Brightwheel", icon: "book", id: "brightwheel_info" }
     ]
   }
 };
@@ -402,6 +404,7 @@ const Alyne = () => {
               <div className="h-14 rounded-xl flex items-center justify-center overflow-hidden">
                 <img src={ALYNE_LOGO} alt="ALYNE" className="h-14 w-auto object-cover rounded-xl" />
               </div>
+              <span className="text-[9px] text-gray-400 font-medium">A Nevika Cura Company</span>
             </div>
             
             <div className="flex items-center gap-2">
@@ -671,6 +674,12 @@ const Alyne = () => {
             </div>
 
             {/* Quick Actions */}
+            {selectedChild && (
+              <div className="space-y-3">
+                <GrowthPercentile childAge={selectedChild?.age_text || '2y'} height={87} weight={12.5} gender={selectedChild?.gender || 'boy'} />
+                <VaccineSchedule vaccines={[]} />
+              </div>
+            )}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <QuickAction icon={<MessageCircle className="w-5 h-5 text-amber-600" />} title="AI Chat" subtitle="Ask ALYNE" bgColor="bg-amber-50" onClick={() => setActiveCategory({id: 'chat', title: 'AI Chat'})} />
               {selectedRegion === 'india' && (
@@ -686,25 +695,29 @@ const Alyne = () => {
             {/* Region-Specific Resources */}
             <div>
               <h3 className="text-sm font-semibold text-gray-500 mb-3 flex items-center gap-2">
-                {selectedRegion === 'india' ? '🇮🇳' : '🇺🇸'} {selectedRegion === 'india' ? 'India' : 'USA'} Resources
+                <Globe className="w-4 h-4" /> {selectedRegion === 'india' ? 'India' : 'USA'} Resources
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {regionData.quickLinks?.map((link) => (
-                  <button 
-                    key={link.id} 
-                    onClick={() => setActiveCategory({id: link.id, title: link.name, region: selectedRegion})}
-                    className="bg-white border p-4 rounded-xl text-left hover:shadow-md transition-all hover:border-teal-300"
-                  >
-                    <span className="text-2xl block mb-2">{link.icon}</span>
-                    <p className="font-medium text-sm text-gray-800">{link.name}</p>
-                  </button>
-                ))}
+                {regionData.quickLinks?.map((link) => {
+                  const iconMap = { govt: Building2, food: Utensils, weather: AlertTriangle, leaf: Leaf, shield: Shield, school: GraduationCap, heart: Heart, car: Car, doctor: Stethoscope, book: BookOpen };
+                  const IconComp = iconMap[link.icon] || Globe;
+                  return (
+                    <button 
+                      key={link.id} 
+                      onClick={() => setActiveCategory({id: link.id, title: link.name, region: selectedRegion})}
+                      className="bg-white border p-4 rounded-xl text-left hover:shadow-md transition-all hover:border-teal-300"
+                    >
+                      <IconComp className="w-6 h-6 text-teal-600 mb-2" />
+                      <p className="font-medium text-sm text-gray-800">{link.name}</p>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Common Resources */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-500 mb-3">📚 Helpful Resources</h3>
+              <h3 className="text-sm font-semibold text-gray-500 mb-3 flex items-center gap-2"><BookOpen className="w-4 h-4" /> Helpful Resources</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <button onClick={() => setActiveCategory({id: 'dev_screening', title: 'Developmental Screening'})} className="bg-gradient-to-r from-purple-50 to-pink-50 border p-4 rounded-xl text-left hover:shadow-md">
                   <Brain className="w-5 h-5 text-purple-600 mb-2" />
@@ -729,7 +742,7 @@ const Alyne = () => {
               <CardHeader className="pb-2">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Star className="w-4 h-4 text-amber-500" />
-                  {selectedRegion === 'india' ? '🇮🇳' : '🇺🇸'} Health Tips for {selectedRegion === 'india' ? 'India' : 'USA'}
+                  Health Tips for {selectedRegion === 'india' ? 'India' : 'USA'}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1215,7 +1228,9 @@ const KidsShopSection = ({ user, onBack }) => {
         {loading ? [...Array(8)].map((_, i) => <div key={i} className="bg-gray-100 rounded-xl h-40 animate-pulse"></div>) : products.map(p => (
           <Card key={p.id} className="border shadow-sm hover:shadow-md">
             <CardContent className="p-3">
-              <div className="w-full h-16 bg-gray-100 rounded-lg mb-2 flex items-center justify-center"><Package className="w-8 h-8 text-gray-300" /></div>
+              <div className="w-full h-16 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-lg mb-2 flex items-center justify-center">
+                <ShoppingCart className="w-6 h-6 text-teal-400" />
+              </div>
               {p.bestseller && <Badge className="bg-rose-500 text-xs mb-1">Best</Badge>}
               <h4 className="font-medium text-xs line-clamp-2">{p.name}</h4>
               <p className="text-xs text-gray-400">{p.brand}</p>
@@ -1267,7 +1282,48 @@ const VaccinationsSection = ({ child, region, onBack }) => {
         <div><h2 className="text-xl font-bold">Vaccinations</h2><p className="text-sm text-gray-500">{region === 'india' ? 'IAP Schedule' : 'CDC Schedule'}</p></div>
       </div>
 
-      <Card><CardContent className="p-4"><div className="flex justify-between mb-2"><span>Progress</span><span className="font-bold text-teal-600">{progress}%</span></div><Progress value={progress} className="h-2" /></CardContent></Card>
+      {/* Progress Bar */}
+      <Card><CardContent className="p-4">
+        <div className="flex justify-between mb-2"><span className="text-sm font-medium">Vaccination Progress</span><span className="font-bold text-teal-600">{stats.done || 0}/{stats.total || 0}</span></div>
+        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-teal-400 to-emerald-500 rounded-full transition-all" style={{ width: `${progress}%` }} />
+        </div>
+        <div className="flex justify-between mt-2 text-xs">
+          <span className="text-emerald-600 font-medium">{progress}% complete</span>
+          <span className="text-amber-600">{stats.due || 0} due</span>
+          {(stats.overdue || 0) > 0 && <span className="text-red-600">{stats.overdue} overdue</span>}
+        </div>
+      </CardContent></Card>
+
+      {/* Timeline Visualization */}
+      {vaccinations.length > 0 && (
+        <Card><CardContent className="p-4">
+          <h4 className="font-semibold text-sm mb-3">Timeline</h4>
+          <div className="relative pl-6">
+            <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-gray-200" />
+            {vaccinations.slice(0, 8).map((v, i) => (
+              <div key={v.id} className="relative mb-3 last:mb-0">
+                <div className={`absolute -left-4 w-3 h-3 rounded-full border-2 ${
+                  v.status === 'done' ? 'bg-emerald-500 border-emerald-500' : 
+                  v.status === 'overdue' ? 'bg-red-500 border-red-500' : 
+                  'bg-white border-amber-400'
+                }`} />
+                <div className="ml-2 flex items-center justify-between bg-gray-50 rounded-lg p-2">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-700">{v.vaccine_name} <span className="text-gray-400">({v.dose})</span></p>
+                    <p className="text-[10px] text-gray-400">{v.scheduled_date}</p>
+                  </div>
+                  <Badge className={`text-[10px] border-0 ${
+                    v.status === 'done' ? 'bg-emerald-100 text-emerald-700' : 
+                    v.status === 'overdue' ? 'bg-red-100 text-red-700' : 
+                    'bg-amber-100 text-amber-700'
+                  }`}>{v.status}</Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent></Card>
+      )}
 
       <div className="flex gap-2 flex-wrap">
         {['all', 'due', 'overdue', 'done'].map(f => <Button key={f} variant={filter === f ? 'default' : 'outline'} size="sm" onClick={() => setFilter(f)} className={filter === f ? 'bg-teal-600' : ''}>{f.charAt(0).toUpperCase() + f.slice(1)} {f !== 'all' && `(${stats[f] || 0})`}</Button>)}
@@ -1305,6 +1361,12 @@ const GrowthSection = ({ child, onBack }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (child) fetchGrowth(); }, [child?.id]);
 
+  const chartData = records.slice().reverse().map(r => ({
+    date: (r.date || '').slice(5),
+    height: r.height_cm || null,
+    weight: r.weight_kg || null,
+  }));
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -1317,6 +1379,40 @@ const GrowthSection = ({ child, onBack }) => {
           <Card className="bg-teal-50"><CardContent className="p-4 text-center"><Ruler className="w-6 h-6 text-teal-600 mx-auto" /><p className="text-xl font-bold text-teal-700">{records[0].height_cm || '--'} cm</p><p className="text-xs text-gray-500">Height</p></CardContent></Card>
           <Card className="bg-amber-50"><CardContent className="p-4 text-center"><Scale className="w-6 h-6 text-amber-600 mx-auto" /><p className="text-xl font-bold text-amber-700">{records[0].weight_kg || '--'} kg</p><p className="text-xs text-gray-500">Weight</p></CardContent></Card>
           <Card className="bg-pink-50"><CardContent className="p-4 text-center"><Baby className="w-6 h-6 text-pink-600 mx-auto" /><p className="text-xl font-bold text-pink-700">{child.age_display}</p><p className="text-xs text-gray-500">Age</p></CardContent></Card>
+        </div>
+      )}
+
+      {/* Growth Charts */}
+      {chartData.length >= 2 && (
+        <div className="space-y-4">
+          <Card>
+            <CardContent className="p-4">
+              <h4 className="font-semibold mb-3 text-sm flex items-center gap-2"><TrendingUp className="w-4 h-4 text-teal-500" /> Height Trend (cm)</h4>
+              <ResponsiveContainer width="100%" height={180}>
+                <LineChart data={chartData} margin={{ top: 5, right: 10, bottom: 5, left: -20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="date" tick={{ fontSize: 10 }} stroke="#999" />
+                  <YAxis tick={{ fontSize: 10 }} stroke="#999" />
+                  <Tooltip contentStyle={{ borderRadius: 12, fontSize: 12, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                  <Line type="monotone" dataKey="height" stroke="#14b8a6" strokeWidth={2.5} dot={{ fill: '#14b8a6', r: 4 }} name="Height (cm)" />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <h4 className="font-semibold mb-3 text-sm flex items-center gap-2"><Scale className="w-4 h-4 text-amber-500" /> Weight Trend (kg)</h4>
+              <ResponsiveContainer width="100%" height={180}>
+                <LineChart data={chartData} margin={{ top: 5, right: 10, bottom: 5, left: -20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="date" tick={{ fontSize: 10 }} stroke="#999" />
+                  <YAxis tick={{ fontSize: 10 }} stroke="#999" />
+                  <Tooltip contentStyle={{ borderRadius: 12, fontSize: 12, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                  <Line type="monotone" dataKey="weight" stroke="#f59e0b" strokeWidth={2.5} dot={{ fill: '#f59e0b', r: 4 }} name="Weight (kg)" />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
         </div>
       )}
 
@@ -1352,7 +1448,7 @@ const GovtSchemesSection = ({ onBack }) => {
     <div className="space-y-4">
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
-        <div><h2 className="text-xl font-bold">🏛️ Government Schemes</h2><p className="text-sm text-gray-500">Free healthcare programs for children</p></div>
+        <div><h2 className="text-xl font-bold">Government Schemes</h2><p className="text-sm text-gray-500">Free healthcare programs for children</p></div>
       </div>
       
       {loading ? <div className="text-center py-8">Loading...</div> : (
@@ -1409,7 +1505,7 @@ const RegionalFoodsSection = ({ onBack }) => {
     <div className="space-y-4">
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" onClick={onBack}><ArrowLeft className="w-5 h-5" /></Button>
-        <div><h2 className="text-xl font-bold">🍲 Regional Weaning Foods</h2><p className="text-sm text-gray-500">Traditional first foods for babies</p></div>
+        <div><h2 className="text-xl font-bold">Regional Weaning Foods</h2><p className="text-sm text-gray-500">Traditional first foods for babies</p></div>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2">

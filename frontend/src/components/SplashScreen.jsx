@@ -335,13 +335,14 @@ const SplashScreen = ({ onComplete, user }) => {
       <div className="relative z-10 text-center max-w-md mx-auto flex flex-col items-center">
         {/* Logo/Brand */}
         <div className="mb-6">
-          <div className="bg-white rounded-[40px] px-8 py-5 shadow-xl">
+          <div className="rounded-[40px] px-8 py-5">
             <img 
-              src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
+              src="https://customer-assets.emergentagent.com/job_d786a99e-45bb-47d6-851a-3fcc890efd73/artifacts/1k8xe1te_1314-removebg-preview.png" 
               alt="Nevika Cura" 
-              className="h-20 w-auto object-contain"
+              className="h-24 w-24 mx-auto object-contain"
             />
           </div>
+          <p className="text-white text-xl font-bold tracking-wide mt-2">Nevika Cura</p>
           <div className="h-1 w-20 bg-gradient-to-r from-teal-200 to-cyan-200 mx-auto rounded-full mt-3"></div>
         </div>
         

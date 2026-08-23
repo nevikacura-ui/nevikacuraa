@@ -283,12 +283,9 @@ export function SmartNotificationBanner() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Don't show on staff/admin/doctor pages
-    const isStaffPage = window.location.pathname.startsWith('/staff') || 
-                        window.location.pathname.startsWith('/admin') ||
-                        window.location.pathname.startsWith('/doctor');
-    
-    if (isStaffPage) return;
+    // Only show on the Nevika home page
+    const pathname = window.location.pathname;
+    if (pathname !== '/') return;
     
     // Check if we should re-prompt
     const shouldShowBanner = () => {
@@ -348,38 +345,48 @@ export function SmartNotificationBanner() {
     setShowBanner(false);
   };
 
-  if (!showBanner) return null;
+  // Disabled - replaced with inline banner on Home page
+  return null;
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-[40] max-w-md mx-auto animate-in slide-in-from-bottom duration-500">
-      <div className="bg-gradient-to-r from-teal-500 to-emerald-600 rounded-2xl shadow-2xl overflow-hidden">
-        <div className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-              <Bell className="w-6 h-6 text-white" />
+    <div className="fixed bottom-6 left-4 right-4 z-[35] max-w-sm mx-auto animate-in slide-in-from-bottom-12 fade-in duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
+      {/* Apple Liquid Glass Container */}
+      <div 
+        className="relative bg-white/40 backdrop-blur-2xl border border-white/60 rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)] ring-1 ring-white/60 ring-inset"
+      >
+        {/* Liquid water reflection overlay - top highlight */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/60 to-transparent pointer-events-none" />
+        {/* Liquid water volume - subtle blue tint at bottom */}
+        <div className="absolute inset-0 bg-gradient-to-t from-blue-50/30 to-transparent pointer-events-none" />
+        
+        <div className="relative p-5">
+          <div className="flex items-start gap-4">
+            {/* Glass pill icon container */}
+            <div className="w-12 h-12 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
+              <Bell className="w-6 h-6 text-teal-600" />
             </div>
-            <div className="flex-1">
-              <p className="font-semibold text-white">Don&apos;t miss important updates!</p>
-              <p className="text-white/80 text-sm mt-0.5">
-                Enable notifications for medicine reminders & appointment alerts
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-slate-800 text-sm leading-tight">Don&apos;t miss important updates!</p>
+              <p className="text-slate-600 text-xs mt-1 leading-snug">
+                Get medicine reminders & appointment alerts
               </p>
             </div>
-            <button onClick={handleDismiss} className="text-white/60 hover:text-white p-1">
-              <X className="w-5 h-5" />
+            <button onClick={handleDismiss} className="text-slate-400 hover:text-slate-600 p-1 transition-colors">
+              <X className="w-4 h-4" />
             </button>
           </div>
           
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-3 mt-4">
             <button
               onClick={handleDismiss}
-              className="flex-1 py-2.5 text-white/80 hover:text-white text-sm font-medium rounded-lg hover:bg-white/10 transition-colors"
+              className="flex-1 py-2.5 text-slate-500 hover:text-slate-800 text-sm font-medium transition-colors"
             >
               Later
             </button>
             <Button
               onClick={handleEnable}
               disabled={isLoading}
-              className="flex-1 bg-white text-teal-700 hover:bg-white/90 rounded-lg font-medium"
+              className="flex-1 bg-white/80 backdrop-blur-sm hover:bg-white text-teal-700 font-semibold shadow-sm rounded-full border border-white/50 transition-all hover:shadow-md"
               data-testid="smart-banner-enable-btn"
             >
               {isLoading ? 'Enabling...' : 'Enable Now'}

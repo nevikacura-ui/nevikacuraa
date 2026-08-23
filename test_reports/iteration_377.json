@@ -1,0 +1,76 @@
+{
+  "summary": "Testing completed for Nevika Cura booking code system and doctor image display. All features verified working correctly: 1) DGC prefix for walk-in/emergency bookings, 2) DGO prefix for web bookings, 3) Booking ID format PREFIX-DDMMYY-XXXX, 4) Doctor images display correctly on BookingConfirmation page.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_booking_id_format.py",
+    "/app/test_reports/pytest/pytest_booking_id_format_377.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "booking_utils.py: Unified booking ID generator correctly implements PREFIX-DDMMYY-XXXX format with service/source mapping",
+    "diagyn_staff/appointments.py (line 82-84): Correctly uses generate_booking_id(service='diagyn', source='clinic') for walk-in/emergency",
+    "appointment_routes.py (line 121-132): Legacy wrapper correctly routes to new generator with service detection",
+    "BookingConfirmation.jsx (line 18-28): DOC_IMAGES map correctly maps 'vikas' to male image and 'neha' to female image"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_booking_id_format.py"
+  ],
+  "success_rate": {
+    "backend": "100% (6 passed, 1 skipped)",
+    "frontend": "100%"
+  },
+  "test_credentials": "dr_neha/neha2026, dr_vikas/vikas2026",
+  "seed_data_creation": "Created test appointments with unique patient names (TEST_WalkIn_*, TEST_Emergency_*, TEST_Random_*)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Booking ID format testing complete. New format is PREFIX-DDMMYY-XXXX where PREFIX is DGO (DiaGyn Online), DGC (DiaGyn Clinic walk-in/emergency), MGO (Mango Labs Online), ORO (Orange Pharmacy Online). The 4-digit code serves as verification OTP. Staff login endpoint is /api/staff/login (not /api/diagyn-staff/auth/login). Doctor images on BookingConfirmation are correctly mapped via getDocImg() function.",
+  "features_tested": {
+    "booking_id_format_dgc_walkin": {
+      "status": "PASS",
+      "endpoint": "POST /api/diagyn-staff/appointments/book",
+      "payload": {"appointment_type": "WALK_IN"},
+      "expected_format": "DGC-DDMMYY-XXXX",
+      "verified": true
+    },
+    "booking_id_format_dgc_emergency": {
+      "status": "PASS",
+      "endpoint": "POST /api/diagyn-staff/appointments/book",
+      "payload": {"appointment_type": "EMERGENCY"},
+      "expected_format": "DGC-DDMMYY-XXXX",
+      "verified": true
+    },
+    "booking_id_randomness": {
+      "status": "PASS",
+      "description": "Two bookings generate different 4-digit codes",
+      "verified": true
+    },
+    "booking_id_format_regex": {
+      "status": "PASS",
+      "pattern": "^(DGO|DGC|MGO|ORO)-\\d{6}-\\d{4}$",
+      "valid_examples": ["DGO-050426-1234", "DGC-050426-5678", "MGO-050426-9012", "ORO-050426-3456"],
+      "invalid_examples_rejected": ["DG-2026-0412", "DGO-2026-0412", "DGO-050426-123"]
+    },
+    "doctor_image_vikas": {
+      "status": "PASS",
+      "url": "/booking-confirmation?type=diagyn&doctor=Dr.%20Vikas%20Jha",
+      "expected_image": "gg2swmlp_IMG-20220627-WA0003.jpg (male)",
+      "actual_image": "gg2swmlp_IMG-20220627-WA0003.jpg",
+      "correct": true
+    },
+    "doctor_image_neha": {
+      "status": "PASS",
+      "url": "/booking-confirmation?type=diagyn&doctor=Dr.%20Neha%20Patel",
+      "expected_image": "u05fho69_IMG-20260126-WA0000.jpg (female)",
+      "actual_image": "u05fho69_IMG-20260126-WA0000.jpg",
+      "correct": true
+    }
+  }
+}

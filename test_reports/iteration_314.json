@@ -1,0 +1,150 @@
+{
+  "summary": "Iteration 314 - Health Insights Page, Adult Vaccination Page, Cart Product Suggestions, Stripe International Payment. All 11 backend tests passed (100%). Frontend testing confirmed: Health Insights page with purple gradient, For You/Family toggle, health metrics cards, action cards, AI section; Adult Vaccination page with teal gradient, vaccine grid (6 vaccines), expandable cards with Add to Cart, How it Works section; Cart page with clickable product suggestions with Add to Cart buttons; Stripe international payment redirects to checkout.stripe.com.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend": {
+      "total_tests": 11,
+      "passed": 11,
+      "failed": 0,
+      "tests": [
+        "TestHealthEndpoint::test_health_endpoint - PASSED",
+        "TestPharmacyTrending::test_pharmacy_trending_returns_products - PASSED (5 products)",
+        "TestPharmacyTrending::test_pharmacy_trending_with_limit - PASSED",
+        "TestStripePharmacyCheckout::test_stripe_pharmacy_checkout_success - PASSED ($17.65 USD / ₹1500 INR)",
+        "TestStripePharmacyCheckout::test_stripe_pharmacy_checkout_empty_cart - PASSED (returns 400)",
+        "TestStripePharmacyCheckout::test_stripe_pharmacy_checkout_multiple_items - PASSED ($95.29 USD / ₹8100 INR)",
+        "TestPharmacyBrowse::test_pharmacy_v3_browse - PASSED",
+        "TestPharmacyBrowse::test_pharmacy_search - PASSED",
+        "TestVaccinationData::test_health_endpoint_for_vaccination_page - PASSED",
+        "TestVaccinationData::test_pharmacy_trending_for_cart_suggestions - PASSED",
+        "TestCartIntegration::test_pharmacy_orders_endpoint - PASSED (requires auth)"
+      ]
+    },
+    "frontend": {
+      "HomepageToggles": {
+        "status": "PASSED",
+        "findings": [
+          "Health Insights toggle button found (data-testid='home-health-insights')",
+          "Purple gradient styling on Health Insights button",
+          "Adult Vaccination toggle button found (data-testid='home-adult-vaccination')",
+          "Teal gradient styling on Vaccination button",
+          "Both buttons navigate correctly to their pages"
+        ]
+      },
+      "HealthInsightsPage": {
+        "status": "PASSED",
+        "findings": [
+          "Purple gradient background (linear-gradient #7C3AED → #9333EA → #A855F7 → #C084FC)",
+          "Back button (data-testid='health-insights-back') present",
+          "For You / Family toggle (data-testid='insights-tab-toggle') working",
+          "Health metrics scroll section with Cholesterol, Hemoglobin cards",
+          "Action cards: Your health insights, Your family insights",
+          "Upload cards: Upload lab report, Upload prescription, Book lab test",
+          "Ask AI section with 4 prompt chips and input field",
+          "AI submit button navigates to /health-assistant"
+        ]
+      },
+      "AdultVaccinationPage": {
+        "status": "PASSED",
+        "findings": [
+          "Teal/green gradient background (linear-gradient #ECFDF5 → #D1FAE5 → #F0FDF4)",
+          "Back button (data-testid='vaccination-back') present",
+          "Search input (data-testid='vaccine-search-input') working",
+          "Vaccine grid with 6 vaccines: Influenza, HPV, Shingles, Pneumonia, Tdap, Hepatitis B",
+          "Clicking vaccine card expands to show description, price, doses",
+          "Add to Cart button appears on expanded card (data-testid='add-vaccine-{id}')",
+          "Toast notification 'Influenza vaccine added to cart' appears",
+          "How it Works section with 4 steps",
+          "Bottom CTA: Call Us button, View Cart button",
+          "View Cart navigates to /cart"
+        ]
+      },
+      "CartProductSuggestions": {
+        "status": "PASSED",
+        "findings": [
+          "Cart product suggestions section (data-testid='cart-product-suggestions') present",
+          "Suggestion cards are clickable (data-testid='suggest-product-{idx}')",
+          "Add to Cart buttons on each suggestion (data-testid='add-suggest-{idx}')",
+          "Clicking Add to Cart adds item and shows toast notification",
+          "Products fetched from /api/pharmacy/trending endpoint"
+        ]
+      },
+      "StripeInternationalPayment": {
+        "status": "PASSED",
+        "findings": [
+          "Stripe button (data-testid='stripe-intl-btn') present",
+          "Button text: 'Pay with Card (International)'",
+          "Clicking button redirects to checkout.stripe.com",
+          "Stripe checkout shows US$17.64 (converted from ₹1500)",
+          "Stripe sandbox mode active"
+        ]
+      },
+      "CartCalculations": {
+        "status": "PASSED",
+        "findings": [
+          "Vaccine added to cart: Influenza Vaccine ₹1500 (17% off from ₹1800)",
+          "Savings ribbon: 'You save ₹180 on this order'",
+          "Bill Summary shows correct totals",
+          "Delivery options: Priority (₹30) and Standard (FREE)",
+          "Main checkout button: 'Confirm and pay ₹1620'"
+        ]
+      }
+    }
+  },
+  "api_endpoints_tested": {
+    "stripe_payments": [
+      "POST /api/payments/stripe/pharmacy-checkout - Creates Stripe checkout session for pharmacy/vaccine orders"
+    ],
+    "pharmacy": [
+      "GET /api/pharmacy/trending - Returns trending products for cart suggestions",
+      "GET /api/pharmacy/v3/browse - Returns pharmacy sections",
+      "GET /api/pharmacy/search - Returns search results"
+    ],
+    "health": [
+      "GET /api/health - Returns {status: 'ok'}"
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_health_vaccination_314.py",
+    "/app/test_reports/pytest/pytest_health_vaccination_314.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Health Insights page uses 1mg-inspired purple gradient design with AI-powered features",
+    "Adult Vaccination page uses teal/green gradient with 6 vaccine options",
+    "Vaccine Add to Cart uses CartContext.addToPharmacyCart correctly",
+    "Cart product suggestions fetch from /api/pharmacy/trending and render clickable cards",
+    "Stripe pharmacy checkout converts INR to USD (÷85) for international patients",
+    "All data-testids present for automated testing",
+    "Navigation between pages works correctly (back buttons, View Cart)"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_health_vaccination_314.py"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 tests passed)",
+    "frontend": "100% (all features working)"
+  },
+  "test_credentials": {
+    "admin_email": "nevikacura@gmail.com",
+    "doctor": "dr_vikas / test1234",
+    "staff": "staff_diagyn / test1234",
+    "stripe_key": "sk_test_emergent (sandbox)"
+  },
+  "seed_data_creation": "Injected test cart data via localStorage: pharmacyCart (Influenza Vaccine ₹1500)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "New pages added: /health-insights (purple gradient, AI-powered health insights), /adult-vaccination (teal gradient, 6 vaccines with Add to Cart). Homepage has two new toggle buttons (data-testid: home-health-insights, home-adult-vaccination). Cart page has CartProductSuggestions component with clickable product cards and Add to Cart buttons (data-testid: cart-product-suggestions, suggest-product-{idx}, add-suggest-{idx}). Stripe international payment button (data-testid: stripe-intl-btn) creates checkout session via POST /api/payments/stripe/pharmacy-checkout.",
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  }
+}

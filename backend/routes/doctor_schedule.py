@@ -62,12 +62,14 @@ class DaySchedule(BaseModel):
 class BlockedDate(BaseModel):
     date: str  # "2026-02-10"
     reason: str = "Leave"
+    force_override: bool = False
 
 class BlockedSession(BaseModel):
     date: str  # "2026-02-10"
     start_time: str  # "11:00"
     end_time: str  # "14:00"
     reason: str = "Break"
+    force_override: bool = False
 
 class ScheduleUpdate(BaseModel):
     weekly_schedule: Optional[List[DaySchedule]] = None
@@ -146,9 +148,64 @@ async def update_my_schedule(data: ScheduleUpdate, doctor=Depends(verify_doctor)
 
 @router.post("/block-date")
 async def block_date(data: BlockedDate, doctor=Depends(verify_doctor)):
-    """Block a specific date (holiday/leave)"""
+    """Block a specific date (holiday/leave). If force_override, cancel existing appointments."""
     doctor_id = doctor.get("sub") or doctor.get("id")
+    doctor_name = doctor.get("name", "Doctor")
     
+    # Check for existing appointments on this date
+    existing_appointments = await db.appointments.find({
+        "doctor": {"$regex": doctor_name, "$options": "i"},
+        "date": data.date,
+        "status": {"$in": ["pending", "Booked", "In Clinic"]}
+    }).to_list(100)
+    
+    if existing_appointments and not data.force_override:
+        # Return conflict with appointment details
+        patients = [{"name": a.get("patient_name", "Unknown"), "time": a.get("time", ""), "phone": a.get("patient_phone", ""), "booking_id": a.get("booking_id", a.get("id", ""))} for a in existing_appointments]
+        return {
+            "success": False, 
+            "conflict": True,
+            "appointment_count": len(existing_appointments),
+            "patients": patients,
+            "message": f"{len(existing_appointments)} appointment(s) booked on {data.date}. Override to cancel and notify patients."
+        }
+    
+    # Cancel existing appointments and notify patients if force override
+    cancelled_count = 0
+    notified_patients = []
+    if existing_appointments and data.force_override:
+        for appt in existing_appointments:
+            await db.appointments.update_one(
+                {"booking_id": appt.get("booking_id", appt.get("id"))},
+                {"$set": {
+                    "status": "Cancelled",
+                    "cancellation_reason": f"Doctor on leave: {data.reason}",
+                    "cancelled_at": datetime.now(timezone.utc).isoformat(),
+                    "cancelled_by": "doctor_leave"
+                }}
+            )
+            cancelled_count += 1
+            
+            # Send WhatsApp cancellation notification
+            patient_phone = appt.get("patient_phone", "")
+            patient_name = appt.get("patient_name", "Patient")
+            booking_id = str(appt.get("booking_id", appt.get("id", "")))[:8]
+            if patient_phone:
+                try:
+                    from services.msg91_whatsapp import send_order_cancelled
+                    await send_order_cancelled(
+                        phone=patient_phone,
+                        patient_name=patient_name,
+                        service_name="DiaGyn",
+                        order_id=booking_id,
+                        db=db
+                    )
+                    notified_patients.append(patient_name)
+                    logger.info(f"WhatsApp cancellation sent to {patient_name} ({patient_phone})")
+                except Exception as e:
+                    logger.error(f"Failed to send cancellation WhatsApp to {patient_phone}: {e}")
+    
+    # Block the date
     await db.doctor_schedules.update_one(
         {"doctor_id": doctor_id},
         {
@@ -159,7 +216,12 @@ async def block_date(data: BlockedDate, doctor=Depends(verify_doctor)):
         upsert=True
     )
     
-    return {"success": True, "message": f"Blocked {data.date}"}
+    return {
+        "success": True, 
+        "message": f"Blocked {data.date}",
+        "cancelled_count": cancelled_count,
+        "notified_patients": notified_patients
+    }
 
 
 @router.delete("/block-date/{date}")
@@ -296,10 +358,78 @@ async def get_all_doctors_schedules(doctor=Depends(verify_doctor)):
 
 @router.post("/block-session")
 async def block_session(data: BlockedSession, doctor=Depends(verify_doctor)):
-    """Block a specific time slot on a date"""
+    """Block a specific time slot on a date. If force_override, cancel existing appointments in that session."""
     doctor_id = doctor.get("sub") or doctor.get("id")
+    doctor_name = doctor.get("name", "Doctor")
     
-    await db.doctor_schedules.update_one(
+    # Find appointments within this session's time range
+    all_appointments = await db.appointments.find({
+        "doctor": {"$regex": doctor_name, "$options": "i"},
+        "date": data.date,
+        "status": {"$in": ["pending", "Booked", "In Clinic"]}
+    }).to_list(100)
+    
+    # Filter by time range (convert appointment time to 24h and check)
+    def time_in_range(appt_time, start, end):
+        try:
+            t = appt_time.strip().upper()
+            if "AM" in t or "PM" in t:
+                parsed = datetime.strptime(t, "%I:%M %p")
+            else:
+                parsed = datetime.strptime(t, "%H:%M")
+            s = datetime.strptime(start, "%H:%M")
+            e = datetime.strptime(end, "%H:%M")
+            return s <= parsed <= e
+        except:
+            return False
+    
+    affected_appointments = [a for a in all_appointments if time_in_range(a.get("time", ""), data.start_time, data.end_time)]
+    
+    if affected_appointments and not data.force_override:
+        patients = [{"name": a.get("patient_name", "Unknown"), "time": a.get("time", ""), "phone": a.get("patient_phone", ""), "booking_id": a.get("booking_id", a.get("id", ""))} for a in affected_appointments]
+        return {
+            "success": False,
+            "conflict": True,
+            "appointment_count": len(affected_appointments),
+            "patients": patients,
+            "message": f"{len(affected_appointments)} appointment(s) booked in this session. Override to cancel and notify patients."
+        }
+    
+    # Cancel and notify if force override
+    cancelled_count = 0
+    notified_patients = []
+    if affected_appointments and data.force_override:
+        for appt in affected_appointments:
+            await db.appointments.update_one(
+                {"booking_id": appt.get("booking_id", appt.get("id"))},
+                {"$set": {
+                    "status": "Cancelled",
+                    "cancellation_reason": f"Doctor on leave: {data.reason}",
+                    "cancelled_at": datetime.now(timezone.utc).isoformat(),
+                    "cancelled_by": "doctor_leave"
+                }}
+            )
+            cancelled_count += 1
+            
+            patient_phone = appt.get("patient_phone", "")
+            patient_name = appt.get("patient_name", "Patient")
+            booking_id = str(appt.get("booking_id", appt.get("id", "")))[:8]
+            if patient_phone:
+                try:
+                    from services.msg91_whatsapp import send_order_cancelled
+                    await send_order_cancelled(
+                        phone=patient_phone,
+                        patient_name=patient_name,
+                        service_name="DiaGyn",
+                        order_id=booking_id,
+                        db=db
+                    )
+                    notified_patients.append(patient_name)
+                    logger.info(f"WhatsApp cancellation sent to {patient_name} ({patient_phone})")
+                except Exception as e:
+                    logger.error(f"Failed to send cancellation WhatsApp to {patient_phone}: {e}")
+    
+    result = await db.doctor_schedules.update_one(
         {"doctor_id": doctor_id},
         {
             "$addToSet": {
@@ -314,7 +444,14 @@ async def block_session(data: BlockedSession, doctor=Depends(verify_doctor)):
         upsert=True
     )
     
-    return {"success": True, "message": f"Blocked session on {data.date} from {data.start_time} to {data.end_time}"}
+    logger.info(f"Blocked session for doctor {doctor_id} on {data.date}: {data.start_time}-{data.end_time}")
+    
+    return {
+        "success": True, 
+        "message": f"Blocked session on {data.date} from {data.start_time} to {data.end_time}",
+        "cancelled_count": cancelled_count,
+        "notified_patients": notified_patients
+    }
 
 
 @router.delete("/block-session/{date}/{start_time}")

@@ -676,3 +676,133 @@ async def logout():
         "message": "Logged out successfully",
         "note": "Please remove the token from local storage"
     }
+
+
+# ============ PHONE-BASED AUTHENTICATION (WhatsApp OTP) ============
+
+class PhoneLoginRequest(BaseModel):
+    phone: str
+
+class PhoneSignUpRequest(BaseModel):
+    phone: str
+    name: str
+
+@router.post("/phone/login")
+async def phone_login(request: PhoneLoginRequest):
+    """
+    Login with phone number. User must have an existing account.
+    OTP verification should be done before calling this endpoint.
+    """
+    global db
+    phone = request.phone.strip()
+    
+    # Check if user exists by phone
+    user = await db.registered_users.find_one({"phone": phone}, {"_id": 0})
+    
+    if not user:
+        raise HTTPException(
+            status_code=404, 
+            detail="Phone number not registered. Please sign up first."
+        )
+    
+    # Generate JWT token
+    token = jwt.encode(
+        {
+            "sub": user["id"],
+            "reg_id": user.get("registration_id"),
+            "phone": phone,
+            "email": user.get("email"),
+            "name": user.get("name"),
+            "type": "registered",
+            "exp": datetime.now(timezone.utc) + timedelta(days=30)
+        },
+        JWT_SECRET,
+        algorithm=JWT_ALGORITHM
+    )
+    
+    logger.info(f"User logged in via phone: {phone}")
+    
+    return {
+        "success": True,
+        "message": f"Welcome back, {user.get('name')}!",
+        "token": token,
+        "user": {
+            "id": user["id"],
+            "registration_id": user.get("registration_id"),
+            "email": user.get("email"),
+            "name": user.get("name"),
+            "phone": phone
+        },
+        "mode": "registered"
+    }
+
+
+@router.post("/phone/signup")
+async def phone_signup(request: PhoneSignUpRequest):
+    """
+    Sign up with phone number and name.
+    OTP verification should be done before calling this endpoint.
+    """
+    global db
+    phone = request.phone.strip()
+    name = request.name.strip()
+    
+    if not name:
+        raise HTTPException(status_code=400, detail="Name is required")
+    
+    # Check if phone already registered
+    existing = await db.registered_users.find_one({"phone": phone})
+    if existing:
+        raise HTTPException(
+            status_code=400, 
+            detail="Phone number already registered. Please login instead."
+        )
+    
+    # Generate registration ID
+    user_id = str(uuid.uuid4())
+    registration_id = f"NC{datetime.now().strftime('%y%m')}{random.randint(1000, 9999)}"
+    
+    # Create user record
+    user_record = {
+        "id": user_id,
+        "registration_id": registration_id,
+        "name": name,
+        "phone": phone,
+        "email": None,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "email_verified": False,
+        "phone_verified": True,
+        "auth_method": "phone_otp"
+    }
+    
+    await db.registered_users.insert_one(user_record)
+    
+    # Generate JWT token
+    token = jwt.encode(
+        {
+            "sub": user_id,
+            "reg_id": registration_id,
+            "phone": phone,
+            "name": name,
+            "type": "registered",
+            "exp": datetime.now(timezone.utc) + timedelta(days=30)
+        },
+        JWT_SECRET,
+        algorithm=JWT_ALGORITHM
+    )
+    
+    logger.info(f"New user registered via phone: {phone} -> {registration_id}")
+    
+    return {
+        "success": True,
+        "message": "Account created successfully!",
+        "token": token,
+        "user": {
+            "id": user_id,
+            "registration_id": registration_id,
+            "name": name,
+            "phone": phone
+        },
+        "mode": "registered"
+    }
+

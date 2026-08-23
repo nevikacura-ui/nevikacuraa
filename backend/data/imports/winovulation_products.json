@@ -1,0 +1,562 @@
+[
+  {
+    "name": "Allynowin",
+    "mrp": 149.0,
+    "composition": "Allylestrenol 5mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin C3",
+    "mrp": 119.0,
+    "composition": "Calcium Citrate 750mg; Calcium Aspartate 500mg; Calcium Orotate 100mg; Vit D3 500IU",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin CCM",
+    "mrp": 310.0,
+    "composition": "Calcium Citrate Malate eq Ca 250mg; Cholecalciferol 100IU; Folic Acid 50mcg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin Coral",
+    "mrp": 149.0,
+    "composition": "Coral Calcium eq Ca 255mg; Vit D3 500IU",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin D Plus",
+    "mrp": 105.0,
+    "composition": "Calcium Carbonate 1250mg; Vit D3 250IU",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin D3 Tab",
+    "mrp": 100.8,
+    "composition": "Cholecalciferol 60000IU",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin Kit",
+    "mrp": 420.0,
+    "composition": "Ibandronate 150mg; Calcium Carbonate 500mg; Vit D3 500IU; Zinc 7.5mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin XT",
+    "mrp": 340.0,
+    "composition": "Calcium 500mg; Vit D3 2000IU; Methylcobalamin 1500mcg; L-methylfolate 1mg; P5P 0.5mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Cervimore",
+    "mrp": 299.0,
+    "composition": "L-Arginine; NAC; Calcium; Grape seed; Vit C; Lactobacillus",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Clomiyes 100",
+    "mrp": 156.24,
+    "composition": "Clomiphene Citrate 100mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Clomiyes 25",
+    "mrp": 64.0,
+    "composition": "Clomiphene Citrate 25mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Clomiyes 50",
+    "mrp": 99.0,
+    "composition": "Clomiphene Citrate 50mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Clomiyes U100",
+    "mrp": 410.0,
+    "composition": "Clomiphene 100mg + Ubidecarenone 100mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Clomiyes U50",
+    "mrp": 330.0,
+    "composition": "Clomiphene 50mg + Ubidecarenone 50mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Dinofly Plus",
+    "mrp": 520.0,
+    "composition": "Dienogest 2mg + Ethinylestradiol 0.03mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Dinofly",
+    "mrp": 599.0,
+    "composition": "Dienogest 2mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Doxytime Forte",
+    "mrp": 99.0,
+    "composition": "Doxylamine 20mg + Pyridoxine 20mg + Folic Acid 5mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Doxytime",
+    "mrp": 79.0,
+    "composition": "Doxylamine 10mg + Pyridoxine 10mg + Folic Acid 2.5mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Dydroplay 10",
+    "mrp": 749.0,
+    "composition": "Dydrogesterone 10mg",
+    "form": "Drops",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Dydroplay 20",
+    "mrp": 990.0,
+    "composition": "Dydrogesterone 20mg",
+    "form": "Drops",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Novugest 100 Inj",
+    "mrp": 110.0,
+    "composition": "Progesterone 100mg",
+    "form": "Injection",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Novugest 200 Inj",
+    "mrp": 185.0,
+    "composition": "Progesterone 200mg",
+    "form": "Injection",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Winglad FSH 75",
+    "mrp": 1290.0,
+    "composition": "Urofollitropin 75IU",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Winglad HCG 5000",
+    "mrp": 438.32,
+    "composition": "Chorionic Gonadotrophin 5000IU",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Winglad HMG 75",
+    "mrp": 1249.0,
+    "composition": "Menotropin 75IU",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin D3 Nano Shots",
+    "mrp": 316.0,
+    "composition": "Cholecalciferol 60000IU",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Fosfomore Sachet",
+    "mrp": 490.0,
+    "composition": "Fosfomycin 3g",
+    "form": "Powder",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Myovil Plus Sachet",
+    "mrp": 69.0,
+    "composition": "Myo-inositol 2000mg + P5P 2.4mg + Calcium 1000mg + VitD3 15mcg",
+    "form": "Powder",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Stepogest Gel",
+    "mrp": 230.0,
+    "composition": "Progesterone 8% gel",
+    "form": "Cream",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin 60 Nasal",
+    "mrp": 2300.0,
+    "composition": "Calcitonin 200IU",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Primepil Ultra",
+    "mrp": 549.0,
+    "composition": "Drospirenone 3mg + Ethinylestradiol 0.03mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Texachip MF",
+    "mrp": 249.0,
+    "composition": "Tranexamic Acid 500mg + Mefenamic Acid 250mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Wincab 0.5",
+    "mrp": 290.0,
+    "composition": "Cabergoline 0.5mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Winstep Max",
+    "mrp": 249.0,
+    "composition": "Multivitamin multimineral",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Zithowin SF Kit",
+    "mrp": 149.0,
+    "composition": "Fluconazole 150mg + Azithromycin 1g + Secnidazole 1g",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Pantochip DSR",
+    "mrp": 189.0,
+    "composition": "Pantoprazole 40mg + Domperidone 30mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Rabochip DSR",
+    "mrp": 179.0,
+    "composition": "Rabeprazole 20mg + Domperidone 30mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin Fem",
+    "mrp": 299.0,
+    "composition": "Calcitriol + Calcium + Vitamin K2-7 + Magnesium",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Clinstep Forte",
+    "mrp": 259.0,
+    "composition": "Clindamycin 100mg + Clotrimazole 100mg + Tinidazole 100mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Clinstep",
+    "mrp": 139.0,
+    "composition": "Clindamycin 100mg + Clotrimazole 200mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Fentimed",
+    "mrp": 185.0,
+    "composition": "Fenticonazole 600mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Fertimore Q",
+    "mrp": 899.0,
+    "composition": "Astaxanthin 16mg + CoQ10 200mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Foltix DHA",
+    "mrp": 210.0,
+    "composition": "L-methylfolate + Methylcobalamin + P5P + DHA",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Winogass",
+    "mrp": 99.0,
+    "composition": "Simethicone 140mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin D3 Suspension",
+    "mrp": 144.0,
+    "composition": "Calcium + Magnesium + Zinc + VitD3",
+    "form": "Syrup",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Utichip Syrup",
+    "mrp": 199.0,
+    "composition": "Ayurvedic uterine tonic",
+    "form": "Syrup",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Caldimin D3 Injection",
+    "mrp": 84.0,
+    "composition": "Cholecalciferol 600000IU",
+    "form": "Injection",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Ferywin FCM",
+    "mrp": 3300.0,
+    "composition": "Ferric Carboxymaltose",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Ferywin Injection",
+    "mrp": 245.0,
+    "composition": "Iron Sucrose",
+    "form": "Injection",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Nervobim C",
+    "mrp": 79.0,
+    "composition": "Vit C + Methylcobalamin + Folic acid + Niacinamide",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Ewindiol H",
+    "mrp": 549.0,
+    "composition": "Estradiol hemihydrate 2mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Ewindiol",
+    "mrp": 420.0,
+    "composition": "Estradiol valerate 2mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Fertimore F",
+    "mrp": 490.0,
+    "composition": "CoQ10 DHA Melatonin Chromium L-arginine vitamins",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Fertimore M",
+    "mrp": 410.0,
+    "composition": "CoQ10 DHA Panax ginseng L-carnitine multivitamin",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Ferywin XT Pro",
+    "mrp": 219.0,
+    "composition": "Ferrous bisglycinate Folic acid Zinc Methylcobalamin",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Ferywin XT",
+    "mrp": 119.0,
+    "composition": "Ferrous ascorbate 100mg + Folic acid 1.5mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Folyture Plus",
+    "mrp": 159.0,
+    "composition": "Methylcobalamin L-methylfolate Pyridoxine",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Funtwist Fem",
+    "mrp": 179.0,
+    "composition": "Herbal female supplement",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Letrolim 2.5",
+    "mrp": 164.19,
+    "composition": "Letrozole 2.5mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Myovil Forte",
+    "mrp": 390.0,
+    "composition": "Inositol Berberine Chromium Folic acid Vit D3",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Myovil M",
+    "mrp": 249.0,
+    "composition": "Myo-inositol 600mg + Metformin 500mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Niftawin SR",
+    "mrp": 127.16,
+    "composition": "Nitrofurantoin 100mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Northovil 10CR",
+    "mrp": 159.0,
+    "composition": "Norethindrone 10mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Northovil 15CR",
+    "mrp": 254.0,
+    "composition": "Norethisterone acetate 15mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Northovil 5",
+    "mrp": 60.37,
+    "composition": "Norethisterone 5mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Novugest M10",
+    "mrp": 69.88,
+    "composition": "Medroxyprogesterone 10mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Ovachip Plus",
+    "mrp": 599.0,
+    "composition": "DHEA 75mg + Folic acid + Vit D3",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Primepill 21",
+    "mrp": 66.57,
+    "composition": "Levonorgestrel 0.15mg + Ethinylestradiol 0.03mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Primepill 35",
+    "mrp": 349.0,
+    "composition": "Cyproterone 2mg + Ethinylestradiol 0.035mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  },
+  {
+    "name": "Primepill D",
+    "mrp": 212.47,
+    "composition": "Desogestrel 0.15mg + Ethinylestradiol 0.03mg",
+    "form": "Tablet",
+    "category": "Women Health",
+    "source": "WinOvulation"
+  }
+]

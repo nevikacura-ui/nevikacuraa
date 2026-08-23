@@ -1,0 +1,258 @@
+[
+  {
+    "name": "AZELTRA 200 15ML",
+    "composition": "Amoxicillin 200mg + Clavulanic acid 28.5mg /5ml",
+    "mrp": 99.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "AZELTRA 250 TAB",
+    "composition": "Azithromycin 250mg",
+    "mrp": 99.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "CPERO 500 TAB",
+    "composition": "Ciprofloxacin 500mg",
+    "mrp": 99.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "OFLER 200 TAB",
+    "composition": "Ofloxacin 200mg",
+    "mrp": 98.8,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "SUREPENAM 200 TAB",
+    "composition": "Faropenem 200mg",
+    "mrp": 99.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "ARISTO POVIDON 100ML",
+    "composition": "Povidone Iodine 10% Solution",
+    "mrp": 99.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "ARISTO POVIDON 5%",
+    "composition": "Povidone Iodine 5% Solution",
+    "mrp": 99.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "CANDICHAMP 75GM POWDER",
+    "composition": "Clotrimazole 1% w/v",
+    "mrp": 99.0,
+    "form": "Powder",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "CANDICHAMP-B 10GM",
+    "composition": "Clotrimazole 1% w/v + Beclomethasone Dipropionate 0.025% w/v",
+    "mrp": 99.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "ARILIZAR LIQUID",
+    "composition": "Disodium Hydrogen Citrate 1.37gm/5ml",
+    "mrp": 99.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "ARISTO NEXOM RD CAP",
+    "composition": "Esomeprazole 40mg + Domperidone 30mg SR",
+    "mrp": 99.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "RABITOP DSR CAP",
+    "composition": "Rabeprazole 20mg + Domperidone 30mg SR",
+    "mrp": 99.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "RABITOP-LS CAP",
+    "composition": "Rabeprazole 20mg + Levosulpiride 75mg SR",
+    "mrp": 99.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "ARISTO PYRIMEF-P 100MG SUSPENSION",
+    "composition": "Mefenamic 100mg/5ml Suspension",
+    "mrp": 37.63,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "DYNAFLEX PLUS TAB",
+    "composition": "Diclofenac 50mg + Paracetamol 325mg",
+    "mrp": 35.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "MEGACECLO 200SR TAB",
+    "composition": "Aceclofenac 200mg Sustained Release",
+    "mrp": 98.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "MEGACECLO P TAB",
+    "composition": "Aceclofenac 100mg + Paracetamol 325mg",
+    "mrp": 99.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "MEGACECLO SP TAB",
+    "composition": "Aceclofenac 100mg + Paracetamol 325mg + Serratiopeptidase 15mg",
+    "mrp": 99.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "MEGACECLO RAB CAP",
+    "composition": "Aceclofenac 200mg SR + Rabeprazole 20mg EC",
+    "mrp": 199.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "ARISTO DOXO-400 TAB",
+    "composition": "Doxofylline 400mg",
+    "mrp": 99.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "ARISTODRYL PLUS 100ML",
+    "composition": "Diphenhydramine Hydrochloride 14.08mg + Ammonium Chloride 138mg + Sodium Citrate 57.03mg/5ml",
+    "mrp": 99.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "ARISTOKOF DX 100ML",
+    "composition": "Dextromethorphan 10mg + CPM 4mg/5ml",
+    "mrp": 99.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "FLUMONT-LC KID 60ML",
+    "composition": "Levocetirizine 2.5mg + Montelukast 4mg/5ml",
+    "mrp": 99.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "ARISTOCAL D3 SHOTS",
+    "composition": "Cholecalciferol 60000 IU",
+    "mrp": 319.2,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "ARISTONEUROL OD TAB",
+    "composition": "Methylcobalamin 1500mcg",
+    "mrp": 152.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "ARISTONEUROL PLUS INJ",
+    "composition": "Mecobalamin 1000mcg + Pyridoxine 100mg + Niacinamide 100mg + Benzyl Alcohol 2%",
+    "mrp": 90.0,
+    "form": "Injection",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "HUNGER AID PLUS SYRUP",
+    "composition": "Sodium Citrate 275mg/5ml",
+    "mrp": 147.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "SUPER V LYCO CAP",
+    "composition": "Lycopene + Multivitamin + Zinc Soft Gelatin",
+    "mrp": 163.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "GABAPREX-M TAB",
+    "composition": "Gabapentin 300mg + Methylcobalamin 500mcg",
+    "mrp": 163.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "M-PREDNACORTIL 4MG TAB",
+    "composition": "Methylprednisolone 4mg",
+    "mrp": 60.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "POWERFORCE 50 TAB",
+    "composition": "Sildenafil 50mg",
+    "mrp": 140.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  },
+  {
+    "name": "PREGALEARN TEST KIT",
+    "composition": "One step urine HCG pregnancy test",
+    "mrp": 60.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo"
+  }
+]

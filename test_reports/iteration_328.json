@@ -1,0 +1,149 @@
+{
+  "summary": "Iteration 328 - Dr. Vikas DARK Coffee Green Theme + Pharmacy Alternatives Testing. All 11 features PASSED. Dr. Vikas modal redesigned with: 1) DARK coffee green (#1F3527 = rgb(31,53,39)) card backgrounds, 2) Neon green (#A6FF4D = rgb(166,255,77)) for selected clinic, date, time filter, time slot, CTA button, 3) White text on dark cards, 4) Stats cards with dark green bg + neon green icons, 5) Tab bar with dark coffee green bg + neon green active tab. Date auto-selects Monday when clinic chosen (Sunday disabled for offline). Dr. Neha Pink/Charcoal theme regression PASSED. Pharmacy alternatives: clicking alt card switches product view, Add button shows toast.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "frontend": {
+      "DrVikasModalDarkCoffeeGreenCards": {
+        "status": "PASSED",
+        "findings": [
+          "Stats card background: rgb(31, 53, 39) = #1F3527 (DARK coffee green)",
+          "All content cards use dark coffee green background",
+          "Clinic selection card, date picker card, time slots card all have #1F3527 bg"
+        ]
+      },
+      "NeonGreenAccentColor": {
+        "status": "PASSED",
+        "findings": [
+          "Active tab background: rgb(166, 255, 77) = #A6FF4D (neon green)",
+          "Selected clinic button: rgb(166, 255, 77)",
+          "Selected date button: rgb(166, 255, 77)",
+          "Active time filter: rgb(166, 255, 77)",
+          "Selected time slot: rgb(166, 255, 77)",
+          "Book Appointment button gradient: linear-gradient(135deg, rgb(166, 255, 77), rgb(138, 224, 48))"
+        ]
+      },
+      "WhiteTextOnDarkCards": {
+        "status": "PASSED",
+        "findings": [
+          "Doctor name text color: rgb(255, 255, 255) = white",
+          "Stats values (15+, 10,000+, 4.91) displayed in white",
+          "Section titles (Select Clinic, Select Date, Choose Time) in white"
+        ]
+      },
+      "StatsCardsWithNeonIcons": {
+        "status": "PASSED",
+        "findings": [
+          "Stats cards (15+ Years, 10,000+ Patients, 4.91 Rating) have dark green background",
+          "Icons use neon green color (#A6FF4D)"
+        ]
+      },
+      "TabBarDarkWithNeonActive": {
+        "status": "PASSED",
+        "findings": [
+          "Tab bar has dark coffee green background",
+          "Active tab (Schedules) has neon green (#A6FF4D) background",
+          "Inactive tabs have muted white text"
+        ]
+      },
+      "DateAutoSelection": {
+        "status": "PASSED",
+        "findings": [
+          "When Amnion clinic selected, date auto-selects to Monday (index 1)",
+          "Today (Sunday) is disabled for offline clinics",
+          "Monday (March 30) auto-selected with neon green background"
+        ]
+      },
+      "TimeSlotsDisplay": {
+        "status": "PASSED",
+        "findings": [
+          "Time slots appear after date selection",
+          "Morning filter shows 11:30 AM and 11:45 AM slots",
+          "10 total slots available for Monday at Amnion"
+        ]
+      },
+      "TimeSlotSelection": {
+        "status": "PASSED",
+        "findings": [
+          "Clicking time slot turns it neon green (#A6FF4D)",
+          "Selected slot has dark text (#1F3527) on neon green background"
+        ]
+      },
+      "BookAppointmentButton": {
+        "status": "PASSED",
+        "findings": [
+          "Book Appointment button appears after slot selection",
+          "Button has neon green gradient background",
+          "Button text is dark (#1F3527)"
+        ]
+      },
+      "DrNehaPinkCharcoalRegression": {
+        "status": "PASSED",
+        "findings": [
+          "Dr. Neha stats card background: rgb(255, 255, 255) = WHITE (not dark green)",
+          "Dr. Neha active tab: rgb(55, 65, 81) = CHARCOAL (#374151)",
+          "Dr. Neha name text: rgb(55, 65, 81) = CHARCOAL",
+          "Dr. Neha selected clinic: rgb(236, 72, 153) = PINK (#EC4899)",
+          "Pink/Charcoal theme correctly preserved for Dr. Neha"
+        ]
+      },
+      "PharmacyAlternatives": {
+        "status": "PASSED",
+        "findings": [
+          "Alternatives section found with 15 alternatives for Paracetamol",
+          "Clicking alternative card switches product view (StayHappi Paracetamol -> Paracin Kid 125mg)",
+          "Add to Cart button shows toast: 'Added Paracin Kid 125mg Tablet to cart'",
+          "Alternative cards show product image, name, manufacturer, price, and Add button"
+        ]
+      }
+    }
+  },
+  "test_report_links": ["/app/test_reports/iteration_328.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "DoctorDetailModal.jsx correctly implements isDark flag based on theme.label === 'green'",
+    "DOCTOR_BOOKING_THEMES.vikas has cardBg: '#1F3527', accent: '#A6FF4D' as specified",
+    "Dark card text colors properly set: cText = '#FFFFFF', cTextMuted = 'rgba(255,255,255,0.55)'",
+    "ProductDetailView.jsx onSelectAlternative prop correctly switches product view",
+    "Pharmacy.js passes onSelectAlternative={(alt) => setSelectedMedicine(alt)} to ProductDetailView",
+    "Toast notification on alternative add-to-cart working via toast.success()"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend only test)",
+    "frontend": "100% (11/11 tests passed)"
+  },
+  "test_credentials": {
+    "admin_email": "nevikacura@gmail.com",
+    "doctor": "dr_vikas / test1234",
+    "staff": "staff_diagyn / test1234"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 328 verified Dr. Vikas DARK coffee green theme implementation. Key colors: cardBg=#1F3527 (rgb(31,53,39)), accent=#A6FF4D (rgb(166,255,77)), text=white on dark cards. Dr. Neha Pink/Charcoal theme preserved (cardBg=white, accent=#EC4899, text=#374151). Pharmacy alternatives working: click alt card to switch view, click Add button shows toast. Today is Sunday March 29, 2026 - Sunday disabled for offline clinics, Monday auto-selected.",
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  },
+  "theme_colors_verified": {
+    "vikas_dark_theme": {
+      "cardBg": "#1F3527 (rgb(31, 53, 39))",
+      "accent": "#A6FF4D (rgb(166, 255, 77))",
+      "text": "#FFFFFF (white)",
+      "ctaGradient": "linear-gradient(135deg, rgb(166, 255, 77), rgb(138, 224, 48))"
+    },
+    "neha_pink_theme": {
+      "cardBg": "#FFFFFF (rgb(255, 255, 255))",
+      "accent": "#EC4899 (rgb(236, 72, 153))",
+      "text": "#374151 (rgb(55, 65, 81))"
+    }
+  }
+}

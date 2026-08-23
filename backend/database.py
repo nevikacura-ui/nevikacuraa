@@ -79,8 +79,13 @@ async def close_db():
         logger.info("MongoDB connection closed")
 
 def get_db():
-    """Get database instance"""
+    """Get database instance - falls back to server.db if database module not initialized"""
     global db
-    if db is None:
+    if db is not None:
+        return db
+    # Fallback: get db from the main server module (which initializes it directly)
+    try:
+        from server import db as server_db
+        return server_db
+    except ImportError:
         raise RuntimeError("Database not initialized. Call init_db() first.")
-    return db

@@ -1,0 +1,83 @@
+{
+  "summary": "Completed comprehensive testing of iteration 273 - Voice Booking Notification Pipeline Verification. All 19 backend tests passed. Verified: 1) Voice booking POST /api/voice-booking/confirm-booking creates appointment AND sends all 4 notification types (Patient WhatsApp, Doctor WhatsApp, Staff WhatsApp, Patient Email), 2) Backend logs confirm MSG91 WhatsApp delivery with Status: 200, 3) Cashfree staff numbers correctly routed (Mango=917039040040, Orange=917039030030, Appointments=clinic-based), 4) COD diagnostic orders send patient WhatsApp, 5) Frontend checkout guards and CuraPay transition timing verified.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_voice_booking_notifications_273.py",
+    "/app/test_reports/pytest/pytest_voice_booking_notifications_273.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_voice_booking_notifications_273.py"
+  ],
+  "success_rate": {
+    "backend": "100% (19/19 tests passed)",
+    "frontend": "100% (Homepage loads correctly, checkout guards verified)"
+  },
+  "test_credentials": "Test phone: 9833188288",
+  "seed_data_creation": "Voice booking test created appointment with booking_id 9046, COD diagnostic order created with booking_id 1240",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iteration 273 voice booking notification pipeline fully verified. Key findings from backend logs: 1) Voice booking (booking_id 9046) sent all 4 notifications - Patient WhatsApp to 919833188288 (MSG91 Status: 200), Doctor WhatsApp to 919699409888, Staff WhatsApp to 918108500522 (Pushpa Clinic), Patient Email sent. 2) COD diagnostic order (booking_id 1240) sent Staff WhatsApp to 917039040040 (Mango Labs) and Patient WhatsApp to 919833188288. 3) Email sending may fail with 'daily quota exceeded' error from Resend API - this is an external API limit, NOT a code bug. 4) All Cashfree webhook handlers use correct staff numbers: confirm_lab_booking→917039040040, confirm_pharmacy_order→917039030030, confirm_appointment→clinic-based (Pushpa=918108500522, Amnion=918108500533). 5) Frontend checkout guards properly check showBookingConfirmation and orderDetails to prevent empty cart page from overriding confirmation view.",
+  "tests_executed": {
+    "health_endpoint": {
+      "health_returns_ok": "PASS"
+    },
+    "voice_booking_api": {
+      "confirm_booking_creates_appointment": "PASS - booking_id 9046 created",
+      "doctors_endpoint": "PASS - Returns doctors list",
+      "parse_intent_endpoint": "PASS - Parses booking request"
+    },
+    "voice_booking_code_review": {
+      "has_patient_whatsapp": "PASS - send_diagyn_appointment_confirmation called",
+      "has_doctor_whatsapp": "PASS - notify_doctor_whatsapp called",
+      "has_staff_whatsapp": "PASS - notify_staff_new_appointment called",
+      "has_email_notification": "PASS - send_email_notification called"
+    },
+    "cashfree_staff_numbers": {
+      "lab_booking_917039040040": "PASS",
+      "pharmacy_order_917039030030": "PASS",
+      "appointment_clinic_based": "PASS - Pushpa=918108500522, Amnion=918108500533"
+    },
+    "cod_diagnostic_notifications": {
+      "queue_status_patient_whatsapp": "PASS - send_proton_lab_confirmation called"
+    },
+    "regular_appointment_notifications": {
+      "all_channels_present": "PASS - email, patient WhatsApp, doctor WhatsApp, staff notification"
+    },
+    "frontend_checkout_guards": {
+      "mango_empty_cart_guard": "PASS - Checks showBookingConfirmation and orderDetails",
+      "pharmacy_empty_cart_guard": "PASS - Checks showBookingConfirmation and orderDetails",
+      "mango_cod_sets_confirmation": "PASS - setShowBookingConfirmation(true)"
+    },
+    "curapay_transition_timing": {
+      "mango_after_api": "PASS",
+      "pharmacy_after_api": "PASS"
+    }
+  },
+  "backend_logs_verification": {
+    "voice_booking_9046": {
+      "patient_whatsapp": "✅ MSG91 WhatsApp sent to 919833188288 using template 'diagyn_appointment_confirm' - Status: 200",
+      "doctor_whatsapp": "✅ WhatsApp notification via MSG91: to=919699409888",
+      "staff_whatsapp": "✅ MSG91 WhatsApp sent to 918108500522 using template 'diagyn_appointment_confirm' - Status: 200",
+      "patient_email": "✅ [VOICE] Patient email sent for booking 9046"
+    },
+    "cod_diagnostic_1240": {
+      "staff_whatsapp": "✅ MSG91 WhatsApp sent to 917039040040 using template 'proton_lab_confirm' - Status: 200",
+      "patient_whatsapp": "✅ MSG91 WhatsApp sent to 919833188288 using template 'proton_lab_confirm' - Status: 200"
+    }
+  },
+  "email_note": "Email sending via Resend API may fail with 'daily quota exceeded' error - this is an external API limit, NOT a code bug. The code correctly attempts to send emails.",
+  "mocked_apis": {
+    "ABHA/NDHM": "MOCKED - endpoints are mocked as per previous iterations"
+  },
+  "console_warnings": []
+}

@@ -107,62 +107,32 @@ frontend/node_modules/.cache/default-development/23.pack
 frontend/node_modules/.cache/default-development/24.pack
 frontend/node_modules/.cache/default-development/25.pack
 frontend/node_modules/.cache/default-development/9.pack_
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
 frontend/node_modules/.cache/default-development/11.pack_
 frontend/node_modules/.cache/default-development/3.pack_
 frontend/node_modules/.cache/default-development/1.pack_
 frontend/node_modules/.cache/default-development/2.pack_
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
 frontend/node_modules/.cache/default-development/7.pack_
 frontend/node_modules/.cache/default-development/8.pack_
 frontend/node_modules/.cache/default-development/4.pack_
+firebase-admin.json
+test_credentials.md
+**/test_credentials.md
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+.env
+.env.*
+credentials.json
+*.key
+.credentials
+backend/data/imports/covaxl.pdf
+backend/data/imports/brand_logos_new/medicine_data.csv

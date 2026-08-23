@@ -1,0 +1,30 @@
+{
+  "iteration": 250,
+  "date": "2026-03-21",
+  "test_type": "self_test_screenshots_curl",
+  "results": {
+    "backend": {
+      "staff_login": "PASS - Token generated for orange_staff",
+      "coupon_validate_invalid": "PASS - Returns valid=false for invalid code",
+      "coupon_validate_valid": "PASS - Returns valid=true, discount_percent=100, duration_days=180",
+      "coupon_redeem": "PASS - Returns success=true with subscription_id",
+      "coupon_reuse_prevention": "PASS - Used coupon returns valid=false",
+      "coupon_email_send": "PASS - 200 coupons emailed to nevikacura@gmail.com"
+    },
+    "frontend": {
+      "orange_staff_portal": "PASS - Dashboard loads, Past Orders tab visible",
+      "mango_staff_portal": "PASS - Past Orders tab added to navigation",
+      "diagyn_staff_portal": "PASS - Archives toggle visible in appointments view",
+      "glydex_hba1c_ring": "PASS - HbA1c Target Tracker ring visible (7.2% current)",
+      "glydex_med_adherence": "PASS - Weekly Med Adherence tracker visible (80%)",
+      "glydex_consult_cta": "PASS - Consult a Diabetologist CTA visible",
+      "evara_fertility_window": "PASS - Fertility Window with cycle ring and mini bar visible",
+      "evara_consult_cta": "PASS - Consult a Gynecologist CTA visible",
+      "reneu_water_intake": "PASS - Daily Water Intake ring visible (5/8 glasses)",
+      "profile_declutter": "PASS - Birthday, Biometric, Trusted Devices sections removed",
+      "portal_checkout_coupon": "PASS - Coupon input section added",
+      "booking_confirmation_brands": "PASS - Brand-specific sections added"
+    }
+  },
+  "notes": "Testing agent hit context limits (known issue). Self-tested via curl + targeted screenshots."
+}

@@ -45,8 +45,8 @@ LOYALTY_TIERS = {
 
 # Helper
 def get_db():
-    from server import db
-    return db
+    from database import get_db as _get_db
+    return _get_db()
 
 def get_tier_for_amount(amount: float) -> str:
     """Determine tier based on billing amount"""
@@ -410,7 +410,7 @@ async def get_loyalty_terms():
                 "content": [
                     "For questions about the Loyalty Program:",
                     "Email: nevikacura@gmail.com",
-                    "Phone: +91 8108500511 (Orange Pharmacy)",
+                    "Phone: +91 7039030030 (Orange Pharmacy)",
                     "Address: Nevika Cura Healthcare, Mumbai, Maharashtra, India"
                 ]
             }

@@ -59,16 +59,16 @@ const WhatsAppOTP = ({
     setError(null);
     
     try {
-      const res = await axios.post(`${API}/api/otp/whatsapp/send`, {
+      const res = await axios.post(`${API}/api/otp/sms/send`, {
         phone: phone,
         purpose: purpose
       });
       
       setStep('otp_sent');
       setCountdown(30); // 30 seconds before resend
-      setMockOtp(res.data.mock ? res.data.otp : null);
-      toast.success('OTP sent via WhatsApp!', {
-        description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your WhatsApp'
+      setMockOtp(null);
+      toast.success('OTP sent via SMS!', {
+        description: 'Check your messages'
       });
       
       // Focus first input
@@ -91,7 +91,7 @@ const WhatsAppOTP = ({
     setError(null);
     
     try {
-      const res = await axios.post(`${API}/api/otp/whatsapp/verify`, {
+      const res = await axios.post(`${API}/api/otp/sms/verify`, {
         phone: phone,
         otp: otpCode
       });
@@ -179,7 +179,7 @@ const WhatsAppOTP = ({
     return (
       <div className="flex items-center justify-center p-4">
         <Loader2 className="w-6 h-6 animate-spin text-green-500 mr-2" />
-        <span className="text-gray-600">Sending OTP via WhatsApp...</span>
+        <span className="text-gray-600">Sending OTP via SMS...</span>
       </div>
     );
   }

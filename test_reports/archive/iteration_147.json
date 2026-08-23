@@ -1,0 +1,52 @@
+{
+  "summary": "Iteration 147: UI Polish Testing - 8/8 tests PASSED. Ad cards removed from Home page, social icons enlarged (64x64px), promo cards correctly placed on DiaGyn (both), Pharmacy (Mango only), Mango (Orange only) pages with new ad images and translucent buttons. Fixed body background CSS override issue - now #0A0A0F (dark) for Android PWA status bar.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_147.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/frontend/src/index.css"
+  ],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100% (8/8 tests passed)"
+  },
+  "test_credentials": {
+    "guest": "localStorage: guestMobile=9999999999, introShown=true, introComplete=true, darkMode=true"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All UI polish changes verified: 1) Home page has NO ad cards (removed MangoPromoCard/OrangePromoCard), 2) Social icons on Home are w-16 h-16 (64x64px), 3) DiaGyn page shows both ad cards, 4) Pharmacy page shows only MangoPromoCard, 5) Mango page shows only OrangePromoCard, 6) Ad cards have new images with embedded logos and translucent 'Book Now'/'Order Now' buttons at bottom-right, 7) Body background fixed to #0A0A0F for Android PWA status bar, 8) Theme toggle is pill-shaped and works, 9) Footer social icons present (data-testid: social-instagram, social-facebook, social-threads).",
+  "tests_executed": {
+    "frontend": [
+      "Home page NO MangoPromoCard - PASS",
+      "Home page NO OrangePromoCard - PASS", 
+      "Home page social icons size 64x64px (w-16 h-16) - PASS",
+      "DiaGyn page has both promo cards - PASS",
+      "Pharmacy page has ONLY MangoPromoCard - PASS",
+      "Mango page has ONLY OrangePromoCard - PASS",
+      "Body background #0A0A0F (dark) - PASS (FIXED)",
+      "Theme toggle pill-shaped and clickable - PASS",
+      "Footer social icons present - PASS"
+    ]
+  },
+  "fixes_applied": [
+    {
+      "file": "/app/frontend/src/index.css",
+      "issue": "Body background was being overridden to white by Tailwind's bg-background class",
+      "fix": "Changed body @apply rule to use explicit background-color: #0A0A0F !important instead of bg-background"
+    }
+  ],
+  "notes": "The ad card labels ('MANGO HEALTH LABS', 'ORANGE PHARMACY') visible in screenshots are embedded IN THE IMAGE design, not code-generated labels. The ServicePromoCards.jsx component only adds translucent 'Book Now'/'Order Now' buttons as requested."
+}

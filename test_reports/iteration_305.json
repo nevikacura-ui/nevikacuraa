@@ -1,0 +1,128 @@
+{
+  "summary": "Iteration 305 - Testing Queue Insights API, LiveWaitTimer, QueueInsightsWidget, and Billing Timer features. All 14 backend tests passed (100%). Frontend verified: QueueInsightsWidget with 4 metrics (Waiting, With Dr, Avg Wait, Done) visible in both Staff Portal and Doctor Portal. LiveWaitTimer showing elapsed wait time on CheckedIn patients in appointment cards and StaffCheckinView active patients list.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_tests": {
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "tests": [
+        "TestHealthCheck::test_api_health - PASSED",
+        "TestStaffLogin::test_staff_login_success - PASSED",
+        "TestStaffLogin::test_doctor_login_success - PASSED",
+        "TestQueueInsightsAPI::test_queue_insights_endpoint_exists - PASSED",
+        "TestQueueInsightsAPI::test_queue_insights_with_clinic_filter - PASSED",
+        "TestQueueInsightsAPI::test_queue_insights_returns_correct_structure - PASSED",
+        "TestQueueInsightsAPI::test_queue_insights_requires_auth - PASSED",
+        "TestBillingTimerEndpoints::test_billing_pending_endpoint_exists - PASSED",
+        "TestBillingTimerEndpoints::test_billing_pending_with_clinic_filter - PASSED",
+        "TestBillingTimerEndpoints::test_billing_close_requires_appointment_id - PASSED",
+        "TestBillingTimerEndpoints::test_billing_endpoints_require_auth - PASSED",
+        "TestTodaysAppointments::test_todays_appointments_returns_checked_in_at - PASSED",
+        "TestTodaysAppointments::test_appointments_by_date_endpoint - PASSED",
+        "TestDiaGynStaffConfig::test_diagyn_staff_config - PASSED"
+      ]
+    },
+    "frontend_tests": {
+      "staff_portal": {
+        "status": "PASSED",
+        "findings": [
+          "QueueInsightsWidget visible with 4 metric boxes: Waiting (1), With Dr (0), Avg Wait (0m), Done (0)",
+          "LiveWaitTimer showing 'Waiting 5m' on CheckedIn patient card",
+          "Appointment card shows Token 1, Test Voice Patient, status CheckedIn",
+          "WITH DR button available to move patient to doctor",
+          "WebSocket connection established for live updates",
+          "Clinic toggle (Pushpa/Amnion) working correctly"
+        ]
+      },
+      "doctor_portal": {
+        "status": "PASSED",
+        "findings": [
+          "QueueInsightsWidget visible with 4 metric boxes: Waiting (1), With Dr (0), Avg Wait (0m), Done (0)",
+          "LiveWaitTimer component found (1 instance)",
+          "Next Patient banner showing 'Test Voice Patient'",
+          "Calendar view with March 2026 dates",
+          "Clinic tabs: All Clinics, Pushpa, Amnion",
+          "Summary stats: 4.9 Rating, 1 Waiting, 4 Today, 0 Done"
+        ]
+      },
+      "staff_checkin_view": {
+        "status": "PASSED",
+        "findings": [
+          "Code tab navigation working",
+          "Quick Check-in by Booking Code section visible",
+          "Booking code input field with placeholder 'E.G., DG123ABC'",
+          "CHECK IN PATIENT button present",
+          "Today's Active Patients section showing waiting patient",
+          "LiveWaitTimer showing '6m' with WAITING status badge",
+          "Legend showing S=Scheduled, W=Walk-in, E=Emergency"
+        ]
+      }
+    },
+    "api_verification": {
+      "queue_insights": {
+        "endpoint": "GET /api/diagyn-staff/queue/insights",
+        "status": "WORKING",
+        "returns": {
+          "success": true,
+          "waiting_count": "integer",
+          "with_doctor_count": "integer",
+          "avg_wait_minutes": "integer",
+          "completed_count": "integer",
+          "longest_waiting": "object or null",
+          "waiting_patients": "array"
+        }
+      },
+      "billing_pending": {
+        "endpoint": "GET /api/diagyn-staff/billing/pending",
+        "status": "WORKING",
+        "returns": "pending_count, appointments array, server_time"
+      },
+      "billing_close": {
+        "endpoint": "POST /api/diagyn-staff/billing/close",
+        "status": "WORKING",
+        "returns": "404 for non-existent appointment (correct behavior)"
+      }
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_queue_insights_305.py",
+    "/app/test_reports/pytest/pytest_queue_insights_305.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Queue Insights API at /api/diagyn-staff/queue/insights returns all required fields: waiting_count, avg_wait_minutes, with_doctor_count, completed_count, longest_waiting, waiting_patients",
+    "LiveWaitTimer component correctly parses IST-stored timestamps and updates every 30 seconds",
+    "QueueInsightsWidget fetches from queue/insights API every 30 seconds with proper auth token",
+    "WaitTimeEstimate component connected to real queue data with positive messaging",
+    "Billing timer endpoints (pending/close) working correctly with proper auth requirements"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_queue_insights_305.py"
+  ],
+  "success_rate": {
+    "backend": "100% (14/14 passed)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "diagyn_staff_login": "staff_diagyn / test1234",
+    "doctor_login": "dr_vikas / test1234",
+    "admin_login": "admin / test1234"
+  },
+  "seed_data_creation": "None required - existing checked-in appointment (Test Voice Patient) used for testing",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Queue Insights API at /api/diagyn-staff/queue/insights returns real-time queue data. LiveWaitTimer component shows elapsed wait time since checked_in_at timestamp. QueueInsightsWidget displays 4 metrics (Waiting, With Dr, Avg Wait, Done) and updates every 30 seconds. Staff portal login flow: /staff -> click DiaGyn Healthcare -> fill credentials -> Log In. Doctor portal login: /doctor-login -> fill credentials -> Log in. StaffCheckinView (Code tab) shows active patients with LiveWaitTimer.",
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": ["ABHA integration"]
+  }
+}

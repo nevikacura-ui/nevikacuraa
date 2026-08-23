@@ -1,0 +1,78 @@
+{
+  "summary": "OTP bypass bug fix for guest checkout flows - ALL TESTS PASSED. Verified that guest users with guestMobile in localStorage can skip OTP verification in PharmacyCheckout, UnifiedCheckout, and MangoCheckout. The fix correctly: 1) Shows 'Phone verified via login' badge, 2) Hides OTP input fields and Send OTP button, 3) Enables Continue button, 4) Auto-fills patient name and phone from localStorage.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_226.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only test)",
+    "frontend": "100% (all OTP bypass tests passed)"
+  },
+  "seed_data_creation": "Used localStorage simulation: guestMobile=9876543210, patientName=Test Guest User, pharmacyCart/labCart items",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "OTP bypass fix verified working in all 3 checkout flows. The fix uses isGuestVerified = Boolean(localStorage.getItem('guestMobile') || localStorage.getItem('userPhone')) to detect if guest already verified via login OTP. Routes tested: /pharmacy/checkout (PharmacyCheckout), /unified-checkout (UnifiedCheckout), /mango/checkout (MangoCheckout).",
+  "test_results_detail": {
+    "pharmacy_checkout": {
+      "route": "/pharmacy/checkout",
+      "guest_verified_badge": "PASS - Shows 'Test Guest User' with '+91 9876543210 - Verified'",
+      "send_otp_button_hidden": "PASS - Send OTP button NOT in DOM",
+      "otp_inputs_hidden": "PASS - OTP input fields NOT in DOM",
+      "continue_button_enabled": "PASS - Continue button is ENABLED",
+      "name_autofill": "PASS - Name auto-filled from localStorage.patientName",
+      "phone_autofill": "PASS - Phone auto-filled from localStorage.guestMobile"
+    },
+    "unified_checkout": {
+      "route": "/unified-checkout?type=pharmacy",
+      "phone_verified_badge": "PASS - 'Phone verified via login' green badge VISIBLE",
+      "send_otp_button_hidden": "PASS - Send OTP button NOT in DOM",
+      "otp_inputs_hidden": "PASS - OTP input fields NOT in DOM",
+      "continue_to_payment_button": "PASS - 'Continue to Payment' button is VISIBLE",
+      "phone_prefilled": "PASS - Phone input pre-filled with 9876543210"
+    },
+    "mango_checkout": {
+      "route": "/mango/checkout",
+      "verified_state": "PASS - Shows 'Test Guest User' with '+91 9876543210 - Verified'",
+      "send_otp_button_hidden": "PASS - Send OTP button NOT in DOM",
+      "otp_inputs_hidden": "PASS - OTP inputs NOT visible or NOT in DOM",
+      "continue_button_enabled": "PASS - Continue button is ENABLED"
+    },
+    "non_guest_flow": {
+      "route": "/pharmacy/checkout (without guestMobile)",
+      "send_otp_button_visible": "PASS - 'Verify via WhatsApp OTP' button is VISIBLE",
+      "inputs_empty": "PASS - Name and phone inputs are empty",
+      "phone_editable": "PASS - Phone input is NOT disabled (editable)",
+      "continue_disabled": "PASS - Continue button visually greyed out"
+    }
+  },
+  "bugs_fixed": [
+    {
+      "bug": "Guest users asked for OTP again during checkout despite already verifying via OTP at guest login",
+      "fix_location": [
+        "PharmacyCheckout.jsx lines 56-58",
+        "UnifiedCheckout.jsx lines 92-99",
+        "MangoCheckout.jsx lines 72-74"
+      ],
+      "fix_description": "Added isGuestVerified check that reads guestMobile from localStorage to auto-bypass OTP verification"
+    },
+    {
+      "bug": "auth.verified property name mismatch",
+      "fix_description": "Changed auth.verified to auth.isVerified to match useUnifiedAuth hook return value"
+    },
+    {
+      "bug": "Wrong argument to verifyOtp",
+      "fix_description": "Changed auth.verifyOtp(phone, otp) to auth.verifyOtp(otp) - hook only needs OTP, phone stored internally"
+    }
+  ]
+}

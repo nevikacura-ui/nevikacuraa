@@ -1,43 +1,117 @@
 <!doctype html>
-<html lang="en" style="background-color: #ffffff;">
+<html lang="en" style="background-color: #0A0A0F;">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" content="#ffffff" />
-        <meta name="description" content="Nevika Cura - Complete Healthcare Solutions. Book doctor appointments, diagnostic tests, and order medicines online." />
+        <meta name="theme-color" content="#120A1C" />
+        <meta name="description" content="Nevika Cura - Book doctor appointments, order medicines online with 15% discount, diagnostic lab tests at home. DiaGyn Healthcare, Orange Pharmacy, Mango Health Labs." />
+        <meta name="keywords" content="healthcare, doctor appointment, online pharmacy, lab tests, diagnostic tests, medicine delivery, DiaGyn, Orange Pharmacy, Mango Health Labs, Nevika Cura" />
+        <meta name="author" content="Nevika Cura Healthcare" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://nevikacura.com" />
         
-        <!-- Preconnect for faster loading -->
+        <!-- Preconnect to external assets (deduplicated) -->
         <link rel="preconnect" href="https://customer-assets.emergentagent.com" crossorigin />
-        <link rel="dns-prefetch" href="https://customer-assets.emergentagent.com" />
+        <link rel="preconnect" href="https://static.prod-images.emergentagent.com" crossorigin />
         <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="dns-prefetch" href="https://customer-assets.emergentagent.com" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        
+        <!-- Preload critical onboarding images -->
+        <link rel="preload" href="%PUBLIC_URL%/icons/onboard-otp.png" as="image" />
+        <link rel="preload" href="%PUBLIC_URL%/icons/onboard-booking.png" as="image" />
+        <link rel="preload" href="%PUBLIC_URL%/icons/curapay-transparent.png" as="image" />
+        
+        <!-- FontAwesome for medicine icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+        
+        <!-- Instant path-based theme: light bg for staff portals -->
+        <script>
+          (function(){
+            var p = window.location.pathname;
+            if (p.indexOf('/pharmacy-staff') === 0 ||
+                p.indexOf('/diagyn-staff') === 0 || p.indexOf('/mango-staff') === 0 ||
+                p.indexOf('/doctor-portal') === 0 || p.indexOf('/doctor') === 0 ||
+                p.indexOf('/doctor-login') === 0) {
+              document.documentElement.style.backgroundColor = '#FAFAF8';
+              document.documentElement.setAttribute('data-portal', 'pharmacy');
+            }
+          })();
+        </script>
+        
+        <!-- Google Fonts (non-blocking) -->
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
         
         <!-- PWA Manifest -->
         <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
         
         <!-- Favicon -->
-        <link rel="icon" href="%PUBLIC_URL%/icons/nevika-app-icon.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="%PUBLIC_URL%/icons/icon-192x192.png" />
+        <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
         
         <!-- Apple Touch Icon -->
-        <link rel="apple-touch-icon" href="%PUBLIC_URL%/icons/nevika-app-icon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="%PUBLIC_URL%/icons/icon-152x152.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="%PUBLIC_URL%/icons/icon-144x144.png" />
         
         <!-- iOS PWA Meta Tags -->
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Nevika Cura" />
         
         <!-- Windows PWA Meta Tags -->
-        <meta name="msapplication-TileColor" content="#14b8a6" />
+        <meta name="msapplication-TileColor" content="#0A0A0F" />
         <meta name="msapplication-TileImage" content="%PUBLIC_URL%/icons/icon-144x144.png" />
         
         <!-- Open Graph Meta Tags -->
-        <meta property="og:title" content="Nevika Cura Healthcare" />
-        <meta property="og:description" content="Complete Healthcare Solutions - Book appointments, tests & order medicines" />
+        <meta property="og:title" content="Nevika Cura - Complete Healthcare Solutions" />
+        <meta property="og:description" content="Book doctor appointments, order medicines with 15% off, and get lab tests at home. DiaGyn Healthcare, Orange Pharmacy, Mango Health Labs." />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://nevikacura.com" />
         <meta property="og:image" content="%PUBLIC_URL%/icons/icon-512x512.png" />
+        <meta property="og:image:width" content="512" />
+        <meta property="og:image:height" content="512" />
+        <meta property="og:site_name" content="Nevika Cura" />
+        <meta property="og:locale" content="en_IN" />
         
-        <title>Nevika Cura | Healthcare</title>
+        <!-- Twitter Card Meta Tags -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Nevika Cura - Complete Healthcare Solutions" />
+        <meta name="twitter:description" content="Book doctor appointments, order medicines online, get lab tests at home." />
+        <meta name="twitter:image" content="%PUBLIC_URL%/icons/icon-512x512.png" />
+        
+        <!-- Structured Data (JSON-LD) -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "MedicalBusiness",
+          "name": "Nevika Cura Healthcare",
+          "url": "https://nevikacura.com",
+          "logo": "https://nevikacura.com/icons/icon-512x512.png",
+          "description": "Complete healthcare platform - DiaGyn Healthcare, Orange Pharmacy, Mango Health Labs. Book appointments, order medicines, get lab tests.",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "24215, Kuykendal Road",
+            "addressLocality": "Tomball",
+            "addressRegion": "Texas",
+            "postalCode": "77375",
+            "addressCountry": "US"
+          },
+          "telephone": "+917039020020",
+          "department": [
+            {"@type": "MedicalClinic", "name": "DiaGyn Healthcare", "telephone": "+917039020020"},
+            {"@type": "Pharmacy", "name": "Orange Pharmacy", "telephone": "+917039030030"},
+            {"@type": "DiagnosticLab", "name": "Mango Health Labs", "telephone": "+917039040040"}
+          ],
+          "sameAs": []
+        }
+        </script>
+        
+        <title>Nevika Cura | Healthcare - Appointments, Pharmacy, Lab Tests</title>
         <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
+        <!-- Cashfree Payment SDK -->
+        <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
         <!--
         These two scripts have been added for the Visual Edits, please do not edit or remove them
         -->
@@ -62,7 +136,12 @@
             }
         </script>
     </head>
-    <body style="background: #ffffff;">
+    <body style="background: #0A0A0F;">
+        <script>
+          if (document.documentElement.getAttribute('data-portal') === 'pharmacy') {
+            document.body.style.background = '#FAFAF8';
+          }
+        </script>
         <noscript>
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; background: #f0f9ff; border-radius: 12px;">
                 <h1 style="color: #0077b6; font-size: 28px;">Nevika Cura Healthcare</h1>
@@ -81,7 +160,19 @@
                 </p>
             </div>
         </noscript>
-        <div id="root"></div>
+        <div id="root">
+            <!-- Pre-React splash: shows until JS bundle loads -->
+            <style>@keyframes ncPulse{0%,100%{transform:scale(1);opacity:0.9}50%{transform:scale(1.05);opacity:1}}</style>
+            <div id="pre-splash" style="position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:99999;">
+                <img src="%PUBLIC_URL%/nevika-splash-icon.png?v=7" alt="Nevika Cura" style="width:120px;height:120px;object-fit:contain;animation:ncPulse 1.5s ease-in-out infinite;" />
+            </div>
+            <script>
+              if (document.documentElement.getAttribute('data-portal') === 'pharmacy') {
+                var splash = document.getElementById('pre-splash');
+                if (splash) { splash.style.background = '#FAFAF8'; }
+              }
+            </script>
+        </div>
         
         <!--
       This HTML file is a template.
@@ -161,41 +252,51 @@
             });
         </script>
         
-        <!-- Service Worker Registration -->
+        <!-- Service Worker Registration with Auto-Update -->
         <script>
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', async function() {
                     try {
                         const registration = await navigator.serviceWorker.register('/service-worker.js');
-                        console.log('Nevika Cura PWA: Service Worker registered with scope:', registration.scope);
+                        console.log('Nevika Cura PWA: SW registered');
                         
-                        // Check for updates
+                        // Check for updates periodically (every 30 min)
+                        setInterval(() => registration.update(), 30 * 60 * 1000);
+
+                        // New SW found
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
-                            console.log('Nevika Cura PWA: New service worker installing...');
-                            
                             newWorker.addEventListener('statechange', () => {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // New SW installed, skip waiting
                                     newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                    console.log('Nevika Cura PWA: New version available, refreshing...');
-                                    window.location.reload();
                                 }
                             });
                         });
 
-                        // Handle controller change (when new SW takes over)
+                        // When new SW takes control, reload for fresh content
+                        let refreshing = false;
                         navigator.serviceWorker.addEventListener('controllerchange', () => {
-                            console.log('Nevika Cura PWA: Controller changed');
+                            if (!refreshing) { refreshing = true; window.location.reload(); }
                         });
 
-                        // Immediately claim if there's a waiting worker
+                        // Listen for messages from SW
+                        navigator.serviceWorker.addEventListener('message', (event) => {
+                            if (event.data?.type === 'SW_UPDATED') {
+                                console.log('Nevika Cura: App updated to v' + event.data.version);
+                            }
+                            if (event.data?.type === 'CACHE_CLEARED') {
+                                console.log('Nevika Cura: Cache cleared, reloading...');
+                                window.location.reload(true);
+                            }
+                        });
+
+                        // Activate waiting SW immediately
                         if (registration.waiting) {
                             registration.waiting.postMessage({ type: 'SKIP_WAITING' });
                         }
 
                     } catch (error) {
-                        console.log('Nevika Cura PWA: Service Worker registration failed:', error);
+                        console.log('Nevika Cura PWA: SW registration failed:', error);
                     }
                 });
             }

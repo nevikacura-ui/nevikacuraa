@@ -1,0 +1,1218 @@
+[
+  {
+    "name": "ASCOAIR INHALER",
+    "composition": "Salbutamol 100mcg",
+    "mrp": 142.0,
+    "form": "Inhaler",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCOAIR FB 100 INHALER",
+    "composition": "Formoterol 6mcg + Budesonide 100mcg",
+    "mrp": 351.12,
+    "form": "Inhaler",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCOAIR FB 200 INHALER",
+    "composition": "Formoterol 6mcg + Budesonide 200mcg",
+    "mrp": 498.71,
+    "form": "Inhaler",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "SALMECORT SF 125 INHALER",
+    "composition": "Salmeterol 25mcg + Fluticasone 125mcg",
+    "mrp": 510.0,
+    "form": "Inhaler",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "SALMECORT SF 250 INHALER",
+    "composition": "Salmeterol 25mcg + Fluticasone 250mcg",
+    "mrp": 684.0,
+    "form": "Inhaler",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ALEXCET TAB",
+    "composition": "Cetirizine HCL 10mg",
+    "mrp": 18.82,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ALEXCET L TAB",
+    "composition": "Levocetirizine Dihydrochloride 5mg",
+    "mrp": 34.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ALEXCET LM TAB",
+    "composition": "Montelukast 10mg + Levocetirizine 5mg",
+    "mrp": 190.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ALEXCET LM KID TAB",
+    "composition": "Montelukast 4mg + Levocetirizine 2.5mg",
+    "mrp": 87.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ALEXFLU COLD TAB",
+    "composition": "Cetirizine 5mg + Phenylephrine 10mg + Paracetamol 325mg",
+    "mrp": 38.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "AZIZOOM 250MG TAB",
+    "composition": "Azithromycin 250mg",
+    "mrp": 78.22,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "AZIZOOM 500MG TAB",
+    "composition": "Azithromycin 500mg",
+    "mrp": 131.94,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CALBONEX 500 TAB",
+    "composition": "Calcium Carbonate 1250mg eq. to Elemental Calcium 500mg + Vitamin D3 250IU",
+    "mrp": 93.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CEFATE-100 DT TAB",
+    "composition": "Cefixime 100mg",
+    "mrp": 108.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CEFATE-200 DT TAB",
+    "composition": "Cefixime 200mg",
+    "mrp": 97.66,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CEFATE-O TAB",
+    "composition": "Cefixime 200mg + Ofloxacin 200mg",
+    "mrp": 148.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CETIRIZINE 10MG TAB",
+    "composition": "Cetirizine HCL 10mg",
+    "mrp": 21.06,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "DROTACLEAR SPAS TAB",
+    "composition": "Drotaverine 80mg + Mefenamic Acid 250mg",
+    "mrp": 96.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ESOMER 20MG TAB",
+    "composition": "Esomeprazole 20mg",
+    "mrp": 105.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ESOMER 40MG TAB",
+    "composition": "Esomeprazole 40mg",
+    "mrp": 165.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "FLAMOX CV 375MG TAB",
+    "composition": "Amoxicillin 250mg + Potassium Clavulanate 125mg",
+    "mrp": 149.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "FLAMOX CV 625MG TAB",
+    "composition": "Amoxicillin 500mg + Potassium Clavulanate 125mg",
+    "mrp": 204.85,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GALVAMARK 50MG TAB",
+    "composition": "Vildagliptin 50mg",
+    "mrp": 109.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GALVAMARK MET 50/1000 TAB",
+    "composition": "Vildagliptin 50mg + Metformin 1000mg",
+    "mrp": 128.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GALVAMARK MET 50/500 TAB",
+    "composition": "Vildagliptin 50mg + Metformin 500mg",
+    "mrp": 124.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENASMA M TAB",
+    "composition": "Doxofylline 400mg + Montelukast 10mg",
+    "mrp": 164.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENDAN MD 4MG TAB",
+    "composition": "Ondansetron 4mg Mouth Dissolving",
+    "mrp": 55.06,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENFENAC MR TAB",
+    "composition": "Aceclofenac 100mg + Chlorzoxazone 250mg + Paracetamol 325mg",
+    "mrp": 71.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENFENAC-SP FORTE TAB",
+    "composition": "Aceclofenac 100mg + Paracetamol 325mg + Serratiopeptidase 15mg",
+    "mrp": 130.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENFLU TAB",
+    "composition": "Fluconazole 150mg",
+    "mrp": 12.05,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENOCORT 6MG TAB",
+    "composition": "Deflazacort 6mg",
+    "mrp": 100.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENPAR 500MG TAB",
+    "composition": "Paracetamol 500mg",
+    "mrp": 9.97,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENPAR 650MG TAB",
+    "composition": "Paracetamol 650mg",
+    "mrp": 22.35,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENPAR AC TAB",
+    "composition": "Paracetamol 325mg + Aceclofenac 100mg",
+    "mrp": 60.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENTAC-300MG TAB",
+    "composition": "Ranitidine 300mg",
+    "mrp": 53.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENTAC-D TAB",
+    "composition": "Ranitidine 150mg + Domperidone 10mg",
+    "mrp": 74.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENTAC-150 TAB",
+    "composition": "Ranitidine 150mg",
+    "mrp": 38.52,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENTONA XT TAB",
+    "composition": "Ferrous Ascorbate 100mg + Folic Acid 1.5mg + Zinc 22.5mg",
+    "mrp": 101.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "IVLOR 12MG TAB",
+    "composition": "Ivermectin 12mg",
+    "mrp": 149.32,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "KUSHAGRA 100MG TAB",
+    "composition": "Sildenafil Citrate 100mg",
+    "mrp": 159.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "KUSHAGRA FORCE TAB",
+    "composition": "Sildenafil 50mg + Dapoxetine 30mg",
+    "mrp": 170.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MIFER FORTE TAB",
+    "composition": "Mefenamic Acid 500mg + Paracetamol 325mg",
+    "mrp": 47.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MIFER SPAS TAB",
+    "composition": "Mefenamic Acid 250mg + Dicyclomine HCL 10mg",
+    "mrp": 48.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MILIBEND 400MG TAB",
+    "composition": "Albendazole 400mg",
+    "mrp": 7.85,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MILIVO 250MG TAB",
+    "composition": "Levofloxacin 250mg",
+    "mrp": 46.59,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MILIVO 500MG TAB",
+    "composition": "Levofloxacin 500mg",
+    "mrp": 85.23,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "NASORYL COLD & FLU TAB",
+    "composition": "Paracetamol 325mg + Caffeine 30mg + Phenylephrine 2.5mg + CPM 2mg",
+    "mrp": 64.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "NOVOGESIC 100MG TAB",
+    "composition": "Nimesulide 100mg",
+    "mrp": 27.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "NOVOGESIC P TAB",
+    "composition": "Nimesulide 100mg + Paracetamol 325mg",
+    "mrp": 43.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "OFLOFINE 200MG TAB",
+    "composition": "Ofloxacin 200mg",
+    "mrp": 59.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "OFLOFINE OZ TAB",
+    "composition": "Ofloxacin 200mg + Ornidazole 500mg",
+    "mrp": 92.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "PANTOGLEN 40MG TAB",
+    "composition": "Pantoprazole 40mg",
+    "mrp": 85.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "PANTOGLEN D TAB",
+    "composition": "Pantoprazole 40mg + Domperidone 10mg",
+    "mrp": 87.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "PAYFOL TAB",
+    "composition": "Folic Acid 5mg",
+    "mrp": 45.36,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "PODOGLEN 100 DT TAB",
+    "composition": "Cefpodoxime Proxetil 100mg",
+    "mrp": 142.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "PODOGLEN 200 DT TAB",
+    "composition": "Cefpodoxime Proxetil 200mg",
+    "mrp": 241.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "POSTLUT-N 5MG TAB",
+    "composition": "Norethisterone 5mg",
+    "mrp": 53.87,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "RABEFINE 20MG TAB",
+    "composition": "Rabeprazole Sodium 20mg",
+    "mrp": 77.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "RABEFINE D TAB",
+    "composition": "Rabeprazole 20mg + Domperidone 10mg",
+    "mrp": 76.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "SPASMOGLEN TAB",
+    "composition": "Paracetamol 325mg + Dicyclomine 20mg",
+    "mrp": 34.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "STREPCLEAR LOZENGES",
+    "composition": "Amylmetacresol 0.6mg + 2,4-Dichlorobenzyl Alcohol",
+    "mrp": 40.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "TERBICLAIR 250MG TAB",
+    "composition": "Terbinafine 250mg",
+    "mrp": 91.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "THYROCRUSH 25MCG TAB",
+    "composition": "Thyroxine Sodium 25mcg",
+    "mrp": 173.38,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "THYROCRUSH 50MCG TAB",
+    "composition": "Thyroxine Sodium 50mcg",
+    "mrp": 123.65,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "THYROCRUSH 75MCG TAB",
+    "composition": "Thyroxine Sodium 75mcg",
+    "mrp": 172.03,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "THYROCRUSH 100MCG TAB",
+    "composition": "Thyroxine Sodium 100mcg",
+    "mrp": 158.59,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "THYROCRUSH 125MCG TAB",
+    "composition": "Thyroxine Sodium 125mcg",
+    "mrp": 202.94,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "THYROCRUSH 150MCG TAB",
+    "composition": "Thyroxine Sodium 150mcg",
+    "mrp": 204.29,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "XMETOR 500MG TAB",
+    "composition": "Metformin HCL 500mg",
+    "mrp": 33.9,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCODEX COUGH PEARLS",
+    "composition": "CPM 2mg + Dextromethorphan 10mg + Phenylephrine 5mg",
+    "mrp": 49.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CALBONEX SOFTGEL CAP",
+    "composition": "Elemental Calcium 200mg + Calcitriol 0.25mcg + Zinc 7.5mg",
+    "mrp": 217.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CALBONEX D3 60K SOFTGEL CAP",
+    "composition": "Cholecalciferol 60000 IU",
+    "mrp": 113.35,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CANDIPRAZ 100MG CAP",
+    "composition": "Itraconazole 100mg",
+    "mrp": 156.97,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CANDIPRAZ 200MG CAP",
+    "composition": "Itraconazole 200mg",
+    "mrp": 247.74,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ESOMER D 40SR CAP",
+    "composition": "Esomeprazole 40mg + Domperidone 30mg SR",
+    "mrp": 175.5,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ESOMER L CAP",
+    "composition": "Esomeprazole 40mg + Levosulpiride 75mg",
+    "mrp": 258.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MILIOM D CAP",
+    "composition": "Omeprazole 20mg + Domperidone 10mg",
+    "mrp": 107.5,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MILIOM 20MG CAP",
+    "composition": "Omeprazole 20mg",
+    "mrp": 42.67,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "PANTOGLEN DSR CAP",
+    "composition": "Pantoprazole 40mg + Domperidone 30mg SR",
+    "mrp": 129.5,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "PANTOGLEN L CAP",
+    "composition": "Pantoprazole 40mg + Levosulpiride 75mg SR",
+    "mrp": 252.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "PREGABACTIN M75 CAP",
+    "composition": "Pregabalin 75mg + Methylcobalamin 750mcg",
+    "mrp": 132.5,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "RABEFINE DSR CAP",
+    "composition": "Rabeprazole 20mg + Domperidone 30mg SR",
+    "mrp": 103.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "RABEFINE L CAP",
+    "composition": "Rabeprazole 20mg + Levosulpiride 75mg SR",
+    "mrp": 180.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "SAFERON Z CAP",
+    "composition": "Carbonyl Iron 50mg + Zinc 61.8mg + Folic Acid 0.5mg",
+    "mrp": 95.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ALEXCET SYRUP 30ML",
+    "composition": "Cetirizine HCL 5mg/5ml",
+    "mrp": 19.82,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ALEXCET SYRUP 60ML",
+    "composition": "Cetirizine HCL 5mg/5ml",
+    "mrp": 39.65,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ALEXCET-L SYRUP 30ML",
+    "composition": "Levocetirizine 2.5mg/5ml",
+    "mrp": 41.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ALEXCET-L SYRUP 60ML",
+    "composition": "Levocetirizine 2.5mg/5ml",
+    "mrp": 65.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ALEXCET LM SYRUP 60ML",
+    "composition": "Montelukast 4mg + Levocetirizine 2.5mg/5ml",
+    "mrp": 117.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCODEX D COUGH SYRUP 100ML",
+    "composition": "Dextromethorphan 10mg + Phenylephrine 5mg + CPM 2mg/5ml",
+    "mrp": 141.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCODEX DX SYRUP 100ML",
+    "composition": "Bromhexine 4mg + Ammonium Chloride 50mg + Dextromethorphan 10mg/5ml",
+    "mrp": 77.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCODEX DX SYRUP 60ML",
+    "composition": "Bromhexine 4mg + Ammonium Chloride 50mg + Dextromethorphan 10mg/5ml",
+    "mrp": 52.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCODEX JUNIOR SYRUP 60ML",
+    "composition": "CPM 2mg + Dextromethorphan 10mg + Phenylephrine 5mg/5ml",
+    "mrp": 83.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCODEX JUNIOR LS DROPS 15ML",
+    "composition": "Levosalbutamol 0.25mg + Ambroxol 7.5mg + Guaiphenesin 25mg/ml",
+    "mrp": 71.5,
+    "form": "Drops",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCODEX LS EXPECTORANT 100ML",
+    "composition": "Levosalbutamol 1mg + Ambroxol 30mg + Guaiphenesin 50mg/5ml",
+    "mrp": 118.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCODEX LS JUNIOR EXPECTORANT 60ML",
+    "composition": "Levosalbutamol 0.5mg + Ambroxol 15mg + Guaiphenesin 50mg/5ml",
+    "mrp": 89.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCODEX PLUS EXPECTORANT 100ML",
+    "composition": "Terbutaline 1.25mg + Bromhexine 2mg + Guaiphenesin 50mg + Menthol 0.5mg/5ml",
+    "mrp": 118.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCODEX SF EXPECTORANT 100ML",
+    "composition": "Terbutaline 1.25mg + Bromhexine 2mg + Guaiphenesin 50mg + Menthol 0.5mg/5ml Sugar Free",
+    "mrp": 135.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ASCODEX-CD COUGH SYRUP 100ML",
+    "composition": "Codeine Phosphate 10mg + CPM 4mg/5ml",
+    "mrp": 117.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CETIRIZINE SYRUP 30ML",
+    "composition": "Cetirizine HCL 5mg/5ml",
+    "mrp": 19.36,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CETIRIZINE SYRUP 60ML",
+    "composition": "Cetirizine HCL 5mg/5ml",
+    "mrp": 39.65,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENCOFF-C COUGH SYRUP 100ML",
+    "composition": "Codeine Phosphate 10mg + CPM 4mg/5ml",
+    "mrp": 107.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENCYPER PLUS SYRUP 200ML",
+    "composition": "Cyproheptadine 2mg + Tricholine Citrate 275mg/5ml",
+    "mrp": 131.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENDAN SOLUTION 30ML",
+    "composition": "Ondansetron 2mg/5ml",
+    "mrp": 32.12,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENPAR PLUS SUSPENSION 60ML",
+    "composition": "Paracetamol 125mg + CPM 1mg + Phenylephrine 2.5mg/5ml",
+    "mrp": 43.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENPARA COLD DS SUSPENSION 60ML",
+    "composition": "CPM 2mg + Phenylephrine 5mg + Paracetamol 250mg + Sodium Citrate 60mg/5ml",
+    "mrp": 97.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENTONA XT SUSPENSION 150ML",
+    "composition": "Ferrous Ascorbate eq. to Elemental Iron 30mg + Folic Acid 550mcg/5ml",
+    "mrp": 134.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "HEMOGLEN FORTE SYRUP 315ML",
+    "composition": "Iron Polymaltose Complex eq. to Elemental Iron 50mg + Folic Acid 0.5%/15ml",
+    "mrp": 258.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MIFER PLUS DS SUSPENSION 60ML",
+    "composition": "Mefenamic Acid 100mg + Paracetamol 250mg/5ml",
+    "mrp": 52.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MIFER PLUS SUSPENSION 60ML",
+    "composition": "Mefenamic Acid 50mg + Paracetamol 125mg/5ml",
+    "mrp": 38.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MILIBEND PLUS SUSPENSION 10ML",
+    "composition": "Ivermectin 3mg + Albendazole 200mg/5ml",
+    "mrp": 17.85,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MILIBEND SUSPENSION 10ML",
+    "composition": "Albendazole 200mg/5ml",
+    "mrp": 12.09,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "OFLOFINE SUSPENSION 30ML",
+    "composition": "Ofloxacin 50mg/5ml",
+    "mrp": 40.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "OFLOFINE M SUSPENSION 30ML",
+    "composition": "Ofloxacin 50mg + Metronidazole 100mg/5ml",
+    "mrp": 50.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "OFLOFINE M SUSPENSION 60ML",
+    "composition": "Ofloxacin 50mg + Metronidazole 100mg/5ml",
+    "mrp": 78.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "RELCER MPS PLUS SUSPENSION 170ML",
+    "composition": "Aluminium Hydroxide 250mg + Simethicone 50mg + Magnesium Hydroxide 250mg/5ml",
+    "mrp": 132.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "SPASCAINE GEL 170ML",
+    "composition": "Aluminium Hydroxide 291mg + Magnesium Hydroxide 98mg + Oxetacaine 10mg/5ml",
+    "mrp": 195.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "SUCRA RELCER O SUSPENSION 200ML",
+    "composition": "Sucralfate 1g + Oxetacaine 20mg/10ml",
+    "mrp": 170.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "SUCRA RELCER SUSPENSION 200ML",
+    "composition": "Sucralfate 1g/10ml",
+    "mrp": 135.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CEFATE 50 DS 30ML",
+    "composition": "Cefixime 50mg/5ml",
+    "mrp": 60.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CEFATE FORTE DS 30ML",
+    "composition": "Cefixime 100mg/5ml",
+    "mrp": 85.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "FLAMOX CV DS 30ML",
+    "composition": "Amoxicillin 200mg + Potassium Clavulanate 28.5mg/5ml",
+    "mrp": 68.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "FLAMOX CV DDS DS 30ML",
+    "composition": "Amoxicillin 400mg + Potassium Clavulanate 57mg/5ml",
+    "mrp": 139.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "PODOGLEN 50 DS 30ML",
+    "composition": "Cefpodoxime Proxetil 50mg/5ml",
+    "mrp": 98.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "PODOGLEN FORTE DS 30ML",
+    "composition": "Cefpodoxime Proxetil 100mg/5ml",
+    "mrp": 142.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CANDIPRAZ OC CREAM 15GM",
+    "composition": "Ofloxacin 0.75% + Ornidazole 2% + Itraconazole 1% + Clobetasol Propionate 0.05%",
+    "mrp": 135.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CANDIGESIC GEL 10GM",
+    "composition": "Diclofenac Diethylamine 1.16% + Linseed Oil 3% + Methyl Salicylate 10% + Menthol 5%",
+    "mrp": 37.5,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CANDIGESIC GEL 35GM",
+    "composition": "Diclofenac Diethylamine 1.16% + Linseed Oil 3% + Methyl Salicylate 10% + Menthol 5%",
+    "mrp": 105.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GAMSCABOMA LOTION 100ML",
+    "composition": "Gamma Benzene Hexachloride 1%",
+    "mrp": 115.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GETLITE NEO CREAM 20GM",
+    "composition": "Hydroquinone 2% + Tretinoin 0.025% + Mometasone 0.1%",
+    "mrp": 315.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENSORE GEL 10GM",
+    "composition": "Choline Salicylate 8.7% + Lignocaine HCL 2%",
+    "mrp": 67.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENTADINE 5% OINTMENT 10GM",
+    "composition": "Povidone Iodine 5%",
+    "mrp": 35.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENTADINE 5% OINTMENT 20GM",
+    "composition": "Povidone Iodine 5%",
+    "mrp": 65.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENTADINE 5% SOLUTION 100ML",
+    "composition": "Povidone Iodine 5%",
+    "mrp": 70.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "GLENVIRAX CREAM 5GM",
+    "composition": "Aciclovir 5%",
+    "mrp": 46.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "KETOPLUS CREAM 15GM",
+    "composition": "Ketoconazole 2%",
+    "mrp": 95.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "MELNOR CREAM 20GM",
+    "composition": "Hydroquinone 2% + Tretinoin 0.025% + Mometasone 0.1%",
+    "mrp": 315.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "NEBASKIN POWDER 10GM",
+    "composition": "Neomycin 5mg + Bacitracin 250 units + Sulphacetamide Sodium 60mg/gm",
+    "mrp": 62.0,
+    "form": "Powder",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "QUDRAFORCE GM CREAM 15GM",
+    "composition": "Beclomethasone 0.025% + Clotrimazole 1% + Neomycin 0.5%",
+    "mrp": 78.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "SCABOMA PLUS LOTION 50ML",
+    "composition": "Permethrin 5%",
+    "mrp": 73.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "SUPIROBAN OINTMENT 5GM",
+    "composition": "Mupirocin 2%",
+    "mrp": 99.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CALBONEX D3 SACHET 1GM",
+    "composition": "Cholecalciferol 60000 IU Granules",
+    "mrp": 33.95,
+    "form": "Powder",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CANDIGESIC SPRAY 55GM",
+    "composition": "Diclofenac Diethylamine 1.16% + Linseed Oil 3% + Methyl Salicylate 10% + Menthol 5%",
+    "mrp": 191.5,
+    "form": "Cream",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "CANDIPREG KIT",
+    "composition": "Pregnancy Test Kit",
+    "mrp": 76.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "FLUBLAST JUNIOR NASAL SPRAY 10ML",
+    "composition": "Xylometazoline HCL 0.05% + Benzalkonium Chloride 0.02%",
+    "mrp": 46.07,
+    "form": "Drops",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "FLUBLAST ADULT NASAL SPRAY 10ML",
+    "composition": "Xylometazoline HCL 0.1% + Benzalkonium Chloride 0.02%",
+    "mrp": 57.34,
+    "form": "Drops",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ORS POWDER ORANGE 21.8GM",
+    "composition": "Oral Rehydration Salts",
+    "mrp": 25.29,
+    "form": "Powder",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "NASORYL JUNIOR NASAL SPRAY 10ML",
+    "composition": "Oxymetazoline HCL 0.025% + Benzalkonium Chloride 0.02%",
+    "mrp": 71.0,
+    "form": "Drops",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "NASORYL ADULT NASAL SPRAY 10ML",
+    "composition": "Oxymetazoline HCL 0.05% + Benzalkonium Chloride 0.02%",
+    "mrp": 87.5,
+    "form": "Drops",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ORS LIQUID APPLE 200ML",
+    "composition": "Oral Rehydration Salts",
+    "mrp": 29.4,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "ORS LIQUID ORANGE 200ML",
+    "composition": "Oral Rehydration Salts",
+    "mrp": 29.4,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Glenmark"
+  },
+  {
+    "name": "WAXACTIN EAR DROP 10ML",
+    "composition": "Benzocaine 2.7% + Chlorbutol 5% + Turpentine Oil 15% + Paradichlorobenzene 2%",
+    "mrp": 89.5,
+    "form": "Drops",
+    "category": "General",
+    "source": "Glenmark"
+  }
+]

@@ -24,8 +24,8 @@ class CreateComment(BaseModel):
 
 # Helper
 def get_db():
-    from server import db
-    return db
+    from database import get_db as _get_db
+    return _get_db()
 
 # Sample community topics/categories
 COMMUNITY_CATEGORIES = [

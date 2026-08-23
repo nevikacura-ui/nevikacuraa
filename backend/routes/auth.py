@@ -9,11 +9,12 @@ import jwt
 import logging
 from datetime import datetime, timezone, timedelta
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel, EmailStr
 
 from database import get_db
 from services import send_email_notification
+from rate_limit import limiter
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +108,8 @@ async def get_current_user(authorization: str = None):
 # ============ Email-based Auth Routes ============
 
 @router.post("/register")
-async def register(user_data: UserRegister):
+@limiter.limit("5/minute")
+async def register(request: Request, user_data: UserRegister):
     """Register new user with email/password"""
     db = get_db()
     
@@ -156,7 +158,8 @@ async def register(user_data: UserRegister):
     }
 
 @router.post("/login")
-async def login(credentials: UserLogin):
+@limiter.limit("10/minute")
+async def login(request: Request, credentials: UserLogin):
     """Login with email/password"""
     db = get_db()
     
@@ -202,9 +205,10 @@ async def get_me(authorization: str = None):
 # ============ OTP-based Auth Routes ============
 
 @router.post("/otp/send")
-async def send_auth_otp(request: AuthOTPRequest):
+@limiter.limit("3/minute")
+async def send_auth_otp(request: Request, otp_request: AuthOTPRequest):
     """Send OTP for authentication - Uses MOCK OTP (no SMS for login)"""
-    phone = request.phone.strip()
+    phone = otp_request.phone.strip()
     
     if not phone or len(phone) < 10:
         raise HTTPException(status_code=400, detail="Invalid phone number")
@@ -232,10 +236,11 @@ async def send_auth_otp(request: AuthOTPRequest):
     }
 
 @router.post("/otp/verify")
-async def verify_auth_otp(request: AuthOTPVerify):
+@limiter.limit("5/minute")
+async def verify_auth_otp(request: Request, otp_data: AuthOTPVerify):
     """Verify OTP for authentication - Uses MOCK verification"""
-    phone = request.phone.strip()
-    otp = request.otp.strip()
+    phone = otp_data.phone.strip()
+    otp = otp_data.otp.strip()
     
     # Use mock OTP verification only (no SMS verification for login)
     otp_key = f"auth_{phone}"

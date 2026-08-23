@@ -1,0 +1,72 @@
+{
+  "summary": "Iteration 335 - My Appointments Tracker Page Testing. All features working correctly: 1) GET /api/appointments/patient-active returns active, completed, cancelled appointments with can_cancel and can_reschedule flags, 2) POST /api/appointments/{id}/patient-cancel successfully cancels appointments with phone verification and 1-hour cutoff enforcement, 3) POST /api/appointments/{id}/reschedule successfully reschedules appointments with slot conflict check, 4) Frontend /my-appointments page loads with Active/Completed/Cancelled tabs, 5) Cancel modal opens with reason selection, 6) Reschedule modal opens with date picker and time slot selector (Morning 11AM-2PM, Evening 6PM-10PM), 7) Homepage tracker 'All Clear' state navigates to /my-appointments, 8) Book New button navigates to /diagyn.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_api_tests": {
+      "patient_active_endpoint": "PASSED - GET /api/appointments/patient-active?phone=9403890429 returns active, completed, cancelled arrays with can_cancel/can_reschedule flags",
+      "patient_cancel_endpoint": "PASSED - POST /api/appointments/{id}/patient-cancel cancels appointment, returns success",
+      "reschedule_endpoint": "PASSED - POST /api/appointments/{id}/reschedule reschedules to new date/time",
+      "phone_verification": "PASSED - Wrong phone returns 403 Forbidden",
+      "slot_conflict_check": "PASSED - Rescheduling to booked slot returns 409 Conflict",
+      "booked_slots_endpoint": "PASSED - GET /api/appointments/booked-slots returns booked slots for doctor/clinic/date",
+      "invalid_phone_validation": "PASSED - Invalid phone returns 400 Bad Request"
+    },
+    "frontend_ui_tests": {
+      "my_appointments_page_load": "PASSED - Page loads with data-testid='my-appointments-page'",
+      "tabs_navigation": "PASSED - Active/Completed/Cancelled tabs work correctly",
+      "appointment_card_display": "PASSED - Cards show doctor, clinic, date, time, booking_id, status badge",
+      "cancel_button": "PASSED - data-testid='cancel-btn-{id}' visible for cancellable appointments",
+      "reschedule_button": "PASSED - data-testid='reschedule-btn-{id}' visible for reschedulable appointments",
+      "cancel_modal": "PASSED - Opens with reason selection (Schedule conflict, Feeling better, etc.)",
+      "reschedule_modal": "PASSED - Opens with date picker (7 non-Sunday dates) and time slots",
+      "time_slots_display": "PASSED - Morning (11AM-2PM) and Evening (6PM-10PM) slots shown",
+      "book_new_navigation": "PASSED - data-testid='book-new-btn' navigates to /diagyn",
+      "back_button": "PASSED - data-testid='appointments-back-btn' visible",
+      "refresh_button": "PASSED - data-testid='appointments-refresh-btn' visible"
+    },
+    "homepage_tracker_tests": {
+      "empty_tracker_state": "PASSED - data-testid='active-orders-empty' shows 'All Clear' message",
+      "empty_tracker_navigation": "PASSED - Clicking empty tracker navigates to /my-appointments",
+      "view_all_button": "PASSED - data-testid='view-all-orders-btn' navigates to /my-appointments"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_my_appointments.py",
+    "/app/test_reports/pytest/pytest_my_appointments_335.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Backend appointment_routes.py lines 1160-1223: patient-cancel endpoint correctly implements phone verification and 1-hour cutoff",
+    "Backend appointment_routes.py lines 1227-1300: reschedule endpoint correctly validates new slot availability before updating",
+    "Backend appointment_routes.py lines 1303-1368: patient-active endpoint correctly adds can_cancel/can_reschedule flags based on appointment datetime",
+    "Frontend MyAppointmentsPage.jsx: Well-structured with CancelModal and RescheduleModal components",
+    "Frontend ActiveOrdersTracker.jsx: Empty state correctly navigates to /my-appointments on click"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_my_appointments.py"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "test_phone": "9403890429",
+    "localStorage_keys": ["userPhone", "guestMobile"]
+  },
+  "seed_data_creation": "Created and cancelled test appointments via API for testing cancel/reschedule flows",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "My Appointments feature fully tested. Backend APIs (patient-active, patient-cancel, reschedule) all working with proper validation. Frontend page loads correctly with tabs, modals, and navigation. Homepage tracker 'All Clear' state navigates to /my-appointments. Test phone 9403890429 has cancelled appointments in history.",
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  }
+}

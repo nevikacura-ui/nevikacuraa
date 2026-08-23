@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, User, Bell, Heart, Users, Shield,
   ChevronRight, LogOut, HelpCircle, FileText, Star,
-  CreditCard, BellRing, Calendar, Download, ExternalLink, Check
+  CreditCard, BellRing, Calendar, Download, ExternalLink, Check, Globe
 } from 'lucide-react';
 import NotificationSettings from '@/components/NotificationSettings';
 import FamilyMembers from '@/components/FamilyMembers';
@@ -14,8 +14,9 @@ import PaymentManagement from '@/components/PaymentManagement';
 import PushNotificationManager from '@/components/PushNotificationManager';
 import SmartScheduling from '@/components/SmartScheduling';
 import { SyncAllAppointmentsButton } from '@/components/AddToCalendar';
-import { useLanguage } from '@/context/LanguageContext';
+import { useLanguage, LANGUAGES } from '@/context/LanguageContext';
 import BottomNav from '@/components/BottomNav';
+import LanguageSelector from '@/components/LanguageSelector';
 
 // Calendar Sync Section Component
 const CalendarSyncSection = () => {
@@ -134,11 +135,12 @@ const CalendarSyncSection = () => {
 const SettingsPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [activeSection, setActiveSection] = useState(null);
 
   const menuItems = [
     { id: 'profile', icon: User, label: 'Profile', description: 'View and edit your profile', color: 'bg-blue-100 text-blue-600', onClick: () => navigate('/profile') },
+    { id: 'language', icon: Globe, label: t('language'), description: LANGUAGES[language]?.nativeName || 'English', color: 'bg-indigo-100 text-indigo-600', onClick: () => setActiveSection('language') },
     { id: 'family', icon: Users, label: t('familyMembers'), description: 'Manage family health profiles', color: 'bg-pink-100 text-pink-600', onClick: () => setActiveSection('family') },
     { id: 'notifications', icon: Bell, label: t('notifications'), description: 'Email & SMS preferences', color: 'bg-violet-100 text-violet-600', onClick: () => setActiveSection('notifications') },
     { id: 'push', icon: BellRing, label: 'Push Notifications', description: 'Real-time alerts & reminders', color: 'bg-emerald-100 text-emerald-600', onClick: () => setActiveSection('push') },
@@ -176,8 +178,8 @@ const SettingsPage = () => {
 
   const handleLogout = () => {
     if (window.confirm('Are you sure you want to logout?')) {
-      logout();
-      navigate('/');
+      ['patientToken', 'patientInfo', 'patientLoginExpiry', 'token', 'user', 'guestMobile', 'authToken', 'guestMode', 'skippedLogin', 'intro_seen'].forEach(k => localStorage.removeItem(k));
+      window.location.href = '/';
     }
   };
 
@@ -272,6 +274,56 @@ const SettingsPage = () => {
         </div>
         <div className="p-4">
           <PaymentManagement />
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (activeSection === 'language') {
+    return (
+      <div className="min-h-screen bg-slate-50 pb-24">
+        <div className="sticky top-0 z-40 bg-white border-b">
+          <div className="flex items-center gap-3 p-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setActiveSection(null)}
+              className="rounded-xl"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <h1 className="text-lg font-semibold">{t('language')}</h1>
+          </div>
+        </div>
+        <div className="p-4 space-y-3">
+          {Object.values(LANGUAGES).map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => { 
+                setLanguage(lang.code);
+                localStorage.setItem('nevika_language', lang.code);
+              }}
+              className={`w-full p-4 rounded-xl border-2 text-left transition-all flex items-center justify-between ${
+                language === lang.code ? 'border-[#1F4F46] bg-[#1F4F46]/5' : 'border-slate-200 bg-white hover:border-slate-300'
+              }`}
+              data-testid={`lang-option-${lang.code}`}
+            >
+              <div>
+                <p className={`font-semibold ${language === lang.code ? 'text-[#1F4F46]' : 'text-slate-800'}`}>
+                  {lang.nativeName}
+                </p>
+                <p className="text-sm text-slate-500">{lang.name}</p>
+              </div>
+              {language === lang.code ? (
+                <div className="w-6 h-6 rounded-full bg-[#1F4F46] flex items-center justify-center">
+                  <Check className="w-4 h-4 text-white" />
+                </div>
+              ) : (
+                <div className="w-6 h-6 rounded-full border-2 border-slate-200" />
+              )}
+            </button>
+          ))}
         </div>
         <BottomNav />
       </div>

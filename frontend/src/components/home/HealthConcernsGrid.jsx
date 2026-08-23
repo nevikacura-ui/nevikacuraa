@@ -29,7 +29,7 @@ const HealthConcernsGrid = () => {
     {
       id: 'stomach-care',
       name: 'Stomach Care',
-      icon: '🫃',
+      icon: '💊',
       path: '/pharmacy?category=digestive',
       color: 'from-amber-500 to-orange-600',
       bgColor: 'bg-amber-50'

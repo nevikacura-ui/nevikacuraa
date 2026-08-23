@@ -1,135 +1,39 @@
-# Nevika Cura Healthcare - Changelog
+# Nevika Cura - Changelog
 
-## [January 11, 2026] - Twilio SMS OTP Integration
+## March 28, 2026
 
-### Added
-- **Real SMS OTP via Twilio Verify API:**
-  - Auth OTP (login/register) uses Twilio Verify Service
-  - Order OTP (DiaGyn, Proton, Pharmacy) uses Twilio Verify Service
-  - Auto-formats Indian phone numbers with +91 prefix
-  - 5-minute OTP expiry
-  - Rate limiting via Twilio (prevents brute force)
+### Health Calendar API Fix
+- Fixed `/api/health-calendar/events` — was using `request.app.state.db` (doesn't exist), changed to `from database import get_db`
+- API now returns proper JSON with events array
 
-- **Frontend Updates:**
-  - Green SMS confirmation banner when real OTP sent
-  - Yellow test mode banner only when using mock fallback
-  - Dynamic message based on `method` field in API response
+### Mango.js Refactoring (3,202 → 512 lines)
+- Extracted 7 components to `/pages/mango/` using React Context pattern
+- MangoContext.jsx (state sharing), MangoBrowseView, MangoTestSelection, MangoOTPStep, MangoBookingStep, MangoCheckoutDedicated, MangoCheckoutInlineStep, MangoModals
+- 84% code reduction while maintaining full functionality
 
-- **Graceful Fallback:**
-  - Falls back to mock OTP if Twilio unavailable
-  - Mock OTP display only shown when using fallback
+### Cashfree Checkout Optimizations
+- Payment retry modal — Users can retry failed payments or switch payment method
+- Delivery time estimates — Dynamic estimates based on order type and time of day
+- Best coupon auto-suggest — New `/api/coupons/available` endpoint returns ranked coupons
+- Coupon auto-apply UI in checkout review step
 
-- **Environment Variables:**
-  - `TWILIO_PHONE_NUMBER` - SMS sender number
-  - `TWILIO_VERIFY_SERVICE_SID` - For OTP verification
+### Inventory Consolidation
+- New `/api/inventory/batch-expiry` — Track medicine batches and expiry dates
+- New `/api/inventory/bulk-price-update` — Bulk update MRP/sale prices
+- New `/api/inventory/stock-summary` — Admin dashboard with in-stock/low-stock/out-of-stock counts
+- InventoryDashboard component added to AdminPanel.js with Inventory tab
 
-### Testing
-- Verified SMS delivery to Indian numbers
-- Response shows `"method": "sms"` when real SMS sent
+### SmartReorderWidget Integration
+- Wired SmartReorderWidget into Pharmacy.js (was imported but not rendered)
+- Shows past orders for quick reorder
 
----
+### Photo Prescription Scanner Upgrade
+- Enhanced Scan Rx Wheel animation during OCR processing
+- Multi-ring spinning animation with scanning dots and step progress indicators
 
-## [January 10, 2026] - Push Notifications & Feedback System
+### WhatsApp Templates
+- Added Mango Health Labs templates: booking confirmed, sample collected, report ready
 
-### Added
-- **Auto Notification Prompt:**
-  - Shows for logged-in users after 3 second delay
-  - Android banner-style with gradient background
-  - Enable Now / Maybe Later buttons
-  - Dismissal persisted in localStorage
-
-- **Push Notifications for Status Updates:**
-  - Pharmacy order status → Push notification (no email)
-  - Diagnostic test status → Push notification (no email)
-  - Appointment check-in → Push notification (no email)
-  - Appointment completion → Push notification + feedback email
-
-- **Appointment Feedback System:**
-  - New `/feedback/:token` page with 5-star rating
-  - Rating labels: Poor, Fair, Good, Very Good, Excellent
-  - Optional comment field
-  - Feedback stored in `appointment_feedback` collection (private)
-  - Admin notification on new feedback
-
-- **Email Changes:**
-  - Reduced email volume - only for NEW appointments and COMPLETED appointments
-  - Completed appointment email includes feedback star rating links
-
-- **Service Worker Updates:**
-  - Android banner-style notifications
-  - Vibration pattern: [200, 100, 200]
-  - Action buttons: View Details, Dismiss
-  - Click handling opens relevant URL
-
-### Testing
-- 13/13 backend tests passed
-- Test file: `/app/tests/test_feedback_notifications.py`
-
----
-
-## [January 10, 2026] - Loyalty Points System
-
-### Added
-- **Staff Portal - Pharmacy:**
-  - New "Loyalty Points" tab for pharmacy staff
-  - Search registered users by phone number
-  - Display user name and current loyalty points
-  - Add points (1-500 per transaction) with optional reason
-  - Shows "User Not Registered" for unregistered phones
-
-- **Staff Portal - Diagnostics:**
-  - New "Loyalty Points" tab for diagnostics staff
-  - Same functionality as pharmacy staff
-  - Purple-themed UI consistent with diagnostics branding
-
-- **Admin Portal - Loyalty Tab:**
-  - Summary cards: Total Credited, Total Redeemed, Net Active Points, Users with Points
-  - Search user by phone for redemption
-  - Redeem/subtract points with required reason
-  - View transaction history per user
-  - Top Loyalty Members leaderboard with gold/silver/bronze badges
-
-- **Backend APIs:**
-  - `GET /api/loyalty-points/by-phone/{phone}` - Staff access to search users
-  - `POST /api/staff/loyalty-points/add` - Staff adds points (max 500)
-  - `POST /api/admin/loyalty-points/subtract` - Admin redeems points
-  - `GET /api/admin/loyalty-points/summary` - Dashboard statistics
-  - `GET /api/admin/loyalty-points/transactions` - Transaction history
-
-- **Database Changes:**
-  - `loyalty_points` field added to users collection (default: 0)
-  - `loyalty_transactions` collection for audit trail
-
-- **Testing:**
-  - 22/22 backend tests passed
-  - Test file: `/app/tests/test_loyalty_points.py`
-
-### Fixed
-- Admin loyalty summary cards field name mismatch (total_points_credited → total_points_issued)
-
----
-
-## [January 10, 2026] - Doctor Multi-Clinic Portal
-
-### Added
-- Doctors can view appointments from ALL clinics they work at
-- Clinic toggle dropdown: "All Clinics", "Pushpa Clinic", "Amnion Clinic"
-- Calendar-based navigation with 7-day view and appointment counts
-- Patient history modal for doctors to view complete medical records
-
-### Fixed
-- Slot synchronization bug - patient bookings (pending status) now correctly block slots
-
----
-
-## [January 8, 2026] - Core Features
-
-### Added
-- OTP-based authentication (mock mode)
-- DiaGyn Healthcare - Appointment booking
-- Proton Diagnostics - Test booking
-- Orange Pharmacy - Medicine ordering (4,266 medicines)
-- Admin Dashboard with inventory management
-- Staff Portal for clinic, pharmacy, and diagnostics staff
-- Email notifications via Resend API
-- WhatsApp notification links
+### Bug Fixes
+- Fixed missing React import in App.js (caused React is not defined error)
+- Fixed PackageBuilder onAddToCart callback (was using setSelectedTests as setState)

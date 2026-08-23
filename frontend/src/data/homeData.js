@@ -184,20 +184,9 @@ export const clinicLocations = [
     address: 'A-4, Sai Darshan, Near Don Bosco High School',
     city: 'Naigaon East, Maharashtra',
     phone: '+91 9403890429',
-    hours: '11 AM - 2 PM, 6 PM - 10 PM',
+    hours: '11:30 AM - 2 PM, 6 PM - 10 PM',
     mapLink: 'https://maps.google.com/?q=Pushpa+Clinic+Naigaon',
     services: ['Consultations', 'Sonography', 'Lab Tests']
-  },
-  {
-    id: 'amnion',
-    name: 'Amnion General & Speciality Clinic',
-    logo: 'https://customer-assets.emergentagent.com/job_medhealth-portal/artifacts/jc4rkjh4_9_20260102_012214_0005.png',
-    address: 'G-7, Rashmi Star City Phase 5, Opp Thakur School',
-    city: 'Naigaon East, Maharashtra',
-    phone: '+91 9403890429',
-    hours: '11 AM - 2 PM, 6 PM - 10 PM',
-    mapLink: 'https://maps.google.com/?q=Amnion+Clinic+Naigaon',
-    services: ['Consultations', 'Pharmacy', 'Diagnostics']
   }
 ];
 

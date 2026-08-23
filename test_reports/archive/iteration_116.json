@@ -1,0 +1,54 @@
+{
+  "summary": "Tested complete checkout flows for Orange Pharmacy and Mango Labs. Backend APIs (14/14 tests passed). Frontend UI verified - pricing fix confirmed (Iron + Folic Acid shows ₹199). Both checkout pages have proper forms with OTP verification, address selection, and payment method options.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_checkout_flows.py",
+    "/app/test_reports/pytest/pytest_checkout_flows.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_checkout_flows.py"
+  ],
+  "success_rate": {
+    "backend": "100% (14/14 tests passed)",
+    "frontend": "100% - All checkout UI elements verified"
+  },
+  "test_credentials": "N/A - Guest flow tested",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Checkout flows are working correctly. Backend APIs for /api/pharmacy and /api/diagnostics are functional with COD, Pay Later, and Pay Now payment methods. Frontend shows correct pricing (Iron + Folic Acid at ₹199). Mango Labs checkout has 3-step flow (Tests → Schedule → Payment) with date picker and time slots. OTP verification is via MSG91 (real integration).",
+  "verified_features": {
+    "pharmacy_checkout": {
+      "price_fix": "✅ Iron + Folic Acid shows ₹199 (43% OFF from ₹349)",
+      "add_to_cart": "✅ 'Added Iron + Folic Acid to cart' toast shows correctly",
+      "cart_bar": "✅ '1 item in cart ₹199 Checkout' displays at bottom",
+      "checkout_button": "✅ Checkout button visible with data-testid='checkout-btn'",
+      "prescription_upload": "✅ 'Upload Prescription (Optional)' section available"
+    },
+    "mango_checkout": {
+      "test_selection": "✅ 'Diabetes Screening selected! 3 tests added.' toast",
+      "checkout_page": "✅ 3-step progress (Tests → Schedule → Payment)",
+      "form_elements": "✅ Name input, Phone input, Email input, OTP button",
+      "collection_types": "✅ Home Collection (FREE) and Visit Lab options",
+      "time_slots": "✅ 5 time slots available (8AM-7PM)",
+      "payment_methods": "✅ COD, Pay Later, Pay Now supported"
+    },
+    "backend_apis": {
+      "POST /api/pharmacy": "✅ Creates orders with booking_id and status",
+      "POST /api/diagnostics": "✅ Creates lab bookings with proper status",
+      "GET /api/pharmacy/all": "✅ Returns medicine inventory",
+      "POST /api/otp/whatsapp/send": "✅ OTP endpoint accessible",
+      "POST /api/payments/cashfree/create-order": "✅ Cashfree integration accessible"
+    }
+  }
+}

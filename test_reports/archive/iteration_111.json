@@ -1,0 +1,114 @@
+{
+  "summary": "Doctor Portal Leave Management Feature - All tests passed. Backend APIs (block-session, block-date, my-schedule, booked-slots sync) and Frontend UI (DoctorLeaveManager modal) working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_doctor_leave_management.py",
+    "/app/test_reports/pytest/pytest_doctor_leave_management.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "DoctorLeaveManager.jsx: Well-implemented with proper data-testid attributes for testing",
+    "doctor_schedule.py: Clean API implementation with proper auth checks",
+    "server.py booked-slots endpoint (lines 3650-3720): Correctly queries doctor_schedules for blocked sessions using staff 'id' field"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_doctor_leave_management.py"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 tests passed)",
+    "frontend": "100%"
+  },
+  "test_credentials": "dr_vikas / test (Doctor Portal)",
+  "seed_data_creation": "Test blocks cleaned up after tests",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Leave Management feature fully tested. Backend uses doctor_schedules collection with 'id' field from staff record. Sessions: Morning (11:00-14:00), Evening (18:00-22:00). Full day blocks all slots 06:00-22:45.",
+  "features_tested": [
+    {
+      "feature": "Doctor Portal Login (dr_vikas/test)",
+      "status": "PASS",
+      "details": "Login returns token and staff info with role='doctor'"
+    },
+    {
+      "feature": "Leave Management Modal opens from CalendarOff icon",
+      "status": "PASS",
+      "details": "Button in header with data-testid='manage-leave-btn' opens DoctorLeaveManager modal"
+    },
+    {
+      "feature": "Date picker for selecting date",
+      "status": "PASS",
+      "details": "HTML date input with data-testid='leave-date-input', min date is today"
+    },
+    {
+      "feature": "Session buttons (Morning, Evening, Full Day)",
+      "status": "PASS",
+      "details": "Morning (11AM-2PM), Evening (6PM-10PM), Full Day options with proper styling"
+    },
+    {
+      "feature": "Block Session API (POST /api/doctor-schedule/block-session)",
+      "status": "PASS",
+      "details": "Adds blocked_sessions array to doctor_schedules collection"
+    },
+    {
+      "feature": "Block Full Day API (POST /api/doctor-schedule/block-date)",
+      "status": "PASS",
+      "details": "Adds blocked_dates array to doctor_schedules collection"
+    },
+    {
+      "feature": "Delete Session Block (DELETE /api/doctor-schedule/block-session/{date}/{time})",
+      "status": "PASS",
+      "details": "Removes blocked session from array"
+    },
+    {
+      "feature": "Delete Full Day Block (DELETE /api/doctor-schedule/block-date/{date})",
+      "status": "PASS",
+      "details": "Removes blocked date from array"
+    },
+    {
+      "feature": "Blocked sessions sync to DiaGyn (GET /api/appointments/booked-slots)",
+      "status": "PASS",
+      "details": "booked-slots API queries doctor_schedules for blocked_sessions and includes them in response"
+    },
+    {
+      "feature": "Full day block returns date_blocked=true",
+      "status": "PASS",
+      "details": "When date is in blocked_dates, API returns all slots (06:00-22:45) and date_blocked=true"
+    },
+    {
+      "feature": "Upcoming Blocked Sessions list in modal",
+      "status": "PASS",
+      "details": "Shows all blocked sessions with delete buttons (data-testid='remove-block-{idx}')"
+    },
+    {
+      "feature": "Feb 17, 2026 morning block verification",
+      "status": "PASS",
+      "details": "booked-slots returns 11:00-13:45 as blocked (existing test data)"
+    }
+  ],
+  "pytest_results": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0,
+    "tests": [
+      "test_doctor_login_success - PASS",
+      "test_get_my_schedule - PASS",
+      "test_block_morning_session - PASS",
+      "test_block_evening_session - PASS",
+      "test_block_full_day - PASS",
+      "test_blocked_session_appears_in_booked_slots - PASS",
+      "test_full_day_block_returns_all_slots - PASS",
+      "test_delete_blocked_session - PASS",
+      "test_delete_blocked_date - PASS",
+      "test_unauthorized_access_rejected - PASS",
+      "test_existing_blocked_sessions_for_feb17 - PASS"
+    ]
+  }
+}

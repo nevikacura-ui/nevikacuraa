@@ -89,13 +89,14 @@ const MembershipPlans = () => {
       const data = await res.json();
 
       if (data.free_membership) {
-        toast.success('🎉 Membership activated with coupon!');
+        toast.success('Membership activated with coupon!');
         setShowCheckoutModal(false);
-        // Redirect to profile completion
         navigate('/profile?membership=new');
-      } else if (data.checkout_url) {
+      } else if (data.payment_session_id) {
+        // Redirect to Cashfree checkout
         localStorage.setItem('pending_membership_email', checkoutEmail);
-        window.location.href = data.checkout_url;
+        const checkoutUrl = `${window.location.origin}/checkout?session=${data.payment_session_id}&order=${data.order_id}&amount=${data.amount}&type=membership`;
+        window.location.href = checkoutUrl;
       } else {
         toast.error(data.detail || 'Failed to create checkout');
       }
@@ -154,7 +155,7 @@ const MembershipPlans = () => {
           </button>
           <h1 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             <Crown className="w-6 h-6 text-amber-500" />
-            Membership Plans
+            Cura Card Plans
           </h1>
           <div className="w-20"></div>
         </div>
@@ -165,7 +166,7 @@ const MembershipPlans = () => {
         <div className="max-w-4xl mx-auto text-center">
           <Badge className="bg-white/20 text-white mb-4">All-in-One Healthcare</Badge>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Comprehensive Membership Plans
+            Comprehensive Cura Card Plans
           </h2>
           <p className="text-lg text-white/90 max-w-2xl mx-auto">
             Get unlimited consultations, pharmacy discounts, diagnostic benefits, and access to all health portals - all in one membership.

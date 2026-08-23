@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Depends, Header
 from pydantic import BaseModel
 from typing import List, Optional, Dict
 from datetime import datetime, timezone, timedelta
+from utils.sanitize import sanitize_ai_input
 import jwt
 import os
 import json
@@ -278,9 +279,9 @@ async def get_appointment_suggestions(request: SymptomInput, patient = Depends(g
         
         prompt = f"""Based on these symptoms, suggest the most appropriate specialist and urgency:
 
-Symptoms: {', '.join(request.symptoms)}
-Duration: {request.duration or 'Not specified'}
-Severity: {request.severity}
+Symptoms: {', '.join(sanitize_ai_input(s) for s in request.symptoms)}
+Duration: {sanitize_ai_input(request.duration or 'Not specified')}
+Severity: {sanitize_ai_input(request.severity)}
 
 Provide recommendation in JSON format."""
 
@@ -441,6 +442,68 @@ Create a friendly, comprehensive health report in JSON format."""
             "ai_powered": False,
             "disclaimer": "Standard report. AI generation unavailable."
         }
+
+
+# ===== POST-VISIT CARE RECOMMENDATIONS =====
+
+POST_VISIT_TIPS = {
+    "consultation": [
+        {"title": "Follow Prescription", "desc": "Take all medicines as prescribed. Don't skip doses even if you feel better."},
+        {"title": "Stay Hydrated", "desc": "Drink plenty of water and fluids throughout the day."},
+        {"title": "Watch for Symptoms", "desc": "If symptoms worsen or new ones appear, contact the clinic immediately."},
+        {"title": "Schedule Follow-up", "desc": "Book your follow-up visit as recommended by your doctor."},
+    ],
+    "gynecology": [
+        {"title": "Rest & Recovery", "desc": "Take adequate rest. Avoid heavy physical activity for the recommended period."},
+        {"title": "Medication Adherence", "desc": "Continue prescribed supplements and medications on schedule."},
+        {"title": "Dietary Guidelines", "desc": "Follow the dietary recommendations. Include iron-rich foods and calcium."},
+        {"title": "Follow-up Visit", "desc": "Schedule your next visit for test results and progress review."},
+    ],
+    "online": [
+        {"title": "Download Prescription", "desc": "Your e-prescription has been shared. Download it from your profile."},
+        {"title": "Order Medicines", "desc": "Use Orange Pharmacy to order prescribed medicines with doorstep delivery."},
+        {"title": "Monitor Progress", "desc": "Track your symptoms and share updates during your next consultation."},
+        {"title": "Reach Out Anytime", "desc": "Message the clinic on WhatsApp if you have any concerns before your next visit."},
+    ],
+    "default": [
+        {"title": "Follow Doctor's Advice", "desc": "Adhere to the treatment plan discussed during your visit."},
+        {"title": "Take Medicines on Time", "desc": "Set reminders to take your medications as prescribed."},
+        {"title": "Healthy Lifestyle", "desc": "Maintain a balanced diet, adequate sleep, and light exercise."},
+        {"title": "Next Appointment", "desc": "Book your follow-up when recommended by the doctor."},
+    ],
+}
+
+@router.get("/post-visit-care")
+async def get_post_visit_care(consultation_type: str = "default"):
+    """Get post-visit care recommendations based on consultation type"""
+    tips = POST_VISIT_TIPS.get(consultation_type, POST_VISIT_TIPS["default"])
+    return {"success": True, "tips": tips, "consultation_type": consultation_type}
+
+@router.get("/post-visit-care/{appointment_id}")
+async def get_post_visit_care_for_appointment(appointment_id: str):
+    """Get post-visit care for a specific appointment"""
+    if not db:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    from bson import ObjectId
+    try:
+        apt = await db.appointments.find_one(
+            {"_id": ObjectId(appointment_id)},
+            {"_id": 0, "consultation_type": 1, "doctor_name": 1, "status": 1, "date": 1}
+        )
+    except:
+        apt = None
+    
+    c_type = "default"
+    if apt:
+        ct = (apt.get("consultation_type") or "").lower()
+        if "gyn" in ct: c_type = "gynecology"
+        elif "online" in ct: c_type = "online"
+        elif "consult" in ct: c_type = "consultation"
+    
+    tips = POST_VISIT_TIPS.get(c_type, POST_VISIT_TIPS["default"])
+    return {"success": True, "tips": tips, "appointment": apt}
+
 
 def setup_routes(database):
     """Setup routes with database"""

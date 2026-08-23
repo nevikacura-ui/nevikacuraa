@@ -1,0 +1,115 @@
+{
+  "summary": "Checkout Flows with WhatsApp OTP Verification - All features tested and working correctly. Orange Pharmacy and Mango Labs checkout flows implemented with OTP verification, cart navigation, and PaymentPage flowcharts.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_checkout_otp_flows.py",
+    "/app/test_reports/pytest/pytest_checkout_otp.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Pharmacy.js checkout view at line 1324-1546 - well implemented with proper data-testid attributes",
+    "Mango.js checkout view at line 1299-1558 - correctly shows Selected Tests instead of Order Summary",
+    "PaymentPage flowchart functions correctly return 7 steps for pharmacy and 5 steps for mango"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_checkout_otp_flows.py"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100%"
+  },
+  "test_credentials": "None required",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Checkout flows with WhatsApp OTP verification tested. Both pharmacy and mango lab checkout pages render correctly at ?step=checkout. OTP send/verify endpoints working via MSG91 integration.",
+  "features_tested": [
+    {
+      "feature": "Orange Pharmacy checkout flow (/pharmacy?step=checkout)",
+      "status": "PASS",
+      "details": "Page loads with clean header, back button, Order Summary showing cart items, user details form with name/phone/email fields, Send OTP via WhatsApp button"
+    },
+    {
+      "feature": "Orange Pharmacy OTP flow",
+      "status": "PASS",
+      "details": "Fill name and phone, click Send OTP via WhatsApp, OTP toast appears 'OTP sent via WhatsApp!', 6-digit OTP input fields appear with Verify OTP button and Resend countdown"
+    },
+    {
+      "feature": "Mango Labs checkout flow (/mango?step=checkout)",
+      "status": "PASS",
+      "details": "Page loads with green gradient header, 'Mango Health Labs Checkout' title, Selected Tests summary, user details form with patient name/phone/email"
+    },
+    {
+      "feature": "Mango Labs OTP flow",
+      "status": "PASS",
+      "details": "Same OTP flow as pharmacy - Send OTP button triggers WhatsApp OTP, input fields appear for 6-digit code verification"
+    },
+    {
+      "feature": "CartPage navigation - Pharmacy",
+      "status": "PASS",
+      "details": "Code verified: navigate('/pharmacy?step=checkout') is called when activeTab='pharmacy' and cart has items"
+    },
+    {
+      "feature": "CartPage navigation - Lab Tests",
+      "status": "PASS",
+      "details": "Code verified: navigate('/mango?step=checkout') is called when activeTab='lab' and cart has items"
+    },
+    {
+      "feature": "OTP backend - POST /api/otp/whatsapp/send",
+      "status": "PASS",
+      "details": "API returns success=true, method=whatsapp, expires_in=300. Tested with phone and purpose parameters. Returns 400 for invalid phone numbers."
+    },
+    {
+      "feature": "OTP backend - POST /api/otp/whatsapp/verify",
+      "status": "PASS",
+      "details": "API validates OTP correctly. Returns 400 with 'Invalid OTP. X attempts remaining.' for wrong OTP. Returns 400 for expired/non-existent OTP."
+    },
+    {
+      "feature": "PaymentPage flowchart - Pharmacy (7 steps)",
+      "status": "PASS",
+      "details": "Order Confirmed → Pharmacist Call → Prescription Generated → In Process → Ready to Dispatch → Out for Delivery → Delivered"
+    },
+    {
+      "feature": "PaymentPage flowchart - Mango Labs (5 steps)",
+      "status": "PASS",
+      "details": "Order Confirmed → Phlebotomist Call → Sample Collection → In Process → Report Generated"
+    },
+    {
+      "feature": "Payment options - Pharmacy",
+      "status": "PASS",
+      "details": "COD, Pay Later (Recommended badge), Pay Now - all 3 options present"
+    },
+    {
+      "feature": "Payment options - Mango Labs",
+      "status": "PASS",
+      "details": "COD, QR/Card on Delivery (Convenient badge), Pay Now - NO Pay Later option (correct)"
+    }
+  ],
+  "pytest_results": {
+    "total": 12,
+    "passed": 12,
+    "failed": 0,
+    "tests": [
+      "test_otp_send_pharmacy_order - PASS",
+      "test_otp_send_lab_booking - PASS",
+      "test_otp_send_invalid_phone - PASS",
+      "test_otp_verify_invalid_otp - PASS",
+      "test_otp_verify_expired - PASS",
+      "test_create_pharmacy_order_cod - PASS",
+      "test_create_pharmacy_order_pay_later - PASS",
+      "test_create_diagnostic_order_cod - PASS",
+      "test_create_diagnostic_order_qr_card - PASS",
+      "test_booking_limits_status - PASS",
+      "test_api_health - PASS",
+      "test_msg91_status - PASS"
+    ]
+  }
+}

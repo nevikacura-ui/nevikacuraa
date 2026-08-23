@@ -1,0 +1,96 @@
+{
+  "summary": "Tested 8 frontend features for iteration 145: Home page social card with dark Instagram icon, pill-shaped theme toggle, dark/light mode switch, cross-promotion cards on DiaGyn/Pharmacy/Mango pages, Home page promo ads, and footer social icons. All 8/8 tests PASSED.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/frontend/src/components/ServicePromoCards.jsx",
+    "/app/frontend/src/components/ServiceHeader.jsx",
+    "/app/frontend/src/components/Footer.jsx",
+    "/app/frontend/src/pages/Home.js",
+    "/app/frontend/src/pages/DiaGynRedesigned.js",
+    "/app/frontend/src/pages/Pharmacy.js",
+    "/app/frontend/src/pages/Mango.js"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "ServicePromoCards.jsx - Uses image-based ad cards (MangoPromoCard, OrangePromoCard) with actual screenshot images",
+    "ServiceHeader.jsx - Pill-shaped toggle (w-12 h-6 rounded-full) with bg-gray-600 for dark mode and bg-green-500 for light mode",
+    "Footer.jsx - Uses dark-themed Instagram icon from static.prod-images.emergentagent.com",
+    "DiaGyn page correctly shows both Mango and Orange promo cards",
+    "Pharmacy page correctly shows ONLY Mango promo card (DiaGyn ad removed as specified)",
+    "Mango page correctly shows ONLY Orange promo card (DiaGyn ad removed as specified)",
+    "Home page shows both Orange and Mango promo ad image cards"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend only testing)",
+    "frontend": "100% (8/8 features verified)"
+  },
+  "features_verified": {
+    "1_home_social_card": {
+      "status": "PASS",
+      "details": "Social connect card with dark Instagram icon, Facebook, Threads logos present on home page",
+      "data_testids": ["social-connect-card", "home-social-instagram", "home-social-facebook", "home-social-threads"],
+      "instagram_img_src": "https://static.prod-images.emergentagent.com/jobs/52fac319-eb99-4766-978d-d2bba8458f97/images/1780d1fc637b46ef878387f76298fad5041532840a18f151500ffce41dd19b35.png"
+    },
+    "2_theme_toggle_pill": {
+      "status": "PASS",
+      "details": "Pill-shaped toggle button found (w-12 h-6 rounded-full). Dark mode uses bg-gray-600",
+      "data_testid": "theme-toggle-btn",
+      "classes": "relative w-12 h-6 rounded-full transition-all duration-300 flex items-center bg-gray-600"
+    },
+    "3_toggle_mode_switch": {
+      "status": "PASS",
+      "details": "Toggle switches from dark (gray) to light (green) mode correctly. Sun icon in light mode, Moon in dark mode",
+      "dark_mode_class": "bg-gray-600",
+      "light_mode_class": "bg-green-500"
+    },
+    "4_diagyn_promos": {
+      "status": "PASS",
+      "details": "DiaGyn page (/diagyn) has BOTH Mango promo card AND Orange promo card",
+      "mango_promo": true,
+      "orange_promo": true,
+      "diagyn_promo": false
+    },
+    "5_pharmacy_promos": {
+      "status": "PASS",
+      "details": "Pharmacy page (/pharmacy) has ONLY Mango promo card - NO DiaGyn promo card as specified",
+      "mango_promo": true,
+      "orange_promo": false,
+      "diagyn_promo": false
+    },
+    "6_mango_promos": {
+      "status": "PASS",
+      "details": "Mango page (/mango) has ONLY Orange promo card - NO DiaGyn promo card as specified",
+      "mango_promo": false,
+      "orange_promo": true,
+      "diagyn_promo": false
+    },
+    "7_home_promo_ads": {
+      "status": "PASS",
+      "details": "Home page has BOTH Orange and Mango promo ad image cards before footer",
+      "mango_promo": true,
+      "orange_promo": true
+    },
+    "8_footer_social_icons": {
+      "status": "PASS",
+      "details": "Footer has dark Instagram icon, Facebook, Threads social icons present",
+      "data_testids": ["social-instagram", "social-facebook", "social-threads"],
+      "instagram_img_src": "https://static.prod-images.emergentagent.com/jobs/52fac319-eb99-4766-978d-d2bba8458f97/images/1780d1fc637b46ef878387f76298fad5041532840a18f151500ffce41dd19b35.png"
+    }
+  },
+  "test_credentials": {
+    "guest_access": "localStorage: guestMobile=9999999999, introShown=true, introComplete=true, darkMode=true"
+  },
+  "seed_data_creation": "None needed",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 8 features verified and working correctly. Key changes from iteration 144: 1) DiaGyn ad removed from Pharmacy page (now only Mango ad), 2) DiaGyn ad removed from Mango page (now only Orange ad), 3) Theme toggle is pill-shaped with green color in light mode and gray in dark mode, 4) Instagram icon uses dark UI version throughout (footer + home social card). The MangoPromoCard and OrangePromoCard in ServicePromoCards.jsx use actual provided screenshot images."
+}

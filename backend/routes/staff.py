@@ -3,7 +3,7 @@ Nevika Cura - Staff Routes
 Staff portal endpoints for clinic operations, appointments, orders, etc.
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Header, UploadFile, File
+from fastapi import APIRouter, HTTPException, Depends, Header, UploadFile, File, Request
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone, timedelta
@@ -12,6 +12,8 @@ import os
 import uuid
 import logging
 import base64
+
+from rate_limit import limiter
 
 logger = logging.getLogger(__name__)
 
@@ -182,7 +184,8 @@ async def verify_staff(authorization: str = Header(None)):
 # ============ Staff Login ============
 
 @router.post("/login")
-async def staff_login(input: StaffLogin):
+@limiter.limit("10/minute")
+async def staff_login(request: Request, input: StaffLogin):
     """Staff login with username/password OR phone/access_code"""
     import bcrypt
     
@@ -206,9 +209,9 @@ async def staff_login(input: StaffLogin):
         
         logger.info(f"Found staff record: {staff_record is not None}")
         
-        if staff_record and staff_record.get('password_hash'):
+        if staff_record and (staff_record.get('password_hash') or staff_record.get('password')):
             try:
-                stored_hash = staff_record['password_hash']
+                stored_hash = staff_record.get('password_hash') or staff_record.get('password')
                 logger.info(f"Stored hash prefix: {stored_hash[:20] if stored_hash else 'None'}, len={len(stored_hash) if stored_hash else 0}")
                 password_valid = bcrypt.checkpw(input.password.encode(), stored_hash.encode())
                 logger.info(f"Password valid: {password_valid}")
@@ -1511,14 +1514,54 @@ async def update_pharmacy_order_status(
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Order not found")
     
-    # Notify patient
-    order = await db.pharmacy_orders.find_one({"id": order_id}, {"_id": 0, "patient_phone": 1, "patient_name": 1})
+    # Get order details for notifications
+    order = await db.pharmacy_orders.find_one(
+        {"id": order_id}, 
+        {"_id": 0, "patient_phone": 1, "patient_name": 1, "patient_email": 1, "total_amount": 1, "payment_status": 1}
+    )
+    
+    # Send status notification
     if send_sms_notification and order and order.get("patient_phone"):
         try:
             msg = f"Dear {order.get('patient_name', 'Customer')}, your pharmacy order status: {status}. - Orange Pharmacy"
             await send_sms_notification(order["patient_phone"], msg)
         except Exception as e:
             logger.error(f"Failed to send status notification: {e}")
+    
+    # PAYMENT REMINDER: Send when status is "Ready for Pickup" and payment is pending
+    if status == "Ready for Pickup" and order:
+        payment_status = order.get("payment_status", "pending")
+        if payment_status in ["pending", "Pending", "unpaid", "Unpaid"]:
+            try:
+                from services.msg91_whatsapp import send_payment_reminder_whatsapp
+                total_amount = order.get("total_amount", 0)
+                patient_name = order.get("patient_name", "Customer")
+                patient_phone = order.get("patient_phone")
+                patient_email = order.get("patient_email")
+                
+                # Send WhatsApp payment reminder
+                if patient_phone:
+                    await send_payment_reminder_whatsapp(
+                        phone=patient_phone,
+                        patient_name=patient_name,
+                        amount=total_amount,
+                        order_id=order_id
+                    )
+                    logger.info(f"Payment reminder sent via WhatsApp for order {order_id}")
+                
+                # Also send email reminder if email is available
+                if patient_email and send_email_notification:
+                    try:
+                        await send_email_notification(
+                            to_email=patient_email,
+                            subject=f"Payment Reminder - Orange Pharmacy Order #{order_id}",
+                            body=f"Dear {patient_name},\\n\\nYour order #{order_id} is ready for pickup!\\n\\nPending Amount: ₹{total_amount}\\n\\nPlease complete your payment to collect your order.\\n\\nThank you,\\nOrange Pharmacy"
+                        )
+                        logger.info(f"Payment reminder email sent for order {order_id}")
+                    except Exception as e:
+                        logger.error(f"Failed to send payment reminder email: {e}")
+            except Exception as e:
+                logger.error(f"Failed to send payment reminder: {e}")
     
     return {"message": f"Order status updated to {status}"}
 

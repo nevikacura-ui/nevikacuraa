@@ -1,0 +1,148 @@
+{
+  "summary": "Iteration 197: Verified all features from revert + new implementations. Backend: 9/9 API tests passed (token management, patient history, doctor running late). Frontend: Heart icon visible, festival themed buttons, Staff portal History tab, Doctor portal Running Late button. File deletions confirmed: UpcomingEventsWidget.js and upcoming_events.py removed, events_router removed from server.py.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_clinic_features_197.py",
+    "/app/test_reports/pytest/pytest_clinic_features_197.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "All 9 backend tests for clinic_features.py passed (token management, patient history, doctor running late)",
+    "Heart icon in Nevika Cura tab is visible with pink/rose fill color per festival theme",
+    "Book Now, Book Tests, Shop Now buttons use festival accent color (pink #ec4899 for Holi)",
+    "DiaGyn Staff Portal correctly shows 7 navigation tabs: Today, Code, Walk-in, Book, History, Token, Summary",
+    "Doctor Portal has 'Running Late? Notify Patients' button functional in UI",
+    "UpcomingEventsWidget.js successfully deleted from frontend components",
+    "upcoming_events.py successfully deleted from backend routes",
+    "events_router properly removed from server.py, clinic_features_router registered at line 10453"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_clinic_features_197.py"
+  ],
+  "success_rate": {
+    "backend": "100% - 9/9 tests passed",
+    "frontend": "100% - All UI elements verified"
+  },
+  "test_credentials": {
+    "staff_diagyn": "test1234",
+    "dr_vikas": "test1234"
+  },
+  "seed_data_creation": "Existing appointments used: Vikas at 18:00, Vik at 18:15 with Dr. Vikas Jha at Pushpa Clinic",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All requested features verified working. Token management APIs at /api/tokens/*, patient history at /api/clinic/patient-history/{phone}, doctor delay at /api/clinic/doctor-running-late and /api/clinic/doctor-delay-status. Frontend UI confirmed: heart icon pink, festival themed buttons pink, staff portal has History tab (7 tabs total), doctor portal has Running Late button. UpcomingEventsWidget and upcoming_events routes successfully removed as part of revert.",
+  "feature_verification": {
+    "Backend_Token_Management": {
+      "GET_current_token": {
+        "status": "PASS",
+        "endpoint": "/api/tokens/current?department=diagyn",
+        "returns": "token_number and department"
+      },
+      "POST_advance_token": {
+        "status": "PASS",
+        "endpoint": "/api/tokens/next",
+        "body": "{department: diagyn}",
+        "action": "Increments token by 1"
+      },
+      "POST_reset_token": {
+        "status": "PASS",
+        "endpoint": "/api/tokens/reset",
+        "body": "{department: diagyn}",
+        "action": "Resets to 0"
+      }
+    },
+    "Backend_Patient_History": {
+      "GET_patient_history": {
+        "status": "PASS",
+        "endpoint": "/api/clinic/patient-history/9876543210",
+        "returns": "patient, appointments, orders, lab_orders, wallet_transactions, total_visits, total_orders"
+      }
+    },
+    "Backend_Doctor_Running_Late": {
+      "POST_send_delay": {
+        "status": "PASS",
+        "endpoint": "/api/clinic/doctor-running-late",
+        "body": "{doctor_name, delay_minutes, clinic, date}",
+        "returns": "success, delay_minutes, patients_notified, message"
+      },
+      "GET_delay_status": {
+        "status": "PASS",
+        "endpoint": "/api/clinic/doctor-delay-status?doctor=Dr.%20Vikas%20Jha&date=2026-03-04",
+        "returns": "active (bool), delay (object)"
+      },
+      "POST_clear_delay": {
+        "status": "PASS",
+        "endpoint": "/api/clinic/clear-doctor-delay",
+        "body": "{doctor_name, date}",
+        "action": "Sets active=false"
+      }
+    },
+    "Frontend_Heart_Icon": {
+      "status": "PASS",
+      "location": "ServiceHeader.jsx - Nevika Cura tab",
+      "description": "Heart icon visible with pink/rose fill color (#f43f5e or festival accent)",
+      "code_reference": "Lines 240-248 in ServiceHeader.jsx"
+    },
+    "Frontend_Festival_Buttons": {
+      "Book_Now": {
+        "status": "PASS",
+        "location": "Home.js - DiaGyn service card",
+        "style": "Festival accent color (pink #ec4899 for Holi)"
+      },
+      "Book_Tests": {
+        "status": "PASS",
+        "location": "Home.js - Mango service card",
+        "style": "Festival accent color"
+      },
+      "Shop_Now": {
+        "status": "PASS",
+        "location": "Home.js - Orange Pharmacy card",
+        "style": "Festival accent color"
+      }
+    },
+    "Frontend_Staff_Portal_History_Tab": {
+      "status": "PASS",
+      "location": "DiaGynStaffPortal.js - Navigation tabs",
+      "tabs_count": 7,
+      "tabs": ["Today", "Code", "Walk-in", "Book", "History", "Token", "Summary"],
+      "data_testid": "nav-history"
+    },
+    "Frontend_Doctor_Running_Late": {
+      "status": "PASS",
+      "location": "DoctorPortalRedesigned.js",
+      "button_text": "Running Late? Notify Patients",
+      "data_testid": "running-late-btn",
+      "functionality": "Opens modal to select delay duration and notify patients"
+    },
+    "File_Deletions": {
+      "UpcomingEventsWidget.js": {
+        "status": "DELETED",
+        "path": "/app/frontend/src/components/UpcomingEventsWidget.js"
+      },
+      "upcoming_events.py": {
+        "status": "DELETED",
+        "path": "/app/backend/routes/upcoming_events.py"
+      },
+      "events_router_in_server.py": {
+        "status": "REMOVED",
+        "note": "No reference to events_router in server.py"
+      },
+      "clinic_features_router": {
+        "status": "REGISTERED",
+        "location": "server.py line 10453-10455"
+      }
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  }
+}

@@ -9,23 +9,11 @@ CLINICS_DATA = {
             "address": "A-4, Sai Darshan, Near Don Bosco High School",
             "city": "Naigaon East, Maharashtra",
             "phone": "+91 9403890429",
-            "hours": "11 AM - 2 PM, 6 PM - 10 PM",
+            "hours": "11:30 AM - 2 PM, 6 PM - 10 PM",
             "map_link": "https://maps.google.com/?q=Pushpa+Clinic+Naigaon",
-            "services": ["Consultations", "Sonography", "Lab Tests"],
+            "services": ["Consultations", "Sonography", "Lab Tests", "Pharmacy", "Diagnostics"],
             "logo": "https://customer-assets.emergentagent.com/job_medhealth-portal/artifacts/x55478bz_5_20260102_012214_0001.png",
             "doctors": ["Dr. Neha Patel", "Dr. Vikas Jha"]
-        },
-        {
-            "id": "amnion_clinic",
-            "name": "Amnion Clinic",
-            "address": "G-7, Rashmi Star City Phase 5, Opp Thakur School",
-            "city": "Naigaon East, Maharashtra",
-            "phone": "+91 9403890429",
-            "hours": "11 AM - 2 PM, 6 PM - 10 PM",
-            "map_link": "https://maps.google.com/?q=Amnion+Clinic+Naigaon",
-            "services": ["Consultations", "Pharmacy", "Diagnostics"],
-            "logo": "https://customer-assets.emergentagent.com/job_medhealth-portal/artifacts/jc4rkjh4_9_20260102_012214_0005.png",
-            "doctors": ["Dr. Vikas Jha", "Dr. Neha Patel"]
         }
     ]
 }
@@ -42,9 +30,7 @@ DOCTORS_DATA = {
             "color": "from-teal-400 to-emerald-500",
             "schedules": {
                 "Pushpa Clinic": [
-                    {"days": ["Monday", "Wednesday", "Friday"], "time": "18:00-22:00"}
-                ],
-                "Amnion Clinic": [
+                    {"days": ["Monday", "Wednesday", "Friday"], "time": "18:00-22:00"},
                     {"days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "time": "11:00-14:00"},
                     {"days": ["Tuesday", "Thursday", "Saturday"], "time": "18:00-22:00"}
                 ]
@@ -59,12 +45,10 @@ DOCTORS_DATA = {
             "avatar": "NP",
             "color": "from-pink-400 to-rose-500",
             "schedules": {
-                "Amnion Clinic": [
-                    {"days": ["Monday", "Wednesday", "Friday"], "time": "18:00-22:00"}
-                ],
                 "Pushpa Clinic": [
                     {"days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "time": "11:00-14:00"},
-                    {"days": ["Tuesday", "Thursday", "Saturday"], "time": "18:00-22:00"}
+                    {"days": ["Tuesday", "Thursday", "Saturday"], "time": "18:00-22:00"},
+                    {"days": ["Monday", "Wednesday", "Friday"], "time": "18:00-22:00"}
                 ]
             }
         }

@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useCart } from '@/context/CartContext';
 import { 
   ChevronDown, ChevronUp, Heart, Search, Share2, ArrowLeft,
-  Clock, ShoppingCart, Plus, Minus, ChevronRight, Shield, Truck, Package
+  Clock, ShoppingCart, Plus, Minus, ChevronRight, Shield, Truck, Package, RefreshCw
 } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
@@ -24,13 +25,15 @@ const PharmacyProductPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { productId } = useParams();
+  const { pharmacyCart, addToPharmacyCart } = useCart();
   
   // Get product from location state or fetch
   const [product, setProduct] = useState(location.state?.product || null);
   const [loading, setLoading] = useState(!product);
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [cart, setCart] = useState([]);
+  const [alternatives, setAlternatives] = useState([]);
+  const [loadingAlts, setLoadingAlts] = useState(false);
   
   // Expandable sections
   const [expandedSections, setExpandedSections] = useState({
@@ -39,19 +42,39 @@ const PharmacyProductPage = () => {
     info: false
   });
 
+  // Update product when navigating between alternatives (same route pattern)
   useEffect(() => {
-    // Load cart from localStorage
-    const savedCart = localStorage.getItem('pharmacy_cart');
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
+    if (location.state?.product) {
+      setProduct(location.state.product);
+      setQuantity(1);
+      setLoading(false);
+    } else if (productId) {
+      setProduct(null);
+      setLoading(true);
     }
-  }, []);
+  }, [productId, location.state?.product]);
 
   useEffect(() => {
     if (!product && productId) {
       fetchProduct();
     }
-  }, [productId]);
+  }, [product, productId]);
+
+  useEffect(() => {
+    if (product?.id) {
+      fetchAlternatives(product.id);
+    }
+  }, [product?.id]);
+
+  const fetchAlternatives = async (id) => {
+    setLoadingAlts(true);
+    try {
+      const res = await fetch(`${API}/api/pharmacy/v2/alternatives/${id}?limit=6`);
+      const data = await res.json();
+      setAlternatives(data.alternatives || []);
+    } catch { /* ignore */ }
+    setLoadingAlts(false);
+  };
 
   const fetchProduct = async () => {
     setLoading(true);
@@ -76,23 +99,23 @@ const PharmacyProductPage = () => {
   };
 
   const addToCart = () => {
-    const existingIndex = cart.findIndex(item => item.name === product.name);
-    let newCart;
-    
-    if (existingIndex >= 0) {
-      newCart = [...cart];
-      newCart[existingIndex].quantity += quantity;
-    } else {
-      newCart = [...cart, { ...product, quantity }];
-    }
-    
-    setCart(newCart);
-    localStorage.setItem('pharmacy_cart', JSON.stringify(newCart));
+    const price = product.price || product.sale_price || product.mrp || 0;
+    addToPharmacyCart({
+      id: product.id || product.name,
+      name: product.name,
+      price: price,
+      mrp: product.mrp || price,
+      quantity,
+      type: 'medicine',
+      form: product.form,
+      image: product.image_url || product.image,
+      discount_percent: product.discount_percent || 0,
+    });
     toast.success(`Added ${quantity} ${product.name} to cart`);
   };
 
   const getCartTotal = () => {
-    return cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    return pharmacyCart.reduce((sum, item) => sum + (item.quantity || 1), 0);
   };
 
   const shareProduct = async () => {
@@ -144,7 +167,7 @@ const PharmacyProductPage = () => {
   return (
     <div className="min-h-screen bg-white pb-32">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-slate-100">
+      <header className="sticky top-0 z-50 bg-white border-b border-slate-100 safe-area-top">
         <div className="flex items-center justify-between px-4 py-3">
           <button onClick={() => navigate(-1)} className="p-2 -ml-2">
             <ArrowLeft className="w-6 h-6 text-slate-700" />
@@ -177,6 +200,8 @@ const PharmacyProductPage = () => {
               src={product.image} 
               alt={product.name}
               className="w-full h-full object-contain"
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <span className="text-9xl">{getMedicineIcon(product.form)}</span>
@@ -393,13 +418,82 @@ const PharmacyProductPage = () => {
                   ))}
                 </div>
               </div>
+              <div className="pt-2 border-t border-slate-100 text-center">
+                <a href="/return-refund-policy" className="text-xs text-orange-500 hover:text-orange-600 underline font-medium" data-testid="product-page-return-policy">
+                  Return & Refund Policy
+                </a>
+              </div>
             </div>
           )}
         </div>
       </div>
 
+      {/* Medicine Alternatives Section */}
+      {alternatives.length > 0 && (
+        <div className="px-4 py-4 border-t border-slate-100" data-testid="alternatives-section">
+          <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+            <RefreshCw className="w-4 h-4 text-orange-500" />
+            Similar Medicines ({alternatives.length})
+          </h3>
+          <p className="text-xs text-slate-500 mb-3">
+            Same salt/composition: {product.salt || product.generic_name || product.composition || 'N/A'}
+          </p>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+            {alternatives.map(alt => {
+              const altInCart = pharmacyCart.find(item => item.name === alt.name);
+              return (
+                <div
+                  key={alt.id}
+                  className="flex-shrink-0 w-44 bg-slate-50 rounded-xl p-3 border border-slate-100 hover:border-orange-200 transition-colors cursor-pointer"
+                  data-testid={`alt-${alt.id}`}
+                  onClick={() => navigate(`/pharmacy/product/${alt.id}`, { state: { product: alt } })}
+                >
+                  <div>
+                    <p className="text-xs font-semibold text-slate-800 line-clamp-2 h-8">{alt.name}</p>
+                    <p className="text-[10px] text-slate-400 mt-1 truncate">{alt.manufacturer}</p>
+                    <div className="flex items-baseline gap-1.5 mt-2">
+                      {alt.mrp > 0 && <span className="text-sm font-bold text-slate-800">₹{alt.sale_price || alt.mrp}</span>}
+                      {alt.discount_percent > 0 && <span className="text-[10px] text-green-600 font-medium">{alt.discount_percent}% off</span>}
+                    </div>
+                    {alt.stock_quantity > 0 && <span className="text-[9px] text-green-600 mt-1 block">In Stock</span>}
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      const altPrice = alt.price || alt.sale_price || alt.mrp || 0;
+                      addToPharmacyCart({
+                        id: alt.id || alt.name,
+                        name: alt.name,
+                        price: altPrice,
+                        mrp: alt.mrp || altPrice,
+                        quantity: 1,
+                        type: 'medicine',
+                        form: alt.form,
+                        image: alt.image_url || alt.image,
+                        discount_percent: alt.discount_percent || 0,
+                      });
+                      toast.success(`Added ${alt.name} to cart`);
+                    }}
+                    className="w-full mt-2 py-1.5 rounded-lg text-xs font-semibold transition-colors"
+                    style={{
+                      background: altInCart ? '#f0fdf4' : '#fff7ed',
+                      color: altInCart ? '#16a34a' : '#ea580c',
+                      border: `1px solid ${altInCart ? '#bbf7d0' : '#fed7aa'}`
+                    }}
+                    data-testid={`alt-add-${alt.id}`}
+                  >
+                    {altInCart ? `In Cart (${altInCart.quantity})` : '+ Add to Cart'}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* View Cart Floating Button */}
-      {cart.length > 0 && (
+      {pharmacyCart.length > 0 && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40">
           <button
             onClick={() => navigate('/pharmacy', { state: { showCart: true } })}

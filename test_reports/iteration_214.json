@@ -1,0 +1,103 @@
+{
+  "summary": "Testing of server.py modularization and extracted routes (auth_routes.py, appointment_routes.py, service_routes.py). Backend: 23/23 tests passed (100%). All auth endpoints, appointment routes, and service routes working correctly after extraction from server.py (reduced from 5174 to 2173 lines). Frontend: DiaGyn Staff Portal calendar toggle feature verified - List/Cal buttons functional with month grid display.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_auth_refactor_routes_214.py",
+    "/app/test_reports/pytest/pytest_auth_refactor_214.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_auth_refactor_routes_214.py"
+  ],
+  "success_rate": {
+    "backend": "100% (23/23 tests passed)",
+    "frontend": "100%"
+  },
+  "test_results": {
+    "backend_api_tests": {
+      "auth_routes_py": {
+        "POST /api/auth/register": "PASS - user registration working",
+        "POST /api/auth/login": "PASS - user login working",
+        "POST /api/auth/login (invalid)": "PASS - returns 401 for invalid credentials",
+        "GET /api/auth/me": "PASS - returns user with valid token",
+        "GET /api/user/loyalty-points": "PASS - returns loyalty points",
+        "GET /api/user/preferences": "PASS - returns preferences",
+        "GET /api/auth/biometric/status": "PASS - returns biometric status"
+      },
+      "appointment_routes_py": {
+        "GET /api/appointments/booked-slots": "PASS - returns booked slots for date",
+        "GET /api/doctors/next-available": "PASS - returns next available slot",
+        "GET /api/booking-limits/status": "PASS - returns booking limits",
+        "GET /api/appointments": "PASS - returns user appointments list"
+      },
+      "service_routes_py": {
+        "POST /api/otp/send": "PASS - returns 503 (MSG91 not configured) - EXPECTED",
+        "POST /api/booking-code/verify": "PASS - validation working",
+        "GET /api/pharmacy/autocomplete": "PASS - returns suggestions",
+        "GET /api/pharmacy/forms": "PASS - returns medicine forms"
+      },
+      "staff_login": {
+        "POST /api/staff/login (diagyn)": "PASS - staff_diagyn login successful",
+        "POST /api/staff/login (invalid)": "PASS - returns 401 for invalid credentials"
+      },
+      "auth_utils_py": {
+        "JWT validation": "PASS - tokens work with extracted auth_utils.py"
+      },
+      "additional_endpoints": {
+        "GET /api/guest/orders": "PASS - returns orders by phone",
+        "GET /api/orders/last": "PASS - endpoint working",
+        "GET /api/orders/history": "PASS - returns order history",
+        "GET /api/health": "PASS - returns status=ok"
+      }
+    },
+    "frontend_tests": {
+      "diagyn_staff_portal": {
+        "login": "PASS - staff_diagyn/test1234 login successful",
+        "websocket": "PASS - Live connection established",
+        "clinic_tabs": "PASS - Pushpa/Amnion tabs visible",
+        "calendar_toggle": {
+          "list_button": "PASS - data-testid='view-toggle-list' found",
+          "cal_button": "PASS - data-testid='view-toggle-calendar' found",
+          "calendar_view": "PASS - Shows month grid with 31 day cells",
+          "month_nav": "PASS - Previous/Next month navigation arrows present",
+          "appointment_counts": "PASS - Day cells show appointment count badges"
+        },
+        "dark_theme": "PASS - Dark theme (rgb(10, 10, 26)) applied"
+      }
+    }
+  },
+  "test_credentials": {
+    "patient": "final_test@test.com / test1234",
+    "staff_diagyn": "staff_diagyn / test1234",
+    "staff_mango": "staff_mango / test1234",
+    "staff_orange": "staff_orange / test1234"
+  },
+  "seed_data_creation": "Created test user during registration test (TEST_RegisterUser)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 214 verified the server.py modularization from 5174 to 2173 lines. Auth routes (auth_routes.py), appointment routes (appointment_routes.py), and service routes (service_routes.py) all working correctly after extraction. Shared auth_utils.py with User model and JWT handling working properly. DiaGyn staff portal calendar toggle (List/Cal buttons) verified with month grid display showing day numbers and appointment counts. OTP endpoints return 503 as MSG91 is not configured - this is expected behavior per the test request.",
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": [],
+    "note": "OTP send returns 503 because MSG91 is not configured - this is expected"
+  },
+  "server_modularization": {
+    "original_size": "5174 lines",
+    "current_size": "2173 lines",
+    "extracted_routes": [
+      "/app/backend/routes/auth_routes.py - auth endpoints (register, login, biometric, loyalty, preferences)",
+      "/app/backend/routes/appointment_routes.py - appointment endpoints (booked-slots, next-available, booking-limits)",
+      "/app/backend/routes/service_routes.py - service endpoints (OTP, booking-code, pharmacy)"
+    ],
+    "shared_utils": "/app/backend/utils/auth_utils.py - User model, JWT config, get_current_user"
+  }
+}

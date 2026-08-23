@@ -135,10 +135,21 @@ export const translations = {
 };
 
 export const ThemeLanguageProvider = ({ children }) => {
-  // Dark mode state
+  // Auto-theme: light during clinic hours (8AM-6PM IST), dark otherwise
+  const getAutoTheme = () => {
+    const now = new Date();
+    const istHour = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })).getHours();
+    return istHour < 8 || istHour >= 18; // dark mode outside 8AM-6PM
+  };
+
+  const [autoTheme, setAutoTheme] = useState(() => {
+    return localStorage.getItem('autoTheme') === 'true';
+  });
+
   const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (localStorage.getItem('autoTheme') === 'true') return getAutoTheme();
     const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : false;
+    return saved !== null ? JSON.parse(saved) : false;
   });
 
   // Language state
@@ -147,12 +158,25 @@ export const ThemeLanguageProvider = ({ children }) => {
     return saved || 'en';
   });
 
-  // Apply dark mode to document
+  // Auto-theme check every minute
+  useEffect(() => {
+    if (!autoTheme) return;
+    const check = () => setIsDarkMode(getAutoTheme());
+    check();
+    const interval = setInterval(check, 60000);
+    return () => clearInterval(interval);
+  }, [autoTheme]);
+
+  // Apply dark/light mode to document
   useEffect(() => {
     if (isDarkMode) {
+      document.documentElement.classList.remove('light-mode');
       document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light-mode');
+      document.documentElement.setAttribute('data-theme', 'light');
     }
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
   }, [isDarkMode]);
@@ -162,7 +186,18 @@ export const ThemeLanguageProvider = ({ children }) => {
     localStorage.setItem('language', language);
   }, [language]);
 
-  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+  const toggleDarkMode = () => {
+    setAutoTheme(false);
+    localStorage.setItem('autoTheme', 'false');
+    setIsDarkMode(!isDarkMode);
+  };
+
+  const toggleAutoTheme = () => {
+    const next = !autoTheme;
+    setAutoTheme(next);
+    localStorage.setItem('autoTheme', String(next));
+    if (next) setIsDarkMode(getAutoTheme());
+  };
   
   const t = (key) => {
     return translations[language]?.[key] || translations.en[key] || key;
@@ -172,6 +207,8 @@ export const ThemeLanguageProvider = ({ children }) => {
     <ThemeLanguageContext.Provider value={{
       isDarkMode,
       toggleDarkMode,
+      autoTheme,
+      toggleAutoTheme,
       language,
       setLanguage,
       t,

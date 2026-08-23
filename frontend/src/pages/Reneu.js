@@ -1,679 +1,587 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { 
-  ArrowLeft, Sparkles, ChevronRight, CheckCircle2, Camera, Plus,
-  Leaf, Pill, FlaskConical, Stethoscope, Calendar, Clock, TrendingUp,
-  User, Heart, Droplets, Sun, Moon, AlertCircle, FileText, X
-} from 'lucide-react';
-import { AnimatedPage } from '@/components/PageTransition';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { useSubscriptionRedirect } from '@/hooks/useSubscriptionRedirect';
+import PortalCheckout from '@/components/PortalCheckout';
+import HealthReminders from '@/components/HealthReminders';
+import { SleepQualityChart, WorkoutStreak } from '@/components/HealthCharts';
+import { WaterIntakeRing } from '@/components/HealthRings';
+import {
+  ArrowLeft, Sparkles, Activity, Brain, Heart, Leaf, Crown,
+  Dumbbell, Target, Zap, TrendingUp, Shield, Sun, Moon,
+  ChevronRight, Timer, Scale, Droplets, Apple, Utensils,
+  Bed, Clock, Smartphone, Check, Lock, Star, X,
+  Scissors, Eye, BookOpen, Bell
+} from 'lucide-react';
 
-const API = process.env.REACT_APP_BACKEND_URL;
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Reneu Sub-sections
-const RENEU_SECTIONS = [
-  { id: 'core', name: 'Reneu Core', subtitle: 'Vitamins & Nutrition', icon: '💊', color: 'from-emerald-500 to-teal-500', bgLight: 'bg-emerald-50' },
-  { id: 'skin', name: 'Reneu Skin', subtitle: 'Skin Wellness', icon: '✨', color: 'from-pink-500 to-rose-500', bgLight: 'bg-pink-50' },
-  { id: 'hair', name: 'Reneu Hair', subtitle: 'Hair Health', icon: '💇', color: 'from-amber-500 to-orange-500', bgLight: 'bg-amber-50' },
-  { id: 'women', name: 'Reneu Women', subtitle: "Women's Wellness", icon: '🌸', color: 'from-purple-500 to-violet-500', bgLight: 'bg-purple-50' },
-  { id: 'men', name: 'Reneu Men', subtitle: "Men's Wellness", icon: '💪', color: 'from-blue-500 to-indigo-500', bgLight: 'bg-blue-50' }
+const TABS = [
+  { id: 'fitness', label: 'Fitness', icon: Dumbbell, gradient: 'from-orange-400 via-rose-400 to-pink-400' },
+  { id: 'nutrition', label: 'Nutrition', icon: Apple, gradient: 'from-emerald-400 via-green-400 to-teal-400' },
+  { id: 'sleep', label: 'Sleep', icon: Moon, gradient: 'from-indigo-400 via-violet-400 to-purple-400' },
+  { id: 'beauty', label: 'Beauty', icon: Sparkles, gradient: 'from-pink-400 via-rose-400 to-red-400' },
 ];
-
-// Concern options by section
-const CONCERNS = {
-  skin: [
-    { id: 'acne', name: 'Acne & Pimples', icon: '🔴', tests: ['Vitamin D', 'Zinc', 'Hormonal Panel'] },
-    { id: 'dryness', name: 'Dry Skin', icon: '🏜️', tests: ['Vitamin E', 'Omega-3', 'Thyroid'] },
-    { id: 'pigmentation', name: 'Pigmentation', icon: '🌗', tests: ['Vitamin C', 'B12', 'Iron'] },
-    { id: 'aging', name: 'Premature Aging', icon: '⏳', tests: ['Collagen Markers', 'Antioxidants', 'Hormones'] },
-    { id: 'dullness', name: 'Dull Skin', icon: '😶', tests: ['Vitamin B Complex', 'Hemoglobin', 'Liver Function'] },
-    { id: 'oily', name: 'Oily Skin', icon: '💧', tests: ['Androgens', 'Insulin', 'Zinc'] }
-  ],
-  hair: [
-    { id: 'hairfall', name: 'Hair Fall', icon: '📉', tests: ['Iron', 'Ferritin', 'Vitamin D', 'Thyroid', 'Biotin'] },
-    { id: 'dandruff', name: 'Dandruff', icon: '❄️', tests: ['Zinc', 'Vitamin B6', 'Selenium'] },
-    { id: 'greying', name: 'Premature Greying', icon: '🔘', tests: ['B12', 'Copper', 'Catalase'] },
-    { id: 'thinning', name: 'Hair Thinning', icon: '〰️', tests: ['DHT', 'Testosterone', 'Protein'] },
-    { id: 'drybrittle', name: 'Dry & Brittle', icon: '🥀', tests: ['Biotin', 'Omega-3', 'Vitamin E'] },
-    { id: 'slowgrowth', name: 'Slow Growth', icon: '🐢', tests: ['Protein', 'Iron', 'Zinc', 'Biotin'] }
-  ],
-  core: [
-    { id: 'fatigue', name: 'Fatigue & Low Energy', icon: '😴', tests: ['Vitamin D', 'B12', 'Iron', 'Thyroid'] },
-    { id: 'immunity', name: 'Weak Immunity', icon: '🛡️', tests: ['Vitamin C', 'Zinc', 'Vitamin D'] },
-    { id: 'bones', name: 'Bone & Joint Pain', icon: '🦴', tests: ['Calcium', 'Vitamin D', 'Phosphorus'] },
-    { id: 'mood', name: 'Mood Swings', icon: '🎭', tests: ['B Complex', 'Vitamin D', 'Magnesium'] },
-    { id: 'sleep', name: 'Sleep Issues', icon: '🌙', tests: ['Magnesium', 'Melatonin', 'Cortisol'] },
-    { id: 'digestion', name: 'Digestive Issues', icon: '🫄', tests: ['B12', 'Folate', 'Gut Health Panel'] }
-  ],
-  women: [
-    { id: 'pcos', name: 'PCOS Symptoms', icon: '🔄', tests: ['Hormonal Panel', 'Insulin', 'AMH'] },
-    { id: 'period', name: 'Irregular Periods', icon: '📅', tests: ['FSH', 'LH', 'Estrogen', 'Progesterone'] },
-    { id: 'fertility', name: 'Fertility Concerns', icon: '🤰', tests: ['AMH', 'FSH', 'Prolactin', 'Thyroid'] },
-    { id: 'menopause', name: 'Menopause', icon: '🌺', tests: ['Estrogen', 'FSH', 'Bone Density'] },
-    { id: 'anemia', name: 'Anemia & Weakness', icon: '💉', tests: ['CBC', 'Iron', 'Ferritin', 'B12'] },
-    { id: 'skinaging', name: 'Skin & Hair Changes', icon: '🪞', tests: ['Collagen', 'Biotin', 'Hormones'] }
-  ],
-  men: [
-    { id: 'energy', name: 'Low Energy', icon: '🔋', tests: ['Testosterone', 'Thyroid', 'Vitamin D'] },
-    { id: 'muscle', name: 'Muscle Weakness', icon: '💪', tests: ['Testosterone', 'Protein', 'Creatinine'] },
-    { id: 'libido', name: 'Low Libido', icon: '❤️‍🔥', tests: ['Testosterone', 'Prolactin', 'Thyroid'] },
-    { id: 'stress', name: 'Stress & Anxiety', icon: '😰', tests: ['Cortisol', 'Magnesium', 'B Complex'] },
-    { id: 'hairloss', name: 'Male Pattern Hair Loss', icon: '👨‍🦲', tests: ['DHT', 'Testosterone', 'Thyroid'] },
-    { id: 'prostate', name: 'Prostate Health', icon: '🔬', tests: ['PSA', 'Testosterone', 'Zinc'] }
-  ]
-};
-
-// Recommended lab tests with prices
-const LAB_TESTS = {
-  'Vitamin D': { price: 599, turnaround: '24 hours' },
-  'B12': { price: 499, turnaround: '24 hours' },
-  'Iron': { price: 399, turnaround: '24 hours' },
-  'Ferritin': { price: 499, turnaround: '24 hours' },
-  'Thyroid': { price: 699, turnaround: '24 hours' },
-  'Biotin': { price: 899, turnaround: '48 hours' },
-  'Zinc': { price: 599, turnaround: '24 hours' },
-  'CBC': { price: 349, turnaround: '6 hours' },
-  'Hormonal Panel': { price: 1999, turnaround: '48 hours' },
-  'Vitamin D + B12 + Iron': { price: 999, turnaround: '24 hours', combo: true },
-  'Skin & Hair Panel': { price: 1499, turnaround: '48 hours', combo: true },
-  'Complete Wellness Panel': { price: 2499, turnaround: '48 hours', combo: true }
-};
-
-// Supplement recommendations
-const SUPPLEMENTS = {
-  'Vitamin D': { name: 'Vitamin D3 60K', brand: 'HealthKart', price: 399, dosage: '1 tablet/week' },
-  'B12': { name: 'Methylcobalamin 1500mcg', brand: 'Nutrela', price: 299, dosage: '1 tablet/day' },
-  'Biotin': { name: 'Biotin 10000mcg', brand: 'Carbamide Forte', price: 449, dosage: '1 tablet/day' },
-  'Iron': { name: 'Ferrous Ascorbate', brand: 'Orofer', price: 189, dosage: '1 tablet/day' },
-  'Zinc': { name: 'Zinc Picolinate 50mg', brand: 'NOW Foods', price: 599, dosage: '1 capsule/day' },
-  'Collagen': { name: 'Marine Collagen', brand: 'OZiva', price: 1299, dosage: '1 scoop/day' },
-  'Omega-3': { name: 'Fish Oil 1000mg', brand: 'HealthKart', price: 599, dosage: '1 softgel/day' }
-};
 
 const Reneu = () => {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState('core');
-  const [selectedConcerns, setSelectedConcerns] = useState([]);
-  const [showAssessment, setShowAssessment] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const [assessmentStep, setAssessmentStep] = useState(1);
-  const [progressPhotos, setProgressPhotos] = useState([]);
-  const [treatmentLog, setTreatmentLog] = useState([]);
-  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
-  
-  // Assessment form data
-  const [assessmentData, setAssessmentData] = useState({
-    age: '',
-    gender: '',
-    duration: '',
-    severity: '',
-    lifestyle: [],
-    currentSupplements: '',
-    medicalHistory: ''
-  });
+  const { isSubscribed, trial, gate, canAccess, startTrial } = useSubscriptionRedirect();
+  const [activeTab, setActiveTab] = useState('fitness');
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [showReminders, setShowReminders] = useState(false);
 
-  const currentSectionData = RENEU_SECTIONS.find(s => s.id === activeSection);
-  const currentConcerns = CONCERNS[activeSection] || [];
+  // Data from API
+  const [programs, setPrograms] = useState([]);
+  const [nutritionPlans, setNutritionPlans] = useState([]);
+  const [sleepTips, setSleepTips] = useState([]);
+  const [skinCare, setSkinCare] = useState(null);
+  const [hairCare, setHairCare] = useState(null);
 
-  // Get recommended tests based on selected concerns
-  const getRecommendedTests = () => {
-    const allTests = new Set();
-    selectedConcerns.forEach(concernId => {
-      const concern = currentConcerns.find(c => c.id === concernId);
-      if (concern) {
-        concern.tests.forEach(test => allTests.add(test));
-      }
-    });
-    return Array.from(allTests);
-  };
+  // Dialog states
+  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [selectedNutrition, setSelectedNutrition] = useState(null);
+  const [showSleepLog, setShowSleepLog] = useState(false);
+  const [showSkinCare, setShowSkinCare] = useState(false);
+  const [showHairCare, setShowHairCare] = useState(false);
+  const [sleepLogs, setSleepLogs] = useState([]);
+  const [fitnessLogs, setFitnessLogs] = useState([]);
+  const [newSleepLog, setNewSleepLog] = useState({ date: new Date().toISOString().split('T')[0], bedtime: '23:00', wakeup_time: '07:00', screen_time_minutes: 0, quality: 'fair', notes: '' });
 
-  const toggleConcern = (concernId) => {
-    setSelectedConcerns(prev => 
-      prev.includes(concernId) 
-        ? prev.filter(c => c !== concernId)
-        : [...prev, concernId]
-    );
-  };
+  const token = localStorage.getItem('token') || localStorage.getItem('staffToken');
 
-  const startAssessment = () => {
-    if (selectedConcerns.length === 0) {
-      toast.error('Please select at least one concern');
-      return;
+  const fetchData = useCallback(async () => {
+    try {
+      const [progRes, nutRes, sleepRes, skinRes, hairRes] = await Promise.all([
+        fetch(`${API_URL}/api/reneu/programs`),
+        fetch(`${API_URL}/api/reneu/nutrition`),
+        fetch(`${API_URL}/api/reneu/sleep-tips`),
+        fetch(`${API_URL}/api/reneu/skin-care`),
+        fetch(`${API_URL}/api/reneu/hair-care`),
+      ]);
+      if (progRes.ok) setPrograms((await progRes.json()).programs || []);
+      if (nutRes.ok) setNutritionPlans((await nutRes.json()).plans || []);
+      if (sleepRes.ok) setSleepTips((await sleepRes.json()).tips || []);
+      if (skinRes.ok) setSkinCare((await skinRes.json()).data || null);
+      if (hairRes.ok) setHairCare((await hairRes.json()).data || null);
+    } catch {}
+  }, []);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  useEffect(() => {
+    if (token) {
+      fetch(`${API_URL}/api/reneu/sleep-logs`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.ok ? r.json() : null)
+        .then(d => d && setSleepLogs(d.logs || []))
+        .catch(() => {});
+      fetch(`${API_URL}/api/reneu/fitness-logs`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.ok ? r.json() : null)
+        .then(d => d && setFitnessLogs(d.logs || []))
+        .catch(() => {});
     }
-    setShowAssessment(true);
-    setAssessmentStep(1);
+  }, [token]);
+
+  const addSleepLog = async () => {
+    if (!gate('sleep')) return;
+    try {
+      const res = await fetch(`${API_URL}/api/reneu/sleep-log`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(newSleepLog),
+      });
+      if (res.ok) {
+        toast.success('Sleep log added!');
+        const data = await res.json();
+        setSleepLogs(prev => [data.log, ...prev]);
+        setShowSleepLog(false);
+      }
+    } catch { toast.error('Failed to log sleep'); }
   };
 
-  const completeAssessment = () => {
-    setShowAssessment(false);
-    setShowResults(true);
-    toast.success('Assessment complete! Here are your personalized recommendations.');
+  const logWorkout = async (program) => {
+    if (!gate('fitness')) return;
+    try {
+      const res = await fetch(`${API_URL}/api/reneu/fitness-log`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ date: new Date().toISOString().split('T')[0], program_id: program.id, duration_minutes: parseInt(program.duration) || 30 }),
+      });
+      if (res.ok) toast.success(`${program.name} workout logged!`);
+    } catch { toast.error('Failed to log workout'); }
   };
 
-  const bookLabTest = (testName) => {
-    toast.success(`Redirecting to Mango Labs for ${testName}...`);
-    navigate('/mango');
+  const getSleepDuration = (bedtime, wakeup) => {
+    const [bh, bm] = bedtime.split(':').map(Number);
+    const [wh, wm] = wakeup.split(':').map(Number);
+    let hours = wh - bh + (wm - bm) / 60;
+    if (hours < 0) hours += 24;
+    return hours.toFixed(1);
   };
 
-  const orderSupplement = (supplement) => {
-    toast.success(`Adding ${supplement} to cart...`);
-    navigate('/pharmacy');
-  };
+  const PROGRAM_ICONS = { yoga: Leaf, meditation: Brain, weight_training: Dumbbell, hiit: Zap, walking: Target };
+  const PROGRAM_GRADIENTS = { yoga: 'from-teal-400 to-cyan-400', meditation: 'from-indigo-400 to-violet-400', weight_training: 'from-red-400 to-rose-400', hiit: 'from-orange-400 to-amber-400', walking: 'from-green-400 to-emerald-400' };
 
   return (
-    <AnimatedPage>
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white" data-testid="reneu-page">
-        {/* Premium Header */}
-        <header className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white sticky top-0 z-50">
-          <div className="max-w-5xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => navigate('/')}
-                  className="rounded-full bg-white/10 hover:bg-white/20 text-white"
-                  data-testid="reneu-back-btn"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-white p-1">
-                    <img 
-                      src="https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/uy8wpc27_file_00000000caf871fdae54ae4c4854bbd4.png" 
-                      alt="Reneu" 
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div>
-                    <h1 className="text-xl font-bold tracking-wide flex items-center gap-2">
-                      RENEU
-                    </h1>
-                    <p className="text-sm text-slate-400">Inside Out Wellness</p>
-                  </div>
-                </div>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="rounded-full border-white/30 text-white hover:bg-white/10"
-                onClick={() => navigate('/mango')}
-              >
-                <FlaskConical className="w-4 h-4 mr-2" />
-                Book Test
-              </Button>
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-teal-50" data-testid="reneu-page">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-xl border-b sticky top-0 z-50">
+        <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+          <button onClick={() => navigate('/')} className="p-2 rounded-xl hover:bg-gray-100" data-testid="reneu-back-btn">
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-white" />
             </div>
+            <span className="font-bold text-gray-800 text-lg">Reneu</span>
+            <span className="text-[9px] text-gray-400 font-medium ml-1">A Nevika Cura Company</span>
           </div>
-        </header>
-
-        {/* Sub-section Tabs */}
-        <div className="bg-white border-b border-slate-100 sticky top-[72px] z-40">
-          <div className="max-w-5xl mx-auto px-4">
-            <div className="flex gap-1 overflow-x-auto py-3 scrollbar-hide">
-              {RENEU_SECTIONS.map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => {
-                    setActiveSection(section.id);
-                    setSelectedConcerns([]);
-                    setShowResults(false);
-                  }}
-                  className={`flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${
-                    activeSection === section.id 
-                      ? `bg-gradient-to-r ${section.color} text-white shadow-lg` 
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                  data-testid={`tab-${section.id}`}
-                >
-                  <span className="text-base">{section.icon}</span>
-                  <span className="hidden sm:inline">{section.name}</span>
-                  <span className="sm:hidden">{section.name.replace('Reneu ', '')}</span>
-                </button>
-              ))}
-            </div>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowReminders(true)} className="p-2 rounded-xl hover:bg-gray-100" data-testid="reneu-bell-btn"><Bell className="w-5 h-5 text-gray-500" /></button>
+            {isSubscribed && <Badge className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] px-2 border-0"><Crown className="w-3 h-3 mr-1" />Pro</Badge>}
+            {trial?.active && !isSubscribed && <Badge className="bg-emerald-100 text-emerald-700 text-[10px] px-2 border border-emerald-200">{trial.days_remaining}d trial</Badge>}
           </div>
         </div>
 
-        <main className="max-w-5xl mx-auto px-4 py-6">
-          {/* Section Hero */}
-          <Card className={`overflow-hidden mb-6 border-0 shadow-xl ${currentSectionData?.bgLight}`}>
-            <div className="p-6 sm:p-8">
-              <div className="flex items-center gap-4 mb-4">
-                <span className="text-5xl">{currentSectionData?.icon}</span>
-                <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
-                    {currentSectionData?.name}
-                  </h2>
-                  <p className="text-slate-600">{currentSectionData?.subtitle}</p>
-                </div>
-              </div>
-              <p className="text-slate-600 mb-4">
-                {activeSection === 'core' && 'Identify vitamin deficiencies causing fatigue, weakness, and health issues. Get personalized supplement recommendations.'}
-                {activeSection === 'skin' && 'Understand the root cause of your skin concerns. From acne to aging, find solutions that work from within.'}
-                {activeSection === 'hair' && 'Stop hair fall at its root. Identify deficiencies and hormonal imbalances affecting your hair health.'}
-                {activeSection === 'women' && "Hormonal health, fertility, PCOS, menopause - comprehensive wellness solutions for every stage of a woman's life."}
-                {activeSection === 'men' && "Energy, vitality, and performance. Address the underlying causes of fatigue, stress, and hormonal imbalances."}
-              </p>
-            </div>
-          </Card>
+        {/* Tab bar */}
+        <div className="flex gap-1.5 px-4 pb-3 max-w-lg mx-auto overflow-x-auto">
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} data-testid={`reneu-tab-${tab.id}`}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? `bg-gradient-to-r ${tab.gradient} text-white shadow-lg`
+                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}>
+                <Icon className="w-3.5 h-3.5" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      </header>
 
-          {/* Concern Selection */}
-          {!showResults && (
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-amber-500" />
-                What concerns you?
-                <Badge variant="outline" className="ml-2">{selectedConcerns.length} selected</Badge>
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {currentConcerns.map((concern) => (
-                  <button
-                    key={concern.id}
-                    onClick={() => toggleConcern(concern.id)}
-                    className={`p-4 rounded-2xl border-2 transition-all text-left ${
-                      selectedConcerns.includes(concern.id)
-                        ? `border-2 ${currentSectionData?.bgLight} border-slate-400 shadow-md`
-                        : 'border-slate-200 hover:border-slate-300 bg-white'
-                    }`}
-                    data-testid={`concern-${concern.id}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{concern.icon}</span>
-                      <div>
-                        <p className="font-semibold text-slate-800 text-sm">{concern.name}</p>
-                        <p className="text-xs text-slate-500">{concern.tests.length} tests</p>
-                      </div>
-                      {selectedConcerns.includes(concern.id) && (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-500 ml-auto" />
+      <div className="max-w-lg mx-auto px-4 py-5 pb-32 space-y-5">
+
+        {/* Today Summary Card */}
+        {token && (
+          <div className="bg-white rounded-2xl p-4 shadow-sm border" data-testid="reneu-today-summary">
+            <h3 className="text-sm font-bold text-gray-700 mb-2">Today</h3>
+            <div className="flex gap-3">
+              <div className="flex-1 bg-orange-50 rounded-xl p-3 text-center">
+                <Dumbbell className="w-5 h-5 text-orange-500 mx-auto mb-1" />
+                <p className="text-xs font-semibold text-gray-700">{fitnessLogs.filter(l => l.date === new Date().toISOString().split('T')[0]).length > 0 ? 'Done' : 'Pending'}</p>
+                <p className="text-[10px] text-gray-400">Workout</p>
+              </div>
+              <div className="flex-1 bg-indigo-50 rounded-xl p-3 text-center">
+                <Moon className="w-5 h-5 text-indigo-500 mx-auto mb-1" />
+                <p className="text-xs font-semibold text-gray-700">{sleepLogs[0]?.quality || '—'}</p>
+                <p className="text-[10px] text-gray-400">Last Sleep</p>
+              </div>
+              <div className="flex-1 bg-emerald-50 rounded-xl p-3 text-center">
+                <Target className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
+                <p className="text-xs font-semibold text-gray-700">{(() => { let s = 0; const today = new Date(); for (let i = 0; i < 30; i++) { const d = new Date(today); d.setDate(d.getDate() - i); if (fitnessLogs.some(l => l.date === d.toISOString().split('T')[0])) s++; else if (i > 0) break; } return s; })()}d</p>
+                <p className="text-[10px] text-gray-400">Streak</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========== FITNESS TAB ========== */}
+        {activeTab === 'fitness' && (
+          <div className="space-y-4" data-testid="reneu-fitness-section">
+            <div className="text-center mb-2">
+              <h2 className="text-lg font-bold text-gray-800">Fitness Programs</h2>
+              <p className="text-xs text-gray-400">Yoga, meditation, weight training & more</p>
+            </div>
+            {fitnessLogs.length > 0 && <WorkoutStreak logs={fitnessLogs} />}
+            <WaterIntakeRing glasses={5} target={8} />
+            <div className="grid grid-cols-2 gap-3">
+              {programs.map((program) => {
+                const Icon = PROGRAM_ICONS[program.id] || Dumbbell;
+                const grad = PROGRAM_GRADIENTS[program.id] || 'from-gray-400 to-gray-500';
+                return (
+                  <button key={program.id} onClick={() => { if (gate('fitness')) setSelectedProgram(program); }}
+                    data-testid={`fitness-${program.id}`}
+                    className={`bg-gradient-to-br ${grad} text-white p-4 rounded-2xl text-left hover:opacity-90 transition-all hover:scale-[1.03] shadow-lg relative`}>
+                    {!canAccess('fitness') && <Lock className="w-4 h-4 absolute top-2 right-2 text-white/50" />}
+                    <Icon className="w-7 h-7 mb-2" />
+                    <h4 className="font-bold text-sm">{program.name}</h4>
+                    <p className="text-[10px] text-white/70 mt-0.5">{program.level}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge className="bg-white/20 text-white text-[9px] border-0"><Timer className="w-2.5 h-2.5 mr-1" />{program.duration}</Badge>
+                      <span className="text-[9px] text-white/60">{program.sessions} sessions</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ========== NUTRITION TAB ========== */}
+        {activeTab === 'nutrition' && (
+          <div className="space-y-4" data-testid="reneu-nutrition-section">
+            <div className="text-center mb-2">
+              <h2 className="text-lg font-bold text-gray-800">Nutrition & Diet</h2>
+              <p className="text-xs text-gray-400">Plans for weight loss & weight gain</p>
+            </div>
+            {nutritionPlans.map((plan) => (
+              <button key={plan.id} onClick={() => { if (gate('nutrition')) setSelectedNutrition(plan); }}
+                data-testid={`nutrition-${plan.id}`}
+                className={`w-full bg-gradient-to-r ${plan.id === 'weight_loss' ? 'from-emerald-400 to-teal-500' : 'from-orange-400 to-amber-500'} text-white p-5 rounded-2xl text-left hover:opacity-90 transition-all shadow-lg relative`}>
+                {!canAccess('nutrition') && <Lock className="w-4 h-4 absolute top-3 right-3 text-white/50" />}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-bold text-base">{plan.name}</h3>
+                    <p className="text-[11px] text-white/80 mt-1">{plan.goal}</p>
+                    <p className="text-[10px] text-white/60 mt-0.5">{plan.calories}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    {plan.id === 'weight_loss' ? <TrendingUp className="w-6 h-6 rotate-180" /> : <TrendingUp className="w-6 h-6" />}
+                  </div>
+                </div>
+                <p className="text-xs text-white/70 mt-2">{plan.description}</p>
+                <div className="flex gap-2 mt-3">
+                  {plan.tips?.slice(0, 2).map((tip, i) => (
+                    <Badge key={i} className="bg-white/20 text-white text-[9px] border-0">{tip}</Badge>
+                  ))}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* ========== SLEEP TAB ========== */}
+        {activeTab === 'sleep' && (
+          <div className="space-y-4" data-testid="reneu-sleep-section">
+            <div className="text-center mb-2">
+              <h2 className="text-lg font-bold text-gray-800">Sleep & Screen Time</h2>
+              <p className="text-xs text-gray-400">Track sleep quality & screen time habits</p>
+            </div>
+
+            {/* Sleep Quality Chart */}
+            {sleepLogs.length > 0 && <SleepQualityChart logs={sleepLogs} />}
+
+            {/* Log Sleep Button */}
+            <Button onClick={() => { if (gate('sleep')) setShowSleepLog(true); }}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-indigo-400 to-violet-500 text-white font-semibold shadow-lg"
+              data-testid="log-sleep-btn">
+              <Bed className="w-5 h-5 mr-2" /> Log Tonight's Sleep
+            </Button>
+
+            {/* Recent Sleep Logs */}
+            {sleepLogs.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-semibold text-gray-700">Recent Logs</h3>
+                {sleepLogs.slice(0, 5).map((log, i) => (
+                  <div key={log.id || i} className="bg-white rounded-xl p-3 shadow-sm border flex items-center justify-between" data-testid={`sleep-log-${i}`}>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">{log.date}</p>
+                      <p className="text-[10px] text-gray-400">{log.bedtime} - {log.wakeup_time}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-base font-bold text-indigo-600">{getSleepDuration(log.bedtime, log.wakeup_time)}h</p>
+                      {log.screen_time_minutes > 0 && (
+                        <p className="text-[10px] text-gray-400 flex items-center gap-0.5 justify-end"><Smartphone className="w-2.5 h-2.5" />{log.screen_time_minutes} min</p>
                       )}
                     </div>
+                    <Badge className={`text-[10px] border-0 ml-2 ${log.quality === 'excellent' ? 'bg-emerald-100 text-emerald-700' : log.quality === 'good' ? 'bg-blue-100 text-blue-700' : log.quality === 'fair' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
+                      {log.quality}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Sleep Tips */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-gray-700">Sleep Tips</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {sleepTips.map((tip, i) => {
+                  const icons = { moon: Moon, clock: Clock, thermometer: Activity, coffee: Utensils, dumbbell: Dumbbell, book: BookOpen };
+                  const TipIcon = icons[tip.icon] || Star;
+                  return (
+                    <div key={i} className="bg-white rounded-xl p-3 shadow-sm border" data-testid={`sleep-tip-${i}`}>
+                      <TipIcon className="w-5 h-5 text-indigo-500 mb-1" />
+                      <h4 className="text-xs font-semibold text-gray-700">{tip.title}</h4>
+                      <p className="text-[10px] text-gray-400 mt-0.5">{tip.desc}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========== BEAUTY TAB (Skin & Hair) ========== */}
+        {activeTab === 'beauty' && (
+          <div className="space-y-4" data-testid="reneu-beauty-section">
+            <div className="text-center mb-2">
+              <h2 className="text-lg font-bold text-gray-800">Skin & Hair Care</h2>
+              <p className="text-xs text-gray-400">Expert routines & concern-based advice</p>
+            </div>
+
+            <button onClick={() => { if (gate('beauty')) setShowSkinCare(true); }} data-testid="skin-care-btn"
+              className="w-full bg-gradient-to-r from-pink-400 to-rose-500 text-white p-5 rounded-2xl text-left hover:opacity-90 transition-all shadow-lg relative">
+              {!canAccess('beauty') && <Lock className="w-4 h-4 absolute top-3 right-3 text-white/50" />}
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center"><Sun className="w-6 h-6" /></div>
+                <div>
+                  <h3 className="font-bold text-base">Skin Care</h3>
+                  <p className="text-[11px] text-white/80">Morning & evening routines, concern fixes</p>
+                </div>
+                <ChevronRight className="w-5 h-5 ml-auto" />
+              </div>
+            </button>
+
+            <button onClick={() => { if (gate('beauty')) setShowHairCare(true); }} data-testid="hair-care-btn"
+              className="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white p-5 rounded-2xl text-left hover:opacity-90 transition-all shadow-lg relative">
+              {!canAccess('beauty') && <Lock className="w-4 h-4 absolute top-3 right-3 text-white/50" />}
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center"><Scissors className="w-6 h-6" /></div>
+                <div>
+                  <h3 className="font-bold text-base">Hair Care</h3>
+                  <p className="text-[11px] text-white/80">Routines, treatments & concern solutions</p>
+                </div>
+                <ChevronRight className="w-5 h-5 ml-auto" />
+              </div>
+            </button>
+          </div>
+        )}
+
+        {/* ========== SUBSCRIBE / TRIAL CTA ========== */}
+        {!isSubscribed && (
+          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-5 text-center" data-testid="reneu-cta">
+            {trial?.active ? (
+              <><h3 className="text-lg font-bold text-gray-800">Trial Active — {trial.days_remaining} days left</h3><p className="text-sm text-gray-500 mt-1 mb-4">Upgrade for unlimited access to all programs</p></>
+            ) : (
+              <><h3 className="text-lg font-bold text-gray-800">Unlock All Features</h3><p className="text-sm text-gray-500 mt-1 mb-4">Full access to fitness, nutrition, sleep tracking & beauty care</p></>
+            )}
+            <div className="flex gap-3 justify-center flex-wrap">
+              {!trial?.active && (
+                <Button onClick={startTrial} className="rounded-full px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white shadow-md" data-testid="reneu-trial-btn">
+                  <Zap className="w-4 h-4 mr-2" /> 7-Day Free Trial
+                </Button>
+              )}
+              <Button onClick={() => setShowCheckout(true)} className="rounded-full px-6 py-3 bg-gradient-to-r from-emerald-400 to-teal-500 text-white shadow-md hover:shadow-lg" data-testid="reneu-subscribe-btn">
+                <Crown className="w-4 h-4 mr-2" /> Subscribe Now
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ========== PROGRAM DETAIL DIALOG ========== */}
+      <Dialog open={!!selectedProgram} onOpenChange={(o) => !o && setSelectedProgram(null)}>
+        <DialogContent className="max-w-md p-0 rounded-2xl border-0 overflow-hidden" data-testid="program-detail-modal">
+          {selectedProgram && (
+            <>
+              <div className={`bg-gradient-to-r ${PROGRAM_GRADIENTS[selectedProgram.id] || 'from-gray-400 to-gray-500'} p-5 text-white`}>
+                <DialogHeader>
+                  <DialogTitle className="text-xl text-white">{selectedProgram.name}</DialogTitle>
+                </DialogHeader>
+                <div className="flex gap-2 mt-2">
+                  <Badge className="bg-white/20 text-white border-0">{selectedProgram.level}</Badge>
+                  <Badge className="bg-white/20 text-white border-0">{selectedProgram.duration}</Badge>
+                  <Badge className="bg-white/20 text-white border-0">{selectedProgram.sessions} sessions</Badge>
+                </div>
+              </div>
+              <ScrollArea className="max-h-[55vh] px-5 py-4 space-y-4">
+                <p className="text-sm text-gray-600 mb-4">{selectedProgram.description}</p>
+
+                <h4 className="text-sm font-bold text-gray-700 mb-2">Weekly Schedule</h4>
+                <div className="space-y-2 mb-4">
+                  {selectedProgram.schedule?.map((s, i) => (
+                    <div key={i} className="flex items-center justify-between bg-gray-50 rounded-xl p-3">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-700">{s.day}</p>
+                        <p className="text-[11px] text-gray-500">{s.focus}</p>
+                      </div>
+                      <Badge className="bg-blue-50 text-blue-600 text-[10px] border-0">{s.duration}</Badge>
+                    </div>
+                  ))}
+                </div>
+
+                <h4 className="text-sm font-bold text-gray-700 mb-2">Benefits</h4>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {selectedProgram.benefits?.map((b, i) => (
+                    <Badge key={i} className="bg-emerald-50 text-emerald-700 text-[10px] border border-emerald-200"><Check className="w-3 h-3 mr-1" />{b}</Badge>
+                  ))}
+                </div>
+
+                <Button onClick={() => { logWorkout(selectedProgram); setSelectedProgram(null); }}
+                  className={`w-full h-11 rounded-xl bg-gradient-to-r ${PROGRAM_GRADIENTS[selectedProgram.id] || 'from-gray-400 to-gray-500'} text-white font-semibold`}
+                  data-testid="log-workout-btn">
+                  <Dumbbell className="w-4 h-4 mr-2" /> Log Workout
+                </Button>
+              </ScrollArea>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ========== NUTRITION DETAIL DIALOG ========== */}
+      <Dialog open={!!selectedNutrition} onOpenChange={(o) => !o && setSelectedNutrition(null)}>
+        <DialogContent className="max-w-md p-0 rounded-2xl border-0 overflow-hidden" data-testid="nutrition-detail-modal">
+          {selectedNutrition && (
+            <>
+              <div className={`bg-gradient-to-r ${selectedNutrition.id === 'weight_loss' ? 'from-emerald-400 to-teal-500' : 'from-orange-400 to-amber-500'} p-5 text-white`}>
+                <DialogHeader>
+                  <DialogTitle className="text-xl text-white flex items-center gap-2"><Utensils className="w-5 h-5" /> {selectedNutrition.name}</DialogTitle>
+                </DialogHeader>
+                <p className="text-sm text-white/80 mt-1">{selectedNutrition.goal} | {selectedNutrition.calories}</p>
+              </div>
+              <ScrollArea className="max-h-[55vh] px-5 py-4">
+                <p className="text-sm text-gray-600 mb-4">{selectedNutrition.description}</p>
+                {Object.entries(selectedNutrition.meals || {}).map(([meal, items]) => (
+                  <div key={meal} className="mb-4">
+                    <h4 className="text-sm font-bold text-gray-700 capitalize flex items-center gap-2 mb-2">
+                      <Clock className="w-4 h-4 text-blue-500" /> {meal}
+                    </h4>
+                    {items.map((item, i) => (
+                      <div key={i} className="bg-gray-50 rounded-xl p-3 mb-1.5 flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">{item.item}</p>
+                          <p className="text-[10px] text-gray-400">Protein: {item.protein}</p>
+                        </div>
+                        <Badge className="bg-blue-50 text-blue-600 text-[10px] border-0">{item.calories} cal</Badge>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+                <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                  <h4 className="text-sm font-bold text-emerald-700 mb-2">Pro Tips</h4>
+                  {selectedNutrition.tips?.map((tip, i) => (
+                    <p key={i} className="text-xs text-gray-600 flex items-start gap-2 mb-1"><Check className="w-3 h-3 text-emerald-500 mt-0.5 flex-shrink-0" />{tip}</p>
+                  ))}
+                </div>
+              </ScrollArea>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* ========== SLEEP LOG DIALOG ========== */}
+      <Dialog open={showSleepLog} onOpenChange={setShowSleepLog}>
+        <DialogContent className="max-w-md rounded-2xl" data-testid="sleep-log-modal">
+          <DialogHeader>
+            <DialogTitle className="text-lg flex items-center gap-2"><Bed className="w-5 h-5 text-indigo-500" /> Log Sleep</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div><label className="text-xs text-gray-500 block mb-1">Date</label><Input type="date" value={newSleepLog.date} onChange={e => setNewSleepLog({...newSleepLog, date: e.target.value})} data-testid="sleep-date" /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><label className="text-xs text-gray-500 block mb-1">Bedtime</label><Input type="time" value={newSleepLog.bedtime} onChange={e => setNewSleepLog({...newSleepLog, bedtime: e.target.value})} data-testid="sleep-bedtime" /></div>
+              <div><label className="text-xs text-gray-500 block mb-1">Wake Up</label><Input type="time" value={newSleepLog.wakeup_time} onChange={e => setNewSleepLog({...newSleepLog, wakeup_time: e.target.value})} data-testid="sleep-wakeup" /></div>
+            </div>
+            <div><label className="text-xs text-gray-500 block mb-1">Screen Time Before Bed (minutes)</label><Input type="number" min={0} placeholder="e.g. 45" value={newSleepLog.screen_time_minutes || ''} onChange={e => setNewSleepLog({...newSleepLog, screen_time_minutes: parseInt(e.target.value) || 0})} data-testid="sleep-screentime" /></div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-1">Sleep Quality</label>
+              <div className="grid grid-cols-4 gap-2">
+                {['poor', 'fair', 'good', 'excellent'].map(q => (
+                  <button key={q} onClick={() => setNewSleepLog({...newSleepLog, quality: q})} data-testid={`sleep-quality-${q}`}
+                    className={`py-2 rounded-lg text-xs font-semibold capitalize transition-all ${newSleepLog.quality === q ? 'bg-indigo-500 text-white shadow-md' : 'bg-gray-100 text-gray-500'}`}>
+                    {q}
                   </button>
                 ))}
               </div>
-              
-              {selectedConcerns.length > 0 && (
-                <Button 
-                  onClick={startAssessment}
-                  className={`w-full mt-6 h-14 rounded-2xl font-bold text-lg bg-gradient-to-r ${currentSectionData?.color}`}
-                  data-testid="start-assessment-btn"
-                >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Start Root Cause Analysis
-                </Button>
-              )}
             </div>
-          )}
+            <Button onClick={addSleepLog} className="w-full h-11 bg-gradient-to-r from-indigo-400 to-violet-500 text-white rounded-xl font-semibold" data-testid="submit-sleep-log">
+              Save Sleep Log
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-          {/* Results Section */}
-          {showResults && (
-            <div className="space-y-6">
-              {/* Recommended Lab Tests */}
-              <Card className="p-6 border-0 shadow-lg">
-                <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  <FlaskConical className="w-5 h-5 text-teal-500" />
-                  Recommended Lab Tests
-                </h3>
-                <p className="text-sm text-slate-600 mb-4">Based on your concerns, we recommend these tests to identify root causes:</p>
-                
-                {/* Combo Panel */}
-                <Card className="p-4 mb-4 bg-gradient-to-r from-teal-50 to-emerald-50 border-teal-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Badge className="bg-teal-500 text-white mb-2">Best Value</Badge>
-                      <h4 className="font-bold text-slate-800">
-                        {activeSection === 'skin' || activeSection === 'hair' ? 'Skin & Hair Panel' : 'Complete Wellness Panel'}
-                      </h4>
-                      <p className="text-sm text-slate-600">Includes: {getRecommendedTests().slice(0, 4).join(', ')} & more</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-teal-600">
-                        ₹{activeSection === 'skin' || activeSection === 'hair' ? '1,499' : '2,499'}
-                      </p>
-                      <Button 
-                        size="sm" 
-                        className="mt-2 bg-teal-600 hover:bg-teal-700 rounded-full"
-                        onClick={() => bookLabTest('Complete Panel')}
-                      >
-                        Book Now
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-                
-                {/* Individual Tests */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {getRecommendedTests().slice(0, 6).map((test, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                      <div>
-                        <p className="font-medium text-slate-800">{test}</p>
-                        <p className="text-xs text-slate-500">Results in 24-48 hrs</p>
-                      </div>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="rounded-full"
-                        onClick={() => bookLabTest(test)}
-                      >
-                        ₹{LAB_TESTS[test]?.price || 599}
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              {/* Supplement Recommendations */}
-              <Card className="p-6 border-0 shadow-lg">
-                <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  <Pill className="w-5 h-5 text-orange-500" />
-                  Recommended Supplements
-                </h3>
-                <p className="text-sm text-slate-600 mb-4">While you wait for test results, these supplements may help:</p>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {getRecommendedTests().slice(0, 4).map((test, idx) => {
-                    const supplement = SUPPLEMENTS[test];
-                    if (!supplement) return null;
-                    return (
-                      <div key={idx} className="flex items-center justify-between p-4 bg-orange-50 rounded-xl border border-orange-100">
+      {/* ========== SKIN CARE DIALOG ========== */}
+      <Dialog open={showSkinCare} onOpenChange={setShowSkinCare}>
+        <DialogContent className="max-w-md p-0 rounded-2xl border-0 overflow-hidden" data-testid="skin-care-modal">
+          <div className="bg-gradient-to-r from-pink-400 to-rose-500 p-5 text-white">
+            <DialogHeader><DialogTitle className="text-xl text-white flex items-center gap-2"><Sun className="w-5 h-5" /> Skin Care Guide</DialogTitle></DialogHeader>
+          </div>
+          <ScrollArea className="max-h-[55vh] px-5 py-4">
+            {skinCare && (
+              <Tabs defaultValue="morning">
+                <TabsList className="grid grid-cols-2 mb-4">
+                  <TabsTrigger value="morning">Morning</TabsTrigger>
+                  <TabsTrigger value="evening">Evening</TabsTrigger>
+                </TabsList>
+                {['morning', 'evening'].map(time => (
+                  <TabsContent key={time} value={time} className="space-y-2">
+                    {skinCare.routines?.[time]?.map((step, i) => (
+                      <div key={i} className="bg-gray-50 rounded-xl p-3 flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold text-sm flex-shrink-0">{step.step}</div>
                         <div>
-                          <p className="font-bold text-slate-800">{supplement.name}</p>
-                          <p className="text-xs text-slate-600">{supplement.brand} • {supplement.dosage}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-orange-600">₹{supplement.price}</p>
-                          <Button 
-                            size="sm" 
-                            className="mt-1 bg-orange-500 hover:bg-orange-600 rounded-full text-xs"
-                            onClick={() => orderSupplement(supplement.name)}
-                          >
-                            Order
-                          </Button>
+                          <p className="text-sm font-semibold text-gray-700">{step.name}</p>
+                          <p className="text-[10px] text-gray-500">{step.desc}</p>
+                          <Badge className="mt-1 bg-pink-50 text-pink-600 text-[9px] border-0">{step.duration}</Badge>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </Card>
-
-              {/* Diet Tips */}
-              <Card className="p-6 border-0 shadow-lg bg-gradient-to-br from-green-50 to-emerald-50">
-                <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  <Leaf className="w-5 h-5 text-green-500" />
-                  Diet Tips
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-semibold text-green-700 mb-2">✅ Include in Diet</h4>
-                    <ul className="space-y-1 text-sm text-slate-700">
-                      {activeSection === 'hair' && (
-                        <>
-                          <li>• Eggs, nuts, seeds (Biotin)</li>
-                          <li>• Spinach, lentils (Iron)</li>
-                          <li>• Fish, walnuts (Omega-3)</li>
-                          <li>• Dairy, sunlight (Vitamin D)</li>
-                        </>
-                      )}
-                      {activeSection === 'skin' && (
-                        <>
-                          <li>• Citrus fruits (Vitamin C)</li>
-                          <li>• Carrots, tomatoes (Antioxidants)</li>
-                          <li>• Nuts, avocados (Vitamin E)</li>
-                          <li>• Fish, flaxseeds (Omega-3)</li>
-                        </>
-                      )}
-                      {(activeSection === 'core' || activeSection === 'women' || activeSection === 'men') && (
-                        <>
-                          <li>• Leafy greens (Iron, Folate)</li>
-                          <li>• Eggs, dairy (B12, D)</li>
-                          <li>• Nuts, seeds (Zinc, Magnesium)</li>
-                          <li>• Fish, sunlight (Vitamin D)</li>
-                        </>
-                      )}
-                    </ul>
+                    ))}
+                  </TabsContent>
+                ))}
+              </Tabs>
+            )}
+            {skinCare?.concerns && (
+              <div className="mt-4">
+                <h4 className="text-sm font-bold text-gray-700 mb-2">Common Concerns</h4>
+                {skinCare.concerns.map((c, i) => (
+                  <div key={i} className="bg-gray-50 rounded-xl p-3 mb-2">
+                    <h5 className="text-xs font-bold text-pink-600">{c.issue}</h5>
+                    <ul className="mt-1 space-y-0.5">{c.tips.map((t, j) => <li key={j} className="text-[10px] text-gray-600 flex gap-1"><Check className="w-3 h-3 text-pink-400 flex-shrink-0" />{t}</li>)}</ul>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-red-600 mb-2">❌ Avoid</h4>
-                    <ul className="space-y-1 text-sm text-slate-700">
-                      <li>• Excessive sugar & processed foods</li>
-                      <li>• Alcohol & smoking</li>
-                      <li>• Too much caffeine</li>
-                      <li>• Late night eating</li>
-                    </ul>
-                  </div>
-                </div>
-              </Card>
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
 
-              {/* Book Consultation */}
-              <Card className="p-6 border-0 shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold mb-1 flex items-center gap-2">
-                      <Stethoscope className="w-5 h-5" />
-                      Consult a Specialist
-                    </h3>
-                    <p className="text-sm text-blue-100">Get expert advice from our dermatologists & nutritionists</p>
-                  </div>
-                  <Button 
-                    className="bg-white text-blue-600 hover:bg-blue-50 rounded-full"
-                    onClick={() => navigate('/diagyn')}
-                  >
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Book Now
-                  </Button>
-                </div>
-              </Card>
-
-              {/* Progress Tracker */}
-              <Card className="p-6 border-0 shadow-lg">
-                <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-purple-500" />
-                  Track Your Progress
-                </h3>
-                <p className="text-sm text-slate-600 mb-4">Upload photos to track improvements over time</p>
-                
-                <div className="flex gap-3 overflow-x-auto pb-2">
-                  {progressPhotos.map((photo, idx) => (
-                    <div key={idx} className="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 border-slate-200">
-                      <img src={photo.url} alt={`Progress ${idx + 1}`} className="w-full h-full object-cover" />
+      {/* ========== HAIR CARE DIALOG ========== */}
+      <Dialog open={showHairCare} onOpenChange={setShowHairCare}>
+        <DialogContent className="max-w-md p-0 rounded-2xl border-0 overflow-hidden" data-testid="hair-care-modal">
+          <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-5 text-white">
+            <DialogHeader><DialogTitle className="text-xl text-white flex items-center gap-2"><Scissors className="w-5 h-5" /> Hair Care Guide</DialogTitle></DialogHeader>
+          </div>
+          <ScrollArea className="max-h-[55vh] px-5 py-4">
+            {hairCare && (
+              <>
+                <h4 className="text-sm font-bold text-gray-700 mb-2">Weekly Routine</h4>
+                <div className="space-y-2 mb-4">
+                  {hairCare.routines?.map((step, i) => (
+                    <div key={i} className="bg-gray-50 rounded-xl p-3 flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-sm flex-shrink-0">{step.step}</div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">{step.name} <span className="text-[10px] text-gray-400 font-normal">({step.freq})</span></p>
+                        <p className="text-[10px] text-gray-500">{step.desc}</p>
+                      </div>
                     </div>
                   ))}
-                  <button 
-                    onClick={() => setShowPhotoUpload(true)}
-                    className="flex-shrink-0 w-24 h-24 rounded-xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 hover:border-slate-400 hover:text-slate-500 transition-colors"
-                  >
-                    <Camera className="w-6 h-6 mb-1" />
-                    <span className="text-xs">Add Photo</span>
-                  </button>
                 </div>
-              </Card>
+                <h4 className="text-sm font-bold text-gray-700 mb-2">Common Concerns</h4>
+                {hairCare.concerns?.map((c, i) => (
+                  <div key={i} className="bg-gray-50 rounded-xl p-3 mb-2">
+                    <h5 className="text-xs font-bold text-amber-600">{c.issue}</h5>
+                    <ul className="mt-1 space-y-0.5">{c.tips.map((t, j) => <li key={j} className="text-[10px] text-gray-600 flex gap-1"><Check className="w-3 h-3 text-amber-400 flex-shrink-0" />{t}</li>)}</ul>
+                  </div>
+                ))}
+              </>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
 
-              {/* Start Over */}
-              <Button 
-                variant="outline" 
-                className="w-full rounded-xl"
-                onClick={() => {
-                  setShowResults(false);
-                  setSelectedConcerns([]);
-                }}
-              >
-                Start New Assessment
-              </Button>
-            </div>
-          )}
-        </main>
-
-        {/* Assessment Modal */}
-        <Dialog open={showAssessment} onOpenChange={setShowAssessment}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-amber-500" />
-                Quick Assessment ({assessmentStep}/3)
-              </DialogTitle>
-            </DialogHeader>
-            
-            <div className="space-y-4">
-              {assessmentStep === 1 && (
-                <>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700">Your Age</label>
-                    <Input 
-                      type="number" 
-                      placeholder="Enter age"
-                      value={assessmentData.age}
-                      onChange={(e) => setAssessmentData({...assessmentData, age: e.target.value})}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700">How long have you had this concern?</label>
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                      {['< 3 months', '3-6 months', '6-12 months', '> 1 year'].map((opt) => (
-                        <button
-                          key={opt}
-                          onClick={() => setAssessmentData({...assessmentData, duration: opt})}
-                          className={`p-3 rounded-xl border-2 text-sm ${
-                            assessmentData.duration === opt 
-                              ? 'border-teal-500 bg-teal-50' 
-                              : 'border-slate-200'
-                          }`}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-              
-              {assessmentStep === 2 && (
-                <>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700">Severity</label>
-                    <div className="grid grid-cols-3 gap-2 mt-2">
-                      {['Mild', 'Moderate', 'Severe'].map((opt) => (
-                        <button
-                          key={opt}
-                          onClick={() => setAssessmentData({...assessmentData, severity: opt})}
-                          className={`p-3 rounded-xl border-2 text-sm ${
-                            assessmentData.severity === opt 
-                              ? 'border-teal-500 bg-teal-50' 
-                              : 'border-slate-200'
-                          }`}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700">Lifestyle factors</label>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {['Stress', 'Poor Sleep', 'Irregular Diet', 'Sedentary', 'Smoking', 'Alcohol'].map((opt) => (
-                        <button
-                          key={opt}
-                          onClick={() => {
-                            const current = assessmentData.lifestyle || [];
-                            setAssessmentData({
-                              ...assessmentData, 
-                              lifestyle: current.includes(opt) 
-                                ? current.filter(l => l !== opt)
-                                : [...current, opt]
-                            });
-                          }}
-                          className={`px-3 py-1.5 rounded-full border text-sm ${
-                            (assessmentData.lifestyle || []).includes(opt)
-                              ? 'border-teal-500 bg-teal-50 text-teal-700' 
-                              : 'border-slate-200'
-                          }`}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-              
-              {assessmentStep === 3 && (
-                <>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700">Current supplements (if any)</label>
-                    <Textarea 
-                      placeholder="e.g., Vitamin D, Biotin, Multivitamins..."
-                      value={assessmentData.currentSupplements}
-                      onChange={(e) => setAssessmentData({...assessmentData, currentSupplements: e.target.value})}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700">Any medical conditions?</label>
-                    <Textarea 
-                      placeholder="e.g., Thyroid, PCOS, Diabetes..."
-                      value={assessmentData.medicalHistory}
-                      onChange={(e) => setAssessmentData({...assessmentData, medicalHistory: e.target.value})}
-                      className="mt-1"
-                    />
-                  </div>
-                </>
-              )}
-              
-              <div className="flex gap-3">
-                {assessmentStep > 1 && (
-                  <Button 
-                    variant="outline" 
-                    className="flex-1"
-                    onClick={() => setAssessmentStep(assessmentStep - 1)}
-                  >
-                    Back
-                  </Button>
-                )}
-                <Button 
-                  className={`flex-1 bg-gradient-to-r ${currentSectionData?.color}`}
-                  onClick={() => {
-                    if (assessmentStep < 3) {
-                      setAssessmentStep(assessmentStep + 1);
-                    } else {
-                      completeAssessment();
-                    }
-                  }}
-                >
-                  {assessmentStep < 3 ? 'Next' : 'Get Recommendations'}
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        {/* Photo Upload Modal */}
-        <Dialog open={showPhotoUpload} onOpenChange={setShowPhotoUpload}>
-          <DialogContent className="max-w-sm">
-            <DialogHeader>
-              <DialogTitle>Add Progress Photo</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center">
-                <Camera className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                <p className="text-sm text-slate-600 mb-3">Upload a photo to track your progress</p>
-                <Button variant="outline">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Choose Photo
-                </Button>
-              </div>
-              <p className="text-xs text-slate-500 text-center">
-                Photos are stored securely and only visible to you
-              </p>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </AnimatedPage>
+      {/* Checkout Modal */}
+      <PortalCheckout open={showCheckout} onOpenChange={setShowCheckout} portalName="Reneu" accentGradient="from-emerald-400 to-teal-500" />
+      <HealthReminders open={showReminders} onOpenChange={setShowReminders} portal="reneu" />
+    </div>
   );
 };
 

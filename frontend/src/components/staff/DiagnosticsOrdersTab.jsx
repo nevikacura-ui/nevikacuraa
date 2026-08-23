@@ -111,7 +111,7 @@ const DiagnosticsOrdersTab = ({
             Clinic Add-on Services
             <span className="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded-full">{serviceOrders.length} orders</span>
           </h2>
-          <p className="text-sm text-gray-500 mb-4">Blood tests, Sonography & ECG ordered during clinic visits at Pushpa/Amnion Clinic</p>
+          <p className="text-sm text-gray-500 mb-4">Blood tests, Sonography & ECG ordered during clinic visits at Pushpa Clinic</p>
           
           <div className="space-y-3">
             {serviceOrders.map((order) => (

@@ -1,0 +1,85 @@
+{
+  "summary": "DiaGyn OTP, Booking, and Doctor Portal WebSocket sync - All issues FIXED. Backend APIs working (12/13 tests passed). Frontend booking flow fully functional with OTP send/verify.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/ws/appointments (HTTP test)", "issue": "WebSocket endpoint returns 404 when accessed via HTTP - expected behavior for WS endpoint"}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_diagyn_otp_booking.py",
+    "/app/test_reports/pytest/pytest_diagyn_otp_iteration136.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "FIXED: DiaGynRedesigned.js had duplicate '/api/api/' paths - corrected to '/api/' (lines 321, 826, 852, 1118)"
+  ],
+  "updated_files": [
+    "/app/frontend/src/pages/DiaGynRedesigned.js",
+    "/app/backend/tests/test_diagyn_otp_booking.py"
+  ],
+  "success_rate": {
+    "backend": "92% (12/13 tests passed)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "staff_login": {"username": "staff_diagyn", "password": "test1234"},
+    "doctor_login": {"username": "dr_vikas", "password": "test1234"},
+    "test_phone": "9876543210"
+  },
+  "seed_data_creation": "Backend test created appointments: TEST_Booking_Patient_136",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All DiaGyn features working. OTP flow: /api/otp/whatsapp/send and /api/otp/whatsapp/verify are functioning. Doctor Portal connects to diagyn_staff WebSocket room for real-time updates.",
+  "verified_features": {
+    "otp_send": {
+      "status": "WORKING",
+      "endpoint": "POST /api/otp/whatsapp/send",
+      "verification": "OTP sent via WhatsApp! toast shown, OTP entry screen displayed"
+    },
+    "otp_verify": {
+      "status": "WORKING",
+      "endpoint": "POST /api/otp/whatsapp/verify",
+      "verification": "API returns 400 for invalid OTP (correct behavior)"
+    },
+    "appointment_booking": {
+      "status": "WORKING",
+      "endpoint": "POST /api/appointments",
+      "verification": "Time slots display (26 slots), booking form works"
+    },
+    "booked_slots": {
+      "status": "WORKING",
+      "endpoint": "GET /api/appointments/booked-slots",
+      "verification": "Returns array of booked slot times"
+    },
+    "doctor_clinic_auto_select": {
+      "status": "WORKING",
+      "verification": "Amnion auto-selected for Saturday (Dr. Vikas works Sat at Amnion)"
+    },
+    "doctor_portal_websocket": {
+      "status": "WORKING",
+      "connection": "wss://*/api/ws/appointments?portal=diagyn_staff&date=2026-02-21",
+      "verification": "Console shows [WS] Connected to appointments: diagyn_staff"
+    }
+  },
+  "bugs_fixed_this_iteration": [
+    "Fixed duplicate /api/api/ path in DiaGynRedesigned.js line 321 (booked-slots)",
+    "Fixed duplicate /api/api/ path in DiaGynRedesigned.js line 826 (otp send)",
+    "Fixed duplicate /api/api/ path in DiaGynRedesigned.js line 852 (otp verify)",
+    "Fixed duplicate /api/api/ path in DiaGynRedesigned.js line 1118 (appointments)"
+  ],
+  "screenshots": [
+    ".screenshots/diagyn_page.jpg",
+    ".screenshots/diagyn_vikas_modal.jpg",
+    ".screenshots/diagyn_amnion.jpg",
+    ".screenshots/diagyn_slot_selected.jpg",
+    ".screenshots/diagyn_patient_filled.jpg",
+    ".screenshots/diagyn_otp_result.jpg",
+    ".screenshots/doctor_portal_dashboard.jpg"
+  ]
+}

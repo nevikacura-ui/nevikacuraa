@@ -1,0 +1,93 @@
+{
+  "summary": "Iteration 331 - Navigation/Routing Bug Fixes Testing. Tested 3 bug fixes: 1) Bottom nav hidden on Labs/Pharmacy pages - PASSED (7/7 pages correctly hide nav), 2) Bottom nav visible on Home/MyCura/Portals - PASSED (3/4 pages show nav), 3) Alternative medicine click in ProductDetailView - PASSED (product refreshes correctly), 4) PharmacyCheckout calculation - VERIFIED via code review (robust with Math.round and Math.max(0, total)). ONE ISSUE FOUND: /cura-one page does NOT include BottomNav component - needs to be added.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "CuraOne.jsx",
+        "issue": "BottomNav component is NOT included in CuraOne page - bottom nav should be visible on /cura-one but it's missing",
+        "selector": "[data-testid='persistent-footer']",
+        "priority": "MEDIUM",
+        "fix": "Add 'import BottomNav from '@/components/BottomNav';' and '<BottomNav />' at the end of the component JSX"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "bottom_nav_hidden_pages": {
+      "/pharmacy": "PASSED - nav NOT in DOM",
+      "/mango": "PASSED - nav NOT in DOM",
+      "/orange": "PASSED - nav NOT in DOM",
+      "/proton": "PASSED - nav NOT in DOM",
+      "/nexugene": "PASSED - nav NOT in DOM",
+      "/nutricare": "PASSED - nav NOT in DOM",
+      "/orange-generics": "PASSED - nav NOT in DOM"
+    },
+    "bottom_nav_visible_pages": {
+      "/": "PASSED - nav VISIBLE",
+      "/my-cura": "PASSED - nav VISIBLE",
+      "/portals": "PASSED - nav VISIBLE",
+      "/cura-one": "FAILED - nav NOT in DOM (BottomNav component not included in page)"
+    },
+    "alternative_medicine_click": {
+      "status": "PASSED",
+      "details": "Clicked on alternative card in ProductDetailView, product changed from 'Pmson 500 Tablet' to 'Paracin Kid 125mg Tablet' - useEffect reset on product change working correctly"
+    },
+    "pharmacy_checkout_calculation": {
+      "status": "VERIFIED via code review",
+      "details": {
+        "itemsTotal": "Math.round(sum of price * quantity)",
+        "cartDiscount": "Math.min(coupon + coins + loyalty, itemsTotal) - capped to prevent negative",
+        "deliveryCharge": "itemsTotal >= 1000 ? 0 : 49",
+        "total": "Math.max(0, itemsTotal - cartDiscount + deliveryCharge) - never negative"
+      }
+    }
+  },
+  "code_review_findings": {
+    "BottomNav.jsx": {
+      "HIDDEN_NAV_PATHS": ["/mango", "/proton", "/nexugene", "/labs", "/pharmacy", "/orange", "/orange-generics", "/nutricare", "/orange-select", "/trusted-formulary"],
+      "shouldHideNav": "Correctly checks if pathname matches or starts with hidden paths"
+    },
+    "ProductDetailView.jsx": {
+      "useEffect_reset": "Lines 43-47 correctly reset imgError and activeImg when product.id or product.name changes",
+      "onSelectAlternative": "Prop correctly passed and called when alternative card is clicked"
+    },
+    "PharmacyCheckout.jsx": {
+      "calculation_robustness": "All calculations use Math.round() and total uses Math.max(0, ...) to prevent negative values"
+    },
+    "CuraOne.jsx": {
+      "issue": "Does NOT import or render BottomNav component - needs to be added"
+    }
+  },
+  "test_report_links": ["/app/test_reports/iteration_331.json"],
+  "action_items": [
+    "Add BottomNav component to CuraOne.jsx page - import and render at end of component"
+  ],
+  "critical_code_review_comments": [
+    "CuraOne.jsx is missing BottomNav import and component - add: import BottomNav from '@/components/BottomNav'; and <BottomNav /> before closing div",
+    "Home.js, MyCura.jsx, Portals.jsx all correctly include BottomNav",
+    "Pharmacy.js includes BottomNav but shouldHideNav() returns early with empty div for /pharmacy path"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend only test)",
+    "frontend": "93% (14/15 tests passed - 1 issue with /cura-one missing BottomNav)"
+  },
+  "test_credentials": {
+    "admin_email": "nevikacura@gmail.com",
+    "doctor": "dr_vikas / test1234",
+    "staff": "staff_diagyn / test1234"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Iteration 331 verified bottom nav visibility on various pages. All Labs/Pharmacy pages correctly hide bottom nav. Home, MyCura, Portals correctly show bottom nav. CuraOne page is MISSING BottomNav component - needs to be added. Alternative medicine click in ProductDetailView works correctly. PharmacyCheckout calculations are robust with proper rounding and non-negative total.",
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  }
+}

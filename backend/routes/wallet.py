@@ -62,13 +62,29 @@ async def get_current_user(authorization: str = Header(None)):
     try:
         token = authorization.split(" ")[1]
         payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
-        # Support both 'sub' (from server.py) and 'user_id' (legacy) for user ID
         user_id = payload.get("sub") or payload.get("user_id")
-        if not user_id:
-            raise HTTPException(status_code=401, detail="Invalid token payload")
-        user = await db.users.find_one({"id": user_id}, {"_id": 0})
+        phone = payload.get("phone")
+        patient_id = payload.get("patient_id")
+        
+        user = None
+        # Try by user ID in both collections
+        if user_id:
+            user = await db.users.find_one({"id": user_id}, {"_id": 0})
+            if not user:
+                user = await db.patients.find_one({"id": user_id}, {"_id": 0})
+        # Try by patient_id
+        if not user and patient_id:
+            user = await db.patients.find_one({"patient_id": patient_id}, {"_id": 0})
+        # Try by phone in both collections
+        if not user and phone:
+            user = await db.users.find_one({"phone": phone}, {"_id": 0})
+            if not user:
+                user = await db.patients.find_one({"phone": phone}, {"_id": 0})
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
+        # Ensure a consistent 'id' field
+        if not user.get("id"):
+            user["id"] = user.get("patient_id") or user_id or phone
         return user
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expired")
@@ -477,4 +493,387 @@ async def get_all_wallets(admin = Depends(verify_admin)):
         "wallets": wallets,
         "total_users": len(wallets),
         "total_balance": total_balance
+    }
+
+class GiftCashRequest(BaseModel):
+    user_phone: str
+    amount: float
+    description: Optional[str] = "Gift cash from Nevika Cura"
+    admin_note: Optional[str] = None
+
+@router.post("/admin/gift-cash")
+async def add_gift_cash(data: GiftCashRequest, admin = Depends(verify_admin)):
+    """Admin: Add gift cash to a user's wallet"""
+    if data.amount <= 0:
+        raise HTTPException(status_code=400, detail="Amount must be positive")
+    if data.amount > 10000:
+        raise HTTPException(status_code=400, detail="Maximum gift cash is Rs.10,000 per transaction")
+    
+    # Clean phone
+    clean_phone = data.user_phone.strip().replace(" ", "")
+    if not clean_phone.startswith("91") and len(clean_phone) == 10:
+        clean_phone = "91" + clean_phone
+    
+    # Find user by phone
+    user = await db.users.find_one({"phone": {"$regex": clean_phone}}, {"_id": 0, "password": 0})
+    user_id = user.get("id") if user else clean_phone
+    user_name = user.get("name", "Unknown") if user else "New User"
+    
+    # Update or create wallet
+    now = datetime.now(timezone.utc).isoformat()
+    wallet = await db.wallets.find_one({"user_id": user_id})
+    
+    if wallet:
+        new_balance = wallet.get("balance", 0) + data.amount
+        await db.wallets.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "balance": new_balance,
+                "total_added": wallet.get("total_added", 0) + data.amount,
+                "updated_at": now
+            }}
+        )
+    else:
+        new_balance = data.amount
+        await db.wallets.insert_one({
+            "id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "user_phone": clean_phone,
+            "user_name": user_name,
+            "balance": data.amount,
+            "total_added": data.amount,
+            "total_spent": 0,
+            "created_at": now,
+            "updated_at": now
+        })
+    
+    # Record transaction
+    transaction = {
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "user_phone": clean_phone,
+        "user_name": user_name,
+        "type": "gift_cash",
+        "amount": data.amount,
+        "description": data.description,
+        "admin_note": data.admin_note or "",
+        "status": "completed",
+        "balance_after": new_balance,
+        "created_at": now
+    }
+    await db.wallet_transactions.insert_one(transaction)
+    
+    logger.info(f"[WALLET] Gift cash Rs.{data.amount} added to {clean_phone} ({user_name})")
+    
+    return {
+        "success": True,
+        "message": f"Rs.{data.amount} gift cash added to {user_name}",
+        "new_balance": new_balance,
+        "user_phone": clean_phone,
+        "user_name": user_name
+    }
+
+@router.get("/admin/gift-cash/history")
+async def get_gift_cash_history(limit: int = 50, admin = Depends(verify_admin)):
+    """Admin: View gift cash transaction history"""
+    transactions = await db.wallet_transactions.find(
+        {"type": "gift_cash"}, {"_id": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    return {"transactions": transactions, "count": len(transactions)}
+
+@router.get("/admin/search-user")
+async def search_user_for_gift(phone: str = "", admin = Depends(verify_admin)):
+    """Admin: Search user by phone to add gift cash"""
+    if not phone:
+        wallets = await db.wallets.find({}, {"_id": 0}).sort("updated_at", -1).limit(10).to_list(10)
+        return {"users": wallets}
+    
+    clean_phone = phone.strip().replace(" ", "")
+    if not clean_phone.startswith("91") and len(clean_phone) == 10:
+        clean_phone = "91" + clean_phone
+    
+    # Search users
+    user = await db.users.find_one(
+        {"phone": {"$regex": clean_phone}},
+        {"_id": 0, "password": 0}
+    )
+    
+    wallet = await db.wallets.find_one(
+        {"$or": [{"user_phone": {"$regex": clean_phone}}, {"user_id": user.get("id") if user else ""}]},
+        {"_id": 0}
+    )
+    
+    if user:
+        return {"users": [{
+            "user_id": user.get("id", ""),
+            "user_phone": user.get("phone", clean_phone),
+            "user_name": user.get("name", ""),
+            "balance": wallet.get("balance", 0) if wallet else 0,
+            "has_wallet": bool(wallet)
+        }]}
+    else:
+        return {"users": [{
+            "user_id": "",
+            "user_phone": clean_phone,
+            "user_name": "New User",
+            "balance": wallet.get("balance", 0) if wallet else 0,
+            "has_wallet": bool(wallet)
+        }]}
+
+
+# ============ CASHFREE WALLET TOP-UP ============
+
+class CashfreeTopUpRequest(BaseModel):
+    amount: float
+    return_url: Optional[str] = None
+
+@router.post("/cashfree-topup")
+async def create_cashfree_wallet_topup(
+    data: CashfreeTopUpRequest,
+    user = Depends(get_current_user)
+):
+    """Create Cashfree payment order for wallet top-up"""
+    if data.amount < 50:
+        raise HTTPException(status_code=400, detail="Minimum top-up is ₹50")
+    if data.amount > 50000:
+        raise HTTPException(status_code=400, detail="Maximum top-up is ₹50,000")
+    
+    try:
+        from cashfree_pg.models.create_order_request import CreateOrderRequest
+        from cashfree_pg.models.customer_details import CustomerDetails
+        from cashfree_pg.models.order_meta import OrderMeta
+        from cashfree_pg.api_client import Cashfree
+        
+        client_id = os.environ.get("CASHFREE_CLIENT_ID")
+        client_secret = os.environ.get("CASHFREE_CLIENT_SECRET")
+        env = os.environ.get("CASHFREE_ENVIRONMENT", "sandbox")
+        cashfree = Cashfree(
+            XEnvironment=Cashfree.PRODUCTION if env == "production" else Cashfree.SANDBOX,
+            XClientId=client_id, XClientSecret=client_secret
+        )
+        
+        timestamp = int(datetime.now(timezone.utc).timestamp())
+        order_id = f"CP_TOPUP_{timestamp}_{user['id'][:8]}"
+        
+        frontend_url = os.environ.get("CHECKOUT_BASE_URL", os.environ.get("FRONTEND_URL", ""))
+        return_url = data.return_url or f"{frontend_url}/cura-wallet?topup_order={order_id}"
+        
+        clean_phone = user.get("phone", "0000000000").replace("+91", "").replace("+", "").replace(" ", "")[-10:]
+        if len(clean_phone) < 10:
+            clean_phone = clean_phone.zfill(10)
+        
+        customer_name = user.get("name", "CuraPay User").strip()
+        if len(customer_name) < 3:
+            customer_name = f"{customer_name} User"
+        
+        customer = CustomerDetails(
+            customer_id=user["id"],
+            customer_phone=clean_phone,
+            customer_email=user.get("email", f"{clean_phone}@nevikacura.com"),
+            customer_name=customer_name
+        )
+        order_meta = OrderMeta(return_url=return_url)
+        
+        create_req = CreateOrderRequest(
+            order_id=order_id,
+            order_amount=float(data.amount),
+            order_currency="INR",
+            customer_details=customer,
+            order_meta=order_meta
+        )
+        
+        response = cashfree.PGCreateOrder("2023-08-01", create_req, None, None)
+        
+        if response and response.data:
+            # Store top-up order
+            await db.wallet_topup_orders.insert_one({
+                "order_id": order_id,
+                "cf_order_id": response.data.cf_order_id,
+                "payment_session_id": response.data.payment_session_id,
+                "user_id": user["id"],
+                "user_phone": user.get("phone", ""),
+                "user_name": user.get("name", ""),
+                "amount": data.amount,
+                "status": "PENDING",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            
+            return {
+                "success": True,
+                "order_id": order_id,
+                "payment_session_id": response.data.payment_session_id,
+                "cf_order_id": response.data.cf_order_id,
+                "amount": data.amount
+            }
+        else:
+            raise HTTPException(status_code=500, detail="Failed to create payment order")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Cashfree top-up error: {e}")
+        raise HTTPException(status_code=500, detail=f"Payment error: {str(e)}")
+
+@router.post("/cashfree-topup/verify/{order_id}")
+async def verify_cashfree_topup(order_id: str, user = Depends(get_current_user)):
+    """Verify Cashfree payment and credit wallet"""
+    topup = await db.wallet_topup_orders.find_one({"order_id": order_id, "user_id": user["id"]})
+    if not topup:
+        raise HTTPException(status_code=404, detail="Top-up order not found")
+    
+    if topup.get("status") == "CREDITED":
+        return {"success": True, "message": "Already credited", "amount": topup["amount"]}
+    
+    try:
+        from cashfree_pg.api_client import Cashfree
+        client_id = os.environ.get("CASHFREE_CLIENT_ID")
+        client_secret = os.environ.get("CASHFREE_CLIENT_SECRET")
+        env = os.environ.get("CASHFREE_ENVIRONMENT", "sandbox")
+        cashfree = Cashfree(
+            XEnvironment=Cashfree.PRODUCTION if env == "production" else Cashfree.SANDBOX,
+            XClientId=client_id, XClientSecret=client_secret
+        )
+        
+        response = cashfree.PGOrderFetchPayments("2023-08-01", order_id, None)
+        
+        if response and response.data:
+            for payment in response.data:
+                if payment.payment_status == "SUCCESS":
+                    amount = topup["amount"]
+                    
+                    # Credit wallet
+                    wallet = await db.wallets.find_one({"user_id": user["id"]})
+                    now = datetime.now(timezone.utc).isoformat()
+                    
+                    if wallet:
+                        new_balance = wallet.get("balance", 0) + amount
+                        await db.wallets.update_one(
+                            {"user_id": user["id"]},
+                            {"$set": {
+                                "balance": new_balance,
+                                "total_added": wallet.get("total_added", 0) + amount,
+                                "updated_at": now
+                            }}
+                        )
+                    else:
+                        new_balance = amount
+                        await db.wallets.insert_one({
+                            "id": str(uuid.uuid4()),
+                            "user_id": user["id"],
+                            "balance": amount,
+                            "total_added": amount,
+                            "total_spent": 0,
+                            "created_at": now, "updated_at": now
+                        })
+                    
+                    # Record transaction
+                    await db.wallet_transactions.insert_one({
+                        "id": str(uuid.uuid4()),
+                        "user_id": user["id"],
+                        "type": "topup",
+                        "amount": amount,
+                        "description": "CuraPay top-up via Cashfree",
+                        "payment_method": "cashfree",
+                        "cashfree_order_id": order_id,
+                        "status": "completed",
+                        "balance_after": new_balance,
+                        "created_at": now
+                    })
+                    
+                    # Award loyalty points (2% of top-up)
+                    loyalty_points = int(amount * 0.02)
+                    if loyalty_points > 0:
+                        await db.wallets.update_one(
+                            {"user_id": user["id"]},
+                            {"$inc": {"loyalty_points": loyalty_points}}
+                        )
+                    
+                    await db.wallet_topup_orders.update_one(
+                        {"order_id": order_id},
+                        {"$set": {"status": "CREDITED", "credited_at": now}}
+                    )
+                    
+                    return {
+                        "success": True,
+                        "message": f"₹{amount} credited to CuraPay wallet",
+                        "amount": amount,
+                        "new_balance": new_balance,
+                        "loyalty_points_earned": loyalty_points
+                    }
+        
+        return {"success": False, "message": "Payment not completed yet"}
+    except Exception as e:
+        logger.error(f"Top-up verify error: {e}")
+        return {"success": False, "message": "Verification failed. Try again."}
+
+# ============ CURAPAY - PAY WITH WALLET ============
+
+class CuraPayCheckoutRequest(BaseModel):
+    amount: float
+    service_type: str  # pharmacy, lab, diagyn
+    reference_id: str
+    description: str
+
+@router.post("/curapay/checkout")
+async def curapay_checkout(
+    data: CuraPayCheckoutRequest,
+    user = Depends(get_current_user)
+):
+    """Pay using CuraPay wallet balance — also awards loyalty points"""
+    wallet = await db.wallets.find_one({"user_id": user["id"]})
+    
+    if not wallet or wallet.get("balance", 0) < data.amount:
+        balance = wallet.get("balance", 0) if wallet else 0
+        raise HTTPException(
+            status_code=400,
+            detail=f"Insufficient CuraPay balance. Current: ₹{balance}, Required: ₹{data.amount}"
+        )
+    
+    new_balance = wallet["balance"] - data.amount
+    now = datetime.now(timezone.utc).isoformat()
+    
+    # Deduct from wallet
+    await db.wallets.update_one(
+        {"user_id": user["id"]},
+        {"$set": {
+            "balance": new_balance,
+            "total_spent": wallet.get("total_spent", 0) + data.amount,
+            "updated_at": now
+        }}
+    )
+    
+    # Award loyalty points (3% for wallet payments — better than other methods)
+    loyalty_points = int(data.amount * 0.03)
+    if loyalty_points > 0:
+        await db.wallets.update_one(
+            {"user_id": user["id"]},
+            {"$inc": {"loyalty_points": loyalty_points}}
+        )
+    
+    # Record transaction
+    txn_id = str(uuid.uuid4())
+    await db.wallet_transactions.insert_one({
+        "id": txn_id,
+        "user_id": user["id"],
+        "type": "debit",
+        "amount": data.amount,
+        "service_type": data.service_type,
+        "reference_id": data.reference_id,
+        "description": data.description,
+        "payment_method": "curapay",
+        "status": "completed",
+        "balance_after": new_balance,
+        "loyalty_points_earned": loyalty_points,
+        "created_at": now
+    })
+    
+    logger.info(f"[CURAPAY] ₹{data.amount} paid by {user['id']} for {data.service_type}:{data.reference_id}")
+    
+    return {
+        "success": True,
+        "transaction_id": txn_id,
+        "amount_paid": data.amount,
+        "new_balance": new_balance,
+        "loyalty_points_earned": loyalty_points,
+        "message": f"₹{data.amount} paid via CuraPay. {loyalty_points} loyalty points earned!"
     }

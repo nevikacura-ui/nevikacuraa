@@ -11,14 +11,7 @@ const CLINICS = {
     address: 'A-4, Sai Darshan, Near Don Bosco High School, Naigaon East',
     phone: '9403890429',
     mapLink: 'https://maps.app.goo.gl/LfFoHwVzvMEQ1Qzt9',
-    schedule: 'Mon - Sat: 11 AM - 2 PM & 6 PM - 10 PM'
-  },
-  amnion: {
-    name: 'Amnion Clinic',
-    address: 'G-7, Rashmi Star City Phase 5, Opp Thakur School, Naigaon East',
-    mapLink: 'https://maps.app.goo.gl/aBr4jwCv3b6874vi8',
-    phone: '9403890429',
-    schedule: 'Mon - Sat: 11 AM - 2 PM & 6 PM - 10 PM'
+    schedule: 'Mon - Sat: 11:30 AM - 2 PM & 6 PM - 10 PM'
   }
 };
 
@@ -66,7 +59,7 @@ const QueuePage = () => {
   }, []);
 
   // Check if clinic is currently open
-  // Timings: Mon-Sat, 11 AM - 2 PM & 6 PM - 10 PM
+  // Timings: Mon-Sat, 11:30 AM - 2 PM & 6 PM - 10 PM
   const isClinicOpen = () => {
     const hour = currentTime.getHours();
     const minute = currentTime.getMinutes();
@@ -76,9 +69,9 @@ const QueuePage = () => {
     // Closed on Sunday
     if (dayName === 'Sunday') return false;
     
-    // Morning: 11:00 AM - 2:00 PM (660 - 840 minutes)
+    // Morning: 11:30 AM - 2:00 PM (690 - 840 minutes)
     // Evening: 6:00 PM - 10:00 PM (1080 - 1320 minutes)
-    const morningOpen = 11 * 60; // 11:00 AM
+    const morningOpen = 11.5 * 60; // 11:30 AM
     const morningClose = 14 * 60; // 2:00 PM
     const eveningOpen = 18 * 60; // 6:00 PM
     const eveningClose = 22 * 60; // 10:00 PM

@@ -1,0 +1,81 @@
+{
+  "summary": "Bug fix verification completed for 2 issues in Nevika Cura DiaGyn booking flow. Both bugs are CONFIRMED FIXED: 1) Patient name input is now editable for verified users (was read-only), 2) BookingConfirmation page shows actual patient name instead of 'Patient'.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_376.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "PatientInfoModal.jsx (lines 211-228): Verified user name is now always an editable Input field with data-testid='input-patient-name'. The fix correctly uses <Input> component instead of read-only text display.",
+    "DiaGynRedesigned.js (line 305): patientName is now correctly passed to bookingDetails object as info.name",
+    "DiaGynRedesigned.js (line 340): patientName is correctly passed to BookingConfirmation component via orderDetails",
+    "BookingConfirmation.jsx (line 126): Uses orderDetails.patientName with fallback to 'Patient' - working correctly"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100%"
+  },
+  "test_credentials": "No auth required. localStorage setup: guestMobile=9876543210, patientInfo={name:'V',phone:'9876543210',verified:true}, whatsappVerified_9876543210=true",
+  "seed_data_creation": "Created test booking with ID 4835 for Dr. Vikas Jha at Pushpa Clinic on Fri, 10 Apr 2026 at 18:00",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Both bugs verified fixed. Full booking flow tested: /diagyn -> Dr. Vikas card -> Pushpa clinic -> date selection -> Evening 6:00 PM slot -> swipe to book -> PatientInfoModal (name editable) -> edit name to 'Vikas Kumar' -> Book Appointment -> Confirm Booking review (shows Vikas Kumar) -> Confirm -> BookingConfirmation page (shows 'Vikas Kumar, your appointment has been confirmed!')",
+  "features_tested": {
+    "bug_1_patient_name_editable": {
+      "status": "FIXED",
+      "description": "Patient name input on PatientInfoModal is now editable for verified users",
+      "verification": {
+        "element": "[data-testid='input-patient-name']",
+        "tag": "INPUT",
+        "disabled": false,
+        "readonly": false,
+        "initial_value": "V",
+        "edited_value": "Vikas Kumar",
+        "edit_successful": true
+      },
+      "code_location": "/app/frontend/src/pages/diagyn/PatientInfoModal.jsx lines 211-228"
+    },
+    "bug_2_patient_name_on_confirmation": {
+      "status": "FIXED",
+      "description": "BookingConfirmation page shows actual patient name instead of 'Patient'",
+      "verification": {
+        "confirmation_message": "Vikas Kumar, your appointment has been confirmed!",
+        "patient_field": "Vikas Kumar",
+        "booking_id": "4835"
+      },
+      "code_locations": [
+        "/app/frontend/src/pages/DiaGynRedesigned.js line 305 (patientName added to bookingDetails)",
+        "/app/frontend/src/pages/DiaGynRedesigned.js line 340 (patientName passed to BookingConfirmation)",
+        "/app/frontend/src/components/BookingConfirmation.jsx line 126 (uses orderDetails.patientName)"
+      ]
+    },
+    "full_booking_flow": {
+      "status": "PASS",
+      "steps_verified": [
+        "Page load with splash animation",
+        "Doctor card click (data-testid='doctor-card-vikas')",
+        "Doctor detail modal opens",
+        "Clinic selection (Pushpa)",
+        "Date selection from calendar",
+        "Time filter (Evening)",
+        "Time slot selection (6:00 PM)",
+        "Swipe to book gesture",
+        "PatientInfoModal opens",
+        "Name input editable and edited",
+        "Book Appointment button click",
+        "Confirmation review page",
+        "Confirm Booking button click",
+        "BookingConfirmation page with correct patient name"
+      ]
+    }
+  }
+}

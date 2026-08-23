@@ -8,12 +8,15 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 import logging
+import jwt
+from datetime import datetime, timezone, timedelta
 
 from services.whatsapp_otp import (
     send_whatsapp_otp,
     verify_whatsapp_otp,
     resend_whatsapp_otp
 )
+from utils.auth_utils import JWT_SECRET, JWT_ALGORITHM
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +72,7 @@ async def send_otp(request: SendOTPRequest):
 async def verify_otp(request: VerifyOTPRequest):
     """
     Verify OTP received via WhatsApp
-    Returns success status and purpose for frontend routing
+    Returns success status, JWT token (30-day), and purpose for frontend routing
     """
     phone = request.phone.strip()
     otp = request.otp.strip()
@@ -84,6 +87,21 @@ async def verify_otp(request: VerifyOTPRequest):
     
     if not result.get("success"):
         raise HTTPException(status_code=400, detail=result.get("error", "Invalid OTP"))
+    
+    # Generate 30-day JWT token for persistent session
+    token = jwt.encode(
+        {
+            'sub': phone,
+            'phone': phone,
+            'type': 'guest_whatsapp',
+            'exp': datetime.now(timezone.utc) + timedelta(days=30)
+        },
+        JWT_SECRET,
+        algorithm=JWT_ALGORITHM
+    )
+    
+    result['token'] = token
+    result['expires_in_days'] = 30
     
     return result
 

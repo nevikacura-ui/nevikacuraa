@@ -64,11 +64,11 @@ const LoadingScreen = ({ onComplete }) => {
     >
       {/* Logo Container */}
       <div className="mb-8">
-        <div className="bg-white rounded-[32px] px-6 py-4 shadow-2xl">
+        <div className="rounded-[32px] px-6 py-4">
           <img 
-            src="https://customer-assets.emergentagent.com/job_ac8a9ff5-aa40-4353-a699-dcb3a3af111e/artifacts/3jh0hyis_Blue%20White%20Minimal%20Marketing%20Agency%20Business%20Card%20%28Business%20Card%20%28US%29%29%20%28Cir_20260110_233820_0000%20%281%29.jpg" 
+            src="https://customer-assets.emergentagent.com/job_4625448c-b743-44eb-9c92-5eb654622ad3/artifacts/bbwpw7kq_Screenshot_20260220-043004.png" 
             alt="Nevika Cura" 
-            className="h-16 w-auto object-contain"
+            className="h-20 w-auto object-contain"
           />
         </div>
       </div>

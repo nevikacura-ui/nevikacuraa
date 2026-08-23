@@ -29,16 +29,6 @@ const HealthServicesCards = () => {
       bgGradient: 'from-purple-50 to-violet-50'
     },
     {
-      id: 'insurance',
-      name: 'Insurance',
-      description: 'Starting ₹2/day',
-      icon: Shield,
-      path: '/features',
-      gradient: 'from-red-500 to-rose-500',
-      bgGradient: 'from-red-50 to-rose-50',
-      badge: 'New'
-    },
-    {
       id: 'health-insights',
       name: 'Health Insights',
       description: 'Track your health',

@@ -104,3 +104,79 @@ def format_time_ist(dt_str: str) -> str:
         return ist_dt.strftime("%I:%M %p")
     except Exception:
         return str(dt_str)
+
+
+def normalize_time_to_24h(time_str: str) -> str:
+    """
+    Normalize any time format to 24-hour format (HH:MM) for consistent storage.
+    Handles: '09:00 AM', '9:00 AM', '14:00', '2:00 PM', '6:15 PM', etc.
+    
+    This ensures all times in the database are stored in a consistent format
+    that sorts correctly and can be displayed properly.
+    """
+    if not time_str or str(time_str) == 'None':
+        return None
+    
+    time_str = str(time_str).strip().upper()
+    
+    # Already in 24-hour format (no AM/PM)
+    if 'AM' not in time_str and 'PM' not in time_str:
+        parts = time_str.split(':')
+        if len(parts) >= 2:
+            try:
+                hour = int(parts[0])
+                minute = int(parts[1].split()[0])  # Handle any trailing text
+                return f"{hour:02d}:{minute:02d}"
+            except (ValueError, IndexError):
+                pass
+        return time_str
+    
+    # 12-hour format with AM/PM
+    try:
+        is_pm = 'PM' in time_str
+        time_str = time_str.replace('AM', '').replace('PM', '').strip()
+        
+        parts = time_str.split(':')
+        hour = int(parts[0])
+        minute = int(parts[1].strip()) if len(parts) > 1 else 0
+        
+        # Convert to 24-hour
+        if is_pm and hour != 12:
+            hour += 12
+        elif not is_pm and hour == 12:
+            hour = 0
+        
+        return f"{hour:02d}:{minute:02d}"
+    except (ValueError, IndexError):
+        return time_str
+
+
+def format_time_for_display(time_str: str) -> str:
+    """
+    Format time for user display in 12-hour format with AM/PM.
+    Handles any input format (24-hour or 12-hour).
+    Returns: HH:MM AM/PM (e.g., "02:30 PM", "11:00 AM")
+    """
+    if not time_str or str(time_str) == 'None':
+        return ""
+    
+    # First normalize to 24-hour
+    normalized = normalize_time_to_24h(time_str)
+    if not normalized:
+        return time_str
+    
+    try:
+        parts = normalized.split(':')
+        hour = int(parts[0])
+        minute = int(parts[1])
+        
+        # Convert to 12-hour format
+        am_pm = 'AM' if hour < 12 else 'PM'
+        if hour == 0:
+            hour = 12
+        elif hour > 12:
+            hour -= 12
+        
+        return f"{hour:02d}:{minute:02d} {am_pm}"
+    except (ValueError, IndexError):
+        return time_str

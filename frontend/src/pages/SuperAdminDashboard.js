@@ -10,6 +10,7 @@ import {
   FlaskConical, Pill, Stethoscope, TrendingUp, Clock,
   User, Lock, Loader2, RefreshCw, ChevronRight, Filter
 } from 'lucide-react';
+import { AdminSkeleton, ShimmerCSS } from '@/components/PageSkeletons';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -213,6 +214,9 @@ const SuperAdminDashboard = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto p-4">
         {/* Dashboard Tab */}
+        {activeTab === 'dashboard' && !dashboardData && (
+          <><ShimmerCSS /><AdminSkeleton /></>
+        )}
         {activeTab === 'dashboard' && dashboardData && (
           <div className="space-y-6">
             {/* Revenue Summary */}
@@ -274,7 +278,7 @@ const SuperAdminDashboard = () => {
                 <Button
                   variant="ghost"
                   className="w-full mt-3 text-teal-600"
-                  onClick={() => navigate('/diagyn-staff')}
+                  onClick={() => navigate('/staff')}
                 >
                   Open Portal <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>

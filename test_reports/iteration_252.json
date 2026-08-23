@@ -1,0 +1,69 @@
+{
+  "iteration": 252,
+  "date": "2026-03-23",
+  "test_type": "feature_verification",
+  "summary": "Verified Matrix-style falling animations on Orange Medcare and Nevika Labs pages, curved cards on Labs page, DiaGyn staff portal login with clinic override banner, and backend clinic-override API.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend": {
+      "clinic_override_active_api": "PASS - GET /api/clinic-override/active returns override data correctly",
+      "clinic_override_structure": "PASS - Override data has correct structure (doctor_name, date, session, override_clinic)",
+      "health_api": "PASS - /api/health returns ok",
+      "staff_login_success": "PASS - diagyn_staff/test1234 login works",
+      "staff_login_invalid": "PASS - Invalid credentials rejected",
+      "diagyn_staff_config": "PASS - /api/diagyn-staff/config returns config",
+      "diagyn_staff_appointments": "PASS - /api/diagyn-staff/appointments/by-date returns appointments"
+    },
+    "frontend": {
+      "orange_medcare_page": "PASS - /orange loads with data-testid='orange-medcare-page'",
+      "pharma_matrix_rain": "PASS - PharmaMatrixRain canvas found with data-testid='pharma-matrix-rain' (CANVAS element)",
+      "orange_pharmacy_card": "PASS - Card found and navigates to /pharmacy",
+      "orange_healthplus_card": "PASS - Card found",
+      "nevika_labs_page": "PASS - /labs loads with data-testid='nevika-labs-page'",
+      "lab_matrix_rain": "PASS - LabMatrixRain canvas found with data-testid='lab-matrix-rain' (CANVAS element)",
+      "mango_card_curved": "PASS - Border radius 32px (2rem) - curved corners",
+      "proton_card_curved": "PASS - Border radius 32px (2rem) - curved corners",
+      "nexugene_card_curved": "PASS - Border radius 32px (2rem) - curved corners",
+      "mango_card_navigation": "PASS - Navigates to /mango",
+      "proton_card_navigation": "PASS - Navigates to /mango/ultrasound",
+      "nexugene_card_navigation": "PASS - Navigates to /nexugene",
+      "diagyn_staff_login": "PASS - Login with diagyn_staff/test1234 works",
+      "clinic_override_banner": "PASS - Banner visible with data-testid='staff-override-notice-0', shows 'Clinic Switch — 2026-03-25 (evening) Dr. Vikas Jha: Pushpa Clinic → Amnion Clinic'"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_matrix_rain_features.py",
+    "/app/test_reports/pytest/pytest_matrix_rain_252.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_matrix_rain_features.py"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "diagyn_staff": "diagyn_staff / test1234"
+  },
+  "seed_data_creation": "None - used existing clinic override for Dr. Vikas Jha",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Matrix rain animations are HTML5 Canvas-based components (PharmaMatrixRain.jsx and LabMatrixRain.jsx) with data-testid attributes. Labs page cards use inline style borderRadius: '2rem' for curved corners. DiaGyn staff portal shows clinic override banner when there are active overrides in the database.",
+  "features_verified": [
+    "PharmaMatrixRain animation on /orange page with falling pharmacy items (pills, syringes, bottles, Rx symbols)",
+    "LabMatrixRain animation on /labs page with falling lab items (collection vials, UPT kits, HIV card kits, sample containers)",
+    "Curved cards (2rem border-radius) for Mango, Proton, Nexugene on Labs page",
+    "DiaGyn Staff Portal login and clinic override amber banner display",
+    "Backend GET /api/clinic-override/active API returns correct override data"
+  ]
+}

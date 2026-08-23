@@ -1,0 +1,867 @@
+[
+  {
+    "name": "ACYCLOSURE SP",
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "ACYCLOSURE TH 4",
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "ACYCLOSURE TH 8",
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "ACYCLOSURE TH PLUS",
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "ALLERFEX M",
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "name": "ALLUGEL MPS ORANGE",
+    "form": "Cream",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "ALLUGEL MPS SAUNF",
+    "form": "Cream",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "ALLUGEL MPS MINT FLAVOUR",
+    "form": "Cream",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "ALLUGEL MPS ASSORTED FLAVOUR",
+    "form": "Cream",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "ALLUGEL O",
+    "form": "Cream",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "AMPOXIN CV 375",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "AMPOXIN CV FORTE SYRUP",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "BINAFIDE 0.5",
+    "form": "Tablet",
+    "category": "Respiratory"
+  },
+  {
+    "name": "BINAFIDE 1",
+    "form": "Tablet",
+    "category": "Respiratory"
+  },
+  {
+    "name": "BINAFIDE DUO",
+    "form": "Tablet",
+    "category": "Respiratory"
+  },
+  {
+    "name": "BINAFIDE F",
+    "form": "Inhaler",
+    "category": "Respiratory"
+  },
+  {
+    "name": "CEFLOCHEM SB 1.5GM",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "CHANGE M SUSP 30ML",
+    "form": "Syrup",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "CHANGE M SUSP 60ML",
+    "form": "Syrup",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "CHERRYMAX",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "CLOTRISURE CREAM",
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "name": "CYPSTAR",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "BRO CORDINE",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "CORDINE DX",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "CORDINE DX PLUS",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "CORDINE LS",
+    "form": "Syrup",
+    "category": "Respiratory"
+  },
+  {
+    "name": "D3-HIGH CAPSULE",
+    "form": "Capsule",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "name": "D3-HIGH DROP",
+    "form": "Syrup",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "name": "D3-HIGH SACHET",
+    "form": "Powder",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "name": "D3-HIGH SOLUTION (NANO SHOT)",
+    "form": "Tablet",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "name": "DICLOGESIC SPRAY",
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "DICLOGESIC MAXX SPRAY",
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "DICLOGESIC GEL 30GM",
+    "form": "Cream",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "DICLOGESIC GEL 50GM",
+    "form": "Cream",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "DICLOGESIC GEL 75GM",
+    "form": "Cream",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "DICLOGESIC TABLET",
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "DICLOGESIC-SP",
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "DICLOGESIC TH 4",
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "DICLOGESIC TH 8",
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "DOMSTAL RD",
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "DYNAPRES D",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "EMSCAB 100 ML",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "EMSCAB PLUS",
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "name": "ETOXIB 60 MG",
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "ETOXIB 90 MG",
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "ETOXIB 120 MG",
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "ETOXIB MR",
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "EVEGLOW CREAM",
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "name": "FLUCOBIG 150 1\u2019s",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "FLUCOBIG 150 2\u2019s",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "FLUCOBIG 200 1\u2019s",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "FLUCOBIG 200 2\u2019s",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "GUTQUICK",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "KREAMVIN GEL",
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "name": "LOFECTION LB",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "LEZYNCET M SUSP 30ML",
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "name": "LEZYNCET M SUSP 60ML",
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "name": "LULI EASE",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "MAXISPAS",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "MAXISPAS DROP",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "MAXIZONE SB INJ",
+    "form": "Injection",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "MAXIZONE 0.5",
+    "form": "Injection",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "MAXIZONE 1",
+    "form": "Injection",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "MOPRY 5GM",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "MOPRY 15GM",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "MOXIF EYE DROP",
+    "form": "Drops",
+    "category": "Eye Care"
+  },
+  {
+    "name": "NIMUNICE",
+    "form": "Tablet",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "NIMUNICE P",
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "NOCKTUM 250",
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "NOCKTUM 500",
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "NOCKTUM CV",
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "OFLOXIBACT EYE DROP",
+    "form": "Drops",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "OFLOXIBACT D EYE DROP",
+    "form": "Drops",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "OFLOXIBACT 200MG TAB",
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "OFLOXIBACT- OZ TAB",
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "OMIZAC CAP",
+    "form": "Capsule",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "OMIZAC D",
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "PANSPED 20",
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "PANSPED 40 10\u2019s",
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "PANSPED 40 15\u2019s",
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "PANSPED DSR 10\u2019s",
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "PANSPED DSR 15\u2019s",
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "PANSPED D 20",
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "PANSPED D 40",
+    "form": "Tablet",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "PANSPED IV",
+    "form": "Injection",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "PANSPED L",
+    "form": "Capsule",
+    "category": "Digestive Health"
+  },
+  {
+    "name": "PREGASK(PINK), TEST KIT",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "PREGASK(PURPLE), TEST KIT",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "QUINTOR EYE DROP",
+    "form": "Drops",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "SMOOTHEYE EYE DROP",
+    "form": "Drops",
+    "category": "Eye Care"
+  },
+  {
+    "name": "TOPCEF 50 DT",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TOPCEF 100 DT",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TOPCEF 200 DT",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TOPCEF 50 DS",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "TOPCEF 100 DS",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "TOPCEF CLAV",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TOPCEF O 200",
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "TOPCEF O DS",
+    "form": "Syrup",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "TOPCID 20",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TOPCID 40",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TORBAC",
+    "form": "Injection",
+    "category": "General"
+  },
+  {
+    "name": "TORHISGO 8, 10\u2019S",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TORHISGO 8, 15\u2019S",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TORHISGO 16, 10\u2019S",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TORHISGO 16, 15\u2019S",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TORMOXIN 125 KID TAB",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TORMOXIN 125 DRY SYP",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "TORMOXIN 250 DRY SYP",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "TORMOXIN 250",
+    "form": "Capsule",
+    "category": "General"
+  },
+  {
+    "name": "TORMOXIN 500",
+    "form": "Capsule",
+    "category": "General"
+  },
+  {
+    "name": "TORMOXIN CLAV 375",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TORMOXIN CLAV 625",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TORMOXIN CLAV SYRUP",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "TORMOXIN CLAV FORTE SYRUP",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "TORTHROCIN 250",
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "TORTHROCIN 500",
+    "form": "Tablet",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "TRICUTIS 100",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "TRICUTIS 200",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "U.V.A CEF 50 DRY SYRUP",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "U.V.A CEF 100 DRY SYRUP",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "U.V.A CEF 100 DT",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "U.V.A CEF 200",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "U.V.A CEF CV",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "U.V.A CEF CV DS",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "UNIBREETH",
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "name": "UNIDERM NM 15 GM CREAM",
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "name": "UNIDINE 5% 20 GM OINTMENT",
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "name": "UNIDINE 5% 100 ML SOLUTION",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "UNIDINE 10% 100 ML SOLUTION",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "UNIDINE 5% 500 ML SOLUTION",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "UNIDINE 10% 500 ML SOLUTION",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "UNIDINE 7.5% 500 ML SCRUB",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "UNIDINE 5% 250 GM OINTMENT",
+    "form": "Cream",
+    "category": "General"
+  },
+  {
+    "name": "UNIENZYME DROPS",
+    "form": "Syrup",
+    "category": "Pain Relief"
+  },
+  {
+    "name": "UNIENZYME SYRUP PINEAPPLE",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "UNIENZYME SYRUP CARDAMOM",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "UNILAX 100",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "UNILAX 200",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "UNILAX 450",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "UNIMIKA 100",
+    "form": "Injection",
+    "category": "General"
+  },
+  {
+    "name": "UNIMIKA 250",
+    "form": "Injection",
+    "category": "General"
+  },
+  {
+    "name": "UNISTAT 10",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "UNISTAT 20",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "UNISTAT 40",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "UNISTAT F",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "UNIPREST M",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "UNISPEED CZ",
+    "form": "Tablet",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "name": "UNIVITAL NF",
+    "form": "Tablet",
+    "category": "Vitamins & Supplements"
+  },
+  {
+    "name": "UVNIL 5 10\u2019s",
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "name": "UVNIL 5 15\u2019s",
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "name": "UVNIL MONT",
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "name": "UVNIL MONT KID TAB",
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "name": "UVNIL MONT KID SUSPENSION 30ML",
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "name": "UVNIL MONT KID SUSPENSION 60ML",
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "name": "UVNIL SYRUP 30ML",
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "name": "UVNIL SYRUP 60ML",
+    "form": "Syrup",
+    "category": "Allergy"
+  },
+  {
+    "name": "VIZYLAC JUNIOR",
+    "form": "Syrup",
+    "category": "Antibiotics"
+  },
+  {
+    "name": "VOMILIFE MD",
+    "form": "Tablet",
+    "category": "General"
+  },
+  {
+    "name": "VOMILIFE SYRUP",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "VOMILIFE INJ 2ML",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "VOMILIFE INJ 4ML",
+    "form": "Syrup",
+    "category": "General"
+  },
+  {
+    "name": "XT PARA 500",
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "XT PARA 650",
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "XT PARA 1000",
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "XT PARA SUSP",
+    "form": "Syrup",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "XTPARA MF 50",
+    "form": "Syrup",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "XTPARA MF 100",
+    "form": "Syrup",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "XTPARA COLD DS",
+    "form": "Syrup",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "XTPARA COLD TAB",
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "XTPARA COLD & FLU",
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "XTPARA SPAS",
+    "form": "Tablet",
+    "category": "Cold & Fever"
+  },
+  {
+    "name": "ZYNCET TABLET",
+    "form": "Tablet",
+    "category": "Allergy"
+  },
+  {
+    "name": "ZYNCET SYRUP",
+    "form": "Syrup",
+    "category": "Allergy"
+  }
+]

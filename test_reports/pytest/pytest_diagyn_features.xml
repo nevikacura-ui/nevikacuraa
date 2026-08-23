@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="10" time="1.555" timestamp="2026-02-13T07:42:48.495861+00:00" hostname="agent-env-4b313481-56c0-48ea-84e9-9c80307df16c"><testcase classname="backend.tests.test_diagyn_features.TestHealthCheck" name="test_api_health" time="0.090"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+backend/tests/test_diagyn_features.py:31: in test_api_health
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase><testcase classname="backend.tests.test_diagyn_features.TestReservedSlots" name="test_booked_slots_includes_reserved" time="0.043" /><testcase classname="backend.tests.test_diagyn_features.TestReservedSlots" name="test_booked_slots_for_dr_vikas" time="0.038" /><testcase classname="backend.tests.test_diagyn_features.TestStaffPortalAuth" name="test_staff_login" time="0.267" /><testcase classname="backend.tests.test_diagyn_features.TestStaffPortalAuth" name="test_doctor_login" time="0.039"><failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401]&gt;.status_code">backend/tests/test_diagyn_features.py:115: in test_doctor_login
+    assert response.status_code == 200
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401]&gt;.status_code</failure></testcase><testcase classname="backend.tests.test_diagyn_features.TestStaffPortalSlots" name="test_staff_slots_exclude_reserved" time="0.297" /><testcase classname="backend.tests.test_diagyn_features.TestAppointmentSync" name="test_appointments_list_accessible" time="0.293" /><testcase classname="backend.tests.test_diagyn_features.TestFeeCodes" name="test_fee_codes_available" time="0.308" /><testcase classname="backend.tests.test_diagyn_features.TestBookingWindow" name="test_date_validation" time="0.037" /><testcase classname="backend.tests.test_diagyn_features.TestBookingWindow" name="test_date_4_months_ahead" time="0.033" /></testsuite></testsuites>

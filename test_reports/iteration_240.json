@@ -1,0 +1,86 @@
+{
+  "summary": "Source Display Feature Testing Complete. Backend: 8/9 tests passed (89%). Frontend Staff Portal: Source badge displays correctly on appointment cards. Admin Panel: 'Upcoming Appointments' section does not show source because backend /api/admin/orders/recent endpoint does not include appointments data.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "/api/admin/orders/recent",
+        "issue": "Missing 'appointments' field in response. Frontend Admin.js lines 1737 and 1865 expect recentOrders.appointments with source field, but backend only returns pharmacy_orders and diagnostic_orders",
+        "priority": "HIGH"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Admin Panel - Upcoming/Recent Appointments",
+        "issue": "Shows 'No appointments' because backend /api/admin/orders/recent doesn't return appointments data",
+        "affected_selectors": ["text=Upcoming Appointments", "text=Recent Appointments"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_source_display.py",
+    "/app/test_reports/pytest/pytest_source_display_240.xml"
+  ],
+  "action_items": [
+    "Update /app/backend/routes/admin.py - add appointments query to /orders/recent endpoint with source field",
+    "Verify that the appointments returned include 'source' field"
+  ],
+  "critical_code_review_comments": [
+    "Backend source field implementation is CORRECT:",
+    "- diagyn_staff.py line 673: source='Staff' added for staff bookings",
+    "- appointment_routes.py line 238: source='Website' added for patient bookings",
+    "- appointment_routes.py line 744: source='Website' added for guest bookings",
+    "- chatbot_api.py line 361: source='WhatsApp' for chatbot bookings",
+    "Frontend source badge implementation is CORRECT:",
+    "- DiaGynStaffPortal.js lines 2681-2688: Source badge with color coding",
+    "- Admin.js lines 1747-1749: Upcoming Appointments with source",
+    "- Admin.js lines 1869-1871: Recent Appointments with source",
+    "ISSUE: Backend /api/admin/orders/recent (admin.py line 435) doesn't query appointments collection"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_source_display.py"
+  ],
+  "success_rate": {
+    "backend": "89% (8/9 tests passed, 1 skipped guest-book)",
+    "frontend": "100% - Staff Portal source badge displays correctly"
+  },
+  "test_credentials": {
+    "staff": {"username": "staff_diagyn", "password": "test1234"},
+    "admin": {"password": "nevikacura2026"}
+  },
+  "seed_data_creation": "Created test appointments with source='Staff' for verification",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Source display feature partially working. Staff Portal correctly shows source badges (Staff/Website/WhatsApp with color coding). Backend correctly saves source field on appointment creation. Admin Panel 'Upcoming Appointments' and 'Recent Appointments' sections don't show source because /api/admin/orders/recent endpoint doesn't return appointments data - this needs backend fix to query appointments collection.",
+  "tests_executed": [
+    {"category": "Authentication", "tests": [
+      {"test": "Staff login (staff_diagyn)", "result": "PASS"},
+      {"test": "Admin login (nevikacura2026)", "result": "PASS"}
+    ]},
+    {"category": "Backend Source Field", "tests": [
+      {"test": "POST /api/diagyn-staff/appointments/book sets source='Staff'", "result": "PASS"},
+      {"test": "GET /api/diagyn-staff/appointments/today returns source field", "result": "PASS"},
+      {"test": "GET /api/diagyn-staff/appointments/by-date returns source field", "result": "PASS"}
+    ]},
+    {"category": "Admin Panel", "tests": [
+      {"test": "GET /api/admin/orders/recent", "result": "PASS - but missing appointments array"},
+      {"test": "Admin login with correct password", "result": "PASS"}
+    ]},
+    {"category": "Frontend Staff Portal", "tests": [
+      {"test": "Login as staff_diagyn", "result": "PASS"},
+      {"test": "Source badge visible on appointment card", "result": "PASS - 'Staff' badge displayed"},
+      {"test": "Source badge color coding", "result": "PASS - indigo/purple for Staff source"},
+      {"test": "'Test Source Patient' appointment visible", "result": "PASS"}
+    ]},
+    {"category": "Frontend Admin Panel", "tests": [
+      {"test": "Login with correct password", "result": "PASS"},
+      {"test": "Upcoming Appointments section", "result": "SHOWS 'No appointments' - data not returned"},
+      {"test": "Recent Appointments section (Orders tab)", "result": "SHOWS 'No appointments' - data not returned"}
+    ]}
+  ],
+  "rca_of_issue": "Admin Panel doesn't display appointments with source field because:\n1. Frontend Admin.js expects recentOrders.appointments (lines 1737, 1865)\n2. Backend /api/admin/orders/recent (admin.py line 435-444) only returns pharmacy_orders and diagnostic_orders\n3. Missing: Query to appointments collection with source field projection\n\nFix: Add appointments query to /orders/recent endpoint:\n```python\nappointments = await db.appointments.find({}, {'_id': 0}).sort('created_at', -1).to_list(limit)\nreturn {\n    'appointments': appointments,\n    'pharmacy_orders': pharmacy_orders,\n    'diagnostic_orders': diagnostic_orders\n}\n```"
+}

@@ -118,7 +118,68 @@ class BookingStatusUpdate(BaseModel):
     notes: Optional[str] = None
 
 
-# ============ Test Catalog ============
+# ============ Public Test Catalog (No Auth) ============
+
+@router.get("/test-catalog")
+async def get_public_test_catalog(
+    search: str = None,
+    category: str = None,
+    sort_by: str = None,
+    min_price: float = None,
+    max_price: float = None,
+    sample_type: str = None,
+    fasting: str = None
+):
+    """Public endpoint - returns test catalog for patients (no auth required)"""
+    query = {"is_active": True}
+    if search:
+        query["$or"] = [
+            {"name": {"$regex": search, "$options": "i"}},
+            {"category": {"$regex": search, "$options": "i"}}
+        ]
+    if category:
+        query["category"] = category
+    if sample_type:
+        query["sample_type"] = {"$regex": sample_type, "$options": "i"}
+    if fasting == "yes":
+        query["fasting_required"] = True
+    elif fasting == "no":
+        query["fasting_required"] = False
+    if min_price is not None:
+        query.setdefault("price", {})["$gte"] = min_price
+    if max_price is not None:
+        query.setdefault("price", {})["$lte"] = max_price
+
+    sort_field = "name"
+    sort_dir = 1
+    if sort_by == "price_low":
+        sort_field, sort_dir = "price", 1
+    elif sort_by == "price_high":
+        sort_field, sort_dir = "price", -1
+    elif sort_by == "name_az":
+        sort_field, sort_dir = "name", 1
+    elif sort_by == "name_za":
+        sort_field, sort_dir = "name", -1
+
+    tests = await db.lab_tests.find(
+        query,
+        {"_id": 0, "id": 1, "name": 1, "code": 1, "category": 1, "price": 1,
+         "home_collection_price": 1, "sample_type": 1, "turnaround_time": 1,
+         "fasting_required": 1, "preparation_instructions": 1}
+    ).sort(sort_field, sort_dir).to_list(500)
+
+    categories = await db.lab_tests.distinct("category", {"is_active": True})
+    sample_types = await db.lab_tests.distinct("sample_type", {"is_active": True})
+
+    return {
+        "tests": tests,
+        "total": len(tests),
+        "categories": sorted([c for c in categories if c]),
+        "sample_types": sorted([s for s in sample_types if s])
+    }
+
+
+# ============ Test Catalog (Staff) ============
 
 @router.post("/tests")
 async def create_test(data: TestCreate, staff=Depends(verify_lab_staff)):
@@ -357,26 +418,10 @@ async def update_booking_status(
     # Email for report ready
     if send_email_notification and patient_email and data.status == "report_generated":
         try:
+            from services.email_templates import mango_report_ready_email
+            tests_list = [t.get("name", t) if isinstance(t, dict) else str(t) for t in booking.get("tests", [])]
+            html = mango_report_ready_email(patient_name, booking_id, tests_list)
             subject = f"Your Lab Report is Ready - {booking_id}"
-            html = f"""
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: #14b8a6; color: white; padding: 20px; text-align: center;">
-                    <h2>Mango Health Labs</h2>
-                </div>
-                <div style="padding: 20px;">
-                    <p>Dear {patient_name},</p>
-                    <p>Your lab report for booking <strong>#{booking_id}</strong> is now ready!</p>
-                    <div style="background: #f0fdfa; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #14b8a6;">
-                        <p style="margin: 0;">You can:</p>
-                        <ul>
-                            <li>Download from the Nevika Cura app</li>
-                            <li>Visit our center to collect a printed copy</li>
-                        </ul>
-                    </div>
-                    <p>Thank you for choosing Mango Health Labs!</p>
-                </div>
-            </div>
-            """
             await send_email_notification(
                 subject=f"Mango Health Labs - {subject}",
                 html_content=html,
@@ -457,22 +502,10 @@ async def send_report_to_patient(booking_id: str, staff=Depends(verify_lab_staff
     # Send email with report
     if send_email_notification and patient_email:
         try:
+            from services.email_templates import mango_report_ready_email
+            tests_list = [t.get("name", t) if isinstance(t, dict) else str(t) for t in tests[:5]]
+            html = mango_report_ready_email(patient_name, booking_id, tests_list)
             subject = f"Your Lab Report - {booking_id} | Mango Health Labs"
-            html = f"""
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: #14b8a6; color: white; padding: 20px; text-align: center;">
-                    <h2>Mango Health Labs</h2>
-                </div>
-                <div style="padding: 20px;">
-                    <p>Dear {patient_name},</p>
-                    <p>Your lab report is ready for booking <strong>#{booking_id}</strong>.</p>
-                    <p><strong>Tests:</strong> {test_names}</p>
-                    <p>Please download your report from the Nevika Cura app or contact us for assistance.</p>
-                    <p>If you have any questions about your results, please consult your doctor.</p>
-                    <p>Thank you for choosing Mango Health Labs!</p>
-                </div>
-            </div>
-            """
             await send_email_notification(
                 subject=subject,
                 html_content=html,
@@ -553,4 +586,233 @@ async def get_dashboard_stats(staff=Depends(verify_lab_staff)):
         "in_process": in_process,
         "reports_ready": reports_ready,
         "total_tests": total_tests
+    }
+
+
+
+# ==================== MANGO LAB BOOKING INVOICE ====================
+from fastapi.responses import HTMLResponse
+
+LOGO_MANGO = "https://customer-assets.emergentagent.com/job_1fa4546e-4936-4955-8a5d-dab926a22cbb/artifacts/28cub72l_Add%20a%20subheading_20260311_123952_0000.png"
+LOGO_CURAPAY_M = "https://customer-assets.emergentagent.com/job_1fa4546e-4936-4955-8a5d-dab926a22cbb/artifacts/bqr5vr04_file_00000000d14471faa6dd7695a521413d.png"
+
+@router.get("/invoice/{booking_id}", response_class=HTMLResponse)
+async def get_mango_invoice(booking_id: str):
+    """Generate printable Mango Labs booking invoice"""
+    if db is None:
+        raise HTTPException(status_code=500, detail="Database not available")
+
+    booking = await db.mango_bookings.find_one(
+        {"$or": [{"booking_id": booking_id}, {"id": booking_id}]},
+        {"_id": 0}
+    )
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+
+    name = booking.get("patient_name", "Patient")
+    phone = booking.get("patient_phone", "")
+    email = booking.get("patient_email", "")
+    bid = booking.get("booking_id", booking_id)
+    status = booking.get("status", "")
+    tests = booking.get("tests", [])
+    amount = booking.get("total_amount", 0)
+    payment = booking.get("payment_method", "COD")
+    payment_status = booking.get("payment_status", "Pending")
+    date_raw = booking.get("booking_date", booking.get("preferred_date", booking.get("created_at", "")))
+    collection = booking.get("collection_type", "Visit Center")
+    address = booking.get("collection_address", booking.get("address", ""))
+    time_slot = booking.get("time_slot", "")
+
+    try:
+        if isinstance(date_raw, str) and date_raw:
+            dt = datetime.fromisoformat(date_raw.replace("Z", "+00:00"))
+            date_str = dt.strftime("%d %b %Y")
+        else:
+            date_str = str(date_raw)[:10] if date_raw else "N/A"
+    except Exception:
+        date_str = str(date_raw)[:10] if date_raw else "N/A"
+
+    # Tests table
+    tests_rows = ""
+    for t in tests:
+        t_name = t.get("name", t) if isinstance(t, dict) else str(t)
+        t_price = t.get("price", "") if isinstance(t, dict) else ""
+        tests_rows += f'<div class="row"><span class="label">{t_name}</span><span class="value">{t_price}</span></div>'
+    if not tests_rows:
+        tests_rows = '<div class="row"><span class="label">Lab Tests</span><span class="value">As prescribed</span></div>'
+
+    status_color = '#10b981' if status in ('completed', 'report_ready') else '#D4A017' if status in ('sample_collected', 'in_process') else '#f59e0b'
+    status_label = status.replace('_', ' ').upper() if status else 'BOOKED'
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice — {bid}</title>
+<style>
+  * {{ margin:0; padding:0; box-sizing:border-box; }}
+  body {{ font-family: 'Helvetica Neue', Arial, sans-serif; background: #f4f5f7; color: #1e293b; }}
+  .invoice {{ max-width: 600px; margin: 24px auto; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }}
+  .header {{ background: linear-gradient(135deg, #8B6914, #D4A017); padding: 32px 28px 24px; text-align: center; }}
+  .header img {{ height: 40px; margin-bottom: 14px; }}
+  .header h1 {{ color: #fff; font-size: 22px; font-weight: 800; letter-spacing: 1px; }}
+  .header p {{ color: rgba(255,255,255,0.65); font-size: 11px; margin-top: 4px; letter-spacing: 0.5px; }}
+  .status-badge {{ display: inline-block; background: {status_color}; color: #fff; font-size: 11px; font-weight: 800; padding: 4px 16px; border-radius: 20px; margin-top: 12px; letter-spacing: 1.5px; }}
+  .body {{ padding: 28px; }}
+  .section-title {{ font-size: 9px; font-weight: 700; color: #94a3b8; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }}
+  .row {{ display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }}
+  .row:last-child {{ border-bottom: none; }}
+  .row .label {{ color: #64748b; font-size: 13px; }}
+  .row .value {{ color: #1e293b; font-size: 13px; font-weight: 600; text-align: right; max-width: 60%; }}
+  .total-box {{ background: #fef9e7; border-radius: 14px; padding: 16px 20px; margin: 16px 0; display: flex; justify-content: space-between; align-items: center; border: 1px solid #f5deb3; }}
+  .total-box .total-label {{ font-size: 13px; color: #64748b; }}
+  .total-box .total-amount {{ font-size: 22px; font-weight: 800; color: #8B6914; }}
+  .footer {{ padding: 20px 28px 28px; text-align: center; border-top: 1px solid #f1f5f9; }}
+  .footer .powered {{ display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }}
+  .footer .powered img {{ height: 28px; border-radius: 6px; }}
+  .footer .powered span {{ font-size: 10px; color: #94a3b8; }}
+  .footer .powered strong {{ font-size: 12px; color: #D4A017; font-weight: 700; }}
+  .footer p {{ font-size: 10px; color: #94a3b8; line-height: 1.6; }}
+  @media print {{ body {{ background: #fff; }} .invoice {{ box-shadow: none; margin: 0; border-radius: 0; }} .no-print {{ display: none !important; }} }}
+  .print-btn {{ display: block; width: fit-content; margin: 16px auto; background: #D4A017; color: #fff; border: none; padding: 12px 32px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; }}
+  .print-btn:hover {{ background: #8B6914; }}
+</style>
+</head>
+<body>
+<div class="no-print" style="text-align:center;padding-top:16px;">
+  <button class="print-btn" onclick="window.print()">Download / Print Invoice</button>
+</div>
+<div class="invoice">
+  <div class="header">
+    <img src="{LOGO_MANGO}" alt="Mango Health Labs" />
+    <h1>INVOICE</h1>
+    <p>Lab Booking Receipt</p>
+    <div class="status-badge">{status_label}</div>
+  </div>
+  <div class="body">
+    <p class="section-title">Invoice Details</p>
+    <div class="row"><span class="label">Booking ID</span><span class="value">{bid}</span></div>
+    <div class="row"><span class="label">Date</span><span class="value">{date_str}</span></div>
+    {f'<div class="row"><span class="label">Time Slot</span><span class="value">{time_slot}</span></div>' if time_slot else ''}
+    <div class="row"><span class="label">Collection</span><span class="value">{collection}</span></div>
+    {f'<div class="row"><span class="label">Address</span><span class="value">{address}</span></div>' if address else ''}
+
+    <p class="section-title" style="margin-top:20px;">Patient</p>
+    <div class="row"><span class="label">Name</span><span class="value">{name}</span></div>
+    {f'<div class="row"><span class="label">Phone</span><span class="value">{phone}</span></div>' if phone else ''}
+    {f'<div class="row"><span class="label">Email</span><span class="value">{email}</span></div>' if email else ''}
+
+    <p class="section-title" style="margin-top:20px;">Tests</p>
+    {tests_rows}
+
+    <p class="section-title" style="margin-top:20px;">Payment</p>
+    <div class="row"><span class="label">Method</span><span class="value">{payment}</span></div>
+    <div class="row"><span class="label">Status</span><span class="value">{payment_status}</span></div>
+
+    {f'<div class="total-box"><span class="total-label">Total Amount</span><span class="total-amount">&#8377;{amount}</span></div>' if amount else ''}
+  </div>
+  <div class="footer">
+    <div class="powered">
+      <img src="{LOGO_CURAPAY_M}" alt="CuraPay" />
+      <div><span>Powered by</span><br/><strong>CuraPay</strong></div>
+    </div>
+    <p>This is a computer-generated invoice.<br/>Mango Health Labs &bull; Nevika Cura Healthcare Pvt. Ltd.</p>
+  </div>
+</div>
+</body>
+</html>"""
+    return HTMLResponse(content=html)
+
+
+# ============ OTP-Based Collection Verification ============
+
+class CollectionVerification(BaseModel):
+    booking_id: str
+    verification_code: str
+
+
+@router.post("/collection/verify")
+async def verify_collection(data: CollectionVerification):
+    """
+    Phlebotomist verifies sample collection by entering the 6-digit booking ID.
+    The patient shares their booking ID verbally as the verification code.
+    Works for Mango Health Labs, Proton Diagnostics, Nexugene.
+    """
+    # Search across lab bookings and diagnostic orders
+    booking = await db.lab_bookings.find_one({"booking_id": data.booking_id}, {"_id": 0})
+    source_collection = "lab_bookings"
+    id_field = "booking_id"
+
+    if not booking:
+        booking = await db.diagnostic_orders.find_one({"booking_id": data.booking_id}, {"_id": 0})
+        source_collection = "diagnostic_orders"
+
+    if not booking:
+        booking = await db.lab_orders.find_one({"id": data.booking_id}, {"_id": 0})
+        source_collection = "lab_orders"
+        id_field = "id"
+
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+
+    actual_id = booking.get("booking_id") or booking.get("id", "")
+
+    # Verify code matches the booking ID
+    if data.verification_code.strip() != actual_id.strip():
+        return {"success": False, "error": "Invalid code. Ask patient for their booking number."}
+
+    # Check if already collected
+    if booking.get("status") in ("sample_collected", "processing", "report_ready", "completed"):
+        return {"success": False, "error": "Sample already collected for this booking."}
+
+    # Mark as sample collected
+    now = datetime.now(timezone.utc).isoformat()
+    update = {
+        "status": "sample_collected",
+        "sample_collected_at": now,
+        "collection_verified": True,
+        "collection_verification_time": now
+    }
+
+    await db[source_collection].update_one(
+        {id_field: actual_id},
+        {"$set": update}
+    )
+
+    return {
+        "success": True,
+        "message": f"Sample collection verified for booking #{actual_id}",
+        "booking_id": actual_id,
+        "collected_at": now
+    }
+
+
+@router.get("/collection/{booking_id}/info")
+async def get_collection_info(booking_id: str):
+    """Get booking info for phlebotomist collection page (public - no auth)"""
+    booking = await db.lab_bookings.find_one({"booking_id": booking_id}, {"_id": 0})
+    if not booking:
+        booking = await db.diagnostic_orders.find_one({"booking_id": booking_id}, {"_id": 0})
+    if not booking:
+        booking = await db.lab_orders.find_one({"id": booking_id}, {"_id": 0})
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+
+    tests = booking.get("tests", booking.get("items", []))
+    patient = booking.get("patient_name", booking.get("customer", {}).get("name", "Patient"))
+    phone = booking.get("patient_phone", booking.get("customer", {}).get("phone", ""))
+    address = booking.get("address", booking.get("collection_address", ""))
+
+    return {
+        "success": True,
+        "booking_id": booking.get("booking_id") or booking.get("id"),
+        "status": booking.get("status", "pending"),
+        "patient_name": patient,
+        "patient_phone": phone,
+        "address": address,
+        "tests": [{"name": t.get("name", t.get("test_name", "Test")), "price": t.get("price", 0)} for t in tests] if tests else [],
+        "total": booking.get("total_amount", booking.get("total", 0)),
+        "collection_time": booking.get("preferred_time", booking.get("time_slot", "")),
+        "created_at": booking.get("created_at", "")
     }

@@ -1,0 +1,1258 @@
+[
+  {
+    "name": "ARISTOMOX 500 ORANGE CAP",
+    "composition": "Amoxicillin 500mg",
+    "mrp": 125.83,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOMOX 500 YELLOW CAP",
+    "composition": "Amoxicillin 500mg",
+    "mrp": 125.83,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOMOX CV 625 TAB",
+    "composition": "Amoxicillin 500mg + Clavulanic acid 125mg",
+    "mrp": 208.54,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOMOX CV 375 TAB",
+    "composition": "Amoxicillin 250mg + Clavulanic Acid 125mg",
+    "mrp": 198.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOMOX CV 1.2 INJ",
+    "composition": "Amoxicillin 1000mg + Clavulanic acid 200mg/20ml vial",
+    "mrp": 158.65,
+    "form": "Injection",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOMOX CV 1000 TAB",
+    "composition": "Amoxicillin 875mg + Clavulanic acid 125mg",
+    "mrp": 233.05,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOMOX CV DS 30ML",
+    "composition": "Amoxicillin 200mg + Clavulanic acid 28.5mg/5ml",
+    "mrp": 67.87,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOMOX CV DS 30ML SPWFR",
+    "composition": "Amoxicillin 200mg + Clavulanic acid 28.5mg/5ml",
+    "mrp": 69.21,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOMOX CV DDS 457 30ML",
+    "composition": "Amoxicillin 400mg + Clavulanic Acid 57mg",
+    "mrp": 146.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "AZELTRA 200 15ML",
+    "composition": "Azithromycin 200mg/5ml",
+    "mrp": 57.29,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "AZELTRA 200 XL 30ML",
+    "composition": "Azithromycin 200mg/5ml",
+    "mrp": 114.58,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "AZELTRA 250 TAB",
+    "composition": "Azithromycin 250mg",
+    "mrp": 78.42,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "AZELTRA 500 TAB",
+    "composition": "Azithromycin 500mg",
+    "mrp": 79.2,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "CPERO 500 TAB",
+    "composition": "Ciprofloxacin 500mg",
+    "mrp": 47.6,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "CEFPER 500 TAB",
+    "composition": "Cefuroxime 500mg",
+    "mrp": 576.02,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "CEFPER CV TAB",
+    "composition": "Cefuroxime 500mg + Clavulanic 125mg",
+    "mrp": 390.3,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ORIXIME-50 30ML SPWFR",
+    "composition": "Cefixime 50mg/5ml",
+    "mrp": 55.77,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ORIXIME-50 30ML",
+    "composition": "Cefixime 50mg/5ml",
+    "mrp": 54.77,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ORIXIME-100 30ML SPWFR",
+    "composition": "Cefixime 100mg/5ml",
+    "mrp": 80.3,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ORIXIME 200 TAB",
+    "composition": "Cefixime 200mg",
+    "mrp": 111.44,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ORIXIME-CV TAB",
+    "composition": "Cefixime 200mg + Clavulanic acid 125mg",
+    "mrp": 294.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ORIXIME-O TAB",
+    "composition": "Cefixime 200mg + Ofloxacin 200mg",
+    "mrp": 156.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "OFLER M SUSP 30ML",
+    "composition": "Ofloxacin 50mg + Metronidazole 100mg/5ml",
+    "mrp": 82.35,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "OFLER M SUSP 60ML",
+    "composition": "Ofloxacin 50mg + Metronidazole 100mg/5ml",
+    "mrp": 99.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "OFLER 200 TAB ALU-ALU",
+    "composition": "Ofloxacin 200mg",
+    "mrp": 98.8,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "OFLER 200 TAB PVC",
+    "composition": "Ofloxacin 200mg",
+    "mrp": 98.8,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "OFLER OZ TAB",
+    "composition": "Ofloxacin 200mg + Ornidazole 500mg",
+    "mrp": 142.8,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "QURE 500 TAB",
+    "composition": "Levofloxacin 500mg",
+    "mrp": 102.48,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "SUREPENAM 200 TAB",
+    "composition": "Faropenem 200mg",
+    "mrp": 630.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "SUREPENAM ER 300 TAB",
+    "composition": "Faropenem 300mg",
+    "mrp": 825.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTODERM GM 10GM",
+    "composition": "Clobetasol Propionate 0.05% + Neomycin 0.5% + Miconazole 2.0%",
+    "mrp": 71.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTODERM GM 20GM",
+    "composition": "Clobetasol Propionate 0.05% + Neomycin 0.5% + Miconazole 2.0%",
+    "mrp": 125.9,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO POVIDON 10GM",
+    "composition": "Povidone Iodine 5% Ointment",
+    "mrp": 33.9,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO POVIDON 20GM",
+    "composition": "Povidone Iodine 5% Ointment",
+    "mrp": 64.55,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO POVIDON 250GM",
+    "composition": "Povidone Iodine 5% Ointment",
+    "mrp": 492.5,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO POVIDON 5% 100ML",
+    "composition": "Povidone Iodine 5% Solution",
+    "mrp": 50.4,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO POVIDON 5% 500ML",
+    "composition": "Povidone Iodine 5% Solution",
+    "mrp": 252.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO POVIDON 10% 100ML",
+    "composition": "Povidone Iodine 10% Solution",
+    "mrp": 109.76,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO POVIDON 10% 500ML",
+    "composition": "Povidone Iodine 10% Solution",
+    "mrp": 537.6,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO POVIDON 5% 2LTR",
+    "composition": "Povidone Iodine 5% Solution",
+    "mrp": 985.6,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "CANDICHAMP 30GM POWDER",
+    "composition": "Clotrimazole 1% w/v",
+    "mrp": 53.9,
+    "form": "Powder",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "CANDICHAMP 75GM POWDER",
+    "composition": "Clotrimazole 1% w/v",
+    "mrp": 99.6,
+    "form": "Powder",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "CANDICHAMP-VG GEL",
+    "composition": "Clotrimazole 2% w/w Vaginal Gel",
+    "mrp": 149.8,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "CANDICHAMP-B 10GM",
+    "composition": "Clotrimazole 1% + Beclomethasone Dipropionate 0.025%",
+    "mrp": 70.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "CANDICHAMP-B 20GM",
+    "composition": "Clotrimazole 1% + Beclomethasone Dipropionate 0.025%",
+    "mrp": 99.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "KETOSHINE SHAMPOO 120ML",
+    "composition": "Ketoconazole 2% Shampoo",
+    "mrp": 240.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "KETOSHINE SOAP 75GM",
+    "composition": "Ketoconazole 2% Soap",
+    "mrp": 140.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "TERBIZOL 250 TAB",
+    "composition": "Terbinafine 250mg",
+    "mrp": 185.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "TERBIZOL 10GM",
+    "composition": "Terbinafine 1% w/w",
+    "mrp": 59.92,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "MUPITOP OINTMENT 5GM",
+    "composition": "Mupirocin 2% w/w",
+    "mrp": 115.58,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "AQUAGERMINA SUSP",
+    "composition": "Bacillus Clausii 2 Billion Spores Oral Suspension",
+    "mrp": 26.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARILIZAR LIQUID 100ML",
+    "composition": "Disodium Hydrogen Citrate 1.37gm/5ml",
+    "mrp": 139.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO NEXOM 40 TAB",
+    "composition": "Esomeprazole 40mg",
+    "mrp": 186.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO NEXOM RD CAP",
+    "composition": "Esomeprazole 40mg + Domperidone 30mg SR",
+    "mrp": 163.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOPARA SPAS TAB",
+    "composition": "Paracetamol 325mg + Dicyclomine 20mg",
+    "mrp": 59.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "RABITOP DSR CAP ALU-ALU",
+    "composition": "Rabeprazole 20mg + Domperidone 30mg SR",
+    "mrp": 124.5,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "RABITOP 20MG",
+    "composition": "Rabeprazole 20mg",
+    "mrp": 126.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "RABITOP-LS CAP",
+    "composition": "Rabeprazole 20mg + Levosulpiride 75mg SR",
+    "mrp": 240.5,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO ZENTO-400 10ML",
+    "composition": "Albendazole 200mg/5ml",
+    "mrp": 20.38,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO ZENTO-400 TAB",
+    "composition": "Albendazole 400mg",
+    "mrp": 20.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "LIVERHELP SYRUP 200ML",
+    "composition": "Ayurvedic Liver Tonic",
+    "mrp": 136.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "LIVERHELP TAB",
+    "composition": "Ayurvedic Liver Tablets",
+    "mrp": 126.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "LIVERHELP DS SYRUP 225ML",
+    "composition": "Ayurvedic Liver Tonic Double Strength",
+    "mrp": 245.25,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "LIVERHELP DS TAB",
+    "composition": "Ayurvedic Liver Tablets Double Strength",
+    "mrp": 225.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "PROMISEC 20MG CAP",
+    "composition": "Omeprazole 20mg",
+    "mrp": 65.4,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "PROMISEC D CAP",
+    "composition": "Omeprazole 20mg + Domperidone 10mg",
+    "mrp": 200.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "RANTOP 50MG INJ",
+    "composition": "Ranitidine 50mg/2ml",
+    "mrp": 20.0,
+    "form": "Injection",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "RANTOP 150MG TAB",
+    "composition": "Ranitidine 150mg",
+    "mrp": 65.9,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "RANTOP 300 TAB",
+    "composition": "Ranitidine 300mg",
+    "mrp": 36.1,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "VISCO-MPS LIQUID 170ML",
+    "composition": "Simethicone 25mg + Magnesium Hydroxide 200mg + Aluminium Hydroxide 200mg",
+    "mrp": 131.35,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO PYRIMEF 500 TAB",
+    "composition": "Mefenamic Acid 500mg",
+    "mrp": 33.9,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO PYRIMEF-P 100MG SUSP",
+    "composition": "Mefenamic 100mg/5ml Suspension",
+    "mrp": 37.63,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO PYRIMEF FORTE TAB",
+    "composition": "Mefenamic 500mg + Paracetamol 325mg",
+    "mrp": 55.8,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO PYRIMEF SPAS TAB",
+    "composition": "Mefenamic 250mg + Dicyclomine 10mg",
+    "mrp": 50.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO PYRIMEF PLUS SUSP 60ML",
+    "composition": "Mefenamic 50mg + Paracetamol 125mg",
+    "mrp": 49.06,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO PYRIMEF DS SUSP 60ML",
+    "composition": "Mefenamic 100mg + Paracetamol 250mg",
+    "mrp": 59.14,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO GESIC SUSP 60ML",
+    "composition": "Ibuprofen 100mg + Paracetamol 162.5mg",
+    "mrp": 45.95,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO GESIC SUSP 100ML",
+    "composition": "Ibuprofen 100mg + Paracetamol 162.5mg",
+    "mrp": 65.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "DYNAFLEX 55GM SPRAY",
+    "composition": "Diclofenac diethylamine 1.16% + Linseed Oil 3% + Methylsalicylate 10% + Menthol 5%",
+    "mrp": 163.1,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "DYNAFLEX 75GM SPRAY",
+    "composition": "Diclofenac diethylamine 1.16% + Linseed Oil 3% + Methylsalicylate 10% + Menthol 5%",
+    "mrp": 217.85,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "DYNAFLEX GEL 30GM",
+    "composition": "Diclofenac Diethylamine 1.16% + Linseed Oil 3% + Methyl Salicylate 10% + Menthol 5%",
+    "mrp": 108.35,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "DYNAFLEX HOT GEL 30GM",
+    "composition": "Diclofenac diethylamine 1.16% + Methyl Salicylate 10% + Menthol 5% + Capsaicin 0.025%",
+    "mrp": 137.8,
+    "form": "Cream",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "DYNAFLEX PLUS TAB",
+    "composition": "Diclofenac 50mg + Paracetamol 325mg",
+    "mrp": 35.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "DYNAFLEX MR TAB",
+    "composition": "Diclofenac 50mg + Paracetamol 325mg + Chlorzoxazone 250mg",
+    "mrp": 122.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "DYNAFLEX SP TAB",
+    "composition": "Diclofenac 50mg + Paracetamol 325mg + Serratiopeptidase 15mg",
+    "mrp": 163.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "DYNAFLEX AQUA 75MG INJ",
+    "composition": "Diclofenac Sodium 75mg/Inj",
+    "mrp": 35.15,
+    "form": "Injection",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "DYNAFLEX 75MG INJ",
+    "composition": "Diclofenac 75mg 3ml + Benzyl Alcohol 4%",
+    "mrp": 5.77,
+    "form": "Injection",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ETORIDOL 60 TAB",
+    "composition": "Etoricoxib 60mg",
+    "mrp": 125.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ETORIDOL 90 TAB",
+    "composition": "Etoricoxib 90mg",
+    "mrp": 180.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ETORIDOL 120 TAB",
+    "composition": "Etoricoxib 120mg",
+    "mrp": 180.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ETORIDOL-P TAB",
+    "composition": "Etoricoxib 60mg + Paracetamol 325mg",
+    "mrp": 164.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "FLEXIBON TAB",
+    "composition": "Glucosamine SPC 750mg + Diacerein 50mg + Methylsulfonylmethane 250mg",
+    "mrp": 249.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "MEGACECLO 100 TAB",
+    "composition": "Aceclofenac 100mg",
+    "mrp": 60.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "MEGACECLO 200SR TAB",
+    "composition": "Aceclofenac 200mg Sustained Release",
+    "mrp": 98.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "MEGACECLO P TAB",
+    "composition": "Aceclofenac 100mg + Paracetamol 325mg",
+    "mrp": 98.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "MEGACECLO SP TAB",
+    "composition": "Aceclofenac 100mg + Paracetamol 325mg + Serratiopeptidase 15mg",
+    "mrp": 141.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "MEGACECLO MR TAB",
+    "composition": "Aceclofenac 100mg + Paracetamol 325mg + Chlorzoxazone 250mg",
+    "mrp": 137.8,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "MEGACECLO RAB CAP",
+    "composition": "Aceclofenac 200mg SR + Rabeprazole 20mg EC",
+    "mrp": 199.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "MEGACECLO SPAS TAB",
+    "composition": "Aceclofenac 100mg + Drotaverine 80mg",
+    "mrp": 163.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO CETREST TAB",
+    "composition": "Cetirizine 10mg",
+    "mrp": 21.06,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO CETREST 30ML",
+    "composition": "Cetirizine 5mg/5ml",
+    "mrp": 22.18,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO CETREST 60ML",
+    "composition": "Cetirizine 5mg/5ml",
+    "mrp": 44.35,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO CETREST COLD TOTAL TAB",
+    "composition": "Paracetamol 500mg + Phenylephrine 10mg + CPM 2mg",
+    "mrp": 105.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO CETREST COLD DS 60ML",
+    "composition": "Paracetamol 250mg + Phenylephrine 5mg + CPM 2mg/5ml",
+    "mrp": 98.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO L-CETREST TAB",
+    "composition": "Levocetirizine 5mg",
+    "mrp": 89.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO L-CETREST 60ML",
+    "composition": "Levocetirizine 2.5mg/5ml",
+    "mrp": 104.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO DOXO-400 TAB",
+    "composition": "Doxofylline 400mg",
+    "mrp": 53.9,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTODRYL 100ML",
+    "composition": "Ammonium Chloride 150mg + Diphenhydramine 15mg + Sodium Citrate 85mg/5ml",
+    "mrp": 129.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTODRYL PLUS 100ML",
+    "composition": "Diphenhydramine HCl 14.08mg + Ammonium Chloride 138mg + Sodium Citrate 57.03mg/5ml",
+    "mrp": 120.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOKOF DM PLUS 100ML",
+    "composition": "Dextromethorphan 10mg + CPM 2mg + Phenylephrine 5mg/5ml",
+    "mrp": 135.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOKOF DX 100ML",
+    "composition": "Dextromethorphan 10mg + CPM 4mg/5ml",
+    "mrp": 129.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "FLUMONT-LC KID TAB",
+    "composition": "Levocetirizine 2.5mg + Montelukast 4mg",
+    "mrp": 139.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "FLUMONT-LC KID 60ML",
+    "composition": "Levocetirizine 2.5mg + Montelukast 4mg/5ml",
+    "mrp": 140.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "FLUMONT-LC TAB",
+    "composition": "Levocetirizine 5mg + Montelukast 10mg",
+    "mrp": 270.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "FLUMONT-FX TAB",
+    "composition": "Montelukast 10mg + Fexofenadine 120mg",
+    "mrp": 251.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "VENTILEX 100ML",
+    "composition": "Terbutaline 1.25mg + Bromhexine 2mg + Guaiphenesin 50mg + Menthol 0.5mg/5ml",
+    "mrp": 124.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "VENTILEX A 100ML",
+    "composition": "Terbutaline 1.25mg + Guaiphenesin 50mg + Ambroxol 15mg + Menthol 0.5mg/5ml",
+    "mrp": 129.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "VENTILEX LS 100ML",
+    "composition": "Levosalbutamol 1mg + Ambroxol HCL 30mg + Guaiphenesin 50mg/5ml",
+    "mrp": 121.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOCAL 500 TAB",
+    "composition": "Calcium Carbonate 1250mg eq. to elemental calcium 500mg + Vitamin D3 250IU",
+    "mrp": 145.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOCAL CT CAP",
+    "composition": "Calcium Carbonate 500mg + Calcitriol 0.25mcg",
+    "mrp": 327.3,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOCAL D3 60K CAP",
+    "composition": "Cholecalciferol 60000 IU",
+    "mrp": 137.89,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOCAL D3 SHOTS",
+    "composition": "Cholecalciferol 60000 IU",
+    "mrp": 319.2,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOCAL D3 SACHET",
+    "composition": "Cholecalciferol 60000 IU",
+    "mrp": 38.06,
+    "form": "Powder",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTONEUROL OD TAB",
+    "composition": "Methylcobalamin 1500mcg",
+    "mrp": 152.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTONEUROL PLUS CAP",
+    "composition": "Methylcobalamin 1500mcg + Alpha Lipoic acid 100mg + Pyridoxine 3mg + Folic acid 1.5mg",
+    "mrp": 229.9,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTONEUROL PLUS INJ",
+    "composition": "Mecobalamin 1000mcg + Pyridoxine 100mg + Niacinamide 100mg + Benzyl Alcohol 2%",
+    "mrp": 90.0,
+    "form": "Injection",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOPLEX 100ML",
+    "composition": "Vitamin B Complex with L-Lysine Syrup",
+    "mrp": 108.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOPLEX 200ML",
+    "composition": "Vitamin B Complex with L-Lysine Syrup",
+    "mrp": 164.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO PROTEIN POWDER 200GM",
+    "composition": "Protein Powder 20gm Protein/100gm Powder",
+    "mrp": 402.0,
+    "form": "Powder",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO PROTEIN DHA POWDER 200GM",
+    "composition": "Protein Powder with DHA 20gm Protein/100gm Powder",
+    "mrp": 436.0,
+    "form": "Powder",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "HAEMOPROL FORTE 300ML",
+    "composition": "Iron Polymaltose Complex eq. to Elemental Iron 50mg + Folic acid 0.5mg/15ml",
+    "mrp": 208.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "HAEMOPROL RED 225ML",
+    "composition": "Ferric Ammonium Citrate eq. to Elemental iron 32.8mg + Folic acid 0.5mg + Vitamin B12 7.5mcg/15ml",
+    "mrp": 158.7,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "HAEMOPROL XT TAB",
+    "composition": "Ferrous ascorbate 100mg + Folic acid 1.5mg",
+    "mrp": 167.75,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "HAEMOPROL XT 150ML",
+    "composition": "Ferrous ascorbate 30mg + Folic acid 550mcg/5ml",
+    "mrp": 165.3,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "HAEMOPROL Z CAP",
+    "composition": "Carbonyl Iron 50mg + Zinc 22.5mg + Folic acid 0.5mg",
+    "mrp": 208.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "HAEMOPROL INJ",
+    "composition": "Iron Sucrose Injection 100mg/5ml",
+    "mrp": 321.5,
+    "form": "Injection",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "HUNGER AID PLUS SYRUP 200ML",
+    "composition": "Cyproheptadine 2mg + Tricholine Citrate 65% 275mg + Sorbitol 70% 2gm",
+    "mrp": 147.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "SUPER V GOLD CAP",
+    "composition": "Ginseng 212.50mg, Multivitamin & Multimineral Softgel Capsules",
+    "mrp": 120.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "SUPER V LYCO CAP",
+    "composition": "Antioxidants Lycopene, Vitamin & Zinc Soft Gelatin Capsules",
+    "mrp": 163.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "SUPER V RICH CAP",
+    "composition": "Multivitamin & Multimineral Softgel Capsules",
+    "mrp": 145.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOVERT TAB",
+    "composition": "Betahistine HCL 16mg",
+    "mrp": 213.45,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO FEBU 40 TAB",
+    "composition": "Febuxostat 40mg",
+    "mrp": 163.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO FEBU 80 TAB",
+    "composition": "Febuxostat 80mg",
+    "mrp": 240.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOCORT H INJ",
+    "composition": "Hydrocortisone 100mg/vial",
+    "mrp": 47.84,
+    "form": "Injection",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTOCORT T INJ",
+    "composition": "Triamcinolone 40mg/1ml",
+    "mrp": 174.05,
+    "form": "Injection",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO EMEGON INJ",
+    "composition": "Ondansetron 2mg/2ml",
+    "mrp": 13.35,
+    "form": "Injection",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO EMEGON SYRUP 30ML",
+    "composition": "Ondansetron Syrup 2mg/5ml",
+    "mrp": 43.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "ARISTO EMEGON MD-4 TAB",
+    "composition": "Ondansetron 4mg",
+    "mrp": 58.57,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "DEFLISTO 6 TAB",
+    "composition": "Deflazacort 6mg",
+    "mrp": 163.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "GUTBLISS CAP",
+    "composition": "Pre & Probiotic capsules",
+    "mrp": 163.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "GABAPREX-M TAB",
+    "composition": "Gabapentin 300mg + Methylcobalamin 500mcg",
+    "mrp": 163.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "PRE-GABAPREX CAP",
+    "composition": "Pregabalin 75mg + Methylcobalamin 750mcg",
+    "mrp": 224.0,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "M-PREDNACORTIL 4MG TAB",
+    "composition": "Methylprednisolone 4mg",
+    "mrp": 60.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "M-PREDNACORTIL 8MG TAB",
+    "composition": "Methylprednisolone 8mg",
+    "mrp": 87.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "POWERFORCE 50 TAB",
+    "composition": "Sildenafil 50mg",
+    "mrp": 140.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "POWERFORCE 100 TAB",
+    "composition": "Sildenafil 100mg",
+    "mrp": 276.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  },
+  {
+    "name": "PREGALEARN TEST KIT",
+    "composition": "One step urine HCG pregnancy test",
+    "mrp": 60.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Aristo Full"
+  }
+]

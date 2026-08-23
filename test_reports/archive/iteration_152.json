@@ -1,0 +1,97 @@
+{
+  "summary": "Iteration 152: Bug fixes for WhatsApp staff notifications and duplicate login portals verified. All 13 backend tests passed. All frontend UI tests passed.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration_152_whatsapp_login_bugs.py",
+    "/app/test_reports/pytest/pytest_iteration_152.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_iteration_152_whatsapp_login_bugs.py"
+  ],
+  "success_rate": {
+    "backend": "100% (13/13 tests passed)",
+    "frontend": "100% (All UI tests passed)"
+  },
+  "test_credentials": {
+    "staff_diagyn": "staff_diagyn/test1234",
+    "doctor": "dr_vikas/test1234",
+    "admin": "admin/test1234"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Bug fixes verified: (1) WhatsApp staff notification phone mapping for 'orange' department is correctly set to '918108500511' in notify_staff_new_order function at line 1194 and STAFF_NOTIFICATION_NUMBERS at line 1100. (2) /login-old route removed from App.js - no LoginPage or StaffPortalLogin imports. (3) Staff portals all have built-in login forms. (4) PatientLogin Staff Portal link correctly navigates to /staff.",
+  "tests_executed": {
+    "backend": [
+      "GET /api/test/msg91-status - PASS (returns MSG91 config status)",
+      "POST /api/staff/login staff_diagyn/test1234 - PASS",
+      "POST /api/staff/login dr_vikas/test1234 - PASS",
+      "POST /api/staff/login admin/test1234 - PASS",
+      "GET /login-old - PASS (route no longer renders LoginPage component)",
+      "GET /staff - PASS (loads UnifiedStaffLogin)",
+      "GET /diagyn-staff - PASS (has built-in login form)",
+      "GET /orange-staff - PASS (has built-in login form)",
+      "GET /mango-staff - PASS (has built-in login form)",
+      "GET /doctor-login - PASS (has login form)",
+      "GET /login - PASS (loads PatientLogin)",
+      "POST /api/test/send-whatsapp orange_pharmacy_confirm - PASS (template configured)",
+      "GET /api/health-report/run - PASS"
+    ],
+    "frontend": [
+      "/staff - UnifiedStaffLogin loads with Staff Portal and Doctor Portal buttons - PASS",
+      "/staff - Staff Portal button has data-testid='select-staff-portal' - PASS",
+      "/staff - Staff Portal navigates to /diagyn-staff - PASS",
+      "/staff - Pharmacy Staff quick link visible - PASS",
+      "/staff - Lab Staff quick link visible - PASS",
+      "/login - PatientLogin loads with email/WhatsApp options - PASS",
+      "/login - Staff Portal button navigates to /staff (not /staff-portal-login) - PASS",
+      "/diagyn-staff - Built-in login form with username/password fields - PASS",
+      "/orange-staff - Built-in login form with username/password fields - PASS",
+      "/mango-staff - Built-in login form with username/password fields - PASS",
+      "/doctor-login - Login form with username/password fields - PASS"
+    ]
+  },
+  "features_verified": {
+    "whatsapp_staff_notifications": {
+      "orange_department_mapping": "'orange' mapped to '918108500511' in notify_staff_new_order",
+      "staff_notification_numbers": "'orange' and 'orange pharmacy' mapped to '918108500511'",
+      "send_orange_pharmacy_confirmation": "Properly calls send_msg91_whatsapp (not log_only)",
+      "status": "VERIFIED"
+    },
+    "duplicate_login_cleanup": {
+      "login_old_route": "Removed from App.js - no /login-old route",
+      "loginpage_import": "Not imported in App.js",
+      "staff_portal_login_import": "Not imported in App.js",
+      "status": "VERIFIED"
+    },
+    "staff_portal_navigation": {
+      "unified_staff_login": "/staff shows portal selector with Staff Portal and Doctor Portal",
+      "staff_portal_path": "Staff Portal button navigates to /diagyn-staff",
+      "patient_login_staff_link": "Staff Portal link navigates to /staff (not /staff-portal-login)",
+      "status": "VERIFIED"
+    },
+    "staff_portal_login_forms": {
+      "diagyn_staff": "Built-in login form - /diagyn-staff",
+      "orange_staff": "Built-in login form - /orange-staff",
+      "mango_staff": "Built-in login form - /mango-staff",
+      "doctor_login": "Login form - /doctor-login",
+      "status": "VERIFIED"
+    }
+  },
+  "code_review_verification": {
+    "notify_staff_new_order_orange_mapping": "Line 1194: 'orange': '918108500511'",
+    "staff_notification_numbers_orange": "Line 1100: 'orange': '918108500511'",
+    "notify_staff_new_appointment_patient_phone": "Line 1161: patient_phone field is included in notification details",
+    "msg91_whatsapp_status_endpoint": "GET /api/test/msg91-status - calls test_msg91_connection()"
+  }
+}

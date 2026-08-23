@@ -1,0 +1,442 @@
+[
+  {
+    "name": "AlbaYes Plus",
+    "composition": "Each 5ml contains: Albendazole 400mg & Ivermectin 1.5mg",
+    "mrp": 27.1,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "worm infections",
+    "composition": "Each 5 ml contains: Albendazole 200mg",
+    "mrp": 20.04,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "AlbaYes",
+    "composition": "Each uncoated chewable tablet contains: Albendazole 400mg",
+    "mrp": 9.09,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Amikind-100",
+    "composition": "Each 2 ml contains: Amikacin Suphate 100mg",
+    "mrp": 38.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "tract, lungs etc.",
+    "composition": "Each 2 ml contains: Amikacin Suphate 250mg",
+    "mrp": 51.7,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Amikind-500",
+    "composition": "Each 2 ml contains: Amikacin Suphate 500mg",
+    "mrp": 113.73,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Azikind-100 XL",
+    "composition": "Each 5 ml contains: Azithromycin 100mg",
+    "mrp": 88.0,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "skin and soft tissues & lungs",
+    "composition": "Each 5 ml contains: Azithromycin 200mg",
+    "mrp": 114.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Azikind-250",
+    "composition": "Each \ufb01lm coated tablet contains: Azithromycin 250mg",
+    "mrp": 78.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Azikind-500",
+    "composition": "Each \ufb01lm coated tablet contains: Azithromycin 500mg",
+    "mrp": 78.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "soft tissues & lungs",
+    "composition": "Each \ufb01lm coated tablet contains: Azithromycin 500mg",
+    "mrp": 117.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Brutacross",
+    "composition": "Each ml of reconstituted suspension contains: Cefpodoxime 25mg",
+    "mrp": 89.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "gastrointestinal tract & urinary tract",
+    "composition": "Each 5ml of reconstituted suspension contains: Cefpodoxime 100mg",
+    "mrp": 165.0,
+    "form": "Cream",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Brutacross-100",
+    "composition": "Each uncoted dispersible tablet contains: Cefpodoxime 100mg",
+    "mrp": 165.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Brutacross-200",
+    "composition": "Each uncoted dispersible tablet contains: Cefpodoxime 200mg",
+    "mrp": 247.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Brutacross-CV",
+    "composition": "Each 5 ml of reconstituted suspension contains: Cefpodoxime 50mg & Clavulanic Acid 31.25mg",
+    "mrp": 133.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefablast-250",
+    "composition": "Each \ufb01lm coated tablet contains: Cefuroxime 250mg",
+    "mrp": 302.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Brutacross-O",
+    "composition": "Each \ufb01lm coated tablet contains : Cefpodoxime 200 mg & O\ufb02oxacin 200 mg",
+    "mrp": 350.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefablast-CV 500",
+    "composition": "Each \ufb01lm coated tablet contains: Cefuroxime 500mg & Clavulanic Acid 125mg",
+    "mrp": 653.4,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefaclass",
+    "composition": "Each ml of reconstituted suspension contains: Ce\ufb01xime 25mg",
+    "mrp": 78.65,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefablast-500",
+    "composition": "Each \ufb01lm coated tablet contains: Cefuroxime 500mg",
+    "mrp": 576.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefaclass-50",
+    "composition": "Each 5 ml of reconstituted suspension contains: Ce\ufb01xime 50mg",
+    "mrp": 54.43,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefaclass-100",
+    "composition": "Each 5 ml of reconstituted suspension contains: Ce\ufb01xime 100mg",
+    "mrp": 79.96,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefaclass-O",
+    "composition": "Each 5 ml of reconstituted suspension contains: Ce\ufb01xime 50mg & O\ufb02oxacin 50mg",
+    "mrp": 100.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefaclass-200",
+    "composition": "Each uncoated dispersible tablet contains: Ce\ufb01xime 200mg",
+    "mrp": 109.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefaclass-SB 375",
+    "composition": "Each Vial Contains: Ceftriaxone 250mg & Sulbactam 125mg",
+    "mrp": 66.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefaclass-CV 325",
+    "composition": "Each \ufb01lm coated tablet contains: Ce\ufb01xime 200mg & Clavulanic Acid 125 mg",
+    "mrp": 247.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefaclass-1g",
+    "composition": "Each Vial contains: Ceftriaxone 1gm",
+    "mrp": 67.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Cefaclass-Tazo",
+    "composition": "Each Vial Contains: Ceftriaxone 1000mg & Tazobactam 125mg",
+    "mrp": 203.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Ciprozol-500",
+    "composition": "Each \ufb01lm coated tablet contains: Cipro\ufb02oxacin 500mg",
+    "mrp": 44.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Doxykind-LB",
+    "composition": "Each capsule contains: Doxycycline100mg & Lactic Acid Bacillus 5 Billion Spores",
+    "mrp": 114.95,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Fungiforce-200",
+    "composition": "Each uncoated tablet contains: Fluconazole 200mg",
+    "mrp": 39.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Fungiforce-Itra 100",
+    "composition": "Each hard gelatin capsule contains: Itraconazole 100mg (As pellets)",
+    "mrp": 186.7,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Fungiforce-150",
+    "composition": "Each uncoated tablet contains: Fluconazole 150mg",
+    "mrp": 27.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Levostand-250",
+    "composition": "Each \ufb01lm coated tablet contains: Levo\ufb02oxacin 250mg",
+    "mrp": 53.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Levostand-500",
+    "composition": "Each \ufb01lm coated tablet contains: Levo\ufb02oxacin 500mg",
+    "mrp": 98.56,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Fungiforce-Itra 200",
+    "composition": "Each hard gelatin capsule contains: Itraconazole 200mg (As pellets)",
+    "mrp": 247.74,
+    "form": "Capsule",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Mahamox-250",
+    "composition": "Each hard gelatin capsule contains: Amoxycillin 250mg",
+    "mrp": 27.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Mahamox-500",
+    "composition": "Each hard gelatin capsule contains: Amoxycillin 500mg",
+    "mrp": 82.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Levostand-OZ",
+    "composition": "Each \ufb01lm coated tablet contains: Levo\ufb02oxacin 250mg & Ornidazole 500mg",
+    "mrp": 132.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Mahamox-CV",
+    "composition": "Each ml of the constituted suspension contains: Amoxycillin 80mg & Clavulanic Acid 11.4mg",
+    "mrp": 83.1,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Mahamox-CV 625",
+    "composition": "Each \ufb01lm coated tablet contains: Amoxycillin 500mg & Clavulanic Acid 125mg",
+    "mrp": 204.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Noraday-400 NF",
+    "composition": "Each \ufb01lm coated tablet contains: Nor\ufb02oxacin 400mg & Lactic Acid Bacillus 120 x 106 Spores (Appropriate Overages Added)",
+    "mrp": 77.44,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Noraday-TZ NF",
+    "composition": "Each \ufb01lm coated tablet contains: Nor\ufb02oxacin 400mg, Tinidazole 600mg & Lactic Acid Bacillus 120 x 106 Spores (Appropriate Overages Added)",
+    "mrp": 108.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Rifatreat 400",
+    "composition": "Rifaximin Tablets BP 400 mg",
+    "mrp": 330.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Rifatreat 550",
+    "composition": "Rifaximin Tablets BP 550 mg",
+    "mrp": 390.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Rifatreat-200",
+    "composition": "Rifaximin Tablets BP 200 mg",
+    "mrp": 175.0,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Zenkind-200",
+    "composition": "Each \ufb01lm coated tablet contains: O\ufb02oxacin 200mg",
+    "mrp": 102.85,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Zenkind 200",
+    "composition": "Each \ufb01lm coated tablet contains: O\ufb02oxacin 200mg",
+    "mrp": 80.82,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Zenkind",
+    "composition": "Each 5 ml contains: O\ufb02oxacin 50mg",
+    "mrp": 60.5,
+    "form": "Syrup",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Zenkind-M",
+    "composition": "Each 5 ml contains: O\ufb02oxacin 50mg & Metronidazole 100mg",
+    "mrp": 94.6,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Zenkind-OZ",
+    "composition": "Each \ufb01lm coated tablet contains: O\ufb02oxacin 200mg & Ornidazole 500mg",
+    "mrp": 157.3,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Metrokind-IV",
+    "composition": "Each 100 ml contains: Metronidazole 500 mg",
+    "mrp": 23.5,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Mankind\u02bcs NS- IV Infusion",
+    "composition": "Each 100 ml contains: Sodium Chloride 0.9% w/v",
+    "mrp": 22.42,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  },
+  {
+    "name": "Ciprozol-IV",
+    "composition": "Each 100 ml contains: Cipro\ufb02oxacin 0.2 gm & Sodium Chloride 0.9% w/v",
+    "mrp": 22.4,
+    "form": "Tablet",
+    "category": "General",
+    "source": "Prime Mankind"
+  }
+]

@@ -258,6 +258,66 @@ async def get_patient_by_phone(phone: str):
     }
 
 
+@router.get("/health-timeline")
+async def get_health_timeline(phone: str):
+    """Build a chronological health timeline for a patient from appointments and lab tests."""
+    if not phone or len(phone) < 10:
+        raise HTTPException(status_code=400, detail="Valid phone required")
+
+    phone_clean = phone[-10:]
+    timeline = []
+
+    # Fetch appointments
+    appointments = await db.appointments.find(
+        {"$or": [
+            {"patient_phone": {"$regex": phone_clean}},
+            {"phone": {"$regex": phone_clean}},
+        ]},
+        {"_id": 0}
+    ).sort("date", -1).to_list(100)
+
+    for apt in appointments:
+        timeline.append({
+            "id": apt.get("id") or apt.get("booking_id", ""),
+            "type": "appointment",
+            "title": apt.get("doctor", "Doctor Visit"),
+            "subtitle": apt.get("specialty", ""),
+            "clinic": apt.get("clinic", ""),
+            "date": apt.get("date", ""),
+            "time": apt.get("time", ""),
+            "status": apt.get("status", ""),
+            "diagnosis": apt.get("diagnosis", ""),
+            "notes": apt.get("notes", ""),
+            "medicines": apt.get("medicines", []),
+            "created_at": apt.get("created_at", apt.get("date", "")),
+        })
+
+    # Fetch lab orders
+    lab_orders = await db.lab_orders.find(
+        {"$or": [
+            {"patient_phone": {"$regex": phone_clean}},
+            {"phone": {"$regex": phone_clean}},
+        ]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+
+    for lab in lab_orders:
+        timeline.append({
+            "id": lab.get("id", ""),
+            "type": "lab_test",
+            "title": "Lab Test",
+            "subtitle": ", ".join(lab.get("tests", [])) if isinstance(lab.get("tests"), list) else str(lab.get("tests", "")),
+            "clinic": lab.get("lab", "Mango Labs"),
+            "date": lab.get("created_at", ""),
+            "time": "",
+            "status": lab.get("status", ""),
+            "created_at": lab.get("created_at", ""),
+        })
+
+    timeline.sort(key=lambda ev: ev.get("date") or ev.get("created_at") or "0000", reverse=True)
+    return {"timeline": timeline, "total": len(timeline)}
+
+
 @router.get("/{patient_id}")
 async def get_patient(patient_id: str):
     """Get patient details by patient ID"""

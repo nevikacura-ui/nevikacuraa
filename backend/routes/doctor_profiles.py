@@ -58,7 +58,7 @@ DOCTOR_PROFILES = [
         "specialization": "Obstetrics & Gynecology",
         "qualification": "MBBS, DGO, FICOG",
         "experience_years": 12,
-        "clinic": "DiaGyn Healthcare - Amnion Clinic",
+        "clinic": "DiaGyn Healthcare - Pushpa Clinic",
         "clinic_address": "Dombivli East, Mumbai",
         "consultation_fee": 400,
         "about": "Dr. Vikas Jha is an experienced gynecologist specializing in normal and cesarean deliveries, menstrual disorders, and preventive women's healthcare.",
@@ -89,6 +89,15 @@ class ReviewInput(BaseModel):
     visit_type: Optional[str] = None  # consultation, delivery, surgery, etc.
 
 # ==================== ENDPOINTS ====================
+
+@router.get("")
+async def get_doctors(
+    specialization: Optional[str] = None,
+    clinic: Optional[str] = None,
+    min_rating: Optional[float] = None
+):
+    """Get all doctors (root endpoint) - same as /all"""
+    return await get_all_doctors(specialization, clinic, min_rating)
 
 @router.get("/all")
 async def get_all_doctors(
@@ -140,17 +149,13 @@ async def get_weekly_availability(days: int = 7):
         "Dr. Neha Patel": {
             "pushpa": [
                 {"days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "time": "11:00-14:00", "session": "morning"},
-                {"days": ["Tuesday", "Thursday", "Saturday"], "time": "18:00-22:00", "session": "evening"}
-            ],
-            "amnion": [
+                {"days": ["Tuesday", "Thursday", "Saturday"], "time": "18:00-22:00", "session": "evening"},
                 {"days": ["Monday", "Wednesday", "Friday"], "time": "18:00-22:00", "session": "evening"}
             ]
         },
         "Dr. Vikas Jha": {
             "pushpa": [
-                {"days": ["Monday", "Wednesday", "Friday"], "time": "18:00-22:00", "session": "evening"}
-            ],
-            "amnion": [
+                {"days": ["Monday", "Wednesday", "Friday"], "time": "18:00-22:00", "session": "evening"},
                 {"days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "time": "11:00-14:00", "session": "morning"},
                 {"days": ["Tuesday", "Thursday", "Saturday"], "time": "18:00-22:00", "session": "evening"}
             ]
@@ -178,7 +183,7 @@ async def get_weekly_availability(days: int = 7):
             }
             
             for clinic_id, schedules in clinics.items():
-                clinic_name = "Pushpa Clinic" if clinic_id == "pushpa" else "Amnion Clinic"
+                clinic_name = "Pushpa Clinic"
                 sessions = []
                 
                 for schedule in schedules:

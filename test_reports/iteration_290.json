@@ -1,0 +1,165 @@
+{
+  "summary": "Tested all 15 features for dynamic header transition on Pharmacy page and Mango category page redesign. All tests PASSED. Dynamic header uses IntersectionObserver to detect light zone and transitions from dark (#0a0b14) to cream (#FFF8F0) with 0.5s CSS transition. Logo gets darkened (brightness 0.15), wallet icon changes to amber-600, user icon changes to dark, tab gradients fade to cream. Mango category pages have premium hero banners with category-specific gradients (teal for full-body, pink for womens-health, amber for diabetes-care), decorative circles, wave SVG, 3D green add buttons.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend only test)",
+    "frontend": "100%"
+  },
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Dynamic header transition verified working on Pharmacy page. IntersectionObserver on lightZoneRef (data-testid=pharmacy-light-zone) with rootMargin '-60px 0px 0px 0px' triggers headerLightMode state. ServiceHeader accepts lightMode prop (default false) and applies: cream background (#FFF8F0), logo brightness(0.15), wallet amber-600 (#B45309), user dark (#57534e), tab gradients fade to cream. Mango category pages use CATEGORY_CONFIG for gradient colors: full-body=teal, womens-health=pink, diabetes-care=amber. All have wave SVG, decorative circles, 3D green buttons with box-shadow.",
+  "test_results": {
+    "pharmacy_dynamic_header": {
+      "1_header_dark_at_top": {
+        "status": "PASS",
+        "background": "rgb(10, 11, 20) (#0a0b14)"
+      },
+      "2_header_transitions_to_cream": {
+        "status": "PASS",
+        "background_after_scroll": "rgb(255, 248, 240) (#FFF8F0)"
+      },
+      "3_logo_darkened_in_light_mode": {
+        "status": "PASS",
+        "filter": "brightness(0.15)"
+      },
+      "4_wallet_icon_amber_in_light_mode": {
+        "status": "PASS",
+        "color": "rgb(180, 83, 9) (#B45309 amber-600)"
+      },
+      "5_user_icon_dark_in_light_mode": {
+        "status": "PASS",
+        "color": "rgb(87, 83, 78) (#57534e)"
+      },
+      "6_tab_gradients_fade_to_cream": {
+        "status": "PASS",
+        "active_tab_gradient": "linear-gradient(rgb(194, 65, 12) 0%, rgb(234, 88, 12) 40%, rgb(255, 248, 240) 100%)"
+      },
+      "7_transition_is_smooth_0.5s": {
+        "status": "PASS",
+        "transition": "background 0.5s, border-bottom 0.5s"
+      }
+    },
+    "mango_category_full_body": {
+      "8_page_loads_with_teal_gradient": {
+        "status": "PASS",
+        "gradient": "linear-gradient(135deg, rgb(13, 148, 136) 0%, rgb(15, 118, 110) 50%, rgb(19, 78, 74) 100%)"
+      },
+      "9_hero_has_title_count_icon_wave_circles": {
+        "status": "PASS",
+        "title": "Full Body Checkup",
+        "test_count": "5 tests available",
+        "category_image": "https://cdn-icons-png.flaticon.com/512/3209/3209960.png",
+        "wave_svg": true,
+        "decorative_circles": 3
+      },
+      "10_search_bar_works": {
+        "status": "PASS",
+        "placeholder": "Search in Full Body Checkup..."
+      },
+      "11_back_button_navigates_to_mango": {
+        "status": "PASS",
+        "navigation": "/mango"
+      }
+    },
+    "mango_category_womens_health": {
+      "12_page_loads_with_pink_gradient": {
+        "status": "PASS",
+        "gradient": "linear-gradient(135deg, rgb(236, 72, 153) 0%, rgb(219, 39, 119) 50%, rgb(190, 24, 93) 100%)"
+      },
+      "13_sticky_checkout_bar_appears": {
+        "status": "PASS",
+        "bar_text": "1 test in cart — Proceed"
+      },
+      "14_cart_button_navigates_to_checkout": {
+        "status": "PASS",
+        "navigation": "/mango/checkout"
+      }
+    },
+    "mango_category_diabetes_care": {
+      "15_page_loads_with_amber_gradient": {
+        "status": "PASS",
+        "gradient": "linear-gradient(135deg, rgb(245, 158, 11) 0%, rgb(217, 119, 6) 50%, rgb(180, 83, 9) 100%)"
+      },
+      "16_search_filters_tests": {
+        "status": "PASS",
+        "search_term": "glucose",
+        "filtered_results": 5
+      }
+    },
+    "pharmacy_dual_tone_theme": {
+      "17_dark_top_section": {
+        "status": "PASS",
+        "background": "rgb(5, 5, 16) (#050510)"
+      },
+      "18_theme_transition_gradient": {
+        "status": "PASS",
+        "gradient": "linear-gradient(rgb(5, 5, 16) 0%, rgb(28, 18, 16) 35%, rgb(255, 248, 240) 100%)",
+        "height": "100px"
+      },
+      "19_cream_light_zone": {
+        "status": "PASS",
+        "background": "rgb(255, 248, 240) (#FFF8F0)"
+      }
+    },
+    "pharmacy_category_page": {
+      "20_still_works_with_gradient_hero": {
+        "status": "PASS",
+        "gradient": "linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(37, 99, 235) 50%, rgb(29, 78, 216) 100%)",
+        "wave_svg": true,
+        "back_button": true
+      }
+    }
+  },
+  "features_verified": {
+    "1_pharmacy_header_dark_at_top": "VERIFIED - Header background #0a0b14 (dark) at top of page",
+    "2_pharmacy_header_cream_in_light_zone": "VERIFIED - Header transitions to #FFF8F0 when scrolling into light zone",
+    "3_logo_darkened_in_light_mode": "VERIFIED - Logo filter brightness(0.15) applied",
+    "4_wallet_icon_amber_in_light_mode": "VERIFIED - Wallet icon color #B45309 (amber-600)",
+    "5_user_icon_dark_in_light_mode": "VERIFIED - User icon color #57534e (dark)",
+    "6_tab_gradients_fade_to_cream": "VERIFIED - Active tab gradient ends with #FFF8F0",
+    "7_transition_smooth_0.5s": "VERIFIED - CSS transition 0.5s on background and border-bottom",
+    "8_mango_full_body_teal_gradient": "VERIFIED - Teal gradient hero (#0D9488 to #134E4A)",
+    "9_mango_womens_health_pink_gradient": "VERIFIED - Pink gradient hero (#EC4899 to #BE185D)",
+    "10_mango_hero_elements": "VERIFIED - Title, test count, category icon, wave SVG, decorative circles",
+    "11_mango_test_cards_3d_buttons": "VERIFIED - White cards on cream bg, 3D green buttons with box-shadow",
+    "12_mango_search_filters_tests": "VERIFIED - Search input filters tests by name",
+    "13_mango_back_button_navigation": "VERIFIED - Back button navigates to /mango",
+    "14_mango_cart_button_navigation": "VERIFIED - Cart button navigates to /mango/checkout",
+    "15_mango_sticky_checkout_bar": "VERIFIED - Sticky bar appears after adding test to cart",
+    "16_pharmacy_dual_tone_still_works": "VERIFIED - Dark top (#050510), gradient transition, cream bottom (#FFF8F0)",
+    "17_pharmacy_category_page_works": "VERIFIED - Gradient hero, wave SVG, back button all working"
+  },
+  "data_testids_verified": [
+    "nav-orange",
+    "main-logo",
+    "header-curapay-btn",
+    "profile-button",
+    "login-button",
+    "pharmacy-light-zone",
+    "theme-transition-gradient",
+    "mango-category-page",
+    "cat-title",
+    "cat-back-btn",
+    "cat-cart-btn",
+    "cat-search-input",
+    "cat-test-{n}",
+    "cat-add-{n}",
+    "cat-checkout-btn",
+    "pharmacy-category-page",
+    "category-back-btn",
+    "category-hero-title"
+  ]
+}

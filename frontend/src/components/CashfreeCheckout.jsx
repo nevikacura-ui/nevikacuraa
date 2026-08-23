@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Loader2, CreditCard, Smartphone, Banknote, ChevronRight, Tag, X, Check } from 'lucide-react';
+import { Loader2, CreditCard, Smartphone, Banknote, ChevronRight, Tag, X, Check, Gift } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 const PRODUCTION_DOMAIN = process.env.REACT_APP_PRODUCTION_DOMAIN || 'https://nevikacura.com';
@@ -31,7 +31,13 @@ const CashfreeCheckout = ({
   const [validatingCoupon, setValidatingCoupon] = useState(false);
   const [discountAmount, setDiscountAmount] = useState(0);
 
-  const finalAmount = Math.max(0, orderDetails.amount - discountAmount);
+  // Gift Card state
+  const [giftCardCode, setGiftCardCode] = useState('');
+  const [appliedGiftCard, setAppliedGiftCard] = useState(null);
+  const [validatingGiftCard, setValidatingGiftCard] = useState(false);
+  const [giftCardDiscount, setGiftCardDiscount] = useState(0);
+
+  const finalAmount = Math.max(0, orderDetails.amount - discountAmount - giftCardDiscount);
 
   const validateCoupon = async () => {
     if (!couponCode.trim()) {
@@ -78,6 +84,47 @@ const CashfreeCheckout = ({
     setCouponCode('');
   };
 
+  const validateGiftCard = async () => {
+    if (!giftCardCode.trim()) {
+      toast.error('Please enter a gift card code');
+      return;
+    }
+    setValidatingGiftCard(true);
+    try {
+      const res = await fetch(`${API}/api/gift-cards/check/${giftCardCode.trim().toUpperCase()}`);
+      const data = await res.json();
+
+      if (res.ok && data.status === 'active' && data.balance > 0) {
+        const applicable = Math.min(data.balance, orderDetails.amount - discountAmount);
+        setAppliedGiftCard({
+          code: data.code,
+          balance: data.balance,
+          applied: applicable
+        });
+        setGiftCardDiscount(applicable);
+        toast.success(`Gift card applied! Rs.${applicable} will be deducted`);
+      } else if (data.status === 'inactive') {
+        toast.error('This gift card has not been activated yet');
+      } else if (data.status === 'used') {
+        toast.error('This gift card has been fully used');
+      } else if (data.balance <= 0) {
+        toast.error('No balance remaining on this gift card');
+      } else {
+        toast.error(data.detail || 'Invalid gift card');
+      }
+    } catch (error) {
+      toast.error('Failed to validate gift card');
+    } finally {
+      setValidatingGiftCard(false);
+    }
+  };
+
+  const removeGiftCard = () => {
+    setAppliedGiftCard(null);
+    setGiftCardDiscount(0);
+    setGiftCardCode('');
+  };
+
   const handleCashfreePayment = async () => {
     // Prevent payment for zero amounts (prescription orders need pharmacist confirmation first)
     if (finalAmount <= 0) {
@@ -107,6 +154,8 @@ const CashfreeCheckout = ({
           original_amount: orderDetails.amount,
           discount_amount: discountAmount,
           coupon_code: appliedCoupon?.code || null,
+          gift_card_code: appliedGiftCard?.code || null,
+          gift_card_amount: giftCardDiscount || 0,
           product_type: orderDetails.type,
           product_id: orderDetails.productId || `${orderDetails.type.toUpperCase()}_${Date.now()}`,
           return_url: `${PRODUCTION_DOMAIN}${returnPath}?payment=success&order_id=`
@@ -182,12 +231,26 @@ const CashfreeCheckout = ({
     }
   }, []);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (selectedMethod === 'online') {
       handleCashfreePayment();
     } else {
-      // COD - just confirm the order
-      onPaymentSuccess?.({ method: 'cod', orderId: null });
+      // COD - deduct gift card balance if applied, then confirm
+      if (appliedGiftCard && giftCardDiscount > 0) {
+        try {
+          await fetch(`${API}/api/gift-cards/use`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              code: appliedGiftCard.code,
+              amount: giftCardDiscount,
+              service: orderDetails.type,
+              order_id: orderDetails.productId || ''
+            })
+          });
+        } catch (e) { /* silent - best effort */ }
+      }
+      onPaymentSuccess?.({ method: 'cod', orderId: null, giftCardUsed: giftCardDiscount });
       onOpenChange(false);
     }
   };
@@ -239,13 +302,19 @@ const CashfreeCheckout = ({
                 </div>
                 {discountAmount > 0 && (
                   <div className="flex justify-between items-center text-green-600">
-                    <span>Discount ({appliedCoupon?.code})</span>
-                    <span>-₹{discountAmount?.toLocaleString()}</span>
+                    <span>Coupon ({appliedCoupon?.code})</span>
+                    <span>-Rs.{discountAmount?.toLocaleString()}</span>
+                  </div>
+                )}
+                {giftCardDiscount > 0 && (
+                  <div className="flex justify-between items-center text-teal-600">
+                    <span>Gift Card ({appliedGiftCard?.code})</span>
+                    <span>-Rs.{giftCardDiscount?.toLocaleString()}</span>
                   </div>
                 )}
                 <div className="flex justify-between items-center text-lg font-bold mt-2 pt-2 border-t">
                   <span className="text-slate-800">Total Amount</span>
-                  <span className="text-green-600">₹{finalAmount?.toLocaleString()}</span>
+                  <span className="text-green-600">Rs.{finalAmount?.toLocaleString()}</span>
                 </div>
               </>
             ) : (
@@ -270,7 +339,7 @@ const CashfreeCheckout = ({
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-green-500" />
                     <span className="font-medium text-green-700">{appliedCoupon.code}</span>
-                    <span className="text-sm text-green-600">(-₹{discountAmount})</span>
+                    <span className="text-sm text-green-600">(-Rs.{discountAmount})</span>
                   </div>
                   <button onClick={removeCoupon} className="text-slate-400 hover:text-red-500">
                     <X className="w-4 h-4" />
@@ -298,6 +367,50 @@ const CashfreeCheckout = ({
               )}
             </div>
           )}
+
+          {/* Gift Card Redemption Section */}
+          <div className="border border-slate-200 rounded-xl p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Gift className="w-4 h-4 text-teal-500" />
+              <span className="text-sm font-medium text-slate-700">Have a gift card?</span>
+            </div>
+            {appliedGiftCard ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between bg-teal-50 border border-teal-200 rounded-lg p-2">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-teal-500" />
+                    <span className="font-mono font-medium text-teal-700 text-sm">{appliedGiftCard.code}</span>
+                  </div>
+                  <button onClick={removeGiftCard} className="text-slate-400 hover:text-red-500" data-testid="remove-gift-card-btn">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex justify-between text-xs text-teal-600 px-1">
+                  <span>Card balance: Rs.{appliedGiftCard.balance}</span>
+                  <span className="font-bold">Applied: -Rs.{appliedGiftCard.applied}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Input
+                  value={giftCardCode}
+                  onChange={(e) => setGiftCardCode(e.target.value.toUpperCase())}
+                  placeholder="e.g. NCAB12XY34ZQ"
+                  className="flex-1 uppercase font-mono"
+                  data-testid="gift-card-input"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={validateGiftCard}
+                  disabled={validatingGiftCard || !giftCardCode.trim()}
+                  data-testid="apply-gift-card-btn"
+                >
+                  {validatingGiftCard ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
+                </Button>
+              </div>
+            )}
+          </div>
 
           {/* Payment Methods */}
           <div className="space-y-3">
@@ -361,8 +474,10 @@ const CashfreeCheckout = ({
           >
             {processing ? (
               <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Processing...</>
-            ) : selectedMethod === 'online' && orderDetails.amount > 0 ? (
-              <>Pay ₹{orderDetails.amount?.toLocaleString()} <ChevronRight className="w-5 h-5 ml-2" /></>
+            ) : selectedMethod === 'online' && finalAmount > 0 ? (
+              <>Pay Rs.{finalAmount?.toLocaleString()} <ChevronRight className="w-5 h-5 ml-2" /></>
+            ) : finalAmount === 0 && (giftCardDiscount > 0 || discountAmount > 0) ? (
+              <>Confirm (Fully Covered) <ChevronRight className="w-5 h-5 ml-2" /></>
             ) : (
               <>Confirm Order <ChevronRight className="w-5 h-5 ml-2" /></>
             )}

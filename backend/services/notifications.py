@@ -2,6 +2,7 @@
 Nevika Cura - Notification Services
 Email and MSG91 WhatsApp notification utilities
 Note: Twilio SMS has been removed - using MSG91 WhatsApp for all messaging
+All times displayed in IST (Indian Standard Time)
 """
 
 import os
@@ -9,6 +10,14 @@ import logging
 import asyncio
 from datetime import datetime, timezone
 from typing import Optional
+
+# Import IST timezone utilities for consistent time formatting
+try:
+    from utils.timezone_utils import format_time_for_display, normalize_time_to_24h
+except ImportError:
+    # Fallback if utils not available
+    def format_time_for_display(t): return str(t) if t else ""
+    def normalize_time_to_24h(t, for_sorting=True): return str(t) if t else ""
 
 logger = logging.getLogger(__name__)
 
@@ -72,15 +81,21 @@ async def send_email_notification(
 # ============ MSG91 WhatsApp Notifications ============
 
 async def send_appointment_notification(patient_phone: str, appointment_details: dict, db=None):
-    """Send appointment confirmation via MSG91 WhatsApp (primary)"""
+    """Send appointment confirmation via MSG91 WhatsApp (primary)
+    Times are automatically formatted to 12-hour IST format for user display.
+    """
     from services.msg91_whatsapp import send_diagyn_appointment_confirmation
     
     try:
+        # Format time for display (convert any format to 12-hour AM/PM)
+        raw_time = appointment_details.get('time', '')
+        display_time = format_time_for_display(raw_time) if raw_time else ''
+        
         result = await send_diagyn_appointment_confirmation(
             phone=patient_phone,
             patient_name=appointment_details.get('patient_name', 'Patient'),
             date=appointment_details.get('date', ''),
-            time=appointment_details.get('time', ''),
+            time=display_time,  # Use formatted 12-hour time
             doctor_name=appointment_details.get('doctor', 'Doctor'),
             clinic_name=appointment_details.get('clinic', 'Clinic'),
             booking_id=appointment_details.get('booking_id', ''),

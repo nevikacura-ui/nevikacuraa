@@ -14,8 +14,9 @@ import {
   ArrowLeft, Star, MapPin, Clock, Phone, Calendar, 
   GraduationCap, Award, Languages, Users, Heart, 
   MessageSquare, ChevronRight, Search, Filter,
-  Loader2, CheckCircle, Stethoscope, Building
+  Loader2, CheckCircle, Stethoscope, Building, Quote
 } from 'lucide-react';
+import { testimonials } from '@/data/homeData';
 
 const API = process.env.REACT_APP_BACKEND_URL + '/api';
 
@@ -37,6 +38,7 @@ const DoctorProfiles = () => {
     would_recommend: true
   });
   const [submittingReview, setSubmittingReview] = useState(false);
+  const [testimonialIdx, setTestimonialIdx] = useState(0);
   
   useEffect(() => {
     fetchDoctors();
@@ -131,6 +133,35 @@ const DoctorProfiles = () => {
         </header>
         
         <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+          {/* Patient Testimonials */}
+          <div data-testid="doctor-testimonials" className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-5 border border-indigo-100">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
+                <Quote className="w-4 h-4 text-indigo-500" />
+                Patient Stories
+              </h3>
+              <div className="flex gap-1">
+                {testimonials.map((_, i) => (
+                  <button key={i} onClick={() => setTestimonialIdx(i)}
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${i === testimonialIdx ? 'bg-indigo-500 w-4' : 'bg-gray-300'}`} />
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center gap-1 mb-2">
+              {[...Array(testimonials[testimonialIdx].rating)].map((_, i) => (
+                <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              ))}
+            </div>
+            <p className="text-sm text-gray-700 leading-relaxed mb-3">"{testimonials[testimonialIdx].text}"</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{testimonials[testimonialIdx].name}</p>
+                <p className="text-xs text-gray-500">{testimonials[testimonialIdx].location}</p>
+              </div>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-indigo-100 text-indigo-600">{testimonials[testimonialIdx].service}</span>
+            </div>
+          </div>
+
           {/* Doctor Card */}
           <Card>
             <CardContent className="p-6">

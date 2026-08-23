@@ -47,8 +47,8 @@ class DuePaymentFilter(BaseModel):
 
 # Helper to get DB
 def get_db():
-    from server import db
-    return db
+    from database import get_db as _get_db
+    return _get_db()
 
 # Routes
 @router.post("/invoices")

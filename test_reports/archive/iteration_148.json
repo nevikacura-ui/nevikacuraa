@@ -1,0 +1,51 @@
+{
+  "summary": "Iteration 148: Two new features tested - 1) Custom Medicine Entry on Pharmacy page, 2) ICICI Bank receipt-style BookingConfirmation. All 10/10 tests PASSED.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_148.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100% (10/10 tests passed)"
+  },
+  "test_credentials": {
+    "guest": "localStorage: guestMobile=9999999999, introShown=true, introComplete=true, darkMode=true"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Two new features fully functional: 1) Pharmacy /pharmacy page has 'Type Medicine' card with purple/violet PenLine icon in 2-column grid alongside 'Upload Prescription'. Clicking opens bottom sheet modal with medicine name input, quantity +/- buttons, 'Price will be confirmed by pharmacist' note, and disabled Add to Cart button until name entered. Custom medicines add to cart successfully. 2) BookingConfirmation has ICICI receipt-style design with colored headers (orange for pharmacy, teal for diagyn, green for mango), mandala pattern overlay, zigzag torn edges (top below header, bottom perforated), green checkmark badge, prominent ₹ amount display, booking ID with copy button, timestamp IST. DiaGyn type shows doctor/clinic/date/time and 'Add to Google Calendar' button. Receipt printer animation (3s) and confetti both work correctly.",
+  "tests_executed": {
+    "frontend": [
+      "Pharmacy 'Type Medicine' card visible with purple icon - PASS",
+      "2-column grid layout (Upload Prescription + Type Medicine) - PASS",
+      "Custom medicine modal opens as bottom sheet - PASS",
+      "Modal has medicine name input, quantity +/- buttons - PASS",
+      "'Price will be confirmed by pharmacist' note present - PASS",
+      "Add to Cart button disabled when name empty - PASS",
+      "Add to Cart button enables when name entered - PASS",
+      "Orange receipt: orange header, ORANGE PHARMACY, zigzag, checkmark, ₹amount, booking ID, copy button - PASS",
+      "DiaGyn receipt: teal header, DIAGYN, doctor/clinic/date/time, Add to Google Calendar button - PASS",
+      "Mango receipt: green header, MANGO LABS text - PASS",
+      "Receipt printer animation (3s) + confetti animation - PASS"
+    ]
+  },
+  "test_urls": {
+    "pharmacy_custom_medicine": "/pharmacy",
+    "orange_receipt": "/booking-confirmation?type=orange&orderId=ORD2456&amount=1299&items=Crocin,Dolo",
+    "diagyn_receipt": "/booking-confirmation?type=diagyn&orderId=APT8891&doctor=Dr.+Vikas+Jha&clinic=DiaGyn+Clinic&date=2026-02-28&time=6:00+PM",
+    "mango_receipt": "/booking-confirmation?type=mango&orderId=LAB7890&amount=599&tests=CBC,Thyroid"
+  },
+  "notes": "AudioContext and vibration warnings in console are expected browser security restrictions (require user gesture). Not functional issues."
+}

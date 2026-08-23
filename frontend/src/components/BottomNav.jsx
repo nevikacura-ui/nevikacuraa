@@ -1,508 +1,251 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home as HomeIcon, Pill, Calendar, TestTube, User, MessageCircle, Loader2, Check, RefreshCw, Phone } from 'lucide-react';
+import { Home as HomeIcon, Heart, Plus, X, Stethoscope, FlaskConical, Pill, Compass, Wallet, ShoppingCart, Package, ChevronRight, Scan, ListOrdered } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useCart } from '@/context/CartContext';
+import { useFestivalTheme } from '@/components/FestivalBanner';
+import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { selectionTap, mediumTap } from '@/utils/haptics';
-import { toast } from 'sonner';
-import axios from 'axios';
 
 const API = process.env.REACT_APP_BACKEND_URL;
+
+// Pages where bottom nav should be completely hidden (Labs & Pharmacy pages)
+const HIDDEN_NAV_PATHS = [
+  '/', '/home',
+  '/mango', '/proton', '/nexugene', '/labs',
+  '/pharmacy', '/orange', '/orange-generics', '/nutricare',
+  '/orange-select', '/trusted-formulary',
+];
+
+const shouldHideNav = (pathname) => {
+  return HIDDEN_NAV_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'));
+};
 
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user: authUser, setPatientAuth } = useAuth();
+  const { user: authUser } = useAuth();
+  const festival = useFestivalTheme();
+  const { isDarkMode } = useThemeLanguage();
+  const { getTotalCartCount, getPharmacyCartCount, getLabCartCount, getPharmacyTotal, getLabTotal, calculateDiscount, hasEligibleItems } = useCart();
   const [isScrolling, setIsScrolling] = useState(false);
-  const [showBookingModal, setShowBookingModal] = useState(false);
-  
-  // Check if user is logged in (auth context OR localStorage)
-  // Re-check on every render to catch localStorage changes
-  const [, forceUpdate] = useState(0);
-  
-  useEffect(() => {
-    // Force re-render when storage changes
-    const handleStorageChange = () => forceUpdate(n => n + 1);
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
-  
-  const isLoggedIn = authUser || 
-    typeof window !== 'undefined' && (
-      localStorage.getItem('patientToken') || 
-      localStorage.getItem('guestMobile')
-    );
-  
-  const user = authUser || (
-    typeof window !== 'undefined' && localStorage.getItem('patientInfo') 
-      ? JSON.parse(localStorage.getItem('patientInfo')) 
-      : null
-  );
-  
-  // WhatsApp OTP Login State
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginStep, setLoginStep] = useState('phone'); // 'phone' | 'otp'
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [mockOtp, setMockOtp] = useState(null);
-  const [countdown, setCountdown] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const otpRefs = useRef([]);
-  
-  // Countdown timer for resend
-  useEffect(() => {
-    if (countdown > 0) {
-      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [countdown]);
+  const [bookExpanded, setBookExpanded] = useState(false);
 
-  // Determine active tab based on current path
+  const isLoggedIn = authUser || (typeof window !== 'undefined' && (localStorage.getItem('patientToken') || localStorage.getItem('guestMobile')));
+
   const getActiveTab = () => {
     const path = location.pathname;
     if (path === '/' || path === '/home') return 'home';
-    if (path.includes('/pharmacy')) return 'pharmacy';
-    if (path.includes('/diagyn')) return 'diagyn';
-    if (path.includes('/mango')) return 'lab';
-    if (path.includes('/patient-portal') || path.includes('/profile')) return 'profile';
+    if (path === '/my-cura') return 'mycura';
+    if (path.includes('/diagyn') || path.includes('/mango') || path.includes('/pharmacy')) return 'none';
+    if (path === '/portals') return 'portals';
+    if (path === '/cura-wallet' || path === '/cura-one') return 'curaone';
+    if (path.includes('/profile') || path.includes('/patient-profile') || path.includes('/prescriptions') || path.includes('/my-orders') || path.includes('/cart')) return 'home';
     return 'home';
   };
-
   const activeTab = getActiveTab();
 
-  // Theme colors based on active page
-  const getThemeColors = () => {
-    switch (activeTab) {
-      case 'diagyn':
-        return {
-          primary: 'teal',
-          activeBg: 'bg-teal-500',
-          activeShadow: 'shadow-teal-500/40',
-          activeText: 'text-teal-600'
-        };
-      case 'pharmacy':
-        return {
-          primary: 'orange',
-          activeBg: 'bg-orange-500',
-          activeShadow: 'shadow-orange-500/40',
-          activeText: 'text-orange-600'
-        };
-      case 'lab':
-        return {
-          primary: 'blue',
-          activeBg: 'bg-blue-500',
-          activeShadow: 'shadow-blue-500/40',
-          activeText: 'text-blue-600'
-        };
-      default:
-        return {
-          primary: 'teal',
-          activeBg: 'bg-teal-500',
-          activeShadow: 'shadow-teal-500/40',
-          activeText: 'text-teal-600'
-        };
-    }
-  };
-
-  const theme = getThemeColors();
-
-  // Hide bottom nav while scrolling
   useEffect(() => {
-    let scrollTimeout;
-    
-    const handleScroll = () => {
-      setIsScrolling(true);
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => setIsScrolling(false), 300);
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-    };
+    let t;
+    const onScroll = () => { setIsScrolling(true); clearTimeout(t); t = setTimeout(() => setIsScrolling(false), 300); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); clearTimeout(t); };
   }, []);
 
-  const navItems = [
-    { 
-      id: 'home', 
-      label: 'Home', 
-      icon: HomeIcon, 
-      path: '/',
-      color: 'teal'
-    },
-    { 
-      id: 'pharmacy', 
-      label: 'Pharmacy', 
-      icon: Pill, 
-      path: '/pharmacy',
-      color: 'orange'
-    },
-    { 
-      id: 'book', 
-      label: 'Book', 
-      icon: Calendar, 
-      isCenter: true,
-      color: 'rose'
-    },
-    { 
-      id: 'lab', 
-      label: 'Lab Tests', 
-      icon: TestTube, 
-      path: '/mango',
-      color: 'blue'
-    },
-    { 
-      id: 'profile', 
-      label: isLoggedIn ? 'Profile' : 'Login', 
-      icon: User, 
-      path: '/profile',
-      color: 'slate'
-    }
+  useEffect(() => { setBookExpanded(false); }, [location.pathname]);
+
+  const totalCartCount = getTotalCartCount();
+
+  // Hide nav on Labs & Pharmacy pages (after all hooks)
+  if (shouldHideNav(location.pathname)) return <div className="md:hidden h-0" />;
+  if (typeof document === 'undefined') return null;
+
+  /* Simplified: Home + My Cura (Portal & CuraOne are now toggles on Home page) */
+  const leftTabs = [
+    { id: 'home', label: 'Home', icon: HomeIcon, path: '/' },
+    { id: 'mycura', label: 'My Cura', icon: Heart, path: '/my-cura' },
+  ];
+  const rightTabs = [];
+
+  const bookOptions = [
+    { label: 'Consult', icon: Stethoscope, path: '/diagyn/book', color: '#06B6D4', bg: 'rgba(6,182,212,0.15)', border: 'rgba(6,182,212,0.35)' },
+    { label: 'Scan Rx', icon: Scan, path: '/pharmacy?scan=1', color: '#F97316', bg: 'rgba(249,115,22,0.15)', border: 'rgba(249,115,22,0.35)' },
+    { label: 'Quick Order', icon: ListOrdered, path: '/pharmacy?quickorder=1', color: '#22C55E', bg: 'rgba(34,197,94,0.15)', border: 'rgba(34,197,94,0.35)' },
   ];
 
-  const handleNavClick = (item) => {
-    // Haptic feedback on navigation
-    selectionTap();
-    
-    console.log('BottomNav click:', item.id, 'isLoggedIn:', isLoggedIn);
-    
-    if (item.id === 'book') {
-      setShowBookingModal(true);
-    } else if (item.id === 'profile' && !isLoggedIn) {
-      // Show login page for non-logged-in users
-      console.log('Navigating to /login (not logged in)');
-      navigate('/login');
-    } else if (item.id === 'profile' && isLoggedIn) {
-      // Go to profile for logged-in users
-      console.log('Navigating to /profile (logged in)');
-      navigate('/profile');
-    } else if (item.path) {
-      console.log('Navigating to:', item.path);
-      navigate(item.path);
-    }
+  const renderTab = (tab) => {
+    const isActive = activeTab === tab.id;
+    const Icon = tab.icon;
+    return (
+      <button
+        key={tab.id}
+        onClick={() => { selectionTap(); navigate(tab.path); }}
+        className="relative flex items-center justify-center transition-all duration-300 ease-out"
+        style={{
+          background: isActive ? (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)') : 'transparent',
+          borderRadius: '18px',
+          padding: isActive ? '7px 14px' : '7px 10px',
+          gap: isActive ? '5px' : '0',
+          minWidth: isActive ? '82px' : '40px',
+        }}
+        data-testid={`nav-${tab.id}`}
+      >
+        {tab.isCuraOne ? (
+          <div className="relative">
+            <img
+              src="/images/curaone-nav-icon.png"
+              alt="CuraOne"
+              className="w-[20px] h-[24px] object-contain transition-all duration-200"
+              style={{ opacity: isActive ? 1 : 0.35, filter: isActive ? 'brightness(1.4) drop-shadow(0 0 6px rgba(255,200,50,0.5))' : (isDarkMode ? 'grayscale(0.5)' : 'grayscale(0.5) brightness(0.6)') }}
+              draggable={false}
+            />
+            {isActive && <div className="absolute -inset-1.5 rounded-full blur-[6px] -z-10" style={{ background: 'rgba(255,200,50,0.2)' }} />}
+          </div>
+        ) : (
+          <Icon
+            className="w-[19px] h-[19px] flex-shrink-0 transition-all duration-200"
+            style={{
+              color: isActive ? (isDarkMode ? '#fff' : '#0d9488') : (isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.35)'),
+              strokeWidth: isActive ? 2.2 : 1.5,
+              fill: tab.id === 'mycura' && isActive ? (isDarkMode ? '#fff' : '#0d9488') : 'none',
+            }}
+          />
+        )}
+        {isActive && (
+          <span
+            className="text-[10.5px] font-bold whitespace-nowrap overflow-hidden"
+            style={{ color: isDarkMode ? '#fff' : '#0d9488', animation: 'navLabelIn 0.25s cubic-bezier(0.22,1,0.36,1) both', maxWidth: '54px' }}
+          >
+            {tab.label}
+          </span>
+        )}
+        {tab.id === 'home' && totalCartCount > 0 && (
+          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black text-white" style={{ background: '#F43F5E', boxShadow: '0 2px 6px rgba(244,63,94,0.4)' }}>{totalCartCount}</span>
+        )}
+      </button>
+    );
   };
-  
-  // WhatsApp OTP Functions
-  const sendOTP = async () => {
-    if (!phone || phone.length < 10) {
-      toast.error('Please enter a valid 10-digit phone number');
-      return;
-    }
-    
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API}/api/otp/whatsapp/send`, {
-        phone: phone,
-        purpose: 'profile_login'
-      });
-      
-      setLoginStep('otp');
-      setCountdown(30);
-      setMockOtp(res.data.mock ? res.data.otp : null);
-      toast.success('OTP sent via WhatsApp!', {
-        description: res.data.mock ? `Use code: ${res.data.otp}` : 'Check your WhatsApp'
-      });
-      setTimeout(() => otpRefs.current[0]?.focus(), 100);
-    } catch (err) {
-      toast.error(err.response?.data?.detail || 'Failed to send OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const verifyOTP = async () => {
-    const otpCode = otp.join('');
-    if (otpCode.length !== 6) {
-      toast.error('Enter 6-digit OTP');
-      return;
-    }
-    
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API}/api/otp/whatsapp/verify`, {
-        phone: phone,
-        otp: otpCode
-      });
-      
-      // Login successful - try to get/create patient profile
-      try {
-        const profileRes = await axios.post(`${API}/api/patients/portal/login-mobile`, {
-          mobile: phone
-        });
-        
-        if (profileRes.data.token) {
-          localStorage.setItem('patientToken', profileRes.data.token);
-          setPatientAuth({
-            ...profileRes.data.patient,
-            token: profileRes.data.token
-          });
-        }
-      } catch (profileErr) {
-        // Profile doesn't exist - create guest profile
-        localStorage.setItem('guestPhone', phone);
-      }
-      
-      toast.success('Login successful!');
-      setShowLoginModal(false);
-      navigate('/patient-portal');
-    } catch (err) {
-      toast.error(err.response?.data?.detail || 'Invalid OTP');
-      setOtp(['', '', '', '', '', '']);
-      otpRefs.current[0]?.focus();
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const handleOtpChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value.slice(-1);
-    setOtp(newOtp);
-    if (value && index < 5) otpRefs.current[index + 1]?.focus();
-    if (index === 5 && value && newOtp.join('').length === 6) {
-      setTimeout(() => verifyOTP(), 100);
-    }
-  };
-  
-  const handleOtpKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      otpRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const getIconStyle = (item) => {
-    const isActive = activeTab === item.id;
-    
-    if (isActive) {
-      // Active item gets its own color
-      const colorMap = {
-        teal: 'bg-teal-500 shadow-teal-500/40',
-        orange: 'bg-orange-500 shadow-orange-500/40',
-        blue: 'bg-blue-500 shadow-blue-500/40',
-        slate: 'bg-slate-600 shadow-slate-600/40'
-      };
-      return `${colorMap[item.color]} shadow-lg scale-110`;
-    }
-    
-    return 'bg-slate-100';
-  };
-
-  const getTextStyle = (item) => {
-    const isActive = activeTab === item.id;
-    
-    if (isActive) {
-      const colorMap = {
-        teal: 'text-teal-600',
-        orange: 'text-orange-600',
-        blue: 'text-blue-600',
-        slate: 'text-slate-700'
-      };
-      return colorMap[item.color];
-    }
-    
-    return 'text-slate-500';
-  };
-
-  if (typeof document === 'undefined') return null;
 
   return (
     <>
       {createPortal(
-        <nav className={`md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-200 z-[9999] pb-safe transition-transform duration-300 ${
-          isScrolling ? 'translate-y-full' : 'translate-y-0'
-        }`}>
-          <div className="flex items-center justify-around py-2 px-4">
-            {navItems.map((item) => (
-              item.isCenter ? (
-                // Center Book Button - Always prominent
-                <button
-                  key={item.id}
-                  onClick={() => handleNavClick(item)}
-                  className="relative -mt-4 flex flex-col items-center"
-                  data-testid="nav-book-appointment"
-                >
-                  <div className="w-14 h-14 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg shadow-rose-500/40 hover:scale-105 transition-all ring-3 ring-white">
-                    <item.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <span className="mt-1 text-[10px] font-bold text-rose-600">{item.label}</span>
-                </button>
-              ) : (
-                <button
-                  key={item.id}
-                  onClick={() => handleNavClick(item)}
-                  className="flex flex-col items-center gap-1 px-2 py-1.5 transition-all"
-                  data-testid={`nav-${item.id}`}
-                >
-                  <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${getIconStyle(item)}`}>
-                    <item.icon className={`w-5 h-5 ${activeTab === item.id ? 'text-white' : 'text-slate-500'}`} />
-                  </div>
-                  <span className={`text-[10px] font-semibold ${getTextStyle(item)}`}>{item.label}</span>
-                </button>
-              )
-            ))}
-          </div>
-        </nav>,
-        document.body
-      )}
-
-      {/* Booking Modal */}
-      <Dialog open={showBookingModal} onOpenChange={setShowBookingModal}>
-        <DialogContent className="max-w-sm rounded-3xl">
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl font-bold text-slate-800">
-              Book Appointment
-            </DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 pt-4">
-            <Button
-              onClick={() => {
-                mediumTap();
-                setShowBookingModal(false);
-                navigate('/diagyn');
-              }}
-              className="h-24 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 rounded-2xl"
-              data-testid="book-doctor-btn"
-            >
-              <User className="w-8 h-8" />
-              <span className="text-sm font-semibold">Doctor Appointment</span>
-            </Button>
-            <Button
-              onClick={() => {
-                mediumTap();
-                setShowBookingModal(false);
-                navigate('/diagyn?type=sonography');
-              }}
-              className="h-24 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 rounded-2xl"
-              data-testid="book-sonography-btn"
-            >
-              <Calendar className="w-8 h-8" />
-              <span className="text-sm font-semibold">Sonography</span>
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-      
-      {/* WhatsApp OTP Login Modal */}
-      <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
-        <DialogContent className="max-w-sm rounded-3xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center justify-center gap-2 text-xl font-bold text-slate-800">
-              <MessageCircle className="w-6 h-6 text-green-500" />
-              Login via WhatsApp
-            </DialogTitle>
-          </DialogHeader>
-          
-          {loginStep === 'phone' ? (
-            <div className="space-y-4 pt-2">
-              <p className="text-sm text-gray-500 text-center">
-                Enter your WhatsApp number to receive OTP
-              </p>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <Input
-                  type="tel"
-                  placeholder="10-digit WhatsApp number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  className="pl-10 h-12 text-lg rounded-xl"
-                  data-testid="login-phone-input"
-                />
-              </div>
-              <Button
-                onClick={sendOTP}
-                disabled={loading || phone.length < 10}
-                className="w-full h-12 bg-green-500 hover:bg-green-600 rounded-xl text-base"
-                data-testid="send-login-otp-btn"
-              >
-                {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <>
-                    <MessageCircle className="w-5 h-5 mr-2" />
-                    Send OTP via WhatsApp
-                  </>
-                )}
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-4 pt-2">
-              <div className="flex items-center justify-center gap-2 text-gray-600 bg-gray-50 p-2 rounded-lg">
-                <Phone className="w-4 h-4" />
-                <span className="text-sm">OTP sent to ******{phone.slice(-4)}</span>
-              </div>
-              
-              {mockOtp && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
-                  <p className="text-xs text-yellow-600 mb-1">Test Mode - Use this OTP:</p>
-                  <p className="text-2xl font-mono font-bold text-yellow-700 tracking-widest">{mockOtp}</p>
-                </div>
-              )}
-              
-              <div className="flex justify-center gap-2">
-                {otp.map((digit, index) => (
-                  <Input
-                    key={index}
-                    ref={el => otpRefs.current[index] = el}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                    className="w-11 h-14 text-center text-2xl font-bold border-2 focus:border-green-500 rounded-lg"
-                    data-testid={`login-otp-input-${index}`}
-                  />
-                ))}
-              </div>
-              
-              <Button
-                onClick={verifyOTP}
-                disabled={loading || otp.join('').length !== 6}
-                className="w-full h-12 bg-green-500 hover:bg-green-600 rounded-xl text-base"
-                data-testid="verify-login-otp-btn"
-              >
-                {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <>
-                    <Check className="w-5 h-5 mr-2" />
-                    Verify & Login
-                  </>
-                )}
-              </Button>
-              
-              <div className="flex items-center justify-between text-sm">
-                <button
-                  onClick={() => setLoginStep('phone')}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  Change number
-                </button>
-                {countdown > 0 ? (
-                  <span className="text-gray-400">Resend in {countdown}s</span>
-                ) : (
+        <>
+          {/* ── Expanded Book Bubble Menu ── */}
+          {bookExpanded && (
+            <div className="fixed inset-0 z-[9998]" onClick={() => setBookExpanded(false)} data-testid="book-overlay">
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" style={{ animation: 'navFadeIn 0.2s ease-out' }} />
+              <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex gap-6" style={{ animation: 'navBubbleUp 0.3s cubic-bezier(0.34,1.56,0.64,1)' }}>
+                {bookOptions.map((opt, i) => (
                   <button
-                    onClick={sendOTP}
-                    disabled={loading}
-                    className="text-green-600 hover:text-green-700 flex items-center gap-1"
+                    key={opt.label}
+                    onClick={(e) => { e.stopPropagation(); mediumTap(); navigate(opt.path); setBookExpanded(false); }}
+                    className="flex flex-col items-center gap-2.5"
+                    style={{ animation: `navBubbleIn 0.3s cubic-bezier(0.34,1.56,0.64,1) ${i * 60}ms both` }}
+                    data-testid={`book-${opt.label.toLowerCase().replace(' ', '-')}`}
                   >
-                    <RefreshCw className="w-3 h-3" />
-                    Resend OTP
+                    <div
+                      className="w-[60px] h-[60px] rounded-full flex items-center justify-center"
+                      style={{
+                        background: opt.bg,
+                        border: `2px solid ${opt.border}`,
+                        backdropFilter: 'blur(20px)',
+                        boxShadow: `0 8px 32px ${opt.bg}, 0 0 0 1px rgba(255,255,255,0.04)`,
+                      }}
+                    >
+                      <opt.icon className="w-6 h-6" style={{ color: opt.color }} />
+                    </div>
+                    <span className="text-[11px] font-bold text-white" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}>{opt.label}</span>
                   </button>
-                )}
+                ))}
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
 
-      {/* Bottom padding spacer */}
-      <div className="md:hidden h-20" />
+          {/* ── Bottom Nav Container ── */}
+          <nav
+            className={`md:hidden fixed bottom-0 left-0 right-0 z-[9999] transition-transform duration-300 ${isScrolling && !bookExpanded ? 'translate-y-full' : 'translate-y-0'}`}
+            style={{ transform: 'translateZ(0)' }}
+            data-testid="persistent-footer"
+          >
+            <div className="px-4 pb-3 pt-1 relative">
+              {/* ── Elevated Book FAB — floats above the bar ── */}
+              <div className="absolute left-1/2 -translate-x-1/2 -top-5 z-10">
+                <button
+                  onClick={() => { mediumTap(); setBookExpanded(!bookExpanded); }}
+                  className="relative group"
+                  data-testid="nav-book"
+                >
+                  {/* Outer glow ring */}
+                  <div className="absolute inset-0 rounded-full transition-all duration-300" style={{
+                    background: bookExpanded ? 'transparent' : 'rgba(244,63,94,0.15)',
+                    transform: 'scale(1.35)',
+                    filter: 'blur(8px)',
+                  }} />
+                  {/* Button */}
+                  <div
+                    className="relative w-[56px] h-[56px] rounded-full flex items-center justify-center transition-all duration-300 active:scale-90"
+                    style={{
+                      background: bookExpanded
+                        ? 'rgba(255,255,255,0.1)'
+                        : 'linear-gradient(135deg, #F43F5E 0%, #E11D48 50%, #BE123C 100%)',
+                      boxShadow: bookExpanded
+                        ? '0 4px 16px rgba(0,0,0,0.3)'
+                        : '0 6px 24px rgba(244,63,94,0.45), 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2)',
+                      border: bookExpanded ? '1px solid rgba(255,255,255,0.15)' : '2px solid rgba(255,255,255,0.15)',
+                      transform: bookExpanded ? 'rotate(45deg)' : 'rotate(0)',
+                      transition: 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+                    }}
+                  >
+                    {bookExpanded
+                      ? <X className="w-5 h-5 text-white/70" />
+                      : <Plus className="w-6 h-6 text-white" strokeWidth={2.5} />
+                    }
+                  </div>
+                </button>
+              </div>
+
+              {/* ── Glassmorphic bar ── */}
+              <div className="rounded-[26px] overflow-hidden" style={{
+                background: isDarkMode ? 'rgba(8,8,16,0.88)' : 'rgba(255,255,255,0.92)',
+                backdropFilter: 'blur(40px) saturate(1.6)',
+                WebkitBackdropFilter: 'blur(40px) saturate(1.6)',
+                border: isDarkMode ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(0,0,0,0.08)',
+                boxShadow: isDarkMode
+                  ? '0 -4px 32px rgba(0,0,0,0.25), 0 0 0 0.5px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.05)'
+                  : '0 -4px 32px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04)',
+              }}>
+                <div className="flex items-center py-2.5 px-3">
+                  {/* Left tabs */}
+                  <div className="flex items-center gap-1 flex-1 justify-evenly">
+                    {leftTabs.map(renderTab)}
+                  </div>
+
+                  {/* Center spacer for the FAB */}
+                  <div className="w-16 flex-shrink-0" />
+
+                  {/* Right tabs */}
+                  <div className="flex items-center gap-1 flex-1 justify-evenly">
+                    {rightTabs.map(renderTab)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nav>
+        </>,
+        document.body
+      )}
+
+      {/* Animations */}
+      <style>{`
+        @keyframes navFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes navBubbleUp { from { opacity: 0; transform: translate(-50%, 40px) scale(0.8); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+        @keyframes navBubbleIn { from { opacity: 0; transform: scale(0.3) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes navLabelIn { from { opacity: 0; max-width: 0; } to { opacity: 1; max-width: 54px; } }
+      `}</style>
+
+      {/* Spacer */}
+      <div className="md:hidden h-24" />
     </>
   );
 };

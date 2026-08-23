@@ -1,263 +1,306 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Toaster } from '@/components/ui/sonner';
+import CuraNotificationRenderer from '@/components/CuraNotification';
+import { setupCuraToast } from '@/utils/curaToast';
+import { lightTap } from '@/utils/haptics';
+
+// Intercept sonner toast → Radial Pulse notifications
+setupCuraToast();
 import Home from '@/pages/Home';
-import DiaGyn from '@/pages/DiaGyn';
-import Mango from '@/pages/Mango';
-import Pharmacy from '@/pages/Pharmacy';
-import Evara from '@/pages/Evara';
-import Glydex from '@/pages/Glydex';
-import Profile from '@/pages/Profile';
-import Admin from '@/pages/Admin';
-import AdminPanel from '@/pages/AdminPanel';
-import DiaGynStaffPortal from '@/pages/DiaGynStaffPortal';
-import OrangePharmacyStaffPortal from '@/pages/OrangePharmacyStaffPortal';
-import MangoLabsStaffPortal from '@/pages/MangoLabsStaffPortal';
-import DoctorPortal from '@/pages/DoctorPortal';
-import TrackOrder from '@/pages/TrackOrder';
-import OrderTracking from '@/pages/OrderTracking';
-import Feedback from '@/pages/Feedback';
-import PrivacyPolicy from '@/pages/PrivacyPolicy';
-import TermsOfService from '@/pages/TermsOfService';
-import AboutUs from '@/pages/AboutUs';
-// New Feature Pages
-import MyHealth from '@/pages/MyHealth';
-import HealthPackages from '@/pages/HealthPackages';
-import MembershipPlans from '@/pages/MembershipPlans';
-import ReferralProgram from '@/pages/ReferralProgram';
-import HealthTips from '@/pages/HealthTips';
-import Teleconsultation from '@/pages/Teleconsultation';
-import QuickReorder from '@/pages/QuickReorder';
-import ColorTest from '@/pages/ColorTest';
-// High Priority Features
-import EmergencyServices from '@/pages/EmergencyServices';
-import HealthRiskAssessment from '@/pages/HealthRiskAssessment';
-import MedicationTracker from '@/pages/MedicationTracker';
-import DoctorProfiles from '@/pages/DoctorProfiles';
-import Billing from '@/pages/Billing';
-// Community & Reminders
-import Community from '@/pages/Community';
-import Reminders from '@/pages/Reminders';
-// ALYNE - Kids Health
-import Alyne from '@/pages/Alyne';
-// ANC Public Form
-import ANCFormPublic from '@/pages/ANCFormPublic';
-// Diabetes Public Form
-import DiabetesFormPublic from '@/pages/DiabetesFormPublic';
-// Simple Face Attendance (for debugging)
-import SimpleFaceAttendance from '@/pages/SimpleFaceAttendance';
-// Live Queue Display
-import QueuePage from '@/pages/QueuePage';
-// Patient Health Dashboard
-import HealthDashboard from '@/pages/HealthDashboard';
-import HealthDashboardPage from '@/pages/HealthDashboardPage';
-import SettingsPage from '@/pages/SettingsPage';
-// Senior Care Charity
-import SeniorCare from '@/pages/SeniorCare';
-// Smart Medicine Reminders
-import SmartReminders from '@/pages/SmartReminders';
-// Patient Portal
-import PatientPortal from '@/pages/PatientPortal';
-// Enhancement Features Page
-import EnhancementFeatures from '@/pages/EnhancementFeatures';
-// Payment Pages
-import { PaymentSuccess, PaymentCancel } from '@/components/PaymentCheckout';
-import PaymentHistory from '@/pages/PaymentHistory';
-// New Portal Pages (Renamed)
-import Serena from '@/pages/Serena';
-import Corvia from '@/pages/Corvia';
-import Reneu from '@/pages/Reneu';
-import InnerScore from '@/pages/InnerScore';
-import FaithCare from '@/pages/FaithCare';
-import Thrive360New from '@/pages/Thrive360New';
-import Senova from '@/pages/Senova';
-import PSVNFoundation from '@/pages/PSVNFoundation';
-import MedicineImageUpload from '@/pages/MedicineImageUpload';
-import ProtonReportDownload from '@/pages/ProtonReportDownload';
-import PharmacyProductPage from '@/pages/PharmacyProductPage';
-import HowToInstall from '@/pages/HowToInstall';
-import NevikaCuraOne from '@/pages/NevikaCuraOne';
-// Login Page
-import LoginPage from '@/pages/LoginPage';
-// Patient Login (New Unified Auth)
-import PatientLogin from '@/pages/PatientLogin';
-// Unified Staff Login (Portal Selector)
-import UnifiedStaffLogin from '@/pages/UnifiedStaffLogin';
-// Separate Staff Portal Logins
-import StaffPortalLogin from '@/pages/StaffPortalLogin';
-import DoctorPortalLogin from '@/pages/DoctorPortalLogin';
-import AdminPortalLogin from '@/pages/AdminPortalLogin';
-// Super Admin Dashboard
-import SuperAdminDashboard from '@/pages/SuperAdminDashboard';
-// Intro Screen (Loading + Splash combined)
+import BrandedLoader from '@/components/BrandedLoader';
 import IntroScreen from '@/components/IntroScreen';
-// Page Transitions
-import { AnimatedPage } from '@/components/PageTransition';
+import PageErrorBoundary from '@/components/PageErrorBoundary';
+import { DiaGynSkeleton, MangoSkeleton, PharmacySkeleton, AdminSkeleton, StaffPortalSkeleton, ShimmerCSS } from '@/components/PageSkeletons';
+import { useNavigate } from 'react-router-dom';
+import RouteTransitionLoader from '@/components/RouteTransitionLoader';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { AnimatedPage, PageTransitionProvider } from '@/components/PageTransition';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ViewModeProvider } from '@/context/ViewModeContext';
 import { LanguageProvider } from '@/context/LanguageContext';
-import { FullScreenNotificationPrompt, SmartNotificationBanner } from '@/components/NotificationPrompt';
+import { CartProvider } from '@/context/CartContext';
+import { WishlistProvider } from '@/context/WishlistContext';
+import { ThemeLanguageProvider } from '@/context/ThemeLanguageContext';
+import { CartAnimationProvider } from '@/components/AddToCartAnimation';
+import FloatingCartButton from '@/components/FloatingCartButton';
+import ScrollToTop from '@/components/ScrollToTop';
+import { FestivalThemeProvider } from '@/components/FestivalBanner';
 import './App.css';
 
-// Wrapper component to access auth context
+// All lazy imports from centralized file
+import {
+  DiaGynRedesigned, Mango, MangoUltrasound, Pharmacy, OrangeMedcare, OrangeGenerics,
+  TrustedFormularyPage, Nutricare, Evara, Glydex, Profile, AdminPanel,
+  DiaGynStaffPortal, OrangePharmacyStaffPortal, MangoLabsStaffPortal, TokenDisplay,
+  DoctorPortalRedesigned, TrackOrder, MyAppointmentsPage, PatientProfile, OrderTracking, PatientDashboard,
+  Feedback, PrivacyPolicy, TermsOfService, AboutUs, MembershipPlans, DoctorProfiles,
+  Alyne, ANCFormPublic, DiabetesFormPublic, QueuePage, SettingsPage, PaymentGateway,
+  PaymentReturn, PaymentHistoryDashboard, Reneu, PSVNFoundation, MedicineImageUpload,
+  ProtonReportDownload, PharmacyProductPage, PharmacyCategory, ShopByBrand, HowToInstall,
+  NevikaCuraOne, HealthCard, GiftHealthCards, HealthPlans, CarePackages, CuraWallet,
+  CuraOne, CuraXCoins, CuraBonus, SavedAddresses, FamilyMembers, MyFavorites,
+  HealthInsights, MedicineScanner, PaymentMethods, FamilyWallet, NevikaLabs,
+  ProtonDiagnostics, Nexugene, PrescriptionWallet, AppointmentCalendar, PatientLogin,
+  StaffPortalLogin, DoctorPortalLogin, AdminPortalLogin, DoctorEMRDashboard,
+  SuperAdminDashboard, Checkout, OnlineAppointmentSuccess, CartPage,
+  BookingConfirmationPage, MyOrders, PharmacyCheckout, MangoCheckout, MangoCategory,
+  UnifiedCheckout, HealthTimeline, DoctorSearch, LiveOrderTracking, VirtualOrderTracking, DeliveryAgentTracker, PhlebotomistTracker,
+  ReturnRefundPolicy, LabReportViewer, ReferralProgram, SymptomChecker, TeleconsultPage,
+  RatingPage, MyCura, Portals, PrescriptionScannerPage, MyPrescriptions, VoiceBookingPage,
+  MedicineRemindersPage, FamilyHealthPage, OrganViewerPage, BookingAnalyticsPage,
+  CuraCoinsPage, HealthScorePage, DoctorInsightsPage, EmergencySOSPage, PaymentSuccess,
+  HealthAssistantPage, HyperlocalPage, VideoConsultPage, HealthStreaksPage, WearablesPage,
+  MedicalRecordsPage, SmartRemindersPage, RevenueDashboard, HandoffNotes,
+  EmergencyHealthCard, EmergencyScanPage, ExpressRxTracker, PostVisitPipeline,
+  AdultVaccination, HomeCare, Evercare,
+  NotificationBanner, OnboardingTour, PaymentCancel,
+} from '@/routes/lazyImports';
+
+const retryLazy = (fn) => lazy(() => fn().catch(() => { window.location.reload(); return fn(); }));
+
+const NotFoundPage = () => {
+  const nav = useNavigate();
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center" style={{ background: 'var(--bg-404, #F8FAFB)' }}>
+      <p className="text-7xl font-black mb-2" style={{ color: 'rgba(0,0,0,0.08)' }}>404</p>
+      <p className="text-lg font-semibold mb-1" style={{ color: '#1a1a2e' }}>Page not found</p>
+      <p className="text-sm text-gray-500 mb-6">The page you're looking for doesn't exist or has been moved.</p>
+      <button onClick={() => nav('/')} className="px-6 py-2.5 rounded-xl text-sm font-medium text-white"
+        style={{ background: 'linear-gradient(135deg, #0D9488, #10B981)' }} data-testid="404-go-home">
+        Go Home
+      </button>
+    </div>
+  );
+};
+
 function AppContent() {
   const { user } = useAuth();
-  
-  // Check if intro should be shown - computed immediately on render
+
   const shouldSkipIntro = () => {
-    const authToken = localStorage.getItem('authToken');
+    if (localStorage.getItem('intro_done')) return true;
+    const isRootPath = window.location.pathname === '/' || window.location.pathname === '';
+    if (!isRootPath) return true;
     const patientToken = localStorage.getItem('patientToken');
-    const guestMobile = localStorage.getItem('guestMobile');
-    
-    const isStaffPage = window.location.pathname.includes('/admin') || 
-                        window.location.pathname.includes('/staff') || 
-                        window.location.pathname.includes('/super-admin') ||
-                        window.location.pathname.includes('/diagyn-staff') ||
-                        window.location.pathname.includes('/doctor-portal') ||
-                        window.location.pathname.includes('/doctor-login') ||
-                        window.location.pathname.includes('/pharmacy-staff') ||
-                        window.location.pathname.includes('/mango-staff') ||
-                        window.location.pathname.includes('/lab-staff') ||
-                        window.location.pathname.includes('/orange-staff');
-    const isPublicPage = window.location.pathname.includes('/anc-form') ||
-                         window.location.pathname.includes('/diabetes-form') ||
-                         window.location.pathname.includes('/queue') ||
-                         window.location.pathname.includes('/report') ||
-                         window.location.pathname.includes('/medicine-images') ||
-                         window.location.pathname.includes('/order-tracking') ||
-                         window.location.pathname.includes('/login') ||
-                         window.location.pathname.includes('/profile') ||
-                         window.location.pathname.includes('/track') ||
-                         window.location.pathname.includes('/faithcare') ||
-                         window.location.pathname.includes('/innerscore');
-    
-    return isStaffPage || isPublicPage || authToken || patientToken || guestMobile || user;
+    if (patientToken || user) return true;
+    return false;
   };
-  
+
   const [showIntro, setShowIntro] = useState(() => !shouldSkipIntro());
-  
-  // Re-check when user changes
+
   useEffect(() => {
-    if (shouldSkipIntro()) {
+    if (showIntro && user) {
       setShowIntro(false);
+      localStorage.setItem('intro_done', '1');
     }
-  }, [user]);
-  
+  }, [user, showIntro]);
+
   const handleIntroComplete = () => {
     setShowIntro(false);
+    localStorage.setItem('intro_done', '1');
+    if (!localStorage.getItem('onboarding_done')) {
+      setTimeout(() => setShowOnboarding(true), 800);
+    }
   };
-  
+
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    return !!localStorage.getItem('intro_done') && !localStorage.getItem('onboarding_done');
+  });
+
+  useEffect(() => {
+    const handleGlobalClick = (e) => {
+      const el = e.target.closest('button, a, [role="button"], [data-testid], input[type="checkbox"], input[type="radio"]');
+      if (el) lightTap();
+    };
+    document.addEventListener('click', handleGlobalClick, { passive: true });
+    return () => document.removeEventListener('click', handleGlobalClick);
+  }, []);
+
   return (
     <>
-      {/* Intro Screen (Loading animation -> Splash) */}
       {showIntro && (
         <IntroScreen onComplete={handleIntroComplete} user={user} />
       )}
-      <div className="App">
+      <div className="App grain-texture" style={showIntro ? { display: 'none' } : undefined}>
+        <ScrollToTop />
+        <RouteTransitionLoader />
+        <Suspense fallback={null}><NotificationBanner /></Suspense>
+        {showOnboarding && <Suspense fallback={null}><OnboardingTour onComplete={() => setShowOnboarding(false)} /></Suspense>}
+        <PageErrorBoundary pageName="app">
         <Routes>
+          {/* Core Services */}
           <Route path="/" element={<AnimatedPage><Home /></AnimatedPage>} />
-          <Route path="/diagyn" element={<AnimatedPage><DiaGyn /></AnimatedPage>} />
-          <Route path="/mango" element={<AnimatedPage><Mango /></AnimatedPage>} />
-          <Route path="/pharmacy" element={<AnimatedPage><Pharmacy /></AnimatedPage>} />
-          <Route path="/evara" element={<AnimatedPage><Evara /></AnimatedPage>} />
-          <Route path="/glydex" element={<AnimatedPage><Glydex /></AnimatedPage>} />
-          {/* New Portal Routes (Renamed) */}
-          <Route path="/serena" element={<AnimatedPage><Serena /></AnimatedPage>} />
-          <Route path="/corvia" element={<AnimatedPage><Corvia /></AnimatedPage>} />
-          <Route path="/reneu" element={<AnimatedPage><Reneu /></AnimatedPage>} />
-          <Route path="/innerscore" element={<InnerScore />} />
-          <Route path="/faithcare" element={<FaithCare />} />
-          <Route path="/thrive360" element={<AnimatedPage><Thrive360New /></AnimatedPage>} />
-          <Route path="/senova" element={<AnimatedPage><Senova /></AnimatedPage>} />
-          <Route path="/psvn-foundation" element={<AnimatedPage><PSVNFoundation /></AnimatedPage>} />
-          <Route path="/aanya" element={<AnimatedPage><Alyne /></AnimatedPage>} />
-          <Route path="/profile" element={<AnimatedPage><Profile /></AnimatedPage>} />
-          <Route path="/login" element={<PatientLogin />} />
-          <Route path="/login-old" element={<LoginPage />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin-panel" element={<AdminPanel />} />
-          {/* Staff Portal Selector - Shows all portal options */}
-          <Route path="/staff" element={<UnifiedStaffLogin />} />
-          <Route path="/staff-login" element={<UnifiedStaffLogin />} />
-          {/* Separate Portal Logins */}
-          <Route path="/staff-portal-login" element={<StaffPortalLogin />} />
-          <Route path="/doctor-login" element={<DoctorPortalLogin />} />
-          <Route path="/admin-login" element={<AdminPortalLogin />} />
-          {/* Super Admin Dashboard */}
-          <Route path="/super-admin" element={<SuperAdminDashboard />} />
-          <Route path="/admin-dashboard" element={<SuperAdminDashboard />} />
-          {/* Individual Staff Portals */}
-          <Route path="/diagyn-staff" element={<DiaGynStaffPortal />} />
-          <Route path="/pharmacy-staff" element={<OrangePharmacyStaffPortal />} />
-          <Route path="/orange-staff" element={<OrangePharmacyStaffPortal />} />
-          <Route path="/mango-staff" element={<MangoLabsStaffPortal />} />
-          <Route path="/lab-staff" element={<MangoLabsStaffPortal />} />
-          <Route path="/doctor-portal" element={<DoctorPortal />} />
-          <Route path="/track" element={<AnimatedPage><TrackOrder /></AnimatedPage>} />
-          <Route path="/order-tracking" element={<OrderTracking />} />
-          <Route path="/feedback/:token" element={<Feedback />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsOfService />} />
-          <Route path="/about" element={<AboutUs />} />
-          {/* New Feature Routes */}
-          <Route path="/my-health" element={<AnimatedPage><MyHealth /></AnimatedPage>} />
-          <Route path="/health-packages" element={<AnimatedPage><HealthPackages /></AnimatedPage>} />
-          <Route path="/membership-plans" element={<AnimatedPage><MembershipPlans /></AnimatedPage>} />
-          <Route path="/referral" element={<AnimatedPage><ReferralProgram /></AnimatedPage>} />
-          <Route path="/health-tips" element={<AnimatedPage><HealthTips /></AnimatedPage>} />
-          <Route path="/teleconsult" element={<AnimatedPage><Teleconsultation /></AnimatedPage>} />
-          <Route path="/quick-reorder" element={<AnimatedPage><QuickReorder /></AnimatedPage>} />
-          <Route path="/color-test" element={<ColorTest />} />
-          {/* High Priority Features */}
-          <Route path="/emergency" element={<AnimatedPage><EmergencyServices /></AnimatedPage>} />
-          <Route path="/health-assessment" element={<AnimatedPage><HealthRiskAssessment /></AnimatedPage>} />
-          <Route path="/medication-tracker" element={<AnimatedPage><MedicationTracker /></AnimatedPage>} />
-          <Route path="/doctors" element={<AnimatedPage><DoctorProfiles /></AnimatedPage>} />
-          <Route path="/doctors/:doctorId" element={<AnimatedPage><DoctorProfiles /></AnimatedPage>} />
-          <Route path="/billing" element={<Billing />} />
-          {/* Community & Reminders */}
-          <Route path="/community" element={<Community />} />
-          <Route path="/reminders" element={<Reminders />} />
-          {/* ALYNE - Kids Health */}
-          <Route path="/alyne" element={<Alyne />} />
-          {/* ANC Public Form */}
-          <Route path="/anc-form/:formId" element={<ANCFormPublic />} />
-          {/* Diabetes Public Form */}
-          <Route path="/diabetes-form/:formId" element={<DiabetesFormPublic />} />
-          {/* Simple Face Attendance - for debugging */}
-          <Route path="/face-attendance" element={<SimpleFaceAttendance />} />
-          {/* Live Queue Display - Public */}
-          <Route path="/queue" element={<QueuePage />} />
-          {/* Patient Health Dashboard */}
-          <Route path="/health-dashboard" element={<HealthDashboardPage />} />
-          {/* Settings Page */}
-          <Route path="/settings" element={<SettingsPage />} />
-          {/* Senior Care Charity */}
-          <Route path="/senior-care" element={<SeniorCare />} />
-          {/* Smart Medicine Reminders */}
-          <Route path="/smart-reminders" element={<SmartReminders />} />
-          {/* Patient Portal */}
-          <Route path="/patient-portal" element={<PatientPortal />} />
-          {/* Enhancement Features */}
-          <Route path="/features" element={<EnhancementFeatures />} />
-          {/* How to Install App */}
-          <Route path="/install" element={<AnimatedPage><HowToInstall /></AnimatedPage>} />
-          {/* Payment Routes */}
-          <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/my-cura" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><MyCura /></AnimatedPage></Suspense>} />
+          <Route path="/portals" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><Portals /></AnimatedPage></Suspense>} />
+          <Route path="/diagyn" element={<Suspense fallback={<div style={{background:'#0A0A0F',minHeight:'100vh'}}/>}><AnimatedPage><DiaGynRedesigned /></AnimatedPage></Suspense>} />
+
+          {/* Mango Labs */}
+          <Route path="/mango" element={<Suspense fallback={<><ShimmerCSS /><MangoSkeleton /></>}><AnimatedPage><Mango /></AnimatedPage></Suspense>} />
+          <Route path="/mango/ultrasound" element={<Suspense fallback={<BrandedLoader variant="mango" />}><AnimatedPage><MangoUltrasound /></AnimatedPage></Suspense>} />
+          <Route path="/mango/checkout" element={<Suspense fallback={<BrandedLoader variant="mango" />}><MangoCheckout /></Suspense>} />
+          <Route path="/mango/category/:slug" element={<Suspense fallback={<BrandedLoader variant="mango" />}><MangoCategory /></Suspense>} />
+          <Route path="/labs" element={<Suspense fallback={<BrandedLoader variant="mango" />}><AnimatedPage><NevikaLabs /></AnimatedPage></Suspense>} />
+          <Route path="/proton" element={<Suspense fallback={<BrandedLoader variant="mango" />}><AnimatedPage><ProtonDiagnostics /></AnimatedPage></Suspense>} />
+          <Route path="/nexugene" element={<Suspense fallback={<BrandedLoader variant="mango" />}><AnimatedPage><Nexugene /></AnimatedPage></Suspense>} />
+
+          {/* Orange Pharmacy */}
+          <Route path="/orange" element={<Suspense fallback={<><ShimmerCSS /><PharmacySkeleton /></>}><AnimatedPage><OrangeMedcare /></AnimatedPage></Suspense>} />
+          <Route path="/orange-generics" element={<Suspense fallback={<BrandedLoader variant="orange" />}><AnimatedPage><OrangeGenerics /></AnimatedPage></Suspense>} />
+          <Route path="/pharmacy" element={<Suspense fallback={<BrandedLoader variant="orange" />}><AnimatedPage><Pharmacy /></AnimatedPage></Suspense>} />
+          <Route path="/nutricare" element={<Suspense fallback={<BrandedLoader variant="orange" />}><AnimatedPage><Nutricare /></AnimatedPage></Suspense>} />
+          <Route path="/pharmacy/checkout" element={<Suspense fallback={<BrandedLoader variant="orange" />}><PharmacyCheckout /></Suspense>} />
+          <Route path="/pharmacy/product/:productId" element={<Suspense fallback={<BrandedLoader variant="orange" />}><PharmacyProductPage /></Suspense>} />
+          <Route path="/pharmacy/brands" element={<Suspense fallback={<BrandedLoader variant="orange" />}><ShopByBrand /></Suspense>} />
+          <Route path="/pharmacy/brands/:brandName" element={<Suspense fallback={<BrandedLoader variant="orange" />}><ShopByBrand /></Suspense>} />
+          <Route path="/pharmacy/category/:categoryName" element={<Suspense fallback={<BrandedLoader variant="orange" />}><AnimatedPage><PharmacyCategory /></AnimatedPage></Suspense>} />
+          <Route path="/orange-select" element={<Suspense fallback={<BrandedLoader variant="orange" />}><AnimatedPage><TrustedFormularyPage /></AnimatedPage></Suspense>} />
+          <Route path="/trusted-formulary" element={<Suspense fallback={<BrandedLoader variant="orange" />}><AnimatedPage><TrustedFormularyPage /></AnimatedPage></Suspense>} />
+
+          {/* Sub-Portals */}
+          <Route path="/evara" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><Evara /></AnimatedPage></Suspense>} />
+          <Route path="/glydex" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><Glydex /></AnimatedPage></Suspense>} />
+          <Route path="/reneu" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><Reneu /></AnimatedPage></Suspense>} />
+          <Route path="/aanya" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><Alyne /></AnimatedPage></Suspense>} />
+          <Route path="/alyne" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><Alyne /></AnimatedPage></Suspense>} />
+          <Route path="/psvn-foundation" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><PSVNFoundation /></AnimatedPage></Suspense>} />
+
+          {/* User Pages */}
+          <Route path="/profile" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><Profile /></AnimatedPage></Suspense>} />
+          <Route path="/my-orders" element={<Suspense fallback={<BrandedLoader />}><MyOrders /></Suspense>} />
+          <Route path="/login" element={<Suspense fallback={<BrandedLoader />}><PatientLogin /></Suspense>} />
+          <Route path="/settings" element={<Suspense fallback={<BrandedLoader />}><SettingsPage /></Suspense>} />
+          <Route path="/doctors" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><DoctorProfiles /></AnimatedPage></Suspense>} />
+          <Route path="/doctors/:doctorId" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><DoctorProfiles /></AnimatedPage></Suspense>} />
+
+          {/* Admin & Staff */}
+          <Route path="/admin" element={<Suspense fallback={<BrandedLoader />}><AdminPanel /></Suspense>} />
+          <Route path="/admin-panel" element={<Suspense fallback={<BrandedLoader />}><AdminPanel /></Suspense>} />
+          <Route path="/staff" element={<Suspense fallback={<BrandedLoader />}><StaffPortalLogin /></Suspense>} />
+          <Route path="/doctor-login" element={<Suspense fallback={<BrandedLoader />}><DoctorPortalLogin /></Suspense>} />
+          <Route path="/admin-login" element={<Suspense fallback={<BrandedLoader />}><AdminPortalLogin /></Suspense>} />
+          <Route path="/super-admin" element={<Suspense fallback={<><ShimmerCSS /><AdminSkeleton /></>}><SuperAdminDashboard /></Suspense>} />
+          <Route path="/diagyn-staff" element={<Suspense fallback={<><ShimmerCSS /><StaffPortalSkeleton /></>}><DiaGynStaffPortal /></Suspense>} />
+          <Route path="/pharmacy-staff" element={<Suspense fallback={<><ShimmerCSS /><StaffPortalSkeleton /></>}><OrangePharmacyStaffPortal /></Suspense>} />
+          <Route path="/mango-staff" element={<Suspense fallback={<><ShimmerCSS /><StaffPortalSkeleton /></>}><MangoLabsStaffPortal /></Suspense>} />
+          <Route path="/token-display" element={<Suspense fallback={<BrandedLoader />}><TokenDisplay /></Suspense>} />
+          <Route path="/doctor-portal" element={<Suspense fallback={<BrandedLoader variant="diagyn" />}><DoctorPortalRedesigned /></Suspense>} />
+          <Route path="/doctor-portal/emr/:bookingId" element={<Suspense fallback={<BrandedLoader variant="diagyn" />}><DoctorEMRDashboard /></Suspense>} />
+          <Route path="/doctor-portal/payment-success" element={<Suspense fallback={<BrandedLoader />}><PaymentReturn /></Suspense>} />
+          <Route path="/revenue-dashboard" element={<Suspense fallback={<BrandedLoader />}><RevenueDashboard /></Suspense>} />
+          <Route path="/handoff-notes" element={<Suspense fallback={<BrandedLoader />}><HandoffNotes /></Suspense>} />
+          <Route path="/payment-return" element={<Suspense fallback={<BrandedLoader />}><PaymentReturn /></Suspense>} />
+
+          {/* Booking & Orders */}
+          <Route path="/booking-confirmation" element={<Suspense fallback={<BrandedLoader />}><BookingConfirmationPage /></Suspense>} />
+          <Route path="/track" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><TrackOrder /></AnimatedPage></Suspense>} />
+          <Route path="/my-appointments" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><MyAppointmentsPage /></AnimatedPage></Suspense>} />
+          <Route path="/order-tracking" element={<Suspense fallback={<BrandedLoader />}><OrderTracking /></Suspense>} />
+          <Route path="/patient-profile" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><PatientProfile /></AnimatedPage></Suspense>} />
+          <Route path="/my-portal" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><PatientDashboard /></AnimatedPage></Suspense>} />
+          <Route path="/patient-profile/addresses" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><SavedAddresses /></AnimatedPage></Suspense>} />
+          <Route path="/patient-profile/family" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><FamilyMembers /></AnimatedPage></Suspense>} />
+          <Route path="/patient-profile/favorites" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><MyFavorites /></AnimatedPage></Suspense>} />
+          <Route path="/cura-wallet" element={<Suspense fallback={<BrandedLoader variant="curapay" />}><AnimatedPage><CuraWallet /></AnimatedPage></Suspense>} />
+          <Route path="/cura-one" element={<Suspense fallback={<BrandedLoader variant="curaone" />}><AnimatedPage><CuraOne /></AnimatedPage></Suspense>} />
+          <Route path="/cura-coins" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><CuraXCoins /></AnimatedPage></Suspense>} />
+          <Route path="/cura-bonus" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><CuraBonus /></AnimatedPage></Suspense>} />
+          <Route path="/health-insights" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><HealthInsights /></AnimatedPage></Suspense>} />
+          <Route path="/medicine-scanner" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><MedicineScanner /></AnimatedPage></Suspense>} />
+          <Route path="/payment-methods" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><PaymentMethods /></AnimatedPage></Suspense>} />
+          <Route path="/family-wallet" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><FamilyWallet /></AnimatedPage></Suspense>} />
+          <Route path="/feedback/:token" element={<Suspense fallback={<BrandedLoader />}><Feedback /></Suspense>} />
+
+          {/* Legal */}
+          <Route path="/privacy" element={<Suspense fallback={<BrandedLoader />}><PrivacyPolicy /></Suspense>} />
+          <Route path="/terms" element={<Suspense fallback={<BrandedLoader />}><TermsOfService /></Suspense>} />
+          <Route path="/about" element={<Suspense fallback={<BrandedLoader />}><AboutUs /></Suspense>} />
+
+          {/* Features */}
+          <Route path="/membership-plans" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><MembershipPlans /></AnimatedPage></Suspense>} />
+          <Route path="/install" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><HowToInstall /></AnimatedPage></Suspense>} />
+          <Route path="/abha" element={<Navigate to="/" replace />} />
+          <Route path="/health-assistant" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><HealthAssistantPage /></AnimatedPage></Suspense>} />
+          <Route path="/cura-plus" element={<Navigate to="/cura-one" replace />} />
+          <Route path="/nearby" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><HyperlocalPage /></AnimatedPage></Suspense>} />
+          <Route path="/video-consult" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><VideoConsultPage /></AnimatedPage></Suspense>} />
+          <Route path="/health-streaks" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><HealthStreaksPage /></AnimatedPage></Suspense>} />
+          <Route path="/wearables" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><WearablesPage /></AnimatedPage></Suspense>} />
+
+          {/* Public Forms & Queue */}
+          <Route path="/anc-form/:formId" element={<Suspense fallback={<BrandedLoader />}><ANCFormPublic /></Suspense>} />
+          <Route path="/diabetes-form/:formId" element={<Suspense fallback={<BrandedLoader />}><DiabetesFormPublic /></Suspense>} />
+          <Route path="/queue" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><QueuePage /></AnimatedPage></Suspense>} />
+          <Route path="/health-timeline" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><HealthTimeline /></AnimatedPage></Suspense>} />
+          <Route path="/emergency-card" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><EmergencyHealthCard /></AnimatedPage></Suspense>} />
+          <Route path="/emergency-scan/:cardId" element={<Suspense fallback={<BrandedLoader />}><EmergencyScanPage /></Suspense>} />
+          <Route path="/express-rx" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><ExpressRxTracker /></AnimatedPage></Suspense>} />
+          <Route path="/post-visit" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><PostVisitPipeline /></AnimatedPage></Suspense>} />
+          <Route path="/adult-vaccination" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><AdultVaccination /></AnimatedPage></Suspense>} />
+          <Route path="/home-care" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><HomeCare /></AnimatedPage></Suspense>} />
+          <Route path="/evercare" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><Evercare /></AnimatedPage></Suspense>} />
+
+          {/* Payment */}
+          <Route path="/pay" element={<Suspense fallback={<BrandedLoader />}><PaymentGateway /></Suspense>} />
+          <Route path="/payment-success" element={<Suspense fallback={<BrandedLoader />}><PaymentSuccess /></Suspense>} />
+          <Route path="/payment/success" element={<Suspense fallback={<BrandedLoader />}><PaymentSuccess /></Suspense>} />
           <Route path="/payment/cancel" element={<PaymentCancel />} />
-          <Route path="/payment/history" element={<PaymentHistory />} />
-          {/* Medicine Image Upload - No Login Required */}
-          <Route path="/medicine-images" element={<MedicineImageUpload />} />
-          {/* Proton Report Download - Patient Access */}
-          <Route path="/report/:bookingId" element={<ProtonReportDownload />} />
-          <Route path="/report" element={<ProtonReportDownload />} />
-          {/* Pharmacy Product Page - Full Page View */}
-          <Route path="/pharmacy/product/:productId" element={<PharmacyProductPage />} />
-          {/* Nevika Cura ONE Membership Page */}
-          <Route path="/one" element={<AnimatedPage><NevikaCuraOne /></AnimatedPage>} />
+          <Route path="/payment-history" element={<Suspense fallback={<BrandedLoader />}><PaymentHistoryDashboard /></Suspense>} />
+          <Route path="/checkout" element={<Suspense fallback={<BrandedLoader />}><Checkout /></Suspense>} />
+          <Route path="/online-appointment-success" element={<Suspense fallback={<BrandedLoader />}><OnlineAppointmentSuccess /></Suspense>} />
+          <Route path="/cart" element={<Suspense fallback={<BrandedLoader />}><CartPage /></Suspense>} />
+          <Route path="/unified-checkout" element={<Suspense fallback={<BrandedLoader />}><UnifiedCheckout /></Suspense>} />
+
+          {/* Medicine & Reports */}
+          <Route path="/medicine-images" element={<Suspense fallback={<BrandedLoader />}><MedicineImageUpload /></Suspense>} />
+          <Route path="/report/:bookingId" element={<Suspense fallback={<BrandedLoader />}><ProtonReportDownload /></Suspense>} />
+          <Route path="/report" element={<Suspense fallback={<BrandedLoader />}><ProtonReportDownload /></Suspense>} />
+          <Route path="/prescriptions" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><PrescriptionWallet /></AnimatedPage></Suspense>} />
+          <Route path="/appointment-calendar" element={<Suspense fallback={<BrandedLoader variant="diagyn" />}><AnimatedPage><AppointmentCalendar /></AnimatedPage></Suspense>} />
+
+          {/* Membership & Revenue */}
+          <Route path="/one" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><NevikaCuraOne /></AnimatedPage></Suspense>} />
+          <Route path="/health-card" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><HealthCard /></AnimatedPage></Suspense>} />
+          <Route path="/gift-cards" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><GiftHealthCards /></AnimatedPage></Suspense>} />
+          <Route path="/health-plans" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><HealthPlans /></AnimatedPage></Suspense>} />
+          <Route path="/care-programs" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><CarePackages /></AnimatedPage></Suspense>} />
+
+          {/* Feature Pages */}
+          <Route path="/doctor-search" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><DoctorSearch /></AnimatedPage></Suspense>} />
+          <Route path="/live-tracking" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><LiveOrderTracking /></AnimatedPage></Suspense>} />
+          <Route path="/track-delivery" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><VirtualOrderTracking /></AnimatedPage></Suspense>} />
+          <Route path="/deliver/:orderId" element={<Suspense fallback={<BrandedLoader variant="orange" />}><DeliveryAgentTracker /></Suspense>} />
+          <Route path="/deliver" element={<Suspense fallback={<BrandedLoader variant="orange" />}><DeliveryAgentTracker /></Suspense>} />
+          <Route path="/collect/:bookingId" element={<Suspense fallback={<BrandedLoader variant="mango" />}><PhlebotomistTracker /></Suspense>} />
+          <Route path="/collect" element={<Suspense fallback={<BrandedLoader variant="mango" />}><PhlebotomistTracker /></Suspense>} />
+          <Route path="/return-refund-policy" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><ReturnRefundPolicy /></AnimatedPage></Suspense>} />
+          <Route path="/lab-reports" element={<Suspense fallback={<BrandedLoader variant="mango" />}><AnimatedPage><LabReportViewer /></AnimatedPage></Suspense>} />
+          <Route path="/referral" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><ReferralProgram /></AnimatedPage></Suspense>} />
+          <Route path="/symptom-checker" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><SymptomChecker /></AnimatedPage></Suspense>} />
+          <Route path="/teleconsult" element={<Suspense fallback={<BrandedLoader variant="diagyn" />}><AnimatedPage><TeleconsultPage /></AnimatedPage></Suspense>} />
+          <Route path="/rate-visit" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><RatingPage /></AnimatedPage></Suspense>} />
+          <Route path="/prescription-scanner" element={<Suspense fallback={<BrandedLoader variant="orange" />}><AnimatedPage><PrescriptionScannerPage /></AnimatedPage></Suspense>} />
+          <Route path="/my-prescriptions" element={<Suspense fallback={<BrandedLoader variant="orange" />}><AnimatedPage><MyPrescriptions /></AnimatedPage></Suspense>} />
+          <Route path="/voice-booking" element={<Suspense fallback={<BrandedLoader variant="diagyn" />}><AnimatedPage><VoiceBookingPage /></AnimatedPage></Suspense>} />
+          <Route path="/medicine-reminders" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><MedicineRemindersPage /></AnimatedPage></Suspense>} />
+          <Route path="/family-health" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><FamilyHealthPage /></AnimatedPage></Suspense>} />
+          <Route path="/organ-viewer" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><OrganViewerPage /></AnimatedPage></Suspense>} />
+          <Route path="/booking-analytics" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><BookingAnalyticsPage /></AnimatedPage></Suspense>} />
+          <Route path="/curacoins" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><CuraCoinsPage /></AnimatedPage></Suspense>} />
+          <Route path="/health-score" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><HealthScorePage /></AnimatedPage></Suspense>} />
+          <Route path="/health-calendar" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage>{React.createElement(retryLazy(() => import('@/pages/HealthCalendarPage')))}</AnimatedPage></Suspense>} />
+          <Route path="/doctor-insights" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><DoctorInsightsPage /></AnimatedPage></Suspense>} />
+          <Route path="/emergency-sos" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><EmergencySOSPage /></AnimatedPage></Suspense>} />
+          <Route path="/medical-records" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><MedicalRecordsPage /></AnimatedPage></Suspense>} />
+          <Route path="/smart-reminders" element={<Suspense fallback={<BrandedLoader />}><AnimatedPage><SmartRemindersPage /></AnimatedPage></Suspense>} />
+
+          {/* 404 */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
-        <Toaster position="top-center" richColors />
-        <SmartNotificationBanner />
+        </PageErrorBoundary>
+        <Toaster position="top-center" richColors toastOptions={{ style: { display: 'none' } }} />
+        <CuraNotificationRenderer />
+        <FloatingCartButton />
       </div>
     </>
   );
@@ -265,15 +308,27 @@ function AppContent() {
 
 function App() {
   return (
+    <ErrorBoundary>
     <AuthProvider>
+      <FestivalThemeProvider>
+      <ThemeLanguageProvider>
       <LanguageProvider>
         <ViewModeProvider>
-          <BrowserRouter>
-            <AppContent />
-          </BrowserRouter>
+          <CartProvider>
+            <WishlistProvider>
+            <CartAnimationProvider>
+              <BrowserRouter>
+                <AppContent />
+              </BrowserRouter>
+            </CartAnimationProvider>
+            </WishlistProvider>
+          </CartProvider>
         </ViewModeProvider>
       </LanguageProvider>
+      </ThemeLanguageProvider>
+      </FestivalThemeProvider>
     </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

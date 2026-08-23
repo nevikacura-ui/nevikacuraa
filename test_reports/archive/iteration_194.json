@@ -1,0 +1,142 @@
+{
+  "summary": "Completed testing for Iteration 194 - Payment Methods CRUD and WhatsApp Wallet Notification Templates. Backend: All 14 API tests PASSED (8 payment methods CRUD tests + 5 notification tests + 1 seeded data verification). Frontend: Payment Methods page (/payment-methods) loads correctly showing seeded UPI (rahul@ybl) and Card (****4567 Visa) methods. Add Payment modal works with UPI/Card toggle, validation correctly rejects UPI without @ sign. Card form has all required fields (last4, network Visa/MC/RuPay, holder, expiry). Patient Profile shows Payment Methods menu item with blue gradient icon. Theme uses dark background and Outfit font consistently.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "IntroScreen",
+        "issues": ["IntroScreen overlay (z-[99999]) blocks interactions when navigating within app. This is existing behavior mentioned in iteration 193. Not blocking direct URL navigation to /payment-methods or /patient-profile."]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_payment_methods_notifications.py",
+    "/app/test_reports/pytest/pytest_payment_notifications_194.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Payment methods API correctly validates upi_id (required for UPI) and card_last4 (required for Card)",
+    "WhatsApp notifications are MOCKED - send_whatsapp not configured, templates logged with preview returned",
+    "All 3 WhatsApp templates correctly mention Orange Pharmacy and Mango Health Labs as per requirements"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_payment_methods_notifications.py"
+  ],
+  "success_rate": {
+    "backend": "100% - 14/14 tests passed",
+    "frontend": "100% - Payment Methods page and forms work correctly"
+  },
+  "test_credentials": "Phone: 9876543210, Guest mode",
+  "seed_data_creation": "Payment methods seeded: UPI (rahul@ybl), Card (****4567 Visa, Rahul Kumar, Exp 12/28)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Payment Methods CRUD fully functional. API endpoints: POST /api/payment-methods (save UPI/Card), GET /api/payment-methods/{phone} (list), DELETE /api/payment-methods/{pm_id} (remove), PUT /api/payment-methods/{pm_id}/default?phone={phone} (set default). WhatsApp notifications: POST /api/notify/wallet-reward, /api/notify/coins-redeemed, /api/notify/wallet-refund all work but are MOCKED (send_whatsapp not configured). GET /api/notify/templates returns 3 templates with samples mentioning Orange Pharmacy and Mango Health Labs. Frontend Payment Methods page has data-testid attributes: payment-methods-page, add-payment-btn, payment-form-modal, select-upi, select-card, input-upi-id, input-card-last4, input-card-holder, input-card-expiry, save-payment-btn.",
+  "feature_verification": {
+    "backend_apis": {
+      "payment_methods_save_upi": {
+        "endpoint": "POST /api/payment-methods",
+        "status": "PASS",
+        "test_case": "method_type=upi with upi_id saves correctly"
+      },
+      "payment_methods_save_card": {
+        "endpoint": "POST /api/payment-methods",
+        "status": "PASS",
+        "test_case": "method_type=card with card_last4/network/holder/expiry saves correctly"
+      },
+      "payment_methods_validation_upi": {
+        "endpoint": "POST /api/payment-methods",
+        "status": "PASS",
+        "test_case": "Returns 400 when upi_id missing for UPI type"
+      },
+      "payment_methods_validation_card": {
+        "endpoint": "POST /api/payment-methods",
+        "status": "PASS",
+        "test_case": "Returns 400 when card_last4 missing for Card type"
+      },
+      "payment_methods_get": {
+        "endpoint": "GET /api/payment-methods/{phone}",
+        "status": "PASS",
+        "test_case": "Returns list of payment methods for phone"
+      },
+      "payment_methods_delete": {
+        "endpoint": "DELETE /api/payment-methods/{pm_id}",
+        "status": "PASS",
+        "test_case": "Deletes method, returns 404 for unknown ID"
+      },
+      "payment_methods_set_default": {
+        "endpoint": "PUT /api/payment-methods/{pm_id}/default",
+        "status": "PASS",
+        "test_case": "Sets is_default=true, clears other defaults for same phone"
+      },
+      "wallet_reward_notification": {
+        "endpoint": "POST /api/notify/wallet-reward",
+        "status": "PASS (MOCKED)",
+        "test_case": "Logs notification, returns preview mentioning Orange Pharmacy and Mango Health Labs"
+      },
+      "coins_redeemed_notification": {
+        "endpoint": "POST /api/notify/coins-redeemed",
+        "status": "PASS (MOCKED)",
+        "test_case": "Logs notification with DiaGyn Healthcare, Orange Pharmacy, Mango Health Labs"
+      },
+      "wallet_refund_notification": {
+        "endpoint": "POST /api/notify/wallet-refund",
+        "status": "PASS (MOCKED)",
+        "test_case": "Logs notification mentioning all partner brands"
+      },
+      "notification_templates": {
+        "endpoint": "GET /api/notify/templates",
+        "status": "PASS",
+        "test_case": "Returns 3 templates (cura_wallet_reward, cura_coins_redeemed, cura_wallet_refund) with variables and samples"
+      },
+      "notification_history": {
+        "endpoint": "GET /api/notifications/wallet/{phone}",
+        "status": "PASS",
+        "test_case": "Returns notification history with template, message, created_at"
+      }
+    },
+    "frontend_ui": {
+      "payment_methods_page": {
+        "url": "/payment-methods",
+        "page_loads": "PASS",
+        "header": "PASS - Shows 'Payment Methods' title with back and add buttons",
+        "security_badge": "PASS - Shows 'encrypted & secured by Cashfree'",
+        "seeded_upi": "PASS - Shows rahul@ybl with UPI label",
+        "seeded_card": "PASS - Shows ****4567 Visa with holder and expiry",
+        "add_modal": "PASS - Opens on add button click"
+      },
+      "add_payment_modal": {
+        "upi_card_toggle": "PASS - UPI and Card toggle buttons work",
+        "upi_form": "PASS - UPI ID input with validation",
+        "card_form": "PASS - Last 4, Network (Visa/MC/RuPay), Holder, Expiry fields",
+        "default_checkbox": "PASS - Set as default payment method option",
+        "save_button": "PASS - Save UPI/Card button changes based on selection"
+      },
+      "upi_validation": {
+        "status": "PASS",
+        "test_case": "Shows 'Enter a valid UPI ID' error toast when @ missing"
+      },
+      "patient_profile_menu": {
+        "payment_methods_item": "PASS - Menu item with CreditCard icon, blue gradient, 'Manage UPI & cards (Cashfree)' subtitle"
+      },
+      "theme_consistency": {
+        "dark_background": "PASS - Uses #050510 dark theme",
+        "outfit_font": "PASS - Outfit font family applied",
+        "glass_morphism": "PASS - Uses backdrop-blur and subtle borders"
+      }
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": [
+      "/api/notify/wallet-reward - WhatsApp not configured, logs notification with preview",
+      "/api/notify/coins-redeemed - WhatsApp not configured, logs notification with preview",
+      "/api/notify/wallet-refund - WhatsApp not configured, logs notification with preview",
+      "/api/health-stats/{phone} - Returns mock health metrics (from iteration 193)"
+    ]
+  }
+}

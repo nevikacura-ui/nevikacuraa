@@ -9,7 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         heading: ['Outfit', 'sans-serif'],
-        body: ['DM Sans', 'sans-serif']
+        body: ['Figtree', 'DM Sans', 'sans-serif']
       },
       borderRadius: {
         lg: 'var(--radius)',

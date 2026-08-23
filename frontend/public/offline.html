@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nevika Cura - Offline</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0A0A0F;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 420px;
+    }
+    .icon {
+      width: 80px; height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #14b8a6, #0891b2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, #14b8a6, #0891b2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p { color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; }
+    .actions { display: flex; flex-direction: column; gap: 0.75rem; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0.75rem 1.5rem; border-radius: 12px;
+      font-size: 0.9rem; font-weight: 600;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: linear-gradient(135deg, #14b8a6, #0891b2); color: #fff; }
+    .btn-secondary { background: rgba(255,255,255,0.08); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.1); }
+    .services {
+      margin-top: 2rem; padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .services h3 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+    .service-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .service-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.5rem 0.75rem; border-radius: 8px;
+      background: rgba(255,255,255,0.04); text-align: left;
+    }
+    .service-item span { font-size: 0.85rem; color: #cbd5e1; }
+    .service-item a { color: #14b8a6; text-decoration: none; font-weight: 500; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+        <path d="M10.71 5.05A16 16 0 0 1 22.56 9"></path>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
+    </div>
+    <h1>You're Offline</h1>
+    <p>It looks like you've lost your internet connection. Some features may still be available from cached data.</p>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="window.location.reload()">Try Again</button>
+      <a href="/" class="btn btn-secondary">Go to Home</a>
+    </div>
+    <div class="services">
+      <h3>Need help now?</h3>
+      <div class="service-list">
+        <div class="service-item">
+          <span>DiaGyn Healthcare</span>
+          <a href="tel:+917039020020">7039020020</a>
+        </div>
+        <div class="service-item">
+          <span>Orange Pharmacy</span>
+          <a href="tel:+917039030030">7039030030</a>
+        </div>
+        <div class="service-item">
+          <span>Mango Health Labs</span>
+          <a href="tel:+917039040040">7039040040</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

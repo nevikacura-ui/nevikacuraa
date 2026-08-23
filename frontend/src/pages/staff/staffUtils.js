@@ -8,27 +8,22 @@ export const API = process.env.REACT_APP_BACKEND_URL + '/api';
 
 // Clinic to Doctors mapping
 export const CLINICS = {
-  'Pushpa Clinic': ['Dr. Vikas Jha', 'Dr. Neha Patel'],
-  'Amnion Clinic': ['Dr. Vikas Jha', 'Dr. Neha Patel']
+  'Pushpa Clinic': ['Dr. Vikas Jha', 'Dr. Neha Patel']
 };
 
 // Doctor schedules with time slots
 export const DOCTOR_SCHEDULES = {
   'Dr. Vikas Jha': {
     'Pushpa Clinic': [
-      { days: ['Monday', 'Wednesday', 'Friday'], time: '06:00 PM - 10:00 PM' }
-    ],
-    'Amnion Clinic': [
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00 AM - 02:00 PM' },
+      { days: ['Monday', 'Wednesday', 'Friday'], time: '06:00 PM - 10:00 PM' },
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:30 AM - 02:00 PM' },
       { days: ['Tuesday', 'Thursday', 'Saturday'], time: '06:00 PM - 10:00 PM' }
     ]
   },
   'Dr. Neha Patel': {
     'Pushpa Clinic': [
-      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00 AM - 02:00 PM' },
-      { days: ['Tuesday', 'Thursday', 'Saturday'], time: '06:00 PM - 10:00 PM' }
-    ],
-    'Amnion Clinic': [
+      { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:30 AM - 02:00 PM' },
+      { days: ['Tuesday', 'Thursday', 'Saturday'], time: '06:00 PM - 10:00 PM' },
       { days: ['Monday', 'Wednesday', 'Friday'], time: '06:00 PM - 10:00 PM' }
     ]
   }

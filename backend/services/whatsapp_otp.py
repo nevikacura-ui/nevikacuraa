@@ -46,11 +46,15 @@ def generate_otp() -> str:
 
 
 def clean_phone_number(phone: str) -> str:
+    """Clean phone number - preserve country code if present, default to India (91)"""
     clean_phone = str(phone).replace("+", "").replace(" ", "").replace("-", "")
+    # If it's exactly 10 digits, assume India
     if len(clean_phone) == 10:
         clean_phone = "91" + clean_phone
-    elif not clean_phone.startswith("91"):
-        clean_phone = "91" + clean_phone[-10:]
+    # If it's too short (less than 10), assume India
+    elif len(clean_phone) < 10:
+        clean_phone = "91" + clean_phone
+    # Otherwise, the number already includes country code — leave it as-is
     return clean_phone
 
 
@@ -62,6 +66,7 @@ async def send_whatsapp_otp(
     """
     Send OTP via WhatsApp using MSG91 nevika_otp_verify template
     Template has: body with OTP variable + URL button with OTP parameter
+    Production-ready: No mock OTP bypass - strictly WhatsApp API
     """
     clean_phone = clean_phone_number(phone)
     otp = generate_otp()

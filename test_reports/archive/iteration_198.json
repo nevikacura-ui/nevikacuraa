@@ -1,0 +1,113 @@
+{
+  "summary": "Iteration 198: Testing Holi gradient buttons on homepage and ANC Registration tab in DiaGyn Staff Portal. All features verified working: 1) Homepage buttons (Book Now, Book Tests, Shop Now) have multi-color gradient styling with pill shape (rounded-full), 2) Heart icon in Nevika Cura tab is pink and filled, 3) DiaGyn Staff Portal has 8 tabs in 4x2 grid with unique colors, 4) ANC tab shows full registration form with all fields, 5) Backend ANC endpoints working (register + email).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_anc_features_198.py",
+    "/app/test_reports/pytest/pytest_anc_features_198.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "All 5 backend tests passed for ANC features (register endpoint, email endpoint, field validation)",
+    "ANC registration POST /api/anc/register returns registration_id, EDD, gestational age",
+    "ANC email POST /api/clinic/anc-send-email successfully sends formatted email to nevikacura@gmail.com via Resend",
+    "Homepage buttons (Book Now, Book Tests, Shop Now) have gradient background-image and border-radius: 9999px (pill shape)",
+    "Heart icon in Nevika Cura tab has pink fill color (rgb(236, 72, 153)) and is visible against dark background",
+    "DiaGyn Staff Portal has 8 navigation tabs in grid-cols-4 layout (4x2 grid)",
+    "Each nav tab has unique color: blue, green, amber, purple, pink, cyan, red, orange",
+    "ANC form has all required fields: Patient Name, Age, Phone, Address, Husband Name, LMP, G/P/A/L, Blood Group, Rh Factor, Weight, Height, Medical History checkboxes, Clinic, Doctor",
+    "Register & Email Form button submits to both /api/anc/register and /api/clinic/anc-send-email"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_anc_features_198.py"
+  ],
+  "success_rate": {
+    "backend": "100% - 5/5 tests passed",
+    "frontend": "100% - All UI elements verified"
+  },
+  "test_credentials": {
+    "staff_diagyn": "test1234",
+    "dr_vikas": "test1234"
+  },
+  "seed_data_creation": "Created 2 test ANC registrations: ANC-PUS-2026-8752B6 (Pushpa), ANC-AMN-2026-C231D5 (Amnion)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All new features verified: 1) Holi gradient buttons on homepage work with multi-color gradient and pill shape, 2) Heart icon is pink/filled in Nevika Cura tab, 3) DiaGyn Staff Portal has 8 tabs (Today, Code, Walk-in, Book, ANC, History, Token, Summary) in 4x2 grid with unique colors, 4) ANC registration form has all fields without BP (as specified), includes Address field, 5) Backend endpoints /api/anc/register and /api/clinic/anc-send-email work correctly.",
+  "feature_verification": {
+    "Homepage_Holi_Gradient_Buttons": {
+      "Book_Now": {
+        "status": "PASS",
+        "location": "Home.js - DiaGyn service card line ~515",
+        "gradient": "linear-gradient(135deg, festival.colors[0], festival.colors[1], festival.colors[2])",
+        "shape": "rounded-full (border-radius: 9999px)"
+      },
+      "Book_Tests": {
+        "status": "PASS",
+        "location": "Home.js - Mango service card line ~538",
+        "gradient": "linear-gradient(135deg, multi-color)",
+        "shape": "rounded-full"
+      },
+      "Shop_Now": {
+        "status": "PASS",
+        "location": "Home.js - Pharmacy service card line ~560",
+        "gradient": "linear-gradient(135deg, multi-color)",
+        "shape": "rounded-full"
+      }
+    },
+    "Heart_Icon_Fix": {
+      "status": "PASS",
+      "location": "ServiceHeader.jsx line ~239-248",
+      "fill_color": "rgb(236, 72, 153) - pink/rose",
+      "visible_against_dark": true
+    },
+    "DiaGyn_Staff_Portal_8_Tabs": {
+      "status": "PASS",
+      "layout": "grid-cols-4 (4x2 grid)",
+      "tabs": [
+        {"id": "appointments", "label": "Today", "color": "#3B82F6 (blue)"},
+        {"id": "checkin", "label": "Code", "color": "#10B981 (green)"},
+        {"id": "walkin", "label": "Walk-in", "color": "#F59E0B (amber)"},
+        {"id": "book", "label": "Book", "color": "#8B5CF6 (purple)"},
+        {"id": "anc", "label": "ANC", "color": "#EC4899 (pink)"},
+        {"id": "history", "label": "History", "color": "#06B6D4 (cyan)"},
+        {"id": "token", "label": "Token", "color": "#EF4444 (red)"},
+        {"id": "summary", "label": "Summary", "color": "#F97316 (orange)"}
+      ]
+    },
+    "ANC_Registration_Form": {
+      "status": "PASS",
+      "fields_present": [
+        "Patient Name*", "Age*", "Phone*", "Address*", "Aadhaar",
+        "Husband Name*", "Husband Phone", "Occupation",
+        "LMP*", "G/P/A/L fields",
+        "Blood Group", "Rh Factor", "Weight (kg)", "Height (cm)",
+        "Medical History checkboxes (Previous Cesarean, Diabetes, Hypertension, Thyroid)",
+        "Clinic selector", "Doctor selector"
+      ],
+      "bp_field": "NOT included (as per requirement - basic ANC form)",
+      "submit_button": "Register & Email Form"
+    },
+    "Backend_ANC_Register": {
+      "status": "PASS",
+      "endpoint": "POST /api/anc/register",
+      "returns": "registration_id, edd, gestational_age, patient_name, clinic"
+    },
+    "Backend_ANC_Email": {
+      "status": "PASS",
+      "endpoint": "POST /api/clinic/anc-send-email",
+      "recipient": "nevikacura@gmail.com",
+      "provider": "Resend API"
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  }
+}

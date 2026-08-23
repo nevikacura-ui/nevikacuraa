@@ -1,26 +1,28 @@
 """
 Prescription OCR and Medicine Extraction
-Uses Gemini Vision to extract medicine names from prescription images
+Uses Gemini Vision via emergentintegrations to extract medicine names from prescription images
 """
 
 import os
 import re
 import base64
+import json
 import logging
-import httpx
+import uuid
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from typing import List, Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/prescription", tags=["Prescription OCR"])
 
-# Database reference (set by server.py)
 db = None
 
 def set_db(database):
-    """Set database instance from server.py"""
     global db
     db = database
 
@@ -36,135 +38,127 @@ class PrescriptionOCRResponse(BaseModel):
     medicines: List[ExtractedMedicine]
     raw_text: Optional[str] = None
     confidence: Optional[str] = None
+    doctor_name: Optional[str] = None
+    date: Optional[str] = None
     message: str
 
-@router.post("/extract", response_model=PrescriptionOCRResponse)
-async def extract_medicines_from_prescription(file: UploadFile = File(...)):
-    """
-    Extract medicine names from a prescription image using AI vision
-    """
-    try:
-        # Validate file type
-        if not file.content_type or not file.content_type.startswith('image/'):
-            raise HTTPException(status_code=400, detail="Please upload an image file (JPG, PNG)")
-        
-        # Read file content
-        content = await file.read()
-        if len(content) > 10 * 1024 * 1024:  # 10MB limit
-            raise HTTPException(status_code=400, detail="Image too large. Maximum 10MB allowed.")
-        
-        # Convert to base64
-        base64_image = base64.standard_b64encode(content).decode('utf-8')
-        
-        # Get Emergent LLM key
-        emergent_key = os.environ.get('EMERGENT_LLM_KEY')
-        if not emergent_key:
-            logger.warning("EMERGENT_LLM_KEY not found, returning mock data")
-            return PrescriptionOCRResponse(
-                success=True,
-                medicines=[
-                    ExtractedMedicine(name="Metformin 500mg", dosage="500mg", frequency="Twice daily", duration="30 days", quantity=60),
-                    ExtractedMedicine(name="Amlodipine 5mg", dosage="5mg", frequency="Once daily", duration="30 days", quantity=30),
-                ],
-                raw_text="[Mock extraction - API key not configured]",
-                confidence="mock",
-                message="Extracted 2 medicines (demo mode)"
-            )
-        
-        # Use emergentintegrations for Gemini
-        try:
-            from emergentintegrations.llm import GeminiIntegration
-            
-            gemini = GeminiIntegration(api_key=emergent_key)
-            
-            prompt = """Analyze this prescription image and extract all medicine information.
+SYSTEM_PROMPT = """You are a medical prescription OCR expert. You analyze prescription images and extract structured medicine information. Always return valid JSON. Be precise with medicine names, dosages, and frequencies. If handwriting is unclear, provide your best interpretation."""
+
+EXTRACTION_PROMPT = """Analyze this prescription image carefully and extract ALL medicine information.
 
 For each medicine found, provide:
-1. Medicine name (including brand name and generic if visible)
+1. Medicine name (brand name + generic if visible)
 2. Dosage (e.g., 500mg, 10mg)
 3. Frequency (e.g., once daily, twice daily, before meals)
 4. Duration (e.g., 7 days, 2 weeks, 1 month)
 5. Quantity if specified
 
-Return the information in this exact JSON format:
+Return ONLY valid JSON in this exact format (no markdown, no code blocks):
 {
     "medicines": [
         {
             "name": "Medicine Name",
-            "dosage": "dosage",
-            "frequency": "how often",
-            "duration": "how long",
-            "quantity": number or null
+            "dosage": "dosage or null",
+            "frequency": "how often or null",
+            "duration": "how long or null",
+            "quantity": null
         }
     ],
-    "raw_text": "Any other relevant text from prescription",
-    "doctor_name": "if visible",
-    "date": "if visible"
+    "raw_text": "All readable text from the prescription",
+    "doctor_name": "Doctor name if visible or null",
+    "date": "Prescription date if visible or null"
 }
 
-If you cannot read the prescription clearly, still provide your best attempt with whatever is readable.
-If no medicines are found, return an empty medicines array."""
-            
-            # Use Gemini with image
-            response = await gemini.generate_with_image(
-                prompt=prompt,
-                image_base64=base64_image,
-                mime_type=file.content_type
-            )
-            
-            # Parse the response
-            import json
-            try:
-                # Try to extract JSON from response
-                json_match = re.search(r'\{[\s\S]*\}', response)
-                if json_match:
-                    parsed = json.loads(json_match.group())
-                    medicines = []
-                    for med in parsed.get('medicines', []):
-                        medicines.append(ExtractedMedicine(
-                            name=med.get('name', ''),
-                            dosage=med.get('dosage'),
-                            frequency=med.get('frequency'),
-                            duration=med.get('duration'),
-                            quantity=med.get('quantity')
-                        ))
-                    
-                    return PrescriptionOCRResponse(
-                        success=True,
-                        medicines=medicines,
-                        raw_text=parsed.get('raw_text'),
-                        confidence="high" if len(medicines) > 0 else "low",
-                        message=f"Extracted {len(medicines)} medicine(s) from prescription"
-                    )
-            except json.JSONDecodeError:
-                pass
-            
-            # If JSON parsing fails, return raw response
-            return PrescriptionOCRResponse(
-                success=True,
-                medicines=[],
-                raw_text=response,
-                confidence="low",
-                message="Could not parse prescription. Please enter medicines manually."
-            )
-            
-        except ImportError:
-            logger.warning("emergentintegrations not installed")
-            # Fallback: Return mock data
-            return PrescriptionOCRResponse(
-                success=True,
-                medicines=[
-                    ExtractedMedicine(name="Medicine from prescription", dosage="As prescribed", frequency="As directed"),
-                ],
-                raw_text="[Emergent integrations not available]",
-                confidence="mock",
-                message="Prescription uploaded. Our pharmacist will review and suggest medicines."
-            )
-            
+If no medicines are found, return {"medicines": [], "raw_text": "description of what you see", "doctor_name": null, "date": null}."""
+
+
+@router.post("/extract", response_model=PrescriptionOCRResponse)
+async def extract_medicines_from_prescription(file: UploadFile = File(...)):
+    """Extract medicine names from a prescription image using Gemini Vision"""
+    try:
+        if not file.content_type or not file.content_type.startswith('image/'):
+            raise HTTPException(status_code=400, detail="Please upload an image file (JPG, PNG, WEBP)")
+
+        content = await file.read()
+        if len(content) > 10 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="Image too large. Maximum 10MB allowed.")
+
+        base64_image = base64.standard_b64encode(content).decode('utf-8')
+
+        emergent_key = os.environ.get('EMERGENT_LLM_KEY')
+        if not emergent_key:
+            logger.warning("EMERGENT_LLM_KEY not configured")
+            raise HTTPException(status_code=500, detail="OCR service not configured")
+
+        from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
+
+        chat = LlmChat(
+            api_key=emergent_key,
+            session_id=f"prescription-ocr-{uuid.uuid4().hex[:8]}",
+            system_message=SYSTEM_PROMPT
+        ).with_model("gemini", "gemini-2.5-flash")
+
+        image_content = ImageContent(image_base64=base64_image)
+
+        user_message = UserMessage(
+            text=EXTRACTION_PROMPT,
+            file_contents=[image_content]
+        )
+
+        response = await chat.send_message(user_message)
+        logger.info(f"Gemini OCR response length: {len(response)}")
+
+        # Parse JSON from response
+        try:
+            # Strip markdown code blocks if present
+            cleaned = response.strip()
+            if cleaned.startswith("```"):
+                cleaned = re.sub(r'^```(?:json)?\s*', '', cleaned)
+                cleaned = re.sub(r'\s*```$', '', cleaned)
+
+            json_match = re.search(r'\{[\s\S]*\}', cleaned)
+            if json_match:
+                parsed = json.loads(json_match.group())
+                medicines = []
+                for med in parsed.get('medicines', []):
+                    qty = med.get('quantity')
+                    if qty is not None:
+                        try:
+                            qty = int(qty)
+                        except (ValueError, TypeError):
+                            qty = None
+                    medicines.append(ExtractedMedicine(
+                        name=med.get('name', 'Unknown Medicine'),
+                        dosage=med.get('dosage'),
+                        frequency=med.get('frequency'),
+                        duration=med.get('duration'),
+                        quantity=qty
+                    ))
+
+                return PrescriptionOCRResponse(
+                    success=True,
+                    medicines=medicines,
+                    raw_text=parsed.get('raw_text'),
+                    confidence="high" if len(medicines) > 0 else "low",
+                    doctor_name=parsed.get('doctor_name'),
+                    date=parsed.get('date'),
+                    message=f"Extracted {len(medicines)} medicine(s) from prescription"
+                )
+        except json.JSONDecodeError:
+            logger.warning(f"Failed to parse JSON from Gemini response: {response[:200]}")
+
+        return PrescriptionOCRResponse(
+            success=True,
+            medicines=[],
+            raw_text=response[:500],
+            confidence="low",
+            message="Could not parse prescription. Please try a clearer image or enter medicines manually."
+        )
+
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Prescription OCR error: {str(e)}")
+        logger.error(f"Prescription OCR error: {str(e)}", exc_info=True)
         return PrescriptionOCRResponse(
             success=False,
             medicines=[],
@@ -172,6 +166,7 @@ If no medicines are found, return an empty medicines array."""
             confidence="error",
             message=f"Failed to process prescription: {str(e)}"
         )
+
 
 @router.get("/common-medicines")
 async def get_common_medicines():

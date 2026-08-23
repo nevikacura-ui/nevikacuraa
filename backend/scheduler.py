@@ -19,7 +19,7 @@ logging.basicConfig(
 logger = logging.getLogger("nevika_scheduler")
 
 # Configuration
-API_URL = os.environ.get("API_URL", "https://staff-pay-portal-1.preview.emergentagent.com")
+API_URL = os.environ.get("API_URL", "https://premium-rx-portal.preview.emergentagent.com")
 CRON_SECRET = os.environ.get("CRON_SECRET", "nevika_cron_2026")
 
 # Scheduler intervals (in seconds)
@@ -56,6 +56,7 @@ async def run_all_reminders():
         tasks = [
             call_cron_endpoint(session, "appointment-reminders", "Appointment Reminders"),
             call_cron_endpoint(session, "sonography-reminders", "Sonography Reminders"),
+            call_cron_endpoint(session, "faithcare-reminders", "FaithCare Sehri/Iftar"),
         ]
         
         results = await asyncio.gather(*tasks, return_exceptions=True)

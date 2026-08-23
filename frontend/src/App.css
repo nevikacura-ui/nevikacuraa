@@ -1,5 +1,329 @@
 .App {
   min-height: 100vh;
+  padding-bottom: 80px; /* Space for persistent footer */
+  background-color: #0A0A0F;
+  transition: background-color 0.3s ease;
+}
+
+/* Smooth image loading - prevents stutter */
+img {
+  transition: opacity 0.3s ease;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+img[loading="lazy"] {
+  opacity: 0;
+}
+img[loading="lazy"][src]:not([src=""]) {
+  animation: imgFadeIn 0.35s ease 0.05s forwards;
+}
+@keyframes imgFadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+/* Prevent layout shift - images inside fixed-size containers */
+img[decoding="async"] {
+  content-visibility: auto;
+}
+
+
+/* Grain texture overlay for dark surfaces — GPU optimized */
+.grain-texture::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px;
+  will-change: auto;
+  contain: strict;
+  transform: translateZ(0);
+}
+
+/* Page enter — no animation, instant render */
+.page-enter {
+  opacity: 1;
+}
+
+/* Status pill animations */
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(234,179,8,0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(234,179,8,0); }
+}
+@keyframes statusComplete {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes statusBreathe {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.status-booked {
+  animation: statusBreathe 3s ease-in-out infinite;
+}
+.status-checkedin {
+  animation: statusPulse 1.8s ease-in-out infinite;
+}
+.status-completed {
+  animation: statusComplete 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+/* ======== LIGHT MODE POLISH ======== */
+[data-theme="light"] .App {
+  background-color: #F8FAFB !important;
+}
+
+[data-theme="light"] body {
+  background-color: #F8FAFB !important;
+}
+
+html[data-theme="light"] {
+  background-color: #F8FAFB !important;
+}
+
+html[data-theme="light"] .grain-texture::before {
+  display: none !important;
+}
+
+[data-theme="light"] .grain-texture::before {
+  opacity: 0.008;
+}
+
+/* Light-mode glassmorphism cards */
+[data-theme="light"] .glass-card {
+  background: rgba(255,255,255,0.72) !important;
+  border-color: rgba(0,0,0,0.06) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.03) !important;
+}
+
+[data-theme="light"] .glass-card-strong {
+  background: rgba(255,255,255,0.88) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+
+[data-theme="light"] .glass-card-tint-teal {
+  background: rgba(20,184,166,0.06) !important;
+  border-color: rgba(20,184,166,0.12) !important;
+}
+
+[data-theme="light"] .glass-card-tint-orange {
+  background: rgba(249,115,22,0.06) !important;
+  border-color: rgba(249,115,22,0.12) !important;
+}
+
+/* Light bottom nav */
+[data-theme="light"] [data-testid="persistent-footer"] > div {
+  background: rgba(255,255,255,0.92) !important;
+  border-color: rgba(0,0,0,0.06) !important;
+  backdrop-filter: blur(20px) saturate(1.6);
+}
+
+/* Light mode text overrides for home */
+[data-theme="light"] .lt-text-primary { color: #1a1a2e !important; }
+[data-theme="light"] .lt-text-secondary { color: #52525b !important; }
+[data-theme="light"] .lt-text-muted { color: #a1a1aa !important; }
+[data-theme="light"] .lt-bg-page { background: #F8FAFB !important; }
+[data-theme="light"] .lt-bg-card { background: rgba(255,255,255,0.72) !important; border: 1px solid rgba(0,0,0,0.06) !important; }
+[data-theme="light"] .lt-bg-elevated { background: rgba(255,255,255,0.88) !important; }
+
+/* Broad light-mode text overrides - Home page content */
+html[data-theme="light"] .App .text-white:not([class*="bg-gradient"]):not([class*="bg-teal"]):not([class*="bg-orange"]):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-rose"]):not([class*="bg-red"]):not(button[class*="bg-"]) {
+  color: #1a1a2e !important;
+}
+
+/* EXCLUDE: Membership page keeps its own dark theme */
+html[data-theme="light"] [data-testid="membership-page"] .text-white,
+html[data-theme="light"] [data-testid="membership-page"] .text-white\/80,
+html[data-theme="light"] [data-testid="membership-page"] .text-white\/70,
+html[data-theme="light"] [data-testid="membership-page"] .text-white\/60,
+html[data-theme="light"] [data-testid="membership-page"] .text-white\/50,
+html[data-theme="light"] [data-testid="membership-page"] .text-white\/40,
+html[data-theme="light"] [data-testid="membership-page"] .text-white\/30,
+html[data-theme="light"] [data-testid="membership-page"] .text-white\/20 {
+  color: inherit !important;
+}
+html[data-theme="light"] .App .text-white\/80 { color: #3f3f46 !important; }
+html[data-theme="light"] .App .text-white\/70 { color: #52525b !important; }
+html[data-theme="light"] .App .text-white\/60 { color: #52525b !important; }
+html[data-theme="light"] .App .text-white\/50 { color: #71717a !important; }
+html[data-theme="light"] .App .text-white\/40 { color: #a1a1aa !important; }
+html[data-theme="light"] .App .text-white\/30 { color: #a1a1aa !important; }
+html[data-theme="light"] .App .text-gray-500 { color: #71717a !important; }
+html[data-theme="light"] .App .text-gray-400 { color: #a1a1aa !important; }
+
+/* Preserve white text inside colored service banners */
+html[data-theme="light"] .App [style*="gradient"] .text-white,
+html[data-theme="light"] .App [class*="from-teal"] .text-white,
+html[data-theme="light"] .App [class*="from-green"] .text-white,
+html[data-theme="light"] .App [class*="from-orange"] .text-white,
+html[data-theme="light"] .App [class*="from-blue"] .text-white,
+html[data-theme="light"] .App [class*="bg-gradient"] .text-white {
+  color: #FFFFFF !important;
+}
+
+/* Light mode - borders */
+html[data-theme="light"] .App .border-white\/10,
+html[data-theme="light"] .App .border-white\/5,
+html[data-theme="light"] .App .border-white\/8 {
+  border-color: rgba(0,0,0,0.06) !important;
+}
+
+/* Light mode - bg overrides for inline dark backgrounds */
+html[data-theme="light"] .App .bg-white\/5,
+html[data-theme="light"] .App .bg-white\/4,
+html[data-theme="light"] .App .bg-white\/\[0\.04\],
+html[data-theme="light"] .App .bg-white\/\[0\.05\] {
+  background: rgba(0,0,0,0.03) !important;
+}
+
+/* Light mode - queue status items */
+[data-theme="light"] [data-testid="live-queue-preview"] .text-white {
+  color: #1a1a2e !important;
+}
+[data-theme="light"] [data-testid="live-queue-preview"] .text-xs.font-medium.text-white {
+  color: #1a1a2e !important;
+}
+
+/* Light mode - clinic cards text */
+[data-theme="light"] [data-testid="clinic-locations"] .text-white {
+  color: #1a1a2e !important;
+}
+[data-theme="light"] [data-testid="clinic-locations"] .text-white\/60 {
+  color: #52525b !important;
+}
+[data-theme="light"] [data-testid="clinic-locations"] .text-white\/80 {
+  color: #27272a !important;
+}
+[data-theme="light"] [data-testid="clinic-locations"] .text-white\/50 {
+  color: #71717a !important;
+}
+
+/* Light mode - stats/certifications text */
+[data-theme="light"] .text-white\/70 {
+  color: #52525b !important;
+}
+[data-theme="light"] .text-white\/40 {
+  color: #a1a1aa !important;
+}
+
+/* Light mode - ServiceHeader */
+[data-theme="light"] header.sticky {
+  background: rgba(255,255,255,0.85) !important;
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border-bottom: 1px solid rgba(0,0,0,0.06) !important;
+}
+[data-theme="light"] header.sticky .text-white,
+[data-theme="light"] header.sticky .text-white\/80,
+[data-theme="light"] header.sticky .text-white\/90 {
+  color: #1a1a2e !important;
+}
+[data-theme="light"] header.sticky .text-white\/50,
+[data-theme="light"] header.sticky .text-white\/40 {
+  color: #71717a !important;
+}
+[data-theme="light"] header.sticky .hover\:bg-white\/10:hover,
+[data-theme="light"] header.sticky .hover\:bg-white\/20:hover {
+  background: rgba(0,0,0,0.05) !important;
+}
+[data-theme="light"] header.sticky .text-amber-400 {
+  color: #f59e0b !important;
+}
+
+/* Light mode - Service tabs */
+[data-theme="light"] [data-testid="service-tabs"] {
+  background: rgba(255,255,255,0.85) !important;
+}
+[data-theme="light"] [data-testid="service-tabs"] button {
+  color: #52525b !important;
+}
+[data-theme="light"] [data-testid="service-tabs"] button[data-active="true"] {
+  background: rgba(0,0,0,0.05) !important;
+  color: #1a1a2e !important;
+}
+
+/* Light mode - Quick actions scrollbar */
+[data-theme="light"] [data-testid="quick-actions"] button,
+[data-theme="light"] [data-testid="portal-scrollbar"] button {
+  background: rgba(255,255,255,0.8) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+  color: #1a1a2e !important;
+}
+
+/* Light mode - "Our Services" text */
+[data-theme="light"] .lt-text-primary {
+  color: #1a1a2e !important;
+}
+
+/* Light mode - section labels */
+[data-theme="light"] .text-white {
+  /* Only override in specific containers, not globally */
+}
+
+/* Light mode - Book Appointment floating button */
+[data-theme="light"] [data-testid="book-appointment-fab"] {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12) !important;
+}
+
+/* Light mode - bottom nav */
+[data-theme="light"] [data-testid="persistent-footer"] {
+  background: transparent !important;
+}
+[data-theme="light"] [data-testid="persistent-footer"] > div > div {
+  background: rgba(255,255,255,0.92) !important;
+  border-color: rgba(0,0,0,0.06) !important;
+}
+[data-theme="light"] [data-testid="persistent-footer"] .text-gray-500 {
+  color: #71717a !important;
+}
+
+/* Light mode - inline styled dark backgrounds */
+html[data-theme="light"] .App .bg-\[\#111827\],
+html[data-theme="light"] .App .bg-\[\#0D0D0D\],
+html[data-theme="light"] .App .bg-\[\#0A0A0A\],
+html[data-theme="light"] .App .bg-\[\#0a0a0a\],
+html[data-theme="light"] .App .bg-\[\#050510\],
+html[data-theme="light"] .App .bg-\[\#1A1A2E\],
+html[data-theme="light"] .App .bg-slate-900 {
+  background-color: rgba(255,255,255,0.85) !important;
+}
+
+/* Light mode - dark card backgrounds */
+html[data-theme="light"] .App .bg-\[\#0A0A0F\] {
+  background-color: #F8FAFB !important;
+}
+
+/* Light mode - membership and notification banners */
+html[data-theme="light"] .App [data-testid="membership-card"],
+html[data-theme="light"] .App [data-testid="notif-inline-banner"] {
+  background: rgba(255,255,255,0.85) !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+}
+
+/* Light mode - Portal scroll bar */
+html[data-theme="light"] [data-testid="portal-scroll-bar"] {
+  background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(248,250,251,1) 100%) !important;
+}
+html[data-theme="light"] [data-testid="portal-scroll-bar"] .ring-white\/10 {
+  --tw-ring-color: rgba(0,0,0,0.06) !important;
+}
+html[data-theme="light"] [data-testid="portal-scroll-bar"] .ring-offset-\[#0A0A0F\] {
+  --tw-ring-offset-color: #F8FAFB !important;
+}
+
+/* Safe area padding for iOS devices with notch/home indicator */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 8px);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 /* PWA Install Prompt Animation */
@@ -16,4 +340,209 @@
 
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
+}
+
+/* ---- Micro-Animations ---- */
+
+/* Button hover scale */
+button, a[role="button"], [data-clickable] {
+  transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.2s ease;
+}
+button:active, a[role="button"]:active {
+  transform: scale(0.97);
+}
+
+/* Card hover lift */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+/* Staggered entrance for list items */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+/* Smooth page transitions */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translate3d(0, 4px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.animate-page-enter {
+  animation: pageEnter 0.15s ease-out;
+}
+
+/* Skeleton shimmer for loading states */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* Pulse ring for notification dots */
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(20, 184, 166, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); }
+}
+.pulse-ring {
+  animation: pulseRing 2s infinite;
+}
+
+/* Smooth scrollbar */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Image lazy load - handled by component */
+
+/* ======== GLASSMORPHISM CARDS ======== */
+.glass-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-radius: 1rem;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-card:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.10);
+}
+.glass-card-strong {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.10);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border-radius: 1rem;
+}
+.glass-card-tint-teal {
+  background: rgba(20,184,166,0.06);
+  border: 1px solid rgba(20,184,166,0.12);
+  backdrop-filter: blur(16px);
+}
+.glass-card-tint-orange {
+  background: rgba(249,115,22,0.06);
+  border: 1px solid rgba(249,115,22,0.12);
+  backdrop-filter: blur(16px);
+}
+
+/* ======== BOTTOM SHEET ======== */
+@keyframes bottomSheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes bottomSheetDown {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes overlayFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.bottom-sheet-overlay {
+  animation: overlayFadeIn 0.2s ease-out both;
+}
+.bottom-sheet-overlay.closing {
+  animation: overlayFadeOut 0.2s ease-in both;
+}
+.bottom-sheet-content {
+  animation: bottomSheetUp 0.32s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+.bottom-sheet-content.closing {
+  animation: bottomSheetDown 0.25s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+/* Light mode bottom sheet */
+[data-theme="light"] .bottom-sheet-content {
+  background: #FFFFFF !important;
+  border-color: rgba(0,0,0,0.06) !important;
+}
+[data-theme="light"] .bottom-sheet-content h3 {
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .bottom-sheet-content .glass-card,
+[data-theme="light"] .bottom-sheet-content .glass-card-tint-teal {
+  background: rgba(0,0,0,0.03) !important;
+  border-color: rgba(0,0,0,0.06) !important;
+}
+[data-theme="light"] .bottom-sheet-content .text-white {
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .bottom-sheet-content .text-white\/40,
+[data-theme="light"] .bottom-sheet-content .text-white\/50 {
+  color: #71717a !important;
+}
+
+/* ======== PULL TO REFRESH ======== */
+@keyframes stethoscopeBounce {
+  0%, 100% { transform: rotate(-15deg) scale(1); }
+  50% { transform: rotate(15deg) scale(1.1); }
+}
+.ptr-stethoscope {
+  animation: stethoscopeBounce 0.8s ease-in-out infinite;
+}
+
+/* ======== ENHANCED MICRO-INTERACTIONS ======== */
+/* Card tap ripple */
+@keyframes tapRipple {
+  0% { transform: scale(0); opacity: 0.35; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+/* Smooth number counter */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-count-up {
+  animation: countUp 0.5s ease-out both;
+}
+
+/* Icon bounce on tap */
+@keyframes iconBounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(0.85); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.tap-bounce:active > * {
+  animation: iconBounce 0.3s ease both;
+}
+
+/* Smooth theme transition - targeted only for theme-sensitive elements */
+.App,
+.glass-card,
+.glass-card-strong,
+header.sticky {
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+/* Stethoscope pull indicator */
+.ptr-container {
+  overflow: hidden;
+  position: relative;
+}
+.ptr-indicator {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  transition: transform 0.2s ease;
+  z-index: 10;
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="9" time="3.960" timestamp="2026-02-21T02:47:38.395677+00:00" hostname="agent-env-a677c4c0-d69f-446c-8798-8b3a30df6ce6"><testcase classname="tests.test_iteration133_staff_login.TestUnifiedStaffCredentials" name="test_diagyn_staff_login" time="0.417"><failure message="AssertionError: Expected role clinic_staff, got diagyn_staff&#10;assert 'diagyn_staff' == 'clinic_staff'&#10;  &#10;  - clinic_staff&#10;  + diagyn_staff">tests/test_iteration133_staff_login.py:29: in test_diagyn_staff_login
+    assert data["staff"]["role"] == "clinic_staff", f"Expected role clinic_staff, got {data['staff']['role']}"
+E   AssertionError: Expected role clinic_staff, got diagyn_staff
+E   assert 'diagyn_staff' == 'clinic_staff'
+E     
+E     - clinic_staff
+E     + diagyn_staff</failure></testcase><testcase classname="tests.test_iteration133_staff_login.TestUnifiedStaffCredentials" name="test_mango_labs_staff_login" time="0.351"><failure message="AssertionError: Expected role diagnostic_staff, got lab_staff&#10;assert 'lab_staff' == 'diagnostic_staff'&#10;  &#10;  - diagnostic_staff&#10;  + lab_staff">tests/test_iteration133_staff_login.py:46: in test_mango_labs_staff_login
+    assert data["staff"]["role"] == "diagnostic_staff", f"Expected role diagnostic_staff, got {data['staff']['role']}"
+E   AssertionError: Expected role diagnostic_staff, got lab_staff
+E   assert 'lab_staff' == 'diagnostic_staff'
+E     
+E     - diagnostic_staff
+E     + lab_staff</failure></testcase><testcase classname="tests.test_iteration133_staff_login.TestUnifiedStaffCredentials" name="test_orange_pharmacy_staff_login" time="0.345"><failure message="AssertionError: Expected role pharmacy_staff, got staff&#10;assert 'staff' == 'pharmacy_staff'&#10;  &#10;  - pharmacy_staff&#10;  + staff">tests/test_iteration133_staff_login.py:63: in test_orange_pharmacy_staff_login
+    assert data["staff"]["role"] == "pharmacy_staff", f"Expected role pharmacy_staff, got {data['staff']['role']}"
+E   AssertionError: Expected role pharmacy_staff, got staff
+E   assert 'staff' == 'pharmacy_staff'
+E     
+E     - pharmacy_staff
+E     + staff</failure></testcase><testcase classname="tests.test_iteration133_staff_login.TestUnifiedStaffCredentials" name="test_doctor_vikas_login" time="0.345" /><testcase classname="tests.test_iteration133_staff_login.TestUnifiedStaffCredentials" name="test_doctor_neha_login" time="0.366" /><testcase classname="tests.test_iteration133_staff_login.TestUnifiedStaffCredentials" name="test_admin_login" time="0.359" /><testcase classname="tests.test_iteration133_staff_login.TestUnifiedStaffCredentials" name="test_invalid_credentials_rejected" time="0.455" /><testcase classname="tests.test_iteration133_staff_login.TestUnifiedStaffCredentials" name="test_old_credentials_rejected" time="0.744" /><testcase classname="tests.test_iteration133_staff_login.TestTokenExpiry" name="test_token_validity" time="0.480" /></testsuite></testsuites>

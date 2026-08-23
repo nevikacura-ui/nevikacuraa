@@ -28,8 +28,20 @@ const getDeviceName = () => {
   return 'Unknown Device';
 };
 
+// Safely parse JSON from localStorage
+const safeParseJSON = (key) => {
+  try {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : null;
+  } catch { return null; }
+};
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  // Hydrate user immediately from localStorage cache for instant session restore
+  const [user, setUser] = useState(() => {
+    const cached = safeParseJSON('userInfo') || safeParseJSON('patientInfo');
+    return cached || null;
+  });
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [patientToken, setPatientToken] = useState(localStorage.getItem('patientToken'));
   const [loading, setLoading] = useState(true);
@@ -62,7 +74,7 @@ export const AuthProvider = ({ children }) => {
           headers: { Authorization: `Bearer ${patientToken}` }
         });
         if (response.data.authenticated && response.data.user) {
-          setUser({
+          const userData = {
             id: response.data.user.id,
             name: response.data.user.name,
             email: response.data.user.email,
@@ -70,7 +82,9 @@ export const AuthProvider = ({ children }) => {
             role: 'patient',
             patient_id: response.data.user.patient_id,
             ...response.data.user
-          });
+          };
+          setUser(userData);
+          localStorage.setItem('patientInfo', JSON.stringify(userData));
           setLoading(false);
           return;
         }
@@ -83,7 +97,7 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${patientToken}` }
       });
       // Convert patient data to user format
-      setUser({
+      const userData = {
         id: response.data.patient_id,
         name: response.data.name,
         email: response.data.email,
@@ -91,9 +105,12 @@ export const AuthProvider = ({ children }) => {
         role: 'patient',
         patient_id: response.data.patient_id,
         ...response.data
-      });
+      };
+      setUser(userData);
+      localStorage.setItem('patientInfo', JSON.stringify(userData));
     } catch (error) {
       console.error('Failed to fetch patient user:', error);
+      const status = error?.response?.status;
       
       // Check if we have patientInfo in localStorage as fallback
       const patientInfoStr = localStorage.getItem('patientInfo');
@@ -116,9 +133,14 @@ export const AuthProvider = ({ children }) => {
         }
       }
       
-      // Clear invalid patient token only if no fallback
-      localStorage.removeItem('patientToken');
-      setPatientToken(null);
+      // Only clear token if server explicitly rejected it (401/403)
+      if (status === 401 || status === 403) {
+        localStorage.removeItem('patientToken');
+        localStorage.removeItem('patientInfo');
+        setPatientToken(null);
+        setUser(null);
+      }
+      // For network errors with no fallback, keep tokens but clear user
     } finally {
       setLoading(false);
     }
@@ -128,7 +150,7 @@ export const AuthProvider = ({ children }) => {
   const setPatientAuth = (newToken, patientData) => {
     setPatientToken(newToken);
     localStorage.setItem('patientToken', newToken);
-    setUser({
+    const userData = {
       id: patientData.patient_id,
       name: patientData.name,
       email: patientData.email,
@@ -136,7 +158,10 @@ export const AuthProvider = ({ children }) => {
       role: 'patient',
       patient_id: patientData.patient_id,
       ...patientData
-    });
+    };
+    setUser(userData);
+    // Cache patient info for offline/error resilience
+    localStorage.setItem('patientInfo', JSON.stringify(userData));
   };
 
   const checkBiometricAvailability = async () => {
@@ -161,13 +186,28 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUser(response.data);
+      // Cache user data for offline/error resilience
+      localStorage.setItem('userInfo', JSON.stringify(response.data));
       // Check if biometric is enabled for this user
       if (biometricAvailable) {
         checkBiometricStatus();
       }
     } catch (error) {
       console.error('Failed to fetch user:', error);
-      logout();
+      const status = error?.response?.status;
+      if (status === 401 || status === 403) {
+        // Token is explicitly invalid — clear session
+        logout();
+      } else {
+        // Network error or server issue — keep user logged in from cache
+        const cached = safeParseJSON('userInfo');
+        if (cached) {
+          setUser(cached);
+        } else {
+          // No cache available, must logout
+          logout();
+        }
+      }
     } finally {
       setLoading(false);
     }
@@ -196,6 +236,7 @@ export const AuthProvider = ({ children }) => {
     setToken(response.data.token);
     setUser(response.data.user);
     localStorage.setItem('token', response.data.token);
+    localStorage.setItem('userInfo', JSON.stringify(response.data.user));
     if (rememberMe) {
       localStorage.setItem('remember_me', 'true');
     }
@@ -208,6 +249,7 @@ export const AuthProvider = ({ children }) => {
     setToken(response.data.token);
     setUser(response.data.user);
     localStorage.setItem('token', response.data.token);
+    localStorage.setItem('userInfo', JSON.stringify(response.data.user));
     return response.data;
   };
 
@@ -227,6 +269,7 @@ export const AuthProvider = ({ children }) => {
     setToken(response.data.token);
     setUser(response.data.user);
     localStorage.setItem('token', response.data.token);
+    localStorage.setItem('userInfo', JSON.stringify(response.data.user));
     return response.data;
   };
 
@@ -237,6 +280,7 @@ export const AuthProvider = ({ children }) => {
     setToken(response.data.token);
     setUser(response.data.user);
     localStorage.setItem('token', response.data.token);
+    localStorage.setItem('userInfo', JSON.stringify(response.data.user));
     return response.data;
   };
 
@@ -259,6 +303,7 @@ export const AuthProvider = ({ children }) => {
     setToken(response.data.token);
     setUser(response.data.user);
     localStorage.setItem('token', response.data.token);
+    localStorage.setItem('userInfo', JSON.stringify(response.data.user));
     return response.data;
   };
 
@@ -273,6 +318,7 @@ export const AuthProvider = ({ children }) => {
     setToken(response.data.token);
     setUser(response.data.user);
     localStorage.setItem('token', response.data.token);
+    localStorage.setItem('userInfo', JSON.stringify(response.data.user));
     return response.data;
   };
 
@@ -358,6 +404,7 @@ export const AuthProvider = ({ children }) => {
         setToken(response.data.token);
         setUser(response.data.user);
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userInfo', JSON.stringify(response.data.user));
         
         return response.data;
       } catch (e) {
@@ -384,6 +431,8 @@ export const AuthProvider = ({ children }) => {
     setBiometricEnabled(false);
     localStorage.removeItem('token');
     localStorage.removeItem('patientToken');
+    localStorage.removeItem('patientInfo');
+    localStorage.removeItem('userInfo');
     localStorage.removeItem('remember_me');
   };
   
@@ -413,6 +462,7 @@ export const AuthProvider = ({ children }) => {
       setToken(backendResponse.data.token);
       setUser(backendResponse.data.user);
       localStorage.setItem('token', backendResponse.data.token);
+      localStorage.setItem('userInfo', JSON.stringify(backendResponse.data.user));
       
       return backendResponse.data;
     } catch (error) {

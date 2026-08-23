@@ -1,0 +1,116 @@
+{
+  "summary": "Iteration 196: Tested Upcoming Events Widget for doctor/patient/staff. Backend: 15/15 API tests passed. Frontend: Staff widget works with filter tabs, Doctor portal had critical bug (fixed: doctorData -> profile), Patient widget correctly only shows when logged in with events.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "bugs_fixed": [
+    {
+      "file": "/app/frontend/src/pages/DoctorPortalRedesigned.js",
+      "line": 921,
+      "issue": "ReferenceError: doctorData is not defined",
+      "fix": "Changed 'doctorData' to 'profile' which is the correct variable name defined in the component",
+      "priority": "CRITICAL"
+    }
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_upcoming_events_widget.py",
+    "/app/test_reports/pytest/pytest_upcoming_events_196.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "StaffUpcomingWidget correctly shows filter tabs: All, Appointments (2), Pharmacy (0), Lab Tests (0)",
+    "DoctorUpcomingWidget now renders correctly after bug fix - shows 'Today's Appointments' section",
+    "PatientUpcomingWidget correctly only renders when user is logged in AND has events (per design)"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_upcoming_events_widget.py",
+    "/app/frontend/src/pages/DoctorPortalRedesigned.js"
+  ],
+  "success_rate": {
+    "backend": "100% - 15/15 tests passed",
+    "frontend": "100% - All widgets verified after bug fix"
+  },
+  "test_credentials": {
+    "staff_diagyn": "test1234",
+    "dr_neha": "test1234",
+    "dr_vikas": "test1234"
+  },
+  "seed_data_creation": "2 appointments exist for today (Vikas at 18:00, Vik at 18:15) both with Dr. Vikas Jha at Pushpa Clinic",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Upcoming Events Widget testing complete. Backend APIs all working: /api/upcoming-events/patient/{phone}, /api/upcoming-events/doctor/{doctor_name}, /api/upcoming-events/staff/{portal}. Staff widget at /diagyn-staff shows with data-testid='staff-upcoming-widget' and filter tabs (filter-all, filter-appointment, filter-pharmacy_order, filter-lab_order). Doctor widget at /doctor-portal shows with data-testid='doctor-upcoming-widget'. Patient widget on Home shows with data-testid='patient-upcoming-widget' ONLY when user is logged in AND has events.",
+  "feature_verification": {
+    "Backend_APIs": {
+      "patient_events_api": {
+        "status": "PASS",
+        "endpoint": "GET /api/upcoming-events/patient/9876543210",
+        "returns": "JSON with events array and count"
+      },
+      "doctor_neha_events_api": {
+        "status": "PASS",
+        "endpoint": "GET /api/upcoming-events/doctor/Neha",
+        "returns": "JSON with events array and count"
+      },
+      "staff_all_events_api": {
+        "status": "PASS",
+        "endpoint": "GET /api/upcoming-events/staff/all",
+        "returns": "JSON with events array (has 2 appointments)"
+      },
+      "staff_orange_pharmacy_api": {
+        "status": "PASS",
+        "endpoint": "GET /api/upcoming-events/staff/orange",
+        "returns": "Pharmacy-only events (portal filter working)"
+      },
+      "staff_mango_lab_api": {
+        "status": "PASS",
+        "endpoint": "GET /api/upcoming-events/staff/mango",
+        "returns": "Lab-only events (portal filter working)"
+      }
+    },
+    "Frontend_Staff_Widget": {
+      "widget_renders": {
+        "status": "PASS",
+        "data_testid": "staff-upcoming-widget"
+      },
+      "filter_tabs": {
+        "status": "PASS",
+        "tabs_found": ["filter-all", "filter-appointment", "filter-pharmacy_order", "filter-lab_order"]
+      },
+      "events_displayed": {
+        "status": "PASS",
+        "count": "2 appointments (Vikas, Vik)"
+      },
+      "styling": {
+        "status": "PASS",
+        "notes": "White background with pastel colors for event types"
+      }
+    },
+    "Frontend_Doctor_Widget": {
+      "widget_renders": {
+        "status": "PASS (after bug fix)",
+        "data_testid": "doctor-upcoming-widget"
+      },
+      "bug_fixed": {
+        "issue": "doctorData is not defined",
+        "resolution": "Changed to use 'profile' variable"
+      }
+    },
+    "Frontend_Patient_Widget": {
+      "widget_behavior": {
+        "status": "PASS",
+        "notes": "Correctly hidden for guest users, shows only when logged in with events"
+      },
+      "data_testid": "patient-upcoming-widget"
+    }
+  },
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  }
+}

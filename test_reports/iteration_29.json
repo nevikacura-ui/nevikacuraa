@@ -156,7 +156,7 @@
     "frontend": "100% (10/10 passed)"
   },
   "test_credentials": {
-    "api_base_url": "https://staff-pay-portal-1.preview.emergentagent.com",
+    "api_base_url": "https://premium-rx-portal.preview.emergentagent.com",
     "test_user_email": "test_teleconsult_ui@test.com",
     "test_user_password": "testpass123",
     "admin_password": "nevikacura2026"

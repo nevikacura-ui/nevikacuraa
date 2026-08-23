@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="7" time="3.947" timestamp="2026-02-25T19:44:06.994890+00:00" hostname="agent-env-c280ed3a-0335-4a06-be8f-fe05f6b80878"><testcase classname="backend.tests.test_proton_nutricare.TestProtonBookingAPI" name="test_proton_booking_success" time="0.278" /><testcase classname="backend.tests.test_proton_nutricare.TestProtonBookingAPI" name="test_proton_booking_nt_scan" time="2.366" /><testcase classname="backend.tests.test_proton_nutricare.TestProtonBookingAPI" name="test_proton_booking_ecg" time="0.225" /><testcase classname="backend.tests.test_proton_nutricare.TestProtonBookingAPI" name="test_proton_booking_usg_whole_abdomen" time="0.166" /><testcase classname="backend.tests.test_proton_nutricare.TestProtonBookingAPI" name="test_proton_booking_missing_required_fields" time="0.379" /><testcase classname="backend.tests.test_proton_nutricare.TestProtonBookingAPI" name="test_proton_booking_multiple_children" time="0.268" /><testcase classname="backend.tests.test_proton_nutricare.TestHealthEndpoint" name="test_health_check" time="0.166"><failure message="requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)">/root/.venv/lib/python3.11/site-packages/requests/models.py:976: in json
+    return complexjson.loads(self.text, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/json/decoder.py:355: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+backend/tests/test_proton_nutricare.py:163: in test_health_check
+    data = response.json()
+           ^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/requests/models.py:980: in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+E   requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)</failure></testcase></testsuite></testsuites>

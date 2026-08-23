@@ -32,6 +32,7 @@ db = None
 get_current_user = None
 get_current_user_optional = None
 send_sms_notification = None
+_JWT_SECRET = None
 
 def set_db(database):
     global db
@@ -45,6 +46,29 @@ def set_auth_dependencies(auth_func, auth_optional_func):
 def set_sms_function(sms_func):
     global send_sms_notification
     send_sms_notification = sms_func
+
+def set_jwt_secret(secret):
+    global _JWT_SECRET
+    _JWT_SECRET = secret
+
+from fastapi import Header
+import jwt as pyjwt
+
+async def _resolve_user_optional(authorization: str = Header(None)):
+    """Resolve user from token, returning None if no auth"""
+    if not authorization or not authorization.startswith("Bearer "):
+        return None
+    token = authorization.split(" ")[1]
+    try:
+        secret = _JWT_SECRET or os.environ.get("JWT_SECRET", "nevika-health-secret-key-2024")
+        payload = pyjwt.decode(token, secret, algorithms=["HS256"])
+        user_id = payload.get("sub") or payload.get("user_id")
+        if not user_id:
+            return None
+        user_doc = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
+        return user_doc
+    except Exception:
+        return None
 
 
 # ============ EVARA MODELS ============
@@ -576,6 +600,14 @@ To stop: Reply STOP
 
 # ============ PERIOD TRACKING ============
 
+class PeriodLogRequest(BaseModel):
+    start_date: str
+    end_date: Optional[str] = None
+    flow: str = "medium"
+    symptoms: Optional[List[str]] = []
+    notes: Optional[str] = None
+
+
 @router.post("/period/log")
 async def log_period(
     start_date: str,
@@ -585,7 +617,7 @@ async def log_period(
     notes: Optional[str] = None,
     user = Depends(lambda: get_current_user_optional)
 ):
-    """Log period data"""
+    """Log period data (query params)"""
     if not user:
         raise HTTPException(status_code=401, detail="Please login to track your period")
     
@@ -612,11 +644,73 @@ async def log_period(
     }
 
 
+@router.post("/period-log")
+async def log_period_json(data: PeriodLogRequest, user = Depends(_resolve_user_optional)):
+    """Log period data (JSON body — used by frontend)"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Please login to track your period")
+    
+    period_log = {
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"],
+        "start_date": data.start_date,
+        "end_date": data.end_date,
+        "flow": data.flow,
+        "symptoms": data.symptoms or [],
+        "notes": data.notes,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.evara_period_logs.insert_one(period_log)
+    
+    start = datetime.strptime(data.start_date, "%Y-%m-%d")
+    next_predicted = (start + timedelta(days=28)).strftime("%Y-%m-%d")
+    
+    return {
+        "success": True,
+        "log": {k: v for k, v in period_log.items() if k != "_id"},
+        "next_predicted": next_predicted
+    }
+
+
 @router.get("/period/history")
 async def get_period_history(user = Depends(lambda: get_current_user_optional)):
     """Get period tracking history"""
     if not user:
         return {"history": [], "predictions": None}
+    
+    history = await db.evara_period_logs.find(
+        {"user_id": user["id"]},
+        {"_id": 0}
+    ).sort([("start_date", -1)]).limit(12).to_list(12)
+    
+    if len(history) >= 2:
+        cycles = []
+        for i in range(len(history) - 1):
+            start1 = datetime.strptime(history[i]["start_date"], "%Y-%m-%d")
+            start2 = datetime.strptime(history[i+1]["start_date"], "%Y-%m-%d")
+            cycles.append((start1 - start2).days)
+        avg_cycle = sum(cycles) // len(cycles) if cycles else 28
+    else:
+        avg_cycle = 28
+    
+    next_predicted = None
+    if history:
+        last_start = datetime.strptime(history[0]["start_date"], "%Y-%m-%d")
+        next_predicted = (last_start + timedelta(days=avg_cycle)).strftime("%Y-%m-%d")
+    
+    return {
+        "history": history,
+        "average_cycle_length": avg_cycle,
+        "next_predicted": next_predicted
+    }
+
+
+@router.get("/period-history")
+async def get_period_history_alias(user = Depends(_resolve_user_optional)):
+    """Get period tracking history (alias for frontend)"""
+    if not user:
+        return {"history": [], "average_cycle_length": 28, "next_predicted": None}
     
     history = await db.evara_period_logs.find(
         {"user_id": user["id"]},

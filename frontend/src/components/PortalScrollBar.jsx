@@ -5,138 +5,111 @@ import {
   Brain, Baby, Smile, HeartPulse, Shield, Dumbbell, Users, HandHeart, Calendar
 } from 'lucide-react';
 
-// Portal data - 12 Health & Wellness Portals - Full branded logos
+// Portal data - Core Services + 4 Portals + 2 Special Features
 const portals = [
-  // 1. Evara - Women's Health (Full branded logo with text)
+  // Core Services
+  {
+    id: 'diagyn',
+    name: 'DiaGyn',
+    subtitle: 'Healthcare',
+    path: '/diagyn',
+    logo: 'https://customer-assets.emergentagent.com/job_9e8d9b3c-7dc9-4711-89c9-8c62a2076713/artifacts/bng70qyp_Green%20and%20Blue%20Cross%20Medical%20Consultation%20Logo_20260220_182331_0002.png',
+    bgColor: '#f5f5f5',
+    fillContainer: true,
+    containLogo: true
+  },
+  {
+    id: 'nevika-labs',
+    name: 'Mango',
+    subtitle: 'Health Labs',
+    path: '/mango',
+    logo: 'https://customer-assets.emergentagent.com/job_9e8d9b3c-7dc9-4711-89c9-8c62a2076713/artifacts/ed8oc0g0_file_00000000e87072088292092d9333f740%20%281%29.png',
+    bgColor: '#f5f5f5',
+    fillContainer: true,
+    containLogo: true
+  },
+  {
+    id: 'proton-diagnostics',
+    name: 'Proton',
+    subtitle: 'Diagnostics',
+    path: '/mango/ultrasound',
+    logo: 'https://customer-assets.emergentagent.com/job_0057b5ba-9311-4e6b-8f3c-1683dcbd0649/artifacts/p8vk4fal_file_000000002ab872088062c5eefaa511b9.png',
+    bgColor: '#e8eef6',
+    fillContainer: true,
+    containLogo: false
+  },
+  {
+    id: 'nexugene',
+    name: 'Nexugene',
+    subtitle: 'Genetic Testing',
+    path: '/nexugene',
+    logo: 'https://customer-assets.emergentagent.com/job_0057b5ba-9311-4e6b-8f3c-1683dcbd0649/artifacts/w5y7zt1o_file_000000009420720880d6c2f519c3d746.png',
+    bgColor: '#0c0a2a',
+    fillContainer: true,
+    containLogo: false
+  },
+  {
+    id: 'orange-healthplus',
+    name: 'Orange',
+    subtitle: 'HealthPlus',
+    path: '/nutricare',
+    logo: 'https://customer-assets.emergentagent.com/job_9e8d9b3c-7dc9-4711-89c9-8c62a2076713/artifacts/ggkh90wn_1068-removebg-preview.png',
+    bgColor: '#1a1a2e',
+    fillContainer: true,
+    containLogo: true
+  },
+  {
+    id: 'pharmacy',
+    name: 'Orange',
+    subtitle: 'Pharmacy',
+    path: '/pharmacy',
+    logo: 'https://customer-assets.emergentagent.com/job_9e8d9b3c-7dc9-4711-89c9-8c62a2076713/artifacts/lr4uhupz_file_000000009974720b9b0298afaa32caf8%20%281%29.png',
+    bgColor: '#f5f5f5',
+    fillContainer: true,
+    containLogo: true
+  },
+  // 4 Core Portals
   {
     id: 'evara',
     name: 'Evara',
     subtitle: "Women's Health",
     path: '/evara',
     logo: '/icons/evara-logo.png',
-    bgColor: '#511b63',
+    bgColor: '#6b2f82',
     fillContainer: true
   },
-  // 2. Glydex - Diabetes Care (Full branded logo with text)
   {
     id: 'glydex',
     name: 'Glydex',
     subtitle: 'Diabetes Care',
     path: '/glydex',
     logo: 'https://customer-assets.emergentagent.com/job_healthhelper-7/artifacts/u2dcjapg_file_00000000c85c7209b181fb96372c6521.png',
-    bgColor: '#121f33',
-    fillContainer: true
-  },
-  // 3. Serena - Mental Health & Meditation
-  {
-    id: 'serena',
-    name: 'Serena',
-    subtitle: 'Mental Wellness',
-    path: '/serena',
-    logo: 'https://customer-assets.emergentagent.com/job_medportal-nevika/artifacts/rnobb9t9_90.png',
-    bgColor: '#1a2e35',
+    bgColor: '#1e3a5f',
     fillContainer: true,
-    tagline: 'Find Your Calm.'
+    scale: 1.3
   },
-  // 4. Aanya Newborn
-  {
-    id: 'aanya',
-    name: 'Aanya',
-    subtitle: 'Newborn Care',
-    path: '/aanya',
-    logo: 'https://customer-assets.emergentagent.com/job_nevika-health-7/artifacts/or3lea1i_Screenshot_20260128-154553.png',
-    bgColor: '#e8f5f0',
-    fillContainer: true
-  },
-  // 5. Alyne Kids - Child Care
-  {
-    id: 'alyne',
-    name: 'Alyne Kids',
-    subtitle: 'Child Care',
-    path: '/alyne',
-    logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
-    bgColor: '#0a1628',
-    fillContainer: true
-  },
-  // 6. Corvia - Heart, Hypertension & Cholesterol
-  {
-    id: 'corvia',
-    name: 'Corvia',
-    subtitle: 'Heart & BP Care',
-    path: '/corvia',
-    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/p3zt5ovj_Pink%20Simple%20Charity%20Logo_20260128_183244_0000.png',
-    bgColor: '#c8f56a',
-    fillContainer: true,
-    tagline: 'Healthy Heart & Prevention.'
-  },
-  // 7. Reneu - Preventive & Lifestyle Medicine
   {
     id: 'reneu',
     name: 'Reneu',
-    subtitle: 'Preventive Health',
+    subtitle: 'Wellness & Fitness',
     path: '/reneu',
     logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/uy8wpc27_file_00000000caf871fdae54ae4c4854bbd4.png',
     bgColor: '#f5f5f5',
     fillContainer: true,
     containLogo: true,
-    needsBorder: true,
-    tagline: 'Renew Health, Stay Ahead.'
+    needsBorder: true
   },
-  // 8. Thrive360 - Fitness Portal
   {
-    id: 'thrive360',
-    name: 'Thrive360',
-    subtitle: 'Mind. Body. Life.',
-    path: '/thrive360',
-    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/qb3buukl_91.png',
-    bgColor: '#1a1a3e',
+    id: 'alyne',
+    name: 'ALYNE',
+    subtitle: 'Kids Health',
+    path: '/alyne',
+    logo: 'https://customer-assets.emergentagent.com/job_alynehealth/artifacts/llhgc3hn_Blue%20White%20Professional%20Minimal%20Brand%20Logo_20260114_042449_0002.png',
+    bgColor: '#162d4a',
     fillContainer: true,
-    tagline: 'Mind. Body. Life.'
+    scale: 1.3
   },
-  // 9. Senova - Senior Care (Full branded logo)
-  {
-    id: 'senova',
-    name: 'Senova',
-    subtitle: 'Senior Care',
-    path: '/senova',
-    logo: 'https://customer-assets.emergentagent.com/job_healthhub-231/artifacts/fb3a722w_file_000000000dfc7230a4605006a1e3131a.png',
-    bgColor: '#f0f4f8',
-    fillContainer: true,
-    tagline: "Care for Life's Next Chapter."
-  },
-  // 10. InnerScore - Health Intelligence Portal
-  {
-    id: 'innerscore',
-    name: 'InnerScore',
-    subtitle: 'Health Intelligence',
-    path: '/innerscore',
-    logo: 'https://customer-assets.emergentagent.com/job_55d2778b-393f-4c6f-a4f0-366c7890154e/artifacts/gj9y2saj_file_00000000e9b472089087d7c50ce82a55.png',
-    bgColor: '#0f172a',
-    fillContainer: true,
-    tagline: 'Measure your core.'
-  },
-  // FaithCare - Cultural & Community Health Sync
-  {
-    id: 'faithcare',
-    name: 'FaithCare',
-    subtitle: 'Cultural Health Sync',
-    path: '/faithcare',
-    logo: 'https://customer-assets.emergentagent.com/job_55d2778b-393f-4c6f-a4f0-366c7890154e/artifacts/rbodxuxv_file_00000000e2a47209b2515ab5afe77eeb.png',
-    bgColor: '#1e293b',
-    fillContainer: true,
-    tagline: 'Care aligned with faith.'
-  },
-  // 11. PSVN Foundation
-  {
-    id: 'psvn',
-    name: 'PSVN',
-    subtitle: 'Foundation',
-    path: '/psvn-foundation',
-    logo: 'https://customer-assets.emergentagent.com/job_medportal-nevika/artifacts/gg3hluvl_Screenshot_20260129-011553%20%281%29.png',
-    bgColor: '#ffffff',
-    fillContainer: true,
-    tagline: 'Care. Compassion. Community.'
-  }
+  // Special Features - accessible via footer only
 ];
 
 const PortalScrollBar = () => {
@@ -215,29 +188,28 @@ const PortalScrollBar = () => {
 
   return (
     <div 
-      className="relative sticky top-[104px] z-40 overflow-hidden"
+      className="relative z-40 overflow-hidden"
       style={{ 
-        background: '#f8fafc',
-        transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
-        opacity: isVisible ? 1 : 0,
-        transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out',
-        willChange: 'transform',
-        backfaceVisibility: 'hidden',
-        WebkitBackfaceVisibility: 'hidden',
-        perspective: 1000,
-        WebkitPerspective: 1000
+        background: 'linear-gradient(180deg, #0f172a 0%, #0A0A0F 100%)',
+        willChange: 'auto',
       }}
       data-testid="portal-scroll-bar"
     >
+      {/* "Our Brands" Label */}
+      <div className="px-4 pt-4 pb-1 flex items-center gap-2">
+        <h3 className="text-[11px] font-bold text-white/50 uppercase tracking-widest">Our Brands</h3>
+        <div className="flex-1 h-px bg-white/8"></div>
+        <span className="text-[10px] text-white font-medium tracking-wide">A Nevika Cura Company</span>
+      </div>
       {/* Left Arrow */}
       {showLeftArrow && (
         <button
           onClick={scrollLeft}
-          className="absolute left-2 top-1/2 z-20 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 border border-slate-200"
+          className="absolute left-1 top-1/2 z-20 w-8 h-8 bg-white/10 backdrop-blur-md shadow-lg rounded-full flex items-center justify-center hover:bg-white/20 border border-white/10"
           style={{ transform: 'translateY(-50%) translateZ(0)' }}
           aria-label="Scroll left"
         >
-          <ChevronLeft className="w-6 h-6 text-slate-600" />
+          <ChevronLeft className="w-4 h-4 text-white" />
         </button>
       )}
 
@@ -245,71 +217,53 @@ const PortalScrollBar = () => {
       {showRightArrow && (
         <button
           onClick={scrollRight}
-          className="absolute right-2 top-1/2 z-20 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-slate-50 border border-slate-200"
+          className="absolute right-1 top-1/2 z-20 w-8 h-8 bg-white/10 backdrop-blur-md shadow-lg rounded-full flex items-center justify-center hover:bg-white/20 border border-white/10"
           style={{ transform: 'translateY(-50%) translateZ(0)' }}
           aria-label="Scroll right"
         >
-          <ChevronRight className="w-6 h-6 text-slate-600" />
+          <ChevronRight className="w-4 h-4 text-white" />
         </button>
       )}
 
-      {/* Scrollable Container - GPU Accelerated */}
+      {/* Scrollable Container */}
       <div
         ref={scrollRef}
-        className="flex items-center lg:justify-center gap-3 sm:gap-3 md:gap-2 lg:gap-3 xl:gap-4 px-2 md:px-4 py-4 overflow-x-auto"
+        className="flex items-start lg:justify-center gap-5 px-4 py-4 overflow-x-auto"
         style={{ 
           scrollbarWidth: 'none', 
           msOverflowStyle: 'none',
           WebkitOverflowScrolling: 'touch',
           scrollBehavior: 'smooth',
-          transform: 'translateZ(0)',
-          backfaceVisibility: 'hidden'
+          scrollSnapType: 'x mandatory',
         }}
       >
         {portals.map((portal) => {
           const isActive = activePortal === portal.id;
-          const IconComponent = portal.icon;
           
           return (
             <button
               key={portal.id}
               onClick={() => navigate(portal.path)}
-              className={`flex-shrink-0 ${
-                isActive 
-                  ? 'ring-3 ring-teal-500 ring-offset-2 ring-offset-[#F5F5F4] rounded-2xl' 
-                  : ''
-              }`}
-              style={{
-                transform: isActive ? 'scale(1.05) translateZ(0)' : 'translateZ(0)',
-                transition: 'transform 0.2s ease-out',
-                backfaceVisibility: 'hidden'
-              }}
+              className="flex-shrink-0 flex flex-col items-center gap-2 group"
+              style={{ scrollSnapAlign: 'start' }}
               data-testid={`portal-btn-${portal.id}`}
               title={portal.name}
             >
-              {/* Logo/Icon Container - GPU Accelerated */}
+              {/* Logo Container with ring effect */}
               <div 
-                className={`w-[82px] h-[82px] sm:w-[88px] sm:h-[88px] md:w-[95px] md:h-[95px] lg:w-[108px] lg:h-[108px] xl:w-[120px] xl:h-[120px] 2xl:w-[135px] 2xl:h-[135px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg ${
+                className={`w-[72px] h-[72px] sm:w-[76px] sm:h-[76px] md:w-[84px] md:h-[84px] lg:w-[92px] lg:h-[92px] rounded-2xl flex items-center justify-center overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl ${
                   portal.needsBorder ? 'border-2 border-gray-200' : ''
-                }`}
+                } ${isActive ? 'ring-2 ring-teal-400 ring-offset-2 ring-offset-[#0A0A0F]' : 'ring-1 ring-white/10'}`}
                 style={{
-                  backgroundColor: portal.useGradient ? undefined : portal.bgColor,
-                  background: portal.useGradient ? portal.bgColor : undefined,
-                  transform: 'translateZ(0)',
-                  backfaceVisibility: 'hidden'
+                  backgroundColor: portal.bgColor,
                 }}
               >
-                {portal.hasIcon ? (
-                  <IconComponent 
-                    className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16" 
-                    style={{ color: portal.iconColor || '#ffffff' }}
-                  />
-                ) : portal.fillContainer ? (
+                {portal.fillContainer ? (
                   <img 
                     src={portal.logo} 
                     alt={portal.name}
-                    className={`${portal.containLogo ? 'w-full h-full object-contain p-2' : 'w-full h-full object-cover'}`}
-                    style={portal.scale ? { transform: `scale(${portal.scale})` } : {}}
+                    className={`${portal.containLogo ? 'w-full h-full object-contain p-1' : 'w-full h-full object-cover'}`}
+                    style={portal.scale ? { transform: `scale(${portal.scale})` } : { transform: 'scale(1.15)' }}
                     loading="lazy"
                   />
                 ) : (
@@ -321,6 +275,7 @@ const PortalScrollBar = () => {
                   />
                 )}
               </div>
+              {/* Label */}
             </button>
           );
         })}
@@ -328,10 +283,10 @@ const PortalScrollBar = () => {
 
       {/* Gradient Fades */}
       {showLeftArrow && (
-        <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-[#0f172a] to-transparent pointer-events-none z-10"></div>
       )}
       {showRightArrow && (
-        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#F5F5F4] to-transparent pointer-events-none z-10"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-[#0A0A0F] to-transparent pointer-events-none z-10"></div>
       )}
 
       {/* Hide scrollbar */}

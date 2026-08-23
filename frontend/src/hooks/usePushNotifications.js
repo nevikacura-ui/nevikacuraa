@@ -1,231 +1,105 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { toast } from 'sonner';
+import { requestNotificationPermission, onForegroundMessage } from '@/lib/firebase';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+const API = process.env.REACT_APP_BACKEND_URL;
 
-// Convert base64 URL-safe to Uint8Array
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
-  
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
-}
-
-export function usePushNotifications() {
-  const [isSupported, setIsSupported] = useState(false);
-  const [permission, setPermission] = useState('default');
+export function usePushNotifications(userEmail) {
+  const registered = useRef(false);
+  const fcmToken = useRef(null);
+  const [isSupported] = useState(() => 'Notification' in window && 'serviceWorker' in navigator);
+  const [permission, setPermission] = useState(() => ('Notification' in window ? Notification.permission : 'denied'));
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [subscription, setSubscription] = useState(null);
 
-  // Check if push notifications are supported
-  useEffect(() => {
-    const supported = 'serviceWorker' in navigator && 'PushManager' in window;
-    setIsSupported(supported);
-    
-    if (supported && 'Notification' in window) {
-      setPermission(Notification.permission);
-    }
-  }, []);
-
-  // Check current subscription status
-  const checkSubscription = useCallback(async () => {
-    if (!isSupported) return;
-    
-    try {
-      const registration = await navigator.serviceWorker.ready;
-      const sub = await registration.pushManager.getSubscription();
-      setIsSubscribed(!!sub);
-      setSubscription(sub);
-    } catch (err) {
-      console.error('Error checking subscription:', err);
-    }
-  }, [isSupported]);
-
-  useEffect(() => {
-    checkSubscription();
-  }, [checkSubscription]);
-
-  // Subscribe to push notifications
-  const subscribe = useCallback(async (token = null) => {
-    if (!isSupported) {
-      setError('Push notifications not supported');
-      return false;
-    }
-
+  const subscribe = useCallback(async () => {
+    if (!isSupported) return false;
     setIsLoading(true);
     setError(null);
-
     try {
-      // Request permission
-      const permissionResult = await Notification.requestPermission();
-      setPermission(permissionResult);
+      const perm = await Notification.requestPermission();
+      setPermission(perm);
+      if (perm !== 'granted') { setError('Permission denied'); setIsLoading(false); return false; }
 
-      if (permissionResult !== 'granted') {
-        setError('Notification permission denied');
-        setIsLoading(false);
-        return false;
-      }
-
-      // Get VAPID public key from server
-      const vapidResponse = await fetch(`${API_URL}/api/push/vapid-public-key`);
-      if (!vapidResponse.ok) {
-        throw new Error('Failed to get VAPID key');
-      }
-      const { publicKey } = await vapidResponse.json();
-
-      // Subscribe to push manager
-      const registration = await navigator.serviceWorker.ready;
-      const pushSubscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey)
-      });
-
-      // Send subscription to server
-      const headers = {
-        'Content-Type': 'application/json'
-      };
+      const token = await requestNotificationPermission();
       if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`${API_URL}/api/push/subscribe`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          endpoint: pushSubscription.endpoint,
-          keys: {
-            p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(pushSubscription.getKey('p256dh')))),
-            auth: btoa(String.fromCharCode.apply(null, new Uint8Array(pushSubscription.getKey('auth'))))
-          }
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save subscription');
-      }
-
-      setIsSubscribed(true);
-      setSubscription(pushSubscription);
-      setIsLoading(false);
-      return true;
-    } catch (err) {
-      console.error('Subscribe error:', err);
-      setError(err.message);
-      setIsLoading(false);
-      return false;
-    }
-  }, [isSupported]);
-
-  // Unsubscribe from push notifications
-  const unsubscribe = useCallback(async () => {
-    if (!subscription) return false;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Unsubscribe from push manager
-      await subscription.unsubscribe();
-
-      // Remove from server
-      await fetch(`${API_URL}/api/push/unsubscribe`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          endpoint: subscription.endpoint,
-          keys: {}
-        })
-      });
-
-      setIsSubscribed(false);
-      setSubscription(null);
-      setIsLoading(false);
-      return true;
-    } catch (err) {
-      console.error('Unsubscribe error:', err);
-      setError(err.message);
-      setIsLoading(false);
-      return false;
-    }
-  }, [subscription]);
-
-  // Send test notification
-  const sendTestNotification = useCallback(async (token) => {
-    if (!token) {
-      setError('Authentication required');
-      return false;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/api/push/test`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      const data = await response.json();
-      return data.success;
-    } catch (err) {
-      console.error('Test notification error:', err);
-      setError(err.message);
-      return false;
-    }
-  }, []);
-
-  // Test notification directly via service worker (works in background)
-  const testBackgroundNotification = useCallback(async () => {
-    try {
-      const registration = await navigator.serviceWorker.ready;
-      if (registration.active) {
-        registration.active.postMessage({ type: 'TEST_NOTIFICATION' });
+        fcmToken.current = token;
+        await fetch(`${API}/api/fcm/register-token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, user_email: userEmail || null, device_info: navigator.userAgent }),
+        });
+        setIsSubscribed(true);
+        setIsLoading(false);
         return true;
       }
-      return false;
-    } catch (err) {
-      console.error('Background test error:', err);
-      return false;
+    } catch (e) {
+      setError(e.message);
+      console.warn('Push subscribe failed:', e);
     }
-  }, []);
+    setIsLoading(false);
+    return false;
+  }, [isSupported, userEmail]);
 
-  // Force update service worker
-  const updateServiceWorker = useCallback(async () => {
+  const unsubscribe = useCallback(async () => {
+    setIsLoading(true);
     try {
-      const registration = await navigator.serviceWorker.ready;
-      await registration.update();
-      if (registration.waiting) {
-        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      if (fcmToken.current) {
+        await fetch(`${API}/api/fcm/unregister/${encodeURIComponent(fcmToken.current)}`, { method: 'DELETE' });
       }
-      return true;
-    } catch (err) {
-      console.error('SW update error:', err);
-      return false;
+      setIsSubscribed(false);
+    } catch (e) {
+      console.warn('Unsubscribe failed:', e);
     }
+    setIsLoading(false);
+    return true;
   }, []);
 
-  return {
-    isSupported,
-    permission,
-    isSubscribed,
-    isLoading,
-    error,
-    subscribe,
-    unsubscribe,
-    sendTestNotification,
-    testBackgroundNotification,
-    updateServiceWorker,
-    checkSubscription
-  };
+  const sendTestNotification = useCallback(async () => {
+    if (!fcmToken.current) throw new Error('No FCM token');
+    const res = await fetch(`${API}/api/fcm/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: 'Nevika Cura',
+        body: 'Your appointment reminder: Dr. Vikas Jha tomorrow at 10:30 AM',
+        target_token: fcmToken.current,
+        data: { type: 'test', click_action: '/' },
+      }),
+    });
+    if (!res.ok) throw new Error('Send failed');
+    return true;
+  }, []);
+
+  useEffect(() => {
+    if (registered.current) return;
+    registered.current = true;
+
+    if (permission === 'granted' && isSupported) {
+      requestNotificationPermission().then((token) => {
+        if (token) {
+          fcmToken.current = token;
+          fetch(`${API}/api/fcm/register-token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token, user_email: userEmail || null, device_info: navigator.userAgent }),
+          }).catch(() => {});
+          setIsSubscribed(true);
+        }
+      }).catch(() => {});
+    }
+
+    const unsub = onForegroundMessage((payload) => {
+      const { title, body } = payload.notification || {};
+      if (title) {
+        toast(title, { description: body, duration: 6000 });
+      }
+    });
+    return unsub;
+  }, [userEmail, permission, isSupported]);
+
+  return { isSupported, permission, isSubscribed, isLoading, error, subscribe, unsubscribe, sendTestNotification };
 }
 
 export default usePushNotifications;

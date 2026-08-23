@@ -1,0 +1,84 @@
+{
+  "summary": "Completed frontend testing of iteration 278 features. All 13 test cases PASSED: 1) 'How to Book' banner (data-testid='how-to-book-banner') visible on /labs hub page above Mango/Proton/Nexugene cards. 2) Clicking 'How to Book' on /labs opens MangoTutorial (data-testid='mango-tutorial') with 4 slides. 3) 'How to Book' banner correctly REMOVED from /mango page. 4) 'How It Works' button correctly REMOVED from /mango hero strip. 5) Mango hero strip has Wishlist button and 'FREE home sample collection' text. 6) CuraCard (MembershipLinkBanner, data-testid='membership-link-banner') present on /mango at lower position (y=1142px, not header). 7) 'How to Book' banner still visible on /diagyn header. 8) CuraCard present on /diagyn at lower position. 9) 'How to Book' banner still visible on /orange header. 10) CuraCard present on /orange before BottomNav. 11) 'How to Book' banner still visible on /pharmacy header. 12) CuraCard present on /pharmacy at lower position. 13) All lab cards (Mango, Proton, Nexugene) present on /labs hub page.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_278.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend only testing)",
+    "frontend": "100%"
+  },
+  "test_credentials": "",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iteration 278 verified: 'How to Book' banner moved from /mango to /labs hub page (opens MangoTutorial). 'How to Book' and 'How It Works' removed from /mango hero strip. CuraCard (MembershipLinkBanner) added back at lower positions on /mango (after ad banner), /diagyn (after promo cards), /pharmacy (after Common Concerns), /orange (before BottomNav). 'How to Book' banners still present on /diagyn, /orange, /pharmacy headers.",
+  "tests_executed": {
+    "labs_how_to_book_banner": {
+      "status": "PASS",
+      "detail": "'How to Book' banner (data-testid='how-to-book-banner') visible on /labs hub page"
+    },
+    "labs_mango_tutorial_opens": {
+      "status": "PASS",
+      "detail": "Clicking 'How to Book' on /labs opens MangoTutorial (data-testid='mango-tutorial') with 4 slides"
+    },
+    "labs_cards_present": {
+      "status": "PASS",
+      "detail": "All 3 lab cards (Mango, Proton, Nexugene) present on /labs hub page"
+    },
+    "mango_how_to_book_removed": {
+      "status": "PASS",
+      "detail": "'How to Book' banner NOT found on /mango (correctly removed)"
+    },
+    "mango_how_it_works_removed": {
+      "status": "PASS",
+      "detail": "'How It Works' button NOT found on /mango hero strip (correctly removed)"
+    },
+    "mango_hero_strip_elements": {
+      "status": "PASS",
+      "detail": "Mango hero strip has Wishlist button and 'FREE home sample collection' text"
+    },
+    "mango_curacard_lower_position": {
+      "status": "PASS",
+      "detail": "CuraCard (MembershipLinkBanner) found on /mango at y=1142px (lower position, not header)"
+    },
+    "diagyn_how_to_book_present": {
+      "status": "PASS",
+      "detail": "'How to Book' banner visible on /diagyn header"
+    },
+    "diagyn_curacard_present": {
+      "status": "PASS",
+      "detail": "CuraCard (MembershipLinkBanner) found on /diagyn at lower position"
+    },
+    "orange_how_to_book_present": {
+      "status": "PASS",
+      "detail": "'How to Book' banner visible on /orange header"
+    },
+    "orange_curacard_present": {
+      "status": "PASS",
+      "detail": "CuraCard (MembershipLinkBanner) found on /orange before BottomNav"
+    },
+    "pharmacy_how_to_book_present": {
+      "status": "PASS",
+      "detail": "'How to Book' banner visible on /pharmacy header"
+    },
+    "pharmacy_curacard_present": {
+      "status": "PASS",
+      "detail": "CuraCard (MembershipLinkBanner) found on /pharmacy at lower position"
+    }
+  },
+  "mocked_apis": {
+    "ABHA/NDHM": "MOCKED - endpoints are mocked as per previous iterations"
+  }
+}

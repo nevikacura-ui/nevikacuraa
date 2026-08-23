@@ -256,6 +256,7 @@ async def get_message_templates():
                 "endpoint": "/api/whatsapp/send/lab-report"
             }
         ],
-        "provider": "Twilio WhatsApp API",
-        "note": "Professional transactional messages sent directly via Twilio"
+        "provider": "MSG91 WhatsApp Business API",
+        "meta_approval_status": "Templates auto-submitted to Meta via MSG91",
+        "note": "Submit/manage templates at MSG91 Dashboard → WhatsApp → Templates. Templates are routed to Meta for approval automatically. OTP template 'nevika_otp_verify' is already approved and active."
     }

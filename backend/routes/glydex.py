@@ -367,6 +367,12 @@ async def add_sugar_log(data: SugarLog, user = Depends(get_current_user)):
     return {"status": "added", "log": log}
 
 
+@router.post("/sugar-log")
+async def add_sugar_log_alias(data: SugarLog, user = Depends(get_current_user)):
+    """Add a new blood sugar log (alias for frontend)"""
+    return await add_sugar_log(data, user)
+
+
 @router.delete("/sugar-logs/{log_id}")
 async def delete_sugar_log(log_id: str, user = Depends(get_current_user)):
     """Delete a blood sugar log"""
@@ -1098,7 +1104,7 @@ async def send_diabetes_form_link(data: DiabetesFormSendRequest):
     
     # Create form record
     form_id = str(uuid.uuid4())
-    base_url = os.environ.get("FRONTEND_URL", "https://staff-pay-portal-1.preview.emergentagent.com")
+    base_url = os.environ.get("FRONTEND_URL", "https://premium-rx-portal.preview.emergentagent.com")
     form_link = f"{base_url}/diabetes-form/{form_id}"
     
     form_record = {
@@ -1343,7 +1349,7 @@ async def resend_diabetes_form_link(form_id: str):
     
     # Create new form with same patient data
     new_form_id = str(uuid.uuid4())
-    base_url = os.environ.get("FRONTEND_URL", "https://staff-pay-portal-1.preview.emergentagent.com")
+    base_url = os.environ.get("FRONTEND_URL", "https://premium-rx-portal.preview.emergentagent.com")
     new_form_link = f"{base_url}/diabetes-form/{new_form_id}"
     
     new_form_record = {

@@ -1,0 +1,63 @@
+{
+  "summary": "P0 Bug Fixes Testing - All 11 tests passed. Verified: 1) Chatbot slots endpoint correctly excludes reserved 11:00/11:15 AM slots, 2) Chatbot slots-text endpoint correctly excludes reserved slots, 3) Morning session starts from 11:30 AM, 4) Fresh appointments don't have stale billing data, 5) BillingCheckoutModal only pre-fills fee_code when doctor_charges_set is true, 6) Billing/close endpoint works correctly",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "/api/config/clinics",
+        "issue": "Database has old clinic hours '11 AM - 2 PM' instead of '11:30 AM - 2 PM'. Static config file is correct but DB needs update.",
+        "priority": "LOW"
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_p0_bug_fixes_367.py",
+    "/app/test_reports/pytest/pytest_results_367.xml"
+  ],
+  "action_items": [
+    "Update clinic hours in database from '11 AM - 2 PM' to '11:30 AM - 2 PM' (low priority - static config is correct)"
+  ],
+  "critical_code_review_comments": [
+    "AppointmentCard.jsx line 202: Correctly shows total_amount only for billing_pending/Completed status",
+    "BillingCheckoutModal.jsx lines 5-11: Correctly checks doctor_charges_set before pre-filling fee_code/scan_codes",
+    "chatbot_api.py lines 120-121, 132: Correctly filters out reserved 11:00/11:15 slots in /slots endpoint",
+    "chatbot_api.py lines 194-195, 218: Correctly filters out reserved slots in /slots-text endpoint"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_p0_bug_fixes_367.py"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "N/A - UI testing limited due to browser automation issues"
+  },
+  "test_credentials": {
+    "admin": "nevikacura / nevikacura2026",
+    "test_patient_phone": "9876543210"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "P0 bug fixes verified: 1) Chatbot reserved slots (11:00/11:15 AM) filtering works, 2) Morning session displays as 11:30 AM, 3) Fresh appointments don't show stale billing data, 4) BillingCheckoutModal doesn't pre-fill stale fee_code. Database clinic hours need update from '11 AM' to '11:30 AM' but this is low priority as static config is correct.",
+  "bugs_verified_fixed": [
+    {
+      "bug": "Fresh appointments showing old billing data (fee_code, total_amount)",
+      "fix_location": "AppointmentCard.jsx line 202, BillingCheckoutModal.jsx lines 5-11",
+      "status": "VERIFIED FIXED"
+    },
+    {
+      "bug": "WhatsApp AI chatbot showing morning slot timing as '11 AM - 2 PM' instead of '11:30 AM - 2 PM'",
+      "fix_location": "chatbot_api.py, clinic_config.py, msg91_whatsapp.py, voice_booking.py",
+      "status": "VERIFIED FIXED"
+    },
+    {
+      "bug": "Chatbot returning reserved 11:00/11:15 slots as available",
+      "fix_location": "chatbot_api.py lines 120-121, 132, 194-195, 218",
+      "status": "VERIFIED FIXED"
+    }
+  ]
+}

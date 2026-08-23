@@ -1,0 +1,101 @@
+{
+  "summary": "Tested 4 new features for Nevika Cura Healthcare Platform: 1) MSG91 SMS OTP endpoints, 2) Bottom nav hidden on home page, 3) Amnion Clinic hidden (only Pushpa Clinic visible), 4) Light theme as default. All backend SMS OTP tests PASSED (6/6). All frontend tests PASSED.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "Legacy Amnion references", "issue": "Some backend files still have legacy Amnion Clinic references (notification_service.py, ai_prescription.py, msg91_whatsapp.py, constants.py) - not affecting functionality but could be cleaned up"}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_sms_otp_endpoints_382.py",
+    ".screenshots/01_intro_screen_light_theme.png",
+    ".screenshots/02_home_page_no_bottom_nav.png",
+    ".screenshots/03_diagyn_page_with_bottom_nav.png",
+    ".screenshots/06_diagyn_main_page.png",
+    ".screenshots/07_diagyn_doctors_section.png"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "SMS OTP service (msg91_sms_otp.py): Well-implemented with proper error handling, DB logging, and phone number cleaning",
+    "SMS OTP routes (sms_otp.py): Proper validation for phone (min 10 digits) and OTP (6 digits), returns JWT token on successful verification",
+    "BottomNav.jsx: HIDDEN_NAV_PATHS correctly includes '/' and '/home' to hide nav on home page",
+    "diagyn/data.js: clinics array only has 'pushpa' and 'online' - Amnion correctly removed",
+    "ThemeLanguageContext.jsx: isDarkMode defaults to false (light theme)",
+    "IntroScreen.jsx: Uses bg-white for splash and bg-[#FAFAF8] for main screen (light theme)",
+    "Backend clinic_config.py: Only Pushpa Clinic configured, no Amnion"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_sms_otp_endpoints_382.py"
+  ],
+  "success_rate": {
+    "backend": "100% (6/6 tests passed)",
+    "frontend": "100% (all features verified)"
+  },
+  "test_credentials": "Staff: dr_neha/neha2026, Patient: 9876543210",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 4 features tested and working: SMS OTP API endpoints, bottom nav hidden on home, Amnion Clinic hidden, light theme default. Legacy Amnion references exist in some backend files but don't affect functionality.",
+  "features_tested": {
+    "sms_otp_send": {
+      "status": "PASS",
+      "endpoint": "POST /api/otp/sms/send",
+      "tests": [
+        "Valid phone (9876543210) returns 200 with success=true",
+        "Invalid phone (123) returns 400"
+      ]
+    },
+    "sms_otp_verify": {
+      "status": "PASS",
+      "endpoint": "POST /api/otp/sms/verify",
+      "tests": [
+        "Wrong OTP returns 400 (not 500)",
+        "Invalid OTP format (5 digits) returns 400"
+      ]
+    },
+    "sms_otp_resend": {
+      "status": "PASS",
+      "endpoint": "POST /api/otp/sms/resend",
+      "tests": [
+        "Resend after initial send returns 200"
+      ]
+    },
+    "bottom_nav_hidden_on_home": {
+      "status": "PASS",
+      "tests": [
+        "Home page (/) does NOT show bottom navigation",
+        "DiaGyn page (/diagyn) DOES show bottom navigation"
+      ]
+    },
+    "amnion_clinic_hidden": {
+      "status": "PASS",
+      "tests": [
+        "DiaGyn page does NOT show Amnion Clinic",
+        "diagyn/data.js only has pushpa and online clinics",
+        "Backend clinic_config.py only has Pushpa Clinic"
+      ]
+    },
+    "light_theme_default": {
+      "status": "PASS",
+      "tests": [
+        "HTML element has data-theme='light' and class='light-mode'",
+        "Body background is rgb(248, 250, 251) - light color",
+        "IntroScreen shows light theme with white/light backgrounds",
+        "Trust badges (35K+, NABL, 4000+, 100+) visible with dark text"
+      ]
+    },
+    "doctor_schedules": {
+      "status": "PASS",
+      "tests": [
+        "Dr. Vikas Jha (Diabetologist) visible on DiaGyn page",
+        "Dr. Neha Patel (OBGYN) visible on DiaGyn page",
+        "Schedule shows combined timings for Pushpa Clinic"
+      ]
+    }
+  }
+}
