@@ -1449,10 +1449,11 @@ except Exception as e:
 
 # Order Status Notifications
 try:
-    from routes.order_notifications import router as notif_router, init_db as init_notif_db
+    from routes.order_notifications import router as notif_router, init_db as init_notif_db, set_whatsapp_func as set_notif_wa
     init_notif_db(db)
+    set_notif_wa(send_msg91_whatsapp)
     app.include_router(notif_router)
-    logger.info("Order Notifications router loaded")
+    logger.info("Order Notifications router loaded (with WhatsApp)")
 except Exception as e:
     logger.warning(f"Could not load Order Notifications router: {e}")
 

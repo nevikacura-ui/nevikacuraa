@@ -105,9 +105,14 @@ class FamilyMember(BaseModel):
 
 @router.post("/family/members")
 async def add_family_member(member: FamilyMember, phone: str = ""):
-    """Add a family member profile"""
+    """Add a family member profile (max 5 per patient)"""
     if not phone:
         raise HTTPException(status_code=400, detail="Phone number required")
+    
+    # Enforce max 5 members
+    count = await db.family_members.count_documents({"owner_phone": phone[-10:]})
+    if count >= 5:
+        raise HTTPException(status_code=400, detail="Maximum 5 family members allowed. Delete one to add a new member.")
     
     member_id = str(uuid.uuid4())[:8]
     doc = {

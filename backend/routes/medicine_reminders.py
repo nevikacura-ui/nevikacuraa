@@ -324,6 +324,41 @@ async def log_medicine_taken(log: LogMedicineTaken, user = Depends(verify_user))
         # Send refill alert if low
         if new_qty <= 5:
             logger.info(f"Low stock alert for {reminder.get('medicine_name')}: {new_qty} remaining")
+            # Send WhatsApp refill reminder
+            try:
+                user_phone = reminder.get("user_phone") or user.get("phone") or user.get("sub", "")
+                if user_phone and len(user_phone) >= 10:
+                    from services.msg91_whatsapp import send_msg91_whatsapp, TEMPLATES
+                    medicine_name = reminder.get("medicine_name", "your medicine")
+                    template = TEMPLATES.get("medicine_refill_reminder") or TEMPLATES.get("orange_pharmacy_confirm")
+                    if template:
+                        await send_msg91_whatsapp(
+                            recipient_phone=user_phone,
+                            template_name=template,
+                            variables=[
+                                user.get("name", "Patient"),
+                                medicine_name,
+                                str(new_qty),
+                                "nevikacura.com/pharmacy",
+                            ],
+                            db=db,
+                            reference_id=reminder.get("id", ""),
+                            message_type="refill_reminder",
+                        )
+                        logger.info(f"Refill WhatsApp sent for {medicine_name} to {user_phone}")
+                        
+                        # Log the refill reminder
+                        await db.refill_reminders.insert_one({
+                            "user_id": user.get("sub") or user.get("user_id"),
+                            "phone": user_phone[-10:],
+                            "medicine_name": medicine_name,
+                            "remaining_qty": new_qty,
+                            "reminder_id": reminder.get("id"),
+                            "sent_via": "whatsapp",
+                            "created_at": datetime.now(timezone.utc).isoformat(),
+                        })
+            except Exception as wa_err:
+                logger.error(f"Failed to send refill WhatsApp: {wa_err}")
     
     return {
         "success": True,
@@ -526,3 +561,64 @@ async def cron_send_medicine_reminders(secret: str = ""):
         "timestamp": now.isoformat(),
         "notifications_sent": notifications_sent
     }
+
+
+
+@router.get("/refill-check")
+async def check_refill_alerts():
+    """Check all active reminders for low stock and send WhatsApp refill alerts."""
+    if db is None:
+        return {"success": False, "error": "Database not available"}
+
+    low_stock = await db.medicine_reminders.find({
+        "is_active": True,
+        "remaining_quantity": {"$lte": 5, "$gt": 0},
+    }, {"_id": 0}).to_list(100)
+
+    alerts_sent = 0
+    for reminder in low_stock:
+        user_phone = reminder.get("user_phone", "")
+        if not user_phone or len(user_phone) < 10:
+            continue
+
+        # Check if we already sent a refill reminder in the last 24 hours
+        from datetime import timedelta
+        day_ago = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+        existing = await db.refill_reminders.find_one({
+            "reminder_id": reminder.get("id"),
+            "created_at": {"$gte": day_ago},
+        })
+        if existing:
+            continue
+
+        try:
+            from services.msg91_whatsapp import send_msg91_whatsapp, TEMPLATES
+            template = TEMPLATES.get("medicine_refill_reminder") or TEMPLATES.get("orange_pharmacy_confirm")
+            if template:
+                await send_msg91_whatsapp(
+                    recipient_phone=user_phone,
+                    template_name=template,
+                    variables=[
+                        "Patient",
+                        reminder.get("medicine_name", "Medicine"),
+                        str(reminder.get("remaining_quantity", 0)),
+                        "nevikacura.com/pharmacy",
+                    ],
+                    db=db,
+                    reference_id=reminder.get("id", ""),
+                    message_type="refill_reminder",
+                )
+                await db.refill_reminders.insert_one({
+                    "user_id": reminder.get("user_id"),
+                    "phone": user_phone[-10:],
+                    "medicine_name": reminder.get("medicine_name"),
+                    "remaining_qty": reminder.get("remaining_quantity"),
+                    "reminder_id": reminder.get("id"),
+                    "sent_via": "whatsapp",
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                })
+                alerts_sent += 1
+        except Exception as e:
+            logger.error(f"Refill alert failed for {reminder.get('medicine_name')}: {e}")
+
+    return {"success": True, "low_stock_count": len(low_stock), "alerts_sent": alerts_sent}

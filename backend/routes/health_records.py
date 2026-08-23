@@ -216,8 +216,13 @@ async def get_family_members(user_id: str):
 
 @router.post("/family/{user_id}")
 async def add_family_member(user_id: str, member: FamilyMember):
-    """Add a family member"""
+    """Add a family member (max 5 per patient)"""
     db = get_db()
+    
+    # Enforce max 5 members
+    count = await db.family_members.count_documents({"primary_user_id": user_id})
+    if count >= 5:
+        raise HTTPException(status_code=400, detail="Maximum 5 family members allowed. Remove one to add a new member.")
     
     member_doc = {
         "id": str(uuid.uuid4()),

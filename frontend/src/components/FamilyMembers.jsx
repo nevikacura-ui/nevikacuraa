@@ -164,16 +164,17 @@ const FamilyMembers = () => {
             <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Outfit, sans-serif' }}>
               Family Members
             </h2>
-            <p className="text-sm text-slate-500">Manage health profiles for your family</p>
+            <p className="text-sm text-slate-500">{members.length}/5 members added</p>
           </div>
         </div>
         <Button
           onClick={() => { resetForm(); setEditingMember(null); setShowAddDialog(true); }}
           className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 rounded-xl"
+          disabled={members.length >= 5}
           data-testid="add-family-member-btn"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Add Member
+          {members.length >= 5 ? 'Limit Reached' : 'Add Member'}
         </Button>
       </div>
 

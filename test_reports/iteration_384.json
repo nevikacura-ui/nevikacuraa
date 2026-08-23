@@ -1,0 +1,103 @@
+{
+  "summary": "Tested 3 new features for Nevika Cura Healthcare Platform iteration 384: Order Notifications (WhatsApp via MSG91), Family Members (max 5 limit), and Refill Reminders. Backend: 12/12 tests PASSED. Frontend: 9/9 UI tests PASSED.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "FamilyMembers.js page",
+        "issue": "Missing 'X/5 members added' counter display - the component FamilyMembers.jsx has it but the page FamilyMembers.js does not show member count",
+        "selector": "N/A",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Family Members page",
+        "issues": ["Dark theme with low contrast text (white/25 for secondary text) - acceptable for dark mode but could be improved"]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_new_features_384.py",
+    "/app/test_reports/pytest/pytest_new_features_384.xml"
+  ],
+  "action_items": [
+    "OPTIONAL: Add 'X/5 members added' counter to FamilyMembers.js page header (currently only in FamilyMembers.jsx component)"
+  ],
+  "critical_code_review_comments": [
+    "Order notifications API correctly triggers WhatsApp for key statuses (confirmed, shipped, delivered, report_ready) and skips for non-critical statuses (packed, in_progress)",
+    "Family member 5-limit is enforced in both /api/health-records/family/{user_id} and /api/family/members endpoints",
+    "Refill check endpoint returns proper structure with low_stock_count and alerts_sent",
+    "WhatsApp templates gracefully handle missing templates by logging and skipping"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_new_features_384.py"
+  ],
+  "success_rate": {
+    "backend": "100% (12/12 tests passed)",
+    "frontend": "100% (9/9 UI elements verified)"
+  },
+  "test_credentials": "Patient phone: 9876543210",
+  "seed_data_creation": "Family members added via API during testing",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 3 new features tested and working: 1) Order Notifications - POST /api/order-status-notify triggers WhatsApp for pharmacy_order/lab_order confirmed status, GET /api/order-notifications/{phone} retrieves notifications, POST /api/order-notifications/{phone}/mark-read marks as read. 2) Family Members - POST /api/health-records/family/{user_id} and /api/family/members both enforce 5-member limit, GET endpoints return members list. 3) Refill Reminders - GET /api/medicine-reminders/refill-check returns low_stock_count and alerts_sent. Home page Quick Services (Consult, Pharmacy, Labs, Book) and Quick Links (My Orders, Prescriptions, CuraPay, Profile) all have correct data-testid attributes.",
+  "features_tested": {
+    "order_notifications": {
+      "status": "PASS",
+      "tests": [
+        "POST /api/order-status-notify pharmacy_order confirmed - whatsapp_sent=true",
+        "POST /api/order-status-notify lab_order confirmed - whatsapp_sent=true",
+        "POST /api/order-status-notify pharmacy_order packed - whatsapp_sent=false (correct)",
+        "GET /api/order-notifications/9876543210 - returns notifications list",
+        "POST /api/order-notifications/9876543210/mark-read - success=true"
+      ]
+    },
+    "family_members": {
+      "status": "PASS",
+      "tests": [
+        "POST /api/health-records/family/9876543210 - adds member with member_id",
+        "GET /api/health-records/family/9876543210 - returns family_members list",
+        "POST /api/family/members - phase4 endpoint works with 5-member limit",
+        "5-member limit enforced (returns 400 when exceeded)"
+      ]
+    },
+    "refill_reminders": {
+      "status": "PASS",
+      "tests": [
+        "GET /api/medicine-reminders/refill-check - returns success, low_stock_count, alerts_sent"
+      ]
+    },
+    "home_page_quick_services": {
+      "status": "PASS",
+      "tests": [
+        "Quick Services section found (data-testid='quick-services')",
+        "Consult button found (data-testid='quick-consult')",
+        "Pharmacy button found (data-testid='quick-pharmacy')",
+        "Labs button found (data-testid='quick-labs')",
+        "Book button found (data-testid='quick-book')"
+      ]
+    },
+    "home_page_quick_links": {
+      "status": "PASS",
+      "tests": [
+        "My Orders link found (data-testid='quick-link-my-orders')",
+        "Prescriptions link found (data-testid='quick-link-prescriptions')",
+        "CuraPay link found (data-testid='quick-link-curapay')",
+        "Profile link found (data-testid='quick-link-profile')"
+      ]
+    },
+    "family_members_page": {
+      "status": "PASS",
+      "tests": [
+        "Family Members page loads at /patient-profile/family",
+        "Family members list displayed (3 members visible)",
+        "Add button (+) visible in header (data-testid='add-family-btn')"
+      ]
+    }
+  }
+}
